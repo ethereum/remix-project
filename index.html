@@ -11,22 +11,29 @@
 body {
     padding: 0px;
     font-size: 12px;
+    color: #111111;
+}
+#optimizeBox {
+    position: absolute;
+    top: 30px;
+    left: 720px;
+    font-size: 14px;
 }
 #input {
     position: absolute;
     top: 120px;
     left: 0px;
-    width: 500px;
+    width: 700px;
     bottom: 0px;
     font-size: 15px;
 }
 #output {
     position: absolute;
     top: 120px;
-    left: 520px;
-    right: 0px;
+    left: 720px;
+    right: 10px;
     bottom: 0px;
-    font-size: 15px;
+    font-size: 14px;
 }
 </style>
 <script src="libs/ace.js"></script>
@@ -36,13 +43,65 @@ body {
 <body>
 <h1>Solidity realtime compiler</h1>
 Source code on the left, compiled code and AST on the right (or error).
+<div id="optimizeBox">
+<input id="optimize" type="checkbox" checked="checked"><label for="optimize">optimize</label>
+</div>
+<div id="input"> contract Ballot {
+    // Create a new ballot with $(_numProposals) different proposals.
+    function Ballot(uint8 _numProposals) {
+        address sender = 0x123; // msg.sender
+        chairperson = sender;
+        numProposals = _numProposals;
+    }
 
-<div id="input">contract ExampleContract
-{
-  function fun()
-  {
-    var x = 2 + 3 - 8 != 9 && true == false;
-  }
+    // Give $(voter) the right to vote on this ballot.
+    // May only be called by $(chairperson).
+    function giveRightToVote(address voter) {
+        if (/*msg.sender != chairperson ||*/ voted[voter]) return;
+        voterWeight[voter] = 1;
+    }
+
+    // Delegate your vote to the voter $(to).
+    function delegate(address to) {
+        address sender = 0x123; // msg.sender
+        if (voted[sender]) return;
+        while (delegations[to] != address(0) && delegations[to] != sender)
+            to = delegations[to];
+        if (to == sender) return;
+        voted[sender] = true;
+        delegations[sender] = to;
+        if (voted[to]) voteCounts[votes[to]] += voterWeight[sender];
+        else voterWeight[to] += voterWeight[sender];
+    }
+
+    // Give a single vote to proposal $(proposal).
+    function vote(uint8 proposal) {
+        address sender = 0x123; // msg.sender
+        if (voted[sender] || proposal >= numProposals) return;
+        voted[sender] = true;
+        votes[sender] = proposal;
+        voteCounts[proposal] += voterWeight[sender];
+    }
+
+    function winningProposal() const returns (uint8 winningProposal) {
+        uint256 winningVoteCount = 0;
+        uint8 proposal = 0;
+        while (proposal < numProposals) {
+            if (voteCounts[proposal] > winningVoteCount) {
+                winningVoteCount = voteCounts[proposal];
+                winningProposal = proposal;
+            }
+            ++proposal;
+        }
+    }
+
+    address chairperson;
+    uint8 numProposals;
+    mapping(address => uint256) voterWeight;
+    mapping(address => bool) voted;
+    mapping(address => uint8) votes;
+    mapping(address => address) delegations;
+    mapping(uint8 => uint256) voteCounts;
 }
 </div>
 <pre id="output"></pre>
@@ -62,11 +121,12 @@ var previousInput = '';
 var outputArea = document.querySelector('#output');
 var onChange = function() {
     var input = editor.getValue();
+    var optimize = document.querySelector('#optimize').checked;
     if (input == previousInput)
         return;
     previousInput = input;
     try {
-        outputArea.innerHTML = compileString(input);
+        outputArea.innerHTML = compileString(input, optimize);
     } catch (exception) {
         outputArea.innerHTML = "Uncaught JavaScript Exception:\n" + exception;
     }
