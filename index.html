@@ -116,7 +116,7 @@ editor.getSession().setMode("ace/mode/javascript");
 editor.getSession().setTabSize(4);
 editor.getSession().setUseSoftTabs(true);
 
-var compileString = Module.cwrap("compileString", "string", ["string"]);
+var compileString = Module.cwrap("compileString", "string", ["string", "number"]);
 var previousInput = '';
 var outputArea = document.querySelector('#output');
 var onChange = function() {
@@ -126,7 +126,7 @@ var onChange = function() {
         return;
     previousInput = input;
     try {
-        outputArea.innerHTML = compileString(input, optimize);
+        outputArea.innerHTML = compileString(input, optimize ? 1 : 0);
     } catch (exception) {
         outputArea.innerHTML = "Uncaught JavaScript Exception:\n" + exception;
     }
