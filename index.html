@@ -119,20 +119,25 @@ editor.getSession().setUseSoftTabs(true);
 var compileString = Module.cwrap("compileString", "string", ["string", "number"]);
 var previousInput = '';
 var outputArea = document.querySelector('#output');
-var onChange = function() {
+var compile = function() {
     var input = editor.getValue();
     var optimize = document.querySelector('#optimize').checked;
-    if (input == previousInput)
-        return;
-    previousInput = input;
     try {
         outputArea.innerHTML = compileString(input, optimize ? 1 : 0);
     } catch (exception) {
         outputArea.innerHTML = "Uncaught JavaScript Exception:\n" + exception;
     }
+}
+var onChange = function() {
+    var input = editor.getValue();
+    if (input == previousInput)
+        return;
+    previousInput = input;
+    compile();
 };
 
 editor.getSession().on('change', onChange);
+document.querySelector('#optimize').addEventListener('change', compile);
 
 onChange();
 </script>
