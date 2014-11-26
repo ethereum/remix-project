@@ -49,7 +49,7 @@ Source code on the left, compiled code and AST on the right (or error).
 <div id="input"> contract Ballot {
     // Create a new ballot with $(_numProposals) different proposals.
     function Ballot(uint8 _numProposals) {
-        address sender = 0x123; // msg.sender
+        address sender = msg.sender;
         chairperson = sender;
         numProposals = _numProposals;
     }
@@ -57,13 +57,13 @@ Source code on the left, compiled code and AST on the right (or error).
     // Give $(voter) the right to vote on this ballot.
     // May only be called by $(chairperson).
     function giveRightToVote(address voter) {
-        if (/*msg.sender != chairperson ||*/ voted[voter]) return;
+        if (msg.sender != chairperson || voted[voter]) return;
         voterWeight[voter] = 1;
     }
 
     // Delegate your vote to the voter $(to).
     function delegate(address to) {
-        address sender = 0x123; // msg.sender
+        address sender = msg.sender;
         if (voted[sender]) return;
         while (delegations[to] != address(0) && delegations[to] != sender)
             to = delegations[to];
@@ -76,7 +76,7 @@ Source code on the left, compiled code and AST on the right (or error).
 
     // Give a single vote to proposal $(proposal).
     function vote(uint8 proposal) {
-        address sender = 0x123; // msg.sender
+        address sender = msg.sender;
         if (voted[sender] || proposal >= numProposals) return;
         voted[sender] = true;
         votes[sender] = proposal;
