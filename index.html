@@ -128,12 +128,14 @@ var compile = function() {
         outputArea.innerHTML = "Uncaught JavaScript Exception:\n" + exception;
     }
 }
+var compileTimeout = null;
 var onChange = function() {
     var input = editor.getValue();
     if (input == previousInput)
         return;
     previousInput = input;
-    compile();
+    if (compileTimeout) window.clearTimeout(compileTimeout);
+    compileTimeout = window.setTimeout(compile, 300);
 };
 
 editor.getSession().on('change', onChange);
