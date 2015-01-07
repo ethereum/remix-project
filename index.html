@@ -83,7 +83,7 @@ Source code on the left, compiled code and AST on the right (or error).
         voteCounts[proposal] += voterWeight[sender];
     }
 
-    function winningProposal() const returns (uint8 winningProposal) {
+    function winningProposal() constant returns (uint8 winningProposal) {
         uint256 winningVoteCount = 0;
         uint8 proposal = 0;
         while (proposal < numProposals) {
