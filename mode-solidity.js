@@ -63,12 +63,12 @@ var JavaScriptHighlightRules = function(options) {
         "variable.language":
             "this|bool|address|" + intTypes,
         "keyword":
-            "contract|const|" +
+            "contract|constant|" +
             "struct|mapping|break|continue|delete|else|for|function|" +
             "if|new|return|returns|var|while|" +
             "private|public",
         "storage.type":
-            "const|var|function",
+            "constant|var|function",
         "constant.language.boolean": "true|false"
     }, "identifier");
     var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
