@@ -35,16 +35,20 @@ body {
     bottom: 0px;
     font-size: 14px;
 }
+#header {
+    margin-bottom: 4px;
+}
 </style>
 <script src="libs/ace.js"></script>
 <script src="mode-solidity.js"></script>
 <script src="soljs.js"></script>
 </head>
 <body>
-<h1>Solidity realtime compiler</h1>
+<h1 id="header">Solidity realtime compiler</h1>
 Source code on the left, compiled code and AST on the right (or error).<br/>
 <b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
-To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.
+To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
+Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/42f5ae4c8b5d891d03330c4a40891cba581bb7f0">42f5ae4c...</a> 2014-03-16
 <div id="optimizeBox">
 <input id="optimize" type="checkbox" checked="checked"><label for="optimize">optimize</label>
 </div>
