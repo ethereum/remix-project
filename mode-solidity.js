@@ -56,17 +56,17 @@ var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocComme
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var JavaScriptHighlightRules = function(options) {
-    var intTypes = 'hash|int|uint';
+    var intTypes = 'bytes|int|uint';
     for (var width = 8; width <= 256; width += 8)
-        intTypes += '|hash' + width + '|uint' + width + '|int' + width;
+        intTypes += '|bytes' + (width / 8) + '|uint' + width + '|int' + width;
     var keywordMapper = this.createKeywordMapper({
         "variable.language":
-            "this|bool|address|" + intTypes,
+            "this|bool|byte|bytes|bytes0|address|" + intTypes,
         "keyword":
             "contract|constant|" +
-            "struct|mapping|break|continue|delete|else|for|function|" +
+            "struct|mapping|enum|break|continue|delete|else|for|function|" +
             "if|new|return|returns|var|while|" +
-            "private|public",
+            "private|public|external|internal",
         "storage.type":
             "constant|var|function",
         "constant.language.boolean": "true|false"
