@@ -48,7 +48,7 @@ body {
 Source code on the left, compiled code and AST on the right (or error).<br/>
 <b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
 To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
-Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/42f5ae4c8b5d891d03330c4a40891cba581bb7f0">42f5ae4c...</a> 2014-03-16
+Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/bb30afcbe8d168e8bd7ebf99bd3256376470c36e">bb30afcbe8...</a> 2015-04-17
 <div id="optimizeBox">
 <input id="optimize" type="checkbox" checked="checked"><label for="optimize">optimize</label>
 </div>
@@ -123,9 +123,14 @@ editor.getSession().setTabSize(4);
 editor.getSession().setUseSoftTabs(true);
 
 var compileString = Module.cwrap("compileString", "string", ["string", "number"]);
+var ready = false;
+Module['onRuntimeInitialized'] = function() { ready = true; onChange(); };
+
 var previousInput = '';
 var outputArea = document.querySelector('#output');
 var compile = function() {
+    if (!ready)
+        return;
     var input = editor.getValue();
     var optimize = document.querySelector('#optimize').checked;
     try {
@@ -136,6 +141,8 @@ var compile = function() {
 }
 var compileTimeout = null;
 var onChange = function() {
+    if (!ready)
+        return;
     var input = editor.getValue();
     if (input == previousInput)
         return;
@@ -146,8 +153,6 @@ var onChange = function() {
 
 editor.getSession().on('change', onChange);
 document.querySelector('#optimize').addEventListener('change', compile);
-
-onChange();
 </script>
 </body>
 </html>
