@@ -34,23 +34,32 @@ body {
     right: 10px;
     bottom: 0px;
     font-size: 14px;
+    overflow: auto;
 }
 #header {
     margin-bottom: 4px;
 }
+.col1 {
+    width: 18ex;
+    display: inline-block;
+}
+.col2 {
+    width: 60ex;
+}
 </style>
+<script src="libs/jquery-2.1.3.min.js"></script>
 <script src="libs/ace.js"></script>
 <script src="mode-solidity.js"></script>
-<script src="soljs.js"></script>
+<script src="soljson.js"></script>
 </head>
 <body>
 <h1 id="header">Solidity realtime compiler</h1>
 Source code on the left, compiled code and AST on the right (or error).<br/>
 <b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
 To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
-Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/bb30afcbe8d168e8bd7ebf99bd3256376470c36e">bb30afcbe8...</a> 2015-04-17
+Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/2329a5af24e78c90c161dab553f6cf78f04ddea2">2329a5af...</a> 2015-04-22
 <div id="optimizeBox">
-<input id="optimize" type="checkbox" checked="checked"><label for="optimize">optimize</label>
+<input id="optimize" type="checkbox"><label for="optimize">optimize</label>
 </div>
 <div id="input"> contract Ballot {
     // Create a new ballot with $(_numProposals) different proposals.
@@ -110,7 +119,7 @@ Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/bb30afcbe8d168
     mapping(uint8 => uint256) voteCounts;
 }
 </div>
-<pre id="output"></pre>
+<div id="output"></div>
 
 <div style="height: 100px;"></div>
 <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
@@ -122,22 +131,26 @@ editor.getSession().setMode("ace/mode/javascript");
 editor.getSession().setTabSize(4);
 editor.getSession().setUseSoftTabs(true);
 
-var compileString = Module.cwrap("compileString", "string", ["string", "number"]);
+var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
 var ready = false;
 Module['onRuntimeInitialized'] = function() { ready = true; onChange(); };
 
 var previousInput = '';
-var outputArea = document.querySelector('#output');
 var compile = function() {
     if (!ready)
         return;
     var input = editor.getValue();
     var optimize = document.querySelector('#optimize').checked;
     try {
-        outputArea.innerHTML = compileString(input, optimize ? 1 : 0);
+        var data = $.parseJSON(compileJSON(input, optimize ? 1 : 0));
     } catch (exception) {
-        outputArea.innerHTML = "Uncaught JavaScript Exception:\n" + exception;
+        renderError("Uncaught JavaScript Exception:\n" + exception);
+        return;
     }
+    if (data['error'] !== undefined)
+        renderError(data['error']);
+    else
+        renderContracts(data);
 }
 var compileTimeout = null;
 var onChange = function() {
@@ -153,6 +166,29 @@ var onChange = function() {
 
 editor.getSession().on('change', onChange);
 document.querySelector('#optimize').addEventListener('change', compile);
+
+var renderError = function(message) {
+    $('#output').empty().append($('<pre></pre>').text(message));
+};
+var renderContracts = function(data) {
+    $('#output').empty();
+    for (var contractName in data.contracts) {
+        var contract = data.contracts[contractName];
+        var contractOutput = $('<div class="contractOutput"/>')
+            .append($('<h3/>').text(contractName))
+            .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
+            .append(tableRow('Bytecode', contract.bytecode))
+            .append(tableRow('Interface', contract['interface']))
+            .append(tableRow('Solidity Interface', contract.solidity_interface))
+            .append(tableRow('Opcodes', contract.opcodes));
+        $('#output').append(contractOutput);
+    }
+};
+var tableRow = function(description, data) {
+    return $('<div/>')
+        .append($('<span class="col1">').text(description))
+        .append($('<input readonly="readonly" class="col2">').val(data));
+};
 </script>
 </body>
 </html>
