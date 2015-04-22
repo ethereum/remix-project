@@ -149,7 +149,7 @@ var compile = function() {
     if (data['error'] !== undefined)
         renderError(data['error']);
     else
-        renderContracts(data);
+        renderContracts(data, input);
 }
 var compileTimeout = null;
 var onChange = function() {
@@ -169,7 +169,7 @@ document.querySelector('#optimize').addEventListener('change', compile);
 var renderError = function(message) {
     $('#output').empty().append($('<pre></pre>').text(message));
 };
-var renderContracts = function(data) {
+var renderContracts = function(data, source) {
     $('#output').empty();
     for (var contractName in data.contracts) {
         var contract = data.contracts[contractName];
@@ -179,7 +179,8 @@ var renderContracts = function(data) {
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
             .append(tableRow('Solidity Interface', contract.solidity_interface))
-            .append(tableRow('Opcodes', contract.opcodes));
+            .append(tableRow('Opcodes', contract.opcodes))
+            .append(formatAssembly(contract.assembly, source));
         $('#output').append(contractOutput);
     }
 };
@@ -188,6 +189,32 @@ var tableRow = function(description, data) {
         .append($('<span class="col1">').text(description))
         .append($('<input readonly="readonly" class="col2">').val(data));
 };
+var formatAssembly = function(asm, source) {
+    var button = $('<button>Assembly</button>');
+    var text = $('<pre style="display: none;"/>').text(formatAssemblyText(asm, '', source));
+    button.click(function() { text.toggle(); });
+    return $('<div/>').append(button).append(text);
+};
+var formatAssemblyText = function(asm, prefix, source) {
+    var text = '';
+    text += prefix + '.code\n';
+    $.each(asm['.code'], function(i, item) {
+        var v = item.value === undefined ? '' : item.value;
+        var src = '';
+        if (item.begin !== undefined && item.end != undefined)
+            src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g');
+        text += '  ' + prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
+    });
+    text += prefix + '.data\n';
+    if (asm['.data'])
+        $.each(asm['.data'], function(i, item) {
+            text += '  ' + prefix + '' + i + ':\n';
+            text += formatAssemblyText(item, prefix + '    ', source);
+        });
+
+    return text;
+};
+$('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); } )
 </script>
 </body>
 </html>
