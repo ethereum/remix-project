@@ -56,7 +56,7 @@ body {
 Source code on the left, compiled code and AST on the right (or error).<br/>
 <b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
 To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
-Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/0d48ad1d585511cf3a31e547477ebbaafaaf6ffa">0d48ad...</a> 2015-04-22
+Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/dea8d55f904e8eaa0a1da237748810b2ead69cfd">dea8d55f...</a> 2015-05-18
 <div id="optimizeBox">
 <input id="optimize" type="checkbox"><label for="optimize">optimize</label>
 </div>
@@ -179,8 +179,7 @@ var renderContracts = function(data, source) {
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
             .append(tableRow('Solidity Interface', contract.solidity_interface))
-            .append(tableRow('Opcodes', contract.opcodes))
-            .append(formatAssembly(contract.assembly, source));
+            .append(getDetails(contract, source));
         $('#output').append(contractOutput);
     }
 };
@@ -189,11 +188,20 @@ var tableRow = function(description, data) {
         .append($('<span class="col1">').text(description))
         .append($('<input readonly="readonly" class="col2">').val(data));
 };
-var formatAssembly = function(asm, source) {
-    var button = $('<button>Assembly</button>');
-    var text = $('<pre style="display: none;"/>').text(formatAssemblyText(asm, '', source));
-    button.click(function() { text.toggle(); });
-    return $('<div/>').append(button).append(text);
+var getDetails = function(contract, source) {
+    var button = $('<button>Details</button>');
+    var details = $('<div style="display: none;"/>')
+        .append(tableRow('Opcodes', contract.opcodes));
+    var funHashes = '';
+    for (var fun in contract.functionHashes)
+        funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
+    details.append($('<span class="col1">Functions</span>'));
+    details.append($('<pre/>').text(funHashes));
+    details.append($('<span class="col1">Assembly</span>'));
+    var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
+    details.append(assembly);
+    button.click(function() { details.toggle(); });
+    return $('<div/>').append(button).append(details);
 };
 var formatAssemblyText = function(asm, prefix, source) {
     var text = '';
@@ -203,7 +211,11 @@ var formatAssemblyText = function(asm, prefix, source) {
         var src = '';
         if (item.begin !== undefined && item.end != undefined)
             src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g');
-        text += '  ' + prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
+        if (src.length > 30)
+            src = src.slice(0, 30) + '...';
+        if (item.name != 'tag')
+            text += '  ';
+        text += prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
     });
     text += prefix + '.data\n';
     if (asm['.data'])
