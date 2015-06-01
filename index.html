@@ -166,6 +166,8 @@ var onChange = function() {
 editor.getSession().on('change', onChange);
 document.querySelector('#optimize').addEventListener('change', compile);
 
+var detailsOpen = {};
+
 var renderError = function(message) {
     $('#output').empty().append($('<pre></pre>').text(message));
 };
@@ -179,7 +181,7 @@ var renderContracts = function(data, source) {
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
             .append(tableRow('Solidity Interface', contract.solidity_interface))
-            .append(getDetails(contract, source));
+            .append(getDetails(contract, source, contractName));
         $('#output').append(contractOutput);
     }
 };
@@ -188,7 +190,7 @@ var tableRow = function(description, data) {
         .append($('<span class="col1">').text(description))
         .append($('<input readonly="readonly" class="col2">').val(data));
 };
-var getDetails = function(contract, source) {
+var getDetails = function(contract, source, contractName) {
     var button = $('<button>Details</button>');
     var details = $('<div style="display: none;"/>')
         .append(tableRow('Opcodes', contract.opcodes));
@@ -202,7 +204,9 @@ var getDetails = function(contract, source) {
     details.append($('<span class="col1">Assembly</span>'));
     var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
     details.append(assembly);
-    button.click(function() { details.toggle(); });
+    button.click(function() { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
+    if (detailsOpen[contractName])
+        details.show();
     return $('<div/>').append(button).append(details);
 };
 var formatGasEstimates = function(data) {
