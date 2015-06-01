@@ -56,7 +56,7 @@ body {
 Source code on the left, compiled code and AST on the right (or error).<br/>
 <b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
 To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
-Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/dea8d55f904e8eaa0a1da237748810b2ead69cfd">dea8d55f...</a> 2015-05-18
+Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/481e1f20a35643fd4103b1190c641484b4e38199">481e1f...</a> 2015-06-01
 <div id="optimizeBox">
 <input id="optimize" type="checkbox"><label for="optimize">optimize</label>
 </div>
@@ -197,11 +197,26 @@ var getDetails = function(contract, source) {
         funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
     details.append($('<span class="col1">Functions</span>'));
     details.append($('<pre/>').text(funHashes));
+    details.append($('<span class="col1">Gas Estimates</span>'));
+    details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
     details.append($('<span class="col1">Assembly</span>'));
     var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
     details.append(assembly);
     button.click(function() { details.toggle(); });
     return $('<div/>').append(button).append(details);
+};
+var formatGasEstimates = function(data) {
+    var gasToText = function(g) { return g === null ? 'unknown' : g; }
+    var text = '';
+    if ('creation' in data)
+        text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
+    text += 'External:\n';
+    for (var fun in data.external)
+        text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+    text += 'Internal:\n';
+    for (var fun in data.internal)
+        text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+    return text;
 };
 var formatAssemblyText = function(asm, prefix, source) {
     var text = '';
