@@ -56,7 +56,7 @@ body {
 Source code on the left, compiled code and AST on the right (or error).<br/>
 <b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
 To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
-Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/d810b3d1b41375220c2e90124e612b0311a63eea">d810b3d1...</a> 2015-06-12
+Version: <a href="https://github.com/ethereum/cpp-ethereum/commit/53659d489d7da120209c51d88853f0ee58cd60f8">53659d48...</a> 2015-06-18
 <div id="optimizeBox">
 <input id="optimize" type="checkbox"><label for="optimize">optimize</label>
 </div>
@@ -219,7 +219,7 @@ var formatGasEstimates = function(data) {
         text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
     text += 'Internal:\n';
     for (var fun in data.internal)
-        text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+        text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
     return text;
 };
 var formatAssemblyText = function(asm, prefix, source) {
