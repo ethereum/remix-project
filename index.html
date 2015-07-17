@@ -2,7 +2,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
-<title>Solidity realtime compiler</title>
+<title>Solidity realtime compiler and runtime</title>
 <link rel="stylesheet" href="stylesheets/styles.css">
 <link rel="stylesheet" href="stylesheets/pygment_trac.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -45,18 +45,23 @@ body {
 .col2 {
     width: 60ex;
 }
+.runButton {
+    width: 30ex;
+    text-align: left;
+    overflow: hidden;
+}
 </style>
 <script src="libs/jquery-2.1.3.min.js"></script>
 <script src="libs/ace.js"></script>
 <script src="mode-solidity.js"></script>
 <script src="soljson.js"></script>
+<script src="ethereumjs-vm.js"></script>
 </head>
 <body>
-<h1 id="header">Solidity realtime compiler</h1>
-Source code on the left, compiled code and AST on the right (or error).<br/>
-<b>Note:</b> Chrome/Chromium currently reports &quot;Uncaught JavaScript Exception&quot;.
-To work around this problem, enable the debug console (Ctrl+Shift+i) and reload.<br/>
-Version: <span id="version">(loading)</span>
+<h1 id="header">Solidity realtime compiler and runtime</h1>
+Version: <span id="version">(loading)</span><br/>
+<b>Note:</b> If Chrome/Chromium reports &quot;Uncaught JavaScript Exception&quot;,
+enable the debug console (Ctrl+Shift+i) and reload.
 <div id="optimizeBox">
 <input id="optimize" type="checkbox"><label for="optimize">optimize</label>
 </div>
@@ -132,12 +137,14 @@ Version: <span id="version">(loading)</span>
 <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
 
 <script>
+// ----------------- editor ----------------------
 var editor = ace.edit("input");
 editor.setTheme("ace/theme/monokai");
 editor.getSession().setMode("ace/mode/javascript");
 editor.getSession().setTabSize(4);
 editor.getSession().setUseSoftTabs(true);
 
+// ----------------- compiler ----------------------
 var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
 var ready = false;
 Module['onRuntimeInitialized'] = function() {
@@ -178,6 +185,7 @@ var onChange = function() {
 editor.getSession().on('change', onChange);
 document.querySelector('#optimize').addEventListener('change', compile);
 
+// ----------------- compiler output renderer ----------------------
 var detailsOpen = {};
 
 var renderError = function(message) {
@@ -189,6 +197,7 @@ var renderContracts = function(data, source) {
         var contract = data.contracts[contractName];
         var contractOutput = $('<div class="contractOutput"/>')
             .append($('<h3/>').text(contractName))
+            .append(getExecuteInterface(contract, contractName))
             .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
@@ -258,6 +267,76 @@ var formatAssemblyText = function(asm, prefix, source) {
     return text;
 };
 $('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); } )
+
+// ----------------- VM ----------------------
+
+var stateTrie = new EthVm.Trie();
+var vm = new EthVm.VM(stateTrie);
+var secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
+var publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
+var address = ethUtil.pubToAddress(new Buffer(publicKey, 'hex'));
+var account = new EthVm.Account();
+account.balance = 'f00000000000000001';
+var nonce = 0;
+stateTrie.put(address, account.serialize());
+var runTx = function(data, to, cb) {
+    var tx = new EthVm.Transaction({
+        nonce: new Buffer([nonce++]), //@todo count beyond 255
+        gasPrice: '01',
+        gasLimit: '3000000',
+        to: to,
+        data: data
+    });
+    tx.sign(new Buffer(secretKey, 'hex'));
+    vm.runTx({tx: tx}, cb);
+};
+
+var getExecuteInterface = function(contract, name) {
+    var execInter = $('<div/>');
+    var createButton = $('<button>Create</button>');
+    var createResult = $('<span/>');
+    execInter
+        .append(createButton)
+        .append(createResult);
+    var bytecode = contract.bytecode;
+    var funHashes = contract.functionHashes;
+    var abi = $.parseJSON(contract.interface);
+    createButton.click(function() {
+        createResult.text(' ...');
+        //@todo constructor arguments
+        runTx(bytecode, undefined, function(err, result) {
+            if (err)
+                createResult.text(err);
+            else
+            {
+                createResult.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
+                appendFunctions(result.createdAddress);
+            }
+        });
+    });
+    var appendFunctions = function(address) {
+        var instance = $('<div/>');
+        instance.append($('<span/>').text('Contract at address ' + address.toString('hex')));
+        $.each(funHashes, function(signature, hash) {
+            var runButton = $('<button class="runButton"/>').text(signature);
+            var resultField = $('<span/>');
+            runButton.click(function() {
+                resultField.text(' ...');
+                //@todo arguments
+                runTx(hash, address, function(err, result) {
+                    if (err)
+                        resultField.text(err);
+                    else
+                        resultField.text(' Result: ' + result.vm.return.toString('hex'));
+                });
+            });
+            instance.append($('<div/>').append(runButton).append(resultField));
+        });
+        execInter.append(instance);
+    };
+    return execInter;
+};
+
 </script>
 </body>
 </html>
