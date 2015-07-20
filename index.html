@@ -56,6 +56,7 @@ body {
 <script src="mode-solidity.js"></script>
 <script src="soljson.js"></script>
 <script src="ethereumjs-vm.js"></script>
+<script src="web3.min.js"></script>
 </head>
 <body>
 <h1 id="header">Solidity realtime compiler and runtime</h1>
@@ -292,49 +293,82 @@ var runTx = function(data, to, cb) {
     vm.runTx({tx: tx}, cb);
 };
 
-var getExecuteInterface = function(contract, name) {
-    var execInter = $('<div/>');
-    var createButton = $('<button>Create</button>');
-    var createResult = $('<span/>');
-    execInter
-        .append(createButton)
-        .append(createResult);
-    var bytecode = contract.bytecode;
-    var funHashes = contract.functionHashes;
-    var abi = $.parseJSON(contract.interface);
-    createButton.click(function() {
-        createResult.text(' ...');
-        //@todo constructor arguments
-        runTx(bytecode, undefined, function(err, result) {
-            if (err)
-                createResult.text(err);
-            else
-            {
-                createResult.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
-                appendFunctions(result.createdAddress);
-            }
-        });
+var getConstructorInterface = function(abi) {
+    var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
+    for (var i = 0; i < abi.length; i++)
+        if (abi[i].type == 'constructor') {
+            funABI.inputs = abi[i].inputs || [];
+            break;
+        }
+    return funABI;
+};
+
+var getCallButton = function(args) {
+    // args.abi, args.bytecode [constr only], args.address [fun only]
+    // args.appendFunctions [constr only]
+    var isConstructor = args.bytecode !== undefined;
+    var fun = new web3.eth.function(args.abi);
+    var inputs = '';
+    $.each(args.abi.inputs, function(i, inp) {
+        if (inputs != '') inputs += ', ';
+        inputs += inp.type + ' ' + inp.name;
     });
+    var inputField = $('<input/>').attr('placeholder', inputs);
+    var outputSpan = $('<div/>');
+    var button = $('<button/>')
+        .text(args.bytecode ? 'Create' : fun.displayName())
+        .click(function() {
+            var funArgs = $.parseJSON('[' + inputField.val() + ']');
+            var data = fun.toPayload(funArgs).data;
+            if (data.slice(0, 2) == '0x') data = data.slice(2);
+            if (isConstructor)
+                data = args.bytecode + data.slice(8);
+            outputSpan.text(' ...');
+            runTx(data, args.address, function(err, result) {
+                if (err)
+                    outputSpan.text(err);
+                else if (isConstructor) {
+                    outputSpan.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
+                    args.appendFunctions(result.createdAddress);
+                } else {
+                    var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
+                    outputSpan.text(' Returned: ' + JSON.stringify(outputObj));
+                }
+            });
+        });
+    if (!isConstructor)
+        button.addClass('runButton');
+    var c = $('<div/>')
+        .append(button);
+    if (args.abi.inputs.length > 0)
+        c.append(inputField);
+    return c.append(outputSpan);
+};
+
+var getExecuteInterface = function(contract, name) {
+    var abi = $.parseJSON(contract.interface);
+    var execInter = $('<div/>');
+    var funABI = getConstructorInterface(abi);
+
     var appendFunctions = function(address) {
         var instance = $('<div/>');
         instance.append($('<span/>').text('Contract at address ' + address.toString('hex')));
-        $.each(funHashes, function(signature, hash) {
-            var runButton = $('<button class="runButton"/>').text(signature);
-            var resultField = $('<span/>');
-            runButton.click(function() {
-                resultField.text(' ...');
-                //@todo arguments
-                runTx(hash, address, function(err, result) {
-                    if (err)
-                        resultField.text(err);
-                    else
-                        resultField.text(' Result: ' + result.vm.return.toString('hex'));
-                });
-            });
-            instance.append($('<div/>').append(runButton).append(resultField));
+        $.each(abi, function(i, funABI) {
+            if (funABI.type != 'function') return;
+            instance.append(getCallButton({
+                abi: funABI,
+                address: address
+            }));
         });
         execInter.append(instance);
     };
+
+    execInter
+        .append(getCallButton({
+            abi: funABI,
+            bytecode: contract.bytecode,
+            appendFunctions: appendFunctions
+        }));
     return execInter;
 };
 
