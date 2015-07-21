@@ -13,8 +13,16 @@ body {
     color: #111111;
 }
 #solIcon {
-    top: -10px;
-    right: -60px;
+    right: 10px;
+    top: 10px;
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
+}
+#solIcon img {
+    top: -20px;
+    right: -10px;
     position: absolute;
     height: 100px;
 }
@@ -65,7 +73,7 @@ body {
 <script src="web3.min.js"></script>
 </head>
 <body>
-<img id="solIcon" src="solidity.svg"/>
+<div id="solIcon"><img src="solidity.svg"></div>
 <h1 id="header">Solidity realtime compiler and runtime</h1>
 Version: <span id="version">(loading)</span><br/>
 Execution environment does not connect to any node, everyhing is in-memory only.<br/>
