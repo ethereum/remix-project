@@ -12,6 +12,12 @@ body {
     font-size: 12px;
     color: #111111;
 }
+#solIcon {
+    top: -10px;
+    right: -60px;
+    position: absolute;
+    height: 100px;
+}
 #optimizeBox {
     position: absolute;
     top: 30px;
@@ -59,6 +65,7 @@ body {
 <script src="web3.min.js"></script>
 </head>
 <body>
+<img id="solIcon" src="solidity.svg"/>
 <h1 id="header">Solidity realtime compiler and runtime</h1>
 Version: <span id="version">(loading)</span><br/>
 Execution environment does not connect to any node, everyhing is in-memory only.<br/>
