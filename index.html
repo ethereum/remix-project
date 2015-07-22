@@ -156,24 +156,16 @@ enable the debug console (Ctrl+Shift+i) and reload.
 <script>
 // ----------------- editor ----------------------
 var editor = ace.edit("input");
-editor.setTheme("ace/theme/monokai");
 editor.getSession().setMode("ace/mode/javascript");
 editor.getSession().setTabSize(4);
 editor.getSession().setUseSoftTabs(true);
 
 // ----------------- compiler ----------------------
 var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
-var ready = false;
-Module['onRuntimeInitialized'] = function() {
-    ready = true;
-    $('#version').text(Module.cwrap("version", "string", [])());
-    onChange();
-};
+$('#version').text(Module.cwrap("version", "string", [])());
 
 var previousInput = '';
 var compile = function() {
-    if (!ready)
-        return;
     var input = editor.getValue();
     var optimize = document.querySelector('#optimize').checked;
     try {
@@ -189,8 +181,6 @@ var compile = function() {
 }
 var compileTimeout = null;
 var onChange = function() {
-    if (!ready)
-        return;
     var input = editor.getValue();
     if (input == previousInput)
         return;
@@ -198,6 +188,7 @@ var onChange = function() {
     if (compileTimeout) window.clearTimeout(compileTimeout);
     compileTimeout = window.setTimeout(compile, 300);
 };
+onChange();
 
 editor.getSession().on('change', onChange);
 document.querySelector('#optimize').addEventListener('change', compile);
