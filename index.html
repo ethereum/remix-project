@@ -258,7 +258,7 @@ var renderContracts = function(data, source) {
             .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
-            .append(textRow('Geth deploy', gethDeploy(contractName,contract['interface'],contract.bytecode)))
+            .append(textRow('Geth deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
             .append(getDetails(contract, source, contractName));
         $('#output').append(contractOutput);
     }
