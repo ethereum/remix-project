@@ -56,23 +56,22 @@ body {
     width: 18ex;
     display: inline-block;
 }
-strong.col1 {
-    top: -10px;
-    position: relative;
-    margin-bottom: 5px;    
-}
 .col2 {
     width: 60ex;
+    display: inline-block;
 }
-textarea.col2 {
-    height: 20px;
+.gethDeployText {
     border-color: #bebebe;
-    margin-bottom: 5px;
+    height: 2.5ex;
 }
 .runButton {
     width: 30ex;
     text-align: left;
     overflow: hidden;
+}
+.contractInstance {
+    margin-left: 2ex;
+    margin-bottom: 20px;
 }
 </style>
 <script src="libs/jquery-2.1.3.min.js"></script>
@@ -237,7 +236,7 @@ var gethDeploy = function(contractName, interface, bytecode){
 
 
     return code;
-}
+};
 
 var renderContracts = function(data, source) {
     $('#output').empty();
@@ -245,24 +244,30 @@ var renderContracts = function(data, source) {
         var contract = data.contracts[contractName];
         var contractOutput = $('<div class="contractOutput"/>')
             .append($('<h3/>').text(contractName))
-            .append(getExecuteInterface(contract, contractName))
             .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
+            .append(getExecuteInterface(contract, contractName))
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
             .append(textRow('Geth deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
             .append(getDetails(contract, source, contractName));
         $('#output').append(contractOutput);
     }
+    $('.col2 input,textarea').click(function() { this.select(); } );
+};
+var tableRowItems = function(first, second) {
+    return $('<div/>')
+        .append($('<div class="col1">').append(first))
+        .append($('<div class="col2">').append(second));
 };
 var tableRow = function(description, data) {
-    return $('<div/>')
-        .append($('<span class="col1">').text(description))
-        .append($('<input readonly="readonly" class="col2">').val(data));
+    return tableRowItems(
+        $('<span/>').text(description),
+        $('<input readonly="readonly"/>').val(data));
 };
 var textRow = function(description, data) {
-    return $('<div/>')
-        .append($('<strong class="col1">').text(description))
-        .append($('<textarea class="col2" onclick="this.select()">'+data+"</textarea>"));
+    return tableRowItems(
+        $('<strong/>').text(description),
+        $('<textarea readonly="readonly" class="gethDeployText"/>').val(data));
 };
 var getDetails = function(contract, source, contractName) {
     var button = $('<button>Details</button>');
@@ -407,7 +412,7 @@ var getExecuteInterface = function(contract, name) {
     var funABI = getConstructorInterface(abi);
 
     var appendFunctions = function(address) {
-        var instance = $('<div/>');
+        var instance = $('<div class="contractInstance"/>');
         instance.append($('<span/>').text('Contract at address ' + address.toString('hex')));
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
