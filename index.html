@@ -56,13 +56,18 @@ body {
     width: 18ex;
     display: inline-block;
 }
+strong.col1 {
+    top: -10px;
+    position: relative;
+    margin-bottom: 5px;    
+}
 .col2 {
     width: 60ex;
 }
 textarea.col2 {
-    height: 100px;
-    background: #fff6dd;  
-    border-color: #efece2;
+    height: 20px;
+    border-color: #bebebe;
+    margin-bottom: 5px;
 }
 .runButton {
     width: 30ex;
@@ -253,8 +258,7 @@ var renderContracts = function(data, source) {
             .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
-            .append(tableRow('Solidity Interface', contract.solidity_interface))
-            .append(textRow('Deploy Instructions', gethDeploy(contractName,contract['interface'],contract.bytecode)))
+            .append(textRow('Geth deploy', gethDeploy(contractName,contract['interface'],contract.bytecode)))
             .append(getDetails(contract, source, contractName));
         $('#output').append(contractOutput);
     }
@@ -266,12 +270,13 @@ var tableRow = function(description, data) {
 };
 var textRow = function(description, data) {
     return $('<div/>')
-        .append($('<span class="col1">').text(description))
-        .append($('<textarea readonly="readonly" class="col2" onclick="this.select()">'+data+"</textarea>"));
+        .append($('<strong class="col1">').text(description))
+        .append($('<textarea class="col2" onclick="this.select()">'+data+"</textarea>"));
 };
 var getDetails = function(contract, source, contractName) {
     var button = $('<button>Details</button>');
     var details = $('<div style="display: none;"/>')
+        .append(tableRow('Solidity Interface', contract.solidity_interface))
         .append(tableRow('Opcodes', contract.opcodes));
     var funHashes = '';
     for (var fun in contract.functionHashes)
