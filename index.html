@@ -59,6 +59,11 @@ body {
 .col2 {
     width: 60ex;
 }
+textarea.col2 {
+    height: 100px;
+    background: #fff6dd;  
+    border-color: #efece2;
+}
 .runButton {
     width: 30ex;
     text-align: left;
@@ -208,6 +213,36 @@ var detailsOpen = {};
 var renderError = function(message) {
     $('#output').empty().append($('<pre></pre>').text(message));
 };
+
+var gethDeploy = function(contractName, interface, bytecode){
+    var code = "";
+    var funABI = getConstructorInterface($.parseJSON(interface));
+
+    $.each(funABI.inputs, function(i, inp) {
+        code += "var "+inp.name+" = /* var of type " + inp.type + " here */ ;\n";
+    });
+
+    code += "\nvar "+contractName+"Contract = web3.eth.contract("+interface.replace("\n","")+");"
+        +"\nvar "+contractName+" = "+contractName+"Contract.new(";
+    
+    $.each(funABI.inputs, function(i, inp) {
+        code += "\n   "+inp.name+",";
+    });
+                
+    code += "\n   {"+
+    "\n     from: web3.eth.accounts[0], "+
+    "\n     data: '"+bytecode+"', "+
+    "\n     gas: 1000000"+
+    "\n   }, function(e, contract){"+
+    "\n    if (typeof contract.address != 'undefined') {"+            
+    "\n    console.log(e, contract);"+
+    "\n    console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
+    "\n }})";
+
+
+    return code;
+}
+
 var renderContracts = function(data, source) {
     $('#output').empty();
     for (var contractName in data.contracts) {
@@ -219,6 +254,7 @@ var renderContracts = function(data, source) {
             .append(tableRow('Bytecode', contract.bytecode))
             .append(tableRow('Interface', contract['interface']))
             .append(tableRow('Solidity Interface', contract.solidity_interface))
+            .append(textRow('Deploy Instructions', gethDeploy(contractName,contract['interface'],contract.bytecode)))
             .append(getDetails(contract, source, contractName));
         $('#output').append(contractOutput);
     }
@@ -227,6 +263,11 @@ var tableRow = function(description, data) {
     return $('<div/>')
         .append($('<span class="col1">').text(description))
         .append($('<input readonly="readonly" class="col2">').val(data));
+};
+var textRow = function(description, data) {
+    return $('<div/>')
+        .append($('<span class="col1">').text(description))
+        .append($('<textarea readonly="readonly" class="col2" onclick="this.select()">'+data+"</textarea>"));
 };
 var getDetails = function(contract, source, contractName) {
     var button = $('<button>Details</button>');
