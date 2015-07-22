@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<title>Solidity realtime compiler</title>
+<link rel="stylesheet" href="stylesheets/styles.css">
+<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<style type="text/css">
+body {
+    padding: 0px;
+    font-size: 12px;
+}
+#input {
+    position: absolute;
+    top: 120px;
+    left: 0px;
+    width: 500px;
+    bottom: 0px;
+    font-size: 15px;
+}
+#output {
+    position: absolute;
+    top: 120px;
+    left: 520px;
+    right: 0px;
+    bottom: 0px;
+    font-size: 15px;
+}
+</style>
+<script src="libs/ace.js"></script>
+<script src="mode-solidity.js"></script>
+<script src="soljs.js"></script>
+</head>
+<body>
+<h1>Solidity realtime compiler</h1>
+Source code on the left, compiled code and AST on the right (or error).
+
+<div id="input">contract ExampleContract
+{
+  function fun()
+  {
+    var x = 2 + 3 - 8 != 9 && true == false;
+  }
+}
+</div>
+<pre id="output"></pre>
+
+<div style="height: 100px;"></div>
+<p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+<script>
+var editor = ace.edit("input");
+editor.setTheme("ace/theme/monokai");
+editor.getSession().setMode("ace/mode/javascript");
+editor.getSession().setTabSize(4);
+editor.getSession().setUseSoftTabs(true);
+
+var compileString = Module.cwrap("compileString", "string", ["string"]);
+var previousInput = '';
+var outputArea = document.querySelector('#output');
+var onChange = function() {
+    var input = editor.getValue();
+    if (input == previousInput)
+        return;
+    previousInput = input;
+    try {
+        outputArea.innerHTML = compileString(input);
+    } catch (exception) {
+        outputArea.innerHTML = "Uncaught JavaScript Exception:\n" + exception;
+    }
+};
+
+editor.getSession().on('change', onChange);
+
+onChange();
+</script>
+</body>
+</html>
