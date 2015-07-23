@@ -243,10 +243,13 @@ var renderContracts = function(data, source) {
     for (var contractName in data.contracts) {
         var contract = data.contracts[contractName];
         var contractOutput = $('<div class="contractOutput"/>')
-            .append($('<h3/>').text(contractName))
-            .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
-            .append(getExecuteInterface(contract, contractName))
-            .append(tableRow('Bytecode', contract.bytecode))
+            .append($('<h3/>').text(contractName));
+        if (contract.bytecode.length > 0)
+            contractOutput
+                .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
+                .append(getExecuteInterface(contract, contractName))
+                .append(tableRow('Bytecode', contract.bytecode));
+        contractOutput
             .append(tableRow('Interface', contract['interface']))
             .append(textRow('Geth deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
             .append(getDetails(contract, source, contractName));
@@ -281,9 +284,12 @@ var getDetails = function(contract, source, contractName) {
     details.append($('<pre/>').text(funHashes));
     details.append($('<span class="col1">Gas Estimates</span>'));
     details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
-    details.append($('<span class="col1">Assembly</span>'));
-    var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
-    details.append(assembly);
+    if (contract.assembly !== null)
+    {
+        details.append($('<span class="col1">Assembly</span>'));
+        var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
+        details.append(assembly);
+    }
     button.click(function() { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
     if (detailsOpen[contractName])
         details.show();
