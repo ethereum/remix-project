@@ -303,8 +303,9 @@ var formatGasEstimates = function(data) {
     return text;
 };
 var formatAssemblyText = function(asm, prefix, source) {
-    var text = '';
-    text += prefix + '.code\n';
+    if (typeof(asm) == typeof('') || asm === null || asm === undefined)
+        return prefix + asm + '\n';
+    var text = prefix + '.code\n';
     $.each(asm['.code'], function(i, item) {
         var v = item.value === undefined ? '' : item.value;
         var src = '';
