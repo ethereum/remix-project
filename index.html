@@ -12,67 +12,135 @@ body {
     font-size: 12px;
     color: #111111;
 }
-#solIcon {
-    right: 10px;
-    top: 10px;
+#editor {
     position: absolute;
-    height: 100px;
-    width: 100px;
-    overflow: hidden;
-}
-#solIcon img {
-    top: -20px;
-    right: -10px;
-    position: absolute;
-    height: 100px;
-}
-#optimizeBox {
-    position: absolute;
-    top: 30px;
-    left: 720px;
-    font-size: 14px;
+    top: 0;
+    left: 0px;
+    width: auto;
+    bottom: 0px;
+    right: 32em;
+    
 }
 #input {
-    position: absolute;
-    top: 120px;
-    left: 0px;
-    width: 700px;
-    bottom: 0px;
     font-size: 15px;
-}
-#output {
     position: absolute;
-    top: 120px;
-    left: 720px;
-    right: 10px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#righthand-panel {
+    position: absolute;
+    top: 0;
+    width: 32em;
+    right: 0;
     bottom: 0px;
-    font-size: 14px;
     overflow: auto;
+    border-left: 1px solid #ccc;
 }
+
+#output {
+    border-top: 1px solid #ccc;
+    position: absolute;
+    top: 18em;
+    width: 32em;
+    right: 0;
+    bottom: 0px;
+}
+
 #header {
-    margin-bottom: 4px;
+    font-size: 14px;
+    padding: 1em;
+    font-size: 12px;
+    height: 18em;
 }
+
+#header h1 {
+    margin-top: 0;
+}
+
+#header .info { clear: left; }
+
+#header #solIcon {
+    float: left;
+    height: 5em;
+}
+
 .col1 {
-    width: 18ex;
-    display: inline-block;
+    width: 30%;
+    float: left;
 }
 .col2 {
-    width: 60ex;
-    display: inline-block;
+    width: 70%;
+    float: left;
+}
+
+.row {
+    overflow: auto;
 }
 .gethDeployText {
     border-color: #bebebe;
-    height: 2.5ex;
+    height: 2.5em;
+    width: 100%;
+    display: block;
 }
 .runButton {
-    width: 30ex;
+    width: 16em;
     text-align: left;
     overflow: hidden;
+    margin-right: 0.6em;
 }
 .contractInstance {
-    margin-left: 2ex;
+    margin-left: 2em;
     margin-bottom: 20px;
 }
+
+
+.contractOutput {
+    border-bottom: 1px solid #ccc;
+    padding: 0.4em;
+    box-sizing: border-box;
+}
+
+.contractOutput .title {
+    margin: 0;
+    cursor: pointer;
+}
+
+.contractOutput .body {
+    display: none;
+    margin-top: 10px;
+}
+
+.contractOutput.show .body {
+    display: block;
+}
+
+.contractOutput .title:before {
+    content: "\25B6";
+    color: #ccc;
+    margin-right: 0.4em;
+    font-size: 10px;
+}
+
+.contractOutput.show .title:before {
+    content: "\25BC";
+}
+
+
+.solError {
+    position: absolute;
+    background-color: rgba(255, 0, 0, 0.5);
+    z-index:40;
+}
+
+.error {
+    background-color: rgba(255, 0, 0, 0.5);
+    border-radius: 0;
+    border: 0 none;
+}
+
 </style>
 <script src="libs/jquery-2.1.3.min.js"></script>
 <script src="libs/ace.js"></script>
@@ -82,367 +150,338 @@ body {
 <script src="web3.min.js"></script>
 </head>
 <body>
-<div id="solIcon"><img src="solidity.svg"></div>
-<h1 id="header">Solidity realtime compiler and runtime</h1>
-Version: <span id="version">(loading)</span><br/>
-Execution environment does not connect to any node, everyhing is in-memory only.<br/>
-<b>Note:</b> If Chrome/Chromium reports &quot;Uncaught JavaScript Exception&quot;,
-enable the debug console (Ctrl+Shift+i) and reload.
-<div id="optimizeBox">
-<input id="optimize" type="checkbox"><label for="optimize">optimize</label>
-</div>
-<div id="input">contract Ballot {
+    <div id="editor">
+        <div id="input">contract Ballot {
     struct Voter {
         uint weight;
-        bool voted;
+        bool voted
         uint8 vote;
         address delegate;
     }
     struct Proposal {
         uint voteCount;
     }
+}
+        </div>
+    </div>
 
-    address chairperson;
-    mapping(address => Voter) voters;
-    Proposal[] proposals;
+    <div id="righthand-panel">
+        <div id="header">
+            <img id="solIcon" src="solidity.svg">
+            <h1>Solidity realtime<br/>compiler and runtime</h1>
+            <div class="info">
+                <p>Version: <span id="version">(loading)</span><br/>
+                Execution environment does not connect to any node, everyhing is in-memory only.<br/>
+                <strong>Note:</strong> If Chrome/Chromium reports &quot;Uncaught JavaScript Exception&quot;,
+                enable the debug console (Ctrl+Shift+i) and reload.</p>
+            </div>
+            <div id="optimizeBox">
+                <input id="optimize" type="checkbox"><label for="optimize">Enable Optimization</label>
+            </div>
+        </div>
+        <div id="output"></div>
+    </div>
 
-    // Create a new ballot with $(_numProposals) different proposals.
-    function Ballot(uint8 _numProposals) {
-        chairperson = msg.sender;
-        voters[chairperson].weight = 1;
-        proposals.length = _numProposals;
-    }
+    <script>
+        // ----------------- editor ----------------------
+        var editor = ace.edit("input");
+        editor.getSession().setMode("ace/mode/javascript");
+        editor.getSession().setTabSize(4);
+        editor.getSession().setUseSoftTabs(true);
+        Range = ace.require('ace/range').Range;
+        var errMarkerId = null;
 
-    // Give $(voter) the right to vote on this ballot.
-    // May only be called by $(chairperson).
-    function giveRightToVote(address voter) {
-        if (msg.sender != chairperson || voters[voter].voted) return;
-        voters[voter].weight = 1;
-    }
+        // ----------------- compiler ----------------------
+        var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
+        $('#version').text(Module.cwrap("version", "string", [])());
 
-    // Delegate your vote to the voter $(to).
-    function delegate(address to) {
-        Voter sender = voters[msg.sender]; // assigns reference
-        if (sender.voted) return;
-        while (voters[to].delegate != address(0) && voters[to].delegate != msg.sender)
-            to = voters[to].delegate;
-        if (to == msg.sender) return;
-        sender.voted = true;
-        sender.delegate = to;
-        Voter delegate = voters[to];
-        if (delegate.voted)
-            proposals[delegate.vote].voteCount += sender.weight;
-        else
-            delegate.weight += sender.weight;
-    }
-
-    // Give a single vote to proposal $(proposal).
-    function vote(uint8 proposal) {
-        Voter sender = voters[msg.sender];
-        if (sender.voted || proposal >= proposals.length) return;
-        sender.voted = true;
-        sender.vote = proposal;
-        proposals[proposal].voteCount += sender.weight;
-    }
-
-    function winningProposal() constant returns (uint8 winningProposal) {
-        uint256 winningVoteCount = 0;
-        for (uint8 proposal = 0; proposal < proposals.length; proposal++) {
-            if (proposals[proposal].voteCount > winningVoteCount) {
-                winningVoteCount = proposals[proposal].voteCount;
-                winningProposal = proposal;
+        var previousInput = '';
+        var compile = function() {
+            editor.getSession().clearAnnotations();
+            editor.getSession().removeMarker(errMarkerId);
+            var input = editor.getValue();
+            var optimize = document.querySelector('#optimize').checked;
+            try {
+                var data = $.parseJSON(compileJSON(input, optimize ? 1 : 0));
+            } catch (exception) {
+                renderError("Uncaught JavaScript Exception:\n" + exception);
+                return;
             }
-            ++proposal;
+            if (data['error'] !== undefined)
+                renderError(data['error']);
+            else
+                renderContracts(data, input);
         }
-    }
-}
-</div>
-<div id="output"></div>
+        var compileTimeout = null;
+        var onChange = function() {
+            var input = editor.getValue();
+            if (input == previousInput)
+                return;
+            previousInput = input;
+            if (compileTimeout) window.clearTimeout(compileTimeout);
+            compileTimeout = window.setTimeout(compile, 300);
+        };
+        onChange();
 
-<div style="height: 100px;"></div>
-<p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        editor.getSession().on('change', onChange);
+        document.querySelector('#optimize').addEventListener('change', compile);
 
-<script>
-// ----------------- editor ----------------------
-var editor = ace.edit("input");
-editor.getSession().setMode("ace/mode/javascript");
-editor.getSession().setTabSize(4);
-editor.getSession().setUseSoftTabs(true);
+        // ----------------- compiler output renderer ----------------------
+        var detailsOpen = {};
 
-// ----------------- compiler ----------------------
-var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
-$('#version').text(Module.cwrap("version", "string", [])());
+        var renderError = function(message) {
+            var err = message.match(/^:([0-9]*):([0-9]*)/)
+            var errLine = parseInt( err[1], 10 ) - 1;
+            var errCol = parseInt( err[2], 10 );
+            editor.gotoLine( errLine );
+            $('#output').empty().append($('<pre class="error"></pre>').text(message));
+            errMarkerId = editor.getSession().addMarker(new Range(errLine, 0, errLine, 1), "solError", "fullLine");
+            editor.getSession().setAnnotations([{
+                row: errLine,
+                column: errCol,
+                text: message,
+                type: "error"
+            }]);
+        };
 
-var previousInput = '';
-var compile = function() {
-    var input = editor.getValue();
-    var optimize = document.querySelector('#optimize').checked;
-    try {
-        var data = $.parseJSON(compileJSON(input, optimize ? 1 : 0));
-    } catch (exception) {
-        renderError("Uncaught JavaScript Exception:\n" + exception);
-        return;
-    }
-    if (data['error'] !== undefined)
-        renderError(data['error']);
-    else
-        renderContracts(data, input);
-}
-var compileTimeout = null;
-var onChange = function() {
-    var input = editor.getValue();
-    if (input == previousInput)
-        return;
-    previousInput = input;
-    if (compileTimeout) window.clearTimeout(compileTimeout);
-    compileTimeout = window.setTimeout(compile, 300);
-};
-onChange();
+        var gethDeploy = function(contractName, interface, bytecode){
+            var code = "";
+            var funABI = getConstructorInterface($.parseJSON(interface));
 
-editor.getSession().on('change', onChange);
-document.querySelector('#optimize').addEventListener('change', compile);
-
-// ----------------- compiler output renderer ----------------------
-var detailsOpen = {};
-
-var renderError = function(message) {
-    $('#output').empty().append($('<pre></pre>').text(message));
-};
-
-var gethDeploy = function(contractName, interface, bytecode){
-    var code = "";
-    var funABI = getConstructorInterface($.parseJSON(interface));
-
-    $.each(funABI.inputs, function(i, inp) {
-        code += "var "+inp.name+" = /* var of type " + inp.type + " here */ ;\n";
-    });
-
-    code += "\nvar "+contractName+"Contract = web3.eth.contract("+interface.replace("\n","")+");"
-        +"\nvar "+contractName+" = "+contractName+"Contract.new(";
-    
-    $.each(funABI.inputs, function(i, inp) {
-        code += "\n   "+inp.name+",";
-    });
-                
-    code += "\n   {"+
-    "\n     from: web3.eth.accounts[0], "+
-    "\n     data: '"+bytecode+"', "+
-    "\n     gas: 1000000"+
-    "\n   }, function(e, contract){"+
-    "\n   if(!e) {"+
-    "\n     if(!contract.address) {"+
-    "\n       console.log('Contract transaction sent! TransactionHash: ' + contract.transactionHash + ' waiting to be mined...');"+
-    "\n     } else {"+
-    "\n       console.log('Contract mined! Address: ' + contract.address);"+
-    "\n       console.log(contract);"+
-    "\n     }"+
-    "\n }})";
-
-    return code;
-};
-
-var renderContracts = function(data, source) {
-    $('#output').empty();
-    for (var contractName in data.contracts) {
-        var contract = data.contracts[contractName];
-        var contractOutput = $('<div class="contractOutput"/>')
-            .append($('<h3/>').text(contractName));
-        if (contract.bytecode.length > 0)
-            contractOutput
-                .append($('<div/>').text((contract.bytecode.length / 2) + ' bytes'))
-                .append(getExecuteInterface(contract, contractName))
-                .append(tableRow('Bytecode', contract.bytecode));
-        contractOutput
-            .append(tableRow('Interface', contract['interface']))
-            .append(textRow('Console deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
-            .append(getDetails(contract, source, contractName));
-        $('#output').append(contractOutput);
-    }
-    $('.col2 input,textarea').click(function() { this.select(); } );
-};
-var tableRowItems = function(first, second) {
-    return $('<div/>')
-        .append($('<div class="col1">').append(first))
-        .append($('<div class="col2">').append(second));
-};
-var tableRow = function(description, data) {
-    return tableRowItems(
-        $('<span/>').text(description),
-        $('<input readonly="readonly"/>').val(data));
-};
-var textRow = function(description, data) {
-    return tableRowItems(
-        $('<strong/>').text(description),
-        $('<textarea readonly="readonly" class="gethDeployText"/>').val(data));
-};
-var getDetails = function(contract, source, contractName) {
-    var button = $('<button>Details</button>');
-    var details = $('<div style="display: none;"/>')
-        .append(tableRow('Solidity Interface', contract.solidity_interface))
-        .append(tableRow('Opcodes', contract.opcodes));
-    var funHashes = '';
-    for (var fun in contract.functionHashes)
-        funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
-    details.append($('<span class="col1">Functions</span>'));
-    details.append($('<pre/>').text(funHashes));
-    details.append($('<span class="col1">Gas Estimates</span>'));
-    details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
-    if (contract.assembly !== null)
-    {
-        details.append($('<span class="col1">Assembly</span>'));
-        var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
-        details.append(assembly);
-    }
-    button.click(function() { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
-    if (detailsOpen[contractName])
-        details.show();
-    return $('<div/>').append(button).append(details);
-};
-var formatGasEstimates = function(data) {
-    var gasToText = function(g) { return g === null ? 'unknown' : g; }
-    var text = '';
-    if ('creation' in data)
-        text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
-    text += 'External:\n';
-    for (var fun in data.external)
-        text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
-    text += 'Internal:\n';
-    for (var fun in data.internal)
-        text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
-    return text;
-};
-var formatAssemblyText = function(asm, prefix, source) {
-    if (typeof(asm) == typeof('') || asm === null || asm === undefined)
-        return prefix + asm + '\n';
-    var text = prefix + '.code\n';
-    $.each(asm['.code'], function(i, item) {
-        var v = item.value === undefined ? '' : item.value;
-        var src = '';
-        if (item.begin !== undefined && item.end != undefined)
-            src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g');
-        if (src.length > 30)
-            src = src.slice(0, 30) + '...';
-        if (item.name != 'tag')
-            text += '  ';
-        text += prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
-    });
-    text += prefix + '.data\n';
-    if (asm['.data'])
-        $.each(asm['.data'], function(i, item) {
-            text += '  ' + prefix + '' + i + ':\n';
-            text += formatAssemblyText(item, prefix + '    ', source);
-        });
-
-    return text;
-};
-$('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); } )
-
-// ----------------- VM ----------------------
-
-var stateTrie = new EthVm.Trie();
-var vm = new EthVm.VM(stateTrie);
-//@todo this does not calculate the gas costs correctly but gets the job done.
-var identityCode = 'return { gasUsed: 1, return: opts.data, exception: 1 };';
-var identityAddr = ethUtil.pad(new Buffer('04', 'hex'), 20)
-vm.loadPrecompiled(identityAddr, identityCode);
-var secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
-var publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
-var address = ethUtil.pubToAddress(new Buffer(publicKey, 'hex'));
-var account = new EthVm.Account();
-account.balance = 'f00000000000000001';
-var nonce = 0;
-stateTrie.put(address, account.serialize());
-var runTx = function(data, to, cb) {
-    var tx = new EthVm.Transaction({
-        nonce: new Buffer([nonce++]), //@todo count beyond 255
-        gasPrice: '01',
-        gasLimit: '3000000',
-        to: to,
-        data: data
-    });
-    tx.sign(new Buffer(secretKey, 'hex'));
-    vm.runTx({tx: tx}, cb);
-};
-
-var getConstructorInterface = function(abi) {
-    var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
-    for (var i = 0; i < abi.length; i++)
-        if (abi[i].type == 'constructor') {
-            funABI.inputs = abi[i].inputs || [];
-            break;
-        }
-    return funABI;
-};
-
-var getCallButton = function(args) {
-    // args.abi, args.bytecode [constr only], args.address [fun only]
-    // args.appendFunctions [constr only]
-    var isConstructor = args.bytecode !== undefined;
-    var fun = new web3.eth.function(args.abi);
-    var inputs = '';
-    $.each(args.abi.inputs, function(i, inp) {
-        if (inputs != '') inputs += ', ';
-        inputs += inp.type + ' ' + inp.name;
-    });
-    var inputField = $('<input/>').attr('placeholder', inputs);
-    var outputSpan = $('<div/>');
-    var button = $('<button/>')
-        .text(args.bytecode ? 'Create' : fun.displayName())
-        .click(function() {
-            var funArgs = $.parseJSON('[' + inputField.val() + ']');
-            var data = fun.toPayload(funArgs).data;
-            if (data.slice(0, 2) == '0x') data = data.slice(2);
-            if (isConstructor)
-                data = args.bytecode + data.slice(8);
-            outputSpan.text(' ...');
-            runTx(data, args.address, function(err, result) {
-                if (err)
-                    outputSpan.text(err);
-                else if (isConstructor) {
-                    outputSpan.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
-                    args.appendFunctions(result.createdAddress);
-                } else {
-                    var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
-                    outputSpan.text(' Returned: ' + JSON.stringify(outputObj));
-                }
+            $.each(funABI.inputs, function(i, inp) {
+                code += "var "+inp.name+" = /* var of type " + inp.type + " here */ ;\n";
             });
-        });
-    if (!isConstructor)
-        button.addClass('runButton');
-    var c = $('<div/>')
-        .append(button);
-    if (args.abi.inputs.length > 0)
-        c.append(inputField);
-    return c.append(outputSpan);
-};
 
-var getExecuteInterface = function(contract, name) {
-    var abi = $.parseJSON(contract.interface);
-    var execInter = $('<div/>');
-    var funABI = getConstructorInterface(abi);
+            code += "\nvar "+contractName+"Contract = web3.eth.contract("+interface.replace("\n","")+");"
+                +"\nvar "+contractName+" = "+contractName+"Contract.new(";
+            
+            $.each(funABI.inputs, function(i, inp) {
+                code += "\n   "+inp.name+",";
+            });
+                        
+            code += "\n   {"+
+            "\n     from: web3.eth.accounts[0], "+
+            "\n     data: '"+bytecode+"', "+
+            "\n     gas: 1000000"+
+            "\n   }, function(e, contract){"+
+            "\n    if (typeof contract.address != 'undefined') {"+            
+            "\n         console.log(e, contract);"+
+            "\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
+            "\n    }" +
+            "\n })";
 
-    var appendFunctions = function(address) {
-        var instance = $('<div class="contractInstance"/>');
-        instance.append($('<span/>').text('Contract at address ' + address.toString('hex')));
-        $.each(abi, function(i, funABI) {
-            if (funABI.type != 'function') return;
-            instance.append(getCallButton({
-                abi: funABI,
-                address: address
-            }));
-        });
-        execInter.append(instance);
-    };
 
-    execInter
-        .append(getCallButton({
-            abi: funABI,
-            bytecode: contract.bytecode,
-            appendFunctions: appendFunctions
-        }));
-    return execInter;
-};
+            return code;
+        };
 
-</script>
+        var renderContracts = function(data, source) {
+            $('#output').empty();
+            for (var contractName in data.contracts) {
+                var contract = data.contracts[contractName];
+                var title =$('<h3 class="title"/>').text(contractName);
+                var contractOutput = $('<div class="contractOutput"/>')
+                    .append(title);
+                var body = $('<div class="body" />')
+                contractOutput.append( body );
+                if (contract.bytecode.length > 0)
+                    body.append($('<div class="size"/>').text((contract.bytecode.length / 2) + ' bytes'))
+                        .append(getExecuteInterface(contract, contractName))
+                        .append(tableRow('Bytecode', contract.bytecode));
+                body.append(tableRow('Interface', contract['interface']))
+                    .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
+                    .append(getDetails(contract, source, contractName));
+
+                $('#output').append(contractOutput);
+                title.click(function(ev){
+                    $(this).parent().toggleClass('show')
+                })
+            }
+
+            $('.col2 input,textarea').click(function() { this.select(); } );
+        };
+        var tableRowItems = function(first, second) {
+            return $('<div class="row"/>')
+                .append($('<div class="col1">').append(first))
+                .append($('<div class="col2">').append(second));
+        };
+        var tableRow = function(description, data) {
+            return tableRowItems(
+                $('<span/>').text(description),
+                $('<input readonly="readonly"/>').val(data));
+        };
+        var textRow = function(description, data) {
+            return tableRowItems(
+                $('<strong/>').text(description),
+                $('<textarea readonly="readonly" class="gethDeployText"/>').val(data));
+        };
+        var getDetails = function(contract, source, contractName) {
+            var button = $('<button>Details</button>');
+            var details = $('<div style="display: none;"/>')
+                .append(tableRow('Solidity Interface', contract.solidity_interface))
+                .append(tableRow('Opcodes', contract.opcodes));
+            var funHashes = '';
+            for (var fun in contract.functionHashes)
+                funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
+            details.append($('<span class="col1">Functions</span>'));
+            details.append($('<pre/>').text(funHashes));
+            details.append($('<span class="col1">Gas Estimates</span>'));
+            details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
+            if (contract.assembly !== null)
+            {
+                details.append($('<span class="col1">Assembly</span>'));
+                var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
+                details.append(assembly);
+            }
+            button.click(function() { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
+            if (detailsOpen[contractName])
+                details.show();
+            return $('<div/>').append(button).append(details);
+        };
+        var formatGasEstimates = function(data) {
+            var gasToText = function(g) { return g === null ? 'unknown' : g; }
+            var text = '';
+            if ('creation' in data)
+                text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
+            text += 'External:\n';
+            for (var fun in data.external)
+                text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+            text += 'Internal:\n';
+            for (var fun in data.internal)
+                text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
+            return text;
+        };
+        var formatAssemblyText = function(asm, prefix, source) {
+            if (typeof(asm) == typeof('') || asm === null || asm === undefined)
+                return prefix + asm + '\n';
+            var text = prefix + '.code\n';
+            $.each(asm['.code'], function(i, item) {
+                var v = item.value === undefined ? '' : item.value;
+                var src = '';
+                if (item.begin !== undefined && item.end != undefined)
+                    src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g');
+                if (src.length > 30)
+                    src = src.slice(0, 30) + '...';
+                if (item.name != 'tag')
+                    text += '  ';
+                text += prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
+            });
+            text += prefix + '.data\n';
+            if (asm['.data'])
+                $.each(asm['.data'], function(i, item) {
+                    text += '  ' + prefix + '' + i + ':\n';
+                    text += formatAssemblyText(item, prefix + '    ', source);
+                });
+
+            return text;
+        };
+        $('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); } )
+
+        // ----------------- VM ----------------------
+
+        var stateTrie = new EthVm.Trie();
+        var vm = new EthVm.VM(stateTrie);
+        //@todo this does not calculate the gas costs correctly but gets the job done.
+        var identityCode = 'return { gasUsed: 1, return: opts.data, exception: 1 };';
+        var identityAddr = ethUtil.pad(new Buffer('04', 'hex'), 20)
+        vm.loadPrecompiled(identityAddr, identityCode);
+        var secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
+        var publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
+        var address = ethUtil.pubToAddress(new Buffer(publicKey, 'hex'));
+        var account = new EthVm.Account();
+        account.balance = 'f00000000000000001';
+        var nonce = 0;
+        stateTrie.put(address, account.serialize());
+        var runTx = function(data, to, cb) {
+            var tx = new EthVm.Transaction({
+                nonce: new Buffer([nonce++]), //@todo count beyond 255
+                gasPrice: '01',
+                gasLimit: '3000000',
+                to: to,
+                data: data
+            });
+            tx.sign(new Buffer(secretKey, 'hex'));
+            vm.runTx({tx: tx}, cb);
+        };
+
+        var getConstructorInterface = function(abi) {
+            var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
+            for (var i = 0; i < abi.length; i++)
+                if (abi[i].type == 'constructor') {
+                    funABI.inputs = abi[i].inputs || [];
+                    break;
+                }
+            return funABI;
+        };
+
+        var getCallButton = function(args) {
+            // args.abi, args.bytecode [constr only], args.address [fun only]
+            // args.appendFunctions [constr only]
+            var isConstructor = args.bytecode !== undefined;
+            var fun = new web3.eth.function(args.abi);
+            var inputs = '';
+            $.each(args.abi.inputs, function(i, inp) {
+                if (inputs != '') inputs += ', ';
+                inputs += inp.type + ' ' + inp.name;
+            });
+            var inputField = $('<input/>').attr('placeholder', inputs);
+            var outputSpan = $('<div/>');
+            var button = $('<button/>')
+                .text(args.bytecode ? 'Create' : fun.displayName())
+                .click(function() {
+                    var funArgs = $.parseJSON('[' + inputField.val() + ']');
+                    var data = fun.toPayload(funArgs).data;
+                    if (data.slice(0, 2) == '0x') data = data.slice(2);
+                    if (isConstructor)
+                        data = args.bytecode + data.slice(8);
+                    outputSpan.text(' ...');
+                    runTx(data, args.address, function(err, result) {
+                        if (err)
+                            outputSpan.text(err);
+                        else if (isConstructor) {
+                            outputSpan.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
+                            args.appendFunctions(result.createdAddress);
+                        } else {
+                            var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
+                            outputSpan.text(' Returned: ' + JSON.stringify(outputObj));
+                        }
+                    });
+                });
+            if (!isConstructor)
+                button.addClass('runButton');
+            var c = $('<div/>')
+                .append(button);
+            if (args.abi.inputs.length > 0)
+                c.append(inputField);
+            return c.append(outputSpan);
+        };
+
+        var getExecuteInterface = function(contract, name) {
+            var abi = $.parseJSON(contract.interface);
+            var execInter = $('<div/>');
+            var funABI = getConstructorInterface(abi);
+
+            var appendFunctions = function(address) {
+                var instance = $('<div class="contractInstance"/>');
+                instance.append($('<span/>').text('Contract at address ' + address.toString('hex')));
+                $.each(abi, function(i, funABI) {
+                    if (funABI.type != 'function') return;
+                    instance.append(getCallButton({
+                        abi: funABI,
+                        address: address
+                    }));
+                });
+                execInter.append(instance);
+            };
+
+            execInter
+                .append(getCallButton({
+                    abi: funABI,
+                    bytecode: contract.bytecode,
+                    appendFunctions: appendFunctions
+                }));
+            return execInter;
+        };
+
+    </script>
 </body>
 </html>
