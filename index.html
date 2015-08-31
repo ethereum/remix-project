@@ -18,7 +18,7 @@ body {
     left: 0px;
     width: auto;
     bottom: 0px;
-    right: 32em;
+    right: 37em;
     
 }
 #input {
@@ -28,33 +28,30 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
+    min-width: 20vw;
 }
 
 #righthand-panel {
     position: absolute;
     top: 0;
-    width: 32em;
+    width: 37em;
+    max-width: 80vw;
     right: 0;
     bottom: 0px;
     overflow: auto;
-    border-left: 1px solid #ccc;
+    border-left: 1px dotted black;
+    box-sizing: border-box;
 }
 
 #output {
-    border-top: 1px solid #ccc;
-    background-color: white;
-    position: absolute;
-    top: 18em;
-    left: 0;
-    right: 0;
-    bottom: 0px;
+    border-top: 1px dotted black;
+    display: block;
 }
 
 #header {
     font-size: 14px;
     padding: 1em;
     font-size: 12px;
-    height: 18em;
 }
 
 #header h1 {
@@ -86,60 +83,102 @@ body {
     width: 100%;
     display: block;
 }
-.runButton {
-    width: 16em;
-    text-align: left;
-    overflow: hidden;
-    margin-right: 0.6em;
-}
+
 .contractInstance {
-    margin-left: 2em;
-    margin-bottom: 20px;
+    background-color: #ccc;
+    margin-bottom: 1em;
+    padding: 0.6em;
 }
 
+.contractInstance.hide > *:not(.title) {
+    display: none;
+}
+
+
+.contractInstance .contractProperty input,
+.contractInstance .contractProperty button {
+    text-align: left;
+    padding: 0.3em;
+    width: 50%;
+    margin: 0;
+}
+.contractOutput .contractInstance .contractProperty {
+    margin-bottom: 0;
+}
+.contractOutput .contractInstance .contractProperty .output {
+    padding: 0.4em;
+    background-color: #333;
+    color: white;
+    margin-bottom: 1em;
+    display: block;
+}
+.contractInstance .contractProperty .output:empty { display: none; }
 
 .contractOutput {
-    border-bottom: 1px solid #ccc;
-    padding: 0.4em;
+    border-bottom: 1px dotted black;
+    padding: 0.6em;
     box-sizing: border-box;
 }
-
-.contractOutput .title {
-    margin: 0;
-    cursor: pointer;
+.contractOutput .contractProperty {
+    margin-bottom: 0.6em;
+}
+.contractOutput .contractProperty .output {
+    display: inline;
 }
 
+
 .contractOutput .body {
-    display: none;
     margin-top: 10px;
 }
 
-.contractOutput.show .body {
-    display: block;
+.contractOutput.hide {
+    background-color: #4C4C67;
+    color: white;
 }
 
-.contractOutput .title:before {
-    content: "\25B6";
-    color: #ccc;
+.contractOutput.hide > *:not(.title) {
+    display: none;
+}
+
+.title {
+    margin: 0;
+    cursor: pointer;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.title:before {
+    content: "\25BC";
+    opacity: 0.5;
     margin-right: 0.4em;
     font-size: 10px;
 }
 
-.contractOutput.show .title:before {
-    content: "\25BC";
+.hide > .title:before {
+    content: "\25B6";
+}
+
+.contractOutput > .title {
+    border-bottom: #4C4C67;
 }
 
 
+.title .size {
+    font-weight: normal;
+    float: right;
+}
+
 .solError {
     position: absolute;
-    background-color: rgba(255, 0, 0, 0.5);
+    background-color: rgba(255, 0, 0, 0.2);
     z-index:40;
 }
 
 .error {
     background-color: rgba(255, 0, 0, 0.5);
     border-radius: 0;
-    border: 0 none;
+    word-wrap: break-word;
+    border: 1px solid #D00909;
 }
 
 #ghostbar {
@@ -164,6 +203,15 @@ body {
     z-index: 999;
 }
 
+
+input[readonly] {
+    padding: .4em;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
 </style>
 <script src="libs/jquery-2.1.3.min.js"></script>
 <script src="libs/ace.js"></script>
@@ -171,75 +219,15 @@ body {
 <script src="soljson.js"></script>
 <script src="ethereumjs-vm.js"></script>
 <script src="web3.min.js"></script>
+<script src="ballot.sol.js"></script>
+
+
 </head>
 <body>
+    
+
     <div id="editor">
-        <div id="input">contract Ballot {
-    struct Voter {
-        uint weight;
-        bool voted;
-        uint8 vote;
-        address delegate;
-    }
-    struct Proposal {
-        uint voteCount;
-    }
-
-    address chairperson;
-    mapping(address => Voter) voters;
-    Proposal[] proposals;
-
-    // Create a new ballot with $(_numProposals) different proposals.
-    function Ballot(uint8 _numProposals) {
-        chairperson = msg.sender;
-        voters[chairperson].weight = 1;
-        proposals.length = _numProposals;
-    }
-
-    // Give $(voter) the right to vote on this ballot.
-    // May only be called by $(chairperson).
-    function giveRightToVote(address voter) {
-        if (msg.sender != chairperson || voters[voter].voted) return;
-        voters[voter].weight = 1;
-    }
-
-    // Delegate your vote to the voter $(to).
-    function delegate(address to) {
-        Voter sender = voters[msg.sender]; // assigns reference
-        if (sender.voted) return;
-        while (voters[to].delegate != address(0) && voters[to].delegate != msg.sender)
-            to = voters[to].delegate;
-        if (to == msg.sender) return;
-        sender.voted = true;
-        sender.delegate = to;
-        Voter delegate = voters[to];
-        if (delegate.voted)
-            proposals[delegate.vote].voteCount += sender.weight;
-        else
-            delegate.weight += sender.weight;
-    }
-
-    // Give a single vote to proposal $(proposal).
-    function vote(uint8 proposal) {
-        Voter sender = voters[msg.sender];
-        if (sender.voted || proposal >= proposals.length) return;
-        sender.voted = true;
-        sender.vote = proposal;
-        proposals[proposal].voteCount += sender.weight;
-    }
-
-    function winningProposal() constant returns (uint8 winningProposal) {
-        uint256 winningVoteCount = 0;
-        for (uint8 proposal = 0; proposal < proposals.length; proposal++) {
-            if (proposals[proposal].voteCount > winningVoteCount) {
-                winningVoteCount = proposals[proposal].voteCount;
-                winningProposal = proposal;
-            }
-            ++proposal;
-        }
-    }
-}
-        </div>
+        <div id="input"></div>
     </div>
 
     <div id="righthand-panel">
@@ -261,7 +249,11 @@ body {
         <div id="output"></div>
     </div>
 
+    
+
     <script>
+
+
 
         // ----------------- resizeable ui ---------------
 
@@ -299,10 +291,16 @@ body {
 
 
         // ----------------- editor ----------------------
+
+        var SOL_CACHE_KEY = "sol-cache";
+
         var editor = ace.edit("input");
         var session = editor.getSession();
         var Range = ace.require('ace/range').Range;
         var errMarkerId = null;
+
+        var solCache = window.localStorage.getItem( SOL_CACHE_KEY );
+        editor.setValue( solCache || BALLOT_EXAMPLE, 1 );
 
         session.setMode("ace/mode/javascript");
         session.setTabSize(4);
@@ -326,7 +324,7 @@ body {
         window.onresize = onResize;
         onResize();
 
-        document.querySelector('#editorWrap').addEventListener('change', onResize );
+        document.querySelector('#editor').addEventListener('change', onResize );
         
 
         // ----------------- compiler ----------------------
@@ -349,11 +347,16 @@ body {
                 renderError(data['error']);
             else
                 renderContracts(data, input);
+                
         }
         var compileTimeout = null;
         var onChange = function() {
             var input = editor.getValue();
-            if (input == previousInput)
+            if (input === "") {
+                window.localStorage.setItem( SOL_CACHE_KEY, '' )
+                return;
+            }
+            if (input === previousInput)
                 return;
             previousInput = input;
             if (compileTimeout) window.clearTimeout(compileTimeout);
@@ -362,23 +365,26 @@ body {
         onChange();
 
         editor.getSession().on('change', onChange);
+
         document.querySelector('#optimize').addEventListener('change', compile);
 
         // ----------------- compiler output renderer ----------------------
         var detailsOpen = {};
 
         var renderError = function(message) {
+            var $output = $('#output').empty()
             var err = message.match(/^:([0-9]*):([0-9]*)/)
-            var errLine = parseInt( err[1], 10 ) - 1;
-            var errCol = parseInt( err[2], 10 );
-            $('#output').empty().append($('<pre class="error"></pre>').text(message));
-            errMarkerId = editor.getSession().addMarker(new Range(errLine, 0, errLine, 1), "solError", "fullLine");
-            editor.getSession().setAnnotations([{
-                row: errLine,
-                column: errCol,
-                text: message,
-                type: "error"
-            }]);
+            if (err && err.length) {
+                var errLine = parseInt( err[1], 10 ) - 1;
+                var errCol = err[2] ? parseInt( err[2], 10 ) : 0;
+                $output.append($('<pre class="error"></pre>').text(message));
+                editor.getSession().setAnnotations([{
+                    row: errLine,
+                    column: errCol,
+                    text: message,
+                    type: "error"
+                }]);
+            }
         };
 
         var gethDeploy = function(contractName, interface, bytecode){
@@ -412,32 +418,33 @@ body {
         };
 
         var renderContracts = function(data, source) {
+            window.localStorage.setItem( SOL_CACHE_KEY, source );
+
             $('#output').empty();
             for (var contractName in data.contracts) {
                 var contract = data.contracts[contractName];
-                var title =$('<h3 class="title"/>').text(contractName);
+                var title = $('<h3 class="title"/>').text(contractName);
                 var contractOutput = $('<div class="contractOutput"/>')
                     .append(title);
                 var body = $('<div class="body" />')
                 contractOutput.append( body );
                 if (contract.bytecode.length > 0)
-                    body.append($('<div class="size"/>').text((contract.bytecode.length / 2) + ' bytes'))
-                        .append(getExecuteInterface(contract, contractName))
+                    title.append($('<div class="size"/>').text((contract.bytecode.length / 2) + ' bytes'))
+                    body.append(getExecuteInterface(contract, contractName))
                         .append(tableRow('Bytecode', contract.bytecode));
                 body.append(tableRow('Interface', contract['interface']))
-                    .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
+                    .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
                     .append(getDetails(contract, source, contractName));
 
                 $('#output').append(contractOutput);
-                title.click(function(ev){
-                    $(this).parent().toggleClass('show')
-                })
+                title.click(function(ev){ $(this).parent().toggleClass('hide') });
             }
 
             $('.col2 input,textarea').click(function() { this.select(); } );
         };
-        var tableRowItems = function(first, second) {
+        var tableRowItems = function(first, second, cls) {
             return $('<div class="row"/>')
+                .addClass(cls)
                 .append($('<div class="col1">').append(first))
                 .append($('<div class="col2">').append(second));
         };
@@ -446,10 +453,11 @@ body {
                 $('<span/>').text(description),
                 $('<input readonly="readonly"/>').val(data));
         };
-        var textRow = function(description, data) {
+        var textRow = function(description, data, cls) {
             return tableRowItems(
                 $('<strong/>').text(description),
-                $('<textarea readonly="readonly" class="gethDeployText"/>').val(data));
+                $('<textarea readonly="readonly" class="gethDeployText"/>').val(data),
+                cls);
         };
         var getDetails = function(contract, source, contractName) {
             var button = $('<button>Details</button>');
@@ -561,7 +569,7 @@ body {
                 inputs += inp.type + ' ' + inp.name;
             });
             var inputField = $('<input/>').attr('placeholder', inputs);
-            var outputSpan = $('<div/>');
+            var outputSpan = $('<div class="output"/>');
             var button = $('<button/>')
                 .text(args.bytecode ? 'Create' : fun.displayName())
                 .click(function() {
@@ -570,7 +578,7 @@ body {
                     if (data.slice(0, 2) == '0x') data = data.slice(2);
                     if (isConstructor)
                         data = args.bytecode + data.slice(8);
-                    outputSpan.text(' ...');
+                    outputSpan.text('...');
                     runTx(data, args.address, function(err, result) {
                         if (err)
                             outputSpan.text(err);
@@ -585,7 +593,7 @@ body {
                 });
             if (!isConstructor)
                 button.addClass('runButton');
-            var c = $('<div/>')
+            var c = $('<div class="contractProperty"/>')
                 .append(button);
             if (args.abi.inputs.length > 0)
                 c.append(inputField);
@@ -599,7 +607,8 @@ body {
 
             var appendFunctions = function(address) {
                 var instance = $('<div class="contractInstance"/>');
-                instance.append($('<span/>').text('Contract at address ' + address.toString('hex')));
+                var title = $('<span class="title"/>').text('Contract at ' + address.toString('hex') );
+                instance.append(title);
                 $.each(abi, function(i, funABI) {
                     if (funABI.type != 'function') return;
                     instance.append(getCallButton({
@@ -608,6 +617,7 @@ body {
                     }));
                 });
                 execInter.append(instance);
+                title.click(function(ev){ $(this).parent().toggleClass('hide') });
             };
 
             execInter
