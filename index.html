@@ -254,6 +254,7 @@ body {
                 enable the debug console (Ctrl+Shift+i) and reload.</p>
             </div>
             <div id="optimizeBox">
+                <input id="editorWrap" type="checkbox"><label for="editorWrap">Text Wrap</label>
                 <input id="optimize" type="checkbox"><label for="optimize">Enable Optimization</label>
             </div>
         </div>
@@ -292,17 +293,41 @@ body {
                $('#ghostbar').remove();
                $(document).unbind('mousemove');
                dragging = false;
+               onResize();
            }
         });
 
 
         // ----------------- editor ----------------------
         var editor = ace.edit("input");
-        editor.getSession().setMode("ace/mode/javascript");
-        editor.getSession().setTabSize(4);
-        editor.getSession().setUseSoftTabs(true);
-        Range = ace.require('ace/range').Range;
+        var session = editor.getSession();
+        var Range = ace.require('ace/range').Range;
         var errMarkerId = null;
+
+        session.setMode("ace/mode/javascript");
+        session.setTabSize(4);
+        session.setUseSoftTabs(true);
+        
+
+        // ----------------- editor resize ---------------
+
+        function onResize() {
+            editor.resize();
+            session.setUseWrapMode(document.querySelector('#editorWrap').checked);
+            if(session.getUseWrapMode()) {
+                var characterWidth = editor.renderer.characterWidth;
+                var contentWidth = editor.container.ownerDocument.getElementsByClassName("ace_scroller")[0].clientWidth;
+
+                if(contentWidth > 0) {
+                    session.setWrapLimit(parseInt(contentWidth / characterWidth, 10));
+                }
+            }
+        }
+        window.onresize = onResize;
+        onResize();
+
+        document.querySelector('#editorWrap').addEventListener('change', onResize );
+        
 
         // ----------------- compiler ----------------------
         var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
@@ -346,7 +371,6 @@ body {
             var err = message.match(/^:([0-9]*):([0-9]*)/)
             var errLine = parseInt( err[1], 10 ) - 1;
             var errCol = parseInt( err[2], 10 );
-            editor.gotoLine( errLine );
             $('#output').empty().append($('<pre class="error"></pre>').text(message));
             errMarkerId = editor.getSession().addMarker(new Range(errLine, 0, errLine, 1), "solError", "fullLine");
             editor.getSession().setAnnotations([{
