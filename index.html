@@ -42,9 +42,10 @@ body {
 
 #output {
     border-top: 1px solid #ccc;
+    background-color: white;
     position: absolute;
     top: 18em;
-    width: 32em;
+    left: 0;
     right: 0;
     bottom: 0px;
 }
@@ -141,6 +142,28 @@ body {
     border: 0 none;
 }
 
+#ghostbar {
+    width: 1px;
+    background-color: red;
+    opacity: 0.5;
+    position: absolute;
+    cursor: col-resize;
+    z-index: 9999;
+    top: 0;
+    bottom: 0;
+}
+
+#dragbar{
+    background-color: transparent;
+    position: absolute;
+    width: 5px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    cursor: col-resize;
+    z-index: 999;
+}
+
 </style>
 <script src="libs/jquery-2.1.3.min.js"></script>
 <script src="libs/ace.js"></script>
@@ -220,6 +243,7 @@ body {
     </div>
 
     <div id="righthand-panel">
+        <div id="dragbar"></div>
         <div id="header">
             <img id="solIcon" src="solidity.svg">
             <h1>Solidity realtime<br/>compiler and runtime</h1>
@@ -237,6 +261,41 @@ body {
     </div>
 
     <script>
+
+        // ----------------- resizeable ui ---------------
+
+       var dragging = false;
+       $('#dragbar').mousedown(function(e){
+           e.preventDefault();
+           
+           dragging = true;
+           var main = $('#righthand-panel');
+           var ghostbar = $('<div id="ghostbar">', {
+                css: {
+                    top: main.offset().top,
+                    left: main.offset().left
+                }
+            }).prependTo('body');
+           
+            $(document).mousemove(function(e){
+              ghostbar.css("left",e.pageX+2);
+           });
+        });
+
+       var $body = $('body');
+
+       $(document).mouseup(function(e){
+           if (dragging) {
+                var delta = $body.width() - e.pageX+2;
+               $('#righthand-panel').css("width", delta);
+               $('#editor').css("right", delta);
+               $('#ghostbar').remove();
+               $(document).unbind('mousemove');
+               dragging = false;
+           }
+        });
+
+
         // ----------------- editor ----------------------
         var editor = ace.edit("input");
         editor.getSession().setMode("ace/mode/javascript");
