@@ -417,6 +417,11 @@ input[readonly] {
             return code;
         };
 
+        var combined = function(contractName, interface, bytecode){
+            return JSON.stringify( [{name: contractName, interface: interface, bytecode: bytecode}]);
+
+        };
+
         var renderContracts = function(data, source) {
             window.localStorage.setItem( SOL_CACHE_KEY, source );
 
@@ -434,6 +439,7 @@ input[readonly] {
                         .append(tableRow('Bytecode', contract.bytecode));
                 body.append(tableRow('Interface', contract['interface']))
                     .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
+                    .append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
                     .append(getDetails(contract, source, contractName));
 
                 $('#output').append(contractOutput);
