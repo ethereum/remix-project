@@ -229,11 +229,14 @@ var gethDeploy = function(contractName, interface, bytecode){
     "\n     data: '"+bytecode+"', "+
     "\n     gas: 1000000"+
     "\n   }, function(e, contract){"+
-    "\n    if (typeof contract.address != 'undefined') {"+            
-    "\n    console.log(e, contract);"+
-    "\n    console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
+    "\n   if(!e) {"+
+    "\n     if(!contract.address) {"+
+    "\n       console.log('Contract transaction sent! TransactionHash: ' + contract.transactionHash + ' waiting to be mined...');"+
+    "\n     } else {"+
+    "\n       console.log('Contract mined! Address: ' + contract.address);"+
+    "\n       console.log(contract);"+
+    "\n     }"+
     "\n }})";
-
 
     return code;
 };
@@ -251,7 +254,7 @@ var renderContracts = function(data, source) {
                 .append(tableRow('Bytecode', contract.bytecode));
         contractOutput
             .append(tableRow('Interface', contract['interface']))
-            .append(textRow('Geth deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
+            .append(textRow('Console deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode)))
             .append(getDetails(contract, source, contractName));
         $('#output').append(contractOutput);
     }
