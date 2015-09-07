@@ -258,39 +258,48 @@ input[readonly] {
 
 
         // ----------------- resizeable ui ---------------
-
-       var dragging = false;
-       $('#dragbar').mousedown(function(e){
-           e.preventDefault();
-           
-           dragging = true;
-           var main = $('#righthand-panel');
-           var ghostbar = $('<div id="ghostbar">', {
+        var EDITOR_SIZE_CACHE_KEY = "editor-size-cache";
+        var dragging = false;
+        $('#dragbar').mousedown(function(e){
+            e.preventDefault();
+            dragging = true;
+            var main = $('#righthand-panel');
+            var ghostbar = $('<div id="ghostbar">', {
                 css: {
                     top: main.offset().top,
                     left: main.offset().left
                 }
             }).prependTo('body');
-           
+
             $(document).mousemove(function(e){
               ghostbar.css("left",e.pageX+2);
-           });
+            });
         });
 
-       var $body = $('body');
+        var $body = $('body');
+
+        function setEditorSize (delta) {
+            $('#righthand-panel').css("width", delta);
+            $('#editor').css("right", delta);
+        }
 
        $(document).mouseup(function(e){
            if (dragging) {
                 var delta = $body.width() - e.pageX+2;
-               $('#righthand-panel').css("width", delta);
-               $('#editor').css("right", delta);
-               $('#ghostbar').remove();
-               $(document).unbind('mousemove');
-               dragging = false;
-               onResize();
+                setEditorSize( delta )
+                $('#ghostbar').remove();
+                $(document).unbind('mousemove');
+                dragging = false;
+                window.localStorage.setItem( EDITOR_SIZE_CACHE_KEY, delta );
+                onResize();
            }
         });
 
+        // set cached defaults
+        var cachedSize = window.localStorage.getItem( EDITOR_SIZE_CACHE_KEY );
+        if (cachedSize) {
+            setEditorSize( cachedSize )
+        }
 
         // ----------------- editor ----------------------
 
