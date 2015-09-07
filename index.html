@@ -281,25 +281,23 @@ input[readonly] {
         function setEditorSize (delta) {
             $('#righthand-panel').css("width", delta);
             $('#editor').css("right", delta);
+            onResize();
         }
 
        $(document).mouseup(function(e){
            if (dragging) {
                 var delta = $body.width() - e.pageX+2;
-                setEditorSize( delta )
                 $('#ghostbar').remove();
                 $(document).unbind('mousemove');
                 dragging = false;
+                setEditorSize( delta )
                 window.localStorage.setItem( EDITOR_SIZE_CACHE_KEY, delta );
-                onResize();
            }
         });
 
         // set cached defaults
         var cachedSize = window.localStorage.getItem( EDITOR_SIZE_CACHE_KEY );
-        if (cachedSize) {
-            setEditorSize( cachedSize )
-        }
+        if (cachedSize) setEditorSize( cachedSize );
 
         // ----------------- editor ----------------------
 
