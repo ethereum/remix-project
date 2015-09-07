@@ -257,7 +257,26 @@ input[readonly] {
 
 
 
+        
+
+        // ----------------- editor ----------------------
+
+        var SOL_CACHE_KEY = "sol-cache";
+
+        var editor = ace.edit("input");
+        var session = editor.getSession();
+        var Range = ace.require('ace/range').Range;
+        var errMarkerId = null;
+
+        var solCache = window.localStorage.getItem( SOL_CACHE_KEY );
+        editor.setValue( solCache || BALLOT_EXAMPLE, 1 );
+
+        session.setMode("ace/mode/javascript");
+        session.setTabSize(4);
+        session.setUseSoftTabs(true);
+
         // ----------------- resizeable ui ---------------
+        
         var EDITOR_SIZE_CACHE_KEY = "editor-size-cache";
         var dragging = false;
         $('#dragbar').mousedown(function(e){
@@ -298,22 +317,6 @@ input[readonly] {
         // set cached defaults
         var cachedSize = window.localStorage.getItem( EDITOR_SIZE_CACHE_KEY );
         if (cachedSize) setEditorSize( cachedSize );
-
-        // ----------------- editor ----------------------
-
-        var SOL_CACHE_KEY = "sol-cache";
-
-        var editor = ace.edit("input");
-        var session = editor.getSession();
-        var Range = ace.require('ace/range').Range;
-        var errMarkerId = null;
-
-        var solCache = window.localStorage.getItem( SOL_CACHE_KEY );
-        editor.setValue( solCache || BALLOT_EXAMPLE, 1 );
-
-        session.setMode("ace/mode/javascript");
-        session.setTabSize(4);
-        session.setUseSoftTabs(true);
         
 
         // ----------------- editor resize ---------------
