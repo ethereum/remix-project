@@ -661,12 +661,13 @@ input[readonly] {
                 title.click(function(ev){ $(this).parent().toggleClass('hide') });
             };
 
-            execInter
-                .append(getCallButton({
-                    abi: funABI,
-                    bytecode: contract.bytecode,
-                    appendFunctions: appendFunctions
-                }));
+            if (contract.bytecode.length > 0)
+                execInter
+                    .append(getCallButton({
+                        abi: funABI,
+                        bytecode: contract.bytecode,
+                        appendFunctions: appendFunctions
+                    }));
             return execInter;
         };
 
