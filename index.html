@@ -512,6 +512,8 @@ input[readonly] {
             details.append($('<pre/>').text(funHashes));
             details.append($('<span class="col1">Gas Estimates</span>'));
             details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
+            if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0)
+                details.append(tableRow('Runtime Bytecode', contract.runtimeBytecode));
             if (contract.assembly !== null)
             {
                 details.append($('<span class="col1">Assembly</span>'));
