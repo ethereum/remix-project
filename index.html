@@ -263,8 +263,8 @@ input[readonly] {
             <div class="info">
                 <p>Version: <span id="version">(loading)</span><br/>
                 Change to: <select id="versionSelector"></select><br/>
-		Execution environment does not connect to any node, everyhing is local and in memory only.<br/>
-		<code>tx.origin = <span id="txorigin"/></code></p>
+                Execution environment does not connect to any node, everyhing is local and in memory only.<br/>
+                <code>tx.origin = <span id="txorigin"/></code></p>
             </div>
             <div id="optimizeBox">
                 <input id="editorWrap" type="checkbox"><label for="editorWrap">Text Wrap</label>
@@ -384,9 +384,12 @@ input[readonly] {
         var compileJSON;
 
         var previousInput = '';
+        var sourceAnnotations = [];
         var compile = function() {
             editor.getSession().clearAnnotations();
+            sourceAnnotations = [];
             editor.getSession().removeMarker(errMarkerId);
+            $('#output').empty();
             var input = editor.getValue();
             var optimize = document.querySelector('#optimize').checked;
             try {
@@ -397,6 +400,10 @@ input[readonly] {
             }
             if (data['error'] !== undefined)
                 renderError(data['error']);
+            if (data['errors'] != undefined)
+                $.each(data['errors'], function(i, err) {
+                    renderError(err);
+                });
             else
                 renderContracts(data, input);
                 
@@ -433,18 +440,18 @@ input[readonly] {
 
         var renderError = function(message) {
             $('#output')
-                .empty()
                 .append($('<pre class="error"></pre>').text(message));
             var err = message.match(/^:([0-9]*):([0-9]*)/)
             if (err && err.length) {
                 var errLine = parseInt( err[1], 10 ) - 1;
                 var errCol = err[2] ? parseInt( err[2], 10 ) : 0;
-                editor.getSession().setAnnotations([{
+                sourceAnnotations[sourceAnnotations.length] ={
                     row: errLine,
                     column: errCol,
                     text: message,
                     type: "error"
-                }]);
+                };
+                editor.getSession().setAnnotations(sourceAnnotations);
             }
         };
 
