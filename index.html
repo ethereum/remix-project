@@ -1,4 +1,6 @@
 <html>
+<head>
+<meta charset="utf-8">
 <!--
 
 The MIT License (MIT)
@@ -24,8 +26,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 -->
-<head>
-<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
 <title>Solidity realtime compiler and runtime</title>
 <link rel="stylesheet" href="stylesheets/styles.css">
@@ -262,6 +262,7 @@ input[readonly] {
             <h1>Solidity realtime<br/>compiler and runtime</h1>
             <div class="info">
                 <p>Version: <span id="version">(loading)</span><br/>
+                Change to: <select id="versionSelector"></select><br/>
 		Execution environment does not connect to any node, everyhing is local and in memory only.<br/>
 		<code>tx.origin = <span id="txorigin"/></code></p>
             </div>
@@ -277,9 +278,6 @@ input[readonly] {
 
     <script>
 
-
-
-        
 
         // ----------------- editor ----------------------
 
@@ -297,6 +295,27 @@ input[readonly] {
         session.setTabSize(4);
         session.setUseSoftTabs(true);
 
+        // ----------------- version selector-------------
+
+        $.get('bin/list.txt').then(function(versionList) {
+            $('option', '#versionSelector').remove();
+            $.each(versionList.split('\n'), function(i, file) {
+                if (file) {
+                var version = file.replace(/soljson-(.*).js/, "$1");
+                $('#versionSelector').append(new Option(version, file));
+                }
+            });
+            $('#versionSelector').change(function() {
+                Module = null;
+                compileJSON = null;
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'bin/' + $('#versionSelector').val();
+                $('head').append(script);
+                onCompilerLoaded();
+            });
+        });
+        
         // ----------------- resizeable ui ---------------
         
         var EDITOR_SIZE_CACHE_KEY = "editor-size-cache";
@@ -362,8 +381,7 @@ input[readonly] {
         
 
         // ----------------- compiler ----------------------
-        var compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
-        $('#version').text(Module.cwrap("version", "string", [])());
+        var compileJSON;
 
         var previousInput = '';
         var compile = function() {
@@ -396,7 +414,15 @@ input[readonly] {
             if (compileTimeout) window.clearTimeout(compileTimeout);
             compileTimeout = window.setTimeout(compile, 300);
         };
+
+        var onCompilerLoaded = function() {
+            compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
+            $('#version').text(Module.cwrap("version", "string", [])());
+            previousInput = '';
         onChange();
+        };
+        if (Module)
+            onCompilerLoaded();
 
         editor.getSession().on('change', onChange);
 
