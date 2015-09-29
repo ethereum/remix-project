@@ -1,0 +1,24 @@
+{
+  "name": "solc",
+  "version": "0.1.3-2",
+  "description": "Solidity compiler",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chriseth/browser-solidity.git"
+  },
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "compiler"
+  ],
+  "author": "chriseth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chriseth/browser-solidity/issues"
+  },
+  "homepage": "https://github.com/chriseth/browser-solidity#readme"
+}
