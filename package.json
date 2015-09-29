@@ -2,9 +2,9 @@
   "name": "solc",
   "version": "0.1.3",
   "description": "Solidity compiler",
-  "main": "soljson-latest.js",
+  "main": "index.js",
   "bin": {
-    "solc": "soljson-latest.js"
+    "solc": "bin/soljson-latest.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
