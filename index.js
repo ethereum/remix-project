@@ -6,5 +6,6 @@ compileJSON = soljson.cwrap("compileJSON", "string", ["string", "number"]);
 module.exports = {
 	compile: function(input, optimise){
 		return JSON.parse( compileJSON(input, optimise) );
-	}
+	},
+	version: soljson.cwrap("version", "string", [])
 }
