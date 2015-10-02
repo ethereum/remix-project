@@ -93,11 +93,12 @@ THE SOFTWARE.
 	var solFiles = JSON.parse( window.localStorage.getItem( SOL_CACHE_FILES_KEY ) ) || [SOL_CACHE_FILE];
 	window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
 
-	var solCache = window.localStorage.getItem( SOL_CACHE_FILE );
-        editor.setValue( solCache || BALLOT_EXAMPLE, 1 );
+	var solCache = window.localStorage.getItem( SOL_CACHE_FILE ) || BALLOT_EXAMPLE;
+	window.localStorage.setItem( SOL_CACHE_FILE, solCache )
+	editor.setValue( solCache, 1 );
 
 
-        session.setMode("ace/mode/javascript");
+	session.setMode("ace/mode/javascript");
         session.setTabSize(4);
         session.setUseSoftTabs(true);
 
@@ -113,7 +114,6 @@ THE SOFTWARE.
 	    SOL_CACHE_FILE = name;
 	    window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
 	    window.localStorage.setItem( SOL_CACHE_FILE, '' );
-	    console.log('new file added: ', solFiles)
 	    updateFiles();
 	})
 
@@ -122,7 +122,6 @@ THE SOFTWARE.
 	$filesEl.on( 'click','.file.active', function(ev){
 	    var $fileTabEl = $(this)
 	    var originalName = $fileTabEl.find('.name').text()
-	    console.log("click active: ", originalName )
 	    ev.preventDefault()
 	    if ($(this).find('input').length > 0 ) return false;
 	    var $fileNameInputEl = $('<input value="'+originalName+'"/>');
@@ -135,10 +134,10 @@ THE SOFTWARE.
 		var $new = null
 		if (confirm( "Are you sure you want to rename: " + originalName + " to " + newName + '?' )) {
 
-		    solFiles[solFiles.indexOf(originalName)] = newName
+		    solFiles.splice( solFiles.indexOf(originalName), 1, newName );
 		    window.localStorage.setItem( newName, window.localStorage.getItem(originalName) );
 		    window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
-		    window.localStorage.setItem( originalName, '')
+		    window.localStorage.removeItem( originalName )
 		    SOL_CACHE_FILE = newName;
 		    updateFiles()
 		}
@@ -154,12 +153,11 @@ THE SOFTWARE.
 	    var name = $(this).parent().find('.name').text()
 
 	    if (confirm( "Are you sure you want to remove: " + name + " from local storage?" )) {
-		console.log("remove file, ", ev.target)
 		var index = solFiles.indexOf(name);
-		solFiles[index] = undefined;
+		solFiles.splice(index, 1 );
 		window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
 		SOL_CACHE_FILE = solFiles[ Math.max(0, index - 1)]
-		window.localStorage.setItem( name, null)
+		window.localStorage.removeItem( name )
 		updateFiles()
 	    }
 	    return false;
@@ -168,7 +166,6 @@ THE SOFTWARE.
 	function showFileHandler (ev) {
 	    ev.preventDefault()
 	    SOL_CACHE_FILE = $(this).find('.name').text();
-	    console.log('click normal', SOL_CACHE_FILE, typeof window.localStorage.getItem( SOL_CACHE_FILE ))
 	    updateFiles()
 	    return false;
 	}
@@ -178,7 +175,6 @@ THE SOFTWARE.
 	}
 
 	function updateFiles () {
-	    console.log("Update files", solFiles, SOL_CACHE_FILE, typeof window.localStorage.getItem( SOL_CACHE_FILE ) )
 	    $filesEl.find('.file').remove()
 	    for (var f in solFiles) {
 		if (solFiles[f]) $filesEl.append( fileTabTemplate(solFiles[f]) );

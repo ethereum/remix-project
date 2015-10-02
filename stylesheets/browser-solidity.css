@@ -39,9 +39,6 @@ body {
 
 #files .file.active {
     font-weight: bold;
-    background-color: #F0F0F0;
-    border: 1px solid #BFBFBF;
-    box-shadow: 0 0 5px rgba(0,0,0,0.25);
     border-bottom: 0 none;
     padding-right: 2.5em;
 }
