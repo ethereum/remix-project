@@ -88,9 +88,10 @@ THE SOFTWARE.
 	var editor = ace.edit("input");
         var session = editor.getSession();
         var Range = ace.require('ace/range').Range;
-        var errMarkerId = null;
+	var errMarkerId = null;
 
 	var solFiles = JSON.parse( window.localStorage.getItem( SOL_CACHE_FILES_KEY ) ) || [SOL_CACHE_FILE];
+	if (solFiles.length === 0) solFiles = [SOL_CACHE_FILE];
 	window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
 
 	var solCache = window.localStorage.getItem( SOL_CACHE_FILE ) || BALLOT_EXAMPLE;
@@ -181,6 +182,7 @@ THE SOFTWARE.
 	    var active = fileTabFromName(SOL_CACHE_FILE);
 	    active.addClass('active')
 	    editor.setValue( window.localStorage.getItem( SOL_CACHE_FILE ) || '', 1 );
+	    $('#input').toggle( typeof SOL_CACHE_FILE === 'string' )
 	}
 
 	function fileTabTemplate(name){
