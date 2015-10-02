@@ -80,12 +80,12 @@ THE SOFTWARE.
     <script>
 
 
-        // ----------------- editor ----------------------
+	// ----------------- editor ----------------------
 
-	var SOL_CACHE_FILE = "Untitled.sol"
+	var SOL_CACHE_FILE = "Untitled"
 	var SOL_CACHE_FILES_KEY = "sol-cache-files";
 
-        var editor = ace.edit("input");
+	var editor = ace.edit("input");
         var session = editor.getSession();
         var Range = ace.require('ace/range').Range;
         var errMarkerId = null;
@@ -286,9 +286,11 @@ THE SOFTWARE.
             editor.getSession().removeMarker(errMarkerId);
             $('#output').empty();
             var input = editor.getValue();
+	    var inputIncludingImports = includeLocalImports( input );
+	    console.log( inputIncludingImports )
             var optimize = document.querySelector('#optimize').checked;
             try {
-                var data = $.parseJSON(compileJSON(input, optimize ? 1 : 0));
+		var data = $.parseJSON(compileJSON(inputIncludingImports, optimize ? 1 : 0));
             } catch (exception) {
                 renderError("Uncaught JavaScript Exception:\n" + exception);
                 return;
@@ -321,8 +323,25 @@ THE SOFTWARE.
             compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
             $('#version').text(Module.cwrap("version", "string", [])());
             previousInput = '';
-        onChange();
+	    onChange();
         };
+
+	function includeLocalImports( input ) {
+	    var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"]/g
+	    var imports = [];
+	    var matches = [];
+	    var match;
+	    while ((match = importRegex.exec(input)) !== null) {
+		console.log("match:", match[0])
+		if (match[1] && solFiles.indexOf(match[1]) !== -1) {
+		    imports.push( match[1] )
+		    matches.push( match[0] )
+		}
+	    }
+	    for (var i in imports) { input = input.replace( matches[i], window.localStorage.getItem( imports[i] ) ); }
+	    return input;
+	}
+
         if (Module)
             onCompilerLoaded();
 
