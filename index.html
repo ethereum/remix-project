@@ -339,7 +339,10 @@ THE SOFTWARE.
 		    matches.push( match[0] )
 		}
 	    }
-	    for (var i in imports) { input = input.replace( matches[i], window.localStorage.getItem( imports[i] ) ); }
+	    for (var i in imports) {
+		imported = includeLocalImports( window.localStorage.getItem( imports[i] ) )
+		input = input.replace( matches[i], imported );
+	    }
 	    return input;
 	}
 
