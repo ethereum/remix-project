@@ -109,7 +109,7 @@ THE SOFTWARE.
 
 	$filesEl.on( 'click','.newFile', function(){
 	    count++;
-	    var name = 'Unititled'+count+'.sol';
+	    var name = 'Unititled'+count;
 	    solFiles.push( name )
 	    SOL_CACHE_FILE = name;
 	    window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
@@ -132,17 +132,16 @@ THE SOFTWARE.
 		ev.preventDefault()
 		var newName = ev.target.value;
 		var $new = null
-		if (confirm( "Are you sure you want to rename: " + originalName + " to " + newName + '?' )) {
+		if ( newName !== originalName && confirm( "Are you sure you want to rename: " + originalName + " to " + newName + '?' )) {
 
 		    solFiles.splice( solFiles.indexOf(originalName), 1, newName );
 		    window.localStorage.setItem( newName, window.localStorage.getItem(originalName) );
 		    window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
 		    window.localStorage.removeItem( originalName )
 		    SOL_CACHE_FILE = newName;
-		    updateFiles()
 		}
 
-		fileTabFromName(newName || originalName ).addClass('active')
+		updateFiles()
 		return false;
 	    })
 	    return false;
