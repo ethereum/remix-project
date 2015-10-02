@@ -24,7 +24,13 @@
 
 var multi = function(func) { return func.toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]; }
 
-var BALLOT_EXAMPLE = multi(function(){/*contract Ballot {
+var BALLOT_EXAMPLE = multi(function(){/*
+
+// create a new file called 'test' :)
+import "test";
+
+contract Ballot {
+
     struct Voter {
         uint weight;
         bool voted;

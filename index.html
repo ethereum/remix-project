@@ -285,12 +285,11 @@ THE SOFTWARE.
             editor.getSession().clearAnnotations();
             sourceAnnotations = [];
             editor.getSession().removeMarker(errMarkerId);
-            $('#output').empty();
-            var input = editor.getValue();
+	    $('#output').empty();
+	    var input = editor.getValue();
 	    var inputIncludingImports = includeLocalImports( input );
-	    console.log( inputIncludingImports )
-            var optimize = document.querySelector('#optimize').checked;
-            try {
+	    var optimize = document.querySelector('#optimize').checked;
+	    try {
 		var data = $.parseJSON(compileJSON(inputIncludingImports, optimize ? 1 : 0));
             } catch (exception) {
                 renderError("Uncaught JavaScript Exception:\n" + exception);
@@ -325,15 +324,14 @@ THE SOFTWARE.
             $('#version').text(Module.cwrap("version", "string", [])());
             previousInput = '';
 	    onChange();
-        };
+	};
 
 	function includeLocalImports( input ) {
-	    var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"]/g
+	    var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g
 	    var imports = [];
 	    var matches = [];
 	    var match;
 	    while ((match = importRegex.exec(input)) !== null) {
-		console.log("match:", match[0])
 		if (match[1] && solFiles.indexOf(match[1]) !== -1) {
 		    imports.push( match[1] )
 		    matches.push( match[0] )
