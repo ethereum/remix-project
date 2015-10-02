@@ -50,6 +50,9 @@ THE SOFTWARE.
     
 
     <div id="editor">
+	<div id="files">
+	    <span class="newFile" title="New File">+</span>
+	</div>
         <div id="input"></div>
     </div>
 
@@ -79,19 +82,118 @@ THE SOFTWARE.
 
         // ----------------- editor ----------------------
 
-        var SOL_CACHE_KEY = "sol-cache";
+	var SOL_CACHE_FILE = "Untitled.sol"
+	var SOL_CACHE_FILES_KEY = "sol-cache-files";
 
         var editor = ace.edit("input");
         var session = editor.getSession();
         var Range = ace.require('ace/range').Range;
         var errMarkerId = null;
 
-        var solCache = window.localStorage.getItem( SOL_CACHE_KEY );
+	var solFiles = JSON.parse( window.localStorage.getItem( SOL_CACHE_FILES_KEY ) ) || [SOL_CACHE_FILE];
+	window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
+
+	var solCache = window.localStorage.getItem( SOL_CACHE_FILE );
         editor.setValue( solCache || BALLOT_EXAMPLE, 1 );
+
 
         session.setMode("ace/mode/javascript");
         session.setTabSize(4);
         session.setUseSoftTabs(true);
+
+	// ----------------- file selector-------------
+
+	var count = 0;
+	var $filesEl = $('#files');
+
+	$filesEl.on( 'click','.newFile', function(){
+	    count++;
+	    var name = 'Unititled'+count+'.sol';
+	    solFiles.push( name )
+	    SOL_CACHE_FILE = name;
+	    window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
+	    window.localStorage.setItem( SOL_CACHE_FILE, '' );
+	    console.log('new file added: ', solFiles)
+	    updateFiles();
+	})
+
+	$filesEl.on( 'click','.file:not(.active)',  showFileHandler )
+
+	$filesEl.on( 'click','.file.active', function(ev){
+	    var $fileTabEl = $(this)
+	    var originalName = $fileTabEl.find('.name').text()
+	    console.log("click active: ", originalName )
+	    ev.preventDefault()
+	    if ($(this).find('input').length > 0 ) return false;
+	    var $fileNameInputEl = $('<input value="'+originalName+'"/>');
+	    $fileTabEl.html( $fileNameInputEl )
+	    $fileNameInputEl.focus()
+
+	    $fileNameInputEl.on( 'blur', function(ev){
+		ev.preventDefault()
+		var newName = ev.target.value;
+		var $new = null
+		if (confirm( "Are you sure you want to rename: " + originalName + " to " + newName + '?' )) {
+
+		    solFiles[solFiles.indexOf(originalName)] = newName
+		    window.localStorage.setItem( newName, window.localStorage.getItem(originalName) );
+		    window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
+		    window.localStorage.setItem( originalName, '')
+		    SOL_CACHE_FILE = newName;
+		    updateFiles()
+		}
+
+		fileTabFromName(newName || originalName ).addClass('active')
+		return false;
+	    })
+	    return false;
+	})
+
+	$filesEl.on( 'click','.file .remove', function(ev){
+	    ev.preventDefault();
+	    var name = $(this).parent().find('.name').text()
+
+	    if (confirm( "Are you sure you want to remove: " + name + " from local storage?" )) {
+		console.log("remove file, ", ev.target)
+		var index = solFiles.indexOf(name);
+		solFiles[index] = undefined;
+		window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
+		SOL_CACHE_FILE = solFiles[ Math.max(0, index - 1)]
+		window.localStorage.setItem( name, null)
+		updateFiles()
+	    }
+	    return false;
+	})
+
+	function showFileHandler (ev) {
+	    ev.preventDefault()
+	    SOL_CACHE_FILE = $(this).find('.name').text();
+	    console.log('click normal', SOL_CACHE_FILE, typeof window.localStorage.getItem( SOL_CACHE_FILE ))
+	    updateFiles()
+	    return false;
+	}
+
+	function fileTabFromName(name) {
+	    return $('#files .file').filter(function(){ return $(this).find('.name').text() == name; })
+	}
+
+	function updateFiles () {
+	    console.log("Update files", solFiles, SOL_CACHE_FILE, typeof window.localStorage.getItem( SOL_CACHE_FILE ) )
+	    $filesEl.find('.file').remove()
+	    for (var f in solFiles) {
+		if (solFiles[f]) $filesEl.append( fileTabTemplate(solFiles[f]) );
+	    }
+	    var active = fileTabFromName(SOL_CACHE_FILE);
+	    active.addClass('active')
+	    editor.setValue( window.localStorage.getItem( SOL_CACHE_FILE ) || '', 1 );
+	}
+
+	function fileTabTemplate(name){
+	    return $('<span class="file"><span class="name">'+name+'</span><span class="remove">x</span></span>');
+	}
+
+	SOL_CACHE_FILE = solFiles[0]
+	updateFiles();
 
         // ----------------- version selector-------------
 
@@ -209,7 +311,7 @@ THE SOFTWARE.
         var onChange = function() {
             var input = editor.getValue();
             if (input === "") {
-                window.localStorage.setItem( SOL_CACHE_KEY, '' )
+		window.localStorage.setItem( SOL_CACHE_FILE, '' )
                 return;
             }
             if (input === previousInput)
@@ -288,7 +390,7 @@ THE SOFTWARE.
         };
 
         var renderContracts = function(data, source) {
-            window.localStorage.setItem( SOL_CACHE_KEY, source );
+	    window.localStorage.setItem( SOL_CACHE_FILE, source );
 
             $('#output').empty();
             for (var contractName in data.contracts) {
