@@ -286,15 +286,19 @@ THE SOFTWARE.
 		var previousInput = '';
 		var sourceAnnotations = [];
 		var compile = function() {
+
 			editor.getSession().clearAnnotations();
 			sourceAnnotations = [];
 			editor.getSession().removeMarker(errMarkerId);
-		$('#output').empty();
-		var input = editor.getValue();
-		var inputIncludingImports = includeLocalImports( input );
-		var optimize = document.querySelector('#optimize').checked;
-		try {
-		var data = $.parseJSON(compileJSON(inputIncludingImports, optimize ? 1 : 0));
+			$('#output').empty();
+			var input = editor.getValue();
+			window.localStorage.setItem( SOL_CACHE_FILE, input );
+
+			var inputIncludingImports = includeLocalImports( input );
+			var optimize = document.querySelector('#optimize').checked;
+			
+			try {
+				var data = $.parseJSON(compileJSON(inputIncludingImports, optimize ? 1 : 0));
 			} catch (exception) {
 				renderError("Uncaught JavaScript Exception:\n" + exception);
 				return;
@@ -309,11 +313,12 @@ THE SOFTWARE.
 				renderContracts(data, input);
 				
 		}
+		
 		var compileTimeout = null;
 		var onChange = function() {
 			var input = editor.getValue();
 			if (input === "") {
-		window.localStorage.setItem( SOL_CACHE_FILE, '' )
+				window.localStorage.setItem( SOL_CACHE_FILE, '' )
 				return;
 			}
 			if (input === previousInput)
@@ -411,8 +416,6 @@ THE SOFTWARE.
 		};
 
 		var renderContracts = function(data, source) {
-		window.localStorage.setItem( SOL_CACHE_FILE, source );
-
 			$('#output').empty();
 			for (var contractName in data.contracts) {
 				var contract = data.contracts[contractName];
