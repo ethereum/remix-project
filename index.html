@@ -128,6 +128,7 @@ THE SOFTWARE.
 		var $fileNameInputEl = $('<input value="'+originalName+'"/>');
 		$fileTabEl.html( $fileNameInputEl )
 		$fileNameInputEl.focus()
+		$fileNameInputEl.select()
 		$fileNameInputEl.on( 'blur', handleRename )
 		$fileNameInputEl.keyup( handleRename );
 
