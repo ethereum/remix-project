@@ -10,12 +10,66 @@ body {
     width: auto;
     bottom: 0px;
     right: 37em;
-    
 }
+
+#files {
+    font-size: 15px;
+    height: 2.5em;
+    box-sizing: border-box;
+    line-height: 2em;
+    padding: 0.5em 0.5em 0;
+}
+
+#files .file,
+#files .newFile {
+    display: inline-block;
+    padding: 0 0.6em;
+    box-sizing: border-box;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    margin-right: 0.5em;
+    position: relative;
+}
+
+#files .newFile {
+    background-color: #B1EAC5;
+    font-weight: bold;
+    color: #4E775D;
+}
+
+#files .file.active {
+    font-weight: bold;
+    border-bottom: 0 none;
+    padding-right: 2.5em;
+}
+#files .file .remove {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 1.25em;
+    width: 1.25em;
+    line-height: 1em;
+    border-radius: 1em;
+    color: #FF8080;
+    display: none;
+    margin: 0.4em;
+    text-align: center;
+}
+
+#files .file input {
+    background-color: transparent;
+    border: 0 none;
+    border-bottom: 1px dotted black;
+    line-height: 1em;
+    margin: 0.5em 0;
+}
+
+#files .file.active .remove { display: inline-block; }
+
 #input {
     font-size: 15px;
     position: absolute;
-    top: 0;
+    top: 2.5em;
     left: 0;
     right: 0;
     bottom: 0;
