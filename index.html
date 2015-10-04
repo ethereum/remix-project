@@ -82,50 +82,41 @@ THE SOFTWARE.
 
 	// ----------------- editor ----------------------
 
-	var SOL_CACHE_FILE = "Untitled"
-	var SOL_CACHE_FILES_KEY = "sol-cache-files";
+	var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
+	var SOL_CACHE_UNTITLED = SOL_CACHE_FILE_PREFIX + 'Untitled';
+	var SOL_CACHE_FILE = null;
 
 	var editor = ace.edit("input");
 	var session = editor.getSession();
 	var Range = ace.require('ace/range').Range;
 	var errMarkerId = null;
 
-	var solFiles = JSON.parse(window.localStorage.getItem(SOL_CACHE_FILES_KEY)) || [SOL_CACHE_FILE];
-	if (solFiles.length === 0) solFiles = [SOL_CACHE_FILE];
-	var solCache = window.localStorage.getItem(SOL_CACHE_FILE) || BALLOT_EXAMPLE;
-	window.localStorage.setItem(SOL_CACHE_FILE, solCache)
-
-	if (window.localStorage.getItem('sol-cache')) {
+	var untitledCount = 1;
+	if (!getFiles().length || window.localStorage['sol-cache']) {
 		// Backwards-compatibility
-		var count = '';
-		while (window.localStorage.getItem('Untitled' + count))
-			count = (count - 0) + 1;
-		window.localStorage.setItem('Untitled' + count, window.localStorage.getItem('sol-cache'));
+		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
+			untitledCount++;
+		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
+		window.localStorage[SOL_CACHE_FILE] = window.localStorage['sol-cache'] || BALLOT_EXAMPLE;
 		window.localStorage.removeItem('sol-cache');
-		solFiles.push('Untitled' + count);
 	}
 
-	window.localStorage.setItem(SOL_CACHE_FILES_KEY, JSON.stringify(solFiles));
+	SOL_CACHE_FILE = getFiles()[0];
 
-	editor.setValue(solCache, -1);
-
-
+	editor.setValue( window.localStorage[SOL_CACHE_FILE], -1);
 	session.setMode("ace/mode/javascript");
 	session.setTabSize(4);
 	session.setUseSoftTabs(true);
 
 	// ----------------- file selector-------------
 
-	var count = 0;
 	var $filesEl = $('#files');
 
 	$filesEl.on('click','.newFile', function() {
-		count++;
-		var name = 'Unititled' + count;
-		solFiles.push(name);
-		SOL_CACHE_FILE = name;
-		window.localStorage.setItem(SOL_CACHE_FILES_KEY, JSON.stringify(solFiles));
-		window.localStorage.setItem(SOL_CACHE_FILE, '');
+		var files = getFiles()
+		while (typeof files[SOL_CACHE_UNTITLED + untitledCount] !== 'undefined') untitledCount++;
+		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
+		window.localStorage[fileKey(SOL_CACHE_FILE)] = '';
 		updateFiles();
 	})
 
@@ -139,7 +130,7 @@ THE SOFTWARE.
 		var $fileNameInputEl = $('<input value="'+originalName+'"/>');
 		$fileTabEl.html($fileNameInputEl);
 		$fileNameInputEl.focus();
-		$fileNameInputEl.select();
+		$fileNameInputEl.select();	
 		$fileNameInputEl.on('blur', handleRename);
 		$fileNameInputEl.keyup(handleRename);
 
@@ -151,12 +142,10 @@ THE SOFTWARE.
 			$fileNameInputEl.off('keyup');
 
 			if (newName !== originalName && confirm("Are you sure you want to rename: " + originalName + " to " + newName + '?')) {
-
-				solFiles.splice(solFiles.indexOf(originalName), 1, newName);
-				window.localStorage.setItem(newName, window.localStorage.getItem(originalName));
-				window.localStorage.setItem(SOL_CACHE_FILES_KEY, JSON.stringify(solFiles));
-				window.localStorage.removeItem(originalName);
-				SOL_CACHE_FILE = newName;
+				var content = window.localStorage.removeItem( fileKey(originalName) );
+				window.localStorage[fileKey( newName )] = content;
+				window.localStorage.removeItem( fileKey(originalName) );
+				SOL_CACHE_FILE = fileKey( newName );
 			}
 
 			updateFiles();
@@ -169,13 +158,11 @@ THE SOFTWARE.
 	$filesEl.on('click', '.file .remove', function(ev) {
 		ev.preventDefault();
 		var name = $(this).parent().find('.name').text();
+		var index = getFiles().indexOf( fileKey(name) );
 
 		if (confirm("Are you sure you want to remove: " + name + " from local storage?")) {
-			var index = solFiles.indexOf(name);
-			solFiles.splice(index, 1);
-			window.localStorage.setItem(SOL_CACHE_FILES_KEY, JSON.stringify(solFiles));
-			SOL_CACHE_FILE = solFiles[ Math.max(0, index - 1)];
-			window.localStorage.removeItem(name);
+			SOL_CACHE_FILE = getFiles()[ Math.max(0, index - 1)];
+			window.localStorage.removeItem( fileKey( name ) );
 			updateFiles();
 		}
 		return false;
@@ -183,31 +170,52 @@ THE SOFTWARE.
 
 	function showFileHandler(ev) {
 		ev.preventDefault();
-		SOL_CACHE_FILE = $(this).find('.name').text();
+		SOL_CACHE_FILE = fileKey( $(this).find('.name').text() );
 		updateFiles();
 		return false;
 	}
 
-	function fileTabFromName(name) {
+	function fileTabFromKey(key) {
+		var name = fileNameFromKey(key);
 		return $('#files .file').filter(function(){ return $(this).find('.name').text() == name; });
 	}
 
+
 	function updateFiles() {
 		$filesEl.find('.file').remove();
-		for (var f in solFiles) {
-			if (solFiles[f]) $filesEl.append(fileTabTemplate(solFiles[f]));
+		var files = getFiles();
+		for (var f in files) {
+			$filesEl.append(fileTabTemplate(files[f]));
 		}
-		var active = fileTabFromName(SOL_CACHE_FILE);
+		var active = fileTabFromKey(SOL_CACHE_FILE);
 		active.addClass('active');
-		editor.setValue(window.localStorage.getItem(SOL_CACHE_FILE) || '', -1);
-		$('#input').toggle(typeof SOL_CACHE_FILE === 'string');
+		editor.setValue( window.localStorage[SOL_CACHE_FILE] || '', -1);
+		$('#input').toggle( true );
 	}
 
-	function fileTabTemplate(name) {
+	function fileTabTemplate(key) {
+		var name = fileNameFromKey(key);
 		return $('<span class="file"><span class="name">'+name+'</span><span class="remove">x</span></span>');
 	}
 
-	SOL_CACHE_FILE = solFiles[0];
+	function fileKey( name ) {
+		return SOL_CACHE_FILE_PREFIX + name;
+	}
+
+	function fileNameFromKey(key) {
+		return key.replace( SOL_CACHE_FILE_PREFIX, '' );
+	}
+
+	function getFiles() {
+		var files = [];
+		for (var f in localStorage ) {
+			if (f.indexOf( SOL_CACHE_FILE_PREFIX, 0 ) === 0) {
+				files.push(f);
+			}
+		}
+		return files;
+	}
+
 	updateFiles();
 
 		// ----------------- version selector-------------
