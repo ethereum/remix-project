@@ -86,16 +86,27 @@ THE SOFTWARE.
 	var SOL_CACHE_FILES_KEY = "sol-cache-files";
 
 	var editor = ace.edit("input");
-		var session = editor.getSession();
-		var Range = ace.require('ace/range').Range;
+	var session = editor.getSession();
+	var Range = ace.require('ace/range').Range;
 	var errMarkerId = null;
 
 	var solFiles = JSON.parse( window.localStorage.getItem( SOL_CACHE_FILES_KEY ) ) || [SOL_CACHE_FILE];
 	if (solFiles.length === 0) solFiles = [SOL_CACHE_FILE];
-	window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
-
 	var solCache = window.localStorage.getItem( SOL_CACHE_FILE ) || BALLOT_EXAMPLE;
 	window.localStorage.setItem( SOL_CACHE_FILE, solCache )
+
+	if (window.localStorage.getItem('sol-cache')) {
+		// Backwards-compatibility
+		var count = '';
+		while (window.localStorage.getItem('Untitled' + count))
+			count = (count - 0) + 1;
+		window.localStorage.setItem('Untitled' + count, window.localStorage.getItem('sol-cache'));
+		window.localStorage.removeItem('sol-cache');
+		solFiles.push('Untitled' + count);
+	}
+
+	window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
+
 	editor.setValue( solCache, 1 );
 
 
