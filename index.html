@@ -107,7 +107,7 @@ THE SOFTWARE.
 
 	window.localStorage.setItem( SOL_CACHE_FILES_KEY, JSON.stringify( solFiles ) );
 
-	editor.setValue( solCache, 1 );
+	editor.setValue( solCache, -1 );
 
 
 	session.setMode("ace/mode/javascript");
@@ -197,7 +197,7 @@ THE SOFTWARE.
 		}
 		var active = fileTabFromName(SOL_CACHE_FILE);
 		active.addClass('active')
-		editor.setValue( window.localStorage.getItem( SOL_CACHE_FILE ) || '', 1 );
+		editor.setValue( window.localStorage.getItem( SOL_CACHE_FILE ) || '', -1 );
 		$('#input').toggle( typeof SOL_CACHE_FILE === 'string' )
 	}
 
