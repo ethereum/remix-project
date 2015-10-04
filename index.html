@@ -161,8 +161,8 @@ THE SOFTWARE.
 		var index = getFiles().indexOf( fileKey(name) );
 
 		if (confirm("Are you sure you want to remove: " + name + " from local storage?")) {
-			SOL_CACHE_FILE = getFiles()[ Math.max(0, index - 1)];
 			window.localStorage.removeItem( fileKey( name ) );
+			SOL_CACHE_FILE = getFiles()[ Math.max(0, index - 1)];
 			updateFiles();
 		}
 		return false;
@@ -187,10 +187,16 @@ THE SOFTWARE.
 		for (var f in files) {
 			$filesEl.append(fileTabTemplate(files[f]));
 		}
-		var active = fileTabFromKey(SOL_CACHE_FILE);
-		active.addClass('active');
-		editor.setValue( window.localStorage[SOL_CACHE_FILE] || '', -1);
-		$('#input').toggle( true );
+		
+		if (SOL_CACHE_FILE) {
+			var active = fileTabFromKey(SOL_CACHE_FILE);
+			active.addClass('active');
+			editor.setValue( window.localStorage[SOL_CACHE_FILE] || '', -1);
+			editor.focus();
+			$('#input').toggle( true );
+		} else {
+			$('#input').toggle( false );
+		}
 	}
 
 	function fileTabTemplate(key) {
