@@ -113,10 +113,10 @@ THE SOFTWARE.
 	var $filesEl = $('#files');
 
 	$filesEl.on('click','.newFile', function() {
-		var files = getFiles()
-		while (typeof files[SOL_CACHE_UNTITLED + untitledCount] !== 'undefined') untitledCount++;
+		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
+			untitledCount++;
 		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-		window.localStorage[fileKey(SOL_CACHE_FILE)] = '';
+		window.localStorage[SOL_CACHE_FILE] = '';
 		updateFiles();
 	})
 
@@ -142,9 +142,9 @@ THE SOFTWARE.
 			$fileNameInputEl.off('keyup');
 
 			if (newName !== originalName && confirm("Are you sure you want to rename: " + originalName + " to " + newName + '?')) {
-				var content = window.localStorage.removeItem( fileKey(originalName) );
+				var content = window.localStorage.getItem( fileKey(originalName) );
 				window.localStorage[fileKey( newName )] = content;
-				window.localStorage.removeItem( fileKey(originalName) );
+				window.localStorage.removeItem( fileKey( originalName) );
 				SOL_CACHE_FILE = fileKey( newName );
 			}
 
