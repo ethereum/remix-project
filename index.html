@@ -132,22 +132,24 @@ THE SOFTWARE.
 	$filesEl.on( 'click','.file:not(.active)',  showFileHandler )
 
 	$filesEl.on( 'click','.file.active', function(ev){
-		var $fileTabEl = $(this)
-		var originalName = $fileTabEl.find('.name').text()
-		ev.preventDefault()
+		var $fileTabEl = $(this);
+		var originalName = $fileTabEl.find('.name').text();
+		ev.preventDefault();
 		if ($(this).find('input').length > 0 ) return false;
 		var $fileNameInputEl = $('<input value="'+originalName+'"/>');
-		$fileTabEl.html( $fileNameInputEl )
-		$fileNameInputEl.focus()
-		$fileNameInputEl.select()
-		$fileNameInputEl.on( 'blur', handleRename )
+		$fileTabEl.html( $fileNameInputEl );
+		$fileNameInputEl.focus();
+		$fileNameInputEl.select();
+		$fileNameInputEl.on( 'blur', handleRename );
 		$fileNameInputEl.keyup( handleRename );
 
 		function handleRename (ev) {
-			ev.preventDefault()
+			ev.preventDefault();
 			if (ev.which && ev.which !== 13) return false;
 			var newName = ev.target.value;
-			var $new = null
+			$fileNameInputEl.off('blur');
+			$fileNameInputEl.off('keyup');
+
 			if ( newName !== originalName && confirm( "Are you sure you want to rename: " + originalName + " to " + newName + '?' )) {
 
 				solFiles.splice( solFiles.indexOf(originalName), 1, newName );
