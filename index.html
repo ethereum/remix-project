@@ -369,13 +369,13 @@ THE SOFTWARE.
 		var matches = [];
 		var match;
 		while ((match = importRegex.exec(input)) !== null) {
-		if (match[1] && solFiles.indexOf(match[1]) !== -1) {
+		if (match[1] && getFiles().indexOf(fileKey(match[1])) !== -1) {
 			imports.push(match[1])
 			matches.push(match[0])
 		}
 		}
 		for (var i in imports) {
-			imported = includeLocalImports(window.localStorage.getItem(imports[i]))
+			imported = includeLocalImports(window.localStorage.getItem( fileKey(imports[i]) ))
 			input = input.replace(matches[i], imported);
 		}
 		return input;
