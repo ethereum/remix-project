@@ -464,7 +464,9 @@ THE SOFTWARE.
 					removable_instances: true
 				});
 				var $contractOutput = dapp.render();
-				$contractOutput.append(textRow('Interface', contract['interface']))
+				$contractOutput
+						.append(textRow('Bytecode', contract.bytecode))
+						.append(textRow('Interface', contract['interface']))
 						.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
 						.append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
 						.append(getDetails(contract, source, contractName));
