@@ -104,6 +104,7 @@ THE SOFTWARE.
 	SOL_CACHE_FILE = getFiles()[0];
 
 	editor.setValue( window.localStorage[SOL_CACHE_FILE], -1);
+	editor.resize(true);
 	session.setMode("ace/mode/javascript");
 	session.setTabSize(4);
 	session.setUseSoftTabs(true);
@@ -278,7 +279,7 @@ THE SOFTWARE.
 				$('#ghostbar').remove();
 				$(document).unbind('mousemove');
 				dragging = false;
-				setEditorSize(delta)
+				setEditorSize(delta);
 				window.localStorage.setItem(EDITOR_SIZE_CACHE_KEY, delta);
 			}
 		});
@@ -346,7 +347,7 @@ THE SOFTWARE.
 		var onChange = function() {
 			var input = editor.getValue();
 			if (input === "") {
-				window.localStorage.setItem(SOL_CACHE_FILE, '')
+				window.localStorage.setItem(SOL_CACHE_FILE, '');
 				return;
 			}
 			if (input === previousInput)
@@ -364,18 +365,18 @@ THE SOFTWARE.
 	};
 
 	function includeLocalImports(input) {
-		var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g
+		var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g;
 		var imports = [];
 		var matches = [];
 		var match;
 		while ((match = importRegex.exec(input)) !== null) {
 		if (match[1] && getFiles().indexOf(fileKey(match[1])) !== -1) {
-			imports.push(match[1])
-			matches.push(match[0])
+			imports.push(match[1]);
+			matches.push(match[0]);
 		}
 		}
 		for (var i in imports) {
-			imported = includeLocalImports(window.localStorage.getItem( fileKey(imports[i]) ))
+			imported = includeLocalImports(window.localStorage.getItem( fileKey(imports[i]) ));
 			input = input.replace(matches[i], imported);
 		}
 		return input;
@@ -393,19 +394,23 @@ THE SOFTWARE.
 
 		var renderError = function(message) {
 			var type = message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
-			$('#output')
-				.append($('<pre class="' + type + '"></pre>').text(message));
-			var err = message.match(/^:([0-9]*):([0-9]*)/)
+			var $error = $('<pre class="' + type + '"></pre>').text(message);
+			$('#output').append( $error );
+			var err = message.match(/^:([0-9]*):([0-9]*)/);
 			if (err && err.length) {
 				var errLine = parseInt(err[1], 10) - 1;
 				var errCol = err[2] ? parseInt(err[2], 10) : 0;
-				sourceAnnotations[sourceAnnotations.length] ={
+				sourceAnnotations[sourceAnnotations.length] = {
 					row: errLine,
 					column: errCol,
 					text: message,
 					type: type
 				};
 				editor.getSession().setAnnotations(sourceAnnotations);
+				$error.click(function(ev){
+					editor.focus();
+					editor.gotoLine(errLine + 1, errCol - 1, true);
+				});
 			}
 		};
 
