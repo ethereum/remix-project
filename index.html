@@ -392,8 +392,9 @@ THE SOFTWARE.
 		var detailsOpen = {};
 
 		var renderError = function(message) {
+			var type = message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
 			$('#output')
-				.append($('<pre class="error"></pre>').text(message));
+				.append($('<pre class="' + type + '"></pre>').text(message));
 			var err = message.match(/^:([0-9]*):([0-9]*)/)
 			if (err && err.length) {
 				var errLine = parseInt(err[1], 10) - 1;
@@ -402,7 +403,7 @@ THE SOFTWARE.
 					row: errLine,
 					column: errCol,
 					text: message,
-					type: "error"
+					type: type
 				};
 				editor.getSession().setAnnotations(sourceAnnotations);
 			}
