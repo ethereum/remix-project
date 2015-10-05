@@ -91,11 +91,11 @@ THE SOFTWARE.
 	var Range = ace.require('ace/range').Range;
 	var errMarkerId = null;
 
-	var untitledCount = 1;
+	var untitledCount = '';
 	if (!getFiles().length || window.localStorage['sol-cache']) {
-		// Backwards-compatibility
+		// Backwards-compatibility     
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
-			untitledCount++;
+			untitledCount = (untitledCount - 0) + 1;
 		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
 		window.localStorage[SOL_CACHE_FILE] = window.localStorage['sol-cache'] || BALLOT_EXAMPLE;
 		window.localStorage.removeItem('sol-cache');
@@ -114,7 +114,7 @@ THE SOFTWARE.
 
 	$filesEl.on('click','.newFile', function() {
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
-			untitledCount++;
+			untitledCount = (untitledCount - 0) + 1;
 		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
 		window.localStorage[SOL_CACHE_FILE] = '';
 		updateFiles();
