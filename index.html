@@ -452,7 +452,6 @@ THE SOFTWARE.
 		};
 
 		var renderContracts = function(data, source) {
-			console.log( "rendering ", data)
 			for (var contractName in data.contracts) {
 				var contract = data.contracts[contractName];
 				var dapp = new UniversalDApp([{
@@ -469,8 +468,7 @@ THE SOFTWARE.
 						.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
 						.append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
 						.append(getDetails(contract, source, contractName));
-
-				console.log("contract output", $contractOutput )
+				$('#txorigin').text('0x' + dapp.address.toString('hex'));
 				$('#output').append( $contractOutput );
 			}
 			$('.col2 input,textarea').click(function() { this.select(); });
