@@ -218,6 +218,7 @@ body {
     border-radius: 0;
     word-wrap: break-word;
     border: 1px solid #D00909;
+    cursor: pointer;
 }
 
 .warning {
@@ -225,6 +226,7 @@ body {
     border-radius: 0;
     word-wrap: break-word;
     border: 1px solid #BBB427;
+    cursor: pointer;
 }
 
 #ghostbar {
