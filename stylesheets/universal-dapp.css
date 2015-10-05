@@ -1,0 +1,270 @@
+
+.udapp {
+	padding: 1em;
+	border: 1px dotted #4D5686;
+	position: relative;
+	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	overflow: auto;
+}
+
+.udapp a {
+	color: #7A7AE2;
+}
+
+.udapp a:visited {
+	color: #7A7AE2;
+}
+
+.udapp input,
+.udapp button,
+.udapp-setup textarea,
+.udapp-setup button {
+    display: block;
+    width: 100%;
+    padding: 0.6em;
+    box-sizing: border-box;
+    border: 1px solid rgba( 0,0,0,0.3 );
+    border-radius: 0.5em;
+}
+
+.udapp-setup textarea {
+	border-radius: 0;
+	margin-bottom: 1em;
+	height: 7em;
+}
+
+.udapp button {
+	min-width: 8em;
+}
+
+.udapp-setup button {
+	background-color: #556DF3;
+	color: white;
+	cursor: pointer;
+}
+
+.udapp .contract {
+	margin-bottom: 1em;
+}
+
+.udapp .create {
+	overflow: auto;
+	margin-bottom: 1em;
+}
+
+.udapp .title {
+	margin-bottom: 0.4em;
+	display: inline-block;
+	padding: 0.2em;
+    background-color: rgba( 255,255,255,0.5 );
+    display: block;
+    font-weight: bold;
+    padding-right: 2em;
+    word-wrap: break-word;
+}
+
+.udapp .output {
+	padding: 1em;
+    clear: both;
+    word-wrap: break-word;
+}
+
+.udapp .constructor > .output {
+	padding-right: 1em;
+}
+
+.udapp .output .error {
+	color: red;
+}
+
+.udapp .output .result {
+	position: relative;
+	margin-bottom: 0.5em;
+	white-space: pre;
+}
+
+.udapp .result { position: relative; }
+.udapp .output .result .returned,
+.udapp .output .result .value,
+.udapp .output .result .waiting,
+.udapp .output .result .gasUsed {
+	padding-right: 2em;
+	word-wrap: break-word;
+}
+
+.udapp .output .result:last-child { margin: 0; }
+
+.udapp .output:empty {
+	display: none;
+}
+
+.udapp-close:before {
+	position: absolute;
+    top: .4em;
+    right: .4em;
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    content: "x";
+    cursor: pointer;
+}
+
+.udapp .instance {
+    padding: 0.4em;
+    background-color: #ECD7D7;
+    margin-bottom: 1em;
+    position: relative;
+    border: 1px solid #999;
+}
+
+.udapp .instance:last-child {
+	margin-bottom: 0;
+}
+
+.udapp .instance .title {
+	cursor: pointer;
+}
+
+.udapp .instance.hide .title {
+    margin-bottom: 0;
+    padding-right: 1.5em;
+    word-wrap: break-word;
+}
+
+.udapp .instance .title:before {
+    content: "\25BC";
+    opacity: 0.5;
+    margin-right: 0.4em;
+    font-size: 10px;
+}
+
+.udapp .instance.hide > *:not(.title) {
+	display: none;
+}
+
+.udapp .instance.hide > .title:before {
+    content: "\25B6";
+}
+
+
+.udapp .contractProperty {
+	overflow: auto;
+	margin-bottom: 0.4em;
+}
+
+
+.udapp input,
+.udapp button {
+	width: 33%;
+	display: block;
+	float: left;
+}
+
+.udapp .atAddress {
+	background-color: #62B762;
+	margin-right: 1em;
+	border-radius: 0.5em;
+}
+
+.udapp input { border-left: 0 none;}
+.udapp button {
+	background-color: #666;
+	color: white;
+	cursor: pointer;
+}
+
+.udapp .instance input,
+.udapp .instance button {
+	width: 50%;
+	float: left;
+}
+
+.udapp .contractProperty.hasArgs input,
+.udapp .contractProperty.hasArgs button {
+	width: 50%;
+}
+
+.udapp .contractProperty .call {
+	background-color: #D42828;
+}
+
+.udapp .contractProperty.constant .call {
+	background-color: #556DF3;
+}
+
+.udapp .contractProperty input {
+	display: none;
+}
+
+.udapp .contractProperty > .value {
+	padding: 0 0.4em;
+	box-sizing: border-box;
+	width: 50%;
+	float: left;
+	word-wrap: break-word;
+}
+
+.udapp .contractProperty.hasArgs input {
+	display: block;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.udapp .contractProperty.hasArgs button {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: 0;
+}
+
+
+.udapp .events:not(:empty):before {
+	content: "Events";
+	font-weight: bold;
+	display: block;
+	margin-bottom: 0.4em;
+}
+
+.udapp .events .event {
+	padding: 0.4em;
+    position: relative;
+    word-wrap: break-word;
+    padding-right: 3em;
+    background-color: white;
+    margin-bottom: 0.5em;
+    white-space: pre;
+}
+
+.udapp .events .event .name { margin-right: 0.5em; }
+
+
+
+.udapp .legend {
+	font-size: 12px;
+	float: left;
+	color: #666;
+}
+
+.udapp .legend div {
+	display: inline-block;
+	margin-right: 0.5em;
+}
+.udapp .legend div:before {
+	content: ".";
+	color: transparent;
+	display: inline-block;
+	background-color: #ccc;
+	height: 1em;
+	margin-right: 0.5em;
+	width: 1em;
+}
+
+.udapp .legend .attach:before { background-color: #62B762; }
+.udapp .legend .transact:before { background-color: #D42828; }
+.udapp .legend .call:before { background-color: #556DF3; }
+
+.udapp .poweredBy {
+	float: right;
+	color: #666;
+	font-size: 12px;
+}

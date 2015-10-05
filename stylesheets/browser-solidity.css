@@ -119,9 +119,21 @@ body {
     float: left;
 }
 
+#output .poweredBy,
+#output .legend { display: none; }
+
+#output .udapp {
+    border: 0 none;
+    box-shadow: none;
+}
+
 .row {
     overflow: auto;
+    display: block;
+    clear: both;
+    margin: 0.5em;
 }
+
 .gethDeployText {
     border-color: #bebebe;
     height: 2.5em;
@@ -129,88 +141,17 @@ body {
     display: block;
 }
 
-.contractInstance {
-    background-color: #ccc;
-    margin-bottom: 1em;
-    padding: 0.6em;
-}
-
-.contractInstance.hide > *:not(.title) {
-    display: none;
-}
-
-
-.contractInstance .contractProperty input,
-.contractInstance .contractProperty button {
-    text-align: left;
-    padding: 0.3em;
-    width: 50%;
-    margin: 0;
-}
-.contractOutput .contractInstance .contractProperty {
-    margin-bottom: 0;
-}
-.contractOutput .contractInstance .contractProperty .output {
-    padding: 0.4em;
-    background-color: #333;
-    color: white;
-    margin-bottom: 1em;
-    display: block;
-}
-.contractInstance .contractProperty .output:empty { display: none; }
-
-.contractOutput {
-    border-bottom: 1px dotted black;
-    padding: 0.6em;
-    box-sizing: border-box;
-}
-.contractOutput .contractProperty {
-    margin-bottom: 0.6em;
-}
-.contractOutput .contractProperty .output {
-    display: inline;
-}
-
-
-.contractOutput .body {
-    margin-top: 10px;
-}
-
-.contractOutput.hide {
-    background-color: #4C4C67;
-    color: white;
-}
-
-.contractOutput.hide > *:not(.title) {
-    display: none;
-}
-
-.title {
-    margin: 0;
+.contractDetails button {
+    background-color: transparent;
+    border: 0 none;
+    padding: 0;
+    display: inline-block;
+    text-decoration: underline;
+    color: blue;
     cursor: pointer;
-    font-family: monospace;
-    font-weight: bold;
-}
-
-.title:before {
-    content: "\25BC";
-    opacity: 0.5;
-    margin-right: 0.4em;
-    font-size: 10px;
-}
-
-.hide > .title:before {
-    content: "\25B6";
-}
-
-.contractOutput > .title {
-    border-bottom: #4C4C67;
-}
-
-
-.title .size {
-    font-weight: normal;
-    float: right;
+    width: auto;
+    min-width: 4em;
+    margin-bottom: 1em;
 }
 
 .error {
