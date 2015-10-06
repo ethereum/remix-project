@@ -322,7 +322,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
             var tx = new EthVm.Transaction({
                 nonce: new Buffer([this.nonce++]), //@todo count beyond 255
                 gasPrice: '01',
-                gasLimit: '3000000',
+                gasLimit: '3000000000', //plenty
                 to: to,
                 data: data
             });
