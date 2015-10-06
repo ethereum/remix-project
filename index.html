@@ -519,6 +519,7 @@ THE SOFTWARE.
 
 				if (executionContext === 'vm') $('#txorigin').text('0x' + dapp.address.toString('hex'));
 				else web3.eth.getAccounts( function(err,accounts) {
+					if (err) renderError(err.message);
 					$('#txorigin').text(accounts[0]);
 				});
 
