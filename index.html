@@ -334,14 +334,21 @@ THE SOFTWARE.
 				renderError("Uncaught JavaScript Exception:\n" + exception);
 				return;
 			}
-			if (data['error'] !== undefined)
+
+			var noFatalErrors = true; // ie warnings are ok
+
+			if (data['error'] !== undefined) {
 				renderError(data['error']);
-			if (data['errors'] != undefined)
+				if (errortype(data['error']) !== 'warning') noFatalErrors = false;
+			}
+			if (data['errors'] != undefined) {
 				$.each(data['errors'], function(i, err) {
 					renderError(err);
+					if (errortype(err) !== 'warning') noFatalErrors = false;
 				});
-			else
-				renderContracts(data, input);
+			}
+			
+			if (noFatalErrors) renderContracts(data, input);
 				
 		}
 		
@@ -394,9 +401,13 @@ THE SOFTWARE.
 		// ----------------- compiler output renderer ----------------------
 		var detailsOpen = {};
 
+		function errortype(message) {
+			return message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
+		}
+
 		var renderError = function(message) {
-			var type = message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
-			var $error = $('<pre class="' + type + '"></pre>').text(message);
+			var type = errortype(message);
+			var $error = $('<div class="' + type + '"><pre>' + message + '</pre><div class="close">x</div></div>');
 			$('#output').append( $error );
 			var err = message.match(/^:([0-9]*):([0-9]*)/);
 			if (err && err.length) {
@@ -412,6 +423,11 @@ THE SOFTWARE.
 				$error.click(function(ev){
 					editor.focus();
 					editor.gotoLine(errLine + 1, errCol - 1, true);
+				});
+				$error.find('.close').click(function(ev){
+					ev.preventDefault();
+					$error.remove();
+					return false;
 				});
 			}
 		};
