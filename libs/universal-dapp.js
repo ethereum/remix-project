@@ -229,7 +229,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
 
         if (lookupOnly && !inputs.length) {
-            $outputOverride.html( $result );
+            $outputOverride.empty().append( $result );
         } else {
             outputSpan.append( $result );
         }
