@@ -166,6 +166,20 @@ body {
     border-bottom: 1px dotted;
 }
 
+#output .udapp button,
+#output .udapp input {
+    padding: 0.25em;
+    color: black;
+}
+
+#output .udapp button {
+    border-color: #9E9D9D;
+}
+
+#output .udapp .atAddress { background-color: #B1EAC5; }
+#output .udapp .contractProperty .call { background-color: #FF8B8B; }
+#output .udapp .contractProperty.constant .call { background-color: #9DC1F5; }
+
 .row {
     overflow: auto;
     display: block;
