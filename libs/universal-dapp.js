@@ -252,7 +252,6 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                     function testResult (err, address) {
                         if (!err && !address) {
-                            console.log( "Polling for tx receipt....")
                             setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
                         } else done( err, address )
                     }
@@ -301,9 +300,6 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
-
-    console.log( "runtx (" + args.abi.name + ") data: ", data )
-    console.log( "runtx (" + args.abi.name + ") to:", to )
     
     if (!this.vm) {
         if (constant && !isConstructor) {
@@ -316,7 +312,6 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: data,
                 gas: 1000000
             }, function(err, resp) {
-                console.log( 'sendTx callback:', err, resp )
                 cb( err, resp )
             })
         }
