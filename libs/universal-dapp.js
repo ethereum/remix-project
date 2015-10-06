@@ -39,6 +39,9 @@ UniversalDApp.prototype.render = function () {
                 this.getInstanceInterface(this.contracts[c], this.contracts[c].address, $contractEl );
             } else {
                 var $title = $('<span class="title"/>').text( this.contracts[c].name );
+                if (this.contracts[c].bytecode) {
+                    $title.append($('<div class="size"/>').text((this.contracts[c].bytecode.length / 2) + ' bytes'))
+                }
                 $contractEl.append( $title ).append( this.getCreateInterface( $contractEl, this.contracts[c]) );
             }
             this.$el.append( $contractEl );
