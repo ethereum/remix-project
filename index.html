@@ -471,6 +471,7 @@ THE SOFTWARE.
 						.append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
 						.append(getDetails(contract, source, contractName));
 				$('#txorigin').text('0x' + dapp.address.toString('hex'));
+				$contractOutput.find('.title').click(function(ev){ $(this).closest('.udapp').toggleClass('hide') });
 				$('#output').append( $contractOutput );
 			}
 			$('.col2 input,textarea').click(function() { this.select(); });

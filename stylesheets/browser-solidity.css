@@ -119,6 +119,37 @@ body {
     float: left;
 }
 
+.udapp.hide {
+    padding-bottom: 0;
+}
+
+.udapp.hide > *:not(.contract) {
+    display: none;
+}
+
+.udapp.hide .contract {
+    margin: 0;
+}
+
+.udapp.hide .contract > *:not(.title) {
+    display: none;
+}
+
+.udapp .contract > .title {
+    cursor:pointer;
+}
+
+.udapp .contract > .title:before {
+    content: "\25BC";
+    opacity: 0.5;
+    margin-right: 0.4em;
+    font-size: 10px;
+}
+
+.udapp.hide > .contract > .title:before {
+    content: "\25B6";
+}
+
 #output .poweredBy,
 #output .legend { display: none; }
 
