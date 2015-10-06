@@ -3,7 +3,7 @@ function UniversalDApp (contracts, options) {
     this.$el = $('<div class="udapp" />');
     this.contracts = contracts;
 
-    if (web3.currentProvider) {
+    if (!options.vm && web3.currentProvider) {
 
     } else if (options.vm) {
         this.stateTrie = new EthVm.Trie();
