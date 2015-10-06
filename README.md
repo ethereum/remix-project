@@ -7,7 +7,7 @@ Browser solidity is a browser based solidity compiler. To use either visit [http
 
 To use the solidity compiler via nodejs you can install it via npm
 
-	npm install --save solc
+	npm install solc
 
 And then use it like so:
 
