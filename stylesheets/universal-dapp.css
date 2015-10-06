@@ -116,6 +116,7 @@
     text-align: center;
     content: "x";
     cursor: pointer;
+    z-index: 9999;
 }
 
 .udapp .instance {
