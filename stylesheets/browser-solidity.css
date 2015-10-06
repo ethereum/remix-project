@@ -163,6 +163,7 @@ body {
 #output .udapp {
     border: 0 none;
     box-shadow: none;
+    border-bottom: 1px dotted;
 }
 
 .row {
