@@ -8,7 +8,8 @@
 	overflow: auto;
 }
 
-.udapp a {
+.udapp a,
+.udapp .caveat {
 	color: #7A7AE2;
 }
 

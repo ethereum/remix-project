@@ -202,7 +202,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var getGasUsedOutput = function (result) {
         var $gasUsed = $('<div class="gasUsed">')
-        var caveat = lookupOnly ? '<em>(<a href="#" title="Cost only applies when called by a contract">caveat</a>)</em>' : '';
+        var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
         if (result.gasUsed) {
             var gas = result.gasUsed.toString(10)
             $gasUsed.html('<strong>Cost:</strong> ' + gas + ' gas. ' + caveat )
