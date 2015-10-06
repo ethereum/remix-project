@@ -215,8 +215,8 @@ body {
 #dragbar{
     background-color: transparent;
     position: absolute;
-    width: 5px;
-    left: 0;
+    width: 10px;
+    right: -10px;
     top: 0;
     bottom: 0;
     cursor: col-resize;
