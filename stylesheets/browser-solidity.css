@@ -110,6 +110,13 @@ body {
     height: 5em;
 }
 
+#header #executionContext {
+    padding: 0.4em 1em;
+    background-color: #efefef;
+    display: inline-block;
+    margin-left: 1em;
+}
+
 .col1 {
     width: 30%;
     float: left;
@@ -186,8 +193,8 @@ body {
 }
 
 
-.error,
-.warning {
+.sol.error,
+.sol.warning {
     border-radius: 0;
     word-wrap: break-word;
     cursor: pointer;
@@ -195,15 +202,15 @@ body {
     margin: 0.25em;
 }
 
-.error pre,
-.warning pre {
+.sol.error pre,
+.sol.warning pre {
     background-color: transparent;
     margin: 0;
     font-size: 10px;
 }
 
-.error .close,
-.warning .close {
+.sol.error .close,
+.sol.warning .close {
     font-weight: bold;
     position: absolute;
     top: 0;
@@ -211,12 +218,12 @@ body {
     padding: 0.5em;
 }
 
-.error {
+.sol.error {
     background-color: rgba(255, 0, 0, 0.5);
     border: 1px solid #D00909;
 }
 
-.warning {
+.sol.warning {
     background-color: rgba(210, 202, 36, 0.5);
     border: 1px solid #BBB427; 
 }
