@@ -138,10 +138,10 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                     .append( $('<span class="args" />').text( JSON.stringify(response.args, null, 2) ) )
                     .append( $close );
 
-                $events.append( $event )                
+                $events.append( $event );            
             })
         }
-        $instance.append( $title )           
+        $instance.append( $title );        
 
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
@@ -150,7 +150,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 address: address
             }));
         });
-        ($el || $createInterface ).append( $instance.append( $events ) )
+        ($el || $createInterface ).append( $instance.append( $events ) );
     }
 
     if (!address || !$target) {
@@ -213,9 +213,9 @@ UniversalDApp.prototype.getCallButton = function(args) {
     var getOutput = function() {
         var values = Array.prototype.slice.call(arguments);
         var $result = $('<div class="result" />');
-        var $close = $('<div class="udapp-close" />')
-            $close.click( function(){ $result.remove(); } )
-            $result.append( $close );
+        var $close = $('<div class="udapp-close" />');
+        $close.click( function(){ $result.remove(); } );
+        $result.append( $close );
         for( var v in values ) { $result.append( values[v] ); } 
         return $result;
     }
@@ -229,7 +229,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
 
         if (lookupOnly && !inputs.length) {
-            $outputOverride.html( $result )
+            $outputOverride.html( $result );
         } else {
             outputSpan.append( $result );
         }
@@ -252,8 +252,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                     function testResult (err, address) {
                         if (!err && !address) {
-                            setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
-                        } else done( err, address )
+                            setTimeout( function(){ tryTillResponse(txhash, done) }, 500);
+                        } else done( err, address );
                     }
 
                 }
@@ -312,8 +312,8 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: data,
                 gas: 1000000
             }, function(err, resp) {
-                cb( err, resp )
-            })
+                cb( err, resp );
+            });
         }
     } else {
         try {
