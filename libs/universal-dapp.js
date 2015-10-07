@@ -313,14 +313,14 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 to: to,
                 data: data,
                 gas: 1000000
-            }
+            };
             web3.eth.estimateGas( tx, function(err, resp){
                 tx.gas = resp;
                 if (!err) web3.eth.sendTransaction( tx, function(err, resp) {
                     cb( err, resp );
                 });
                 else cb( err, resp);
-            })
+            });
         }
     } else {
         try {

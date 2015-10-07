@@ -21,12 +21,12 @@
 .udapp button,
 .udapp-setup textarea,
 .udapp-setup button {
-    display: block;
-    width: 100%;
-    padding: 0.6em;
-    box-sizing: border-box;
-    border: 1px solid rgba( 0,0,0,0.3 );
-    border-radius: 0.5em;
+	display: block;
+	width: 100%;
+	padding: 0.6em;
+	box-sizing: border-box;
+	border: 1px solid rgba( 0,0,0,0.3 );
+	border-radius: 0.5em;
 }
 
 .udapp-setup textarea {
@@ -54,25 +54,25 @@
 	margin-bottom: 0.4em;
 	display: inline-block;
 	padding: 0.2em;
-    background-color: rgba( 255,255,255,0.5 );
-    display: block;
-    font-weight: bold;
-    padding-right: 2em;
-    word-wrap: break-word;
-    position: relative;
+	background-color: rgba( 255,255,255,0.5 );
+	display: block;
+	font-weight: bold;
+	padding-right: 2em;
+	word-wrap: break-word;
+	position: relative;
 }
 
 .udapp .title .size {
 	position: absolute;
 	right: 2.2em;
 	top: 0.2em;
-    font-weight: normal;
+	font-weight: normal;
 }
 
 .udapp .output {
 	padding: 1em;
-    clear: both;
-    word-wrap: break-word;
+	clear: both;
+	word-wrap: break-word;
 }
 
 .udapp .constructor > .output {
@@ -106,22 +106,22 @@
 
 .udapp-close:before {
 	position: absolute;
-    top: .4em;
-    right: .4em;
-    width: 1.5em;
-    height: 1.5em;
-    text-align: center;
-    content: "x";
-    cursor: pointer;
-    z-index: 9999;
+	top: .4em;
+	right: .4em;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	content: "x";
+	cursor: pointer;
+	z-index: 9999;
 }
 
 .udapp .instance {
-    padding: 0.4em;
-    background-color: #ECD7D7;
-    margin-bottom: 1em;
-    position: relative;
-    border: 1px solid #999;
+	padding: 0.4em;
+	background-color: #ECD7D7;
+	margin-bottom: 1em;
+	position: relative;
+	border: 1px solid #999;
 }
 
 .udapp .instance:last-child {
@@ -133,16 +133,16 @@
 }
 
 .udapp .instance.hide .title {
-    margin-bottom: 0;
-    padding-right: 1.5em;
-    word-wrap: break-word;
+	margin-bottom: 0;
+	padding-right: 1.5em;
+	word-wrap: break-word;
 }
 
 .udapp .instance .title:before {
-    content: "\25BC";
-    opacity: 0.5;
-    margin-right: 0.4em;
-    font-size: 10px;
+	content: "\25BC";
+	opacity: 0.5;
+	margin-right: 0.4em;
+	font-size: 10px;
 }
 
 .udapp .instance.hide > *:not(.title) {
@@ -150,7 +150,7 @@
 }
 
 .udapp .instance.hide > .title:before {
-    content: "\25B6";
+	content: "\25B6";
 }
 
 
@@ -179,7 +179,7 @@
 	color: white;
 	cursor: pointer;
 	overflow: hidden;
-    text-overflow: ellipsis;
+	text-overflow: ellipsis;
 }
 
 .udapp .instance input,
@@ -239,12 +239,12 @@
 
 .udapp .events .event {
 	padding: 0.4em;
-    position: relative;
-    word-wrap: break-word;
-    padding-right: 3em;
-    background-color: white;
-    margin-bottom: 0.5em;
-    white-space: pre;
+	position: relative;
+	word-wrap: break-word;
+	padding-right: 3em;
+	background-color: white;
+	margin-bottom: 0.5em;
+	white-space: pre;
 }
 
 .udapp .events .event .name { margin-right: 0.5em; }
