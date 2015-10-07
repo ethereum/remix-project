@@ -119,7 +119,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $close.click( function(){ $instance.remove(); } )
             $instance.append( $close );
         }
-        var $title = $('<span class="title"/>').text( contract.name + " at " + (self.options.vm ? '0x' : '') + address.toString('hex') );
+        var context = self.options.vm ? 'memory' : 'blockchain';
+        var $title = $('<span class="title"/>').text( contract.name + " at " + (self.options.vm ? '0x' : '') + address.toString('hex')  + ' (' + context + ')');
         $title.click(function(){
             $instance.toggleClass('hide');
         });
