@@ -500,34 +500,44 @@ THE SOFTWARE.
 		};
 
 		var renderContracts = function(data, source) {
+			var udappContracts = [];
 			for (var contractName in data.contracts) {
 				var contract = data.contracts[contractName];
-				var dapp = new UniversalDApp([{
+				udappContracts.push({
 					name: contractName,
-					interface:  contract['interface'],
+					interface: contract['interface'],
 					bytecode: contract.bytecode
-				}], {
-					vm: executionContext === 'vm',
-					removable: false,
-					removable_instances: true
 				});
-				var $contractOutput = dapp.render();
-				$contractOutput
+			}
+			var dapp = new UniversalDApp(udappContracts, {
+				vm: executionContext === 'vm',
+				removable: false,
+				removable_instances: true,
+				renderOutputModifier: function(contractName, $contractOutput) {
+					var contract = data.contracts[contractName];
+					return $contractOutput
 						.append(textRow('Bytecode', contract.bytecode))
 						.append(textRow('Interface', contract['interface']))
 						.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
 						.append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
 						.append(getDetails(contract, source, contractName));
+				}});
+			var $contractOutput = dapp.render();
 
-				if (executionContext === 'vm') $('#txorigin').text('0x' + dapp.address.toString('hex'));
-				else web3.eth.getAccounts( function(err,accounts) {
-					if (err) renderError(err.message);
+			if (executionContext === 'vm')
+				$('#txorigin').text('0x' + dapp.address.toString('hex'));
+			else
+				web3.eth.getAccounts(function(err, accounts) {
+					if (err)
+						renderError(err.message);
 					$('#txorigin').text(accounts[0]);
 				});
 
-				$contractOutput.find('.title').click(function(ev){ $(this).closest('.udapp').toggleClass('hide') });
-				$('#output').append( $contractOutput );
-			}
+			$contractOutput.find('.title').click(function(ev){
+				console.log($(this));
+				$(this).closest('.contract').toggleClass('hide');
+			});
+			$('#output').append( $contractOutput );
 			$('.col2 input,textarea').click(function() { this.select(); });
 		};
 		var tableRowItems = function(first, second, cls) {

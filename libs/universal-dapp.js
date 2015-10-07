@@ -2,6 +2,7 @@ function UniversalDApp (contracts, options) {
     this.options = options || {};
     this.$el = $('<div class="udapp" />');
     this.contracts = contracts;
+    this.renderOutputModifier = options.renderOutputModifier || function(name, content) { return content; };
 
     if (!options.vm && web3.currentProvider) {
 
@@ -44,7 +45,7 @@ UniversalDApp.prototype.render = function () {
                 }
                 $contractEl.append( $title ).append( this.getCreateInterface( $contractEl, this.contracts[c]) );
             }
-            this.$el.append( $contractEl );
+            this.$el.append(this.renderOutputModifier(this.contracts[c].name, $contractEl));
         }
     }
     $legend = $('<div class="legend" />')
