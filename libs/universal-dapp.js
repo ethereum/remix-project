@@ -306,14 +306,19 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
             var func = web3.eth.contract( [args.abi] ).at( to );
             func[args.abi.name].call( cb );
         } else {
-            web3.eth.sendTransaction({
+            var tx = {
                 from: web3.eth.accounts[0],
                 to: to,
                 data: data,
                 gas: 1000000
-            }, function(err, resp) {
-                cb( err, resp );
-            });
+            }
+            web3.eth.estimateGas( tx, function(err, resp){
+                tx.gas = resp;
+                if (!err) web3.eth.sendTransaction( tx, function(err, resp) {
+                    cb( err, resp );
+                });
+                else cb( err, resp);
+            })
         }
     } else {
         try {
