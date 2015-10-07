@@ -35,10 +35,6 @@
 	height: 7em;
 }
 
-.udapp button {
-	min-width: 8em;
-}
-
 .udapp-setup button {
 	background-color: #556DF3;
 	color: white;
@@ -188,11 +184,14 @@
 .udapp .instance button {
 	width: 50%;
 	float: left;
+	box-sizing: border-box;
 }
 
-.udapp .contractProperty.hasArgs input,
-.udapp .contractProperty.hasArgs button {
-	width: 50%;
+.udapp .contractProperty.hasArgs input {
+	width: 75%;
+}
+.udapp .contractProperty button {
+	width: 25%;
 }
 
 .udapp .contractProperty .call {
@@ -201,6 +200,7 @@
 
 .udapp .contractProperty.constant .call {
 	background-color: #556DF3;
+	width: 25%;
 }
 
 .udapp .contractProperty input {
@@ -210,7 +210,7 @@
 .udapp .contractProperty > .value {
 	padding: 0 0.4em;
 	box-sizing: border-box;
-	width: 50%;
+	width: 75%;
 	float: left;
 	word-wrap: break-word;
 }
