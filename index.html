@@ -470,7 +470,7 @@ THE SOFTWARE.
 				code += "var " + inp.name + " = /* var of type " + inp.type + " here */ ;\n";
 			});
 
-			code += "\nvar " + contractName + "Contract = web3.eth.contract(" + interface.replace("\n","") + ");"
+			code += "var " + contractName + "Contract = web3.eth.contract(" + interface.replace("\n","") + ");"
 				+"\nvar " + contractName + " = " + contractName + "Contract.new(";
 			
 			$.each(funABI.inputs, function(i, inp) {
