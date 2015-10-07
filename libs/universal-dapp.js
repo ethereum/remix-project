@@ -191,7 +191,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         inputs += inp.type + ' ' + inp.name;
     });
     if (!args.bytecode && !fun.displayName()) return;
-    var inputField = $('<input/>').attr('placeholder', inputs);
+    var inputField = $('<input/>').attr('placeholder', inputs).attr('title', inputs);
     var $outputOverride = $('<div class="value" />');
     var outputSpan = $('<div class="output"/>');
 
