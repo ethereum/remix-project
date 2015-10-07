@@ -30,6 +30,7 @@ THE SOFTWARE.
 <title>Solidity realtime compiler and runtime</title>
 <link rel="stylesheet" href="stylesheets/styles.css">
 <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+<link rel="stylesheet" href="stylesheets/universal-dapp.css">
 <link rel="stylesheet" href="stylesheets/browser-solidity.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <style type="text/css">
@@ -41,6 +42,7 @@ THE SOFTWARE.
 <script src="libs/mode-solidity.js"></script>
 <script src="bin/soljson-latest.js"></script>
 <script src="libs/ethereumjs-vm.js"></script>
+<script src="libs/universal-dapp.js"></script>
 <script src="libs/web3.min.js"></script>
 <script src="ballot.sol.js"></script>
 
@@ -50,26 +52,35 @@ THE SOFTWARE.
 	
 
 	<div id="editor">
-	<div id="files">
-		<span class="newFile" title="New File">+</span>
-	</div>
+		<div id="files">
+			<span class="newFile" title="New File">+</span>
+		</div>
 		<div id="input"></div>
+		<div id="dragbar"></div>
 	</div>
 
 	<div id="righthand-panel">
-		<div id="dragbar"></div>
 		<div id="header">
 			<img id="solIcon" src="solidity.svg">
 			<h1>Solidity realtime<br/>compiler and runtime</h1>
 			<div class="info">
 				<p>Version: <span id="version">(loading)</span><br/>
 				Change to: <select id="versionSelector"></select><br/>
-				Execution environment does not connect to any node, everyhing is local and in memory only.<br/>
 				<code>tx.origin = <span id="txorigin"/></code></p>
 			</div>
 			<div id="optimizeBox">
-				<input id="editorWrap" type="checkbox"><label for="editorWrap">Text Wrap</label>
-				<input id="optimize" type="checkbox"><label for="optimize">Enable Optimization</label>
+				<label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
+				<label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
+				<span id="executionContext">
+					<label for="vm" title="Execution environment does not connect to any node, everything is local and in memory only.">
+						<input id="vm" type="radio" value="vm" checked name="executionContext">
+						JavaScript VM
+					</label>
+					<label for="web3" title="Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!">
+						<input id="web3" type="radio" value="web3" name="executionContext">
+						Web3 Provider
+					</label>
+				</span>
 			</div>
 		</div>
 		<div id="output"></div>
@@ -108,6 +119,27 @@ THE SOFTWARE.
 	session.setMode("ace/mode/javascript");
 	session.setTabSize(4);
 	session.setUseSoftTabs(true);
+
+	// ----------------- execution context -------------
+
+	var $vmToggle = $('#vm');
+	var $web3Toggle = $('#web3');
+
+	var executionContext = 'vm';
+	$vmToggle.get(0).checked = true;
+
+	$vmToggle.on('change', executionContextChange );
+	$web3Toggle.on('change', executionContextChange );
+
+	function executionContextChange (ev) {
+		if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
+			$vmToggle.get(0).checked = true;
+			executionContext = 'vm';
+		} else executionContext = ev.target.value;
+		compile();
+	}
+
+
 
 	// ----------------- file selector-------------
 
@@ -307,6 +339,7 @@ THE SOFTWARE.
 		onResize();
 
 		document.querySelector('#editor').addEventListener('change', onResize);
+		document.querySelector('#editorWrap').addEventListener('change', onResize);
 		
 
 		// ----------------- compiler ----------------------
@@ -332,14 +365,21 @@ THE SOFTWARE.
 				renderError("Uncaught JavaScript Exception:\n" + exception);
 				return;
 			}
-			if (data['error'] !== undefined)
+
+			var noFatalErrors = true; // ie warnings are ok
+
+			if (data['error'] !== undefined) {
 				renderError(data['error']);
-			if (data['errors'] != undefined)
+				if (errortype(data['error']) !== 'warning') noFatalErrors = false;
+			}
+			if (data['errors'] != undefined) {
 				$.each(data['errors'], function(i, err) {
 					renderError(err);
+					if (errortype(err) !== 'warning') noFatalErrors = false;
 				});
-			else
-				renderContracts(data, input);
+			}
+			
+			if (noFatalErrors) renderContracts(data, input);
 				
 		}
 		
@@ -392,9 +432,14 @@ THE SOFTWARE.
 		// ----------------- compiler output renderer ----------------------
 		var detailsOpen = {};
 
+		function errortype(message) {
+			return message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
+		}
+
 		var renderError = function(message) {
-			var type = message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
-			var $error = $('<pre class="' + type + '"></pre>').text(message);
+			var type = errortype(message);
+			var $pre = $("<pre />").text(message);
+			var $error = $('<div class="sol ' + type + '"><div class="close">x</div></div>').prepend($pre);
 			$('#output').append( $error );
 			var err = message.match(/^:([0-9]*):([0-9]*)/);
 			if (err && err.length) {
@@ -411,6 +456,11 @@ THE SOFTWARE.
 					editor.focus();
 					editor.gotoLine(errLine + 1, errCol - 1, true);
 				});
+				$error.find('.close').click(function(ev){
+					ev.preventDefault();
+					$error.remove();
+					return false;
+				});
 			}
 		};
 
@@ -422,7 +472,7 @@ THE SOFTWARE.
 				code += "var " + inp.name + " = /* var of type " + inp.type + " here */ ;\n";
 			});
 
-			code += "\nvar " + contractName + "Contract = web3.eth.contract(" + interface.replace("\n","") + ");"
+			code += "var " + contractName + "Contract = web3.eth.contract(" + interface.replace("\n","") + ");"
 				+"\nvar " + contractName + " = " + contractName + "Contract.new(";
 			
 			$.each(funABI.inputs, function(i, inp) {
@@ -450,27 +500,34 @@ THE SOFTWARE.
 		};
 
 		var renderContracts = function(data, source) {
-			$('#output').empty();
 			for (var contractName in data.contracts) {
 				var contract = data.contracts[contractName];
-				var title = $('<h3 class="title"/>').text(contractName);
-				var contractOutput = $('<div class="contractOutput"/>')
-					.append(title);
-				var body = $('<div class="body" />')
-				contractOutput.append(body);
-				if (contract.bytecode.length > 0)
-					title.append($('<div class="size"/>').text((contract.bytecode.length / 2) + ' bytes'))
-					body.append(getExecuteInterface(contract, contractName))
-						.append(tableRow('Bytecode', contract.bytecode));
-				body.append(tableRow('Interface', contract['interface']))
-					.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
-					.append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
-					.append(getDetails(contract, source, contractName));
+				var dapp = new UniversalDApp([{
+					name: contractName,
+					interface:  contract['interface'],
+					bytecode: contract.bytecode
+				}], {
+					vm: executionContext === 'vm',
+					removable: false,
+					removable_instances: true
+				});
+				var $contractOutput = dapp.render();
+				$contractOutput
+						.append(textRow('Bytecode', contract.bytecode))
+						.append(textRow('Interface', contract['interface']))
+						.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
+						.append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
+						.append(getDetails(contract, source, contractName));
 
-				$('#output').append(contractOutput);
-				title.click(function(ev){ $(this).parent().toggleClass('hide') });
+				if (executionContext === 'vm') $('#txorigin').text('0x' + dapp.address.toString('hex'));
+				else web3.eth.getAccounts( function(err,accounts) {
+					if (err) renderError(err.message);
+					$('#txorigin').text(accounts[0]);
+				});
+
+				$contractOutput.find('.title').click(function(ev){ $(this).closest('.udapp').toggleClass('hide') });
+				$('#output').append( $contractOutput );
 			}
-
 			$('.col2 input,textarea').click(function() { this.select(); });
 		};
 		var tableRowItems = function(first, second, cls) {
@@ -491,7 +548,7 @@ THE SOFTWARE.
 				cls);
 		};
 		var getDetails = function(contract, source, contractName) {
-			var button = $('<button>Details</button>');
+			var button = $('<button>Toggle Details</button>');
 			var details = $('<div style="display: none;"/>')
 				.append(tableRow('Solidity Interface', contract.solidity_interface))
 				.append(tableRow('Opcodes', contract.opcodes));
@@ -513,7 +570,7 @@ THE SOFTWARE.
 			button.click(function() { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
 			if (detailsOpen[contractName])
 				details.show();
-			return $('<div/>').append(button).append(details);
+			return $('<div class="contractDetails"/>').append(button).append(details);
 		};
 		var formatGasEstimates = function(data) {
 			var gasToText = function(g) { return g === null ? 'unknown' : g; }
@@ -552,35 +609,8 @@ THE SOFTWARE.
 
 			return text;
 		};
-		$('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); })
-
-		// ----------------- VM ----------------------
-
-		var stateTrie = new EthVm.Trie();
-		var vm = new EthVm.VM(stateTrie);
-		//@todo this does not calculate the gas costs correctly but gets the job done.
-		var identityCode = 'return { gasUsed: 1, return: opts.data, exception: 1 };';
-		var identityAddr = ethUtil.pad(new Buffer('04', 'hex'), 20)
-		vm.loadPrecompiled(identityAddr, identityCode);
-		var secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
-		var publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
-		var address = ethUtil.pubToAddress(new Buffer(publicKey, 'hex'));
-		$('#txorigin').text('0x' + address.toString('hex'));
-		var account = new EthVm.Account();
-		account.balance = 'f00000000000000001';
-		var nonce = 0;
-		stateTrie.put(address, account.serialize());
-		var runTx = function(data, to, cb) {
-			var tx = new EthVm.Transaction({
-				nonce: new Buffer([nonce++]), //@todo count beyond 255
-				gasPrice: '01',
-				gasLimit: '3000000000', // plenty
-				to: to,
-				data: data
-			});
-			tx.sign(new Buffer(secretKey, 'hex'));
-			vm.runTx({tx: tx}, cb);
-		};
+		
+		$('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); });
 
 		var getConstructorInterface = function(abi) {
 			var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
@@ -590,78 +620,6 @@ THE SOFTWARE.
 					break;
 				}
 			return funABI;
-		};
-
-		var getCallButton = function(args) {
-			// args.abi, args.bytecode [constr only], args.address [fun only]
-			// args.appendFunctions [constr only]
-			var isConstructor = args.bytecode !== undefined;
-			var fun = new web3.eth.function(args.abi);
-			var inputs = '';
-			$.each(args.abi.inputs, function(i, inp) {
-				if (inputs != '') inputs += ', ';
-				inputs += inp.type + ' ' + inp.name;
-			});
-			var inputField = $('<input/>').attr('placeholder', inputs);
-			var outputSpan = $('<div class="output"/>');
-			var button = $('<button/>')
-				.text(args.bytecode ? 'Create' : fun.displayName())
-				.click(function() {
-					var funArgs = $.parseJSON('[' + inputField.val() + ']');
-					var data = fun.toPayload(funArgs).data;
-					if (data.slice(0, 2) == '0x') data = data.slice(2);
-					if (isConstructor)
-						data = args.bytecode + data.slice(8);
-					outputSpan.text('...');
-					runTx(data, args.address, function(err, result) {
-						if (err)
-							outputSpan.text(err);
-						else if (isConstructor) {
-							outputSpan.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
-							args.appendFunctions(result.createdAddress);
-						} else {
-							var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
-							outputSpan.text(' Returned: ' + JSON.stringify(outputObj));
-						}
-					});
-				});
-			if (!isConstructor)
-				button.addClass('runButton');
-			var c = $('<div class="contractProperty"/>')
-				.append(button);
-			if (args.abi.inputs.length > 0)
-				c.append(inputField);
-			return c.append(outputSpan);
-		};
-
-		var getExecuteInterface = function(contract, name) {
-			var abi = $.parseJSON(contract.interface);
-			var execInter = $('<div/>');
-			var funABI = getConstructorInterface(abi);
-
-			var appendFunctions = function(address) {
-				var instance = $('<div class="contractInstance"/>');
-				var title = $('<span class="title"/>').text('Contract at ' + address.toString('hex'));
-				instance.append(title);
-				$.each(abi, function(i, funABI) {
-					if (funABI.type != 'function') return;
-					instance.append(getCallButton({
-						abi: funABI,
-						address: address
-					}));
-				});
-				execInter.append(instance);
-				title.click(function(ev){ $(this).parent().toggleClass('hide') });
-			};
-
-			if (contract.bytecode.length > 0)
-				execInter
-					.append(getCallButton({
-						abi: funABI,
-						bytecode: contract.bytecode,
-						appendFunctions: appendFunctions
-					}));
-			return execInter;
 		};
 
 	</script>

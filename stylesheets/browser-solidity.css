@@ -110,6 +110,13 @@ body {
     height: 5em;
 }
 
+#header #executionContext {
+    padding: 0.4em 1em;
+    background-color: #efefef;
+    display: inline-block;
+    margin-left: 1em;
+}
+
 .col1 {
     width: 30%;
     float: left;
@@ -119,9 +126,67 @@ body {
     float: left;
 }
 
+.udapp.hide {
+    padding-bottom: 0;
+}
+
+.udapp.hide > *:not(.contract) {
+    display: none;
+}
+
+.udapp.hide .contract {
+    margin: 0;
+}
+
+.udapp.hide .contract > *:not(.title) {
+    display: none;
+}
+
+.udapp .contract > .title {
+    cursor:pointer;
+}
+
+.udapp .contract > .title:before {
+    content: "\25BC";
+    opacity: 0.5;
+    margin-right: 0.4em;
+    font-size: 10px;
+}
+
+.udapp.hide > .contract > .title:before {
+    content: "\25B6";
+}
+
+#output .poweredBy,
+#output .legend { display: none; }
+
+#output .udapp {
+    border: 0 none;
+    box-shadow: none;
+    border-bottom: 1px dotted;
+}
+
+#output .udapp button,
+#output .udapp input {
+    padding: 0.25em;
+    color: black;
+}
+
+#output .udapp button {
+    border-color: #9E9D9D;
+}
+
+#output .udapp .atAddress { background-color: #B1EAC5; }
+#output .udapp .contractProperty .call { background-color: #FF8B8B; }
+#output .udapp .contractProperty.constant .call { background-color: #9DC1F5; }
+
 .row {
     overflow: auto;
+    display: block;
+    clear: both;
+    margin: 0.5em;
 }
+
 .gethDeployText {
     border-color: #bebebe;
     height: 2.5em;
@@ -129,104 +194,54 @@ body {
     display: block;
 }
 
-.contractInstance {
-    background-color: #ccc;
-    margin-bottom: 1em;
-    padding: 0.6em;
-}
-
-.contractInstance.hide > *:not(.title) {
-    display: none;
-}
-
-
-.contractInstance .contractProperty input,
-.contractInstance .contractProperty button {
-    text-align: left;
-    padding: 0.3em;
-    width: 50%;
-    margin: 0;
-}
-.contractOutput .contractInstance .contractProperty {
-    margin-bottom: 0;
-}
-.contractOutput .contractInstance .contractProperty .output {
-    padding: 0.4em;
-    background-color: #333;
-    color: white;
-    margin-bottom: 1em;
-    display: block;
-}
-.contractInstance .contractProperty .output:empty { display: none; }
-
-.contractOutput {
-    border-bottom: 1px dotted black;
-    padding: 0.6em;
-    box-sizing: border-box;
-}
-.contractOutput .contractProperty {
-    margin-bottom: 0.6em;
-}
-.contractOutput .contractProperty .output {
-    display: inline;
-}
-
-
-.contractOutput .body {
-    margin-top: 10px;
-}
-
-.contractOutput.hide {
-    background-color: #4C4C67;
-    color: white;
-}
-
-.contractOutput.hide > *:not(.title) {
-    display: none;
-}
-
-.title {
-    margin: 0;
+.contractDetails button {
+    background-color: transparent;
+    border: 0 none;
+    padding: 0;
+    display: inline-block;
+    text-decoration: underline;
+    color: blue;
     cursor: pointer;
-    font-family: monospace;
-    font-weight: bold;
+    width: auto;
+    min-width: 4em;
+    margin-bottom: 1em;
 }
 
-.title:before {
-    content: "\25BC";
-    opacity: 0.5;
-    margin-right: 0.4em;
+
+.sol.error,
+.sol.warning {
+    border-radius: 0;
+    word-wrap: break-word;
+    cursor: pointer;
+    position: relative;
+    margin: 0.25em;
+}
+
+.sol.error pre,
+.sol.warning pre {
+    background-color: transparent;
+    margin: 0;
     font-size: 10px;
+    border: 0 none;
 }
 
-.hide > .title:before {
-    content: "\25B6";
+.sol.error .close,
+.sol.warning .close {
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5em;
 }
 
-.contractOutput > .title {
-    border-bottom: #4C4C67;
-}
-
-
-.title .size {
-    font-weight: normal;
-    float: right;
-}
-
-.error {
+.sol.error {
     background-color: rgba(255, 0, 0, 0.5);
-    border-radius: 0;
-    word-wrap: break-word;
     border: 1px solid #D00909;
-    cursor: pointer;
 }
 
-.warning {
+.sol.warning {
     background-color: rgba(210, 202, 36, 0.5);
-    border-radius: 0;
-    word-wrap: break-word;
-    border: 1px solid #BBB427;
-    cursor: pointer;
+    border: 1px solid #BBB427; 
 }
 
 #ghostbar {
@@ -243,8 +258,8 @@ body {
 #dragbar{
     background-color: transparent;
     position: absolute;
-    width: 5px;
-    left: 0;
+    width: 10px;
+    right: -10px;
     top: 0;
     bottom: 0;
     cursor: col-resize;
