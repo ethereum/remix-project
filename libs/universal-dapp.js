@@ -270,6 +270,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var button = $('<button />')
         .addClass( 'call' )
+        .attr('title', fun.displayName())
         .text(args.bytecode ? 'Create' : fun.displayName())
         .click( handleCallButtonClick );
 

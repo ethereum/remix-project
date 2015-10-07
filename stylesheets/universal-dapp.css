@@ -178,6 +178,8 @@
 	background-color: #666;
 	color: white;
 	cursor: pointer;
+	overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .udapp .instance input,
