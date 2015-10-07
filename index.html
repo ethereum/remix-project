@@ -124,7 +124,9 @@ THE SOFTWARE.
 
 	var $vmToggle = $('#vm');
 	var $web3Toggle = $('#web3');
+
 	var executionContext = 'vm';
+	$vmToggle.get(0).checked = true;
 
 	$vmToggle.on('change', executionContextChange );
 	$web3Toggle.on('change', executionContextChange );
