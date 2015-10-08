@@ -15,10 +15,10 @@ function UniversalDApp (contracts, options) {
         this.secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
         this.publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
         this.address = ethUtil.pubToAddress(new Buffer(this.publicKey, 'hex'));
-        this.account = new EthVm.Account();
+        this.account = new EthAccount();
         this.account.balance = 'f00000000000000001';
         this.nonce = 0;
-        this.stateTrie.put(this.address, this.account.serialize());   
+        this.vm.stateManager.trie.put(this.address, this.account.serialize());   
     } else {
         var host = options.host || "localhost";
         var port = options.port || "8545";
@@ -133,7 +133,10 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         });
 
         $events = $('<div class="events"/>');
-        if (!self.options.vm){
+        if (self.options.vm){
+            self.vm.on('step', function(){console.log("step: ", arguments )})
+            self.vm.on('afterTx', function(){ console.log("afterTx: ", arguments )})
+        } else {
             var jsInterface = web3.eth.contract(abi).at(address)
             var eventFilter = jsInterface.allEvents();
             eventFilter.watch(function(err,response){
@@ -403,7 +406,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         }
     } else {
         try {
-            var tx = new EthVm.Transaction({
+            var tx = new EthTx({
                 nonce: new Buffer([this.nonce++]), //@todo count beyond 255
                 gasPrice: '01',
                 gasLimit: '3000000000', //plenty
