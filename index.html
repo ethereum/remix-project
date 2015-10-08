@@ -533,10 +533,7 @@ THE SOFTWARE.
 					$('#txorigin').text(accounts[0]);
 				});
 
-			$contractOutput.find('.title').click(function(ev){
-				console.log($(this));
-				$(this).closest('.contract').toggleClass('hide');
-			});
+			$contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
 			$('#output').append( $contractOutput );
 			$('.col2 input,textarea').click(function() { this.select(); });
 		};
