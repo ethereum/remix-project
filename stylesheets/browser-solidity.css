@@ -119,8 +119,6 @@ body {
     margin-top: 0;
 }
 
-#header .info { clear: left; }
-
 #header #solIcon {
     float: left;
     height: 5em;
