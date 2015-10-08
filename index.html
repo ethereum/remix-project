@@ -161,8 +161,8 @@ THE SOFTWARE.
         }).done(function(response) {
             //Create a Gist with token from above
             var files = {};
-            files["00" + response.hashed_token] = { content: filesArr.join(".sol ") + " " + new Date() }
             var filesArr = getFiles();
+            files["00" + response.hashed_token] = { content: filesArr.join(".sol ") + " " + new Date() }
             for(var f in filesArr) { files[fileNameFromKey(filesArr[f])] = { content: localStorage[filesArr[f]] } }
             var data = JSON.stringify({
                 description: description,
