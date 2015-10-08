@@ -1,0 +1,8 @@
+stylesheets
+libs
+solidity.svg
+ballot.sol.js
+index.html
+soljson.js
+bin/list.*
+bin/soljson-v*
