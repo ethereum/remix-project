@@ -62,17 +62,14 @@ THE SOFTWARE.
 
     <div id="righthand-panel">
         <div id="header">
-            <img id="solIcon" src="solidity.svg">
+            <img id="solIcon" title="Solidity realtime compiler and runtime" src="sol.gif">
             <div class="info">
-                <p>
-                    Version: <span id="version">(loading)</span><br/>
-                    Change to: <select id="versionSelector"></select>
-                </p>
+                <div class="version">Solidity version: <span id="version">(loading)</span> change to: <select id="versionSelector"></select></div>
             </div>
             <div id="optimizeBox">
+                <button id="gist" title="Publish all files as public gist on github.com"><img src="stylesheets/github.png" alt="">Publish gist</button>
                 <label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
                 <label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
-                <button id="gist" title="Publish all files as public gist on github.com">Publish gist</button>
                 <code class="origin">tx.origin: <span id="txorigin"/></code>
                 <span id="executionContext">
                     <label for="vm" title="Execution environment does not connect to any node, everything is local and in memory only.">

@@ -120,9 +120,34 @@ body {
 }
 
 #header #solIcon {
-    float: right;
+    float: left;
     height: 5em;
 }
+
+#header .info {
+    font-size: 10px;
+    font-family: monospace;
+    min-height: 5em;
+    padding: 1em 0;
+    padding-left: 7em;
+}
+
+#header #gist {
+    background-color: #efefef;
+    padding: 0.25em;
+    color: black;
+    border:0 none;
+    border-radius: 0.5em;
+    width: 8em;
+    margin-right: 1em;
+    cursor: pointer;
+}
+
+#header #gist img {
+    height: 1.15em;
+    margin-right: 0.5em;
+}
+
 
 #header .origin,
 #header #executionContext {
@@ -130,7 +155,10 @@ body {
     background-color: #efefef;
     display: block;
     margin-top: 0.5em;
+    word-wrap: break-word;
 }
+
+#header #executionContext{ margin-top: 0; }
 
 .col1 {
     width: 30%;
