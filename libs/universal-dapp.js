@@ -15,7 +15,7 @@ function UniversalDApp (contracts, options) {
         this.secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
         this.publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
         this.address = ethUtil.pubToAddress(new Buffer(this.publicKey, 'hex'));
-        this.account = new EthAccount();
+        this.account = new Account();
         this.account.balance = 'f00000000000000001';
         this.nonce = 0;
         this.vm.stateManager.trie.put(this.address, this.account.serialize());   
@@ -406,7 +406,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         }
     } else {
         try {
-            var tx = new EthTx({
+            var tx = new Tx({
                 nonce: new Buffer([this.nonce++]), //@todo count beyond 255
                 gasPrice: '01',
                 gasLimit: '3000000000', //plenty
