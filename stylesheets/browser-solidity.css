@@ -125,11 +125,10 @@ body {
 }
 
 #header .info {
-    font-size: 10px;
     font-family: monospace;
-    min-height: 5em;
-    padding: 1em 0;
-    padding-left: 7em;
+    min-height: 6em;
+    padding: 0.25em 0;
+    padding-left: 6em;
 }
 
 #header #gist {
@@ -159,6 +158,12 @@ body {
 }
 
 #header #executionContext{ margin-top: 0; }
+
+
+#header #versionSelector {
+    border: 0 none;
+    font-family: monospace;
+}
 
 .col1 {
     width: 30%;
