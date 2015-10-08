@@ -238,21 +238,21 @@ UniversalDApp.prototype.getCallButton = function(args) {
         var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
 
         if (isConstructor) {
-	   if (args.bytecode.indexOf('_') >= 0) {
-               if (self.options.vm)
-                   self.linkBytecode(args.contractName, function(err, bytecode) {
-                       if (err)
-                           $result.replaceWith(getOutput($('<span/>').text('Error deploying required libraries: ' + err)));
-                       else {
-                           args.bytecode = bytecode;
-                           handleCallButtonClick(ev);
-                       }
-                   });
-               else
-                   $result.replaceWeth(getOutput( $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>')));
-               return;
-           } else
-               data = args.bytecode + data.slice(8);
+	     if (args.bytecode.indexOf('_') >= 0) {
+                 if (self.options.vm)
+                     self.linkBytecode(args.contractName, function(err, bytecode) {
+                         if (err)
+                             $result.replaceWith(getOutput($('<span/>').text('Error deploying required libraries: ' + err)));
+                         else {
+                             args.bytecode = bytecode;
+                             handleCallButtonClick(ev);
+                         }
+                     });
+                 else
+                     $result.replaceWith(getOutput( $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>')));
+                 return;
+             } else
+                 data = args.bytecode + data.slice(8);
 	}
 
         if (lookupOnly && !inputs.length) {
@@ -316,7 +316,6 @@ UniversalDApp.prototype.getCallButton = function(args) {
 }
 
 UniversalDApp.prototype.linkBytecode = function(contractName, cb) {
-console.log("linking " + contractName);
     var bytecode = this.getContractByName(contractName).bytecode;
     if (bytecode.indexOf('_') < 0)
         return cb(null, bytecode);
@@ -341,7 +340,6 @@ console.log("linking " + contractName);
 };
 
 UniversalDApp.prototype.deployLibrary = function(contractName, cb) {
-console.log("deploying librari " + contractName);
     if (this.getContractByName(contractName).address)
         return cb(null, this.getContractByName(contractName).address);
     var self = this;
@@ -352,9 +350,7 @@ console.log("deploying librari " + contractName);
             else self.deployLibrary(contractName, cb);
         });
     else {
-        console.log(cb);
         this.runTx(bytecode, {abi: {constant: false}, bytecode: bytecode}, function(err, result) {
-            console.log(cb);
             if (err) return cb(err);
             self.getContractByName(contractName).address = result.createdAddress;
             cb(err, result.createdAddress);
