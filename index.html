@@ -145,43 +145,27 @@ THE SOFTWARE.
 
     $('#gist').click(function(){
 
-        //Get Github Authorization Token with proper scope, print to console
-        var note = ((new Date()).toString() + Math.random().toString());                                              
+        //Get Github Authorization Token with proper scope, print to console                                             
         var description = "Ethereum Contracts Gist created using soleditor at: https://chriseth.github.io/browser-solidity";
-        $.ajax({ 
-            url: 'https://api.github.com/authorizations',
-            type: 'POST',
-            beforeSend: function(xhr) { 
-                xhr.setRequestHeader("Authorization", "Basic " + "c29sZWRpdG9yOmRlY2VudHJhbGlzZWV2ZXJ5dGhpbmc="); 
-            },
-            data: JSON.stringify({
-                scopes:["gist"],
-                note: note
-            })
-        }).done(function(response) {
-            //Create a Gist with token from above
-            var files = {};
-            var filesArr = getFiles();
-            files["00" + response.hashed_token] = { content: filesArr.join(".sol ") + " " + new Date() }
-            for(var f in filesArr) { files[fileNameFromKey(filesArr[f])] = { content: localStorage[filesArr[f]] } }
-            var data = JSON.stringify({
-                description: description,
-                public: true,
-                files: files
-            });
+        //Create a Gist with token from above
+        var files = {};
+        var filesArr = getFiles();
+        files["00" + response.hashed_token] = { content: filesArr.join(".sol ") + " " + new Date() }
+        for(var f in filesArr) { files[fileNameFromKey(filesArr[f])] = { content: localStorage[filesArr[f]] } }
+        var data = JSON.stringify({
+            description: description,
+            public: true,
+            files: files
+        });
 
-            $.ajax({ 
-                url: 'https://api.github.com/gists',
-                type: 'POST',
-                beforeSend: function(xhr) { 
-                    xhr.setRequestHeader("Authorization", "token " + response.token); 
-                },
-                data: data
-            }).done(function(response) {
-                if (response.html_url && confirm("Created a gist at " + response.html_url + " Would you like to open it in a new window?")) {
-                    window.open( response.html_url );
-                }
-            });
+        $.ajax({ 
+            url: 'https://api.github.com/gists',
+            type: 'POST',
+            data: data
+        }).done(function(response) {
+            if (response.html_url && confirm("Created a gist at " + response.html_url + " Would you like to open it in a new window?")) {
+                window.open( response.html_url, '_blank' );
+            }
         });
 
     })
