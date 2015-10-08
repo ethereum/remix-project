@@ -120,15 +120,16 @@ body {
 }
 
 #header #solIcon {
-    float: left;
+    float: right;
     height: 5em;
 }
 
+#header .origin,
 #header #executionContext {
     padding: 0.4em 1em;
     background-color: #efefef;
-    display: inline-block;
-    margin-left: 1em;
+    display: block;
+    margin-top: 0.5em;
 }
 
 .col1 {

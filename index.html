@@ -66,13 +66,14 @@ THE SOFTWARE.
             <div class="info">
                 <p>
                     Version: <span id="version">(loading)</span><br/>
-                    Change to: <select id="versionSelector"></select> <button id="gist" title="Publish all files as public gist on github.com">Publish all files as public gist</button><br/>
-                    <code>tx.origin = <span id="txorigin"/></code>
+                    Change to: <select id="versionSelector"></select>
                 </p>
             </div>
             <div id="optimizeBox">
                 <label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
                 <label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
+                <button id="gist" title="Publish all files as public gist on github.com">Publish gist</button>
+                <code class="origin">tx.origin: <span id="txorigin"/></code>
                 <span id="executionContext">
                     <label for="vm" title="Execution environment does not connect to any node, everything is local and in memory only.">
                         <input id="vm" type="radio" value="vm" checked name="executionContext">
@@ -144,29 +145,32 @@ THE SOFTWARE.
     // ------------------ gist publish --------------
 
     $('#gist').click(function(){
-
-        //Get Github Authorization Token with proper scope, print to console                                             
-        var description = "Ethereum Contracts Gist created using soleditor at: https://chriseth.github.io/browser-solidity";
-        //Create a Gist with token from above
-        var files = {};
-        var filesArr = getFiles();
-        for(var f in filesArr) { files[fileNameFromKey(filesArr[f])] = { content: localStorage[filesArr[f]] } }
-        var data = JSON.stringify({
-            description: description,
-            public: true,
-            files: files
-        });
-
-        $.ajax({ 
-            url: 'https://api.github.com/gists',
-            type: 'POST',
-            data: data
-        }).done(function(response) {
-            if (response.html_url && confirm("Created a gist at " + response.html_url + " Would you like to open it in a new window?")) {
-                window.open( response.html_url, '_blank' );
+        if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com")) {
+                                           
+            var files = {};
+            var filesArr = getFiles();
+            var description = "Ethereum Contracts Gist created using soleditor at: https://chriseth.github.io/browser-solidity";
+            
+            for(var f in filesArr) {
+                files[fileNameFromKey(filesArr[f])] = {
+                    content: localStorage[filesArr[f]]
+                };
             }
-        });
 
+            $.ajax({ 
+                url: 'https://api.github.com/gists',
+                type: 'POST',
+                data: JSON.stringify({
+                    description: description,
+                    public: true,
+                    files: files
+                })
+            }).done(function(response) {
+                if (response.html_url && confirm("Created a gist at " + response.html_url + " Would you like to open it in a new window?")) {
+                    window.open( response.html_url, '_blank' );
+                }
+            });
+        }
     })
 
 
