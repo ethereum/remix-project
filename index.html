@@ -93,6 +93,31 @@ THE SOFTWARE.
 
 	$(document).ready(function() {
 
+	var $filesEl = $('#files');
+
+	// ------------------ gist load ----------------
+
+	var location_hash_params = window.location.hash.substr(1).split("=");
+	var loadingFromGist = false;
+	if (location_hash_params.length == 2 && location_hash_params[0] == 'gist') {
+		loadingFromGist = true;
+		$.ajax({
+			url: 'https://api.github.com/gists/'+location_hash_params[1],
+			jsonp: 'callback',
+			dataType: 'jsonp',
+			success: function(response){
+				if (response.data) {
+					for(var f in response.data.files) {
+						window.localStorage[fileKey(f)] = response.data.files[f].content;
+					}
+					updateFiles();
+				}
+			}
+		});
+	}
+
+
+
 	// ----------------- editor ----------------------
 
 	var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
@@ -106,6 +131,7 @@ THE SOFTWARE.
 
 	var untitledCount = '';
 	if (!getFiles().length || window.localStorage['sol-cache']) {
+		if(loadingFromGist) return;
 		// Backwards-compatibility     
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
 			untitledCount = (untitledCount - 0) + 1;
@@ -142,25 +168,6 @@ THE SOFTWARE.
 	}
 
 
-	// ------------------ gist load ----------------
-
-	var location_hash_params = window.location.hash.substr(1).split("=");
-	if (location_hash_params.length == 2 && location_hash_params[0] == 'gist') {
-		$.ajax({
-			url: 'https://api.github.com/gists/'+location_hash_params[1],
-			jsonp: 'callback',
-			dataType: 'jsonp',
-			success: function(response){
-				if (response.data) {
-					for(var f in response.data.files) {
-						window.localStorage[fileKey(f)] = response.data.files[f].content;
-					}
-					updateFiles();
-				}
-			}
-		})
-	}
-
 
 	// ------------------ gist publish --------------
 
@@ -169,7 +176,7 @@ THE SOFTWARE.
 										   
 			var files = {};
 			var filesArr = getFiles();
-			var description = "Ethereum Contracts Gist created using soleditor at: https://chriseth.github.io/browser-solidity to load gist in soleditor append #gist=gistid to the url, where gistid is the id in this gist url.";
+			var description = "Ethereum Contracts Gist created using soleditor at: https://chriseth.github.io/browser-solidity to load gist in soleditor append \"#gist=gistid\" to the url, where gistid is the id in this gists url.";
 			
 			for(var f in filesArr) {
 				files[fileNameFromKey(filesArr[f])] = {
@@ -195,8 +202,6 @@ THE SOFTWARE.
 
 
 	// ----------------- file selector-------------
-
-	var $filesEl = $('#files');
 
 	$filesEl.on('click','.newFile', function() {
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
