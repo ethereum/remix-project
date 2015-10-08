@@ -17,7 +17,7 @@ body {
     height: 2.5em;
     box-sizing: border-box;
     line-height: 2em;
-    padding: 0.5em 0.5em 0;
+    padding: 0.5em 0 0;
 }
 
 #files .file,
@@ -31,10 +31,26 @@ body {
     position: relative;
 }
 
-#files .newFile {
+#files .newFile,
+#files .toggleRHP {
     background-color: #B1EAC5;
     font-weight: bold;
     color: #4E775D;
+}
+
+#files .toggleRHP {
+    float: right;
+    cursor: pointer;
+}
+
+#files .toggleRHP:before {
+    content: ">>";
+    width: 2em;
+    padding: 0 0.6em;
+    box-sizing: border-box;
+}
+#files .toggleRHP.toggled:before {
+    content: "<<";
 }
 
 #files .file.active {
