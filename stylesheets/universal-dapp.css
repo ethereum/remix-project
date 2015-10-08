@@ -43,6 +43,7 @@
 
 .udapp .contract {
 	margin-bottom: 1em;
+	clear: both;
 }
 
 .udapp .create {
