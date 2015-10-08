@@ -34,23 +34,16 @@ body {
 #files .newFile,
 #files .toggleRHP {
     background-color: #B1EAC5;
+    padding: 0.6em;
     font-weight: bold;
-    color: #4E775D;
+    cursor: pointer;
+    color: black;
 }
 
 #files .toggleRHP {
     float: right;
-    cursor: pointer;
-}
-
-#files .toggleRHP:before {
-    content: ">>";
     width: 2em;
-    padding: 0 0.6em;
     box-sizing: border-box;
-}
-#files .toggleRHP.toggled:before {
-    content: "<<";
 }
 
 #files .file.active {
@@ -65,7 +58,6 @@ body {
     height: 1.25em;
     width: 1.25em;
     line-height: 1em;
-    border-radius: 1em;
     color: #FF8080;
     display: none;
     margin: 0.4em;
@@ -100,12 +92,12 @@ body {
     right: 0;
     bottom: 0px;
     overflow: auto;
-    border-left: 1px dotted black;
+    border-left: 3px solid #efefef;
     box-sizing: border-box;
 }
 
 #output {
-    border-top: 1px dotted black;
+    border-top: 3px solid #efefef;
     display: block;
 }
 
@@ -133,18 +125,14 @@ body {
 
 #header #gist {
     background-color: #efefef;
+    font-size: 12px;
     padding: 0.25em;
     color: black;
     border:0 none;
-    border-radius: 0.5em;
+    border-radius: 3px;
     width: 8em;
     margin-right: 1em;
     cursor: pointer;
-}
-
-#header #gist img {
-    height: 1.15em;
-    margin-right: 0.5em;
 }
 
 
@@ -163,6 +151,7 @@ body {
 #header #versionSelector {
     border: 0 none;
     font-family: monospace;
+    background-color: transparent;
 }
 
 .col1 {
@@ -211,22 +200,9 @@ body {
 #output .udapp {
     border: 0 none;
     box-shadow: none;
-    border-bottom: 1px dotted;
+    border-bottom: 3px solid #efefef;
 }
 
-#output .udapp button,
-#output .udapp input {
-    padding: 0.25em;
-    color: black;
-}
-
-#output .udapp button {
-    border-color: #9E9D9D;
-}
-
-#output .udapp .atAddress { background-color: #B1EAC5; }
-#output .udapp .contractProperty .call { background-color: #FF8B8B; }
-#output .udapp .contractProperty.constant .call { background-color: #9DC1F5; }
 
 .row {
     overflow: auto;

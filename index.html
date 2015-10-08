@@ -28,23 +28,24 @@ THE SOFTWARE.
 -->
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
 <title>Solidity realtime compiler and runtime</title>
-<link rel="stylesheet" href="stylesheets/styles.css">
-<link rel="stylesheet" href="stylesheets/pygment_trac.css">
-<link rel="stylesheet" href="stylesheets/universal-dapp.css">
-<link rel="stylesheet" href="stylesheets/browser-solidity.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/pygment_trac.css">
+<link rel="stylesheet" href="assets/css/universal-dapp.css">
+<link rel="stylesheet" href="assets/css/browser-solidity.css">
+<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <style type="text/css">
 
 </style>
 <script src="bin/list.js"></script>
-<script src="libs/jquery-2.1.3.min.js"></script>
-<script src="libs/ace.js"></script>
-<script src="libs/mode-solidity.js"></script>
+<script src="assets/js/jquery-2.1.3.min.js"></script>
+<script src="assets/js/ace.js"></script>
+<script src="assets/js/mode-solidity.js"></script>
 <script src="bin/soljson-latest.js"></script>
-<script src="libs/ethereumjs-vm.js"></script>
-<script src="libs/universal-dapp.js"></script>
-<script src="libs/web3.min.js"></script>
-<script src="ballot.sol.js"></script>
+<script src="assets/js/ethereumjs-vm.js"></script>
+<script src="assets/js/universal-dapp.js"></script>
+<script src="assets/js/web3.min.js"></script>
+<script src="assets/js/ballot.sol.js"></script>
 
 
 </head>
@@ -53,8 +54,8 @@ THE SOFTWARE.
 
     <div id="editor">
         <div id="files">
-            <span class="newFile" title="New File">+</span>
-            <span class="toggleRHP" title="Toggle right hand panel"></span>
+            <span class="newFile" title="New File"><i class="fa fa-file-text-o"></i></span>
+            <span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-columns"></i></span>
         </div>
         <div id="input"></div>
         <div id="dragbar"></div>
@@ -62,12 +63,12 @@ THE SOFTWARE.
 
     <div id="righthand-panel">
         <div id="header">
-            <img id="solIcon" title="Solidity realtime compiler and runtime" src="stylesheets/sol.gif">
+            <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/sol.gif">
             <div class="info">
                 <div class="version">Solidity version: <span id="version">(loading)</span> change to: <select id="versionSelector"></select></div>
             </div>
             <div id="optimizeBox">
-                <button id="gist" title="Publish all files as public gist on github.com"><img src="stylesheets/github.png" alt="">Publish gist</button>
+                <button id="gist" title="Publish all files as public gist on github.com"><i class="fa fa-github"></i> Publish gist</button>
                 <label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
                 <label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
                 <code class="origin">tx.origin: <span id="txorigin"/></code>
@@ -264,7 +265,7 @@ THE SOFTWARE.
 
     function fileTabTemplate(key) {
         var name = fileNameFromKey(key);
-        return $('<span class="file"><span class="name">'+name+'</span><span class="remove">x</span></span>');
+        return $('<span class="file"><span class="name">'+name+'</span><span class="remove"><i class="fa fa-close"></i></span></span>');
     }
 
     function fileKey( name ) {
@@ -484,7 +485,7 @@ THE SOFTWARE.
         var renderError = function(message) {
             var type = errortype(message);
             var $pre = $("<pre />").text(message);
-            var $error = $('<div class="sol ' + type + '"><div class="close">x</div></div>').prepend($pre);
+            var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
             $('#output').append( $error );
             var err = message.match(/^:([0-9]*):([0-9]*)/);
             if (err && err.length) {
