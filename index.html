@@ -108,11 +108,15 @@ THE SOFTWARE.
         var gistId;
         var key = location_hash_params[index+1];
         if (key === '') {
-            gistId = getGistId( prompt("Enter the gist url or id you'd like to load.") );            
+            var str = prompt("Enter the URL or ID of the Gist you'd like to load.")
+            if (str !== '') {
+                gistId = getGistId( str );
+                loadingFromGist = true;    
+            }
         } else {
             gistId = getGistId( key );
+            loadingFromGist = true;
         }
-		loadingFromGist = true;
 		$.ajax({
 			url: 'https://api.github.com/gists/'+gistId,
 			jsonp: 'callback',
