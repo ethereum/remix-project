@@ -134,8 +134,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
 
         $events = $('<div class="events"/>');
         if (self.options.vm){
-            self.vm.on('step', function(){console.log("step: ", arguments )})
-            self.vm.on('afterTx', function(){ console.log("afterTx: ", arguments )})
+            self.vm.on('afterTx', function(response){
+                // TODO: parse/use reponse.vm.logs
+            });
         } else {
             var jsInterface = web3.eth.contract(abi).at(address)
             var eventFilter = jsInterface.allEvents();
