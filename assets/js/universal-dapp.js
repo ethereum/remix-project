@@ -2,6 +2,7 @@ function UniversalDApp (contracts, options) {
     this.options = options || {};
     this.$el = $('<div class="udapp" />');
     this.contracts = contracts;
+    this.renderOutputModifier = options.renderOutputModifier || function(name, content) { return content; };
 
     if (!options.vm && web3.currentProvider) {
 
@@ -44,7 +45,7 @@ UniversalDApp.prototype.render = function () {
                 }
                 $contractEl.append( $title ).append( this.getCreateInterface( $contractEl, this.contracts[c]) );
             }
-            this.$el.append( $contractEl );
+            this.$el.append(this.renderOutputModifier(this.contracts[c].name, $contractEl));
         }
     }
     $legend = $('<div class="legend" />')
@@ -59,10 +60,17 @@ UniversalDApp.prototype.render = function () {
     return this.$el;
 }
 
+UniversalDApp.prototype.getContractByName = function(contractName) {
+    for (var c in this.contracts)
+        if (this.contracts[c].name == contractName)
+            return this.contracts[c];
+    return null;
+};
+
 UniversalDApp.prototype.getABIInputForm = function (cb){
     var self = this;
     var $el = $('<div class="udapp-setup" />');
-    var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytyecode, "interface": abi }, { ... } ]\'/>')
+    var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytecode, "interface": abi }, { ... } ]\'/>')
     var $createButton = $('<button class="udapp-create"/>').text('Create a Universal ÐApp')
     $createButton.click(function(ev){
         var contracts =  $.parseJSON( $jsonInput.val() );
@@ -157,6 +165,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     if (!address || !$target) {
         $createInterface.append( this.getCallButton({
             abi: funABI,
+            contractName: contract.name,
             bytecode: contract.bytecode,
             appendFunctions: appendFunctions
         }));
@@ -179,7 +188,7 @@ UniversalDApp.prototype.getConstructorInterface = function(abi) {
 
 UniversalDApp.prototype.getCallButton = function(args) {
     var self = this;
-    // args.abi, args.bytecode [constr only], args.address [fun only]
+    // args.abi, args.contractName [constr only], args.bytecode, args.address [fun only]
     // args.appendFunctions [constr only]
     var isConstructor = args.bytecode !== undefined;
     var lookupOnly = ( args.abi.constant && !isConstructor );
@@ -225,9 +234,26 @@ UniversalDApp.prototype.getCallButton = function(args) {
         var funArgs = $.parseJSON('[' + inputField.val() + ']');
         var data = fun.toPayload(funArgs).data;
         if (data.slice(0, 2) == '0x') data = data.slice(2);
-        if (isConstructor) data = args.bytecode + data.slice(8);
 
         var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
+
+        if (isConstructor) {
+	     if (args.bytecode.indexOf('_') >= 0) {
+                 if (self.options.vm)
+                     self.linkBytecode(args.contractName, function(err, bytecode) {
+                         if (err)
+                             $result.replaceWith(getOutput($('<span/>').text('Error deploying required libraries: ' + err)));
+                         else {
+                             args.bytecode = bytecode;
+                             handleCallButtonClick(ev);
+                         }
+                     });
+                 else
+                     $result.replaceWith(getOutput( $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>')));
+                 return;
+             } else
+                 data = args.bytecode + data.slice(8);
+	}
 
         if (lookupOnly && !inputs.length) {
             $outputOverride.empty().append( $result );
@@ -288,6 +314,49 @@ UniversalDApp.prototype.getCallButton = function(args) {
         .append( (lookupOnly && !inputs.length) ? $outputOverride : inputField );
     return $contractProperty.append(outputSpan);
 }
+
+UniversalDApp.prototype.linkBytecode = function(contractName, cb) {
+    var bytecode = this.getContractByName(contractName).bytecode;
+    if (bytecode.indexOf('_') < 0)
+        return cb(null, bytecode);
+    var m = bytecode.match(/__([^_]{1,36})__/);
+    if (!m)
+        return cb("Invalid bytecode format.");
+    var libraryName = m[1];
+    if (!this.getContractByName(contractName))
+        return cb("Library " + libraryName + " not found.");
+    var self = this;
+    this.deployLibrary(libraryName, function(err, address) {
+        if (err) return cb(err);
+        var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_');
+        var hexAddress = address.toString('hex');
+        if (hexAddress.slice(0, 2) == '0x') hexAddress = hexAddress.slice(2);
+        hexAddress = Array(40 - hexAddress.length + 1).join('0') + hexAddress;
+        while (bytecode.indexOf(libLabel) >= 0)
+            bytecode = bytecode.replace(libLabel, hexAddress);
+        self.getContractByName(contractName).bytecode = bytecode;
+        self.linkBytecode(contractName, cb);
+    });
+};
+
+UniversalDApp.prototype.deployLibrary = function(contractName, cb) {
+    if (this.getContractByName(contractName).address)
+        return cb(null, this.getContractByName(contractName).address);
+    var self = this;
+    var bytecode = this.getContractByName(contractName).bytecode;
+    if (bytecode.indexOf('_') >= 0)
+        this.linkBytecode(contractName, function(err, bytecode) {
+            if (err) cb(err);
+            else self.deployLibrary(contractName, cb);
+        });
+    else {
+        this.runTx(bytecode, {abi: {constant: false}, bytecode: bytecode}, function(err, result) {
+            if (err) return cb(err);
+            self.getContractByName(contractName).address = result.createdAddress;
+            cb(err, result.createdAddress);
+        });
+    }
+};
 
 UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract ) {
     $contract.append( self.getInstanceInterface(contract) );

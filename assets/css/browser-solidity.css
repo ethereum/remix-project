@@ -163,19 +163,15 @@ body {
     float: left;
 }
 
-.udapp.hide {
+.contract.hide {
     padding-bottom: 0;
 }
 
-.udapp.hide > *:not(.contract) {
-    display: none;
-}
-
-.udapp.hide .contract {
+.contract.hide {
     margin: 0;
 }
 
-.udapp.hide .contract > *:not(.title) {
+.contract.hide > *:not(.title) {
     display: none;
 }
 
@@ -190,7 +186,7 @@ body {
     font-size: 10px;
 }
 
-.udapp.hide > .contract > .title:before {
+.contract.hide > .title:before {
     content: "\25B6";
 }
 
