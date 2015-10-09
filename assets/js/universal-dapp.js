@@ -382,6 +382,9 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
+
+    var gas = self.options.getGas ? self.options.getGas : 1000000;
+    var value = self.options.getValue ? self.options.getValue : 0;
     
     if (!this.vm) {
         if (constant && !isConstructor) {
@@ -389,10 +392,11 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
             func[args.abi.name].call( cb );
         } else {
             var tx = {
-                from: web3.eth.accounts[0],
+                from: self.options.getAddress ? self.options.getAddress() : web3.eth.accounts[0],
                 to: to,
                 data: data,
-                gas: 1000000
+                gas: gas,
+                value: value
             };
             web3.eth.estimateGas( tx, function(err, resp){
                 tx.gas = resp;
@@ -409,6 +413,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 gasPrice: '01',
                 gasLimit: '3000000000', //plenty
                 to: to,
+                value: value,
                 data: data
             });
             tx.sign(new Buffer(this.secretKey, 'hex'));

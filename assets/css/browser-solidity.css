@@ -139,15 +139,24 @@ body {
 #header #optionViews {
     clear: both;
     overflow: auto;
-    padding: 1em;
 }
 #header #optionViews > div {
     display: none;
+    padding: 0.4em;
 }
 #header #optionViews.txView #txView { display: block; }
 #header #optionViews.settingsView #settingsView { display: block; }
 #header #optionViews.publishView #publishView { display: block; }
 #header #optionViews.envView #envView { display: block; }
+
+#header #optionViews.txView input,
+#header #optionViews.txView select {
+    max-width: 13em;
+    padding: 0.3em;
+    box-sizing: border-box;
+    border: 1px solid rgba( 0,0,0,0.3 );
+    border-radius: 3px;
+}
 
 #header .info {
     font-family: monospace;
@@ -172,28 +181,14 @@ body {
 #header .origin,
 #header #executionContext {
     display: block;
-    margin-top: 0.5em;
     word-wrap: break-word;
 }
-
-#header #executionContext{ margin-top: 0; }
-
 
 #header #versionSelector {
     border: 0 none;
     font-family: monospace;
     background-color: transparent;
 }
-
-
-
-
-
-
-
-
-
-
 
 .col1 {
     width: 30%;
