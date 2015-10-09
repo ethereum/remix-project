@@ -74,12 +74,10 @@ THE SOFTWARE.
 			</div>
 			<div id="optionViews" class="txView">
 				<div id="txView">
-					<code class="origin">tx.origin: <span id="txorigin"/></code>
-					<select name="" id="">
-						<option value="">Acc</option>
-					</select>
-					<input type="text" class="gas">
-					<input type="text" class="value">
+					<select name="origin" id="txorigin"></select>
+					<label for="gas"><input type="number" id="gas"> Gas</label>
+					<label for="gasPrice"><input type="number" id="gasPrice"> Gas Price</label>
+					<label for="value"><input type="number" id="value"> Value</label>
 				</div>
 				<div id="settingsView">
 					<div class="version">Solidity version: <span id="version">(loading)</span> <br/>Change to: <select id="versionSelector"></select></div>
@@ -649,17 +647,22 @@ THE SOFTWARE.
 				}});
 			var $contractOutput = dapp.render();
 
-			if (executionContext === 'vm')
-				$('#txorigin').text('0x' + dapp.address.toString('hex'));
-			else
-				web3.eth.getAccounts(function(err, accounts) {
-					if (err)
-						renderError(err.message);
-					if (accounts && accounts[0])
-						$('#txorigin').text(accounts[0]);
-						else
-						$('#txorigin').text('unknown');	
-				});
+
+			$txOrigin = $('#txorigin');
+			if (executionContext === 'vm') {
+				$txOrigin.empty();
+				var addr = '0x' + dapp.address.toString('hex');
+				$txOrigin.val(addr);
+				$txOrigin.append($('<option />').val(addr).text(addr));
+			} else web3.eth.getAccounts(function(err, accounts) {
+				if (err)
+					renderError(err.message);
+				if (accounts && accounts[0]){
+					$txOrigin.empty();
+					for( var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])); }
+					$txOrigin.val(accounts[0]);
+				} else $txOrigin.val('unknown');	
+			});
 
 			$contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
 			$('#output').append( $contractOutput );

@@ -142,7 +142,6 @@ body {
     padding: 1em;
 }
 #header #optionViews > div {
-    margin-top: 1em;
     display: none;
 }
 #header #optionViews.txView #txView { display: block; }
