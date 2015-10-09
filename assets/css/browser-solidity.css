@@ -158,6 +158,15 @@ body {
     border-radius: 3px;
 }
 
+#header #optionViews .pre {
+    word-wrap: break-word;
+    background-color: #ccc;
+    font-family: monospace;
+    border-radius: 3px;
+    display: inline-block;
+    padding: 0 0.6em;
+}
+
 #header #optionViews .hide {
     display: none;
 }
