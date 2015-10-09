@@ -221,57 +221,65 @@ UniversalDApp.prototype.getCallButton = function(args) {
     }
 
     var getOutput = function() {
-        var values = Array.prototype.slice.call(arguments);
         var $result = $('<div class="result" />');
         var $close = $('<div class="udapp-close" />');
         $close.click( function(){ $result.remove(); } );
         $result.append( $close );
-        for( var v in values ) { $result.append( values[v] ); } 
         return $result;
-    }
+    };
+    var clearOutput = function($result) {
+        $(':not(.udapp-close)', $result).remove();
+    };
+    var replaceOutput = function($result, message) {
+        clearOutput($result);
+        $result.append(message);
+    };
 
-    var handleCallButtonClick = function( ev ) {
+    var handleCallButtonClick = function(ev, $result) {
         var funArgs = $.parseJSON('[' + inputField.val() + ']');
         var data = fun.toPayload(funArgs).data;
         if (data.slice(0, 2) == '0x') data = data.slice(2);
 
-        var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
+        if (!$result) {
+            $result = getOutput(); 
+            if (lookupOnly && !inputs.length)
+                $outputOverride.empty().append( $result );
+            else
+                outputSpan.append( $result );
+        }
+        replaceOutput($result, $('<span>Waiting for transaction to be mined...</span>'));
 
         if (isConstructor) {
-	     if (args.bytecode.indexOf('_') >= 0) {
+            if (args.bytecode.indexOf('_') >= 0) {
+                 replaceOutput($result, $('<span>Deploying and linking required libraries...</span>'));
                  if (self.options.vm)
                      self.linkBytecode(args.contractName, function(err, bytecode) {
                          if (err)
-                             $result.replaceWith(getOutput($('<span/>').text('Error deploying required libraries: ' + err)));
+                             replaceOutput($result, $('<span/>').text('Error deploying required libraries: ' + err));
                          else {
                              args.bytecode = bytecode;
-                             handleCallButtonClick(ev);
+                             handleCallButtonClick(ev, $result);
                          }
                      });
                  else
-                     $result.replaceWith(getOutput( $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>')));
+                     replaceOutput($result, $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>'));
                  return;
              } else
                  data = args.bytecode + data.slice(8);
-	}
-
-        if (lookupOnly && !inputs.length) {
-            $outputOverride.empty().append( $result );
-        } else {
-            outputSpan.append( $result );
         }
 
         self.runTx(data, args, function(err, result) {
             if (err) {
-                $result.replaceWith( getOutput( $('<span/>').text(err).addClass('error') ) );
+                replaceOutput($result, $('<span/>').text(err).addClass('error'));
             } else if (self.options.vm && isConstructor) {
-                $result.replaceWith( getOutput( getGasUsedOutput( result ) ) );
+                replaceOutput($result, getGasUsedOutput(result));
                 args.appendFunctions(result.createdAddress);
             } else if (self.options.vm){
                 var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
-                $result.replaceWith( getOutput( getReturnOutput( outputObj ), getGasUsedOutput( result.vm ) ) );
+                clearOutput($result);
+                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
             } else if (args.abi.constant && !isConstructor) {
-                $result.replaceWith( getOutput( getReturnOutput( result ) ) );
+                replaceOutput($result, getReturnOutput(result));
             } else {
                 
                 function tryTillResponse (txhash, done) {
@@ -288,7 +296,10 @@ UniversalDApp.prototype.getCallButton = function(args) {
                     if (isConstructor) {
                         $result.html('');
                         args.appendFunctions(result.contractAddress);
-                    } else $result.replaceWith( getOutput( getReturnOutput( result ), getGasUsedOutput( result ) ) );
+                    } else {
+                        clearOutput($result);
+                        $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
+                    }
                 })
             
             }

@@ -530,7 +530,10 @@ THE SOFTWARE.
 				web3.eth.getAccounts(function(err, accounts) {
 					if (err)
 						renderError(err.message);
-					$('#txorigin').text(accounts[0]);
+					if (accounts && accounts[0])
+						$('#txorigin').text(accounts[0]);
+        				else
+						$('#txorigin').text('unknown');	
 				});
 
 			$contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
