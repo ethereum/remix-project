@@ -160,7 +160,7 @@ body {
 
 #header #optionViews .pre {
     word-wrap: break-word;
-    background-color: #ccc;
+    background-color: #efefef;
     font-family: monospace;
     border-radius: 3px;
     display: inline-block;
