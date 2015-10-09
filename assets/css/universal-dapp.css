@@ -107,6 +107,7 @@
 
 .udapp-close:before {
 	position: absolute;
+	font-family: monospace;
 	top: .4em;
 	right: .4em;
 	width: 1.5em;
