@@ -95,12 +95,28 @@ THE SOFTWARE.
 
 	// ------------------ gist load ----------------
 
+    function getGistId(str) {
+        var idr = /[0-9A-Fa-f]{8,}/
+        var match = idr.exec(str)[0] 
+        return match;
+    }
+
 	var location_hash_params = window.location.hash.substr(1).split("=");
 	var loadingFromGist = false;
-	if (location_hash_params.length == 2 && location_hash_params[0] == 'gist') {
+	if (location_hash_params.indexOf('gist') !== -1 && location_hash_params.length >= 2) {
+        var index = location_hash_params.indexOf('gist');
+        var gistId;
+        var key = location_hash_params[1];
+        if (key === '') {
+            gistId = getGistId( prompt("Enter the gist url or id you'd like to load.") );            
+        } else if (key === "referer") {
+            gistId = getGistId( document.referer );
+        } else {
+            gistId = getGistId( key );
+        }
 		loadingFromGist = true;
 		$.ajax({
-			url: 'https://api.github.com/gists/'+location_hash_params[1],
+			url: 'https://api.github.com/gists/'+gistId,
 			jsonp: 'callback',
 			dataType: 'jsonp',
 			success: function(response){
@@ -174,7 +190,7 @@ THE SOFTWARE.
 										   
 			var files = {};
 			var filesArr = getFiles();
-			var description = "Ethereum Contracts Gist created using soleditor at: https://chriseth.github.io/browser-solidity to load gist in soleditor append \"#gist=gistid\" to the url, where gistid is the id in this gists url.";
+			var description = "Created using **soleditor**: Realtime Ethereum Contract Compiler and Runtime. Load this file https://chriseth.github.io/browser-solidity#gist= ";
 			
 			for(var f in filesArr) {
 				files[fileNameFromKey(filesArr[f])] = {
