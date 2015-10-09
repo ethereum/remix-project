@@ -103,18 +103,52 @@ body {
 
 #header {
     font-size: 14px;
-    padding: 1em;
     font-size: 12px;
-}
-
-#header h1 {
-    margin-top: 0;
 }
 
 #header #solIcon {
     float: left;
     height: 5em;
 }
+
+#header #menu {
+    overflow: auto;
+    background-color: #efefef;
+}
+
+
+#header #options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#header #options li {
+    color: #333;
+    float: left;
+    padding: 1.2em;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+#header #options li.active {
+    background-color: yellow;
+    color: black;
+}
+
+#header #optionViews {
+    clear: both;
+    overflow: auto;
+    padding: 1em;
+}
+#header #optionViews > div {
+    margin-top: 1em;
+    display: none;
+}
+#header #optionViews.txView #txView { display: block; }
+#header #optionViews.settingsView #settingsView { display: block; }
+#header #optionViews.publishView #publishView { display: block; }
+#header #optionViews.envView #envView { display: block; }
 
 #header .info {
     font-family: monospace;
@@ -138,8 +172,6 @@ body {
 
 #header .origin,
 #header #executionContext {
-    padding: 0.4em 1em;
-    background-color: #efefef;
     display: block;
     margin-top: 0.5em;
     word-wrap: break-word;
@@ -153,6 +185,16 @@ body {
     font-family: monospace;
     background-color: transparent;
 }
+
+
+
+
+
+
+
+
+
+
 
 .col1 {
     width: 30%;
