@@ -108,7 +108,8 @@ body {
 
 #header #solIcon {
     float: left;
-    height: 5em;
+    height: 5.1em;
+    background-color: white;
 }
 
 #header #menu {
