@@ -93,8 +93,6 @@ THE SOFTWARE.
 
 	$(document).ready(function() {
 
-	var $filesEl = $('#files');
-
 	// ------------------ gist load ----------------
 
 	var location_hash_params = window.location.hash.substr(1).split("=");
@@ -202,7 +200,7 @@ THE SOFTWARE.
 
 
 	// ----------------- file selector-------------
-
+    var $filesEl = $('#files');
 	$filesEl.on('click','.newFile', function() {
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
 			untitledCount = (untitledCount - 0) + 1;
@@ -273,8 +271,11 @@ THE SOFTWARE.
 
 
 	function updateFiles() {
-		$filesEl.find('.file').remove();
+        var $filesEl = $('#files');
 		var files = getFiles();
+
+        $filesEl.find('.file').remove();
+
 		for (var f in files) {
 			$filesEl.append(fileTabTemplate(files[f]));
 		}
@@ -284,10 +285,8 @@ THE SOFTWARE.
 			active.addClass('active');
 			editor.setValue( window.localStorage[SOL_CACHE_FILE] || '', -1);
 			editor.focus();
-			$('#input').toggle( true );
-		} else {
-			$('#input').toggle( false );
-		}
+        }
+		$('#input').toggle( !!SOL_CACHE_FILE );
 	}
 
 	function fileTabTemplate(key) {
