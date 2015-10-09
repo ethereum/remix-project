@@ -77,24 +77,26 @@ THE SOFTWARE.
 					<div class="row">
 						<label for="txorigin"><select name="txorigin" id="txorigin"></select> Transaction origin</label>
 					</div>
-					<div class="row">
+					<div class="row hide">
 						<label for="gas"><input type="number" id="gas" value="0"> Gas</label>
 					</div>
-					<div class="row">
+					<div class="row hide">
 						<label for="gasPrice"><input type="number" id="gasPrice" value="0"> Gas Price</label>
 					</div>
-					<div class="row">
+					<div class="row hide">
 						<label for="value"><input type="number" id="value" value="0"> Value</label>
 					</div>
 				</div>
 				<div id="settingsView">
-					<div class="version">Solidity version: <span id="version">(loading)</span> <br/>Change to: <select id="versionSelector"></select></div>
-					<label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
-					<label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
+					<div class="version row"><strong>Solidity version:</strong> <span id="version">(loading)</span></div>
+					<div class="row">Change to: <select id="versionSelector"></select></div>
+					<div class="row">
+						<label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
+						<label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
+					</div>
 				</div>
 				<div id="publishView">
-					<p>Publish all open files to an anonymous github gist.</p>
-					<button id="gist" title="Publish all files as public gist on github.com"><i class="fa fa-github"></i> Publish Gist</button>
+					<div class="row"><button id="gist" title="Publish all files as public gist on github.com"><i class="fa fa-github"></i> Publish Gist</button> Publish all open files to an anonymous github gist.</div>
 				</div>
 				<div id="envView">
 					<span id="executionContext">

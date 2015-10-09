@@ -125,7 +125,7 @@ body {
 }
 
 #header #options li {
-    color: #333;
+    color: #aaa;
     float: left;
     padding: 1.2em;
     font-size: 1.5em;
@@ -133,7 +133,6 @@ body {
 }
 
 #header #options li.active {
-    background-color: yellow;
     color: black;
 }
 
@@ -143,7 +142,7 @@ body {
 }
 #header #optionViews > div {
     display: none;
-    padding: 0.4em;
+    padding: 1em 0.5em 0.5em;
 }
 #header #optionViews.txView #txView { display: block; }
 #header #optionViews.settingsView #settingsView { display: block; }
@@ -157,6 +156,10 @@ body {
     box-sizing: border-box;
     border: 1px solid rgba( 0,0,0,0.3 );
     border-radius: 3px;
+}
+
+#header #optionViews .hide {
+    display: none;
 }
 
 #header .info {
