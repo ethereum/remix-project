@@ -101,7 +101,7 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
         $createInterface.append( $close );
     }
     var $newButton = this.getInstanceInterface( contract )
-    var $atButton = $('<button class="atAddress"/>').text('At Address').click( function(){ self.clickContractAt( self, $container, contract ) } );
+    var $atButton = $('<button class="atAddress"/>').text('At Address').click( function(){ self.clickContractAt( self, $container.find('.createContract'), contract ) } );
     $createInterface.append( $atButton ).append( $newButton );
     return $createInterface;
 }
@@ -376,9 +376,9 @@ UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract 
     $contract.append( self.getInstanceInterface(contract) );
 }
 
-UniversalDApp.prototype.clickContractAt = function ( self, $contract, contract ) {
+UniversalDApp.prototype.clickContractAt = function ( self, $output, contract ) {
     var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" )   
-    self.getInstanceInterface(contract, address, $contract );
+    self.getInstanceInterface(contract, address, $output );
 }
 
 UniversalDApp.prototype.runTx = function( data, args, cb) {
