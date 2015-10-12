@@ -17,7 +17,7 @@ body {
     height: 2.5em;
     box-sizing: border-box;
     line-height: 2em;
-    padding: 0.5em 0.5em 0;
+    padding: 0.5em 0 0;
 }
 
 #files .file,
@@ -31,10 +31,19 @@ body {
     position: relative;
 }
 
-#files .newFile {
+#files .newFile,
+#files .toggleRHP {
     background-color: #B1EAC5;
+    padding: 0.6em;
     font-weight: bold;
-    color: #4E775D;
+    cursor: pointer;
+    color: black;
+}
+
+#files .toggleRHP {
+    float: right;
+    width: 2em;
+    box-sizing: border-box;
 }
 
 #files .file.active {
@@ -49,7 +58,6 @@ body {
     height: 1.25em;
     width: 1.25em;
     line-height: 1em;
-    border-radius: 1em;
     color: #FF8080;
     display: none;
     margin: 0.4em;
@@ -84,37 +92,115 @@ body {
     right: 0;
     bottom: 0px;
     overflow: auto;
-    border-left: 1px dotted black;
+    border-left: 3px solid #efefef;
     box-sizing: border-box;
 }
 
 #output {
-    border-top: 1px dotted black;
+    border-top: 3px solid #efefef;
     display: block;
 }
 
 #header {
     font-size: 14px;
-    padding: 1em;
     font-size: 12px;
 }
 
-#header h1 {
-    margin-top: 0;
-}
-
-#header .info { clear: left; }
-
 #header #solIcon {
     float: left;
-    height: 5em;
+    height: 5.1em;
+    background-color: white;
 }
 
-#header #executionContext {
-    padding: 0.4em 1em;
+#header #menu {
+    overflow: auto;
     background-color: #efefef;
+}
+
+
+#header #options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#header #options li {
+    color: #aaa;
+    float: left;
+    padding: 1.2em;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+#header #options li.active {
+    color: black;
+}
+
+#header #optionViews {
+    clear: both;
+    overflow: auto;
+}
+#header #optionViews > div {
+    display: none;
+    padding: 1em 0.5em 0.5em;
+}
+#header #optionViews.txView #txView { display: block; }
+#header #optionViews.settingsView #settingsView { display: block; }
+#header #optionViews.publishView #publishView { display: block; }
+#header #optionViews.envView #envView { display: block; }
+
+#header #optionViews.txView input,
+#header #optionViews.txView select {
+    max-width: 13em;
+    padding: 0.3em;
+    box-sizing: border-box;
+    border: 1px solid rgba( 0,0,0,0.3 );
+    border-radius: 3px;
+}
+
+#header #optionViews .pre {
+    word-wrap: break-word;
+    background-color: #efefef;
+    font-family: monospace;
+    border-radius: 3px;
     display: inline-block;
-    margin-left: 1em;
+    padding: 0 0.6em;
+}
+
+#header #optionViews .hide {
+    display: none;
+}
+
+#header .info {
+    font-family: monospace;
+    min-height: 6em;
+    padding: 0.25em 0;
+    padding-left: 6em;
+}
+
+#header #gist {
+    background-color: #efefef;
+    font-size: 12px;
+    padding: 0.25em;
+    color: black;
+    border:0 none;
+    border-radius: 3px;
+    width: 8em;
+    margin-right: 1em;
+    cursor: pointer;
+}
+
+
+#header .origin,
+#header #executionContext {
+    display: block;
+    word-wrap: break-word;
+}
+
+#header #versionSelector {
+    border: 0 none;
+    font-family: monospace;
+    background-color: transparent;
 }
 
 .col1 {
@@ -159,22 +245,9 @@ body {
 #output .udapp {
     border: 0 none;
     box-shadow: none;
-    border-bottom: 1px dotted;
+    border-bottom: 3px solid #efefef;
 }
 
-#output .udapp button,
-#output .udapp input {
-    padding: 0.25em;
-    color: black;
-}
-
-#output .udapp button {
-    border-color: #9E9D9D;
-}
-
-#output .udapp .atAddress { background-color: #B1EAC5; }
-#output .udapp .contractProperty .call { background-color: #FF8B8B; }
-#output .udapp .contractProperty.constant .call { background-color: #9DC1F5; }
 
 .row {
     overflow: auto;

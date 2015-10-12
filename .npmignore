@@ -1,7 +1,4 @@
-stylesheets
-libs
-solidity.svg
-ballot.sol.js
+assets
 index.html
 soljson.js
 bin/list.*
