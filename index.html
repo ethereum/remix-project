@@ -153,6 +153,7 @@
 							for(var f in response.data.files) {
 								window.localStorage[fileKey(f)] = response.data.files[f].content;
 							}
+							SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
 							updateFiles();
 						}
 					}
