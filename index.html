@@ -94,7 +94,7 @@
 					</div>
 					<div id="publishView">
 						<p><button id="gist" title="Publish all files as public gist on github.com"><i class="fa fa-github"></i> Publish Gist</button> Publish all open files to an anonymous github gist.</p>
-						<p>You can also load a gist by adding the following <span class="pre">#gist=GIST_ID</span> to your url, where GIST_ID is the id of the gist to load.</p>
+						<p>You can also load a gist by adding the following <span class="pre">?gist=GIST_ID</span> to your url, where GIST_ID is the id of the gist to load.</p>
 					</div>
 					<div id="envView">
 						<span id="executionContext">
@@ -236,7 +236,7 @@
 												   
 					var files = {};
 					var filesArr = getFiles();
-					var description = "Created using soleditor: Realtime Ethereum Contract Compiler and Runtime. Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity#gist=";
+					var description = "Created using soleditor: Realtime Ethereum Contract Compiler and Runtime. Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity?gist=";
 					
 					for(var f in filesArr) {
 						files[fileNameFromKey(filesArr[f])] = {
