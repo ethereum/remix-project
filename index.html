@@ -128,21 +128,21 @@
 				return match;
 			}
 
-			var location_hash_params = window.location.hash.substr(1).split("=");
+			var location_query_params = window.location.search.substr(1).split("=");
 			var loadingFromGist = false;
-			if (location_hash_params.indexOf('gist') !== -1 && location_hash_params.length >= 2) {
-				var index = location_hash_params.indexOf('gist');
+			if (location_query_params.indexOf('gist') !== -1 && location_query_params.length >= 2) {
+				var index = location_query_params.indexOf('gist');
 				var gistId;
-				var key = location_hash_params[index+1];
+				var key = location_query_params[index+1];
 				if (key === '') {
 					var str = prompt("Enter the URL or ID of the Gist you'd like to load.");
 					if (str !== '') {
 						gistId = getGistId( str );
-						loadingFromGist = true;
+						loadingFromGist = !!gistId;
 					}
 				} else {
 					gistId = getGistId( key );
-					loadingFromGist = true;
+					loadingFromGist = !!gistId;
 				}
 				$.ajax({
 					url: 'https://api.github.com/gists/'+gistId,
