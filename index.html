@@ -39,7 +39,6 @@
 		<script src="assets/js/jquery-2.1.3.min.js"></script>
 		<script src="assets/js/ace.js"></script>
 		<script src="assets/js/mode-solidity.js"></script>
-		<script src="bin/soljson-latest.js"></script>
 		<script src="assets/js/ethereumjs-vm.js"></script>
 		<script src="assets/js/universal-dapp.js"></script>
 		<script src="assets/js/web3.min.js"></script>
@@ -391,13 +390,7 @@
 				}
 			});
 			$('#versionSelector').change(function() {
-				Module = null;
-				compileJSON = null;
-				var script = document.createElement('script');
-				script.type = 'text/javascript';
-				script.src = 'bin/' + $('#versionSelector').val();
-				$('head').append(script);
-				onCompilerLoaded();
+				loadVersion($('#versionSelector').val());
 			});
 			
 			// ----------------- resizeable ui ---------------
@@ -497,14 +490,11 @@
 				var inputIncludingImports = includeLocalAndRemoteImports(input, compile);
 				if (!inputIncludingImports) return;
 				var optimize = document.querySelector('#optimize').checked;
-				
-				try {
-					var data = $.parseJSON(compileJSON(inputIncludingImports, optimize ? 1 : 0));
-				} catch (exception) {
-					renderError("Uncaught JavaScript Exception:\n" + exception);
-					return;
-				}
 
+				compileJSON(inputIncludingImports, optimize ? 1 : 0);
+			};
+			var compilationFinished = function(result) {
+				var data = $.parseJSON(result);
 				var noFatalErrors = true; // ie warnings are ok
 
 				if (data['error'] !== undefined) {
@@ -517,10 +507,9 @@
 						if (errortype(err) !== 'warning') noFatalErrors = false;
 					});
 				}
-				
-				if (noFatalErrors) renderContracts(data, input);
-					
-			}
+			
+				if (noFatalErrors) renderContracts(data, editor.getValue());
+			};
 			
 			var compileTimeout = null;
 			var onChange = function() {
@@ -537,8 +526,18 @@
 			};
 
 			var onCompilerLoaded = function() {
-				compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
-				$('#version').text(Module.cwrap("version", "string", [])());
+				if (worker === null) {
+					var compile = Module.cwrap("compileJSON", "string", ["string", "number"]);
+					compileJSON = function(source, optimize, cb) {
+						try {
+							var result = compile(source, optimize);
+						} catch (exception) {
+							result = JSON.stringify({error: 'Uncaught JavaScript exception:\n' + exception});
+						}
+						compilationFinished(result);
+					};
+					$('#version').text(Module.cwrap("version", "string", [])());
+				}
 				previousInput = '';
 				onChange();
 			};
@@ -567,8 +566,53 @@
 				return input;
 			}
 
-			if (Module)
-				onCompilerLoaded();
+			var initializeWorker = function() {
+				if (worker !== null)
+					worker.terminate();
+				worker = new Worker('worker.js');
+				worker.addEventListener('message', function(msg) {
+					var data = msg.data;
+					switch (data.cmd) {
+					case 'versionLoaded':
+						$('#version').text(data.data);
+						onCompilerLoaded();
+						break;
+					case 'compiled':
+						compilationFinished(data.data);
+						break;
+					};
+				});
+				worker.onerror = function(msg) { console.log(msg.data); };
+				worker.addEventListener('error', function(msg) { console.log(msg.data); });
+				compileJSON = function(source, optimize) {
+					worker.postMessage({cmd: 'compile', source: source, optimize: optimize});
+				};
+			};
+			var worker = null;
+			var loadVersion = function(version) {
+				$('#version').text("(loading)");
+				var isFirefox = typeof InstallTrigger !== 'undefined';
+				if (document.location.protocol != 'file:' && Worker !== undefined && isFirefox) {
+					// Workers cannot load js on "file:"-URLs and we get a
+					// "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
+					// resort to non-worker version in that case.
+					initializeWorker();
+					worker.postMessage({cmd: 'loadVersion', data: 'bin/' + version});
+				} else {
+					Module = null;
+					compileJSON = function(source, optimize) { compilationFinished('{}'); };
+					var newScript = document.createElement('script');
+					newScript.type = 'text/javascript';
+					newScript.src = 'bin/' + version;
+					document.getElementsByTagName("head")[0].appendChild(newScript);
+					var check = window.setInterval(function() {
+						if (!Module) return;
+						window.clearInterval(check);
+						onCompilerLoaded();
+					}, 200);
+				}
+			};
+			loadVersion('soljson-latest.js');
 
 			editor.getSession().on('change', onChange);
 
