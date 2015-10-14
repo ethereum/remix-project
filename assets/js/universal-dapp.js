@@ -382,6 +382,7 @@ UniversalDApp.prototype.clickContractAt = function ( self, $output, contract ) {
 }
 
 UniversalDApp.prototype.runTx = function( data, args, cb) {
+    var self = this;
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
