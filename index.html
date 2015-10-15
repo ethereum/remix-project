@@ -655,7 +655,7 @@
 			var detailsOpen = {};
 
 			function errortype(message) {
-				return message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
+				return message.match(/^.*:[0-9]*:[0-9]* Warning: /) ? 'warning' : 'error';
 			}
 
 			var renderError = function(message) {
@@ -663,18 +663,27 @@
 				var $pre = $("<pre />").text(message);
 				var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
 				$('#output').append( $error );
-				var err = message.match(/^:([0-9]*):([0-9]*)/);
-				if (err && err.length) {
-					var errLine = parseInt(err[1], 10) - 1;
-					var errCol = err[2] ? parseInt(err[2], 10) : 0;
-					sourceAnnotations[sourceAnnotations.length] = {
-						row: errLine,
-						column: errCol,
-						text: message,
-						type: type
-					};
-					editor.getSession().setAnnotations(sourceAnnotations);
+				var err = message.match(/^([^:]*):([0-9]*):(([0-9]*):)? /);
+				if (err) {
+					var errFile = err[1];
+					var errLine = parseInt(err[2], 10) - 1;
+					var errCol = err[4] ? parseInt(err[4], 10) : 0;
+					if (errFile == '' || errFile == fileNameFromKey(SOL_CACHE_FILE)) {
+						sourceAnnotations[sourceAnnotations.length] = {
+							row: errLine,
+							column: errCol,
+							text: message,
+							type: type
+						};
+						editor.getSession().setAnnotations(sourceAnnotations);
+					}
 					$error.click(function(ev){
+						if (errFile != '' && errFile != fileNameFromKey(SOL_CACHE_FILE) && getFiles().indexOf(fileKey(errFile)) !== -1) {
+							// Switch to file
+							SOL_CACHE_FILE = fileKey(errFile);
+							updateFiles();
+							//@TODO could show some error icon in files with errors
+						}
 						editor.focus();
 						editor.gotoLine(errLine + 1, errCol - 1, true);
 					});
