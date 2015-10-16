@@ -22,7 +22,7 @@ Starting from version 0.1.6, multiple files are supported with automatic import 
 	var solc = require('solc');
 	var input = {
 		'lib.sol': 'library L { function f() returns (uint) { return 7; } }',
-		 'cont.sol': 'import "lib.sol"; contract x { function g() { L.f(); } }'
+		'cont.sol': 'import "lib.sol"; contract x { function g() { L.f(); } }'
 	};
 	var output = solc.compile({sources: input}, 1);
 	for (var contractName in output.contracts)
