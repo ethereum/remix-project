@@ -1,6 +1,6 @@
 {
   "name": "solc",
-  "version": "0.1.5-multi",
+  "version": "0.1.6",
   "description": "Solidity compiler",
   "main": "index.js",
   "scripts": {
