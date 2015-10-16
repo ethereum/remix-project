@@ -475,6 +475,7 @@
 
 			// ----------------- compiler ----------------------
 			var compileJSON;
+			var compilerAcceptsMultipleFiles;
 
 			var previousInput = '';
 			var sourceAnnotations = [];
@@ -487,11 +488,13 @@
 				var input = editor.getValue();
 				window.localStorage.setItem(SOL_CACHE_FILE, input);
 
-				var inputIncludingImports = includeLocalAndRemoteImports(input, compile);
-				if (!inputIncludingImports) return;
+				var files = {};
+				files[fileNameFromKey(SOL_CACHE_FILE)] = input;
+				var input = gatherImports(files, compile);
+				if (!input) return;
 				var optimize = document.querySelector('#optimize').checked;
 
-				compileJSON(inputIncludingImports, optimize ? 1 : 0);
+				compileJSON(input, optimize ? 1 : 0);
 			};
 			var compilationFinished = function(result) {
 				var data = $.parseJSON(result);
@@ -527,7 +530,14 @@
 
 			var onCompilerLoaded = function() {
 				if (worker === null) {
-					var compile = Module.cwrap("compileJSON", "string", ["string", "number"]);
+					var compile;
+					if ('_compileJSONMulti' in Module) {
+						compilerAcceptsMultipleFiles = true;
+						compile = Module.cwrap("compileJSONMulti", "string", ["string", "number"]);
+					} else {
+						compilerAcceptsMultipleFiles = false;
+						compile = Module.cwrap("compileJSON", "string", ["string", "number"]);
+					}
 					compileJSON = function(source, optimize, cb) {
 						try {
 							var result = compile(source, optimize);
@@ -543,24 +553,46 @@
 			};
 
 			var cachedRemoteFiles = {};
-			function includeLocalAndRemoteImports(input, asyncCallback, needAsync) {
+			function gatherImports(files, asyncCallback, needAsync) {
+				if (!compilerAcceptsMultipleFiles)
+					return files[fileNameFromKey(SOL_CACHE_FILE)];
 				var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g;
-				var match;
-				for (var runs = 0; (match = importRegex.exec(input)) !== null && runs < 100; runs++) {
-					var githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(match[1]);
-					if (getFiles().indexOf(fileKey(match[1])) !== -1)
-						input = input.replace(match[0], window.localStorage.getItem( fileKey(match[1]) ));
-					else if (match[1] in cachedRemoteFiles)
-						input = input.replace(match[0], cachedRemoteFiles[match[1]]);
-					else if (githubMatch) {
-						$.getJSON('https://api.github.com/repos/' + githubMatch[3] + '/contents/' + githubMatch[4], function(result) {
-							var content = Base64.decode(result.content);
-							cachedRemoteFiles[match[1]] = content;
-							includeLocalAndRemoteImports(input.replace(match[0], content), asyncCallback, true);
-						});
-						return null;
+				var reloop = false;
+				do {
+					reloop = false;
+					for (var fileName in files) {
+						var match;
+						while (match = importRegex.exec(files[fileName])) {
+							var m = match[1];
+							if (m in files) continue;
+							if (getFiles().indexOf(fileKey(m)) !== -1) {
+								files[m] = window.localStorage[fileKey(match[1])];
+								reloop = true;
+							} else if (m in cachedRemoteFiles) {
+								files[m] = cachedRemoteFiles[m];
+								reloop = true;
+							} else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
+								$.getJSON('https://api.github.com/repos/' + githubMatch[3] + '/contents/' + githubMatch[4], function(result) {
+									var content;
+									if ('content' in result)
+										content = Base64.decode(result.content);
+									else
+										content = "\"" + m + "\" NOT FOUND"; //@TODO handle this better
+									cachedRemoteFiles[m] = content;
+									files[m] = content;
+									gatherImports(files, asyncCallback, true);
+								}).fail(function(){
+									var content = "\"" + m + "\" NOT FOUND"; //@TODO handle this better
+									cachedRemoteFiles[m] = content;
+									files[m] = content;
+									gatherImports(files, asyncCallback, true);
+								});
+								return null;
+							}
+						}
 					}
-				}
+				} while (reloop);
+				var input = JSON.stringify({'sources':files});
 				if (needAsync)
 					asyncCallback(input);
 				return input;
@@ -575,6 +607,7 @@
 					switch (data.cmd) {
 					case 'versionLoaded':
 						$('#version').text(data.data);
+						compilerAcceptsMultipleFiles = !!data.acceptsMultipleFiles;
 						onCompilerLoaded();
 						break;
 					case 'compiled':
@@ -622,7 +655,7 @@
 			var detailsOpen = {};
 
 			function errortype(message) {
-				return message.match(/^[0-9:]* Warning: /) ? 'warning' : 'error';
+				return message.match(/^.*:[0-9]*:[0-9]* Warning: /) ? 'warning' : 'error';
 			}
 
 			var renderError = function(message) {
@@ -630,18 +663,27 @@
 				var $pre = $("<pre />").text(message);
 				var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
 				$('#output').append( $error );
-				var err = message.match(/^:([0-9]*):([0-9]*)/);
-				if (err && err.length) {
-					var errLine = parseInt(err[1], 10) - 1;
-					var errCol = err[2] ? parseInt(err[2], 10) : 0;
-					sourceAnnotations[sourceAnnotations.length] = {
-						row: errLine,
-						column: errCol,
-						text: message,
-						type: type
-					};
-					editor.getSession().setAnnotations(sourceAnnotations);
+				var err = message.match(/^([^:]*):([0-9]*):(([0-9]*):)? /);
+				if (err) {
+					var errFile = err[1];
+					var errLine = parseInt(err[2], 10) - 1;
+					var errCol = err[4] ? parseInt(err[4], 10) : 0;
+					if (errFile == '' || errFile == fileNameFromKey(SOL_CACHE_FILE)) {
+						sourceAnnotations[sourceAnnotations.length] = {
+							row: errLine,
+							column: errCol,
+							text: message,
+							type: type
+						};
+						editor.getSession().setAnnotations(sourceAnnotations);
+					}
 					$error.click(function(ev){
+						if (errFile != '' && errFile != fileNameFromKey(SOL_CACHE_FILE) && getFiles().indexOf(fileKey(errFile)) !== -1) {
+							// Switch to file
+							SOL_CACHE_FILE = fileKey(errFile);
+							updateFiles();
+							//@TODO could show some error icon in files with errors
+						}
 						editor.focus();
 						editor.gotoLine(errLine + 1, errCol - 1, true);
 					});
