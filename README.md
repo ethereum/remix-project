@@ -29,3 +29,12 @@ Starting from version 0.1.6, multiple files are supported with automatic import 
 		console.log(contractName + ': ' + output.contracts[contractName].bytecode);
 
 Note that all input files that are imported have to be supplied, the compiler will not load any additional files on its own.
+
+###Using a legacy version
+
+In order to allow compiling contracts using a specific version of solidity, the `solc.setVersion` method is available.
+
+	var solc = require('solc');
+	solc.setVersion( 'latest' ); // this is used by default
+	solc.setVersion( 'v0.1.1-2015-08-04-6ff4cd6' );
+	var output = solc.compile( "contract t { function g() {} }", 1 );
