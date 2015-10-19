@@ -136,7 +136,7 @@
 				var gistId;
 				var key = location_query_params[index+1];
 				if (key === '') {
-					var str = prompt("Enter the URL or ID of the Gist you'd like to load.");
+					var str = prompt("Enter the URL or ID of the Gist you would like to load.");
 					if (str !== '') {
 						gistId = getGistId( str );
 						loadingFromGist = !!gistId;
@@ -151,8 +151,16 @@
 					dataType: 'jsonp',
 					success: function(response){
 						if (response.data) {
-							for(var f in response.data.files) {
-								window.localStorage[fileKey(f)] = response.data.files[f].content;
+							for (var f in response.data.files) {
+								var key = fileKey(f);
+								var content = response.data.files[f].content;
+								if (key in window.localStorage && window.localStorage[key] != content) {
+									var count = '';
+									var otherKey = key + count;
+									while ((key + count) in window.localStorage) count = count - 1;
+									window.localStorage[key + count] = window.localStorage[key];
+								}
+								window.localStorage[key] = content;
 							}
 							SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
 							updateFiles();
