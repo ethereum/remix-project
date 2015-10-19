@@ -32,9 +32,12 @@ Note that all input files that are imported have to be supplied, the compiler wi
 
 ###Using a legacy version
 
-In order to allow compiling contracts using a specific version of solidity, the `solc.setVersion` method is available.
+In order to allow compiling contracts using a specific version of solidity, the `solc.useVersion` method is available. this returns a new solc object using the version provided. **Note**: version strings must match the version substring of the files availble in `/bin/soljson-*.js`. See below for an example.
 
 	var solc = require('solc');
-	solc.setVersion( 'latest' ); // this is used by default
-	solc.setVersion( 'v0.1.1-2015-08-04-6ff4cd6' );
-	var output = solc.compile( "contract t { function g() {} }", 1 );
+	// by default the latest version is used
+	// ie: solc.useVersion('latest')
+
+	// getting a legacy version
+	var solcV011 = solc.useVersion( 'v0.1.1-2015-08-04-6ff4cd6' );
+	var output = solcV011.compile( "contract t { function g() {} }", 1 );
