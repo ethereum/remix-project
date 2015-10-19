@@ -1,4 +1,3 @@
-
 function setupMethods (soljson){
 
 	var compileJSON = soljson.cwrap("compileJSON", "string", ["string", "number"]);
