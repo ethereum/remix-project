@@ -22,7 +22,7 @@ function UniversalDApp (contracts, options) {
     } else {
         var host = options.host || "localhost";
         var port = options.port || "8545";
-        var rpc_url = 'http://' + host + ':' + port;
+        var rpc_url = options.web3endpoint || ('http://' + host + ':' + port);
         web3.setProvider( new web3.providers.HttpProvider( rpc_url ) );
     }
 
