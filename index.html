@@ -234,7 +234,11 @@
 
 			$vmToggle.on('change', executionContextChange );
 			$web3Toggle.on('change', executionContextChange );
-			$web3endpoint.on('change', compile );
+			$web3endpoint.on('change', function(){
+				var endpoint = $('#web3Endpoint').val();
+				web3.setProvider( new web3.providers.HttpProvider( endpoint ) );
+				compile();
+			} );
 
 			function executionContextChange (ev) {
 				if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
@@ -759,7 +763,6 @@
 					removable: false,
 					getAddress: function(){ return $('#txorigin').val(); },
 					removable_instances: true,
-					web3endpoint: $('#web3Endpoint').val(),
 					renderOutputModifier: function(contractName, $contractOutput) {
 						var contract = data.contracts[contractName];
 						return $contractOutput
