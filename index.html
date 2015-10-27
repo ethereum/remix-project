@@ -463,12 +463,12 @@
 
 			// ----------------- toggle right hand panel -----------------
 
-			var toggledRHP = false;
+			var hidingRHP = false;
 			$('.toggleRHP').click(function(){
-			   toggledRHP = !toggledRHP;
-			   setEditorSize( toggledRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
-			   $('.toggleRHP').toggleClass('toggled', toggledRHP);
-			   if (!toggledRHP) compile();
+			   hidingRHP = !hidingRHP;
+			   setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
+			   $('.toggleRHP').toggleClass('hiding', hidingRHP);
+			   if (!hidingRHP) compile();
 			});
 			
 
@@ -530,7 +530,7 @@
 					});
 				}
 			
-				if (noFatalErrors && !toggledRHP) renderContracts(data, editor.getValue());
+				if (noFatalErrors && !hidingRHP) renderContracts(data, editor.getValue());
 			};
 			
 			var compileTimeout = null;
