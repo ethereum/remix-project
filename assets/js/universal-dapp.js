@@ -5,7 +5,7 @@ function UniversalDApp (contracts, options) {
     this.renderOutputModifier = options.renderOutputModifier || function(name, content) { return content; };
 
     if (!options.vm && web3.currentProvider) {
-
+        console.log("Provider already set")
     } else if (options.vm) {
         this.vm = new EthVm();
         //@todo this does not calculate the gas costs correctly but gets the job done.

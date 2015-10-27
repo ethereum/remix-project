@@ -238,7 +238,7 @@
 				var endpoint = $('#web3Endpoint').val();
 				web3.setProvider( new web3.providers.HttpProvider( endpoint ) );
 				compile();
-			} );
+			});
 
 			function executionContextChange (ev) {
 				if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
@@ -467,7 +467,8 @@
 			$('.toggleRHP').click(function(){
 			   toggledRHP = !toggledRHP;
 			   setEditorSize( toggledRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
-			   $('.toggleRHP').toggleClass('toggled', toggledRHP)
+			   $('.toggleRHP').toggleClass('toggled', toggledRHP);
+			   if (!toggledRHP) compile();
 			});
 			
 
@@ -499,7 +500,6 @@
 			var previousInput = '';
 			var sourceAnnotations = [];
 			var compile = function() {
-
 				editor.getSession().clearAnnotations();
 				sourceAnnotations = [];
 				editor.getSession().removeMarker(errMarkerId);
@@ -530,7 +530,7 @@
 					});
 				}
 			
-				if (noFatalErrors) renderContracts(data, editor.getValue());
+				if (noFatalErrors && !toggledRHP) renderContracts(data, editor.getValue());
 			};
 			
 			var compileTimeout = null;
