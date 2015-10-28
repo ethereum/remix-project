@@ -97,13 +97,18 @@
 					</div>
 					<div id="envView">
 						<span id="executionContext">
-							<label for="vm" title="Execution environment does not connect to any node, everything is local and in memory only.">
+							<label for="vm">
 								<input id="vm" type="radio" value="vm" checked name="executionContext">
-								JavaScript VM
+								<strong>JavaScript VM</strong>
+								<p>Execution environment does not connect to any node, everything is local and in memory only.</p>
 							</label>
-							<label for="web3" title="Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!">
+							<label for="web3">
 								<input id="web3" type="radio" value="web3" name="executionContext">
-								Web3 Provider
+								<strong>Web3 Provider</strong>
+								<p>Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!</p>
+								<label for="web3Endpoint">
+									<strong>Web3 Provider Endpoint</strong>: <input type="text" id="web3Endpoint" value="http://localhost:8545">
+								</label>
 							</label>
 						</span>
 					</div>
@@ -222,12 +227,18 @@
 
 			var $vmToggle = $('#vm');
 			var $web3Toggle = $('#web3');
+			var $web3endpoint = $('#web3Endpoint');
 
 			var executionContext = 'vm';
 			$vmToggle.get(0).checked = true;
 
 			$vmToggle.on('change', executionContextChange );
 			$web3Toggle.on('change', executionContextChange );
+			$web3endpoint.on('change', function(){
+				var endpoint = $('#web3Endpoint').val();
+				web3.setProvider( new web3.providers.HttpProvider( endpoint ) );
+				compile();
+			});
 
 			function executionContextChange (ev) {
 				if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
@@ -452,11 +463,12 @@
 
 			// ----------------- toggle right hand panel -----------------
 
-			var toggledRHP = false;
+			var hidingRHP = false;
 			$('.toggleRHP').click(function(){
-			   toggledRHP = !toggledRHP;
-			   setEditorSize( toggledRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
-			   $('.toggleRHP').toggleClass('toggled', toggledRHP)
+			   hidingRHP = !hidingRHP;
+			   setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
+			   $('.toggleRHP').toggleClass('hiding', hidingRHP);
+			   if (!hidingRHP) compile();
 			});
 			
 
@@ -488,7 +500,6 @@
 			var previousInput = '';
 			var sourceAnnotations = [];
 			var compile = function() {
-
 				editor.getSession().clearAnnotations();
 				sourceAnnotations = [];
 				editor.getSession().removeMarker(errMarkerId);
@@ -519,7 +530,7 @@
 					});
 				}
 			
-				if (noFatalErrors) renderContracts(data, editor.getValue());
+				if (noFatalErrors && !hidingRHP) renderContracts(data, editor.getValue());
 			};
 			
 			var compileTimeout = null;

@@ -22,7 +22,7 @@ function UniversalDApp (contracts, options) {
     } else {
         var host = options.host || "localhost";
         var port = options.port || "8545";
-        var rpc_url = 'http://' + host + ':' + port;
+        var rpc_url = options.getWeb3endpoint ? options.getWeb3endpoint() : ('http://' + host + ':' + port);
         web3.setProvider( new web3.providers.HttpProvider( rpc_url ) );
     }
 
@@ -296,7 +296,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                 }
                 tryTillResponse( result, function(err, result) {
-                    if (isConstructor) {
+                    if (err) replaceOutput($result, $('<span/>').text(err).addClass('error'));
+                    else if (isConstructor) {
                         $result.html('');
                         args.appendFunctions(result.contractAddress);
                     } else {
