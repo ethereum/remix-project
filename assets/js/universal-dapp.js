@@ -115,6 +115,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         if (a.constant == true) return -1;
         else return 1;
     });
+    var web3contract = web3.eth.contract(abi);
     var funABI = this.getConstructorInterface(abi);
     var $createInterface = $('<div class="createContract"/>');
 
@@ -138,8 +139,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 // TODO: parse/use reponse.vm.logs
             });
         } else {
-            var jsInterface = web3.eth.contract(abi).at(address)
-            var eventFilter = jsInterface.allEvents();
+            var eventFilter = web3contract.at(address).allEvents();
             eventFilter.watch(function(err,response){
                 $event = $('<div class="event" />')
 
@@ -157,8 +157,13 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
 
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
+            // @todo getData cannot be used with overloaded functions
             $instance.append(self.getCallButton({
                 abi: funABI,
+                encode: function(args) {
+                    var obj = web3contract.at('0x00')[funABI.name];
+                    return obj.getData.apply(obj, args);
+                },
                 address: address
             }));
         });
@@ -168,6 +173,10 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     if (!address || !$target) {
         $createInterface.append( this.getCallButton({
             abi: funABI,
+            encode: function(args) {
+                var obj = web3contract.new;
+                return obj.getData.apply(obj, args);
+            },
             contractName: contract.name,
             bytecode: contract.bytecode,
             appendFunctions: appendFunctions
@@ -191,18 +200,16 @@ UniversalDApp.prototype.getConstructorInterface = function(abi) {
 
 UniversalDApp.prototype.getCallButton = function(args) {
     var self = this;
-    // args.abi, args.contractName [constr only], args.bytecode, args.address [fun only]
-    // args.appendFunctions [constr only]
+    // args.abi, args.encode, args.bytecode [constr only], args.address [fun only]
+    // args.contractName [constr only], args.appendFunctions [constr only]
     var isConstructor = args.bytecode !== undefined;
     var lookupOnly = ( args.abi.constant && !isConstructor );
 
-    var fun = new web3.eth.function(args.abi);
     var inputs = '';
     $.each(args.abi.inputs, function(i, inp) {
         if (inputs != '') inputs += ', ';
         inputs += inp.type + ' ' + inp.name;
     });
-    if (!args.bytecode && !fun.displayName()) return;
     var inputField = $('<input/>').attr('placeholder', inputs).attr('title', inputs);
     var $outputOverride = $('<div class="value" />');
     var outputSpan = $('<div class="output"/>');
@@ -239,10 +246,6 @@ UniversalDApp.prototype.getCallButton = function(args) {
     };
 
     var handleCallButtonClick = function(ev, $result) {
-        var funArgs = $.parseJSON('[' + inputField.val() + ']');
-        var data = fun.toPayload(funArgs).data;
-        if (data.slice(0, 2) == '0x') data = data.slice(2);
-
         if (!$result) {
             $result = getOutput(); 
             if (lookupOnly && !inputs.length)
@@ -250,6 +253,21 @@ UniversalDApp.prototype.getCallButton = function(args) {
             else
                 outputSpan.append( $result );
         }
+
+        var funArgs = '';
+        try {
+            funArgs = $.parseJSON('[' + inputField.val() + ']');
+        } catch (e) {
+            replaceOutput($result, $('<span/>').text('Error encoding arguments: ' + e));
+            return;
+        }
+        var data = '';
+        if (!isConstructor || funArgs.length > 0)
+            data = args.encode(funArgs);
+        if (data.slice(0, 9) == 'undefined')
+            data = data.slice(9);
+        if (data.slice(0, 2) == '0x') data = data.slice(2);
+
         replaceOutput($result, $('<span>Waiting for transaction to be mined...</span>'));
 
         if (isConstructor) {
@@ -268,17 +286,21 @@ UniversalDApp.prototype.getCallButton = function(args) {
                      replaceOutput($result, $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>'));
                  return;
              } else
-                 data = args.bytecode + data.slice(8);
+                 data = args.bytecode + data;
         }
 
         self.runTx(data, args, function(err, result) {
             if (err) {
                 replaceOutput($result, $('<span/>').text(err).addClass('error'));
+            } else if (self.options.vm && result.vm.return === undefined) {
+                replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
             } else if (self.options.vm && isConstructor) {
                 replaceOutput($result, getGasUsedOutput(result));
                 args.appendFunctions(result.createdAddress);
             } else if (self.options.vm){
-                var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
+                //@todo implement once decoder is exposed by web3.js
+                //var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
+                var outputObj = '0x' + result.vm.return.toString('hex');
                 clearOutput($result);
                 $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
             } else if (args.abi.constant && !isConstructor) {
@@ -312,8 +334,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var button = $('<button />')
         .addClass( 'call' )
-        .attr('title', fun.displayName())
-        .text(args.bytecode ? 'Create' : fun.displayName())
+        .attr('title', args.abi.name)
+        .text(args.bytecode ? 'Create' : args.abi.name)
         .click( handleCallButtonClick );
 
     if (lookupOnly && !inputs.length) {

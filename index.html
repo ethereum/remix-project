@@ -105,7 +105,7 @@
 							<label for="web3">
 								<input id="web3" type="radio" value="web3" name="executionContext">
 								<strong>Web3 Provider</strong>
-								<p>Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!</p>
+								<p>Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!</p>
 								<label for="web3Endpoint">
 									<strong>Web3 Provider Endpoint</strong>: <input type="text" id="web3Endpoint" value="http://localhost:8545">
 								</label>
@@ -229,14 +229,25 @@
 			var $web3Toggle = $('#web3');
 			var $web3endpoint = $('#web3Endpoint');
 
+			if (typeof web3 !== 'undefined')
+			{
+				if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider)
+					$web3endpoint.val('ipc');
+				web3 = new Web3(web3.currentProvider);
+			} else
+				web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
 			var executionContext = 'vm';
 			$vmToggle.get(0).checked = true;
 
 			$vmToggle.on('change', executionContextChange );
 			$web3Toggle.on('change', executionContextChange );
-			$web3endpoint.on('change', function(){
-				var endpoint = $('#web3Endpoint').val();
-				web3.setProvider( new web3.providers.HttpProvider( endpoint ) );
+			$web3endpoint.on('change', function() {
+				var endpoint = $web3endpoint.val();
+				if (endpoint == 'ipc')
+					web3.setProvider(new Web3.providers.IpcProvider());
+				else
+					web3.setProvider(new Web3.providers.HttpProvider(endpoint));
 				compile();
 			});
 
