@@ -81,13 +81,11 @@ var BALLOT_EXAMPLE = multi(function(){/*contract Ballot {
 
     function winningProposal() constant returns (uint8 winningProposal) {
         uint256 winningVoteCount = 0;
-        for (uint8 proposal = 0; proposal < proposals.length; proposal++) {
+        for (uint8 proposal = 0; proposal < proposals.length; proposal++)
             if (proposals[proposal].voteCount > winningVoteCount) {
                 winningVoteCount = proposals[proposal].voteCount;
                 winningProposal = proposal;
             }
-            ++proposal;
-        }
     }
 }
 */});
