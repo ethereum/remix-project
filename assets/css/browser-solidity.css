@@ -106,15 +106,28 @@ body {
     font-size: 12px;
 }
 
-#header #solIcon {
+#header #helpButton {
     float: left;
+    padding: 1.2em;
+    padding-left: 2.2em;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: auto;
+    color: #000;
+    outline: none;
+
+}
+
+#header #solIcon {
+    float: right;
     height: 5.1em;
     background-color: white;
 }
 
 #header #menu {
-    overflow: auto;
+    overflow: hidden;
     background-color: #efefef;
+    height: 5.1em;
 }
 
 
