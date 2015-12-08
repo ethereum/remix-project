@@ -61,12 +61,12 @@ var JavaScriptHighlightRules = function(options) {
         intTypes += '|bytes' + (width / 8) + '|uint' + width + '|int' + width;
     var keywordMapper = this.createKeywordMapper({
         "variable.language":
-            "this|bool|byte|bytes|bytes0|address|" + intTypes,
+            "this|bool|string|byte|bytes|bytes0|address|" + intTypes,
         "keyword":
-            "contract|constant|" +
+            "contract|library|constant|event|modifier|" +
             "struct|mapping|enum|break|continue|delete|else|for|function|" +
-            "if|new|return|returns|var|while|" +
-            "private|public|external|internal",
+            "if|new|return|returns|var|while|using|" +
+            "private|public|external|internal|storage|memory",
         "storage.type":
             "constant|var|function",
         "constant.language.boolean": "true|false"
@@ -180,7 +180,7 @@ var JavaScriptHighlightRules = function(options) {
                 regex : identifierRe
             }, {
                 token : "keyword.operator",
-                regex : /--|\+\+|===|==|=|!=|!==|=>|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|[!$%&*+\-~\/^]=?/,
+                regex : /--|\*\*|\+\+|===|==|=|!=|!==|=>|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|[!$%&*+\-~\/^]=?/,
                 next  : "start"
             }, {
                 token : "punctuation.operator",
