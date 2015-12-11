@@ -106,7 +106,8 @@
 							<label for="web3">
 								<input id="web3" type="radio" value="web3" name="executionContext">
 								<strong>Web3 Provider</strong>
-								<p>Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!</p>
+                                                                <p>Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!<br/>
+                                                                <b>If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.</b></p>
 								<label for="web3Endpoint">
 									<strong>Web3 Provider Endpoint</strong>: <input type="text" id="web3Endpoint" value="http://localhost:8545">
 								</label>
