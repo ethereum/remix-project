@@ -2,6 +2,7 @@ var version = function() { return '(loading)'; }
 var compileJSON = function() { return ''; }
 addEventListener('message', function(e) {
 	var data = e.data;
+	var missingInputs = [];
 	switch (data.cmd) {
 		case 'loadVersion':
 			delete Module;
@@ -10,7 +11,17 @@ addEventListener('message', function(e) {
 
 			importScripts(data.data);
 			version = Module.cwrap("version", "string", []);
-			if ('_compileJSONMulti' in Module)
+			if ('_compileJSONCallback' in Module)
+			{
+				compileJSONInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
+				var missingInputCallback = Module.Runtime.addFunction(function(path) {
+					missingInputs.push(Module.Pointer_stringify(path));
+				});
+				compileJSON = function(input, optimize) {
+					return compileJSONInternal(input, optimize, missingInputCallback);
+				};
+			}
+			else if ('_compileJSONMulti' in Module)
 				compileJSON = Module.cwrap("compileJSONMulti", "string", ["string", "number"]);
 			else
 				compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
@@ -21,7 +32,8 @@ addEventListener('message', function(e) {
 			});
 			break;
 		case 'compile':
-			postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize)});
+			missingInputs
+			postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize)}, missingInputs: missingInputs);
 			break;
 	}
 }, false);
