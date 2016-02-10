@@ -409,6 +409,8 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
+    if (data.slice(0, 2) != '0x')
+        data = '0x' + data;
 
     var gas = self.options.getGas ? self.options.getGas : 1000000;
     var value = self.options.getValue ? self.options.getValue : 0;
