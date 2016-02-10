@@ -512,7 +512,7 @@
 
 			var previousInput = '';
 			var sourceAnnotations = [];
-			var compile = function() {
+			var compile = function(missingInputs) {
 				editor.getSession().clearAnnotations();
 				sourceAnnotations = [];
 				editor.getSession().removeMarker(errMarkerId);
@@ -522,13 +522,17 @@
 
 				var files = {};
 				files[fileNameFromKey(SOL_CACHE_FILE)] = input;
-				var input = gatherImports(files, compile);
-				if (!input) return;
-				var optimize = document.querySelector('#optimize').checked;
-
-				compileJSON(input, optimize ? 1 : 0);
+				gatherImports(files, missingInputs, function(input, error) {
+					$('#output').empty();
+					if (input === null) {
+						renderError(error);
+					} else {
+						var optimize = document.querySelector('#optimize').checked;
+						compileJSON(input, optimize ? 1 : 0);
+					}
+				});
 			};
-			var compilationFinished = function(result) {
+			var compilationFinished = function(result, missingInputs) {
 				var data = $.parseJSON(result);
 				var noFatalErrors = true; // ie warnings are ok
 
@@ -543,7 +547,10 @@
 					});
 				}
 			
-				if (noFatalErrors && !hidingRHP) renderContracts(data, editor.getValue());
+				if (missingInputs !== undefined && missingInputs.length > 0)
+					compile(missingInputs);
+				else if (noFatalErrors && !hidingRHP)
+					renderContracts(data, editor.getValue());
 			};
 			
 			var compileTimeout = null;
@@ -563,7 +570,18 @@
 			var onCompilerLoaded = function() {
 				if (worker === null) {
 					var compile;
-					if ('_compileJSONMulti' in Module) {
+					var missingInputs = [];
+					if ('_compileJSONCallback' in Module) {
+						compilerAcceptsMultipleFiles = true;
+						var missingInputsCallback = Module.Runtime.addFunction(function(path, contents, error) {
+							missingInputs.push(Module.Pointer_stringify(path));
+						});
+						var compileInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
+						compile = function(input, optimize) {
+							missingInputs.length = 0;
+							return compileInternal(input, optimize, missingInputsCallback);
+						};
+					} else if ('_compileJSONMulti' in Module) {
 						compilerAcceptsMultipleFiles = true;
 						compile = Module.cwrap("compileJSONMulti", "string", ["string", "number"]);
 					} else {
@@ -576,7 +594,7 @@
 						} catch (exception) {
 							result = JSON.stringify({error: 'Uncaught JavaScript exception:\n' + exception});
 						}
-						compilationFinished(result);
+						compilationFinished(result, missingInputs);
 					};
 					$('#version').text(Module.cwrap("version", "string", [])());
 				}
@@ -585,49 +603,54 @@
 			};
 
 			var cachedRemoteFiles = {};
-			function gatherImports(files, asyncCallback, needAsync) {
+			function gatherImports(files, importHints, cb) {
+				importHints = importHints || [];
 				if (!compilerAcceptsMultipleFiles)
-					return files[fileNameFromKey(SOL_CACHE_FILE)];
+				{
+					cb(files[fileNameFromKey(SOL_CACHE_FILE)]);
+					return;
+				}
 				var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g;
 				var reloop = false;
 				do {
 					reloop = false;
 					for (var fileName in files) {
 						var match;
-						while (match = importRegex.exec(files[fileName])) {
-							var m = match[1];
-							if (m in files) continue;
-							if (getFiles().indexOf(fileKey(m)) !== -1) {
-								files[m] = window.localStorage[fileKey(match[1])];
-								reloop = true;
-							} else if (m in cachedRemoteFiles) {
-								files[m] = cachedRemoteFiles[m];
-								reloop = true;
-							} else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
-								$.getJSON('https://api.github.com/repos/' + githubMatch[3] + '/contents/' + githubMatch[4], function(result) {
-									var content;
-									if ('content' in result)
-										content = Base64.decode(result.content);
-									else
-										content = "\"" + m + "\" NOT FOUND"; //@TODO handle this better
+						while (match = importRegex.exec(files[fileName]))
+							importHints.push(match[1]);
+					}
+					while (importHints.length > 0) {
+						var m = importHints.pop();
+						if (m in files) continue;
+						if (getFiles().indexOf(fileKey(m)) !== -1) {
+							files[m] = window.localStorage[fileKey(m)];
+							reloop = true;
+						} else if (m in cachedRemoteFiles) {
+							files[m] = cachedRemoteFiles[m];
+							reloop = true;
+						} else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
+							$('#output').append($('<div/>').append($('<pre/>').text("Loading github.com/" + githubMatch[3] + " ...")));
+							$.getJSON('https://api.github.com/repos/' + githubMatch[3] + '/contents/' + githubMatch[4], function(result) {
+								if ('content' in result)
+								{
+									var content = Base64.decode(result.content);
 									cachedRemoteFiles[m] = content;
 									files[m] = content;
-									gatherImports(files, asyncCallback, true);
-								}).fail(function(){
-									var content = "\"" + m + "\" NOT FOUND"; //@TODO handle this better
-									cachedRemoteFiles[m] = content;
-									files[m] = content;
-									gatherImports(files, asyncCallback, true);
-								});
-								return null;
-							}
+									gatherImports(files, importHints, cb);
+								}
+								else
+									cb(null, "Unable to import \"" + m + "\"");
+							}).fail(function(){
+								cb(null, "Unable to import \"" + m + "\"");
+							});
+							return;
+						} else {
+							cb(null, "Unable to import \"" + m + "\"");
+							return;
 						}
 					}
 				} while (reloop);
-				var input = JSON.stringify({'sources':files});
-				if (needAsync)
-					asyncCallback(input);
-				return input;
+				cb(JSON.stringify({'sources':files}));
 			}
 
 			var initializeWorker = function() {
@@ -643,7 +666,7 @@
 						onCompilerLoaded();
 						break;
 					case 'compiled':
-						compilationFinished(data.data);
+						compilationFinished(data.data, data.missingInputs);
 						break;
 					};
 				});
