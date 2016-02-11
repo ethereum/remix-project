@@ -1,8 +1,8 @@
 var version = function() { return '(loading)'; }
 var compileJSON = function() { return ''; }
+var missingInputs = [];
 addEventListener('message', function(e) {
 	var data = e.data;
-	var missingInputs = [];
 	switch (data.cmd) {
 		case 'loadVersion':
 			delete Module;
@@ -32,7 +32,7 @@ addEventListener('message', function(e) {
 			});
 			break;
 		case 'compile':
-			missingInputs
+                        missingInputs.length = 0;
 			postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize)}, missingInputs: missingInputs);
 			break;
 	}
