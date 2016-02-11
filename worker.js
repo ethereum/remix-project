@@ -32,8 +32,8 @@ addEventListener('message', function(e) {
 			});
 			break;
 		case 'compile':
-                        missingInputs.length = 0;
-			postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize)}, missingInputs: missingInputs);
+			missingInputs.length = 0;
+			postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize), missingInputs: missingInputs});
 			break;
 	}
 }, false);
