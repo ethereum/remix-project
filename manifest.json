@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "Solidity",
+  "description": "Realtime compiler and runtime",
+  "devtools_page": "devtools.html",
+  "update_url": "https://chriseth.github.io/browser-solidity/",
+  "version": "1.0",
+  "manifest_version": 2,
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "https://ajax.googleapis.com/",
+	"webRequest", 
+	"webRequestBlocking", 
+	"\u003Call_urls>", 
+	"storage"
+  ]
+}
