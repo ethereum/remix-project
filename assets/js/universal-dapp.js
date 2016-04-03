@@ -7,13 +7,13 @@ function UniversalDApp (contracts, options) {
     if (!options.vm && web3.currentProvider) {
 
     } else if (options.vm) {
-        this.BN = EthVm.deps.ethUtil.BN;
-        this.stateTrie = new EthVm.deps.Trie();
-        this.vm = new EthVm(this.stateTrie);
+        this.BN = EthJS.BN;
+        this.stateTrie = new EthJS.Trie();
+        this.vm = new EthJS.VM(this.stateTrie);
         this.secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
         this.publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
         this.address = ethUtil.pubToAddress(new Buffer(this.publicKey, 'hex'), true);
-        this.account = new EthVm.deps.Account();
+        this.account = new EthJS.Account();
         this.account.balance = 'f00000000000000001';
         this.nonce = 0;
         this.vm.stateManager.trie.put(this.address, this.account.serialize());   
@@ -437,7 +437,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         }
     } else {
         try {
-            var tx = new EthVm.deps.Transaction({
+            var tx = new EthJS.Tx({
                 nonce: new Buffer([this.nonce++]), //@todo count beyond 255
                 gasPrice: 1,
                 gasLimit: 3000000000, //plenty
@@ -446,7 +446,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: new Buffer(data.slice(2), 'hex')
             });
             tx.sign(new Buffer(this.secretKey, 'hex'));
-            this.vm.runTx({tx: tx, skipBalance: true, skipNonce: true}, cb);
+            this.vm.runTx({tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
         } catch (e) {
             cb( e, null );
         }
