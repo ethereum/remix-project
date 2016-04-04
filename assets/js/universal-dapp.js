@@ -316,9 +316,18 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 replaceOutput($result, getGasUsedOutput(result));
                 args.appendFunctions(result.createdAddress);
             } else if (self.options.vm){
-                //@todo implement once decoder is exposed by web3.js
-                //var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
-                var outputObj = '0x' + result.vm.return.toString('hex');
+                var outputObj;
+
+                try {
+                    var outputTypes = [];
+                    for (var i = 0; i < args.abi.outputs.length; i++) {
+                        outputTypes.push(args.abi.outputs[i].type);
+                    }
+                    outputObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
+                } catch (e) {
+                    outputObj = '0x' + result.vm.return.toString('hex');
+                }
+
                 clearOutput($result);
                 $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
             } else if (args.abi.constant && !isConstructor) {
