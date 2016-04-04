@@ -684,22 +684,22 @@
 					}});
 				var $contractOutput = dapp.render();
 
-
 				$txOrigin = $('#txorigin');
-				if (executionContext === 'vm') {
-					$txOrigin.empty();
-					var addr = '0x' + dapp.address.toString('hex');
-					$txOrigin.val(addr);
-					$txOrigin.append($('<option />').val(addr).text(addr));
-				} else web3.eth.getAccounts(function(err, accounts) {
+				function renderAccounts(err, accounts) {
 					if (err)
 						renderError(err.message);
 					if (accounts && accounts[0]){
 						$txOrigin.empty();
 						for( var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])); }
 						$txOrigin.val(accounts[0]);
-					} else $txOrigin.val('unknown');	
-				});
+					} else $txOrigin.val('unknown');
+				}
+
+				if (executionContext === 'vm') {
+					dapp.getAccounts(renderAccounts);
+				} else {
+					web3.eth.getAccounts(renderAccounts);
+				}
 
 				$contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
 				$('#output').append( $contractOutput );

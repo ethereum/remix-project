@@ -7,16 +7,14 @@ function UniversalDApp (contracts, options) {
     if (!options.vm && web3.currentProvider) {
 
     } else if (options.vm) {
+        this.accounts = {}
+
         this.BN = EthJS.BN;
         this.stateTrie = new EthJS.Trie();
         this.vm = new EthJS.VM(this.stateTrie);
-        this.secretKey = '3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511'
-        this.publicKey = '0406cc661590d48ee972944b35ad13ff03c7876eae3fd191e8a2f77311b0a3c6613407b5005e63d7d8d76b89d5f900cde691497688bb281e07a5052ff61edebdc0'
-        this.address = ethUtil.pubToAddress(new Buffer(this.publicKey, 'hex'), true);
-        this.account = new EthJS.Account();
-        this.account.balance = 'f00000000000000001';
-        this.nonce = 0;
-        this.vm.stateManager.trie.put(this.address, this.account.serialize());   
+
+        this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511')
+        this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c')
     } else {
         var host = options.host || "localhost";
         var port = options.port || "8545";
@@ -25,6 +23,26 @@ function UniversalDApp (contracts, options) {
     }
 
 }
+
+UniversalDApp.prototype.addAccount = function (privateKey, balance) {
+  if (this.accounts) {
+    privateKey = new Buffer(privateKey, 'hex')
+    var address = EthJS.Util.privateToAddress(privateKey);
+
+    var account = new EthJS.Account();
+    account.balance = balance || 'f00000000000000001';
+    this.vm.stateManager.trie.put(address, account.serialize());
+
+    this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
+  }
+};
+
+UniversalDApp.prototype.getAccounts = function (cb) {
+  if (!this.accounts) return cb("No accounts?");
+
+  cb(null, Object.keys(this.accounts));
+};
+
 UniversalDApp.prototype.render = function () {
     if (this.contracts.length == 0) {
         this.$el.append( this.getABIInputForm() );
@@ -437,15 +455,17 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         }
     } else {
         try {
+            var address = this.options.getAddress ? this.options.getAddress() : this.getAccounts()[0];
+            var account = this.accounts[address];
             var tx = new EthJS.Tx({
-                nonce: new Buffer([this.nonce++]), //@todo count beyond 255
+                nonce: new Buffer([account.nonce++]), //@todo count beyond 255
                 gasPrice: 1,
                 gasLimit: 3000000000, //plenty
                 to: to,
                 value: value,
                 data: new Buffer(data.slice(2), 'hex')
             });
-            tx.sign(new Buffer(this.secretKey, 'hex'));
+            tx.sign(account.privateKey);
             this.vm.runTx({tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
         } catch (e) {
             cb( e, null );
