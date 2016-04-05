@@ -51,6 +51,36 @@
 			}
 
 
+			// ----------------- storage --------------------
+
+			function syncStorage() {
+
+				var obj = {}
+
+				function check(key){
+					chrome.storage.sync.get( key, function(resp){
+						console.log("comparing to cloud", resp)
+						if (obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "' from cloud storage?")) {
+							console.log("Overwriting", key )
+							localStorage.setItem( key,  resp[key] );
+							updateFiles();
+						}
+					})
+				}
+
+				for (var y in window.localStorage) {
+					console.log("checking", y)
+					obj[y] = window.localStorage.getItem(y);
+					if (y.indexOf(SOL_CACHE_FILE_PREFIX) !== 0) continue;
+					check(y)
+				}
+
+			}
+
+			window.syncStorage = syncStorage;
+			if (chrome && chrome.storage && chrome.storage.sync) syncStorage()
+
+
 
 			// ----------------- editor ----------------------
 
@@ -800,5 +830,7 @@
 					}
 				return funABI;
 			};
+
+			syncStorage()
 
 		});

@@ -5,11 +5,15 @@
   "description": "Realtime compiler and runtime",
   "devtools_page": "devtools.html",
   "update_url": "https://chriseth.github.io/browser-solidity/",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 2,
   "background": {
     "scripts": ["background.js"],
     "persistent": true
+  },
+
+  "icons": {
+    "32": "icon.png"
   },
 
   "browser_action": {
@@ -17,12 +21,12 @@
   },
   
   "permissions": [
+    "storage",
     "tabs",
     "activeTab",
     "https://ajax.googleapis.com/",
-	"webRequest", 
-	"webRequestBlocking", 
-	"\u003Call_urls>", 
-	"storage"
+    "webRequest",
+    "webRequestBlocking",
+    "\u003Call_urls>"
   ]
 }
