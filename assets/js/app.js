@@ -55,16 +55,28 @@
 
 			function syncStorage() {
 
+				if (!chrome || !chrome.storage || !chrome.storage.sync) return;
+
 				var obj = {}
+				var done = false;
+				var count = 0
+				var dont = 0;
 
 				function check(key){
 					chrome.storage.sync.get( key, function(resp){
-						console.log("comparing to cloud", resp)
-						if (obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "' from cloud storage?")) {
+						console.log("comparing to cloud", key, resp)
+						if (typeof resp[key] != 'undefined' && obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "'? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.")) {
 							console.log("Overwriting", key )
-							localStorage.setItem( key,  resp[key] );
+							localStorage.setItem( key, resp[key] );
 							updateFiles();
+						} else {
+							console.log( "add to obj", obj, key)
+							obj[key] = localStorage[key];
 						}
+						done++
+						if (done >= count) chrome.storage.sync.set( obj, function(){
+							console.log( "updated cloud files with: ", obj, this, arguments)
+						})
 					})
 				}
 
@@ -72,13 +84,15 @@
 					console.log("checking", y)
 					obj[y] = window.localStorage.getItem(y);
 					if (y.indexOf(SOL_CACHE_FILE_PREFIX) !== 0) continue;
+					count++;
 					check(y)
 				}
+
 
 			}
 
 			window.syncStorage = syncStorage;
-			if (chrome && chrome.storage && chrome.storage.sync) syncStorage()
+			syncStorage()
 
 
 
@@ -89,7 +103,7 @@
 			var SOL_CACHE_FILE = null;
 
 			var editor = ace.edit("input");
-			var session = editor.getSession();
+			var sessions = {};
 			var Range = ace.require('ace/range').Range;
 			var errMarkerId = null;
 
@@ -106,11 +120,22 @@
 
 			SOL_CACHE_FILE = getFiles()[0];
 
-			editor.setValue( window.localStorage[SOL_CACHE_FILE], -1);
+			var files = getFiles();
+			for (var x in files)
+				sessions[files[x]] = newEditorSession(files[x])
+
+			editor.setSession( sessions[SOL_CACHE_FILE] );
 			editor.resize(true);
-			session.setMode("ace/mode/javascript");
-			session.setTabSize(4);
-			session.setUseSoftTabs(true);
+
+
+
+			function newEditorSession(filename) {
+				var s = new ace.EditSession(window.localStorage[filename])
+				s.setMode("ace/mode/javascript");
+				s.setTabSize(4);
+				s.setUseSoftTabs(true);
+				return s;
+			}
 
 
 
@@ -283,7 +308,7 @@
 				if (SOL_CACHE_FILE) {
 					var active = fileTabFromKey(SOL_CACHE_FILE);
 					active.addClass('active');
-					editor.setValue( window.localStorage[SOL_CACHE_FILE] || '', -1);
+					editor.setSession( sessions[SOL_CACHE_FILE] );
 					editor.focus();
 				}
 				$('#input').toggle( !!SOL_CACHE_FILE );
@@ -308,6 +333,7 @@
 				for (var f in localStorage ) {
 					if (f.indexOf( SOL_CACHE_FILE_PREFIX, 0 ) === 0) {
 						files.push(f);
+						if (!sessions[f]) sessions[f] = newEditorSession(f);
 					}
 				}
 				return files;
@@ -393,6 +419,7 @@
 
 			function onResize() {
 				editor.resize();
+				var session = editor.getSession();
 				session.setUseWrapMode(document.querySelector('#editorWrap').checked);
 				if(session.getUseWrapMode()) {
 					var characterWidth = editor.renderer.characterWidth;
@@ -607,6 +634,9 @@
 			loadVersion('soljson-latest.js');
 
 			editor.getSession().on('change', onChange);
+			editor.on('changeSession', function(){
+				editor.getSession().on('change', onChange);
+			})
 
 			document.querySelector('#optimize').addEventListener('change', compile);
 
