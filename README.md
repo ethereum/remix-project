@@ -44,3 +44,8 @@ In order to allow compiling contracts using a specific version of solidity, the 
 	// getting a legacy version
 	var solcV011 = solc.useVersion( 'v0.1.1-2015-08-04-6ff4cd6' );
 	var output = solcV011.compile( "contract t { function g() {} }", 1 );
+
+#To use it as a chrome extension:
+Browse to chrome://extensions/
+
+Make sure 'Developer mode' has been checked. Then click 'Load unpacked extension...' to pop up a file-selection dialog.
