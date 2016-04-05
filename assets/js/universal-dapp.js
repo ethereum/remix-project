@@ -290,7 +290,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         self.runTx(data, args, function(err, result) {
             if (err) {
                 replaceOutput($result, $('<span/>').text(err).addClass('error'));
-            } else if (result.vm.exception && result.vm.exceptionError) {
+            } else if (self.options.vm && result.vm.exception && result.vm.exceptionError) {
                 replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
             } else if (self.options.vm && result.vm.return === undefined) {
                 replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
