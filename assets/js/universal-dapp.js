@@ -418,7 +418,21 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     if (!this.vm) {
         if (constant && !isConstructor) {
             var func = web3.eth.contract( [args.abi] ).at( to );
-            func[args.abi.name].call( cb );
+            var prepareCallArgs = function(callArgs) {
+                var split = function(str, arr) {
+                    if (str === "")
+                        return arr;
+
+                    var chunk = str.slice(0, 64);
+                    arr.push("0x" + chunk);
+                    return split(str.slice(64), arr);
+                } 
+                return split(callArgs, []);
+            };
+            var argsOnly = data.slice(10);
+            var callArgs = prepareCallArgs(argsOnly);
+            callArgs.push(cb);
+            func[args.abi.name].call.apply(this, callArgs);
         } else {
             var tx = {
                 from: self.options.getAddress ? self.options.getAddress() : web3.eth.accounts[0],
