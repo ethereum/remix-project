@@ -38,6 +38,16 @@
 
 		<script src="https://ethereum.github.io/solc-bin/bin/list.js"></script>
 		<script src="assets/js/jquery-2.1.3.min.js"></script>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+		<script src="bin/list.js"></script>
 		<script src="assets/js/ace.js"></script>
 		<script src="assets/js/mode-solidity.js"></script>
 		<script src="assets/js/ethereumjs-vm.js"></script>
@@ -50,10 +60,13 @@
 		
 
 		<div id="editor">
-			<div id="files">
-				<span class="newFile" title="New File"><i class="fa fa-file-text-o"></i></span>
-				<span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-columns"></i></span>
+			<span class="newFile" title="New File"><i class="fa fa-file-code-o"></i></span>
+			<div class="files-wrapper">
+				<div class="scroller scroller-left"><i class="glyphicon glyphicon-chevron-left"></i></div>
+				<div class="scroller scroller-right"><i class="glyphicon glyphicon-chevron-right"></i></div>
+				<ul id="files" class="nav nav-tabs"></ul>
 			</div>
+			<span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
 			<div id="input"></div>
 			<div id="dragbar"></div>
 		</div>
@@ -62,33 +75,33 @@
 			<div id="header">
 				<div id="menu">
 					<ul id="options">
-						<li class="settingsView active"><i class="fa fa-gear"></i></li>
-						<li class="txView"><i class="fa fa-send"></i></li>
-						<li class="envView"><i class="fa fa-cube"></i></li>
-						<li class="publishView"><i class="fa fa-cloud-upload"></i></li>
+						<li class="settingsView active" title="Settings"><i class="fa fa-gear"></i></li>
+						<li class="txView" title="Transaction"><i class="fa fa-send"></i></li>
+						<li class="envView" title="Environment"><i class="fa fa-cube"></i></li>
+						<li class="publishView" title="Publish" ><i class="fa fa-cloud-upload"></i></li>
+						<li id="helpButton"><a href="https://solidity.readthedocs.org" target="_blank" title="Open Documentation" class="fa fa-question"></a></li>
 					</ul>
-					<a href="https://solidity.readthedocs.org" target="_blank" id="helpButton" class="fa fa-question" title="Documentation" class="fa fa-question"></a>
 					<img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/sol.svg" alt="Solidity realtime compiler and runtime">
 				</div>
 				<div id="optionViews" class="settingsView">
 					<div id="txView">
-						<div class="row">
+						<div class="crow">
 							<label for="txorigin"><select name="txorigin" id="txorigin"></select> Transaction origin</label>
 						</div>
-						<div class="row hide">
+						<div class="crow hide">
 							<label for="gas"><input type="number" id="gas" value="0"> Gas</label>
 						</div>
-						<div class="row hide">
+						<div class="crow hide">
 							<label for="gasPrice"><input type="number" id="gasPrice" value="0"> Gas Price</label>
 						</div>
-						<div class="row">
+						<div class="crow">
 							<label for="value"><input type="text" id="value" value="0"> Value (e.g. .7 ether or 5 wei, defaults to ether)</label>
 						</div>
 					</div>
 					<div id="settingsView">
-						<div class="version row"><strong>Solidity version:</strong> <span id="version">(loading)</span></div>
-						<div class="row">Change to: <select id="versionSelector"></select></div>
-						<div class="row">
+						<div class="version crow"><strong>Solidity version:</strong> <span id="version">(loading)</span></div>
+						<div class="crow">Change to: <select id="versionSelector"></select></div>
+						<div class="crow">
 							<label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
 							<label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
 						</div>
