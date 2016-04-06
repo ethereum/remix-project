@@ -229,7 +229,7 @@
 			// ----------------- file selector-------------
 
 			var $filesEl = $('#files');
-			$filesEl.on('click','.newFile', function() {
+			$('.newFile').on('click', function() {
 				while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
 					untitledCount = (untitledCount - 0) + 1;
 				SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
@@ -343,10 +343,10 @@
 				return files;
 			}
 
-			updateFiles();
 
-
-			var hidWidth;
+			$filesWrapper = $('.files-wrapper');
+			$scrollerRight = $('.scroller-right');
+			$scrollerLeft = $('.scroller-left');
 
 			function widthOfList (){
 				var itemsWidth = 0;
@@ -358,54 +358,47 @@
 			};
 
 			function widthOfHidden(){
-				return (($('.files-wrapper').outerWidth()) - widthOfList() - getLeftPosi());
+				return (($filesWrapper.outerWidth()) - widthOfList() - getLeftPosi());
 			};
 
 			function widthOfVisible(){
-				return $('.files-wrapper').outerWidth();
+				return $filesWrapper.outerWidth();
 			};
 
 			function getLeftPosi(){
-				return $('#files').position().left;
+				return $filesEl.position().left;
 			};
 
 			function reAdjust (){
-
-				console.log("left start: ", getLeftPosi())
-				console.log("outer width: ", widthOfVisible(), "content width: ",  widthOfList(), " left+vis: ", getLeftPosi() + widthOfVisible())
 				if (widthOfList() + getLeftPosi() > + widthOfVisible()) {
-					console.log( "show right scroll")
-					$('.scroller-right').fadeIn('fast');
+					$scrollerRight.fadeIn('fast');
 				} else {
-					console.log( "hide right scroll")
-					$('.scroller-right').fadeOut('fast');
+					$scrollerRight.fadeOut('fast');
 				}
 
 				if (getLeftPosi()<0) {
-					console.log( "show left scroll")
-					$('.scroller-left').fadeIn('fast');
+					$scrollerLeft.fadeIn('fast');
 				} else {
-					console.log( "hide left scroll")
-					$('.scroller-left').fadeOut('fast');
-					$('#files').animate({left: getLeftPosi() + "px"},'slow');
+					$scrollerLeft.fadeOut('fast');
+					$filesEl.animate({left: getLeftPosi() + "px"},'slow');
 				}
 			}
 
-			$('.scroller-right').click(function() {
+			$scrollerRight.click(function() {
 				var delta = (getLeftPosi() - 200)
-				console.log(delta)
-				$('#files').animate({left: delta + "px"},'slow',function(){
+				$filesEl.animate({left: delta + "px"},'slow',function(){
 					reAdjust();
 				});
 			});
 
-			$('.scroller-left').click(function() {
+			$scrollerLeft.click(function() {
 				var delta = Math.min( (getLeftPosi() + 200), 0 )
-				console.log(delta)
-				$('#files').animate({left: delta + "px"},'slow',function(){
+				$filesEl.animate({left: delta + "px"},'slow',function(){
 					reAdjust();
 				});
 			});
+
+			updateFiles();
 
 			// ----------------- version selector-------------
 
