@@ -123,7 +123,7 @@
 
 
 			var files = getFiles();
-			for (var x in files)
+			for (var x in files) {
 				sessions[files[x]] = newEditorSession(files[x])
 
 			editor.setSession( sessions[SOL_CACHE_FILE] );
@@ -378,7 +378,6 @@
 			function activeFilePos() {
 				var el = $filesEl.find('.active');
 				var l = el.position().left;
-				console.log("active file left", l, el)
 				return l;
 			}
 
@@ -416,6 +415,7 @@
 			// ----------------- version selector-------------
 
 			// var soljsonSources is provided by bin/list.js
+
 			$('option', '#versionSelector').remove();
 			$.each(soljsonSources, function(i, file) {
 				if (file) {
