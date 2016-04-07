@@ -286,7 +286,7 @@
 				window.localStorage[SOL_CACHE_FILE] = '';
 				updateFiles();
 
-				$filesEl.animate({left: (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)) + "px"}, "slow", function(){
+				$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ "px"}, "slow", function(){
 					reAdjust();
 				})
 			});
