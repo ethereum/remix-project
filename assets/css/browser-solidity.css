@@ -25,6 +25,7 @@ body {
     vertical-align: middle;
     background-color: rgba(255,255,255,0.8);
     height: 100%;
+    font-size: 1.3em;
 }
 
 .scroller i {
