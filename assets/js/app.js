@@ -52,13 +52,13 @@
 
 			function getGistId(str) {
 				var idr = /[0-9A-Fa-f]{8,}/;
-				var match = idr.exec(str)[0];
-				return match;
+				var match = idr.exec(str);
+				return match ? match[0] : null;
 			}
 
 			var queryParams = getQueryParams();
 			var loadingFromGist = false;
-			if (queryParams['gist']) {
+			if (typeof queryParams['gist'] != undefined) {
 				var gistId;
 				if (queryParams['gist'] === '') {
 					var str = prompt("Enter the URL or ID of the Gist you would like to load.");
@@ -70,7 +70,7 @@
 					gistId = queryParams['gist'];
 					loadingFromGist = !!gistId;
 				}
-				$.ajax({
+				if (loadingFromGist) $.ajax({
 					url: 'https://api.github.com/gists/'+gistId,
 					jsonp: 'callback',
 					dataType: 'jsonp',
@@ -249,7 +249,7 @@
 
 					var files = {};
 					var filesArr = getFiles();
-					var description = "Created using soleditor: Realtime Ethereum Contract Compiler and Runtime. Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/#gist=";
+					var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
 
 					for(var f in filesArr) {
 						files[fileNameFromKey(filesArr[f])] = {
@@ -734,6 +734,7 @@
 			var worker = null;
 			var loadVersion = function(version) {
 				$('#version').text("(loading)");
+				updateQueryParams({version: version});
 				var isFirefox = typeof InstallTrigger !== 'undefined';
 				if (document.location.protocol != 'file:' && Worker !== undefined && isFirefox) {
 					// Workers cannot load js on "file:"-URLs and we get a
