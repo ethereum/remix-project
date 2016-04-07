@@ -2,6 +2,52 @@
 
 		$(document).ready(function() {
 
+
+
+			// ------------------ query params (hash) ----------------
+
+			function getQueryParams() {
+
+				var qs = window.location.hash.substr(1);
+
+				if (window.location.search.length > 0) {
+					// use legacy query params instead of hash
+					window.location.hash = window.location.search.substr(1);
+					window.location.search = "";
+				}
+
+				var params = {};
+				var parts = qs.split("&");
+				for (var x in parts) {
+					var keyValue = parts[x].split("=");
+					if (keyValue[0] !== "") params[keyValue[0]] = keyValue[1];
+				}
+				return params;
+			}
+
+			function updateQueryParams(params) {
+				var currentParams = getQueryParams();
+				var keys = Object.keys(params);
+				for (var x in keys) {
+					currentParams[keys[x]] = params[keys[x]];
+				}
+				var queryString = "#";
+				var updatedKeys = Object.keys(currentParams);
+				for( var y in updatedKeys) {
+					queryString += updatedKeys[y] + "=" + currentParams[updatedKeys[y]] + "&";
+				}
+				window.location.hash = queryString.slice(0, -1);
+			}
+
+
+			function syncQueryParams() {
+				$('#optimize').attr( 'checked', (getQueryParams().optimize == "true") );
+			}
+
+
+			window.onhashchange = syncQueryParams;
+			syncQueryParams();
+
 			// ------------------ gist load ----------------
 
 			function getGistId(str) {
@@ -10,20 +56,18 @@
 				return match;
 			}
 
-			var location_query_params = window.location.search.substr(1).split("=");
+			var queryParams = getQueryParams();
 			var loadingFromGist = false;
-			if (location_query_params.indexOf('gist') !== -1 && location_query_params.length >= 2) {
-				var index = location_query_params.indexOf('gist');
+			if (queryParams['gist']) {
 				var gistId;
-				var key = location_query_params[index+1];
-				if (key === '') {
+				if (queryParams['gist'] === '') {
 					var str = prompt("Enter the URL or ID of the Gist you would like to load.");
 					if (str !== '') {
 						gistId = getGistId( str );
 						loadingFromGist = !!gistId;
 					}
 				} else {
-					gistId = getGistId( key );
+					gistId = queryParams['gist'];
 					loadingFromGist = !!gistId;
 				}
 				$.ajax({
@@ -43,8 +87,12 @@
 								}
 								window.localStorage[key] = content;
 							}
-							SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
-							updateFiles();
+							if (!response.data.files) {
+								alert( "Gist load error: " + response.data.message )
+							} else {
+								SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
+								updateFiles();
+							}
 						}
 					}
 				});
@@ -201,8 +249,8 @@
 
 					var files = {};
 					var filesArr = getFiles();
-					var description = "Created using soleditor: Realtime Ethereum Contract Compiler and Runtime. Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/?gist=";
-					
+					var description = "Created using soleditor: Realtime Ethereum Contract Compiler and Runtime. Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/#gist=";
+
 					for(var f in filesArr) {
 						files[fileNameFromKey(filesArr[f])] = {
 							content: localStorage[filesArr[f]]
@@ -424,6 +472,7 @@
 				}
 			});
 			$('#versionSelector').change(function() {
+				updateQueryParams({version: $('#versionSelector').val() });
 				loadVersion($('#versionSelector').val());
 			});
 			
@@ -533,7 +582,7 @@
 					if (input === null) {
 						renderError(error);
 					} else {
-						var optimize = document.querySelector('#optimize').checked;
+						var optimize = getQueryParams().optimize;
 						compileJSON(input, optimize ? 1 : 0);
 					}
 				});
@@ -706,14 +755,18 @@
 					}, 200);
 				}
 			};
-			loadVersion('soljson-latest.js');
+
+			loadVersion( getQueryParams().version || 'soljson-latest.js');
 
 			editor.getSession().on('change', onChange);
 			editor.on('changeSession', function(){
 				editor.getSession().on('change', onChange);
 			})
 
-			document.querySelector('#optimize').addEventListener('change', compile);
+			document.querySelector('#optimize').addEventListener('change', function(){
+				updateQueryParams({optimize: document.querySelector('#optimize').checked });
+				compile();
+			});
 
 			// ----------------- compiler output renderer ----------------------
 			var detailsOpen = {};
