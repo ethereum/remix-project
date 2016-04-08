@@ -434,22 +434,19 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var value = self.options.getValue ? self.options.getValue : 0;
     
     if (!this.vm) {
+        var tx = {
+            from: self.options.getAddress ? self.options.getAddress() : web3.eth.accounts[0],
+            to: to,
+            data: data,
+            gas: gas,
+            value: value
+        };
         if (constant && !isConstructor) {
-            var func = web3.eth.contract( [args.abi] ).at( to );
-            func[args.abi.name].call( cb );
+            web3.eth.call( tx, cb );
         } else {
-            var tx = {
-                from: self.options.getAddress ? self.options.getAddress() : web3.eth.accounts[0],
-                to: to,
-                data: data,
-                gas: gas,
-                value: value
-            };
             web3.eth.estimateGas( tx, function(err, resp){
                 tx.gas = resp;
-                if (!err) web3.eth.sendTransaction( tx, function(err, resp) {
-                    cb( err, resp );
-                });
+                if (!err) web3.eth.sendTransaction( tx, cb );
                 else cb( err, resp);
             });
         }
