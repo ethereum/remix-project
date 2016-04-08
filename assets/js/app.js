@@ -890,11 +890,7 @@ $(document).ready(function() {
 			} else $txOrigin.val('unknown');
 		}
 
-		if (executionContext === 'vm') {
-			dapp.getAccounts(renderAccounts);
-		} else {
-			web3.eth.getAccounts(renderAccounts);
-		}
+		dapp.getAccounts(renderAccounts);
 
 		$contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
 		$('#output').append( $contractOutput );

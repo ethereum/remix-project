@@ -38,9 +38,13 @@ UniversalDApp.prototype.addAccount = function (privateKey, balance) {
 };
 
 UniversalDApp.prototype.getAccounts = function (cb) {
-    if (!this.accounts) return cb("No accounts?");
+    if (!this.vm) {
+        web3.eth.getAccounts(cb);
+    } else {
+        if (!this.accounts) return cb("No accounts?");
 
-    cb(null, Object.keys(this.accounts));
+        cb(null, Object.keys(this.accounts));
+    }
 };
 
 UniversalDApp.prototype.render = function () {
