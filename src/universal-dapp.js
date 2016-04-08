@@ -7,6 +7,7 @@ var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
 var EventManager = require('./lib/eventManager');
+var crypto = require('crypto');
 
 /*
   trigger debugRequested
@@ -47,6 +48,14 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this.addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea');
     this.addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce');
   }
+};
+
+UniversalDApp.prototype.newAccount = function () {
+  var privateKey;
+  do {
+    privateKey = crypto.randomBytes(32);
+  } while (!ethJSUtil.isValidPrivate(privateKey));
+  this._addAccount(privateKey);
 };
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
