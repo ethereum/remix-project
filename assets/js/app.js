@@ -672,6 +672,7 @@
 					vm: executionContext === 'vm',
 					removable: false,
 					getAddress: function(){ return $('#txorigin').val(); },
+					getValue: function(){ return $('#value').val(); },
 					removable_instances: true,
 					renderOutputModifier: function(contractName, $contractOutput) {
 						var contract = data.contracts[contractName];
