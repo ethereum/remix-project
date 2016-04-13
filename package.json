@@ -2,17 +2,31 @@
   "name": "remix",
   "version": "0.0.1",
   "description": "Ethereum IDE and tools for the web",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    }
+  ],
   "main": "index.js",
   "dependencies": {
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "react": "^15.0.1",
-    "react-dom": "^15.0.1"
+    "react-dom": "^15.0.1",
+    "web3": "^0.15.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "web3": "^0.15.3"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js"
+    "install": "npm install --save react react-dom; npm install -g browserify; npm install --save babelify babel-preset-react; npm install web3",
+    "start_node": "cd ../webthree/eth; ./eth --rpccorsdomain \"*\" -j --admin-via-http -v 0",
+    "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js"
   },
   "repository": {
     "type": "git",
