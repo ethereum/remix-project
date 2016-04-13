@@ -1,7 +1,12 @@
 var React = require('react');
- 
+var TxBrowser = require('./txBrowser');
+
 module.exports = React.createClass({
   render: function() {
-    return <p>Sample other Text</p>;
+    return (<div>
+    <p>Debugger</p>
+    <TxBrowser/>
+    </div>
+    );
   }
 });
