@@ -23,10 +23,10 @@ module.exports = React.createClass({
 		
 		return (
 		<div>
-		<div>Trasnaction details</div>
-		<input onChange={this.updateBlockN} type="text" placeholder={this.state.blockNumber}></input>
-		<input onChange={this.updateTxN} type="text" placeholder={this.state.txNumber}></input>
-		<button onClick={this.submit}>Get</button>
+			<div><h3>Transaction details</h3></div>
+			<input onChange={this.updateBlockN} type="text" placeholder={this.state.blockNumber}></input>
+			<input onChange={this.updateTxN} type="text" placeholder={this.state.txNumber}></input>
+			<button onClick={this.submit}>Get</button>
 		</div>
 		);
 	}

@@ -4,7 +4,7 @@ var TxBrowser = require('./txBrowser');
 module.exports = React.createClass({
   render: function() {
     return (<div>
-    <p>Debugger</p>
+    <p><h1>Debugger</h1></p>
     <TxBrowser/>
     </div>
     );
