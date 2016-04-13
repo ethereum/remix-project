@@ -25,7 +25,7 @@
   },
   "scripts": {
     "install": "npm install --save react react-dom; npm install -g browserify; npm install --save babelify babel-preset-react; npm install web3",
-    "start_node": "cd ../webthree/eth; ./eth --rpccorsdomain \"*\" -j --admin-via-http -v 0",
+    "start_node": "../../build/webthree/eth/./eth --rpccorsdomain "*" -j --admin-via-http -v 0",
     "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js"
   },
   "repository": {
