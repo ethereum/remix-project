@@ -1,0 +1,27 @@
+{
+  "name": "remix",
+  "version": "0.0.1",
+  "description": "Ethereum IDE and tools for the web",
+  "main": "index.js",
+  "dependencies": {
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^7.2.0",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix.git"
+  },
+  "author": "cpp-ethereum team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix#readme"
+}
