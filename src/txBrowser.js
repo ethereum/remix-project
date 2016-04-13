@@ -1,14 +1,17 @@
 var React = require('react');
 
 module.exports = React.createClass({
+	propTypes: {
+		onNewTxRequested: React.PropTypes.func.isRequired,
+	},
+
 	getInitialState: function() {
 		return {blockNumber: "1160004", txNumber: "1"}
 	},
 
 	submit: function()
 	{
-		var vmTrace = web3.admin.vmTrace(this.state.blockNumber, parseInt(this.state.txNumber), "TmrjdiILLn0=");
-		console.log(JSON.stringify(vmTrace));	
+		this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber), "TmrjdiILLn0=");
 	},
 	
 	updateBlockN: function(ev) {
