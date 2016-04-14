@@ -5,20 +5,21 @@ var VmTraceBrowser = require('./vmTraceBrowser');
 
 module.exports = React.createClass({
   getInitialState: function() {
-	return {vmTrace: null}
+	 return {vmTrace: null}
   },
 
   render: function() {
-    return (<div>
-    <p><h1>Debugger</h1></p>
-		<TxBrowser onNewTxRequested={this.retrieveVmTrace} />
-		<VmTraceBrowser vmTrace={this.state.vmTrace} />
-	</div>
+    return (
+        <div>
+          <h1>Debugger</h1>
+		      <TxBrowser onNewTxRequested={this.retrieveVmTrace} />
+		      <VmTraceBrowser vmTrace={this.state.vmTrace} />
+        </div>
     );
   },
 
   retrieveVmTrace: function(blockNumber, txNumber)
-  {
+  { 
 	  this.setState({vmTrace: VmTraceManager.retrieveVmTrace(blockNumber, txNumber)});
   }
 });

@@ -11,7 +11,7 @@ module.exports = React.createClass({
 
 	submit: function()
 	{
-		this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber), "TmrjdiILLn0=");
+		this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber));
 	},
 	
 	updateBlockN: function(ev) {
@@ -22,8 +22,7 @@ module.exports = React.createClass({
 	  this.state.txNumber = ev.target.value;
 	},
 
-	render: function() {
-		
+	render: function() {		
 		return (
 		<div>
 			<div><h3>Transaction details</h3></div>
