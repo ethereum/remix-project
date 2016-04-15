@@ -431,7 +431,15 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         data = '0x' + data;
 
     var gas = self.options.getGas ? self.options.getGas : 1000000;
-    var value = self.options.getValue ? self.options.getValue : 0;
+
+    var value = 0;
+    if (self.options.getValue) {
+        try {
+            value = self.options.getValue();
+        } catch (e) {
+            return cb(e);
+        }
+    }
     
     if (!this.vm) {
         var tx = {
@@ -459,7 +467,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 gasPrice: 1,
                 gasLimit: 3000000000, //plenty
                 to: to,
-                value: value,
+                value: new this.BN(value, 10),
                 data: new Buffer(data.slice(2), 'hex')
             });
             tx.sign(account.privateKey);

@@ -672,6 +672,10 @@
 					vm: executionContext === 'vm',
 					removable: false,
 					getAddress: function(){ return $('#txorigin').val(); },
+					getValue: function(){
+						var comp = $('#value').val().split(' ');
+						return web3.toWei(comp[0], comp.slice(1).join(' '));
+					},
 					removable_instances: true,
 					renderOutputModifier: function(contractName, $contractOutput) {
 						var contract = data.contracts[contractName];
