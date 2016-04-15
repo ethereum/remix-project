@@ -169,7 +169,16 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 $events.append( $event );            
             })
         }
-        $instance.append( $title );        
+        $instance.append( $title );
+
+        // Add the fallback function
+        $instance.append(self.getCallButton({
+            abi: { constant: false, inputs:[], name: '(fallback)', outputs: [], type: 'function' },
+            encode: function(args) {
+              return '';
+            },
+            address: address
+        }));
 
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
