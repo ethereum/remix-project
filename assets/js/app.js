@@ -559,13 +559,13 @@
 					// "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
 					// resort to non-worker version in that case.
 					initializeWorker();
-					worker.postMessage({cmd: 'loadVersion', data: 'bin/' + version});
+					worker.postMessage({cmd: 'loadVersion', data: 'https://github.com/ethereum/solc-bin/raw/master/bin/' + version});
 				} else {
 					Module = null;
 					compileJSON = function(source, optimize) { compilationFinished('{}'); };
 					var newScript = document.createElement('script');
 					newScript.type = 'text/javascript';
-					newScript.src = 'bin/' + version;
+					newScript.src = 'https://github.com/ethereum/solc-bin/raw/master/bin/' + version;
 					document.getElementsByTagName("head")[0].appendChild(newScript);
 					var check = window.setInterval(function() {
 						if (!Module) return;
