@@ -264,6 +264,14 @@ UniversalDApp.prototype.getCallButton = function(args) {
         return $gasUsed;
     }
 
+    var getDecodedOutput = function (result) {
+        var $decoded = $('<ol>');
+        for (var i = 0; i < result.length; i++) {
+            $decoded.append($('<li>').text(result[i]));
+        }
+        return $('<div class="decoded">').html('<strong>Decoded:</strong> ').append($decoded);
+    }
+
     var getOutput = function() {
         var $result = $('<div class="result" />');
         var $close = $('<div class="udapp-close" />');
@@ -340,20 +348,21 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 replaceOutput($result, getGasUsedOutput(result));
                 args.appendFunctions(result.createdAddress);
             } else if (self.options.vm){
-                var outputObj;
+                var outputObj = '0x' + result.vm.return.toString('hex');
+                clearOutput($result);
+                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
 
                 try {
                     var outputTypes = [];
                     for (var i = 0; i < args.abi.outputs.length; i++) {
                         outputTypes.push(args.abi.outputs[i].type);
                     }
-                    outputObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
-                } catch (e) {
-                    outputObj = '0x' + result.vm.return.toString('hex');
-                }
 
-                clearOutput($result);
-                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
+                    var decodedObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
+
+                    $result.append(getDecodedOutput(decodedObj));
+                } catch (e) {
+                }
             } else if (args.abi.constant && !isConstructor) {
                 replaceOutput($result, getReturnOutput(result));
             } else {
