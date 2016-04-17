@@ -103,7 +103,7 @@
 
 			function syncStorage() {
 
-				if (!chrome || !chrome.storage || !chrome.storage.sync) return;
+				if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) return;
 
 				var obj = {}
 				var done = false;
