@@ -173,6 +173,7 @@
 			var files = getFiles();
 			for (var x in files) {
 				sessions[files[x]] = newEditorSession(files[x])
+	    }
 
 			editor.setSession( sessions[SOL_CACHE_FILE] );
 			editor.resize(true);
