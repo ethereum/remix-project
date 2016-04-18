@@ -31,7 +31,7 @@ module.exports = React.createClass({
 		if (this.props.data)
 		{	
 			for (var key in this.props.data)
-				ret.push(<tr key={key} ><td>{JSON.stringify(this.props.data[key])}</td></tr>)			
+				ret.push(<tr key={key} ><td>{JSON.stringify(this.props.data[key])}</td></tr>)
 		}
 		return ret
 	}	

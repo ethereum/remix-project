@@ -10,7 +10,7 @@ module.exports = {
 		{
 			margin: '10px',
 			border: '1px solid',
-			width: '625px'
+			width: '800px'
 		},
 		table:
 		{

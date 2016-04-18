@@ -118,8 +118,8 @@ module.exports = React.createClass({
 			memoryIndex = this.retrieveLastSeenProperty(vmTraceIndex, "memory", props.vmTrace.vmtrace)	
 		if (props.vmTrace.vmtrace[memoryIndex].memory || memoryIndex === 0)
 		{
-			this.setState({ currentMemory: this.formatMemory(props.vmTrace.vmtrace[memoryIndex].memory) })
-			lastMemory = this.formatMemory(props.vmTrace.vmtrace[memoryIndex].memory)
+			this.setState({ currentMemory: this.formatMemory(props.vmTrace.vmtrace[memoryIndex].memory, 16) })
+			lastMemory = this.formatMemory(props.vmTrace.vmtrace[memoryIndex].memory, 16)
 		}
 
 		if (props.vmTrace.vmtrace[vmTraceIndex].calldata)
