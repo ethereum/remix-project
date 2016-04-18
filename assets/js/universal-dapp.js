@@ -287,8 +287,14 @@ UniversalDApp.prototype.getCallButton = function(args) {
             return;
         }
         var data = '';
-        if (!isConstructor || funArgs.length > 0)
-            data = args.encode(funArgs);
+        if (!isConstructor || funArgs.length > 0) {
+            try {
+                data = args.encode(funArgs);
+            } catch(e) {
+                replaceOutput($result, $('<span/>').text('Error encoding arguments: ' + e));
+                return;
+            }
+        }
         if (data.slice(0, 9) == 'undefined')
             data = data.slice(9);
         if (data.slice(0, 2) == '0x') data = data.slice(2);
