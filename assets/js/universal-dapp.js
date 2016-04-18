@@ -352,23 +352,26 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 clearOutput($result);
                 $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
 
-                try {
-                    var outputTypes = [];
-                    for (var i = 0; i < args.abi.outputs.length; i++) {
-                        outputTypes.push(args.abi.outputs[i].type);
+                // Only decode if there supposed to be fields
+                if (args.abi.outputs.length > 0) {
+                    try {
+                        var outputTypes = [];
+                        for (var i = 0; i < args.abi.outputs.length; i++) {
+                            outputTypes.push(args.abi.outputs[i].type);
+                        }
+
+                        // decode data
+                        var decodedObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
+
+                        // format decoded data
+                        decodedObj = EthJS.ABI.stringify(outputTypes, decodedObj);
+                        for (var i = 0; i < outputTypes.length; i++) {
+                            decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
+                        }
+
+                        $result.append(getDecodedOutput(decodedObj));
+                    } catch (e) {
                     }
-
-                    // decode data
-                    var decodedObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
-
-                    // format decoded data
-                    decodedObj = EthJS.ABI.stringify(outputTypes, decodedObj);
-                    for (var i = 0; i < outputTypes.length; i++) {
-                        decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
-                    }
-
-                    $result.append(getDecodedOutput(decodedObj));
-                } catch (e) {
                 }
             } else if (args.abi.constant && !isConstructor) {
                 replaceOutput($result, getReturnOutput(result));
