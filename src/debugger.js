@@ -2,6 +2,7 @@ var React = require('react');
 var TxBrowser = require('./txBrowser');
 var VmTraceManager = require('./vmTraceManager');
 var VmTraceBrowser = require('./vmTraceBrowser');
+var style = require('./basicStyles')
 
 module.exports = React.createClass({
 	getInitialState: function() {
@@ -11,7 +12,7 @@ module.exports = React.createClass({
 	render: function() {
 		return (
 			<div>
-			<h1>Debugger</h1>
+			<h1 style={style.container} >Debugger</h1>
 			<TxBrowser onNewTxRequested={this.retrieveVmTrace} />
 			<VmTraceBrowser vmTrace={this.state.vmTrace} />
 			</div>
