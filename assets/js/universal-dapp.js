@@ -150,24 +150,33 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         });
 
         $events = $('<div class="events"/>');
+
+        var parseLogs = function(err,response) {
+            $event = $('<div class="event" />')
+
+            var $close = $('<div class="udapp-close" />')
+            $close.click( function(){ $event.remove(); } )
+
+            $event.append( $('<span class="name"/>').text(response.event) )
+                .append( $('<span class="args" />').text( JSON.stringify(response.args, null, 2) ) )
+                .append( $close );
+
+            $events.append( $event );
+        }
+
         if (self.options.vm){
             self.vm.on('afterTx', function(response){
-                // TODO: parse/use reponse.vm.logs
+                for (var i in response.vm.logs) {
+                    // [address, topics, mem]
+                    var log = response.vm.logs[i];
+
+                    // FIXME: parse based on ABI (match event name + decode values)
+                    parseLogs(null, { event: log[1][0].toString('hex'), args: '0x' + log[2].toString('hex') });
+                }
             });
         } else {
             var eventFilter = web3contract.at(address).allEvents();
-            eventFilter.watch(function(err,response){
-                $event = $('<div class="event" />')
-
-                var $close = $('<div class="udapp-close" />')
-                $close.click( function(){ $event.remove(); } )
-
-                $event.append( $('<span class="name"/>').text(response.event) )
-                    .append( $('<span class="args" />').text( JSON.stringify(response.args, null, 2) ) )
-                    .append( $close );
-
-                $events.append( $event );            
-            })
+            eventFilter.watch(parseLogs);
         }
         $instance.append( $title );
 
