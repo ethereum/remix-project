@@ -173,7 +173,7 @@
 			var files = getFiles();
 			for (var x in files) {
 				sessions[files[x]] = newEditorSession(files[x])
-	    }
+			}
 
 			editor.setSession( sessions[SOL_CACHE_FILE] );
 			editor.resize(true);
@@ -182,7 +182,7 @@
 				var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript")
 				s.setTabSize(4);
 				s.setUseSoftTabs(true);
-				aces[filekey] = s;
+				sessions[filekey] = s;
 				return s;
 			}
 
