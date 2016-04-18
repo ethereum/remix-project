@@ -19,7 +19,7 @@ module.exports = React.createClass({
 	},
 
 	retrieveVmTrace: function(blockNumber, txNumber)
-	{ 
+	{
 		this.setState({vmTrace: VmTraceManager.retrieveVmTrace(blockNumber, txNumber)});
 	}
 });
