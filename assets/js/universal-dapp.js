@@ -265,9 +265,14 @@ UniversalDApp.prototype.getCallButton = function(args) {
     }
 
     var getDecodedOutput = function (result) {
-        var $decoded = $('<ol>');
-        for (var i = 0; i < result.length; i++) {
-            $decoded.append($('<li>').text(result[i]));
+        var $decoded;
+        if (Array.isArray(result)) {
+            $decoded = $('<ol>');
+            for (var i = 0; i < result.length; i++) {
+                $decoded.append($('<li>').text(result[i]));
+            }
+        } else {
+            $decoded = result;
         }
         return $('<div class="decoded">').html('<strong>Decoded:</strong> ').append($decoded);
     }
@@ -371,6 +376,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                         $result.append(getDecodedOutput(decodedObj));
                     } catch (e) {
+                        $result.append(getDecodedOutput('Failed to decode output: ' + e));
                     }
                 }
             } else if (args.abi.constant && !isConstructor) {
