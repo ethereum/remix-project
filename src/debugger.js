@@ -11,8 +11,8 @@ module.exports = React.createClass({
 
 	render: function() {
 		return (
-			<div>
-			<h1 style={style.container} >Debugger</h1>
+			<div style={style.wrapper} >
+			<h1 style={style.container} >Eth Debugger</h1>
 			<TxBrowser onNewTxRequested={this.retrieveVmTrace} />
 			<VmTraceBrowser vmTrace={this.state.vmTrace} />
 			</div>

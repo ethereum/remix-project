@@ -1,8 +1,20 @@
 module.exports = {
+	wrapper:
+	{
+		'fontFamily': "arial,sans-serif"  
+	},
 	container: 
 	{
 		margin: '10px',
 		padding: '5px'
+	},
+	address:
+	{
+		'fontStyle': 'italic'
+	},
+	instructions:
+	{
+		'width': '600px'
 	},
 	panel:
 	{
@@ -10,7 +22,7 @@ module.exports = {
 		{
 			margin: '10px',
 			border: '1px solid',
-			width: '800px'
+			width: '600px'
 		},
 		table:
 		{
@@ -18,7 +30,8 @@ module.exports = {
 		},
 		title:
 		{
-			padding: '5px'
+			padding: '5px',
+			'fontStyle': 'italic'
 		}
 	},
 	hidden:

@@ -1,5 +1,6 @@
 var React = require('react');
-var BasicPanel = require('./basicPanel');
+var BasicPanel = require('./basicPanel')
+var codeUtils = require('./codeUtils')
 var style = require('./basicStyles')
 
 module.exports = React.createClass({
@@ -7,18 +8,20 @@ module.exports = React.createClass({
 	getInitialState: function()
 	{
 		return {
-			currentSelected: 0,
+			currentSelected: 0, // current selected item in the vmTrace
+			selectedInst: 0, // current selected item in the contract assembly code
 			currentAddress: null,
 			currentStack: null,
 			currentLevels: null,
 			currentStorage: null,
 			currentMemory: null,
 			currentCallData: null,
-			selectedInst: 0,
 			lastLevels: null,
 			lastStorage: null,
 			lastMemory: null,
-			lastCallData: null
+			lastCallData: null,
+			codes: {},
+			codesMap: {}
 		};
 	},
 
@@ -33,6 +36,7 @@ module.exports = React.createClass({
 	{		
 		return (
 			<div style={this.props.vmTrace === null ? style.hidden : style.display} >
+			<div style={style.container}><span style={style.address}>{this.state.currentAddress}</span></div> 
 			<div style={style.container}>
 			<button onClick={this.stepIntoBack} disabled={ this.checkButtonState(-1) } >stepIntoBack</button>
 			<button onClick={this.stepOverBack} disabled={ this.checkButtonState(-1) } >stepOverBack</button>
@@ -40,7 +44,7 @@ module.exports = React.createClass({
 			<button onClick={this.stepIntoForward} disabled={ this.checkButtonState(1) } >stepIntoForward</button>
 			</div>
 			<div style={style.container}>
-			<select size="10" ref='itemsList' value={this.state.selectedInst}>
+			<select size="10" ref='itemsList' style={style.container} value={this.state.selectedInst}>
 			{ this.renderAssemblyItems() }
 			</select>
 			</div>
@@ -48,11 +52,36 @@ module.exports = React.createClass({
 			<BasicPanel name="Stack" data={this.state.currentStack} />
 			<BasicPanel name="CallStack" data={this.state.currentCallStack} />
 			<BasicPanel name="Storage" data={this.state.currentStorage} />
-			<BasicPanel name="Memory" data={this.state.currentMemory} />
+			<BasicPanel name="Memory" data={this.state.currentMemory} renderRow={this.renderMemoryRow} />
 			<BasicPanel name="CallData" data={this.state.currentCallData} />
 			</div>
 			</div>
 			);
+	},
+
+	renderMemoryRow: function(data)
+	{
+		var ret = []
+		if (data)
+		{
+			for (var key in data)
+			{
+				var memSlot = data[key]
+				ret.push(<tr key={key} ><td>{memSlot.address}</td><td>{memSlot.content.raw}</td><td>{memSlot.content.ascii}</td></tr>)
+			}
+		}
+		return ret
+	},
+
+	resolveAddress: function(address)
+	{
+		if (!this.state.codes[address])
+		{
+			var hexCode = web3.eth.getCode(address)	
+			var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
+			this.state.codes[address] = code[0]
+			this.state.codesMap[address] = code[1]
+		}
 	},
 
 	checkButtonState: function(incr)
@@ -62,71 +91,82 @@ module.exports = React.createClass({
 		if (incr === -1)
 			return this.state.currentSelected === 0 ? "disabled" : ""
 		else if (incr === 1)
-			return this.state.currentSelected >= this.props.vmTrace.vmtrace.length - 1 ? "disabled" : "" 
+			return this.state.currentSelected >= this.props.vmTrace.length - 1 ? "disabled" : "" 
 	},
 
 	renderAssemblyItems: function()
 	{
-		if (this.props.vmTrace && this.props.vmTrace.vmtrace)
+		if (this.props.vmTrace)
 		{      
-			return this.props.vmTrace.vmtrace.map(function(item, i) 
+			return this.state.codes[this.state.currentAddress].map(function(item, i) 
 			{
-				return <option key={i} value={i} >{i} {item.instname}</option>;
+				return <option key={i} value={i} >{item}</option>;
 			});	
 		}
 	},
 
-	componentWillReceiveProps: function (nextProps) {
+	componentWillReceiveProps: function (nextProps) 
+	{
 		this.updateState(nextProps, 0)
 	},
 
 	updateState: function(props, vmTraceIndex)
 	{
-		var previousState = this.state.currentSelected 
-		this.setState({ currentSelected: vmTraceIndex })
-		this.state.currentAddress = props.vmTrace.vmtrace[0].address
-		this.state.selectedInst = props.vmTrace.codesmap[this.state.currentAddress][props.vmTrace.vmtrace[vmTraceIndex].pc]
+		var previousState = this.state.currentSelected
+		var stateChanges = {}
 
-		if (props.vmTrace.vmtrace[vmTraceIndex].stack)
+		var currentAddress = this.state.currentAddress
+		if (!currentAddress)
+			currentAddress = props.vmTrace[vmTraceIndex].address
+		if (props.vmTrace[vmTraceIndex].address && props.vmTrace[vmTraceIndex].address !== this.state.currentAddress)
 		{
-			var stack = props.vmTrace.vmtrace[vmTraceIndex].stack
-			stack.reverse()	
-			this.setState({ currentStack: stack })
+			this.resolveAddress(props.vmTrace[vmTraceIndex].address)
+			stateChanges["currentAddress"] = props.vmTrace[vmTraceIndex].address
 		}
 
-		if (props.vmTrace.vmtrace[vmTraceIndex].levels)
+		if (props.vmTrace[vmTraceIndex].stack)
 		{
-			var levels = props.vmTrace.vmtrace[vmTraceIndex].levels
+			var stack = props.vmTrace[vmTraceIndex].stack
+			stack.reverse()
+			stateChanges["currentStack"] = stack
+		}
+
+		if (props.vmTrace[vmTraceIndex].levels)
+		{
+			var levels = props.vmTrace[vmTraceIndex].levels
 			var callStack = []
 			for (var k in levels)
-				callStack.push(props.vmTrace.vmtrace[levels[k]].address)			
-			this.setState({ currentCallStack: callStack })
+				callStack.push(props.vmTrace[levels[k]].address)	
+			stateChanges["currentCallStack"] = callStack
 			lastCallStack = callStack
 		}
 
 		var storageIndex = vmTraceIndex
 		if (vmTraceIndex < previousState)
-			storageIndex = this.retrieveLastSeenProperty(vmTraceIndex, "storage", props.vmTrace.vmtrace)
-		if (props.vmTrace.vmtrace[storageIndex].storage || storageIndex === 0)
+			storageIndex = this.retrieveLastSeenProperty(vmTraceIndex, "storage", props.vmTrace)
+		if (props.vmTrace[storageIndex].storage || storageIndex === 0)
 		{
-			this.setState({ currentStorage: props.vmTrace.vmtrace[storageIndex].storage })
-			lastStorage = props.vmTrace.vmtrace[storageIndex].storage
+			stateChanges["currentStorage"] = props.vmTrace[storageIndex].storage
+			lastStorage = props.vmTrace[storageIndex].storage
 		}
 
 		var memoryIndex = vmTraceIndex
 		if (vmTraceIndex < previousState)
-			memoryIndex = this.retrieveLastSeenProperty(vmTraceIndex, "memory", props.vmTrace.vmtrace)	
-		if (props.vmTrace.vmtrace[memoryIndex].memory || memoryIndex === 0)
+			memoryIndex = this.retrieveLastSeenProperty(vmTraceIndex, "memory", props.vmTrace)	
+		if (props.vmTrace[memoryIndex].memory || memoryIndex === 0)
 		{
-			this.setState({ currentMemory: this.formatMemory(props.vmTrace.vmtrace[memoryIndex].memory, 16) })
-			lastMemory = this.formatMemory(props.vmTrace.vmtrace[memoryIndex].memory, 16)
+			stateChanges["currentMemory"] = this.formatMemory(props.vmTrace[memoryIndex].memory, 16)
+			lastMemory = this.formatMemory(props.vmTrace[memoryIndex].memory, 16)
 		}
 
-		if (props.vmTrace.vmtrace[vmTraceIndex].calldata)
+		if (props.vmTrace[vmTraceIndex].calldata)
 		{
-			this.setState({ currentCallData: props.vmTrace.vmtrace[vmTraceIndex].calldata })
-			lastCallData = props.vmTrace.vmtrace[vmTraceIndex].calldata
+			stateChanges["currentCallData"] = props.vmTrace[vmTraceIndex].calldata
+			lastCallData = props.vmTrace[vmTraceIndex].calldata
 		}
+		stateChanges["selectedInst"] = this.state.codesMap[currentAddress][props.vmTrace[vmTraceIndex].pc]
+		stateChanges["currentSelected"] = vmTraceIndex
+		this.setState(stateChanges)
 	},
 
 	retrieveLastSeenProperty: function(currentIndex, propertyName, vmTrace)
@@ -185,13 +225,13 @@ module.exports = React.createClass({
 
 	isCallInstruction: function(index)
 	{
-		var state = this.props.vmTrace.vmtrace[index];
-		return state.instname === "CALL" || state.instname === "CREATE";
+		var state = this.props.vmTrace[index];
+		return state.instname === "CALL" || state.instname === "CREATE" || state.instname === "DELEGATECALL"
 	},
 
 	isReturnInstruction: function(index)
 	{
-		var state = this.props.vmTrace.vmtrace[index];
+		var state = this.props.vmTrace[index];
 		return state.instname === "RETURN"
 	},
 
@@ -219,7 +259,7 @@ module.exports = React.createClass({
 	{
 		var i = this.state.currentSelected
 		var depth = 0
-		while (++i < this.props.vmTrace.vmtrace.length) 
+		while (++i < this.props.vmTrace.length) 
 		{
 			if (this.isReturnInstruction(i))
 			{
@@ -241,11 +281,7 @@ module.exports = React.createClass({
 
 	selectState: function(index)
 	{
-		var selectedInst = this.props.vmTrace.codesmap[this.state.currentAddress][this.props.vmTrace.vmtrace[index].pc]
 		this.updateState(this.props, index)
-		this.refs.itemsList.value = selectedInst
-		if (this.props.vmTrace.vmtrace[index].address && this.state.currentAddress !== this.props.vmTrace.vmtrace[index].address)
-			this.state.currentAddress = this.props.vmTrace.vmtrace[index].address
 	},
 
 	formatMemory: function(mem, width)

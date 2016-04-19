@@ -26,7 +26,6 @@ module.exports = React.createClass({
 	render: function() {		
 		return (
 			<div style={style.container} >
-			<div><h3>Transaction details</h3></div>
 			<input onChange={this.updateBlockN} type="text" placeholder= {"Block number e.g. : " + this.state.blockNumber}></input>
 			<input onChange={this.updateTxN} type="text" placeholder={"Transaction Number e.g. : " + this.state.txNumber}></input>
 			<button onClick={this.submit}>Get</button>

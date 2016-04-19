@@ -7,7 +7,8 @@ module.exports = React.createClass({
 	{
 		return {
 			data: null,
-			name: null
+			name: null,
+			renderRow: null
 		};
 	},
 
@@ -18,7 +19,7 @@ module.exports = React.createClass({
 			<div style={style.panel.title} >{this.props.name}</div>
 			<table style={style.panel.table}>
 			<tbody>
-			{ this.renderItems() }
+			{this.renderItems()}
 			</tbody>
 			</table>
 			</div>
@@ -27,12 +28,16 @@ module.exports = React.createClass({
 	
 	renderItems: function()
 	{
-		var ret = []
-		if (this.props.data)
-		{	
+		if (!this.props.data)
+			return []
+		if (!this.props.renderRow)
+		{
+			var ret = []	
 			for (var key in this.props.data)
-				ret.push(<tr key={key} ><td>{JSON.stringify(this.props.data[key])}</td></tr>)
+				ret.push(<tr key={key} ><td>{this.props.data[key]}</td></tr>)
+			return ret
 		}
-		return ret
+		else
+			return this.props.renderRow(this.props.data) 
 	}	
 })
