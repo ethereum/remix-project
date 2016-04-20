@@ -58,8 +58,8 @@ module.exports = {
         	new web3._extend.Method({
         		name: 'vmTrace',
         		call: 'admin_eth_vmTrace',
-        		inputFormatter: [null, null],
-        		params: 2
+        		inputFormatter: [null, null, null],
+        		params: 3
         	}), 
         	],
         	properties:

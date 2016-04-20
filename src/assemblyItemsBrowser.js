@@ -20,8 +20,8 @@ module.exports = React.createClass({
 			lastStorage: null,
 			lastMemory: null,
 			lastCallData: null,
-			codes: {},
-			codesMap: {}
+			codes: {}, // assembly items instructions list by contract addesses
+			instructionsIndexByBytesOffset: {} // mapping between bytes offset and instructions index.
 		};
 	},
 
@@ -44,19 +44,30 @@ module.exports = React.createClass({
 			<button onClick={this.stepIntoForward} disabled={ this.checkButtonState(1) } >stepIntoForward</button>
 			</div>
 			<div style={style.container}>
-			<select size="10" ref='itemsList' style={style.container} value={this.state.selectedInst}>
+			<select size="10" ref='itemsList' style={style.instuctions} value={this.state.selectedInst}>
 			{ this.renderAssemblyItems() }
 			</select>
 			</div>
 			<div>
 			<BasicPanel name="Stack" data={this.state.currentStack} />
 			<BasicPanel name="CallStack" data={this.state.currentCallStack} />
-			<BasicPanel name="Storage" data={this.state.currentStorage} />
+			<BasicPanel name="Storage" data={this.state.currentStorage} renderRow={this.renderStorageRow} />
 			<BasicPanel name="Memory" data={this.state.currentMemory} renderRow={this.renderMemoryRow} />
 			<BasicPanel name="CallData" data={this.state.currentCallData} />
 			</div>
 			</div>
 			);
+	},
+
+	renderStorageRow: function(data)
+	{
+		var ret = []
+		if (data)
+		{
+			for (var key in data)
+				ret.push(<tr key={key} ><td>{key}</td><td>{data[key]}</td></tr>)
+		}
+		return ret
 	},
 
 	renderMemoryRow: function(data)
@@ -80,7 +91,7 @@ module.exports = React.createClass({
 			var hexCode = web3.eth.getCode(address)	
 			var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
 			this.state.codes[address] = code[0]
-			this.state.codesMap[address] = code[1]
+			this.state.instructionsIndexByBytesOffset[address] = code[1]
 		}
 	},
 
@@ -164,7 +175,7 @@ module.exports = React.createClass({
 			stateChanges["currentCallData"] = props.vmTrace[vmTraceIndex].calldata
 			lastCallData = props.vmTrace[vmTraceIndex].calldata
 		}
-		stateChanges["selectedInst"] = this.state.codesMap[currentAddress][props.vmTrace[vmTraceIndex].pc]
+		stateChanges["selectedInst"] = this.state.instructionsIndexByBytesOffset[currentAddress][props.vmTrace[vmTraceIndex].pc]
 		stateChanges["currentSelected"] = vmTraceIndex
 		this.setState(stateChanges)
 	},
@@ -304,11 +315,11 @@ module.exports = React.createClass({
 		for (var k = 0; k < memorySlot.length; k += 2)
 		{
 			var raw = memorySlot.substr(k, 2)
-			var dec = web3.toDecimal("0x" + raw)
-			if (dec >= 32 && dec < 127)
-				ret.ascii += web3.toAscii(raw)
-			else
+			var ascii = web3.toAscii(raw)
+			if (ascii === String.fromCharCode(0))
 				ret.ascii += "?"
+			else
+				ret.ascii += ascii
 			ret.raw += " " + raw
 		}
 		return ret

@@ -17,11 +17,13 @@ module.exports = React.createClass({
 		return (
 			<div style={style.panel.container}>
 			<div style={style.panel.title} >{this.props.name}</div>
+			<div style={style.panel.tableContainer} >
 			<table style={style.panel.table}>
 			<tbody>
 			{this.renderItems()}
 			</tbody>
 			</table>
+			</div>
 			</div>
 			);
 	},
