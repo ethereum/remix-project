@@ -10,6 +10,6 @@ Web3Admin.extend(web3);
 var Debugger = require('./debugger');
 
 ReactDOM.render(
-  <Debugger/>,
-  document.getElementById('app')
+	<Debugger/>,
+	document.getElementById('app')
 );
