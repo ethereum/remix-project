@@ -33,10 +33,12 @@
 		<link rel="stylesheet" href="assets/css/universal-dapp.css">
 		<link rel="stylesheet" href="assets/css/browser-solidity.css">
 		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link rel="icon" type="x-icon" href="icon.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
 		<script src="https://ethereum.github.io/solc-bin/bin/list.js"></script>
 		<script src="assets/js/jquery-2.1.3.min.js"></script>
+		<script src="bin/list.js"></script>
 		<script src="assets/js/ace.js"></script>
 		<script src="assets/js/mode-solidity.js"></script>
 		<script src="assets/js/ethereumjs-vm.js"></script>
@@ -49,10 +51,13 @@
 		
 
 		<div id="editor">
-			<div id="files">
-				<span class="newFile" title="New File"><i class="fa fa-file-text-o"></i></span>
-				<span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-columns"></i></span>
+			<span class="newFile" title="New File"><i class="fa fa-file-code-o"></i></span>
+			<div class="files-wrapper">
+				<div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
+				<div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
+				<ul id="files" class="nav nav-tabs"></ul>
 			</div>
+			<span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
 			<div id="input"></div>
 			<div id="dragbar"></div>
 		</div>
@@ -61,40 +66,40 @@
 			<div id="header">
 				<div id="menu">
 					<ul id="options">
-						<li class="settingsView active"><i class="fa fa-gear"></i></li>
-						<li class="txView"><i class="fa fa-send"></i></li>
-						<li class="envView"><i class="fa fa-cube"></i></li>
-						<li class="publishView"><i class="fa fa-cloud-upload"></i></li>
+						<li class="settingsView active" title="Settings"><i class="fa fa-gear"></i></li>
+						<li class="txView" title="Transaction"><i class="fa fa-send"></i></li>
+						<li class="envView" title="Environment"><i class="fa fa-cube"></i></li>
+						<li class="publishView" title="Publish" ><i class="fa fa-cloud-upload"></i></li>
+						<li id="helpButton"><a href="https://solidity.readthedocs.org" target="_blank" title="Open Documentation" class="fa fa-question"></a></li>
 					</ul>
-					<a href="https://solidity.readthedocs.org" target="_blank" id="helpButton" class="fa fa-question" title="Documentation" class="fa fa-question"></a>
 					<img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/sol.svg" alt="Solidity realtime compiler and runtime">
 				</div>
 				<div id="optionViews" class="settingsView">
 					<div id="txView">
-						<div class="row">
+						<div class="crow">
 							<label for="txorigin"><select name="txorigin" id="txorigin"></select> Transaction origin</label>
 						</div>
-						<div class="row hide">
+						<div class="crow hide">
 							<label for="gas"><input type="number" id="gas" value="0"> Gas</label>
 						</div>
-						<div class="row hide">
+						<div class="crow hide">
 							<label for="gasPrice"><input type="number" id="gasPrice" value="0"> Gas Price</label>
 						</div>
-						<div class="row">
+						<div class="crow">
 							<label for="value"><input type="text" id="value" value="0"> Value (e.g. .7 ether or 5 wei, defaults to ether)</label>
 						</div>
 					</div>
 					<div id="settingsView">
-						<div class="version row"><strong>Solidity version:</strong> <span id="version">(loading)</span></div>
-						<div class="row">Change to: <select id="versionSelector"></select></div>
-						<div class="row">
+						<div class="version crow"><strong>Solidity version:</strong> <span id="version">(loading)</span></div>
+						<div class="crow">Change to: <select id="versionSelector"></select></div>
+						<div class="crow">
 							<label for="editorWrap"><input id="editorWrap" type="checkbox">Text Wrap</label>
 							<label for="optimize"><input id="optimize" type="checkbox">Enable Optimization</label>
 						</div>
 					</div>
 					<div id="publishView">
 						<p><button id="gist" title="Publish all files as public gist on github.com"><i class="fa fa-github"></i> Publish Gist</button> Publish all open files to an anonymous github gist.</p>
-						<p>You can also load a gist by adding the following <span class="pre">?gist=GIST_ID</span> to your url, where GIST_ID is the id of the gist to load.</p>
+						<p>You can also load a gist by adding the following <span class="pre">#gist=GIST_ID</span> to your url, where GIST_ID is the id of the gist to load.</p>
 					</div>
 					<div id="envView">
 						<span id="executionContext">

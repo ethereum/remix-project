@@ -2,31 +2,75 @@
 
 		$(document).ready(function() {
 
+
+
+			// ------------------ query params (hash) ----------------
+
+			function getQueryParams() {
+
+				var qs = window.location.hash.substr(1);
+
+				if (window.location.search.length > 0) {
+					// use legacy query params instead of hash
+					window.location.hash = window.location.search.substr(1);
+					window.location.search = "";
+				}
+
+				var params = {};
+				var parts = qs.split("&");
+				for (var x in parts) {
+					var keyValue = parts[x].split("=");
+					if (keyValue[0] !== "") params[keyValue[0]] = keyValue[1];
+				}
+				return params;
+			}
+
+			function updateQueryParams(params) {
+				var currentParams = getQueryParams();
+				var keys = Object.keys(params);
+				for (var x in keys) {
+					currentParams[keys[x]] = params[keys[x]];
+				}
+				var queryString = "#";
+				var updatedKeys = Object.keys(currentParams);
+				for( var y in updatedKeys) {
+					queryString += updatedKeys[y] + "=" + currentParams[updatedKeys[y]] + "&";
+				}
+				window.location.hash = queryString.slice(0, -1);
+			}
+
+
+			function syncQueryParams() {
+				$('#optimize').attr( 'checked', (getQueryParams().optimize == "true") );
+			}
+
+
+			window.onhashchange = syncQueryParams;
+			syncQueryParams();
+
 			// ------------------ gist load ----------------
 
 			function getGistId(str) {
 				var idr = /[0-9A-Fa-f]{8,}/;
-				var match = idr.exec(str)[0];
-				return match;
+				var match = idr.exec(str);
+				return match ? match[0] : null;
 			}
 
-			var location_query_params = window.location.search.substr(1).split("=");
+			var queryParams = getQueryParams();
 			var loadingFromGist = false;
-			if (location_query_params.indexOf('gist') !== -1 && location_query_params.length >= 2) {
-				var index = location_query_params.indexOf('gist');
+			if (typeof queryParams['gist'] != undefined) {
 				var gistId;
-				var key = location_query_params[index+1];
-				if (key === '') {
+				if (queryParams['gist'] === '') {
 					var str = prompt("Enter the URL or ID of the Gist you would like to load.");
 					if (str !== '') {
 						gistId = getGistId( str );
 						loadingFromGist = !!gistId;
 					}
 				} else {
-					gistId = getGistId( key );
+					gistId = queryParams['gist'];
 					loadingFromGist = !!gistId;
 				}
-				$.ajax({
+				if (loadingFromGist) $.ajax({
 					url: 'https://api.github.com/gists/'+gistId,
 					jsonp: 'callback',
 					dataType: 'jsonp',
@@ -43,12 +87,60 @@
 								}
 								window.localStorage[key] = content;
 							}
-							SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
-							updateFiles();
+							if (!response.data.files) {
+								alert( "Gist load error: " + response.data.message )
+							} else {
+								SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
+								updateFiles();
+							}
 						}
 					}
 				});
 			}
+
+
+			// ----------------- storage --------------------
+
+			function syncStorage() {
+
+				if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) return;
+
+				var obj = {}
+				var done = false;
+				var count = 0
+				var dont = 0;
+
+				function check(key){
+					chrome.storage.sync.get( key, function(resp){
+						console.log("comparing to cloud", key, resp)
+						if (typeof resp[key] != 'undefined' && obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "'? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.")) {
+							console.log("Overwriting", key )
+							localStorage.setItem( key, resp[key] );
+							updateFiles();
+						} else {
+							console.log( "add to obj", obj, key)
+							obj[key] = localStorage[key];
+						}
+						done++
+						if (done >= count) chrome.storage.sync.set( obj, function(){
+							console.log( "updated cloud files with: ", obj, this, arguments)
+						})
+					})
+				}
+
+				for (var y in window.localStorage) {
+					console.log("checking", y)
+					obj[y] = window.localStorage.getItem(y);
+					if (y.indexOf(SOL_CACHE_FILE_PREFIX) !== 0) continue;
+					count++;
+					check(y)
+				}
+
+
+			}
+
+			window.syncStorage = syncStorage;
+			syncStorage()
 
 
 
@@ -59,7 +151,8 @@
 			var SOL_CACHE_FILE = null;
 
 			var editor = ace.edit("input");
-			var session = editor.getSession();
+			var sessions = {};
+
 			var Range = ace.require('ace/range').Range;
 			var errMarkerId = null;
 
@@ -76,11 +169,22 @@
 
 			SOL_CACHE_FILE = getFiles()[0];
 
-			editor.setValue( window.localStorage[SOL_CACHE_FILE], -1);
+
+			var files = getFiles();
+			for (var x in files) {
+				sessions[files[x]] = newEditorSession(files[x])
+			}
+
+			editor.setSession( sessions[SOL_CACHE_FILE] );
 			editor.resize(true);
-			session.setMode("ace/mode/javascript");
-			session.setTabSize(4);
-			session.setUseSoftTabs(true);
+
+			function newEditorSession(filekey) {
+				var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript")
+				s.setTabSize(4);
+				s.setUseSoftTabs(true);
+				sessions[filekey] = s;
+				return s;
+			}
 
 
 
@@ -88,7 +192,9 @@
 
 			$('#options li').click(function(ev){
 				var $el = $(this);
-				var cls = /[a-z]+View/.exec( $el.get(0).className )[0];
+				var match = /[a-z]+View/.exec( $el.get(0).className );
+				if (!match) return;
+				var cls = match[0];
 				if (!$el.hasClass('active')) {
 					$el.parent().find('li').removeClass('active');
 					$('#optionViews').attr('class', '').addClass(cls);
@@ -141,11 +247,11 @@
 
 			$('#gist').click(function(){
 				if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com?")) {
-												   
+
 					var files = {};
 					var filesArr = getFiles();
-					var description = "Created using soleditor: Realtime Ethereum Contract Compiler and Runtime. Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/?gist=";
-					
+					var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
+
 					for(var f in filesArr) {
 						files[fileNameFromKey(filesArr[f])] = {
 							content: localStorage[filesArr[f]]
@@ -170,13 +276,20 @@
 
 
 			// ----------------- file selector-------------
+
 			var $filesEl = $('#files');
-			$filesEl.on('click','.newFile', function() {
+			var FILE_SCROLL_DELTA = 300;
+
+			$('.newFile').on('click', function() {
 				while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
 					untitledCount = (untitledCount - 0) + 1;
 				SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
 				window.localStorage[SOL_CACHE_FILE] = '';
 				updateFiles();
+
+				$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ "px"}, "slow", function(){
+					reAdjust();
+				})
 			});
 
 			$filesEl.on('click', '.file:not(.active)', showFileHandler);
@@ -253,16 +366,17 @@
 				if (SOL_CACHE_FILE) {
 					var active = fileTabFromKey(SOL_CACHE_FILE);
 					active.addClass('active');
-					editor.setValue( window.localStorage[SOL_CACHE_FILE] || '', -1);
+					editor.setSession( sessions[SOL_CACHE_FILE] );
 					editor.focus();
 				}
 				$('#input').toggle( !!SOL_CACHE_FILE );
 				$('#output').toggle( !!SOL_CACHE_FILE );
+				reAdjust();
 			}
 
 			function fileTabTemplate(key) {
 				var name = fileNameFromKey(key);
-				return $('<span class="file"><span class="name">'+name+'</span><span class="remove"><i class="fa fa-close"></i></span></span>');
+				return $('<li class="file"><span class="name">'+name+'</span><span class="remove"><i class="fa fa-close"></i></span></li>');
 			}
 
 			function fileKey( name ) {
@@ -278,16 +392,79 @@
 				for (var f in localStorage ) {
 					if (f.indexOf( SOL_CACHE_FILE_PREFIX, 0 ) === 0) {
 						files.push(f);
+						if (!sessions[f]) sessions[f] = newEditorSession(f);
 					}
 				}
 				return files;
 			}
+
+
+			$filesWrapper = $('.files-wrapper');
+			$scrollerRight = $('.scroller-right');
+			$scrollerLeft = $('.scroller-left');
+
+			function widthOfList (){
+				var itemsWidth = 0;
+				$('.file').each(function(){
+					var itemWidth = $(this).outerWidth();
+					itemsWidth += itemWidth;
+				});
+				return itemsWidth;
+			};
+
+			function widthOfHidden(){
+				return (($filesWrapper.outerWidth()) - widthOfList() - getLeftPosi());
+			};
+
+			function widthOfVisible(){
+				return $filesWrapper.outerWidth();
+			};
+
+			function getLeftPosi(){
+				return $filesEl.position().left;
+			};
+
+			function activeFilePos() {
+				var el = $filesEl.find('.active');
+				var l = el.position().left;
+				return l;
+			}
+
+			function reAdjust (){
+				if (widthOfList() + getLeftPosi() > + widthOfVisible()) {
+					$scrollerRight.fadeIn('fast');
+				} else {
+					$scrollerRight.fadeOut('fast');
+				}
+
+				if (getLeftPosi()<0) {
+					$scrollerLeft.fadeIn('fast');
+				} else {
+					$scrollerLeft.fadeOut('fast');
+					$filesEl.animate({left: getLeftPosi() + "px"},'slow');
+				}
+			}
+
+			$scrollerRight.click(function() {
+				var delta = (getLeftPosi() - FILE_SCROLL_DELTA)
+				$filesEl.animate({left: delta + "px"},'slow',function(){
+					reAdjust();
+				});
+			});
+
+			$scrollerLeft.click(function() {
+				var delta = Math.min( (getLeftPosi() + FILE_SCROLL_DELTA), 0 )
+				$filesEl.animate({left: delta + "px"},'slow',function(){
+					reAdjust();
+				});
+			});
 
 			updateFiles();
 
 			// ----------------- version selector-------------
 
 			// var soljsonSources is provided by bin/list.js
+
 			$('option', '#versionSelector').remove();
 			$.each(soljsonSources, function(i, file) {
 				if (file) {
@@ -296,6 +473,7 @@
 				}
 			});
 			$('#versionSelector').change(function() {
+				updateQueryParams({version: $('#versionSelector').val() });
 				loadVersion($('#versionSelector').val());
 			});
 			
@@ -339,6 +517,7 @@
 					dragging = false;
 					setEditorSize(delta);
 					window.localStorage.setItem(EDITOR_SIZE_CACHE_KEY, delta);
+					reAdjust();
 				}
 			});
 
@@ -352,10 +531,11 @@
 
 			var hidingRHP = false;
 			$('.toggleRHP').click(function(){
-			   hidingRHP = !hidingRHP;
-			   setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
-			   $('.toggleRHP').toggleClass('hiding', hidingRHP);
-			   if (!hidingRHP) compile();
+				 hidingRHP = !hidingRHP;
+				 setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
+				 $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
+				 $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
+				 if (!hidingRHP) compile();
 			});
 			
 
@@ -363,6 +543,7 @@
 
 			function onResize() {
 				editor.resize();
+				var session = editor.getSession();
 				session.setUseWrapMode(document.querySelector('#editorWrap').checked);
 				if(session.getUseWrapMode()) {
 					var characterWidth = editor.renderer.characterWidth;
@@ -372,6 +553,7 @@
 						session.setWrapLimit(parseInt(contentWidth / characterWidth, 10));
 					}
 				}
+				reAdjust();
 			}
 			window.onresize = onResize;
 			onResize();
@@ -401,7 +583,7 @@
 					if (input === null) {
 						renderError(error);
 					} else {
-						var optimize = document.querySelector('#optimize').checked;
+						var optimize = getQueryParams().optimize;
 						compileJSON(input, optimize ? 1 : 0);
 					}
 				});
@@ -553,6 +735,7 @@
 			var worker = null;
 			var loadVersion = function(version) {
 				$('#version').text("(loading)");
+				updateQueryParams({version: version});
 				var isFirefox = typeof InstallTrigger !== 'undefined';
 				if (document.location.protocol != 'file:' && Worker !== undefined && isFirefox) {
 					// Workers cannot load js on "file:"-URLs and we get a
@@ -574,11 +757,18 @@
 					}, 200);
 				}
 			};
-			loadVersion('soljson-latest.js');
+
+			loadVersion( getQueryParams().version || 'soljson-latest.js');
 
 			editor.getSession().on('change', onChange);
+			editor.on('changeSession', function(){
+				editor.getSession().on('change', onChange);
+			})
 
-			document.querySelector('#optimize').addEventListener('change', compile);
+			document.querySelector('#optimize').addEventListener('change', function(){
+				updateQueryParams({optimize: document.querySelector('#optimize').checked });
+				compile();
+			});
 
 			// ----------------- compiler output renderer ----------------------
 			var detailsOpen = {};
@@ -710,7 +900,7 @@
 				$('.col2 input,textarea').click(function() { this.select(); });
 			};
 			var tableRowItems = function(first, second, cls) {
-				return $('<div class="row"/>')
+				return $('<div class="crow"/>')
 					.addClass(cls)
 					.append($('<div class="col1">').append(first))
 					.append($('<div class="col2">').append(second));
@@ -800,5 +990,7 @@
 					}
 				return funABI;
 			};
+
+			syncStorage()
 
 		});

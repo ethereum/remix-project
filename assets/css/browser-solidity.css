@@ -5,52 +5,100 @@ body {
     font-weight: normal;
 }
 #editor {
+
     position: absolute;
     top: 0;
-    left: 0px;
+    left: 0;
     width: auto;
-    bottom: 0px;
+    bottom: 0;
     right: 37em;
 }
 
+
+.scroller {
+    position: absolute;
+    z-index: 999;
+    text-align: center;
+    cursor: pointer;
+    display: none;
+    padding: 0 0.9em;
+    vertical-align: middle;
+    background-color: rgba(255,255,255,0.8);
+    height: 100%;
+    font-size: 1.3em;
+}
+
+.scroller i {
+    line-height: 3em;
+}
+
+.scroller-right {
+    right: 0;
+}
+
+.scroller-left {
+    left: 0;
+}
+
+.files-wrapper {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 3em;
+    right: 3em;
+}
+
 #files {
+    list-style: none;
+    margin: 0;
     font-size: 15px;
     height: 2.5em;
     box-sizing: border-box;
     line-height: 2em;
     padding: 0.5em 0 0;
+    position: relative;
+    left: 0;
+    top:0;
+    min-width:3000px;
+    border-bottom: 0 none;
 }
 
-#files .file,
-#files .newFile {
+#files .file {
     display: inline-block;
     padding: 0 0.6em;
     box-sizing: border-box;
-    background-color: #f0f0f0;
+    background-color: #F4F6FF;
     cursor: pointer;
-    margin-right: 0.5em;
+    border-right: 0.5em solid white;
     position: relative;
+    display:table-cell;
+    text-align: center;
+    vertical-align: middle;
+    color: #999;
 }
 
-#files .newFile,
-#files .toggleRHP {
-    background-color: #B1EAC5;
+.newFile,
+.toggleRHP {
+    display: block;
+    float: left;
+    margin-top: 0.5em;
     padding: 0.6em;
     font-weight: bold;
     cursor: pointer;
     color: black;
 }
 
-#files .toggleRHP {
+.toggleRHP {
     float: right;
-    width: 2em;
-    box-sizing: border-box;
+    position: absolute;
+    right: 0;
 }
 
 #files .file.active {
+    color: black;
     font-weight: bold;
     border-bottom: 0 none;
-    padding-right: 2.5em;
+    padding-right: 2em;
 }
 #files .file .remove {
     position: absolute;
@@ -76,6 +124,8 @@ body {
 #files .file.active .remove { display: inline-block; }
 
 #input {
+    border-top: 3px solid #F4F6FF;
+    padding-top: 0.5em;
     font-size: 15px;
     position: absolute;
     top: 2.5em;
@@ -93,42 +143,30 @@ body {
     right: 0;
     bottom: 0px;
     overflow: auto;
-    border-left: 3px solid #efefef;
     box-sizing: border-box;
 }
 
 #output {
-    border-top: 3px solid #efefef;
     display: block;
 }
 
 #header {
-    font-size: 14px;
     font-size: 12px;
-}
-
-#header #helpButton {
-    float: left;
-    padding: 1.2em;
-    padding-left: 2.2em;
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: auto;
-    color: #000;
-    outline: none;
-
 }
 
 #header #solIcon {
     float: right;
-    height: 5.1em;
+    height: 100%;
     background-color: white;
 }
 
 #header #menu {
+    border-bottom: 3px solid #F4F6FF;
     overflow: hidden;
-    background-color: #efefef;
-    height: 5.1em;
+    height: 2em;
+    font-size: 1.25em;
+    padding-top: 0.5em;
+    box-sizing: content-box;
 }
 
 
@@ -139,20 +177,26 @@ body {
 }
 
 #header #options li {
-    color: #aaa;
     float: left;
-    padding: 1.2em;
-    font-size: 1.5em;
+    padding: 0.5em 0.6em;
+    font-size: 1em;
     cursor: pointer;
+    background-color: transparent;
+    margin-right: 0.5em;
 }
 
 #header #options li.active {
-    color: black;
+    background-color: #F4F6FF;
+}
+
+#header #options li a {
+    color: inherit;
 }
 
 #header #optionViews {
     clear: both;
     overflow: auto;
+    background-color: #F4F6FF;
 }
 #header #optionViews > div {
     display: none;
@@ -174,7 +218,7 @@ body {
 
 #header #optionViews .pre {
     word-wrap: break-word;
-    background-color: #efefef;
+    background-color: #C6CFF7;
     font-family: monospace;
     border-radius: 3px;
     display: inline-block;
@@ -193,7 +237,7 @@ body {
 }
 
 #header #gist {
-    background-color: #efefef;
+    background-color: #C6CFF7;
     font-size: 12px;
     padding: 0.25em;
     color: black;
@@ -259,11 +303,11 @@ body {
 #output .udapp {
     border: 0 none;
     box-shadow: none;
-    border-bottom: 3px solid #efefef;
+    border-bottom: 3px solid #F4F6FF;
 }
 
 
-.row {
+.crow {
     overflow: auto;
     display: block;
     clear: both;
@@ -297,7 +341,9 @@ body {
     word-wrap: break-word;
     cursor: pointer;
     position: relative;
-    margin: 0.25em;
+    margin: 0.5em;
+    border-radius: 0.6em;
+    padding: 1em 1.5em;
 }
 
 .sol.error pre,
@@ -306,25 +352,26 @@ body {
     margin: 0;
     font-size: 10px;
     border: 0 none;
+    padding: 0;
+    border-radius: 0;
 }
 
 .sol.error .close,
 .sol.warning .close {
     font-weight: bold;
     position: absolute;
+    color: rgba(0,0,0,0.5);
     top: 0;
     right: 0;
     padding: 0.5em;
 }
 
 .sol.error {
-    background-color: rgba(255, 0, 0, 0.5);
-    border: 1px solid #D00909;
+    background-color: rgba(255, 0, 0, 0.4);
 }
 
 .sol.warning {
-    background-color: rgba(210, 202, 36, 0.5);
-    border: 1px solid #BBB427; 
+    background-color: rgba(210, 202, 36, 0.4);
 }
 
 #ghostbar {
@@ -338,17 +385,23 @@ body {
     bottom: 0;
 }
 
-#dragbar{
+#dragbar {
     background-color: transparent;
     position: absolute;
-    width: 10px;
-    right: -10px;
-    top: 0;
+    width: 1em;
+    right: -3px;
+    top: 3em;
     bottom: 0;
     cursor: col-resize;
     z-index: 999;
+    border-right: 3px solid #F4F6FF;
 }
 
+#editor .ace-tm .ace_gutter,
+#editor .ace-tm .ace_gutter-active-line,
+#editor .ace-tm .ace_marker-layer .ace_active-line {
+    background-color: rgba(225, 229, 251, 0.5);
+}
 
 input[readonly] {
     padding: .4em;
