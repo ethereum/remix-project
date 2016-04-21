@@ -763,6 +763,7 @@
 			editor.getSession().on('change', onChange);
 			editor.on('changeSession', function(){
 				editor.getSession().on('change', onChange);
+				onChange();
 			})
 
 			document.querySelector('#optimize').addEventListener('change', function(){
