@@ -12,23 +12,21 @@ module.exports = {
 	{
 		'fontStyle': 'italic'
 	},
-	instructions:
+	instructionsList:
 	{
-		'width': '650px'
+		'width': "320px"
 	},
 	panel:
 	{
 		container:
 		{
-			'margin': '10px',
 			'border': '1px solid',
-			'width': '650px'
+			'width': '600px'
 		},
 		tableContainer:
 		{
-			'minHeight': '50px',
-			'maxHeight': '200px',
-			'overflowY': 'scroll'
+			'height': '150px',
+			'overflowY': 'auto'
 		},
 		table:
 		{
@@ -47,5 +45,14 @@ module.exports = {
 	display:
 	{
 		'display': 'block'
+	},
+	sticker:
+	{
+		'verticalAlign': 'top',
+		'margin': '5px'
+	},
+	inline:
+	{
+		'display': 'inline-block'
 	}
 }

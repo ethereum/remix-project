@@ -1,5 +1,6 @@
 var React = require('react');
 var BasicPanel = require('./basicPanel')
+var Sticker = require('./sticker')
 var codeUtils = require('./codeUtils')
 var style = require('./basicStyles')
 
@@ -16,12 +17,10 @@ module.exports = React.createClass({
 			currentStorage: null,
 			currentMemory: null,
 			currentCallData: null,
-			lastLevels: null,
-			lastStorage: null,
-			lastMemory: null,
-			lastCallData: null,
+			currentStepInfo: null,
 			codes: {}, // assembly items instructions list by contract addesses
-			instructionsIndexByBytesOffset: {} // mapping between bytes offset and instructions index.
+			instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
+			levels: {}
 		};
 	},
 
@@ -37,25 +36,50 @@ module.exports = React.createClass({
 		return (
 			<div style={this.props.vmTrace === null ? style.hidden : style.display} >
 			<div style={style.container}><span style={style.address}>{this.state.currentAddress}</span></div> 
+			
 			<div style={style.container}>
-			<button onClick={this.stepIntoBack} disabled={ this.checkButtonState(-1) } >stepIntoBack</button>
-			<button onClick={this.stepOverBack} disabled={ this.checkButtonState(-1) } >stepOverBack</button>
-			<button onClick={this.stepOverForward} disabled={ this.checkButtonState(1) } >stepOverForward</button>
-			<button onClick={this.stepIntoForward} disabled={ this.checkButtonState(1) } >stepIntoForward</button>
+				<button onClick={this.stepIntoBack} disabled={ this.checkButtonState(-1) } >Step Into Back</button>
+				<button onClick={this.stepOverBack} disabled={ this.checkButtonState(-1) } >Step Over Back</button>
+				<button onClick={this.stepOverForward} disabled={ this.checkButtonState(1) } >Step Over Forward</button>
+				<button onClick={this.stepIntoForward} disabled={ this.checkButtonState(1) } >Step Into Forward</button>
 			</div>
+
 			<div style={style.container}>
-			<select size="10" ref='itemsList' style={style.instuctions} value={this.state.selectedInst}>
-			{ this.renderAssemblyItems() }
-			</select>
-			</div>
-			<div>
-			<BasicPanel name="Stack" data={this.state.currentStack} />
-			<BasicPanel name="CallStack" data={this.state.currentCallStack} />
-			<BasicPanel name="Storage" data={this.state.currentStorage} renderRow={this.renderStorageRow} />
-			<BasicPanel name="Memory" data={this.state.currentMemory} renderRow={this.renderMemoryRow} />
-			<BasicPanel name="CallData" data={this.state.currentCallData} />
-			</div>
-			</div>
+			<table>
+				<tbody>
+				<tr>
+					<td>
+						<select size="10" ref='itemsList' style={style.instructionsList}  value={this.state.selectedInst}>
+						{ this.renderAssemblyItems() }
+						</select>
+						<div style={Object.assign(style.inline, style.sticker)}>
+							<Sticker data={this.state.currentStepInfo} />
+						</div>
+					</td>
+					<td>
+						<BasicPanel name="CallData" data={this.state.currentCallData} />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<BasicPanel name="Stack" data={this.state.currentStack} />
+					</td>
+					<td>
+						<BasicPanel name="CallStack" data={this.state.currentCallStack} />	
+					</td>					
+				</tr>
+				<tr>
+					<td>
+						<BasicPanel name="Storage" data={this.state.currentStorage} renderRow={this.renderStorageRow} />
+					</td>
+					<td>
+						<BasicPanel name="Memory" data={this.state.currentMemory} renderRow={this.renderMemoryRow} />
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			</div>	
+			</div>		
 			);
 	},
 
@@ -108,7 +132,7 @@ module.exports = React.createClass({
 	renderAssemblyItems: function()
 	{
 		if (this.props.vmTrace)
-		{      
+		{
 			return this.state.codes[this.state.currentAddress].map(function(item, i) 
 			{
 				return <option key={i} value={i} >{item}</option>;
@@ -117,8 +141,26 @@ module.exports = React.createClass({
 	},
 
 	componentWillReceiveProps: function (nextProps) 
-	{
+	{ 
+		this.buildCallStack(nextProps.vmTrace)
 		this.updateState(nextProps, 0)
+	},
+
+	buildCallStack: function(vmTrace)
+	{
+		this.state.levels = {}
+		var depth = 0
+		var currentAddress = vmTrace[0].address
+		var callStack = [currentAddress]
+		for (var k in vmTrace)
+		{
+			var trace = vmTrace[k]
+			if (trace.depth > depth)
+				callStack.push(trace.address) // new context
+			else if (trace.depth < depth)
+				callStack.pop() // returning from context
+			this.state.levels[trace.steps] = callStack 
+		}
 	},
 
 	updateState: function(props, vmTraceIndex)
@@ -142,41 +184,33 @@ module.exports = React.createClass({
 			stateChanges["currentStack"] = stack
 		}
 
-		if (props.vmTrace[vmTraceIndex].levels)
-		{
-			var levels = props.vmTrace[vmTraceIndex].levels
-			var callStack = []
-			for (var k in levels)
-				callStack.push(props.vmTrace[levels[k]].address)	
-			stateChanges["currentCallStack"] = callStack
-			lastCallStack = callStack
-		}
+		if (this.state.levels[vmTraceIndex])
+			stateChanges["currentCallStack"] = this.state.levels[vmTraceIndex]
 
 		var storageIndex = vmTraceIndex
 		if (vmTraceIndex < previousState)
 			storageIndex = this.retrieveLastSeenProperty(vmTraceIndex, "storage", props.vmTrace)
 		if (props.vmTrace[storageIndex].storage || storageIndex === 0)
-		{
 			stateChanges["currentStorage"] = props.vmTrace[storageIndex].storage
-			lastStorage = props.vmTrace[storageIndex].storage
-		}
 
 		var memoryIndex = vmTraceIndex
 		if (vmTraceIndex < previousState)
 			memoryIndex = this.retrieveLastSeenProperty(vmTraceIndex, "memory", props.vmTrace)	
 		if (props.vmTrace[memoryIndex].memory || memoryIndex === 0)
-		{
 			stateChanges["currentMemory"] = this.formatMemory(props.vmTrace[memoryIndex].memory, 16)
-			lastMemory = this.formatMemory(props.vmTrace[memoryIndex].memory, 16)
-		}
 
 		if (props.vmTrace[vmTraceIndex].calldata)
-		{
 			stateChanges["currentCallData"] = props.vmTrace[vmTraceIndex].calldata
-			lastCallData = props.vmTrace[vmTraceIndex].calldata
-		}
 		stateChanges["selectedInst"] = this.state.instructionsIndexByBytesOffset[currentAddress][props.vmTrace[vmTraceIndex].pc]
 		stateChanges["currentSelected"] = vmTraceIndex
+
+		stateChanges["currentStepInfo"] = [
+			"Current Step: " + props.vmTrace[vmTraceIndex].steps,
+			"Adding Memory: " + (props.vmTrace[vmTraceIndex].memexpand ? props.vmTrace[vmTraceIndex].memexpand : ""),
+			"Step Cost: " + props.vmTrace[vmTraceIndex].gascost,
+			"Remaining Gas: " + props.vmTrace[vmTraceIndex].gas
+		]
+
 		this.setState(stateChanges)
 	},
 
