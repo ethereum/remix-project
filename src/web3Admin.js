@@ -92,13 +92,13 @@ module.exports = {
         	property: 'debug',
         	methods:
         	[
-            new web3._extend.Method({
-                name: 'debugTrace',
-                call: 'debug_trace',
-                params: 1,
-                inputFormatter: [null, null],
-                params: 2
-            }),
+        	new web3._extend.Method({
+        		name: 'debugTrace',
+        		call: 'debug_trace',
+        		params: 1,
+        		inputFormatter: [null, null],
+        		params: 2
+        	}),
         	new web3._extend.Method({
         		name: 'printBlock',
         		call: 'debug_printBlock',
@@ -272,6 +272,6 @@ module.exports = {
         	})
         	]
         });
-      }
-    };
+    }
+};
 
