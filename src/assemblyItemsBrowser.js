@@ -20,7 +20,7 @@ module.exports = React.createClass({
 			currentStepInfo: null,
 			codes: {}, // assembly items instructions list by contract addesses
 			instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
-			levels: {}
+			callStack: {}
 		};
 	},
 
@@ -35,7 +35,7 @@ module.exports = React.createClass({
 	{		
 		return (
 			<div style={this.props.vmTrace === null ? style.hidden : style.display} >
-			<div style={style.container}><span style={style.address}>{this.state.currentAddress}</span></div> 
+			<div style={style.container}><span style={style.address}>Current code: {this.state.currentAddress}</span></div> 
 			
 			<div style={style.container}>
 				<button onClick={this.stepIntoBack} disabled={ this.checkButtonState(-1) } >Step Into Back</button>
@@ -142,29 +142,36 @@ module.exports = React.createClass({
 
 	componentWillReceiveProps: function (nextProps) 
 	{ 
+		if (!nextProps.vmTrace)
+			return
 		this.buildCallStack(nextProps.vmTrace)
 		this.updateState(nextProps, 0)
 	},
 
 	buildCallStack: function(vmTrace)
 	{
-		this.state.levels = {}
-		var depth = 0
-		var currentAddress = vmTrace[0].address
-		var callStack = [currentAddress]
-		for (var k in vmTrace)
+		if (!vmTrace)
+			return
+		var callStack = []
+		var depth = -1
+		for (var k = 1; k < vmTrace.length; k++)
 		{
 			var trace = vmTrace[k]
+			if (trace.depth === undefined || trace.depth === depth)
+				continue
 			if (trace.depth > depth)
 				callStack.push(trace.address) // new context
 			else if (trace.depth < depth)
 				callStack.pop() // returning from context
-			this.state.levels[trace.steps] = callStack 
+			depth = trace.depth
+			this.state.callStack[k] = callStack.slice(0)
 		}
 	},
 
 	updateState: function(props, vmTraceIndex)
 	{
+		if (!props.vmTrace)
+			return
 		var previousState = this.state.currentSelected
 		var stateChanges = {}
 
@@ -184,8 +191,11 @@ module.exports = React.createClass({
 			stateChanges["currentStack"] = stack
 		}
 
-		if (this.state.levels[vmTraceIndex])
-			stateChanges["currentCallStack"] = this.state.levels[vmTraceIndex]
+		var callStackIndex = vmTraceIndex
+		if (vmTraceIndex < previousState)
+			callStackIndex = this.retrieveLastSeenProperty(vmTraceIndex, "depth", props.vmTrace)
+		if (this.state.callStack[callStackIndex] || callStackIndex === 0)
+			stateChanges["currentCallStack"] = this.state.callStack[callStackIndex]
 
 		var storageIndex = vmTraceIndex
 		if (vmTraceIndex < previousState)
@@ -199,8 +209,12 @@ module.exports = React.createClass({
 		if (props.vmTrace[memoryIndex].memory || memoryIndex === 0)
 			stateChanges["currentMemory"] = this.formatMemory(props.vmTrace[memoryIndex].memory, 16)
 
-		if (props.vmTrace[vmTraceIndex].calldata)
-			stateChanges["currentCallData"] = props.vmTrace[vmTraceIndex].calldata
+		var callDataIndex = vmTraceIndex
+		if (vmTraceIndex < previousState)
+			callDataIndex = this.retrieveLastSeenProperty(vmTraceIndex, "calldata", props.vmTrace)
+		if (props.vmTrace[vmTraceIndex].calldata || callDataIndex === 0)
+			stateChanges["currentCallData"] = [props.vmTrace[callDataIndex].calldata]
+
 		stateChanges["selectedInst"] = this.state.instructionsIndexByBytesOffset[currentAddress][props.vmTrace[vmTraceIndex].pc]
 		stateChanges["currentSelected"] = vmTraceIndex
 
@@ -225,8 +239,8 @@ module.exports = React.createClass({
 		}
 		return index	
 	},
-	
-	stepIntoBack: function ()
+
+	stepIntoBack: function()
 	{
 		this.moveSelection(-1)
 	},
@@ -271,7 +285,7 @@ module.exports = React.createClass({
 	isCallInstruction: function(index)
 	{
 		var state = this.props.vmTrace[index];
-		return state.instname === "CALL" || state.instname === "CREATE" || state.instname === "DELEGATECALL"
+		return state.instname === "CALL" || state.instname === "CALLCODE" || state.instname === "CREATE" || state.instname === "DELEGATECALL"
 	},
 
 	isReturnInstruction: function(index)

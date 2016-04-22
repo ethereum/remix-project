@@ -93,7 +93,7 @@ module.exports = {
         	methods:
         	[
         	new web3._extend.Method({
-        		name: 'debugTrace',
+        		name: 'trace',
         		call: 'debug_trace',
         		params: 1,
         		inputFormatter: [null, null],

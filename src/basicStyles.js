@@ -16,6 +16,10 @@ module.exports = {
 	{
 		'width': "320px"
 	},
+	transactionInfo:
+	{
+		'marginTop': '5px'
+	},
 	panel:
 	{
 		container:
