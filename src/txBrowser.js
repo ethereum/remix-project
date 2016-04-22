@@ -1,4 +1,5 @@
 var React = require('react');
+var style = require('./basicStyles')
 
 module.exports = React.createClass({
 	propTypes: {
@@ -6,12 +7,14 @@ module.exports = React.createClass({
 	},
 
 	getInitialState: function() {
-		return {blockNumber: "1160004", txNumber: "1"}
+		return {blockNumber: "1382256", txNumber: "1", from: "", to: "", hash: ""}
 	},
 
 	submit: function()
 	{
-		this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber));
+		var tx = web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
+		this.setState({from: tx.from, to: tx.to, hash: tx.hash})
+		this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber))
 	},
 	
 	updateBlockN: function(ev) {
@@ -24,11 +27,15 @@ module.exports = React.createClass({
 
 	render: function() {		
 		return (
-			<div>
-			<div><h3>Transaction details</h3></div>
-			<input onChange={this.updateBlockN} type="text" placeholder= {"Block number e.g. : " + this.state.blockNumber}></input>
-			<input onChange={this.updateTxN} type="text" placeholder={"Transaction Number e.g. : " + this.state.txNumber}></input>
+			<div style={style.container} >
+			<input onChange={this.updateBlockN} type="text" placeholder= {"Block number or hash (default 1382256)" + this.state.blockNumber}></input>
+			<input onChange={this.updateTxN} type="text" placeholder={"Transaction Number (default 1) " + this.state.txNumber}></input>
 			<button onClick={this.submit}>Get</button>
+			<div style={style.transactionInfo}>
+			<div>Hash: {this.state.hash}</div>
+			<div>From: {this.state.from}</div>
+			<div>To: {this.state.to}</div>
+			</div>
 			</div>
 			);
 	}

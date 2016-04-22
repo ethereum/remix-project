@@ -1,5 +1,8 @@
 module.exports = {
-	retrieveVmTrace: function(blockNumber, txNumber) {
-		return web3.admin.vmTrace(blockNumber, parseInt(txNumber));
+	retrieveVmTrace: function(blockNumber, txNumber, callBack) {
+			web3.debug.trace(blockNumber, parseInt(txNumber), function(error, result)
+			{
+				callBack(error, result)
+			});
 	}
 }

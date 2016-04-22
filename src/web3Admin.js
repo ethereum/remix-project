@@ -58,8 +58,8 @@ module.exports = {
         	new web3._extend.Method({
         		name: 'vmTrace',
         		call: 'admin_eth_vmTrace',
-        		inputFormatter: [null, null],
-        		params: 2
+        		inputFormatter: [null, null, null],
+        		params: 3
         	}), 
         	],
         	properties:
@@ -92,6 +92,13 @@ module.exports = {
         	property: 'debug',
         	methods:
         	[
+        	new web3._extend.Method({
+        		name: 'trace',
+        		call: 'debug_trace',
+        		params: 1,
+        		inputFormatter: [null, null],
+        		params: 2
+        	}),
         	new web3._extend.Method({
         		name: 'printBlock',
         		call: 'debug_printBlock',
@@ -265,6 +272,6 @@ module.exports = {
         	})
         	]
         });
-      }
-    };
+    }
+};
 
