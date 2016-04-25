@@ -14,14 +14,13 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "babel-preset-react": "^6.5.0",
-    "babelify": "^7.2.0",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "web3": "^0.15.3"
   },
   "devDependencies": {
-    "web3": "^0.15.3"
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^7.2.0",
   },
   "scripts": {
     "install": "npm install --save react react-dom; npm install -g browserify; npm install --save babelify babel-preset-react; npm install web3",
