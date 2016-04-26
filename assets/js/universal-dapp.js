@@ -25,22 +25,26 @@ function UniversalDApp (contracts, options) {
 }
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
-  if (this.accounts) {
-    privateKey = new Buffer(privateKey, 'hex')
-    var address = EthJS.Util.privateToAddress(privateKey);
+    if (this.accounts) {
+        privateKey = new Buffer(privateKey, 'hex')
+        var address = EthJS.Util.privateToAddress(privateKey);
 
-    var account = new EthJS.Account();
-    account.balance = balance || 'f00000000000000001';
-    this.vm.stateManager.trie.put(address, account.serialize());
+        var account = new EthJS.Account();
+        account.balance = balance || 'f00000000000000001';
+        this.vm.stateManager.trie.put(address, account.serialize());
 
-    this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
-  }
+        this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
+    }
 };
 
 UniversalDApp.prototype.getAccounts = function (cb) {
-  if (!this.accounts) return cb("No accounts?");
+    if (!this.vm) {
+        web3.eth.getAccounts(cb);
+    } else {
+        if (!this.accounts) return cb("No accounts?");
 
-  cb(null, Object.keys(this.accounts));
+        cb(null, Object.keys(this.accounts));
+    }
 };
 
 UniversalDApp.prototype.render = function () {
