@@ -366,7 +366,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
                         }
 
                         // decode data
-                        var decodedObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
+                        var decodedObj = EthJS.ABI.rawDecode(outputTypes, result.vm.return);
 
                         // format decoded data
                         decodedObj = EthJS.ABI.stringify(outputTypes, decodedObj);
