@@ -84,7 +84,18 @@ UniversalDApp.prototype.getAccounts = function (cb) {
   var self = this;
 
   if (!self.executionContext.isVM()) {
-    self.web3.personal.getAccounts(cb);
+    // TOOD: remove the try/catch if this is fixed: https://github.com/ethereum/web3.js/issues/442
+    try {
+      self.web3.personal.listAccounts(function (err, res) {
+        if (err) {
+          self.web3.eth.getAccounts(cb);
+        } else {
+          cb(err, res);
+        }
+      });
+    } catch (e) {
+      self.web3.eth.getAccounts(cb);
+    }
   } else {
     if (!self.accounts) {
       return cb('No accounts?');
