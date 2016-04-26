@@ -175,7 +175,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $.each(abi, function(i, funABI) {
                 if (funABI.type !== 'event') return;
 
-		var hash = EthJS.Util.sha3(funABI.name + '(' + funABI.inputs.map(function(item) { return item.type }).join(',')  + ')');
+		var hash = EthJS.ABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
 		eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
             });
 
