@@ -264,6 +264,19 @@ UniversalDApp.prototype.getCallButton = function(args) {
         return $gasUsed;
     }
 
+    var getDecodedOutput = function (result) {
+        var $decoded;
+        if (Array.isArray(result)) {
+            $decoded = $('<ol>');
+            for (var i = 0; i < result.length; i++) {
+                $decoded.append($('<li>').text(result[i]));
+            }
+        } else {
+            $decoded = result;
+        }
+        return $('<div class="decoded">').html('<strong>Decoded:</strong> ').append($decoded);
+    }
+
     var getOutput = function() {
         var $result = $('<div class="result" />');
         var $close = $('<div class="udapp-close" />');
@@ -340,20 +353,37 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 replaceOutput($result, getGasUsedOutput(result));
                 args.appendFunctions(result.createdAddress);
             } else if (self.options.vm){
-                var outputObj;
-
-                try {
-                    var outputTypes = [];
-                    for (var i = 0; i < args.abi.outputs.length; i++) {
-                        outputTypes.push(args.abi.outputs[i].type);
-                    }
-                    outputObj = EthJS.ABI.rawDecode(null, null, outputTypes, result.vm.return);
-                } catch (e) {
-                    outputObj = '0x' + result.vm.return.toString('hex');
-                }
-
+                var outputObj = '0x' + result.vm.return.toString('hex');
                 clearOutput($result);
                 $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
+
+                // Only decode if there supposed to be fields
+                if (args.abi.outputs.length > 0) {
+                    try {
+                        var outputTypes = [];
+                        for (var i = 0; i < args.abi.outputs.length; i++) {
+                            outputTypes.push(args.abi.outputs[i].type);
+                        }
+
+                        // decode data
+                        var decodedObj = EthJS.ABI.rawDecode(outputTypes, result.vm.return);
+
+                        // format decoded data
+                        decodedObj = EthJS.ABI.stringify(outputTypes, decodedObj);
+                        for (var i = 0; i < outputTypes.length; i++) {
+                            var name = args.abi.outputs[i].name;
+                            if (name.length > 0) {
+                                decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i];
+                            } else {
+                                decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
+                            }
+                        }
+
+                        $result.append(getDecodedOutput(decodedObj));
+                    } catch (e) {
+                        $result.append(getDecodedOutput('Failed to decode output: ' + e));
+                    }
+                }
             } else if (args.abi.constant && !isConstructor) {
                 replaceOutput($result, getReturnOutput(result));
             } else {
