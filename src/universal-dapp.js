@@ -274,8 +274,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $instance.append(self.getCallButton({
                 abi: funABI,
                 encode: function (args) {
-                    var obj = web3contract.at('0x00')[funABI.name];
-                    return obj.getData.apply(obj, args);
+                    var types = [];
+                    for (var i = 0; i < funABI.inputs.length; i++) {
+                        types.push(funABI.inputs[i].type);
+                    }
+
+                    return Buffer.concat([ ethJSABI.methodID(funABI.name, types), ethJSABI.rawEncode(types, args) ]).toString('hex');
                 },
                 address: address
             }));
