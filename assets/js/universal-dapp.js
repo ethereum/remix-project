@@ -192,6 +192,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                             return item.type;
                         });
                         decoded = EthJS.ABI.rawDecode(types, log[2]);
+                        decoded = EthJS.ABI.stringify(types, decoded)
                     } catch (e) {
                         decoded = '0x' + log[2].toString('hex');
                     }
