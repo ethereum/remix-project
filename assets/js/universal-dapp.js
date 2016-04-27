@@ -183,11 +183,21 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 for (var i in response.vm.logs) {
                     // [address, topics, mem]
                     var log = response.vm.logs[i];
+                    var abi = eventABI[log[1][0].toString('hex')];
+                    var event = abi.event;
+                    var decoded;
 
-                    var event = eventABI[log[1][0].toString('hex')].event;
+                    try {
+                        var types = abi.inputs.map(function (item) {
+                            return item.type;
+                        });
+                        decoded = EthJS.ABI.rawDecode(types, log[2]);
+                        decoded = EthJS.ABI.stringify(types, decoded)
+                    } catch (e) {
+                        decoded = '0x' + log[2].toString('hex');
+                    }
 
-                    // FIXME: parse based on ABI (match event name + decode values)
-                    parseLogs(null, { event: event, args: '0x' + log[2].toString('hex') });
+                    parseLogs(null, { event: event, args: decoded });
                 }
             });
         } else {
