@@ -1,8 +1,10 @@
 var React = require('react');
 var BasicPanel = require('./basicPanel')
 var Sticker = require('./sticker')
+var ButtonNavigator = require('./vmTraceButtonNavigator')
 var codeUtils = require('./codeUtils')
 var style = require('./basicStyles')
+var Slider = require('./slider');
 
 module.exports = React.createClass({
 
@@ -36,14 +38,10 @@ module.exports = React.createClass({
 		return (
 			<div style={this.props.vmTrace === null ? style.hidden : style.display} >
 			<div style={style.container}><span style={style.address}>Current code: {this.state.currentAddress}</span></div> 
-			
 			<div style={style.container}>
-				<button onClick={this.stepIntoBack} disabled={ this.checkButtonState(-1) } >Step Into Back</button>
-				<button onClick={this.stepOverBack} disabled={ this.checkButtonState(-1) } >Step Over Back</button>
-				<button onClick={this.stepOverForward} disabled={ this.checkButtonState(1) } >Step Over Forward</button>
-				<button onClick={this.stepIntoForward} disabled={ this.checkButtonState(1) } >Step Into Forward</button>
+				<Slider step={this.state.currentSelected} onChange={this.selectState} min="0" max={this.props.vmTrace ? this.props.vmTrace.length : 0}/>
+				<ButtonNavigator vmTraceLength={this.props.vmTrace ? this.props.vmTrace.length : 0} step={this.state.currentSelected} stepIntoBack={this.stepIntoBack} stepIntoForward={this.stepIntoForward} stepOverBack={this.stepOverBack} stepOverForward={this.stepOverForward} />
 			</div>
-
 			<div style={style.container}>
 			<table>
 				<tbody>
@@ -82,7 +80,7 @@ module.exports = React.createClass({
 			</div>		
 			);
 	},
-
+	
 	renderStorageRow: function(data)
 	{
 		var ret = []
@@ -117,17 +115,7 @@ module.exports = React.createClass({
 			this.state.codes[address] = code[0]
 			this.state.instructionsIndexByBytesOffset[address] = code[1]
 		}
-	},
-
-	checkButtonState: function(incr)
-	{
-		if (!this.props.vmTrace)
-			return "disabled"
-		if (incr === -1)
-			return this.state.currentSelected === 0 ? "disabled" : ""
-		else if (incr === 1)
-			return this.state.currentSelected >= this.props.vmTrace.length - 1 ? "disabled" : "" 
-	},
+	},	
 
 	renderAssemblyItems: function()
 	{
@@ -170,7 +158,7 @@ module.exports = React.createClass({
 
 	updateState: function(props, vmTraceIndex)
 	{
-		if (!props.vmTrace)
+		if (!props.vmTrace || !props.vmTrace[vmTraceIndex])
 			return
 		var previousState = this.state.currentSelected
 		var stateChanges = {}
@@ -243,22 +231,6 @@ module.exports = React.createClass({
 	stepIntoBack: function()
 	{
 		this.moveSelection(-1)
-	},
-
-	stepOverBack: function()
-	{
-		if (this.isReturnInstruction(this.state.currentSelected - 1))
-			this.stepOutBack();
-		else
-			this.moveSelection(-1);
-	},
-
-	stepOverForward: function()
-	{
-		if (this.isCallInstruction(this.state.currentSelected))
-			this.stepOutForward();
-		else
-			this.moveSelection(1);
 	},
 
 	stepIntoForward: function()
