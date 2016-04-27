@@ -169,13 +169,25 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         }
 
         if (self.options.vm){
+            // FIXME: support indexed events
+            var eventABI = {};
+
+            $.each(abi, function(i, funABI) {
+                if (funABI.type !== 'event') return;
+
+		var hash = EthJS.ABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
+		eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
+            });
+
             self.vm.on('afterTx', function(response){
                 for (var i in response.vm.logs) {
                     // [address, topics, mem]
                     var log = response.vm.logs[i];
 
+                    var event = eventABI[log[1][0].toString('hex')].event;
+
                     // FIXME: parse based on ABI (match event name + decode values)
-                    parseLogs(null, { event: log[1][0].toString('hex'), args: '0x' + log[2].toString('hex') });
+                    parseLogs(null, { event: event, args: '0x' + log[2].toString('hex') });
                 }
             });
         } else {
