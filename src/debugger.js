@@ -14,11 +14,11 @@ module.exports = React.createClass({
 			<div style={style.wrapper} >
 				<h1 style={style.container} >Eth Debugger</h1>
 				<TxBrowser onNewTxRequested={this.retrieveVmTrace} />
-				<div style={style.container} >{this.state.state}</div>			
+				<div style={style.container} >{this.state.state}</div>
 				<VmTraceBrowser vmTrace={this.state.vmTrace} />
 			</div>
 			);
-	},	
+	},
 
 	retrieveVmTrace: function(blockNumber, txNumber)
 	{

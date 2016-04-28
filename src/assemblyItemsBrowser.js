@@ -80,7 +80,7 @@ module.exports = React.createClass({
 			</div>		
 			);
 	},
-	
+
 	renderStorageRow: function(data)
 	{
 		var ret = []
