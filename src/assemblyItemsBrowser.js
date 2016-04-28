@@ -11,8 +11,8 @@ module.exports = React.createClass({
 	getInitialState: function()
 	{
 		return {
-			currentSelected: 0, // current selected item in the vmTrace
-			selectedInst: 0, // current selected item in the contract assembly code
+			currentSelected: -1, // current selected item in the vmTrace
+			selectedInst: -1, // current selected item in the contract assembly code
 			currentAddress: null,
 			currentStack: null,
 			currentLevels: null,
@@ -39,7 +39,7 @@ module.exports = React.createClass({
 			<div style={this.props.vmTrace === null ? style.hidden : style.display} >
 			<div style={style.container}><span style={style.address}>Current code: {this.state.currentAddress}</span></div> 
 			<div style={style.container}>
-				<Slider step={this.state.currentSelected} onChange={this.selectState} min="0" max={this.props.vmTrace ? this.props.vmTrace.length : 0}/>
+				<Slider ref="slider" onChange={this.selectState} min="0" max={this.props.vmTrace ? this.props.vmTrace.length : 0}/>
 				<ButtonNavigator vmTraceLength={this.props.vmTrace ? this.props.vmTrace.length : 0} step={this.state.currentSelected} stepIntoBack={this.stepIntoBack} stepIntoForward={this.stepIntoForward} stepOverBack={this.stepOverBack} stepOverForward={this.stepOverForward} />
 			</div>
 			<div style={style.container}>
@@ -133,6 +133,7 @@ module.exports = React.createClass({
 		if (!nextProps.vmTrace)
 			return
 		this.buildCallStack(nextProps.vmTrace)
+		this.setState({"currentSelected": -1})
 		this.updateState(nextProps, 0)
 	},
 
@@ -142,7 +143,7 @@ module.exports = React.createClass({
 			return
 		var callStack = []
 		var depth = -1
-		for (var k = 1; k < vmTrace.length; k++)
+		for (var k = 0; k < vmTrace.length; k++)
 		{
 			var trace = vmTrace[k]
 			if (trace.depth === undefined || trace.depth === depth)
@@ -160,49 +161,41 @@ module.exports = React.createClass({
 	{
 		if (!props.vmTrace || !props.vmTrace[vmTraceIndex])
 			return
-		var previousState = this.state.currentSelected
+		var previousIndex = this.state.currentSelected
 		var stateChanges = {}
-
-		var currentAddress = this.state.currentAddress
-		if (!currentAddress)
-			currentAddress = props.vmTrace[vmTraceIndex].address
-		if (props.vmTrace[vmTraceIndex].address && props.vmTrace[vmTraceIndex].address !== this.state.currentAddress)
-		{
-			this.resolveAddress(props.vmTrace[vmTraceIndex].address)
-			stateChanges["currentAddress"] = props.vmTrace[vmTraceIndex].address
-		}
-
-		if (props.vmTrace[vmTraceIndex].stack)
+		
+		if (props.vmTrace[vmTraceIndex].stack) // there's always a stack
 		{
 			var stack = props.vmTrace[vmTraceIndex].stack
 			stack.reverse()
 			stateChanges["currentStack"] = stack
 		}
+		
+		var currentAddress = this.state.currentAddress
+		var addressIndex = this.shouldUpdateStateProperty("address", vmTraceIndex, previousIndex, props.vmTrace)
+		if (addressIndex > -1)
+		{
+			currentAddress = props.vmTrace[addressIndex].address
+			this.resolveAddress(currentAddress)
+			Object.assign(stateChanges, { "currentAddress": currentAddress })
+		}
+		
+		var depthIndex = this.shouldUpdateStateProperty("depth", vmTraceIndex, previousIndex, props.vmTrace)
+		if (depthIndex > -1)
+			Object.assign(stateChanges, { "currentCallStack": this.state.callStack[depthIndex] })
 
-		var callStackIndex = vmTraceIndex
-		if (vmTraceIndex < previousState)
-			callStackIndex = this.retrieveLastSeenProperty(vmTraceIndex, "depth", props.vmTrace)
-		if (this.state.callStack[callStackIndex] || callStackIndex === 0)
-			stateChanges["currentCallStack"] = this.state.callStack[callStackIndex]
+		var storageIndex = this.shouldUpdateStateProperty("storage", vmTraceIndex, previousIndex, props.vmTrace)
+		if (storageIndex > -1)
+			Object.assign(stateChanges, { "currentStorage": props.vmTrace[storageIndex].storage })
 
-		var storageIndex = vmTraceIndex
-		if (vmTraceIndex < previousState)
-			storageIndex = this.retrieveLastSeenProperty(vmTraceIndex, "storage", props.vmTrace)
-		if (props.vmTrace[storageIndex].storage || storageIndex === 0)
-			stateChanges["currentStorage"] = props.vmTrace[storageIndex].storage
-
-		var memoryIndex = vmTraceIndex
-		if (vmTraceIndex < previousState)
-			memoryIndex = this.retrieveLastSeenProperty(vmTraceIndex, "memory", props.vmTrace)	
-		if (props.vmTrace[memoryIndex].memory || memoryIndex === 0)
-			stateChanges["currentMemory"] = this.formatMemory(props.vmTrace[memoryIndex].memory, 16)
-
-		var callDataIndex = vmTraceIndex
-		if (vmTraceIndex < previousState)
-			callDataIndex = this.retrieveLastSeenProperty(vmTraceIndex, "calldata", props.vmTrace)
-		if (props.vmTrace[vmTraceIndex].calldata || callDataIndex === 0)
-			stateChanges["currentCallData"] = [props.vmTrace[callDataIndex].calldata]
-
+		var memoryIndex = this.shouldUpdateStateProperty("memory", vmTraceIndex, previousIndex, props.vmTrace)
+		if (memoryIndex > -1)
+			Object.assign(stateChanges, { "currentMemory": this.formatMemory(props.vmTrace[memoryIndex].memory, 16) })
+		
+		var callDataIndex = this.shouldUpdateStateProperty("calldata", vmTraceIndex, previousIndex, props.vmTrace)
+		if (callDataIndex > -1)
+			Object.assign(stateChanges, { "currentCallData": [props.vmTrace[callDataIndex].calldata] })
+		
 		stateChanges["selectedInst"] = this.state.instructionsIndexByBytesOffset[currentAddress][props.vmTrace[vmTraceIndex].pc]
 		stateChanges["currentSelected"] = vmTraceIndex
 
@@ -212,8 +205,22 @@ module.exports = React.createClass({
 			"Step Cost: " + props.vmTrace[vmTraceIndex].gascost,
 			"Remaining Gas: " + props.vmTrace[vmTraceIndex].gas
 		]
-
+		this.refs.slider.setValue(vmTraceIndex)
 		this.setState(stateChanges)
+	},
+	
+	shouldUpdateStateProperty: function(vmTraceName, nextIndex, previousIndex, vmTrace)
+	{
+		var propIndex = -1
+		if (previousIndex + 1 === nextIndex)
+			propIndex = nextIndex
+		else
+			propIndex = this.retrieveLastSeenProperty(nextIndex, vmTraceName, vmTrace)
+		
+		if (propIndex > -1 && vmTrace[propIndex][vmTraceName] !== undefined)
+			return propIndex
+		else
+			return -1
 	},
 
 	retrieveLastSeenProperty: function(currentIndex, propertyName, vmTrace)

@@ -13,7 +13,8 @@ module.exports = React.createClass({
 	submit: function()
 	{
 		var tx = web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
-		this.setState({from: tx.from, to: tx.to, hash: tx.hash})
+		if (tx)
+			this.setState({from: tx.from, to: tx.to, hash: tx.hash})
 		this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber))
 	},
 	
