@@ -40,7 +40,9 @@ module.exports = React.createClass({
 			<div style={style.container}><span style={style.address}>Current code: {this.state.currentAddress}</span></div> 
 			<div style={style.container}>
 				<Slider ref="slider" onChange={this.selectState} min="0" max={this.props.vmTrace ? this.props.vmTrace.length : 0}/>
-				<ButtonNavigator vmTraceLength={this.props.vmTrace ? this.props.vmTrace.length : 0} step={this.state.currentSelected} stepIntoBack={this.stepIntoBack} stepIntoForward={this.stepIntoForward} stepOverBack={this.stepOverBack} stepOverForward={this.stepOverForward} />
+				<ButtonNavigator
+                    vmTraceLength={this.props.vmTrace ? this.props.vmTrace.length : 0} step={this.state.currentSelected} stepIntoBack={this.stepIntoBack} 
+                    stepIntoForward={this.stepIntoForward} stepOverBack={this.stepOverBack} stepOverForward={this.stepOverForward} />
 			</div>
 			<div style={style.container}>
 			<table>
