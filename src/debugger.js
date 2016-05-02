@@ -6,16 +6,16 @@ var style = require('./basicStyles')
 
 module.exports = React.createClass({
 	getInitialState: function() {
-		return {vmTrace: null, state: ""}
+		return {vmTrace: null, state: "", currentStep: -1}
 	},
 
 	render: function() {
 		return (
 			<div style={style.wrapper} >
-			<h1 style={style.container} >Eth Debugger</h1>
-			<TxBrowser onNewTxRequested={this.retrieveVmTrace} />
-			<div style={style.container} >{this.state.state}</div>
-			<VmTraceBrowser vmTrace={this.state.vmTrace} />
+				<h1 style={style.container} >Eth Debugger</h1>
+				<TxBrowser onNewTxRequested={this.retrieveVmTrace} />
+				<div style={style.container} >{this.state.state}</div>
+				<VmTraceBrowser vmTrace={this.state.vmTrace} />
 			</div>
 			);
 	},
