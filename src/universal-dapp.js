@@ -569,7 +569,13 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: new Buffer(data.slice(2), 'hex')
             });
             tx.sign(account.privateKey);
-            this.vm.runTx({tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
+            var block = new EthJS.Block({
+                header: {
+                    // FIXME: support coinbase, difficulty, number and gasLimit
+                    timestamp: new Date().getTime() / 1000 | 0
+                }
+            });
+            this.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
         } catch (e) {
             cb( e, null );
         }
