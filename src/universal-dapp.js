@@ -1,3 +1,12 @@
+var $ = require('jquery');
+var EthJSVM = require('ethereumjs-vm');
+var Trie = require('merkle-patricia-tree');
+var ethJSUtil = require('ethereumjs-util');
+var EthJSTX = require('ethereumjs-tx');
+var EthJSAccount = require('ethereumjs-account');
+var ethABI = require('ethereumjs-abi');
+var web3 = require('./web3-adapter.js');
+
 function UniversalDApp (contracts, options) {
     this.options = options || {};
     this.$el = $('<div class="udapp" />');
@@ -9,9 +18,9 @@ function UniversalDApp (contracts, options) {
     } else if (options.vm) {
         this.accounts = {}
 
-        this.BN = EthJS.BN;
-        this.stateTrie = new EthJS.Trie();
-        this.vm = new EthJS.VM(this.stateTrie);
+        this.BN = ethJSUtil.BN;
+        this.stateTrie = new Trie();
+        this.vm = new EthJSVM(this.stateTrie);
 
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511')
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c')
@@ -27,9 +36,9 @@ function UniversalDApp (contracts, options) {
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
     if (this.accounts) {
         privateKey = new Buffer(privateKey, 'hex')
-        var address = EthJS.Util.privateToAddress(privateKey);
+        var address = ethJSUtil.privateToAddress(privateKey);
 
-        var account = new EthJS.Account();
+        var account = new EthJSAccount();
         account.balance = balance || 'f00000000000000001';
         this.vm.stateManager.trie.put(address, account.serialize());
 
@@ -175,7 +184,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $.each(abi, function(i, funABI) {
                 if (funABI.type !== 'event') return;
 
-		var hash = EthJS.ABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
+		var hash = ethABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
 		eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
             });
 
@@ -191,8 +200,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                         var types = abi.inputs.map(function (item) {
                             return item.type;
                         });
-                        decoded = EthJS.ABI.rawDecode(types, log[2]);
-                        decoded = EthJS.ABI.stringify(types, decoded)
+                        decoded = ethABI.rawDecode(types, log[2]);
+                        decoded = ethABI.stringify(types, decoded)
                     } catch (e) {
                         decoded = '0x' + log[2].toString('hex');
                     }
@@ -392,10 +401,10 @@ UniversalDApp.prototype.getCallButton = function(args) {
                         }
 
                         // decode data
-                        var decodedObj = EthJS.ABI.rawDecode(outputTypes, result.vm.return);
+                        var decodedObj = ethABI.rawDecode(outputTypes, result.vm.return);
 
                         // format decoded data
-                        decodedObj = EthJS.ABI.stringify(outputTypes, decodedObj);
+                        decodedObj = ethABI.stringify(outputTypes, decodedObj);
                         for (var i = 0; i < outputTypes.length; i++) {
                             var name = args.abi.outputs[i].name;
                             if (name.length > 0) {
@@ -551,7 +560,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         try {
             var address = this.options.getAddress ? this.options.getAddress() : this.getAccounts()[0];
             var account = this.accounts[address];
-            var tx = new EthJS.Tx({
+            var tx = new EthJSTX({
                 nonce: new Buffer([account.nonce++]), //@todo count beyond 255
                 gasPrice: 1,
                 gasLimit: 3000000000, //plenty
@@ -566,3 +575,5 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
         }
     }
 }
+
+module.exports = UniversalDApp;
