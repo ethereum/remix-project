@@ -33,5 +33,6 @@
   "bugs": {
     "url": "https://github.com/ethereum/browser-solidity/issues"
   },
-  "homepage": "https://github.com/ethereum/browser-solidity#readme"
+  "homepage": "https://github.com/ethereum/browser-solidity#readme",
+  "private": true
 }
