@@ -13,7 +13,7 @@ const codes = {
   0x08: ['ADDMOD', 8, 3, 1, false],
   0x09: ['MULMOD', 8, 3, 1, false],
   0x0a: ['EXP', 10, 2, 1, false],
-  0x0b: ['SIGNEXTEND', 5, 1, 1, false],
+  0x0b: ['SIGNEXTEND', 5, 1, 1, false]
 
   // 0x10 range - bit ops
   0x10: ['LT', 3, 2, 1, false],

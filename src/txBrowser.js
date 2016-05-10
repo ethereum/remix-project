@@ -21,7 +21,7 @@ module.exports = React.createClass({
       this.setState({from: tx.from, to: tx.to, hash: tx.hash})
     }
     this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber))
-  },
+  }
 
   updateBlockN: function (ev) {
     this.state.blockNumber = ev.target.value
