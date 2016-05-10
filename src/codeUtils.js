@@ -1,3 +1,4 @@
+'use strict'
 var opcodes = require('./opcodes')
 
 module.exports = {

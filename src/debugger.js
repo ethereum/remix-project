@@ -1,12 +1,20 @@
+'use strict'
 var React = require('react')
 var TxBrowser = require('./txBrowser')
-var VmTraceManager = require('./vmTraceManager')
 var VmTraceBrowser = require('./vmTraceBrowser')
 var style = require('./basicStyles')
 
 module.exports = React.createClass({
   getInitialState: function () {
     return {vmTrace: null, state: '', currentStep: -1}
+  },
+
+  childContextTypes: {
+    web3: React.PropTypes.object
+  },
+
+  getChildContext: function () {
+    return { web3: this.props.web3 }
   },
 
   render: function () {
@@ -24,12 +32,12 @@ module.exports = React.createClass({
 
   retrieveVmTrace: function (blockNumber, txNumber) {
     this.setState({state: 'loading...'})
-    var deb = this
-    VmTraceManager.retrieveVmTrace(blockNumber, txNumber, function (error, result) {
+    var self = this
+    this.props.web3.debug.trace(blockNumber, parseInt(txNumber), function (error, result) {
       if (error) {
         console.log(error)
       } else {
-        deb.setState({vmTrace: result, state: ''})
+        self.setState({vmTrace: result, state: ''})
       }
     })
   }

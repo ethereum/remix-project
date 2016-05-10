@@ -1,3 +1,4 @@
+'use strict'
 var React = require('react')
 var BasicPanel = require('./basicPanel')
 var Sticker = require('./sticker')
@@ -7,6 +8,10 @@ var style = require('./basicStyles')
 var Slider = require('./slider')
 
 module.exports = React.createClass({
+  contextTypes: {
+    web3: React.PropTypes.object
+  },
+
   getInitialState: function () {
     return {
       currentSelected: -1, // current selected item in the vmTrace
@@ -135,7 +140,7 @@ module.exports = React.createClass({
 
   resolveAddress: function (address) {
     if (!this.state.codes[address]) {
-      var hexCode = web3.eth.getCode(address)
+      var hexCode = this.context.web3.eth.getCode(address)
       var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
       this.state.codes[address] = code[0]
       this.state.instructionsIndexByBytesOffset[address] = code[1]
@@ -341,7 +346,7 @@ module.exports = React.createClass({
     for (var k = 0; k < mem.length; k += (width * 2)) {
       var memory = mem.substr(k, width * 2)
       ret.push({
-        address: web3.toHex(k),
+        address: this.context.web3.toHex(k),
         content: this.tryAsciiFormat(memory)
       })
     }
@@ -352,7 +357,7 @@ module.exports = React.createClass({
     var ret = { ascii: '', raw: '' }
     for (var k = 0; k < memorySlot.length; k += 2) {
       var raw = memorySlot.substr(k, 2)
-      var ascii = web3.toAscii(raw)
+      var ascii = this.context.web3.toAscii(raw)
       if (ascii === String.fromCharCode(0)) {
         ret.ascii += '?'
       } else {

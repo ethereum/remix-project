@@ -1,3 +1,4 @@
+'use strict'
 module.exports = {
   rule: {
     'width': '600px'

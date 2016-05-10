@@ -39,6 +39,10 @@
   },
   "homepage": "https://github.com/ethereum/remix#readme",
   "standard": {
-    "global": ["web3"]
+    "global": ["web3"],
+    "ignore": [
+      "node_modules/*",
+      "build/*"
+    ]
   }
 }

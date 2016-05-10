@@ -1,3 +1,4 @@
+'use strict'
 module.exports = {
   extend: function (web3) {
     // ADMIN

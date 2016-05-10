@@ -1,7 +1,12 @@
+'use strict'
 var React = require('react')
 var style = require('./basicStyles')
 
 module.exports = React.createClass({
+  contextTypes: {
+    web3: React.PropTypes.object
+  },
+
   propTypes: {
     onNewTxRequested: React.PropTypes.func.isRequired
   },
@@ -11,7 +16,7 @@ module.exports = React.createClass({
   },
 
   submit: function () {
-    var tx = web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
+    var tx = this.context.web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
     if (tx) {
       this.setState({from: tx.from, to: tx.to, hash: tx.hash})
     }
