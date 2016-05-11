@@ -19,8 +19,10 @@ module.exports = React.createClass({
     var tx = this.context.web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
     if (tx) {
       this.setState({from: tx.from, to: tx.to, hash: tx.hash})
+      this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber), tx)
+    } else {
+      console.log('cannot find ' + this.state.blockNumber + ' ' + this.state.txNumber)
     }
-    this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber))
   },
 
   updateBlockN: function (ev) {

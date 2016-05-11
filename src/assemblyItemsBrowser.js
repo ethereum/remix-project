@@ -6,12 +6,13 @@ var ButtonNavigator = require('./vmTraceButtonNavigator')
 var codeUtils = require('./codeUtils')
 var style = require('./basicStyles')
 var Slider = require('./slider')
+var StorageResolver = require('./storageResolver.js')
 
 module.exports = React.createClass({
   contextTypes: {
     web3: React.PropTypes.object
   },
-
+  
   getInitialState: function () {
     return {
       currentSelected: -1, // current selected item in the vmTrace
@@ -24,14 +25,17 @@ module.exports = React.createClass({
       currentCallData: null,
       currentStepInfo: null,
       codes: {}, // assembly items instructions list by contract addesses
+      executingCode: [], // code currently loaded in the debugger
       instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
-      callStack: {}
+      callStack: {},
+      storageStates: {}
     }
   },
 
   getDefaultProps: function () {
     return {
-      vmTrace: null
+      vmTrace: null,
+      transaction: null
     }
   },
 
@@ -53,8 +57,10 @@ module.exports = React.createClass({
             stepIntoBack={this.stepIntoBack}
             stepIntoForward={this.stepIntoForward}
             stepOverBack={this.stepOverBack}
-            stepOverForward={this.stepOverForward} />
+            stepOverForward={this.stepOverForward}
+            jumpToNextCall={this.jumpToNextCall} />
         </div>
+        <StorageResolver ref='storageResolver' transaction={this.props.transaction} />
         <div style={style.container}>
           <table>
             <tbody>
@@ -138,83 +144,130 @@ module.exports = React.createClass({
     return ret
   },
 
-  resolveAddress: function (address) {
-    if (!this.state.codes[address]) {
-      var hexCode = this.context.web3.eth.getCode(address)
-      var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
-      this.state.codes[address] = code[0]
-      this.state.instructionsIndexByBytesOffset[address] = code[1]
+  loadCode: function (address, callback) {
+    console.log('loading new code from web3 ' + address)
+    this.context.web3.eth.getCode(address, function (error, result) {
+      if (error) {
+        console.log(error)
+      } else {
+        callback(result)
+      }
+    })
+  },
+
+  cacheExecutingCode: function (address, hexCode) {
+    var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
+    this.state.codes[address] = code[0]
+    this.state.instructionsIndexByBytesOffset[address] = code[1]
+    return {
+      code: code[0],
+      instructionsIndexByBytesOffset: code[1]
+    }
+  },
+
+  getExecutingCodeFromCache: function (address) {
+    if (this.state.codes[address]) {
+      return {
+        code: this.state.codes[address],
+        instructionsIndexByBytesOffset: this.state.instructionsIndexByBytesOffset[address]
+      }
+    } else {
+      return null
     }
   },
 
   renderAssemblyItems: function () {
-    if (this.props.vmTrace) {
-      return this.state.codes[this.state.currentAddress].map(function (item, i) {
+    if (this.props.vmTrace && this.state.executingCode) {
+      return this.state.executingCode.map(function (item, i) {
         return <option key={i} value={i}>{item}</option>
       })
     }
   },
 
   componentWillReceiveProps: function (nextProps) {
+    this.setState(this.getInitialState())
     if (!nextProps.vmTrace) {
       return
     }
     this.buildCallStack(nextProps.vmTrace)
-    this.setState({'currentSelected': -1})
     this.updateState(nextProps, 0)
   },
 
   buildCallStack: function (vmTrace) {
-    if (!vmTrace) {
-      return
-    }
+    if (!vmTrace) return
     var callStack = []
+    var callStackFrame = {}
     var depth = -1
+    this.refs.storageResolver.init(this.props.transaction)
     for (var k = 0; k < vmTrace.length; k++) {
       var trace = vmTrace[k]
-      if (trace.depth === undefined || trace.depth === depth) {
-        continue
-      }
+      if (trace.depth === undefined || trace.depth === depth) continue
       if (trace.depth > depth) {
-        callStack.push(trace.address) // new context
+        if (k === 0) {
+          callStack.push('0x' + vmTrace[k].address) // new context
+        } else {
+          // getting the address from the stack
+          var callTrace = vmTrace[k - 1]
+          var address = callTrace.stack[callTrace.stack.length - 2]
+          callStack.push(address) // new context
+        }
       } else if (trace.depth < depth) {
         callStack.pop() // returning from context
       }
       depth = trace.depth
-      this.state.callStack[k] = callStack.slice(0)
+      callStackFrame[k] = callStack.slice(0)
+
+      this.refs.storageResolver.trackStorageChange(k, trace)
     }
+    this.setState({'callStack': callStackFrame})
   },
 
   updateState: function (props, vmTraceIndex) {
-    if (!props.vmTrace || !props.vmTrace[vmTraceIndex]) {
-      return
-    }
+    if (!props.vmTrace || !props.vmTrace[vmTraceIndex]) return
     var previousIndex = this.state.currentSelected
     var stateChanges = {}
 
+    var stack
     if (props.vmTrace[vmTraceIndex].stack) { // there's always a stack
-      var stack = props.vmTrace[vmTraceIndex].stack
+      stack = props.vmTrace[vmTraceIndex].stack.slice(0)
       stack.reverse()
-      stateChanges['currentStack'] = stack
+      Object.assign(stateChanges, { 'currentStack': stack })
     }
 
-    var currentAddress = this.state.currentAddress
-    var addressIndex = this.shouldUpdateStateProperty('address', vmTraceIndex, previousIndex, props.vmTrace)
-    if (addressIndex > -1) {
-      currentAddress = props.vmTrace[addressIndex].address
-      this.resolveAddress(currentAddress)
-      Object.assign(stateChanges, { 'currentAddress': currentAddress })
-    }
-
+    var newContextLoaded = false
     var depthIndex = this.shouldUpdateStateProperty('depth', vmTraceIndex, previousIndex, props.vmTrace)
     if (depthIndex > -1) {
-      Object.assign(stateChanges, { 'currentCallStack': this.state.callStack[depthIndex] })
+      Object.assign(stateChanges, {'currentCallStack': this.state.callStack[depthIndex]})
+      // updating exectution context:
+      var address = this.resolveAddress(depthIndex, props)
+      if (address !== this.state.currentAddress) {
+        var self = this
+        this.ensureExecutingCodeUpdated(address, vmTraceIndex, props, function (code) {
+          if (self.state.currentAddress !== address) {
+            console.log('updating executing code ' + self.state.currentAddress + ' -> ' + address)
+            self.setState(
+              {
+                'selectedInst': code.instructionsIndexByBytesOffset[props.vmTrace[vmTraceIndex].pc],
+                'executingCode': code.code,
+                'currentAddress': address
+              })
+          }
+        })
+        newContextLoaded = true
+      }
+    }
+    if (!newContextLoaded) {
+      Object.assign(stateChanges,
+        {
+          'selectedInst': this.getExecutingCodeFromCache(this.state.currentAddress).instructionsIndexByBytesOffset[props.vmTrace[vmTraceIndex].pc]
+        })
     }
 
-    var storageIndex = this.shouldUpdateStateProperty('storage', vmTraceIndex, previousIndex, props.vmTrace)
-    if (storageIndex > -1) {
-      Object.assign(stateChanges, { 'currentStorage': props.vmTrace[storageIndex].storage })
-    }
+    Object.assign(stateChanges, { 'currentSelected': vmTraceIndex })
+
+    this.refs.storageResolver.rebuildStorageAt(vmTraceIndex, props.transaction, function (storage) {
+      Object.assign(stateChanges, { 'currentStorage': storage })
+    })
 
     var memoryIndex = this.shouldUpdateStateProperty('memory', vmTraceIndex, previousIndex, props.vmTrace)
     if (memoryIndex > -1) {
@@ -226,17 +279,48 @@ module.exports = React.createClass({
       Object.assign(stateChanges, { 'currentCallData': [props.vmTrace[callDataIndex].calldata] })
     }
 
-    stateChanges['selectedInst'] = this.state.instructionsIndexByBytesOffset[currentAddress][props.vmTrace[vmTraceIndex].pc]
-    stateChanges['currentSelected'] = vmTraceIndex
-
     stateChanges['currentStepInfo'] = [
       'Current Step: ' + props.vmTrace[vmTraceIndex].steps,
       'Adding Memory: ' + (props.vmTrace[vmTraceIndex].memexpand ? props.vmTrace[vmTraceIndex].memexpand : ''),
       'Step Cost: ' + props.vmTrace[vmTraceIndex].gascost,
       'Remaining Gas: ' + props.vmTrace[vmTraceIndex].gas
     ]
+
     this.refs.slider.setValue(vmTraceIndex)
     this.setState(stateChanges)
+  },
+
+  ensureExecutingCodeUpdated: function (address, vmTraceIndex, props, callBack) {
+    this.resolveCode(address, vmTraceIndex, props, function (address, code) {
+      callBack(code)
+    })
+  },
+
+  resolveAddress: function (vmTraceIndex, props) {
+    var address = props.vmTrace[vmTraceIndex].address
+    if (vmTraceIndex > 0) {
+      var stack = this.state.callStack[vmTraceIndex] // callcode, delegatecall, ...
+      address = stack[stack.length - 1]
+    }
+    return address
+  },
+
+  resolveCode: function (address, vmTraceIndex, props, callBack) {
+    var cache = this.getExecutingCodeFromCache(address)
+    if (cache) {
+      callBack(address, cache)
+      return
+    }
+
+    if (vmTraceIndex === 0 && props.transaction.to === null) { // start of the trace
+      callBack(address, this.cacheExecutingCode(address, props.transaction.input))
+      return
+    }
+
+    var self = this
+    this.loadCode(address, function (code) {
+      callBack(address, self.cacheExecutingCode(address, code))
+    })
   },
 
   shouldUpdateStateProperty: function (vmTraceName, nextIndex, previousIndex, vmTrace) {
@@ -263,6 +347,16 @@ module.exports = React.createClass({
       index--
     }
     return index
+  },
+
+  jumpToNextCall: function () {
+    var i = this.state.currentSelected
+    while (++i < this.props.vmTrace.length) {
+      if (this.isCallInstruction(i)) {
+        this.selectState(i + 1)
+        break
+      }
+    }
   },
 
   stepIntoBack: function () {
