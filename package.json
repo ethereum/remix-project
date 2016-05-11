@@ -20,12 +20,14 @@
   },
   "devDependencies": {
     "babel-preset-react": "^6.5.0",
-    "babelify": "^7.2.0"
+    "babelify": "^7.2.0",
+    "standard": "^7.0.1",
+    "standard-reporter": "^0.0.9"
   },
   "scripts": {
-    "install": "npm install --save react react-dom; npm install -g browserify; npm install --save babelify babel-preset-react; npm install web3",
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
-    "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js"
+    "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js",
+    "test" : "standard 2>&1 | standard-reporter > lint.xml"
   },
   "repository": {
     "type": "git",
@@ -36,5 +38,11 @@
   "bugs": {
     "url": "https://github.com/ethereum/remix/issues"
   },
-  "homepage": "https://github.com/ethereum/remix#readme"
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "standard": {
+    "ignore": [
+      "node_modules/*",
+      "build/*"
+    ]
+  }
 }
