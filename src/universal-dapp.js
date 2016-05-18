@@ -574,7 +574,9 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 header: {
                     // FIXME: support coinbase, difficulty, number and gasLimit
                     timestamp: new Date().getTime() / 1000 | 0
-                }
+                },
+                transactions: [],
+                uncleHeaders: []
             });
             this.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
         } catch (e) {
