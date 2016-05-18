@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- stable
+script: npm run build
+deploy:
+  provider: script
+  script: ci/deploy_from_travis.sh
+  skip_cleanup: true
+  on:
+        branch: master
+env:
+  global:
+  - ENCRYPTION_LABEL: "b5c2730599da"
+  - COMMIT_AUTHOR_EMAIL: "chris@ethereum.org"
+  - COMMIT_AUTHOR: "Travis CI"
+  - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json worker.js"
+
+
