@@ -22,7 +22,7 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "standard": "^7.0.1",
-    "standard-reporter": "^0.0.9"
+    "standard-reporter": "^1.0.5"
   },
   "scripts": {
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
