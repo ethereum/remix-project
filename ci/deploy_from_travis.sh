@@ -2,8 +2,6 @@
 
 set -e
 
-REPO=`git config remote.origin.url`
-SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 git config user.name "$COMMIT_AUTHOR"
@@ -22,4 +20,4 @@ chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
 
-git push -f "${SSH_REPO}" gh-pages
+git push -f "${PUSH_REPO}" gh-pages
