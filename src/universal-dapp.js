@@ -5,6 +5,7 @@ var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
 var EthJSAccount = require('ethereumjs-account');
 var ethABI = require('ethereumjs-abi');
+var EthJSBlock = require('ethereumjs-block');
 var web3 = require('./web3-adapter.js');
 
 function UniversalDApp (contracts, options) {
@@ -569,7 +570,15 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: new Buffer(data.slice(2), 'hex')
             });
             tx.sign(account.privateKey);
-            this.vm.runTx({tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
+            var block = new EthJSBlock({
+                header: {
+                    // FIXME: support coinbase, difficulty, number and gasLimit
+                    timestamp: new Date().getTime() / 1000 | 0
+                },
+                transactions: [],
+                uncleHeaders: []
+            });
+            this.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true, enableHomestead: true}, cb);
         } catch (e) {
             cb( e, null );
         }
