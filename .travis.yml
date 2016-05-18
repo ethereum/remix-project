@@ -1,6 +1,7 @@
 language: node_js
 node_js:
 - stable
+script: npm run build
 deploy:
   provider: script
   script: ci/deploy_from_travis.sh
