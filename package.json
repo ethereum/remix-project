@@ -27,7 +27,7 @@
   "scripts": {
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
     "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js",
-    "test" : "standard 2>&1 | standard-reporter > lint.xml"
+    "test" : "standard"
   },
   "repository": {
     "type": "git",
