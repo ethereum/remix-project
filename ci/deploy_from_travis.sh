@@ -20,4 +20,4 @@ chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
 
-git push -f "${PUSH_REPO}" gh-pages
+git push -f "$PUSH_REPO" gh-pages
