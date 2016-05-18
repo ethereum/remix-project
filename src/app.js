@@ -184,6 +184,7 @@ var run = function() {
 
 	function newEditorSession(filekey) {
 		var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript")
+		s.setUndoManager(new ace.UndoManager());
 		s.setTabSize(4);
 		s.setUseSoftTabs(true);
 		sessions[filekey] = s;
