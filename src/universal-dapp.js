@@ -4,7 +4,7 @@ var Trie = require('merkle-patricia-tree');
 var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
 var EthJSAccount = require('ethereumjs-account');
-var ethABI = require('ethereumjs-abi');
+var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var web3 = require('./web3-adapter.js');
 
@@ -185,7 +185,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $.each(abi, function(i, funABI) {
                 if (funABI.type !== 'event') return;
 
-		var hash = ethABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
+		var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
 		eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
             });
 
@@ -201,8 +201,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                         var types = abi.inputs.map(function (item) {
                             return item.type;
                         });
-                        decoded = ethABI.rawDecode(types, log[2]);
-                        decoded = ethABI.stringify(types, decoded)
+                        decoded = ethJSABI.rawDecode(types, log[2]);
+                        decoded = ethJSABI.stringify(types, decoded)
                     } catch (e) {
                         decoded = '0x' + log[2].toString('hex');
                     }
@@ -402,10 +402,10 @@ UniversalDApp.prototype.getCallButton = function(args) {
                         }
 
                         // decode data
-                        var decodedObj = ethABI.rawDecode(outputTypes, result.vm.return);
+                        var decodedObj = ethJSABI.rawDecode(outputTypes, result.vm.return);
 
                         // format decoded data
-                        decodedObj = ethABI.stringify(outputTypes, decodedObj);
+                        decodedObj = ethJSABI.stringify(outputTypes, decodedObj);
                         for (var i = 0; i < outputTypes.length; i++) {
                             var name = args.abi.outputs[i].name;
                             if (name.length > 0) {
