@@ -31,8 +31,10 @@ module.exports = React.createClass({
     if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
 
     var self = this
-    this.context.traceManager.getStorageAt(nextProps.currentStepIndex, this.context.tx.blockNumber.toString(), this.context.tx.transactionIndex, function (storage) {
-      if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
+    this.context.traceManager.getStorageAt(nextProps.currentStepIndex, this.context.tx.blockNumber.toString(), this.context.tx.transactionIndex, function (error, storage) {
+      if (error) {
+        console.log(error)
+      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
         self.setState({
           data: storage
         })

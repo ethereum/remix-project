@@ -73,8 +73,10 @@ module.exports = React.createClass({
     if (nextProps.currentStepIndex < 0) return
     if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
     var self = this
-    this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (address) {
-      if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
+    this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (error, address) {
+      if (error) {
+        console.log(error)
+      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
         self.setState({
           currentAddress: address
         })

@@ -84,28 +84,44 @@ module.exports = React.createClass({
     if (nextProps.currentStepIndex < 0) return
 
     var self = this
-    this.context.traceManager.getCurrentStep(nextProps.currentStepIndex, function (step) {
-      self.setState({
-        step: step
-      })
+    this.context.traceManager.getCurrentStep(nextProps.currentStepIndex, function (error, step) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.setState({
+          step: step
+        })
+      }
     })
 
-    this.context.traceManager.getMemExpand(nextProps.currentStepIndex, function (addmem) {
-      self.setState({
-        addmemory: addmem
-      })
+    this.context.traceManager.getMemExpand(nextProps.currentStepIndex, function (error, addmem) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.setState({
+          addmemory: addmem
+        })
+      }
     })
 
-    this.context.traceManager.getStepCost(nextProps.currentStepIndex, function (gas) {
-      self.setState({
-        gas: gas
-      })
+    this.context.traceManager.getStepCost(nextProps.currentStepIndex, function (error, gas) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.setState({
+          gas: gas
+        })
+      }
     })
 
-    this.context.traceManager.getRemainingGas(nextProps.currentStepIndex, function (remaingas) {
-      self.setState({
-        remaininGas: remaingas
-      })
+    this.context.traceManager.getRemainingGas(nextProps.currentStepIndex, function (error, remaingas) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.setState({
+          remaininGas: remaingas
+        })
+      }
     })
   }
 })

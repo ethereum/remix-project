@@ -54,8 +54,12 @@ module.exports = React.createClass({
   newTraceAvailable: function () {
     this.init()
     var self = this
-    this.context.traceManager.getLength(function (length) {
-      self.setState({ traceLength: length })
+    this.context.traceManager.getLength(function (error, length) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.setState({ traceLength: length })
+      }
     })
   },
 

@@ -31,8 +31,10 @@ module.exports = React.createClass({
     if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
 
     var self = this
-    this.context.traceManager.getMemoryAt(nextProps.currentStepIndex, function (memory) {
-      if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
+    this.context.traceManager.getMemoryAt(nextProps.currentStepIndex, function (error, memory) {
+      if (error) {
+        console.log(error)
+      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
         self.setState({
           data: self.formatMemory(memory, 16)
         })

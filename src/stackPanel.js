@@ -30,8 +30,10 @@ module.exports = React.createClass({
     if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
 
     var self = this
-    this.context.traceManager.getStackAt(nextProps.currentStepIndex, function (stack) {
-      if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
+    this.context.traceManager.getStackAt(nextProps.currentStepIndex, function (error, stack) {
+      if (error) {
+        console.log(error)
+      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
         self.setState({
           data: stack
         })

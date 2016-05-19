@@ -48,8 +48,12 @@ module.exports = React.createClass({
     if (nextProps.currentStepIndex < 0) return
     codeResolver.setWeb3(this.context.web3)
     var self = this
-    this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (address) {
-      self.ensureCodeLoaded(address, nextProps.currentStepIndex)
+    this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (error, address) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.ensureCodeLoaded(address, nextProps.currentStepIndex)
+      }
     })
   },
 
@@ -77,10 +81,14 @@ module.exports = React.createClass({
 
   setInstructionIndex: function (address, step) {
     var self = this
-    this.context.traceManager.getCurrentPC(step, function (instIndex) {
-      self.setState({
-        selected: codeResolver.getInstructionIndex(address, instIndex)
-      })
+    this.context.traceManager.getCurrentPC(step, function (error, instIndex) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.setState({
+          selected: codeResolver.getInstructionIndex(address, instIndex)
+        })
+      }
     })
   }
 })

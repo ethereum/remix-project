@@ -136,14 +136,14 @@ module.exports = {
 
   // API section
   getLength: function (callback) {
-    if (!this.trace) callback(0)
-    callback(this.trace.length)
+    if (!this.trace) callback('no trace available', null)
+    callback(null, this.trace.length)
   },
 
   getStorageAt: function (stepIndex, blockNumber, txIndex, callback) {
     var stoChange = this.findLowerBound(stepIndex, this.vmTraceChangesRef)
     if (!stoChange) {
-      return {}
+      callback('cannot rebuild storage', null)
     }
 
     var changeRefs = this.vmTraceIndexByStorageChange[stoChange]
@@ -160,20 +160,20 @@ module.exports = {
           }
         }
       }
-      callback(storage)
+      callback(null, storage)
     })
   },
 
   getCallDataAt: function (stepIndex, callback) {
     var callDataChange = this.findLowerBound(stepIndex, this.callDataChanges)
-    if (!callDataChange) return ['']
-    callback([this.trace[callDataChange].calldata])
+    if (!callDataChange) return callback('no calldata found', null)
+    callback(null, [this.trace[callDataChange].calldata])
   },
 
   getCallStackAt: function (stepIndex, callback) {
     var callStackChange = this.findLowerBound(stepIndex, this.depthChanges)
-    if (!callStackChange) return ''
-    callback(this.callStack[callStackChange].stack)
+    if (!callStackChange) return callback('no callstack found', null)
+    callback(null, this.callStack[callStackChange].stack)
   },
 
   getStackAt: function (stepIndex, callback) {
@@ -181,46 +181,52 @@ module.exports = {
     if (this.trace[stepIndex].stack) { // there's always a stack
       stack = this.trace[stepIndex].stack.slice(0)
       stack.reverse()
-      callback(stack)
+      callback(null, stack)
+    } else {
+      callback('no stack found', null)
     }
   },
 
   getLastDepthIndexChangeSince: function (stepIndex, callback) {
     var depthIndex = this.findLowerBound(stepIndex, this.depthChanges)
-    callback(depthIndex)
+    callback(null, depthIndex)
   },
 
   getCurrentCalledAddressAt: function (stepIndex, callback) {
     var self = this
-    this.getLastDepthIndexChangeSince(stepIndex, function (addressIndex) {
-      callback(self.resolveAddress(addressIndex))
+    this.getLastDepthIndexChangeSince(stepIndex, function (error, addressIndex) {
+      if (error) {
+        callback(error, null)
+      } else {
+        callback(null, self.resolveAddress(addressIndex))
+      }
     })
   },
 
   getMemoryAt: function (stepIndex, callback) {
     var lastChanges = this.findLowerBound(stepIndex, this.memoryChanges)
-    if (!lastChanges) return ''
-    callback(this.trace[lastChanges].memory)
+    if (!lastChanges) return callback('no memory found', null)
+    callback(null, this.trace[lastChanges].memory)
   },
 
   getCurrentPC: function (stepIndex, callback) {
-    callback(this.trace[stepIndex].pc)
+    callback(null, this.trace[stepIndex].pc)
   },
 
   getCurrentStep: function (stepIndex, callback) {
-    callback(this.trace[stepIndex].steps)
+    callback(null, this.trace[stepIndex].steps)
   },
 
   getMemExpand: function (stepIndex, callback) {
-    callback(this.trace[stepIndex].memexpand ? this.trace[stepIndex].memexpand : '')
+    callback(null, this.trace[stepIndex].memexpand ? this.trace[stepIndex].memexpand : '')
   },
 
   getStepCost: function (stepIndex, callback) {
-    callback(this.trace[stepIndex].gascost)
+    callback(null, this.trace[stepIndex].gascost)
   },
 
   getRemainingGas: function (stepIndex, callback) {
-    callback(this.trace[stepIndex].gas)
+    callback(null, this.trace[stepIndex].gas)
   },
 
   // step section
