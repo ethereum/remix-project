@@ -58,10 +58,10 @@ module.exports = {
     for (var k in this.trace) {
       var step = this.trace[k]
 
-      this.calldata(k, step)
-      this.memory(k, step)
-      currentStorageAddress = this.storage(k, step, currentStorageAddress)
-      var depth = this.depth(k, step, currentDepth, callStack)
+      this.buildCalldata(k, step)
+      this.buildMemory(k, step)
+      currentStorageAddress = this.buildStorage(k, step, currentStorageAddress)
+      var depth = this.buildDepth(k, step, currentDepth, callStack)
       if (depth) {
         currentDepth = depth
       }
@@ -69,19 +69,19 @@ module.exports = {
   },
 
   // compute trace section
-  calldata: function (index, step) {
+  buildCalldata: function (index, step) {
     if (step.calldata) {
       this.callDataChanges.push(index)
     }
   },
 
-  memory: function (index, step) {
+  buildMemory: function (index, step) {
     if (step.memory) {
       this.memoryChanges.push(index)
     }
   },
 
-  storage: function (index, step, currentAddress) {
+  buildStorage: function (index, step, currentAddress) {
     var change = false
     if (step.address) {
       // new context
@@ -111,7 +111,7 @@ module.exports = {
     return currentAddress
   },
 
-  depth: function (index, step, currentDepth, callStack) {
+  buildDepth: function (index, step, currentDepth, callStack) {
     if (step.depth === undefined) return
     if (step.depth > currentDepth) {
       if (index === 0) {
