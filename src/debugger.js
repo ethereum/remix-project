@@ -3,14 +3,15 @@ var React = require('react')
 var TxBrowser = require('./txBrowser')
 var StepManager = require('./stepManager')
 var AssemblyItemsBrowser = require('./vmDebugger')
-var traceManager = require('./traceManager')
+var TraceManager = require('./traceManager')
 var style = require('./basicStyles')
 
 module.exports = React.createClass({
   getInitialState: function () {
     return {
       currentStepIndex: -1, // index of the selected item in the vmtrace
-      tx: null
+      tx: null,
+      traceManager: null
     }
   },
 
@@ -23,13 +24,15 @@ module.exports = React.createClass({
   getChildContext: function () {
     return {
       web3: this.props.web3,
-      traceManager: traceManager,
+      traceManager: this.state.traceManager,
       tx: this.state.tx
     }
   },
 
   componentDidMount: function () {
-    traceManager.setWeb3(this.props.web3)
+    this.setState({
+      traceManager: new TraceManager(this.props.web3)
+    })
   },
 
   render: function () {
@@ -50,7 +53,7 @@ module.exports = React.createClass({
   },
 
   startDebugging: function (blockNumber, txIndex, tx) {
-    if (traceManager.isLoading) {
+    if (this.state.traceManager.isLoading) {
       return
     }
     console.log('loading trace...')
@@ -58,7 +61,7 @@ module.exports = React.createClass({
       tx: tx
     })
     var self = this
-    traceManager.resolveTrace(blockNumber, txIndex, function (success) {
+    this.state.traceManager.resolveTrace(blockNumber, txIndex, function (success) {
       console.log('trace loaded ' + success)
       self.setState({
         currentStepIndex: 0
