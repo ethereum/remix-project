@@ -9,8 +9,8 @@ var style = require('./basicStyles')
 module.exports = React.createClass({
   getInitialState: function () {
     return {
-      tx: null,
-      currentStepIndex: -1 // index of the selected item in the vmtrace
+      currentStepIndex: -1, // index of the selected item in the vmtrace
+      tx: null
     }
   },
 
@@ -38,7 +38,7 @@ module.exports = React.createClass({
         <h1 style={style.container}>Eth Debugger</h1>
         <TxBrowser onNewTxRequested={this.startDebugging} />
         <StepManager ref='stepManager' onStepChanged={this.stepChanged} />
-        <AssemblyItemsBrowser currentStepIndex={this.state.currentStepIndex} />
+        <AssemblyItemsBrowser ref='assemblyitemsbrowser' currentStepIndex={this.state.currentStepIndex} />
       </div>
     )
   },

@@ -45,7 +45,7 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    console.log('asm' + JSON.stringify(nextProps))
+    console.log('new prop asmCode')
     if (nextProps.currentStepIndex < 0) return
     codeResolver.setWeb3(this.context.web3)
     var self = this
@@ -61,6 +61,10 @@ module.exports = React.createClass({
       })
       var self = this
       codeResolver.resolveCode(address, currentStep, this.context.tx, function (address, code) {
+        if (window.ethDebuggerSelectedItem !== currentStep) {
+          console.log(currentStep + ' discarded. current is ' + window.ethDebuggerSelectedItem)
+          return
+        }
         self.setState({
           code: code,
           address: address

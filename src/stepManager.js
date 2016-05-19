@@ -39,6 +39,14 @@ module.exports = React.createClass({
     )
   },
 
+  componentDidMount: function () {
+    this.updateGlobalSelectedItem(0)
+  },
+
+  updateGlobalSelectedItem: function (value) {
+    window.ethDebuggerSelectedItem = value
+  },
+
   init: function () {
     this.refs.slider.setValue(0)
   },
@@ -91,6 +99,7 @@ module.exports = React.createClass({
   },
 
   changeState: function (step) {
+    this.updateGlobalSelectedItem(step)
     this.setState({
       currentStepIndex: step
     })
