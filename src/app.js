@@ -4,6 +4,16 @@ var web3 = require('./web3-adapter.js');
 var ace = require('brace');
 require('./mode-solidity.js');
 
+// The event listener needs to be registered as early as possible, because the
+// parent will send the message upon the "load" event.
+var filesToLoad = null;
+var loadFilesCallback = function(files) { filesToLoad = files; }; // will be replaced later
+window.addEventListener("message", function(ev) {
+	if (typeof ev.data == typeof [] && ev.data[0] === "loadFiles") {
+		loadFilesCallback(ev.data[1]);
+	}
+}, false);
+
 var Base64 = require('js-base64').Base64;
 
 var run = function() {
@@ -59,6 +69,21 @@ var run = function() {
 		var match = idr.exec(str);
 		return match ? match[0] : null;
 	}
+	function loadFiles(files) {
+		for (var f in files) {
+			var key = fileKey(f);
+			var content = files[f].content;
+			if (key in window.localStorage && window.localStorage[key] != content) {
+				var count = '';
+				var otherKey = key + count;
+				while ((key + count) in window.localStorage) count = count - 1;
+				window.localStorage[key + count] = window.localStorage[key];
+			}
+			window.localStorage[key] = content;
+		}
+		SOL_CACHE_FILE = fileKey(Object.keys(files)[0]);
+		updateFiles();
+	}
 
 	var queryParams = getQueryParams();
 	var loadingFromGist = false;
@@ -80,28 +105,21 @@ var run = function() {
 			dataType: 'jsonp',
 			success: function(response){
 				if (response.data) {
-					for (var f in response.data.files) {
-						var key = fileKey(f);
-						var content = response.data.files[f].content;
-						if (key in window.localStorage && window.localStorage[key] != content) {
-							var count = '';
-							var otherKey = key + count;
-							while ((key + count) in window.localStorage) count = count - 1;
-							window.localStorage[key + count] = window.localStorage[key];
-						}
-						window.localStorage[key] = content;
-					}
 					if (!response.data.files) {
-						alert( "Gist load error: " + response.data.message )
-					} else {
-						SOL_CACHE_FILE = fileKey(Object.keys(response.data.files)[0]);
-						updateFiles();
+						alert( "Gist load error: " + response.data.message );
+						return;
 					}
+					loadFiles(response.data.files);
 				}
 			}
 		});
 	}
 
+	loadFilesCallback = function(files) {
+		loadFiles(files);
+	};
+	if (filesToLoad !== null)
+		loadFiles(filesToLoad);
 
 	// ----------------- storage --------------------
 
@@ -244,19 +262,24 @@ var run = function() {
 
 
 	// ------------------ gist publish --------------
+	
+	var packageFiles = function() {
+		var files = {};
+		var filesArr = getFiles();
+
+		for (var f in filesArr) {
+			files[fileNameFromKey(filesArr[f])] = {
+				content: localStorage[filesArr[f]]
+			};
+		}
+		return files;		
+	};
 
 	$('#gist').click(function(){
 		if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com?")) {
 
-			var files = {};
-			var filesArr = getFiles();
+			var files = packageFiles();
 			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
-
-			for(var f in filesArr) {
-				files[fileNameFromKey(filesArr[f])] = {
-					content: localStorage[filesArr[f]]
-				};
-			}
 
 			$.ajax({ 
 				url: 'https://api.github.com/gists',
@@ -274,6 +297,18 @@ var run = function() {
 		}
 	});
 
+	$('#copyOver').click(function(){
+		var target = prompt(
+			"To which other browser-solidity instance do you want to copy over all files?",
+			"https://ethereum.github.io/browser-solidity/"
+		);
+		if (target === null)
+			return;
+		var files = packageFiles();
+		var iframe = $('<iframe/>', {src: target, style: "display:none;", load: function() {
+			this.contentWindow.postMessage(["loadFiles", files], "*");
+		}}).appendTo('body');
+	});
 
 	// ----------------- file selector-------------
 
