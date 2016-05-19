@@ -8,8 +8,8 @@ it will always deliver the latest version.
 # Offline Usage
 
 Full offline usage is currently not supported because the compiler is always
-loaded via http. If you clone or download the repository, you still have to
-build it before you can use it.
+loaded via http. If you clone / download the repository, use the
+`gh-pages` branch (otherwise you still have to build the application).
 
 # Building
 
