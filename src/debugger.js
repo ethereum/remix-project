@@ -57,7 +57,6 @@ module.exports = React.createClass({
     this.setState({
       tx: tx
     })
-    traceManager.setTransaction(tx)
     var self = this
     traceManager.resolveTrace(blockNumber, txIndex, function (success) {
       console.log('trace loaded ' + success)

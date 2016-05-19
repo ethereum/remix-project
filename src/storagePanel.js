@@ -4,7 +4,8 @@ var BasicPanel = require('./basicPanel')
 
 module.exports = React.createClass({
   contextTypes: {
-    traceManager: React.PropTypes.object
+    traceManager: React.PropTypes.object,
+    tx: React.PropTypes.object
   },
 
   getDefaultProps: function () {
@@ -30,7 +31,7 @@ module.exports = React.createClass({
     if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
 
     var self = this
-    this.context.traceManager.getStorageAt(nextProps.currentStepIndex, function (storage) {
+    this.context.traceManager.getStorageAt(nextProps.currentStepIndex, this.context.tx.blockNumber.toString(), this.context.tx.transactionIndex, function (storage) {
       if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
         self.setState({
           data: storage

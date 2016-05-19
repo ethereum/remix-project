@@ -22,10 +22,6 @@ module.exports = {
     this.web3 = web3
   },
 
-  setTransaction: function (tx) {
-    this.transaction = tx
-  },
-
   resolveTrace: function (blockNumber, txNumber, callback) {
     this.isLoading = true
     this.init()
@@ -144,7 +140,7 @@ module.exports = {
     callback(this.trace.length)
   },
 
-  getStorageAt: function (stepIndex, callback) {
+  getStorageAt: function (stepIndex, blockNumber, txIndex, callback) {
     var stoChange = this.findLowerBound(stepIndex, this.vmTraceChangesRef)
     if (!stoChange) {
       return {}
@@ -153,7 +149,7 @@ module.exports = {
     var changeRefs = this.vmTraceIndexByStorageChange[stoChange]
     var address = this.storageChanges[changeRefs.context].address
     var self = this
-    this.retrieveStorage(address, function (storage) {
+    this.retrieveStorage(address, blockNumber, txIndex, function (storage) {
       for (var k = 0; k < changeRefs.context; k++) {
         var context = self.storageChanges[k]
         if (context.address === address) {
@@ -319,13 +315,13 @@ module.exports = {
   },
 
   // retrieve the storage of an account just after the execution of tx
-  retrieveStorage: function (address, callBack) {
+  retrieveStorage: function (address, blockNumber, txIndex, callBack) {
     if (this.storages[address]) {
       callBack(this.storages[address])
     }
     var self = this
-    if (this.transaction) {
-      this.web3.debug.storageAt(this.transaction.blockNumber.toString(), this.transaction.transactionIndex, address, function (error, result) {
+    if (blockNumber !== null && txIndex !== null) {
+      this.web3.debug.storageAt(blockNumber, txIndex, address, function (error, result) {
         if (error) {
           console.log(error)
         } else {
@@ -334,7 +330,7 @@ module.exports = {
         }
       })
     } else {
-      console.log('transaction is not defined')
+      console.log('blockNumber/txIndex are not defined')
     }
   }
 }
