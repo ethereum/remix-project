@@ -42,18 +42,22 @@ module.exports = React.createClass({
           Get
         </button>
         <div style={style.transactionInfo}>
-          <div>
-            Hash:
-            {this.state.hash}
-          </div>
-          <div>
-            From:
-            {this.state.from}
-          </div>
-          <div>
-            To:
-            {this.state.to}
-          </div>
+          <table>
+            <tbody>
+              <tr>
+                <td>Hash: </td>
+                <td>{this.state.hash}</td>
+              </tr>
+              <tr>
+                <td>From: </td>
+                <td>{this.state.from}</td>
+              </tr>
+              <tr>
+                <td>To: </td>
+                <td>{this.state.to}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     )

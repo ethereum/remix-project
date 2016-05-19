@@ -2,6 +2,10 @@
 var React = require('react')
 
 module.exports = React.createClass({
+  contextTypes: {
+    traceManager: React.PropTypes.object
+  },
+
   propTypes: {
     stepIntoBack: React.PropTypes.func.isRequired,
     stepIntoForward: React.PropTypes.func.isRequired,
@@ -32,7 +36,7 @@ module.exports = React.createClass({
     if (incr === -1) {
       return this.props.step === 0 ? 'disabled' : ''
     } else if (incr === 1) {
-      return this.props.step >= this.props.vmTraceLength - 1 ? 'disabled' : ''
+      return this.props.step >= this.props.max - 1 ? 'disabled' : ''
     }
   }
 })

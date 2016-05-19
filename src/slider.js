@@ -3,6 +3,10 @@ var React = require('react')
 var style = require('./sliderStyles')
 
 module.exports = React.createClass({
+  contextTypes: {
+    traceManager: React.PropTypes.object
+  },
+
   propTypes: {
     onChange: React.PropTypes.func.isRequired
   },
@@ -10,7 +14,7 @@ module.exports = React.createClass({
   getDefaultProps: function () {
     return {
       min: 0,
-      max: 500
+      max: 1
     }
   },
 
@@ -26,6 +30,10 @@ module.exports = React.createClass({
           onMouseUp={this.onMouseUp} />
       </div>
     )
+  },
+
+  componentDidMount: function () {
+    this.setValue(0)
   },
 
   onMouseUp: function (event) {
