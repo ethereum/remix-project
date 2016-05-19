@@ -2,7 +2,7 @@
 var React = require('react')
 var TxBrowser = require('./txBrowser')
 var StepManager = require('./stepManager')
-var AssemblyItemsBrowser = require('./assemblyItemsBrowser')
+var AssemblyItemsBrowser = require('./vmDebugger')
 var traceManager = require('./traceManager')
 var style = require('./basicStyles')
 
