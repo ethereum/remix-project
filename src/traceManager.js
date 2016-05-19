@@ -145,7 +145,7 @@ module.exports = {
   },
 
   getStorageAt: function (stepIndex, callback) {
-    var stoChange = this.lastPropertyChange(stepIndex, this.vmTraceChangesRef)
+    var stoChange = this.findLowerBound(stepIndex, this.vmTraceChangesRef)
     if (!stoChange) {
       return {}
     }
@@ -169,13 +169,13 @@ module.exports = {
   },
 
   getCallDataAt: function (stepIndex, callback) {
-    var callDataChange = this.lastPropertyChange(stepIndex, this.callDataChanges)
+    var callDataChange = this.findLowerBound(stepIndex, this.callDataChanges)
     if (!callDataChange) return ['']
     callback([this.trace[callDataChange].calldata])
   },
 
   getCallStackAt: function (stepIndex, callback) {
-    var callStackChange = this.lastPropertyChange(stepIndex, this.depthChanges)
+    var callStackChange = this.findLowerBound(stepIndex, this.depthChanges)
     if (!callStackChange) return ''
     callback(this.callStack[callStackChange].stack)
   },
@@ -190,7 +190,7 @@ module.exports = {
   },
 
   getLastDepthIndexChangeSince: function (stepIndex, callback) {
-    var depthIndex = this.lastPropertyChange(stepIndex, this.depthChanges)
+    var depthIndex = this.findLowerBound(stepIndex, this.depthChanges)
     callback(depthIndex)
   },
 
@@ -202,7 +202,7 @@ module.exports = {
   },
 
   getMemoryAt: function (stepIndex, callback) {
-    var lastChanges = this.lastPropertyChange(stepIndex, this.memoryChanges)
+    var lastChanges = this.findLowerBound(stepIndex, this.memoryChanges)
     if (!lastChanges) return ''
     callback(this.trace[lastChanges].memory)
   },
@@ -289,7 +289,7 @@ module.exports = {
   },
 
   // util section
-  lastPropertyChange: function (target, changes) {
+  findLowerBound: function (target, changes) {
     if (changes.length === 1) {
       if (changes[0] > target) {
         // we only a closest maximum, returning 0
@@ -301,9 +301,9 @@ module.exports = {
 
     var middle = Math.floor(changes.length / 2)
     if (changes[middle] > target) {
-      return this.lastPropertyChange(target, changes.slice(0, middle))
+      return this.findLowerBound(target, changes.slice(0, middle))
     } else if (changes[middle] < target) {
-      return this.lastPropertyChange(target, changes.slice(middle, changes.length))
+      return this.findLowerBound(target, changes.slice(middle, changes.length))
     } else {
       return changes[middle]
     }

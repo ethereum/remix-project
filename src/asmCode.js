@@ -45,7 +45,6 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    console.log('new prop asmCode')
     if (nextProps.currentStepIndex < 0) return
     codeResolver.setWeb3(this.context.web3)
     var self = this
