@@ -1,7 +1,6 @@
 {
   "name": "Solidity",
   "description": "Realtime compiler and runtime",
-  "devtools_page": "devtools.html",
   "update_url": "https://chriseth.github.io/browser-solidity/",
   "version": "1.1",
   "manifest_version": 2,
