@@ -15,10 +15,10 @@ loaded via http. If you clone/download the repository, use the
 
 Many dependencies are only provided via npm:
 
-	npm install    # fetch dependencies
+    npm install    # fetch dependencies
 	npm run build  # build application into build/app.js
 
-Now point your browser to `index.html` to open the application.
+Now point your browser to `index.html` to open the application.  
 
 ## Usage as a Chrome Extension
 

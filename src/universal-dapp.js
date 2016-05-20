@@ -150,7 +150,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var $createInterface = $('<div class="createContract"/>');
 
     var appendFunctions = function (address, $el){
-
+        
         var $instance = $('<div class="instance"/>');
         if (self.options.removable_instances) {
             var $close = $('<div class="udapp-close" />')
@@ -185,8 +185,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $.each(abi, function(i, funABI) {
                 if (funABI.type !== 'event') return;
 
-        var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
-        eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
+		var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
+		eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
             });
 
             self.vm.on('afterTx', function(response){
@@ -254,7 +254,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     } else {
         appendFunctions( address, $target );
     }
-
+    
     return $createInterface;
 }
 
@@ -330,7 +330,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var handleCallButtonClick = function(ev, $result) {
         if (!$result) {
-            $result = getOutput();
+            $result = getOutput(); 
             if (lookupOnly && !inputs.length)
                 $outputOverride.empty().append( $result );
             else
@@ -423,7 +423,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
             } else if (args.abi.constant && !isConstructor) {
                 replaceOutput($result, getReturnOutput(result));
             } else {
-
+                
                 function tryTillResponse (txhash, done) {
                     web3.eth.getTransactionReceipt(result, testResult );
 
@@ -444,7 +444,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
                         $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
                     }
                 })
-
+            
             }
         });
     }
@@ -517,7 +517,7 @@ UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract 
 }
 
 UniversalDApp.prototype.clickContractAt = function ( self, $output, contract ) {
-    var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" )
+    var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" )   
     self.getInstanceInterface(contract, address, $output );
 }
 
@@ -539,7 +539,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
             return cb(e);
         }
     }
-
+    
     if (!this.vm) {
         var tx = {
             from: self.options.getAddress ? self.options.getAddress() : web3.eth.accounts[0],

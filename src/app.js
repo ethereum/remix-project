@@ -181,7 +181,7 @@ var run = function() {
 	var untitledCount = '';
 	if (!getFiles().length || window.localStorage['sol-cache']) {
 		if(loadingFromGist) return;
-		// Backwards-compatibility
+		// Backwards-compatibility     
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
 			untitledCount = (untitledCount - 0) + 1;
 		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
@@ -262,7 +262,7 @@ var run = function() {
 
 
 	// ------------------ gist publish --------------
-
+	
 	var packageFiles = function() {
 		var files = {};
 		var filesArr = getFiles();
@@ -272,7 +272,7 @@ var run = function() {
 				content: localStorage[filesArr[f]]
 			};
 		}
-		return files;
+		return files;		
 	};
 
 	$('#gist').click(function(){
@@ -281,7 +281,7 @@ var run = function() {
 			var files = packageFiles();
 			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
 
-			$.ajax({
+			$.ajax({ 
 				url: 'https://api.github.com/gists',
 				type: 'POST',
 				data: JSON.stringify({
@@ -397,7 +397,7 @@ var run = function() {
 		for (var f in files) {
 			$filesEl.append(fileTabTemplate(files[f]));
 		}
-
+		
 		if (SOL_CACHE_FILE) {
 			var active = fileTabFromKey(SOL_CACHE_FILE);
 			active.addClass('active');
@@ -511,9 +511,9 @@ var run = function() {
 		updateQueryParams({version: $('#versionSelector').val() });
 		loadVersion($('#versionSelector').val());
 	});
-
+	
 	// ----------------- resizeable ui ---------------
-
+	
 	var EDITOR_SIZE_CACHE_KEY = "editor-size-cache";
 	var dragging = false;
 	$('#dragbar').mousedown(function(e){
@@ -566,13 +566,13 @@ var run = function() {
 
 	var hidingRHP = false;
 	$('.toggleRHP').click(function(){
-		hidingRHP = !hidingRHP;
-		setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
-		$('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
-		$('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
-		if (!hidingRHP) compile();
+		 hidingRHP = !hidingRHP;
+		 setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
+		 $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
+		 $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
+		 if (!hidingRHP) compile();
 	});
-
+	
 
 	// ----------------- editor resize ---------------
 
@@ -595,7 +595,7 @@ var run = function() {
 
 	document.querySelector('#editor').addEventListener('change', onResize);
 	document.querySelector('#editorWrap').addEventListener('change', onResize);
-
+	
 
 	// ----------------- compiler ----------------------
 	var compileJSON;
@@ -637,13 +637,13 @@ var run = function() {
 				if (errortype(err) !== 'warning') noFatalErrors = false;
 			});
 		}
-
+	
 		if (missingInputs !== undefined && missingInputs.length > 0)
 			compile(missingInputs);
 		else if (noFatalErrors && !hidingRHP)
 			renderContracts(data, editor.getValue());
 	};
-
+	
 	var compileTimeout = null;
 	var onChange = function() {
 		var input = editor.getValue();
@@ -860,18 +860,18 @@ var run = function() {
 
 		code += "var " + contractName + "Contract = web3.eth.contract(" + interface.replace("\n","") + ");"
 			+"\nvar " + contractName + " = " + contractName + "Contract.new(";
-
+		
 		$.each(funABI.inputs, function(i, inp) {
 			code += "\n   " + inp.name + ",";
 		});
-
+					
 		code += "\n   {"+
 		"\n     from: web3.eth.accounts[0], "+
 		"\n     data: '"+bytecode+"', "+
 		"\n     gas: 3000000"+
 		"\n   }, function(e, contract){"+
 		"\n    console.log(e, contract);"+
-		"\n    if (typeof contract.address != 'undefined') {"+
+		"\n    if (typeof contract.address != 'undefined') {"+            
 		"\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
 		"\n    }" +
 		"\n })";
@@ -1010,7 +1010,7 @@ var run = function() {
 
 		return text;
 	};
-
+	
 	$('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); });
 
 	var getConstructorInterface = function(abi) {
