@@ -22,6 +22,8 @@ Now point your browser to `index.html` to open the application.
 
 ## Usage as as Chrome Extension
 
-Browse to chrome://extensions/
+If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
+
+After that, browse to `chrome://extensions/`.
 
 Make sure 'Developer mode' has been checked. Then click 'Load unpacked extension...' to pop up a file-selection dialog. Select the `browser-solidity` folder, wherever it is placed on your computer.
