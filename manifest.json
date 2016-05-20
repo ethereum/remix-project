@@ -1,6 +1,4 @@
 {
-  "manifest_version": 2,
-
   "name": "Solidity",
   "description": "Realtime compiler and runtime",
   "devtools_page": "devtools.html",
