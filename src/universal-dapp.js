@@ -313,12 +313,18 @@ UniversalDApp.prototype.getCallButton = function(args) {
         return $('<div class="' + returnCls + '">').html('<strong>' + returnName + ':</strong> ' + JSON.stringify( result, null, 2 ) );
     };
 
-    var getGasUsedOutput = function (result) {
+    var getGasUsedOutput = function (result, vmResult) {
         var $gasUsed = $('<div class="gasUsed">');
         var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
         if (result.gasUsed) {
             var gas = result.gasUsed.toString(10);
-            $gasUsed.html('<strong>Cost:</strong> ' + gas + ' gas. ' + caveat );
+            $gasUsed.html('<strong>Transaction cost:</strong> ' + gas + ' gas. ' + caveat );
+        }
+        if (vmResult.gasUsed) {
+            var $callGasUsed = $('<div class="gasUsed">');
+            var gas = vmResult.gasUsed.toString(10);
+            $callGasUsed.append('<strong>Execution cost:</strong> ' + gas + ' gas.' );
+            $gasUsed.append($callGasUsed);
         }
         return $gasUsed;
     };
@@ -409,12 +415,12 @@ UniversalDApp.prototype.getCallButton = function(args) {
             } else if (self.options.vm && result.vm.return === undefined) {
                 replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
             } else if (self.options.vm && isConstructor) {
-                replaceOutput($result, getGasUsedOutput(result));
+                replaceOutput($result, getGasUsedOutput(result, result.vm));
                 args.appendFunctions(result.createdAddress);
             } else if (self.options.vm){
                 var outputObj = '0x' + result.vm.return.toString('hex');
                 clearOutput($result);
-                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result));
+                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result, result.vm));
 
                 // Only decode if there supposed to be fields
                 if (args.abi.outputs.length > 0) {
