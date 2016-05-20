@@ -20,8 +20,8 @@ Many dependencies are only provided via npm:
 
 Now point your browser to `index.html` to open the application.  
 
-# To use it as a chrome extension
+## Usage as as Chrome Extension
 
 Browse to chrome://extensions/
 
-Make sure 'Developer mode' has been checked. Then click 'Load unpacked extension...' to pop up a file-selection dialog.
+Make sure 'Developer mode' has been checked. Then click 'Load unpacked extension...' to pop up a file-selection dialog. Select the `browser-solidity` folder, wherever it is placed on your computer.
