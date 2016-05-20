@@ -41,6 +41,7 @@ UniversalDApp.prototype.addAccount = function (privateKey, balance) {
 
         var account = new EthJSAccount();
         account.balance = balance || 'f00000000000000001';
+
         this.vm.stateManager.trie.put(address, account.serialize());
 
         this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
@@ -54,6 +55,30 @@ UniversalDApp.prototype.getAccounts = function (cb) {
         if (!this.accounts) return cb("No accounts?");
 
         cb(null, Object.keys(this.accounts));
+    }
+};
+
+UniversalDApp.prototype.getBalance = function (address, cb) {
+    address = ethJSUtil.stripHexPrefix(address);
+
+    if (!this.vm) {
+        web3.eth.getBalance(address, function (err, res) {
+            if (err) {
+                cb(err);
+            } else {
+                cb(null, res.toString(10));
+            }
+        });
+    } else {
+        if (!this.accounts) return cb("No accounts?");
+
+        this.vm.stateManager.trie.get(new Buffer(address, 'hex'), function (err, res) {
+            if (err) {
+                cb("Account not found");
+            } else {
+                cb(null, new ethJSUtil.BN(new EthJSAccount(res).toString(), 16).toString(10));
+            }
+        });
     }
 };
 
