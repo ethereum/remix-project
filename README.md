@@ -20,7 +20,7 @@ Many dependencies are only provided via npm:
 
 Now point your browser to `index.html` to open the application.
 
-## Usage as as Chrome Extension
+## Usage as a Chrome Extension
 
 If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
 After that, follow these steps:
