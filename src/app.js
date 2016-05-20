@@ -279,7 +279,7 @@ var run = function() {
 		if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com?")) {
 
 			var files = packageFiles();
-			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://chriseth.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
+			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
 
 			$.ajax({ 
 				url: 'https://api.github.com/gists',
