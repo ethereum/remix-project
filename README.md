@@ -26,9 +26,6 @@ If you would like to use this as a Chrome extension, you must either build it fi
 After that, follow these steps:
 
 * Browse to `chrome://extensions/`
-
 * Make sure 'Developer mode' has been checked
-
 * Click 'Load unpacked extension...' to pop up a file-selection dialog
-
 * Select your `browser-solidity` folder
