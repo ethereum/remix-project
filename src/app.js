@@ -624,8 +624,15 @@ var run = function() {
 		});
 	};
 	var compilationFinished = function(result, missingInputs) {
-		var data = $.parseJSON(result);
+		var data;
 		var noFatalErrors = true; // ie warnings are ok
+
+		try {
+			data = $.parseJSON(result);
+		} catch (exception) {
+			renderError('Invalid JSON output from the compiler: ' + exception);
+			return;
+		}
 
 		if (data['error'] !== undefined) {
 			renderError(data['error']);
