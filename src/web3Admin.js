@@ -90,6 +90,12 @@ module.exports = {
       property: 'debug',
       methods: [
         new web3._extend.Method({
+          name: 'storageAt',
+          call: 'debug_storageAt',
+          inputFormatter: [null, null, null],
+          params: 3
+        }),
+        new web3._extend.Method({
           name: 'trace',
           call: 'debug_trace',
           inputFormatter: [null, null],
