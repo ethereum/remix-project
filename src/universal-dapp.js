@@ -667,7 +667,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       tx = new EthJSTX({
         nonce: new Buffer([account.nonce++]), // @todo count beyond 255
         gasPrice: 1,
-        gasLimit: 3000000000, // plenty
+        gasLimit: gas,
         to: to,
         value: new BN(value, 10),
         data: new Buffer(data.slice(2), 'hex')
