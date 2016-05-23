@@ -618,7 +618,14 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     data = '0x' + data;
   }
 
-  var gas = self.options.getGas ? self.options.getGas : 3000000;
+  var gasLimit = 3000000;
+  if (self.options.getGasLimit) {
+    try {
+      gasLimit = self.options.getGasLimit();
+    } catch (e) {
+      return cb(e);
+    }
+  }
 
   var value = 0;
   if (self.options.getValue) {
@@ -645,7 +652,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
           return cb(err, resp);
         }
 
-        if (resp > gas) {
+        if (resp > gasLimit) {
           return cb('Gas required exceeds limit: ' + resp);
         }
 
@@ -667,7 +674,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       tx = new EthJSTX({
         nonce: new Buffer([account.nonce++]), // @todo count beyond 255
         gasPrice: 1,
-        gasLimit: gas,
+        gasLimit: gasLimit,
         to: to,
         value: new BN(value, 10),
         data: new Buffer(data.slice(2), 'hex')
