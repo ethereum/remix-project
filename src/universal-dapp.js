@@ -618,7 +618,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     data = '0x' + data;
   }
 
-  var gas = self.options.getGas ? self.options.getGas : 1000000;
+  var gas = self.options.getGas ? self.options.getGas : 3000000;
 
   var value = 0;
   if (self.options.getValue) {
