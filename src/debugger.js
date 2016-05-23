@@ -37,7 +37,7 @@ module.exports = React.createClass({
 
   render: function () {
     return (
-      <div style={style.wrapper}>
+      <div style={style.font}>
         <h1 style={style.container}>Eth Debugger</h1>
         <TxBrowser onNewTxRequested={this.startDebugging} />
         <StepManager ref='stepManager' onStepChanged={this.stepChanged} />

@@ -1,6 +1,6 @@
 'use strict'
 module.exports = {
-  wrapper: {
+  font: {
     'fontFamily': 'arial,sans-serif'
   },
   container: {
@@ -11,7 +11,8 @@ module.exports = {
     'fontStyle': 'italic'
   },
   instructionsList: {
-    'width': '320px'
+    'width': '320px',
+    'height': '300px'
   },
   transactionInfo: {
     'marginTop': '5px'
@@ -22,7 +23,7 @@ module.exports = {
       'width': '600px'
     },
     tableContainer: {
-      'height': '150px',
+      'height': '300px',
       'overflowY': 'auto'
     },
     table: {

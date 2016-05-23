@@ -38,7 +38,7 @@ module.exports = React.createClass({
         ret.push(
           <tr key={key}>
             <td>
-              <pre>{this.props.data[key]}</pre>
+              <pre style={style.font} >{this.props.data[key]}</pre>
             </td>
           </tr>)
       }

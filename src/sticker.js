@@ -55,7 +55,7 @@ module.exports = React.createClass({
                 remaining gas
               </td>
               <td>
-                {this.state.remaingas}
+                {this.state.remainingGas}
               </td>
             </tr>
           </tbody>
@@ -119,7 +119,7 @@ module.exports = React.createClass({
         console.log(error)
       } else {
         self.setState({
-          remaininGas: remaingas
+          remainingGas: remaingas
         })
       }
     })

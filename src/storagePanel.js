@@ -1,6 +1,7 @@
 'use strict'
 var React = require('react')
 var BasicPanel = require('./basicPanel')
+var style = require('./basicStyles')
 
 module.exports = React.createClass({
   contextTypes: {
@@ -49,10 +50,10 @@ module.exports = React.createClass({
         ret.push(
           <tr key={key}>
             <td>
-              <pre>{key}</pre>
+              <pre style={style.font} >{key}</pre>
             </td>
             <td>
-              <pre>{data[key]}</pre>
+              <pre style={style.font}>{data[key]}</pre>
             </td>
           </tr>)
       }
