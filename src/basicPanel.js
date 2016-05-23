@@ -38,7 +38,7 @@ module.exports = React.createClass({
         ret.push(
           <tr key={key}>
             <td>
-              {this.props.data[key]}
+              <pre>{this.props.data[key]}</pre>
             </td>
           </tr>)
       }

@@ -50,13 +50,13 @@ module.exports = React.createClass({
         ret.push(
           <tr key={key}>
             <td>
-              {memSlot.address}
+              <pre>{memSlot.address}</pre>
             </td>
             <td>
-              {memSlot.content.raw}
+              <pre>{memSlot.content.raw}</pre>
             </td>
             <td>
-              {memSlot.content.ascii}
+              <pre>{memSlot.content.ascii}</pre>
             </td>
           </tr>)
       }
