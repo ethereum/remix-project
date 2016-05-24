@@ -188,6 +188,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         $events = $('<div class="events"/>');
 
         var parseLogs = function(err,response) {
+            if (err)
+                return;
+
             $event = $('<div class="event" />');
 
             var $close = $('<div class="udapp-close" />');
