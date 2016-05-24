@@ -35,9 +35,17 @@ module.exports = React.createClass({
         console.log(error)
       } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
         self.setState({
-          data: callstack
+          data: self.format(callstack)
         })
       }
     })
+  },
+
+  format: function (callstack) {
+    var ret = ''
+    for (var key in callstack) {
+      ret += callstack[key] + '\n'
+    }
+    return ret
   }
 })

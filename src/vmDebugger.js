@@ -43,15 +43,7 @@ module.exports = React.createClass({
                   </div>
                 </td>
                 <td>
-                  <CalldataPanel currentStepIndex={this.props.currentStepIndex} />
-                </td>
-              </tr>
-              <tr>
-                <td>
                   <StackPanel currentStepIndex={this.props.currentStepIndex} />
-                </td>
-                <td>
-                  <CallstackPanel currentStepIndex={this.props.currentStepIndex} />
                 </td>
               </tr>
               <tr>
@@ -60,6 +52,14 @@ module.exports = React.createClass({
                 </td>
                 <td>
                   <MemoryPanel currentStepIndex={this.props.currentStepIndex} />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <CalldataPanel currentStepIndex={this.props.currentStepIndex} />
+                </td>
+                <td>
+                  <CallstackPanel currentStepIndex={this.props.currentStepIndex} />
                 </td>
               </tr>
             </tbody>

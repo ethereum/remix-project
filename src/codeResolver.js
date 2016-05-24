@@ -18,7 +18,7 @@ module.exports = {
       return
     }
 
-    if (vmTraceIndex === 0 && transaction.to === null) { // start of the trace
+    if (address === '(Contract Creation Code)') { // start of the trace
       callBack(address, this.cacheExecutingCode(address, transaction.input).code)
       return
     }
@@ -41,9 +41,14 @@ module.exports = {
   },
 
   cacheExecutingCode: function (address, hexCode) {
+    var codes = this.formatCode(hexCode)
+    this.codes[address] = codes[0]
+    this.instructionsIndexByBytesOffset[address] = codes[1]
+    return codes
+  },
+
+  formatCode: function (hexCode) {
     var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
-    this.codes[address] = code[0]
-    this.instructionsIndexByBytesOffset[address] = code[1]
     return {
       code: code[0],
       instructionsIndexByBytesOffset: code[1]

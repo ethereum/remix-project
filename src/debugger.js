@@ -61,7 +61,7 @@ module.exports = React.createClass({
       tx: tx
     })
     var self = this
-    this.state.traceManager.resolveTrace(blockNumber, txIndex, function (success) {
+    this.state.traceManager.resolveTrace(tx, function (success) {
       console.log('trace loaded ' + success)
       self.setState({
         currentStepIndex: 0

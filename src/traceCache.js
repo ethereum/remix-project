@@ -5,9 +5,13 @@ function TraceCache () {
 
 TraceCache.prototype.init = function () {
   // ...Changes contains index in the vmtrace of the corresponding changes
-  this.depthChanges = []
-  this.memoryChanges = []
+
+  this.callChanges = []
+  this.returnChanges = []
+  this.calls = {}
+
   this.callDataChanges = []
+  this.memoryChanges = []
   this.storageChanges = []
   this.sstore = {} // all sstore occurence in the trace
   this.callStack = {} // contains all callStack by vmtrace index (we need to rebuild it, callstack is not included in the vmtrace)
@@ -21,8 +25,15 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
   this.memoryChanges.push(value)
 }
 
-TraceCache.prototype.pushDepthChanges = function (value) {
-  this.depthChanges.push(value)
+TraceCache.prototype.pushCallChanges = function (step, value) {
+  this.callChanges.push(value)
+  this.calls[value] = {
+    op: step.op
+  }
+}
+
+TraceCache.prototype.pushReturnChanges = function (value) {
+  this.returnChanges.push(value)
 }
 
 TraceCache.prototype.pushCallStack = function (index, callStack) {

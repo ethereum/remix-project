@@ -1,7 +1,6 @@
 'use strict'
 var React = require('react')
 var BasicPanel = require('./basicPanel')
-var style = require('./basicStyles')
 
 module.exports = React.createClass({
   contextTypes: {
@@ -23,7 +22,7 @@ module.exports = React.createClass({
 
   render: function () {
     return (
-      <BasicPanel name='Memory' data={this.state.data} renderRow={this.renderMemoryRow} />
+      <BasicPanel name='Memory' data={this.state.data} />
     )
   },
 
@@ -43,36 +42,20 @@ module.exports = React.createClass({
     })
   },
 
-  renderMemoryRow: function (data) {
-    var ret = []
-    if (data) {
-      for (var key in data) {
-        var memSlot = data[key]
-        ret.push(
-          <tr key={key}>
-            <td>
-              <pre style={style.font}>{memSlot.address}</pre>
-            </td>
-            <td>
-              <pre style={style.font}>{memSlot.content.raw}</pre>
-            </td>
-            <td>
-              <pre style={style.font}>{memSlot.content.ascii}</pre>
-            </td>
-          </tr>)
-      }
-    }
-    return ret
-  },
-
   formatMemory: function (mem, width) {
-    var ret = []
+    var ret = ''
+    if (!mem) {
+      return ret
+    }
+
+    if (!mem.substr) {
+      mem = mem.join('') // geth returns an array, eth return raw string
+    }
+
     for (var k = 0; k < mem.length; k += (width * 2)) {
       var memory = mem.substr(k, width * 2)
-      ret.push({
-        address: this.context.web3.toHex(k),
-        content: this.tryAsciiFormat(memory)
-      })
+      var content = this.tryAsciiFormat(memory)
+      ret += this.context.web3.toHex(k) + '   ' + content.raw + ' ' + content.ascii + '\n'
     }
     return ret
   },

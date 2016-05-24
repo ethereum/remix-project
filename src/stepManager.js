@@ -33,7 +33,7 @@ module.exports = React.createClass({
           stepIntoForward={this.stepIntoForward}
           stepOverBack={this.stepOverBack}
           stepOverForward={this.stepOverForward}
-          jumpToNextCall={this.jumpToNextCall}
+          jumpNextCall={this.jumpToNextCall}
           max={this.state.traceLength} />
       </div>
     )

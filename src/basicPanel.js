@@ -6,8 +6,7 @@ module.exports = React.createClass({
   getDefaultProps: function () {
     return {
       data: null,
-      name: null,
-      renderRow: null
+      name: null
     }
   },
 
@@ -18,33 +17,9 @@ module.exports = React.createClass({
           {this.props.name}
         </div>
         <div style={style.panel.tableContainer}>
-          <table style={style.panel.table}>
-            <tbody>
-              {this.renderItems()}
-            </tbody>
-          </table>
+          <pre style={Object.assign(style.panel.table, style.font)} >{this.props.data}</pre>
         </div>
       </div>
     )
-  },
-
-  renderItems: function () {
-    if (!this.props.data) {
-      return []
-    }
-    if (!this.props.renderRow) {
-      var ret = []
-      for (var key in this.props.data) {
-        ret.push(
-          <tr key={key}>
-            <td>
-              <pre style={style.font} >{this.props.data[key]}</pre>
-            </td>
-          </tr>)
-      }
-      return ret
-    } else {
-      return this.props.renderRow(this.props.data)
-    }
   }
 })

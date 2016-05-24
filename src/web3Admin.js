@@ -96,8 +96,8 @@ module.exports = {
           params: 3
         }),
         new web3._extend.Method({
-          name: 'trace',
-          call: 'debug_trace',
+          name: 'traceTransaction',
+          call: 'debug_traceTransaction',
           inputFormatter: [null, null],
           params: 2
         }),

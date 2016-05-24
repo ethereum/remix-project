@@ -48,13 +48,17 @@ module.exports = React.createClass({
     if (nextProps.currentStepIndex < 0) return
     codeResolver.setWeb3(this.context.web3)
     var self = this
-    this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (error, address) {
-      if (error) {
-        console.log(error)
-      } else {
-        self.ensureCodeLoaded(address, nextProps.currentStepIndex)
-      }
-    })
+    if (nextProps.currentStepIndex === 0) {
+      self.ensureCodeLoaded(this.context.tx.to, nextProps.currentStepIndex)
+    } else {
+      this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (error, address) {
+        if (error) {
+          console.log(error)
+        } else {
+          self.ensureCodeLoaded(address, nextProps.currentStepIndex)
+        }
+      })
+    }
   },
 
   ensureCodeLoaded: function (address, currentStep) {
