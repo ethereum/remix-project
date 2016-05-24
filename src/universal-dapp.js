@@ -192,7 +192,6 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 return;
 
             $event = $('<div class="event" />');
-
             var $close = $('<div class="udapp-close" />');
             $close.click( function(){ $event.remove(); } );
 
