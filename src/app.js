@@ -127,42 +127,42 @@ var run = function() {
 
 		if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) return;
 
-		var obj = {}
+		var obj = {};
 		var done = false;
-		var count = 0
+		var count = 0;
 		var dont = 0;
 
 		function check(key){
 			chrome.storage.sync.get( key, function(resp){
-				console.log("comparing to cloud", key, resp)
+				console.log("comparing to cloud", key, resp);
 				if (typeof resp[key] != 'undefined' && obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "'? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.")) {
-					console.log("Overwriting", key )
+					console.log("Overwriting", key );
 					localStorage.setItem( key, resp[key] );
 					updateFiles();
 				} else {
-					console.log( "add to obj", obj, key)
+					console.log( "add to obj", obj, key);
 					obj[key] = localStorage[key];
 				}
-				done++
+				done++;
 				if (done >= count) chrome.storage.sync.set( obj, function(){
-					console.log( "updated cloud files with: ", obj, this, arguments)
-				})
-			})
+					console.log( "updated cloud files with: ", obj, this, arguments);
+				});
+			});
 		}
 
 		for (var y in window.localStorage) {
-			console.log("checking", y)
+			console.log("checking", y);
 			obj[y] = window.localStorage.getItem(y);
 			if (y.indexOf(SOL_CACHE_FILE_PREFIX) !== 0) continue;
 			count++;
-			check(y)
+			check(y);
 		}
 
 
 	}
 
 	window.syncStorage = syncStorage;
-	syncStorage()
+	syncStorage();
 
 
 
@@ -194,14 +194,14 @@ var run = function() {
 
 	var files = getFiles();
 	for (var x in files) {
-		sessions[files[x]] = newEditorSession(files[x])
+		sessions[files[x]] = newEditorSession(files[x]);
 	}
 
 	editor.setSession( sessions[SOL_CACHE_FILE] );
 	editor.resize(true);
 
 	function newEditorSession(filekey) {
-		var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript")
+		var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript");
 		s.setUndoManager(new ace.UndoManager());
 		s.setTabSize(4);
 		s.setUseSoftTabs(true);
@@ -324,7 +324,7 @@ var run = function() {
 
 		$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ "px"}, "slow", function(){
 			reAdjust();
-		})
+		});
 	});
 
 	$filesEl.on('click', '.file:not(.active)', showFileHandler);
@@ -360,7 +360,7 @@ var run = function() {
 		}
 
 		return false;
-	})
+	});
 
 	$filesEl.on('click', '.file .remove', function(ev) {
 		ev.preventDefault();
@@ -445,19 +445,19 @@ var run = function() {
 			itemsWidth += itemWidth;
 		});
 		return itemsWidth;
-	};
+	}
 
 	function widthOfHidden(){
 		return (($filesWrapper.outerWidth()) - widthOfList() - getLeftPosi());
-	};
+	}
 
 	function widthOfVisible(){
 		return $filesWrapper.outerWidth();
-	};
+	}
 
 	function getLeftPosi(){
 		return $filesEl.position().left;
-	};
+	}
 
 	function activeFilePos() {
 		var el = $filesEl.find('.active');
@@ -481,14 +481,14 @@ var run = function() {
 	}
 
 	$scrollerRight.click(function() {
-		var delta = (getLeftPosi() - FILE_SCROLL_DELTA)
+		var delta = (getLeftPosi() - FILE_SCROLL_DELTA);
 		$filesEl.animate({left: delta + "px"},'slow',function(){
 			reAdjust();
 		});
 	});
 
 	$scrollerLeft.click(function() {
-		var delta = Math.min( (getLeftPosi() + FILE_SCROLL_DELTA), 0 )
+		var delta = Math.min( (getLeftPosi() + FILE_SCROLL_DELTA), 0 );
 		$filesEl.animate({left: delta + "px"},'slow',function(){
 			reAdjust();
 		});
@@ -769,7 +769,7 @@ var run = function() {
 			case 'compiled':
 				compilationFinished(data.data, data.missingInputs);
 				break;
-			};
+			}
 		});
 		worker.onerror = function(msg) { console.log(msg.data); };
 		worker.addEventListener('error', function(msg) { console.log(msg.data); });
@@ -809,7 +809,7 @@ var run = function() {
 	editor.on('changeSession', function(){
 		editor.getSession().on('change', onChange);
 		onChange();
-	})
+	});
 
 	document.querySelector('#optimize').addEventListener('change', function(){
 		updateQueryParams({optimize: document.querySelector('#optimize').checked });
@@ -984,7 +984,7 @@ var run = function() {
 		return $('<div class="contractDetails"/>').append(button).append(details);
 	};
 	var formatGasEstimates = function(data) {
-		var gasToText = function(g) { return g === null ? 'unknown' : g; }
+		var gasToText = function(g) { return g === null ? 'unknown' : g; };
 		var text = '';
 		if ('creation' in data)
 			text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
@@ -1033,7 +1033,7 @@ var run = function() {
 		return funABI;
 	};
 
-	syncStorage()
+	syncStorage();
 
 };
 
