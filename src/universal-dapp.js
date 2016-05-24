@@ -3,7 +3,6 @@ var EthJSVM = require('ethereumjs-vm');
 var Trie = require('merkle-patricia-tree');
 var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
-var EthJSAccount = require('ethereumjs-account');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var web3 = require('./web3-adapter.js');
