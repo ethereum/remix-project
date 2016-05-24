@@ -708,7 +708,7 @@ var run = function() {
 			cb(files[fileNameFromKey(SOL_CACHE_FILE)]);
 			return;
 		}
-		var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g;
+		var importRegex = /import\s*[\'\"]([^\'\"]+)[\'\"];/g;
 		var reloop = false;
 		do {
 			reloop = false;
