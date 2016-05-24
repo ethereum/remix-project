@@ -8,7 +8,9 @@ git config user.name "$COMMIT_AUTHOR"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 git checkout --orphan gh-pages
 git rm --cached -r .
-git add $FILES_TO_PACKAGE
+echo "# Automatic build" > README.md
+echo "Built website from {$SHA}. See https://github.com/ethereum/browser-solidity/ for details." >> README.md
+git add $FILES_TO_PACKAGE README.md
 git commit -m "Built website from {$SHA}."
 
 ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
