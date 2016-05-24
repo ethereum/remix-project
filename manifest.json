@@ -24,7 +24,7 @@
     "https://ajax.googleapis.com/",
     "webRequest",
     "webRequestBlocking",
-    "\u003Call_urls>"
+    "<all_urls>"
   ],
 
   "content_security_policy": "script-src 'self' https://ethereum.github.io/solc-bin/bin/; object-src 'self'"
