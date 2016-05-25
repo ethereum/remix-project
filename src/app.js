@@ -708,7 +708,7 @@ var run = function() {
 			cb(files[fileNameFromKey(SOL_CACHE_FILE)]);
 			return;
 		}
-		var importRegex = /import\s[\'\"]([^\'\"]+)[\'\"];/g;
+		var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g;
 		var reloop = false;
 		do {
 			reloop = false;
@@ -722,6 +722,9 @@ var run = function() {
 				if (m in files) continue;
 				if (getFiles().indexOf(fileKey(m)) !== -1) {
 					files[m] = window.localStorage[fileKey(m)];
+					reloop = true;
+				} else if (m.startsWith('./') && getFiles().indexOf(fileKey(m.slice(2))) !== -1) {
+					files[m] = window.localStorage[fileKey(m.slice(2))];
 					reloop = true;
 				} else if (m in cachedRemoteFiles) {
 					files[m] = cachedRemoteFiles[m];
