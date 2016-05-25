@@ -3,7 +3,6 @@ var EthJSVM = require('ethereumjs-vm');
 var Trie = require('merkle-patricia-tree');
 var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
-var EthJSAccount = require('ethereumjs-account');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var web3 = require('./web3-adapter.js');
@@ -39,9 +38,8 @@ UniversalDApp.prototype.addAccount = function (privateKey, balance) {
         privateKey = new Buffer(privateKey, 'hex')
         var address = ethJSUtil.privateToAddress(privateKey);
 
-        var account = new EthJSAccount();
-        account.balance = balance || 'f00000000000000001';
-        this.vm.stateManager.trie.put(address, account.serialize());
+        // FIXME: we don't care about the callback, but we should still make this proper
+        this.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb() {} );
 
         this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
     }
@@ -54,6 +52,30 @@ UniversalDApp.prototype.getAccounts = function (cb) {
         if (!this.accounts) return cb("No accounts?");
 
         cb(null, Object.keys(this.accounts));
+    }
+};
+
+UniversalDApp.prototype.getBalance = function (address, cb) {
+    address = ethJSUtil.stripHexPrefix(address);
+
+    if (!this.vm) {
+        web3.eth.getBalance(address, function (err, res) {
+            if (err) {
+                cb(err);
+            } else {
+                cb(null, res.toString(10));
+            }
+        });
+    } else {
+        if (!this.accounts) return cb("No accounts?");
+
+        this.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
+            if (err) {
+                cb("Account not found");
+            } else {
+                cb(null, new ethJSUtil.BN(res).toString(10));
+            }
+        });
     }
 };
 
