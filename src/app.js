@@ -320,6 +320,7 @@ var run = function() {
 		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
 			untitledCount = (untitledCount - 0) + 1;
 		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
+		sessions[SOL_CACHE_FILE] = null;
 		window.localStorage[SOL_CACHE_FILE] = '';
 		updateFiles();
 
