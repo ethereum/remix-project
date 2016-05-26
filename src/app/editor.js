@@ -4,15 +4,25 @@ var ace = require('brace');
 require('../mode-solidity.js');
 
 function Editor (loadingFromGist) {
-
   this.newFile = function () {
-    untitledCount = '';
+    var untitledCount = '';
     while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount]) {
       untitledCount = (untitledCount - 0) + 1;
     }
     SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
     sessions[SOL_CACHE_FILE] = null;
     this.setCacheFileContent('');
+  };
+
+  this.uploadFile = function (file) {
+    var fileReader = new FileReader();
+
+    SOL_CACHE_FILE = utils.fileKey(file.name);
+    fileReader.onload = function (e) {
+      window.localStorage[SOL_CACHE_FILE] = e.target.result;
+      sessions[SOL_CACHE_FILE] = null;
+    };
+    fileReader.readAsText(file);
   };
 
   this.setCacheFileContent = function (content) {
@@ -42,19 +52,19 @@ function Editor (loadingFromGist) {
   };
 
   this.hasFile = function (name) {
-    return this.getFiles().indexOf(utils.fileKey(name)) !== -1
+    return this.getFiles().indexOf(utils.fileKey(name)) !== -1;
   };
 
   this.getFiles = function () {
     var files = [];
-    for (var f in localStorage) {
+    for (var f in window.localStorage) {
       if (f.indexOf(utils.getCacheFilePrefix(), 0) === 0) {
         files.push(f);
         if (!sessions[f]) sessions[f] = newEditorSession(f);
       }
     }
     return files;
-  }
+  };
 
   this.packageFiles = function () {
     var files = {};
@@ -62,7 +72,7 @@ function Editor (loadingFromGist) {
 
     for (var f in filesArr) {
       files[utils.fileNameFromKey(filesArr[f])] = {
-        content: localStorage[filesArr[f]]
+        content: window.localStorage[filesArr[f]]
       };
     }
     return files;
@@ -91,7 +101,7 @@ function Editor (loadingFromGist) {
   };
 
   this.setAnnotations = function (sourceAnnotations) {
-    editor.getSession().setAnnotations(sourceAnnotations);    
+    editor.getSession().setAnnotations(sourceAnnotations);
   };
 
   this.onChangeSetup = function (onChange) {
@@ -99,16 +109,16 @@ function Editor (loadingFromGist) {
     editor.on('changeSession', function () {
       editor.getSession().on('change', onChange);
       onChange();
-    })    
+    });
   };
 
   this.handleErrorClick = function (errLine, errCol) {
     editor.focus();
-    editor.gotoLine(errLine + 1, errCol - 1, true);    
+    editor.gotoLine(errLine + 1, errCol - 1, true);
   };
 
   function newEditorSession (filekey) {
-    var s = new ace.EditSession(window.localStorage[filekey], 'ace/mode/javascript')
+    var s = new ace.EditSession(window.localStorage[filekey], 'ace/mode/javascript');
     s.setUndoManager(new ace.UndoManager());
     s.setTabSize(4);
     s.setUseSoftTabs(true);
@@ -130,9 +140,9 @@ function Editor (loadingFromGist) {
     }
 
     SOL_CACHE_FILE = files[0];
-    
+
     for (var x in files) {
-      sessions[files[x]] = newEditorSession(files[x])
+      sessions[files[x]] = newEditorSession(files[x]);
     }
 
     editor.setSession(sessions[SOL_CACHE_FILE]);

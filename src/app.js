@@ -54,6 +54,10 @@ var run = function () {
 	window.onhashchange = syncQueryParams;
 	syncQueryParams();
 
+	// -------- check file upload capabilities -------
+	if (!(window.File || window.FileReader || window.FileList || window.Blob)) {
+		$(".uploadFile").remove();
+	}
 
 	// ------------------ gist load ----------------
 
@@ -151,6 +155,23 @@ var run = function () {
 	$('.newFile').on('click', function () {
 		editor.newFile();
 		updateFiles();
+
+		$filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
+			reAdjust();
+		});
+	});
+
+	// ----------------- file upload -------------
+
+	$('.inputFile').on('change', function () {
+		var fileList = $('input.inputFile')[0].files;
+		for (var i = 0; i < fileList.length; i++) {
+			var name = fileList[i].name;
+			if (!window.localStorage[utils.fileKey(name)] || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
+				editor.uploadFile(fileList[i]);
+				updateFiles();
+			}
+		}
 
 		$filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
 			reAdjust();
