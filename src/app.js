@@ -241,9 +241,9 @@ var run = function() {
 		return $('<li class="file"><span class="name">'+name+'</span><span class="remove"><i class="fa fa-close"></i></span></li>');
 	}
 
-	$filesWrapper = $('.files-wrapper');
-	$scrollerRight = $('.scroller-right');
-	$scrollerLeft = $('.scroller-left');
+	var $filesWrapper = $('.files-wrapper');
+	var $scrollerRight = $('.scroller-right');
+	var $scrollerLeft = $('.scroller-left');
 
 	function widthOfList (){
 		var itemsWidth = 0;
