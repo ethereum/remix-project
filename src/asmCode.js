@@ -67,20 +67,35 @@ module.exports = React.createClass({
         code: ['loading...']
       })
       var self = this
-      codeResolver.resolveCode(address, currentStep, this.context.tx, function (address, code) {
-        if (window.ethDebuggerSelectedItem !== currentStep) {
-          console.log(currentStep + ' discarded. current is ' + window.ethDebuggerSelectedItem)
-          return
-        }
-        self.setState({
-          code: code,
-          address: address
+      if (address.indexOf('(Contract Creation Code)') !== -1) {
+        this.context.traceManager.getContractCreationCode(address, function (error, hexCode) {
+          if (error) {
+            console.log(error)
+          } else {
+            var codes = codeResolver.cacheExecutingCode(address, hexCode)
+            self.updateCode(codes.code, address, currentStep)
+          }
         })
-        self.setInstructionIndex(address, currentStep)
-      })
+      } else {
+        codeResolver.resolveCode(address, currentStep, this.context.tx, function (address, code) {
+          if (window.ethDebuggerSelectedItem !== currentStep) {
+            console.log(currentStep + ' discarded. current is ' + window.ethDebuggerSelectedItem)
+            return
+          }
+          self.updateCode(code, address, currentStep)
+        })
+      }
     } else {
       this.setInstructionIndex(this.state.address, currentStep)
     }
+  },
+
+  updateCode: function (code, address, currentStep) {
+    this.setState({
+      code: code,
+      address: address
+    })
+    this.setInstructionIndex(address, currentStep)
   },
 
   setInstructionIndex: function (address, step) {

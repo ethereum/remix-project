@@ -9,6 +9,7 @@ TraceCache.prototype.init = function () {
   this.callChanges = []
   this.returnChanges = []
   this.calls = {}
+  this.contractCreation = {}
 
   this.callDataChanges = []
   this.memoryChanges = []
@@ -30,6 +31,18 @@ TraceCache.prototype.pushCallChanges = function (step, value) {
   this.calls[value] = {
     op: step.op
   }
+}
+
+TraceCache.prototype.pushContractCreationFromMemory = function (index, token, trace, lastMemoryChange) {
+  var memory = trace[lastMemoryChange].memory
+  var stack = trace[index].stack
+  var offset = 2 * parseInt(stack[stack.length - 2], 16)
+  var size = 2 * parseInt(stack[stack.length - 3], 16)
+  this.contractCreation[token] = '0x' + memory.substr(offset, size)
+}
+
+TraceCache.prototype.pushContractCreation = function (token, code) {
+  this.contractCreation[token] = code
 }
 
 TraceCache.prototype.pushReturnChanges = function (value) {

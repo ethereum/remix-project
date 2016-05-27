@@ -18,11 +18,6 @@ module.exports = {
       return
     }
 
-    if (address === '(Contract Creation Code)') { // start of the trace
-      callBack(address, this.cacheExecutingCode(address, transaction.input).code)
-      return
-    }
-
     var self = this
     this.loadCode(address, function (code) {
       callBack(address, self.cacheExecutingCode(address, code).code)
@@ -42,8 +37,8 @@ module.exports = {
 
   cacheExecutingCode: function (address, hexCode) {
     var codes = this.formatCode(hexCode)
-    this.codes[address] = codes[0]
-    this.instructionsIndexByBytesOffset[address] = codes[1]
+    this.codes[address] = codes.code
+    this.instructionsIndexByBytesOffset[address] = codes.instructionsIndexByBytesOffset
     return codes
   },
 

@@ -64,18 +64,27 @@ module.exports = React.createClass({
   },
 
   sliderMoved: function (step) {
+    if (step >= this.state.traceLength || step < 0) {
+      return
+    }
     this.props.onStepChanged(step)
     this.changeState(step)
   },
 
   stepIntoForward: function () {
     var step = this.state.currentStepIndex + 1
+    if (step >= this.state.traceLength || step < 0) {
+      return
+    }
     this.props.onStepChanged(step)
     this.changeState(step)
   },
 
   stepIntoBack: function () {
     var step = this.state.currentStepIndex - 1
+    if (step >= this.state.traceLength || step < 0) {
+      return
+    }
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
@@ -83,6 +92,9 @@ module.exports = React.createClass({
 
   stepOverForward: function () {
     var step = this.context.traceManager.findStepOverForward(this.state.currentStepIndex)
+    if (step >= this.state.traceLength || step < 0) {
+      return
+    }
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
@@ -90,6 +102,9 @@ module.exports = React.createClass({
 
   stepOverBack: function () {
     var step = this.context.traceManager.findStepOverBack(this.state.currentStepIndex)
+    if (step >= this.state.traceLength || step < 0) {
+      return
+    }
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
@@ -97,6 +112,9 @@ module.exports = React.createClass({
 
   jumpToNextCall: function () {
     var step = this.context.traceManager.findNextCall(this.state.currentStepIndex)
+    if (step >= this.state.traceLength || step < 0) {
+      return
+    }
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)

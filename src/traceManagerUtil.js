@@ -37,7 +37,7 @@ module.exports = {
   isCallInstruction: function (step) {
     return step.op === 'CALL' || step.op === 'CALLCODE' || step.op === 'CREATE' || step.op === 'DELEGATECALL'
   },
-  
+
   isCreateInstruction: function (step) {
     return step.op === 'CREATE'
   },

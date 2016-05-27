@@ -30,7 +30,7 @@ TraceManager.prototype.resolveTrace = function (tx, callback) {
     } else {
       if (result.structLogs.length > 0) {
         self.trace = result.structLogs
-        self.traceAnalyser.analyse(result.structLogs, tx.to, function (error, result) {
+        self.traceAnalyser.analyse(result.structLogs, tx, function (error, result) {
           if (error) {
             console.log(error)
             callback(false)
@@ -146,21 +146,24 @@ TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback
       if (addressIndex === 0) {
         callback(null, self.tx.to)
       } else {
-        var step = this.trace[addressIndex]
-        if (traceManagerUtil.isCreateInstruction(step)) {
-          callback(null, '(Contract Creation Code)')
+        var callStack = self.traceCache.callStack[addressIndex].callStack
+        var calledAddress = callStack[callStack.length - 1]
+        if (calledAddress) {
+          callback(null, calledAddress)
         } else {
-          var callStack = self.traceCache.callStack[addressIndex].callStack
-          var calledAddress = callStack[callStack.length - 1]
-          if (calledAddress) {
-            callback(null, calledAddress)
-          } else {
-            callback('unable to get current called address. ' + stepIndex + ' does not match with a CALL', null)
-          }
+          callback('unable to get current called address. ' + stepIndex + ' does not match with a CALL', null)
         }
       }
     }
   })
+}
+
+TraceManager.prototype.getContractCreationCode = function (token, callback) {
+  if (this.traceCache.contractCreation[token]) {
+    callback(null, this.traceCache.contractCreation[token])
+  } else {
+    callback('no contract creation named ' + token, null)
+  }
 }
 
 TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {

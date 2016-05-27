@@ -6,18 +6,21 @@ function TraceAnalyser (_cache) {
   this.trace = null
 }
 
-TraceAnalyser.prototype.analyse = function (trace, root, callback) {
+TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
   this.trace = trace
-
-  this.traceCache.pushStoreChanges(0, root)
+  this.traceCache.pushStoreChanges(0, tx.to)
   var context = {
-    currentStorageAddress: root,
-    previousStorageAddress: root
+    currentStorageAddress: tx.to,
+    previousStorageAddress: tx.to
   }
-  var callStack = [root]
+  var callStack = [tx.to]
   this.traceCache.pushCallStack(0, {
     callStack: callStack.slice(0)
   })
+
+  if (tx.to === '(Contract Creation Code)') {
+    this.traceCache.pushContractCreation(tx.to, tx.input)
+  }
 
   for (var k = 0; k < this.trace.length; k++) {
     var step = this.trace[k]
@@ -61,26 +64,30 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
 
 TraceAnalyser.prototype.buildDepth = function (index, step, callStack) {
   if (traceManagerUtil.isCallInstruction(step) && !traceManagerUtil.isCallToPrecompiledContract(index, this.trace)) {
-    var newAddress = traceManagerUtil.resolveCalledAddress(index, this.trace)
-    if (newAddress) {
-      callStack.push(newAddress)
+    if (traceManagerUtil.isCreateInstruction(step)) {
+      var contractToken = '(Contract Creation Code) ' + index
+      callStack.push(contractToken)
+      var lastMemoryChange = this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]
+      this.traceCache.pushContractCreationFromMemory(index, contractToken, this.trace, lastMemoryChange)
     } else {
-      console.log('unable to build depth changes. ' + index + ' does not match with a CALL. depth changes will be corrupted')
+      var newAddress = traceManagerUtil.resolveCalledAddress(index, this.trace)
+      if (newAddress) {
+        callStack.push(newAddress)
+      } else {
+        console.log('unable to build depth changes. ' + index + ' does not match with a CALL. depth changes will be corrupted')
+      }
     }
     this.traceCache.pushCallChanges(step, index + 1)
     this.traceCache.pushCallStack(index + 1, {
       callStack: callStack.slice(0)
     })
   } else if (traceManagerUtil.isReturnInstruction(step)) {
-    this.traceCache.pushCallChanges(step, index)
-    this.traceCache.pushCallStack(index, {
+    callStack.pop()
+    this.traceCache.pushCallChanges(step, index + 1)
+    this.traceCache.pushCallStack(index + 1, {
       callStack: callStack.slice(0)
     })
-    callStack.pop()
   }
 }
-
-// 0x90a99e9dbfc38ce0fd6330f97a192a9ef27b8329b57309e8b2abe47a6fe74574
-// 0xc0e95f27e1482ba09dea8162c4b4090e3d89e214416df2ce9d5517ff2107de19
 
 module.exports = TraceAnalyser
