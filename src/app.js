@@ -243,22 +243,28 @@ var run = function() {
 	$vmToggle.on('change', executionContextChange );
 	$web3Toggle.on('change', executionContextChange );
 	$web3endpoint.on('change', function() {
-		var endpoint = $web3endpoint.val();
-		if (endpoint == 'ipc')
-			web3.setProvider(new web3.providers.IpcProvider());
-		else
-			web3.setProvider(new web3.providers.HttpProvider(endpoint));
-		compile();
+		setProviderFromEndpoint();
+		if (executionContext == 'web3') compile();
 	});
 
 	function executionContextChange (ev) {
 		if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
 			$vmToggle.get(0).checked = true;
 			executionContext = 'vm';
-		} else executionContext = ev.target.value;
+		} else {
+			executionContext = ev.target.value;
+			setProviderFromEndpoint();
+		}
 		compile();
 	}
 
+	function setProviderFromEndpoint() {
+		var endpoint = $web3endpoint.val();
+		if (endpoint == 'ipc')
+			web3.setProvider(new web3.providers.IpcProvider());
+		else
+			web3.setProvider(new web3.providers.HttpProvider(endpoint));
+	}
 
 
 	// ------------------ gist publish --------------
