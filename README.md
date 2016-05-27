@@ -4,13 +4,14 @@ Ethereum IDE and tools for the web
 INSTALLATION:
 
 Brief instructions to build for linux(Todo add other platforms) we will add detailed instructions later
-- co the project
-- cd remix
-- install npm and node.js see https://docs.npmjs.com/getting-started/installing-node
-- sudo npm install
-- sudo npm run build
-- run the eth node:  ./eth --rpccorsdomain "*" -j -v 0 or if you have build sudo npm run start_node
-- open remix/index.html
+
+Install eth or geth, npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
+
+    git clone https://github.com/ethereum/remix
+    cd remix
+    npm install && npm run build && npm run start_node
+
+open remix/index.html in your browser.
 
 CODING STYLE:
 
