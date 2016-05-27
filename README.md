@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ethereum/browser-solidity.svg?branch=master)](https://travis-ci.org/ethereum/browser-solidity)
+
 # Browser-Solidity
 
 Browser Solidity is a browser-based Solidity compiler and IDE.
