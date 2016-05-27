@@ -10,7 +10,8 @@ git checkout --orphan gh-pages
 git rm --cached -r .
 echo "# Automatic build" > README.md
 echo "Built website from {$SHA}. See https://github.com/ethereum/browser-solidity/ for details." >> README.md
-git add $FILES_TO_PACKAGE README.md
+# -f is needed because "build" is part of .gitignore
+git add -f $FILES_TO_PACKAGE
 git commit -m "Built website from {$SHA}."
 
 ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"

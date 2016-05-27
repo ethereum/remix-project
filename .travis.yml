@@ -14,6 +14,6 @@ env:
   - COMMIT_AUTHOR_EMAIL="chris@ethereum.org"
   - COMMIT_AUTHOR="Travis CI"
   - PUSH_REPO="git@github.com:ethereum/browser-solidity.git"
-  - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json worker.js"
+  - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json worker.js README.md"
 
 
