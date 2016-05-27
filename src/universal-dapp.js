@@ -499,7 +499,7 @@ UniversalDApp.prototype.linkBytecode = function(contractName, cb) {
     if (!m)
         return cb("Invalid bytecode format.");
     var libraryName = m[1];
-    if (!this.getContractByName(contractName))
+    if (!this.getContractByName(libraryName))
         return cb("Library " + libraryName + " not found.");
     var self = this;
     this.deployLibrary(libraryName, function(err, address) {
