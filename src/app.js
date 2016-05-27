@@ -4,6 +4,10 @@ var web3 = require('./web3-adapter.js');
 var ace = require('brace');
 require('./mode-solidity.js');
 
+var queryParams = require('./app/query-params');
+var gistHandler = require('./app/gist-handler');
+var StorageHandler = require('./app/storage-handler');
+
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
 var filesToLoad = null;
@@ -20,55 +24,15 @@ var run = function() {
 
 	// ------------------ query params (hash) ----------------
 
-	function getQueryParams() {
-
-		var qs = window.location.hash.substr(1);
-
-		if (window.location.search.length > 0) {
-			// use legacy query params instead of hash
-			window.location.hash = window.location.search.substr(1);
-			window.location.search = "";
-		}
-
-		var params = {};
-		var parts = qs.split("&");
-		for (var x in parts) {
-			var keyValue = parts[x].split("=");
-			if (keyValue[0] !== "") params[keyValue[0]] = keyValue[1];
-		}
-		return params;
-	}
-
-	function updateQueryParams(params) {
-		var currentParams = getQueryParams();
-		var keys = Object.keys(params);
-		for (var x in keys) {
-			currentParams[keys[x]] = params[keys[x]];
-		}
-		var queryString = "#";
-		var updatedKeys = Object.keys(currentParams);
-		for( var y in updatedKeys) {
-			queryString += updatedKeys[y] + "=" + currentParams[updatedKeys[y]] + "&";
-		}
-		window.location.hash = queryString.slice(0, -1);
-	}
-
-
 	function syncQueryParams() {
-		$('#optimize').attr( 'checked', (getQueryParams().optimize == "true") );
+	  $('#optimize').attr( 'checked', (queryParams.get().optimize == "true") );
 	}
-
 
 	window.onhashchange = syncQueryParams;
 	syncQueryParams();
 
 	// ------------------ gist load ----------------
 
-	function getGistId(str) {
-		var idr = /[0-9A-Fa-f]{8,}/;
-		var match = idr.exec(str);
-		return match ? match[0] : null;
-	}
 	function loadFiles(files) {
 		for (var f in files) {
 			var key = fileKey(f);
@@ -85,25 +49,12 @@ var run = function() {
 		updateFiles();
 	}
 
-	var queryParams = getQueryParams();
-	var loadingFromGist = false;
-	if (typeof queryParams['gist'] != undefined) {
-		var gistId;
-		if (queryParams['gist'] === '') {
-			var str = prompt("Enter the URL or ID of the Gist you would like to load.");
-			if (str !== '') {
-				gistId = getGistId( str );
-				loadingFromGist = !!gistId;
-			}
-		} else {
-			gistId = queryParams['gist'];
-			loadingFromGist = !!gistId;
-		}
-		if (loadingFromGist) $.ajax({
-			url: 'https://api.github.com/gists/'+gistId,
-			jsonp: 'callback',
-			dataType: 'jsonp',
-			success: function(response){
+	gistHandler.handleLoad(function(gistId) {
+		$.ajax({
+	    url: 'https://api.github.com/gists/'+gistId,
+	    jsonp: 'callback',
+	    dataType: 'jsonp',
+	    success: function(response) {
 				if (response.data) {
 					if (!response.data.files) {
 						alert( "Gist load error: " + response.data.message );
@@ -111,9 +62,9 @@ var run = function() {
 					}
 					loadFiles(response.data.files);
 				}
-			}
-		});
-	}
+	    }
+    });
+	});
 
 	loadFilesCallback = function(files) {
 		loadFiles(files);
@@ -123,52 +74,15 @@ var run = function() {
 
 	// ----------------- storage --------------------
 
-	function syncStorage() {
+	var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
 
-		if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) return;
-
-		var obj = {};
-		var done = false;
-		var count = 0;
-		var dont = 0;
-
-		function check(key){
-			chrome.storage.sync.get( key, function(resp){
-				console.log("comparing to cloud", key, resp);
-				if (typeof resp[key] != 'undefined' && obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "'? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.")) {
-					console.log("Overwriting", key );
-					localStorage.setItem( key, resp[key] );
-					updateFiles();
-				} else {
-					console.log( "add to obj", obj, key);
-					obj[key] = localStorage[key];
-				}
-				done++;
-				if (done >= count) chrome.storage.sync.set( obj, function(){
-					console.log( "updated cloud files with: ", obj, this, arguments);
-				});
-			});
-		}
-
-		for (var y in window.localStorage) {
-			console.log("checking", y);
-			obj[y] = window.localStorage.getItem(y);
-			if (y.indexOf(SOL_CACHE_FILE_PREFIX) !== 0) continue;
-			count++;
-			check(y);
-		}
-
-
-	}
-
-	window.syncStorage = syncStorage;
-	syncStorage();
-
+	var storageHandler = new StorageHandler(SOL_CACHE_FILE_PREFIX);
+	window.syncStorage = storageHandler.sync;
+	storageHandler.sync();
 
 
 	// ----------------- editor ----------------------
 
-	var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
 	var SOL_CACHE_UNTITLED = SOL_CACHE_FILE_PREFIX + 'Untitled';
 	var SOL_CACHE_FILE = null;
 
@@ -285,7 +199,7 @@ var run = function() {
 		if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com?")) {
 
 			var files = packageFiles();
-			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=" + getQueryParams().version + "&optimize="+ getQueryParams().optimize +"&gist=";
+			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=" + queryParams.get().version + "&optimize="+ queryParams.get().optimize +"&gist=";
 
 			$.ajax({
 				url: 'https://api.github.com/gists',
@@ -516,7 +430,7 @@ var run = function() {
 		}
 	});
 	$('#versionSelector').change(function() {
-		updateQueryParams({version: $('#versionSelector').val() });
+		queryParams.update({version: $('#versionSelector').val() });
 		loadVersion($('#versionSelector').val());
 	});
 
@@ -626,7 +540,7 @@ var run = function() {
 			if (input === null) {
 				renderError(error);
 			} else {
-				var optimize = getQueryParams().optimize;
+				var optimize = queryParams.get().optimize;
 				compileJSON(input, optimize ? 1 : 0);
 			}
 		});
@@ -788,7 +702,7 @@ var run = function() {
 	var worker = null;
 	var loadVersion = function(version) {
 		$('#version').text("(loading)");
-		updateQueryParams({version: version});
+		queryParams.update({version: version});
 		var isFirefox = typeof InstallTrigger !== 'undefined';
 		if (document.location.protocol != 'file:' && Worker !== undefined && isFirefox) {
 			// Workers cannot load js on "file:"-URLs and we get a
@@ -811,7 +725,7 @@ var run = function() {
 		}
 	};
 
-	loadVersion( getQueryParams().version || 'soljson-latest.js');
+	loadVersion( queryParams.get().version || 'soljson-latest.js');
 
 	editor.getSession().on('change', onChange);
 	editor.on('changeSession', function(){
@@ -820,7 +734,7 @@ var run = function() {
 	});
 
 	document.querySelector('#optimize').addEventListener('change', function(){
-		updateQueryParams({optimize: document.querySelector('#optimize').checked });
+		queryParams.update({optimize: document.querySelector('#optimize').checked });
 		compile();
 	});
 
@@ -1041,8 +955,7 @@ var run = function() {
 		return funABI;
 	};
 
-	syncStorage();
-
+	storageHandler.sync();
 };
 
 module.exports = {
