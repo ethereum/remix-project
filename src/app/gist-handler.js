@@ -16,7 +16,8 @@ function handleLoad(cb) {
       loadingFromGist = !!gistId;
     }
     if (loadingFromGist) cb(gistId);
-  }  
+  }
+  return loadingFromGist;
 }
 
 function getGistId(str) {

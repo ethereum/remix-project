@@ -1,12 +1,11 @@
 var $ = require('jquery');
 var UniversalDApp = require('./universal-dapp.js');
 var web3 = require('./web3-adapter.js');
-var ace = require('brace');
-require('./mode-solidity.js');
 
 var queryParams = require('./app/query-params');
 var gistHandler = require('./app/gist-handler');
 var StorageHandler = require('./app/storage-handler');
+var Editor = require('./app/editor');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -45,11 +44,11 @@ var run = function() {
 			}
 			window.localStorage[key] = content;
 		}
-		SOL_CACHE_FILE = fileKey(Object.keys(files)[0]);
+		editor.setCacheFile(fileKey(Object.keys(files)[0]));
 		updateFiles();
 	}
 
-	gistHandler.handleLoad(function(gistId) {
+	var loadingFromGist = gistHandler.handleLoad(function(gistId) {
 		$.ajax({
 	    url: 'https://api.github.com/gists/'+gistId,
 	    jsonp: 'callback',
@@ -83,46 +82,7 @@ var run = function() {
 
 	// ----------------- editor ----------------------
 
-	var SOL_CACHE_UNTITLED = SOL_CACHE_FILE_PREFIX + 'Untitled';
-	var SOL_CACHE_FILE = null;
-
-	var editor = ace.edit("input");
-	var sessions = {};
-
-	var Range = ace.acequire('ace/range').Range;
-	var errMarkerId = null;
-
-	var untitledCount = '';
-	if (!getFiles().length || window.localStorage['sol-cache']) {
-		if(loadingFromGist) return;
-		// Backwards-compatibility
-		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
-			untitledCount = (untitledCount - 0) + 1;
-		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-		window.localStorage[SOL_CACHE_FILE] = window.localStorage['sol-cache'] || BALLOT_EXAMPLE;
-		window.localStorage.removeItem('sol-cache');
-	}
-
-	SOL_CACHE_FILE = getFiles()[0];
-
-
-	var files = getFiles();
-	for (var x in files) {
-		sessions[files[x]] = newEditorSession(files[x]);
-	}
-
-	editor.setSession( sessions[SOL_CACHE_FILE] );
-	editor.resize(true);
-
-	function newEditorSession(filekey) {
-		var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript");
-		s.setUndoManager(new ace.UndoManager());
-		s.setTabSize(4);
-		s.setUseSoftTabs(true);
-		sessions[filekey] = s;
-		return s;
-	}
-
+	var editor = new Editor(ace, loadingFromGist, SOL_CACHE_FILE_PREFIX);
 
 
 	// ----------------- tabbed menu -------------------
@@ -185,7 +145,7 @@ var run = function() {
 
 	var packageFiles = function() {
 		var files = {};
-		var filesArr = getFiles();
+		var filesArr = editor.getFiles();
 
 		for (var f in filesArr) {
 			files[fileNameFromKey(filesArr[f])] = {
@@ -236,12 +196,7 @@ var run = function() {
 	var FILE_SCROLL_DELTA = 300;
 
 	$('.newFile').on('click', function() {
-		untitledCount = '';
-		while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
-			untitledCount = (untitledCount - 0) + 1;
-		SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-		sessions[SOL_CACHE_FILE] = null;
-		window.localStorage[SOL_CACHE_FILE] = '';
+		editor.newFile();
 		updateFiles();
 
 		$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ "px"}, "slow", function(){
@@ -274,7 +229,7 @@ var run = function() {
 				var content = window.localStorage.getItem( fileKey(originalName) );
 				window.localStorage[fileKey( newName )] = content;
 				window.localStorage.removeItem( fileKey( originalName) );
-				SOL_CACHE_FILE = fileKey( newName );
+				editor.setCacheFile(fileKey( newName ));
 			}
 
 			updateFiles();
@@ -287,11 +242,10 @@ var run = function() {
 	$filesEl.on('click', '.file .remove', function(ev) {
 		ev.preventDefault();
 		var name = $(this).parent().find('.name').text();
-		var index = getFiles().indexOf( fileKey(name) );
 
 		if (confirm("Are you sure you want to remove: " + name + " from local storage?")) {
 			window.localStorage.removeItem( fileKey( name ) );
-			SOL_CACHE_FILE = getFiles()[ Math.max(0, index - 1)];
+			editor.setNextFile(fileKey(name));
 			updateFiles();
 		}
 		return false;
@@ -299,7 +253,7 @@ var run = function() {
 
 	function showFileHandler(ev) {
 		ev.preventDefault();
-		SOL_CACHE_FILE = fileKey( $(this).find('.name').text() );
+		editor.setCacheFile(fileKey( $(this).find('.name').text() ));
 		updateFiles();
 		return false;
 	}
@@ -312,7 +266,7 @@ var run = function() {
 
 	function updateFiles() {
 		var $filesEl = $('#files');
-		var files = getFiles();
+		var files = editor.getFiles();
 
 		$filesEl.find('.file').remove();
 
@@ -320,14 +274,13 @@ var run = function() {
 			$filesEl.append(fileTabTemplate(files[f]));
 		}
 
-		if (SOL_CACHE_FILE) {
-			var active = fileTabFromKey(SOL_CACHE_FILE);
+		if (editor.cacheFileIsPresent()) {
+			var active = fileTabFromKey(editor.getCacheFile());
 			active.addClass('active');
-			editor.setSession( sessions[SOL_CACHE_FILE] );
-			editor.focus();
+			editor.resetSession();
 		}
-		$('#input').toggle( !!SOL_CACHE_FILE );
-		$('#output').toggle( !!SOL_CACHE_FILE );
+		$('#input').toggle( editor.cacheFileIsPresent() );
+		$('#output').toggle( editor.cacheFileIsPresent() );
 		reAdjust();
 	}
 
@@ -343,18 +296,6 @@ var run = function() {
 	function fileNameFromKey(key) {
 		return key.replace( SOL_CACHE_FILE_PREFIX, '' );
 	}
-
-	function getFiles() {
-		var files = [];
-		for (var f in localStorage ) {
-			if (f.indexOf( SOL_CACHE_FILE_PREFIX, 0 ) === 0) {
-				files.push(f);
-				if (!sessions[f]) sessions[f] = newEditorSession(f);
-			}
-		}
-		return files;
-	}
-
 
 	$filesWrapper = $('.files-wrapper');
 	$scrollerRight = $('.scroller-right');
@@ -500,16 +441,6 @@ var run = function() {
 
 	function onResize() {
 		editor.resize();
-		var session = editor.getSession();
-		session.setUseWrapMode(document.querySelector('#editorWrap').checked);
-		if(session.getUseWrapMode()) {
-			var characterWidth = editor.renderer.characterWidth;
-			var contentWidth = editor.container.ownerDocument.getElementsByClassName("ace_scroller")[0].clientWidth;
-
-			if(contentWidth > 0) {
-				session.setWrapLimit(parseInt(contentWidth / characterWidth, 10));
-			}
-		}
 		reAdjust();
 	}
 	window.onresize = onResize;
@@ -526,15 +457,14 @@ var run = function() {
 	var previousInput = '';
 	var sourceAnnotations = [];
 	var compile = function(missingInputs) {
-		editor.getSession().clearAnnotations();
+		editor.clearAnnotations();
 		sourceAnnotations = [];
-		editor.getSession().removeMarker(errMarkerId);
 		$('#output').empty();
 		var input = editor.getValue();
-		window.localStorage.setItem(SOL_CACHE_FILE, input);
+		window.localStorage.setItem(editor.getCacheFile(), input);
 
 		var files = {};
-		files[fileNameFromKey(SOL_CACHE_FILE)] = input;
+		files[fileNameFromKey(editor.getCacheFile())] = input;
 		gatherImports(files, missingInputs, function(input, error) {
 			$('#output').empty();
 			if (input === null) {
@@ -577,7 +507,7 @@ var run = function() {
 	var onChange = function() {
 		var input = editor.getValue();
 		if (input === "") {
-			window.localStorage.setItem(SOL_CACHE_FILE, '');
+			window.localStorage.setItem(editor.getCacheFile(), '');
 			return;
 		}
 		if (input === previousInput)
@@ -627,7 +557,7 @@ var run = function() {
 		importHints = importHints || [];
 		if (!compilerAcceptsMultipleFiles)
 		{
-			cb(files[fileNameFromKey(SOL_CACHE_FILE)]);
+			cb(files[fileNameFromKey(editor.getCacheFile())]);
 			return;
 		}
 		var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g;
@@ -642,10 +572,10 @@ var run = function() {
 			while (importHints.length > 0) {
 				var m = importHints.pop();
 				if (m in files) continue;
-				if (getFiles().indexOf(fileKey(m)) !== -1) {
+				if (editor.getFiles().indexOf(fileKey(m)) !== -1) {
 					files[m] = window.localStorage[fileKey(m)];
 					reloop = true;
-				} else if (m.startsWith('./') && getFiles().indexOf(fileKey(m.slice(2))) !== -1) {
+				} else if (m.startsWith('./') && editor.getFiles().indexOf(fileKey(m.slice(2))) !== -1) {
 					files[m] = window.localStorage[fileKey(m.slice(2))];
 					reloop = true;
 				} else if (m in cachedRemoteFiles) {
@@ -727,11 +657,7 @@ var run = function() {
 
 	loadVersion( queryParams.get().version || 'soljson-latest.js');
 
-	editor.getSession().on('change', onChange);
-	editor.on('changeSession', function(){
-		editor.getSession().on('change', onChange);
-		onChange();
-	});
+	editor.onChangeSetup(onChange);
 
 	document.querySelector('#optimize').addEventListener('change', function(){
 		queryParams.update({optimize: document.querySelector('#optimize').checked });
@@ -755,24 +681,23 @@ var run = function() {
 			var errFile = err[1];
 			var errLine = parseInt(err[2], 10) - 1;
 			var errCol = err[4] ? parseInt(err[4], 10) : 0;
-			if (errFile == '' || errFile == fileNameFromKey(SOL_CACHE_FILE)) {
+			if (errFile == '' || errFile == fileNameFromKey(editor.getCacheFile())) {
 				sourceAnnotations[sourceAnnotations.length] = {
 					row: errLine,
 					column: errCol,
 					text: message,
 					type: type
 				};
-				editor.getSession().setAnnotations(sourceAnnotations);
+				editor.setAnnotations(sourceAnnotations);
 			}
 			$error.click(function(ev){
-				if (errFile != '' && errFile != fileNameFromKey(SOL_CACHE_FILE) && getFiles().indexOf(fileKey(errFile)) !== -1) {
+				if (errFile != '' && errFile != fileNameFromKey(editor.getCacheFile()) && editor.getFiles().indexOf(fileKey(errFile)) !== -1) {
 					// Switch to file
-					SOL_CACHE_FILE = fileKey(errFile);
+					editor.setCacheFile(fileKey(errFile));
 					updateFiles();
 					//@TODO could show some error icon in files with errors
 				}
-				editor.focus();
-				editor.gotoLine(errLine + 1, errCol - 1, true);
+				editor.handleErrorClick(errLine, errCol);
 			});
 			$error.find('.close').click(function(ev){
 				ev.preventDefault();
