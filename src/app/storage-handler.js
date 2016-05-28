@@ -1,4 +1,4 @@
-function StorageHandler(SOL_CACHE_FILE_PREFIX) {
+function StorageHandler(updateFiles, SOL_CACHE_FILE_PREFIX) {
 
   this.sync = function() {
 

@@ -75,7 +75,7 @@ var run = function() {
 
 	var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
 
-	var storageHandler = new StorageHandler(SOL_CACHE_FILE_PREFIX);
+	var storageHandler = new StorageHandler(updateFiles, SOL_CACHE_FILE_PREFIX);
 	window.syncStorage = storageHandler.sync;
 	storageHandler.sync();
 
