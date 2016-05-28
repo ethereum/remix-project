@@ -82,7 +82,7 @@ var run = function() {
 
 	// ----------------- editor ----------------------
 
-	var editor = new Editor(ace, loadingFromGist, SOL_CACHE_FILE_PREFIX);
+	var editor = new Editor(loadingFromGist, SOL_CACHE_FILE_PREFIX);
 
 
 	// ----------------- tabbed menu -------------------

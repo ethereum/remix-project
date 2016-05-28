@@ -1,7 +1,7 @@
 var ace = require('brace');
 require('../mode-solidity.js');
 
-function Editor(ace, loadingFromGist, SOL_CACHE_FILE_PREFIX) {
+function Editor(loadingFromGist, SOL_CACHE_FILE_PREFIX) {
 
   this.newFile = function() {
     untitledCount = '';
