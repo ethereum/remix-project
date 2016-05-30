@@ -1,7 +1,9 @@
 var queryParams = require('./query-params');
 var utils = require('./utils');
 
-function Compiler(editor, renderContracts, renderError, errortype, handleGithubCall, outputField, hidingRHP) {
+var Base64 = require('js-base64').Base64;
+
+function Compiler(editor, renderContracts, renderError, handleGithubCall, outputField, hidingRHP) {
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;
@@ -108,12 +110,12 @@ function Compiler(editor, renderContracts, renderError, errortype, handleGithubC
 
     if (data['error'] !== undefined) {
       renderError(data['error']);
-      if (errortype(data['error']) !== 'warning') noFatalErrors = false;
+      if (utils.errortype(data['error']) !== 'warning') noFatalErrors = false;
     }
     if (data['errors'] != undefined) {
       data['errors'].forEach(function(err) {
         renderError(err);
-        if (errortype(err) !== 'warning') noFatalErrors = false;
+        if (utils.errortype(err) !== 'warning') noFatalErrors = false;
       });
     }
 

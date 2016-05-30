@@ -20,8 +20,6 @@ window.addEventListener("message", function(ev) {
 	}
 }, false);
 
-var Base64 = require('js-base64').Base64;
-
 var run = function() {
 
 	// ------------------ query params (hash) ----------------
@@ -446,12 +444,8 @@ var run = function() {
 	// ----------------- compiler output renderer ----------------------
 	var detailsOpen = {};
 
-	function errortype(message) {
-		return message.match(/^.*:[0-9]*:[0-9]* Warning: /) ? 'warning' : 'error';
-	}
-
 	var renderError = function(message) {
-		var type = errortype(message);
+		var type = utils.errortype(message);
 		var $pre = $("<pre />").text(message);
 		var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
 		$('#output').append( $error );
@@ -665,7 +659,7 @@ var run = function() {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
-	var compiler = new Compiler(editor, renderContracts, renderError, errortype, handleGithubCall, $('#output'), function() { return hidingRHP; });
+	var compiler = new Compiler(editor, renderContracts, renderError, handleGithubCall, $('#output'), function() { return hidingRHP; });
 
 	function setVersionText(text) {
 		$('#version').text(text);

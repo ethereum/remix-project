@@ -12,8 +12,13 @@ function fileNameFromKey(key) {
   return key.replace( getCacheFilePrefix(), '' );
 }
 
+function errortype(message) {
+  return message.match(/^.*:[0-9]*:[0-9]* Warning: /) ? 'warning' : 'error';
+}
+
 module.exports = {
   getCacheFilePrefix: getCacheFilePrefix,
   fileKey: fileKey,
-  fileNameFromKey: fileNameFromKey
+  fileNameFromKey: fileNameFromKey,
+  errortype: errortype
 };
