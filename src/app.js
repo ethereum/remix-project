@@ -45,7 +45,7 @@ var run = function() {
 			}
 			window.localStorage[key] = content;
 		}
-		editor.setCacheFile(utils.fileKey(Object.keys(files)[0]));
+		editor.setCacheFile(Object.keys(files)[0]);
 		updateFiles();
 	}
 
@@ -228,7 +228,7 @@ var run = function() {
 				var content = window.localStorage.getItem( utils.fileKey(originalName) );
 				window.localStorage[utils.fileKey( newName )] = content;
 				window.localStorage.removeItem( utils.fileKey( originalName) );
-				editor.setCacheFile(utils.fileKey( newName ));
+				editor.setCacheFile(newName);
 			}
 
 			updateFiles();
@@ -252,13 +252,13 @@ var run = function() {
 
 	function showFileHandler(ev) {
 		ev.preventDefault();
-		editor.setCacheFile(utils.fileKey( $(this).find('.name').text() ));
+		editor.setCacheFile($(this).find('.name').text());
 		updateFiles();
 		return false;
 	}
 
-	function fileTabFromKey(key) {
-		var name = utils.fileNameFromKey(key);
+	function fileTabFromKey() {
+		var name = editor.getCacheFile();
 		return $('#files .file').filter(function(){ return $(this).find('.name').text() == name; });
 	}
 
@@ -274,7 +274,7 @@ var run = function() {
 		}
 
 		if (editor.cacheFileIsPresent()) {
-			var active = fileTabFromKey(editor.getCacheFile());
+			var active = fileTabFromKey();
 			active.addClass('active');
 			editor.resetSession();
 		}
@@ -454,7 +454,7 @@ var run = function() {
 			var errFile = err[1];
 			var errLine = parseInt(err[2], 10) - 1;
 			var errCol = err[4] ? parseInt(err[4], 10) : 0;
-			if (errFile == '' || errFile == utils.fileNameFromKey(editor.getCacheFile())) {
+			if (errFile == '' || errFile == editor.getCacheFile()) {
 				compiler.addAnnotation({
 					row: errLine,
 					column: errCol,
@@ -463,9 +463,9 @@ var run = function() {
 				});
 			}
 			$error.click(function(ev){
-				if (errFile != '' && errFile != utils.fileNameFromKey(editor.getCacheFile()) && editor.getFiles().indexOf(utils.fileKey(errFile)) !== -1) {
+				if (errFile != '' && errFile != editor.getCacheFile() && editor.getFiles().indexOf(utils.fileKey(errFile)) !== -1) {
 					// Switch to file
-					editor.setCacheFile(utils.fileKey(errFile));
+					editor.setCacheFile(errFile);
 					updateFiles();
 					//@TODO could show some error icon in files with errors
 				}

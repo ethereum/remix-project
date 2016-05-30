@@ -15,11 +15,11 @@ function Editor(loadingFromGist) {
   };
 
   this.setCacheFile = function(cacheFile) {
-    SOL_CACHE_FILE = cacheFile;
+    SOL_CACHE_FILE = utils.fileKey(cacheFile);
   };
 
   this.getCacheFile = function() {
-    return SOL_CACHE_FILE;
+    return utils.fileNameFromKey(SOL_CACHE_FILE);
   };
 
   this.cacheFileIsPresent = function() {
