@@ -18,6 +18,10 @@ function Editor(loadingFromGist) {
     SOL_CACHE_FILE = utils.fileKey(cacheFile);
   };
 
+  this.getRawCacheFile = function() {
+    return SOL_CACHE_FILE;
+  };
+
   this.getCacheFile = function() {
     return utils.fileNameFromKey(SOL_CACHE_FILE);
   };

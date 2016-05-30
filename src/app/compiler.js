@@ -1,9 +1,11 @@
 var queryParams = require('./query-params');
 var utils = require('./utils');
+var Renderer = require('./renderer');
 
 var Base64 = require('js-base64').Base64;
 
-function Compiler(editor, renderContracts, renderError, handleGithubCall, outputField, hidingRHP) {
+function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
+  var renderer = new Renderer(editor, this, updateFiles);
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;
@@ -19,7 +21,7 @@ function Compiler(editor, renderContracts, renderError, handleGithubCall, output
   function onChange() {
     var input = editor.getValue();
     if (input === "") {
-      window.localStorage.setItem(editor.getCacheFile(), '');
+      window.localStorage.setItem(editor.getRawCacheFile(), '');
       return;
     }
     if (input === previousInput)
@@ -36,14 +38,14 @@ function Compiler(editor, renderContracts, renderError, handleGithubCall, output
     sourceAnnotations = [];
     outputField.empty();
     var input = editor.getValue();
-    window.localStorage.setItem(editor.getCacheFile(), input);
+    window.localStorage.setItem(editor.getRawCacheFile(), input);
 
     var files = {};
-    files[utils.fileNameFromKey(editor.getCacheFile())] = input;
+    files[editor.getCacheFile()] = input;
     gatherImports(files, missingInputs, function(input, error) {
       outputField.empty();
       if (input === null) {
-        renderError(error);
+        render.error(error);
       } else {
         var optimize = queryParams.get().optimize;
         compileJSON(input, optimize ? 1 : 0);
@@ -104,17 +106,17 @@ function Compiler(editor, renderContracts, renderError, handleGithubCall, output
     try {
       data = JSON.parse(result);
     } catch (exception) {
-      renderError('Invalid JSON output from the compiler: ' + exception);
+      renderer.error('Invalid JSON output from the compiler: ' + exception);
       return;
     }
 
     if (data['error'] !== undefined) {
-      renderError(data['error']);
+      renderer.error(data['error']);
       if (utils.errortype(data['error']) !== 'warning') noFatalErrors = false;
     }
     if (data['errors'] != undefined) {
       data['errors'].forEach(function(err) {
-        renderError(err);
+        renderer.error(err);
         if (utils.errortype(err) !== 'warning') noFatalErrors = false;
       });
     }
@@ -122,7 +124,7 @@ function Compiler(editor, renderContracts, renderError, handleGithubCall, output
     if (missingInputs !== undefined && missingInputs.length > 0)
       this.compile(missingInputs);
     else if (noFatalErrors && !hidingRHP())
-      renderContracts(data, editor.getValue());
+      renderer.contracts(data, editor.getValue());
   }
 
   this.initializeWorker = function(version, setVersionText) {
@@ -154,7 +156,7 @@ function Compiler(editor, renderContracts, renderError, handleGithubCall, output
     importHints = importHints || [];
     if (!compilerAcceptsMultipleFiles)
     {
-      cb(files[utils.fileNameFromKey(editor.getCacheFile())]);
+      cb(files[editor.getCacheFile()]);
       return;
     }
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g;
