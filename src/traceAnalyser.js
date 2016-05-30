@@ -55,7 +55,7 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
     this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress)
   } else if (step.op === 'SSTORE') {
     this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress, step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
-  } else if (!step.op === 'RETURN') {
+  } else if (traceManagerUtil.isReturnInstruction(step)) {
     context.currentStorageAddress = context.previousStorageAddress
     this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress)
   }

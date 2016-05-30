@@ -27,7 +27,9 @@ module.exports = {
   // vmTraceIndex has to point to a CALL, CODECALL, ...
   resolveCalledAddress: function (vmTraceIndex, trace) {
     var step = trace[vmTraceIndex]
-    if (this.isCallInstruction(step)) {
+    if (this.isCreateInstruction(step)) {
+      return '(Contract Creation Code) ' + vmTraceIndex
+    } else if (this.isCallInstruction(step)) {
       var stack = step.stack // callcode, delegatecall, ...
       return stack[stack.length - 2]
     }

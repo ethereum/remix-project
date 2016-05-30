@@ -17,7 +17,7 @@ TraceRetriever.prototype.getTrace = function (txHash, callback) {
 }
 
 TraceRetriever.prototype.getStorage = function (tx, address, callback) {
-  if (tx.to === '(Contract Creation Code)') {
+  if (tx.to === '(Contract Creation Code)' || address.indexOf('(Contract Creation Code)') !== -1) {
     callback(null, {})
   } else if (this.storages[address]) {
     callback(null, this.storages[address])

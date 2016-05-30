@@ -12,11 +12,15 @@ module.exports = React.createClass({
   },
 
   getInitialState: function () {
-    return {blockNumber: '1000110', txNumber: '0x50a420e75151e7f04a014019598764102675e0c6c8979f1089690c594cbe871c', from: '', to: '', hash: ''}
+    return {blockNumber: '1000110', txNumber: '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51', from: '', to: '', hash: ''}
   },
 
   // creation 0xa9619e1d0a35b2c1d686f5b661b3abd87f998d2844e8e9cc905edb57fc9ce349
   // invokation 0x71a6d583d16d142c5c3e8903060e8a4ee5a5016348a9448df6c3e63b68076ec4
+  
+  // test:
+  // creation: 0x72908de76f99fca476f9e3a3b5d352f350a98cd77d09cebfc59ffe32a6ecaa0b
+  // invokation: 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51
 
   submit: function () {
     var tx

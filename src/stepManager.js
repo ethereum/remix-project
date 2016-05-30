@@ -77,6 +77,7 @@ module.exports = React.createClass({
       return
     }
     this.props.onStepChanged(step)
+    this.refs.slider.setValue(step)
     this.changeState(step)
   },
 
