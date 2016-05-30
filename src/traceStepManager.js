@@ -26,6 +26,9 @@ TraceStepManager.prototype.findStepOverForward = function (currentStep) {
 }
 
 TraceStepManager.prototype.findStepOutBack = function (currentStep) {
+  if (!this.traceAnalyser.trace) {
+    return currentStep
+  }
   var i = currentStep - 1
   var depth = 0
   while (--i >= 0) {
@@ -39,10 +42,13 @@ TraceStepManager.prototype.findStepOutBack = function (currentStep) {
       depth++
     }
   }
-  return i
+  return i + 1
 }
 
 TraceStepManager.prototype.findStepOutForward = function (currentStep) {
+  if (!this.traceAnalyser.trace) {
+    return currentStep
+  }
   var i = currentStep
   var depth = 0
   while (++i < this.traceAnalyser.trace.length) {
@@ -56,10 +62,13 @@ TraceStepManager.prototype.findStepOutForward = function (currentStep) {
       depth++
     }
   }
-  return i
+  return i - 1
 }
 
 TraceStepManager.prototype.findNextCall = function (currentStep) {
+  if (!this.traceAnalyser.trace) {
+    return currentStep
+  }
   var i = currentStep
   while (++i < this.traceAnalyser.trace.length) {
     if (this.isCallInstruction(i)) {

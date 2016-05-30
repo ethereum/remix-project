@@ -38,7 +38,7 @@ TraceCache.prototype.pushContractCreationFromMemory = function (index, token, tr
   var stack = trace[index].stack
   var offset = 2 * parseInt(stack[stack.length - 2], 16)
   var size = 2 * parseInt(stack[stack.length - 3], 16)
-  this.contractCreation[token] = '0x' + memory.substr(offset, size)
+  this.contractCreation[token] = '0x' + memory.join('').substr(offset, size)
 }
 
 TraceCache.prototype.pushContractCreation = function (token, code) {

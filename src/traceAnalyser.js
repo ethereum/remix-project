@@ -53,7 +53,7 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
       console.log('unable to build storage changes. ' + index + ' does not match with a CALL. storage changes will be corrupted')
     }
     this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress)
-  } else if (step.op === 'SSTORE') {
+  } else if (traceManagerUtil.isSSTOREInstruction(step)) {
     this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress, step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
   } else if (traceManagerUtil.isReturnInstruction(step)) {
     context.currentStorageAddress = context.previousStorageAddress

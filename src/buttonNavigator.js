@@ -17,39 +17,43 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div>
-        <button onClick={this.props.stepIntoBack} disabled={this.checkButtonState(-1)}>
+        <button ref='intoback' onClick={this.props.stepIntoBack}>
           Step Into Back
         </button>
-        <button onClick={this.props.stepOverBack} disabled={this.checkButtonState(-1)}>
+        <button ref='overback' onClick={this.props.stepOverBack}>
           Step Over Back
         </button>
-        <button onClick={this.props.stepOverForward} disabled={this.checkButtonState(1)}>
+        <button ref='overforward' onClick={this.props.stepOverForward}>
           Step Over Forward
         </button>
-        <button onClick={this.props.stepIntoForward} disabled={this.checkButtonState(1)}>
+        <button ref='intoforward' onClick={this.props.stepIntoForward}>
           Step Into Forward
         </button>
-        <button onClick={this.props.jumpNextCall} disabled={this.checkButtonState(1)}>
+        <button ref='nextcall' onClick={this.props.jumpNextCall}>
           Jump Next Call
         </button>
       </div>
     )
   },
 
-  checkButtonState: function (incr) {
+  stepChanged: function (step) {
+    this.refs.intoback.disabled = step <= 0
+    this.refs.overback.disabled = step <= 0
     if (!this.context.traceManager) {
-      return false
+      this.refs.intoforward.disabled = true
+      this.refs.overforward.disabled = true
+      this.refs.nextcall.disabled = true
+    } else {
+      var self = this
+      this.context.traceManager.getLength(function (error, length) {
+        if (error) {
+          console.log(error)
+        } else {
+          self.refs.intoforward.disabled = step >= length - 1
+          self.refs.overforward.disabled = step >= length - 1
+          self.refs.nextcall.disabled = step >= length - 1
+        }
+      })
     }
-    var self = this
-    this.context.traceManager.getLength(function (error, length) {
-      if (error) {
-        return false
-      }
-      if (incr === -1) {
-        return self.props.step === 0 ? 'disabled' : ''
-      } else if (incr === 1) {
-        return self.props.step >= self.props.max - 1 ? 'disabled' : ''
-      }
-    })
   }
 })

@@ -29,6 +29,7 @@ module.exports = React.createClass({
           min='0'
           max={this.state.traceLength} />
         <ButtonNavigator
+          ref='buttons'
           stepIntoBack={this.stepIntoBack}
           stepIntoForward={this.stepIntoForward}
           stepOverBack={this.stepOverBack}
@@ -40,7 +41,7 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function () {
-    this.updateGlobalSelectedItem(0)
+    this.changeState(-1)
   },
 
   updateGlobalSelectedItem: function (value) {
@@ -49,6 +50,7 @@ module.exports = React.createClass({
 
   init: function () {
     this.refs.slider.setValue(0)
+    this.changeState(-1)
   },
 
   newTraceAvailable: function () {
@@ -59,12 +61,13 @@ module.exports = React.createClass({
         console.log(error)
       } else {
         self.setState({ traceLength: length })
+        self.changeState(0)
       }
     })
   },
 
   sliderMoved: function (step) {
-    if (step >= this.state.traceLength || step < 0) {
+    if (!this.context.traceManager.inRange(step)) {
       return
     }
     this.props.onStepChanged(step)
@@ -72,8 +75,11 @@ module.exports = React.createClass({
   },
 
   stepIntoForward: function () {
+    if (!this.context.traceManager.isLoaded()) {
+      return
+    }
     var step = this.state.currentStepIndex + 1
-    if (step >= this.state.traceLength || step < 0) {
+    if (!this.context.traceManager.inRange(step)) {
       return
     }
     this.props.onStepChanged(step)
@@ -82,8 +88,11 @@ module.exports = React.createClass({
   },
 
   stepIntoBack: function () {
+    if (!this.context.traceManager.isLoaded()) {
+      return
+    }
     var step = this.state.currentStepIndex - 1
-    if (step >= this.state.traceLength || step < 0) {
+    if (!this.context.traceManager.inRange(step)) {
       return
     }
     this.props.onStepChanged(step)
@@ -92,30 +101,30 @@ module.exports = React.createClass({
   },
 
   stepOverForward: function () {
-    var step = this.context.traceManager.findStepOverForward(this.state.currentStepIndex)
-    if (step >= this.state.traceLength || step < 0) {
+    if (!this.context.traceManager.isLoaded()) {
       return
     }
+    var step = this.context.traceManager.findStepOverForward(this.state.currentStepIndex)
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
   },
 
   stepOverBack: function () {
-    var step = this.context.traceManager.findStepOverBack(this.state.currentStepIndex)
-    if (step >= this.state.traceLength || step < 0) {
+    if (!this.context.traceManager.isLoaded()) {
       return
     }
+    var step = this.context.traceManager.findStepOverBack(this.state.currentStepIndex)
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
   },
 
   jumpToNextCall: function () {
-    var step = this.context.traceManager.findNextCall(this.state.currentStepIndex)
-    if (step >= this.state.traceLength || step < 0) {
+    if (!this.context.traceManager.isLoaded()) {
       return
     }
+    var step = this.context.traceManager.findNextCall(this.state.currentStepIndex)
     this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
@@ -126,5 +135,6 @@ module.exports = React.createClass({
     this.setState({
       currentStepIndex: step
     })
+    this.refs.buttons.stepChanged(step)
   }
 })

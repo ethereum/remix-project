@@ -53,6 +53,14 @@ TraceManager.prototype.init = function () {
 }
 
 // API section
+TraceManager.prototype.inRange = function (step) {
+  return this.isLoaded() && step >= 0 && step < this.trace.length
+}
+
+TraceManager.prototype.isLoaded = function () {
+  return !this.isLoading && this.trace !== null
+}
+
 TraceManager.prototype.getLength = function (callback) {
   if (!this.trace) {
     callback('no trace available', null)
@@ -62,9 +70,9 @@ TraceManager.prototype.getLength = function (callback) {
 }
 
 TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var stoChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.storageChanges)
   if (stoChange === undefined) return callback('no storage found', null)
@@ -86,9 +94,9 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
 }
 
 TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var callDataChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.callDataChanges)
   if (callDataChange === undefined) return callback('no calldata found', null)
@@ -96,9 +104,9 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var callStackChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.callChanges)
   if (callStackChange === undefined) return callback('no callstack found', null)
@@ -106,9 +114,9 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.getStackAt = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var stack
   if (this.trace[stepIndex].stack) { // there's always a stack
@@ -121,9 +129,9 @@ TraceManager.prototype.getStackAt = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var callChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.callChanges)
   if (callChange === undefined) {
@@ -134,9 +142,9 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback) {
-  if (stepIndex > this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var self = this
   this.getLastCallChangeSince(stepIndex, function (error, addressIndex) {
@@ -167,9 +175,9 @@ TraceManager.prototype.getContractCreationCode = function (token, callback) {
 }
 
 TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   var lastChanges = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.memoryChanges)
   if (lastChanges === undefined) return callback('no memory found', null)
@@ -177,41 +185,41 @@ TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.getCurrentPC = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   callback(null, this.trace[stepIndex].pc)
 }
 
 TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   callback(null, this.trace[stepIndex].steps)
 }
 
 TraceManager.prototype.getMemExpand = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   callback(null, this.trace[stepIndex].memexpand ? this.trace[stepIndex].memexpand : '')
 }
 
 TraceManager.prototype.getStepCost = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   callback(null, this.trace[stepIndex].gasCost)
 }
 
 TraceManager.prototype.getRemainingGas = function (stepIndex, callback) {
-  if (stepIndex >= this.trace.length) {
-    callback('trace smaller than requested', null)
-    return
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
   }
   callback(null, this.trace[stepIndex].gas)
 }
@@ -239,6 +247,16 @@ TraceManager.prototype.findStepOutForward = function (currentStep) {
 
 TraceManager.prototype.findNextCall = function (currentStep) {
   return this.traceStepManager.findNextCall(currentStep)
+}
+
+// util
+TraceManager.prototype.checkRequestedStep = function (stepIndex) {
+  if (!this.trace) {
+    return 'trace not loaded'
+  } else if (stepIndex >= this.trace.length) {
+    return 'trace smaller than requested'
+  }
+  return undefined
 }
 
 module.exports = TraceManager

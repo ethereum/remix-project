@@ -49,6 +49,10 @@ module.exports = {
     return step.op === 'RETURN'
   },
 
+  isSSTOREInstruction: function (step) {
+    return step.op === 'SSTORE'
+  },
+
   newContextStorage: function (step) {
     return step.op === 'CREATE' || step.op === 'CALL'
   },
@@ -64,7 +68,7 @@ module.exports = {
   },
 
   contractCreationToken: function (index) {
-    return '(Contract Creation - Step' + index + ')'
+    return '(Contract Creation - Step ' + index + ')'
   },
 
   isContractCreation: function (address) {

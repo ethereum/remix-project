@@ -64,12 +64,12 @@ module.exports = React.createClass({
     var ret = { ascii: '', raw: '' }
     for (var k = 0; k < memorySlot.length; k += 2) {
       var raw = memorySlot.substr(k, 2)
-      var ascii = this.context.web3.toAscii(raw)
-      if (ascii === String.fromCharCode(0)) {
-        ret.ascii += '?'
-      } else {
-        ret.ascii += ascii
+      var ascii = String.fromCharCode(parseInt(raw, 16))
+      ascii = ascii.replace(/\W/g, '?')
+      if (ascii === '') {
+        ascii = '?'
       }
+      ret.ascii += ascii
       ret.raw += ' ' + raw
     }
     return ret
