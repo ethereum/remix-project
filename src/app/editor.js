@@ -1,7 +1,9 @@
+var utils = require('./utils');
+
 var ace = require('brace');
 require('../mode-solidity.js');
 
-function Editor(loadingFromGist, SOL_CACHE_FILE_PREFIX) {
+function Editor(loadingFromGist) {
 
   this.newFile = function() {
     untitledCount = '';
@@ -38,7 +40,7 @@ function Editor(loadingFromGist, SOL_CACHE_FILE_PREFIX) {
   this.getFiles = function() {
     var files = [];
     for (var f in localStorage ) {
-      if (f.indexOf( SOL_CACHE_FILE_PREFIX, 0 ) === 0) {
+      if (f.indexOf( utils.getCacheFilePrefix(), 0 ) === 0) {
         files.push(f);
         if (!sessions[f]) sessions[f] = newEditorSession(f);
       }
@@ -116,7 +118,7 @@ function Editor(loadingFromGist, SOL_CACHE_FILE_PREFIX) {
     editor.resize(true);
   }
 
-  var SOL_CACHE_UNTITLED = SOL_CACHE_FILE_PREFIX + 'Untitled';
+  var SOL_CACHE_UNTITLED = utils.getCacheFilePrefix() + 'Untitled';
   var SOL_CACHE_FILE = null;
 
   var editor = ace.edit("input");

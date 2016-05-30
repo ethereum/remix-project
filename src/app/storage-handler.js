@@ -1,4 +1,6 @@
-function StorageHandler(updateFiles, SOL_CACHE_FILE_PREFIX) {
+var utils = require('./utils');
+
+function StorageHandler(updateFiles) {
 
   this.sync = function() {
 
@@ -30,7 +32,7 @@ function StorageHandler(updateFiles, SOL_CACHE_FILE_PREFIX) {
     for (var y in window.localStorage) {
       console.log("checking", y);
       obj[y] = window.localStorage.getItem(y);
-      if (y.indexOf(SOL_CACHE_FILE_PREFIX) !== 0) continue;
+      if (y.indexOf(utils.getCacheFilePrefix()) !== 0) continue;
       count++;
       check(y);
     }

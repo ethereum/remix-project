@@ -1,6 +1,7 @@
 var queryParams = require('./query-params');
+var utils = require('./utils');
 
-function Compiler(editor, renderContracts, renderError, errortype, fileNameFromKey, fileKey, handleGithubCall, outputField, hidingRHP) {
+function Compiler(editor, renderContracts, renderError, errortype, handleGithubCall, outputField, hidingRHP) {
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;
@@ -36,7 +37,7 @@ function Compiler(editor, renderContracts, renderError, errortype, fileNameFromK
     window.localStorage.setItem(editor.getCacheFile(), input);
 
     var files = {};
-    files[fileNameFromKey(editor.getCacheFile())] = input;
+    files[utils.fileNameFromKey(editor.getCacheFile())] = input;
     gatherImports(files, missingInputs, function(input, error) {
       outputField.empty();
       if (input === null) {
@@ -151,7 +152,7 @@ function Compiler(editor, renderContracts, renderError, errortype, fileNameFromK
     importHints = importHints || [];
     if (!compilerAcceptsMultipleFiles)
     {
-      cb(files[fileNameFromKey(editor.getCacheFile())]);
+      cb(files[utils.fileNameFromKey(editor.getCacheFile())]);
       return;
     }
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g;
@@ -166,11 +167,11 @@ function Compiler(editor, renderContracts, renderError, errortype, fileNameFromK
       while (importHints.length > 0) {
         var m = importHints.pop();
         if (m in files) continue;
-        if (editor.getFiles().indexOf(fileKey(m)) !== -1) {
-          files[m] = window.localStorage[fileKey(m)];
+        if (editor.getFiles().indexOf(utils.fileKey(m)) !== -1) {
+          files[m] = window.localStorage[utils.fileKey(m)];
           reloop = true;
-        } else if (m.startsWith('./') && editor.getFiles().indexOf(fileKey(m.slice(2))) !== -1) {
-          files[m] = window.localStorage[fileKey(m.slice(2))];
+        } else if (m.startsWith('./') && editor.getFiles().indexOf(utils.fileKey(m.slice(2))) !== -1) {
+          files[m] = window.localStorage[utils.fileKey(m.slice(2))];
           reloop = true;
         } else if (m in cachedRemoteFiles) {
           files[m] = cachedRemoteFiles[m];

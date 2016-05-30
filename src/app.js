@@ -2,6 +2,7 @@ var $ = require('jquery');
 var UniversalDApp = require('./universal-dapp.js');
 var web3 = require('./web3-adapter.js');
 
+var utils = require('./app/utils');
 var queryParams = require('./app/query-params');
 var gistHandler = require('./app/gist-handler');
 
@@ -36,7 +37,7 @@ var run = function() {
 
 	function loadFiles(files) {
 		for (var f in files) {
-			var key = fileKey(f);
+			var key = utils.fileKey(f);
 			var content = files[f].content;
 			if (key in window.localStorage && window.localStorage[key] != content) {
 				var count = '';
@@ -46,7 +47,7 @@ var run = function() {
 			}
 			window.localStorage[key] = content;
 		}
-		editor.setCacheFile(fileKey(Object.keys(files)[0]));
+		editor.setCacheFile(utils.fileKey(Object.keys(files)[0]));
 		updateFiles();
 	}
 
@@ -75,16 +76,14 @@ var run = function() {
 
 	// ----------------- storage --------------------
 
-	var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
-
-	var storageHandler = new StorageHandler(updateFiles, SOL_CACHE_FILE_PREFIX);
+	var storageHandler = new StorageHandler(updateFiles);
 	window.syncStorage = storageHandler.sync;
 	storageHandler.sync();
 
 
 	// ----------------- editor ----------------------
 
-	var editor = new Editor(loadingFromGist, SOL_CACHE_FILE_PREFIX);
+	var editor = new Editor(loadingFromGist);
 
 
 	// ----------------- tabbed menu -------------------
@@ -150,7 +149,7 @@ var run = function() {
 		var filesArr = editor.getFiles();
 
 		for (var f in filesArr) {
-			files[fileNameFromKey(filesArr[f])] = {
+			files[utils.fileNameFromKey(filesArr[f])] = {
 				content: localStorage[filesArr[f]]
 			};
 		}
@@ -228,10 +227,10 @@ var run = function() {
 			$fileNameInputEl.off('keyup');
 
 			if (newName !== originalName && confirm("Are you sure you want to rename: " + originalName + " to " + newName + '?')) {
-				var content = window.localStorage.getItem( fileKey(originalName) );
-				window.localStorage[fileKey( newName )] = content;
-				window.localStorage.removeItem( fileKey( originalName) );
-				editor.setCacheFile(fileKey( newName ));
+				var content = window.localStorage.getItem( utils.fileKey(originalName) );
+				window.localStorage[utils.fileKey( newName )] = content;
+				window.localStorage.removeItem( utils.fileKey( originalName) );
+				editor.setCacheFile(utils.fileKey( newName ));
 			}
 
 			updateFiles();
@@ -246,8 +245,8 @@ var run = function() {
 		var name = $(this).parent().find('.name').text();
 
 		if (confirm("Are you sure you want to remove: " + name + " from local storage?")) {
-			window.localStorage.removeItem( fileKey( name ) );
-			editor.setNextFile(fileKey(name));
+			window.localStorage.removeItem( utils.fileKey( name ) );
+			editor.setNextFile(utils.fileKey(name));
 			updateFiles();
 		}
 		return false;
@@ -255,13 +254,13 @@ var run = function() {
 
 	function showFileHandler(ev) {
 		ev.preventDefault();
-		editor.setCacheFile(fileKey( $(this).find('.name').text() ));
+		editor.setCacheFile(utils.fileKey( $(this).find('.name').text() ));
 		updateFiles();
 		return false;
 	}
 
 	function fileTabFromKey(key) {
-		var name = fileNameFromKey(key);
+		var name = utils.fileNameFromKey(key);
 		return $('#files .file').filter(function(){ return $(this).find('.name').text() == name; });
 	}
 
@@ -287,16 +286,8 @@ var run = function() {
 	}
 
 	function fileTabTemplate(key) {
-		var name = fileNameFromKey(key);
+		var name = utils.fileNameFromKey(key);
 		return $('<li class="file"><span class="name">'+name+'</span><span class="remove"><i class="fa fa-close"></i></span></li>');
-	}
-
-	function fileKey( name ) {
-		return SOL_CACHE_FILE_PREFIX + name;
-	}
-
-	function fileNameFromKey(key) {
-		return key.replace( SOL_CACHE_FILE_PREFIX, '' );
 	}
 
 	$filesWrapper = $('.files-wrapper');
@@ -469,7 +460,7 @@ var run = function() {
 			var errFile = err[1];
 			var errLine = parseInt(err[2], 10) - 1;
 			var errCol = err[4] ? parseInt(err[4], 10) : 0;
-			if (errFile == '' || errFile == fileNameFromKey(editor.getCacheFile())) {
+			if (errFile == '' || errFile == utils.fileNameFromKey(editor.getCacheFile())) {
 				compiler.addAnnotation({
 					row: errLine,
 					column: errCol,
@@ -478,9 +469,9 @@ var run = function() {
 				});
 			}
 			$error.click(function(ev){
-				if (errFile != '' && errFile != fileNameFromKey(editor.getCacheFile()) && editor.getFiles().indexOf(fileKey(errFile)) !== -1) {
+				if (errFile != '' && errFile != utils.fileNameFromKey(editor.getCacheFile()) && editor.getFiles().indexOf(utils.fileKey(errFile)) !== -1) {
 					// Switch to file
-					editor.setCacheFile(fileKey(errFile));
+					editor.setCacheFile(utils.fileKey(errFile));
 					updateFiles();
 					//@TODO could show some error icon in files with errors
 				}
@@ -674,7 +665,7 @@ var run = function() {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
-	var compiler = new Compiler(editor, renderContracts, renderError, errortype, fileNameFromKey, fileKey, handleGithubCall, $('#output'), function() { return hidingRHP; });
+	var compiler = new Compiler(editor, renderContracts, renderError, errortype, handleGithubCall, $('#output'), function() { return hidingRHP; });
 
 	function setVersionText(text) {
 		$('#version').text(text);
