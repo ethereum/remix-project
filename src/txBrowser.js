@@ -1,6 +1,7 @@
 'use strict'
 var React = require('react')
 var style = require('./basicStyles')
+var traceManagerUtil = require('./traceManagerUtil')
 
 module.exports = React.createClass({
   contextTypes: {
@@ -31,7 +32,7 @@ module.exports = React.createClass({
     }
     if (tx) {
       if (!tx.to) {
-        tx.to = '(Contract Creation Code)'
+        tx.to = traceManagerUtil.contractCreationToken('0')
       }
       this.setState({from: tx.from, to: tx.to, hash: tx.hash})
       this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber), tx)

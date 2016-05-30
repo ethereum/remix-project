@@ -2,6 +2,7 @@
 var React = require('react')
 var style = require('./basicStyles')
 var codeResolver = require('./codeResolver')
+var traceManagerUtil = require('./traceManagerUtil')
 
 module.exports = React.createClass({
   contextTypes: {
@@ -67,7 +68,7 @@ module.exports = React.createClass({
         code: ['loading...']
       })
       var self = this
-      if (address.indexOf('(Contract Creation Code)') !== -1) {
+      if (traceManagerUtil.isContractCreation(address)) {
         this.context.traceManager.getContractCreationCode(address, function (error, hexCode) {
           if (error) {
             console.log(error)

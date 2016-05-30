@@ -1,3 +1,4 @@
+'use strict'
 module.exports = {
   // util section
   findLowerBound: function (target, changes) {
@@ -28,7 +29,7 @@ module.exports = {
   resolveCalledAddress: function (vmTraceIndex, trace) {
     var step = trace[vmTraceIndex]
     if (this.isCreateInstruction(step)) {
-      return '(Contract Creation Code) ' + vmTraceIndex
+      return this.contractCreationToken(vmTraceIndex)
     } else if (this.isCallInstruction(step)) {
       var stack = step.stack // callcode, delegatecall, ...
       return stack[stack.length - 2]
@@ -60,5 +61,13 @@ module.exports = {
     } else {
       return false
     }
+  },
+
+  contractCreationToken: function (index) {
+    return '(Contract Creation - Step' + index + ')'
+  },
+
+  isContractCreation: function (address) {
+    return address.indexOf('(Contract Creation - Step') !== -1
   }
 }

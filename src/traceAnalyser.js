@@ -18,7 +18,7 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     callStack: callStack.slice(0)
   })
 
-  if (tx.to === '(Contract Creation Code)') {
+  if (traceManagerUtil.isContractCreation(tx.to)) {
     this.traceCache.pushContractCreation(tx.to, tx.input)
   }
 
@@ -65,7 +65,7 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
 TraceAnalyser.prototype.buildDepth = function (index, step, callStack) {
   if (traceManagerUtil.isCallInstruction(step) && !traceManagerUtil.isCallToPrecompiledContract(index, this.trace)) {
     if (traceManagerUtil.isCreateInstruction(step)) {
-      var contractToken = '(Contract Creation Code) ' + index
+      var contractToken = traceManagerUtil.contractCreationToken(index)
       callStack.push(contractToken)
       var lastMemoryChange = this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]
       this.traceCache.pushContractCreationFromMemory(index, contractToken, this.trace, lastMemoryChange)
