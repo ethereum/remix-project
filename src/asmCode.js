@@ -1,114 +1,56 @@
 'use strict'
 var React = require('react')
 var style = require('./basicStyles')
-var codeResolver = require('./codeResolver')
-var traceManagerUtil = require('./traceManagerUtil')
 
 module.exports = React.createClass({
   contextTypes: {
-    traceManager: React.PropTypes.object,
-    tx: React.PropTypes.object,
-    web3: React.PropTypes.object
+    codeManager: React.PropTypes.object
   },
 
   getInitialState: function () {
     return {
-      code: [],
-      selected: -1,
-      address: '' // selected instruction in the asm
-    }
-  },
-
-  getDefaultProps: function () {
-    return {
-      currentStepIndex: -1
+      code: '',
+      address: ''
     }
   },
 
   render: function () {
     return (
-      <select
-        size='10'
-        ref='itemsList'
-        style={style.instructionsList}
-        value={this.state.selected}>
+      <select size='10' ref='itemsList' style={style.instructionsList}>
         {this.renderAssemblyItems()}
       </select>
     )
   },
 
-  renderAssemblyItems: function () {
-    if (this.state.code) {
-      return this.state.code.map(function (item, i) {
-        return <option key={i} value={i}>{item}</option>
-      })
-    }
+  componentDidMount: function () {
+    this.context.codeManager.registerIndexChangedListener(this, this.indexChanged)
+    this.context.codeManager.registerCodeChangedListener(this, this.codeChanged)
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    if (nextProps.currentStepIndex < 0) return
-    codeResolver.setWeb3(this.context.web3)
-    var self = this
-    if (nextProps.currentStepIndex === 0) {
-      self.ensureCodeLoaded(this.context.tx.to, nextProps.currentStepIndex)
-    } else {
-      this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (error, address) {
-        if (error) {
-          console.log(error)
-        } else {
-          self.ensureCodeLoaded(address, nextProps.currentStepIndex)
-        }
-      })
-    }
+  indexChanged: function (index) {
+    this.refs.itemsList.value = index
   },
 
-  ensureCodeLoaded: function (address, currentStep) {
-    if (address !== this.state.address) {
-      this.setState({
-        code: ['loading...']
-      })
-      var self = this
-      if (traceManagerUtil.isContractCreation(address)) {
-        this.context.traceManager.getContractCreationCode(address, function (error, hexCode) {
-          if (error) {
-            console.log(error)
-          } else {
-            var codes = codeResolver.cacheExecutingCode(address, hexCode)
-            self.updateCode(codes.code, address, currentStep)
-          }
-        })
-      } else {
-        codeResolver.resolveCode(address, currentStep, this.context.tx, function (address, code) {
-          if (window.ethDebuggerSelectedItem !== currentStep) {
-            console.log(currentStep + ' discarded. current is ' + window.ethDebuggerSelectedItem)
-            return
-          }
-          self.updateCode(code, address, currentStep)
-        })
-      }
-    } else {
-      this.setInstructionIndex(this.state.address, currentStep)
-    }
-  },
-
-  updateCode: function (code, address, currentStep) {
+  codeChanged: function (code, address, index) {
     this.setState({
       code: code,
       address: address
     })
-    this.setInstructionIndex(address, currentStep)
+    this.refs.itemsList.value = index
   },
 
-  setInstructionIndex: function (address, step) {
-    var self = this
-    this.context.traceManager.getCurrentPC(step, function (error, instIndex) {
-      if (error) {
-        console.log(error)
-      } else {
-        self.setState({
-          selected: codeResolver.getInstructionIndex(address, instIndex)
-        })
-      }
-    })
+  shouldComponentUpdate: function (nextProps, nextState) {
+    if (nextState.address === this.state.address) {
+      return false
+    }
+    return true
+  },
+
+  renderAssemblyItems: function () {
+    if (this.state && this.state.code) {
+      return this.state.code.map(function (item, i) {
+        return <option key={i} value={i}>{item}</option>
+      })
+    }
   }
 })

@@ -42,7 +42,7 @@ TraceStepManager.prototype.findStepOutBack = function (currentStep) {
       depth++
     }
   }
-  return i + 1
+  return i
 }
 
 TraceStepManager.prototype.findStepOutForward = function (currentStep) {
@@ -62,7 +62,7 @@ TraceStepManager.prototype.findStepOutForward = function (currentStep) {
       depth++
     }
   }
-  return i - 1
+  return i
 }
 
 TraceStepManager.prototype.findNextCall = function (currentStep) {

@@ -2,37 +2,31 @@
 var React = require('react')
 var TxBrowser = require('./txBrowser')
 var StepManager = require('./stepManager')
-var AssemblyItemsBrowser = require('./vmDebugger')
-var TraceManager = require('./traceManager')
+var VmDebugger = require('./vmDebugger')
 var style = require('./basicStyles')
 
 module.exports = React.createClass({
   getInitialState: function () {
     return {
       currentStepIndex: -1, // index of the selected item in the vmtrace
-      tx: null,
-      traceManager: null
+      tx: null
     }
   },
 
   childContextTypes: {
     web3: React.PropTypes.object,
     traceManager: React.PropTypes.object,
+    codeManager: React.PropTypes.object,
     tx: React.PropTypes.object
   },
 
   getChildContext: function () {
     return {
-      web3: this.props.web3,
-      traceManager: this.state.traceManager,
+      web3: this.props.context.web3,
+      traceManager: this.props.context.traceManager,
+      codeManager: this.props.context.codeManager,
       tx: this.state.tx
     }
-  },
-
-  componentDidMount: function () {
-    this.setState({
-      traceManager: new TraceManager(this.props.web3)
-    })
   },
 
   render: function () {
@@ -41,7 +35,7 @@ module.exports = React.createClass({
         <h1 style={style.container}>Eth Debugger</h1>
         <TxBrowser onNewTxRequested={this.startDebugging} />
         <StepManager ref='stepManager' onStepChanged={this.stepChanged} />
-        <AssemblyItemsBrowser ref='assemblyitemsbrowser' currentStepIndex={this.state.currentStepIndex} />
+        <VmDebugger ref='assemblyitemsbrowser' currentStepIndex={this.state.currentStepIndex} />
       </div>
     )
   },
@@ -50,10 +44,11 @@ module.exports = React.createClass({
     this.setState({
       currentStepIndex: stepIndex
     })
+    this.props.context.codeManager.resolveCodeFor(stepIndex, this.state.tx)
   },
 
   startDebugging: function (blockNumber, txIndex, tx) {
-    if (this.state.traceManager.isLoading) {
+    if (this.props.context.traceManager.isLoading) {
       return
     }
     console.log('loading trace...')
@@ -61,12 +56,13 @@ module.exports = React.createClass({
       tx: tx
     })
     var self = this
-    this.state.traceManager.resolveTrace(tx, function (success) {
+    this.props.context.traceManager.resolveTrace(tx, function (success) {
       console.log('trace loaded ' + success)
       self.setState({
         currentStepIndex: 0
       })
       self.refs.stepManager.newTraceAvailable()
+      self.props.context.codeManager.resolveCodeFor(0, tx)
     })
   }
 })

@@ -37,7 +37,7 @@ module.exports = React.createClass({
             <tbody>
               <tr>
                 <td>
-                  <ASMCode currentStepIndex={this.props.currentStepIndex} />
+                  <ASMCode ref='asmcode' currentStepIndex={this.props.currentStepIndex} />
                   <div style={Object.assign(style.inline, style.sticker)}>
                     <Sticker currentStepIndex={this.props.currentStepIndex} />
                   </div>
@@ -67,20 +67,5 @@ module.exports = React.createClass({
         </div>
       </div>
     )
-  },
-
-  componentWillReceiveProps: function (nextProps) {
-    if (nextProps.currentStepIndex < 0) return
-    if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
-    var self = this
-    this.context.traceManager.getCurrentCalledAddressAt(nextProps.currentStepIndex, function (error, address) {
-      if (error) {
-        console.log(error)
-      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
-        self.setState({
-          currentAddress: address
-        })
-      }
-    })
   }
 })

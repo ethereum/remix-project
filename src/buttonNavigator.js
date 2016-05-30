@@ -36,6 +36,10 @@ module.exports = React.createClass({
     )
   },
 
+  shouldComponentUpdate: function () {
+    return false
+  },
+
   stepChanged: function (step) {
     this.refs.intoback.disabled = step <= 0
     this.refs.overback.disabled = step <= 0

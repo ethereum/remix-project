@@ -32,6 +32,10 @@ module.exports = React.createClass({
     )
   },
 
+  shouldComponentUpdate: function (nextProps, nextState) {
+    return (nextProps.max !== this.props.max || nextProps.min !== this.props.min)
+  },
+
   componentDidMount: function () {
     this.setValue(0)
   },
