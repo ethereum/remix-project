@@ -100,44 +100,6 @@ var run = function() {
 		}
 	});
 
-	// ----------------- execution context -------------
-
-	var $vmToggle = $('#vm');
-	var $web3Toggle = $('#web3');
-	var $web3endpoint = $('#web3Endpoint');
-
-	if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider)
-		$web3endpoint.val('ipc');
-
-	var executionContext = 'vm';
-	$vmToggle.get(0).checked = true;
-
-	$vmToggle.on('change', executionContextChange );
-	$web3Toggle.on('change', executionContextChange );
-	$web3endpoint.on('change', function() {
-		setProviderFromEndpoint();
-		if (executionContext == 'web3') compiler.compile();
-	});
-
-	function executionContextChange (ev) {
-		if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
-			$vmToggle.get(0).checked = true;
-			executionContext = 'vm';
-		} else {
-			executionContext = ev.target.value;
-			setProviderFromEndpoint();
-		}
-		compiler.compile();
-	}
-
-	function setProviderFromEndpoint() {
-		var endpoint = $web3endpoint.val();
-		if (endpoint == 'ipc')
-			web3.setProvider(new web3.providers.IpcProvider());
-		else
-			web3.setProvider(new web3.providers.HttpProvider(endpoint));
-	}
-
 
 	// ------------------ gist publish --------------
 
@@ -453,7 +415,7 @@ var run = function() {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
-	var compiler = new Compiler(editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+	var compiler = new Compiler(web3, editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
 
 	function setVersionText(text) {
 		$('#version').text(text);

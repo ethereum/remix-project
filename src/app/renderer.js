@@ -4,9 +4,48 @@ var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
 
-function Renderer(editor, compiler, updateFiles) {
+function Renderer(web3, editor, compiler, updateFiles) {
 
   var detailsOpen = {};
+  var executionContext = 'vm';
+
+  // Forcing all of this setup into its own scope.
+  (function(){
+    function executionContextChange (ev) {
+      if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
+        $vmToggle.get(0).checked = true;
+        executionContext = 'vm';
+      } else {
+        executionContext = ev.target.value;
+        setProviderFromEndpoint();
+      }
+      compiler.compile();
+    }
+
+    function setProviderFromEndpoint() {
+      var endpoint = $web3endpoint.val();
+      if (endpoint == 'ipc')
+        web3.setProvider(new web3.providers.IpcProvider());
+      else
+        web3.setProvider(new web3.providers.HttpProvider(endpoint));
+    }
+
+    var $vmToggle = $('#vm');
+    var $web3Toggle = $('#web3');
+    var $web3endpoint = $('#web3Endpoint');
+
+    if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider)
+      $web3endpoint.val('ipc');
+
+    $vmToggle.get(0).checked = true;
+
+    $vmToggle.on('change', executionContextChange );
+    $web3Toggle.on('change', executionContextChange );
+    $web3endpoint.on('change', function() {
+      setProviderFromEndpoint();
+      if (executionContext == 'web3') compiler.compile();
+    });
+  })();
 
   function renderError(message) {
     var type = utils.errortype(message);
