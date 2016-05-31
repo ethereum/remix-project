@@ -52,6 +52,18 @@ function Editor(loadingFromGist) {
     return files;
   }
 
+  this.packageFiles = function() {
+    var files = {};
+    var filesArr = this.getFiles();
+
+    for (var f in filesArr) {
+      files[utils.fileNameFromKey(filesArr[f])] = {
+        content: localStorage[filesArr[f]]
+      };
+    }
+    return files;
+  };
+
   this.resize = function() {
     editor.resize();
     var session = editor.getSession();

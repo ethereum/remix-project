@@ -21,17 +21,6 @@ window.addEventListener("message", function(ev) {
 
 var run = function() {
 
-	// ------------------ query params (hash) ----------------
-
-	function syncQueryParams() {
-	  $('#optimize').attr( 'checked', (queryParams.get().optimize == "true") );
-	}
-
-	window.onhashchange = syncQueryParams;
-	syncQueryParams();
-
-	// ------------------ gist load ----------------
-
 	function loadFiles(files) {
 		for (var f in files) {
 			var key = utils.fileKey(f);
@@ -47,6 +36,26 @@ var run = function() {
 		editor.setCacheFile(Object.keys(files)[0]);
 		updateFiles();
 	}
+
+	loadFilesCallback = function(files) {
+		loadFiles(files);
+	};
+
+	if (filesToLoad !== null)
+		loadFiles(filesToLoad);
+
+
+	// ------------------ query params (hash) ----------------
+
+	function syncQueryParams() {
+	  $('#optimize').attr( 'checked', (queryParams.get().optimize == "true") );
+	}
+
+	window.onhashchange = syncQueryParams;
+	syncQueryParams();
+
+
+	// ------------------ gist load ----------------
 
 	var loadingFromGist = gistHandler.handleLoad(function(gistId) {
 		$.ajax({
@@ -65,11 +74,6 @@ var run = function() {
     });
 	});
 
-	loadFilesCallback = function(files) {
-		loadFiles(files);
-	};
-	if (filesToLoad !== null)
-		loadFiles(filesToLoad);
 
 	// ----------------- storage --------------------
 
@@ -103,22 +107,10 @@ var run = function() {
 
 	// ------------------ gist publish --------------
 
-	var packageFiles = function() {
-		var files = {};
-		var filesArr = editor.getFiles();
-
-		for (var f in filesArr) {
-			files[utils.fileNameFromKey(filesArr[f])] = {
-				content: localStorage[filesArr[f]]
-			};
-		}
-		return files;
-	};
-
 	$('#gist').click(function(){
 		if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com?")) {
 
-			var files = packageFiles();
+			var files = editor.packageFiles();
 			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=" + queryParams.get().version + "&optimize="+ queryParams.get().optimize +"&gist=";
 
 			$.ajax({
@@ -144,7 +136,7 @@ var run = function() {
 		);
 		if (target === null)
 			return;
-		var files = packageFiles();
+		var files = editor.packageFiles();
 		var iframe = $('<iframe/>', {src: target, style: "display:none;", load: function() {
 			this.contentWindow.postMessage(["loadFiles", files], "*");
 		}}).appendTo('body');
@@ -263,7 +255,7 @@ var run = function() {
 	}
 
 	function widthOfHidden(){
-		return (($filesWrapper.outerWidth()) - widthOfList() - getLeftPosi());
+		return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi());
 	}
 
 	function widthOfVisible(){
