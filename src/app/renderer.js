@@ -66,7 +66,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
         });
       }
       $error.click(function(ev){
-        if (errFile != '' && errFile != editor.getCacheFile() && editor.getFiles().indexOf(utils.fileKey(errFile)) !== -1) {
+        if (errFile != '' && errFile != editor.getCacheFile() && editor.hasFile(errFile)) {
           // Switch to file
           editor.setCacheFile(errFile);
           updateFiles();

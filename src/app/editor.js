@@ -38,7 +38,10 @@ function Editor(loadingFromGist) {
   this.resetSession = function() {
     editor.setSession( sessions[SOL_CACHE_FILE] );
     editor.focus();
+  };
 
+  this.hasFile = function(name) {
+    return this.getFiles().indexOf(utils.fileKey(name)) !== -1
   };
 
   this.getFiles = function() {

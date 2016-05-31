@@ -45,7 +45,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     gatherImports(files, missingInputs, function(input, error) {
       outputField.empty();
       if (input === null) {
-        render.error(error);
+        renderer.error(error);
       } else {
         var optimize = queryParams.get().optimize;
         compileJSON(input, optimize ? 1 : 0);
@@ -122,7 +122,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     }
 
     if (missingInputs !== undefined && missingInputs.length > 0)
-      this.compile(missingInputs);
+      compile(missingInputs);
     else if (noFatalErrors && !hidingRHP())
       renderer.contracts(data, editor.getValue());
   }
@@ -171,10 +171,10 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
       while (importHints.length > 0) {
         var m = importHints.pop();
         if (m in files) continue;
-        if (editor.getFiles().indexOf(utils.fileKey(m)) !== -1) {
+        if (editor.hasFile(m)) {
           files[m] = window.localStorage[utils.fileKey(m)];
           reloop = true;
-        } else if (m.startsWith('./') && editor.getFiles().indexOf(utils.fileKey(m.slice(2))) !== -1) {
+        } else if (m.startsWith('./') && editor.hasFile(m.slice(2))) {
           files[m] = window.localStorage[utils.fileKey(m.slice(2))];
           reloop = true;
         } else if (m in cachedRemoteFiles) {
