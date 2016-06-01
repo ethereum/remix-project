@@ -16,14 +16,14 @@ function UniversalDApp (contracts, options) {
     if (!options.vm && web3.currentProvider) {
 
     } else if (options.vm) {
-        this.accounts = {}
+        this.accounts = {};
 
         this.BN = ethJSUtil.BN;
         this.stateTrie = new Trie();
         this.vm = new EthJSVM(this.stateTrie, null, { activatePrecompiles: true });
 
-        this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511')
-        this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c')
+        this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
+        this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
     } else {
         var host = options.host || "localhost";
         var port = options.port || "8545";
@@ -35,7 +35,7 @@ function UniversalDApp (contracts, options) {
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
     if (this.accounts) {
-        privateKey = new Buffer(privateKey, 'hex')
+        privateKey = new Buffer(privateKey, 'hex');
         var address = ethJSUtil.privateToAddress(privateKey);
 
         // FIXME: we don't care about the callback, but we should still make this proper
@@ -92,7 +92,7 @@ UniversalDApp.prototype.render = function () {
             } else {
                 var $title = $('<span class="title"/>').text( this.contracts[c].name );
                 if (this.contracts[c].bytecode) {
-                    $title.append($('<div class="size"/>').text((this.contracts[c].bytecode.length / 2) + ' bytes'))
+                    $title.append($('<div class="size"/>').text((this.contracts[c].bytecode.length / 2) + ' bytes'));
                 }
                 $contractEl.append( $title ).append( this.getCreateInterface( $contractEl, this.contracts[c]) );
             }
@@ -102,14 +102,14 @@ UniversalDApp.prototype.render = function () {
     $legend = $('<div class="legend" />')
         .append( $('<div class="attach"/>').text('Attach') )
         .append( $('<div class="transact"/>').text('Transact') )
-        .append( $('<div class="call"/>').text('Call') )
+        .append( $('<div class="call"/>').text('Call') );
 
     this.$el.append( $('<div class="poweredBy" />')
-        .html("<a href='http://github.com/d11e9/universal-dapp'>Universal ÐApp</a> powered by The Blockchain") )
+        .html("<a href='http://github.com/d11e9/universal-dapp'>Universal ÐApp</a> powered by The Blockchain") );
 
-    this.$el.append( $legend )
+    this.$el.append( $legend );
     return this.$el;
-}
+};
 
 UniversalDApp.prototype.getContractByName = function(contractName) {
     for (var c in this.contracts)
@@ -121,8 +121,8 @@ UniversalDApp.prototype.getContractByName = function(contractName) {
 UniversalDApp.prototype.getABIInputForm = function (cb){
     var self = this;
     var $el = $('<div class="udapp-setup" />');
-    var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytecode, "interface": abi }, { ... } ]\'/>')
-    var $createButton = $('<button class="udapp-create"/>').text('Create a Universal ÐApp')
+    var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytecode, "interface": abi }, { ... } ]\'/>');
+    var $createButton = $('<button class="udapp-create"/>').text('Create a Universal ÐApp');
     $createButton.click(function(ev){
         var contracts =  $.parseJSON( $jsonInput.val() );
         if (cb) {
@@ -133,30 +133,30 @@ UniversalDApp.prototype.getABIInputForm = function (cb){
             } catch(e) {
                 err = e;
             }
-            cb( err, dapp )
+            cb( err, dapp );
         } else {
             self.contracts = contracts;
-            self.$el.empty().append( self.render() )
+            self.$el.empty().append( self.render() );
         }
-    })
-    $el.append( $jsonInput ).append( $createButton )
+    });
+    $el.append( $jsonInput ).append( $createButton );
     return $el;
-}
+};
 
 
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     var self = this;
     var $createInterface = $('<div class="create"/>');
     if (this.options.removable) {
-        var $close = $('<div class="udapp-close" />')
-        $close.click( function(){ self.$el.remove(); } )
+        var $close = $('<div class="udapp-close" />');
+        $close.click( function(){ self.$el.remove(); } );
         $createInterface.append( $close );
     }
-    var $newButton = this.getInstanceInterface( contract )
-    var $atButton = $('<button class="atAddress"/>').text('At Address').click( function(){ self.clickContractAt( self, $container.find('.createContract'), contract ) } );
+    var $newButton = this.getInstanceInterface( contract );
+    var $atButton = $('<button class="atAddress"/>').text('At Address').click( function(){ self.clickContractAt( self, $container.find('.createContract'), contract ); } );
     $createInterface.append( $atButton ).append( $newButton );
     return $createInterface;
-}
+};
 
 UniversalDApp.prototype.getInstanceInterface = function (contract, address, $target) {
     var self = this;
@@ -175,8 +175,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
 
         var $instance = $('<div class="instance"/>');
         if (self.options.removable_instances) {
-            var $close = $('<div class="udapp-close" />')
-            $close.click( function(){ $instance.remove(); } )
+            var $close = $('<div class="udapp-close" />');
+            $close.click( function(){ $instance.remove(); } );
             $instance.append( $close );
         }
         var context = self.options.vm ? 'memory' : 'blockchain';
@@ -188,17 +188,20 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         $events = $('<div class="events"/>');
 
         var parseLogs = function(err,response) {
-            $event = $('<div class="event" />')
+            if (err)
+                return;
 
-            var $close = $('<div class="udapp-close" />')
-            $close.click( function(){ $event.remove(); } )
+            $event = $('<div class="event" />');
+
+            var $close = $('<div class="udapp-close" />');
+            $close.click( function(){ $event.remove(); } );
 
             $event.append( $('<span class="name"/>').text(response.event) )
                 .append( $('<span class="args" />').text( JSON.stringify(response.args, null, 2) ) )
                 .append( $close );
 
             $events.append( $event );
-        }
+        };
 
         if (self.options.vm){
             // FIXME: support indexed events
@@ -207,7 +210,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $.each(abi, function(i, funABI) {
                 if (funABI.type !== 'event') return;
 
-        var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type }))
+        var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function(item) { return item.type; }));
         eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
             });
 
@@ -224,7 +227,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                             return item.type;
                         });
                         decoded = ethJSABI.rawDecode(types, log[2]);
-                        decoded = ethJSABI.stringify(types, decoded)
+                        decoded = ethJSABI.stringify(types, decoded);
                     } catch (e) {
                         decoded = '0x' + log[2].toString('hex');
                     }
@@ -260,7 +263,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             }));
         });
         ($el || $createInterface ).append( $instance.append( $events ) );
-    }
+    };
 
     if (!address || !$target) {
         $createInterface.append( this.getCallButton({
@@ -278,7 +281,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     }
 
     return $createInterface;
-}
+};
 
 UniversalDApp.prototype.getConstructorInterface = function(abi) {
     var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
@@ -288,7 +291,7 @@ UniversalDApp.prototype.getConstructorInterface = function(abi) {
             break;
         }
     return funABI;
-}
+};
 
 UniversalDApp.prototype.getCallButton = function(args) {
     var self = this;
@@ -309,18 +312,18 @@ UniversalDApp.prototype.getCallButton = function(args) {
     var getReturnOutput = function(result) {
         var returnName = lookupOnly ? 'Value' : 'Result';
         var returnCls = lookupOnly ? 'value' : 'returned';
-        return $('<div class="' + returnCls + '">').html('<strong>' + returnName + ':</strong> ' + JSON.stringify( result, null, 2 ) )
-    }
+        return $('<div class="' + returnCls + '">').html('<strong>' + returnName + ':</strong> ' + JSON.stringify( result, null, 2 ) );
+    };
 
     var getGasUsedOutput = function (result) {
-        var $gasUsed = $('<div class="gasUsed">')
+        var $gasUsed = $('<div class="gasUsed">');
         var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
         if (result.gasUsed) {
-            var gas = result.gasUsed.toString(10)
-            $gasUsed.html('<strong>Cost:</strong> ' + gas + ' gas. ' + caveat )
+            var gas = result.gasUsed.toString(10);
+            $gasUsed.html('<strong>Cost:</strong> ' + gas + ' gas. ' + caveat );
         }
         return $gasUsed;
-    }
+    };
 
     var getDecodedOutput = function (result) {
         var $decoded;
@@ -333,7 +336,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
             $decoded = result;
         }
         return $('<div class="decoded">').html('<strong>Decoded:</strong> ').append($decoded);
-    }
+    };
 
     var getOutput = function() {
         var $result = $('<div class="result" />');
@@ -451,7 +454,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                     function testResult (err, address) {
                         if (!err && !address) {
-                            setTimeout( function(){ tryTillResponse(txhash, done) }, 500);
+                            setTimeout( function(){ tryTillResponse(txhash, done); }, 500);
                         } else done( err, address );
                     }
 
@@ -465,11 +468,11 @@ UniversalDApp.prototype.getCallButton = function(args) {
                         clearOutput($result);
                         $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
                     }
-                })
+                });
 
             }
         });
-    }
+    };
 
     var button = $('<button />')
         .addClass( 'call' )
@@ -489,7 +492,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         .append(button)
         .append( (lookupOnly && !inputs.length) ? $outputOverride : inputField );
     return $contractProperty.append(outputSpan);
-}
+};
 
 UniversalDApp.prototype.linkBytecode = function(contractName, cb) {
     var bytecode = this.getContractByName(contractName).bytecode;
@@ -536,12 +539,12 @@ UniversalDApp.prototype.deployLibrary = function(contractName, cb) {
 
 UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract ) {
     $contract.append( self.getInstanceInterface(contract) );
-}
+};
 
 UniversalDApp.prototype.clickContractAt = function ( self, $output, contract ) {
-    var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" )
+    var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" );
     self.getInstanceInterface(contract, address, $output );
-}
+};
 
 UniversalDApp.prototype.runTx = function( data, args, cb) {
     var self = this;
@@ -605,6 +608,6 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
             cb( e, null );
         }
     }
-}
+};
 
 module.exports = UniversalDApp;
