@@ -83,8 +83,8 @@ function Renderer(web3, editor, compiler, updateFiles) {
   };
   this.error = renderError;
 
-  var combined = function(contractName, interface, bytecode){
-    return JSON.stringify([{name: contractName, interface: interface, bytecode: bytecode}]);
+  var combined = function(contractName, jsonInterface, bytecode){
+    return JSON.stringify([{name: contractName, interface: jsonInterface, bytecode: bytecode}]);
   };
 
   function renderContracts(data, source) {
@@ -224,15 +224,15 @@ function Renderer(web3, editor, compiler, updateFiles) {
     return text;
   };
 
-  function gethDeploy(contractName, interface, bytecode){
+  function gethDeploy(contractName, jsonInterface, bytecode){
     var code = "";
-    var funABI = getConstructorInterface(JSON.parse(interface));
+    var funABI = getConstructorInterface(JSON.parse(jsonInterface));
 
     funABI.inputs.forEach(function(inp) {
       code += "var " + inp.name + " = /* var of type " + inp.type + " here */ ;\n";
     });
 
-    code += "var " + contractName + "Contract = web3.eth.contract(" + interface.replace("\n","") + ");"
+    code += "var " + contractName + "Contract = web3.eth.contract(" + jsonInterface.replace("\n","") + ");"
       +"\nvar " + contractName + " = " + contractName + "Contract.new(";
 
     funABI.inputs.forEach(function(inp) {

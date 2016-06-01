@@ -21,7 +21,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
   function onChange() {
     var input = editor.getValue();
     if (input === "") {
-      window.localStorage.setItem(editor.getRawCacheFile(), '');
+      editor.setCacheFileContent('');
       return;
     }
     if (input === previousInput)
@@ -38,7 +38,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     sourceAnnotations = [];
     outputField.empty();
     var input = editor.getValue();
-    window.localStorage.setItem(editor.getRawCacheFile(), input);
+    editor.setCacheFileContent(input)
 
     var files = {};
     files[editor.getCacheFile()] = input;

@@ -210,7 +210,7 @@ var run = function() {
 		return false;
 	}
 
-	function fileTabFromKey() {
+	function activeFileTab() {
 		var name = editor.getCacheFile();
 		return $('#files .file').filter(function(){ return $(this).find('.name').text() == name; });
 	}
@@ -227,7 +227,7 @@ var run = function() {
 		}
 
 		if (editor.cacheFileIsPresent()) {
-			var active = fileTabFromKey();
+			var active = activeFileTab();
 			active.addClass('active');
 			editor.resetSession();
 		}

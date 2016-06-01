@@ -11,15 +11,15 @@ function Editor(loadingFromGist) {
       untitledCount = (untitledCount - 0) + 1;
     SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
     sessions[SOL_CACHE_FILE] = null;
-    window.localStorage[SOL_CACHE_FILE] = '';
+    this.setCacheFileContent('');
+  };
+
+  this.setCacheFileContent = function(content) {
+    window.localStorage.setItem(SOL_CACHE_FILE, content);
   };
 
   this.setCacheFile = function(cacheFile) {
     SOL_CACHE_FILE = utils.fileKey(cacheFile);
-  };
-
-  this.getRawCacheFile = function() {
-    return SOL_CACHE_FILE;
   };
 
   this.getCacheFile = function() {
