@@ -181,7 +181,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
           files[m] = cachedRemoteFiles[m];
           reloop = true;
         } else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
-          handleGithubCall(function(result) {
+          handleGithubCall(githubMatch[3], githubMatch[4], function(result) {
             if ('content' in result)
             {
               var content = Base64.decode(result.content);

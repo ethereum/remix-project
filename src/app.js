@@ -403,8 +403,8 @@ var run = function() {
 	// ----------------- compiler ----------------------
 
 	function handleGithubCall(root, path, cb) {
-		$('#output').append($('<div/>').append($('<pre/>').text("Loading github.com/" + root + " ...")));
-    return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
+		$('#output').append($('<div/>').append($('<pre/>').text("Loading github.com/" + root + "/" + path + " ...")));
+		return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
 	var compiler = new Compiler(web3, editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
