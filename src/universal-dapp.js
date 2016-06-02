@@ -23,6 +23,8 @@ function UniversalDApp (contracts, options) {
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
     } else if (options.web3) {
         this.web3 = options.web3;
+    } else {
+	throw new Error("Either VM or Web3 mode must be selected");
     }
 }
 
