@@ -22,13 +22,7 @@ function UniversalDApp (contracts, options) {
 
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
-    } else if (!web3.currentProvider) {
-        var host = options.host || "localhost";
-        var port = options.port || "8545";
-        var rpc_url = options.getWeb3endpoint ? options.getWeb3endpoint() : ('http://' + host + ':' + port);
-        web3.setProvider( new web3.providers.HttpProvider( rpc_url ) );
     }
-
 }
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
