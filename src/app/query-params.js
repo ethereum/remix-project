@@ -11,7 +11,9 @@ function getQueryParams () {
   var parts = qs.split('&');
   for (var x in parts) {
     var keyValue = parts[x].split('=');
-    if (keyValue[0] !== '') params[keyValue[0]] = keyValue[1];
+    if (keyValue[0] !== '') {
+      params[keyValue[0]] = keyValue[1];
+    }
   }
   return params;
 }

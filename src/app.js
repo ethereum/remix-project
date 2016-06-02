@@ -40,8 +40,9 @@ var run = function () {
 		loadFiles(files);
 	};
 
-	if (filesToLoad !== null)
+	if (filesToLoad !== null) {
 		loadFiles(filesToLoad);
+        }
 
 
 	// ------------------ query params (hash) ----------------
@@ -133,8 +134,9 @@ var run = function () {
 			'To which other browser-solidity instance do you want to copy over all files?',
 			'https://ethereum.github.io/browser-solidity/'
 		);
-		if (target === null)
+		if (target === null) {
 			return;
+                }
 		var files = editor.packageFiles();
 		var iframe = $('<iframe/>', {src: target, style: 'display:none;', load: function () {
 			this.contentWindow.postMessage(['loadFiles', files], '*');

@@ -25,18 +25,20 @@ function Renderer (editor, compiler, updateFiles) {
 
     function setProviderFromEndpoint () {
       var endpoint = $web3endpoint.val();
-      if (endpoint === 'ipc')
+      if (endpoint === 'ipc') {
         web3.setProvider(new web3.providers.IpcProvider());
-      else
+      } else {
         web3.setProvider(new web3.providers.HttpProvider(endpoint));
+      }
     }
 
     var $vmToggle = $('#vm');
     var $web3Toggle = $('#web3');
     var $web3endpoint = $('#web3Endpoint');
 
-    if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider)
+    if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider) {
       $web3endpoint.val('ipc');
+    }
 
     $vmToggle.get(0).checked = true;
 
@@ -44,7 +46,9 @@ function Renderer (editor, compiler, updateFiles) {
     $web3Toggle.on('change', executionContextChange);
     $web3endpoint.on('change', function () {
       setProviderFromEndpoint();
-      if (executionContext === 'web3') compiler.compile();
+      if (executionContext === 'web3') {
+        compiler.compile();
+      }
     });
   })();
 
@@ -126,13 +130,16 @@ function Renderer (editor, compiler, updateFiles) {
     var $txOrigin = $('#txorigin');
 
     function renderAccounts (err, accounts) {
-      if (err)
+      if (err) {
         renderError(err.message);
+      }
       if (accounts && accounts[0]) {
         $txOrigin.empty();
         for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])); }
         $txOrigin.val(accounts[0]);
-      } else $txOrigin.val('unknown');
+      } else {
+        $txOrigin.val('unknown');
+      }
     }
 
     dapp.getAccounts(renderAccounts);
@@ -173,17 +180,18 @@ function Renderer (editor, compiler, updateFiles) {
     details.append($('<pre/>').text(funHashes));
     details.append($('<span class="col1">Gas Estimates</span>'));
     details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
-    if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0)
+    if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0) {
       details.append(tableRow('Runtime Bytecode', contract.runtimeBytecode));
-    if (contract.assembly !== null)
-    {
+    }
+    if (contract.assembly !== null) {
       details.append($('<span class="col1">Assembly</span>'));
       var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
       details.append(assembly);
     }
     button.click(function () { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
-    if (detailsOpen[contractName])
+    if (detailsOpen[contractName]) {
       details.show();
+    }
     return $('<div class="contractDetails"/>').append(button).append(details);
   };
 
@@ -191,38 +199,46 @@ function Renderer (editor, compiler, updateFiles) {
     var gasToText = function (g) { return g === null ? 'unknown' : g; }
     var text = '';
     var fun;
-    if ('creation' in data)
+    if ('creation' in data) {
       text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
+    }
     text += 'External:\n';
-    for (fun in data.external)
+    for (fun in data.external) {
       text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+    }
     text += 'Internal:\n';
-    for (fun in data.internal)
+    for (fun in data.internal) {
       text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
+    }
     return text;
   };
 
   var formatAssemblyText = function (asm, prefix, source) {
-    if (typeof asm === typeof '' || asm === null || asm === undefined)
+    if (typeof asm === typeof '' || asm === null || asm === undefined) {
       return prefix + asm + '\n';
+    }
     var text = prefix + '.code\n';
     $.each(asm['.code'], function (i, item) {
       var v = item.value === undefined ? '' : item.value;
       var src = '';
-      if (item.begin !== undefined && item.end !== undefined)
+      if (item.begin !== undefined && item.end !== undefined) {
         src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g');
-      if (src.length > 30)
+      }
+      if (src.length > 30) {
         src = src.slice(0, 30) + '...';
-      if (item.name !== 'tag')
+      }
+      if (item.name !== 'tag') {
         text += '  ';
+      }
       text += prefix + item.name + ' ' + v + '\t\t\t' + src + '\n';
     });
     text += prefix + '.data\n';
-    if (asm['.data'])
+    if (asm['.data']) {
       $.each(asm['.data'], function (i, item) {
         text += '  ' + prefix + '' + i + ':\n';
         text += formatAssemblyText(item, prefix + '    ', source);
       });
+    }
 
     return text;
   };
@@ -259,11 +275,12 @@ function Renderer (editor, compiler, updateFiles) {
 
   function getConstructorInterface (abi) {
     var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] };
-    for (var i = 0; i < abi.length; i++)
+    for (var i = 0; i < abi.length; i++) {
       if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || [];
         break;
       }
+    }
     return funABI;
   }
 

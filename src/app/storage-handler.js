@@ -4,7 +4,9 @@ function StorageHandler (updateFiles) {
 
   this.sync = function () {
 
-    if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) return;
+    if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) {
+      return;
+    }
 
     var obj = {};
     var done = false;
@@ -23,16 +25,20 @@ function StorageHandler (updateFiles) {
           obj[key] = localStorage[key];
         }
         done++;
-        if (done >= count) chrome.storage.sync.set(obj, function () {
-          console.log('updated cloud files with: ', obj, this, arguments);
-        })
+        if (done >= count) {
+          chrome.storage.sync.set(obj, function () {
+            console.log('updated cloud files with: ', obj, this, arguments);
+          })
+        }
       })
     }
 
     for (var y in window.localStorage) {
       console.log('checking', y);
       obj[y] = window.localStorage.getItem(y);
-      if (y.indexOf(utils.getCacheFilePrefix()) !== 0) continue;
+      if (y.indexOf(utils.getCacheFilePrefix()) !== 0) {
+        continue;
+      }
       count++;
       check(y);
     }

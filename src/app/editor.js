@@ -7,8 +7,9 @@ function Editor (loadingFromGist) {
 
   this.newFile = function () {
     untitledCount = '';
-    while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
+    while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount]) {
       untitledCount = (untitledCount - 0) + 1;
+    }
     SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
     sessions[SOL_CACHE_FILE] = null;
     this.setCacheFileContent('');
@@ -120,8 +121,9 @@ function Editor (loadingFromGist) {
     if (!files.length || window.localStorage['sol-cache']) {
       if (loadingFromGist) return;
       // Backwards-compatibility
-      while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount])
+      while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount]) {
         untitledCount = (untitledCount - 0) + 1;
+      }
       SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
       window.localStorage[SOL_CACHE_FILE] = window.localStorage['sol-cache'] || BALLOT_EXAMPLE;
       window.localStorage.removeItem('sol-cache');

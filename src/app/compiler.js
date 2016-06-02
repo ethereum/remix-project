@@ -24,10 +24,13 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       editor.setCacheFileContent('');
       return;
     }
-    if (input === previousInput)
+    if (input === previousInput) {
       return;
+    }
     previousInput = input;
-    if (compileTimeout) window.clearTimeout(compileTimeout);
+    if (compileTimeout) {
+      window.clearTimeout(compileTimeout);
+    }
     compileTimeout = window.setTimeout(compile, 300);
   }
 
@@ -112,24 +115,30 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
 
     if (data['error'] !== undefined) {
       renderer.error(data['error']);
-      if (utils.errortype(data['error']) !== 'warning') noFatalErrors = false;
+      if (utils.errortype(data['error']) !== 'warning') {
+        noFatalErrors = false;
+      }
     }
     if (data['errors'] !== undefined) {
       data['errors'].forEach(function (err) {
         renderer.error(err);
-        if (utils.errortype(err) !== 'warning') noFatalErrors = false;
+        if (utils.errortype(err) !== 'warning') {
+          noFatalErrors = false;
+        }
       });
     }
 
-    if (missingInputs !== undefined && missingInputs.length > 0)
+    if (missingInputs !== undefined && missingInputs.length > 0) {
       compile(missingInputs);
-    else if (noFatalErrors && !hidingRHP())
+    } else if (noFatalErrors && !hidingRHP()) {
       renderer.contracts(data, editor.getValue());
+    }
   }
 
   this.initializeWorker = function (version, setVersionText) {
-    if (worker !== null)
+    if (worker !== null) {
       worker.terminate();
+    }
     worker = new Worker('worker.js');
     worker.addEventListener('message', function (msg) {
       var data = msg.data;
@@ -154,8 +163,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
 
   function gatherImports (files, importHints, cb) {
     importHints = importHints || [];
-    if (!compilerAcceptsMultipleFiles)
-    {
+    if (!compilerAcceptsMultipleFiles) {
       cb(files[editor.getCacheFile()]);
       return;
     }
@@ -166,12 +174,15 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       reloop = false;
       for (var fileName in files) {
         var match;
-        while (match = importRegex.exec(files[fileName]))
+        while (match = importRegex.exec(files[fileName])) {
           importHints.push(match[1]);
+        }
       }
       while (importHints.length > 0) {
         var m = importHints.pop();
-        if (m in files) continue;
+        if (m in files) {
+          continue;
+        }
         if (editor.hasFile(m)) {
           files[m] = window.localStorage[utils.fileKey(m)];
           reloop = true;
@@ -183,15 +194,14 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
           reloop = true;
         } else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
           handleGithubCall(githubMatch[3], githubMatch[4], function (result) {
-            if ('content' in result)
-            {
+            if ('content' in result) {
               var content = Base64.decode(result.content);
               cachedRemoteFiles[m] = content;
               files[m] = content;
               gatherImports(files, importHints, cb);
-            }
-            else
+            } else {
               cb(null, 'Unable to import "' + m + '"');
+            }
           }).fail(function () {
             cb(null, 'Unable to import "' + m + '"');
           });

@@ -15,7 +15,9 @@ function handleLoad (cb) {
       gistId = params['gist'];
       loadingFromGist = !!gistId;
     }
-    if (loadingFromGist) cb(gistId);
+    if (loadingFromGist) {
+      cb(gistId);
+    }
   }
   return loadingFromGist;
 }

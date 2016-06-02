@@ -50,7 +50,9 @@ UniversalDApp.prototype.getAccounts = function (cb) {
     if (!this.vm) {
         this.web3.eth.getAccounts(cb);
     } else {
-        if (!this.accounts) return cb('No accounts?');
+        if (!this.accounts) {
+            return cb('No accounts?');
+        }
 
         cb(null, Object.keys(this.accounts));
     }
@@ -68,7 +70,9 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
             }
         });
     } else {
-        if (!this.accounts) return cb('No accounts?');
+        if (!this.accounts) {
+            return cb('No accounts?');
+        }
 
         this.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
             if (err) {
@@ -113,9 +117,11 @@ UniversalDApp.prototype.render = function () {
 };
 
 UniversalDApp.prototype.getContractByName = function (contractName) {
-    for (var c in this.contracts)
-        if (this.contracts[c].name === contractName)
+    for (var c in this.contracts) {
+        if (this.contracts[c].name === contractName) {
             return this.contracts[c];
+        }
+    }
     return null;
 };
 
@@ -162,11 +168,17 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
 UniversalDApp.prototype.getInstanceInterface = function (contract, address, $target) {
     var self = this;
     var abi = JSON.parse(contract.interface).sort(function (a, b) {
-        if (a.name > b.name) return -1;
-        else return 1;
+        if (a.name > b.name) {
+            return -1;
+        } else {
+            return 1;
+        }
     }).sort(function (a, b) {
-        if (a.constant === true) return -1;
-        else return 1;
+        if (a.constant === true) {
+            return -1;
+        } else {
+            return 1;
+        }
     });
     var web3contract = this.web3.eth.contract(abi);
     var funABI = this.getConstructorInterface(abi);
@@ -189,8 +201,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         var $events = $('<div class="events"/>');
 
         var parseLogs = function (err, response) {
-            if (err)
+            if (err) {
                 return;
+            }
 
             var $event = $('<div class="event" />');
 
@@ -209,7 +222,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             var eventABI = {};
 
             $.each(abi, function (i, funABI) {
-                if (funABI.type !== 'event') return;
+                if (funABI.type !== 'event') {
+                    return;
+                }
 
         var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function (item) { return item.type; }));
         eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs };
@@ -252,7 +267,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         }));
 
         $.each(abi, function (i, funABI) {
-            if (funABI.type !== 'function') return;
+            if (funABI.type !== 'function') {
+                return;
+            }
             // @todo getData cannot be used with overloaded functions
             $instance.append(self.getCallButton({
                 abi: funABI,
@@ -286,11 +303,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
 
 UniversalDApp.prototype.getConstructorInterface = function (abi) {
     var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] };
-    for (var i = 0; i < abi.length; i++)
+    for (var i = 0; i < abi.length; i++) {
         if (abi[i].type === 'constructor') {
             funABI.inputs = abi[i].inputs || [];
             break;
         }
+    }
     return funABI;
 };
 
@@ -303,7 +321,9 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
     var inputs = '';
     $.each(args.abi.inputs, function (i, inp) {
-        if (inputs !== '') inputs += ', ';
+        if (inputs !== '') {
+            inputs += ', ';
+        }
         inputs += inp.type + ' ' + inp.name;
     });
     var inputField = $('<input/>').attr('placeholder', inputs).attr('title', inputs);
@@ -363,10 +383,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
     var handleCallButtonClick = function (ev, $result) {
         if (!$result) {
             $result = getOutput();
-            if (lookupOnly && !inputs.length)
+            if (lookupOnly && !inputs.length) {
                 $outputOverride.empty().append($result);
-            else
+            } else {
                 outputSpan.append($result);
+            }
         }
 
         var funArgs = '';
@@ -385,29 +406,34 @@ UniversalDApp.prototype.getCallButton = function (args) {
                 return;
             }
         }
-        if (data.slice(0, 9) === 'undefined')
+        if (data.slice(0, 9) === 'undefined') {
             data = data.slice(9);
-        if (data.slice(0, 2) === '0x') data = data.slice(2);
+        }
+        if (data.slice(0, 2) === '0x') {
+            data = data.slice(2);
+        }
 
         replaceOutput($result, $('<span>Waiting for transaction to be mined...</span>'));
 
         if (isConstructor) {
             if (args.bytecode.indexOf('_') >= 0) {
                  replaceOutput($result, $('<span>Deploying and linking required libraries...</span>'));
-                 if (self.options.vm)
+                 if (self.options.vm) {
                      self.linkBytecode(args.contractName, function (err, bytecode) {
-                         if (err)
+                         if (err) {
                              replaceOutput($result, $('<span/>').text('Error deploying required libraries: ' + err));
-                         else {
+                         } else {
                              args.bytecode = bytecode;
                              handleCallButtonClick(ev, $result);
                          }
                      });
-                 else
+                 } else {
                      replaceOutput($result, $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>'));
+                 }
                  return;
-             } else
+             } else {
                  data = args.bytecode + data;
+             }
         }
 
         self.runTx(data, args, function (err, result) {
@@ -462,13 +488,16 @@ UniversalDApp.prototype.getCallButton = function (args) {
                     function testResult (err, address) {
                         if (!err && !address) {
                             setTimeout(function () { tryTillResponse(txhash, done); }, 500);
-                        } else done(err, address);
+                        } else {
+                            done(err, address);
+                        }
                     }
 
                 }
                 tryTillResponse(result, function (err, result) {
-                    if (err) replaceOutput($result, $('<span/>').text(err).addClass('error'));
-                    else if (isConstructor) {
+                    if (err) {
+                        replaceOutput($result, $('<span/>').text(err).addClass('error'));
+                    } else if (isConstructor) {
                         $result.html('');
                         args.appendFunctions(result.contractAddress);
                     } else {
@@ -503,41 +532,52 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
 UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
     var bytecode = this.getContractByName(contractName).bytecode;
-    if (bytecode.indexOf('_') < 0)
+    if (bytecode.indexOf('_') < 0) {
         return cb(null, bytecode);
+    }
     var m = bytecode.match(/__([^_]{1,36})__/);
-    if (!m)
+    if (!m) {
         return cb('Invalid bytecode format.');
+    }
     var libraryName = m[1];
-    if (!this.getContractByName(libraryName))
+    if (!this.getContractByName(libraryName)) {
         return cb('Library ' + libraryName + ' not found.');
+    }
     var self = this;
     this.deployLibrary(libraryName, function (err, address) {
-        if (err) return cb(err);
+        if (err) {
+            return cb(err);
+        }
         var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_');
         var hexAddress = address.toString('hex');
-        if (hexAddress.slice(0, 2) === '0x') hexAddress = hexAddress.slice(2);
+        if (hexAddress.slice(0, 2) === '0x') {
+            hexAddress = hexAddress.slice(2);
+        }
         hexAddress = Array(40 - hexAddress.length + 1).join('0') + hexAddress;
-        while (bytecode.indexOf(libLabel) >= 0)
+        while (bytecode.indexOf(libLabel) >= 0) {
             bytecode = bytecode.replace(libLabel, hexAddress);
+        }
         self.getContractByName(contractName).bytecode = bytecode;
         self.linkBytecode(contractName, cb);
     });
 };
 
 UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
-    if (this.getContractByName(contractName).address)
+    if (this.getContractByName(contractName).address) {
         return cb(null, this.getContractByName(contractName).address);
+    }
     var self = this;
     var bytecode = this.getContractByName(contractName).bytecode;
-    if (bytecode.indexOf('_') >= 0)
+    if (bytecode.indexOf('_') >= 0) {
         this.linkBytecode(contractName, function (err, bytecode) {
             if (err) cb(err);
             else self.deployLibrary(contractName, cb);
         });
-    else {
+    } else {
         this.runTx(bytecode, { abi: { constant: false }, bytecode: bytecode }, function (err, result) {
-            if (err) return cb(err);
+            if (err) {
+                return cb(err);
+            }
             self.getContractByName(contractName).address = result.createdAddress;
             cb(err, result.createdAddress);
         });
@@ -554,8 +594,9 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
-    if (data.slice(0, 2) !== '0x')
+    if (data.slice(0, 2) !== '0x') {
         data = '0x' + data;
+    }
 
     var gas = self.options.getGas ? self.options.getGas : 1000000;
 
@@ -582,8 +623,11 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         } else {
             this.web3.eth.estimateGas(tx, function (err, resp) {
                 tx.gas = resp;
-                if (!err) self.web3.eth.sendTransaction(tx, cb);
-                else cb(err, resp);
+                if (!err) {
+                    self.web3.eth.sendTransaction(tx, cb);
+                } else {
+                    cb(err, resp);
+                }
             });
         }
     } else {
