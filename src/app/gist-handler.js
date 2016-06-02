@@ -6,7 +6,7 @@ function handleLoad(cb) {
   if (typeof params['gist'] !== undefined) {
     var gistId;
     if (params['gist'] === '') {
-      var str = prompt("Enter the URL or ID of the Gist you would like to load.");
+      var str = prompt('Enter the URL or ID of the Gist you would like to load.');
       if (str !== '') {
         gistId = getGistId( str );
         loadingFromGist = !!gistId;

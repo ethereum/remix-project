@@ -13,7 +13,7 @@ function Renderer(editor, compiler, updateFiles) {
   // Forcing all of this setup into its own scope.
   (function(){
     function executionContextChange (ev) {
-      if (ev.target.value === 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
+      if (ev.target.value === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?') ) {
         $vmToggle.get(0).checked = true;
         executionContext = 'vm';
       } else {
@@ -50,7 +50,7 @@ function Renderer(editor, compiler, updateFiles) {
 
   function renderError(message) {
     var type = utils.errortype(message);
-    var $pre = $("<pre />").text(message);
+    var $pre = $('<pre />').text(message);
     var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
     $('#output').append( $error );
     var err = message.match(/^([^:]*):([0-9]*):(([0-9]*):)? /);
@@ -228,30 +228,30 @@ function Renderer(editor, compiler, updateFiles) {
   };
 
   function gethDeploy(contractName, jsonInterface, bytecode){
-    var code = "";
+    var code = '';
     var funABI = getConstructorInterface(JSON.parse(jsonInterface));
 
     funABI.inputs.forEach(function(inp) {
-      code += "var " + inp.name + " = /* var of type " + inp.type + " here */ ;\n";
+      code += 'var ' + inp.name + ' = /* var of type ' + inp.type + ' here */ ;\n';
     });
 
-    code += "var " + contractName + "Contract = web3.eth.contract(" + jsonInterface.replace("\n","") + ");"
-      +"\nvar " + contractName + " = " + contractName + "Contract.new(";
+    code += 'var ' + contractName + 'Contract = web3.eth.contract(' + jsonInterface.replace('\n','') + ');'
+      +'\nvar ' + contractName + ' = ' + contractName + 'Contract.new(';
 
     funABI.inputs.forEach(function(inp) {
-      code += "\n   " + inp.name + ",";
+      code += '\n   ' + inp.name + ',';
     });
 
-    code += "\n   {"+
-    "\n     from: web3.eth.accounts[0], "+
-    "\n     data: '"+bytecode+"', "+
-    "\n     gas: 3000000"+
-    "\n   }, function(e, contract){"+
-    "\n    console.log(e, contract);"+
-    "\n    if (typeof contract.address !== 'undefined') {"+
-    "\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
-    "\n    }" +
-    "\n })";
+    code += '\n   {'+
+    '\n     from: web3.eth.accounts[0], '+
+    '\n     data: \''+bytecode+'\', '+
+    '\n     gas: 3000000'+
+    '\n   }, function(e, contract){'+
+    '\n    console.log(e, contract);'+
+    '\n    if (typeof contract.address !== \'undefined\') {'+
+    '\n         console.log(\'Contract mined! address: \' + contract.address + \' transactionHash: \' + contract.transactionHash);' +
+    '\n    }' +
+    '\n })';
 
 
     return code;

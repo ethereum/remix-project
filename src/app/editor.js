@@ -73,7 +73,7 @@ function Editor(loadingFromGist) {
     session.setUseWrapMode(document.querySelector('#editorWrap').checked);
     if(session.getUseWrapMode()) {
       var characterWidth = editor.renderer.characterWidth;
-      var contentWidth = editor.container.ownerDocument.getElementsByClassName("ace_scroller")[0].clientWidth;
+      var contentWidth = editor.container.ownerDocument.getElementsByClassName('ace_scroller')[0].clientWidth;
 
       if(contentWidth > 0) {
         session.setWrapLimit(parseInt(contentWidth / characterWidth, 10));
@@ -107,7 +107,7 @@ function Editor(loadingFromGist) {
   };
 
   function newEditorSession(filekey) {
-    var s = new ace.EditSession(window.localStorage[filekey], "ace/mode/javascript")
+    var s = new ace.EditSession(window.localStorage[filekey], 'ace/mode/javascript')
     s.setUndoManager(new ace.UndoManager());
     s.setTabSize(4);
     s.setUseSoftTabs(true);
@@ -140,7 +140,7 @@ function Editor(loadingFromGist) {
   var SOL_CACHE_UNTITLED = utils.getCacheFilePrefix() + 'Untitled';
   var SOL_CACHE_FILE = null;
 
-  var editor = ace.edit("input");
+  var editor = ace.edit('input');
   var sessions = {};
 
   setupStuff(this.getFiles());

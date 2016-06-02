@@ -12,8 +12,8 @@ var Compiler = require('./app/compiler');
 // parent will send the message upon the "load" event.
 var filesToLoad = null;
 var loadFilesCallback = function(files) { filesToLoad = files; }; // will be replaced later
-window.addEventListener("message", function(ev) {
-	if (typeof ev.data === typeof [] && ev.data[0] === "loadFiles") {
+window.addEventListener('message', function(ev) {
+	if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
 		loadFilesCallback(ev.data[1]);
 	}
 }, false);
@@ -47,7 +47,7 @@ var run = function() {
 	// ------------------ query params (hash) ----------------
 
 	function syncQueryParams() {
-	  $('#optimize').attr( 'checked', (queryParams.get().optimize === "true") );
+	  $('#optimize').attr( 'checked', (queryParams.get().optimize === 'true') );
 	}
 
 	window.onhashchange = syncQueryParams;
@@ -64,7 +64,7 @@ var run = function() {
 	    success: function(response) {
 				if (response.data) {
 					if (!response.data.files) {
-						alert( "Gist load error: " + response.data.message );
+						alert( 'Gist load error: ' + response.data.message );
 						return;
 					}
 					loadFiles(response.data.files);
@@ -107,10 +107,10 @@ var run = function() {
 	// ------------------ gist publish --------------
 
 	$('#gist').click(function(){
-		if (confirm("Are you sure you want to publish all your files anonymously as a public gist on github.com?")) {
+		if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
 
 			var files = editor.packageFiles();
-			var description = "Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=" + queryParams.get().version + "&optimize="+ queryParams.get().optimize +"&gist=";
+			var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize='+ queryParams.get().optimize +'&gist=';
 
 			$.ajax({
 				url: 'https://api.github.com/gists',
@@ -121,7 +121,7 @@ var run = function() {
 					files: files
 				})
 			}).done(function(response) {
-				if (response.html_url && confirm("Created a gist at " + response.html_url + " Would you like to open it in a new window?")) {
+				if (response.html_url && confirm('Created a gist at ' + response.html_url + ' Would you like to open it in a new window?')) {
 					window.open( response.html_url, '_blank' );
 				}
 			});
@@ -130,14 +130,14 @@ var run = function() {
 
 	$('#copyOver').click(function(){
 		var target = prompt(
-			"To which other browser-solidity instance do you want to copy over all files?",
-			"https://ethereum.github.io/browser-solidity/"
+			'To which other browser-solidity instance do you want to copy over all files?',
+			'https://ethereum.github.io/browser-solidity/'
 		);
 		if (target === null)
 			return;
 		var files = editor.packageFiles();
-		var iframe = $('<iframe/>', {src: target, style: "display:none;", load: function() {
-			this.contentWindow.postMessage(["loadFiles", files], "*");
+		var iframe = $('<iframe/>', {src: target, style: 'display:none;', load: function() {
+			this.contentWindow.postMessage(['loadFiles', files], '*');
 		}}).appendTo('body');
 	});
 
@@ -150,7 +150,7 @@ var run = function() {
 		editor.newFile();
 		updateFiles();
 
-		$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ "px"}, "slow", function(){
+		$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ 'px'}, 'slow', function(){
 			reAdjust();
 		});
 	});
@@ -176,7 +176,7 @@ var run = function() {
 			$fileNameInputEl.off('blur');
 			$fileNameInputEl.off('keyup');
 
-			if (newName !== originalName && confirm("Are you sure you want to rename: " + originalName + " to " + newName + '?')) {
+			if (newName !== originalName && confirm('Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
 				var content = window.localStorage.getItem( utils.fileKey(originalName) );
 				window.localStorage[utils.fileKey( newName )] = content;
 				window.localStorage.removeItem( utils.fileKey( originalName) );
@@ -194,7 +194,7 @@ var run = function() {
 		ev.preventDefault();
 		var name = $(this).parent().find('.name').text();
 
-		if (confirm("Are you sure you want to remove: " + name + " from local storage?")) {
+		if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
 			window.localStorage.removeItem( utils.fileKey( name ) );
 			editor.setNextFile(utils.fileKey(name));
 			updateFiles();
@@ -282,20 +282,20 @@ var run = function() {
 			$scrollerLeft.fadeIn('fast');
 		} else {
 			$scrollerLeft.fadeOut('fast');
-			$filesEl.animate({left: getLeftPosi() + "px"},'slow');
+			$filesEl.animate({left: getLeftPosi() + 'px'},'slow');
 		}
 	}
 
 	$scrollerRight.click(function() {
 		var delta = (getLeftPosi() - FILE_SCROLL_DELTA);
-		$filesEl.animate({left: delta + "px"},'slow',function(){
+		$filesEl.animate({left: delta + 'px'},'slow',function(){
 			reAdjust();
 		});
 	});
 
 	$scrollerLeft.click(function() {
 		var delta = Math.min( (getLeftPosi() + FILE_SCROLL_DELTA), 0 );
-		$filesEl.animate({left: delta + "px"},'slow',function(){
+		$filesEl.animate({left: delta + 'px'},'slow',function(){
 			reAdjust();
 		});
 	});
@@ -309,7 +309,7 @@ var run = function() {
 	$('option', '#versionSelector').remove();
 	$.each(soljsonSources, function(i, file) {
 		if (file) {
-			var version = file.replace(/soljson-(.*).js/, "$1");
+			var version = file.replace(/soljson-(.*).js/, '$1');
 			$('#versionSelector').append(new Option(version, file));
 		}
 	});
@@ -320,7 +320,7 @@ var run = function() {
 
 	// ----------------- resizeable ui ---------------
 
-	var EDITOR_SIZE_CACHE_KEY = "editor-size-cache";
+	var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache';
 	var dragging = false;
 	$('#dragbar').mousedown(function(e){
 		e.preventDefault();
@@ -334,15 +334,15 @@ var run = function() {
 		}).prependTo('body');
 
 		$(document).mousemove(function(e){
-			ghostbar.css("left",e.pageX+2);
+			ghostbar.css('left',e.pageX+2);
 		});
 	});
 
 	var $body = $('body');
 
 	function setEditorSize (delta) {
-		$('#righthand-panel').css("width", delta);
-		$('#editor').css("right", delta);
+		$('#righthand-panel').css('width', delta);
+		$('#editor').css('right', delta);
 		onResize();
 	}
 
@@ -402,7 +402,7 @@ var run = function() {
 	// ----------------- compiler ----------------------
 
 	function handleGithubCall(root, path, cb) {
-		$('#output').append($('<div/>').append($('<pre/>').text("Loading github.com/" + root + "/" + path + " ...")));
+		$('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')));
 		return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
@@ -413,7 +413,7 @@ var run = function() {
 	}
 
 	var loadVersion = function(version) {
-		setVersionText("(loading)");
+		setVersionText('(loading)');
 		queryParams.update({version: version});
 		var isFirefox = typeof InstallTrigger !== 'undefined';
 		if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
@@ -427,7 +427,7 @@ var run = function() {
 			var newScript = document.createElement('script');
 			newScript.type = 'text/javascript';
 			newScript.src = 'https://ethereum.github.io/solc-bin/bin/' + version;
-			document.getElementsByTagName("head")[0].appendChild(newScript);
+			document.getElementsByTagName('head')[0].appendChild(newScript);
 			var check = window.setInterval(function() {
 				if (!Module) return;
 				window.clearInterval(check);

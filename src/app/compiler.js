@@ -20,7 +20,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
 
   function onChange() {
     var input = editor.getValue();
-    if (input === "") {
+    if (input === '') {
       editor.setCacheFileContent('');
       return;
     }
@@ -72,17 +72,17 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
         var missingInputsCallback = Module.Runtime.addFunction(function(path, contents, error) {
           missingInputs.push(Module.Pointer_stringify(path));
         });
-        var compileInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
+        var compileInternal = Module.cwrap('compileJSONCallback', 'string', ['string', 'number', 'number']);
         compile = function(input, optimize) {
           missingInputs.length = 0;
           return compileInternal(input, optimize, missingInputsCallback);
         };
       } else if ('_compileJSONMulti' in Module) {
         compilerAcceptsMultipleFiles = true;
-        compile = Module.cwrap("compileJSONMulti", "string", ["string", "number"]);
+        compile = Module.cwrap('compileJSONMulti', 'string', ['string', 'number']);
       } else {
         compilerAcceptsMultipleFiles = false;
-        compile = Module.cwrap("compileJSON", "string", ["string", "number"]);
+        compile = Module.cwrap('compileJSON', 'string', ['string', 'number']);
       }
       compileJSON = function(source, optimize, cb) {
         try {
@@ -92,7 +92,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
         }
         compilationFinished(result, missingInputs);
       };
-      setVersionText(Module.cwrap("version", "string", [])());
+      setVersionText(Module.cwrap('version', 'string', [])());
     }
     previousInput = '';
     onChange();
@@ -191,13 +191,13 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
               gatherImports(files, importHints, cb);
             }
             else
-              cb(null, "Unable to import \"" + m + "\"");
+              cb(null, 'Unable to import "' + m + '"');
           }).fail(function(){
-            cb(null, "Unable to import \"" + m + "\"");
+            cb(null, 'Unable to import "' + m + '"');
           });
           return;
         } else {
-          cb(null, "Unable to import \"" + m + "\"");
+          cb(null, 'Unable to import "' + m + '"');
           return;
         }
       }
