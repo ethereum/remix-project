@@ -5,7 +5,6 @@ var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
-var web3 = require('./web3-adapter.js');
 
 function UniversalDApp (contracts, options) {
     this.options = options || {};
@@ -22,6 +21,8 @@ function UniversalDApp (contracts, options) {
 
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
+    } else if (options.web3) {
+        this.web3 = options.web3;
     }
 }
 
@@ -39,7 +40,7 @@ UniversalDApp.prototype.addAccount = function (privateKey, balance) {
 
 UniversalDApp.prototype.getAccounts = function (cb) {
     if (!this.vm) {
-        web3.eth.getAccounts(cb);
+        this.web3.eth.getAccounts(cb);
     } else {
         if (!this.accounts) return cb("No accounts?");
 
@@ -51,7 +52,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
     address = ethJSUtil.stripHexPrefix(address);
 
     if (!this.vm) {
-        web3.eth.getBalance(address, function (err, res) {
+        this.web3.eth.getBalance(address, function (err, res) {
             if (err) {
                 cb(err);
             } else {
@@ -159,7 +160,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         if (a.constant == true) return -1;
         else return 1;
     });
-    var web3contract = web3.eth.contract(abi);
+    var web3contract = this.web3.eth.contract(abi);
     var funABI = this.getConstructorInterface(abi);
     var $createInterface = $('<div class="createContract"/>');
 
@@ -442,7 +443,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
             } else {
 
                 function tryTillResponse (txhash, done) {
-                    web3.eth.getTransactionReceipt(result, testResult );
+                    this.web3.eth.getTransactionReceipt(result, testResult );
 
                     function testResult (err, address) {
                         if (!err && !address) {
@@ -556,18 +557,18 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var tx;
     if (!this.vm) {
         tx = {
-            from: self.options.getAddress ? self.options.getAddress() : web3.eth.accounts[0],
+            from: self.options.getAddress ? self.options.getAddress() : this.web3.eth.accounts[0],
             to: to,
             data: data,
             gas: gas,
             value: value
         };
         if (constant && !isConstructor) {
-            web3.eth.call( tx, cb );
+            this.web3.eth.call( tx, cb );
         } else {
-            web3.eth.estimateGas( tx, function(err, resp){
+            this.web3.eth.estimateGas( tx, function(err, resp){
                 tx.gas = resp;
-                if (!err) web3.eth.sendTransaction( tx, cb );
+                if (!err) self.web3.eth.sendTransaction( tx, cb );
                 else cb( err, resp);
             });
         }
