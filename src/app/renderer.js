@@ -1,10 +1,11 @@
 var $ = require('jquery');
 
+var web3 = require('../web3-adapter.js');
 var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
 
-function Renderer(web3, editor, compiler, updateFiles) {
+function Renderer(editor, compiler, updateFiles) {
 
   var detailsOpen = {};
   var executionContext = 'vm';

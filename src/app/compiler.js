@@ -4,8 +4,8 @@ var Renderer = require('./renderer');
 
 var Base64 = require('js-base64').Base64;
 
-function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
-  var renderer = new Renderer(web3, editor, this, updateFiles);
+function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
+  var renderer = new Renderer(editor, this, updateFiles);
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;
