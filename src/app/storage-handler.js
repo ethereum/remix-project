@@ -14,7 +14,7 @@ function StorageHandler(updateFiles) {
     function check(key){
       chrome.storage.sync.get( key, function(resp){
         console.log("comparing to cloud", key, resp);
-        if (typeof resp[key] != 'undefined' && obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "'? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.")) {
+        if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm("Overwrite '" + fileNameFromKey(key) + "'? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.")) {
           console.log("Overwriting", key );
           localStorage.setItem( key, resp[key] );
           updateFiles();

@@ -3,7 +3,7 @@ var queryParams = require('./query-params');
 function handleLoad(cb) {
   var params = queryParams.get();
   var loadingFromGist = false;
-  if (typeof params['gist'] != undefined) {
+  if (typeof params['gist'] !== undefined) {
     var gistId;
     if (params['gist'] === '') {
       var str = prompt("Enter the URL or ID of the Gist you would like to load.");

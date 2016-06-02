@@ -114,7 +114,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
       renderer.error(data['error']);
       if (utils.errortype(data['error']) !== 'warning') noFatalErrors = false;
     }
-    if (data['errors'] != undefined) {
+    if (data['errors'] !== undefined) {
       data['errors'].forEach(function(err) {
         renderer.error(err);
         if (utils.errortype(err) !== 'warning') noFatalErrors = false;
