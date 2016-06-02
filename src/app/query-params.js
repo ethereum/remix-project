@@ -1,4 +1,4 @@
-function getQueryParams() {
+function getQueryParams () {
   var qs = window.location.hash.substr(1);
 
   if (window.location.search.length > 0) {
@@ -16,7 +16,7 @@ function getQueryParams() {
   return params;
 }
 
-function updateQueryParams(params) {
+function updateQueryParams (params) {
   var currentParams = getQueryParams();
   var keys = Object.keys(params);
   for (var x in keys) {
@@ -24,7 +24,7 @@ function updateQueryParams(params) {
   }
   var queryString = '#';
   var updatedKeys = Object.keys(currentParams);
-  for( var y in updatedKeys) {
+  for (var y in updatedKeys) {
     queryString += updatedKeys[y] + '=' + currentParams[updatedKeys[y]] + '&';
   }
   window.location.hash = queryString.slice(0, -1);

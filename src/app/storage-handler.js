@@ -1,8 +1,8 @@
 var utils = require('./utils');
 
-function StorageHandler(updateFiles) {
+function StorageHandler (updateFiles) {
 
-  this.sync = function() {
+  this.sync = function () {
 
     if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) return;
 
@@ -11,20 +11,20 @@ function StorageHandler(updateFiles) {
     var count = 0
     var dont = 0;
 
-    function check(key){
-      chrome.storage.sync.get( key, function(resp){
+    function check (key) {
+      chrome.storage.sync.get(key, function (resp) {
         console.log('comparing to cloud', key, resp);
         if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + fileNameFromKey(key) + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
-          console.log('Overwriting', key );
-          localStorage.setItem( key, resp[key] );
+          console.log('Overwriting', key);
+          localStorage.setItem(key, resp[key]);
           updateFiles();
         } else {
-          console.log( 'add to obj', obj, key);
+          console.log('add to obj', obj, key);
           obj[key] = localStorage[key];
         }
         done++;
-        if (done >= count) chrome.storage.sync.set( obj, function(){
-          console.log( 'updated cloud files with: ', obj, this, arguments);
+        if (done >= count) chrome.storage.sync.set(obj, function () {
+          console.log('updated cloud files with: ', obj, this, arguments);
         })
       })
     }

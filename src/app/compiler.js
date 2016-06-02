@@ -4,7 +4,7 @@ var Renderer = require('./renderer');
 
 var Base64 = require('js-base64').Base64;
 
-function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
+function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
   var renderer = new Renderer(editor, this, updateFiles);
 
   var compileJSON;
@@ -18,7 +18,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
 
   var compileTimeout = null;
 
-  function onChange() {
+  function onChange () {
     var input = editor.getValue();
     if (input === '') {
       editor.setCacheFileContent('');
@@ -33,7 +33,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
 
   editor.onChangeSetup(onChange);
 
-  var compile = function(missingInputs) {
+  var compile = function (missingInputs) {
     editor.clearAnnotations();
     sourceAnnotations = [];
     outputField.empty();
@@ -42,7 +42,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
 
     var files = {};
     files[editor.getCacheFile()] = input;
-    gatherImports(files, missingInputs, function(input, error) {
+    gatherImports(files, missingInputs, function (input, error) {
       outputField.empty();
       if (input === null) {
         renderer.error(error);
@@ -54,41 +54,41 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
   };
   this.compile = compile;
 
-  this.addAnnotation = function(annotation) {
+  this.addAnnotation = function (annotation) {
     sourceAnnotations[sourceAnnotations.length] = annotation;
     editor.setAnnotations(sourceAnnotations);
   };
 
-  this.setCompileJSON = function() {
-    compileJSON = function(source, optimize) { compilationFinished('{}'); };  
+  this.setCompileJSON = function () {
+    compileJSON = function (source, optimize) { compilationFinished('{}'); };
   };
 
-  function onCompilerLoaded(setVersionText) {
+  function onCompilerLoaded (setVersionText) {
     if (worker === null) {
       var compile;
       var missingInputs = [];
       if ('_compileJSONCallback' in Module) {
         compilerAcceptsMultipleFiles = true;
-        var missingInputsCallback = Module.Runtime.addFunction(function(path, contents, error) {
+        var missingInputsCallback = Module.Runtime.addFunction(function (path, contents, error) {
           missingInputs.push(Module.Pointer_stringify(path));
         });
-        var compileInternal = Module.cwrap('compileJSONCallback', 'string', ['string', 'number', 'number']);
-        compile = function(input, optimize) {
+        var compileInternal = Module.cwrap('compileJSONCallback', 'string', [ 'string', 'number', 'number' ]);
+        compile = function (input, optimize) {
           missingInputs.length = 0;
           return compileInternal(input, optimize, missingInputsCallback);
         };
       } else if ('_compileJSONMulti' in Module) {
         compilerAcceptsMultipleFiles = true;
-        compile = Module.cwrap('compileJSONMulti', 'string', ['string', 'number']);
+        compile = Module.cwrap('compileJSONMulti', 'string', [ 'string', 'number' ]);
       } else {
         compilerAcceptsMultipleFiles = false;
-        compile = Module.cwrap('compileJSON', 'string', ['string', 'number']);
+        compile = Module.cwrap('compileJSON', 'string', [ 'string', 'number' ]);
       }
-      compileJSON = function(source, optimize, cb) {
+      compileJSON = function (source, optimize, cb) {
         try {
           var result = compile(source, optimize);
         } catch (exception) {
-          result = JSON.stringify({error: 'Uncaught JavaScript exception:\n' + exception});
+          result = JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception });
         }
         compilationFinished(result, missingInputs);
       };
@@ -99,7 +99,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
   };
   this.onCompilerLoaded = onCompilerLoaded;
 
-  function compilationFinished(result, missingInputs) {
+  function compilationFinished (result, missingInputs) {
     var data;
     var noFatalErrors = true; // ie warnings are ok
 
@@ -115,7 +115,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
       if (utils.errortype(data['error']) !== 'warning') noFatalErrors = false;
     }
     if (data['errors'] !== undefined) {
-      data['errors'].forEach(function(err) {
+      data['errors'].forEach(function (err) {
         renderer.error(err);
         if (utils.errortype(err) !== 'warning') noFatalErrors = false;
       });
@@ -127,11 +127,11 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
       renderer.contracts(data, editor.getValue());
   }
 
-  this.initializeWorker = function(version, setVersionText) {
+  this.initializeWorker = function (version, setVersionText) {
     if (worker !== null)
       worker.terminate();
     worker = new Worker('worker.js');
-    worker.addEventListener('message', function(msg) {
+    worker.addEventListener('message', function (msg) {
       var data = msg.data;
       switch (data.cmd) {
       case 'versionLoaded':
@@ -144,15 +144,15 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
         break;
       };
     });
-    worker.onerror = function(msg) { console.log(msg.data); };
-    worker.addEventListener('error', function(msg) { console.log(msg.data); });
-    compileJSON = function(source, optimize) {
+    worker.onerror = function (msg) { console.log(msg.data); };
+    worker.addEventListener('error', function (msg) { console.log(msg.data); });
+    compileJSON = function (source, optimize) {
       worker.postMessage({cmd: 'compile', source: source, optimize: optimize});
     };
     worker.postMessage({cmd: 'loadVersion', data: 'https://ethereum.github.io/solc-bin/bin/' + version});
   };
 
-  function gatherImports(files, importHints, cb) {
+  function gatherImports (files, importHints, cb) {
     importHints = importHints || [];
     if (!compilerAcceptsMultipleFiles)
     {
@@ -182,7 +182,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
           files[m] = cachedRemoteFiles[m];
           reloop = true;
         } else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
-          handleGithubCall(githubMatch[3], githubMatch[4], function(result) {
+          handleGithubCall(githubMatch[3], githubMatch[4], function (result) {
             if ('content' in result)
             {
               var content = Base64.decode(result.content);
@@ -192,7 +192,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
             }
             else
               cb(null, 'Unable to import "' + m + '"');
-          }).fail(function(){
+          }).fail(function () {
             cb(null, 'Unable to import "' + m + '"');
           });
           return;
@@ -202,7 +202,7 @@ function Compiler(editor, handleGithubCall, outputField, hidingRHP, updateFiles)
         }
       }
     } while (reloop);
-    cb(JSON.stringify({'sources':files}));
+    cb(JSON.stringify({ 'sources': files }));
   }
 }
 

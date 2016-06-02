@@ -1,18 +1,18 @@
 var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
 
-function getCacheFilePrefix() {
+function getCacheFilePrefix () {
   return SOL_CACHE_FILE_PREFIX;
 }
 
-function fileKey( name ) {
+function fileKey (name) {
   return getCacheFilePrefix() + name;
 }
 
-function fileNameFromKey(key) {
-  return key.replace( getCacheFilePrefix(), '' );
+function fileNameFromKey (key) {
+  return key.replace(getCacheFilePrefix(), '');
 }
 
-function errortype(message) {
+function errortype (message) {
   return message.match(/^.*:[0-9]*:[0-9]* Warning: /) ? 'warning' : 'error';
 }
 

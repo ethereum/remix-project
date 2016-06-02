@@ -5,15 +5,15 @@ var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
 
-function Renderer(editor, compiler, updateFiles) {
+function Renderer (editor, compiler, updateFiles) {
 
   var detailsOpen = {};
   var executionContext = 'vm';
 
   // Forcing all of this setup into its own scope.
-  (function(){
+  (function () {
     function executionContextChange (ev) {
-      if (ev.target.value === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?') ) {
+      if (ev.target.value === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
         $vmToggle.get(0).checked = true;
         executionContext = 'vm';
       } else {
@@ -23,7 +23,7 @@ function Renderer(editor, compiler, updateFiles) {
       compiler.compile();
     }
 
-    function setProviderFromEndpoint() {
+    function setProviderFromEndpoint () {
       var endpoint = $web3endpoint.val();
       if (endpoint === 'ipc')
         web3.setProvider(new web3.providers.IpcProvider());
@@ -40,19 +40,19 @@ function Renderer(editor, compiler, updateFiles) {
 
     $vmToggle.get(0).checked = true;
 
-    $vmToggle.on('change', executionContextChange );
-    $web3Toggle.on('change', executionContextChange );
-    $web3endpoint.on('change', function() {
+    $vmToggle.on('change', executionContextChange);
+    $web3Toggle.on('change', executionContextChange);
+    $web3endpoint.on('change', function () {
       setProviderFromEndpoint();
       if (executionContext === 'web3') compiler.compile();
     });
   })();
 
-  function renderError(message) {
+  function renderError (message) {
     var type = utils.errortype(message);
     var $pre = $('<pre />').text(message);
     var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
-    $('#output').append( $error );
+    $('#output').append($error);
     var err = message.match(/^([^:]*):([0-9]*):(([0-9]*):)? /);
     if (err) {
       var errFile = err[1];
@@ -66,16 +66,16 @@ function Renderer(editor, compiler, updateFiles) {
           type: type
         });
       }
-      $error.click(function(ev){
+      $error.click(function (ev) {
         if (errFile !== '' && errFile !== editor.getCacheFile() && editor.hasFile(errFile)) {
           // Switch to file
           editor.setCacheFile(errFile);
           updateFiles();
-          //@TODO could show some error icon in files with errors
+          // @TODO could show some error icon in files with errors
         }
         editor.handleErrorClick(errLine, errCol);
       });
-      $error.find('.close').click(function(ev){
+      $error.find('.close').click(function (ev) {
         ev.preventDefault();
         $error.remove();
         return false;
@@ -84,11 +84,11 @@ function Renderer(editor, compiler, updateFiles) {
   };
   this.error = renderError;
 
-  var combined = function(contractName, jsonInterface, bytecode){
-    return JSON.stringify([{name: contractName, interface: jsonInterface, bytecode: bytecode}]);
+  var combined = function (contractName, jsonInterface, bytecode) {
+    return JSON.stringify([{ name: contractName, interface: jsonInterface, bytecode: bytecode }]);
   };
 
-  function renderContracts(data, source) {
+  function renderContracts (data, source) {
 
     var udappContracts = [];
     for (var contractName in data.contracts) {
@@ -104,19 +104,19 @@ function Renderer(editor, compiler, updateFiles) {
       mode: executionContext === 'vm' ? 'vm' : 'web3',
       web3: web3,
       removable: false,
-      getAddress: function(){ return $('#txorigin').val(); },
-      getValue: function(){
+      getAddress: function () { return $('#txorigin').val(); },
+      getValue: function () {
         var comp = $('#value').val().split(' ');
         return web3.toWei(comp[0], comp.slice(1).join(' '));
       },
       removable_instances: true,
-      renderOutputModifier: function(contractName, $contractOutput) {
+      renderOutputModifier: function (contractName, $contractOutput) {
         var contract = data.contracts[contractName];
         return $contractOutput
           .append(textRow('Bytecode', contract.bytecode))
           .append(textRow('Interface', contract['interface']))
-          .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(),contract['interface'],contract.bytecode), 'deploy'))
-          .append(textRow('uDApp', combined(contractName,contract['interface'],contract.bytecode), 'deploy'))
+          .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
+          .append(textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'))
           .append(getDetails(contract, source, contractName));
       }
     });
@@ -125,43 +125,43 @@ function Renderer(editor, compiler, updateFiles) {
 
     var $txOrigin = $('#txorigin');
 
-    function renderAccounts(err, accounts) {
+    function renderAccounts (err, accounts) {
       if (err)
         renderError(err.message);
-      if (accounts && accounts[0]){
+      if (accounts && accounts[0]) {
         $txOrigin.empty();
-        for( var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])); }
+        for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])); }
         $txOrigin.val(accounts[0]);
       } else $txOrigin.val('unknown');
     }
 
     dapp.getAccounts(renderAccounts);
 
-    $contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
-    $('#output').append( $contractOutput );
-    $('.col2 input,textarea').click(function() { this.select(); });
+    $contractOutput.find('.title').click(function (ev) { $(this).closest('.contract').toggleClass('hide'); });
+    $('#output').append($contractOutput);
+    $('.col2 input,textarea').click(function () { this.select(); });
   };
   this.contracts = renderContracts;
 
-  var tableRowItems = function(first, second, cls) {
+  var tableRowItems = function (first, second, cls) {
     return $('<div class="crow"/>')
       .addClass(cls)
       .append($('<div class="col1">').append(first))
       .append($('<div class="col2">').append(second));
   };
-  var tableRow = function(description, data) {
+  var tableRow = function (description, data) {
     return tableRowItems(
       $('<span/>').text(description),
       $('<input readonly="readonly"/>').val(data));
   };
-  var textRow = function(description, data, cls) {
+  var textRow = function (description, data, cls) {
     return tableRowItems(
       $('<strong/>').text(description),
       $('<textarea readonly="readonly" class="gethDeployText"/>').val(data),
       cls);
   };
 
-  var getDetails = function(contract, source, contractName) {
+  var getDetails = function (contract, source, contractName) {
     var button = $('<button>Toggle Details</button>');
     var details = $('<div style="display: none;"/>')
       .append(tableRow('Solidity Interface', contract.solidity_interface))
@@ -181,14 +181,14 @@ function Renderer(editor, compiler, updateFiles) {
       var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
       details.append(assembly);
     }
-    button.click(function() { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
+    button.click(function () { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
     if (detailsOpen[contractName])
       details.show();
     return $('<div class="contractDetails"/>').append(button).append(details);
   };
 
-  var formatGasEstimates = function(data) {
-    var gasToText = function(g) { return g === null ? 'unknown' : g; }
+  var formatGasEstimates = function (data) {
+    var gasToText = function (g) { return g === null ? 'unknown' : g; }
     var text = '';
     var fun;
     if ('creation' in data)
@@ -202,11 +202,11 @@ function Renderer(editor, compiler, updateFiles) {
     return text;
   };
 
-  var formatAssemblyText = function(asm, prefix, source) {
-    if (typeof(asm) === typeof('') || asm === null || asm === undefined)
+  var formatAssemblyText = function (asm, prefix, source) {
+    if (typeof asm === typeof '' || asm === null || asm === undefined)
       return prefix + asm + '\n';
     var text = prefix + '.code\n';
-    $.each(asm['.code'], function(i, item) {
+    $.each(asm['.code'], function (i, item) {
       var v = item.value === undefined ? '' : item.value;
       var src = '';
       if (item.begin !== undefined && item.end !== undefined)
@@ -215,11 +215,11 @@ function Renderer(editor, compiler, updateFiles) {
         src = src.slice(0, 30) + '...';
       if (item.name !== 'tag')
         text += '  ';
-      text += prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
+      text += prefix + item.name + ' ' + v + '\t\t\t' + src + '\n';
     });
     text += prefix + '.data\n';
     if (asm['.data'])
-      $.each(asm['.data'], function(i, item) {
+      $.each(asm['.data'], function (i, item) {
         text += '  ' + prefix + '' + i + ':\n';
         text += formatAssemblyText(item, prefix + '    ', source);
       });
@@ -227,28 +227,28 @@ function Renderer(editor, compiler, updateFiles) {
     return text;
   };
 
-  function gethDeploy(contractName, jsonInterface, bytecode){
+  function gethDeploy (contractName, jsonInterface, bytecode) {
     var code = '';
     var funABI = getConstructorInterface(JSON.parse(jsonInterface));
 
-    funABI.inputs.forEach(function(inp) {
+    funABI.inputs.forEach(function (inp) {
       code += 'var ' + inp.name + ' = /* var of type ' + inp.type + ' here */ ;\n';
     });
 
-    code += 'var ' + contractName + 'Contract = web3.eth.contract(' + jsonInterface.replace('\n','') + ');'
-      +'\nvar ' + contractName + ' = ' + contractName + 'Contract.new(';
+    code += 'var ' + contractName + 'Contract = web3.eth.contract(' + jsonInterface.replace('\n', '') + ');' +
+      '\nvar ' + contractName + ' = ' + contractName + 'Contract.new(';
 
-    funABI.inputs.forEach(function(inp) {
+    funABI.inputs.forEach(function (inp) {
       code += '\n   ' + inp.name + ',';
     });
 
-    code += '\n   {'+
-    '\n     from: web3.eth.accounts[0], '+
-    '\n     data: \''+bytecode+'\', '+
-    '\n     gas: 3000000'+
-    '\n   }, function(e, contract){'+
-    '\n    console.log(e, contract);'+
-    '\n    if (typeof contract.address !== \'undefined\') {'+
+    code += '\n   {' +
+    '\n     from: web3.eth.accounts[0], ' +
+    '\n     data: \'' + bytecode + '\', ' +
+    '\n     gas: 3000000' +
+    '\n   }, function (e, contract){' +
+    '\n    console.log(e, contract);' +
+    '\n    if (typeof contract.address !== \'undefined\') {' +
     '\n         console.log(\'Contract mined! address: \' + contract.address + \' transactionHash: \' + contract.transactionHash);' +
     '\n    }' +
     '\n })';
@@ -257,8 +257,8 @@ function Renderer(editor, compiler, updateFiles) {
     return code;
   }
 
-  function getConstructorInterface(abi) {
-    var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
+  function getConstructorInterface (abi) {
+    var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] };
     for (var i = 0; i < abi.length; i++)
       if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || [];

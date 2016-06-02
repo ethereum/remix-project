@@ -11,16 +11,16 @@ var Compiler = require('./app/compiler');
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
 var filesToLoad = null;
-var loadFilesCallback = function(files) { filesToLoad = files; }; // will be replaced later
-window.addEventListener('message', function(ev) {
+var loadFilesCallback = function (files) { filesToLoad = files; }; // will be replaced later
+window.addEventListener('message', function (ev) {
 	if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
 		loadFilesCallback(ev.data[1]);
 	}
 }, false);
 
-var run = function() {
+var run = function () {
 
-	function loadFiles(files) {
+	function loadFiles (files) {
 		for (var f in files) {
 			var key = utils.fileKey(f);
 			var content = files[f].content;
@@ -36,7 +36,7 @@ var run = function() {
 		updateFiles();
 	}
 
-	loadFilesCallback = function(files) {
+	loadFilesCallback = function (files) {
 		loadFiles(files);
 	};
 
@@ -46,8 +46,8 @@ var run = function() {
 
 	// ------------------ query params (hash) ----------------
 
-	function syncQueryParams() {
-	  $('#optimize').attr( 'checked', (queryParams.get().optimize === 'true') );
+	function syncQueryParams () {
+	  $('#optimize').attr('checked', (queryParams.get().optimize === 'true'));
 	}
 
 	window.onhashchange = syncQueryParams;
@@ -56,15 +56,15 @@ var run = function() {
 
 	// ------------------ gist load ----------------
 
-	var loadingFromGist = gistHandler.handleLoad(function(gistId) {
+	var loadingFromGist = gistHandler.handleLoad(function (gistId) {
 		$.ajax({
-	    url: 'https://api.github.com/gists/'+gistId,
+	    url: 'https://api.github.com/gists/' + gistId,
 	    jsonp: 'callback',
 	    dataType: 'jsonp',
-	    success: function(response) {
+	    success: function (response) {
 				if (response.data) {
 					if (!response.data.files) {
-						alert( 'Gist load error: ' + response.data.message );
+						alert('Gist load error: ' + response.data.message);
 						return;
 					}
 					loadFiles(response.data.files);
@@ -88,9 +88,9 @@ var run = function() {
 
 	// ----------------- tabbed menu -------------------
 
-	$('#options li').click(function(ev){
+	$('#options li').click(function (ev) {
 		var $el = $(this);
-		var match = /[a-z]+View/.exec( $el.get(0).className );
+		var match = /[a-z]+View/.exec($el.get(0).className);
 		if (!match) return;
 		var cls = match[0];
 		if (!$el.hasClass('active')) {
@@ -106,11 +106,11 @@ var run = function() {
 
 	// ------------------ gist publish --------------
 
-	$('#gist').click(function(){
+	$('#gist').click(function () {
 		if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
 
 			var files = editor.packageFiles();
-			var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize='+ queryParams.get().optimize +'&gist=';
+			var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist=';
 
 			$.ajax({
 				url: 'https://api.github.com/gists',
@@ -120,15 +120,15 @@ var run = function() {
 					public: true,
 					files: files
 				})
-			}).done(function(response) {
+			}).done(function (response) {
 				if (response.html_url && confirm('Created a gist at ' + response.html_url + ' Would you like to open it in a new window?')) {
-					window.open( response.html_url, '_blank' );
+					window.open(response.html_url, '_blank');
 				}
 			});
 		}
 	});
 
-	$('#copyOver').click(function(){
+	$('#copyOver').click(function () {
 		var target = prompt(
 			'To which other browser-solidity instance do you want to copy over all files?',
 			'https://ethereum.github.io/browser-solidity/'
@@ -136,7 +136,7 @@ var run = function() {
 		if (target === null)
 			return;
 		var files = editor.packageFiles();
-		var iframe = $('<iframe/>', {src: target, style: 'display:none;', load: function() {
+		var iframe = $('<iframe/>', {src: target, style: 'display:none;', load: function () {
 			this.contentWindow.postMessage(['loadFiles', files], '*');
 		}}).appendTo('body');
 	});
@@ -146,30 +146,30 @@ var run = function() {
 	var $filesEl = $('#files');
 	var FILE_SCROLL_DELTA = 300;
 
-	$('.newFile').on('click', function() {
+	$('.newFile').on('click', function () {
 		editor.newFile();
 		updateFiles();
 
-		$filesEl.animate({left: Math.max( (0 - activeFilePos() + (FILE_SCROLL_DELTA/2)), 0)+ 'px'}, 'slow', function(){
+		$filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
 			reAdjust();
 		});
 	});
 
 	$filesEl.on('click', '.file:not(.active)', showFileHandler);
 
-	$filesEl.on('click', '.file.active', function(ev) {
+	$filesEl.on('click', '.file.active', function (ev) {
 		var $fileTabEl = $(this);
 		var originalName = $fileTabEl.find('.name').text();
 		ev.preventDefault();
 		if ($(this).find('input').length > 0) return false;
-		var $fileNameInputEl = $('<input value="'+originalName+'"/>');
+		var $fileNameInputEl = $('<input value="' + originalName + '"/>');
 		$fileTabEl.html($fileNameInputEl);
 		$fileNameInputEl.focus();
 		$fileNameInputEl.select();
 		$fileNameInputEl.on('blur', handleRename);
 		$fileNameInputEl.keyup(handleRename);
 
-		function handleRename(ev) {
+		function handleRename (ev) {
 			ev.preventDefault();
 			if (ev.which && ev.which !== 13) return false;
 			var newName = ev.target.value;
@@ -177,9 +177,9 @@ var run = function() {
 			$fileNameInputEl.off('keyup');
 
 			if (newName !== originalName && confirm('Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-				var content = window.localStorage.getItem( utils.fileKey(originalName) );
-				window.localStorage[utils.fileKey( newName )] = content;
-				window.localStorage.removeItem( utils.fileKey( originalName) );
+				var content = window.localStorage.getItem(utils.fileKey(originalName));
+				window.localStorage[utils.fileKey(newName)] = content;
+				window.localStorage.removeItem(utils.fileKey(originalName));
 				editor.setCacheFile(newName);
 			}
 
@@ -190,32 +190,32 @@ var run = function() {
 		return false;
 	});
 
-	$filesEl.on('click', '.file .remove', function(ev) {
+	$filesEl.on('click', '.file .remove', function (ev) {
 		ev.preventDefault();
 		var name = $(this).parent().find('.name').text();
 
 		if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-			window.localStorage.removeItem( utils.fileKey( name ) );
+			window.localStorage.removeItem(utils.fileKey(name));
 			editor.setNextFile(utils.fileKey(name));
 			updateFiles();
 		}
 		return false;
 	});
 
-	function showFileHandler(ev) {
+	function showFileHandler (ev) {
 		ev.preventDefault();
 		editor.setCacheFile($(this).find('.name').text());
 		updateFiles();
 		return false;
 	}
 
-	function activeFileTab() {
+	function activeFileTab () {
 		var name = editor.getCacheFile();
-		return $('#files .file').filter(function(){ return $(this).find('.name').text() === name; });
+		return $('#files .file').filter(function () { return $(this).find('.name').text() === name; });
 	}
 
 
-	function updateFiles() {
+	function updateFiles () {
 		var $filesEl = $('#files');
 		var files = editor.getFiles();
 
@@ -230,72 +230,72 @@ var run = function() {
 			active.addClass('active');
 			editor.resetSession();
 		}
-		$('#input').toggle( editor.cacheFileIsPresent() );
-		$('#output').toggle( editor.cacheFileIsPresent() );
+		$('#input').toggle(editor.cacheFileIsPresent());
+		$('#output').toggle(editor.cacheFileIsPresent());
 		reAdjust();
 	}
 
-	function fileTabTemplate(key) {
+	function fileTabTemplate (key) {
 		var name = utils.fileNameFromKey(key);
-		return $('<li class="file"><span class="name">'+name+'</span><span class="remove"><i class="fa fa-close"></i></span></li>');
+		return $('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>');
 	}
 
 	var $filesWrapper = $('.files-wrapper');
 	var $scrollerRight = $('.scroller-right');
 	var $scrollerLeft = $('.scroller-left');
 
-	function widthOfList (){
+	function widthOfList () {
 		var itemsWidth = 0;
-		$('.file').each(function(){
+		$('.file').each(function () {
 			var itemWidth = $(this).outerWidth();
 			itemsWidth += itemWidth;
 		});
 		return itemsWidth;
 	}
 
-	function widthOfHidden(){
+	function widthOfHidden () {
 		return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi());
 	}
 
-	function widthOfVisible(){
+	function widthOfVisible () {
 		return $filesWrapper.outerWidth();
 	}
 
-	function getLeftPosi(){
+	function getLeftPosi () {
 		return $filesEl.position().left;
 	}
 
-	function activeFilePos() {
+	function activeFilePos () {
 		var el = $filesEl.find('.active');
 		var l = el.position().left;
 		return l;
 	}
 
-	function reAdjust (){
+	function reAdjust () {
 		if (widthOfList() + getLeftPosi() > + widthOfVisible()) {
 			$scrollerRight.fadeIn('fast');
 		} else {
 			$scrollerRight.fadeOut('fast');
 		}
 
-		if (getLeftPosi()<0) {
+		if (getLeftPosi() < 0) {
 			$scrollerLeft.fadeIn('fast');
 		} else {
 			$scrollerLeft.fadeOut('fast');
-			$filesEl.animate({left: getLeftPosi() + 'px'},'slow');
+			$filesEl.animate({ left: getLeftPosi() + 'px' }, 'slow');
 		}
 	}
 
-	$scrollerRight.click(function() {
+	$scrollerRight.click(function () {
 		var delta = (getLeftPosi() - FILE_SCROLL_DELTA);
-		$filesEl.animate({left: delta + 'px'},'slow',function(){
+		$filesEl.animate({ left: delta + 'px' }, 'slow', function () {
 			reAdjust();
 		});
 	});
 
-	$scrollerLeft.click(function() {
-		var delta = Math.min( (getLeftPosi() + FILE_SCROLL_DELTA), 0 );
-		$filesEl.animate({left: delta + 'px'},'slow',function(){
+	$scrollerLeft.click(function () {
+		var delta = Math.min((getLeftPosi() + FILE_SCROLL_DELTA), 0);
+		$filesEl.animate({ left: delta + 'px' }, 'slow', function () {
 			reAdjust();
 		});
 	});
@@ -307,14 +307,14 @@ var run = function() {
 	// var soljsonSources is provided by bin/list.js
 
 	$('option', '#versionSelector').remove();
-	$.each(soljsonSources, function(i, file) {
+	$.each(soljsonSources, function (i, file) {
 		if (file) {
 			var version = file.replace(/soljson-(.*).js/, '$1');
 			$('#versionSelector').append(new Option(version, file));
 		}
 	});
-	$('#versionSelector').change(function() {
-		queryParams.update({version: $('#versionSelector').val() });
+	$('#versionSelector').change(function () {
+		queryParams.update({ version: $('#versionSelector').val() });
 		loadVersion($('#versionSelector').val());
 	});
 
@@ -322,7 +322,7 @@ var run = function() {
 
 	var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache';
 	var dragging = false;
-	$('#dragbar').mousedown(function(e){
+	$('#dragbar').mousedown(function (e) {
 		e.preventDefault();
 		dragging = true;
 		var main = $('#righthand-panel');
@@ -333,8 +333,8 @@ var run = function() {
 			}
 		}).prependTo('body');
 
-		$(document).mousemove(function(e){
-			ghostbar.css('left',e.pageX+2);
+		$(document).mousemove(function (e) {
+			ghostbar.css('left', e.pageX + 2);
 		});
 	});
 
@@ -346,13 +346,13 @@ var run = function() {
 		onResize();
 	}
 
-	function getEditorSize(){
+	function getEditorSize () {
 		window.localStorage[EDITOR_SIZE_CACHE_KEY] = $('#righthand-panel').width();
 	}
 
-	$(document).mouseup(function(e){
+	$(document).mouseup(function (e) {
 		if (dragging) {
-			var delta = $body.width() - e.pageX+2;
+			var delta = $body.width() - e.pageX + 2;
 			$('#ghostbar').remove();
 			$(document).unbind('mousemove');
 			dragging = false;
@@ -371,19 +371,19 @@ var run = function() {
 	// ----------------- toggle right hand panel -----------------
 
 	var hidingRHP = false;
-	$('.toggleRHP').click(function(){
+	$('.toggleRHP').click(function () {
 		hidingRHP = !hidingRHP;
-		setEditorSize( hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY] );
+		setEditorSize(hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY]);
 		$('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
 		$('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
 		if (!hidingRHP) compiler.compile();
 	});
 
-	function getHidingRHP() { return hidingRHP; }
+	function getHidingRHP () { return hidingRHP; }
 
 	// ----------------- editor resize ---------------
 
-	function onResize() {
+	function onResize () {
 		editor.resize();
 		reAdjust();
 	}
@@ -396,23 +396,23 @@ var run = function() {
 
 	// ----------------- compiler output renderer ----------------------
 
-	$('.asmOutput button').click(function() {$(this).parent().find('pre').toggle(); });
+	$('.asmOutput button').click(function () { $(this).parent().find('pre').toggle(); });
 
 
 	// ----------------- compiler ----------------------
 
-	function handleGithubCall(root, path, cb) {
+	function handleGithubCall (root, path, cb) {
 		$('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')));
 		return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
 	var compiler = new Compiler(editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
 
-	function setVersionText(text) {
+	function setVersionText (text) {
 		$('#version').text(text);
 	}
 
-	var loadVersion = function(version) {
+	var loadVersion = function (version) {
 		setVersionText('(loading)');
 		queryParams.update({version: version});
 		var isFirefox = typeof InstallTrigger !== 'undefined';
@@ -428,7 +428,7 @@ var run = function() {
 			newScript.type = 'text/javascript';
 			newScript.src = 'https://ethereum.github.io/solc-bin/bin/' + version;
 			document.getElementsByTagName('head')[0].appendChild(newScript);
-			var check = window.setInterval(function() {
+			var check = window.setInterval(function () {
 				if (!Module) return;
 				window.clearInterval(check);
 				compiler.onCompilerLoaded(setVersionText);
@@ -436,9 +436,9 @@ var run = function() {
 		}
 	};
 
-	loadVersion( queryParams.get().version || 'soljson-latest.js');
+	loadVersion(queryParams.get().version || 'soljson-latest.js');
 
-	document.querySelector('#optimize').addEventListener('change', function(){
+	document.querySelector('#optimize').addEventListener('change', function () {
 		queryParams.update({optimize: document.querySelector('#optimize').checked });
 		compiler.compile();
 	});
