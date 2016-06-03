@@ -10,7 +10,6 @@
     "es6-shim": "^0.35.1",
     "ethereumjs-block": "^1.2.2",
     "ethereumjs-vm": "^1.4.0",
-    "merkle-patricia-tree": "^2.1.2",
     "ethereumjs-util": "^4.4.0",
     "ethereumjs-tx": "^1.1.1",
     "ethereumjs-abi": "^0.6.1",

@@ -1,6 +1,5 @@
 var $ = require('jquery');
 var EthJSVM = require('ethereumjs-vm');
-var Trie = require('merkle-patricia-tree');
 var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
@@ -24,8 +23,7 @@ function UniversalDApp (contracts, options) {
         this.accounts = {};
 
         this.BN = ethJSUtil.BN;
-        this.stateTrie = new Trie();
-        this.vm = new EthJSVM(this.stateTrie, null, { activatePrecompiles: true });
+        this.vm = new EthJSVM(null, null, { activatePrecompiles: true });
 
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
