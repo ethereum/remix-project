@@ -422,9 +422,9 @@ var run = function () {
 			// Workers cannot load js on "file:"-URLs and we get a
 			// "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
 			// resort to non-worker version in that case.
-			compiler.initializeWorker(version, setVersionText);
+			compiler.loadVersion(true, version, setVersionText);
 		} else {
-			compiler.loadVersion(version, setVersionText);
+			compiler.loadVersion(false, version, setVersionText);
 		}
 	};
 

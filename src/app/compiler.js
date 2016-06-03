@@ -132,7 +132,15 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     }
   }
 
-  this.loadVersion = function (version, setVersionText) {
+  this.loadVersion = function (usingWorker, version, setVersionText) {
+    if (usingWorker) {
+      loadWorker(version, setVersionText);
+    } else {
+      loadInternal(version, setVersionText);
+    }
+  };
+
+  function loadInternal (version, setVersionText) {
     Module = null;
     // Set a safe fallback until the new one is loaded
     compileJSON = function(source, optimize) { compilationFinished('{}'); };
@@ -148,9 +156,9 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       window.clearInterval(check);
       onCompilerLoaded(setVersionText);
     }, 200);
-  };
+  }
 
-  this.initializeWorker = function (version, setVersionText) {
+  function loadWorker (version, setVersionText) {
     if (worker !== null) {
       worker.terminate();
     }
