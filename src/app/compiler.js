@@ -161,6 +161,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     }
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g;
     var reloop = false;
+    var githubMatch;
     do {
       reloop = false;
       for (var fileName in files) {

@@ -121,7 +121,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
 
     var $contractOutput = dapp.render();
 
-    $txOrigin = $('#txorigin');
+    var $txOrigin = $('#txorigin');
 
     function renderAccounts(err, accounts) {
       if (err)
@@ -188,13 +188,14 @@ function Renderer(web3, editor, compiler, updateFiles) {
   var formatGasEstimates = function(data) {
     var gasToText = function(g) { return g === null ? 'unknown' : g; }
     var text = '';
+    var fun;
     if ('creation' in data)
       text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
     text += 'External:\n';
-    for (var fun in data.external)
+    for (fun in data.external)
       text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
     text += 'Internal:\n';
-    for (var fun in data.internal)
+    for (fun in data.internal)
       text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
     return text;
   };
