@@ -414,7 +414,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
             } else if (self.options.vm){
                 var outputObj = '0x' + result.vm.return.toString('hex');
                 clearOutput($result);
-                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result.vm));
+                $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result));
 
                 // Only decode if there supposed to be fields
                 if (args.abi.outputs.length > 0) {
