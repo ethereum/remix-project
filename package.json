@@ -18,7 +18,8 @@
     "jquery": "^2.2.0",
     "brace": "^0.8.0",
     "browserify": "^13.0.0",
-    "js-base64": "^2.1.9"
+    "js-base64": "^2.1.9",
+    "webworkify": "^1.2.1"
   },
   "repository": {
     "type": "git",

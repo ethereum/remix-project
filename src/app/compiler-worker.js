@@ -1,7 +1,10 @@
 var version = function() { return '(loading)'; }
 var compileJSON = function() { return ''; }
 var missingInputs = [];
-addEventListener('message', function(e) {
+
+module.exports = function (self) {
+
+self.addEventListener('message', function(e) {
 	var data = e.data;
 	switch (data.cmd) {
 		case 'loadVersion':
@@ -37,3 +40,5 @@ addEventListener('message', function(e) {
 			break;
 	}
 }, false);
+
+}
