@@ -97,7 +97,6 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     previousInput = '';
     onChange();
   };
-  this.onCompilerLoaded = onCompilerLoaded;
 
   function compilationFinished (result, missingInputs) {
     var data;
