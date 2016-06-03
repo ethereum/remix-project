@@ -63,11 +63,6 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     editor.setAnnotations(sourceAnnotations);
   };
 
-  function setCompileJSON () {
-    compileJSON = function(source, optimize) { compilationFinished('{}'); };
-  };
-  this.setCompileJSON = setCompileJSON;
-
   function onCompilerLoaded (setVersionText) {
     if (worker === null) {
       var compile;
@@ -139,7 +134,9 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
 
   this.loadVersion = function (version, setVersionText) {
     Module = null;
-    setCompileJSON();
+    // Set a safe fallback until the new one is loaded
+    compileJSON = function(source, optimize) { compilationFinished('{}'); };
+
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
     newScript.src = url;
