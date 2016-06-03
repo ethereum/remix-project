@@ -535,10 +535,6 @@ UniversalDApp.prototype.deployLibrary = function(contractName, cb) {
     }
 };
 
-UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract ) {
-    $contract.append( self.getInstanceInterface(contract) );
-};
-
 UniversalDApp.prototype.clickContractAt = function ( self, $output, contract ) {
     var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" );
     self.getInstanceInterface(contract, address, $output );
