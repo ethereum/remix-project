@@ -63,9 +63,10 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     editor.setAnnotations(sourceAnnotations);
   };
 
-  this.setCompileJSON = function () {
-    compileJSON = function (source, optimize) { compilationFinished('{}'); };
+  function setCompileJSON () {
+    compileJSON = function(source, optimize) { compilationFinished('{}'); };
   };
+  this.setCompileJSON = setCompileJSON;
 
   function onCompilerLoaded (setVersionText) {
     if (worker === null) {
@@ -135,6 +136,22 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       renderer.contracts(data, editor.getValue());
     }
   }
+
+  this.loadVersion = function (version, setVersionText) {
+    Module = null;
+    setCompileJSON();
+    var newScript = document.createElement('script');
+    newScript.type = 'text/javascript';
+    newScript.src = url;
+    document.getElementsByTagName('head')[0].appendChild(newScript);
+    var check = window.setInterval(function () {
+      if (!Module) {
+        return;
+      }
+      window.clearInterval(check);
+      onCompilerLoaded(setVersionText);
+    }, 200);
+  };
 
   this.initializeWorker = function (version, setVersionText) {
     if (worker !== null) {
