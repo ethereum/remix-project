@@ -22,6 +22,7 @@
     "js-base64": "^2.1.9",
     "nightwatch": "^0.9.3",
     "semistandard": "^7.0.0",
+    "solc": "https://github.com/ethereum/solc-js",
     "tape": "^4.5.1",
     "web3": "^0.15.3",
     "webworkify": "^1.2.1"
