@@ -291,8 +291,14 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         $createInterface.append(this.getCallButton({
             abi: funABI,
             encode: function (args) {
-                var obj = web3contract.new;
-                return obj.getData.apply(obj, args);
+                var types = [];
+                for (var i = 0; i < funABI.inputs.length; i++) {
+                    types.push(funABI.inputs[i].type);
+                }
+
+		// NOTE: the caller will concatenate the bytecode and this
+		//       it could be done here too for consistency
+                return ethJSABI.rawEncode(types, args).toString('hex');
             },
             contractName: contract.name,
             bytecode: contract.bytecode,
