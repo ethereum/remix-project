@@ -13,9 +13,6 @@ function UniversalDApp (contracts, options) {
     this.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
 
     this.web3 = options.web3;
-    if (!this.web3) {
-       throw new Error('Web3 is required for ABI encoding');
-    }
 
     if (options.mode === 'vm') {
         // FIXME: use `options.vm` or `this.vm` consistently
