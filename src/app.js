@@ -1,5 +1,4 @@
 var $ = require('jquery');
-var web3 = require('./web3-adapter.js');
 
 var utils = require('./app/utils');
 var queryParams = require('./app/query-params');
@@ -407,7 +406,7 @@ var run = function() {
 		return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
 	}
 
-	var compiler = new Compiler(web3, editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+	var compiler = new Compiler(editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
 
 	function setVersionText(text) {
 		$('#version').text(text);
