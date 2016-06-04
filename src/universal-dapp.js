@@ -12,7 +12,15 @@ function UniversalDApp (contracts, options) {
     this.contracts = contracts;
     this.renderOutputModifier = options.renderOutputModifier || function(name, content) { return content; };
 
-    if (options.vm) {
+    this.web3 = options.web3;
+    if (!this.web3) {
+       throw new Error('Web3 is required for ABI encoding');
+    }
+
+    if (options.mode === 'vm') {
+        // FIXME: use `options.vm` or `this.vm` consistently
+        options.vm = true;
+
         this.accounts = {};
 
         this.BN = ethJSUtil.BN;
@@ -21,9 +29,7 @@ function UniversalDApp (contracts, options) {
 
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
-    } else if (options.web3) {
-        this.web3 = options.web3;
-    } else {
+    } else if (options.mode !== 'web3') {
 	throw new Error("Either VM or Web3 mode must be selected");
     }
 }

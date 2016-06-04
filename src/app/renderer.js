@@ -101,8 +101,8 @@ function Renderer(editor, compiler, updateFiles) {
     }
 
     var dapp = new UniversalDApp(udappContracts, {
-      vm: executionContext === 'vm',
-      web3: executionContext !== 'vm' ? web3 : null,
+      mode: executionContext === 'vm' ? 'vm' : 'web3',
+      web3: web3,
       removable: false,
       getAddress: function(){ return $('#txorigin').val(); },
       getValue: function(){
