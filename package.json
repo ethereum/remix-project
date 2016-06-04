@@ -28,7 +28,7 @@
     "nightwatch": "^0.9.3",
     "semistandard": "^7.0.0",
     "tape": "^4.5.1",
-    "web3": "^0.15.3",
+    "web3": "^0.16.0",
     "webworkify": "^1.2.1"
   },
   "repository": {
