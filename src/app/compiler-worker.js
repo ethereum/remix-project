@@ -13,8 +13,7 @@ module.exports = function (self) {
 
         importScripts(data.data);
         version = Module.cwrap("version", "string", []);
-        if ('_compileJSONCallback' in Module)
-        {
+        if ('_compileJSONCallback' in Module) {
           var compileJSONInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
           var missingInputCallback = Module.Runtime.addFunction(function (path) {
             missingInputs.push(Module.Pointer_stringify(path));
@@ -22,11 +21,11 @@ module.exports = function (self) {
           compileJSON = function (input, optimize) {
             return compileJSONInternal(input, optimize, missingInputCallback);
           };
-        }
-        else if ('_compileJSONMulti' in Module)
+        } else if ('_compileJSONMulti' in Module) {
           compileJSON = Module.cwrap("compileJSONMulti", "string", ["string", "number"]);
-        else
+        } else {
           compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
+        }
         postMessage({
           cmd: 'versionLoaded',
           data: version(),

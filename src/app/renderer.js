@@ -130,8 +130,9 @@ function Renderer (editor, compiler, updateFiles) {
       .append(tableRow('Solidity Interface', contract.solidity_interface))
       .append(tableRow('Opcodes', contract.opcodes));
     var funHashes = '';
-    for (var fun in contract.functionHashes)
+    for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
+    }
     details.append($('<span class="col1">Functions</span>'));
     details.append($('<pre/>').text(funHashes));
     details.append($('<span class="col1">Gas Estimates</span>'));
