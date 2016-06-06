@@ -1,77 +1,14 @@
 var $ = require('jquery');
 
-var web3 = require('../web3-adapter.js');
 var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
+var ExecutionContext = require('./execution-context');
 
 function Renderer (editor, compiler, updateFiles) {
 
   var detailsOpen = {};
-  var executionContext = web3.injected ? 'injected' : 'vm';
-
-  // Forcing all of this setup into its own scope.
-  (function () {
-    function executionContextChange (ev) {
-      if (ev.target.value === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
-        setExecutionContextRadio();
-      } else if (ev.target.value === 'injected' && injectedWeb3Provider === undefined) {
-        setExecutionContextRadio();
-      } else {
-        executionContext = ev.target.value;
-        if (executionContext === 'web3') {
-          setProviderFromEndpoint();
-        } else if (executionContext === 'injected') {
-          web3.setProvider(injectedWeb3Provider);
-        }
-      }
-      compiler.compile();
-    }
-
-    function setProviderFromEndpoint () {
-      var endpoint = $web3endpoint.val();
-      if (endpoint === 'ipc') {
-        web3.setProvider(new web3.providers.IpcProvider());
-      } else {
-        web3.setProvider(new web3.providers.HttpProvider(endpoint));
-      }
-    }
-
-    function setExecutionContextRadio () {
-      if (executionContext === 'injected') {
-        $injectedToggle.get(0).checked = true;
-      } else if (executionContext === 'vm') {
-        $vmToggle.get(0).checked = true;
-      } else if (executionContext === 'web3') {
-        $web3Toggle.get(0).checked = true;
-      }
-    }
-
-    if (web3.injected) {
-      var injectedWeb3Provider = web3.currentProvider;
-    }
-
-    var $injectedToggle = $('#injected');
-    var $vmToggle = $('#vm');
-    var $web3Toggle = $('#web3');
-    var $web3endpoint = $('#web3Endpoint');
-
-    if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider) {
-      $web3endpoint.val('ipc');
-    }
-
-    setExecutionContextRadio();
-
-    $injectedToggle.on('change', executionContextChange);
-    $vmToggle.on('change', executionContextChange);
-    $web3Toggle.on('change', executionContextChange);
-    $web3endpoint.on('change', function () {
-      setProviderFromEndpoint();
-      if (executionContext === 'web3') {
-        compiler.compile();
-      }
-    });
-  })();
+  var executionContext = new ExecutionContext(compiler);
 
   function renderError (message) {
     var type = utils.errortype(message);
@@ -126,13 +63,13 @@ function Renderer (editor, compiler, updateFiles) {
     }
 
     var dapp = new UniversalDApp(udappContracts, {
-      mode: executionContext === 'vm' ? 'vm' : 'web3',
-      web3: web3,
+      mode: executionContext.isVM() ? 'vm' : 'web3',
+      web3: executionContext.web3(),
       removable: false,
       getAddress: function () { return $('#txorigin').val(); },
       getValue: function () {
         var comp = $('#value').val().split(' ');
-        return web3.toWei(comp[0], comp.slice(1).join(' '));
+        return executionContext.web3().toWei(comp[0], comp.slice(1).join(' '));
       },
       removable_instances: true,
       renderOutputModifier: function (contractName, $contractOutput) {
