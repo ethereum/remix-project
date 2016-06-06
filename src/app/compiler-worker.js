@@ -15,7 +15,7 @@ module.exports = function (self) {
 				version = Module.cwrap("version", "string", []);
 				if ('_compileJSONCallback' in Module)
 				{
-					compileJSONInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
+					var compileJSONInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
 					var missingInputCallback = Module.Runtime.addFunction(function(path) {
 						missingInputs.push(Module.Pointer_stringify(path));
 					});

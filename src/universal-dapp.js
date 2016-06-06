@@ -345,13 +345,14 @@ UniversalDApp.prototype.getCallButton = function (args) {
     var getGasUsedOutput = function (result, vmResult) {
         var $gasUsed = $('<div class="gasUsed">');
         var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
+        var gas;
         if (result.gasUsed) {
-            var gas = result.gasUsed.toString(10);
+            gas = result.gasUsed.toString(10);
             $gasUsed.html('<strong>Transaction cost:</strong> ' + gas + ' gas. ' + caveat);
         }
         if (vmResult.gasUsed) {
             var $callGasUsed = $('<div class="gasUsed">');
-            var gas = vmResult.gasUsed.toString(10);
+            gas = vmResult.gasUsed.toString(10);
             $callGasUsed.append('<strong>Execution cost:</strong> ' + gas + ' gas.');
             $gasUsed.append($callGasUsed);
         }
@@ -456,8 +457,10 @@ UniversalDApp.prototype.getCallButton = function (args) {
                 // Only decode if there supposed to be fields
                 if (args.abi.outputs.length > 0) {
                     try {
+                        var i;
+
                         var outputTypes = [];
-                        for (var i = 0; i < args.abi.outputs.length; i++) {
+                        for (i = 0; i < args.abi.outputs.length; i++) {
                             outputTypes.push(args.abi.outputs[i].type);
                         }
 
@@ -466,7 +469,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
                         // format decoded data
                         decodedObj = ethJSABI.stringify(outputTypes, decodedObj);
-                        for (var i = 0; i < outputTypes.length; i++) {
+                        for (i = 0; i < outputTypes.length; i++) {
                             var name = args.abi.outputs[i].name;
                             if (name.length > 0) {
                                 decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i];
