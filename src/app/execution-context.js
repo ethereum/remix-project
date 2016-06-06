@@ -21,9 +21,9 @@ function ExecutionContext (compiler) {
     return web3;
   };
 
-  var $injectedToggle = $('#injected');
-  var $vmToggle = $('#vm');
-  var $web3Toggle = $('#web3');
+  var $injectedToggle = $('#injected-mode');
+  var $vmToggle = $('#vm-mode');
+  var $web3Toggle = $('#web3-mode');
   var $web3endpoint = $('#web3Endpoint');
 
   if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider) {
