@@ -8,17 +8,22 @@ var utils = require('./utils');
 function Renderer (editor, compiler, updateFiles) {
 
   var detailsOpen = {};
-  var executionContext = 'vm';
+  var executionContext = web3.injected ? 'injected' : 'vm';
 
   // Forcing all of this setup into its own scope.
   (function () {
     function executionContextChange (ev) {
       if (ev.target.value === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
-        $vmToggle.get(0).checked = true;
-        executionContext = 'vm';
+        setExecutionContextRadio();
+      } else if (ev.target.value === 'injected' && injectedWeb3Provider === undefined) {
+        setExecutionContextRadio();
       } else {
         executionContext = ev.target.value;
-        setProviderFromEndpoint();
+        if (executionContext === 'web3') {
+          setProviderFromEndpoint();
+        } else if (executionContext === 'injected') {
+          web3.setProvider(injectedWeb3Provider);
+        }
       }
       compiler.compile();
     }
@@ -32,6 +37,21 @@ function Renderer (editor, compiler, updateFiles) {
       }
     }
 
+    function setExecutionContextRadio () {
+      if (executionContext === 'injected') {
+        $injectedToggle.get(0).checked = true;
+      } else if (executionContext === 'vm') {
+        $vmToggle.get(0).checked = true;
+      } else if (executionContext === 'web3') {
+        $web3Toggle.get(0).checked = true;
+      }
+    }
+
+    if (web3.injected) {
+      var injectedWeb3Provider = web3.currentProvider;
+    }
+
+    var $injectedToggle = $('#injected');
     var $vmToggle = $('#vm');
     var $web3Toggle = $('#web3');
     var $web3endpoint = $('#web3Endpoint');
@@ -40,8 +60,9 @@ function Renderer (editor, compiler, updateFiles) {
       $web3endpoint.val('ipc');
     }
 
-    $vmToggle.get(0).checked = true;
+    setExecutionContextRadio();
 
+    $injectedToggle.on('change', executionContextChange);
     $vmToggle.on('change', executionContextChange);
     $web3Toggle.on('change', executionContextChange);
     $web3endpoint.on('change', function () {
