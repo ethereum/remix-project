@@ -347,7 +347,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
       gas = result.gasUsed.toString(10);
       $gasUsed.html('<strong>Transaction cost:</strong> ' + gas + ' gas. ' + caveat);
     }
-    if (vmResult.gasUsed) {
+    if (vmResult && vmResult.gasUsed) {
       var $callGasUsed = $('<div class="gasUsed">');
       gas = vmResult.gasUsed.toString(10);
       $callGasUsed.append('<strong>Execution cost:</strong> ' + gas + ' gas.');
@@ -439,13 +439,15 @@ UniversalDApp.prototype.getCallButton = function (args) {
     self.runTx(data, args, function (err, result) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
+      // VM only
       } else if (self.options.vm && result.vm.exception && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
+      // VM only
       } else if (self.options.vm && result.vm.return === undefined) {
         replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
-      } else if (self.options.vm && isConstructor) {
+      } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm));
-        args.appendFunctions(result.createdAddress);
+        args.appendFunctions(self.options.vm ? result.createdAddress : result.contractAddress);
       } else if (self.options.vm) {
         var outputObj = '0x' + result.vm.return.toString('hex');
         clearOutput($result);
@@ -483,17 +485,8 @@ UniversalDApp.prototype.getCallButton = function (args) {
       } else if (args.abi.constant && !isConstructor) {
         replaceOutput($result, getReturnOutput(result));
       } else {
-        tryTillResponse(self.web3, result, function (err, result) {
-          if (err) {
-            replaceOutput($result, $('<span/>').text(err).addClass('error'));
-          } else if (isConstructor) {
-            $result.html('');
-            args.appendFunctions(result.contractAddress);
-          } else {
-            clearOutput($result);
-            $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
-          }
-        });
+        clearOutput($result);
+        $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
       }
     });
   };
@@ -566,16 +559,9 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
       if (err) {
         return cb(err);
       }
-      if (self.options.vm) {
-        self.getContractByName(contractName).address = result.createdAddress;
-        cb(err, result.createdAddress);
-      } else {
-        tryTillResponse(self.web3, result, function (err, finalResult) {
-          if (err) return cb(err);
-          self.getContractByName(contractName).address = finalResult.contractAddress;
-          cb(null, finalResult.contractAddress);
-        });
-      }
+      var address = self.options.vm ? result.createdAddress : result.contractAddress;
+      self.getContractByName(contractName).address = address;
+      cb(err, address);
     });
   }
 };
@@ -618,12 +604,15 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       this.web3.eth.call(tx, cb);
     } else {
       this.web3.eth.estimateGas(tx, function (err, resp) {
-        tx.gas = resp;
-        if (!err) {
-          self.web3.eth.sendTransaction(tx, cb);
-        } else {
-          cb(err, resp);
+        if (err) {
+          return cb(err, resp);
         }
+
+        tx.gas = resp;
+
+        self.web3.eth.sendTransaction(tx, function (err, resp) {
+          tryTillResponse(self.web3, resp, cb);
+        });
       });
     }
   } else {
