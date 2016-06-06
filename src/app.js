@@ -1,3 +1,5 @@
+/* global alert, confirm, prompt, Option, Worker, soljsonSources */
+
 var $ = require('jquery');
 
 var utils = require('./app/utils');

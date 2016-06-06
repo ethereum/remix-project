@@ -1,3 +1,5 @@
+/* global BALLOT_EXAMPLE, FileReader */
+
 var utils = require('./utils');
 
 var ace = require('brace');

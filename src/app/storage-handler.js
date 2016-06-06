@@ -1,3 +1,5 @@
+/* global chrome, confirm, localStorage */
+
 var utils = require('./utils');
 
 function StorageHandler (updateFiles) {

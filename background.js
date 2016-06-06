@@ -1,3 +1,5 @@
+/* global chrome */
+
 chrome.browserAction.onClicked.addListener(function (tab) {
 
     chrome.storage.sync.set({ 'chrome-app-sync' : true });

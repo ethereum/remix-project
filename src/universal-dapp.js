@@ -1,3 +1,5 @@
+/* global prompt */
+
 var $ = require('jquery');
 var EthJSVM = require('ethereumjs-vm');
 var ethJSUtil = require('ethereumjs-util');
