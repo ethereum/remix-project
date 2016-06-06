@@ -6,7 +6,6 @@ var utils = require('./utils');
 var ExecutionContext = require('./execution-context');
 
 function Renderer (editor, compiler, updateFiles) {
-
   var detailsOpen = {};
   var executionContext = new ExecutionContext(compiler);
 
@@ -33,7 +32,7 @@ function Renderer (editor, compiler, updateFiles) {
           // Switch to file
           editor.setCacheFile(errFile);
           updateFiles();
-          // @TODO could show some error icon in files with errors
+        // @TODO could show some error icon in files with errors
         }
         editor.handleErrorClick(errLine, errCol);
       });
@@ -43,7 +42,7 @@ function Renderer (editor, compiler, updateFiles) {
         return false;
       });
     }
-  };
+  }
   this.error = renderError;
 
   var combined = function (contractName, jsonInterface, bytecode) {
@@ -51,7 +50,6 @@ function Renderer (editor, compiler, updateFiles) {
   };
 
   function renderContracts (data, source) {
-
     var udappContracts = [];
     for (var contractName in data.contracts) {
       var contract = data.contracts[contractName];
@@ -105,7 +103,7 @@ function Renderer (editor, compiler, updateFiles) {
     $contractOutput.find('.title').click(function (ev) { $(this).closest('.contract').toggleClass('hide'); });
     $('#output').append($contractOutput);
     $('.col2 input,textarea').click(function () { this.select(); });
-  };
+  }
   this.contracts = renderContracts;
 
   var tableRowItems = function (first, second, cls) {
@@ -154,7 +152,7 @@ function Renderer (editor, compiler, updateFiles) {
   };
 
   var formatGasEstimates = function (data) {
-    var gasToText = function (g) { return g === null ? 'unknown' : g; }
+    var gasToText = function (g) { return g === null ? 'unknown' : g; };
     var text = '';
     var fun;
     if ('creation' in data) {
@@ -217,16 +215,15 @@ function Renderer (editor, compiler, updateFiles) {
     });
 
     code += '\n   {' +
-    '\n     from: web3.eth.accounts[0], ' +
-    '\n     data: \'' + bytecode + '\', ' +
-    '\n     gas: 3000000' +
-    '\n   }, function (e, contract){' +
-    '\n    console.log(e, contract);' +
-    '\n    if (typeof contract.address !== \'undefined\') {' +
-    '\n         console.log(\'Contract mined! address: \' + contract.address + \' transactionHash: \' + contract.transactionHash);' +
-    '\n    }' +
-    '\n })';
-
+      '\n     from: web3.eth.accounts[0], ' +
+      '\n     data: \'' + bytecode + '\', ' +
+      '\n     gas: 3000000' +
+      '\n   }, function (e, contract){' +
+      '\n    console.log(e, contract);' +
+      '\n    if (typeof contract.address !== \'undefined\') {' +
+      '\n         console.log(\'Contract mined! address: \' + contract.address + \' transactionHash: \' + contract.transactionHash);' +
+      '\n    }' +
+      '\n })';
 
     return code;
   }
@@ -241,7 +238,6 @@ function Renderer (editor, compiler, updateFiles) {
     }
     return funABI;
   }
-
 }
 
 module.exports = Renderer;

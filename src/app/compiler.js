@@ -42,7 +42,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     sourceAnnotations = [];
     outputField.empty();
     var input = editor.getValue();
-    editor.setCacheFileContent(input)
+    editor.setCacheFileContent(input);
 
     var files = {};
     files[editor.getCacheFile()] = input;
@@ -148,7 +148,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
   function loadInternal (url, setVersionText) {
     Module = null;
     // Set a safe fallback until the new one is loaded
-    compileJSON = function(source, optimize) { compilationFinished('{}'); };
+    compileJSON = function (source, optimize) { compilationFinished('{}'); };
 
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
@@ -171,14 +171,14 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     worker.addEventListener('message', function (msg) {
       var data = msg.data;
       switch (data.cmd) {
-      case 'versionLoaded':
-        compilerAcceptsMultipleFiles = !!data.acceptsMultipleFiles;
-        onCompilerLoaded(setVersionText, data.data);
-        break;
-      case 'compiled':
-        compilationFinished(data.data, data.missingInputs);
-        break;
-      };
+        case 'versionLoaded':
+          compilerAcceptsMultipleFiles = !!data.acceptsMultipleFiles;
+          onCompilerLoaded(setVersionText, data.data);
+          break;
+        case 'compiled':
+          compilationFinished(data.data, data.missingInputs);
+          break;
+      }
     });
     worker.onerror = function (msg) { console.log(msg.data); };
     worker.addEventListener('error', function (msg) { console.log(msg.data); });
@@ -186,7 +186,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       worker.postMessage({cmd: 'compile', source: source, optimize: optimize});
     };
     worker.postMessage({cmd: 'loadVersion', data: url});
-  };
+  }
 
   function gatherImports (files, importHints, cb) {
     importHints = importHints || [];
@@ -243,4 +243,4 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
   }
 }
 
-module.exports = Compiler
+module.exports = Compiler;
