@@ -4,7 +4,8 @@
   "description": "Minimalistic browser-based Solidity IDE",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "mkdir -p build; browserify src/index.js -o build/app.js"
+    "build": "mkdir -p build; browserify src/index.js -o build/app.js",
+    "lint": "semistandard"
   },
   "devDependencies": {
     "brace": "^0.8.0",
@@ -17,6 +18,7 @@
     "ethereumjs-vm": "^1.4.0",
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
+    "semistandard": "^7.0.0",
     "web3": "^0.15.3",
     "webworkify": "^1.2.1"
   },
@@ -35,5 +37,12 @@
     "url": "https://github.com/ethereum/browser-solidity/issues"
   },
   "homepage": "https://github.com/ethereum/browser-solidity#readme",
-  "private": true
+  "private": true,
+  "semistandard": {
+    "ignore": [
+      "assets/js/",
+      "build/",
+      "src/mode-solidity.js"
+    ]
+  }
 }
