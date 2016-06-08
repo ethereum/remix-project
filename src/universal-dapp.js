@@ -481,7 +481,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
             } else if (args.abi.constant && !isConstructor) {
                 replaceOutput($result, getReturnOutput(result));
             } else {
-                tryTillResponse(result, function (err, result) {
+                tryTillResponse(self.web3, result, function (err, result) {
                     if (err) {
                         replaceOutput($result, $('<span/>').text(err).addClass('error'));
                     } else if (isConstructor) {
@@ -569,7 +569,7 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
                 self.getContractByName(contractName).address = result.createdAddress;
                 cb(err, result.createdAddress);
             } else {
-                tryTillResponse(result, function(err, finalResult) {
+                tryTillResponse(self.web3, result, function(err, finalResult) {
                     if (err) return cb(err);
                     self.getContractByName(contractName).address = finalResult.contractAddress;
                     cb(null, finalResult.contractAddress);
@@ -653,12 +653,12 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     }
 };
 
-function tryTillResponse (txhash, done) {
-    this.web3.eth.getTransactionReceipt(txhash, testResult);
+function tryTillResponse (web3, txhash, done) {
+    web3.eth.getTransactionReceipt(txhash, testResult);
 
     function testResult (err, address) {
         if (!err && !address) {
-            setTimeout(function () { tryTillResponse(txhash, done); }, 500);
+            setTimeout(function () { tryTillResponse(web3, txhash, done); }, 500);
         } else {
             done(err, address);
         }
