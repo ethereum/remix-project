@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - stable
-script: npm run build
+script: npm run lint && npm run build
 deploy:
   provider: script
   script: ci/deploy_from_travis.sh
