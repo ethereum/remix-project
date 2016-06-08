@@ -571,6 +571,17 @@ UniversalDApp.prototype.clickContractAt = function (self, $output, contract) {
   self.getInstanceInterface(contract, address, $output);
 };
 
+function tryTillResponse (web3, txhash, done) {
+  web3.eth.getTransactionReceipt(txhash, function (err, address) {
+    if (!err && !address) {
+      // Try again with a bit of delay
+      setTimeout(function () { tryTillResponse(web3, txhash, done); }, 500);
+    } else {
+      done(err, address);
+    }
+  });
+}
+
 UniversalDApp.prototype.runTx = function (data, args, cb) {
   var self = this;
   var to = args.address;
@@ -646,16 +657,5 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     }
   }
 };
-
-function tryTillResponse (web3, txhash, done) {
-  web3.eth.getTransactionReceipt(txhash, function (err, address) {
-    if (!err && !address) {
-      // Try again with a bit of delay
-      setTimeout(function () { tryTillResponse(web3, txhash, done); }, 500);
-    } else {
-      done(err, address);
-    }
-  });
-}
 
 module.exports = UniversalDApp;
