@@ -5,8 +5,9 @@ var Web3 = require('web3');
 
 var injectedProvider;
 
-if (typeof web3 !== 'undefined') {
-  injectedProvider = web3.currentProvider;
+var web3;
+if (typeof window.web3 !== 'undefined') {
+  injectedProvider = window.web3.currentProvider;
   web3 = new Web3(injectedProvider);
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));

@@ -73,6 +73,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     if (worker === null) {
       var compile;
       var missingInputs = [];
+      var Module = window.Module;
       if ('_compileJSONCallback' in Module) {
         compilerAcceptsMultipleFiles = true;
         var missingInputsCallback = Module.Runtime.addFunction(function (path, contents, error) {
@@ -146,7 +147,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
   };
 
   function loadInternal (url, setVersionText) {
-    Module = null;
+    delete window.Module;
     // Set a safe fallback until the new one is loaded
     compileJSON = function (source, optimize) { compilationFinished('{}'); };
 
@@ -155,7 +156,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     newScript.src = url;
     document.getElementsByTagName('head')[0].appendChild(newScript);
     var check = window.setInterval(function () {
-      if (!Module) {
+      if (!window.Module) {
         return;
       }
       window.clearInterval(check);
