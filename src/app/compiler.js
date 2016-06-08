@@ -201,7 +201,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       reloop = false;
       for (var fileName in files) {
         var match;
-        while (match = importRegex.exec(files[fileName])) {
+        while ((match = importRegex.exec(files[fileName]))) {
           importHints.push(match[1]);
         }
       }
@@ -219,7 +219,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
         } else if (m in cachedRemoteFiles) {
           files[m] = cachedRemoteFiles[m];
           reloop = true;
-        } else if (githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m)) {
+        } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m))) {
           handleGithubCall(githubMatch[3], githubMatch[4], function (result) {
             if ('content' in result) {
               var content = Base64.decode(result.content);
