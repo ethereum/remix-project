@@ -100,13 +100,18 @@
 					</div>
 					<div id="envView">
 						<span id="executionContext">
-							<label for="vm">
-								<input id="vm" type="radio" value="vm" checked name="executionContext">
+							<label for="vm-mode">
+								<input id="vm-mode" type="radio" value="vm" checked name="executionContext">
 								<strong>JavaScript VM</strong>
 								<p>Execution environment does not connect to any node, everything is local and in memory only.</p>
 							</label>
-							<label for="web3">
-								<input id="web3" type="radio" value="web3" name="executionContext">
+							<label for="injected-mode">
+								<input id="injected-mode" type="radio" value="injected" checked name="executionContext">
+								<strong>Injected Web3</strong>
+								<p>Execution environment has been provided by Mist or similar provider.</p>
+							</label>
+							<label for="web3-mode">
+								<input id="web3-mode" type="radio" value="web3" name="executionContext">
 								<strong>Web3 Provider</strong>
 																<p>Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!<br/>
 																<b>If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.</b></p>
