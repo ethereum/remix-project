@@ -424,18 +424,14 @@ UniversalDApp.prototype.getCallButton = function (args) {
         if (isConstructor) {
             if (args.bytecode.indexOf('_') >= 0) {
                  replaceOutput($result, $('<span>Deploying and linking required libraries...</span>'));
-                 if (self.options.vm) {
-                     self.linkBytecode(args.contractName, function (err, bytecode) {
-                         if (err) {
-                             replaceOutput($result, $('<span/>').text('Error deploying required libraries: ' + err));
-                         } else {
-                             args.bytecode = bytecode;
-                             handleCallButtonClick(ev, $result);
-                         }
-                     });
-                 } else {
-                     replaceOutput($result, $('<span>Contract needs to be linked to a library, this is only supported in the JavaScript VM for now.</span>'));
-                 }
+                 self.linkBytecode(args.contractName, function (err, bytecode) {
+                     if (err) {
+                         replaceOutput($result, $('<span/>').text('Error deploying required libraries: ' + err));
+                     } else {
+                         args.bytecode = bytecode;
+                         handleCallButtonClick(ev, $result);
+                     }
+                 });
                  return;
              } else {
                  data = args.bytecode + data;
@@ -487,19 +483,6 @@ UniversalDApp.prototype.getCallButton = function (args) {
             } else if (args.abi.constant && !isConstructor) {
                 replaceOutput($result, getReturnOutput(result));
             } else {
-
-                function tryTillResponse (txhash, done) {
-                    this.web3.eth.getTransactionReceipt(result, testResult);
-
-                    function testResult (err, address) {
-                        if (!err && !address) {
-                            setTimeout(function () { tryTillResponse(txhash, done); }, 500);
-                        } else {
-                            done(err, address);
-                        }
-                    }
-
-                }
                 tryTillResponse(result, function (err, result) {
                     if (err) {
                         replaceOutput($result, $('<span/>').text(err).addClass('error'));
@@ -584,8 +567,16 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
             if (err) {
                 return cb(err);
             }
-            self.getContractByName(contractName).address = result.createdAddress;
-            cb(err, result.createdAddress);
+            if (self.options.vm) {
+                self.getContractByName(contractName).address = result.createdAddress;
+                cb(err, result.createdAddress);
+            } else {
+                tryTillResponse(result, function(err, finalResult) {
+                    if (err) return cb(err);
+                    self.getContractByName(contractName).address = finalResult.contractAddress;
+                    cb(null, finalResult.contractAddress);
+                });
+            }
         });
     }
 };
@@ -663,5 +654,18 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         }
     }
 };
+
+function tryTillResponse (txhash, done) {
+    this.web3.eth.getTransactionReceipt(txhash, testResult);
+
+    function testResult (err, address) {
+        if (!err && !address) {
+            setTimeout(function () { tryTillResponse(txhash, done); }, 500);
+        } else {
+            done(err, address);
+        }
+    }
+
+}
 
 module.exports = UniversalDApp;
