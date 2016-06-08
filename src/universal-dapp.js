@@ -13,9 +13,6 @@ function UniversalDApp (contracts, options) {
     this.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
 
     this.web3 = options.web3;
-    if (!this.web3) {
-       throw new Error('Web3 is required for ABI encoding');
-    }
 
     if (options.mode === 'vm') {
         // FIXME: use `options.vm` or `this.vm` consistently
@@ -180,7 +177,6 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             return 1;
         }
     });
-    var web3contract = this.web3.eth.contract(abi);
     var funABI = this.getConstructorInterface(abi);
     var $createInterface = $('<div class="createContract"/>');
 
@@ -252,7 +248,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 }
             });
         } else {
-            var eventFilter = web3contract.at(address).allEvents();
+            var eventFilter = this.web3.eth.contract(abi).at(address).allEvents();
             eventFilter.watch(parseLogs);
         }
         $instance.append($title);
@@ -274,8 +270,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $instance.append(self.getCallButton({
                 abi: funABI,
                 encode: function (args) {
-                    var obj = web3contract.at('0x00')[funABI.name];
-                    return obj.getData.apply(obj, args);
+                    var types = [];
+                    for (var i = 0; i < funABI.inputs.length; i++) {
+                        types.push(funABI.inputs[i].type);
+                    }
+
+                    return Buffer.concat([ ethJSABI.methodID(funABI.name, types), ethJSABI.rawEncode(types, args) ]).toString('hex');
                 },
                 address: address
             }));
@@ -287,8 +287,14 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         $createInterface.append(this.getCallButton({
             abi: funABI,
             encode: function (args) {
-                var obj = web3contract.new;
-                return obj.getData.apply(obj, args);
+                var types = [];
+                for (var i = 0; i < funABI.inputs.length; i++) {
+                    types.push(funABI.inputs[i].type);
+                }
+
+		// NOTE: the caller will concatenate the bytecode and this
+		//       it could be done here too for consistency
+                return ethJSABI.rawEncode(types, args).toString('hex');
             },
             contractName: contract.name,
             bytecode: contract.bytecode,

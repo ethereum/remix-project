@@ -13,7 +13,7 @@
     "merkle-patricia-tree": "^2.1.2",
     "ethereumjs-util": "^4.4.0",
     "ethereumjs-tx": "^1.1.1",
-    "ethereumjs-abi": "^0.6.1",
+    "ethereumjs-abi": "^0.6.2",
     "web3": "^0.15.3",
     "jquery": "^2.2.0",
     "brace": "^0.8.0",
