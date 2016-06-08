@@ -245,7 +245,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         }
       });
     } else {
-      var eventFilter = this.web3.eth.contract(abi).at(address).allEvents();
+      var eventFilter = self.web3.eth.contract(abi).at(address).allEvents();
       eventFilter.watch(parseLogs);
     }
     $instance.append($title);
