@@ -443,19 +443,9 @@ var run = function () {
 			// Workers cannot load js on "file:"-URLs and we get a
 			// "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
 			// resort to non-worker version in that case.
-			compiler.initializeWorker(version, setVersionText);
+			compiler.loadVersion(true, version, setVersionText);
 		} else {
-			Module = null;
-			compiler.setCompileJSON()
-			var newScript = document.createElement('script');
-			newScript.type = 'text/javascript';
-			newScript.src = 'https://ethereum.github.io/solc-bin/bin/' + version;
-			document.getElementsByTagName('head')[0].appendChild(newScript);
-			var check = window.setInterval(function () {
-				if (!Module) return;
-				window.clearInterval(check);
-				compiler.onCompilerLoaded(setVersionText);
-			}, 200);
+			compiler.loadVersion(false, version, setVersionText);
 		}
 	};
 
