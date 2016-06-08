@@ -7,17 +7,17 @@
     "build": "mkdir -p build; browserify src/index.js -o build/app.js"
   },
   "devDependencies": {
-    "es6-shim": "^0.35.1",
-    "ethereumjs-block": "^1.2.2",
-    "ethereumjs-vm": "^1.4.0",
-    "ethereumjs-util": "^4.4.0",
-    "ethereumjs-tx": "^1.1.1",
-    "ethereumjs-abi": "^0.6.2",
-    "web3": "^0.15.3",
-    "jquery": "^2.2.0",
     "brace": "^0.8.0",
     "browserify": "^13.0.0",
+    "es6-shim": "^0.35.1",
+    "ethereumjs-abi": "^0.6.2",
+    "ethereumjs-block": "^1.2.2",
+    "ethereumjs-tx": "^1.1.1",
+    "ethereumjs-util": "^4.4.0",
+    "ethereumjs-vm": "^1.4.0",
+    "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
+    "web3": "^0.15.3",
     "webworkify": "^1.2.1"
   },
   "repository": {
