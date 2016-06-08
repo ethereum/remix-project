@@ -1,4 +1,5 @@
 /* global chrome, confirm */
+'use strict';
 
 var utils = require('./utils');
 

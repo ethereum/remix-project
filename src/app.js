@@ -1,4 +1,5 @@
 /* global alert, confirm, prompt, Option, Worker */
+'use strict';
 
 var $ = require('jquery');
 var semver = require('semver');

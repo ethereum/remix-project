@@ -1,3 +1,5 @@
+'use strict';
+
 var solc = require('solc/wrapper');
 
 var compileJSON = function () { return ''; };

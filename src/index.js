@@ -1,3 +1,5 @@
+'use strict';
+
 require('es6-shim');
 var app = require('./app.js');
 var $ = require('jquery');

@@ -1,3 +1,5 @@
+'use strict';
+
 var test = require('tape');
 
 var GistHandler = require('../src/app/gist-handler');

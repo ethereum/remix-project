@@ -1,3 +1,5 @@
+'use strict';
+
 var SOL_CACHE_FILE_PREFIX = 'sol-cache-file-';
 
 function getCacheFilePrefix () {

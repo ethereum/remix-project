@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   'Smoke test': function (browser) {
     browser

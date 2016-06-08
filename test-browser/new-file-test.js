@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   'New file test': function (browser) {
     browser
