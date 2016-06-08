@@ -7,11 +7,13 @@ module.exports = function (self) {
     var data = e.data;
     switch (data.cmd) {
       case 'loadVersion':
-        delete Module;
+        delete window.Module;
         version = null;
         compileJSON = null;
 
         importScripts(data.data);
+        var Module = window.Module;
+
         version = Module.cwrap('version', 'string', []);
         if ('_compileJSONCallback' in Module) {
           var compileJSONInternal = Module.cwrap('compileJSONCallback', 'string', ['string', 'number', 'number']);
