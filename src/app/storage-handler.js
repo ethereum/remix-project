@@ -11,7 +11,6 @@ function StorageHandler (updateFiles) {
     var obj = {};
     var done = false;
     var count = 0;
-    var dont = 0;
 
     function check (key) {
       chrome.storage.sync.get(key, function (resp) {

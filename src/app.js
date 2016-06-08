@@ -27,7 +27,6 @@ var run = function () {
       var content = files[f].content;
       if (key in window.localStorage && window.localStorage[key] !== content) {
         var count = '';
-        var otherKey = key + count;
         while ((key + count) in window.localStorage) count = count - 1;
         window.localStorage[key + count] = window.localStorage[key];
       }
@@ -138,7 +137,7 @@ var run = function () {
       return;
     }
     var files = editor.packageFiles();
-    var iframe = $('<iframe/>', {src: target, style: 'display:none;', load: function () {
+    $('<iframe/>', {src: target, style: 'display:none;', load: function () {
       this.contentWindow.postMessage(['loadFiles', files], '*');
     }}).appendTo('body');
   });
@@ -271,9 +270,9 @@ var run = function () {
     return itemsWidth;
   }
 
-  function widthOfHidden () {
-    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi());
-  }
+  //  function widthOfHidden () {
+  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi());
+  //  }
 
   function widthOfVisible () {
     return $filesWrapper.outerWidth();
