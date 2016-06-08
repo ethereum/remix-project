@@ -11,7 +11,7 @@ module.exports = function (self) {
         version = null;
         compileJSON = null;
 
-        importScripts(data.data);
+        self.importScripts(data.data);
         var Module = window.Module;
 
         version = Module.cwrap('version', 'string', []);
@@ -28,7 +28,7 @@ module.exports = function (self) {
         } else {
           compileJSON = Module.cwrap('compileJSON', 'string', ['string', 'number']);
         }
-        postMessage({
+        self.postMessage({
           cmd: 'versionLoaded',
           data: version(),
           acceptsMultipleFiles: ('_compileJSONMulti' in Module)
@@ -36,7 +36,7 @@ module.exports = function (self) {
         break;
       case 'compile':
         missingInputs.length = 0;
-        postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize), missingInputs: missingInputs});
+        self.postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize), missingInputs: missingInputs});
         break;
     }
   }, false);
