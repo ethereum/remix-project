@@ -4,6 +4,7 @@ body {
     color: #111111;
     font-weight: normal;
 }
+
 #editor {
 
     position: absolute;
@@ -13,7 +14,6 @@ body {
     bottom: 0;
     right: 37em;
 }
-
 
 .scroller {
     position: absolute;
@@ -44,7 +44,7 @@ body {
     position: absolute;
     overflow: hidden;
     top: 0;
-    left: 3em;
+    left: 5em;
     right: 3em;
 }
 
@@ -78,6 +78,7 @@ body {
 }
 
 .newFile,
+.uploadFile,
 .toggleRHP {
     display: block;
     float: left;
@@ -169,7 +170,6 @@ body {
     box-sizing: content-box;
 }
 
-
 #header #options {
     list-style: none;
     margin: 0;
@@ -198,10 +198,12 @@ body {
     overflow: auto;
     background-color: #F4F6FF;
 }
+
 #header #optionViews > div {
     display: none;
     padding: 1em 0.5em 0.5em;
 }
+
 #header #optionViews.txView #txView { display: block; }
 #header #optionViews.settingsView #settingsView { display: block; }
 #header #optionViews.publishView #publishView { display: block; }
@@ -248,7 +250,6 @@ body {
     margin-right: 1em;
     cursor: pointer;
 }
-
 
 #header .origin,
 #header #executionContext {
@@ -335,7 +336,6 @@ body {
     margin-bottom: 1em;
 }
 
-
 .sol.error,
 .sol.warning {
     border-radius: 0;
@@ -410,4 +410,8 @@ input[readonly] {
     box-sizing: border-box;
     display: block;
     width: 100%;
+}
+
+input[type="file"] {
+    display: none;
 }
