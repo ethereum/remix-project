@@ -289,7 +289,7 @@ var run = function () {
   }
 
   function reAdjust () {
-    if (widthOfList() + getLeftPosi() > + widthOfVisible()) {
+    if (widthOfList() + getLeftPosi() > widthOfVisible()) {
       $scrollerRight.fadeIn('fast');
     } else {
       $scrollerRight.fadeOut('fast');
