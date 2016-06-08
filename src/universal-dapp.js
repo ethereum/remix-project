@@ -149,12 +149,12 @@ UniversalDApp.prototype.getABIInputForm = function (cb) {
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
   var self = this;
   var $createInterface = $('<div class="create"/>');
-  if (this.options.removable) {
+  if (self.options.removable) {
     var $close = $('<div class="udapp-close" />');
     $close.click(function () { self.$el.remove(); });
     $createInterface.append($close);
   }
-  var $newButton = this.getInstanceInterface(contract);
+  var $newButton = self.getInstanceInterface(contract);
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract); });
   $createInterface.append($atButton).append($newButton);
   return $createInterface;
@@ -175,7 +175,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       return 1;
     }
   });
-  var funABI = this.getConstructorInterface(abi);
+  var funABI = self.getConstructorInterface(abi);
   var $createInterface = $('<div class="createContract"/>');
 
   var appendFunctions = function (address, $el) {
@@ -281,7 +281,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
   };
 
   if (!address || !$target) {
-    $createInterface.append(this.getCallButton({
+    $createInterface.append(self.getCallButton({
       abi: funABI,
       encode: function (args) {
         var types = [];
@@ -512,7 +512,8 @@ UniversalDApp.prototype.getCallButton = function (args) {
 };
 
 UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
-  var bytecode = this.getContractByName(contractName).bytecode;
+  var self = this;
+  var bytecode = self.getContractByName(contractName).bytecode;
   if (bytecode.indexOf('_') < 0) {
     return cb(null, bytecode);
   }
@@ -521,11 +522,10 @@ UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
     return cb('Invalid bytecode format.');
   }
   var libraryName = m[1];
-  if (!this.getContractByName(libraryName)) {
+  if (!self.getContractByName(libraryName)) {
     return cb('Library ' + libraryName + ' not found.');
   }
-  var self = this;
-  this.deployLibrary(libraryName, function (err, address) {
+  self.deployLibrary(libraryName, function (err, address) {
     if (err) {
       return cb(err);
     }
@@ -544,18 +544,18 @@ UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
 };
 
 UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
-  if (this.getContractByName(contractName).address) {
-    return cb(null, this.getContractByName(contractName).address);
-  }
   var self = this;
-  var bytecode = this.getContractByName(contractName).bytecode;
+  if (self.getContractByName(contractName).address) {
+    return cb(null, self.getContractByName(contractName).address);
+  }
+  var bytecode = self.getContractByName(contractName).bytecode;
   if (bytecode.indexOf('_') >= 0) {
-    this.linkBytecode(contractName, function (err, bytecode) {
+    self.linkBytecode(contractName, function (err, bytecode) {
       if (err) cb(err);
       else self.deployLibrary(contractName, cb);
     });
   } else {
-    this.runTx(bytecode, { abi: { constant: false }, bytecode: bytecode }, function (err, result) {
+    self.runTx(bytecode, { abi: { constant: false }, bytecode: bytecode }, function (err, result) {
       if (err) {
         return cb(err);
       }
@@ -603,18 +603,18 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
   }
 
   var tx;
-  if (!this.vm) {
+  if (!self.vm) {
     tx = {
-      from: self.options.getAddress ? self.options.getAddress() : this.web3.eth.accounts[0],
+      from: self.options.getAddress ? self.options.getAddress() : self.web3.eth.accounts[0],
       to: to,
       data: data,
       gas: gas,
       value: value
     };
     if (constant && !isConstructor) {
-      this.web3.eth.call(tx, cb);
+      self.web3.eth.call(tx, cb);
     } else {
-      this.web3.eth.estimateGas(tx, function (err, resp) {
+      self.web3.eth.estimateGas(tx, function (err, resp) {
         if (err) {
           return cb(err, resp);
         }
@@ -632,8 +632,8 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     }
   } else {
     try {
-      var address = this.options.getAddress ? this.options.getAddress() : this.getAccounts()[0];
-      var account = this.accounts[address];
+      var address = self.options.getAddress ? self.options.getAddress() : self.getAccounts()[0];
+      var account = self.accounts[address];
       tx = new EthJSTX({
         nonce: new Buffer([account.nonce++]), // @todo count beyond 255
         gasPrice: 1,
@@ -651,7 +651,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         transactions: [],
         uncleHeaders: []
       });
-      this.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, cb);
+      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, cb);
     } catch (e) {
       cb(e, null);
     }
