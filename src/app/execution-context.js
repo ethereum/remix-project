@@ -1,3 +1,5 @@
+/* global confirm */
+
 var $ = require('jquery');
 var Web3 = require('web3');
 

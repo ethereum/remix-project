@@ -34,5 +34,5 @@ function updateQueryParams (params) {
 
 module.exports = {
   get: getQueryParams,
-  update: updateQueryParams,
+  update: updateQueryParams
 };

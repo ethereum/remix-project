@@ -1,17 +1,16 @@
+/* global chrome, confirm, localStorage */
+
 var utils = require('./utils');
 
 function StorageHandler (updateFiles) {
-
   this.sync = function () {
-
     if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) {
       return;
     }
 
     var obj = {};
     var done = false;
-    var count = 0
-    var dont = 0;
+    var count = 0;
 
     function check (key) {
       chrome.storage.sync.get(key, function (resp) {
@@ -28,9 +27,9 @@ function StorageHandler (updateFiles) {
         if (done >= count) {
           chrome.storage.sync.set(obj, function () {
             console.log('updated cloud files with: ', obj, this, arguments);
-          })
+          });
         }
-      })
+      });
     }
 
     for (var y in window.localStorage) {

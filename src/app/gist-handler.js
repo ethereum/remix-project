@@ -1,3 +1,5 @@
+/* global prompt */
+
 var queryParams = require('./query-params');
 
 function handleLoad (cb) {
