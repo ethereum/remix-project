@@ -9,57 +9,65 @@ var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
 
 function UniversalDApp (contracts, options) {
-  this.options = options || {};
-  this.$el = $('<div class="udapp" />');
-  this.contracts = contracts;
-  this.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
+  var self = this;
 
-  this.web3 = options.web3;
+  self.options = options || {};
+  self.$el = $('<div class="udapp" />');
+  self.contracts = contracts;
+  self.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
+
+  self.web3 = options.web3;
 
   if (options.mode === 'vm') {
-    // FIXME: use `options.vm` or `this.vm` consistently
+    // FIXME: use `options.vm` or `self.vm` consistently
     options.vm = true;
 
-    this.accounts = {};
+    self.accounts = {};
 
-    this.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
+    self.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
 
-    this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
-    this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
+    self.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
+    self.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
   } else if (options.mode !== 'web3') {
     throw new Error('Either VM or Web3 mode must be selected');
   }
 }
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
-  if (this.accounts) {
+  var self = this;
+
+  if (self.accounts) {
     privateKey = new Buffer(privateKey, 'hex');
     var address = ethJSUtil.privateToAddress(privateKey);
 
     // FIXME: we don't care about the callback, but we should still make this proper
-    this.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb () {});
+    self.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb () {});
 
-    this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
+    self.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
   }
 };
 
 UniversalDApp.prototype.getAccounts = function (cb) {
-  if (!this.vm) {
-    this.web3.eth.getAccounts(cb);
+  var self = this;
+
+  if (!self.vm) {
+    self.web3.eth.getAccounts(cb);
   } else {
-    if (!this.accounts) {
+    if (!self.accounts) {
       return cb('No accounts?');
     }
 
-    cb(null, Object.keys(this.accounts));
+    cb(null, Object.keys(self.accounts));
   }
 };
 
 UniversalDApp.prototype.getBalance = function (address, cb) {
+  var self = this;
+
   address = ethJSUtil.stripHexPrefix(address);
 
-  if (!this.vm) {
-    this.web3.eth.getBalance(address, function (err, res) {
+  if (!self.vm) {
+    self.web3.eth.getBalance(address, function (err, res) {
       if (err) {
         cb(err);
       } else {
@@ -67,11 +75,11 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       }
     });
   } else {
-    if (!this.accounts) {
+    if (!self.accounts) {
       return cb('No accounts?');
     }
 
-    this.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
+    self.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
       if (err) {
         cb('Account not found');
       } else {
@@ -82,22 +90,24 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 };
 
 UniversalDApp.prototype.render = function () {
-  if (this.contracts.length === 0) {
-    this.$el.append(this.getABIInputForm());
+  var self = this;
+
+  if (self.contracts.length === 0) {
+    self.$el.append(self.getABIInputForm());
   } else {
-    for (var c in this.contracts) {
+    for (var c in self.contracts) {
       var $contractEl = $('<div class="contract"/>');
 
-      if (this.contracts[c].address) {
-        this.getInstanceInterface(this.contracts[c], this.contracts[c].address, $contractEl);
+      if (self.contracts[c].address) {
+        self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl);
       } else {
-        var $title = $('<span class="title"/>').text(this.contracts[c].name);
-        if (this.contracts[c].bytecode) {
-          $title.append($('<div class="size"/>').text((this.contracts[c].bytecode.length / 2) + ' bytes'));
+        var $title = $('<span class="title"/>').text(self.contracts[c].name);
+        if (self.contracts[c].bytecode) {
+          $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'));
         }
-        $contractEl.append($title).append(this.getCreateInterface($contractEl, this.contracts[c]));
+        $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]));
       }
-      this.$el.append(this.renderOutputModifier(this.contracts[c].name, $contractEl));
+      self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
     }
   }
   var $legend = $('<div class="legend" />')
@@ -105,17 +115,18 @@ UniversalDApp.prototype.render = function () {
     .append($('<div class="transact"/>').text('Transact'))
     .append($('<div class="call"/>').text('Call'));
 
-  this.$el.append($('<div class="poweredBy" />')
+  self.$el.append($('<div class="poweredBy" />')
     .html('<a href="http://github.com/d11e9/universal-dapp">Universal ÐApp</a> powered by The Blockchain'));
 
-  this.$el.append($legend);
-  return this.$el;
+  self.$el.append($legend);
+  return self.$el;
 };
 
 UniversalDApp.prototype.getContractByName = function (contractName) {
-  for (var c in this.contracts) {
-    if (this.contracts[c].name === contractName) {
-      return this.contracts[c];
+  var self = this;
+  for (var c in self.contracts) {
+    if (self.contracts[c].name === contractName) {
+      return self.contracts[c];
     }
   }
   return null;
