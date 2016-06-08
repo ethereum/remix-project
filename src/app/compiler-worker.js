@@ -12,9 +12,9 @@ module.exports = function (self) {
         compileJSON = null;
 
         importScripts(data.data);
-        version = Module.cwrap("version", "string", []);
+        version = Module.cwrap('version', 'string', []);
         if ('_compileJSONCallback' in Module) {
-          var compileJSONInternal = Module.cwrap("compileJSONCallback", "string", ["string", "number", "number"]);
+          var compileJSONInternal = Module.cwrap('compileJSONCallback', 'string', ['string', 'number', 'number']);
           var missingInputCallback = Module.Runtime.addFunction(function (path) {
             missingInputs.push(Module.Pointer_stringify(path));
           });
@@ -22,9 +22,9 @@ module.exports = function (self) {
             return compileJSONInternal(input, optimize, missingInputCallback);
           };
         } else if ('_compileJSONMulti' in Module) {
-          compileJSON = Module.cwrap("compileJSONMulti", "string", ["string", "number"]);
+          compileJSON = Module.cwrap('compileJSONMulti', 'string', ['string', 'number']);
         } else {
-          compileJSON = Module.cwrap("compileJSON", "string", ["string", "number"]);
+          compileJSON = Module.cwrap('compileJSON', 'string', ['string', 'number']);
         }
         postMessage({
           cmd: 'versionLoaded',

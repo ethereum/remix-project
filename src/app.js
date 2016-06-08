@@ -56,7 +56,7 @@ var run = function () {
   // -------- check file upload capabilities -------
 
   if (!(window.File || window.FileReader || window.FileList || window.Blob)) {
-    $(".uploadFile").remove();
+    $('.uploadFile').remove();
   }
 
   // ------------------ gist load ----------------
