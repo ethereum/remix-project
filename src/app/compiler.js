@@ -1,19 +1,13 @@
 var webworkify = require('webworkify');
-var QueryParams = require('./query-params');
 var utils = require('./utils');
-var Renderer = require('./renderer');
 
 var Base64 = require('js-base64').Base64;
 
-function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
-  var renderer = new Renderer(editor, this, updateFiles);
-  var queryParams = new QueryParams();
-
+function Compiler (editor, renderer, queryParams, handleGithubCall, outputField, hidingRHP, updateFiles) {
   var compileJSON;
   var compilerAcceptsMultipleFiles;
 
   var previousInput = '';
-  var sourceAnnotations = [];
 
   var cachedRemoteFiles = {};
   var worker = null;
@@ -40,7 +34,6 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
 
   var compile = function (missingInputs) {
     editor.clearAnnotations();
-    sourceAnnotations = [];
     outputField.empty();
     var input = editor.getValue();
     editor.setCacheFileContent(input);
@@ -59,10 +52,10 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
   };
   this.compile = compile;
 
-  this.addAnnotation = function (annotation) {
-    sourceAnnotations[sourceAnnotations.length] = annotation;
-    editor.setAnnotations(sourceAnnotations);
-  };
+  function setCompileJSON (_compileJSON) {
+    compileJSON = _compileJSON;
+  }
+  this.setCompileJSON = setCompileJSON; // this is exposed for testing
 
   function onCompilerLoaded (setVersionText, version) {
     setVersionText(version);
@@ -92,14 +85,14 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
         compilerAcceptsMultipleFiles = false;
         compile = Module.cwrap('compileJSON', 'string', [ 'string', 'number' ]);
       }
-      compileJSON = function (source, optimize, cb) {
+      setCompileJSON(function (source, optimize, cb) {
         try {
           var result = compile(source, optimize);
         } catch (exception) {
           result = JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception });
         }
         compilationFinished(result, missingInputs);
-      };
+      });
       onCompilerLoaded(setVersionText, Module.cwrap('version', 'string', [])());
     }
   }
@@ -150,7 +143,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
   function loadInternal (url, setVersionText) {
     delete window.Module;
     // Set a safe fallback until the new one is loaded
-    compileJSON = function (source, optimize) { compilationFinished('{}'); };
+    setCompileJSON(function (source, optimize) { compilationFinished('{}'); });
 
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
@@ -184,9 +177,9 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     });
     worker.onerror = function (msg) { console.log(msg.data); };
     worker.addEventListener('error', function (msg) { console.log(msg.data); });
-    compileJSON = function (source, optimize) {
+    setCompileJSON(function (source, optimize) {
       worker.postMessage({cmd: 'compile', source: source, optimize: optimize});
-    };
+    });
     worker.postMessage({cmd: 'loadVersion', data: url});
   }
 

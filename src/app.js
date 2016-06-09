@@ -10,7 +10,9 @@ var gistHandler = new GistHandler();
 
 var StorageHandler = require('./app/storage-handler');
 var Editor = require('./app/editor');
+var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
+var ExecutionContext = require('./app/execution-context');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -423,7 +425,10 @@ var run = function () {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
   }
 
-  var compiler = new Compiler(editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+  var executionContext = new ExecutionContext();
+  var renderer = new Renderer(editor, executionContext, updateFiles);
+  var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+  executionContext.setCompiler(compiler);
 
   function setVersionText (text) {
     $('#version').text(text);

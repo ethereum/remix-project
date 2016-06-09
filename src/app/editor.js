@@ -6,6 +6,15 @@ var ace = require('brace');
 require('../mode-solidity.js');
 
 function Editor (loadingFromGist) {
+  var SOL_CACHE_UNTITLED = utils.getCacheFilePrefix() + 'Untitled';
+  var SOL_CACHE_FILE = null;
+
+  var editor = ace.edit('input');
+  var sessions = {};
+  var sourceAnnotations = [];
+
+  setupStuff(getFiles());
+
   this.newFile = function () {
     var untitledCount = '';
     while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount]) {
@@ -58,7 +67,7 @@ function Editor (loadingFromGist) {
     return this.getFiles().indexOf(utils.fileKey(name)) !== -1;
   };
 
-  this.getFiles = function () {
+  function getFiles () {
     var files = [];
     for (var f in window.localStorage) {
       if (f.indexOf(utils.getCacheFilePrefix(), 0) === 0) {
@@ -67,7 +76,8 @@ function Editor (loadingFromGist) {
       }
     }
     return files;
-  };
+  }
+  this.getFiles = getFiles;
 
   this.packageFiles = function () {
     var files = {};
@@ -100,7 +110,13 @@ function Editor (loadingFromGist) {
   };
 
   this.clearAnnotations = function () {
+    sourceAnnotations = [];
     editor.getSession().clearAnnotations();
+  };
+
+  this.addAnnotation = function (annotation) {
+    sourceAnnotations[sourceAnnotations.length] = annotation;
+    this.setAnnotations(sourceAnnotations);
   };
 
   this.setAnnotations = function (sourceAnnotations) {
@@ -152,14 +168,6 @@ function Editor (loadingFromGist) {
     editor.setSession(sessions[SOL_CACHE_FILE]);
     editor.resize(true);
   }
-
-  var SOL_CACHE_UNTITLED = utils.getCacheFilePrefix() + 'Untitled';
-  var SOL_CACHE_FILE = null;
-
-  var editor = ace.edit('input');
-  var sessions = {};
-
-  setupStuff(this.getFiles());
 }
 
 module.exports = Editor;
