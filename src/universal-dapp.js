@@ -448,35 +448,35 @@ UniversalDApp.prototype.getCallButton = function (args) {
     }
 
     var decodeResponse = function (response) {
-        // Only decode if there supposed to be fields
-        if (args.abi.outputs.length > 0) {
-          try {
-            var i;
+      // Only decode if there supposed to be fields
+      if (args.abi.outputs.length > 0) {
+        try {
+          var i;
 
-            var outputTypes = [];
-            for (i = 0; i < args.abi.outputs.length; i++) {
-              outputTypes.push(args.abi.outputs[i].type);
-            }
-
-            // decode data
-            var decodedObj = ethJSABI.rawDecode(outputTypes, response);
-
-            // format decoded data
-            decodedObj = ethJSABI.stringify(outputTypes, decodedObj);
-            for (i = 0; i < outputTypes.length; i++) {
-              var name = args.abi.outputs[i].name;
-              if (name.length > 0) {
-                decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i];
-              } else {
-                decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
-              }
-            }
-
-            return getDecodedOutput(decodedObj);
-          } catch (e) {
-            return getDecodedOutput('Failed to decode output: ' + e);
+          var outputTypes = [];
+          for (i = 0; i < args.abi.outputs.length; i++) {
+            outputTypes.push(args.abi.outputs[i].type);
           }
+
+          // decode data
+          var decodedObj = ethJSABI.rawDecode(outputTypes, response);
+
+          // format decoded data
+          decodedObj = ethJSABI.stringify(outputTypes, decodedObj);
+          for (i = 0; i < outputTypes.length; i++) {
+            var name = args.abi.outputs[i].name;
+            if (name.length > 0) {
+              decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i];
+            } else {
+              decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
+            }
+          }
+
+          return getDecodedOutput(decodedObj);
+        } catch (e) {
+          return getDecodedOutput('Failed to decode output: ' + e);
         }
+      }
     };
 
     var decoded;
@@ -497,18 +497,18 @@ UniversalDApp.prototype.getCallButton = function (args) {
         clearOutput($result);
         $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result, result.vm));
 
-	decoded = decodeResponse(result.vm.return);
-	if (decoded) {
-	  $result.append(decoded);
-	}
+        decoded = decodeResponse(result.vm.return);
+        if (decoded) {
+          $result.append(decoded);
+        }
       } else if (args.abi.constant && !isConstructor) {
         clearOutput($result);
         $result.append(getReturnOutput(result)).append(getGasUsedOutput({}));
 
-	decoded = decodeResponse(ethJSUtil.toBuffer(result));
-	if (decoded) {
-	  $result.append(decoded);
-	}
+        decoded = decodeResponse(ethJSUtil.toBuffer(result));
+        if (decoded) {
+          $result.append(decoded);
+        }
       } else {
         clearOutput($result);
         $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
