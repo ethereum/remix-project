@@ -5,7 +5,8 @@ var $ = require('jquery');
 var utils = require('./app/utils');
 var QueryParams = require('./app/query-params');
 var queryParams = new QueryParams();
-var gistHandler = require('./app/gist-handler');
+var GistHandler = require('./app/gist-handler');
+var gistHandler = new GistHandler();
 
 var StorageHandler = require('./app/storage-handler');
 var Editor = require('./app/editor');
@@ -62,7 +63,7 @@ var run = function () {
 
   // ------------------ gist load ----------------
 
-  var loadingFromGist = gistHandler.handleLoad(function (gistId) {
+  var loadingFromGist = gistHandler.handleLoad(queryParams.get(), function (gistId) {
     $.ajax({
       url: 'https://api.github.com/gists/' + gistId,
       jsonp: 'callback',
