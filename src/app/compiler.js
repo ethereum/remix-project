@@ -1,5 +1,5 @@
 var webworkify = require('webworkify');
-var queryParams = require('./query-params');
+var QueryParams = require('./query-params');
 var utils = require('./utils');
 var Renderer = require('./renderer');
 
@@ -7,6 +7,7 @@ var Base64 = require('js-base64').Base64;
 
 function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles) {
   var renderer = new Renderer(editor, this, updateFiles);
+  var queryParams = new QueryParams();
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;

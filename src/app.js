@@ -3,7 +3,8 @@
 var $ = require('jquery');
 
 var utils = require('./app/utils');
-var queryParams = require('./app/query-params');
+var QueryParams = require('./app/query-params');
+var queryParams = new QueryParams();
 var gistHandler = require('./app/gist-handler');
 
 var StorageHandler = require('./app/storage-handler');

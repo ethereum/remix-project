@@ -1,0 +1,1 @@
+require('./query-params-test');
