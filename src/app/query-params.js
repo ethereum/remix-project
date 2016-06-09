@@ -20,7 +20,7 @@ function QueryParams (_window) {
       }
     }
     return params;
-  }
+  };
 
   this.update = function (params) {
     var currentParams = this.get();
@@ -34,8 +34,7 @@ function QueryParams (_window) {
       queryString += updatedKeys[y] + '=' + currentParams[updatedKeys[y]] + '&';
     }
     _window.location.hash = queryString.slice(0, -1);
-  }
-
+  };
 }
 
 module.exports = QueryParams;
