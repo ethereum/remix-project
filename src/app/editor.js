@@ -28,8 +28,9 @@ function Editor (loadingFromGist, storage) {
   this.uploadFile = function (file, callback) {
     var fileReader = new FileReader();
 
-    SOL_CACHE_FILE = utils.fileKey(file.name);
+    var cacheName = utils.fileKey(file.name);
     fileReader.onload = function (e) {
+      SOL_CACHE_FILE = cacheName;
       storage.set(SOL_CACHE_FILE, e.target.result);
       sessions[SOL_CACHE_FILE] = null;
       callback();
