@@ -9,57 +9,65 @@ var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
 
 function UniversalDApp (contracts, options) {
-  this.options = options || {};
-  this.$el = $('<div class="udapp" />');
-  this.contracts = contracts;
-  this.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
+  var self = this;
 
-  this.web3 = options.web3;
+  self.options = options || {};
+  self.$el = $('<div class="udapp" />');
+  self.contracts = contracts;
+  self.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
+
+  self.web3 = options.web3;
 
   if (options.mode === 'vm') {
-    // FIXME: use `options.vm` or `this.vm` consistently
+    // FIXME: use `options.vm` or `self.vm` consistently
     options.vm = true;
 
-    this.accounts = {};
+    self.accounts = {};
 
-    this.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
+    self.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
 
-    this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
-    this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
+    self.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
+    self.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
   } else if (options.mode !== 'web3') {
     throw new Error('Either VM or Web3 mode must be selected');
   }
 }
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
-  if (this.accounts) {
+  var self = this;
+
+  if (self.accounts) {
     privateKey = new Buffer(privateKey, 'hex');
     var address = ethJSUtil.privateToAddress(privateKey);
 
     // FIXME: we don't care about the callback, but we should still make this proper
-    this.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb () {});
+    self.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb () {});
 
-    this.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
+    self.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 };
   }
 };
 
 UniversalDApp.prototype.getAccounts = function (cb) {
-  if (!this.vm) {
-    this.web3.eth.getAccounts(cb);
+  var self = this;
+
+  if (!self.vm) {
+    self.web3.eth.getAccounts(cb);
   } else {
-    if (!this.accounts) {
+    if (!self.accounts) {
       return cb('No accounts?');
     }
 
-    cb(null, Object.keys(this.accounts));
+    cb(null, Object.keys(self.accounts));
   }
 };
 
 UniversalDApp.prototype.getBalance = function (address, cb) {
+  var self = this;
+
   address = ethJSUtil.stripHexPrefix(address);
 
-  if (!this.vm) {
-    this.web3.eth.getBalance(address, function (err, res) {
+  if (!self.vm) {
+    self.web3.eth.getBalance(address, function (err, res) {
       if (err) {
         cb(err);
       } else {
@@ -67,11 +75,11 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       }
     });
   } else {
-    if (!this.accounts) {
+    if (!self.accounts) {
       return cb('No accounts?');
     }
 
-    this.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
+    self.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
       if (err) {
         cb('Account not found');
       } else {
@@ -82,22 +90,24 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 };
 
 UniversalDApp.prototype.render = function () {
-  if (this.contracts.length === 0) {
-    this.$el.append(this.getABIInputForm());
+  var self = this;
+
+  if (self.contracts.length === 0) {
+    self.$el.append(self.getABIInputForm());
   } else {
-    for (var c in this.contracts) {
+    for (var c in self.contracts) {
       var $contractEl = $('<div class="contract"/>');
 
-      if (this.contracts[c].address) {
-        this.getInstanceInterface(this.contracts[c], this.contracts[c].address, $contractEl);
+      if (self.contracts[c].address) {
+        self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl);
       } else {
-        var $title = $('<span class="title"/>').text(this.contracts[c].name);
-        if (this.contracts[c].bytecode) {
-          $title.append($('<div class="size"/>').text((this.contracts[c].bytecode.length / 2) + ' bytes'));
+        var $title = $('<span class="title"/>').text(self.contracts[c].name);
+        if (self.contracts[c].bytecode) {
+          $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'));
         }
-        $contractEl.append($title).append(this.getCreateInterface($contractEl, this.contracts[c]));
+        $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]));
       }
-      this.$el.append(this.renderOutputModifier(this.contracts[c].name, $contractEl));
+      self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
     }
   }
   var $legend = $('<div class="legend" />')
@@ -105,17 +115,18 @@ UniversalDApp.prototype.render = function () {
     .append($('<div class="transact"/>').text('Transact'))
     .append($('<div class="call"/>').text('Call'));
 
-  this.$el.append($('<div class="poweredBy" />')
+  self.$el.append($('<div class="poweredBy" />')
     .html('<a href="http://github.com/d11e9/universal-dapp">Universal ÐApp</a> powered by The Blockchain'));
 
-  this.$el.append($legend);
-  return this.$el;
+  self.$el.append($legend);
+  return self.$el;
 };
 
 UniversalDApp.prototype.getContractByName = function (contractName) {
-  for (var c in this.contracts) {
-    if (this.contracts[c].name === contractName) {
-      return this.contracts[c];
+  var self = this;
+  for (var c in self.contracts) {
+    if (self.contracts[c].name === contractName) {
+      return self.contracts[c];
     }
   }
   return null;
@@ -149,12 +160,12 @@ UniversalDApp.prototype.getABIInputForm = function (cb) {
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
   var self = this;
   var $createInterface = $('<div class="create"/>');
-  if (this.options.removable) {
+  if (self.options.removable) {
     var $close = $('<div class="udapp-close" />');
     $close.click(function () { self.$el.remove(); });
     $createInterface.append($close);
   }
-  var $newButton = this.getInstanceInterface(contract);
+  var $newButton = self.getInstanceInterface(contract);
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract); });
   $createInterface.append($atButton).append($newButton);
   return $createInterface;
@@ -175,7 +186,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       return 1;
     }
   });
-  var funABI = this.getConstructorInterface(abi);
+  var funABI = self.getConstructorInterface(abi);
   var $createInterface = $('<div class="createContract"/>');
 
   var appendFunctions = function (address, $el) {
@@ -245,7 +256,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         }
       });
     } else {
-      var eventFilter = this.web3.eth.contract(abi).at(address).allEvents();
+      var eventFilter = self.web3.eth.contract(abi).at(address).allEvents();
       eventFilter.watch(parseLogs);
     }
     $instance.append($title);
@@ -281,7 +292,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
   };
 
   if (!address || !$target) {
-    $createInterface.append(this.getCallButton({
+    $createInterface.append(self.getCallButton({
       abi: funABI,
       encode: function (args) {
         var types = [];
@@ -347,7 +358,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
       gas = result.gasUsed.toString(10);
       $gasUsed.html('<strong>Transaction cost:</strong> ' + gas + ' gas. ' + caveat);
     }
-    if (vmResult.gasUsed) {
+    if (vmResult && vmResult.gasUsed) {
       var $callGasUsed = $('<div class="gasUsed">');
       gas = vmResult.gasUsed.toString(10);
       $callGasUsed.append('<strong>Execution cost:</strong> ' + gas + ' gas.');
@@ -436,64 +447,71 @@ UniversalDApp.prototype.getCallButton = function (args) {
       }
     }
 
+    var decodeResponse = function (response) {
+      // Only decode if there supposed to be fields
+      if (args.abi.outputs.length > 0) {
+        try {
+          var i;
+
+          var outputTypes = [];
+          for (i = 0; i < args.abi.outputs.length; i++) {
+            outputTypes.push(args.abi.outputs[i].type);
+          }
+
+          // decode data
+          var decodedObj = ethJSABI.rawDecode(outputTypes, response);
+
+          // format decoded data
+          decodedObj = ethJSABI.stringify(outputTypes, decodedObj);
+          for (i = 0; i < outputTypes.length; i++) {
+            var name = args.abi.outputs[i].name;
+            if (name.length > 0) {
+              decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i];
+            } else {
+              decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
+            }
+          }
+
+          return getDecodedOutput(decodedObj);
+        } catch (e) {
+          return getDecodedOutput('Failed to decode output: ' + e);
+        }
+      }
+    };
+
+    var decoded;
     self.runTx(data, args, function (err, result) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
+      // VM only
       } else if (self.options.vm && result.vm.exception && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
+      // VM only
       } else if (self.options.vm && result.vm.return === undefined) {
         replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
-      } else if (self.options.vm && isConstructor) {
+      } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm));
-        args.appendFunctions(result.createdAddress);
+        args.appendFunctions(self.options.vm ? result.createdAddress : result.contractAddress);
       } else if (self.options.vm) {
         var outputObj = '0x' + result.vm.return.toString('hex');
         clearOutput($result);
         $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result, result.vm));
 
-        // Only decode if there supposed to be fields
-        if (args.abi.outputs.length > 0) {
-          try {
-            var i;
-
-            var outputTypes = [];
-            for (i = 0; i < args.abi.outputs.length; i++) {
-              outputTypes.push(args.abi.outputs[i].type);
-            }
-
-            // decode data
-            var decodedObj = ethJSABI.rawDecode(outputTypes, result.vm.return);
-
-            // format decoded data
-            decodedObj = ethJSABI.stringify(outputTypes, decodedObj);
-            for (i = 0; i < outputTypes.length; i++) {
-              var name = args.abi.outputs[i].name;
-              if (name.length > 0) {
-                decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i];
-              } else {
-                decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i];
-              }
-            }
-
-            $result.append(getDecodedOutput(decodedObj));
-          } catch (e) {
-            $result.append(getDecodedOutput('Failed to decode output: ' + e));
-          }
+        decoded = decodeResponse(result.vm.return);
+        if (decoded) {
+          $result.append(decoded);
         }
       } else if (args.abi.constant && !isConstructor) {
-        replaceOutput($result, getReturnOutput(result));
+        clearOutput($result);
+        $result.append(getReturnOutput(result)).append(getGasUsedOutput({}));
+
+        decoded = decodeResponse(ethJSUtil.toBuffer(result));
+        if (decoded) {
+          $result.append(decoded);
+        }
       } else {
-        tryTillResponse(self.web3, result, function (err, result) {
-          if (err) {
-            replaceOutput($result, $('<span/>').text(err).addClass('error'));
-          } else if (isConstructor) {
-            $result.html('');
-            args.appendFunctions(result.contractAddress);
-          } else {
-            clearOutput($result);
-            $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
-          }
-        });
+        clearOutput($result);
+        $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
       }
     });
   };
@@ -519,7 +537,8 @@ UniversalDApp.prototype.getCallButton = function (args) {
 };
 
 UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
-  var bytecode = this.getContractByName(contractName).bytecode;
+  var self = this;
+  var bytecode = self.getContractByName(contractName).bytecode;
   if (bytecode.indexOf('_') < 0) {
     return cb(null, bytecode);
   }
@@ -528,11 +547,10 @@ UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
     return cb('Invalid bytecode format.');
   }
   var libraryName = m[1];
-  if (!this.getContractByName(libraryName)) {
+  if (!self.getContractByName(libraryName)) {
     return cb('Library ' + libraryName + ' not found.');
   }
-  var self = this;
-  this.deployLibrary(libraryName, function (err, address) {
+  self.deployLibrary(libraryName, function (err, address) {
     if (err) {
       return cb(err);
     }
@@ -551,31 +569,24 @@ UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
 };
 
 UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
-  if (this.getContractByName(contractName).address) {
-    return cb(null, this.getContractByName(contractName).address);
-  }
   var self = this;
-  var bytecode = this.getContractByName(contractName).bytecode;
+  if (self.getContractByName(contractName).address) {
+    return cb(null, self.getContractByName(contractName).address);
+  }
+  var bytecode = self.getContractByName(contractName).bytecode;
   if (bytecode.indexOf('_') >= 0) {
-    this.linkBytecode(contractName, function (err, bytecode) {
+    self.linkBytecode(contractName, function (err, bytecode) {
       if (err) cb(err);
       else self.deployLibrary(contractName, cb);
     });
   } else {
-    this.runTx(bytecode, { abi: { constant: false }, bytecode: bytecode }, function (err, result) {
+    self.runTx(bytecode, { abi: { constant: false }, bytecode: bytecode }, function (err, result) {
       if (err) {
         return cb(err);
       }
-      if (self.options.vm) {
-        self.getContractByName(contractName).address = result.createdAddress;
-        cb(err, result.createdAddress);
-      } else {
-        tryTillResponse(self.web3, result, function (err, finalResult) {
-          if (err) return cb(err);
-          self.getContractByName(contractName).address = finalResult.contractAddress;
-          cb(null, finalResult.contractAddress);
-        });
-      }
+      var address = self.options.vm ? result.createdAddress : result.contractAddress;
+      self.getContractByName(contractName).address = address;
+      cb(err, address);
     });
   }
 };
@@ -584,6 +595,17 @@ UniversalDApp.prototype.clickContractAt = function (self, $output, contract) {
   var address = prompt('What Address is this contract at in the Blockchain? ie: 0xdeadbeaf...');
   self.getInstanceInterface(contract, address, $output);
 };
+
+function tryTillResponse (web3, txhash, done) {
+  web3.eth.getTransactionReceipt(txhash, function (err, address) {
+    if (!err && !address) {
+      // Try again with a bit of delay
+      setTimeout(function () { tryTillResponse(web3, txhash, done); }, 500);
+    } else {
+      done(err, address);
+    }
+  });
+}
 
 UniversalDApp.prototype.runTx = function (data, args, cb) {
   var self = this;
@@ -606,30 +628,37 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
   }
 
   var tx;
-  if (!this.vm) {
+  if (!self.vm) {
     tx = {
-      from: self.options.getAddress ? self.options.getAddress() : this.web3.eth.accounts[0],
+      from: self.options.getAddress ? self.options.getAddress() : self.web3.eth.accounts[0],
       to: to,
       data: data,
       gas: gas,
       value: value
     };
     if (constant && !isConstructor) {
-      this.web3.eth.call(tx, cb);
+      self.web3.eth.call(tx, cb);
     } else {
-      this.web3.eth.estimateGas(tx, function (err, resp) {
-        tx.gas = resp;
-        if (!err) {
-          self.web3.eth.sendTransaction(tx, cb);
-        } else {
-          cb(err, resp);
+      self.web3.eth.estimateGas(tx, function (err, resp) {
+        if (err) {
+          return cb(err, resp);
         }
+
+        tx.gas = resp;
+
+        self.web3.eth.sendTransaction(tx, function (err, resp) {
+          if (err) {
+            return cb(err, resp);
+          }
+
+          tryTillResponse(self.web3, resp, cb);
+        });
       });
     }
   } else {
     try {
-      var address = this.options.getAddress ? this.options.getAddress() : this.getAccounts()[0];
-      var account = this.accounts[address];
+      var address = self.options.getAddress ? self.options.getAddress() : self.getAccounts()[0];
+      var account = self.accounts[address];
       tx = new EthJSTX({
         nonce: new Buffer([account.nonce++]), // @todo count beyond 255
         gasPrice: 1,
@@ -647,23 +676,11 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         transactions: [],
         uncleHeaders: []
       });
-      this.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, cb);
+      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, cb);
     } catch (e) {
       cb(e, null);
     }
   }
 };
-
-function tryTillResponse (web3, txhash, done) {
-  web3.eth.getTransactionReceipt(txhash, testResult);
-
-  function testResult (err, address) {
-    if (!err && !address) {
-      setTimeout(function () { tryTillResponse(web3, txhash, done); }, 500);
-    } else {
-      done(err, address);
-    }
-  }
-}
 
 module.exports = UniversalDApp;
