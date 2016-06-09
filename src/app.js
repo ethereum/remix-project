@@ -163,9 +163,7 @@ var run = function () {
     for (var i = 0; i < fileList.length; i++) {
       var name = fileList[i].name;
       if (!storage.exists(utils.fileKey(name)) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
-        editor.uploadFile(fileList[i], function () {
-          updateFiles();
-        });
+        editor.uploadFile(fileList[i], updateFiles);
       }
     }
 
