@@ -19,7 +19,7 @@ function Renderer (editor, compiler, updateFiles) {
       var errFile = err[1];
       var errLine = parseInt(err[2], 10) - 1;
       var errCol = err[4] ? parseInt(err[4], 10) : 0;
-      if (errFile === '' || errFile === editor.getCacheFile()) {
+      if (errFile === '' || errFile === utils.fileNameFromKey(editor.getCacheFile())) {
         compiler.addAnnotation({
           row: errLine,
           column: errCol,
@@ -28,9 +28,9 @@ function Renderer (editor, compiler, updateFiles) {
         });
       }
       $error.click(function (ev) {
-        if (errFile !== '' && errFile !== editor.getCacheFile() && editor.hasFile(errFile)) {
+        if (errFile !== '' && errFile !== utils.fileNameFromKey(editor.getCacheFile()) && editor.hasFile(errFile)) {
           // Switch to file
-          editor.setCacheFile(errFile);
+          editor.setCacheFile(utils.fileKey(errFile));
           updateFiles();
         // @TODO could show some error icon in files with errors
         }

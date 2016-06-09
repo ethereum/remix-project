@@ -32,7 +32,7 @@ var run = function () {
       }
       window.localStorage[key] = content;
     }
-    editor.setCacheFile(Object.keys(files)[0]);
+    editor.setCacheFile(utils.fileKey(Object.keys(files)[0]));
     updateFiles();
   }
 
@@ -198,7 +198,7 @@ var run = function () {
         var content = window.localStorage.getItem(utils.fileKey(originalName));
         window.localStorage[utils.fileKey(newName)] = content;
         window.localStorage.removeItem(utils.fileKey(originalName));
-        editor.setCacheFile(newName);
+        editor.setCacheFile(utils.fileKey(newName));
       }
 
       updateFiles();
@@ -222,13 +222,13 @@ var run = function () {
 
   function showFileHandler (ev) {
     ev.preventDefault();
-    editor.setCacheFile($(this).find('.name').text());
+    editor.setCacheFile(utils.fileKey($(this).find('.name').text()));
     updateFiles();
     return false;
   }
 
   function activeFileTab () {
-    var name = editor.getCacheFile();
+    var name = utils.fileNameFromKey(editor.getCacheFile());
     return $('#files .file').filter(function () { return $(this).find('.name').text() === name; });
   }
 

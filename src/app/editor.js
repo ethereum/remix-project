@@ -32,11 +32,11 @@ function Editor (loadingFromGist) {
   };
 
   this.setCacheFile = function (cacheFile) {
-    SOL_CACHE_FILE = utils.fileKey(cacheFile);
+    SOL_CACHE_FILE = cacheFile;
   };
 
   this.getCacheFile = function () {
-    return utils.fileNameFromKey(SOL_CACHE_FILE);
+    return SOL_CACHE_FILE;
   };
 
   this.cacheFileIsPresent = function () {
