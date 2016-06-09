@@ -16,13 +16,14 @@ function Editor (loadingFromGist) {
     this.setCacheFileContent('');
   };
 
-  this.uploadFile = function (file) {
+  this.uploadFile = function (file, callback) {
     var fileReader = new FileReader();
 
     SOL_CACHE_FILE = utils.fileKey(file.name);
     fileReader.onload = function (e) {
       window.localStorage[SOL_CACHE_FILE] = e.target.result;
       sessions[SOL_CACHE_FILE] = null;
+      callback();
     };
     fileReader.readAsText(file);
   };
