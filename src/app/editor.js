@@ -138,6 +138,7 @@ function Editor (loadingFromGist) {
         untitledCount = (untitledCount - 0) + 1;
       }
       SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
+      files.push(SOL_CACHE_FILE);
       window.localStorage[SOL_CACHE_FILE] = window.localStorage['sol-cache'] || BALLOT_EXAMPLE;
       window.localStorage.removeItem('sol-cache');
     }
