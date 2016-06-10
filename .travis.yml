@@ -2,6 +2,10 @@ language: node_js
 node_js:
 - stable
 script: npm run lint && npm run build
+addons:
+  sauce_connect:
+    username: "chriseth"
+    access_key: "b781828a-9e9c-43d8-89d4-2fbb879595ca"
 deploy:
   provider: script
   script: ci/deploy_from_travis.sh
