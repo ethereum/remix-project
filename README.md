@@ -22,6 +22,22 @@ Many dependencies are only provided via npm:
 
 Now point your browser to `index.html` to open the application.
 
+### Troubleshooting building
+
+Here are some things to consider if you have trouble building the package. 
+
+ - Make sure that you have the correct version of `node`, `npm` and `nvm`. You can find the version that is tested on Travis-ci by looking at the log in the [build results](https://travis-ci.org/ethereum/browser-solidity).
+
+Run:
+
+    node --version
+    npm --version
+    nvm --version
+
+
+ - In Debian based OSes such as Ubuntu you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm install rebuild`.
+
+ 
 ## Usage as a Chrome Extension
 
 If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
