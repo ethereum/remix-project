@@ -35,7 +35,7 @@ Run:
     nvm --version
 
 
- - In Debian based OSes such as Ubuntu you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm rebuild`.
+ - In Debian based OSes such as Ubuntu 14.04LTS you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm rebuild`.
 
  
 ## Usage as a Chrome Extension
