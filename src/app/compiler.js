@@ -45,7 +45,7 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
     editor.setCacheFileContent(input);
 
     var files = {};
-    files[editor.getCacheFile()] = input;
+    files[utils.fileNameFromKey(editor.getCacheFile())] = input;
     gatherImports(files, missingInputs, function (input, error) {
       outputField.empty();
       if (input === null) {
