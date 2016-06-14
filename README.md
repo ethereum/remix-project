@@ -37,7 +37,26 @@ Run:
 
  - In Debian based OSes such as Ubuntu 14.04LTS you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm rebuild`.
 
- 
+## Unit Testing
+
+Register new unit test files in `test/index.js`. The tests are written using [tape](https://www.npmjs.com/package/tape). Run the tests via:
+
+    npm test
+
+## Browser Testing
+
+To run the Selenium tests via nightwatch serve the app through a local web server:
+
+    npm run serve # starts web server at localhost:8080
+
+Then you will need to either:
+
+ 1. Have a Selenium server running locally on port 4444 along with the chromedriver installed.
+  * Run: `./node_modules/nightwatch/bin/nightwatch --env local`
+ 1. Or, install SauceConnect and run it locally `sc -u <USERNAME> -k <ACCESS_KEY>` (see .travis.yml for values)
+  * Run: `./node_modules/nightwatch/bin/nightwatch --env chrome`
+
+
 ## Usage as a Chrome Extension
 
 If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
