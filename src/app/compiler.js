@@ -203,7 +203,11 @@ function Compiler (editor, handleGithubCall, outputField, hidingRHP, updateFiles
       for (var fileName in files) {
         var match;
         while ((match = importRegex.exec(files[fileName]))) {
-          importHints.push(match[1]);
+          var importFilePath = match[1];
+          if (importFilePath.startsWith('./')) {
+            importFilePath = importFilePath.slice(2);
+          }
+          importHints.push(importFilePath);
         }
       }
       while (importHints.length > 0) {
