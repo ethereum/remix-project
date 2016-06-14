@@ -1,7 +1,11 @@
 language: node_js
 node_js:
-- stable
-script: npm run lint && npm run test && npm run build
+  - stable
+before_script:
+  - npm run serve &
+script:
+  - npm run lint && npm run test && npm run build && nightwatch --env chrome
+  - pkill node
 addons:
   sauce_connect:
     username: "chriseth"
@@ -11,7 +15,7 @@ deploy:
   script: ci/deploy_from_travis.sh
   skip_cleanup: true
   on:
-        branch: master
+    branch: master
 env:
   global:
   - ENCRYPTION_LABEL="b5c2730599da"
@@ -19,5 +23,3 @@ env:
   - COMMIT_AUTHOR="Travis CI"
   - PUSH_REPO="git@github.com:ethereum/browser-solidity.git"
   - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md"
-
-

@@ -5,7 +5,8 @@
   "scripts": {
     "test": "node test/index.js",
     "build": "mkdir -p build; browserify src/index.js -o build/app.js",
-    "lint": "semistandard"
+    "lint": "semistandard",
+    "serve": "http-server ."
   },
   "devDependencies": {
     "brace": "^0.8.0",
@@ -16,8 +17,10 @@
     "ethereumjs-tx": "^1.1.1",
     "ethereumjs-util": "^4.4.0",
     "ethereumjs-vm": "^1.4.0",
+    "http-server": "0.9.0",
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
+    "nightwatch": "^0.9.3",
     "semistandard": "^7.0.0",
     "tape": "^4.5.1",
     "web3": "^0.15.3",
