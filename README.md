@@ -37,8 +37,13 @@ Run:
 
  - In Debian based OSes such as Ubuntu you may need to run `apt-get install build-essential`. After installing `build-essential` run `npm install rebuild`.
 
- 
-## Testing
+## Unit Testing
+
+Register new unit test files in `test/index.js`. The tests are written using [tape](https://www.npmjs.com/package/tape). Run the tests via:
+
+    npm test
+
+## Browser Testing
 
 To run the Selenium tests via nightwatch serve the app through a local web server:
 
