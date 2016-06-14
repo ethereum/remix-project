@@ -3,12 +3,16 @@
 var $ = require('jquery');
 
 var utils = require('./app/utils');
-var queryParams = require('./app/query-params');
-var gistHandler = require('./app/gist-handler');
+var QueryParams = require('./app/query-params');
+var queryParams = new QueryParams();
+var GistHandler = require('./app/gist-handler');
+var gistHandler = new GistHandler();
 
 var StorageHandler = require('./app/storage-handler');
 var Editor = require('./app/editor');
+var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
+var ExecutionContext = require('./app/execution-context');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -61,7 +65,7 @@ var run = function () {
 
   // ------------------ gist load ----------------
 
-  var loadingFromGist = gistHandler.handleLoad(function (gistId) {
+  var loadingFromGist = gistHandler.handleLoad(queryParams.get(), function (gistId) {
     $.ajax({
       url: 'https://api.github.com/gists/' + gistId,
       jsonp: 'callback',
@@ -421,7 +425,10 @@ var run = function () {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
   }
 
-  var compiler = new Compiler(editor, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+  var executionContext = new ExecutionContext();
+  var renderer = new Renderer(editor, executionContext, updateFiles);
+  var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+  executionContext.setCompiler(compiler);
 
   function setVersionText (text) {
     $('#version').text(text);

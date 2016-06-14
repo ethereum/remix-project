@@ -13,8 +13,13 @@ if (typeof window.web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 }
 
-function ExecutionContext (compiler) {
+function ExecutionContext () {
+  var compiler;
   var executionContext = injectedProvider ? 'injected' : 'vm';
+
+  this.setCompiler = function (_compiler) {
+    compiler = _compiler;
+  };
 
   this.isVM = function () {
     return executionContext === 'vm';

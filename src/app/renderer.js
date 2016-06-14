@@ -3,11 +3,9 @@ var $ = require('jquery');
 var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
-var ExecutionContext = require('./execution-context');
 
-function Renderer (editor, compiler, updateFiles) {
+function Renderer (editor, executionContext, updateFiles) {
   var detailsOpen = {};
-  var executionContext = new ExecutionContext(compiler);
 
   function renderError (message) {
     var type = utils.errortype(message);
@@ -20,7 +18,7 @@ function Renderer (editor, compiler, updateFiles) {
       var errLine = parseInt(err[2], 10) - 1;
       var errCol = err[4] ? parseInt(err[4], 10) : 0;
       if (errFile === '' || errFile === utils.fileNameFromKey(editor.getCacheFile())) {
-        compiler.addAnnotation({
+        editor.addAnnotation({
           row: errLine,
           column: errCol,
           text: message,

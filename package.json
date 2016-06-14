@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Minimalistic browser-based Solidity IDE",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/index.js",
     "build": "mkdir -p build; browserify src/index.js -o build/app.js",
     "lint": "semistandard"
   },
@@ -19,6 +19,7 @@
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
     "semistandard": "^7.0.0",
+    "tape": "^4.5.1",
     "web3": "^0.15.3",
     "webworkify": "^1.2.1"
   },
