@@ -216,7 +216,7 @@ function Renderer (editor, executionContext, updateFiles) {
     code += '\n   {' +
       '\n     from: web3.eth.accounts[0], ' +
       '\n     data: \'' + bytecode + '\', ' +
-      '\n     gas: 3000000' +
+      '\n     gas: 4700000' +
       '\n   }, function (e, contract){' +
       '\n    console.log(e, contract);' +
       '\n    if (typeof contract.address !== \'undefined\') {' +
