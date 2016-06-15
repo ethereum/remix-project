@@ -51,11 +51,11 @@ To run the Selenium tests via nightwatch serve the app through a local web serve
 
 Then you will need to either:
 
- 1. Have a Selenium server running locally on port 4444 along with the chromedriver installed.
+ 1. Have a Selenium server running locally on port 4444.
   * Run: `./node_modules/nightwatch/bin/nightwatch --env local`
- 1. Or, install SauceConnect and run it locally `sc -u <USERNAME> -k <ACCESS_KEY>` (see .travis.yml for values)
-  * Run: `./node_modules/nightwatch/bin/nightwatch --env chrome`
-
+ 1. Or, install and run SauceConnect.
+  * Run: `sc -u <USERNAME> -k <ACCESS_KEY>` (see .travis.yml for values)
+  * Run: `./node_modules/nightwatch/bin/nightwatch --env remote`
 
 ## Usage as a Chrome Extension
 
