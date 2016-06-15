@@ -21,9 +21,9 @@
         "waitForConditionTimeout": 60000
       }
     },
-    "chrome" : {
+    "remote" : {
       "desiredCapabilities": {
-        "browserName": "chrome",
+        "browserName": "firefox",
         "javascriptEnabled": true,
         "acceptSslCerts": true
       }
@@ -33,7 +33,7 @@
       "selenium_port": 4444,
       "selenium_host": "localhost",
       "desiredCapabilities": {
-        "browserName": "chrome",
+        "browserName": "firefox",
         "javascriptEnabled": true,
         "acceptSslCerts": true
       }

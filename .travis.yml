@@ -4,7 +4,7 @@ node_js:
 before_script:
   - npm run serve &
 script:
-  - npm run lint && npm run test && npm run build && nightwatch --env chrome
+  - npm run lint && npm run test && npm run build && nightwatch --env remote
   - pkill node
 addons:
   sauce_connect:
