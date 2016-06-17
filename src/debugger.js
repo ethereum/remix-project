@@ -44,7 +44,7 @@ module.exports = React.createClass({
     this.setState({
       currentStepIndex: stepIndex
     })
-    this.props.context.codeManager.resolveCodeFor(stepIndex, this.state.tx)
+    this.props.context.codeManager.resolveStep(stepIndex, this.state.tx)
   },
 
   startDebugging: function (blockNumber, txIndex, tx) {
@@ -62,7 +62,7 @@ module.exports = React.createClass({
         currentStepIndex: 0
       })
       self.refs.stepManager.newTraceAvailable()
-      self.props.context.codeManager.resolveCodeFor(0, tx)
+      self.props.context.codeManager.resolveStep(0, tx)
     })
   }
 })

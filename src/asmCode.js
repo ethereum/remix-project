@@ -23,8 +23,10 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function () {
-    this.context.codeManager.registerIndexChangedListener(this, this.indexChanged)
-    this.context.codeManager.registerCodeChangedListener(this, this.codeChanged)
+    this.context.codeManager.register('indexChanged', this, this.indexChanged)
+    this.context.codeManager.register('codeChanged', this, this.codeChanged)
+    this.context.codeManager.register('loadingCode', this, function (address) {
+    })
   },
 
   indexChanged: function (index) {

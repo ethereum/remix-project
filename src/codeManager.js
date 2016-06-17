@@ -1,32 +1,30 @@
 'use strict'
 var traceManagerUtil = require('./traceManagerUtil')
 var codeResolver = require('./codeResolver')
+var util = require('./util')
+var eventManager = require('./eventManager')
+
+/*
+  resolve contract code referenced by vmtrace in order to be used by asm listview.
+  events:
+   - indexChanged: triggered when an item is selected
+   - codeChanged: triggered when an item (in a different context) is selected
+   - loadingCode: triggerred when loading new code
+   - resolvingStep: when CodeManager resolves code/selected instruction of a new step
+*/
+
 function CodeManager (_web3, _traceManager) {
+  util.extend(this, eventManager)
   this.web3 = _web3
   this.isLoading = false
   this.traceManager = _traceManager
   this.currentAddress = ''
-  this.indexChangedlisteners = []
-  this.codeChangedlisteners = []
   codeResolver.setWeb3(_web3)
 }
 
-CodeManager.prototype.registerIndexChangedListener = function (obj, func) {
-  this.indexChangedlisteners.push({
-    obj: obj,
-    func: func
-  })
-}
-
-CodeManager.prototype.registerCodeChangedListener = function (obj, func) {
-  this.codeChangedlisteners.push({
-    obj: obj,
-    func: func
-  })
-}
-
-CodeManager.prototype.resolveCodeFor = function (stepIndex, tx) {
+CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   if (stepIndex < 0) return
+  this.trigger('resolvingStep')
   var self = this
   if (stepIndex === 0) {
     self.ensureCodeLoaded(tx.to, stepIndex, tx)
@@ -51,9 +49,10 @@ CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
           console.log(error)
         } else {
           var codes = codeResolver.cacheExecutingCode(address, hexCode)
+          self.trigger('loadingCode', [address])
           self.getInstructionIndex(address, currentStep, function (error, result) {
             if (!error) {
-              self.dispatchCodeChanged(codes.code, address, result)
+              self.trigger('codeChanged', [codes.code, address, result])
               self.currentAddress = address
             } else {
               console.log(error)
@@ -64,9 +63,10 @@ CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
     } else {
       codeResolver.resolveCode(address, currentStep, tx, function (address, code) {
         // resoling code from stack
+        self.trigger('loadingCode', [address])
         self.getInstructionIndex(address, currentStep, function (error, result) {
           if (!error) {
-            self.dispatchCodeChanged(code, address, result)
+            self.trigger('codeChanged', [code, address, result])
             self.currentAddress = address
           } else {
             console.log(error)
@@ -78,7 +78,7 @@ CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
     // only set selected item
     this.getInstructionIndex(this.currentAddress, currentStep, function (error, result) {
       if (!error) {
-        self.dispatchIndexChanged(result)
+        self.trigger('indexChanged', [result])
       }
     })
   }
@@ -94,20 +94,6 @@ CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
       callback(null, itemIndex)
     }
   })
-}
-
-CodeManager.prototype.dispatchIndexChanged = function (itemIndex) {
-  for (var listener in this.indexChangedlisteners) {
-    var l = this.indexChangedlisteners[listener]
-    l.func.call(l.obj, itemIndex)
-  }
-}
-
-CodeManager.prototype.dispatchCodeChanged = function (code, address, itemIndex) {
-  for (var listener in this.codeChangedlisteners) {
-    var l = this.codeChangedlisteners[listener]
-    l.func.call(l.obj, code, address, itemIndex)
-  }
 }
 
 module.exports = CodeManager
