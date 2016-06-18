@@ -4,6 +4,8 @@
   "description": "Minimalistic browser-based Solidity IDE",
   "scripts": {
     "test": "node test/index.js",
+    "browser-test": "nightwatch --env local",
+    "browser-test-sc": "nightwatch --env remote",
     "build": "mkdir -p build; browserify src/index.js -o build/app.js",
     "lint": "semistandard",
     "serve": "http-server ."
