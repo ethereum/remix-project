@@ -9,7 +9,7 @@ EventManager.prototype.unregister = function (eventName, obj) {
       this.registered[eventName].splice(reg, 1)
       return
     }
-  } 
+  }
 }
 
 EventManager.prototype.register = function (eventName, obj, func) {

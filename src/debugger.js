@@ -8,6 +8,8 @@ var util = require('./util')
 var EventManager = require('./eventManager')
 
 module.exports = React.createClass({
+  ethDebuggerSelectedItem: -1,
+
   getInitialState: function () {
     return {
       currentStepIndex: -1, // index of the selected item in the vmtrace

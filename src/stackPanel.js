@@ -25,12 +25,12 @@ module.exports = React.createClass({
     var self = this
     this.context.root.register('indexChanged', this, function (index) {
       if (index < 0) return
-      if (window.ethDebuggerSelectedItem !== index) return
+      if (self.context.root.ethDebuggerSelectedItem !== index) return
 
       self.context.traceManager.getStackAt(index, function (error, stack) {
         if (error) {
           console.log(error)
-        } else if (window.ethDebuggerSelectedItem === index) {
+        } else if (self.context.root.ethDebuggerSelectedItem === index) {
           self.setState({
             data: self.format(stack)
           })

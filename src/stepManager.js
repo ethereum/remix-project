@@ -50,7 +50,7 @@ module.exports = React.createClass({
   },
 
   updateGlobalSelectedItem: function (value) {
-    window.ethDebuggerSelectedItem = value
+    this.context.root.ethDebuggerSelectedItem = value
   },
 
   init: function () {
@@ -108,7 +108,6 @@ module.exports = React.createClass({
     var step = this.context.traceManager.findStepOverForward(this.state.currentStepIndex)
     this.refs.slider.setValue(step)
     this.changeState(step)
-    
   },
 
   stepOverBack: function () {
