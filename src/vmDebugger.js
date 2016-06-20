@@ -10,16 +10,6 @@ var StackPanel = require('./stackPanel')
 var StoragePanel = require('./storagePanel')
 
 module.exports = React.createClass({
-  contextTypes: {
-    traceManager: React.PropTypes.object
-  },
-
-  getInitialState: function () {
-    return {
-      currentAddress: null
-    }
-  },
-
   getDefaultProps: function () {
     return {
       currentStepIndex: -1 // index of the selected item in the vmtrace
@@ -29,9 +19,6 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div style={this.props.vmTrace === null ? style.hidden : style.display}>
-        <div style={style.container}>
-          <span style={style.address}>Current code: {this.state.currentAddress}</span>
-        </div>
         <div style={style.container}>
           <table>
             <tbody>

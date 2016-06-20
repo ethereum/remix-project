@@ -53,6 +53,7 @@ CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
           self.getInstructionIndex(address, currentStep, function (error, result) {
             if (!error) {
               self.trigger('codeChanged', [codes.code, address, result])
+              self.trigger('indexChanged', [result])
               self.currentAddress = address
             } else {
               console.log(error)
@@ -67,6 +68,7 @@ CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
         self.getInstructionIndex(address, currentStep, function (error, result) {
           if (!error) {
             self.trigger('codeChanged', [code, address, result])
+            self.trigger('indexChanged', [result])
             self.currentAddress = address
           } else {
             console.log(error)

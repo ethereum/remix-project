@@ -4,6 +4,8 @@ var TxBrowser = require('./txBrowser')
 var StepManager = require('./stepManager')
 var VmDebugger = require('./vmDebugger')
 var style = require('./basicStyles')
+var util = require('./util')
+var eventManager = require('./eventManager')
 
 module.exports = React.createClass({
   getInitialState: function () {
@@ -12,11 +14,12 @@ module.exports = React.createClass({
       tx: null
     }
   },
-
+  
   childContextTypes: {
     web3: React.PropTypes.object,
     traceManager: React.PropTypes.object,
     codeManager: React.PropTypes.object,
+    root: React.PropTypes.object,
     tx: React.PropTypes.object
   },
 
@@ -25,6 +28,7 @@ module.exports = React.createClass({
       web3: this.props.context.web3,
       traceManager: this.props.context.traceManager,
       codeManager: this.props.context.codeManager,
+      root: this,
       tx: this.state.tx
     }
   },
@@ -41,10 +45,15 @@ module.exports = React.createClass({
   },
 
   stepChanged: function (stepIndex) {
+    this.trigger('indexChanged', [stepIndex])
     this.setState({
       currentStepIndex: stepIndex
     })
     this.props.context.codeManager.resolveStep(stepIndex, this.state.tx)
+  },
+
+  componentWillMount: function () {
+    util.extend(this, eventManager)
   },
 
   startDebugging: function (blockNumber, txIndex, tx) {
@@ -58,11 +67,12 @@ module.exports = React.createClass({
     var self = this
     this.props.context.traceManager.resolveTrace(tx, function (success) {
       console.log('trace loaded ' + success)
-      self.setState({
-        currentStepIndex: 0
-      })
-      self.refs.stepManager.newTraceAvailable()
-      self.props.context.codeManager.resolveStep(0, tx)
+      if (success) {
+        self.stepChanged(0)
+        self.refs.stepManager.newTraceAvailable()
+      } else {
+        console.log('trace not loaded')
+      }
     })
   }
 })

@@ -3,6 +3,8 @@ var React = require('react')
 var ButtonNavigator = require('./buttonNavigator')
 var Slider = require('./slider')
 var style = require('./basicStyles')
+var util = require('./util')
+var eventManager = require('./eventManager')
 
 module.exports = React.createClass({
   propTypes: {
@@ -41,6 +43,7 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function () {
+    // util.extend(this, eventManager)
     this.changeState(-1)
   },
 
@@ -70,8 +73,8 @@ module.exports = React.createClass({
     if (!this.context.traceManager.inRange(step)) {
       return
     }
-    this.props.onStepChanged(step)
     this.changeState(step)
+    this.props.onStepChanged(step)
   },
 
   stepIntoForward: function () {
@@ -82,9 +85,9 @@ module.exports = React.createClass({
     if (!this.context.traceManager.inRange(step)) {
       return
     }
-    this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
+    this.props.onStepChanged(step)
   },
 
   stepIntoBack: function () {
@@ -95,9 +98,9 @@ module.exports = React.createClass({
     if (!this.context.traceManager.inRange(step)) {
       return
     }
-    this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
+    this.props.onStepChanged(step)
   },
 
   stepOverForward: function () {
@@ -105,9 +108,9 @@ module.exports = React.createClass({
       return
     }
     var step = this.context.traceManager.findStepOverForward(this.state.currentStepIndex)
-    this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
+    this.props.onStepChanged(step)
   },
 
   stepOverBack: function () {
@@ -115,22 +118,22 @@ module.exports = React.createClass({
       return
     }
     var step = this.context.traceManager.findStepOverBack(this.state.currentStepIndex)
-    this.props.onStepChanged(step)
     this.refs.slider.setValue(step)
     this.changeState(step)
+    this.props.onStepChanged(step)
   },
 
   jumpToNextCall: function () {
     if (!this.context.traceManager.isLoaded()) {
       return
     }
-    var step = this.context.traceManager.findNextCall(this.state.currentStepIndex)
-    this.props.onStepChanged(step)
+    var step = this.context.traceManager.findNextCall(this.state.currentStepIndex)    
     this.refs.slider.setValue(step)
     this.changeState(step)
+    this.props.onStepChanged(step)
   },
 
-  changeState: function (step) {
+  changeState: function (step) {   
     this.updateGlobalSelectedItem(step)
     this.setState({
       currentStepIndex: step

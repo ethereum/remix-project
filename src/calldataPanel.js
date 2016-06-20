@@ -4,7 +4,9 @@ var BasicPanel = require('./basicPanel')
 
 module.exports = React.createClass({
   contextTypes: {
-    traceManager: React.PropTypes.object
+    traceManager: React.PropTypes.object,
+    codeManager: React.PropTypes.object,
+    root: React.PropTypes.object
   },
 
   getDefaultProps: function () {
@@ -25,19 +27,21 @@ module.exports = React.createClass({
     )
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    if (nextProps.currentStepIndex < 0) return
-    if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
-
+  componentDidMount: function () {
     var self = this
-    this.context.traceManager.getCallDataAt(nextProps.currentStepIndex, function (error, calldata) {
-      if (error) {
-        console.log(error)
-      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
-        self.setState({
-          data: self.format(calldata)
-        })
-      }
+    this.context.root.register('indexChanged', this, function (index) {
+      if (index < 0) return
+      if (window.ethDebuggerSelectedItem !== index) return
+
+      self.context.traceManager.getCallDataAt(index, function (error, calldata) {
+        if (error) {
+          console.log(error)
+        } else if (window.ethDebuggerSelectedItem === index) {
+          self.setState({
+            data: self.format(calldata)
+          })
+        }
+      })
     })
   },
 
