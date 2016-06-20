@@ -21,15 +21,14 @@
   "devDependencies": {
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
-    "mocha": "^2.5.3",
-    "should": "^9.0.2",
     "standard": "^7.0.1",
-    "standard-reporter": "^1.0.5"
+    "standard-reporter": "^1.0.5",
+    "tape": "^4.6.0"
   },
   "scripts": {
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
     "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js",
-    "test": "standard && mocha"
+    "test": "standard && tape ./test/tests.js"
   },
   "repository": {
     "type": "git",
