@@ -4,7 +4,9 @@ var style = require('./basicStyles')
 
 module.exports = React.createClass({
   contextTypes: {
-    codeManager: React.PropTypes.object
+    codeManager: React.PropTypes.object,
+    root: React.PropTypes.object,
+    tx: React.PropTypes.object
   },
 
   getInitialState: function () {
@@ -23,9 +25,13 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function () {
+    var self = this
     this.context.codeManager.register('indexChanged', this, this.indexChanged)
     this.context.codeManager.register('codeChanged', this, this.codeChanged)
     this.context.codeManager.register('loadingCode', this, function (address) {
+    })
+    this.context.root.register('indexChanged', this, function (index) {
+      self.context.codeManager.resolveStep(index, self.context.tx)
     })
   },
 

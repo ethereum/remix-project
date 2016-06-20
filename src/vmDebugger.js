@@ -10,12 +10,6 @@ var StackPanel = require('./stackPanel')
 var StoragePanel = require('./storagePanel')
 
 module.exports = React.createClass({
-  getDefaultProps: function () {
-    return {
-      currentStepIndex: -1 // index of the selected item in the vmtrace
-    }
-  },
-
   render: function () {
     return (
       <div style={this.props.vmTrace === null ? style.hidden : style.display}>
@@ -24,29 +18,29 @@ module.exports = React.createClass({
             <tbody>
               <tr>
                 <td>
-                  <ASMCode ref='asmcode' currentStepIndex={this.props.currentStepIndex} />
+                  <ASMCode />
                   <div style={Object.assign(style.inline, style.sticker)}>
-                    <Sticker currentStepIndex={this.props.currentStepIndex} />
+                    <Sticker />
                   </div>
                 </td>
                 <td>
-                  <StackPanel currentStepIndex={this.props.currentStepIndex} />
+                  <StackPanel />
                 </td>
               </tr>
               <tr>
                 <td>
-                  <StoragePanel currentStepIndex={this.props.currentStepIndex} />
+                  <StoragePanel />
                 </td>
                 <td>
-                  <MemoryPanel currentStepIndex={this.props.currentStepIndex} />
+                  <MemoryPanel />
                 </td>
               </tr>
               <tr>
                 <td>
-                  <CalldataPanel currentStepIndex={this.props.currentStepIndex} />
+                  <CalldataPanel />
                 </td>
                 <td>
-                  <CallstackPanel currentStepIndex={this.props.currentStepIndex} />
+                  <CallstackPanel />
                 </td>
               </tr>
             </tbody>

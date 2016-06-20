@@ -9,12 +9,6 @@ module.exports = React.createClass({
     root: React.PropTypes.object
   },
 
-  getDefaultProps: function () {
-    return {
-      currentStepIndex: -1
-    }
-  },
-
   getInitialState: function () {
     return {
       data: null

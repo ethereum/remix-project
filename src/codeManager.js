@@ -2,7 +2,7 @@
 var traceManagerUtil = require('./traceManagerUtil')
 var codeResolver = require('./codeResolver')
 var util = require('./util')
-var eventManager = require('./eventManager')
+var EventManager = require('./eventManager')
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
@@ -14,7 +14,7 @@ var eventManager = require('./eventManager')
 */
 
 function CodeManager (_web3, _traceManager) {
-  util.extend(this, eventManager)
+  util.extend(this, new EventManager())
   this.web3 = _web3
   this.isLoading = false
   this.traceManager = _traceManager
