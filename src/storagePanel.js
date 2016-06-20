@@ -1,18 +1,13 @@
 'use strict'
 var React = require('react')
 var BasicPanel = require('./basicPanel')
-var style = require('./basicStyles')
 
 module.exports = React.createClass({
   contextTypes: {
     traceManager: React.PropTypes.object,
-    tx: React.PropTypes.object
-  },
-
-  getDefaultProps: function () {
-    return {
-      currentStepIndex: -1
-    }
+    tx: React.PropTypes.object,
+    codeManager: React.PropTypes.object,
+    root: React.PropTypes.object
   },
 
   getInitialState: function () {
@@ -23,40 +18,32 @@ module.exports = React.createClass({
 
   render: function () {
     return (
-      <BasicPanel name='Storage' data={this.state.data} renderRow={this.renderStorageRow} />
+      <BasicPanel name='Storage' data={this.state.data} />
     )
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    if (nextProps.currentStepIndex < 0) return
-    if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
-
+  componentDidMount: function () {
     var self = this
-    this.context.traceManager.getStorageAt(nextProps.currentStepIndex, this.context.tx.blockNumber.toString(), this.context.tx.transactionIndex, function (error, storage) {
-      if (error) {
-        console.log(error)
-      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
-        self.setState({
-          data: storage
-        })
-      }
+    this.context.root.register('indexChanged', this, function (index) {
+      if (index < 0) return
+      if (self.context.root.ethDebuggerSelectedItem !== index) return
+
+      self.context.traceManager.getStorageAt(index, self.context.tx, function (error, storage) {
+        if (error) {
+          console.log(error)
+        } else if (self.context.root.ethDebuggerSelectedItem === index) {
+          self.setState({
+            data: self.formatStorage(storage)
+          })
+        }
+      })
     })
   },
 
-  renderStorageRow: function (data) {
-    var ret = []
-    if (data) {
-      for (var key in data) {
-        ret.push(
-          <tr key={key}>
-            <td>
-              <pre style={style.font} >{key}</pre>
-            </td>
-            <td>
-              <pre style={style.font}>{data[key]}</pre>
-            </td>
-          </tr>)
-      }
+  formatStorage: function (storage) {
+    var ret = ''
+    for (var key in storage) {
+      ret += key + '  ' + storage[key] + '\n'
     }
     return ret
   }

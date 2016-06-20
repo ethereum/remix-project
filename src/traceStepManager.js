@@ -1,35 +1,34 @@
 'use strict'
+var traceManagerUtil = require('./traceManagerUtil')
+
 function TraceStepManager (_traceAnalyser) {
   this.traceAnalyser = _traceAnalyser
 }
 
 TraceStepManager.prototype.isCallInstruction = function (index) {
   var state = this.traceAnalyser.trace[index]
-  return state.instname === 'CALL' || state.instname === 'CALLCODE' || state.instname === 'CREATE' || state.instname === 'DELEGATECALL'
+  return traceManagerUtil.isCallInstruction(state)
 }
 
 TraceStepManager.prototype.isReturnInstruction = function (index) {
   var state = this.traceAnalyser.trace[index]
-  return state.instname === 'RETURN'
+  return traceManagerUtil.isReturnInstruction(state)
 }
 
 TraceStepManager.prototype.findStepOverBack = function (currentStep) {
-  if (this.isReturnInstruction(currentStep - 1)) {
-    return this.findStepOutBack(currentStep)
-  } else {
-    return currentStep - 1
-  }
+  if (currentStep === 0) return 0
+  return this.findStepOutBack(currentStep)
 }
 
 TraceStepManager.prototype.findStepOverForward = function (currentStep) {
-  if (this.isCallInstruction(currentStep)) {
-    return this.findStepOutForward(currentStep)
-  } else {
-    return currentStep + 1
-  }
+  if (currentStep === this.traceAnalyser.trace.length - 1) return currentStep
+  return this.findStepOutForward(currentStep)
 }
 
 TraceStepManager.prototype.findStepOutBack = function (currentStep) {
+  if (!this.traceAnalyser.trace) {
+    return currentStep
+  }
   var i = currentStep - 1
   var depth = 0
   while (--i >= 0) {
@@ -47,9 +46,12 @@ TraceStepManager.prototype.findStepOutBack = function (currentStep) {
 }
 
 TraceStepManager.prototype.findStepOutForward = function (currentStep) {
+  if (!this.traceAnalyser.trace) {
+    return currentStep
+  }
   var i = currentStep
   var depth = 0
-  while (++i < this.traceAnalyser.length) {
+  while (++i < this.traceAnalyser.trace.length) {
     if (this.isReturnInstruction(i)) {
       if (depth === 0) {
         break
@@ -60,7 +62,20 @@ TraceStepManager.prototype.findStepOutForward = function (currentStep) {
       depth++
     }
   }
-  return i + 1
+  return i
+}
+
+TraceStepManager.prototype.findNextCall = function (currentStep) {
+  if (!this.traceAnalyser.trace) {
+    return currentStep
+  }
+  var i = currentStep
+  while (++i < this.traceAnalyser.trace.length) {
+    if (this.isCallInstruction(i)) {
+      return i
+    }
+  }
+  return currentStep
 }
 
 module.exports = TraceStepManager

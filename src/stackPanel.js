@@ -4,13 +4,9 @@ var BasicPanel = require('./basicPanel')
 
 module.exports = React.createClass({
   contextTypes: {
-    traceManager: React.PropTypes.object
-  },
-
-  getDefaultProps: function () {
-    return {
-      currentStepIndex: -1
-    }
+    traceManager: React.PropTypes.object,
+    codeManager: React.PropTypes.object,
+    root: React.PropTypes.object
   },
 
   getInitialState: function () {
@@ -25,19 +21,29 @@ module.exports = React.createClass({
     )
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    if (nextProps.currentStepIndex < 0) return
-    if (window.ethDebuggerSelectedItem !== nextProps.currentStepIndex) return
-
+  componentDidMount: function () {
     var self = this
-    this.context.traceManager.getStackAt(nextProps.currentStepIndex, function (error, stack) {
-      if (error) {
-        console.log(error)
-      } else if (window.ethDebuggerSelectedItem === nextProps.currentStepIndex) {
-        self.setState({
-          data: stack
-        })
-      }
+    this.context.root.register('indexChanged', this, function (index) {
+      if (index < 0) return
+      if (self.context.root.ethDebuggerSelectedItem !== index) return
+
+      self.context.traceManager.getStackAt(index, function (error, stack) {
+        if (error) {
+          console.log(error)
+        } else if (self.context.root.ethDebuggerSelectedItem === index) {
+          self.setState({
+            data: self.format(stack)
+          })
+        }
+      })
     })
+  },
+
+  format: function (stack) {
+    var ret = ''
+    for (var key in stack) {
+      ret += stack[key] + '\n'
+    }
+    return ret
   }
 })
