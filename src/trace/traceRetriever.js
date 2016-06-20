@@ -1,5 +1,6 @@
 'use strict'
-var traceManagerUtil = require('./traceManagerUtil')
+var traceHelper = require('../helpers/traceHelper')
+
 function TraceRetriever (_web3) {
   this.web3 = _web3
   this.storages = {} // contains all intial storage (by addresses)
@@ -18,7 +19,7 @@ TraceRetriever.prototype.getTrace = function (txHash, callback) {
 }
 
 TraceRetriever.prototype.getStorage = function (tx, address, callback) {
-  if (traceManagerUtil.isContractCreation(address)) {
+  if (traceHelper.isContractCreation(address)) {
     callback(null, {})
   } else if (this.storages[address]) {
     callback(null, this.storages[address])

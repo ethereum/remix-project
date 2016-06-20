@@ -4,8 +4,8 @@ var TxBrowser = require('./txBrowser')
 var StepManager = require('./stepManager')
 var VmDebugger = require('./vmDebugger')
 var style = require('./basicStyles')
-var util = require('./util')
-var EventManager = require('./eventManager')
+var util = require('./helpers/global')
+var EventManager = require('./lib/eventManager')
 
 module.exports = React.createClass({
   ethDebuggerSelectedItem: -1,

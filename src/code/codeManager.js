@@ -1,8 +1,8 @@
 'use strict'
-var traceManagerUtil = require('./traceManagerUtil')
+var traceHelper = require('../helpers/traceHelper')
 var codeResolver = require('./codeResolver')
-var util = require('./util')
-var EventManager = require('./eventManager')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
@@ -42,7 +42,7 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
 CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
   var self = this
   if (address !== this.currentAddress) {
-    if (traceManagerUtil.isContractCreation(address)) {
+    if (traceHelper.isContractCreation(address)) {
       this.traceManager.getContractCreationCode(address, function (error, hexCode) {
         // contract creation
         if (error) {
