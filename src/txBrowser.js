@@ -29,6 +29,7 @@ module.exports = React.createClass({
     } else {
       tx = this.context.web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
     }
+    console.log(JSON.stringify(tx))
     if (tx) {
       if (!tx.to) {
         tx.to = traceHelper.contractCreationToken('0')

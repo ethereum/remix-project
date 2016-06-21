@@ -10,6 +10,7 @@ module.exports = React.createClass({
 
   getInitialState: function () {
     return {
+      vmTraceStep: '',
       step: '',
       addmemory: '',
       gas: '',
@@ -22,6 +23,14 @@ module.exports = React.createClass({
       <div>
         <table>
           <tbody>
+            <tr key='vmtracestep'>
+              <td>
+                vmtracestep
+              </td>
+              <td>
+                {this.state.vmTraceStep}
+              </td>
+            </tr>
             <tr key='step'>
               <td>
                 step
@@ -80,6 +89,10 @@ module.exports = React.createClass({
     var self = this
     this.context.root.register('indexChanged', this, function (index) {
       if (index < 0) return
+
+      self.setState({
+        vmTraceStep: index
+      })
 
       self.context.traceManager.getCurrentStep(index, function (error, step) {
         if (error) {

@@ -14,6 +14,7 @@ TraceRetriever.prototype.getTrace = function (txHash, callback) {
     fullStorage: !this.debugStorageAtAvailable()
   }
   this.web3.debug.traceTransaction(txHash, options, function (error, result) {
+    console.log(JSON.stringify(result))
     callback(error, result)
   })
 }

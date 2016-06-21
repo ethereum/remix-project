@@ -32,12 +32,13 @@ TraceManager.prototype.resolveTrace = function (tx, callback) {
         self.trace = result.structLogs
         self.traceAnalyser.analyse(result.structLogs, tx, function (error, result) {
           if (error) {
+            self.isLoading = false
             console.log(error)
             callback(false)
           } else {
+            self.isLoading = false
             callback(true)
           }
-          self.isLoading = false
         })
       } else {
         console.log(tx.hash + ' is not a contract invokation or contract creation.')
@@ -225,7 +226,7 @@ TraceManager.prototype.getRemainingGas = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.isCreationStep = function (stepIndex) {
-  return traceHelper.isCreateInstruction(stepIndex, this.trace)
+  return traceHelper.isCreateInstruction(this.trace[stepIndex])
 }
 
 // step section
