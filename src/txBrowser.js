@@ -1,7 +1,7 @@
 'use strict'
 var React = require('react')
 var style = require('./basicStyles')
-var traceManagerUtil = require('./traceManagerUtil')
+var traceHelper = require('./helpers/traceHelper')
 
 module.exports = React.createClass({
   contextTypes: {
@@ -29,9 +29,10 @@ module.exports = React.createClass({
     } else {
       tx = this.context.web3.eth.getTransactionFromBlock(this.state.blockNumber, this.state.txNumber)
     }
+    console.log(JSON.stringify(tx))
     if (tx) {
       if (!tx.to) {
-        tx.to = traceManagerUtil.contractCreationToken('0')
+        tx.to = traceHelper.contractCreationToken('0')
       }
       this.setState({from: tx.from, to: tx.to, hash: tx.hash})
       this.props.onNewTxRequested(this.state.blockNumber, parseInt(this.state.txNumber), tx)

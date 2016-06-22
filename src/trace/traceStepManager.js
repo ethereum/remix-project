@@ -1,5 +1,5 @@
 'use strict'
-var traceManagerUtil = require('./traceManagerUtil')
+var traceHelper = require('../helpers/traceHelper')
 
 function TraceStepManager (_traceAnalyser) {
   this.traceAnalyser = _traceAnalyser
@@ -7,12 +7,12 @@ function TraceStepManager (_traceAnalyser) {
 
 TraceStepManager.prototype.isCallInstruction = function (index) {
   var state = this.traceAnalyser.trace[index]
-  return traceManagerUtil.isCallInstruction(state)
+  return traceHelper.isCallInstruction(state)
 }
 
 TraceStepManager.prototype.isReturnInstruction = function (index) {
   var state = this.traceAnalyser.trace[index]
-  return traceManagerUtil.isReturnInstruction(state)
+  return traceHelper.isReturnInstruction(state)
 }
 
 TraceStepManager.prototype.findStepOverBack = function (currentStep) {

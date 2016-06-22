@@ -1,6 +1,7 @@
 'use strict'
 var React = require('react')
 var BasicPanel = require('./basicPanel')
+var util = require('./helpers/ui')
 
 module.exports = React.createClass({
   contextTypes: {
@@ -33,43 +34,10 @@ module.exports = React.createClass({
           console.log(error)
         } else if (self.context.root.ethDebuggerSelectedItem === index) {
           self.setState({
-            data: self.formatMemory(memory, 16)
+            data: util.formatMemory(memory, 16)
           })
         }
       })
     })
-  },
-
-  formatMemory: function (mem, width) {
-    var ret = ''
-    if (!mem) {
-      return ret
-    }
-
-    if (!mem.substr) {
-      mem = mem.join('') // geth returns an array, eth return raw string
-    }
-
-    for (var k = 0; k < mem.length; k += (width * 2)) {
-      var memory = mem.substr(k, width * 2)
-      var content = this.tryAsciiFormat(memory)
-      ret += this.context.web3.toHex(k) + '   ' + content.raw + ' ' + content.ascii + '\n'
-    }
-    return ret
-  },
-
-  tryAsciiFormat: function (memorySlot) {
-    var ret = { ascii: '', raw: '' }
-    for (var k = 0; k < memorySlot.length; k += 2) {
-      var raw = memorySlot.substr(k, 2)
-      var ascii = String.fromCharCode(parseInt(raw, 16))
-      ascii = ascii.replace(/\W/g, '?')
-      if (ascii === '') {
-        ascii = '?'
-      }
-      ret.ascii += ascii
-      ret.raw += ' ' + raw
-    }
-    return ret
   }
 })

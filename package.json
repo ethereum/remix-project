@@ -21,13 +21,16 @@
   "devDependencies": {
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
+    "nightwatch": "^0.9.4",
     "standard": "^7.0.1",
-    "standard-reporter": "^1.0.5"
+    "standard-reporter": "^1.0.5",
+    "tape": "^4.6.0"
   },
   "scripts": {
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
     "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js",
-    "test" : "standard"
+    "test": "standard && tape ./test/tests.js",
+    "serve": "http-server ."
   },
   "repository": {
     "type": "git",
@@ -42,7 +45,8 @@
   "standard": {
     "ignore": [
       "node_modules/*",
-      "build/*"
+      "build/*",
+      "test/resources/*"
     ]
   }
 }

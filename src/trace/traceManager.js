@@ -3,7 +3,7 @@ var TraceAnalyser = require('./traceAnalyser')
 var TraceRetriever = require('./traceRetriever')
 var TraceCache = require('./traceCache')
 var TraceStepManager = require('./traceStepManager')
-var traceManagerUtil = require('./traceManagerUtil')
+var traceHelper = require('../helpers/traceHelper')
 
 function TraceManager (_web3) {
   this.web3 = _web3
@@ -32,12 +32,13 @@ TraceManager.prototype.resolveTrace = function (tx, callback) {
         self.trace = result.structLogs
         self.traceAnalyser.analyse(result.structLogs, tx, function (error, result) {
           if (error) {
+            self.isLoading = false
             console.log(error)
             callback(false)
           } else {
+            self.isLoading = false
             callback(true)
           }
-          self.isLoading = false
         })
       } else {
         console.log(tx.hash + ' is not a contract invokation or contract creation.')
@@ -74,7 +75,7 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
   if (check) {
     return callback(check, null)
   }
-  var stoChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.storageChanges)
+  var stoChange = traceHelper.findLowerBound(stepIndex, this.traceCache.storageChanges)
   if (stoChange === undefined) return callback('no storage found', null)
   var self = this
   if (this.traceRetriever.debugStorageAtAvailable()) {
@@ -98,7 +99,7 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callDataChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.callDataChanges)
+  var callDataChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callDataChanges)
   if (callDataChange === undefined) return callback('no calldata found', null)
   callback(null, [this.trace[callDataChange].calldata])
 }
@@ -108,7 +109,7 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callStackChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.callChanges)
+  var callStackChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callChanges)
   if (callStackChange === undefined) return callback('no callstack found', null)
   callback(null, this.traceCache.callStack[callStackChange].callStack)
 }
@@ -133,7 +134,7 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callChange = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.callChanges)
+  var callChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callChanges)
   if (callChange === undefined) {
     callback(null, 0)
   } else {
@@ -179,7 +180,7 @@ TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var lastChanges = traceManagerUtil.findLowerBound(stepIndex, this.traceCache.memoryChanges)
+  var lastChanges = traceHelper.findLowerBound(stepIndex, this.traceCache.memoryChanges)
   if (lastChanges === undefined) return callback('no memory found', null)
   callback(null, this.trace[lastChanges].memory)
 }
@@ -225,7 +226,7 @@ TraceManager.prototype.getRemainingGas = function (stepIndex, callback) {
 }
 
 TraceManager.prototype.isCreationStep = function (stepIndex) {
-  return traceManagerUtil.isCreateInstruction(stepIndex, this.trace)
+  return traceHelper.isCreateInstruction(this.trace[stepIndex])
 }
 
 // step section
