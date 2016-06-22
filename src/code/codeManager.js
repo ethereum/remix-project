@@ -20,6 +20,7 @@ function CodeManager (_web3, _traceManager) {
   this.traceManager = _traceManager
   this.currentAddress = ''
   codeResolver.setWeb3(_web3)
+  this.codeResolver = codeResolver
 }
 
 CodeManager.prototype.resolveStep = function (stepIndex, tx) {

@@ -46,7 +46,7 @@
     "ignore": [
       "node_modules/*",
       "build/*",
-      "test/trace/*"
+      "test/resources/*"
     ]
   }
 }

@@ -1,13 +1,16 @@
 'use strict'
 var tape = require('tape')
 var init = require('../src/helpers/init')
-// var traceInvokation = require('./trace/contractInvokationTrace')
-var txInvokation = require('./trace/contractInvokationTx')
+var txInvokation = require('./resources/contractInvokationTx')
+var TestTraceRetriever = require('./TestTraceRetriever')
+var contractCode = require('./resources/contractInvokationCode')
 
 tape('CodeManager', function (t) {
   var codeManager
   var context = init.loadContext()
   codeManager = context.codeManager
+  context.traceManager.traceRetriever = new TestTraceRetriever()
+  codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
   context.traceManager.resolveTrace(txInvokation, function (success) {
     if (!success) {
       t.fail(' - traceManager.resolveTrace - failed')
