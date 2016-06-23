@@ -17,12 +17,8 @@ function TxBrowser (_web3) {
   this.view
 }
 
-/*
-getInitialState: function () {
-  return {blockNumber: '1000110', txNumber: '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51', from: '', to: '', hash: ''}
-},
-*/
 
+// 0xcda2b2835add61af54cf83bd076664d98d7908c6cd98d86423b3b48d8b8e51ff
 // creation 0xa9619e1d0a35b2c1d686f5b661b3abd87f998d2844e8e9cc905edb57fc9ce349
 // invokation 0x71a6d583d16d142c5c3e8903060e8a4ee5a5016348a9448df6c3e63b68076ec4
 // test:

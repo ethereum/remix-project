@@ -1,4 +1,5 @@
 'use strict'
+var ui = require('../helpers/ui')
 module.exports = {
   // util section
   findLowerBound: function (target, changes) {
@@ -32,7 +33,7 @@ module.exports = {
       return this.contractCreationToken(vmTraceIndex)
     } else if (this.isCallInstruction(step)) {
       var stack = step.stack // callcode, delegatecall, ...
-      return stack[stack.length - 2]
+      return ui.normalizeHex(stack[stack.length - 2])
     }
     return undefined
   },

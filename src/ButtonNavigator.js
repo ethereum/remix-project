@@ -63,7 +63,7 @@ ButtonNavigator.prototype.stepChanged = function (step) {
       } else {
         self.intoForwardDisabled = step >= length - 1
         self.overForwardDisabled = step >= length - 1
-        self.NextcallDisabled = step >= length - 1
+        self.nextCallDisabled = step >= length - 1
       }
     })
   }

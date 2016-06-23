@@ -11,7 +11,7 @@ TraceRetriever.prototype.getTrace = function (txHash, callback) {
     disableStorage: this.debugStorageAtAvailable(),
     disableMemory: false,
     disableStack: false,
-    fullStorage: !this.debugStorageAtAvailable()
+    fullStorage: false // !this.debugStorageAtAvailable()
   }
   this.web3.debug.traceTransaction(txHash, options, function (error, result) {
     callback(error, result)
@@ -33,7 +33,7 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
 }
 
 TraceRetriever.prototype.debugStorageAtAvailable = function () {
-  return true // storageAt not available if using geth
+  return this.web3.version.node.toLowerCase().indexOf('geth') === -1 // storageAt not available if using geth
 }
 
 module.exports = TraceRetriever

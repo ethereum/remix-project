@@ -10,9 +10,8 @@ var yo = require('yo-yo')
 var init = require('./helpers/init')
 var ui = require('./helpers/ui')
 
-function Ethdebugger (_context) {
+function Ethdebugger () {
   util.extend(this, new EventManager())
-  this.context = _context
   this.currentStepIndex = -1
   this.tx
 
@@ -35,7 +34,6 @@ function Ethdebugger (_context) {
 }
 
 Ethdebugger.prototype.render = function () {
-  var self = this
   return (
   yo`<div style=${ui.formatCss(style.font)}>
         <h1 style=${ui.formatCss(style.container)}>Eth Debugger</h1>

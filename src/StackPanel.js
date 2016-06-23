@@ -1,5 +1,6 @@
 'use strict'
 var BasicPanel = require('./BasicPanel')
+var ui = require('./helpers/ui')
 var yo = require('yo-yo')
 
 function StackPanel (_parent, _traceManager) {
@@ -36,7 +37,8 @@ StackPanel.prototype.init = function () {
 StackPanel.prototype.format = function (stack) {
   var ret = ''
   for (var key in stack) {
-    ret += stack[key] + '\n'
+    var hex = ui.normalizeHex(stack[key])
+    ret += hex + '\n'
   }
   return ret
 }

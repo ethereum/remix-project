@@ -41,5 +41,13 @@ module.exports = {
       }
     }
     return ret
+  },
+
+  normalizeHex: function (hex) {
+    if (hex.indexOf('0x') === 0) {
+      hex = hex.replace('0x', '')
+    }
+    hex = hex.replace(/^0+/, '')
+    return '0x' + hex
   }
 }

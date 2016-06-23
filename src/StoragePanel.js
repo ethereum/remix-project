@@ -24,7 +24,7 @@ StoragePanel.prototype.init = function () {
     self.traceManager.getStorageAt(index, self.parent.tx, function (error, storage) {
       if (error) {
         console.log(error)
-        self.basicPanel.data = self.formatStorage(storage)  
+        self.basicPanel.data = self.formatStorage(storage)
       } else if (self.parent.currentStepIndex === index) {
         self.basicPanel.data = self.formatStorage(storage)
       }
