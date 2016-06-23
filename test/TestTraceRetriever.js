@@ -32,7 +32,7 @@ TestTraceRetriever.prototype.getStorage = function (tx, address, callback) {
 }
 
 TestTraceRetriever.prototype.debugStorageAtAvailable = function () {
-  return false // storageAt not available if using geth
+  return false // test scenario does not require web3.
 }
 
 module.exports = TestTraceRetriever

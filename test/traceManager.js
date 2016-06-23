@@ -9,8 +9,8 @@ tape('TraceManager', function (t) {
   var traceManager
 
   t.test('TraceManager.init', function (st) {
-    var context = init.loadContext()
-    traceManager = new TraceManager(context.web3)
+    var web3 = init.loadWeb3()
+    traceManager = new TraceManager(web3)
     traceManager.traceRetriever = new TestTraceRetriever()
     st.end()
   })

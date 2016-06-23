@@ -1,10 +1,9 @@
 'use strict'
-var ReactDOM = require('react-dom')
-var React = require('react')
-var util = require('./helpers/init')
-var Debugger = require('./debugger')
+var Debugger = require('./Ethdebugger')
 
-ReactDOM.render(
-  <Debugger context={util.loadContext()} />,
-  document.getElementById('app')
-)
+function init () {
+  var ethdebugger = new Debugger()
+  document.getElementById('app').appendChild(ethdebugger.render())
+}
+
+init()
