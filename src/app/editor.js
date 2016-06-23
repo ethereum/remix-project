@@ -6,7 +6,7 @@ var ace = require('brace');
 require('../mode-solidity.js');
 
 function Editor (loadingFromGist) {
-  var SOL_CACHE_UNTITLED = utils.getCacheFilePrefix() + 'Untitled';
+  var SOL_CACHE_UNTITLED = utils.fileKey('Untitled');
   var SOL_CACHE_FILE = null;
 
   var editor = ace.edit('input');
@@ -70,7 +70,7 @@ function Editor (loadingFromGist) {
   function getFiles () {
     var files = [];
     for (var f in window.localStorage) {
-      if (f.indexOf(utils.getCacheFilePrefix(), 0) === 0) {
+      if (utils.isCachedFile(f)) {
         files.push(f);
         if (!sessions[f]) sessions[f] = newEditorSession(f);
       }

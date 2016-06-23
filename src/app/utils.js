@@ -4,6 +4,10 @@ function getCacheFilePrefix () {
   return SOL_CACHE_FILE_PREFIX;
 }
 
+function isCachedFile (name) {
+  return name.indexOf(getCacheFilePrefix(), 0) === 0;
+}
+
 function fileKey (name) {
   return getCacheFilePrefix() + name;
 }
@@ -17,7 +21,7 @@ function errortype (message) {
 }
 
 module.exports = {
-  getCacheFilePrefix: getCacheFilePrefix,
+  isCachedFile: isCachedFile,
   fileKey: fileKey,
   fileNameFromKey: fileNameFromKey,
   errortype: errortype
