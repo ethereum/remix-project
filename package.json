@@ -14,13 +14,11 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "react": "^15.0.1",
-    "react-dom": "^15.0.1",
-    "web3": "^0.15.3"
+    "browserify": "^13.0.1",
+    "web3": "^0.15.3",
+    "yo-yo": "^1.2.1"
   },
   "devDependencies": {
-    "babel-preset-react": "^6.5.0",
-    "babelify": "^7.2.0",
     "nightwatch": "^0.9.4",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
@@ -28,7 +26,7 @@
   },
   "scripts": {
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
-    "build": "mkdir -p build; browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js",
+    "build": "mkdir -p build; browserify src/index.js -o build/app.js",
     "test": "standard && tape ./test/tests.js",
     "serve": "http-server ."
   },

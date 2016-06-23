@@ -31,5 +31,15 @@ module.exports = {
       ret.raw += ' ' + raw
     }
     return ret
+  },
+
+  formatCss: function (css1, css2) {
+    var ret = ''
+    for (var arg in arguments) {
+      for (var k in arguments[arg]) {
+        ret += k + ':' + arguments[arg][k] + ';'
+      }
+    }
+    return ret
   }
 }

@@ -1,21 +1,21 @@
 'use strict'
 module.exports = {
   font: {
-    'fontFamily': 'arial,sans-serif'
+    'font-family': 'arial,sans-serif'
   },
   container: {
     'margin': '10px',
     'padding': '5px'
   },
   address: {
-    'fontStyle': 'italic'
+    'font-style': 'italic'
   },
   instructionsList: {
     'width': '320px',
     'height': '300px'
   },
   transactionInfo: {
-    'marginTop': '5px'
+    'margin-top': '5px'
   },
   panel: {
     container: {
@@ -24,14 +24,14 @@ module.exports = {
     },
     tableContainer: {
       'height': '300px',
-      'overflowY': 'auto'
+      'overflow-y': 'auto'
     },
     table: {
       'padding': '5px'
     },
     title: {
       'padding': '5px',
-      'fontStyle': 'italic'
+      'font-style': 'italic'
     }
   },
   hidden: {
@@ -41,7 +41,7 @@ module.exports = {
     'display': 'block'
   },
   sticker: {
-    'verticalAlign': 'top',
+    'vertical-align': 'top',
     'margin': '5px'
   },
   inline: {
