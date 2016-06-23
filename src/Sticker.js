@@ -78,37 +78,41 @@ Sticker.prototype.init = function () {
     self.traceManager.getCurrentStep(index, function (error, step) {
       if (error) {
         console.log(error)
+        self.step = ''
       } else {
         self.step = step
-        yo.update(self.view, self.render())
       }
+      yo.update(self.view, self.render())
     })
 
     self.traceManager.getMemExpand(index, function (error, addmem) {
       if (error) {
         console.log(error)
+        self.addmemory = ''
       } else {
         self.addmemory = addmem
-        yo.update(self.view, self.render())
       }
+      yo.update(self.view, self.render())
     })
 
     self.traceManager.getStepCost(index, function (error, gas) {
       if (error) {
         console.log(error)
+        self.gas = gas
       } else {
         self.gas = gas
-        yo.update(self.view, self.render())
       }
+      yo.update(self.view, self.render())
     })
 
     self.traceManager.getRemainingGas(index, function (error, remaingas) {
       if (error) {
         console.log(error)
+        self.remainingGas = ''
       } else {
         self.remainingGas = remaingas
-        yo.update(self.view, self.render())
       }
+      yo.update(self.view, self.render())
     })
   })
 }

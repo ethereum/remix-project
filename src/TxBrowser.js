@@ -78,6 +78,7 @@ TxBrowser.prototype.render = function () {
         <button onclick=${function () { self.submit() }}>
           Get
         </button>
+        <button onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
         <div style=${ui.formatCss(style.transactionInfo)}>
           <table>
             <tbody>

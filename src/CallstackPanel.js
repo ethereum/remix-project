@@ -24,10 +24,11 @@ CallstackPanel.prototype.init = function () {
     self.traceManager.getCallStackAt(index, function (error, callstack) {
       if (error) {
         console.log(error)
+        self.basicPanel.data = ''
       } else if (self.parent.currentStepIndex === index) {
         self.basicPanel.data = self.format(callstack)
-        self.basicPanel.update()
       }
+      self.basicPanel.update()
     })
   })
 }

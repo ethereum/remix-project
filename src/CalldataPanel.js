@@ -23,11 +23,12 @@ CalldataPanel.prototype.init = function () {
 
     self.traceManager.getCallDataAt(index, function (error, calldata) {
       if (error) {
+        self.basicPanel.data = ''
         console.log(error)
       } else if (self.parent.currentStepIndex === index) {
         self.basicPanel.data = self.format(calldata)
-        self.basicPanel.update()
       }
+      self.basicPanel.update()
     })
   })
 }

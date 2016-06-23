@@ -23,6 +23,7 @@ Slider.prototype.render = function () {
           type='range'
           min=0
           max=${this.max}
+          value=0
           onmouseup=${function () { self.onMouseUp() }}
           disabled=${this.disabled} />
       </div>`

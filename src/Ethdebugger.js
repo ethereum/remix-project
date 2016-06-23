@@ -24,6 +24,9 @@ function Ethdebugger (_context) {
   this.txBrowser.register('newTxRequested', this, function (blockNumber, txIndex, tx) {
     self.startDebugging(blockNumber, txIndex, tx)
   })
+  this.txBrowser.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
+    self.unLoad()
+  })
   this.stepManager = new StepManager(this, this.traceManager)
   this.stepManager.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
@@ -36,7 +39,6 @@ Ethdebugger.prototype.render = function () {
   return (
   yo`<div style=${ui.formatCss(style.font)}>
         <h1 style=${ui.formatCss(style.container)}>Eth Debugger</h1>
-        <div onclick=${function () { self.unLoad() }}>X</div>
         ${this.txBrowser.render()}
         ${this.stepManager.render()}
         ${this.vmDebugger.render()}

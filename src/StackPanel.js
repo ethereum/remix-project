@@ -23,11 +23,12 @@ StackPanel.prototype.init = function () {
 
     self.traceManager.getStackAt(index, function (error, stack) {
       if (error) {
+        self.basicPanel.data = ''
         console.log(error)
       } else if (self.parent.currentStepIndex === index) {
         self.basicPanel.data = self.format(stack)
-        self.basicPanel.update()
       }
+      self.basicPanel.update()
     })
   })
 }
