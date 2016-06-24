@@ -210,10 +210,7 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
           continue;
         }
         if (editor.hasFile(m)) {
-          files[m] = window.localStorage[utils.fileKey(m)];
-          reloop = true;
-        } else if (m.startsWith('./') && editor.hasFile(m.slice(2))) {
-          files[m] = window.localStorage[utils.fileKey(m.slice(2))];
+          files[m] = editor.getFile(m);
           reloop = true;
         } else if (m in cachedRemoteFiles) {
           files[m] = cachedRemoteFiles[m];

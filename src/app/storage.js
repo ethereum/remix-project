@@ -2,7 +2,56 @@
 
 var utils = require('./utils');
 
-function StorageHandler (updateFiles) {
+function Storage (updateFiles) {
+  var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache';
+
+  this.rename = function (originalName, newName) {
+    var content = this.get(originalName);
+    this.set(newName, content);
+    this.remove(originalName);
+  };
+
+  this.remove = function (name) {
+    window.localStorage.removeItem(name);
+  };
+
+  this.setEditorSize = function (size) {
+    this.set(EDITOR_SIZE_CACHE_KEY, size);
+  };
+
+  this.getEditorSize = function () {
+    return this.get(EDITOR_SIZE_CACHE_KEY);
+  };
+
+  this.getFileContent = function (key) {
+    return this.get(utils.fileKey(key));
+  };
+
+  this.exists = function (key) {
+    return !!this.get(key);
+  };
+
+  this.set = function (key, content) {
+    window.localStorage.setItem(key, content);
+  };
+
+  this.get = function (key) {
+    return window.localStorage.getItem(key);
+  };
+
+  this.keys = function () {
+    return Object.keys(window.localStorage);
+  };
+
+  this.loadFile = function (filename, content) {
+    if (this.exists(filename) && this.get(filename) !== content) {
+      var count = '';
+      while (this.exists(filename + count)) count = count - 1;
+      this.rename(filename, filename + count);
+    }
+    this.set(filename, content);
+  };
+
   this.sync = function () {
     if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) {
       return;
@@ -44,4 +93,4 @@ function StorageHandler (updateFiles) {
   };
 }
 
-module.exports = StorageHandler;
+module.exports = Storage;

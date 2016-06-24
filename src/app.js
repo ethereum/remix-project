@@ -8,7 +8,7 @@ var queryParams = new QueryParams();
 var GistHandler = require('./app/gist-handler');
 var gistHandler = new GistHandler();
 
-var StorageHandler = require('./app/storage-handler');
+var Storage = require('./app/storage');
 var Editor = require('./app/editor');
 var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
@@ -25,16 +25,13 @@ window.addEventListener('message', function (ev) {
 }, false);
 
 var run = function () {
+  var storage = new Storage(updateFiles);
+
   function loadFiles (files) {
     for (var f in files) {
       var key = utils.fileKey(f);
       var content = files[f].content;
-      if (key in window.localStorage && window.localStorage[key] !== content) {
-        var count = '';
-        while ((key + count) in window.localStorage) count = count - 1;
-        window.localStorage[key + count] = window.localStorage[key];
-      }
-      window.localStorage[key] = content;
+      storage.loadFile(key, content);
     }
     editor.setCacheFile(utils.fileKey(Object.keys(files)[0]));
     updateFiles();
@@ -82,15 +79,14 @@ var run = function () {
     });
   });
 
-  // ----------------- storage --------------------
+  // ----------------- storage sync --------------------
 
-  var storageHandler = new StorageHandler(updateFiles);
-  window.syncStorage = storageHandler.sync;
-  storageHandler.sync();
+  window.syncStorage = storage.sync;
+  storage.sync();
 
   // ----------------- editor ----------------------
 
-  var editor = new Editor(loadingFromGist);
+  var editor = new Editor(loadingFromGist, storage);
 
   // ----------------- tabbed menu -------------------
 
@@ -166,7 +162,7 @@ var run = function () {
     var fileList = $('input.inputFile')[0].files;
     for (var i = 0; i < fileList.length; i++) {
       var name = fileList[i].name;
-      if (!window.localStorage[utils.fileKey(name)] || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
+      if (!storage.exists(utils.fileKey(name)) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
         editor.uploadFile(fileList[i], function () {
           updateFiles();
         });
@@ -200,9 +196,7 @@ var run = function () {
       $fileNameInputEl.off('keyup');
 
       if (newName !== originalName && confirm('Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-        var content = window.localStorage.getItem(utils.fileKey(originalName));
-        window.localStorage[utils.fileKey(newName)] = content;
-        window.localStorage.removeItem(utils.fileKey(originalName));
+        storage.rename(utils.fileKey(originalName), utils.fileKey(newName));
         editor.setCacheFile(utils.fileKey(newName));
       }
 
@@ -218,7 +212,7 @@ var run = function () {
     var name = $(this).parent().find('.name').text();
 
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-      window.localStorage.removeItem(utils.fileKey(name));
+      storage.remove(utils.fileKey(name));
       editor.setNextFile(utils.fileKey(name));
       updateFiles();
     }
@@ -342,7 +336,6 @@ var run = function () {
 
   // ----------------- resizeable ui ---------------
 
-  var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache';
   var dragging = false;
   $('#dragbar').mousedown(function (e) {
     e.preventDefault();
@@ -369,7 +362,7 @@ var run = function () {
   }
 
   function getEditorSize () {
-    window.localStorage[EDITOR_SIZE_CACHE_KEY] = $('#righthand-panel').width();
+    storage.setEditorSize($('#righthand-panel').width());
   }
 
   $(document).mouseup(function (e) {
@@ -379,13 +372,13 @@ var run = function () {
       $(document).unbind('mousemove');
       dragging = false;
       setEditorSize(delta);
-      window.localStorage.setItem(EDITOR_SIZE_CACHE_KEY, delta);
+      storage.setEditorSize(delta);
       reAdjust();
     }
   });
 
   // set cached defaults
-  var cachedSize = window.localStorage.getItem(EDITOR_SIZE_CACHE_KEY);
+  var cachedSize = storage.getEditorSize();
   if (cachedSize) setEditorSize(cachedSize);
   else getEditorSize();
 
@@ -394,7 +387,7 @@ var run = function () {
   var hidingRHP = false;
   $('.toggleRHP').click(function () {
     hidingRHP = !hidingRHP;
-    setEditorSize(hidingRHP ? 0 : window.localStorage[EDITOR_SIZE_CACHE_KEY]);
+    setEditorSize(hidingRHP ? 0 : storage.getEditorSize());
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
     if (!hidingRHP) compiler.compile();
@@ -455,7 +448,7 @@ var run = function () {
     compiler.compile();
   });
 
-  storageHandler.sync();
+  storage.sync();
 };
 
 module.exports = {
