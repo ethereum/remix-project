@@ -15,12 +15,15 @@ function ASMCode (_parent, _traceManager, _web3) {
 }
 
 ASMCode.prototype.render = function () {
-  this.view = (
+  var view = (
     yo`<select size='10' id='asmitems' ref='itemsList' style=${ui.formatCss(style.instructionsList)}>
     ${this.codeView}
   </select>`
   )
-  return this.view
+  if (!this.view) {
+    this.view = view
+  }
+  return view
 }
 
 ASMCode.prototype.init = function () {
@@ -40,7 +43,6 @@ ASMCode.prototype.indexChanged = function (index) {
 ASMCode.prototype.codeChanged = function (code, address, index) {
   this.code = code
   this.address = address
-  this.instructionIndex = index
   this.renderAssemblyItems()
   yo.update(this.view, this.render())
   document.getElementById('asmitems').value = index
