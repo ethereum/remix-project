@@ -21,20 +21,40 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
   if (traceHelper.isContractCreation(tx.to)) {
     this.traceCache.pushContractCreation(tx.to, tx.input)
   }
+  this.buildCalldata(0, this.trace[0], tx, true)
 
   for (var k = 0; k < this.trace.length; k++) {
     var step = this.trace[k]
-    this.buildCalldata(k, step)
     this.buildMemory(k, step)
-    this.buildDepth(k, step, callStack)
+    this.buildDepth(k, step, tx, callStack)
     context = this.buildStorage(k, step, context)
   }
   callback(null, true)
 }
 
-TraceAnalyser.prototype.buildCalldata = function (index, step) {
-  if (step.calldata) {
-    this.traceCache.pushCallDataChanges(index)
+TraceAnalyser.prototype.buildCalldata = function (index, step, tx, newContext) {
+  var calldata = ''
+  if (index === 0) {
+    calldata = tx.input
+    this.traceCache.pushCallDataChanges(index, calldata)
+  } else if (!newContext) {
+    var lastCall = this.traceCache.callsData[this.traceCache.callDataChanges[this.traceCache.callDataChanges.length - 2]]
+    this.traceCache.pushCallDataChanges(index + 1, lastCall)
+  } else {
+    var memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
+    var callStep = this.trace[index]
+    var stack = callStep.stack
+    var offset = ''
+    var size = ''
+    if (callStep.op === 'DELEGATECALL') {
+      offset = 2 * parseInt(stack[stack.length - 3], 16)
+      size = 2 * parseInt(stack[stack.length - 4], 16)
+    } else {
+      offset = 2 * parseInt(stack[stack.length - 4], 16)
+      size = 2 * parseInt(stack[stack.length - 5], 16)
+    }
+    calldata = '0x' + memory.join('').substr(offset, size)
+    this.traceCache.pushCallDataChanges(index + 1, calldata)
   }
 }
 
@@ -62,7 +82,7 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
   return context
 }
 
-TraceAnalyser.prototype.buildDepth = function (index, step, callStack) {
+TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack) {
   if (traceHelper.isCallInstruction(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
     if (traceHelper.isCreateInstruction(step)) {
       var contractToken = traceHelper.contractCreationToken(index)
@@ -81,12 +101,16 @@ TraceAnalyser.prototype.buildDepth = function (index, step, callStack) {
     this.traceCache.pushCallStack(index + 1, {
       callStack: callStack.slice(0)
     })
+    this.buildCalldata(index, step, tx, true)
   } else if (traceHelper.isReturnInstruction(step)) {
-    callStack.pop()
-    this.traceCache.pushCallChanges(step, index + 1)
-    this.traceCache.pushCallStack(index + 1, {
-      callStack: callStack.slice(0)
-    })
+    if (index + 1 < this.trace.length) {
+      callStack.pop()
+      this.traceCache.pushCallChanges(step, index + 1)
+      this.traceCache.pushCallStack(index + 1, {
+        callStack: callStack.slice(0)
+      })
+      this.buildCalldata(index, step, tx, false)
+    }
   }
 }
 

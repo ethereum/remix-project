@@ -10,7 +10,7 @@ function TxBrowser (_web3) {
   this.web3 = _web3
 
   this.blockNumber
-  this.txNumber = '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51'
+  this.txNumber = '0x71a6d583d16d142c5c3e8903060e8a4ee5a5016348a9448df6c3e63b68076ec4'
   this.hash
   this.from
   this.to

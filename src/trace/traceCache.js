@@ -9,6 +9,7 @@ TraceCache.prototype.init = function () {
   this.callChanges = []
   this.returnChanges = []
   this.calls = {}
+  this.callsData = {}
   this.contractCreation = {}
 
   this.callDataChanges = []
@@ -18,8 +19,9 @@ TraceCache.prototype.init = function () {
   this.callStack = {} // contains all callStack by vmtrace index (we need to rebuild it, callstack is not included in the vmtrace)
 }
 
-TraceCache.prototype.pushCallDataChanges = function (value) {
+TraceCache.prototype.pushCallDataChanges = function (value, calldata) {
   this.callDataChanges.push(value)
+  this.callsData[value] = calldata
 }
 
 TraceCache.prototype.pushMemoryChanges = function (value) {
