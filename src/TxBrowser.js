@@ -54,10 +54,6 @@ TxBrowser.prototype.submit = function () {
   }
 }
 
-TxBrowser.prototype.updateTxhash = function (ev) {
-  this.hash = ev.target.value
-}
-
 TxBrowser.prototype.updateBlockN = function (ev) {
   this.blockNumber = ev.target.value
 }
@@ -69,8 +65,8 @@ TxBrowser.prototype.updateTxN = function (ev) {
 TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div style=${ui.formatCss(style.container)}>
-        <input onchange=${this.updateBlockN} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber}></input>
-        <input onchange=${this.updateTxN} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber}></input>
+        <input onchange=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber}></input>
+        <input onchange=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber}></input>
         <button onclick=${function () { self.submit() }}>
           Get
         </button>
