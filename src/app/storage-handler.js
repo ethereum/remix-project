@@ -35,7 +35,7 @@ function StorageHandler (updateFiles) {
     for (var y in window.localStorage) {
       console.log('checking', y);
       obj[y] = window.localStorage.getItem(y);
-      if (y.indexOf(utils.getCacheFilePrefix()) !== 0) {
+      if (!utils.isCachedFile(y)) {
         continue;
       }
       count++;
