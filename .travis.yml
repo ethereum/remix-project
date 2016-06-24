@@ -1,3 +1,11 @@
 language: node_js
 node_js:
 - stable
+script: npm run test && npm run build
+deploy:
+  provider: script
+  script: ci/deploy_from_travis.sh
+  skip_cleanup: true
+  on:
+        branch: master
+
