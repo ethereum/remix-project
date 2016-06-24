@@ -101,7 +101,7 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
   }
   var callDataChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callDataChanges)
   if (callDataChange === undefined) return callback('no calldata found', null)
-  callback(null, [this.trace[callDataChange].calldata])
+  callback(null, [this.traceCache.callsData[callDataChange]])
 }
 
 TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
