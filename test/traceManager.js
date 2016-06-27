@@ -16,9 +16,9 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.resolveTrace', function (st) {
-    traceManager.resolveTrace(txInvokation, function (success) {
-      if (!success) {
-        st.fail(' - traceManager.resolveTrace - failed')
+    traceManager.resolveTrace(txInvokation, function (error, result) {
+      if (error) {
+        st.fail(' - traceManager.resolveTrace - failed ' + result)
       } else {
         st.end()
       }
@@ -44,11 +44,11 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getStorageAt', function (st) {
-    traceManager.getStorageAt(0, txInvokation, function (error, result) {
+    traceManager.getStorageAt(110, txInvokation, function (error, result) {
       if (error) {
         st.fail(error)
       } else {
-        st.ok(result['0x00'] === '0x2d')
+        st.ok(result['0x00'] === '0x38')
         st.end()
       }
     })

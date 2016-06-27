@@ -8,10 +8,10 @@ function TraceRetriever (_web3) {
 
 TraceRetriever.prototype.getTrace = function (txHash, callback) {
   var options = {
-    disableStorage: this.debugStorageAtAvailable(),
+    disableStorage: true,
     disableMemory: false,
     disableStack: false,
-    fullStorage: false // !this.debugStorageAtAvailable()
+    fullStorage: false
   }
   this.web3.debug.traceTransaction(txHash, options, function (error, result) {
     callback(error, result)
@@ -24,16 +24,20 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
   } else if (this.storages[address]) {
     callback(null, this.storages[address])
   } else {
+    // we always return an empty storage ... storage changes will be displayed instead of the full contract storage
+    callback(null, {})
+    /*
     var self = this
     this.web3.debug.storageAt(tx.blockNumber.toString(), tx.transactionIndex, address, function (error, result) {
       self.storages[address] = result
       callback(error, result)
     })
+    */
   }
 }
 
 TraceRetriever.prototype.debugStorageAtAvailable = function () {
-  return this.web3.version.node.toLowerCase().indexOf('geth') === -1 // storageAt not available if using geth
+  return false  // this.web3.version.node.toLowerCase().indexOf('geth') === -1 // storageAt not available if using geth
 }
 
 module.exports = TraceRetriever

@@ -20,13 +20,14 @@ function TraceManager (_web3) {
 TraceManager.prototype.resolveTrace = function (tx, callback) {
   this.tx = tx
   this.init()
-  if (!this.web3) callback(false)
+  if (!this.web3) callback('web3 not loaded', false)
   this.isLoading = true
   var self = this
   this.traceRetriever.getTrace(tx.hash, function (error, result) {
     if (error) {
       console.log(error)
       self.isLoading = false
+      callback(error, false)
     } else {
       if (result.structLogs.length > 0) {
         self.trace = result.structLogs
@@ -34,15 +35,17 @@ TraceManager.prototype.resolveTrace = function (tx, callback) {
           if (error) {
             self.isLoading = false
             console.log(error)
-            callback(false)
+            callback(error, false)
           } else {
             self.isLoading = false
-            callback(true)
+            callback(null, true)
           }
         })
       } else {
-        console.log(tx.hash + ' is not a contract invokation or contract creation.')
+        var mes = tx.hash + ' is not a contract invokation or contract creation.'
+        console.log(mes)
         self.isLoading = false
+        callback(mes, false)
       }
     }
   })
@@ -77,6 +80,12 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
   }
   var stoChange = traceHelper.findLowerBound(stepIndex, this.traceCache.storageChanges)
   if (stoChange === undefined) return callback('no storage found', null)
+  var address = this.traceCache.sstore[stoChange].address
+  var storage = {}
+  storage = this.traceCache.rebuildStorage(address, storage, stepIndex)
+  callback(null, storage)
+  /*
+  // TODO: use it if we need the full storage to be loaded
   var self = this
   if (this.traceRetriever.debugStorageAtAvailable()) {
     var address = this.traceCache.sstore[stoChange].address
@@ -92,6 +101,7 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
   } else {
     callback(null, this.trace[stoChange].storage)
   }
+  */
 }
 
 TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
