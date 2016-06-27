@@ -40,6 +40,7 @@ TxBrowser.prototype.submit = function () {
   if (!this.txNumber) {
     return
   }
+  this.trigger('newTxLoading', [this.blockNumber, this.txNumber, tx])
   var tx
   try {
     if (this.txNumber.indexOf('0x') !== -1) {
@@ -58,7 +59,7 @@ TxBrowser.prototype.submit = function () {
     this.from = tx.from
     this.to = tx.to
     this.hash = tx.hash
-    this.trigger('newTxRequested', [this.blockNumber, this.txNumber, tx])
+    this.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
   } else {
     var mes = '<not found>'
     this.from = mes

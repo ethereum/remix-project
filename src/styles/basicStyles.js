@@ -7,6 +7,9 @@ module.exports = {
     'margin': '10px',
     'padding': '5px'
   },
+  statusMessage: {
+    'margin-left': '15px'
+  },
   address: {
     'font-style': 'italic'
   },
