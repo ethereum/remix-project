@@ -14,9 +14,9 @@ tape('CodeManager', function (t) {
   traceManager.traceRetriever = new TestTraceRetriever()
   codeManager = new CodeManager(web3, traceManager)
   codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
-  traceManager.resolveTrace(txInvokation, function (success) {
-    if (!success) {
-      t.fail(' - traceManager.resolveTrace - failed')
+  traceManager.resolveTrace(txInvokation, function (error, result) {
+    if (error) {
+      t.fail(' - traceManager.resolveTrace - failed ' + result)
     } else {
       continueTesting(t, codeManager)
     }
