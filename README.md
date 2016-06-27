@@ -3,10 +3,13 @@ Ethereum IDE and tools for the web
 
 ## REMIX WEBSITE:
 
-Remix is avalaible at https://ethereum.github.io/remix
+Remix is avalaible at http://ethereum.github.io/remix. Do not use https if connecting to web3 is required (should be always like that with remix).
 You'll have to run your own node using the following parameters:
 geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
-geth will run the rpc server on http://localhost:8545, remix uses this url by default to connect to web3.
+geth will run the rpc server on http://localhost:8545, remix uses by default this url.
+
+Remix will use this instance of Geth to retrieve the transaction and the associated trace.
+This instance should **only** be used for debugging purposes. Never use features that could have an impact on your keys (do not unlock any keys, do not use this instance together with the wallet, do not activate the admin web3 API).
 
 ## INSTALLATION:
 
@@ -57,7 +60,7 @@ The other 6 panels describe the current selected state:
  - Stack
  - Storage Changes
  - Memory
- - Call Data
+ - Call Data$
  - Call Stack
 
 ## CODING STYLE:
@@ -66,4 +69,3 @@ Remix uses npm coding style: https://docs.npmjs.com/misc/coding-style
 Please be sure your code is compliant with this coding standard before sending PR.
 There's on the above page a bunch of links that propose integration with developer tools (Emacs, Atom, ...).
 You can also run 'npm run test' to check your local repository against the coding style.
-
