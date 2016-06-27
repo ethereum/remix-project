@@ -8,5 +8,9 @@ module.exports = {
     web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'))
     Web3Admin.extend(web3)
     return web3
+  },
+
+  setProvider: function (web3, url) {
+    web3.setProvider(new web3.providers.HttpProvider(url))
   }
 }

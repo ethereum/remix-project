@@ -69,12 +69,10 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   console.log('loading trace...')
   this.tx = tx
   var self = this
-  this.traceManager.resolveTrace(tx, function (success) {
-    console.log('trace loaded ' + success)
-    if (success) {
+  this.traceManager.resolveTrace(tx, function (error, result) {
+    console.log('trace loaded ' + result + ' ' + error)
+    if (result) {
       self.trigger('newTraceLoaded')
-    } else {
-      console.log('trace not loaded')
     }
   })
 }
