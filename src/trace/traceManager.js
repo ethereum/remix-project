@@ -208,7 +208,7 @@ TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  callback(null, this.trace[stepIndex].steps)
+  callback(null, this.traceCache.steps[stepIndex])
 }
 
 TraceManager.prototype.getMemExpand = function (stepIndex, callback) {

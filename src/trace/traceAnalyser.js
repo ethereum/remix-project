@@ -11,7 +11,9 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
   this.traceCache.pushStoreChanges(0, tx.to)
   var context = {
     currentStorageAddress: tx.to,
-    previousStorageAddress: tx.to
+    previousStorageAddress: tx.to,
+    currentCallIndex: 0,
+    lastCallIndex: 0
   }
   var callStack = [tx.to]
   this.traceCache.pushCallStack(0, {
@@ -22,11 +24,10 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     this.traceCache.pushContractCreation(tx.to, tx.input)
   }
   this.buildCalldata(0, this.trace[0], tx, true)
-
   for (var k = 0; k < this.trace.length; k++) {
     var step = this.trace[k]
     this.buildMemory(k, step)
-    this.buildDepth(k, step, tx, callStack)
+    context = this.buildDepth(k, step, tx, callStack, context)
     context = this.buildStorage(k, step, context)
   }
   callback(null, true)
@@ -82,7 +83,7 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
   return context
 }
 
-TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack) {
+TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, context) {
   if (traceHelper.isCallInstruction(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
     if (traceHelper.isCreateInstruction(step)) {
       var contractToken = traceHelper.contractCreationToken(index)
@@ -102,6 +103,9 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack) {
       callStack: callStack.slice(0)
     })
     this.buildCalldata(index, step, tx, true)
+    this.traceCache.pushSteps(index, context.currentCallIndex)
+    context.lastCallIndex = context.currentCallIndex
+    context.currentCallIndex = 0
   } else if (traceHelper.isReturnInstruction(step)) {
     if (index + 1 < this.trace.length) {
       callStack.pop()
@@ -110,8 +114,14 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack) {
         callStack: callStack.slice(0)
       })
       this.buildCalldata(index, step, tx, false)
+      this.traceCache.pushSteps(index, context.currentCallIndex)
+      context.currentCallIndex = context.lastCallIndex + 1
     }
+  } else {
+    this.traceCache.pushSteps(index, context.currentCallIndex)
+    context.currentCallIndex++
   }
+  return context
 }
 
 module.exports = TraceAnalyser
