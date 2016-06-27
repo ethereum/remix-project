@@ -3,7 +3,8 @@ var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
 var TraceManager = require('./trace/traceManager')
 var VmDebugger = require('./VmDebugger')
-var style = require('./basicStyles')
+var Sticker = require('./Sticker')
+var style = require('./styles/basicStyles')
 var util = require('./helpers/global')
 var EventManager = require('./lib/eventManager')
 var yo = require('yo-yo')
@@ -31,14 +32,20 @@ function Ethdebugger () {
     self.stepChanged(stepIndex)
   })
   this.vmDebugger = new VmDebugger(this, this.traceManager, this.web3)
+  this.sticker = new Sticker(this, this.traceManager, this.web3)
 }
 
 Ethdebugger.prototype.render = function () {
   return (
   yo`<div style=${ui.formatCss(style.font)}>
-        <h1 style=${ui.formatCss(style.container)}>Eth Debugger</h1>
-        ${this.txBrowser.render()}
-        ${this.stepManager.render()}
+        <h1 style=${ui.formatCss(style.container)}>VM Debugger</h1>
+        <div style='display:inline-block'>
+          ${this.txBrowser.render()}
+          ${this.stepManager.render()}
+        </div>
+        <div style='display:inline-block'>
+          ${this.sticker.render()}
+        </div>
         ${this.vmDebugger.render()}
      </div>`
   )
@@ -46,7 +53,7 @@ Ethdebugger.prototype.render = function () {
 
 Ethdebugger.prototype.unLoad = function () {
   this.traceManager.init()
-  this.stepManager.init()
+  this.stepManager.reset()
   this.trigger('traceUnloaded')
 }
 

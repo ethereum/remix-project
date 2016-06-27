@@ -1,6 +1,5 @@
 'use strict'
-var Sticker = require('./Sticker')
-var style = require('./basicStyles')
+var style = require('./styles/basicStyles')
 var ASMCode = require('./ASMCode')
 var CalldataPanel = require('./CalldataPanel')
 var MemoryPanel = require('./MemoryPanel')
@@ -11,7 +10,6 @@ var yo = require('yo-yo')
 var ui = require('./helpers/ui')
 
 function VmDebugger (_parent, _traceManager, _web3) {
-  this.sticker = new Sticker(_parent, _traceManager, _web3)
   this.asmCode = new ASMCode(_parent, _traceManager, _web3)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
@@ -35,10 +33,8 @@ VmDebugger.prototype.render = function () {
             <tbody>
               <tr>
                 <td>
+                  
                   ${this.asmCode.render()}
-                  <div style=${ui.formatCss(style.inline, style.sticker)}>
-                    ${this.sticker.render()}
-                  </div>
                 </td>
                 <td>
                   ${this.stackPanel.render()}

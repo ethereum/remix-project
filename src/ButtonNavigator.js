@@ -49,7 +49,7 @@ ButtonNavigator.prototype.stepChanged = function (step) {
   if (!this.traceManager) {
     this.intoForwardDisabled = true
     this.overForwardDisabled = true
-    this.NextCallDisabled = true
+    this.nextCallDisabled = true
   } else {
     var self = this
     this.traceManager.getLength(function (error, length) {
@@ -58,7 +58,7 @@ ButtonNavigator.prototype.stepChanged = function (step) {
         self.overBackDisabled = true
         self.intoForwardDisabled = true
         self.overForwardDisabled = true
-        self.NextcallDisabled = true
+        self.nextCallDisabled = true
         console.log(error)
       } else {
         self.intoForwardDisabled = step >= length - 1

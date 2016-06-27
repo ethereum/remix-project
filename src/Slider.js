@@ -1,5 +1,5 @@
 'use strict'
-var style = require('./sliderStyles')
+var style = require('./styles/sliderStyles')
 var util = require('./helpers/global')
 var EventManager = require('./lib/eventManager')
 var yo = require('yo-yo')
@@ -33,18 +33,11 @@ Slider.prototype.render = function () {
   return view
 }
 
-Slider.prototype.init = function () {
-  var self = this
-  this.traceManager.getLength(function (error, length) {
-    if (error) {
-      console.log(error)
-    } else {
-      self.max = length
-      self.disabled = length === 0
-      yo.update(self.view, self.render())
-      self.setValue(0)
-    }
-  })
+Slider.prototype.init = function (length) {
+  this.max = length
+  this.disabled = length === 0
+  yo.update(this.view, this.render())
+  this.setValue(0)
 }
 
 Slider.prototype.onMouseUp = function (event) {
