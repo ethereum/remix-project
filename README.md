@@ -19,3 +19,15 @@ Remix uses npm coding style: https://docs.npmjs.com/misc/coding-style
 Please be sure your code is compliant with this coding standard before sending PR.
 There's on the above page a bunch of links that propose integration with developer tools (Emacs, Atom, ...).
 You can also run 'npm run test' to check your local repository against the coding style.
+
+REMIX WEBSITE:
+
+Remix is avalaible at https://ethereum.github.io/remix
+You'll have to run your own node using the following parameters:
+geth --rpc --rpcapi 'web3,eth,debug' --rpccorsdomain '*'
+geth will run the rpc server on http://localhost:8545, remix uses this url by default to connect to web3.
+
+
+
+
+
