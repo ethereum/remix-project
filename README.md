@@ -24,7 +24,7 @@ REMIX WEBSITE:
 
 Remix is avalaible at https://ethereum.github.io/remix
 You'll have to run your own node using the following parameters:
-geth --rpc --rpcapi 'web3,eth,debug' --rpccorsdomain '*'
+geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
 geth will run the rpc server on http://localhost:8545, remix uses this url by default to connect to web3.
 
 
