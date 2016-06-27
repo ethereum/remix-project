@@ -3,9 +3,14 @@ Ethereum IDE and tools for the web
 
 ## REMIX WEBSITE:
 
-Remix is avalaible at http://ethereum.github.io/remix. Do not use https if connecting to web3 is required (should be always like that with remix).
+Remix is avalaible at http://ethereum.github.io/remix. 
+You can use it either inside Mist or by connecting to geth or eth.
+Note that connecting to Geth does not work through https. 
+
 You'll have to run your own node using the following parameters:
-geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
+    
+    geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
+
 geth will run the rpc server on http://localhost:8545, remix uses by default this url.
 
 Remix will use this instance of Geth to retrieve the transaction and the associated trace.
