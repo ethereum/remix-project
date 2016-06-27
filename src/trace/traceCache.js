@@ -11,12 +11,17 @@ TraceCache.prototype.init = function () {
   this.calls = {}
   this.callsData = {}
   this.contractCreation = {}
+  this.steps = {}
 
   this.callDataChanges = []
   this.memoryChanges = []
   this.storageChanges = []
   this.sstore = {} // all sstore occurence in the trace
   this.callStack = {} // contains all callStack by vmtrace index (we need to rebuild it, callstack is not included in the vmtrace)
+}
+
+TraceCache.prototype.pushSteps = function (index, currentCallIndex) {
+  this.steps[index] = currentCallIndex
 }
 
 TraceCache.prototype.pushCallDataChanges = function (value, calldata) {
