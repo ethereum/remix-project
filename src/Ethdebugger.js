@@ -15,13 +15,19 @@ function Ethdebugger () {
   util.extend(this, new EventManager())
   this.currentStepIndex = -1
   this.tx
+  this.statusMessage = ''
+
+  this.view
 
   this.web3 = init.loadWeb3()
   this.traceManager = new TraceManager(this.web3)
 
   var self = this
   this.txBrowser = new TxBrowser(this.web3)
-  this.txBrowser.register('newTxRequested', this, function (blockNumber, txIndex, tx) {
+  this.txBrowser.register('newTxLoading', this, function () {
+    self.unLoad()
+  })
+  this.txBrowser.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
     self.startDebugging(blockNumber, txIndex, tx)
   })
   this.txBrowser.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
@@ -36,8 +42,7 @@ function Ethdebugger () {
 }
 
 Ethdebugger.prototype.render = function () {
-  return (
-  yo`<div style=${ui.formatCss(style.font)}>
+  var view = yo`<div style=${ui.formatCss(style.font)}>
         <h1 style=${ui.formatCss(style.container)}>VM Debugger</h1>
         <div style='display:inline-block'>
           ${this.txBrowser.render()}
@@ -46,9 +51,13 @@ Ethdebugger.prototype.render = function () {
         <div style='display:inline-block'>
           ${this.sticker.render()}
         </div>
+        <div style=${ui.formatCss(style.statusMessage)} >${this.statusMessage}</div>
         ${this.vmDebugger.render()}
      </div>`
-  )
+  if (!this.view) {
+    this.view = view
+  }
+  return view
 }
 
 Ethdebugger.prototype.unLoad = function () {
@@ -66,13 +75,20 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   if (this.traceManager.isLoading) {
     return
   }
+  this.statusMessage = 'Loading trace...'
+  yo.update(this.view, this.render())
   console.log('loading trace...')
   this.tx = tx
   var self = this
   this.traceManager.resolveTrace(tx, function (error, result) {
     console.log('trace loaded ' + result + ' ' + error)
     if (result) {
+      self.statusMessage = ''
+      yo.update(self.view, self.render())
       self.trigger('newTraceLoaded')
+    } else {
+      self.statusMessage = error
+      yo.update(self.view, self.render())
     }
   })
 }
