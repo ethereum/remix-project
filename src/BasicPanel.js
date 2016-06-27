@@ -1,5 +1,5 @@
 'use strict'
-var style = require('./basicStyles')
+var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
 var ui = require('./helpers/ui')
 

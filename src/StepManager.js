@@ -1,7 +1,7 @@
 'use strict'
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
-var style = require('./basicStyles')
+var style = require('./styles/basicStyles')
 var util = require('./helpers/global')
 var EventManager = require('./lib/eventManager')
 var yo = require('yo-yo')
@@ -14,10 +14,13 @@ function StepManager (_parent, _traceManager) {
 
   var self = this
   this.parent.register('newTraceLoaded', this, function () {
-    self.traceManager.getLength(function (length) {
-      self.slider.max = length
-      self.slider.init()
-      self.init()
+    self.traceManager.getLength(function (error, length) {
+      if (error) {
+        console.log(error)
+      } else {
+        self.slider.init(length)
+        self.init()
+      }
     })
   })
 
@@ -51,6 +54,12 @@ StepManager.prototype.render = function () {
         ${this.buttonNavigator.render()}
       </div>`
   )
+}
+
+StepManager.prototype.reset = function () {
+  this.slider.setValue(0)
+  this.currentStepIndex = 0
+  this.buttonNavigator.stepChanged(0)
 }
 
 StepManager.prototype.init = function () {

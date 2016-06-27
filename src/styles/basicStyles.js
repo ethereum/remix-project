@@ -11,8 +11,8 @@ module.exports = {
     'font-style': 'italic'
   },
   instructionsList: {
-    'width': '320px',
-    'height': '300px'
+    'width': '600px',
+    'height': '330px'
   },
   transactionInfo: {
     'margin-top': '5px'

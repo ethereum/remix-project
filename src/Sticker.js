@@ -5,23 +5,25 @@ function Sticker (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
 
-  this.vmTraceStep
-  this.step
-  this.addmemory
-  this.gas
-  this.remainingGas
+  this.vmTraceStep = '-'
+  this.step = '-'
+  this.addmemory = '-'
+  this.gas = '-'
+  this.remainingGas = '-'
+  this.loadedAddress = '-'
+  this.hide = true
 
   this.view
   this.init()
 }
 
 Sticker.prototype.render = function () {
-  var view = yo`<div>
+  var view = yo`<div style=${this.hide ? 'display: none' : 'display: block'}>
     <table>
       <tbody>
         <tr key='vmtracestep'>
           <td>
-            vmtracestep
+            VMtracestep:
           </td>
           <td>
             ${this.vmTraceStep}
@@ -29,7 +31,7 @@ Sticker.prototype.render = function () {
         </tr>
         <tr key='step'>
           <td>
-            step
+            Step:
           </td>
           <td>
             ${this.step}
@@ -37,7 +39,7 @@ Sticker.prototype.render = function () {
         </tr>
         <tr key='addmemory'>
           <td>
-            add memory
+            Add memory:
           </td>
           <td>
             ${this.addmemory}
@@ -45,7 +47,7 @@ Sticker.prototype.render = function () {
         </tr>
         <tr key='gas'>
           <td>
-            gas
+            Gas:
           </td>
           <td>
             ${this.gas}
@@ -53,10 +55,18 @@ Sticker.prototype.render = function () {
         </tr>
         <tr key='remaininggas'>
           <td>
-            remaining gas
+            Remaining gas:
           </td>
           <td>
             ${this.remainingGas}
+          </td>
+        </tr>
+        <tr key='remaininggas'>
+          <td>
+            Loaded address:
+          </td>
+          <td>
+            ${this.loadedAddress}
           </td>
         </tr>
       </tbody>
@@ -70,6 +80,16 @@ Sticker.prototype.render = function () {
 
 Sticker.prototype.init = function () {
   var self = this
+  this.parent.register('traceUnloaded', this, function () {
+    self.hide = true
+    yo.update(self.view, self.render())
+  })
+
+  this.parent.register('newTraceLoaded', this, function () {
+    self.hide = false
+    yo.update(self.view, self.render())
+  })
+
   this.parent.register('indexChanged', this, function (index) {
     if (index < 0) return
 
@@ -78,7 +98,7 @@ Sticker.prototype.init = function () {
     self.traceManager.getCurrentStep(index, function (error, step) {
       if (error) {
         console.log(error)
-        self.step = ''
+        self.step = '-'
       } else {
         self.step = step
       }
@@ -88,7 +108,7 @@ Sticker.prototype.init = function () {
     self.traceManager.getMemExpand(index, function (error, addmem) {
       if (error) {
         console.log(error)
-        self.addmemory = ''
+        self.addmemory = '-'
       } else {
         self.addmemory = addmem
       }
@@ -98,9 +118,19 @@ Sticker.prototype.init = function () {
     self.traceManager.getStepCost(index, function (error, gas) {
       if (error) {
         console.log(error)
-        self.gas = gas
+        self.gas = '-'
       } else {
         self.gas = gas
+      }
+      yo.update(self.view, self.render())
+    })
+
+    self.traceManager.getCurrentCalledAddressAt(index, function (error, address) {
+      if (error) {
+        console.log(error)
+        self.loadedAddress = '-'
+      } else {
+        self.loadedAddress = address
       }
       yo.update(self.view, self.render())
     })
@@ -108,7 +138,7 @@ Sticker.prototype.init = function () {
     self.traceManager.getRemainingGas(index, function (error, remaingas) {
       if (error) {
         console.log(error)
-        self.remainingGas = ''
+        self.remainingGas = '-'
       } else {
         self.remainingGas = remaingas
       }

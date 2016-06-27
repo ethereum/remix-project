@@ -1,5 +1,5 @@
 'use strict'
-var style = require('./basicStyles')
+var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
 var CodeManager = require('./code/codeManager')
 var ui = require('./helpers/ui')
@@ -17,8 +17,8 @@ function ASMCode (_parent, _traceManager, _web3) {
 ASMCode.prototype.render = function () {
   var view = (
     yo`<select size='10' id='asmitems' ref='itemsList' style=${ui.formatCss(style.instructionsList)}>
-    ${this.codeView}
-  </select>`
+      ${this.codeView}
+    </select>`
   )
   if (!this.view) {
     this.view = view
