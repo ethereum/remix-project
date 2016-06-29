@@ -8,8 +8,14 @@ You can use it either inside Mist or by connecting to geth or eth.
 Note that connecting to Geth does not work through https. 
 
 You'll have to run your own node using the following parameters:
-    
+
+Using Geth:
+
     geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
+    
+Using Eth:
+
+    eth -j --rpccorsdomain '*'
 
 geth will run the rpc server on http://localhost:8545, remix uses by default this url.
 
