@@ -5,7 +5,7 @@ var utils = require('./utils');
 var ace = require('brace');
 require('../mode-solidity.js');
 
-function Editor (loadingFromGist) {
+function Editor (loadingFromGist, storage) {
   var SOL_CACHE_UNTITLED = utils.fileKey('Untitled');
   var SOL_CACHE_FILE = null;
 
@@ -17,7 +17,7 @@ function Editor (loadingFromGist) {
 
   this.newFile = function () {
     var untitledCount = '';
-    while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount]) {
+    while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {
       untitledCount = (untitledCount - 0) + 1;
     }
     SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
@@ -30,7 +30,7 @@ function Editor (loadingFromGist) {
 
     SOL_CACHE_FILE = utils.fileKey(file.name);
     fileReader.onload = function (e) {
-      window.localStorage[SOL_CACHE_FILE] = e.target.result;
+      storage.set(SOL_CACHE_FILE, e.target.result);
       sessions[SOL_CACHE_FILE] = null;
       callback();
     };
@@ -38,7 +38,7 @@ function Editor (loadingFromGist) {
   };
 
   this.setCacheFileContent = function (content) {
-    window.localStorage.setItem(SOL_CACHE_FILE, content);
+    storage.set(SOL_CACHE_FILE, content);
   };
 
   this.setCacheFile = function (cacheFile) {
@@ -67,14 +67,18 @@ function Editor (loadingFromGist) {
     return this.getFiles().indexOf(utils.fileKey(name)) !== -1;
   };
 
+  this.getFile = function (name) {
+    return storage.get(utils.fileKey(name));
+  };
+
   function getFiles () {
     var files = [];
-    for (var f in window.localStorage) {
+    storage.keys().forEach(function (f) {
       if (utils.isCachedFile(f)) {
         files.push(f);
         if (!sessions[f]) sessions[f] = newEditorSession(f);
       }
-    }
+    });
     return files;
   }
   this.getFiles = getFiles;
@@ -85,7 +89,7 @@ function Editor (loadingFromGist) {
 
     for (var f in filesArr) {
       files[utils.fileNameFromKey(filesArr[f])] = {
-        content: window.localStorage[filesArr[f]]
+        content: storage.get(filesArr[f])
       };
     }
     return files;
@@ -137,7 +141,7 @@ function Editor (loadingFromGist) {
   };
 
   function newEditorSession (filekey) {
-    var s = new ace.EditSession(window.localStorage[filekey], 'ace/mode/javascript');
+    var s = new ace.EditSession(storage.get(filekey), 'ace/mode/javascript');
     s.setUndoManager(new ace.UndoManager());
     s.setTabSize(4);
     s.setUseSoftTabs(true);
@@ -147,16 +151,15 @@ function Editor (loadingFromGist) {
 
   function setupStuff (files) {
     var untitledCount = '';
-    if (!files.length || window.localStorage['sol-cache']) {
+    if (files.length === 0) {
       if (loadingFromGist) return;
       // Backwards-compatibility
-      while (window.localStorage[SOL_CACHE_UNTITLED + untitledCount]) {
+      while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {
         untitledCount = (untitledCount - 0) + 1;
       }
       SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
       files.push(SOL_CACHE_FILE);
-      window.localStorage[SOL_CACHE_FILE] = window.localStorage['sol-cache'] || BALLOT_EXAMPLE;
-      window.localStorage.removeItem('sol-cache');
+      storage.set(SOL_CACHE_FILE, BALLOT_EXAMPLE); // defined in assets/js/ballot.sol.js
     }
 
     SOL_CACHE_FILE = files[0];
