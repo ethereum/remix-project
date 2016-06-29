@@ -1,5 +1,5 @@
 'use strict'
-const codes = {
+var codes = {
   // 0x0 range - arithmetic ops
   // name, baseCost, off stack, on stack, dynamic
   0x00: ['STOP', 0, 0, 0, false],
