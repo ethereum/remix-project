@@ -108,9 +108,9 @@ TxBrowser.prototype.render = function () {
         <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber} />
         <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
         <button id='load' onclick=${function () { self.submit() }}>
-          Get
+          Load
         </button>
-        <button onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
+        <button id='unload' onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
         <div style=${ui.formatCss(style.transactionInfo)}>
           <table>
             <tbody>

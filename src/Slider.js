@@ -23,7 +23,8 @@ Slider.prototype.render = function () {
           min=0
           max=${this.max}
           value=0
-          onmouseup=${function () { self.onMouseUp() }}
+          onkeyup=${function () { self.onChange() }}
+          onmouseup=${function () { self.onChange() }}
           disabled=${this.disabled} />
       </div>`
   if (!this.view) {
@@ -39,7 +40,7 @@ Slider.prototype.init = function (length) {
   this.setValue(0)
 }
 
-Slider.prototype.onMouseUp = function (event) {
+Slider.prototype.onChange = function (event) {
   var value = document.getElementById('slider').value
   this.trigger('moved', [parseInt(value)])
 }
