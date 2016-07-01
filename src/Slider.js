@@ -17,7 +17,6 @@ Slider.prototype.render = function () {
   var self = this
   var view = yo`<div>
         <input
-          ref='rule'
           id='slider'
           style=${ui.formatCss(style.rule)}
           type='range'

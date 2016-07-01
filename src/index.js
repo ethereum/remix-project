@@ -1,9 +1,9 @@
 'use strict'
 var Debugger = require('./Ethdebugger')
-
 function init () {
-  var ethdebugger = new Debugger()
-  document.getElementById('app').appendChild(ethdebugger.render())
+  var container = document.getElementById('app')
+  container.vmdebugger = new Debugger()
+  container.appendChild(container.vmdebugger.render())
 }
 
 init()

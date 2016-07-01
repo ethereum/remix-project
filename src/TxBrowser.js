@@ -78,7 +78,6 @@ TxBrowser.prototype.updateWeb3Url = function (ev) {
 
 TxBrowser.prototype.checkWeb3 = function () {
   try {
-    console.log('block ' + this.web3.eth.blockNumber)
     this.connectInfo = 'Connected to ' + this.web3.currentProvider.host
   } catch (e) {
     console.log(e)
@@ -107,8 +106,8 @@ TxBrowser.prototype.render = function () {
         <br />
         <br />
         <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber} />
-        <input onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
-        <button onclick=${function () { self.submit() }}>
+        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
+        <button id='load' onclick=${function () { self.submit() }}>
           Get
         </button>
         <button onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
@@ -119,7 +118,7 @@ TxBrowser.prototype.render = function () {
                 <td>
                   Hash:
                 </td>
-                <td>
+                <td id='txhash' >
                   ${this.hash}
                 </td>
               </tr>
@@ -127,7 +126,7 @@ TxBrowser.prototype.render = function () {
                 <td>
                   From:
                 </td>
-                <td>
+                <td id='txfrom'>
                   ${this.from}
                 </td>
               </tr>
@@ -135,7 +134,7 @@ TxBrowser.prototype.render = function () {
                 <td>
                   To:
                 </td>
-                <td>
+                <td id='txto' >
                   ${this.to}
                 </td>
               </tr>

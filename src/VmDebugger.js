@@ -27,7 +27,7 @@ function VmDebugger (_parent, _traceManager, _web3) {
 }
 
 VmDebugger.prototype.render = function () {
-  var view = yo`<div style='display:none'>
+  var view = yo`<div id='vmdebugger' style='display:none'>
         <div style=${ui.formatCss(style.container)}>
           <table>
             <tbody>
