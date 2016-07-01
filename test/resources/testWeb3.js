@@ -45,10 +45,6 @@ var web3Override = {
   getBlockNumber: function (callback) { callback('web3 modified testing purposes :)') }
 }
 
-var vmdebugger = document.getElementById('app').vmdebugger
-vmdebugger.web3.eth.getCode = web3Override.getCode
-vmdebugger.web3.debug.traceTransaction = web3Override.traceTransaction
-vmdebugger.web3.debug.storageAt = web3Override.storageAt
-vmdebugger.web3.eth.getTransaction = web3Override.getTransaction
-vmdebugger.web3.eth.getTransactionFromBlock = web3Override.getTransactionFromBlock
-vmdebugger.web3.eth.getBlockNumber = web3Override.getBlockNumber
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = web3Override 
+}

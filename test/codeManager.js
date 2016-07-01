@@ -2,16 +2,17 @@
 var tape = require('tape')
 var init = require('../src/helpers/init')
 var txInvokation = require('./resources/contractInvokationTx')
-var TestTraceRetriever = require('./TestTraceRetriever')
 var contractCode = require('./resources/contractInvokationCode')
 var TraceManager = require('../src/trace/traceManager')
 var CodeManager = require('../src/code/codeManager')
+var web3Test = require('./resources/testWeb3')
+var initWeb3 = require('./init')
 
 tape('CodeManager', function (t) {
   var codeManager
   var web3 = init.loadWeb3()
+  initWeb3.overrideWeb3(web3, web3Test)
   var traceManager = new TraceManager(web3)
-  traceManager.traceRetriever = new TestTraceRetriever()
   codeManager = new CodeManager(web3, traceManager)
   codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
   traceManager.resolveTrace(txInvokation, function (error, result) {

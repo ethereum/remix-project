@@ -2,16 +2,17 @@
 var TraceManager = require('../src/trace/traceManager')
 var tape = require('tape')
 var init = require('../src/helpers/init')
-var TestTraceRetriever = require('./TestTraceRetriever')
 var txInvokation = require('./resources/contractInvokationTx')
+var web3Test = require('./resources/testWeb3')
+var initWeb3 = require('./init')
 
 tape('TraceManager', function (t) {
   var traceManager
 
   t.test('TraceManager.init', function (st) {
     var web3 = init.loadWeb3()
+    initWeb3.overrideWeb3(web3, web3Test)
     traceManager = new TraceManager(web3)
-    traceManager.traceRetriever = new TestTraceRetriever()
     st.end()
   })
 
