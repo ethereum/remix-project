@@ -20,7 +20,7 @@ BasicPanel.prototype.render = function () {
       ${this.name}
     </div>
     <div style=${ui.formatCss(style.panel.tableContainer)}>
-      <pre style=${ui.formatCss(style.panel.table, style.font)} >${this.data}</pre>
+      <pre style=${ui.formatCss(style.panel.table, style.font)} id='basicpanel' >${this.data}</pre>
     </div>
   </div>`
   if (!this.view) {

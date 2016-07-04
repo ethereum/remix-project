@@ -32,27 +32,26 @@ VmDebugger.prototype.render = function () {
           <table>
             <tbody>
               <tr>
-                <td>
-                  
+                <td>                  
                   ${this.asmCode.render()}
                 </td>
-                <td>
+                <td id='stackpanel'>
                   ${this.stackPanel.render()}
                 </td>
               </tr>
               <tr>
-                <td>
+                <td id='storagepanel'>
                   ${this.storagePanel.render()}
                 </td>
-                <td>
+                <td id='memorypanel'>
                   ${this.memoryPanel.render()}
                 </td>
               </tr>
               <tr>
-                <td>
+                <td id='calldatapanel'>
                   ${this.calldataPanel.render()}
                 </td>
-                <td>
+                <td id='callstackpanel'>
                   ${this.CallstackPanel.render()}
                 </td>
               </tr>
