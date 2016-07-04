@@ -1,8 +1,16 @@
 'use strict'
 var init = require('./init')
+var sauce = require('./sauce')
+
 module.exports = {
   beforeEach: function (browser, done) {
-    init(browser, done)
+    try {
+      init(browser, done)
+    } catch (e) {
+      var mes = 'error ' + e.message
+      console.log(mes)
+      done(mes)
+    }
   },
 
   'Load Trace - not found': function (browser) {
@@ -122,5 +130,7 @@ module.exports = {
       .assertCallData('0x0000000000000000000000000000000000000000000000000000000000000000000000000000006060606040526040516020806045833981016040528080519060200190919050505b806001016000600050819055')
       .assertCallStack('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5\n(Contract Creation - Step 63)')
       .end()
-  }
+  },
+
+  tearDown: sauce
 }
