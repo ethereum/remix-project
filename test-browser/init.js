@@ -42,7 +42,7 @@ function injectScript (file, browser, callback) {
 function extendBrowser (browser) {
   browser.assertCurrentSelectedItem = function (expected) {
     browser.getValue('#asmitems', function (result) {
-      browser.assert.containsText('#asmitems option[value="' + result.value + '"]', expected)
+      browser.expect.element('#asmitems option[value="' + result.value + '"]').text.to.equal(expected)
     })
     return browser
   }

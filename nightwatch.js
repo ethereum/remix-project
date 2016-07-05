@@ -43,8 +43,38 @@ module.exports = {
         'browserName': 'firefox',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
-        'build': `build-${TRAVIS_JOB_NUMBER}`,
-        'tunnel-identifier': TRAVIS_JOB_NUMBER
+        'build': 'build-' + TRAVIS_JOB_NUMBER,
+        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+      }
+    },
+
+    'chrome': {
+      'desiredCapabilities': {
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
+        'build': 'build-' + TRAVIS_JOB_NUMBER,
+        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+      }
+    },
+
+    'safari': {
+      'desiredCapabilities': {
+        'browserName': 'safari',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
+        'build': 'build-' + TRAVIS_JOB_NUMBER,
+        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+      }
+    },
+
+    'internetexplorer': {
+      'desiredCapabilities': {
+        'browserName': 'internetexplorer',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
+        'build': 'build-' + TRAVIS_JOB_NUMBER,
+        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
       }
     },
 
@@ -57,14 +87,6 @@ module.exports = {
         'enabled': false,
         'path': ''
       },
-      'desiredCapabilities': {
-        'browserName': 'firefox',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true
-      }
-    },
-
-    'chrome': {
       'desiredCapabilities': {
         'browserName': 'firefox',
         'javascriptEnabled': true,

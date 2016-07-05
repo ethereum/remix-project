@@ -51,9 +51,7 @@ ASMCode.prototype.codeChanged = function (code, address, index) {
 ASMCode.prototype.renderAssemblyItems = function () {
   if (this.code) {
     this.codeView = this.code.map(function (item, i) {
-      return yo`<option key=${i} value=${i}>
-              ${item}
-             </option>`
+      return yo`<option key=${i} value=${i}>${item}</option>`
     })
     return this.codeView
   }

@@ -3,10 +3,7 @@ node_js:
   - stable
 script: 
   - npm run test
-  - npm run build
-  - npm run serve &
-  - npm run nightwatch_local
-  - npm run test
+  - bash ci/browser_tests.sh
 deploy:
   provider: script
   script: ci/deploy_from_travis.sh
