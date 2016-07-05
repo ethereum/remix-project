@@ -21,7 +21,6 @@ function Editor (loadingFromGist, storage) {
       untitledCount = (untitledCount - 0) + 1;
     }
     SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-    sessions[SOL_CACHE_FILE] = null;
     this.setCacheFileContent('');
   };
 
@@ -31,7 +30,6 @@ function Editor (loadingFromGist, storage) {
 
     fileReader.onload = function (e) {
       storage.set(cacheName, e.target.result);
-      sessions[cacheName] = null;
       SOL_CACHE_FILE = cacheName;
       callback();
     };
@@ -62,6 +60,17 @@ function Editor (loadingFromGist, storage) {
   this.resetSession = function () {
     editor.setSession(sessions[SOL_CACHE_FILE]);
     editor.focus();
+  };
+
+  this.removeSession = function (fileKey) {
+    delete sessions[fileKey];
+  };
+
+  this.renameSession = function (oldFileKey, newFileKey) {
+    if (oldFileKey !== newFileKey) {
+      sessions[newFileKey] = sessions[oldFileKey];
+      this.removeSession(oldFileKey);
+    }
   };
 
   this.hasFile = function (name) {

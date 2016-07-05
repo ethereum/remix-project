@@ -193,8 +193,12 @@ var run = function () {
       $fileNameInputEl.off('blur');
       $fileNameInputEl.off('keyup');
 
-      if (newName !== originalName && confirm('Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
+      if (newName !== originalName && confirm(
+            storage.exists(utils.fileKey(newName))
+            ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
+            : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
         storage.rename(utils.fileKey(originalName), utils.fileKey(newName));
+        editor.renameSession(utils.fileKey(originalName), utils.fileKey(newName));
         editor.setCacheFile(utils.fileKey(newName));
       }
 
@@ -211,6 +215,7 @@ var run = function () {
 
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
       storage.remove(utils.fileKey(name));
+      editor.removeSession(utils.fileKey(name));
       editor.setNextFile(utils.fileKey(name));
       updateFiles();
     }
@@ -234,6 +239,7 @@ var run = function () {
     var files = editor.getFiles();
 
     $filesEl.find('.file').remove();
+    $('#output').empty();
 
     for (var f in files) {
       $filesEl.append(fileTabTemplate(files[f]));
