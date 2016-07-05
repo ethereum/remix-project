@@ -6,6 +6,25 @@ var init = {
     web3.eth.getTransaction = web3Override.getTransaction
     web3.eth.getTransactionFromBlock = web3Override.getTransactionFromBlock
     web3.eth.getBlockNumber = web3Override.getBlockNumber
+  },
+
+  readFile: function (filename, callback) {
+    var fs = require('fs')
+    try {
+      console.log('reading ' + filename)
+      if (callback) {
+        fs.readFile(filename, 'utf8', callback)
+      } else {
+        return fs.readFileSync(filename, 'utf8')
+      }
+    } catch (e) {
+      console.log(e)
+      if (callback) {
+        callback(e)
+      } else {
+        return e
+      }
+    }
   }
 }
 

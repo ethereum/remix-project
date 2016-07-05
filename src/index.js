@@ -2,8 +2,8 @@
 var Debugger = require('./Ethdebugger')
 function init () {
   var container = document.getElementById('app')
-  container.vmdebugger = new Debugger()
-  container.appendChild(container.vmdebugger.render())
+  window.vmdebugger = new Debugger()
+  container.appendChild(window.vmdebugger.render())
 }
 
 init()

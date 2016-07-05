@@ -1,37 +1,58 @@
-/* global web3Override */
+var init = require('../test/init')
 module.exports = function (browser, callback) {
   extendBrowser(browser)
 
   browser
     .url('http://127.0.0.1:8080')
-  injectScript('./test/resources/testWeb3.js', browser, function () {
+    .waitForElementPresent('#app div', 1000)
+  injectScript('./test/resources/testWeb3.json', browser, function () {
     callback()
   })
 }
 
-function readFile (filename, callback) {
-  var fs = require('fs')
-  try {
-    console.log('reading ' + filename)
-    fs.readFile(filename, 'utf8', callback)
-  } catch (e) {
-    console.log(e)
-    callback(e)
-  }
-}
-
 function injectScript (file, browser, callback) {
-  readFile(file, function (error, result) {
+  init.readFile(file, function (error, result) {
     if (!error) {
       browser.execute(function (data) {
-        eval.call(null, data) // eslint-disable-line
-        var vmdebugger = document.getElementById('app').vmdebugger
-        vmdebugger.web3.eth.getCode = web3Override.getCode
-        vmdebugger.web3.debug.traceTransaction = web3Override.traceTransaction
-        vmdebugger.web3.debug.storageAt = web3Override.storageAt
-        vmdebugger.web3.eth.getTransaction = web3Override.getTransaction
-        vmdebugger.web3.eth.getTransactionFromBlock = web3Override.getTransactionFromBlock
-        vmdebugger.web3.eth.getBlockNumber = web3Override.getBlockNumber
+        // var vmdebugger = window.vmdebugger // document.getElementById('app').vmdebugger
+        data = JSON.parse(data)
+        window.vmdebugger.web3.eth.getCode = function (address, callback) {
+          if (callback) {
+            callback(null, data.testCodes[address])
+          } else {
+            return data.testCodes[address]
+          }
+        }
+
+        window.vmdebugger.web3.debug.traceTransaction = function (txHash, options, callback) {
+          callback(null, data.testTraces[txHash])
+        }
+
+        window.vmdebugger.web3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
+          callback(null, {})
+        }
+
+        window.vmdebugger.web3.eth.getTransaction = function (txHash, callback) {
+          if (callback) {
+            callback(null, data.testTxs[txHash])
+          } else {
+            return data.testTxs[txHash]
+          }
+        }
+
+        window.vmdebugger.web3.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
+          if (callback) {
+            callback(null, data.testTxsByBlock[blockNumber + '-' + txIndex])
+          } else {
+            return data.testTxsByBlock[blockNumber + '-' + txIndex]
+          }
+        }
+
+        window.vmdebugger.web3.eth.getBlockNumber = function (callback) { callback('web3 modified testing purposes :)') }
+
+        window.vmdebugger.web3.eth.getBlockNumber(function (r) {
+          console.log('rrrr' + r)
+        })
       }, [result], function () {
         callback()
       })

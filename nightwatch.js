@@ -68,9 +68,9 @@ module.exports = {
       }
     },
 
-    'internetexplorer': {
+    'ie': {
       'desiredCapabilities': {
-        'browserName': 'internetexplorer',
+        'browserName': 'internet explorer',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
