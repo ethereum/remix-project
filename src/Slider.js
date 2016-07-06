@@ -34,9 +34,11 @@ Slider.prototype.render = function () {
 }
 
 Slider.prototype.init = function (length) {
+  var slider = document.getElementById('slider')
+  slider.setAttribute('max', length)
   this.max = length
+  this.updateDisabled(length === 0)
   this.disabled = length === 0
-  yo.update(this.view, this.render())
   this.setValue(0)
 }
 
@@ -52,6 +54,14 @@ Slider.prototype.setValue = function (value) {
     slider.stepUp(diff)
   } else {
     slider.stepDown(Math.abs(diff))
+  }
+}
+
+Slider.prototype.updateDisabled = function (disabled) {
+  if (disabled) {
+    document.getElementById('slider').setAttribute('disabled', true)
+  } else {
+    document.getElementById('slider').removeAttribute('disabled')
   }
 }
 

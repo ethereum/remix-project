@@ -65,9 +65,26 @@ ButtonNavigator.prototype.stepChanged = function (step) {
         self.overForwardDisabled = step >= length - 1
         self.nextCallDisabled = step >= length - 1
       }
+      self.updateAll()
     })
   }
-  yo.update(this.view, this.render())
+  this.updateAll()
+}
+
+ButtonNavigator.prototype.updateAll = function () {
+  this.updateDisabled('intoback', this.intoBackDisabled)
+  this.updateDisabled('overback', this.overBackDisabled)
+  this.updateDisabled('overforward', this.overForwardDisabled)
+  this.updateDisabled('intoforward', this.intoForwardDisabled)
+  this.updateDisabled('nextcall', this.nextCallDisabled)
+}
+
+ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
+  if (disabled) {
+    document.getElementById(id).setAttribute('disabled', true)
+  } else {
+    document.getElementById(id).removeAttribute('disabled')
+  }
 }
 
 module.exports = ButtonNavigator

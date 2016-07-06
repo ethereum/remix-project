@@ -11,9 +11,7 @@ function MemoryPanel (_parent, _traceManager) {
 }
 
 MemoryPanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 MemoryPanel.prototype.init = function () {

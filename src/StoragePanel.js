@@ -10,9 +10,7 @@ function StoragePanel (_parent, _traceManager) {
 }
 
 StoragePanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 StoragePanel.prototype.init = function () {

@@ -11,9 +11,7 @@ function StackPanel (_parent, _traceManager) {
 }
 
 StackPanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 StackPanel.prototype.init = function () {

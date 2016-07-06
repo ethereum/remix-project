@@ -10,9 +10,7 @@ function CalldataPanel (_parent, _traceManager) {
 }
 
 CalldataPanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 CalldataPanel.prototype.init = function () {

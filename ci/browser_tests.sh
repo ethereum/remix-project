@@ -16,9 +16,9 @@ while [ ! -f $SAUCECONNECT_READYFILE ]; do
   sleep .5
 done
 
-#npm run nightwatch_remote_firefox
-#npm run nightwatch_remote_chrome
+npm run nightwatch_remote_firefox
+npm run nightwatch_remote_chrome
 #npm run nightwatch_remote_safari
-npm run nightwatch_remote_ie
+#npm run nightwatch_remote_ie
 
-curl "https://saucelabs.com/rest/v1/${SAUCECONNECT_USERNAME}/tunnels/${SAUCECONNECT_JOBIDENTIFIER}" -u "${SAUCECONNECT_USERNAME}:${SAUCECONNECT_ACCESSKEY}" -X DELETE
+curl "http://saucelabs.com/rest/v1/${SAUCECONNECT_USERNAME}/tunnels/${SAUCECONNECT_JOBIDENTIFIER}" -u "${SAUCECONNECT_USERNAME}:${SAUCECONNECT_ACCESSKEY}" -X DELETE

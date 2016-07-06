@@ -10,9 +10,7 @@ function CallstackPanel (_parent, _traceManager) {
 }
 
 CallstackPanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 CallstackPanel.prototype.init = function () {
