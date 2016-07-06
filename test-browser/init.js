@@ -14,9 +14,9 @@ function injectScript (file, browser, callback) {
   init.readFile(file, function (error, result) {
     if (!error) {
       browser.execute(function (data) {
-        // var vmdebugger = window.vmdebugger // document.getElementById('app').vmdebugger
+        var vmdebugger = document.getElementById('app').vmdebugger
         data = JSON.parse(data)
-        window.vmdebugger.web3.eth.getCode = function (address, callback) {
+        vmdebugger.web3.eth.getCode = function (address, callback) {
           if (callback) {
             callback(null, data.testCodes[address])
           } else {
@@ -24,15 +24,15 @@ function injectScript (file, browser, callback) {
           }
         }
 
-        window.vmdebugger.web3.debug.traceTransaction = function (txHash, options, callback) {
+        vmdebugger.web3.debug.traceTransaction = function (txHash, options, callback) {
           callback(null, data.testTraces[txHash])
         }
 
-        window.vmdebugger.web3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
+        vmdebugger.web3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
           callback(null, {})
         }
 
-        window.vmdebugger.web3.eth.getTransaction = function (txHash, callback) {
+        vmdebugger.web3.eth.getTransaction = function (txHash, callback) {
           if (callback) {
             callback(null, data.testTxs[txHash])
           } else {
@@ -40,7 +40,7 @@ function injectScript (file, browser, callback) {
           }
         }
 
-        window.vmdebugger.web3.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
+        vmdebugger.web3.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
           if (callback) {
             callback(null, data.testTxsByBlock[blockNumber + '-' + txIndex])
           } else {
@@ -48,11 +48,9 @@ function injectScript (file, browser, callback) {
           }
         }
 
-        window.vmdebugger.web3.eth.getBlockNumber = function (callback) { callback('web3 modified testing purposes :)') }
+        vmdebugger.web3.eth.getBlockNumber = function (callback) { callback(null, 'web3 modified for testing purposes :)') }
 
-        window.vmdebugger.web3.eth.getBlockNumber(function (r) {
-          console.log('rrrr' + r)
-        })
+        vmdebugger.web3.currentProvider = {host: 'web3 modified for testing purposes :)'}
       }, [result], function () {
         callback()
       })
