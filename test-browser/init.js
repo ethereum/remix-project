@@ -1,7 +1,6 @@
 var init = require('../test/init')
 module.exports = function (browser, callback) {
   extendBrowser(browser)
-
   browser
     .url('http://127.0.0.1:8080')
     .waitForElementPresent('#app div', 1000)
