@@ -110,17 +110,86 @@ function extendBrowser (browser) {
   browser.assertCallStackValue = function (index, value) {
     return assertPanelValue('#callstackpanel', browser, index, value)
   }
+
+  browser.debugerKeyCode = {
+    'Enter': 13,
+    'Up': 38,
+    'Down': 40,
+    'Right': '39',
+    'Left': 37,
+    'Esc': 27,
+    'SpaceBar': 32,
+    'Ctrl': 17,
+    'Alt': 18,
+    'Shift': 16
+  }
+
+/* browser.sendKeys is not working for safari */
+/* still not working properly
+browser.fireEvent = function (el, key, times, callback) {
+  var data = {
+    'id': el.substring(1),
+    'key': key,
+    'times': times
+  }
+  browser.execute(function (data) {
+    data = JSON.parse(data)
+    var el = document.getElementById(data.id)
+    var eventObj
+    console.log(el)
+    console.log(data)
+    var k = 0
+    if (document.createEventObject) {
+      eventObj = document.createEventObject()
+      eventObj.keyCode = data.key
+      while (k < data.times) {
+        console.log('firing brfore createEventObject')
+        el.fireEvent('onkeypress', eventObj)
+        console.log('firing')
+        k++
+      }
+    } else if (typeof (KeyboardEvent) === 'function') {
+      eventObj = new KeyboardEvent('keyup')
+      eventObj.key = data.key
+      eventObj.which = data.key
+      while (k < data.times) {
+        console.log('firing brfore createEvent')
+        el.dispatchEvent(eventObj)
+        console.log('firing')
+        k++
+      }
+    }
+  }, [JSON.stringify(data)], function () {
+    callback()
+  })
+}
+*/
 }
 
 function assertPanel (id, browser, value) {
-  browser.expect.element(id + ' #basicpanel').text.to.equal(value)
+  browser.expect.element(id + 'basicpanel').text.to.equal(value)
   return browser
 }
 
-function assertPanelValue (id, browser, index, value, done) {
-  browser.getText(id + ' #basicpanel', function (result) {
-    var values = result.value.split('\n')
+function assertPanelValue (id, browser, index, value) {
+  getInnerText(id + 'basicpanel', browser, function (result) {
+    var values
+    if (result.value.indexOf('\r\n') !== -1) {
+      values = result.value.split('\r\n')
+    } else if (result.value.indexOf('\n') !== -1) {
+      values = result.value.split('\n')
+    } else if (result.value.indexOf('\r') !== -1) {
+      values = result.value.split('\r')
+    }
     browser.assert.equal(values[index], value)
   })
   return browser
+}
+
+function getInnerText (id, browser, callback) {
+  browser.execute(function (data) {
+    return document.getElementById(data).innerText
+  }, [id.substring(1)], function (result) {
+    callback(result)
+  })
 }

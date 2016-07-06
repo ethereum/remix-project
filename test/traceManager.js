@@ -2,7 +2,6 @@
 var TraceManager = require('../src/trace/traceManager')
 var tape = require('tape')
 var init = require('../src/helpers/init')
-var txInvokation = require('./resources/contractInvokationTx')
 var web3Test = require('./resources/testWeb3')
 var initWeb3 = require('./init')
 
@@ -17,7 +16,8 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.resolveTrace', function (st) {
-    traceManager.resolveTrace(txInvokation, function (error, result) {
+    var tx = traceManager.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    traceManager.resolveTrace(tx, function (error, result) {
       if (error) {
         st.fail(' - traceManager.resolveTrace - failed ' + result)
       } else {
@@ -45,7 +45,8 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getStorageAt', function (st) {
-    traceManager.getStorageAt(110, txInvokation, function (error, result) {
+    var tx = traceManager.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    traceManager.getStorageAt(110, tx, function (error, result) {
       if (error) {
         st.fail(error)
       } else {

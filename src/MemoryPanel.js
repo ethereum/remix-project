@@ -6,7 +6,7 @@ var yo = require('yo-yo')
 function MemoryPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Memory')
+  this.basicPanel = new BasicPanel('Memory', 'memorypanel')
   this.init()
 }
 

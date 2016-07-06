@@ -15,7 +15,7 @@ function VmDebugger (_parent, _traceManager, _web3) {
   this.storagePanel = new StoragePanel(_parent, _traceManager)
   this.memoryPanel = new MemoryPanel(_parent, _traceManager)
   this.calldataPanel = new CalldataPanel(_parent, _traceManager)
-  this.CallstackPanel = new CallstackPanel(_parent, _traceManager)
+  this.callstackPanel = new CallstackPanel(_parent, _traceManager)
   this.view
   var self = this
   _parent.register('newTraceLoaded', this, function () {
@@ -35,25 +35,15 @@ VmDebugger.prototype.render = function () {
                 <td>                  
                   ${this.asmCode.render()}
                 </td>
-                <td id='stackpanel'>
-                  ${this.stackPanel.render()}
-                </td>
+                 ${this.stackPanel.render()}
               </tr>
               <tr>
-                <td id='storagepanel'>
-                  ${this.storagePanel.render()}
-                </td>
-                <td id='memorypanel'>
-                  ${this.memoryPanel.render()}
-                </td>
+               ${this.storagePanel.render()}
+                ${this.memoryPanel.render()}
               </tr>
               <tr>
-                <td id='calldatapanel'>
-                  ${this.calldataPanel.render()}
-                </td>
-                <td id='callstackpanel'>
-                  ${this.CallstackPanel.render()}
-                </td>
+                ${this.calldataPanel.render()}
+                ${this.callstackPanel.render()}
               </tr>
             </tbody>
           </table>

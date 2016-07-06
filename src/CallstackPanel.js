@@ -5,7 +5,7 @@ var yo = require('yo-yo')
 function CallstackPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Call Stack')
+  this.basicPanel = new BasicPanel('Call Stack', 'callstackpanel')
   this.init()
 }
 

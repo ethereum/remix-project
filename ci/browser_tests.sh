@@ -1,10 +1,12 @@
 #!/bin/bash
 
+
 SAUCECONNECT_URL="http://saucelabs.com/downloads/sc-4.3.16-linux.tar.gz"
 SAUCECONNECT_USERNAME="yann300"
 SAUCECONNECT_ACCESSKEY="e6f430f2-daa0-48bb-90fd-8bee20f429eb"
 SAUCECONNECT_JOBIDENTIFIER="remix_tests_${TRAVIS_JOB_NUMBER}"
 SAUCECONNECT_READYFILE="sc.ready"
+TEST_EXITCODE=0
 
 npm run build
 npm run serve &
@@ -18,7 +20,17 @@ done
 
 npm run nightwatch_remote_firefox
 npm run nightwatch_remote_chrome
-#npm run nightwatch_remote_safari
-#npm run nightwatch_remote_ie
+npm run nightwatch_remote_safari
+npm run nightwatch_remote_ie
 
-curl "http://saucelabs.com/rest/v1/${SAUCECONNECT_USERNAME}/tunnels/${SAUCECONNECT_JOBIDENTIFIER}" -u "${SAUCECONNECT_USERNAME}:${SAUCECONNECT_ACCESSKEY}" -X DELETE
+if [ $? -eq 1 ]
+then
+  TEST_EXITCODE=1
+fi
+
+node ci/sauceDisconnect.js $SAUCECONNECT_USERNAME $SAUCECONNECT_ACCESSKEY $SAUCECONNECT_JOBIDENTIFIER
+
+if [ $TEST_EXITCODE -eq 1 ]
+then
+  exit 1
+fi
