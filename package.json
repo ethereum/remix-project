@@ -4,8 +4,11 @@
   "description": "Minimalistic browser-based Solidity IDE",
   "scripts": {
     "test": "node test/index.js",
-    "browser-test": "nightwatch --env local",
-    "browser-test-sc": "nightwatch --env remote",
+    "browser-test": "nightwatch --config nightwatch.js --env local",
+    "browser-test-remote-firefox": "nightwatch --config nightwatch.js --env default",
+    "browser-test-remote-ie": "nightwatch --config nightwatch.js --env ie",
+    "browser-test-remote-chrome": "nightwatch --config nightwatch.js --env chrome",
+    "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
     "build": "mkdir -p build; browserify src/index.js -o build/app.js",
     "lint": "semistandard",
     "serve": "http-server ."
@@ -48,7 +51,9 @@
     "ignore": [
       "assets/js/",
       "build/",
-      "src/mode-solidity.js"
+      "src/mode-solidity.js",
+      "nightwatch.js",
+      "ci/sauceDisconnect.js"
     ]
   }
 }
