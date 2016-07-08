@@ -18,18 +18,26 @@ while [ ! -f $SAUCECONNECT_READYFILE ]; do
   sleep .5
 done
 
-npm run nightwatch_remote_firefox
-npm run nightwatch_remote_chrome
-npm run nightwatch_remote_safari
-npm run nightwatch_remote_ie
+function updateTestExitCode() {
+  if [ $? -eq 1 ]
+  then
+    TEST_EXITCODE=1
+  fi  
+}
 
-if [ $? -eq 1 ]
-then
-  TEST_EXITCODE=1
-fi
+npm run nightwatch_remote_firefox
+updateTestExitCode
+npm run nightwatch_remote_chrome
+updateTestExitCode
+npm run nightwatch_remote_safari
+updateTestExitCode
+npm run nightwatch_remote_ie
+updateTestExitCode
+
 
 node ci/sauceDisconnect.js $SAUCECONNECT_USERNAME $SAUCECONNECT_ACCESSKEY $SAUCECONNECT_JOBIDENTIFIER
 
+echo $TEST_EXITCODE
 if [ $TEST_EXITCODE -eq 1 ]
 then
   exit 1
