@@ -25,7 +25,7 @@ Sticker.prototype.render = function () {
           <td>
             VMtracestep:
           </td>
-          <td>
+          <td id='vmtracestepinfo' >
             ${this.vmTraceStep}
           </td>
         </tr>
@@ -33,7 +33,7 @@ Sticker.prototype.render = function () {
           <td>
             Step:
           </td>
-          <td>
+          <td id='stepinfo'>
             ${this.step}
           </td>
         </tr>
@@ -41,7 +41,7 @@ Sticker.prototype.render = function () {
           <td>
             Add memory:
           </td>
-          <td>
+          <td id='addmemoryinfo'>
             ${this.addmemory}
           </td>
         </tr>
@@ -49,7 +49,7 @@ Sticker.prototype.render = function () {
           <td>
             Gas:
           </td>
-          <td>
+          <td id='gasinfo'>
             ${this.gas}
           </td>
         </tr>
@@ -57,15 +57,15 @@ Sticker.prototype.render = function () {
           <td>
             Remaining gas:
           </td>
-          <td>
+          <td id='remaininggasinfo'>
             ${this.remainingGas}
           </td>
         </tr>
-        <tr key='remaininggas'>
+        <tr key='loadedaddress'>
           <td>
             Loaded address:
           </td>
-          <td>
+          <td id='loadedaddressinfo'>
             ${this.loadedAddress}
           </td>
         </tr>

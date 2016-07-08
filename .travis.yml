@@ -1,7 +1,9 @@
 language: node_js
 node_js:
-- stable
-script: npm run test && npm run build
+  - stable
+script: 
+  - npm run test
+  - bash ci/browser_tests.sh
 deploy:
   provider: script
   script: ci/deploy_from_travis.sh

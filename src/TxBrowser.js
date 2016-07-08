@@ -33,7 +33,7 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.blockNumber = null
   this.txNumber = '0xcda2b2835add61af54cf83bd076664d98d7908c6cd98d86423b3b48d8b8e51ff'
   this.connectInfo = ''
-  this.checkWeb3()
+  this.updateWeb3Url(this.web3.currentProvider.host)
 }
 
 TxBrowser.prototype.submit = function () {
@@ -70,19 +70,27 @@ TxBrowser.prototype.submit = function () {
   yo.update(this.view, this.render())
 }
 
-TxBrowser.prototype.updateWeb3Url = function (ev) {
-  init.setProvider(this.web3, ev.target.value)
-  this.checkWeb3()
-  yo.update(this.view, this.render())
+TxBrowser.prototype.updateWeb3Url = function (newhost) {
+  init.setProvider(this.web3, newhost)
+  var self = this
+  this.checkWeb3(function (error, block) {
+    if (!error) {
+      self.connectInfo = 'Connected to ' + self.web3.currentProvider.host + '. Current block number: ' + block
+    } else {
+      self.connectInfo = 'Unable to connect to ' + self.web3.currentProvider.host + '. ' + error.message
+    }
+    yo.update(self.view, self.render())
+  })
 }
 
-TxBrowser.prototype.checkWeb3 = function () {
+TxBrowser.prototype.checkWeb3 = function (callback) {
   try {
-    console.log('block ' + this.web3.eth.blockNumber)
-    this.connectInfo = 'Connected to ' + this.web3.currentProvider.host
+    this.web3.eth.getBlockNumber(function (error, block) {
+      callback(error, block)
+    })
   } catch (e) {
     console.log(e)
-    this.connectInfo = e.message
+    callback(e.message, null)
   }
 }
 
@@ -102,16 +110,16 @@ TxBrowser.prototype.init = function (ev) {
 TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div style=${ui.formatCss(style.container)}>
-        <span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0]) }} value=${this.web3.currentProvider ? this.web3.currentProvider.host : ' - none - '} type='text' />
+        <span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${this.web3.currentProvider ? this.web3.currentProvider.host : ' - none - '} type='text' />
         <span>${this.connectInfo}</span>
         <br />
         <br />
         <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber} />
-        <input onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
-        <button onclick=${function () { self.submit() }}>
-          Get
+        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
+        <button id='load' onclick=${function () { self.submit() }}>
+          Load
         </button>
-        <button onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
+        <button id='unload' onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
         <div style=${ui.formatCss(style.transactionInfo)}>
           <table>
             <tbody>
@@ -119,7 +127,7 @@ TxBrowser.prototype.render = function () {
                 <td>
                   Hash:
                 </td>
-                <td>
+                <td id='txhash' >
                   ${this.hash}
                 </td>
               </tr>
@@ -127,7 +135,7 @@ TxBrowser.prototype.render = function () {
                 <td>
                   From:
                 </td>
-                <td>
+                <td id='txfrom'>
                   ${this.from}
                 </td>
               </tr>
@@ -135,7 +143,7 @@ TxBrowser.prototype.render = function () {
                 <td>
                   To:
                 </td>
-                <td>
+                <td id='txto' >
                   ${this.to}
                 </td>
               </tr>

@@ -19,16 +19,23 @@
     "yo-yo": "^1.2.1"
   },
   "devDependencies": {
-    "nightwatch": "^0.9.4",
+    "http-server": "^0.9.0",
+    "nightwatch": "^0.9.5",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
-    "tape": "^4.6.0"
+    "tape": "^4.6.0",
+    "yo-yoify": "^3.1.0"
   },
   "scripts": {
     "start_node": "eth --rpccorsdomain \"*\" -j -v 0",
-    "build": "mkdir -p build; browserify src/index.js -o build/app.js",
+    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
     "test": "standard && tape ./test/tests.js",
-    "serve": "http-server ."
+    "serve": "http-server .",
+    "nightwatch_local": "nightwatch --config nightwatch.js --env local",
+    "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
+    "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
+    "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
+    "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie"
   },
   "repository": {
     "type": "git",

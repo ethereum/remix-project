@@ -17,14 +17,14 @@ Slider.prototype.render = function () {
   var self = this
   var view = yo`<div>
         <input
-          ref='rule'
           id='slider'
           style=${ui.formatCss(style.rule)}
           type='range'
           min=0
           max=${this.max}
           value=0
-          onmouseup=${function () { self.onMouseUp() }}
+          onkeyup=${function () { self.onChange() }}
+          onmouseup=${function () { self.onChange() }}
           disabled=${this.disabled} />
       </div>`
   if (!this.view) {
@@ -34,13 +34,15 @@ Slider.prototype.render = function () {
 }
 
 Slider.prototype.init = function (length) {
+  var slider = document.getElementById('slider')
+  slider.setAttribute('max', length)
   this.max = length
+  this.updateDisabled(length === 0)
   this.disabled = length === 0
-  yo.update(this.view, this.render())
   this.setValue(0)
 }
 
-Slider.prototype.onMouseUp = function (event) {
+Slider.prototype.onChange = function (event) {
   var value = document.getElementById('slider').value
   this.trigger('moved', [parseInt(value)])
 }
@@ -52,6 +54,14 @@ Slider.prototype.setValue = function (value) {
     slider.stepUp(diff)
   } else {
     slider.stepDown(Math.abs(diff))
+  }
+}
+
+Slider.prototype.updateDisabled = function (disabled) {
+  if (disabled) {
+    document.getElementById('slider').setAttribute('disabled', true)
+  } else {
+    document.getElementById('slider').removeAttribute('disabled')
   }
 }
 

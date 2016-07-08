@@ -5,14 +5,12 @@ var yo = require('yo-yo')
 function CalldataPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Call Data')
+  this.basicPanel = new BasicPanel('Call Data', 'calldatapanel')
   this.init()
 }
 
 CalldataPanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 CalldataPanel.prototype.init = function () {

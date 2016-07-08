@@ -5,14 +5,12 @@ var yo = require('yo-yo')
 function StoragePanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Storage Changes')
+  this.basicPanel = new BasicPanel('Storage Changes', 'storagepanel')
   this.init()
 }
 
 StoragePanel.prototype.render = function () {
-  return (
-  yo`${this.basicPanel.render()}`
-  )
+  return yo`<div>${this.basicPanel.render()}</div>`
 }
 
 StoragePanel.prototype.init = function () {

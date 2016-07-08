@@ -18,7 +18,9 @@ module.exports = {
         i += jumpNum
       }
 
-      code.push(this.pad(pc, this.roundLog(raw.length, 10)) + '  ' + curOpCode + ' ' + pushData.toString('hex'))
+      var data = pushData.toString('hex') !== '' ? ' ' + pushData.toString('hex') : ''
+
+      code.push(this.pad(pc, this.roundLog(raw.length, 10)) + ' ' + curOpCode + data)
       pushData = ''
     }
     return [ code, codeMap ]
