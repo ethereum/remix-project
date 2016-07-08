@@ -25,3 +25,6 @@ env:
   - COMMIT_AUTHOR="Travis CI"
   - PUSH_REPO="git@github.com:ethereum/browser-solidity.git"
   - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md"
+cache:
+  directories:
+    - node_modules
