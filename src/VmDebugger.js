@@ -35,15 +35,25 @@ VmDebugger.prototype.render = function () {
                 <td>                  
                   ${this.asmCode.render()}
                 </td>
-                 ${this.stackPanel.render()}
+                <td>
+                  ${this.stackPanel.render()}
+                </td>
               </tr>
               <tr>
-               ${this.storagePanel.render()}
-                ${this.memoryPanel.render()}
+                <td>
+                  ${this.storagePanel.render()}
+                </td>
+                <td>
+                  ${this.memoryPanel.render()}
+                </td>
               </tr>
               <tr>
-                ${this.calldataPanel.render()}
-                ${this.callstackPanel.render()}
+                <td>
+                  ${this.calldataPanel.render()}
+                </td>
+                <td>
+                  ${this.callstackPanel.render()}
+                </td>
               </tr>
             </tbody>
           </table>
