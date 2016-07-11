@@ -3,7 +3,7 @@ node_js:
   - stable
 script:
   - npm run lint && npm run test && npm run build
-  - bash ci/browser_tests.sh
+  - ./ci/browser_tests.sh
 deploy:
   provider: script
   script: ci/deploy_from_travis.sh
