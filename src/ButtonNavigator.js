@@ -20,18 +20,18 @@ module.exports = ButtonNavigator
 
 ButtonNavigator.prototype.render = function () {
   var self = this
-  var view = yo`<div>
-    <button id='intoback' onclick=${function () { self.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
-      Step Into Back
-    </button>
+  var view = yo`<div>    
     <button id='overback' onclick=${function () { self.trigger('stepOverBack') }} disabled=${this.overBackDisabled} >
       Step Over Back
     </button>
-    <button id='overforward' onclick=${function () { self.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
-      Step Over Forward
-    </button>
+    <button id='intoback' onclick=${function () { self.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
+      Step Into Back
+    </button>    
     <button id='intoforward' onclick=${function () { self.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
       Step Into Forward
+    </button>
+    <button id='overforward' onclick=${function () { self.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
+      Step Over Forward
     </button>
     <button id='nextcall' onclick=${function () { self.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
       Jump Next Call

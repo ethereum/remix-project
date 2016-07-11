@@ -35,8 +35,8 @@ Slider.prototype.render = function () {
 
 Slider.prototype.init = function (length) {
   var slider = document.getElementById('slider')
-  slider.setAttribute('max', length)
-  this.max = length
+  slider.setAttribute('max', length - 1)
+  this.max = length - 1
   this.updateDisabled(length === 0)
   this.disabled = length === 0
   this.setValue(0)
