@@ -6,12 +6,12 @@ var yo = require('yo-yo')
 function MemoryPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Memory', 'memorypanel')
+  this.basicPanel = new BasicPanel('Memory')
   this.init()
 }
 
 MemoryPanel.prototype.render = function () {
-  return yo`<div>${this.basicPanel.render()}</div>`
+  return yo`<div id='memorypanel' >${this.basicPanel.render()}</div>`
 }
 
 MemoryPanel.prototype.init = function () {

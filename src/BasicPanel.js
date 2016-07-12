@@ -3,11 +3,9 @@ var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
 var ui = require('./helpers/ui')
 
-function BasicPanel (_name, _id) {
+function BasicPanel (_name) {
   this.data
   this.name = _name
-  this.id = _id
-
   this.view
 }
 
@@ -21,7 +19,7 @@ BasicPanel.prototype.render = function () {
       ${this.name}
     </div>
     <div style=${ui.formatCss(style.panel.tableContainer)}>
-      <pre style=${ui.formatCss(style.panel.table, style.font)} id='${this.id}basicpanel' >${this.data}</pre>
+      <pre style=${ui.formatCss(style.panel.table, style.font)} id='basicpanel' >${this.data}</pre>
     </div>
   </div>`
   if (!this.view) {

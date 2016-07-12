@@ -6,12 +6,12 @@ var yo = require('yo-yo')
 function StackPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Stack', 'stackpanel')
+  this.basicPanel = new BasicPanel('Stack')
   this.init()
 }
 
 StackPanel.prototype.render = function () {
-  return yo`<div>${this.basicPanel.render()}</div>`
+  return yo`<div id='stackpanel' >${this.basicPanel.render()}</div>`
 }
 
 StackPanel.prototype.init = function () {
