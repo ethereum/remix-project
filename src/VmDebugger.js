@@ -88,7 +88,7 @@ VmDebugger.prototype.render = function () {
                 <td>
                   ${this.callstackPanel.render()}
                 </td>
-              </tr>              
+              </tr>
             </tbody>
           </table>
         </div>

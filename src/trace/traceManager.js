@@ -109,8 +109,9 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
 TraceManager.prototype.getAddresses = function (callback) {
   var addresses = [ this.tx.to ]
   for (var k in this.traceCache.calls) {
-    if (this.traceCache.calls[k].address) {
-      addresses.push(this.traceCache.calls[k].address)
+    var address = this.traceCache.calls[k].address
+    if (address && addresses.join('').indexOf(address) === -1) {
+      addresses.push(address)
     }
   }
   callback(null, addresses)
