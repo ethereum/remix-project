@@ -16,6 +16,7 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     lastCallIndex: 0
   }
   var callStack = [tx.to]
+  this.traceCache.pushCallChanges(0, 0, callStack[0])
   this.traceCache.pushCallStack(0, {
     callStack: callStack.slice(0)
   })
@@ -36,8 +37,8 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
 
 TraceAnalyser.prototype.buildReturnValues = function (index, step) {
   if (traceHelper.isReturnInstruction(step)) {
-    var offset = 2 * parseInt(step.stack[step.stack.length - 1])
-    var size = 2 * parseInt(step.stack[step.stack.length - 2])
+    var offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
+    var size = 2 * parseInt(step.stack[step.stack.length - 2], 16)
     var memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
     this.traceCache.pushReturnValue(index, '0x' + memory.join('').substr(offset, size))
   }
@@ -76,7 +77,7 @@ TraceAnalyser.prototype.buildMemory = function (index, step) {
 }
 
 TraceAnalyser.prototype.buildStorage = function (index, step, context) {
-  if (traceHelper.newContextStorage(step)) {
+  if (traceHelper.newContextStorage(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
     var calledAddress = traceHelper.resolveCalledAddress(index, this.trace)
     if (calledAddress) {
       context.currentStorageAddress = calledAddress

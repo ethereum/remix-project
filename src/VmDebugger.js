@@ -18,9 +18,9 @@ function VmDebugger (_parent, _traceManager, _web3) {
   this.memoryPanel = new MemoryPanel(_parent, _traceManager)
   this.calldataPanel = new CalldataPanel(_parent, _traceManager)
   this.callstackPanel = new CallstackPanel(_parent, _traceManager)
-    
+
   /* Return values - */
-  this.returnValuesPanel = new BasicPanel('Return Values', 'returnvalues', 'auto', '100px')
+  this.returnValuesPanel = new BasicPanel('Return Value', '1205px', '100px')
   _parent.register('indexChanged', this.returnValuesPanel, function (index) {
     var self = this
     _traceManager.getReturnValue(index, function (error, returnValue) {
@@ -37,9 +37,9 @@ function VmDebugger (_parent, _traceManager, _web3) {
     })
   })
   /* Return values - */
-  
+
   this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parent, _traceManager)
-  
+
   this.view
   var self = this
   _parent.register('newTraceLoaded', this, function () {
@@ -54,7 +54,17 @@ VmDebugger.prototype.render = function () {
   var view = yo`<div id='vmdebugger' style='display:none'>
         <div style=${ui.formatCss(style.container)}>
           <table>
-            <tbody>              
+            <tbody>  
+              <tr>
+                <td colspan='2'>
+                  ${this.returnValuesPanel.render()}
+                </td>
+              </tr>
+              <tr>
+                <td colspan='2'>
+                  ${this.fullStoragesChangesPanel.render()}
+                </td>
+              </tr>            
               <tr>
                 <td>                  
                   ${this.asmCode.render()}
@@ -78,17 +88,7 @@ VmDebugger.prototype.render = function () {
                 <td>
                   ${this.callstackPanel.render()}
                 </td>
-              </tr>
-              <tr>
-                <td colspan='2'>
-                  ${this.returnValuesPanel.render()}
-                </td>
-              </tr>
-              <tr>
-                <td colspan='2'>
-                  ${this.fullStoragesChangesPanel.render()}
-                </td>
-              </tr>
+              </tr>              
             </tbody>
           </table>
         </div>

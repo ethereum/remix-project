@@ -78,9 +78,9 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
   if (check) {
     return callback(check, null)
   }
-  var stoChange = traceHelper.findLowerBound(stepIndex, this.traceCache.storageChanges)
-  if (stoChange === undefined) return callback('no storage found', null)
   if (!address) {
+    var stoChange = traceHelper.findLowerBound(stepIndex, this.traceCache.storageChanges)
+    if (stoChange === undefined) return callback('no storage found', null)
     address = this.traceCache.sstore[stoChange].address
   }
   var storage = {}
@@ -107,9 +107,11 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
 }
 
 TraceManager.prototype.getAddresses = function (callback) {
-  var addresses = {}
+  var addresses = [ this.tx.to ]
   for (var k in this.traceCache.calls) {
-    addresses[this.traceCache.calls[k].address] = ''
+    if (this.traceCache.calls[k].address) {
+      addresses.push(this.traceCache.calls[k].address)
+    }
   }
   callback(null, addresses)
 }
