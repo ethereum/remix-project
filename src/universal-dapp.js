@@ -635,7 +635,6 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       from: self.options.getAddress ? self.options.getAddress() : self.web3.eth.accounts[0],
       to: to,
       data: data,
-      gas: gas,
       value: value
     };
     if (constant && !isConstructor) {
@@ -644,6 +643,10 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       self.web3.eth.estimateGas(tx, function (err, resp) {
         if (err) {
           return cb(err, resp);
+        }
+
+        if (resp > gas) {
+          return cb('Gas required exceeds limit: ' + resp);
         }
 
         tx.gas = resp;
