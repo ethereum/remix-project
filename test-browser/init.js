@@ -167,12 +167,12 @@ browser.fireEvent = function (el, key, times, callback) {
 }
 
 function assertPanel (id, browser, value) {
-  browser.expect.element(id + 'basicpanel').text.to.equal(value)
+  browser.expect.element(id + ' #basicpanel').text.to.equal(value)
   return browser
 }
 
 function assertPanelValue (id, browser, index, value) {
-  getInnerText(id + 'basicpanel', browser, function (result) {
+  getInnerText(id + ' #basicpanel', browser, function (result) {
     var values
     if (result.value.indexOf('\r\n') !== -1) {
       values = result.value.split('\r\n')
@@ -188,8 +188,8 @@ function assertPanelValue (id, browser, index, value) {
 
 function getInnerText (id, browser, callback) {
   browser.execute(function (data) {
-    return document.getElementById(data).innerText
-  }, [id.substring(1)], function (result) {
+    return document.querySelector(data).innerText
+  }, [id], function (result) {
     callback(result)
   })
 }
