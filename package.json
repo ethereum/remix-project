@@ -9,7 +9,7 @@
     "browser-test-remote-ie": "nightwatch --config nightwatch.js --env ie",
     "browser-test-remote-chrome": "nightwatch --config nightwatch.js --env chrome",
     "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
-    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
+    "build": "mkdir -p build; rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js; browserify src/index.js -g yo-yoify -o build/app.js",
     "lint": "semistandard",
     "serve": "http-server ."
   },

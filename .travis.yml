@@ -16,7 +16,7 @@ env:
     - COMMIT_AUTHOR_EMAIL="chris@ethereum.org"
     - COMMIT_AUTHOR="Travis CI"
     - PUSH_REPO="git@github.com:ethereum/browser-solidity.git"
-    - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md"
+    - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md soljson.js"
 cache:
   directories:
     - node_modules
