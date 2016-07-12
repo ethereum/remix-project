@@ -10,6 +10,9 @@ git checkout --orphan gh-pages
 git rm --cached -r .
 echo "# Automatic build" > README.md
 echo "Built website from {$SHA}. See https://github.com/ethereum/browser-solidity/ for details." >> README.md
+echo "To use an offline copy, download browser-solidity-$SHA.zip." >> README.md
+# ZIP the whole directory
+zip -r browser-solidity-$SHA.zip .
 # -f is needed because "build" is part of .gitignore
 git add -f $FILES_TO_PACKAGE
 git commit -m "Built website from {$SHA}."
