@@ -29,8 +29,18 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     this.buildMemory(k, step)
     context = this.buildDepth(k, step, tx, callStack, context)
     context = this.buildStorage(k, step, context)
+    this.buildReturnValues(k, step)
   }
   callback(null, true)
+}
+
+TraceAnalyser.prototype.buildReturnValues = function (index, step) {
+  if (traceHelper.isReturnInstruction(step)) {
+    var offset = 2 * parseInt(step.stack[step.stack.length - 1])
+    var size = 2 * parseInt(step.stack[step.stack.length - 2])
+    var memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
+    this.traceCache.pushReturnValue(index, '0x' + memory.join('').substr(offset, size))
+  }
 }
 
 TraceAnalyser.prototype.buildCalldata = function (index, step, tx, newContext) {
@@ -85,20 +95,21 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
 
 TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, context) {
   if (traceHelper.isCallInstruction(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
+    var newAddress
     if (traceHelper.isCreateInstruction(step)) {
-      var contractToken = traceHelper.contractCreationToken(index)
-      callStack.push(contractToken)
+      newAddress = traceHelper.contractCreationToken(index)
+      callStack.push(newAddress)
       var lastMemoryChange = this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]
-      this.traceCache.pushContractCreationFromMemory(index, contractToken, this.trace, lastMemoryChange)
+      this.traceCache.pushContractCreationFromMemory(index, newAddress, this.trace, lastMemoryChange)
     } else {
-      var newAddress = traceHelper.resolveCalledAddress(index, this.trace)
+      newAddress = traceHelper.resolveCalledAddress(index, this.trace)
       if (newAddress) {
         callStack.push(newAddress)
       } else {
         console.log('unable to build depth changes. ' + index + ' does not match with a CALL. depth changes will be corrupted')
       }
     }
-    this.traceCache.pushCallChanges(step, index + 1)
+    this.traceCache.pushCallChanges(step, index + 1, newAddress)
     this.traceCache.pushCallStack(index + 1, {
       callStack: callStack.slice(0)
     })

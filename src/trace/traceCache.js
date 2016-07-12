@@ -6,12 +6,13 @@ function TraceCache () {
 TraceCache.prototype.init = function () {
   // ...Changes contains index in the vmtrace of the corresponding changes
 
+  this.returnValues = {}
   this.callChanges = []
-  this.returnChanges = []
   this.calls = {}
   this.callsData = {}
   this.contractCreation = {}
   this.steps = {}
+  this.addresses = []
 
   this.callDataChanges = []
   this.memoryChanges = []
@@ -33,11 +34,16 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
   this.memoryChanges.push(value)
 }
 
-TraceCache.prototype.pushCallChanges = function (step, value) {
+TraceCache.prototype.pushCallChanges = function (step, value, address) {
   this.callChanges.push(value)
   this.calls[value] = {
-    op: step.op
+    op: step.op,
+    address: address
   }
+}
+
+TraceCache.prototype.pushReturnValue = function (step, value) {
+  this.returnValues[step] = value
 }
 
 TraceCache.prototype.pushContractCreationFromMemory = function (index, token, trace, lastMemoryChange) {
@@ -50,10 +56,6 @@ TraceCache.prototype.pushContractCreationFromMemory = function (index, token, tr
 
 TraceCache.prototype.pushContractCreation = function (token, code) {
   this.contractCreation[token] = code
-}
-
-TraceCache.prototype.pushReturnChanges = function (value) {
-  this.returnChanges.push(value)
 }
 
 TraceCache.prototype.pushCallStack = function (index, callStack) {

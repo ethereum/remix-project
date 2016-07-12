@@ -31,7 +31,7 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.to = ' - '
   this.hash = ' - '
   this.blockNumber = null
-  this.txNumber = '0xcda2b2835add61af54cf83bd076664d98d7908c6cd98d86423b3b48d8b8e51ff'
+  this.txNumber = '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51'
   this.connectInfo = ''
   this.updateWeb3Url(this.web3.currentProvider.host)
 }

@@ -73,14 +73,16 @@ TraceManager.prototype.getLength = function (callback) {
   }
 }
 
-TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
+TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address) {
   var check = this.checkRequestedStep(stepIndex)
   if (check) {
     return callback(check, null)
   }
   var stoChange = traceHelper.findLowerBound(stepIndex, this.traceCache.storageChanges)
   if (stoChange === undefined) return callback('no storage found', null)
-  var address = this.traceCache.sstore[stoChange].address
+  if (!address) {
+    address = this.traceCache.sstore[stoChange].address
+  }
   var storage = {}
   storage = this.traceCache.rebuildStorage(address, storage, stepIndex)
   callback(null, storage)
@@ -102,6 +104,14 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback) {
     callback(null, this.trace[stoChange].storage)
   }
   */
+}
+
+TraceManager.prototype.getAddresses = function (callback) {
+  var addresses = {}
+  for (var k in this.traceCache.calls) {
+    addresses[this.traceCache.calls[k].address] = ''
+  }
+  callback(null, addresses)
 }
 
 TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
@@ -201,6 +211,14 @@ TraceManager.prototype.getCurrentPC = function (stepIndex, callback) {
     return callback(check, null)
   }
   callback(null, this.trace[stepIndex].pc)
+}
+
+TraceManager.prototype.getReturnValue = function (stepIndex, callback) {
+  var check = this.checkRequestedStep(stepIndex)
+  if (check) {
+    return callback(check, null)
+  }
+  callback(null, this.traceCache.returnValues[stepIndex])
 }
 
 TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {
