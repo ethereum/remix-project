@@ -14,7 +14,7 @@ echo "To use an offline copy, download browser-solidity-$SHA.zip." >> README.md
 # ZIP the whole directory
 zip -r browser-solidity-$SHA.zip $FILES_TO_PACKAGE
 # -f is needed because "build" is part of .gitignore
-git add -f $FILES_TO_PACKAGE
+git add -f $FILES_TO_PACKAGE browser-solidity-$SHA.zip
 git commit -m "Built website from {$SHA}."
 
 ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
