@@ -486,7 +486,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
       // VM only
-      } else if (self.options.vm && result.vm.exception && result.vm.exceptionError) {
+      } else if (self.options.vm && result.vm.exception === 0 && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
       // VM only
       } else if (self.options.vm && result.vm.return === undefined) {
