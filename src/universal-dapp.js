@@ -486,7 +486,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
       // VM only
-      } else if (self.options.vm && result.vm.exception && result.vm.exceptionError) {
+      } else if (self.options.vm && result.vm.exception === 0 && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
       // VM only
       } else if (self.options.vm && result.vm.return === undefined) {
@@ -672,9 +672,9 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       var address = self.options.getAddress ? self.options.getAddress() : self.getAccounts()[0];
       var account = self.accounts[address];
       tx = new EthJSTX({
-        nonce: new Buffer([account.nonce++]), // @todo count beyond 255
-        gasPrice: 1,
-        gasLimit: gasLimit,
+        nonce: new BN(account.nonce++),
+        gasPrice: new BN(1),
+        gasLimit: new BN(gasLimit, 10),
         to: to,
         value: new BN(value, 10),
         data: new Buffer(data.slice(2), 'hex')
