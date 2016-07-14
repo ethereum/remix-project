@@ -672,9 +672,9 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       var address = self.options.getAddress ? self.options.getAddress() : self.getAccounts()[0];
       var account = self.accounts[address];
       tx = new EthJSTX({
-        nonce: new Buffer([account.nonce++]), // @todo count beyond 255
-        gasPrice: 1,
-        gasLimit: gasLimit,
+        nonce: new BN(account.nonce++),
+        gasPrice: new BN(1),
+        gasLimit: new BN(gasLimit, 10),
         to: to,
         value: new BN(value, 10),
         data: new Buffer(data.slice(2), 'hex')
