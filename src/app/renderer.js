@@ -67,6 +67,7 @@ function Renderer (editor, executionContext, updateFiles) {
         var comp = $('#value').val().split(' ');
         return executionContext.web3().toWei(comp[0], comp.slice(1).join(' '));
       },
+      getGasLimit: function () { return $('#gasLimit').val(); },
       removable_instances: true,
       renderOutputModifier: function (contractName, $contractOutput) {
         var contract = data.contracts[contractName];
