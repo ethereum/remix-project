@@ -10,6 +10,10 @@ module.exports = {
     return web3
   },
 
+  extendWeb3: function (web3) {
+    Web3Admin.extend(web3)
+  },
+
   setProvider: function (web3, url) {
     web3.setProvider(new web3.providers.HttpProvider(url))
   }
