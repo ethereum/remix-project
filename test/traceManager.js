@@ -297,4 +297,27 @@ tape('TraceManager', function (t) {
     st.ok(result === 63)
     st.end()
   })
+
+  t.test('TraceManager.getAddresses', function (st) {
+    traceManager.getAddresses(function (error, result) {
+      if (error) {
+        st.fail(error)
+      } else {
+        st.ok(result[0] === '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+        st.ok(result[1] === '(Contract Creation - Step 63)')
+        st.end()
+      }
+    })
+  })
+
+  t.test('TraceManager.getReturnValue', function (st) {
+    traceManager.getReturnValue(108, function (error, result) {
+      if (error) {
+        st.fail(error)
+      } else {
+        st.ok(result === '0x60606040526008565b00')
+        st.end()
+      }
+    })
+  })
 })

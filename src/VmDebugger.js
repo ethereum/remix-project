@@ -6,6 +6,8 @@ var MemoryPanel = require('./MemoryPanel')
 var CallstackPanel = require('./CallstackPanel')
 var StackPanel = require('./StackPanel')
 var StoragePanel = require('./StoragePanel')
+var BasicPanel = require('./BasicPanel')
+var FullStoragesChangesPanel = require('./FullStoragesChanges')
 var yo = require('yo-yo')
 var ui = require('./helpers/ui')
 
@@ -16,6 +18,28 @@ function VmDebugger (_parent, _traceManager, _web3) {
   this.memoryPanel = new MemoryPanel(_parent, _traceManager)
   this.calldataPanel = new CalldataPanel(_parent, _traceManager)
   this.callstackPanel = new CallstackPanel(_parent, _traceManager)
+
+  /* Return values - */
+  this.returnValuesPanel = new BasicPanel('Return Value', '1205px', '100px')
+  _parent.register('indexChanged', this.returnValuesPanel, function (index) {
+    var self = this
+    _traceManager.getReturnValue(index, function (error, returnValue) {
+      if (error) {
+        console.log(error)
+        self.data = ''
+      } else if (_parent.currentStepIndex === index) {
+        self.data = returnValue
+      }
+      self.update()
+      if (!returnValue) {
+        self.hide()
+      }
+    })
+  })
+  /* Return values - */
+
+  this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parent, _traceManager)
+
   this.view
   var self = this
   _parent.register('newTraceLoaded', this, function () {
@@ -30,7 +54,17 @@ VmDebugger.prototype.render = function () {
   var view = yo`<div id='vmdebugger' style='display:none'>
         <div style=${ui.formatCss(style.container)}>
           <table>
-            <tbody>
+            <tbody>  
+              <tr>
+                <td colspan='2'>
+                  ${this.returnValuesPanel.render()}
+                </td>
+              </tr>
+              <tr>
+                <td colspan='2'>
+                  ${this.fullStoragesChangesPanel.render()}
+                </td>
+              </tr>            
               <tr>
                 <td>                  
                   ${this.asmCode.render()}
