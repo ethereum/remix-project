@@ -57,6 +57,6 @@
     ]
   },
   "dependencies": {
-    "ethereum-remix": "0.0.1"
+    "ethereum-remix": "0.0.2"
   }
 }
