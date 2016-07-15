@@ -55,5 +55,8 @@
       "nightwatch.js",
       "ci/sauceDisconnect.js"
     ]
+  },
+  "dependencies": {
+    "ethereum-remix": "0.0.1"
   }
 }

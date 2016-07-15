@@ -64,6 +64,7 @@
 						<li class="txView" title="Transaction"><i class="fa fa-send"></i></li>
 						<li class="envView" title="Environment"><i class="fa fa-cube"></i></li>
 						<li class="publishView" title="Publish" ><i class="fa fa-cloud-upload"></i></li>
+						<li class="debugView" title="Debugger"><i class="fa fa-cube"></i></li>
 						<li id="helpButton"><a href="https://solidity.readthedocs.org" target="_blank" title="Open Documentation" class="fa fa-question"></a></li>
 					</ul>
 					<img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/sol.svg" alt="Solidity realtime compiler and runtime">
@@ -121,7 +122,9 @@
 							</label>
 						</span>
 					</div>
-
+					<div id="debugView">
+						<div id="debugger" ></div>
+					</div>
 				</div>
 			</div>
 			<div id="output"></div>
