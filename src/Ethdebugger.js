@@ -11,15 +11,20 @@ var yo = require('yo-yo')
 var init = require('./helpers/init')
 var ui = require('./helpers/ui')
 
-function Ethdebugger () {
+function Ethdebugger (_web3) {
   util.extend(this, new EventManager())
   this.currentStepIndex = -1
   this.tx
   this.statusMessage = ''
 
   this.view
+  if (_web3) {
+    this.web3 = _web3
+    init.extendWeb3(this.web3)
+  } else {
+    this.web3 = init.loadWeb3()
+  }
 
-  this.web3 = init.loadWeb3()
   this.traceManager = new TraceManager(this.web3)
 
   var self = this
@@ -39,6 +44,10 @@ function Ethdebugger () {
   })
   this.vmDebugger = new VmDebugger(this, this.traceManager, this.web3)
   this.sticker = new Sticker(this, this.traceManager, this.web3)
+}
+
+Ethdebugger.prototype.debug = function (tx) {
+  this.txBrowser.load(tx.hash)
 }
 
 Ethdebugger.prototype.render = function () {

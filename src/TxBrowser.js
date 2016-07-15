@@ -102,6 +102,12 @@ TxBrowser.prototype.updateTxN = function (ev) {
   this.txNumber = ev.target.value
 }
 
+TxBrowser.prototype.load = function (txHash) {
+  this.txNumber = txHash
+  yo.update(this.view, this.render())
+  this.submit()
+}
+
 TxBrowser.prototype.init = function (ev) {
   this.setDefaultValues()
   yo.update(this.view, this.render())
