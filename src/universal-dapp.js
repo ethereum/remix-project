@@ -645,6 +645,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       value: value
     };
     if (constant && !isConstructor) {
+      tx.gas = gasLimit;
       self.web3.eth.call(tx, cb);
     } else {
       self.web3.eth.estimateGas(tx, function (err, resp) {
