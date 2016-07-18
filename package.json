@@ -12,7 +12,7 @@
       "email": "liana@ethdev.com"
     }
   ],
-  "main": "index.js",
+  "main": "./build/app.js",
   "dependencies": {
     "browserify": "^13.0.1",
     "web3": "^0.15.3",
@@ -35,7 +35,8 @@
     "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
     "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
-    "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie"
+    "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
