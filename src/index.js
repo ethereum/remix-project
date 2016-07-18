@@ -1,8 +1,13 @@
 'use strict'
 var Debugger = require('./Ethdebugger')
-function init () {
-  var container = document.getElementById('app')
-  container.vmdebugger = new Debugger()
-  container.appendChild(container.vmdebugger.render())
+if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
+  module.exports = {
+    Debugger: Debugger
+  }
 }
-init()
+if (window) {
+  window.remix = {
+    Debugger: Debugger
+  }
+}
+
