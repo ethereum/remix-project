@@ -1,4 +1,5 @@
-var version = function () { return '(loading)'; };
+var solc = require('solc/wrapper');
+
 var compileJSON = function () { return ''; };
 var missingInputs = [];
 
@@ -8,30 +9,23 @@ module.exports = function (self) {
     switch (data.cmd) {
       case 'loadVersion':
         delete self.Module;
-        version = null;
         compileJSON = null;
 
         self.importScripts(data.data);
-        var Module = self.Module;
 
-        version = Module.cwrap('version', 'string', []);
-        if ('_compileJSONCallback' in Module) {
-          var compileJSONInternal = Module.cwrap('compileJSONCallback', 'string', ['string', 'number', 'number']);
-          var missingInputCallback = Module.Runtime.addFunction(function (path) {
-            missingInputs.push(Module.Pointer_stringify(path));
-          });
-          compileJSON = function (input, optimize) {
-            return compileJSONInternal(input, optimize, missingInputCallback);
-          };
-        } else if ('_compileJSONMulti' in Module) {
-          compileJSON = Module.cwrap('compileJSONMulti', 'string', ['string', 'number']);
-        } else {
-          compileJSON = Module.cwrap('compileJSON', 'string', ['string', 'number']);
-        }
+        var compiler = solc(self.Module);
+
+        compileJSON = function (input, optimize) {
+          return JSON.stringify(compiler.compile(JSON.parse(input), optimize, function (path) {
+            missingInputs.push(path);
+            return { 'error': 'Deferred import' };
+          }));
+        };
+
         self.postMessage({
           cmd: 'versionLoaded',
-          data: version(),
-          acceptsMultipleFiles: ('_compileJSONMulti' in Module)
+          data: compiler.version(),
+          acceptsMultipleFiles: compiler.supportsMulti
         });
         break;
       case 'compile':
