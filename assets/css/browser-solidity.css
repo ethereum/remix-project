@@ -389,7 +389,7 @@ body {
 #dragbar {
     background-color: transparent;
     position: absolute;
-    width: 1em;
+    width: 0.5em;
     right: -3px;
     top: 3em;
     bottom: 0;
