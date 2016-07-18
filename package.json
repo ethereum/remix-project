@@ -29,7 +29,9 @@
     "semistandard": "^7.0.0",
     "tape": "^4.5.1",
     "web3": "^0.16.0",
-    "webworkify": "^1.2.1"
+    "webworkify": "^1.2.1",
+    "yo-yo": "^1.2.2",
+    "yo-yoify": "^3.3.0"
   },
   "repository": {
     "type": "git",

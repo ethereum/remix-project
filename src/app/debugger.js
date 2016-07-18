@@ -1,8 +1,9 @@
 var $ = require('jquery');
+var Remix = require('ethereum-remix');
 
 function Debugger (executionContext, _id) {
   this.el = document.querySelector(_id);
-  this.debugger = new window.remix.Debugger(executionContext.web3());
+  this.debugger = new Remix.Debugger(executionContext.web3());
   this.el.appendChild(this.debugger.render());
   this.web3 = executionContext.web3();
   this.debugView = $('ul#options li.debugView');
