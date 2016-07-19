@@ -92,9 +92,9 @@ var run = function () {
   // ----------------- tabbed menu -------------------
   $('#options li').click(function (ev) {
     var $el = $(this);
-    document.querySelector('ul#options').selectTab($el);
+    selectTab($el);
   });
-  document.querySelector('ul#options').selectTab = function (el) {
+  var selectTab = function (el) {
     var match = /[a-z]+View/.exec(el.get(0).className);
     if (!match) return;
     var cls = match[0];
@@ -427,6 +427,9 @@ var run = function () {
 
   var executionContext = new ExecutionContext();
   var transactionDebugger = new Debugger(executionContext, '#debugger');
+  transactionDebugger.onDebugRequested = function () {
+    selectTab($('ul#options li.debugView'));
+  };
   var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger);
   var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
   executionContext.setCompiler(compiler);

@@ -1,15 +1,13 @@
-var $ = require('jquery');
 var Remix = require('ethereum-remix');
 
-function Debugger (executionContext, _id) {
+function Debugger (_executionContext, _id) {
   this.el = document.querySelector(_id);
-  this.debugger = new Remix.Debugger(executionContext.web3());
+  this.debugger = new Remix.Debugger(_executionContext.web3());
   this.el.appendChild(this.debugger.render());
-  this.web3 = executionContext.web3();
-  this.debugView = $('ul#options li.debugView');
+  this.web3 = _executionContext.web3();
 
   Debugger.prototype.debug = function (receipt) {
-    document.querySelector('ul#options').selectTab(this.debugView);
+    if (this.onDebugRequested) this.onDebugRequested();
     var self = this;
     this.web3.eth.getTransaction(receipt.transactionHash, function (error, tx) {
       if (!error) {
