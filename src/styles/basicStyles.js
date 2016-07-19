@@ -49,5 +49,9 @@ module.exports = {
   },
   inline: {
     'display': 'inline-block'
+  },
+  vmargin: {
+    'margin-top': '10px',
+    'margin-bottom': '10px'
   }
 }
