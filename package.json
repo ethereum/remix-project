@@ -1,6 +1,6 @@
 {
   "name": "ethereum-remix",
-  "version": "0.0.2-alpha.0.0.2",
+  "version": "0.0.2-alpha.0.0.3",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -12,7 +12,7 @@
       "email": "liana@ethdev.com"
     }
   ],
-  "main": "./index.js",
+  "main": "./src/index.js",
   "dependencies": {
     "browserify": "^13.0.1",
     "web3": "^0.15.3",
