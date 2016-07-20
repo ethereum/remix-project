@@ -87,7 +87,7 @@
 
 .udapp .output .result {
 	position: relative;
-	margin-bottom: 0.5em;
+	margin-bottom: 3.5em;
 	white-space: pre;
 }
 
@@ -203,6 +203,11 @@
 .udapp .contractProperty .call {
 	background-color: #FF8B8B;
 	border-color: #FF8B8B;
+}
+
+.udapp .contractProperty .debug {
+	background-color: #9DC1F5;
+	border-color: #9DC1F5;
 }
 
 .udapp .contractProperty.constant .call {

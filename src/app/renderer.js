@@ -4,7 +4,7 @@ var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
 
-function Renderer (editor, executionContext, updateFiles) {
+function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
   var detailsOpen = {};
 
   function renderError (message) {
@@ -78,7 +78,7 @@ function Renderer (editor, executionContext, updateFiles) {
           .append(textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'))
           .append(getDetails(contract, source, contractName));
       }
-    });
+    }, transactionDebugger);
 
     var $contractOutput = dapp.render();
 

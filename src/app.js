@@ -13,6 +13,7 @@ var Editor = require('./app/editor');
 var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
 var ExecutionContext = require('./app/execution-context');
+var Debugger = require('./app/debugger');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -89,21 +90,23 @@ var run = function () {
   var editor = new Editor(loadingFromGist, storage);
 
   // ----------------- tabbed menu -------------------
-
   $('#options li').click(function (ev) {
     var $el = $(this);
-    var match = /[a-z]+View/.exec($el.get(0).className);
+    selectTab($el);
+  });
+  var selectTab = function (el) {
+    var match = /[a-z]+View/.exec(el.get(0).className);
     if (!match) return;
     var cls = match[0];
-    if (!$el.hasClass('active')) {
-      $el.parent().find('li').removeClass('active');
+    if (!el.hasClass('active')) {
+      el.parent().find('li').removeClass('active');
       $('#optionViews').attr('class', '').addClass(cls);
-      $el.addClass('active');
+      el.addClass('active');
     } else {
-      $el.removeClass('active');
+      el.removeClass('active');
       $('#optionViews').removeClass(cls);
     }
-  });
+  };
 
   // ------------------ gist publish --------------
 
@@ -423,7 +426,11 @@ var run = function () {
   }
 
   var executionContext = new ExecutionContext();
-  var renderer = new Renderer(editor, executionContext, updateFiles);
+  var transactionDebugger = new Debugger(executionContext, '#debugger');
+  transactionDebugger.onDebugRequested = function () {
+    selectTab($('ul#options li.debugView'));
+  };
+  var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger);
   var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
   executionContext.setCompiler(compiler);
 

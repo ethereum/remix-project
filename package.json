@@ -9,7 +9,7 @@
     "browser-test-remote-ie": "nightwatch --config nightwatch.js --env ie",
     "browser-test-remote-chrome": "nightwatch --config nightwatch.js --env chrome",
     "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
-    "build": "mkdir -p build; browserify src/index.js -o build/app.js",
+    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
     "lint": "semistandard",
     "serve": "http-server ."
   },
@@ -30,7 +30,10 @@
     "solc": "https://github.com/ethereum/solc-js",
     "tape": "^4.5.1",
     "web3": "^0.16.0",
-    "webworkify": "^1.2.1"
+    "webworkify": "^1.2.1",
+    "yo-yo": "^1.2.2",
+    "yo-yoify": "^3.3.0",
+    "ethereum-remix": "0.0.2-alpha.0.0.4"
   },
   "repository": {
     "type": "git",

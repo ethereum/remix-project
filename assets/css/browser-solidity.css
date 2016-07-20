@@ -208,6 +208,7 @@ body {
 #header #optionViews.settingsView #settingsView { display: block; }
 #header #optionViews.publishView #publishView { display: block; }
 #header #optionViews.envView #envView { display: block; }
+#header #optionViews.debugView #debugView { display: block; }
 
 #header #optionViews.txView input,
 #header #optionViews.txView select {

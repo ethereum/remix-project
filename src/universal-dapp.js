@@ -8,7 +8,7 @@ var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
 
-function UniversalDApp (contracts, options) {
+function UniversalDApp (contracts, options, transactionDebugger) {
   var self = this;
 
   self.options = options || {};
@@ -17,7 +17,7 @@ function UniversalDApp (contracts, options) {
   self.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
 
   self.web3 = options.web3;
-
+  self.transactionDebugger = transactionDebugger;
   if (options.mode === 'vm') {
     // FIXME: use `options.vm` or `self.vm` consistently
     options.vm = true;
@@ -352,6 +352,16 @@ UniversalDApp.prototype.getCallButton = function (args) {
     return $('<div class="' + returnCls + '">').html('<strong>' + returnName + ':</strong> ' + JSON.stringify(result, null, 2));
   };
 
+  var getDebugTransaction = function (result) {
+    var $debugTx = $('<div class="debugTx">');
+    var $button = $('<button class="debug">Debug Transaction</button>');
+    $button.click(function () {
+      self.transactionDebugger.debug(result);
+    });
+    $debugTx.append($button);
+    return $debugTx;
+  };
+
   var getGasUsedOutput = function (result, vmResult) {
     var $gasUsed = $('<div class="gasUsed">');
     var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
@@ -493,6 +503,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
         replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
       } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm));
+        $result.append(getDebugTransaction(result));
         args.appendFunctions(self.options.vm ? result.createdAddress : result.contractAddress);
       } else if (self.options.vm) {
         var outputObj = '0x' + result.vm.return.toString('hex');
@@ -514,6 +525,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
       } else {
         clearOutput($result);
         $result.append(getReturnOutput(result)).append(getGasUsedOutput(result));
+        $result.append(getDebugTransaction(result));
       }
     });
   };
