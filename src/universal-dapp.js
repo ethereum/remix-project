@@ -354,7 +354,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var getDebugTransaction = function (result) {
     var $debugTx = $('<div class="debugTx">');
-    var $button = $('<button class="debug" >Debug Transaction</button>');
+    var $button = $('<button class="debug">Debug Transaction</button>');
     $button.click(function () {
       self.transactionDebugger.debug(result);
     });
@@ -503,6 +503,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
         replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
       } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm));
+        $result.append(getDebugTransaction(result));
         args.appendFunctions(self.options.vm ? result.createdAddress : result.contractAddress);
       } else if (self.options.vm) {
         var outputObj = '0x' + result.vm.return.toString('hex');

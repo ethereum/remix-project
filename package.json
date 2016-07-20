@@ -32,7 +32,7 @@
     "webworkify": "^1.2.1",
     "yo-yo": "^1.2.2",
     "yo-yoify": "^3.3.0",
-    "ethereum-remix": "0.0.2-alpha.0.0.3"
+    "ethereum-remix": "0.0.2-alpha.0.0.4"
   },
   "repository": {
     "type": "git",

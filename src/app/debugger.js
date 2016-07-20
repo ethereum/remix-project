@@ -1,8 +1,8 @@
-var Remix = require('ethereum-remix');
+var remix = require('ethereum-remix');
 
 function Debugger (_executionContext, _id) {
   this.el = document.querySelector(_id);
-  this.debugger = new Remix.Debugger(_executionContext.web3());
+  this.debugger = new remix.Debugger(_executionContext.web3());
   this.el.appendChild(this.debugger.render());
   this.web3 = _executionContext.web3();
 
