@@ -18,9 +18,11 @@ function Ethdebugger (_web3) {
   this.statusMessage = ''
 
   this.view
+  this.displayConnectionSetting = true
   if (_web3) {
     this.web3 = _web3
     init.extendWeb3(this.web3)
+    this.displayConnectionSetting = false
   } else {
     this.web3 = init.loadWeb3()
   }
@@ -28,7 +30,7 @@ function Ethdebugger (_web3) {
   this.traceManager = new TraceManager(this.web3)
 
   var self = this
-  this.txBrowser = new TxBrowser(this.web3)
+  this.txBrowser = new TxBrowser(this.web3, this.displayConnectionSetting)
   this.txBrowser.register('newTxLoading', this, function () {
     self.unLoad()
   })

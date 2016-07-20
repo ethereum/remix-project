@@ -28,8 +28,8 @@ module.exports = {
       'selenium_host': 'ondemand.saucelabs.com',
       'selenium_port': 80,
       'silent': true,
-      'username': 'yann300',
-      'access_key': 'e6f430f2-daa0-48bb-90fd-8bee20f429eb',
+      'username': 'yanneth',
+      'access_key': '1f5a4560-b02b-41aa-b52b-f033aad30870',
       'use_ssl': false,
       'globals': {
         'waitForConditionTimeout': 10000,

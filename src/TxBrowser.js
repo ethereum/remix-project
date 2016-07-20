@@ -6,7 +6,7 @@ var yo = require('yo-yo')
 var ui = require('./helpers/ui')
 var init = require('./helpers/init')
 
-function TxBrowser (_web3) {
+function TxBrowser (_web3, _displayConnectionSetting) {
   util.extend(this, new EventManager())
   this.web3 = _web3
 
@@ -16,6 +16,10 @@ function TxBrowser (_web3) {
   this.from
   this.to
   this.view
+  this.displayConnectionSetting = true
+  if (_displayConnectionSetting !== undefined) {
+    this.displayConnectionSetting = _displayConnectionSetting
+  }
 
   this.setDefaultValues()
 }
@@ -113,13 +117,20 @@ TxBrowser.prototype.init = function (ev) {
   yo.update(this.view, this.render())
 }
 
+TxBrowser.prototype.connectionSetting = function () {
+  if (this.displayConnectionSetting) {
+    var self = this
+    return yo`<div style=${ui.formatCss(style.vmargin)}><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${this.web3.currentProvider ? this.web3.currentProvider.host : ' - none - '} type='text' />
+              <span>${this.connectInfo}</span></div>`
+  } else {
+    return ''
+  }
+}
+
 TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div style=${ui.formatCss(style.container)}>
-        <span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${this.web3.currentProvider ? this.web3.currentProvider.host : ' - none - '} type='text' />
-        <span>${this.connectInfo}</span>
-        <br />
-        <br />
+        ${this.connectionSetting()}
         <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber} />
         <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
         <button id='load' onclick=${function () { self.submit() }}>
