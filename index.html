@@ -65,6 +65,7 @@
 						<li class="envView" title="Environment"><i class="fa fa-cube"></i></li>
 						<li class="publishView" title="Publish" ><i class="fa fa-cloud-upload"></i></li>
 						<li class="debugView" title="Debugger"><i class="fa fa-bug"></i></li>
+						<li class="verificationView" title="Formal Verification"><i class="fa fa-check"></i></li>
 						<li id="helpButton"><a href="https://solidity.readthedocs.org" target="_blank" title="Open Documentation" class="fa fa-question"></a></li>
 					</ul>
 					<img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/sol.svg" alt="Solidity realtime compiler and runtime">
@@ -124,6 +125,19 @@
 					</div>
 					<div id="debugView">
 						<div id="debugger" ></div>
+					</div>
+					<div id="verificationView">
+						<p>This tab provides support for <b>formal verification</b> of Solidity contracts.<br/>
+						This feature is still in development and thus also not yet well documented,
+						but you can find some information
+						<a href="http://solidity.readthedocs.io/en/latest/security-considerations.html#formal-verification">here</a>.
+						The compiler generates input to be verified
+						(or report errors). Please paste the text below into
+						<a href="http://why3.lri.fr/try/">http://why3.lri.fr/try/</a>
+						to actually perform the verification.
+						We plan to support direct integration in the future.</p>
+						<textarea id="formalVerificationInput" readonly="readonly"></textarea>
+						<div id="formalVerificationErrors"></div>
 					</div>
 				</div>
 			</div>
