@@ -18,6 +18,8 @@ function UniversalDApp (contracts, options, transactionDebugger) {
 
   self.web3 = options.web3;
   self.transactionDebugger = transactionDebugger;
+  transactionDebugger.addProvider('EXTERNAL', self.web3);
+  transactionDebugger.switchProvider('EXTERNAL')
   if (options.mode === 'vm') {
     // FIXME: use `options.vm` or `self.vm` consistently
     options.vm = true;
@@ -25,7 +27,8 @@ function UniversalDApp (contracts, options, transactionDebugger) {
     self.accounts = {};
 
     self.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
-
+    transactionDebugger.addProvider('VM', self.vm);
+    transactionDebugger.switchProvider('VM')
     self.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
     self.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
   } else if (options.mode !== 'web3') {
@@ -514,6 +517,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
         if (decoded) {
           $result.append(decoded);
         }
+        $result.append(getDebugTransaction(result));
       } else if (args.abi.constant && !isConstructor) {
         clearOutput($result);
         $result.append(getReturnOutput(result)).append(getGasUsedOutput({}));
@@ -701,7 +705,12 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         transactions: [],
         uncleHeaders: []
       });
-      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, cb);
+      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
+        if (self.vm) {
+          result.transactionHash = self.transactionDebugger.web3().releaseCurrentHash(); // used to keep track of the transaction
+        }
+        cb(err, result);
+      });
     } catch (e) {
       cb(e, null);
     }
