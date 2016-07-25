@@ -1,17 +1,18 @@
 'use strict'
 var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
-var TraceManager = require('./trace/traceManager')
+var TraceManager = require('../trace/traceManager')
 var VmDebugger = require('./VmDebugger')
 var Sticker = require('./Sticker')
 var style = require('./styles/basicStyles')
-var util = require('./helpers/global')
-var EventManager = require('./lib/eventManager')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
-var init = require('./helpers/init')
-var ui = require('./helpers/ui')
+var init = require('../helpers/init')
+var ui = require('../helpers/ui')
+var Web3Provider = require('../web3Provider/web3Provider')
 
-function Ethdebugger (_web3) {
+function Ethdebugger (_web) {
   util.extend(this, new EventManager())
   this.currentStepIndex = -1
   this.tx
@@ -19,12 +20,12 @@ function Ethdebugger (_web3) {
 
   this.view
   this.displayConnectionSetting = true
-  if (_web3) {
-    this.web3 = _web3
-    init.extendWeb3(this.web3)
-    this.displayConnectionSetting = false
+
+  this.web3 = new Web3Provider()
+  if (_web) {
+    this.setProvider('EXTERNAL', _web)
   } else {
-    this.web3 = init.loadWeb3()
+    this.setProvider('EXTERNAL', init.loadWeb3())
   }
 
   this.traceManager = new TraceManager(this.web3)
@@ -46,6 +47,29 @@ function Ethdebugger (_web3) {
   })
   this.vmDebugger = new VmDebugger(this, this.traceManager, this.web3)
   this.sticker = new Sticker(this, this.traceManager, this.web3)
+}
+
+Ethdebugger.prototype.setProvider = function (type, obj) {
+  if (type === 'EXTERNAL') {
+    init.extendWeb3(obj)
+    this.web3.initWeb3(obj)
+    this.displayConnectionSetting = true
+  } else if (type === 'VM') {
+    this.web3.initVM(obj)
+    this.displayConnectionSetting = false
+  }
+}
+
+Ethdebugger.prototype.getWeb3Provider = function () {
+  return this.web3
+}
+
+Ethdebugger.prototype.changeProvider = function (type) {
+  this.web3.switchTo(type, function (error, result) {
+    if (error) {
+      console.log('provider ' + type + ' not defined')
+    }
+  })
 }
 
 Ethdebugger.prototype.debug = function (tx) {

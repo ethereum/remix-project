@@ -9,7 +9,7 @@ var StoragePanel = require('./StoragePanel')
 var BasicPanel = require('./BasicPanel')
 var FullStoragesChangesPanel = require('./FullStoragesChanges')
 var yo = require('yo-yo')
-var ui = require('./helpers/ui')
+var ui = require('../helpers/ui')
 
 function VmDebugger (_parent, _traceManager, _web3) {
   this.asmCode = new ASMCode(_parent, _traceManager, _web3)

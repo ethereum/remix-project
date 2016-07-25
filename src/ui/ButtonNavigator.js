@@ -1,6 +1,6 @@
 'use strict'
-var util = require('./helpers/global')
-var EventManager = require('./lib/eventManager')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
 
 function ButtonNavigator (_traceManager) {

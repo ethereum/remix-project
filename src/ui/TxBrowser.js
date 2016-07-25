@@ -1,10 +1,10 @@
 var style = require('./styles/basicStyles')
-var util = require('./helpers/global')
-var EventManager = require('./lib/eventManager')
-var traceHelper = require('./helpers/traceHelper')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
+var traceHelper = require('../helpers/traceHelper')
 var yo = require('yo-yo')
-var ui = require('./helpers/ui')
-var init = require('./helpers/init')
+var ui = require('../helpers/ui')
+var init = require('../helpers/init')
 
 function TxBrowser (_web3, _displayConnectionSetting) {
   util.extend(this, new EventManager())
@@ -20,8 +20,9 @@ function TxBrowser (_web3, _displayConnectionSetting) {
   if (_displayConnectionSetting !== undefined) {
     this.displayConnectionSetting = _displayConnectionSetting
   }
-
-  this.setDefaultValues()
+  if (this.displayConnectionSetting) {
+    this.setDefaultValues()
+  }
 }
 
 // creation 0xa9619e1d0a35b2c1d686f5b661b3abd87f998d2844e8e9cc905edb57fc9ce349

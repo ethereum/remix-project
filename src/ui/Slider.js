@@ -1,9 +1,9 @@
 'use strict'
 var style = require('./styles/sliderStyles')
-var util = require('./helpers/global')
-var EventManager = require('./lib/eventManager')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
-var ui = require('./helpers/ui')
+var ui = require('../helpers/ui')
 
 function Slider (_traceManager) {
   util.extend(this, new EventManager())

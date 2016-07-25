@@ -2,10 +2,10 @@
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
 var style = require('./styles/basicStyles')
-var util = require('./helpers/global')
-var EventManager = require('./lib/eventManager')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
-var ui = require('./helpers/ui')
+var ui = require('../helpers/ui')
 
 function StepManager (_parent, _traceManager) {
   util.extend(this, new EventManager())

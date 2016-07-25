@@ -1,8 +1,8 @@
 'use strict'
 var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
-var CodeManager = require('./code/codeManager')
-var ui = require('./helpers/ui')
+var CodeManager = require('../code/codeManager')
+var ui = require('../helpers/ui')
 
 function ASMCode (_parent, _traceManager, _web3) {
   this.parent = _parent
