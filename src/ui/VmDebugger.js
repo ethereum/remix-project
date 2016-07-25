@@ -11,8 +11,8 @@ var FullStoragesChangesPanel = require('./FullStoragesChanges')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 
-function VmDebugger (_parent, _traceManager, _web3) {
-  this.asmCode = new ASMCode(_parent, _traceManager, _web3)
+function VmDebugger (_parent, _traceManager) {
+  this.asmCode = new ASMCode(_parent, _traceManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
   this.memoryPanel = new MemoryPanel(_parent, _traceManager)

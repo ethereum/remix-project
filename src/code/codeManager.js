@@ -13,13 +13,11 @@ var EventManager = require('../lib/eventManager')
    - resolvingStep: when CodeManager resolves code/selected instruction of a new step
 */
 
-function CodeManager (_web3, _traceManager) {
+function CodeManager (_traceManager) {
   util.extend(this, new EventManager())
-  this.web3 = _web3
   this.isLoading = false
   this.traceManager = _traceManager
   this.currentAddress = ''
-  codeResolver.setWeb3(_web3)
   this.codeResolver = codeResolver
 }
 

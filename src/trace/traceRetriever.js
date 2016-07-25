@@ -1,8 +1,8 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
+var util = require('../helpers/global')
 
-function TraceRetriever (_web3) {
-  this.web3 = _web3
+function TraceRetriever () {
   this.storages = {} // contains all intial storage (by addresses)
 }
 
@@ -13,7 +13,7 @@ TraceRetriever.prototype.getTrace = function (txHash, callback) {
     disableStack: false,
     fullStorage: false
   }
-  this.web3.debug.traceTransaction(txHash, options, function (error, result) {
+  util.web3.debug.traceTransaction(txHash, options, function (error, result) {
     callback(error, result)
   })
 }
@@ -28,7 +28,7 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
     callback(null, {})
     /*
     var self = this
-    this.web3.debug.storageAt(tx.blockNumber.toString(), tx.transactionIndex, address, function (error, result) {
+    util.web3.debug.storageAt(tx.blockNumber.toString(), tx.transactionIndex, address, function (error, result) {
       self.storages[address] = result
       callback(error, result)
     })
@@ -37,7 +37,7 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
 }
 
 TraceRetriever.prototype.debugStorageAtAvailable = function () {
-  return false  // this.web3.version.node.toLowerCase().indexOf('geth') === -1 // storageAt not available if using geth
+  return false  // util.web3.version.node.toLowerCase().indexOf('geth') === -1 // storageAt not available if using geth
 }
 
 module.exports = TraceRetriever

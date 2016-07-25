@@ -6,9 +6,8 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var init = require('../helpers/init')
 
-function TxBrowser (_web3, _displayConnectionSetting) {
+function TxBrowser (_parent) {
   util.extend(this, new EventManager())
-  this.web3 = _web3
 
   this.blockNumber
   this.txNumber
@@ -17,12 +16,14 @@ function TxBrowser (_web3, _displayConnectionSetting) {
   this.to
   this.view
   this.displayConnectionSetting = true
-  if (_displayConnectionSetting !== undefined) {
-    this.displayConnectionSetting = _displayConnectionSetting
-  }
-  if (this.displayConnectionSetting) {
-    this.setDefaultValues()
-  }
+  var self = this
+  _parent.register('providerChanged', this, function (provider) {
+    self.displayConnectionSetting = provider === 'INTERNAL'
+    self.setDefaultValues()
+    if (self.view) {
+      yo.update(self.view, self.render())
+    }
+  })
 }
 
 // creation 0xa9619e1d0a35b2c1d686f5b661b3abd87f998d2844e8e9cc905edb57fc9ce349
@@ -36,9 +37,9 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.to = ' - '
   this.hash = ' - '
   this.blockNumber = null
-  this.txNumber = '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51'
+  this.txNumber = ''
   this.connectInfo = ''
-  this.updateWeb3Url(this.web3.currentProvider.host)
+  this.updateWeb3Url(util.web3.currentProvider.host)
 }
 
 TxBrowser.prototype.submit = function () {
@@ -49,9 +50,9 @@ TxBrowser.prototype.submit = function () {
   var tx
   try {
     if (this.txNumber.indexOf('0x') !== -1) {
-      tx = this.web3.eth.getTransaction(this.txNumber)
+      tx = util.web3.eth.getTransaction(this.txNumber)
     } else {
-      tx = this.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber)
+      tx = util.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber)
     }
   } catch (e) {
     console.log(e)
@@ -76,13 +77,13 @@ TxBrowser.prototype.submit = function () {
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {
-  init.setProvider(this.web3, newhost)
+  init.setProvider(util.web3, newhost)
   var self = this
   this.checkWeb3(function (error, block) {
     if (!error) {
-      self.connectInfo = 'Connected to ' + self.web3.currentProvider.host + '. Current block number: ' + block
+      self.connectInfo = 'Connected to ' + util.web3.currentProvider.host + '. Current block number: ' + block
     } else {
-      self.connectInfo = 'Unable to connect to ' + self.web3.currentProvider.host + '. ' + error.message
+      self.connectInfo = 'Unable to connect to ' + util.web3.currentProvider.host + '. ' + error.message
     }
     yo.update(self.view, self.render())
   })
@@ -90,7 +91,7 @@ TxBrowser.prototype.updateWeb3Url = function (newhost) {
 
 TxBrowser.prototype.checkWeb3 = function (callback) {
   try {
-    this.web3.eth.getBlockNumber(function (error, block) {
+    util.web3.eth.getBlockNumber(function (error, block) {
       callback(error, block)
     })
   } catch (e) {
@@ -121,7 +122,7 @@ TxBrowser.prototype.init = function (ev) {
 TxBrowser.prototype.connectionSetting = function () {
   if (this.displayConnectionSetting) {
     var self = this
-    return yo`<div style=${ui.formatCss(style.vmargin)}><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${this.web3.currentProvider ? this.web3.currentProvider.host : ' - none - '} type='text' />
+    return yo`<div style=${ui.formatCss(style.vmargin)}><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${util.web3.currentProvider ? util.web3.currentProvider.host : ' - none - '} type='text' />
               <span>${this.connectInfo}</span></div>`
   } else {
     return ''

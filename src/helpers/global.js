@@ -4,5 +4,6 @@ module.exports = {
     for (var property in source) {
       destination[property] = source[property]
     }
-  }
+  },
+  web3: null
 }

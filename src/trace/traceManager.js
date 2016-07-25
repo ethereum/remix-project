@@ -4,14 +4,14 @@ var TraceRetriever = require('./traceRetriever')
 var TraceCache = require('./traceCache')
 var TraceStepManager = require('./traceStepManager')
 var traceHelper = require('../helpers/traceHelper')
+var util = require('../helpers/global')
 
-function TraceManager (_web3) {
-  this.web3 = _web3
+function TraceManager () {
   this.isLoading = false
   this.trace = null
   this.traceCache = new TraceCache()
   this.traceAnalyser = new TraceAnalyser(this.traceCache)
-  this.traceRetriever = new TraceRetriever(_web3)
+  this.traceRetriever = new TraceRetriever()
   this.traceStepManager = new TraceStepManager(this.traceAnalyser)
   this.tx
 }
@@ -20,7 +20,7 @@ function TraceManager (_web3) {
 TraceManager.prototype.resolveTrace = function (tx, callback) {
   this.tx = tx
   this.init()
-  if (!this.web3) callback('web3 not loaded', false)
+  if (!util.web3) callback('web3 not loaded', false)
   this.isLoading = true
   var self = this
   this.traceRetriever.getTrace(tx.hash, function (error, result) {

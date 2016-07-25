@@ -1,49 +1,22 @@
 var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
 
 function web3VmProvider () {
+  var self = this
   this.vm
   this.vmTraces = {}
   this.txs = {}
   this.processingHash
   this.incr = 0
-}
-
-var hexConvert = function (ints) {
-  var ret = '0x'
-  for (var i = 0; i < ints.length; i++) {
-    try {
-      var h = ints[i]
-      if (h) {
-        h = h.toString(16)
-        ret += ('0x' + h) < 0x10 ? '0' + h : h
-      } else {
-        ret += '00'
-      }
-    } catch (e) {
-      console.log('hexconvert ' + i + ' ' + ints.length)
-      console.log(e)
-    }
-  }
-  return ret
-}
-
-var hexListConvert = function (intsList) {
-  var ret = []
-  for (var k in intsList) {
-    ret.push(hexConvert(intsList[k]))
-  }
-  return ret
-}
-
-var formatMemory = function (mem) {
-  var hexMem = hexConvert(mem).substr(2)
-  var ret = []
-  for (var k = 0; k < hexMem.length; k += 32) {
-    var row = hexMem.substr(k, 32)
-    ret.push(row)
-  }
-  return ret
+  this.eth = {}
+  this.debug = {}
+  this.eth.getCode = function (address, cb) { return self.getCode(address, cb) }
+  this.eth.getTransaction = function (hash, cb) { return self.getTransaction(hash, cb) }
+  this.eth.getTransactionFromBlock = function (blockNumber, txIndex, cb) { return self.getTransactionFromBlock(blockNumber, txIndex, cb) }
+  this.eth.getBlockNumber = function (cb) { return self.getBlockNumber(cb) }
+  this.debug.traceTransaction = function (hash, options, cb) { return self.traceTransaction(hash, options, cb) }
+  this.debug.storageAt = function (blockNumber, txIndex, address, cb) { return self.storageAt(blockNumber, txIndex, address, cb) }
+  this.providers = { 'HttpProvider': function (url) {} }
+  this.currentProvider = {'host': 'vm provider'}
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
@@ -109,9 +82,8 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     storage: data.storage,
     op: data.opcode.name,
     pc: data.pc,
-    gas: data.opcode.fee.toString(),
-    gasLeft: data.gasLeft.toString(),
-    gasCost: self.vmTraces[self.processingHash].structLogs.length > 0 ? ((new BN(self.vmTraces[self.processingHash].structLogs[0].gasLeft)) - data.gasLeft).toString() : data.opcode.fee.toString()
+    gasCost: data.opcode.fee.toString(),
+    gas: data.gasLeft.toString()
   }
   self.vmTraces[self.processingHash].structLogs.push(step)
 }
@@ -141,6 +113,8 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
 
 web3VmProvider.prototype.storageAt = function (blockNumber, txIndex, address, cb) { cb(null, {}) }
 
+web3VmProvider.prototype.getBlockNumber = function (cb) { cb(null, 'vm provider') }
+
 web3VmProvider.prototype.getTransaction = function (txHash, cb) {
   if (this.txs[txHash]) {
     if (cb) {
@@ -157,12 +131,44 @@ web3VmProvider.prototype.getTransaction = function (txHash, cb) {
 }
 
 web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txIndex, cb) {
-  var mes = 'not supposed to be needed by remix'
+  var mes = 'not supposed to be needed by remix in vmmode'
   console.log(mes)
   if (cb) {
     cb(mes, null)
   }
   throw mes
+}
+
+var hexConvert = function (ints) {
+  var ret = '0x'
+  for (var i = 0; i < ints.length; i++) {
+    var h = ints[i]
+    if (h) {
+      h = h.toString(16)
+      ret += ('0x' + h) < 0x10 ? '0' + h : h
+    } else {
+      ret += '00'
+    }
+  }
+  return ret
+}
+
+var hexListConvert = function (intsList) {
+  var ret = []
+  for (var k in intsList) {
+    ret.push(hexConvert(intsList[k]))
+  }
+  return ret
+}
+
+var formatMemory = function (mem) {
+  var hexMem = hexConvert(mem).substr(2)
+  var ret = []
+  for (var k = 0; k < hexMem.length; k += 32) {
+    var row = hexMem.substr(k, 32)
+    ret.push(row)
+  }
+  return ret
 }
 
 module.exports = web3VmProvider

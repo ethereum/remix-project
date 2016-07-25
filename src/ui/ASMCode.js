@@ -4,9 +4,9 @@ var yo = require('yo-yo')
 var CodeManager = require('../code/codeManager')
 var ui = require('../helpers/ui')
 
-function ASMCode (_parent, _traceManager, _web3) {
+function ASMCode (_parent, _traceManager) {
   this.parent = _parent
-  this.codeManager = new CodeManager(_web3, _traceManager)
+  this.codeManager = new CodeManager(_traceManager)
   this.code
   this.address
   this.codeView
