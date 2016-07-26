@@ -10,7 +10,7 @@ var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var Web3Providers = require('../web3Provider/web3Providers')
-var init = require('../helpers/init')
+var DummyProvider = require('../web3Provider/dummyProvider')
 
 function Ethdebugger () {
   util.extend(this, new EventManager())
@@ -21,8 +21,8 @@ function Ethdebugger () {
 
   this.view
   this.web3Providers = new Web3Providers()
-  this.addProvider('INTERNAL', init.loadWeb3())
-  this.switchProvider('INTERNAL')
+  this.addProvider('DUMMYWEB3', new DummyProvider())
+  this.switchProvider('DUMMYWEB3')
   this.traceManager = new TraceManager()
 
   var self = this
