@@ -19,7 +19,6 @@ function UniversalDApp (contracts, options, transactionDebugger) {
   self.web3 = options.web3;
   self.transactionDebugger = transactionDebugger;
   transactionDebugger.addProvider('EXTERNAL', self.web3);
-  transactionDebugger.switchProvider('EXTERNAL')
   if (options.mode === 'vm') {
     // FIXME: use `options.vm` or `self.vm` consistently
     options.vm = true;
@@ -28,7 +27,6 @@ function UniversalDApp (contracts, options, transactionDebugger) {
 
     self.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
     transactionDebugger.addProvider('VM', self.vm);
-    transactionDebugger.switchProvider('VM')
     self.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
     self.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
   } else if (options.mode !== 'web3') {
@@ -365,6 +363,16 @@ UniversalDApp.prototype.getCallButton = function (args) {
     return $debugTx;
   };
 
+  var getDebugCall = function (result) {
+    var $debugTx = $('<div class="debugCall">');
+    var $button = $('<button class="debug">Debug Call</button>');
+    $button.click(function () {
+      self.transactionDebugger.debug(result);
+    });
+    $debugTx.append($button);
+    return $debugTx;
+  };
+
   var getGasUsedOutput = function (result, vmResult) {
     var $gasUsed = $('<div class="gasUsed">');
     var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
@@ -517,7 +525,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
         if (decoded) {
           $result.append(decoded);
         }
-        $result.append(getDebugTransaction(result));
+        if (args.abi.constant) {
+          $result.append(getDebugCall(result));
+        } else {
+          $result.append(getDebugTransaction(result));
+        }
       } else if (args.abi.constant && !isConstructor) {
         clearOutput($result);
         $result.append(getReturnOutput(result)).append(getGasUsedOutput({}));
@@ -654,6 +666,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
 
   var tx;
   if (!self.vm) {
+    self.transactionDebugger.switchProvider('EXTERNAL');
     tx = {
       from: self.options.getAddress ? self.options.getAddress() : self.web3.eth.accounts[0],
       to: to,
@@ -686,6 +699,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     }
   } else {
     try {
+      self.transactionDebugger.switchProvider('VM');
       var address = self.options.getAddress ? self.options.getAddress() : self.getAccounts()[0];
       var account = self.accounts[address];
       tx = new EthJSTX({
