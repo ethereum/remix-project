@@ -209,6 +209,7 @@ body {
 #header #optionViews.publishView #publishView { display: block; }
 #header #optionViews.envView #envView { display: block; }
 #header #optionViews.debugView #debugView { display: block; }
+#header #optionViews.verificationView #verificationView { display: block; }
 
 #header #optionViews.txView input,
 #header #optionViews.txView select {
@@ -271,6 +272,11 @@ body {
 .col2 {
     width: 70%;
     float: left;
+}
+
+#formalVerificationInput {
+    height: 4.5em;
+    width: 100%;
 }
 
 .contract.hide {

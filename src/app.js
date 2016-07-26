@@ -14,6 +14,7 @@ var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
 var ExecutionContext = require('./app/execution-context');
 var Debugger = require('./app/debugger');
+var FormalVerification = require('./app/formalVerification');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -437,7 +438,8 @@ var run = function () {
     selectTab($('ul#options li.debugView'));
   };
   var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger);
-  var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, updateFiles);
+  var formalVerification = new FormalVerification($('#verificationView'), renderer);
+  var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, formalVerification, updateFiles);
   executionContext.setCompiler(compiler);
 
   function setVersionText (text) {

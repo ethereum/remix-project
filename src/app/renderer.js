@@ -7,17 +7,20 @@ var utils = require('./utils');
 function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
   var detailsOpen = {};
 
-  function renderError (message) {
+  function renderError (message, container, noAnnotations) {
     var type = utils.errortype(message);
     var $pre = $('<pre />').text(message);
     var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
-    $('#output').append($error);
+    if (container === undefined) {
+      container = $('#output');
+    }
+    container.append($error);
     var err = message.match(/^([^:]*):([0-9]*):(([0-9]*):)? /);
     if (err) {
       var errFile = err[1];
       var errLine = parseInt(err[2], 10) - 1;
       var errCol = err[4] ? parseInt(err[4], 10) : 0;
-      if (errFile === '' || errFile === utils.fileNameFromKey(editor.getCacheFile())) {
+      if (!noAnnotations && (errFile === '' || errFile === utils.fileNameFromKey(editor.getCacheFile()))) {
         editor.addAnnotation({
           row: errLine,
           column: errCol,
