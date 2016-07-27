@@ -10,7 +10,7 @@
     "browser-test-remote-chrome": "nightwatch --config nightwatch.js --env chrome",
     "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
     "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
-    "csslint": "csslint assets/css/",
+    "csslint": "csslint --ignore=order-alphabetical assets/css/",
     "downloadsolc": "rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
     "lint": "semistandard",
     "serve": "http-server ."
