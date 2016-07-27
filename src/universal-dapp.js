@@ -152,6 +152,12 @@ UniversalDApp.prototype.render = function () {
     self.$el.append(self.getABIInputForm());
   } else {
     for (var c in self.contracts) {
+      // This is an abstract contract. Do not display.
+      // FIXME: maybe have a flag for this in the JSON?
+      if (self.contracts[c].bytecode.length === 0) {
+        continue;
+      }
+
       var $contractEl = $('<div class="contract"/>');
 
       if (self.contracts[c].address) {
