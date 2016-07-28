@@ -144,8 +144,11 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
     }
     details.append($('<span class="col1">Functions</span>'));
     details.append($('<pre/>').text(funHashes));
-    details.append($('<span class="col1">Gas Estimates</span>'));
-    details.append($('<pre/>').text(formatGasEstimates(contract.gasEstimates)));
+    var gasEstimates = formatGasEstimates(contract.gasEstimates);
+    if (gasEstimates) {
+      details.append($('<span class="col1">Gas Estimates</span>'));
+      details.append($('<pre/>').text(gasEstimates));
+    }
     if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0) {
       details.append(tableRow('Runtime Bytecode', contract.runtimeBytecode));
     }
@@ -162,6 +165,10 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
   };
 
   var formatGasEstimates = function (data) {
+    // FIXME: the whole gasEstimates object should be nil instead
+    if (data.creation === undefined && data.external === undefined && data.internal === undefined) {
+      return;
+    }
     var gasToText = function (g) { return g === null ? 'unknown' : g; };
     var text = '';
     var fun;
