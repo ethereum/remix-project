@@ -152,12 +152,6 @@ UniversalDApp.prototype.render = function () {
     self.$el.append(self.getABIInputForm());
   } else {
     for (var c in self.contracts) {
-      // This is an abstract contract. Do not display.
-      // FIXME: maybe have a flag for this in the JSON?
-      if (self.contracts[c].bytecode.length === 0) {
-        continue;
-      }
-
       var $contractEl = $('<div class="contract"/>');
 
       if (self.contracts[c].address) {
@@ -167,7 +161,13 @@ UniversalDApp.prototype.render = function () {
         if (self.contracts[c].bytecode) {
           $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'));
         }
-        $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]));
+        $contractEl.append($title);
+
+        // Only display creation interface for non-abstract contracts.
+        // FIXME: maybe have a flag for this in the JSON?
+        if (self.contracts[c].bytecode.length !== 0) {
+          $contractEl.append(self.getCreateInterface($contractEl, self.contracts[c]));
+        }
       }
       self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
     }
