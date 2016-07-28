@@ -1,15 +1,10 @@
 'use strict'
 var codeUtils = require('./codeUtils')
+var util = require('../helpers/global')
 
 module.exports = {
-  web3: null,
-
   codes: {}, // assembly items instructions list by contract addesses
   instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
-
-  setWeb3: function (web3) {
-    this.web3 = web3
-  },
 
   resolveCode: function (address, vmTraceIndex, transaction, callBack) {
     var cache = this.getExecutingCodeFromCache(address)
@@ -26,7 +21,7 @@ module.exports = {
 
   loadCode: function (address, callback) {
     console.log('loading new code from web3 ' + address)
-    this.web3.eth.getCode(address, function (error, result) {
+    util.web3.eth.getCode(address, function (error, result) {
       if (error) {
         console.log(error)
       } else {

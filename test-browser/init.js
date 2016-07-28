@@ -15,7 +15,10 @@ function injectScript (file, browser, callback) {
       browser.execute(function (data) {
         var vmdebugger = document.getElementById('app').vmdebugger
         data = JSON.parse(data)
-        vmdebugger.web3.eth.getCode = function (address, callback) {
+        var uiTestweb3 = {}
+        uiTestweb3.eth = {}
+        uiTestweb3.debug = {}
+        uiTestweb3.eth.getCode = function (address, callback) {
           if (callback) {
             callback(null, data.testCodes[address])
           } else {
@@ -23,15 +26,15 @@ function injectScript (file, browser, callback) {
           }
         }
 
-        vmdebugger.web3.debug.traceTransaction = function (txHash, options, callback) {
+        uiTestweb3.debug.traceTransaction = function (txHash, options, callback) {
           callback(null, data.testTraces[txHash])
         }
 
-        vmdebugger.web3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
+        uiTestweb3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
           callback(null, {})
         }
 
-        vmdebugger.web3.eth.getTransaction = function (txHash, callback) {
+        uiTestweb3.eth.getTransaction = function (txHash, callback) {
           if (callback) {
             callback(null, data.testTxs[txHash])
           } else {
@@ -39,7 +42,7 @@ function injectScript (file, browser, callback) {
           }
         }
 
-        vmdebugger.web3.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
+        uiTestweb3.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
           if (callback) {
             callback(null, data.testTxsByBlock[blockNumber + '-' + txIndex])
           } else {
@@ -47,9 +50,16 @@ function injectScript (file, browser, callback) {
           }
         }
 
-        vmdebugger.web3.eth.getBlockNumber = function (callback) { callback(null, 'web3 modified for testing purposes :)') }
+        uiTestweb3.eth.getBlockNumber = function (callback) { callback(null, 'web3 modified for testing purposes :)') }
 
-        vmdebugger.web3.currentProvider = {host: 'web3 modified for testing purposes :)'}
+        uiTestweb3.eth.providers = { 'HttpProvider': function (url) {} }
+
+        uiTestweb3.eth.setProvider = function (provider) {}
+
+        uiTestweb3.currentProvider = {host: 'web3 modified for testing purposes :)'}
+
+        vmdebugger.addProvider('TEST', uiTestweb3)
+        vmdebugger.switchProvider('TEST')
       }, [result], function () {
         callback()
       })

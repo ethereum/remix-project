@@ -1,22 +1,31 @@
 'use strict'
 var TraceManager = require('../src/trace/traceManager')
 var tape = require('tape')
-var init = require('../src/helpers/init')
+var Web3Providers = require('../src/web3Provider/web3Providers')
+var util = require('../src/helpers/global')
 var web3Test = require('./resources/testWeb3')
-var initWeb3 = require('./init')
 
 tape('TraceManager', function (t) {
   var traceManager
 
   t.test('TraceManager.init', function (st) {
-    var web3 = init.loadWeb3()
-    initWeb3.overrideWeb3(web3, web3Test)
-    traceManager = new TraceManager(web3)
-    st.end()
+    var web3Providers = new Web3Providers()
+    web3Providers.addProvider('TEST', web3Test)
+    web3Providers.get('TEST', function (error, obj) {
+      if (error) {
+        var mes = 'provider TEST not defined'
+        console.log(mes)
+        st.fail(mes)
+      } else {
+        util.web3 = obj
+        traceManager = new TraceManager()
+        st.end()
+      }
+    })
   })
 
   t.test('TraceManager.resolveTrace', function (st) {
-    var tx = traceManager.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    var tx = util.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     traceManager.resolveTrace(tx, function (error, result) {
       if (error) {
         st.fail(' - traceManager.resolveTrace - failed ' + result)
@@ -45,7 +54,7 @@ tape('TraceManager', function (t) {
   })
 
   t.test('TraceManager.getStorageAt', function (st) {
-    var tx = traceManager.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    var tx = util.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     traceManager.getStorageAt(110, tx, function (error, result) {
       if (error) {
         st.fail(error)

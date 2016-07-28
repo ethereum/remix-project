@@ -1,36 +1,32 @@
 'use strict'
 var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
-var TraceManager = require('./trace/traceManager')
+var TraceManager = require('../trace/traceManager')
 var VmDebugger = require('./VmDebugger')
 var Sticker = require('./Sticker')
 var style = require('./styles/basicStyles')
-var util = require('./helpers/global')
-var EventManager = require('./lib/eventManager')
+var util = require('../helpers/global')
+var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
-var init = require('./helpers/init')
-var ui = require('./helpers/ui')
+var ui = require('../helpers/ui')
+var Web3Providers = require('../web3Provider/web3Providers')
+var DummyProvider = require('../web3Provider/dummyProvider')
 
-function Ethdebugger (_web3) {
+function Ethdebugger () {
   util.extend(this, new EventManager())
+
   this.currentStepIndex = -1
   this.tx
   this.statusMessage = ''
 
   this.view
-  this.displayConnectionSetting = true
-  if (_web3) {
-    this.web3 = _web3
-    init.extendWeb3(this.web3)
-    this.displayConnectionSetting = false
-  } else {
-    this.web3 = init.loadWeb3()
-  }
-
-  this.traceManager = new TraceManager(this.web3)
+  this.web3Providers = new Web3Providers()
+  this.addProvider('DUMMYWEB3', new DummyProvider())
+  this.switchProvider('DUMMYWEB3')
+  this.traceManager = new TraceManager()
 
   var self = this
-  this.txBrowser = new TxBrowser(this.web3, this.displayConnectionSetting)
+  this.txBrowser = new TxBrowser(this)
   this.txBrowser.register('newTxLoading', this, function () {
     self.unLoad()
   })
@@ -44,8 +40,29 @@ function Ethdebugger (_web3) {
   this.stepManager.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
   })
-  this.vmDebugger = new VmDebugger(this, this.traceManager, this.web3)
-  this.sticker = new Sticker(this, this.traceManager, this.web3)
+  this.vmDebugger = new VmDebugger(this, this.traceManager)
+  this.sticker = new Sticker(this, this.traceManager)
+}
+
+Ethdebugger.prototype.web3 = function () {
+  return util.web3
+}
+
+Ethdebugger.prototype.addProvider = function (type, obj) {
+  this.web3Providers.addProvider(type, obj)
+  this.trigger('providerAdded', [type])
+}
+
+Ethdebugger.prototype.switchProvider = function (type) {
+  var self = this
+  this.web3Providers.get(type, function (error, obj) {
+    if (error) {
+      console.log('provider ' + type + ' not defined')
+    } else {
+      util.web3 = obj
+      self.trigger('providerChanged', [type])
+    }
+  })
 }
 
 Ethdebugger.prototype.debug = function (tx) {

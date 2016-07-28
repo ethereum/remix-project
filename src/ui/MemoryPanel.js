@@ -1,6 +1,6 @@
 'use strict'
 var BasicPanel = require('./BasicPanel')
-var util = require('./helpers/ui')
+var util = require('../helpers/ui')
 var yo = require('yo-yo')
 
 function MemoryPanel (_parent, _traceManager) {

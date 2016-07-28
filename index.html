@@ -6,7 +6,9 @@
     <script type="text/javascript">
       function loadDebugger() {
         var container = document.getElementById('app')
-        container.vmdebugger = new window.remix.Debugger()
+        container.vmdebugger = new window.remix.ui.Debugger()
+        container.vmdebugger.addProvider('INTERNAL')
+        container.vmdebugger.switchProvider('INTERNAL')
         container.appendChild(container.vmdebugger.render())
       }
     </script>

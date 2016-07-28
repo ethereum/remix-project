@@ -40,7 +40,6 @@ TraceAnalyser.prototype.buildReturnValues = function (index, step) {
     var offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
     var size = 2 * parseInt(step.stack[step.stack.length - 2], 16)
     var memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
-    console.log('push returnValue ' + index)
     this.traceCache.pushReturnValue(index, '0x' + memory.join('').substr(offset, size))
   }
 }

@@ -1,6 +1,6 @@
 'use strict'
 var BasicPanel = require('./BasicPanel')
-var ui = require('./helpers/ui')
+var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
 function StackPanel (_parent, _traceManager) {

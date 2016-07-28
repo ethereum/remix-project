@@ -1,10 +1,12 @@
 'use strict'
 var init = require('../init')
 var web3Override = {}
+web3Override.eth = {}
+web3Override.debug = {}
 var data = init.readFile(require('path').resolve(__dirname, 'testWeb3.json'))
 var data = JSON.parse(data)
 
-web3Override.getCode = function (address, callback) {
+web3Override.eth.getCode = function (address, callback) {
   if (callback) {
     callback(null, data.testCodes[address])
   } else {
@@ -12,15 +14,15 @@ web3Override.getCode = function (address, callback) {
   }
 }
 
-web3Override.traceTransaction = function (txHash, options, callback) {
+web3Override.debug.traceTransaction = function (txHash, options, callback) {
   callback(null, data.testTraces[txHash])
 }
 
-web3Override.storageAt = function (blockNumber, txIndex, address, callback) {
+web3Override.debug.storageAt = function (blockNumber, txIndex, address, callback) {
   callback(null, {})
 }
 
-web3Override.getTransaction = function (txHash, callback) {
+web3Override.eth.getTransaction = function (txHash, callback) {
   if (callback) {
     callback(null, data.testTxs[txHash])
   } else {
@@ -28,7 +30,7 @@ web3Override.getTransaction = function (txHash, callback) {
   }
 }
 
-web3Override.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
+web3Override.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
   if (callback) {
     callback(null, data.testTxsByBlock[blockNumber + '-' + txIndex])
   } else {
@@ -36,7 +38,13 @@ web3Override.getTransactionFromBlock = function (blockNumber, txIndex, callback)
   }
 }
 
-web3Override.getBlockNumber = function (callback) { callback('web3 modified testing purposes :)') }
+web3Override.eth.getBlockNumber = function (callback) { callback('web3 modified testing purposes :)') }
+
+web3Override.eth.setProvider = function (provider) {}
+
+web3Override.eth.providers = { 'HttpProvider': function (url) {} }
+
+web3Override.eth.currentProvider = {'host': 'test provider'}
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = web3Override

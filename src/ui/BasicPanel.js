@@ -1,7 +1,7 @@
 'use strict'
 var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
-var ui = require('./helpers/ui')
+var ui = require('../helpers/ui')
 
 function BasicPanel (_name, _width, _height) {
   this.data
