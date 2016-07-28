@@ -74,12 +74,17 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
       removable_instances: true,
       renderOutputModifier: function (contractName, $contractOutput) {
         var contract = data.contracts[contractName];
-        return $contractOutput
-          .append(textRow('Bytecode', contract.bytecode))
-          .append(textRow('Interface', contract['interface']))
-          .append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
-          .append(textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'))
-          .append(getDetails(contract, source, contractName));
+        if (contract.bytecode) {
+          $contractOutput.append(textRow('Bytecode', contract.bytecode));
+        }
+        if (contract['interface'] !== '[]\n') {
+          $contractOutput.append(textRow('Interface', contract['interface']));
+        }
+        if (contract.bytecode) {
+          $contractOutput.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'));
+          $contractOutput.append(textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'));
+        }
+        return $contractOutput.append(getDetails(contract, source, contractName));
       }
     }, transactionDebugger);
 
@@ -129,8 +134,10 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
   var getDetails = function (contract, source, contractName) {
     var button = $('<button>Toggle Details</button>');
     var details = $('<div style="display: none;"/>')
-      .append(tableRow('Solidity Interface', contract.solidity_interface))
-      .append(tableRow('Opcodes', contract.opcodes));
+      .append(tableRow('Solidity Interface', contract.solidity_interface));
+    if (contract.opcodes !== '') {
+      details.append(tableRow('Opcodes', contract.opcodes));
+    }
     var funHashes = '';
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
