@@ -161,13 +161,7 @@ UniversalDApp.prototype.render = function () {
         if (self.contracts[c].bytecode) {
           $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'));
         }
-        $contractEl.append($title);
-
-        // Only display creation interface for non-abstract contracts.
-        // FIXME: maybe have a flag for this in the JSON?
-        if (self.contracts[c].bytecode.length !== 0) {
-          $contractEl.append(self.getCreateInterface($contractEl, self.contracts[c]));
-        }
+        $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]));
       }
       self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
     }
@@ -219,9 +213,16 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $close.click(function () { self.$el.remove(); });
     $createInterface.append($close);
   }
-  var $newButton = self.getInstanceInterface(contract);
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract); });
-  $createInterface.append($atButton).append($newButton);
+  $createInterface.append($atButton);
+
+  // Only display creation interface for non-abstract contracts.
+  // FIXME: maybe have a flag for this in the JSON?
+  if (contract.bytecode.length !== 0) {
+    var $newButton = self.getInstanceInterface(contract);
+    $createInterface.append($newButton);
+  }
+
   return $createInterface;
 };
 
