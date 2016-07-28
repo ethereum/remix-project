@@ -9,7 +9,7 @@
     "browser-test-remote-ie": "nightwatch --config nightwatch.js --env ie",
     "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
     "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
-    "csslint": "csslint --ignore=order-alphabetical assets/css/",
+    "csslint": "csslint --ignore=order-alphabetical --exclude-list='assets/css/font-awesome.min.css' assets/css/",
     "downloadsolc": "rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
     "lint": "semistandard",
     "serve": "http-server .",
