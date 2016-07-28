@@ -77,7 +77,7 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
         if (contract.bytecode) {
           $contractOutput.append(textRow('Bytecode', contract.bytecode));
         }
-        if (contract['interface'] !== '[]\n') {
+        if ((contract['interface'] !== '[]\n') && (contract['interface'] !== '[]')) {
           $contractOutput.append(textRow('Interface', contract['interface']));
         }
         if (contract.bytecode) {
