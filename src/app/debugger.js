@@ -1,6 +1,6 @@
 var remix = require('ethereum-remix');
 
-function Debugger (executionContext, id) {
+function Debugger (id) {
   this.el = document.querySelector(id);
   this.debugger = new remix.ui.Debugger();
   this.el.appendChild(this.debugger.render());

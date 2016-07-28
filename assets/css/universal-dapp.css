@@ -200,6 +200,10 @@
 	width: 25%;
 }
 
+.udapp .contractProperty button.debug {
+	width: 3%;
+}
+
 .udapp .contractProperty .call {
 	background-color: #FF8B8B;
 	border-color: #FF8B8B;

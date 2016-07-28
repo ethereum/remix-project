@@ -15,6 +15,7 @@ var Compiler = require('./app/compiler');
 var ExecutionContext = require('./app/execution-context');
 var Debugger = require('./app/debugger');
 var FormalVerification = require('./app/formalVerification');
+var EthJSVM = require('ethereumjs-vm');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -431,13 +432,17 @@ var run = function () {
     $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')));
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
   }
-
-  var executionContext = new ExecutionContext();
-  var transactionDebugger = new Debugger(executionContext, '#debugger');
+  var transactionDebugger = new Debugger('#debugger');
+  var vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
+  vm.stateManager.checkpoint();
+  transactionDebugger.addProvider('VM', vm);
+  transactionDebugger.switchProvider('VM');
+  var executionContext = new ExecutionContext(transactionDebugger);
+  transactionDebugger.addProvider('EXTERNAL', executionContext.web3());
   transactionDebugger.onDebugRequested = function () {
     selectTab($('ul#options li.debugView'));
   };
-  var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger);
+  var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger, vm);
   var formalVerification = new FormalVerification($('#verificationView'), renderer);
   var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, formalVerification, updateFiles);
   executionContext.setCompiler(compiler);
