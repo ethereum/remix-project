@@ -175,14 +175,21 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
     if ('creation' in data) {
       text += 'Creation: ' + gasToText(data.creation[0]) + ' + ' + gasToText(data.creation[1]) + '\n';
     }
-    text += 'External:\n';
-    for (fun in data.external) {
-      text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+
+    if ('external' in data) {
+      text += 'External:\n';
+      for (fun in data.external) {
+        text += '  ' + fun + ': ' + gasToText(data.external[fun]) + '\n';
+      }
     }
-    text += 'Internal:\n';
-    for (fun in data.internal) {
-      text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
+
+    if ('internal' in data) {
+      text += 'Internal:\n';
+      for (fun in data.internal) {
+        text += '  ' + fun + ': ' + gasToText(data.internal[fun]) + '\n';
+      }
     }
+
     return text;
   };
 
