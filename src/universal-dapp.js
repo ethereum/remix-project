@@ -730,7 +730,9 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
 
         tx.gas = resp;
 
-        self.web3.eth.sendTransaction(tx, function (err, resp) {
+        var sendTransaction = self.personalMode ? self.web3.personal.unlockAccountAndSendTransaction : self.web3.eth.sendTransaction;
+
+        sendTransaction(tx, function (err, resp) {
           if (err) {
             return cb(err, resp);
           }
