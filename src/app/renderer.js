@@ -77,9 +77,7 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
         if (contract.bytecode) {
           $contractOutput.append(textRow('Bytecode', contract.bytecode));
         }
-        if ((contract['interface'] !== '[]\n') && (contract['interface'] !== '[]')) {
-          $contractOutput.append(textRow('Interface', contract['interface']));
-        }
+        $contractOutput.append(textRow('Interface', contract['interface']));
         if (contract.bytecode) {
           $contractOutput.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'));
           $contractOutput.append(textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'));
