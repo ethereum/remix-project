@@ -77,7 +77,9 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
         if (contract.bytecode) {
           $contractOutput.append(textRow('Bytecode', contract.bytecode));
         }
+
         $contractOutput.append(textRow('Interface', contract['interface']));
+
         if (contract.bytecode) {
           $contractOutput.append(textRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'));
           $contractOutput.append(textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'));
@@ -133,28 +135,34 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
     var button = $('<button>Toggle Details</button>');
     var details = $('<div style="display: none;"/>')
       .append(tableRow('Solidity Interface', contract.solidity_interface));
+
     if (contract.opcodes !== '') {
       details.append(tableRow('Opcodes', contract.opcodes));
     }
+
     var funHashes = '';
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
     }
     details.append($('<span class="col1">Functions</span>'));
     details.append($('<pre/>').text(funHashes));
+
     var gasEstimates = formatGasEstimates(contract.gasEstimates);
     if (gasEstimates) {
       details.append($('<span class="col1">Gas Estimates</span>'));
       details.append($('<pre/>').text(gasEstimates));
     }
+
     if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0) {
       details.append(tableRow('Runtime Bytecode', contract.runtimeBytecode));
     }
+
     if (contract.assembly !== null) {
       details.append($('<span class="col1">Assembly</span>'));
       var assembly = $('<pre/>').text(formatAssemblyText(contract.assembly, '', source));
       details.append(assembly);
     }
+
     button.click(function () { detailsOpen[contractName] = !detailsOpen[contractName]; details.toggle(); });
     if (detailsOpen[contractName]) {
       details.show();
