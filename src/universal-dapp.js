@@ -18,6 +18,7 @@ function UniversalDApp (executionContext, options, txdebugger) {
 
   self.options = options || {};
   self.$el = $('<div class="udapp" />');
+  self.personalMode = self.options.personalMode || false;
   self.contracts;
   self.getAddress;
   self.getValue;
@@ -52,6 +53,9 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
 
 UniversalDApp.prototype.newAccount = function (password) {
   if (!this.executionContext.isVM()) {
+    if (!this.personalMode) {
+      throw new Error('Not running in personal mode');
+    }
     this.web3.personal.newAccount(password);
   } else {
     var privateKey;
@@ -86,13 +90,11 @@ UniversalDApp.prototype.getAccounts = function (cb) {
   if (!self.executionContext.isVM()) {
     // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
     // See: https://github.com/ethereum/web3.js/issues/442
-    self.web3.personal.getListAccounts(function (err, res) {
-      if (err) {
-        self.web3.eth.getAccounts(cb);
-      } else {
-        cb(err, res);
-      }
-    });
+    if (self.personalMode) {
+      self.web3.personal.getListAccounts(cb);
+    } else {
+      self.web3.eth.getAccounts(cb);
+    }
   } else {
     if (!self.accounts) {
       return cb('No accounts?');
