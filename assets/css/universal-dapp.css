@@ -100,6 +100,14 @@
 	word-wrap: break-word;
 }
 
+.udapp .output .result .debugTx {
+    position: absolute;
+    top: 0.4em;
+    right: 1.4em;
+    height: 1.5em;
+    width: 2.5em;
+}
+
 .udapp .output .result:last-child { margin: 0; }
 
 .udapp .output:empty {
@@ -201,7 +209,7 @@
 }
 
 .udapp .contractProperty button.debug {
-	width: 3%;
+	width: 21px;
 }
 
 .udapp .contractProperty .call {
