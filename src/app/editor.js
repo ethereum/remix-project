@@ -180,6 +180,10 @@ function Editor (loadingFromGist, storage) {
 
     editor.setSession(sessions[SOL_CACHE_FILE]);
     editor.resize(true);
+
+    // Unmap ctrl-t & ctrl-f
+    editor.commands.bindKeys({ 'ctrl-t': null });
+    editor.commands.bindKeys({ 'ctrl-f': null });
   }
 }
 
