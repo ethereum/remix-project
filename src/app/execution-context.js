@@ -13,7 +13,8 @@ if (typeof window.web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 }
 
-function ExecutionContext () {
+function ExecutionContext (_txDebugger) {
+  var txDebugger = _txDebugger;
   var compiler;
   var executionContext = injectedProvider ? 'injected' : 'vm';
 
@@ -59,8 +60,12 @@ function ExecutionContext () {
       executionContext = ev.target.value;
       if (executionContext === 'web3') {
         setProviderFromEndpoint();
+        txDebugger.switchProvider('EXTERNAL');
       } else if (executionContext === 'injected') {
         web3.setProvider(injectedProvider);
+        txDebugger.switchProvider('EXTERNAL');
+      } else if (executionContext === 'vm') {
+        txDebugger.switchProvider('VM');
       }
     }
     compiler.compile();

@@ -1,14 +1,13 @@
 /* global prompt */
 
 var $ = require('jquery');
-var EthJSVM = require('ethereumjs-vm');
 var ethJSUtil = require('ethereumjs-util');
 var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
 
-function UniversalDApp (contracts, options, transactionDebugger) {
+function UniversalDApp (contracts, options, transactionDebugger, vm) {
   var self = this;
 
   self.options = options || {};
@@ -18,14 +17,13 @@ function UniversalDApp (contracts, options, transactionDebugger) {
 
   self.web3 = options.web3;
   self.transactionDebugger = transactionDebugger;
+
   if (options.mode === 'vm') {
     // FIXME: use `options.vm` or `self.vm` consistently
     options.vm = true;
 
     self.accounts = {};
-
-    self.vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
-
+    self.vm = vm;
     self.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
     self.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
   } else if (options.mode !== 'web3') {
@@ -354,7 +352,17 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var getDebugTransaction = function (result) {
     var $debugTx = $('<div class="debugTx">');
-    var $button = $('<button class="debug">Debug Transaction</button>');
+    var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i></button>');
+    $button.click(function () {
+      self.transactionDebugger.debug(result);
+    });
+    $debugTx.append($button);
+    return $debugTx;
+  };
+
+  var getDebugCall = function (result) {
+    var $debugTx = $('<div class="debugCall">');
+    var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i></button>');
     $button.click(function () {
       self.transactionDebugger.debug(result);
     });
@@ -513,6 +521,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
         decoded = decodeResponse(result.vm.return);
         if (decoded) {
           $result.append(decoded);
+        }
+        if (args.abi.constant) {
+          $result.append(getDebugCall(result));
+        } else {
+          $result.append(getDebugTransaction(result));
         }
       } else if (args.abi.constant && !isConstructor) {
         clearOutput($result);
@@ -701,7 +714,10 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         transactions: [],
         uncleHeaders: []
       });
-      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, cb);
+      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
+        result.transactionHash = self.transactionDebugger.web3().releaseCurrentHash(); // used to keep track of the transaction
+        cb(err, result);
+      });
     } catch (e) {
       cb(e, null);
     }

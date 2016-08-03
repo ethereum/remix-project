@@ -4,7 +4,7 @@ var UniversalDApp = require('../universal-dapp.js');
 
 var utils = require('./utils');
 
-function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
+function Renderer (editor, executionContext, updateFiles, transactionDebugger, vm) {
   var detailsOpen = {};
 
   function renderError (message, container, noAnnotations) {
@@ -61,6 +61,9 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
       });
     }
 
+    vm.stateManager.revert(function () {
+      vm.stateManager.checkpoint();
+    });
     var dapp = new UniversalDApp(udappContracts, {
       mode: executionContext.isVM() ? 'vm' : 'web3',
       web3: executionContext.web3(),
@@ -86,7 +89,7 @@ function Renderer (editor, executionContext, updateFiles, transactionDebugger) {
         }
         return $contractOutput.append(getDetails(contract, source, contractName));
       }
-    }, transactionDebugger);
+    }, transactionDebugger, vm);
 
     var $contractOutput = dapp.render();
 
