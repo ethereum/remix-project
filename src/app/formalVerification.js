@@ -1,8 +1,12 @@
 var $ = require('jquery');
+var util = require('../lib/util');
 
-function FormalVerification (outputElement, renderer) {
+/*
+  trigger compilationError
+*/
+function FormalVerification (outputElement) {
+  util.makeEventCapable(this);
   this.outputElement = outputElement;
-  this.renderer = renderer;
 }
 
 FormalVerification.prototype.compiling = function () {
@@ -14,23 +18,19 @@ FormalVerification.prototype.compiling = function () {
 
 FormalVerification.prototype.compilationFinished = function (compilationResult) {
   if (compilationResult.formal === undefined) {
-    this.renderer.error(
-      'Formal verification not supported by this compiler version.',
-      $('#formalVerificationErrors'),
-      true
-    );
+    this.event.trigger('compilationError', ['Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true]);
   } else {
     if (compilationResult.formal['why3'] !== undefined) {
       $('#formalVerificationInput', this.outputElement).val(
         '(* copy this to http://why3.lri.fr/try/ *)' +
         compilationResult.formal['why3']
       )
-      .show();
+        .show();
     }
     if (compilationResult.formal.errors !== undefined) {
       var errors = compilationResult.formal.errors;
       for (var i = 0; i < errors.length; i++) {
-        this.renderer.error(errors[i], $('#formalVerificationErrors'), true);
+        this.event.trigger('compilationError', [errors[i], $('#formalVerificationErrors'), true]);
       }
     }
   }

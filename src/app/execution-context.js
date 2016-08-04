@@ -2,6 +2,8 @@
 
 var $ = require('jquery');
 var Web3 = require('web3');
+var util = require('../lib/util');
+var EthJSVM = require('ethereumjs-vm');
 
 var injectedProvider;
 
@@ -13,14 +15,17 @@ if (typeof window.web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 }
 
-function ExecutionContext (_txDebugger) {
-  var txDebugger = _txDebugger;
-  var compiler;
-  var executionContext = injectedProvider ? 'injected' : 'vm';
+var vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
+vm.stateManager.checkpoint();
 
-  this.setCompiler = function (_compiler) {
-    compiler = _compiler;
-  };
+/*
+  trigger contextChanged
+*/
+
+function ExecutionContext () {
+  var self = this;
+  util.makeEventCapable(this);
+  var executionContext = injectedProvider ? 'injected' : 'vm';
 
   this.isVM = function () {
     return executionContext === 'vm';
@@ -28,6 +33,10 @@ function ExecutionContext (_txDebugger) {
 
   this.web3 = function () {
     return web3;
+  };
+
+  this.vm = function () {
+    return vm;
   };
 
   var $injectedToggle = $('#injected-mode');
@@ -47,7 +56,7 @@ function ExecutionContext (_txDebugger) {
   $web3endpoint.on('change', function () {
     setProviderFromEndpoint();
     if (executionContext === 'web3') {
-      compiler.compile();
+      self.event.trigger('web3EndpointChanged');
     }
   });
 
@@ -60,15 +69,17 @@ function ExecutionContext (_txDebugger) {
       executionContext = ev.target.value;
       if (executionContext === 'web3') {
         setProviderFromEndpoint();
-        txDebugger.switchProvider('EXTERNAL');
+        self.event.trigger('contextChanged', ['web3']);
       } else if (executionContext === 'injected') {
         web3.setProvider(injectedProvider);
-        txDebugger.switchProvider('EXTERNAL');
+        self.event.trigger('contextChanged', ['injected']);
       } else if (executionContext === 'vm') {
-        txDebugger.switchProvider('VM');
+        vm.stateManager.revert(function () {
+          vm.stateManager.checkpoint();
+        });
+        self.event.trigger('contextChanged', ['vm']);
       }
     }
-    compiler.compile();
   }
 
   function setProviderFromEndpoint () {

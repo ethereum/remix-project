@@ -13,9 +13,10 @@ var Editor = require('./app/editor');
 var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
 var ExecutionContext = require('./app/execution-context');
+var UniversalDApp = require('./universal-dapp.js');
 var Debugger = require('./app/debugger');
 var FormalVerification = require('./app/formalVerification');
-var EthJSVM = require('ethereumjs-vm');
+var util = require('./lib/util');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -26,8 +27,12 @@ window.addEventListener('message', function (ev) {
     loadFilesCallback(ev.data[1]);
   }
 }, false);
-
+/*
+  trigger selectTab
+*/
 var run = function () {
+  var self = this;
+  util.makeEventCapable(this);
   var storage = new Storage(updateFiles);
 
   function loadFiles (files) {
@@ -108,6 +113,7 @@ var run = function () {
       el.removeClass('active');
       $('#optionViews').removeClass(cls);
     }
+    self.event.trigger('tabChanged', [cls]);
   };
 
   // ------------------ gist publish --------------
@@ -199,7 +205,7 @@ var run = function () {
       $fileNameInputEl.off('keyup');
 
       if (newName !== originalName && confirm(
-            storage.exists(utils.fileKey(newName))
+          storage.exists(utils.fileKey(newName))
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
         storage.rename(utils.fileKey(originalName), utils.fileKey(newName));
@@ -279,7 +285,7 @@ var run = function () {
   }
 
   //  function widthOfHidden () {
-  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi());
+  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi())
   //  }
 
   function widthOfVisible () {
@@ -408,8 +414,6 @@ var run = function () {
     if (!hidingRHP) compiler.compile();
   });
 
-  function getHidingRHP () { return hidingRHP; }
-
   // ----------------- editor resize ---------------
 
   function onResize () {
@@ -433,19 +437,63 @@ var run = function () {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
   }
   var transactionDebugger = new Debugger('#debugger');
-  var vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
-  vm.stateManager.checkpoint();
-  transactionDebugger.addProvider('VM', vm);
+  var executionContext = new ExecutionContext();
+
+  transactionDebugger.addProvider('VM', executionContext.vm());
   transactionDebugger.switchProvider('VM');
-  var executionContext = new ExecutionContext(transactionDebugger);
+  transactionDebugger.addProvider('INTERNAL', executionContext.web3());
   transactionDebugger.addProvider('EXTERNAL', executionContext.web3());
   transactionDebugger.onDebugRequested = function () {
     selectTab($('ul#options li.debugView'));
   };
-  var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger, vm);
-  var formalVerification = new FormalVerification($('#verificationView'), renderer);
-  var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, formalVerification, updateFiles);
-  executionContext.setCompiler(compiler);
+
+  var udapp = new UniversalDApp(executionContext, {
+    removable: false,
+    removable_instances: true
+  }, transactionDebugger);
+
+  udapp.event.register('debugRequested', this, function (data) {
+    transactionDebugger.debug(data);
+  });
+
+  var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext);
+  var formalVerification = new FormalVerification($('#verificationView'));
+
+  formalVerification.event.register('compilationError', this, function (message, container, noAnnotations) {
+    renderer.error(message, container, noAnnotations);
+  });
+
+  var compiler = new Compiler(editor, queryParams, handleGithubCall, updateFiles);
+
+  executionContext.event.register('contextChanged', this, function (context) {
+    $('#output').empty();
+    context = context === 'vm' ? 'VM' : context;
+    context = context === 'injected' ? 'EXTERNAL' : context;
+    context = context === 'web3' ? 'INTERNAL' : context;
+    transactionDebugger.switchProvider(context);
+    compiler.compile();
+  });
+  executionContext.event.register('web3EndpointChanged', this, function (context) {
+    $('#output').empty();
+    compiler.compile();
+  });
+  compiler.event.register('compilerLoaded', this, function (version) {
+    setVersionText(version);
+    compiler.compile();
+  });
+  compiler.event.register('compilationError', this, function (data) {
+    renderer.error(data);
+  });
+  compiler.event.register('compilationSucceed', this, function (data, source) {
+    if (!hidingRHP) {
+      renderer.contracts(data, source);
+      formalVerification.compilationFinished(data);
+    }
+  });
+  compiler.event.register('isCompiling', this, function () {
+    $('#output').empty();
+    formalVerification.compiling();
+  });
 
   function setVersionText (text) {
     $('#version').text(text);
@@ -459,9 +507,9 @@ var run = function () {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
       // resort to non-worker version in that case.
-      compiler.loadVersion(true, version, setVersionText);
+      compiler.loadVersion(true, version);
     } else {
-      compiler.loadVersion(false, version, setVersionText);
+      compiler.loadVersion(false, version);
     }
   };
 
