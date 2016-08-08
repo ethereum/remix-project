@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 var Web3 = require('web3');
-var util = require('../lib/util');
+var EventManager = require('../lib/eventManager');
 var EthJSVM = require('ethereumjs-vm');
 
 var injectedProvider;
@@ -24,7 +24,7 @@ vm.stateManager.checkpoint();
 
 function ExecutionContext () {
   var self = this;
-  util.makeEventCapable(this);
+  this.event = new EventManager();
   var executionContext = injectedProvider ? 'injected' : 'vm';
 
   this.isVM = function () {

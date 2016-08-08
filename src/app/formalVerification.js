@@ -1,11 +1,11 @@
 var $ = require('jquery');
-var util = require('../lib/util');
+var EventManager = require('../lib/eventManager');
 
 /*
   trigger compilationError
 */
 function FormalVerification (outputElement) {
-  util.makeEventCapable(this);
+  this.event = new EventManager();
   this.outputElement = outputElement;
 }
 

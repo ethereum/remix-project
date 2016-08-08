@@ -6,10 +6,10 @@ var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
-var util = require('./lib/util');
+var EventManager = require('./lib/eventManager');
 
 function UniversalDApp (executionContext, options, txdebugger) {
-  util.makeEventCapable(this);
+  this.event = new EventManager();
   var self = this;
 
   self.options = options || {};

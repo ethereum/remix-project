@@ -16,7 +16,7 @@ var ExecutionContext = require('./app/execution-context');
 var UniversalDApp = require('./universal-dapp.js');
 var Debugger = require('./app/debugger');
 var FormalVerification = require('./app/formalVerification');
-var util = require('./lib/util');
+var EventManager = require('./lib/eventManager');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -32,7 +32,7 @@ window.addEventListener('message', function (ev) {
 */
 var run = function () {
   var self = this;
-  util.makeEventCapable(this);
+  this.event = new EventManager();
   var storage = new Storage(updateFiles);
 
   function loadFiles (files) {

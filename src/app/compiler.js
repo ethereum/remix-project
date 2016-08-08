@@ -5,14 +5,14 @@ var utils = require('./utils');
 
 var Base64 = require('js-base64').Base64;
 
-var util = require('../lib/util');
+var EventManager = require('../lib/eventManager');
 
 /*
   trigger compilationError, compilationSucceed, compilerLoaded, isCompiling
 */
 function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   var self = this;
-  util.makeEventCapable(this);
+  this.event = new EventManager();
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;
