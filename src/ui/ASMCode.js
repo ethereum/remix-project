@@ -1,12 +1,11 @@
 'use strict'
 var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
-var CodeManager = require('../code/codeManager')
 var ui = require('../helpers/ui')
 
-function ASMCode (_parent, _traceManager) {
+function ASMCode (_parent, _codeManager) {
   this.parent = _parent
-  this.codeManager = new CodeManager(_traceManager)
+  this.codeManager = _codeManager
   this.code
   this.address
   this.codeView
@@ -27,13 +26,9 @@ ASMCode.prototype.render = function () {
 }
 
 ASMCode.prototype.init = function () {
-  var self = this
   this.codeManager.register('indexChanged', this, this.indexChanged)
   this.codeManager.register('codeChanged', this, this.codeChanged)
   this.codeManager.register('loadingCode', this, function (address) {})
-  this.parent.register('indexChanged', this, function (index) {
-    self.codeManager.resolveStep(index, self.parent.tx)
-  })
 }
 
 ASMCode.prototype.indexChanged = function (index) {
