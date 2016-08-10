@@ -5,6 +5,7 @@ var BasicPanel = require('./ui/BasicPanel')
 var TraceManager = require('./trace/traceManager')
 var CodeManager = require('./code/codeManager')
 var SourceMappingDecoder = require('./util/sourceMappingDecoder')
+var AstWalker = require('./util/astWalker')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -24,7 +25,8 @@ function modules () {
       BasicPanel: BasicPanel
     },
     util: {
-      SourceMappingDecoder: SourceMappingDecoder
+      SourceMappingDecoder: SourceMappingDecoder,
+      AstWalker: AstWalker
     }
   }
 }
