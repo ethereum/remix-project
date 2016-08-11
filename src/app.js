@@ -454,6 +454,9 @@ var run = function () {
   var loadVersion = function (version) {
     setVersionText('(loading)');
     queryParams.update({version: version});
+    if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
+      version = window.soljsonReleases[version];
+    }
     var isFirefox = typeof InstallTrigger !== 'undefined';
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
       // Workers cannot load js on "file:"-URLs and we get a
@@ -466,7 +469,13 @@ var run = function () {
   };
 
   if (window.soljsonSources !== undefined) {
-    loadVersion(queryParams.get().version || 'soljson-latest.js');
+    var latestRelease = 'soljson-latest.js';
+    if (window.soljsonReleases !== undefined) {
+      for (var release in window.soljsonReleases) {
+        latestRelease = release;
+      }
+    }
+    loadVersion(queryParams.get().version || latestRelease);
   } else {
     loadVersion('soljson.js');
   }
