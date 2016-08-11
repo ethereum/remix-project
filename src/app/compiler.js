@@ -8,7 +8,7 @@ var Base64 = require('js-base64').Base64;
 var EventManager = require('../lib/eventManager');
 
 /*
-  trigger compilationError, compilationSucceed, compilerLoaded, isCompiling
+  trigger compilationFinished, compilerLoaded, compilationStarted
 */
 function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   var self = this;
@@ -44,7 +44,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
 
   var compile = function (missingInputs) {
     editor.clearAnnotations();
-    self.event.trigger('isCompiling', []);
+    self.event.trigger('compilationStarted', []);
     var input = editor.getValue();
     editor.setCacheFileContent(input);
 
@@ -52,7 +52,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     files[utils.fileNameFromKey(editor.getCacheFile())] = input;
     gatherImports(files, missingInputs, function (input, error) {
       if (input === null) {
-        this.event.trigger('compilationError', [error]);
+        this.event.trigger('compilationFinished', [false, error, editor.getValue()]);
       } else {
         var optimize = queryParams.get().optimize;
         compileJSON(input, optimize ? 1 : 0);
@@ -102,14 +102,14 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     var noFatalErrors = true; // ie warnings are ok
 
     if (data['error'] !== undefined) {
-      self.event.trigger('compilationError', [data['error']]);
+      self.event.trigger('compilationFinished', [false, [data['error']], editor.getValue()]);
       if (utils.errortype(data['error']) !== 'warning') {
         noFatalErrors = false;
       }
     }
     if (data['errors'] !== undefined) {
+      self.event.trigger('compilationFinished', [false, data['errors'], editor.getValue()]);
       data['errors'].forEach(function (err) {
-        self.event.trigger('compilationError', [err]);
         if (utils.errortype(err) !== 'warning') {
           noFatalErrors = false;
         }
@@ -119,7 +119,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     if (missingInputs !== undefined && missingInputs.length > 0) {
       compile(missingInputs);
     } else if (noFatalErrors) {
-      self.event.trigger('compilationSucceed', [data, editor.getValue()]);
+      self.event.trigger('compilationFinished', [true, data, editor.getValue()]);
     }
   }
 

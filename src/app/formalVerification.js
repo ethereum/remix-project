@@ -2,23 +2,28 @@ var $ = require('jquery');
 var EventManager = require('../lib/eventManager');
 
 /*
-  trigger compilationError
+  trigger compilationFinished
 */
-function FormalVerification (outputElement) {
+function FormalVerification (outputElement, compilerEvent) {
   this.event = new EventManager();
   this.outputElement = outputElement;
-}
-
-FormalVerification.prototype.compiling = function () {
-  $('#formalVerificationInput', this.outputElement)
+  var self = this;
+  compilerEvent.register('compilationFinished', this, function (success, data, source) {
+    if (success) {
+      self.compilationFinished(data);
+    }
+  });
+  compilerEvent.register('compilationStarted', this, function () {
+    $('#formalVerificationInput', self.outputElement)
     .val('')
     .hide();
-  $('#formalVerificationErrors').empty();
-};
+    $('#formalVerificationErrors').empty();
+  });
+}
 
 FormalVerification.prototype.compilationFinished = function (compilationResult) {
   if (compilationResult.formal === undefined) {
-    this.event.trigger('compilationError', ['Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true]);
+    this.event.trigger('compilationFinished', [false, 'Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true]);
   } else {
     if (compilationResult.formal['why3'] !== undefined) {
       $('#formalVerificationInput', this.outputElement).val(
@@ -30,8 +35,10 @@ FormalVerification.prototype.compilationFinished = function (compilationResult) 
     if (compilationResult.formal.errors !== undefined) {
       var errors = compilationResult.formal.errors;
       for (var i = 0; i < errors.length; i++) {
-        this.event.trigger('compilationError', [errors[i], $('#formalVerificationErrors'), true]);
+        this.event.trigger('compilationFinished', [false, errors[i], $('#formalVerificationErrors'), true]);
       }
+    } else {
+      this.event.trigger('compilationFinished', [true, null, null, true]);
     }
   }
 };

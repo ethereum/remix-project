@@ -19,7 +19,7 @@ var vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: t
 vm.stateManager.checkpoint();
 
 /*
-  trigger contextChanged
+  trigger contextChanged, web3EndpointChanged
 */
 
 function ExecutionContext () {

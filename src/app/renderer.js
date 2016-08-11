@@ -3,12 +3,28 @@ var $ = require('jquery');
 var utils = require('./utils');
 var uiHelper = require('./ui-helper');
 
-function Renderer (editor, web3, updateFiles, udapp, executionContext) {
+function Renderer (editor, web3, updateFiles, udapp, executionContext, formalVerificationEvent, compilerEvent) {
   this.editor = editor;
   this.web3 = web3;
   this.updateFiles = updateFiles;
   this.udapp = udapp;
   this.executionContext = executionContext;
+  var self = this;
+  formalVerificationEvent.register('compilationFinished', this, function (success, message, container, noAnnotations) {
+    if (!success) {
+      self.error(message, container, noAnnotations);
+    }
+  });
+  compilerEvent.register('compilationFinished', this, function (success, data, source) {
+    $('#output').empty();
+    if (success) {
+      self.contracts(data, source);
+    } else {
+      data.forEach(function (err) {
+        self.error(err);
+      });
+    }
+  });
 }
 
 Renderer.prototype.error = function (message, container, noAnnotations) {

@@ -8,6 +8,9 @@ var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
 var EventManager = require('./lib/eventManager');
 
+/*
+  trigger debugRequested
+*/
 function UniversalDApp (executionContext, options, txdebugger) {
   this.event = new EventManager();
   var self = this;

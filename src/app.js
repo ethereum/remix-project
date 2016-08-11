@@ -28,7 +28,7 @@ window.addEventListener('message', function (ev) {
   }
 }, false);
 /*
-  trigger selectTab
+  trigger tabChanged
 */
 var run = function () {
   var self = this;
@@ -411,7 +411,6 @@ var run = function () {
     setEditorSize(hidingRHP ? 0 : storage.getEditorSize());
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
-    if (!hidingRHP) compiler.compile();
   });
 
   // ----------------- editor resize ---------------
@@ -436,9 +435,9 @@ var run = function () {
     $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')));
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
   }
-  var transactionDebugger = new Debugger('#debugger');
-  var executionContext = new ExecutionContext();
 
+  var executionContext = new ExecutionContext();
+  var transactionDebugger = new Debugger('#debugger', executionContext.event);
   transactionDebugger.addProvider('VM', executionContext.vm());
   transactionDebugger.switchProvider('VM');
   transactionDebugger.addProvider('INTERNAL', executionContext.web3());
@@ -456,43 +455,25 @@ var run = function () {
     transactionDebugger.debug(data);
   });
 
-  var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext);
-  var formalVerification = new FormalVerification($('#verificationView'));
-
-  formalVerification.event.register('compilationError', this, function (message, container, noAnnotations) {
-    renderer.error(message, container, noAnnotations);
-  });
-
   var compiler = new Compiler(editor, queryParams, handleGithubCall, updateFiles);
+  var formalVerification = new FormalVerification($('#verificationView'), compiler.event);
+  var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
 
   executionContext.event.register('contextChanged', this, function (context) {
-    $('#output').empty();
-    context = context === 'vm' ? 'VM' : context;
-    context = context === 'injected' ? 'EXTERNAL' : context;
-    context = context === 'web3' ? 'INTERNAL' : context;
-    transactionDebugger.switchProvider(context);
     compiler.compile();
   });
+
   executionContext.event.register('web3EndpointChanged', this, function (context) {
-    $('#output').empty();
     compiler.compile();
   });
+
+  executionContext.event.register('compilerLoaded', this, function (context) {
+    compiler.compile();
+  });
+
   compiler.event.register('compilerLoaded', this, function (version) {
     setVersionText(version);
     compiler.compile();
-  });
-  compiler.event.register('compilationError', this, function (data) {
-    renderer.error(data);
-  });
-  compiler.event.register('compilationSucceed', this, function (data, source) {
-    if (!hidingRHP) {
-      renderer.contracts(data, source);
-      formalVerification.compilationFinished(data);
-    }
-  });
-  compiler.event.register('isCompiling', this, function () {
-    $('#output').empty();
-    formalVerification.compiling();
   });
 
   function setVersionText (text) {

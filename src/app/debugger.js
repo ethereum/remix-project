@@ -1,9 +1,17 @@
 var remix = require('ethereum-remix');
 
-function Debugger (id) {
+function Debugger (id, executionContextEvent) {
   this.el = document.querySelector(id);
   this.debugger = new remix.ui.Debugger();
   this.el.appendChild(this.debugger.render());
+
+  var self = this;
+  executionContextEvent.register('contextChanged', this, function (context) {
+    context = context === 'vm' ? 'VM' : context;
+    context = context === 'injected' ? 'EXTERNAL' : context;
+    context = context === 'web3' ? 'INTERNAL' : context;
+    self.switchProvider(context);
+  });
 }
 
 Debugger.prototype.debug = function (receipt) {
