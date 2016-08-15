@@ -4,7 +4,8 @@ var TraceRetriever = require('./traceRetriever')
 var TraceCache = require('./traceCache')
 var TraceStepManager = require('./traceStepManager')
 var traceHelper = require('../helpers/traceHelper')
-var util = require('../helpers/global')
+var util = require('../helpers/util')
+var globalUtil = require('../helpers/global')
 
 function TraceManager () {
   this.isLoading = false
@@ -20,7 +21,7 @@ function TraceManager () {
 TraceManager.prototype.resolveTrace = function (tx, callback) {
   this.tx = tx
   this.init()
-  if (!util.web3) callback('web3 not loaded', false)
+  if (!globalUtil.web3) callback('web3 not loaded', false)
   this.isLoading = true
   var self = this
   this.traceRetriever.getTrace(tx.hash, function (error, result) {
@@ -79,7 +80,8 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
     return callback(check, null)
   }
   if (!address) {
-    var stoChange = traceHelper.findLowerBound(stepIndex, this.traceCache.storageChanges)
+    var stoChangeIndex = util.findLowerBound(stepIndex, this.traceCache.storageChanges)
+    var stoChange = this.traceCache.storageChanges[stoChangeIndex]
     if (stoChange === undefined) return callback('no storage found', null)
     address = this.traceCache.sstore[stoChange].address
   }
@@ -122,7 +124,8 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callDataChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callDataChanges)
+  var callDataChangeIndex = util.findLowerBound(stepIndex, this.traceCache.callDataChanges)
+  var callDataChange = this.traceCache.callDataChanges[callDataChangeIndex]
   if (callDataChange === undefined) return callback('no calldata found', null)
   callback(null, [this.traceCache.callsData[callDataChange]])
 }
@@ -132,7 +135,8 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callStackChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callChanges)
+  var callStackChangeIndex = util.findLowerBound(stepIndex, this.traceCache.callChanges)
+  var callStackChange = this.traceCache.callChanges[callStackChangeIndex]
   if (callStackChange === undefined) return callback('no callstack found', null)
   callback(null, this.traceCache.callStack[callStackChange].callStack)
 }
@@ -157,7 +161,8 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callChange = traceHelper.findLowerBound(stepIndex, this.traceCache.callChanges)
+  var callChangeIndex = util.findLowerBound(stepIndex, this.traceCache.callChanges)
+  var callChange = this.traceCache.callChanges[callChangeIndex]
   if (callChange === undefined) {
     callback(null, 0)
   } else {
@@ -203,7 +208,8 @@ TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var lastChanges = traceHelper.findLowerBound(stepIndex, this.traceCache.memoryChanges)
+  var lastChangesIndex = util.findLowerBound(stepIndex, this.traceCache.memoryChanges)
+  var lastChanges = this.traceCache.memoryChanges[lastChangesIndex]
   if (lastChanges === undefined) return callback('no memory found', null)
   callback(null, this.trace[lastChanges].memory)
 }
