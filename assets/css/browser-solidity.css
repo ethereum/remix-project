@@ -434,3 +434,9 @@ input[readonly] {
 input[type="file"] {
     display: none;
 }
+
+.highlightcode {
+    position:absolute;
+    z-index:20;
+    background-color:#F4B9B7;
+} 

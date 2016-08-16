@@ -15,6 +15,14 @@ function Editor (loadingFromGist, storage) {
 
   setupStuff(getFiles());
 
+  this.addMarker = function (range, cssClass) {
+    return editor.session.addMarker(range, cssClass)
+  }
+
+  this.removeMarker = function (markerId) {
+    editor.session.removeMarker(markerId)
+  }
+
   this.newFile = function () {
     var untitledCount = '';
     while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {

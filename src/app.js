@@ -18,6 +18,7 @@ var UniversalDApp = require('./universal-dapp.js');
 var Debugger = require('./app/debugger');
 var FormalVerification = require('./app/formalVerification');
 var EventManager = require('./lib/eventManager');
+var SourceHighlighter = require('./app/sourceHighlighter');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -233,10 +234,15 @@ var run = function () {
     }
     return false;
   });
+  
+  function swicthToFile (file) {
+    editor.setCacheFile(utils.fileKey(file));
+    updateFiles();
+  }
 
   function showFileHandler (ev) {
     ev.preventDefault();
-    editor.setCacheFile(utils.fileKey($(this).find('.name').text()));
+    swicthToFile($(this).find('.name').text())
     updateFiles();
     return false;
   }
@@ -421,22 +427,21 @@ var run = function () {
   transactionDebugger.switchProvider('VM');
   transactionDebugger.addProvider('INTERNAL', executionContext.web3());
   transactionDebugger.addProvider('EXTERNAL', executionContext.web3());
-  transactionDebugger.onDebugRequested = function () {
-    selectTab($('ul#options li.debugView'));
-  };
 
   var udapp = new UniversalDApp(executionContext, {
     removable: false,
     removable_instances: true
   }, transactionDebugger);
 
-  udapp.event.register('debugRequested', this, function (data) {
-    transactionDebugger.debug(data);
+  udapp.event.register('debugRequested', this, function (txResult) {
+    transactionDebugger.debug(txResult);
+    selectTab($('ul#options li.debugView'));
   });
 
   var compiler = new Compiler(editor, queryParams, handleGithubCall, updateFiles);
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event);
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
+  var sourceHighlighter = new SourceHighlighter(editor, transactionDebugger.debugger, compiler.event, this.event, swicthToFile) // eslint-disable-line
 
   executionContext.event.register('contextChanged', this, function (context) {
     compiler.compile();

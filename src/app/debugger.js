@@ -15,8 +15,7 @@ function Debugger (id, executionContextEvent) {
 }
 
 Debugger.prototype.debug = function (receipt) {
-  if (this.onDebugRequested) this.onDebugRequested();
-  var self = this;
+  var self = this
   this.debugger.web3().eth.getTransaction(receipt.transactionHash, function (error, tx) {
     if (!error) {
       self.debugger.debug(tx);
