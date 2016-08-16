@@ -17,7 +17,6 @@ function CodeManager (_traceManager) {
   util.extend(this, new EventManager())
   this.isLoading = false
   this.traceManager = _traceManager
-  this.currentAddress = ''
   this.codeResolver = codeResolver
 }
 
@@ -26,63 +25,52 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   this.trigger('resolvingStep')
   var self = this
   if (stepIndex === 0) {
-    self.ensureCodeLoaded(tx.to, stepIndex, tx)
+    self.getCode(tx.to, stepIndex, tx)
   } else {
     this.traceManager.getCurrentCalledAddressAt(stepIndex, function (error, address) {
       if (error) {
         console.log(error)
       } else {
-        self.ensureCodeLoaded(address, stepIndex, tx)
+        self.getCode(address, stepIndex, tx)
       }
     })
   }
 }
 
-CodeManager.prototype.ensureCodeLoaded = function (address, currentStep, tx) {
+CodeManager.prototype.getCode = function (address, currentStep, tx) {
   var self = this
-  if (address !== this.currentAddress) {
-    if (traceHelper.isContractCreation(address)) {
+  if (traceHelper.isContractCreation(address)) {
+    var codes = codeResolver.getExecutingCodeFromCache(address)
+    if (!codes) {
       this.traceManager.getContractCreationCode(address, function (error, hexCode) {
         // contract creation
         if (error) {
           console.log(error)
         } else {
-          var codes = codeResolver.cacheExecutingCode(address, hexCode)
-          self.trigger('loadingCode', [address])
-          self.getInstructionIndex(address, currentStep, function (error, result) {
-            if (!error) {
-              self.trigger('codeChanged', [codes.code, address, result])
-              self.trigger('indexChanged', [result])
-              self.currentAddress = address
-            } else {
-              console.log(error)
-            }
-          })
+          codes = codeResolver.cacheExecutingCode(address, hexCode)
+          self.retrieveIndexAndTrigger(address, currentStep, codes.code)
         }
       })
     } else {
-      codeResolver.resolveCode(address, currentStep, tx, function (address, code) {
-        // resoling code from stack
-        self.trigger('loadingCode', [address])
-        self.getInstructionIndex(address, currentStep, function (error, result) {
-          if (!error) {
-            self.trigger('codeChanged', [code, address, result])
-            self.trigger('indexChanged', [result])
-            self.currentAddress = address
-          } else {
-            console.log(error)
-          }
-        })
-      })
+      self.retrieveIndexAndTrigger(address, currentStep, codes.code)
     }
   } else {
-    // only set selected item
-    this.getInstructionIndex(this.currentAddress, currentStep, function (error, result) {
-      if (!error) {
-        self.trigger('indexChanged', [result])
-      }
+    codeResolver.resolveCode(address, function (address, code) {
+      // resoling code from stack
+      self.retrieveIndexAndTrigger(address, currentStep, code)
     })
   }
+}
+
+CodeManager.prototype.retrieveIndexAndTrigger = function (address, step, code) {
+  var self = this
+  this.getInstructionIndex(address, step, function (error, result) {
+    if (!error) {
+      self.trigger('changed', [code, address, result])
+    } else {
+      console.log(error)
+    }
+  })
 }
 
 CodeManager.prototype.getInstructionIndex = function (address, step, callback) {

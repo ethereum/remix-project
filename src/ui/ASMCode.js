@@ -26,21 +26,21 @@ ASMCode.prototype.render = function () {
 }
 
 ASMCode.prototype.init = function () {
-  this.codeManager.register('indexChanged', this, this.indexChanged)
-  this.codeManager.register('codeChanged', this, this.codeChanged)
-  this.codeManager.register('loadingCode', this, function (address) {})
+  this.codeManager.register('changed', this, this.changed)
 }
 
 ASMCode.prototype.indexChanged = function (index) {
   document.getElementById('asmitems').value = index
 }
 
-ASMCode.prototype.codeChanged = function (code, address, index) {
-  this.code = code
-  this.address = address
-  this.renderAssemblyItems()
-  yo.update(this.view, this.render())
-  document.getElementById('asmitems').value = index
+ASMCode.prototype.changed = function (code, address, index) {
+  if (this.address !== address) {
+    this.code = code
+    this.address = address
+    this.renderAssemblyItems()
+    yo.update(this.view, this.render())
+  }
+  this.indexChanged(index)
 }
 
 ASMCode.prototype.renderAssemblyItems = function () {

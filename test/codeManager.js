@@ -40,7 +40,7 @@ function continueTesting (t, codeManager) {
 
   t.test('CodeManager.resolveStep', function (st) {
     st.plan(6)
-    codeManager.register('indexChanged', this, function (index) {
+    codeManager.register('changed', this, function (code, address, index) {
       if (index === undefined || index === null) {
         st.fail(index)
       } else {
@@ -48,8 +48,7 @@ function continueTesting (t, codeManager) {
       }
     })
 
-    codeManager.register('codeChanged', this, function (code, address, index) {
-      console.log(address + ' ' + index + ' ' + code)
+    codeManager.register('changed', this, function (code, address, index) {
       if (!code) {
         st.fail('no codes')
       } else {

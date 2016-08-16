@@ -6,7 +6,7 @@ module.exports = {
   codes: {}, // assembly items instructions list by contract addesses
   instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
 
-  resolveCode: function (address, vmTraceIndex, transaction, callBack) {
+  resolveCode: function (address, callBack) {
     var cache = this.getExecutingCodeFromCache(address)
     if (cache) {
       callBack(address, cache.code)
