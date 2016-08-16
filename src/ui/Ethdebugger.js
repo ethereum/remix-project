@@ -11,6 +11,7 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var Web3Providers = require('../web3Provider/web3Providers')
 var DummyProvider = require('../web3Provider/dummyProvider')
+var CodeManager = require('../code/codeManager')
 
 function Ethdebugger () {
   util.extend(this, new EventManager())
@@ -24,8 +25,13 @@ function Ethdebugger () {
   this.addProvider('DUMMYWEB3', new DummyProvider())
   this.switchProvider('DUMMYWEB3')
   this.traceManager = new TraceManager()
+  this.codeManager = new CodeManager(this.traceManager)
 
   var self = this
+  this.traceManager.register('indexChanged', this, function (index) {
+    self.codeManager.resolveStep(index, self.tx)
+  })
+
   this.txBrowser = new TxBrowser(this)
   this.txBrowser.register('newTxLoading', this, function () {
     self.unLoad()
@@ -40,7 +46,7 @@ function Ethdebugger () {
   this.stepManager.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
   })
-  this.vmDebugger = new VmDebugger(this, this.traceManager)
+  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager)
   this.sticker = new Sticker(this, this.traceManager)
 }
 
