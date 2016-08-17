@@ -6,30 +6,45 @@ var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
+var EventManager = require('./lib/eventManager');
 
-function UniversalDApp (contracts, options, transactionDebugger, vm) {
+/*
+  trigger debugRequested
+*/
+function UniversalDApp (executionContext, options, txdebugger) {
+  this.event = new EventManager();
   var self = this;
 
   self.options = options || {};
   self.$el = $('<div class="udapp" />');
-  self.contracts = contracts;
-  self.renderOutputModifier = options.renderOutputModifier || function (name, content) { return content; };
-
-  self.web3 = options.web3;
-  self.transactionDebugger = transactionDebugger;
-
-  if (options.mode === 'vm') {
-    // FIXME: use `options.vm` or `self.vm` consistently
-    options.vm = true;
-
-    self.accounts = {};
-    self.vm = vm;
-    self.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
-    self.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
-  } else if (options.mode !== 'web3') {
-    throw new Error('Either VM or Web3 mode must be selected');
-  }
+  self.contracts;
+  self.getAddress;
+  self.getValue;
+  self.getGasLimit;
+  self.txdebugger = txdebugger; // temporary: will not be needed anymore when we'll add memory support to the VM
+  var defaultRenderOutputModifier = function (name, content) { return content; };
+  self.renderOutputModifier = defaultRenderOutputModifier;
+  self.web3 = executionContext.web3();
+  self.vm = executionContext.vm();
+  self.executionContext = executionContext;
+  self.executionContext.event.register('contextChanged', this, function (context) {
+    self.reset(self.contracts);
+  });
 }
+
+UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGasLimit, renderer) {
+  this.$el.empty();
+  this.contracts = contracts;
+  this.getAddress = getAddress;
+  this.getValue = getValue;
+  this.getGasLimit = getGasLimit;
+  this.renderOutputModifier = renderer;
+  this.accounts = {};
+  if (this.executionContext.isVM()) {
+    this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
+    this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
+  }
+};
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
   var self = this;
@@ -48,7 +63,7 @@ UniversalDApp.prototype.addAccount = function (privateKey, balance) {
 UniversalDApp.prototype.getAccounts = function (cb) {
   var self = this;
 
-  if (!self.vm) {
+  if (!self.executionContext.isVM()) {
     self.web3.eth.getAccounts(cb);
   } else {
     if (!self.accounts) {
@@ -64,7 +79,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 
   address = ethJSUtil.stripHexPrefix(address);
 
-  if (!self.vm) {
+  if (!self.executionContext.isVM()) {
     self.web3.eth.getBalance(address, function (err, res) {
       if (err) {
         cb(err);
@@ -194,7 +209,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       $close.click(function () { $instance.remove(); });
       $instance.append($close);
     }
-    var context = self.options.vm ? 'memory' : 'blockchain';
+    var context = self.executionContext.isVM() ? 'memory' : 'blockchain';
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex');
     var $title = $('<span class="title"/>').text(contract.name + ' at ' + address + ' (' + context + ')');
@@ -221,7 +236,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       $events.append($event);
     };
 
-    if (self.options.vm) {
+    if (self.executionContext.isVM()) {
       // FIXME: support indexed events
       var eventABI = {};
 
@@ -354,7 +369,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
     var $debugTx = $('<div class="debugTx">');
     var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i></button>');
     $button.click(function () {
-      self.transactionDebugger.debug(result);
+      self.event.trigger('debugRequested', [result]);
     });
     $debugTx.append($button);
     return $debugTx;
@@ -364,7 +379,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
     var $debugTx = $('<div class="debugCall">');
     var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i></button>');
     $button.click(function () {
-      self.transactionDebugger.debug(result);
+      self.event.trigger('debugRequested', [result]);
     });
     $debugTx.append($button);
     return $debugTx;
@@ -504,16 +519,16 @@ UniversalDApp.prototype.getCallButton = function (args) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
       // VM only
-      } else if (self.options.vm && result.vm.exception === 0 && result.vm.exceptionError) {
+      } else if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
       // VM only
-      } else if (self.options.vm && result.vm.return === undefined) {
+      } else if (self.executionContext.isVM() && result.vm.return === undefined) {
         replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
       } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm));
         $result.append(getDebugTransaction(result));
-        args.appendFunctions(self.options.vm ? result.createdAddress : result.contractAddress);
-      } else if (self.options.vm) {
+        args.appendFunctions(self.executionContext.isVM() ? result.createdAddress : result.contractAddress);
+      } else if (self.executionContext.isVM()) {
         var outputObj = '0x' + result.vm.return.toString('hex');
         clearOutput($result);
         $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result, result.vm));
@@ -611,7 +626,7 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
       if (err) {
         return cb(err);
       }
-      var address = self.options.vm ? result.createdAddress : result.contractAddress;
+      var address = self.executionContext.isVM() ? result.createdAddress : result.contractAddress;
       self.getContractByName(contractName).address = address;
       cb(err, address);
     });
@@ -644,27 +659,27 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
   }
 
   var gasLimit = 3000000;
-  if (self.options.getGasLimit) {
+  if (self.getGasLimit) {
     try {
-      gasLimit = self.options.getGasLimit();
+      gasLimit = self.getGasLimit();
     } catch (e) {
       return cb(e);
     }
   }
 
   var value = 0;
-  if (self.options.getValue) {
+  if (self.getValue) {
     try {
-      value = self.options.getValue();
+      value = self.getValue();
     } catch (e) {
       return cb(e);
     }
   }
 
   var tx;
-  if (!self.vm) {
+  if (!self.executionContext.isVM()) {
     tx = {
-      from: self.options.getAddress ? self.options.getAddress() : self.web3.eth.accounts[0],
+      from: self.getAddress ? self.getAddress() : self.web3.eth.accounts[0],
       to: to,
       data: data,
       value: value
@@ -695,7 +710,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
     }
   } else {
     try {
-      var address = self.options.getAddress ? self.options.getAddress() : self.getAccounts()[0];
+      var address = self.getAddress ? self.getAddress() : Object.keys(self.accounts)[0];
       var account = self.accounts[address];
       tx = new EthJSTX({
         nonce: new BN(account.nonce++),
@@ -715,7 +730,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
         uncleHeaders: []
       });
       self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-        result.transactionHash = self.transactionDebugger.web3().releaseCurrentHash(); // used to keep track of the transaction
+        result.transactionHash = self.txdebugger.web3().releaseCurrentHash(); // used to keep track of the transaction
         cb(err, result);
       });
     } catch (e) {

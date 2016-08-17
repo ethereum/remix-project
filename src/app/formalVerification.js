@@ -1,37 +1,44 @@
 var $ = require('jquery');
+var EventManager = require('../lib/eventManager');
 
-function FormalVerification (outputElement, renderer) {
+/*
+  trigger compilationFinished
+*/
+function FormalVerification (outputElement, compilerEvent) {
+  this.event = new EventManager();
   this.outputElement = outputElement;
-  this.renderer = renderer;
-}
-
-FormalVerification.prototype.compiling = function () {
-  $('#formalVerificationInput', this.outputElement)
+  var self = this;
+  compilerEvent.register('compilationFinished', this, function (success, data, source) {
+    if (success) {
+      self.compilationFinished(data);
+    }
+  });
+  compilerEvent.register('compilationStarted', this, function () {
+    $('#formalVerificationInput', self.outputElement)
     .val('')
     .hide();
-  $('#formalVerificationErrors').empty();
-};
+    $('#formalVerificationErrors').empty();
+  });
+}
 
 FormalVerification.prototype.compilationFinished = function (compilationResult) {
   if (compilationResult.formal === undefined) {
-    this.renderer.error(
-      'Formal verification not supported by this compiler version.',
-      $('#formalVerificationErrors'),
-      true
-    );
+    this.event.trigger('compilationFinished', [false, 'Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true]);
   } else {
     if (compilationResult.formal['why3'] !== undefined) {
       $('#formalVerificationInput', this.outputElement).val(
         '(* copy this to http://why3.lri.fr/try/ *)' +
         compilationResult.formal['why3']
       )
-      .show();
+        .show();
     }
     if (compilationResult.formal.errors !== undefined) {
       var errors = compilationResult.formal.errors;
       for (var i = 0; i < errors.length; i++) {
-        this.renderer.error(errors[i], $('#formalVerificationErrors'), true);
+        this.event.trigger('compilationFinished', [false, errors[i], $('#formalVerificationErrors'), true]);
       }
+    } else {
+      this.event.trigger('compilationFinished', [true, null, null, true]);
     }
   }
 };

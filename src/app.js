@@ -13,9 +13,10 @@ var Editor = require('./app/editor');
 var Renderer = require('./app/renderer');
 var Compiler = require('./app/compiler');
 var ExecutionContext = require('./app/execution-context');
+var UniversalDApp = require('./universal-dapp.js');
 var Debugger = require('./app/debugger');
 var FormalVerification = require('./app/formalVerification');
-var EthJSVM = require('ethereumjs-vm');
+var EventManager = require('./lib/eventManager');
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -26,8 +27,12 @@ window.addEventListener('message', function (ev) {
     loadFilesCallback(ev.data[1]);
   }
 }, false);
-
+/*
+  trigger tabChanged
+*/
 var run = function () {
+  var self = this;
+  this.event = new EventManager();
   var storage = new Storage(updateFiles);
 
   function loadFiles (files) {
@@ -108,6 +113,7 @@ var run = function () {
       el.removeClass('active');
       $('#optionViews').removeClass(cls);
     }
+    self.event.trigger('tabChanged', [cls]);
   };
 
   // ------------------ gist publish --------------
@@ -199,7 +205,7 @@ var run = function () {
       $fileNameInputEl.off('keyup');
 
       if (newName !== originalName && confirm(
-            storage.exists(utils.fileKey(newName))
+          storage.exists(utils.fileKey(newName))
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
         storage.rename(utils.fileKey(originalName), utils.fileKey(newName));
@@ -279,7 +285,7 @@ var run = function () {
   }
 
   //  function widthOfHidden () {
-  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi());
+  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi())
   //  }
 
   function widthOfVisible () {
@@ -405,10 +411,7 @@ var run = function () {
     setEditorSize(hidingRHP ? 0 : storage.getEditorSize());
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP);
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP);
-    if (!hidingRHP) compiler.compile();
   });
-
-  function getHidingRHP () { return hidingRHP; }
 
   // ----------------- editor resize ---------------
 
@@ -432,20 +435,46 @@ var run = function () {
     $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')));
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
   }
-  var transactionDebugger = new Debugger('#debugger');
-  var vm = new EthJSVM(null, null, { activatePrecompiles: true, enableHomestead: true });
-  vm.stateManager.checkpoint();
-  transactionDebugger.addProvider('VM', vm);
+
+  var executionContext = new ExecutionContext();
+  var transactionDebugger = new Debugger('#debugger', executionContext.event);
+  transactionDebugger.addProvider('VM', executionContext.vm());
   transactionDebugger.switchProvider('VM');
-  var executionContext = new ExecutionContext(transactionDebugger);
+  transactionDebugger.addProvider('INTERNAL', executionContext.web3());
   transactionDebugger.addProvider('EXTERNAL', executionContext.web3());
   transactionDebugger.onDebugRequested = function () {
     selectTab($('ul#options li.debugView'));
   };
-  var renderer = new Renderer(editor, executionContext, updateFiles, transactionDebugger, vm);
-  var formalVerification = new FormalVerification($('#verificationView'), renderer);
-  var compiler = new Compiler(editor, renderer, queryParams, handleGithubCall, $('#output'), getHidingRHP, formalVerification, updateFiles);
-  executionContext.setCompiler(compiler);
+
+  var udapp = new UniversalDApp(executionContext, {
+    removable: false,
+    removable_instances: true
+  }, transactionDebugger);
+
+  udapp.event.register('debugRequested', this, function (data) {
+    transactionDebugger.debug(data);
+  });
+
+  var compiler = new Compiler(editor, queryParams, handleGithubCall, updateFiles);
+  var formalVerification = new FormalVerification($('#verificationView'), compiler.event);
+  var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
+
+  executionContext.event.register('contextChanged', this, function (context) {
+    compiler.compile();
+  });
+
+  executionContext.event.register('web3EndpointChanged', this, function (context) {
+    compiler.compile();
+  });
+
+  executionContext.event.register('compilerLoaded', this, function (context) {
+    compiler.compile();
+  });
+
+  compiler.event.register('compilerLoaded', this, function (version) {
+    setVersionText(version);
+    compiler.compile();
+  });
 
   function setVersionText (text) {
     $('#version').text(text);
@@ -462,9 +491,9 @@ var run = function () {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
       // resort to non-worker version in that case.
-      compiler.loadVersion(true, version, setVersionText);
+      compiler.loadVersion(true, version);
     } else {
-      compiler.loadVersion(false, version, setVersionText);
+      compiler.loadVersion(false, version);
     }
   };
 

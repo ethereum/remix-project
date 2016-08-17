@@ -5,7 +5,15 @@ var utils = require('./utils');
 
 var Base64 = require('js-base64').Base64;
 
-function Compiler (editor, renderer, queryParams, handleGithubCall, outputField, hidingRHP, formalVerification, updateFiles) {
+var EventManager = require('../lib/eventManager');
+
+/*
+  trigger compilationFinished, compilerLoaded, compilationStarted
+*/
+function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
+  var self = this;
+  this.event = new EventManager();
+
   var compileJSON;
   var compilerAcceptsMultipleFiles;
 
@@ -36,19 +44,15 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
 
   var compile = function (missingInputs) {
     editor.clearAnnotations();
-    outputField.empty();
-    if (formalVerification) {
-      formalVerification.compiling();
-    }
+    self.event.trigger('compilationStarted', []);
     var input = editor.getValue();
     editor.setCacheFileContent(input);
 
     var files = {};
     files[utils.fileNameFromKey(editor.getCacheFile())] = input;
     gatherImports(files, missingInputs, function (input, error) {
-      outputField.empty();
       if (input === null) {
-        renderer.error(error);
+        this.event.trigger('compilationFinished', [false, error, editor.getValue()]);
       } else {
         var optimize = queryParams.get().optimize;
         compileJSON(input, optimize ? 1 : 0);
@@ -62,13 +66,12 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
   }
   this.setCompileJSON = setCompileJSON; // this is exposed for testing
 
-  function onCompilerLoaded (setVersionText, version) {
-    setVersionText(version);
+  function onCompilerLoaded (version) {
     previousInput = '';
-    onChange();
+    self.event.trigger('compilerLoaded', [version]);
   }
 
-  function onInternalCompilerLoaded (setVersionText) {
+  function onInternalCompilerLoaded () {
     if (worker === null) {
       var compiler = solc(window.Module);
 
@@ -91,7 +94,7 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
         compilationFinished(result, missingInputs);
       };
 
-      onCompilerLoaded(setVersionText, compiler.version());
+      onCompilerLoaded(compiler.version());
     }
   }
 
@@ -99,14 +102,14 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
     var noFatalErrors = true; // ie warnings are ok
 
     if (data['error'] !== undefined) {
-      renderer.error(data['error']);
+      self.event.trigger('compilationFinished', [false, [data['error']], editor.getValue()]);
       if (utils.errortype(data['error']) !== 'warning') {
         noFatalErrors = false;
       }
     }
     if (data['errors'] !== undefined) {
+      self.event.trigger('compilationFinished', [false, data['errors'], editor.getValue()]);
       data['errors'].forEach(function (err) {
-        renderer.error(err);
         if (utils.errortype(err) !== 'warning') {
           noFatalErrors = false;
         }
@@ -115,13 +118,12 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
 
     if (missingInputs !== undefined && missingInputs.length > 0) {
       compile(missingInputs);
-    } else if (noFatalErrors && !hidingRHP()) {
-      renderer.contracts(data, editor.getValue());
-      formalVerification.compilationFinished(data);
+    } else if (noFatalErrors) {
+      self.event.trigger('compilationFinished', [true, data, editor.getValue()]);
     }
   }
 
-  this.loadVersion = function (usingWorker, version, setVersionText) {
+  this.loadVersion = function (usingWorker, version) {
     var url;
     if (version !== 'soljson.js') {
       url = 'https://ethereum.github.io/solc-bin/bin/' + version;
@@ -131,13 +133,13 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'));
 
     if (usingWorker) {
-      loadWorker(url, setVersionText);
+      loadWorker(url);
     } else {
-      loadInternal(url, setVersionText);
+      loadInternal(url);
     }
   };
 
-  function loadInternal (url, setVersionText) {
+  function loadInternal (url) {
     delete window.Module;
     // Set a safe fallback until the new one is loaded
     setCompileJSON(function (source, optimize) { compilationFinished('{}'); });
@@ -151,11 +153,11 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
         return;
       }
       window.clearInterval(check);
-      onInternalCompilerLoaded(setVersionText);
+      onInternalCompilerLoaded();
     }, 200);
   }
 
-  function loadWorker (url, setVersionText) {
+  function loadWorker (url) {
     if (worker !== null) {
       worker.terminate();
     }
@@ -165,7 +167,7 @@ function Compiler (editor, renderer, queryParams, handleGithubCall, outputField,
       switch (data.cmd) {
         case 'versionLoaded':
           compilerAcceptsMultipleFiles = !!data.acceptsMultipleFiles;
-          onCompilerLoaded(setVersionText, data.data);
+          onCompilerLoaded(data.data);
           break;
         case 'compiled':
           var result;
