@@ -80,8 +80,7 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
     return callback(check, null)
   }
   if (!address) {
-    var stoChangeIndex = util.findLowerBound(stepIndex, this.traceCache.storageChanges)
-    var stoChange = this.traceCache.storageChanges[stoChangeIndex]
+    var stoChange = util.findLowerBoundValue(stepIndex, this.traceCache.storageChanges)
     if (stoChange === undefined) return callback('no storage found', null)
     address = this.traceCache.sstore[stoChange].address
   }
@@ -124,8 +123,7 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callDataChangeIndex = util.findLowerBound(stepIndex, this.traceCache.callDataChanges)
-  var callDataChange = this.traceCache.callDataChanges[callDataChangeIndex]
+  var callDataChange = util.findLowerBoundValue(stepIndex, this.traceCache.callDataChanges)
   if (callDataChange === undefined) return callback('no calldata found', null)
   callback(null, [this.traceCache.callsData[callDataChange]])
 }
@@ -135,8 +133,7 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callStackChangeIndex = util.findLowerBound(stepIndex, this.traceCache.callChanges)
-  var callStackChange = this.traceCache.callChanges[callStackChangeIndex]
+  var callStackChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
   if (callStackChange === undefined) return callback('no callstack found', null)
   callback(null, this.traceCache.callStack[callStackChange].callStack)
 }
@@ -161,8 +158,7 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callChangeIndex = util.findLowerBound(stepIndex, this.traceCache.callChanges)
-  var callChange = this.traceCache.callChanges[callChangeIndex]
+  var callChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
   if (callChange === undefined) {
     callback(null, 0)
   } else {
@@ -208,8 +204,7 @@ TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var lastChangesIndex = util.findLowerBound(stepIndex, this.traceCache.memoryChanges)
-  var lastChanges = this.traceCache.memoryChanges[lastChangesIndex]
+  var lastChanges = util.findLowerBoundValue(stepIndex, this.traceCache.memoryChanges)
   if (lastChanges === undefined) return callback('no memory found', null)
   callback(null, this.trace[lastChanges].memory)
 }
