@@ -1,6 +1,7 @@
 /* global alert, confirm, prompt, Option, Worker, soljsonSources */
 
 var $ = require('jquery');
+var semver = require('semver');
 
 var utils = require('./app/utils');
 var QueryParams = require('./app/query-params');
@@ -498,10 +499,15 @@ var run = function () {
   };
 
   if (window.soljsonSources !== undefined) {
-    var latestRelease = 'soljson-latest.js';
+    var latestRelease = null;
     if (window.soljsonReleases !== undefined) {
       for (var release in window.soljsonReleases) {
-        latestRelease = release;
+        if (latestRelease === null || semver.gt(release, latestRelease)) {
+          latestRelease = release;
+        }
+      }
+      if (latestRelease === null) {
+        latestRelease = 'soljson-latest.js';
       }
     }
     loadVersion(queryParams.get().version || latestRelease);
