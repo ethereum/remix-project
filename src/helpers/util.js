@@ -44,32 +44,31 @@ module.exports = {
   /*
     Binary Search:
     Assumes that @arg array is sorted increasingly
-    return smallest i such that changes[i] <= target does not hold,
-    or changes.length if all elements are < target.
-    It returns the index where target could be inserted to maintain the order of the array
+    return largest i such that array[i] <= target; return -1 if array[0] > target || array is empty
   */
   findLowerBound: function (target, array) {
-    return findLowerBoundInternal(target, array, 0, array.length)
+    var start = 0
+    var length = array.length
+    while (length > 0) {
+      var half = length >> 1
+      var middle = start + half
+      if (array[middle] <= target) {
+        length = length - 1 - half
+        start = middle + 1
+      } else {
+        length = half
+      }
+    }
+    return start - 1
   },
 
+  /*
+    Binary Search:
+    Assumes that @arg array is sorted increasingly
+    return largest array[i] such that array[i] <= target; return null if array[0] > target || array is empty
+  */
   findLowerBoundValue: function (target, array) {
     var index = this.findLowerBound(target, array)
-    return array[index]
+    return index >= 0 ? array[index] : null
   }
-}
-
-function findLowerBoundInternal (target, array, lowerbound, length) {
-  while (length > 1) {
-    var half = length >> 1
-    var middle = lowerbound + half
-    if (array[middle] < target) {
-      length = length - (middle - lowerbound)
-      lowerbound = middle
-    } else if (array[middle] === target) {
-      return middle
-    } else {
-      length = half
-    }
-  }
-  return lowerbound
 }

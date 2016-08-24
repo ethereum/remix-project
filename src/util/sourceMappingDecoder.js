@@ -18,6 +18,9 @@ function SourceMappingDecoder () {
 SourceMappingDecoder.prototype.atIndex = function (index, mapping) {
   var ret = {}
   var map = mapping.split(';')
+  if (index >= map.length) {
+    index = map.length - 1
+  }
   for (var k = index; k >= 0; k--) {
     var current = map[k]
     if (!current.length) {
@@ -84,7 +87,7 @@ SourceMappingDecoder.prototype.getLinebreakPositions = function (source) {
  *
  * @param {Object} sourceLocation - object containing attributes {source} and {length}
  * @param {Array} lineBreakPositions - array returned by the function 'getLinebreakPositions'
- * @@return {Object} returns an object {start: {line, column}, end: {line, column}} (line count start at 0)
+ * @return {Object} returns an object {start: {line, column}, end: {line, column}} (line/column count start at 0)
  */
 SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocation, lineBreakPositions) {
   if (sourceLocation.start >= 0 && sourceLocation.length >= 0) {
@@ -94,21 +97,19 @@ SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocat
     }
   } else {
     return {
-      start: -1,
-      end: -1
+      start: null,
+      end: null
     }
   }
 }
 
 function convertFromCharPosition (pos, lineBreakPositions) {
   var line = util.findLowerBound(pos, lineBreakPositions)
-
-  if (lineBreakPositions[line] < pos) {
+  if (lineBreakPositions[line] !== pos) {
     line = line + 1
   }
-
-  var column = lineBreakPositions[line - 1] ? (pos - lineBreakPositions[line - 1] - 1) : pos
-
+  var beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
+  var column = pos - beginColumn
   return {
     line: line,
     column: column
