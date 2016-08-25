@@ -152,7 +152,8 @@ module.exports = {
       details.append(assembly);
     }
 
-    button.click(function () { this.detailsOpen[contractName] = !this.detailsOpen[contractName]; details.toggle(); });
+    var self = this;
+    button.click(function () { self.detailsOpen[contractName] = !self.detailsOpen[contractName]; details.toggle(); });
     if (this.detailsOpen[contractName]) {
       details.show();
     }

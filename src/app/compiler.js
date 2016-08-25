@@ -52,7 +52,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     files[utils.fileNameFromKey(editor.getCacheFile())] = input;
     gatherImports(files, missingInputs, function (input, error) {
       if (input === null) {
-        this.event.trigger('compilationFinished', [false, error, editor.getValue()]);
+        self.event.trigger('compilationFinished', [false, [error], editor.getValue()]);
       } else {
         var optimize = queryParams.get().optimize;
         compileJSON(input, optimize ? 1 : 0);
