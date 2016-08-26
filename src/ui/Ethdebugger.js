@@ -28,7 +28,7 @@ function Ethdebugger () {
   this.codeManager = new CodeManager(this.traceManager)
 
   var self = this
-  this.traceManager.register('indexChanged', this, function (index) {
+  this.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
   })
 

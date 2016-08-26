@@ -4,12 +4,10 @@ var Debugger = require('./ui/Ethdebugger')
 var BasicPanel = require('./ui/BasicPanel')
 var TraceManager = require('./trace/traceManager')
 var CodeManager = require('./code/codeManager')
+var SourceMappingDecoder = require('./util/sourceMappingDecoder')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
-}
-if (window) {
-  window.remix = modules()
 }
 
 function modules () {
@@ -24,6 +22,9 @@ function modules () {
       Debugger: Debugger,
       VMdebugger: VMDebugger,
       BasicPanel: BasicPanel
+    },
+    util: {
+      SourceMappingDecoder: SourceMappingDecoder
     }
   }
 }
