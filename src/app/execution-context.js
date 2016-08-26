@@ -21,7 +21,6 @@ vm.stateManager.checkpoint();
 /*
   trigger contextChanged, web3EndpointChanged
 */
-
 function ExecutionContext () {
   var self = this;
   this.event = new EventManager();
@@ -39,6 +38,16 @@ function ExecutionContext () {
     return vm;
   };
 
+  this.setEndPointUrl = function (url) {
+    $web3endpoint.val(url);
+  };
+
+  this.setContext = function (context) {
+    executionContext = context;
+    executionContextChange(context);
+    setExecutionContextRadio()
+  };
+
   var $injectedToggle = $('#injected-mode');
   var $vmToggle = $('#vm-mode');
   var $web3Toggle = $('#web3-mode');
@@ -50,9 +59,9 @@ function ExecutionContext () {
 
   setExecutionContextRadio();
 
-  $injectedToggle.on('change', executionContextChange);
-  $vmToggle.on('change', executionContextChange);
-  $web3Toggle.on('change', executionContextChange);
+  $injectedToggle.on('change', executionContextUIChange);
+  $vmToggle.on('change', executionContextUIChange);
+  $web3Toggle.on('change', executionContextUIChange);
   $web3endpoint.on('change', function () {
     setProviderFromEndpoint();
     if (executionContext === 'web3') {
@@ -60,20 +69,23 @@ function ExecutionContext () {
     }
   });
 
-  function executionContextChange (ev) {
-    if (ev.target.value === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
+  function executionContextUIChange (ev) {
+    executionContextChange(ev.target.value);
+  }
+
+  function executionContextChange (context) {
+    if (context === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
       setExecutionContextRadio();
-    } else if (ev.target.value === 'injected' && injectedProvider === undefined) {
+    } else if (context === 'injected' && injectedProvider === undefined) {
       setExecutionContextRadio();
     } else {
-      executionContext = ev.target.value;
-      if (executionContext === 'web3') {
+      if (context === 'web3') {
         setProviderFromEndpoint();
         self.event.trigger('contextChanged', ['web3']);
-      } else if (executionContext === 'injected') {
+      } else if (context === 'injected') {
         web3.setProvider(injectedProvider);
         self.event.trigger('contextChanged', ['injected']);
-      } else if (executionContext === 'vm') {
+      } else if (context === 'vm') {
         vm.stateManager.revert(function () {
           vm.stateManager.checkpoint();
         });

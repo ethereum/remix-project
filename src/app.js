@@ -18,8 +18,6 @@ var UniversalDApp = require('./universal-dapp.js');
 var Debugger = require('./app/debugger');
 var FormalVerification = require('./app/formalVerification');
 var EventManager = require('./lib/eventManager');
-var SourceHighlighter = require('./app/sourceHighlighter');
-
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
 var filesToLoad = null;
@@ -234,7 +232,7 @@ var run = function () {
     }
     return false;
   });
-  
+
   function swicthToFile (file) {
     editor.setCacheFile(utils.fileKey(file));
     updateFiles();
@@ -242,8 +240,7 @@ var run = function () {
 
   function showFileHandler (ev) {
     ev.preventDefault();
-    swicthToFile($(this).find('.name').text())
-    updateFiles();
+    swicthToFile($(this).find('.name').text());
     return false;
   }
 
@@ -422,11 +419,14 @@ var run = function () {
   }
 
   var executionContext = new ExecutionContext();
-  var transactionDebugger = new Debugger('#debugger', executionContext.event);
-  transactionDebugger.addProvider('VM', executionContext.vm());
+  var compiler = new Compiler(editor, queryParams, handleGithubCall, updateFiles);
+  var formalVerification = new FormalVerification($('#verificationView'), compiler.event);
+
+  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile);
+  transactionDebugger.addProvider('vm', executionContext.vm());
   transactionDebugger.switchProvider('VM');
-  transactionDebugger.addProvider('INTERNAL', executionContext.web3());
-  transactionDebugger.addProvider('EXTERNAL', executionContext.web3());
+  transactionDebugger.addProvider('injected', executionContext.web3());
+  transactionDebugger.addProvider('web3', executionContext.web3());
 
   var udapp = new UniversalDApp(executionContext, {
     removable: false,
@@ -434,14 +434,10 @@ var run = function () {
   }, transactionDebugger);
 
   udapp.event.register('debugRequested', this, function (txResult) {
-    transactionDebugger.debug(txResult);
-    selectTab($('ul#options li.debugView'));
+    startdebugging(txResult.transactionHash);
   });
 
-  var compiler = new Compiler(editor, queryParams, handleGithubCall, updateFiles);
-  var formalVerification = new FormalVerification($('#verificationView'), compiler.event);
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
-  var sourceHighlighter = new SourceHighlighter(editor, transactionDebugger.debugger, compiler.event, this.event, swicthToFile) // eslint-disable-line
 
   executionContext.event.register('contextChanged', this, function (context) {
     compiler.compile();
@@ -451,14 +447,32 @@ var run = function () {
     compiler.compile();
   });
 
-  executionContext.event.register('compilerLoaded', this, function (context) {
+  compiler.event.register('compilerLoaded', this, function (context) {
     compiler.compile();
+    initWithQueryParams();
   });
 
   compiler.event.register('compilerLoaded', this, function (version) {
     setVersionText(version);
     compiler.compile();
   });
+
+  function initWithQueryParams () {
+    if (queryParams.get().endpointurl) {
+      executionContext.setEndPointUrl(queryParams.get().endpointurl);
+    }
+    if (queryParams.get().context) {
+      executionContext.setContext(queryParams.get().context);
+    }
+    if (queryParams.get().debugtx) {
+      startdebugging(queryParams.get().debugtx);
+    }
+  }
+
+  function startdebugging (txHash) {
+    transactionDebugger.debug(txHash);
+    selectTab($('ul#options li.debugView'));
+  }
 
   function setVersionText (text) {
     $('#version').text(text);
