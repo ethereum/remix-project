@@ -67,9 +67,9 @@ function panels (browser) {
     .assertCallData('0x60fe47b10000000000000000000000000000000000000000000000000000000000000038')
     .assertCallStack('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
     .assertStackValue(1, '0x60')
-    .assertMemoryValue(6, '0xc0    60 60 60 40 52 60 40 51 60 20 80 60 45 83 39 81 ????R??Q????E?9?')
-    .assertMemoryValue(7, '0xe0    01 60 40 52 80 80 51 90 60 20 01 90 91 90 50 50 ???R??Q???????PP')
-    .assertMemoryValue(8, '0x100    5b 80 60 01 01 60 00 60 00 50 81 90 55 50 5b 50 ?????????P??UP?P')
+    .assertMemoryValue(6, '0x60\t\t60606040526040516020806045833981\t????R??Q????E?9?')
+    .assertMemoryValue(7, '0x70\t\t01604052808051906020019091905050\t???R??Q???????PP')
+    .assertMemoryValue(8, '0x80\t\t5b806001016000600050819055505b50\t?????????P??UP?P')
     .click('#intoforward') // CREATE
     .assertStack('')
     .assertStorageChanges('')
