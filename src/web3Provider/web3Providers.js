@@ -9,19 +9,16 @@ Web3Providers.prototype.addProvider = function (type, obj) {
   if (type === 'INTERNAL') {
     var web3 = init.loadWeb3()
     this.addWeb3(type, web3)
-  } else if (type === 'EXTERNAL') {
-    init.extendWeb3(obj)
-    this.addWeb3(type, obj)
-  } else if (type === 'VM') {
+  } else if (type === 'vm') {
     this.addVM(obj)
   } else {
+    init.extendWeb3(obj)
     this.addWeb3(type, obj)
   }
 }
 
 Web3Providers.prototype.get = function (type, cb) {
   if (this.modes[type]) {
-    this.currentMode = type
     cb(null, this.modes[type])
   } else {
     cb('error: this provider has not been setup (' + type + ')', null)
