@@ -45,7 +45,7 @@ function ExecutionContext () {
   this.setContext = function (context) {
     executionContext = context;
     executionContextChange(context);
-    setExecutionContextRadio()
+    setExecutionContextRadio();
   };
 
   var $injectedToggle = $('#injected-mode');

@@ -109,9 +109,6 @@ var run = function () {
       el.parent().find('li').removeClass('active');
       $('#optionViews').attr('class', '').addClass(cls);
       el.addClass('active');
-    } else {
-      el.removeClass('active');
-      $('#optionViews').removeClass(cls);
     }
     self.event.trigger('tabChanged', [cls]);
   };
@@ -424,7 +421,7 @@ var run = function () {
 
   var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile);
   transactionDebugger.addProvider('vm', executionContext.vm());
-  transactionDebugger.switchProvider('VM');
+  transactionDebugger.switchProvider('vm');
   transactionDebugger.addProvider('injected', executionContext.web3());
   transactionDebugger.addProvider('web3', executionContext.web3());
 

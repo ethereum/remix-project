@@ -9,12 +9,12 @@ var Range = ace.acequire('ace/range').Range;
 function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
   this.el = document.querySelector(id);
   this.debugger = new remix.ui.Debugger();
-  this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
+  this.sourceMappingDecoder = new remix.util.SourceMappingDecoder();
   this.el.appendChild(this.debugger.render());
   this.editor = editor;
   this.switchToFile = switchToFile;
   this.compiler = compiler;
-  this.cache = new Cache()
+  this.cache = new Cache();
 
   var self = this;
   executionContextEvent.register('contextChanged', this, function (context) {
@@ -23,33 +23,36 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
 
   this.lastCompilationResult = null;
   this.debugger.register('newTraceLoaded', this, function () {
-    self.cache.clear()
+    self.cache.clear();
     self.lastCompilationResult = self.compiler.lastCompilationResult;
   });
 
   this.debugger.register('traceUnloaded', this, function () {
-    self.lastCompilationResult = null;
-    self.removeCurrentMarker()
-    self.cache.clear()
+    self.removeCurrentMarker();
+    self.cache.clear();
   });
 
   this.editor.onChangeSetup(function () {
     if (arguments.length > 0) { // if arguments.length === 0 this is a session change, we don't want to stop debugging in that case
-      self.debugger.unLoad()
+      self.debugger.unLoad();
     }
   });
 
   // register selected code item, highlight the corresponding source location
   this.debugger.codeManager.register('changed', this, function (code, address, index) {
-    this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.lastCompilationResult.data.contracts, function (error, rawLocation) {
-      if (!error) {
-        if (!self.cache.lineBreakPositionsByContent[address]) {
-          self.cache.lineBreakPositionsByContent[address] = self.sourceMappingDecoder.getLinebreakPositions(self.editor.getFile(self.lastCompilationResult.data.sourceList[rawLocation.file]))  
+    if (self.lastCompilationResult) {
+      this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.lastCompilationResult.data.contracts, function (error, rawLocation) {
+        if (!error) {
+          if (!self.cache.lineBreakPositionsByContent[address]) {
+            self.cache.lineBreakPositionsByContent[address] = self.sourceMappingDecoder.getLinebreakPositions(self.editor.getFile(self.lastCompilationResult.data.sourceList[rawLocation.file]));
+          }
+          var lineColumnPos = self.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, self.cache.lineBreakPositionsByContent[address]);
+          self.highlight(lineColumnPos, rawLocation);
+        } else {
+          self.removeCurrentMarker();
         }
-        var lineColumnPos = self.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, self.cache.lineBreakPositionsByContent[address])
-        self.highlight(lineColumnPos, rawLocation);
-      }
-    });
+      });
+    }
   });
 }
 
@@ -120,13 +123,12 @@ Debugger.prototype.removeCurrentMarker = function () {
   }
 };
 
-
 function Cache () {
-  this.contentLineBreakPosition = {}
+  this.contentLineBreakPosition = {};
 }
 
 Cache.prototype.clear = function () {
-  this.lineBreakPositionsByContent = {}
-}
+  this.lineBreakPositionsByContent = {};
+};
 
 module.exports = Debugger;

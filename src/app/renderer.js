@@ -20,9 +20,14 @@ function Renderer (editor, web3, updateFiles, udapp, executionContext, formalVer
     if (success) {
       self.contracts(data, source);
     } else {
-      data.forEach(function (err) {
-        self.error(err);
-      });
+      if (data['error']) {
+        self.error(data['error']);
+      }
+      if (data['errors']) {
+        data['errors'].forEach(function (err) {
+          self.error(err);
+        });
+      }
     }
   });
 }
@@ -93,10 +98,16 @@ Renderer.prototype.contracts = function (data, source) {
       $contractOutput.append(uiHelper.textRow('Web3 deploy', uiHelper.gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'));
       $contractOutput.append(uiHelper.textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'));
     }
-    return $contractOutput.append(uiHelper.getDetails(contract, source, contractName));
+    var ctrSource = getSource(contractName, source, data);
+    return $contractOutput.append(uiHelper.getDetails(contract, ctrSource, contractName));
   };
   // //
   var self = this;
+
+  var getSource = function (contractName, source, data) {
+    var currentFile = utils.fileNameFromKey(self.editor.getCacheFile());
+    return source.sources[currentFile];
+  };
 
   var getAddress = function () { return $('#txorigin').val(); };
 

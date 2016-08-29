@@ -20,7 +20,7 @@
     "browserify": "^13.0.0",
     "csslint": "^1.0.2",
     "es6-shim": "^0.35.1",
-    "ethereum-remix": "0.0.2-alpha.0.0.7",
+    "ethereum-remix": "0.0.2-alpha.0.0.8",
     "ethereumjs-abi": "^0.6.4",
     "ethereumjs-block": "^1.2.2",
     "ethereumjs-tx": "^1.1.1",

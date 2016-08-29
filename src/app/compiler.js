@@ -16,7 +16,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
 
   var compileJSON;
   var compilerAcceptsMultipleFiles;
-  
+
   var previousInput = '';
 
   var cachedRemoteFiles = {};
@@ -60,7 +60,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     });
   };
   this.compile = compile;
- 
+
   function setCompileJSON (_compileJSON) {
     compileJSON = _compileJSON;
   }
@@ -101,18 +101,16 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   this.lastCompilationResult = {
     data: null,
     source: null
-  }
+  };
   function compilationFinished (data, missingInputs, source) {
     var noFatalErrors = true; // ie warnings are ok
 
     if (data['error'] !== undefined) {
-      self.event.trigger('compilationFinished', [false, [data['error']], source]);
       if (utils.errortype(data['error']) !== 'warning') {
         noFatalErrors = false;
       }
     }
     if (data['errors'] !== undefined) {
-      self.event.trigger('compilationFinished', [false, data['errors'], source]);
       data['errors'].forEach(function (err) {
         if (utils.errortype(err) !== 'warning') {
           noFatalErrors = false;
@@ -120,13 +118,15 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
       });
     }
 
-    if (missingInputs !== undefined && missingInputs.length > 0) {
+    if (!noFatalErrors) {
+      self.event.trigger('compilationFinished', [false, data, source]);
+    } else if (missingInputs !== undefined && missingInputs.length > 0) {
       compile(missingInputs);
-    } else if (noFatalErrors) {
+    } else {
       self.lastCompilationResult = {
         data: data,
         source: source
-      }
+      };
       self.event.trigger('compilationFinished', [true, data, source]);
     }
   }
