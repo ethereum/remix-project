@@ -253,11 +253,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         for (var i in response.vm.logs) {
           // [address, topics, mem]
           var log = response.vm.logs[i];
-          var abi = eventABI[log[1][0].toString('hex')];
-          var event = abi.event;
+          var event;
           var decoded;
 
           try {
+            var abi = eventABI[log[1][0].toString('hex')];
+            event = abi.event;
             var types = abi.inputs.map(function (item) {
               return item.type;
             });
