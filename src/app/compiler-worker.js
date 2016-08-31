@@ -16,10 +16,14 @@ module.exports = function (self) {
         var compiler = solc(self.Module);
 
         compileJSON = function (input, optimize) {
-          return JSON.stringify(compiler.compile(JSON.parse(input), optimize, function (path) {
-            missingInputs.push(path);
-            return { 'error': 'Deferred import' };
-          }));
+          try {
+            return JSON.stringify(compiler.compile(JSON.parse(input), optimize, function (path) {
+              missingInputs.push(path);
+              return { 'error': 'Deferred import' };
+            }));
+          } catch (exception) {
+            return JSON.stringify({ error: 'Uncaught JavaScript exception:\n' + exception });
+          }
         };
 
         self.postMessage({
