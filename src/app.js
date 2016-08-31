@@ -487,14 +487,20 @@ var run = function () {
     if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
       version = window.soljsonReleases[version];
     }
+    var url;
+    if (version !== 'soljson.js') {
+      url = 'https://ethereum.github.io/solc-bin/bin/' + version;
+    } else {
+      url = 'soljson.js';
+    }
     var isFirefox = typeof InstallTrigger !== 'undefined';
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
       // resort to non-worker version in that case.
-      compiler.loadVersion(true, version);
+      compiler.loadVersion(true, url);
     } else {
-      compiler.loadVersion(false, version);
+      compiler.loadVersion(false, url);
     }
   };
 
