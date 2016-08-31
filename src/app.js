@@ -506,8 +506,9 @@ var run = function () {
 
   // ----------------- version selector-------------
 
-  // clear the version selector
+  // clear and disable the version selector
   $('option', '#versionSelector').remove();
+  $('#versionSelector').attr('disabled', true);
 
   // load the new version upon change
   $('#versionSelector').change(function () {
@@ -522,6 +523,7 @@ var run = function () {
         $('#versionSelector').append(new Option(version, file));
       }
     });
+    $('#versionSelector').attr('disabled', false);
   }
 
   // always include the local version
