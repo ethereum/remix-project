@@ -352,7 +352,6 @@ var run = function () {
   $('#versionSelector').append(new Option('latest local version', 'soljson.js'));
 
   $('#versionSelector').change(function () {
-    queryParams.update({ version: $('#versionSelector').val() });
     loadVersion($('#versionSelector').val());
   });
 
