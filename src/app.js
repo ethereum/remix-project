@@ -334,27 +334,6 @@ var run = function () {
 
   updateFiles();
 
-  // ----------------- version selector-------------
-
-  // var soljsonSources is provided by bin/list.js
-
-  $('option', '#versionSelector').remove();
-  if (window.soljsonSources !== undefined) {
-    $.each(soljsonSources, function (i, file) {
-      if (file) {
-        var version = file.replace(/soljson-(.*).js/, '$1');
-        $('#versionSelector').append(new Option(version, file));
-      }
-    });
-  }
-
-  // always include the local version
-  $('#versionSelector').append(new Option('latest local version', 'soljson.js'));
-
-  $('#versionSelector').change(function () {
-    loadVersion($('#versionSelector').val());
-  });
-
   // ----------------- resizeable ui ---------------
 
   var dragging = false;
@@ -523,6 +502,27 @@ var run = function () {
   document.querySelector('#optimize').addEventListener('change', function () {
     queryParams.update({ optimize: document.querySelector('#optimize').checked });
     compiler.compile();
+  });
+
+  // ----------------- version selector-------------
+
+  // var soljsonSources is provided by bin/list.js
+
+  $('option', '#versionSelector').remove();
+  if (window.soljsonSources !== undefined) {
+    $.each(soljsonSources, function (i, file) {
+      if (file) {
+        var version = file.replace(/soljson-(.*).js/, '$1');
+        $('#versionSelector').append(new Option(version, file));
+      }
+    });
+  }
+
+  // always include the local version
+  $('#versionSelector').append(new Option('latest local version', 'soljson.js'));
+
+  $('#versionSelector').change(function () {
+    loadVersion($('#versionSelector').val());
   });
 
   storage.sync();
