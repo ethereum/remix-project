@@ -9,9 +9,9 @@ it will always deliver the latest version.
 
 ## Offline Usage
 
-Full offline usage is currently not supported because the compiler is always
-loaded via HTTP. If you clone/download the repository, use the
-`gh-pages` branch (otherwise you still have to build the application).
+The `gh-pages` branch always has the latest stable build of Browser-Solidity. It also contains a ZIP file with the entire build. Download it to use offline.
+
+Note: it contains the latest nightly build of Solidity available at the time of the packaging. No other compiler versions are supported.
 
 ## Building
 
