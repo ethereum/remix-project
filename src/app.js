@@ -506,9 +506,15 @@ var run = function () {
 
   // ----------------- version selector-------------
 
-  // var soljsonSources is provided by bin/list.js
-
+  // clear the version selector
   $('option', '#versionSelector').remove();
+
+  // load the new version upon change
+  $('#versionSelector').change(function () {
+    loadVersion($('#versionSelector').val());
+  });
+
+  // var soljsonSources is provided by bin/list.js
   if (window.soljsonSources !== undefined) {
     $.each(soljsonSources, function (i, file) {
       if (file) {
@@ -520,10 +526,6 @@ var run = function () {
 
   // always include the local version
   $('#versionSelector').append(new Option('latest local version', 'soljson.js'));
-
-  $('#versionSelector').change(function () {
-    loadVersion($('#versionSelector').val());
-  });
 
   storage.sync();
 };
