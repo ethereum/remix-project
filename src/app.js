@@ -506,9 +506,9 @@ var run = function () {
           latestRelease = release;
         }
       }
-      if (latestRelease === null) {
-        latestRelease = 'soljson-latest.js';
-      }
+    }
+    if (latestRelease === null) {
+      latestRelease = 'soljson-latest.js';
     }
     loadVersion(queryParams.get().version || latestRelease);
   } else {
