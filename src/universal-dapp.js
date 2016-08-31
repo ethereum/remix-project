@@ -43,6 +43,9 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
   if (this.executionContext.isVM()) {
     this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
     this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
+    this.addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a');
+    this.addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea');
+    this.addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce');
   }
 };
 
