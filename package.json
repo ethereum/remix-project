@@ -18,7 +18,7 @@
     "brace": "^0.8.0",
     "browserify": "^13.0.0",
     "es6-shim": "^0.35.1",
-    "ethereumjs-abi": "^0.6.2",
+    "ethereumjs-abi": "^0.6.4",
     "ethereumjs-block": "^1.2.2",
     "ethereumjs-tx": "^1.1.1",
     "ethereumjs-util": "^4.4.0",
