@@ -466,10 +466,10 @@ var run = function () {
       version = window.soljsonReleases[version];
     }
     var url;
-    if (version !== 'soljson.js') {
-      url = 'https://ethereum.github.io/solc-bin/bin/' + version;
-    } else {
+    if (version === 'builtin') {
       url = 'soljson.js';
+    } else {
+      url = 'https://ethereum.github.io/solc-bin/bin/' + version;
     }
     var isFirefox = typeof InstallTrigger !== 'undefined';
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
@@ -523,11 +523,11 @@ var run = function () {
     }
     loadVersion(queryParams.get().version || latestRelease);
   } else {
-    loadVersion('soljson.js');
+    loadVersion('builtin');
   }
 
   // always include the local version
-  $('#versionSelector').append(new Option('latest local version', 'soljson.js'));
+  $('#versionSelector').append(new Option('latest local version', 'builtin'));
 
   storage.sync();
 };
