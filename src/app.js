@@ -482,23 +482,6 @@ var run = function () {
     }
   };
 
-  if (window.soljsonSources !== undefined) {
-    var latestRelease = null;
-    if (window.soljsonReleases !== undefined) {
-      for (var release in window.soljsonReleases) {
-        if (latestRelease === null || semver.gt(release, latestRelease)) {
-          latestRelease = release;
-        }
-      }
-    }
-    if (latestRelease === null) {
-      latestRelease = 'soljson-latest.js';
-    }
-    loadVersion(queryParams.get().version || latestRelease);
-  } else {
-    loadVersion('soljson.js');
-  }
-
   document.querySelector('#optimize').addEventListener('change', function () {
     queryParams.update({ optimize: document.querySelector('#optimize').checked });
     compiler.compile();
@@ -517,6 +500,7 @@ var run = function () {
 
   // var soljsonSources is provided by bin/list.js
   if (window.soljsonSources !== undefined) {
+    // populate selector list with available versions
     $.each(soljsonSources, function (i, file) {
       if (file) {
         var version = file.replace(/soljson-(.*).js/, '$1');
@@ -524,6 +508,22 @@ var run = function () {
       }
     });
     $('#versionSelector').attr('disabled', false);
+
+    // load initial verison
+    var latestRelease = null;
+    if (window.soljsonReleases !== undefined) {
+      for (var release in window.soljsonReleases) {
+        if (latestRelease === null || semver.gt(release, latestRelease)) {
+          latestRelease = release;
+        }
+      }
+    }
+    if (latestRelease === null) {
+      latestRelease = 'soljson-latest.js';
+    }
+    loadVersion(queryParams.get().version || latestRelease);
+  } else {
+    loadVersion('soljson.js');
   }
 
   // always include the local version
