@@ -1,9 +1,8 @@
-
 .udapp {
 	padding: 1em;
 	border: 1px dotted #4D5686;
 	position: relative;
-	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 	box-sizing: border-box;
 	overflow: auto;
 }
@@ -25,7 +24,7 @@
 	width: 100%;
 	padding: 0.6em;
 	box-sizing: border-box;
-	border: 1px solid rgba( 0,0,0,0.3 );
+	border: 1px solid rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 }
 
@@ -55,7 +54,7 @@
 .udapp .title {
 	margin-bottom: 0.4em;
 	padding: 0.2em;
-	background-color: rgba( 255,255,255,0.5 );
+	background-color: rgba(255, 255, 255, 0.5);
 	display: block;
 	font-weight: bold;
 	padding-right: 2em;
@@ -90,7 +89,10 @@
 	white-space: pre;
 }
 
-.udapp .result { position: relative; }
+.udapp .result {
+	position: relative;
+}
+
 .udapp .output .result .returned,
 .udapp .output .result .value,
 .udapp .output .result .waiting,
@@ -100,14 +102,16 @@
 }
 
 .udapp .output .result .debugTx {
-    position: absolute;
-    top: 0.4em;
-    right: 1.4em;
-    height: 1.5em;
-    width: 2.5em;
+	position: absolute;
+	top: 0.4em;
+	right: 1.4em;
+	height: 1.5em;
+	width: 2.5em;
 }
 
-.udapp .output .result:last-child { margin: 0; }
+.udapp .output .result:last-child {
+	margin: 0;
+}
 
 .udapp .output:empty {
 	display: none;
@@ -162,12 +166,10 @@
 	content: "\25B6";
 }
 
-
 .udapp .contractProperty {
 	overflow: auto;
 	margin-bottom: 0.4em;
 }
-
 
 .udapp input,
 .udapp button {
@@ -184,7 +186,10 @@
 	border-radius: 3px;
 }
 
-.udapp input { border-left: 0 none;}
+.udapp input {
+	border-left: 0 none;
+}
+
 .udapp button {
 	background-color: #666;
 	color: #4C4B4B;
@@ -269,9 +274,9 @@
 	white-space: pre;
 }
 
-.udapp .events .event .name { margin-right: 0.5em; }
-
-
+.udapp .events .event .name {
+	margin-right: 0.5em;
+}
 
 .udapp .legend {
 	font-size: 12px;
@@ -295,6 +300,14 @@
 	width: 1em;
 }
 
-.udapp .legend .attach:before { background-color: #62B762; }
-.udapp .legend .transact:before { background-color: #D42828; }
-.udapp .legend .call:before { background-color: #556DF3; }
+.udapp .legend .attach:before {
+	background-color: #62B762;
+}
+
+.udapp .legend .transact:before {
+	background-color: #D42828;
+}
+
+.udapp .legend .call:before {
+	background-color: #556DF3;
+}
