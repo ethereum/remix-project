@@ -216,6 +216,12 @@
 	width: 21px;
 }
 
+.udapp .contractProperty button:disabled {
+	cursor: not-allowed;
+	background-color: white;
+	border-color: lightgray;
+}
+
 .udapp .contractProperty .call {
 	background-color: #FF8B8B;
 	border-color: #FF8B8B;
