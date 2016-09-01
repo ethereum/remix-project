@@ -216,11 +216,19 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract); });
   $createInterface.append($atButton);
 
+  var $newButton = self.getInstanceInterface(contract);
+  $createInterface.append($newButton);
+
   // Only display creation interface for non-abstract contracts.
   // FIXME: maybe have a flag for this in the JSON?
-  if (contract.bytecode.length !== 0) {
-    var $newButton = self.getInstanceInterface(contract);
-    $createInterface.append($newButton);
+  // FIXME: maybe fix getInstanceInterface() below for this case
+  if (contract.bytecode.length === 0) {
+    var $createButton = $newButton.find('.constructor .call');
+
+    // NOTE: we must show the button to have CSS properly lined up
+    $createButton.text('Create');
+    $createButton.attr('disabled', 'disabled');
+    $createButton.attr('title', 'This contract does not implement all functions and thus cannot be created.');
   }
 
   return $createInterface;
