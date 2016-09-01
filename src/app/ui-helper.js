@@ -132,10 +132,6 @@ module.exports = {
     var details = $('<div style="display: none;"/>')
       .append(this.tableRow('Solidity Interface', contract.solidity_interface));
 
-    if (contract.opcodes !== '') {
-      details.append(this.tableRow('Opcodes', contract.opcodes));
-    }
-
     var funHashes = '';
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
@@ -149,6 +145,10 @@ module.exports = {
 
     if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0) {
       details.append(this.tableRow('Runtime Bytecode', contract.runtimeBytecode));
+    }
+
+    if (contract.opcodes !== '') {
+      details.append(this.tableRow('Opcodes', contract.opcodes));
     }
 
     if (contract.assembly !== null) {
