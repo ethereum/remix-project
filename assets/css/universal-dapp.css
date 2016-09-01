@@ -296,9 +296,3 @@
 .udapp .legend .attach:before { background-color: #62B762; }
 .udapp .legend .transact:before { background-color: #D42828; }
 .udapp .legend .call:before { background-color: #556DF3; }
-
-.udapp .poweredBy {
-	float: right;
-	color: #666;
-	font-size: 12px;
-}

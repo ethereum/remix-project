@@ -305,7 +305,6 @@ body {
     content: "\25B6";
 }
 
-#output .poweredBy,
 #output .legend { display: none; }
 
 #output .udapp {
