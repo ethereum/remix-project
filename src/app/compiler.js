@@ -180,8 +180,12 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
           break;
       }
     });
-    worker.onerror = function (msg) { console.log(msg.data); };
-    worker.addEventListener('error', function (msg) { console.log(msg.data); });
+    worker.onerror = function (msg) {
+      compilationFinished({ error: 'Worker error: ' + msg.data });
+    };
+    worker.addEventListener('error', function (msg) {
+      compilationFinished({ error: 'Worker error: ' + msg.data });
+    });
     compileJSON = function (source, optimize) {
       worker.postMessage({cmd: 'compile', source: JSON.stringify(source), optimize: optimize});
     };
