@@ -6,7 +6,6 @@ body {
 }
 
 #editor {
-
     position: absolute;
     top: 0;
     left: 0;
@@ -23,7 +22,7 @@ body {
     display: none;
     padding: 0 0.9em;
     vertical-align: middle;
-    background-color: rgba(255,255,255,0.8);
+    background-color: rgba(255, 255, 255, 0.8);
     height: 100%;
     font-size: 1.3em;
 }
@@ -70,7 +69,7 @@ body {
     cursor: pointer;
     border-right: 0.5em solid white;
     position: relative;
-    display:table-cell;
+    display: table-cell;
     text-align: center;
     vertical-align: middle;
     color: #999;
@@ -121,7 +120,9 @@ body {
     margin: 0.5em 0;
 }
 
-#files .file.active .remove { display: inline-block; }
+#files .file.active .remove {
+    display: inline-block;
+}
 
 #input {
     border-top: 3px solid #F4F6FF;
@@ -203,19 +204,36 @@ body {
     padding: 1em 0.5em 0.5em;
 }
 
-#header #optionViews.txView #txView { display: block; }
-#header #optionViews.settingsView #settingsView { display: block; }
-#header #optionViews.publishView #publishView { display: block; }
-#header #optionViews.envView #envView { display: block; }
-#header #optionViews.debugView #debugView { display: block; }
-#header #optionViews.verificationView #verificationView { display: block; }
+#header #optionViews.txView #txView {
+    display: block;
+}
+
+#header #optionViews.settingsView #settingsView {
+    display: block;
+}
+
+#header #optionViews.publishView #publishView {
+    display: block;
+}
+
+#header #optionViews.envView #envView {
+    display: block;
+}
+
+#header #optionViews.debugView #debugView {
+    display: block;
+}
+
+#header #optionViews.verificationView #verificationView {
+    display: block;
+}
 
 #header #optionViews.txView input,
 #header #optionViews.txView select {
     max-width: 13em;
     padding: 0.3em;
     box-sizing: border-box;
-    border: 1px solid rgba( 0,0,0,0.3 );
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 3px;
 }
 
@@ -362,7 +380,7 @@ body {
 .sol.warning .close {
     font-weight: bold;
     position: absolute;
-    color: rgba(0,0,0,0.5);
+    color: rgba(0, 0, 0, 0.5);
     top: 0;
     right: 0;
     padding: 0.5em;
