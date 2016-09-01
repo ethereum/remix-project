@@ -133,8 +133,7 @@ module.exports = {
   detailsOpen: {},
   getDetails: function (contract, source, contractName) {
     var button = $('<button>Toggle Details</button>');
-    var details = $('<div style="display: none;"/>')
-      .append(this.tableRow('Solidity Interface', contract.solidity_interface));
+    var details = $('<div style="display: none;"/>');
 
     var funHashes = '';
     for (var fun in contract.functionHashes) {
