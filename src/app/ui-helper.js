@@ -21,6 +21,13 @@ module.exports = {
       cls);
   },
 
+  preRow: function (description, data) {
+    return this.tableRowItems(
+      $('<span/>').text(description),
+      $('<pre/>').text(data)
+    );
+  },
+
   formatAssemblyText: function (asm, prefix, source) {
     var self = this;
     if (typeof asm === typeof '' || asm === null || asm === undefined) {
@@ -133,13 +140,11 @@ module.exports = {
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
     }
-    details.append($('<span class="col1">Functions</span>'));
-    details.append($('<pre/>').text(funHashes));
+    details.append(this.preRow('Functions', funHashes));
 
     var gasEstimates = this.formatGasEstimates(contract.gasEstimates);
     if (gasEstimates) {
-      details.append($('<span class="col1">Gas Estimates</span>'));
-      details.append($('<pre/>').text(gasEstimates));
+      details.append(this.preRow('Gas Estimates', gasEstimates));
     }
 
     if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0) {
@@ -147,9 +152,7 @@ module.exports = {
     }
 
     if (contract.assembly !== null) {
-      details.append($('<span class="col1">Assembly</span>'));
-      var assembly = $('<pre/>').text(this.formatAssemblyText(contract.assembly, '', source));
-      details.append(assembly);
+      details.append(this.preRow('Assembly', this.formatAssemblyText(contract.assembly, '', source)));
     }
 
     var self = this;
