@@ -135,6 +135,11 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 UniversalDApp.prototype.render = function () {
   var self = this;
 
+  // NOTE: don't display anything if there are no contracts to display
+  if (self.contracts.length === 0) {
+    return self.$el;
+  }
+
   var $legend = $('<div class="legend" />')
     .append($('<div class="attach"/>').text('Attach'))
     .append($('<div class="transact"/>').text('Transact'))
@@ -142,6 +147,7 @@ UniversalDApp.prototype.render = function () {
 
   self.$el.append($legend);
 
+  // NOTE: this might be used in the future
   if (self.contracts.length === 0) {
     self.$el.append(self.getABIInputForm());
   } else {
