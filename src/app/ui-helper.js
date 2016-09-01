@@ -151,7 +151,7 @@ module.exports = {
       details.append(this.tableRow('Runtime Bytecode', contract.runtimeBytecode));
     }
 
-    if (contract.opcodes !== '') {
+    if (contract.opcodes !== undefined && contract.opcodes !== '') {
       details.append(this.tableRow('Opcodes', contract.opcodes));
     }
 
