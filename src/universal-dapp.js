@@ -135,6 +135,13 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 UniversalDApp.prototype.render = function () {
   var self = this;
 
+  var $legend = $('<div class="legend" />')
+    .append($('<div class="attach"/>').text('Attach'))
+    .append($('<div class="transact"/>').text('Transact'))
+    .append($('<div class="call"/>').text('Call'));
+
+  self.$el.append($legend);
+
   if (self.contracts.length === 0) {
     self.$el.append(self.getABIInputForm());
   } else {
@@ -153,12 +160,7 @@ UniversalDApp.prototype.render = function () {
       self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
     }
   }
-  var $legend = $('<div class="legend" />')
-    .append($('<div class="attach"/>').text('Attach'))
-    .append($('<div class="transact"/>').text('Transact'))
-    .append($('<div class="call"/>').text('Call'));
 
-  self.$el.append($legend);
   return self.$el;
 };
 
