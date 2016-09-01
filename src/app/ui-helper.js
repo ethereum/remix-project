@@ -103,7 +103,11 @@ module.exports = {
     if (data.creation === undefined && data.external === undefined && data.internal === undefined) {
       return;
     }
-    var gasToText = function (g) { return g === null ? 'unknown' : g; };
+
+    var gasToText = function (g) {
+      return g === null ? 'unknown' : g;
+    };
+
     var text = '';
     var fun;
     if ('creation' in data) {
@@ -156,7 +160,10 @@ module.exports = {
     }
 
     var self = this;
-    button.click(function () { self.detailsOpen[contractName] = !self.detailsOpen[contractName]; details.toggle(); });
+    button.click(function () {
+      self.detailsOpen[contractName] = !self.detailsOpen[contractName];
+      details.toggle();
+    });
     if (this.detailsOpen[contractName]) {
       details.show();
     }
