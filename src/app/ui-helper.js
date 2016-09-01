@@ -122,8 +122,7 @@ module.exports = {
   detailsOpen: {},
   getDetails: function (contract, source, contractName) {
     var button = $('<button>Toggle Details</button>');
-    var details = $('<div style="display: none;"/>')
-      .append(this.tableRow('Solidity Interface', contract.solidity_interface));
+    var details = $('<div style="display: none;"/>');
 
     if (contract.opcodes !== '') {
       details.append(this.tableRow('Opcodes', contract.opcodes));
