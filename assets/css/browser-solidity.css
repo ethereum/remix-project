@@ -305,14 +305,11 @@ body {
     content: "\25B6";
 }
 
-#output .legend { display: none; }
-
 #output .udapp {
     border: 0 none;
     box-shadow: none;
     border-bottom: 3px solid #F4F6FF;
 }
-
 
 .crow {
     overflow: auto;
