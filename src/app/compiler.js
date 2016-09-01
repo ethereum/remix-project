@@ -123,13 +123,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     }
   }
 
-  this.loadVersion = function (usingWorker, version) {
-    var url;
-    if (version !== 'soljson.js') {
-      url = 'https://ethereum.github.io/solc-bin/bin/' + version;
-    } else {
-      url = 'soljson.js';
-    }
+  this.loadVersion = function (usingWorker, url) {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'));
 
     if (usingWorker) {
