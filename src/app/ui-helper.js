@@ -21,6 +21,13 @@ module.exports = {
       cls);
   },
 
+  preRow: function (description, data) {
+    return this.tableRowItems(
+      $('<span/>').text(description),
+      $('<pre/>').text(data)
+    );
+  },
+
   formatAssemblyText: function (asm, prefix, source) {
     var self = this;
     if (typeof asm === typeof '' || asm === null || asm === undefined) {
@@ -96,7 +103,11 @@ module.exports = {
     if (data.creation === undefined && data.external === undefined && data.internal === undefined) {
       return;
     }
-    var gasToText = function (g) { return g === null ? 'unknown' : g; };
+
+    var gasToText = function (g) {
+      return g === null ? 'unknown' : g;
+    };
+
     var text = '';
     var fun;
     if ('creation' in data) {
@@ -125,35 +136,34 @@ module.exports = {
     var details = $('<div style="display: none;"/>')
       .append(this.tableRow('Solidity Interface', contract.solidity_interface));
 
-    if (contract.opcodes !== '') {
-      details.append(this.tableRow('Opcodes', contract.opcodes));
-    }
-
     var funHashes = '';
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n';
     }
-    details.append($('<span class="col1">Functions</span>'));
-    details.append($('<pre/>').text(funHashes));
+    details.append(this.preRow('Functions', funHashes));
 
     var gasEstimates = this.formatGasEstimates(contract.gasEstimates);
     if (gasEstimates) {
-      details.append($('<span class="col1">Gas Estimates</span>'));
-      details.append($('<pre/>').text(gasEstimates));
+      details.append(this.preRow('Gas Estimates', gasEstimates));
     }
 
     if (contract.runtimeBytecode && contract.runtimeBytecode.length > 0) {
       details.append(this.tableRow('Runtime Bytecode', contract.runtimeBytecode));
     }
 
+    if (contract.opcodes !== undefined && contract.opcodes !== '') {
+      details.append(this.tableRow('Opcodes', contract.opcodes));
+    }
+
     if (contract.assembly !== null) {
-      details.append($('<span class="col1">Assembly</span>'));
-      var assembly = $('<pre/>').text(this.formatAssemblyText(contract.assembly, '', source));
-      details.append(assembly);
+      details.append(this.preRow('Assembly', this.formatAssemblyText(contract.assembly, '', source)));
     }
 
     var self = this;
-    button.click(function () { self.detailsOpen[contractName] = !self.detailsOpen[contractName]; details.toggle(); });
+    button.click(function () {
+      self.detailsOpen[contractName] = !self.detailsOpen[contractName];
+      details.toggle();
+    });
     if (this.detailsOpen[contractName]) {
       details.show();
     }
