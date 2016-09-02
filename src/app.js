@@ -334,27 +334,6 @@ var run = function () {
 
   updateFiles();
 
-  // ----------------- version selector-------------
-
-  // var soljsonSources is provided by bin/list.js
-
-  $('option', '#versionSelector').remove();
-  if (window.soljsonSources !== undefined) {
-    $.each(soljsonSources, function (i, file) {
-      if (file) {
-        var version = file.replace(/soljson-(.*).js/, '$1');
-        $('#versionSelector').append(new Option(version, file));
-      }
-    });
-  }
-
-  // always include the local version
-  $('#versionSelector').append(new Option('latest local version', 'soljson.js'));
-
-  $('#versionSelector').change(function () {
-    loadVersion($('#versionSelector').val());
-  });
-
   // ----------------- resizeable ui ---------------
 
   var dragging = false;
@@ -487,10 +466,10 @@ var run = function () {
       version = window.soljsonReleases[version];
     }
     var url;
-    if (version !== 'soljson.js') {
-      url = 'https://ethereum.github.io/solc-bin/bin/' + version;
-    } else {
+    if (version === 'builtin') {
       url = 'soljson.js';
+    } else {
+      url = 'https://ethereum.github.io/solc-bin/bin/' + version;
     }
     var isFirefox = typeof InstallTrigger !== 'undefined';
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
@@ -503,7 +482,34 @@ var run = function () {
     }
   };
 
+  document.querySelector('#optimize').addEventListener('change', function () {
+    queryParams.update({ optimize: document.querySelector('#optimize').checked });
+    compiler.compile();
+  });
+
+  // ----------------- version selector-------------
+
+  // clear and disable the version selector
+  $('option', '#versionSelector').remove();
+  $('#versionSelector').attr('disabled', true);
+
+  // load the new version upon change
+  $('#versionSelector').change(function () {
+    loadVersion($('#versionSelector').val());
+  });
+
+  // var soljsonSources is provided by bin/list.js
   if (window.soljsonSources !== undefined) {
+    // populate selector list with available versions
+    $.each(soljsonSources, function (i, file) {
+      if (file) {
+        var version = file.replace(/soljson-(.*).js/, '$1');
+        $('#versionSelector').append(new Option(version, file));
+      }
+    });
+    $('#versionSelector').attr('disabled', false);
+
+    // load initial verison
     var latestRelease = null;
     if (window.soljsonReleases !== undefined) {
       for (var release in window.soljsonReleases) {
@@ -517,13 +523,11 @@ var run = function () {
     }
     loadVersion(queryParams.get().version || latestRelease);
   } else {
-    loadVersion('soljson.js');
+    loadVersion('builtin');
   }
 
-  document.querySelector('#optimize').addEventListener('change', function () {
-    queryParams.update({ optimize: document.querySelector('#optimize').checked });
-    compiler.compile();
-  });
+  // always include the local version
+  $('#versionSelector').append(new Option('latest local version', 'builtin'));
 
   storage.sync();
 };
