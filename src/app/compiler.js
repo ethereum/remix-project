@@ -91,24 +91,26 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
           result = { error: 'Uncaught JavaScript exception:\n' + exception };
         }
 
-        compilationFinished(result, missingInputs);
+        compilationFinished(result, missingInputs, source);
       };
 
       onCompilerLoaded(compiler.version());
     }
   }
 
-  function compilationFinished (data, missingInputs) {
+  this.lastCompilationResult = {
+    data: null,
+    source: null
+  };
+  function compilationFinished (data, missingInputs, source) {
     var noFatalErrors = true; // ie warnings are ok
 
     if (data['error'] !== undefined) {
-      self.event.trigger('compilationFinished', [false, [data['error']], editor.getValue()]);
       if (utils.errortype(data['error']) !== 'warning') {
         noFatalErrors = false;
       }
     }
     if (data['errors'] !== undefined) {
-      self.event.trigger('compilationFinished', [false, data['errors'], editor.getValue()]);
       data['errors'].forEach(function (err) {
         if (utils.errortype(err) !== 'warning') {
           noFatalErrors = false;
@@ -116,10 +118,16 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
       });
     }
 
-    if (missingInputs !== undefined && missingInputs.length > 0) {
+    if (!noFatalErrors) {
+      self.event.trigger('compilationFinished', [false, data, source]);
+    } else if (missingInputs !== undefined && missingInputs.length > 0) {
       compile(missingInputs);
-    } else if (noFatalErrors) {
-      self.event.trigger('compilationFinished', [true, data, editor.getValue()]);
+    } else {
+      self.lastCompilationResult = {
+        data: data,
+        source: source
+      };
+      self.event.trigger('compilationFinished', [true, data, source]);
     }
   }
 
@@ -170,7 +178,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
           } catch (exception) {
             result = { 'error': 'Invalid JSON output from the compiler: ' + exception };
           }
-          compilationFinished(result, data.missingInputs);
+          compilationFinished(result, data.missingInputs, data.source);
           break;
       }
     });
