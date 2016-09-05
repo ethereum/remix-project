@@ -475,7 +475,7 @@ var run = function () {
     $('#version').text(text);
   }
 
-  var loadVersion = function (version) {
+  function loadVersion (version) {
     setVersionText('(loading)');
     queryParams.update({version: version});
     if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
@@ -496,7 +496,7 @@ var run = function () {
     } else {
       compiler.loadVersion(false, url);
     }
-  };
+  }
 
   document.querySelector('#optimize').addEventListener('change', function () {
     queryParams.update({ optimize: document.querySelector('#optimize').checked });
