@@ -477,9 +477,6 @@ var run = function () {
 
   function loadVersion (version) {
     queryParams.update({version: version});
-    if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
-      version = window.soljsonReleases[version];
-    }
     var url;
     if (version === 'builtin') {
       url = 'soljson.js';
@@ -524,7 +521,7 @@ var run = function () {
     });
     $('#versionSelector').attr('disabled', false);
 
-    // load initial verison
+    // load initial version
     var latestRelease = null;
     if (window.soljsonReleases !== undefined) {
       for (var release in window.soljsonReleases) {
