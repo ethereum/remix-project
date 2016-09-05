@@ -25,39 +25,45 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   this.trigger('resolvingStep')
   var self = this
   if (stepIndex === 0) {
-    self.getCode(tx.to, stepIndex, tx)
+    self.retrieveCodeAndTrigger(tx.to, stepIndex, tx)
   } else {
     this.traceManager.getCurrentCalledAddressAt(stepIndex, function (error, address) {
       if (error) {
         console.log(error)
       } else {
-        self.getCode(address, stepIndex, tx)
+        self.retrieveCodeAndTrigger(address, stepIndex, tx)
       }
     })
   }
 }
 
-CodeManager.prototype.getCode = function (address, currentStep, tx) {
+CodeManager.prototype.retrieveCodeAndTrigger = function (address, stepIndex, tx) {
   var self = this
+  this.getCode(address, function (error, result) {
+    if (!error) {
+      self.retrieveIndexAndTrigger(address, stepIndex, result.instructions)
+    } else {
+      console.log(error)
+    }
+  })
+}
+
+CodeManager.prototype.getCode = function (address, cb) {
   if (traceHelper.isContractCreation(address)) {
     var codes = codeResolver.getExecutingCodeFromCache(address)
     if (!codes) {
       this.traceManager.getContractCreationCode(address, function (error, hexCode) {
-        // contract creation
-        if (error) {
-          console.log(error)
-        } else {
+        if (!error) {
           codes = codeResolver.cacheExecutingCode(address, hexCode)
-          self.retrieveIndexAndTrigger(address, currentStep, codes.code)
+          cb(null, codes)
         }
       })
     } else {
-      self.retrieveIndexAndTrigger(address, currentStep, codes.code)
+      cb(null, codes)
     }
   } else {
     codeResolver.resolveCode(address, function (address, code) {
-      // resoling code from stack
-      self.retrieveIndexAndTrigger(address, currentStep, code)
+      cb(null, code)
     })
   }
 }

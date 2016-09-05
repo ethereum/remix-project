@@ -12,6 +12,7 @@ var ui = require('../helpers/ui')
 var Web3Providers = require('../web3Provider/web3Providers')
 var DummyProvider = require('../web3Provider/dummyProvider')
 var CodeManager = require('../code/codeManager')
+var SourceLocationTracker = require('../code/sourceLocationTracker')
 
 function Ethdebugger () {
   util.extend(this, new EventManager())
@@ -26,6 +27,7 @@ function Ethdebugger () {
   this.switchProvider('DUMMYWEB3')
   this.traceManager = new TraceManager()
   this.codeManager = new CodeManager(this.traceManager)
+  this.sourceLocationTracker = new SourceLocationTracker(this.codeManager)
 
   var self = this
   this.register('indexChanged', this, function (index) {
@@ -72,7 +74,11 @@ Ethdebugger.prototype.switchProvider = function (type) {
 }
 
 Ethdebugger.prototype.debug = function (tx) {
-  this.txBrowser.load(tx.hash)
+  if (tx instanceof Object) {
+    this.txBrowser.load(tx.hash)
+  } else if (tx instanceof String) {
+    this.txBrowser.load(tx)
+  }
 }
 
 Ethdebugger.prototype.render = function () {

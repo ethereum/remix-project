@@ -3,19 +3,20 @@ var codeUtils = require('./codeUtils')
 var util = require('../helpers/global')
 
 module.exports = {
-  codes: {}, // assembly items instructions list by contract addesses
+  bytecodeByAddress: {}, // bytes code by contract addesses
+  instructionsByAddress: {}, // assembly items instructions list by contract addesses
   instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
 
   resolveCode: function (address, callBack) {
     var cache = this.getExecutingCodeFromCache(address)
     if (cache) {
-      callBack(address, cache.code)
+      callBack(address, cache)
       return
     }
 
     var self = this
     this.loadCode(address, function (code) {
-      callBack(address, self.cacheExecutingCode(address, code).code)
+      callBack(address, self.cacheExecutingCode(address, code))
     })
   },
 
@@ -32,9 +33,10 @@ module.exports = {
 
   cacheExecutingCode: function (address, hexCode) {
     var codes = this.formatCode(hexCode)
-    this.codes[address] = codes.code
+    this.bytecodeByAddress[address] = hexCode
+    this.instructionsByAddress[address] = codes.code
     this.instructionsIndexByBytesOffset[address] = codes.instructionsIndexByBytesOffset
-    return codes
+    return this.getExecutingCodeFromCache(address)
   },
 
   formatCode: function (hexCode) {
@@ -46,10 +48,11 @@ module.exports = {
   },
 
   getExecutingCodeFromCache: function (address) {
-    if (this.codes[address]) {
+    if (this.instructionsByAddress[address]) {
       return {
-        code: this.codes[address],
-        instructionsIndexByBytesOffset: this.instructionsIndexByBytesOffset[address]
+        instructions: this.instructionsByAddress[address],
+        instructionsIndexByBytesOffset: this.instructionsIndexByBytesOffset[address],
+        bytecode: this.bytecodeByAddress[address]
       }
     } else {
       return null
