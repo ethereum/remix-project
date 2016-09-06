@@ -34,7 +34,7 @@ module.exports = function (self) {
         break;
       case 'compile':
         missingInputs.length = 0;
-        self.postMessage({cmd: 'compiled', data: compileJSON(data.source, data.optimize), missingInputs: missingInputs, source: data.source});
+        self.postMessage({cmd: 'compiled', job: data.job, data: compileJSON(data.source, data.optimize), missingInputs: missingInputs});
         break;
     }
   }, false);

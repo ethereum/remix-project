@@ -144,7 +144,9 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   function loadInternal (url) {
     delete window.Module;
     // Set a safe fallback until the new one is loaded
-    setCompileJSON(function (source, optimize) { compilationFinished({}); });
+    setCompileJSON(function (source, optimize) {
+      compilationFinished({error: 'Compiler not yet loaded.'});
+    });
 
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
@@ -164,6 +166,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
       worker.terminate();
     }
     worker = webworkify(require('./compiler-worker.js'));
+    var jobs = [];
     worker.addEventListener('message', function (msg) {
       var data = msg.data;
       switch (data.cmd) {
@@ -173,14 +176,17 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
           break;
         case 'compiled':
           var result;
-          var source;
           try {
             result = JSON.parse(data.data);
-            source = JSON.parse(data.source);
           } catch (exception) {
             result = { 'error': 'Invalid JSON output from the compiler: ' + exception };
           }
-          compilationFinished(result, data.missingInputs, source);
+          var sources = {};
+          if (data.job in jobs !== undefined) {
+            sources = jobs[data.job].sources;
+            delete jobs[data.job];
+          }
+          compilationFinished(result, data.missingInputs, sources);
           break;
       }
     });
@@ -191,7 +197,8 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
       compilationFinished({ error: 'Worker error: ' + msg.data });
     });
     compileJSON = function (source, optimize) {
-      worker.postMessage({cmd: 'compile', source: JSON.stringify(source), optimize: optimize});
+      jobs.push({sources: source});
+      worker.postMessage({cmd: 'compile', job: jobs.length - 1, source: JSON.stringify(source), optimize: optimize});
     };
     worker.postMessage({cmd: 'loadVersion', data: url});
   }
