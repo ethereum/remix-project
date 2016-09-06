@@ -444,14 +444,10 @@ var run = function () {
     compiler.compile();
   });
 
-  compiler.event.register('compilerLoaded', this, function (context) {
-    compiler.compile();
-    initWithQueryParams();
-  });
-
   compiler.event.register('compilerLoaded', this, function (version) {
     setVersionText(version);
     compiler.compile();
+    initWithQueryParams();
   });
 
   function initWithQueryParams () {
