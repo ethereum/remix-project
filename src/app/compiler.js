@@ -52,7 +52,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
     files[utils.fileNameFromKey(editor.getCacheFile())] = input;
     gatherImports(files, missingInputs, function (input, error) {
       if (input === null) {
-        self.event.trigger('compilationFinished', [false, [error], editor.getValue()]);
+        self.event.trigger('compilationFinished', [false, [error], files]);
       } else {
         var optimize = queryParams.get().optimize;
         compileJSON(input, optimize ? 1 : 0);
@@ -144,7 +144,7 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   function loadInternal (url) {
     delete window.Module;
     // Set a safe fallback until the new one is loaded
-    setCompileJSON(function (source, optimize) { compilationFinished('{}'); });
+    setCompileJSON(function (source, optimize) { compilationFinished({}); });
 
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
@@ -173,12 +173,14 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
           break;
         case 'compiled':
           var result;
+          var source;
           try {
             result = JSON.parse(data.data);
+            source = JSON.parse(data.source);
           } catch (exception) {
             result = { 'error': 'Invalid JSON output from the compiler: ' + exception };
           }
-          compilationFinished(result, data.missingInputs, data.source);
+          compilationFinished(result, data.missingInputs, source);
           break;
       }
     });
