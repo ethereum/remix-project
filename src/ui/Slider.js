@@ -11,6 +11,8 @@ function Slider (_traceManager) {
   this.max
   this.disabled = true
   this.view
+
+  this.previousValue = null
 }
 
 Slider.prototype.render = function () {
@@ -23,8 +25,8 @@ Slider.prototype.render = function () {
           min=0
           max=${this.max}
           value=0
-          onkeyup=${function () { self.onChange() }}
-          onmouseup=${function () { self.onChange() }}
+          onchange=${function () { self.onChange() }}
+          oninput=${function () { self.onChange() }}
           disabled=${this.disabled} />
       </div>`
   if (!this.view) {
@@ -43,8 +45,10 @@ Slider.prototype.init = function (length) {
 }
 
 Slider.prototype.onChange = function (event) {
-  var value = document.getElementById('slider').value
-  this.trigger('moved', [parseInt(value)])
+  var value = parseInt(document.getElementById('slider').value)
+  if (value === this.previousValue) return
+  this.previousValue = value
+  this.trigger('moved', [value])
 }
 
 Slider.prototype.setValue = function (value) {
