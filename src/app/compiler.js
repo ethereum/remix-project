@@ -144,6 +144,9 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
 
   function loadInternal (url) {
     delete window.Module;
+    // NOTE: workaround some browsers?
+    window.Module = undefined;
+
     // Set a safe fallback until the new one is loaded
     setCompileJSON(function (source, optimize) {
       compilationFinished({error: 'Compiler not yet loaded.'});
