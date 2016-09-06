@@ -531,22 +531,22 @@ var run = function () {
     $('#versionSelector').append(new Option('latest local version', 'builtin'));
 
     // find latest release
-    var latestRelease = null;
+    var selectedVersion = null;
     for (var release in data.releases) {
-      if (latestRelease === null || semver.gt(release, latestRelease)) {
-        latestRelease = release;
+      if (selectedVersion === null || semver.gt(release, selectedVersion)) {
+        selectedVersion = release;
       }
     }
-    if (latestRelease !== null) {
-      latestRelease = data.releases[latestRelease];
+    if (selectedVersion !== null) {
+      selectedVersion = data.releases[selectedVersion];
     }
 
     // override with the requested version
     if (queryParams.get().version) {
-      latestRelease = queryParams.get().version;
+      selectedVersion = queryParams.get().version;
     }
 
-    loadVersion(latestRelease);
+    loadVersion(selectedVersion);
   });
 
   storage.sync();
