@@ -444,6 +444,10 @@ var run = function () {
     compiler.compile();
   });
 
+  compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
+    setVersionText(usingWorker ? '(loading using worker)' : '(loading)');
+  });
+
   compiler.event.register('compilerLoaded', this, function (version) {
     setVersionText(version);
     compiler.compile();
@@ -472,7 +476,6 @@ var run = function () {
   }
 
   function loadVersion (version) {
-    setVersionText('(loading)');
     queryParams.update({version: version});
     if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
       version = window.soljsonReleases[version];
