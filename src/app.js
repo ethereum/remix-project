@@ -519,17 +519,24 @@ var run = function () {
       return;
     }
 
-    // populate version dropdown with all available compiler versions
+    function buildVersion (build) {
+      if (build.prerelease && build.prerelease.length > 0) {
+        return build.version + '-' + build.prerelease;
+      } else {
+        return build.version;
+      }
+    }
 
     // Sort builds according to semver
     var builds = data.builds.sort(function (a, b) {
-      a = a.version + '-' + a.prerelease;
-      b = b.version + '-' + b.prerelease;
+      a = buildVersion(a);
+      b = buildVersion(b);
       return semver.compare(a, b);
     }).reverse();
 
+    // populate version dropdown with all available compiler versions
     $.each(builds, function (i, build) {
-      $('#versionSelector').append(new Option(build.version + '-' + build.prerelease, build.path));
+      $('#versionSelector').append(new Option(buildVersion(build), build.path));
     });
 
     $('#versionSelector').attr('disabled', false);
