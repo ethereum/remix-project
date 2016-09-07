@@ -444,14 +444,14 @@ var run = function () {
     compiler.compile();
   });
 
-  compiler.event.register('compilerLoaded', this, function (context) {
-    compiler.compile();
-    initWithQueryParams();
+  compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
+    setVersionText(usingWorker ? '(loading using worker)' : '(loading)');
   });
 
   compiler.event.register('compilerLoaded', this, function (version) {
     setVersionText(version);
     compiler.compile();
+    initWithQueryParams();
   });
 
   function initWithQueryParams () {
@@ -475,8 +475,7 @@ var run = function () {
     $('#version').text(text);
   }
 
-  var loadVersion = function (version) {
-    setVersionText('(loading)');
+  function loadVersion (version) {
     queryParams.update({version: version});
     if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
       version = window.soljsonReleases[version];
@@ -496,7 +495,7 @@ var run = function () {
     } else {
       compiler.loadVersion(false, url);
     }
-  };
+  }
 
   document.querySelector('#optimize').addEventListener('change', function () {
     queryParams.update({ optimize: document.querySelector('#optimize').checked });

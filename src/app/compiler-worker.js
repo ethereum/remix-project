@@ -9,6 +9,9 @@ module.exports = function (self) {
     switch (data.cmd) {
       case 'loadVersion':
         delete self.Module;
+        // NOTE: workaround some browsers?
+        self.Module = undefined;
+
         compileJSON = null;
 
         self.importScripts(data.data);
