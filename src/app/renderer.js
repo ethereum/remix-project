@@ -19,15 +19,16 @@ function Renderer (editor, web3, updateFiles, udapp, executionContext, formalVer
     $('#output').empty();
     if (success) {
       self.contracts(data, source);
-    } else {
-      if (data['error']) {
-        self.error(data['error']);
-      }
-      if (data['errors']) {
-        data['errors'].forEach(function (err) {
-          self.error(err);
-        });
-      }
+    }
+
+    // NOTE: still need to display as there might be warnings
+    if (data['error']) {
+      self.error(data['error']);
+    }
+    if (data['errors']) {
+      data['errors'].forEach(function (err) {
+        self.error(err);
+      });
     }
   });
 }
