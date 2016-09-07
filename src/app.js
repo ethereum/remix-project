@@ -436,6 +436,12 @@ var run = function () {
 
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
 
+  var autoCompile = document.querySelector('#autoCompile').checked;
+
+  document.querySelector('#autoCompile').addEventListener('change', function () {
+    autoCompile = document.querySelector('#autoCompile').checked;
+  });
+
   var previousInput = '';
   var compileTimeout = null;
 
@@ -449,6 +455,11 @@ var run = function () {
       return;
     }
     previousInput = input;
+
+    if (!autoCompile) {
+      return;
+    }
+
     if (compileTimeout) {
       window.clearTimeout(compileTimeout);
     }
