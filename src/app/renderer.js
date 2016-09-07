@@ -88,14 +88,15 @@ Renderer.prototype.contracts = function (data, source) {
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
     if (contract.bytecode) {
-      $contractOutput.append(uiHelper.textRow('Bytecode', contract.bytecode))
+      $contractOutput.append(uiHelper.tableRow('Bytecode', contract.bytecode))
     }
 
-    $contractOutput.append(uiHelper.textRow('Interface', contract['interface']))
+    $contractOutput.append(uiHelper.tableRow('Interface', contract['interface']))
 
     if (contract.bytecode) {
-      $contractOutput.append(uiHelper.textRow('Web3 deploy', uiHelper.gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
+      $contractOutput.append(uiHelper.preRow('Web3 deploy', uiHelper.gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
     }
+
     var ctrSource = getSource(contractName, source, data)
     return $contractOutput.append(uiHelper.getDetails(contract, ctrSource, contractName))
   }
