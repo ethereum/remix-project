@@ -351,6 +351,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
   return $createInterface;
 };
 
+// either return the supplied constructor or a mockup (we assume everything can be instantiated)
 UniversalDApp.prototype.getConstructorInterface = function (abi) {
   var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] };
   for (var i = 0; i < abi.length; i++) {
