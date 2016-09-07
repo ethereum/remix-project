@@ -17,30 +17,8 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   var compileJSON;
   var compilerAcceptsMultipleFiles;
 
-  var previousInput = '';
-
   var cachedRemoteFiles = {};
   var worker = null;
-
-  var compileTimeout = null;
-
-  function onChange () {
-    var input = editor.getValue();
-    if (input === '') {
-      editor.setCacheFileContent('');
-      return;
-    }
-    if (input === previousInput) {
-      return;
-    }
-    previousInput = input;
-    if (compileTimeout) {
-      window.clearTimeout(compileTimeout);
-    }
-    compileTimeout = window.setTimeout(compile, 300);
-  }
-
-  editor.onChangeSetup(onChange);
 
   var compile = function (missingInputs) {
     editor.clearAnnotations();
@@ -67,7 +45,6 @@ function Compiler (editor, queryParams, handleGithubCall, updateFiles) {
   this.setCompileJSON = setCompileJSON; // this is exposed for testing
 
   function onCompilerLoaded (version) {
-    previousInput = '';
     self.event.trigger('compilerLoaded', [version]);
   }
 
