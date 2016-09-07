@@ -479,10 +479,7 @@ var run = function () {
     previousInput = '';
     setVersionText(version);
     compiler.compile();
-    initWithQueryParams();
-  });
 
-  function initWithQueryParams () {
     if (queryParams.get().endpointurl) {
       executionContext.setEndPointUrl(queryParams.get().endpointurl);
     }
@@ -492,7 +489,7 @@ var run = function () {
     if (queryParams.get().debugtx) {
       startdebugging(queryParams.get().debugtx);
     }
-  }
+  });
 
   function startdebugging (txHash) {
     transactionDebugger.debug(txHash);
@@ -504,7 +501,7 @@ var run = function () {
   }
 
   function loadVersion (version) {
-    queryParams.update({version: version});
+    queryParams.update({ version: version });
     var url;
     if (version === 'builtin') {
       url = 'soljson.js';
