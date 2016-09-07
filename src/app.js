@@ -520,8 +520,15 @@ var run = function () {
     }
 
     // populate version dropdown with all available compiler versions
-    // NOTE: the list currently is oldest first
-    $.each(data.builds.reverse(), function (i, build) {
+
+    // Sort builds according to semver
+    var builds = data.builds.sort(function (a, b) {
+      a = a.version + '-' + a.prerelease;
+      b = b.version + '-' + b.prerelease;
+      return semver.compare(a, b);
+    }).reverse();
+
+    $.each(builds, function (i, build) {
       $('#versionSelector').append(new Option(build.version + '-' + build.prerelease, build.path));
     });
 
