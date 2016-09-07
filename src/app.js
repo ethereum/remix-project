@@ -1,4 +1,4 @@
-/* global alert, confirm, prompt, Option, Worker, soljsonSources */
+/* global alert, confirm, prompt, Option, Worker */
 
 var $ = require('jquery');
 var semver = require('semver');
@@ -477,9 +477,6 @@ var run = function () {
 
   function loadVersion (version) {
     queryParams.update({version: version});
-    if (window.soljsonReleases !== undefined && window.soljsonReleases[version] !== undefined) {
-      version = window.soljsonReleases[version];
-    }
     var url;
     if (version === 'builtin') {
       url = 'soljson.js';
@@ -513,36 +510,57 @@ var run = function () {
     loadVersion($('#versionSelector').val());
   });
 
-  // var soljsonSources is provided by bin/list.js
-  if (window.soljsonSources !== undefined) {
-    // populate selector list with available versions
-    $.each(soljsonSources, function (i, file) {
-      if (file) {
-        var version = file.replace(/soljson-(.*).js/, '$1');
-        $('#versionSelector').append(new Option(version, file));
+  $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json', function (data, status) {
+    // loading failed for some reason, fall back to local compiler
+    if (status !== 'success') {
+      $('#versionSelector').append(new Option('latest local version', 'builtin'));
+
+      loadVersion('builtin');
+      return;
+    }
+
+    function buildVersion (build) {
+      if (build.prerelease && build.prerelease.length > 0) {
+        return build.version + '-' + build.prerelease;
+      } else {
+        return build.version;
       }
+    }
+
+    // Sort builds according to semver
+    var builds = data.builds.sort(function (a, b) {
+      // NOTE: b vs. a (the order is important), because we want latest first in the list
+      return semver.compare(buildVersion(b), buildVersion(a));
     });
+
+    // populate version dropdown with all available compiler versions
+    $.each(builds, function (i, build) {
+      $('#versionSelector').append(new Option(buildVersion(build), build.path));
+    });
+
     $('#versionSelector').attr('disabled', false);
 
-    // load initial verison
-    var latestRelease = null;
-    if (window.soljsonReleases !== undefined) {
-      for (var release in window.soljsonReleases) {
-        if (latestRelease === null || semver.gt(release, latestRelease)) {
-          latestRelease = release;
-        }
+    // always include the local version
+    $('#versionSelector').append(new Option('latest local version', 'builtin'));
+
+    // find latest release
+    var selectedVersion = null;
+    for (var release in data.releases) {
+      if (selectedVersion === null || semver.gt(release, selectedVersion)) {
+        selectedVersion = release;
       }
     }
-    if (latestRelease === null) {
-      latestRelease = 'soljson-latest.js';
+    if (selectedVersion !== null) {
+      selectedVersion = data.releases[selectedVersion];
     }
-    loadVersion(queryParams.get().version || latestRelease);
-  } else {
-    loadVersion('builtin');
-  }
 
-  // always include the local version
-  $('#versionSelector').append(new Option('latest local version', 'builtin'));
+    // override with the requested version
+    if (queryParams.get().version) {
+      selectedVersion = queryParams.get().version;
+    }
+
+    loadVersion(selectedVersion);
+  });
 
   storage.sync();
 };
