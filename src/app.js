@@ -529,10 +529,9 @@ var run = function () {
 
     // Sort builds according to semver
     var builds = data.builds.sort(function (a, b) {
-      a = buildVersion(a);
-      b = buildVersion(b);
-      return semver.compare(a, b);
-    }).reverse();
+      // NOTE: b vs. a (the order is important), because we want latest first in the list
+      return semver.compare(buildVersion(b), buildVersion(a));
+    });
 
     // populate version dropdown with all available compiler versions
     $.each(builds, function (i, build) {
