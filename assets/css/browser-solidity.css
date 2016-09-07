@@ -257,6 +257,19 @@ body {
     padding-left: 6em;
 }
 
+#settingsView button {
+    background-color: #C6CFF7;
+    font-size: 12px;
+    padding: 0.25em;
+    margin-bottom: .5em;
+    color: black;
+    border:0 none;
+    border-radius: 3px;
+    width: 8em;
+    margin-right: 1em;
+    cursor: pointer;
+}
+
 #publishView button {
     background-color: #C6CFF7;
     font-size: 12px;
