@@ -436,6 +436,10 @@ var run = function () {
 
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
 
+  $('#compile').click(function () {
+    compiler.compile();
+  });
+
   executionContext.event.register('contextChanged', this, function (context) {
     compiler.compile();
   });
