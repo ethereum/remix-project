@@ -436,6 +436,42 @@ var run = function () {
 
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event); // eslint-disable-line
 
+  var autoCompile = document.querySelector('#autoCompile').checked;
+
+  document.querySelector('#autoCompile').addEventListener('change', function () {
+    autoCompile = document.querySelector('#autoCompile').checked;
+  });
+
+  var previousInput = '';
+  var compileTimeout = null;
+
+  function editorOnChange () {
+    var input = editor.getValue();
+    if (input === '') {
+      editor.setCacheFileContent('');
+      return;
+    }
+    if (input === previousInput) {
+      return;
+    }
+    previousInput = input;
+
+    if (!autoCompile) {
+      return;
+    }
+
+    if (compileTimeout) {
+      window.clearTimeout(compileTimeout);
+    }
+    compileTimeout = window.setTimeout(compiler.compile, 300);
+  }
+
+  editor.onChangeSetup(editorOnChange);
+
+  $('#compile').click(function () {
+    compiler.compile();
+  });
+
   executionContext.event.register('contextChanged', this, function (context) {
     compiler.compile();
   });
@@ -449,6 +485,7 @@ var run = function () {
   });
 
   compiler.event.register('compilerLoaded', this, function (version) {
+    previousInput = '';
     setVersionText(version);
     compiler.compile();
     initWithQueryParams();
