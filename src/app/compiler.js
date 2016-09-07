@@ -10,7 +10,7 @@ var EventManager = require('../lib/eventManager');
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted
 */
-function Compiler (editor, handleGithubCall, updateFiles) {
+function Compiler (editor, handleGithubCall) {
   var self = this;
   this.event = new EventManager();
 

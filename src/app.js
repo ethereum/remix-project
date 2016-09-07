@@ -407,7 +407,7 @@ var run = function () {
   }
 
   var executionContext = new ExecutionContext();
-  var compiler = new Compiler(editor, handleGithubCall, updateFiles);
+  var compiler = new Compiler(editor, handleGithubCall);
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event);
 
   var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile);
