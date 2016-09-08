@@ -32,7 +32,7 @@
     "start_node": "./runNode.sh",
     "start_eth": "eth -j --rpccorsdomain '*'",
     "start_geth": "geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
-    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
+    "build": "mkdir build; browserify src/index.js -g yo-yoify -o build/app.js",
     "test": "standard && tape ./test/tests.js",
     "serve": "http-server .",
     "nightwatch_local": "nightwatch --config nightwatch.js --env local",
