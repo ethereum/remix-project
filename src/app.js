@@ -53,15 +53,6 @@ var run = function () {
     loadFiles(filesToLoad);
   }
 
-  // ------------------ query params (hash) ----------------
-
-  function syncQueryParams () {
-    $('#optimize').attr('checked', (queryParams.get().optimize === 'true'));
-  }
-
-  window.onhashchange = syncQueryParams;
-  syncQueryParams();
-
   // -------- check file upload capabilities -------
 
   if (!(window.File || window.FileReader || window.FileList || window.Blob)) {
@@ -488,10 +479,7 @@ var run = function () {
     previousInput = '';
     setVersionText(version);
     compiler.compile();
-    initWithQueryParams();
-  });
 
-  function initWithQueryParams () {
     if (queryParams.get().endpointurl) {
       executionContext.setEndPointUrl(queryParams.get().endpointurl);
     }
@@ -501,7 +489,7 @@ var run = function () {
     if (queryParams.get().debugtx) {
       startdebugging(queryParams.get().debugtx);
     }
-  }
+  });
 
   function startdebugging (txHash) {
     transactionDebugger.debug(txHash);
@@ -513,7 +501,7 @@ var run = function () {
   }
 
   function loadVersion (version) {
-    queryParams.update({version: version});
+    queryParams.update({ version: version });
     var url;
     if (version === 'builtin') {
       url = 'soljson.js';
@@ -530,6 +518,9 @@ var run = function () {
       compiler.loadVersion(false, url);
     }
   }
+
+  // set default
+  $('#optimize').attr('checked', (queryParams.get().optimize === 'true'));
 
   document.querySelector('#optimize').addEventListener('change', function () {
     queryParams.update({ optimize: document.querySelector('#optimize').checked });
