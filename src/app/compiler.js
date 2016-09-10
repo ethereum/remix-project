@@ -3,8 +3,6 @@ var solc = require('solc/wrapper');
 var webworkify = require('webworkify');
 var utils = require('./utils');
 
-var Base64 = require('js-base64').Base64;
-
 var EventManager = require('../lib/eventManager');
 
 /*
@@ -237,17 +235,16 @@ function Compiler (editor, handleGithubCall) {
           files[m] = cachedRemoteFiles[m];
           reloop = true;
         } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m))) {
-          handleGithubCall(githubMatch[3], githubMatch[4], function (result) {
-            if ('content' in result) {
-              var content = Base64.decode(result.content);
-              cachedRemoteFiles[m] = content;
-              files[m] = content;
-              gatherImports(files, importHints, cb);
-            } else {
-              cb(null, 'Unable to import "' + m + '"');
+          handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
+            if (err) {
+              cb(null, 'Unable to import "' + m + '": ' + err);
+              return;
             }
-          }).fail(function () {
-            cb(null, 'Unable to import "' + m + '"');
+
+            cachedRemoteFiles[m] = content;
+            files[m] = content;
+
+            gatherImports(files, importHints, cb);
           });
           return;
         } else if (/^[^:]*:\/\//.exec(m)) {
