@@ -254,7 +254,7 @@ function Compiler (editor, handleGithubCall) {
           cb(null, 'Unable to import "' + m + '": Unsupported URL');
           return;
         } else {
-          cb(null, 'Unable to import "' + m + '"');
+          cb(null, 'Unable to import "' + m + '": File not found');
           return;
         }
       }
