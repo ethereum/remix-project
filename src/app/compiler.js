@@ -250,6 +250,9 @@ function Compiler (editor, handleGithubCall) {
             cb(null, 'Unable to import "' + m + '"');
           });
           return;
+        } else if (/^[^:]*:\/\//.exec(m)) {
+          cb(null, 'Unable to import "' + m + '": Unsupported URL');
+          return;
         } else {
           cb(null, 'Unable to import "' + m + '"');
           return;
