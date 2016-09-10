@@ -34,6 +34,7 @@ function Renderer (editor, web3, updateFiles, udapp, executionContext, formalVer
 }
 
 Renderer.prototype.error = function (message, container, noAnnotations) {
+  var self = this;
   var type = utils.errortype(message);
   var $pre = $('<pre />').text(message);
   var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre);
@@ -46,8 +47,8 @@ Renderer.prototype.error = function (message, container, noAnnotations) {
     var errFile = err[1];
     var errLine = parseInt(err[2], 10) - 1;
     var errCol = err[4] ? parseInt(err[4], 10) : 0;
-    if (!noAnnotations && (errFile === '' || errFile === utils.fileNameFromKey(this.editor.getCacheFile()))) {
-      this.editor.addAnnotation({
+    if (!noAnnotations && (errFile === '' || errFile === utils.fileNameFromKey(self.editor.getCacheFile()))) {
+      self.editor.addAnnotation({
         row: errLine,
         column: errCol,
         text: message,
@@ -55,13 +56,13 @@ Renderer.prototype.error = function (message, container, noAnnotations) {
       });
     }
     $error.click(function (ev) {
-      if (errFile !== '' && errFile !== utils.fileNameFromKey(this.editor.getCacheFile()) && this.editor.hasFile(errFile)) {
+      if (errFile !== '' && errFile !== utils.fileNameFromKey(self.editor.getCacheFile()) && self.editor.hasFile(errFile)) {
         // Switch to file
-        this.editor.setCacheFile(utils.fileKey(errFile));
-        this.updateFiles();
+        self.editor.setCacheFile(utils.fileKey(errFile));
+        self.updateFiles();
       // @TODO could show some error icon in files with errors
       }
-      this.editor.handleErrorClick(errLine, errCol);
+      self.editor.handleErrorClick(errLine, errCol);
     });
     $error.find('.close').click(function (ev) {
       ev.preventDefault();
