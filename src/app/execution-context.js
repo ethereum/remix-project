@@ -80,12 +80,15 @@ function ExecutionContext () {
       setExecutionContextRadio();
     } else {
       if (context === 'web3') {
+        executionContext = context;
         setProviderFromEndpoint();
         self.event.trigger('contextChanged', ['web3']);
       } else if (context === 'injected') {
+        executionContext = context;
         web3.setProvider(injectedProvider);
         self.event.trigger('contextChanged', ['injected']);
       } else if (context === 'vm') {
+        executionContext = context;
         vm.stateManager.revert(function () {
           vm.stateManager.checkpoint();
         });
