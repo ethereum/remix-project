@@ -572,9 +572,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
       // VM only
       } else if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'));
+        $result.append(getDebugTransaction(result));
       // VM only
       } else if (self.executionContext.isVM() && result.vm.return === undefined) {
         replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'));
+        $result.append(getDebugTransaction(result));
       } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm));
         $result.append(getDebugTransaction(result));
