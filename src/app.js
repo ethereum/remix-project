@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 var semver = require('semver');
-var Base64 = require('js-base64').Base64;
+var base64 = require('js-base64').Base64;
 
 var utils = require('./app/utils');
 var QueryParams = require('./app/query-params');
@@ -407,7 +407,7 @@ var run = function () {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
       .done(function (data) {
         if ('content' in data) {
-          cb(null, Base64.decode(data.content));
+          cb(null, base64.decode(data.content));
         } else {
           cb('Content not received');
         }
