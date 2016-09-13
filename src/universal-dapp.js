@@ -566,7 +566,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
     };
 
     var decoded;
-    self.runTx(data, args, function (err, result) {
+    self.runTx({ to: args.address, data: data, isCall: args.abi.constant && !isConstructor }, function (err, result) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
       // VM only
@@ -675,7 +675,7 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
       else self.deployLibrary(contractName, cb);
     });
   } else {
-    self.runTx(bytecode, { abi: { constant: false }, bytecode: bytecode }, function (err, result) {
+    self.runTx({ data: bytecode, isCall: false }, function (err, result) {
       if (err) {
         return cb(err);
       }
@@ -702,11 +702,10 @@ function tryTillResponse (web3, txhash, done) {
   });
 }
 
-UniversalDApp.prototype.runTx = function (data, args, cb) {
+UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this;
-  var to = args.address;
-  var constant = args.abi.constant;
-  var isConstructor = args.bytecode !== undefined;
+  var to = args.to;
+  var data = args.data;
   if (data.slice(0, 2) !== '0x') {
     data = '0x' + data;
   }
@@ -737,7 +736,7 @@ UniversalDApp.prototype.runTx = function (data, args, cb) {
       data: data,
       value: value
     };
-    if (constant && !isConstructor) {
+    if (args.isCall) {
       tx.gas = gasLimit;
       self.web3.eth.call(tx, cb);
     } else {
