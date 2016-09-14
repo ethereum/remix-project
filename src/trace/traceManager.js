@@ -81,7 +81,7 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
   }
   if (!address) {
     var stoChange = util.findLowerBoundValue(stepIndex, this.traceCache.storageChanges)
-    if (stoChange === undefined) return callback('no storage found', null)
+    if (stoChange === null) return callback('no storage found', null)
     address = this.traceCache.sstore[stoChange].address
   }
   var storage = {}
@@ -124,7 +124,7 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
     return callback(check, null)
   }
   var callDataChange = util.findLowerBoundValue(stepIndex, this.traceCache.callDataChanges)
-  if (callDataChange === undefined) return callback('no calldata found', null)
+  if (callDataChange === null) return callback('no calldata found', null)
   callback(null, [this.traceCache.callsData[callDataChange]])
 }
 
@@ -134,7 +134,7 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
     return callback(check, null)
   }
   var callStackChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
-  if (callStackChange === undefined) return callback('no callstack found', null)
+  if (callStackChange === null) return callback('no callstack found', null)
   callback(null, this.traceCache.callStack[callStackChange].callStack)
 }
 
@@ -159,7 +159,7 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
     return callback(check, null)
   }
   var callChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
-  if (callChange === undefined) {
+  if (callChange === null) {
     callback(null, 0)
   } else {
     callback(null, callChange)
@@ -205,7 +205,7 @@ TraceManager.prototype.getMemoryAt = function (stepIndex, callback) {
     return callback(check, null)
   }
   var lastChanges = util.findLowerBoundValue(stepIndex, this.traceCache.memoryChanges)
-  if (lastChanges === undefined) return callback('no memory found', null)
+  if (lastChanges === null) return callback('no memory found', null)
   callback(null, this.trace[lastChanges].memory)
 }
 
