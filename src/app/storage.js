@@ -40,7 +40,8 @@ function Storage (updateFiles) {
   };
 
   this.keys = function () {
-    return Object.keys(window.localStorage);
+    // NOTE: this is a workaround for some browsers
+    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined; });
   };
 
   this.loadFile = function (filename, content) {
