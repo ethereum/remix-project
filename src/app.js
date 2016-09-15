@@ -2,6 +2,7 @@
 
 var $ = require('jquery');
 var semver = require('semver');
+var base64 = require('js-base64').Base64;
 
 var utils = require('./app/utils');
 var QueryParams = require('./app/query-params');
@@ -403,7 +404,17 @@ var run = function () {
 
   function handleGithubCall (root, path, cb) {
     $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')));
-    return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path, cb);
+    return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
+      .done(function (data) {
+        if ('content' in data) {
+          cb(null, base64.decode(data.content));
+        } else {
+          cb('Content not received');
+        }
+      })
+      .fail(function (xhr, text, err) {
+        cb(err);
+      });
   }
 
   var executionContext = new ExecutionContext();
