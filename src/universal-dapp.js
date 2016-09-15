@@ -566,7 +566,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
     };
 
     var decoded;
-    self.runTx({ to: args.address, data: data, isCall: args.abi.constant && !isConstructor }, function (err, result) {
+    self.runTx({ to: args.address, data: data, useCall: args.abi.constant && !isConstructor }, function (err, result) {
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'));
       // VM only
@@ -675,7 +675,7 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
       else self.deployLibrary(contractName, cb);
     });
   } else {
-    self.runTx({ data: bytecode, isCall: false }, function (err, result) {
+    self.runTx({ data: bytecode, useCall: false }, function (err, result) {
       if (err) {
         return cb(err);
       }
@@ -736,7 +736,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       data: data,
       value: value
     };
-    if (args.isCall) {
+    if (args.useCall) {
       tx.gas = gasLimit;
       self.web3.eth.call(tx, cb);
     } else {
