@@ -37,7 +37,7 @@ module.exports = {
     // if stack empty => this is not a precompiled contract
     var step = trace[index]
     if (this.isCallInstruction(step)) {
-      return trace[index + 1].stack.length !== 0
+      return index + 1 < trace.length && trace[index + 1].stack.length !== 0
     } else {
       return false
     }
