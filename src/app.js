@@ -552,15 +552,7 @@ var run = function () {
     loadVersion($('#versionSelector').val());
   });
 
-  $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json', function (data, status) {
-    // loading failed for some reason, fall back to local compiler
-    if (status !== 'success') {
-      $('#versionSelector').append(new Option('latest local version', 'builtin'));
-
-      loadVersion('builtin');
-      return;
-    }
-
+  $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json').done(function (data) {
     function buildVersion (build) {
       if (build.prerelease && build.prerelease.length > 0) {
         return build.version + '-' + build.prerelease;
