@@ -602,6 +602,11 @@ var run = function () {
     }
 
     loadVersion(selectedVersion);
+  }).fail(function (xhr, text, err) {
+    // loading failed for some reason, fall back to local compiler
+    $('#versionSelector').append(new Option('latest local version', 'builtin'));
+
+    loadVersion('builtin');
   });
 
   storage.sync();
