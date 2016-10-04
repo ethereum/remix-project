@@ -147,24 +147,19 @@ UniversalDApp.prototype.render = function () {
 
   self.$el.append($legend);
 
-  // NOTE: this might be used in the future
-  if (self.contracts.length === 0) {
-    self.$el.append(self.getABIInputForm());
-  } else {
-    for (var c in self.contracts) {
-      var $contractEl = $('<div class="contract"/>');
+  for (var c in self.contracts) {
+    var $contractEl = $('<div class="contract"/>');
 
-      if (self.contracts[c].address) {
-        self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl);
-      } else {
-        var $title = $('<span class="title"/>').text(self.contracts[c].name);
-        if (self.contracts[c].bytecode) {
-          $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'));
-        }
-        $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]));
+    if (self.contracts[c].address) {
+      self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl);
+    } else {
+      var $title = $('<span class="title"/>').text(self.contracts[c].name);
+      if (self.contracts[c].bytecode) {
+        $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'));
       }
-      self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
+      $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]));
     }
+    self.$el.append(self.renderOutputModifier(self.contracts[c].name, $contractEl));
   }
 
   return self.$el;
@@ -178,31 +173,6 @@ UniversalDApp.prototype.getContractByName = function (contractName) {
     }
   }
   return null;
-};
-
-UniversalDApp.prototype.getABIInputForm = function (cb) {
-  var self = this;
-  var $el = $('<div class="udapp-setup" />');
-  var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytecode, "interface": abi }, { ... } ]\'/>');
-  var $createButton = $('<button class="udapp-create"/>').text('Render ABI');
-  $createButton.click(function (ev) {
-    var contracts = $.parseJSON($jsonInput.val());
-    if (cb) {
-      var err = null;
-      var dapp = null;
-      try {
-        dapp = new UniversalDApp(contracts, self.options);
-      } catch (e) {
-        err = e;
-      }
-      cb(err, dapp);
-    } else {
-      self.contracts = contracts;
-      self.$el.empty().append(self.render());
-    }
-  });
-  $el.append($jsonInput).append($createButton);
-  return $el;
 };
 
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
@@ -381,6 +351,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
   return $createInterface;
 };
 
+// either return the supplied constructor or a mockup (we assume everything can be instantiated)
 UniversalDApp.prototype.getConstructorInterface = function (abi) {
   var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] };
   for (var i = 0; i < abi.length; i++) {
