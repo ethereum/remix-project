@@ -413,7 +413,8 @@ var run = function () {
         }
       })
       .fail(function (xhr, text, err) {
-        cb(err);
+        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
+        cb(err || 'Unknown transport error');
       });
   }
 
