@@ -10,8 +10,20 @@ module.exports = {
       pragma solidity ^0.4.0;
       contract TestContract { function f() returns (uint) { return 8; } }
       `)
-      .pause(3000)
-      .assert.containsText('.contract .title', 'TestContract')
+    var waitForElementToContainText = function (element, text, done) {
+      browser.getText(element, function (t) {
+        if (t.value.indexOf(text) < 0) {
+          browser.pause(500)
+          waitForElementToContainText(element, text, done)
+        } else {
+          done()
+        }
+      })
+    }
+    browser.perform(function (done) {
+      waitForElementToContainText('.contract .title', 'TestContract', done)
+    })
+    browser.assert.containsText('.contract .title', 'TestContract')
       .click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
       .click('.instance .call[title="f"]')
