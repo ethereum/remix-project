@@ -10,7 +10,7 @@ module.exports = {
     browser
       .waitForElementVisible('.newFile', 10000)
       .click('.newFile')
-      .pause('10000')
+      .pause(500)
       .assert.containsText('.active', 'Untitled')
       .end()
   },
