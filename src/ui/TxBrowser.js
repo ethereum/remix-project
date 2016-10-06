@@ -5,17 +5,17 @@ var traceHelper = require('../helpers/traceHelper')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var init = require('../helpers/init')
+var DropdownPanel = require('./DropdownPanel')
 
 function TxBrowser (_parent) {
   util.extend(this, new EventManager())
 
   this.blockNumber
   this.txNumber
-  this.hash
-  this.from
-  this.to
   this.view
   this.displayConnectionSetting = true
+  this.basicPanel = new DropdownPanel('Transaction')
+  this.basicPanel.data = {}
   var self = this
   _parent.register('providerChanged', this, function (provider) {
     self.displayConnectionSetting = provider === 'INTERNAL'
@@ -33,12 +33,11 @@ function TxBrowser (_parent) {
 // invokation: 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51
 
 TxBrowser.prototype.setDefaultValues = function () {
-  this.from = ' - '
-  this.to = ' - '
-  this.hash = ' - '
   this.blockNumber = null
   this.txNumber = ''
   this.connectInfo = ''
+  this.basicPanel.data = {}
+  this.basicPanel.update()
   this.updateWeb3Url(util.web3.currentProvider.host)
 }
 
@@ -57,23 +56,24 @@ TxBrowser.prototype.submit = function () {
   } catch (e) {
     console.log(e)
   }
-  console.log(JSON.stringify(tx))
+  var info = {}
   if (tx) {
     if (!tx.to) {
       tx.to = traceHelper.contractCreationToken('0')
     }
-    this.from = tx.from
-    this.to = tx.to
-    this.hash = tx.hash
+    info.from = tx.from
+    info.to = tx.to
+    info.hash = tx.hash
     this.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
   } else {
     var mes = '<not found>'
-    this.from = mes
-    this.to = mes
-    this.hash = mes
+    info.from = mes
+    info.to = mes
+    info.hash = mes
     console.log('cannot find ' + this.blockNumber + ' ' + this.txNumber)
   }
-  yo.update(this.view, this.render())
+  this.basicPanel.data = info
+  this.basicPanel.update()
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {
@@ -110,13 +110,16 @@ TxBrowser.prototype.updateTxN = function (ev) {
 
 TxBrowser.prototype.load = function (txHash) {
   this.txNumber = txHash
-  yo.update(this.view, this.render())
   this.submit()
+}
+
+TxBrowser.prototype.unload = function (txHash) {
+  this.trigger('unloadRequested')
+  this.init()
 }
 
 TxBrowser.prototype.init = function (ev) {
   this.setDefaultValues()
-  yo.update(this.view, this.render())
 }
 
 TxBrowser.prototype.connectionSetting = function () {
@@ -131,43 +134,16 @@ TxBrowser.prototype.connectionSetting = function () {
 
 TxBrowser.prototype.render = function () {
   var self = this
-  var view = yo`<div style=${ui.formatCss(style.container)}>
+  var view = yo`<div>
         ${this.connectionSetting()}
-        <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number (default 1000110)' + this.blockNumber} />
-        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' value=${this.txNumber} placeholder=${'Transaction Number or hash (default 2) ' + this.txNumber} />
-        <button id='load' onclick=${function () { self.submit() }}>
+        <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} style='width: 231px' />
+        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} style='width: 266px' />
+        <button id='load' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
           Load
         </button>
-        <button id='unload' onclick=${function () { self.trigger('unloadRequested') }}>Unload</button>
+        <button id='unload' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}>Reset</button>
         <div style=${ui.formatCss(style.transactionInfo)}>
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  Hash:
-                </td>
-                <td id='txhash' >
-                  ${this.hash}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  From:
-                </td>
-                <td id='txfrom'>
-                  ${this.from}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  To:
-                </td>
-                <td id='txto' >
-                  ${this.to}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          ${this.basicPanel.render()}
         </div>
       </div>`
   if (!this.view) {

@@ -1,12 +1,12 @@
 'use strict'
-var BasicPanel = require('./BasicPanel')
+var DropdownPanel = require('./DropdownPanel')
 var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
 function StackPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Stack')
+  this.basicPanel = new DropdownPanel('Stack')
   this.init()
 }
 
@@ -22,7 +22,7 @@ StackPanel.prototype.init = function () {
 
     self.traceManager.getStackAt(index, function (error, stack) {
       if (error) {
-        self.basicPanel.data = ''
+        self.basicPanel.data = {}
         console.log(error)
       } else if (self.parent.currentStepIndex === index) {
         self.basicPanel.data = self.format(stack)
@@ -33,10 +33,10 @@ StackPanel.prototype.init = function () {
 }
 
 StackPanel.prototype.format = function (stack) {
-  var ret = ''
+  var ret = []
   for (var key in stack) {
     var hex = ui.normalizeHex(stack[key])
-    ret += hex + '\n'
+    ret.push(hex)
   }
   return ret
 }
