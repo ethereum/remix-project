@@ -59,7 +59,6 @@
   "private": true,
   "semistandard": {
     "ignore": [
-      "assets/js/",
       "build/",
       "src/mode-solidity.js",
       "nightwatch.js",
