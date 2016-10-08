@@ -1,48 +1,48 @@
-'use strict';
+'use strict'
 
-var $ = require('jquery');
-var EventManager = require('../lib/eventManager');
+var $ = require('jquery')
+var EventManager = require('../lib/eventManager')
 
 /*
   trigger compilationFinished
 */
 function FormalVerification (outputElement, compilerEvent) {
-  this.event = new EventManager();
-  this.outputElement = outputElement;
-  var self = this;
+  this.event = new EventManager()
+  this.outputElement = outputElement
+  var self = this
   compilerEvent.register('compilationFinished', this, function (success, data, source) {
     if (success) {
-      self.compilationFinished(data);
+      self.compilationFinished(data)
     }
-  });
+  })
   compilerEvent.register('compilationStarted', this, function () {
     $('#formalVerificationInput', self.outputElement)
-    .val('')
-    .hide();
-    $('#formalVerificationErrors').empty();
-  });
+      .val('')
+      .hide()
+    $('#formalVerificationErrors').empty()
+  })
 }
 
 FormalVerification.prototype.compilationFinished = function (compilationResult) {
   if (compilationResult.formal === undefined) {
-    this.event.trigger('compilationFinished', [false, 'Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true]);
+    this.event.trigger('compilationFinished', [false, 'Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true])
   } else {
     if (compilationResult.formal['why3'] !== undefined) {
       $('#formalVerificationInput', this.outputElement).val(
         '(* copy this to http://why3.lri.fr/try/ *)' +
         compilationResult.formal['why3']
       )
-        .show();
+        .show()
     }
     if (compilationResult.formal.errors !== undefined) {
-      var errors = compilationResult.formal.errors;
+      var errors = compilationResult.formal.errors
       for (var i = 0; i < errors.length; i++) {
-        this.event.trigger('compilationFinished', [false, errors[i], $('#formalVerificationErrors'), true]);
+        this.event.trigger('compilationFinished', [false, errors[i], $('#formalVerificationErrors'), true])
       }
     } else {
-      this.event.trigger('compilationFinished', [true, null, null, true]);
+      this.event.trigger('compilationFinished', [true, null, null, true])
     }
   }
-};
+}
 
-module.exports = FormalVerification;
+module.exports = FormalVerification
