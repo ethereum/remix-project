@@ -1,4 +1,5 @@
 /* global BALLOT_EXAMPLE, FileReader */
+'use strict';
 
 var utils = require('./utils');
 

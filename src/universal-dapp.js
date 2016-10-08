@@ -1,4 +1,5 @@
 /* global prompt */
+'use strict';
 
 var $ = require('jquery');
 var ethJSUtil = require('ethereumjs-util');

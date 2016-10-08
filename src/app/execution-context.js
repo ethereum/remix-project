@@ -1,4 +1,5 @@
 /* global confirm */
+'use strict';
 
 var $ = require('jquery');
 var Web3 = require('web3');

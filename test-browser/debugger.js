@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   'Debugger Render': function (browser) {
     browser

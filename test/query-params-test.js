@@ -1,3 +1,5 @@
+'use strict';
+
 var test = require('tape');
 
 var QueryParams = require('../src/app/query-params');

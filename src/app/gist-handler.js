@@ -1,3 +1,5 @@
+'use strict';
+
 // Allowing window to be overriden for testing
 function GistHandler (_window) {
   if (_window === undefined) _window = window;

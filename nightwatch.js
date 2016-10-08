@@ -1,4 +1,5 @@
 'use strict'
+
 var TRAVIS_JOB_NUMBER = process.env.TRAVIS_JOB_NUMBER
 
 module.exports = {

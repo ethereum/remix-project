@@ -1,3 +1,5 @@
+'use strict';
+
 var remix = require('ethereum-remix');
 var utils = require('./utils');
 var ace = require('brace');

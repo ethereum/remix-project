@@ -1,3 +1,5 @@
+'use strict';
+
 var $ = require('jquery');
 var EventManager = require('../lib/eventManager');
 
