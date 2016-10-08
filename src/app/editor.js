@@ -178,8 +178,9 @@ function Editor (loadingFromGist, storage) {
         untitledCount = (untitledCount - 0) + 1;
       }
       SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-      files.push(SOL_CACHE_FILE);
-      storage.set(SOL_CACHE_FILE, examples.ballot);
+
+      files.push(examples.ballot.name);
+      storage.set(examples.ballot.name, examples.ballot.content);
     }
 
     SOL_CACHE_FILE = files[0];

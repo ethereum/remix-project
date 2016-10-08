@@ -65,5 +65,5 @@ contract Ballot {
 }`;
 
 module.exports = {
-  ballot: ballot
+  ballot: { name: 'ballot.sol', content: ballot }
 };
