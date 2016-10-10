@@ -1,5 +1,5 @@
 body {
-    padding: 0px;
+    padding: 0;
     font-size: 12px;
     color: #111111;
     font-weight: normal;
@@ -142,7 +142,7 @@ body {
     width: 37em;
     max-width: 80vw;
     right: 0;
-    bottom: 0px;
+    bottom: 0;
     overflow: auto;
     box-sizing: border-box;
 }
