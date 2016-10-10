@@ -21,10 +21,10 @@ module.exports = {
   },
   instructionsList: {
     'width': '72%',
-    'height': '330px',
     'overflow-y': 'scroll',
     'list-style-type': 'none',
-    'margin': 'auto'
+    'margin': 'auto',
+    'max-height': '500px'
   },
   transactionInfo: {
     'margin-top': '5px'
@@ -32,10 +32,10 @@ module.exports = {
   panel: {
     container: {
       'border': '1px solid',
-      'width': '600px'
+      'width': '70%'
     },
     tableContainer: {
-      'height': '300px',
+      'height': '50%',
       'overflow-y': 'auto'
     },
     table: {
@@ -51,10 +51,6 @@ module.exports = {
   },
   display: {
     'display': 'block'
-  },
-  sticker: {
-    'vertical-align': 'top',
-    'margin': '5px'
   },
   inline: {
     'display': 'inline-block'

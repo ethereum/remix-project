@@ -23,11 +23,10 @@ MemoryPanel.prototype.init = function () {
     self.traceManager.getMemoryAt(index, function (error, memory) {
       if (error) {
         console.log(error)
-        self.basicPanel.data = {}
+        self.basicPanel.update({})
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.data = util.formatMemory(memory, 16)
+        self.basicPanel.update(util.formatMemory(memory, 16))
       }
-      self.basicPanel.update()
     })
   })
 }

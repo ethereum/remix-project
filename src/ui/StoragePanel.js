@@ -25,11 +25,10 @@ StoragePanel.prototype.init = function () {
     self.traceManager.getStorageAt(index, self.parent.tx, function (error, storage) {
       if (error) {
         console.log(error)
-        self.basicPanel.data = {}
+        self.basicPanel.update({})
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.data = storage
+        self.basicPanel.update(storage)
       }
-      self.basicPanel.update()
     }, self.address)
   })
 }

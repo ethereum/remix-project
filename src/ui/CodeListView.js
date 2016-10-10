@@ -4,7 +4,7 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var DropdownPanel = require('./DropdownPanel')
 
-function ListView (_parent, _codeManager) {
+function CodeListView (_parent, _codeManager) {
   this.parent = _parent
   this.codeManager = _codeManager
   this.code
@@ -15,11 +15,11 @@ function ListView (_parent, _codeManager) {
   this.init()
 }
 
-ListView.prototype.render = function () {
+CodeListView.prototype.render = function () {
   return yo`<div id='asmcodes' >${this.basicPanel.render({height: style.instructionsList.height})}</div>`
 }
 
-ListView.prototype.init = function () {
+CodeListView.prototype.init = function () {
   var self = this
   this.codeManager.register('changed', this, this.changed)
   this.parent.register('traceUnloaded', this, function () {
@@ -27,20 +27,22 @@ ListView.prototype.init = function () {
   })
 }
 
-ListView.prototype.indexChanged = function (index) {
+CodeListView.prototype.indexChanged = function (index) {
   if (index >= 0) {
     if (this.itemSelected) {
+      this.itemSelected.removeAttribute('selected')
       this.itemSelected.removeAttribute('style')
       this.itemSelected.firstChild.removeAttribute('style')
     }
     this.itemSelected = this.codeView.children[index]
     this.itemSelected.setAttribute('style', ui.formatCss({'background-color': '#eeeeee'}))
+    this.itemSelected.setAttribute('selected', 'selected')
     this.itemSelected.firstChild.setAttribute('style', ui.formatCss({'margin-left': '2px'}))
-    this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.style.height.replace('px', ''))
+    this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetHeight)
   }
 }
 
-ListView.prototype.changed = function (code, address, index) {
+CodeListView.prototype.changed = function (code, address, index) {
   if (this.address !== address) {
     this.code = code
     this.address = address
@@ -51,7 +53,7 @@ ListView.prototype.changed = function (code, address, index) {
   this.indexChanged(index)
 }
 
-ListView.prototype.renderAssemblyItems = function () {
+CodeListView.prototype.renderAssemblyItems = function () {
   if (this.code) {
     var codeView = this.code.map(function (item, i) {
       return yo`<li key=${i} value=${i}><span>${item}</span></li>`
@@ -62,4 +64,4 @@ ListView.prototype.renderAssemblyItems = function () {
   }
 }
 
-module.exports = ListView
+module.exports = CodeListView

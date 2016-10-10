@@ -1,5 +1,5 @@
 'use strict'
-var ListView = require('./ListView')
+var CodeListView = require('./CodeListView')
 var CalldataPanel = require('./CalldataPanel')
 var MemoryPanel = require('./MemoryPanel')
 var CallstackPanel = require('./CallstackPanel')
@@ -11,7 +11,7 @@ var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
 function VmDebugger (_parent, _traceManager, _codeManager) {
-  this.asmCode = new ListView(_parent, _codeManager)
+  this.asmCode = new CodeListView(_parent, _codeManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
   this.memoryPanel = new MemoryPanel(_parent, _traceManager)
@@ -49,8 +49,7 @@ function VmDebugger (_parent, _traceManager, _codeManager) {
 
 VmDebugger.prototype.render = function () {
   var view = yo`<div id='vmdebugger' style='display:none'>
-        <div>        
-          <div>
+        <div>
             ${this.asmCode.render()}
             ${this.stepDetail.render()}
             ${this.stackPanel.render()}
@@ -60,8 +59,7 @@ VmDebugger.prototype.render = function () {
             ${this.callstackPanel.render()}
             ${this.returnValuesPanel.render()}
             ${this.fullStoragesChangesPanel.render()}
-          </div>        
-        </div>
+          </div>
       </div>`
   if (!this.view) {
     this.view = view

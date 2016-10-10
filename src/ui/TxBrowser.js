@@ -136,13 +136,13 @@ TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div>
         ${this.connectionSetting()}
-        <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} style='width: 231px' />
-        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} style='width: 266px' />
+        <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
+        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
         <button id='load' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
           Load
         </button>
         <button id='unload' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}>Reset</button>
-        <div style=${ui.formatCss(style.transactionInfo)}>
+        <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
           ${this.basicPanel.render()}
         </div>
       </div>`

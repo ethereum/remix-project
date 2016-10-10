@@ -27,8 +27,7 @@ FullStoragesChanges.prototype.init = function () {
     self.traceManager.getAddresses(function (error, addresses) {
       if (!error) {
         self.addresses = addresses
-        self.basicPanel.data = {}
-        self.basicPanel.update()
+        self.basicPanel.update({})
       }
     })
 
@@ -49,8 +48,7 @@ FullStoragesChanges.prototype.init = function () {
         self.traceManager.getStorageAt(index, null, function (error, result) {
           if (!error) {
             storageJSON[self.addresses[k]] = result
-            self.basicPanel.data = storageJSON
-            self.basicPanel.update()
+            self.basicPanel.update(storageJSON)
           }
         }, self.addresses[k])
       }

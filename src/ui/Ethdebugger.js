@@ -81,7 +81,7 @@ Ethdebugger.prototype.debug = function (tx) {
 
 Ethdebugger.prototype.render = function () {
   var view = yo`<div style=${ui.formatCss(style.font)}>
-        <div style='margin: auto; width: 604px'>
+        <div style='margin: auto; width: 31%'>
           ${this.txBrowser.render()}
           ${this.stepManager.render()}
         </div>

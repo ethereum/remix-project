@@ -14,19 +14,19 @@ function StepDetail (_parent, _traceManager) {
 }
 
 StepDetail.prototype.render = function () {
-  return yo`<div id='sticker' >${this.basicPanel.render()}</div>`
+  return yo`<div id='stepdetail' >${this.basicPanel.render()}</div>`
 }
 
 StepDetail.prototype.init = function () {
   var self = this
   this.parent.register('traceUnloaded', this, function () {
     self.detail = initDetail()
-    self.basicPanel.update()
+    self.basicPanel.update(self.detail)
   })
 
   this.parent.register('newTraceLoaded', this, function () {
     self.detail = initDetail()
-    self.basicPanel.update()
+    self.basicPanel.update(self.detail)
   })
 
   this.parent.register('indexChanged', this, function (index) {
@@ -41,8 +41,7 @@ StepDetail.prototype.init = function () {
       } else {
         self.detail.step = step
       }
-      self.basicPanel.data = self.detail
-      self.basicPanel.update()
+      self.basicPanel.update(self.detail)
     })
 
     self.traceManager.getMemExpand(index, function (error, addmem) {
@@ -52,8 +51,7 @@ StepDetail.prototype.init = function () {
       } else {
         self.detail.addmemory = addmem
       }
-      self.basicPanel.data = self.detail
-      self.basicPanel.update()
+      self.basicPanel.update(self.detail)
     })
 
     self.traceManager.getStepCost(index, function (error, gas) {
@@ -63,8 +61,7 @@ StepDetail.prototype.init = function () {
       } else {
         self.detail.gas = gas
       }
-      self.basicPanel.data = self.detail
-      self.basicPanel.update()
+      self.basicPanel.update(self.detail)
     })
 
     self.traceManager.getCurrentCalledAddressAt(index, function (error, address) {
@@ -74,8 +71,7 @@ StepDetail.prototype.init = function () {
       } else {
         self.detail.loadedAddress = address
       }
-      self.basicPanel.data = self.detail
-      self.basicPanel.update()
+      self.basicPanel.update(self.detail)
     })
 
     self.traceManager.getRemainingGas(index, function (error, remaingas) {
@@ -85,8 +81,7 @@ StepDetail.prototype.init = function () {
       } else {
         self.detail.remainingGas = remaingas
       }
-      self.basicPanel.data = self.detail
-      self.basicPanel.update()
+      self.basicPanel.update(self.detail)
     })
   })
 }

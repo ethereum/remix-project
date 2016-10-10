@@ -1,87 +1,38 @@
-var init = require('../test/init')
 module.exports = function (browser, callback) {
   extendBrowser(browser)
   browser
     .url('http://127.0.0.1:8080')
-    .waitForElementPresent('#app div', 1000)
-  injectScript('./test/resources/testWeb3.json', browser, function () {
-    callback()
-  })
-}
-
-function injectScript (file, browser, callback) {
-  init.readFile(file, function (error, result) {
-    if (!error) {
-      browser.execute(function (data) {
-        var vmdebugger = document.getElementById('app').vmdebugger
-        data = JSON.parse(data)
-        var uiTestweb3 = {}
-        uiTestweb3.eth = {}
-        uiTestweb3.debug = {}
-        uiTestweb3.eth.getCode = function (address, callback) {
-          if (callback) {
-            callback(null, data.testCodes[address])
-          } else {
-            return data.testCodes[address]
-          }
-        }
-
-        uiTestweb3.debug.traceTransaction = function (txHash, options, callback) {
-          callback(null, data.testTraces[txHash])
-        }
-
-        uiTestweb3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
-          callback(null, {})
-        }
-
-        uiTestweb3.eth.getTransaction = function (txHash, callback) {
-          if (callback) {
-            callback(null, data.testTxs[txHash])
-          } else {
-            return data.testTxs[txHash]
-          }
-        }
-
-        uiTestweb3.eth.getTransactionFromBlock = function (blockNumber, txIndex, callback) {
-          if (callback) {
-            callback(null, data.testTxsByBlock[blockNumber + '-' + txIndex])
-          } else {
-            return data.testTxsByBlock[blockNumber + '-' + txIndex]
-          }
-        }
-
-        uiTestweb3.eth.getBlockNumber = function (callback) { callback(null, 'web3 modified for testing purposes :)') }
-
-        uiTestweb3.eth.providers = { 'HttpProvider': function (url) {} }
-
-        uiTestweb3.eth.setProvider = function (provider) {}
-
-        uiTestweb3.currentProvider = {host: 'web3 modified for testing purposes :)'}
-
-        vmdebugger.addProvider('TEST', uiTestweb3)
-        vmdebugger.switchProvider('TEST')
-      }, [result], function () {
+    .injectScript('test/resources/insertTestWeb3.js', function () {
+      // wait for the script to load test web3...
+      setTimeout(function () {
         callback()
-      })
-    }
-  })
+      }, 5000)
+    })
 }
 
 function extendBrowser (browser) {
   browser.assertCurrentSelectedItem = function (expected) {
-    browser.getValue('#asmitems', function (result) {
-      browser.expect.element('#asmitems option[value="' + result.value + '"]').text.to.equal(expected)
+    browser.execute(function (id) {
+      var node = document.querySelector('#asmcodes ul li[selected="selected"] span')
+      return node.innerText
+    }, [''], function (returnValue) {
+      browser.assert.equal(returnValue.value, expected)
     })
     return browser
   }
 
-  browser.assertSticker = function (vmtracestepinfo, stepinfo, addmemoryinfo, gasinfo, remaininggasinfo, loadedaddressinfo) {
-    browser.expect.element('#vmtracestepinfo').text.to.equal(vmtracestepinfo)
-    browser.expect.element('#stepinfo').text.to.equal(stepinfo)
-    browser.expect.element('#addmemoryinfo').text.to.equal(addmemoryinfo)
-    browser.expect.element('#gasinfo').text.to.equal(gasinfo)
-    browser.expect.element('#remaininggasinfo').text.to.equal(remaininggasinfo)
-    browser.expect.element('#loadedaddressinfo').text.to.equal(loadedaddressinfo)
+  browser.retrieveInnerText = function (selector, callback) {
+    browser.execute(function (selector) {
+      var node = document.querySelector(selector)
+      return node ? node.innerText : ''
+    }, [selector], function (returnValue) {
+      callback(returnValue.value)
+    })
+    return browser
+  }
+
+  browser.assertStepDetail = function (vmtracestepinfo, stepinfo, addmemoryinfo, gasinfo, remaininggasinfo, loadedaddressinfo) {
+    assertPanel('#stepdetail', browser, ['vmTraceStep' + vmtracestepinfo, 'step' + stepinfo, 'addmemory' + addmemoryinfo, 'gas' + gasinfo, 'remainingGas' + remaininggasinfo, 'loadedAddress' + loadedaddressinfo])
     return browser
   }
 
@@ -177,29 +128,31 @@ browser.fireEvent = function (el, key, times, callback) {
 }
 
 function assertPanel (id, browser, value) {
-  browser.expect.element(id + ' #basicpanel').text.to.equal(value)
+  var selector = id + ' .dropdownpanel div div'
+  browser.execute(function (id) {
+    var node = document.querySelector(id)
+    var ret = []
+    for (var k in node.children) {
+      if (node.children[k].innerText) {
+        ret.push(node.children[k].innerText)
+      }
+    }
+    return ret
+  }, [selector], function (returnValues) {
+    value.map(function (item, index) {
+      browser.assert.equal(returnValues.value[index], value[index])
+    })
+  })
   return browser
 }
 
 function assertPanelValue (id, browser, index, value) {
-  getInnerText(id + ' #basicpanel', browser, function (result) {
-    var values
-    if (result.value.indexOf('\r\n') !== -1) {
-      values = result.value.split('\r\n')
-    } else if (result.value.indexOf('\n') !== -1) {
-      values = result.value.split('\n')
-    } else if (result.value.indexOf('\r') !== -1) {
-      values = result.value.split('\r')
-    }
-    browser.assert.equal(values[index], value)
+  var selector = id + ' .dropdownpanel div div'
+  browser.execute(function (id, index) {
+    var node = document.querySelector(id)
+    return node.children[index].innerText
+  }, [selector, index], function (returnValues) {
+    browser.assert.equal(returnValues.value, value)
   })
   return browser
-}
-
-function getInnerText (id, browser, callback) {
-  browser.execute(function (data) {
-    return document.querySelector(data).innerText
-  }, [id], function (result) {
-    callback(result)
-  })
 }
