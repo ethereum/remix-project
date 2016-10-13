@@ -170,15 +170,8 @@ function Editor (loadingFromGist, storage) {
   }
 
   function setupStuff (files) {
-    var untitledCount = '';
     if (files.length === 0) {
       if (loadingFromGist) return;
-      // Backwards-compatibility
-      while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {
-        untitledCount = (untitledCount - 0) + 1;
-      }
-      SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-
       files.push(examples.ballot.name);
       storage.set(examples.ballot.name, examples.ballot.content);
     }
