@@ -34,7 +34,6 @@ function TxBrowser (_parent) {
 
 TxBrowser.prototype.setDefaultValues = function () {
   this.blockNumber = null
-  this.txNumber = ''
   this.connectInfo = ''
   this.basicPanel.data = {}
   this.basicPanel.update()

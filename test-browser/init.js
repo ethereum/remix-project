@@ -128,31 +128,34 @@ browser.fireEvent = function (el, key, times, callback) {
 }
 
 function assertPanel (id, browser, value) {
-  var selector = id + ' .dropdownpanel div div'
-  browser.execute(function (id) {
-    var node = document.querySelector(id)
+  var selector = '.dropdownpanel div.dropdowncontent div'
+  browser.execute(function (id, selector) {
+    var el = document.getElementById(id.replace('#', '').replace('.', ''))
+    var node = el.querySelector(selector)
     var ret = []
-    for (var k in node.children) {
+    for (var k = 0; k < node.children.length; k++) {
       if (node.children[k].innerText) {
         ret.push(node.children[k].innerText)
       }
     }
     return ret
-  }, [selector], function (returnValues) {
+  }, [id, selector], function (returnValues) {
     value.map(function (item, index) {
-      browser.assert.equal(returnValues.value[index], value[index])
+      var testValue = returnValues.value[index].replace(/\r\n/g, '').replace(/\t/g, '').replace(/\s/g, '')
+      browser.assert.equal(testValue, value[index])
     })
   })
   return browser
 }
 
 function assertPanelValue (id, browser, index, value) {
-  var selector = id + ' .dropdownpanel div div'
+  var selector = id + ' .dropdownpanel .dropdowncontent div'
   browser.execute(function (id, index) {
     var node = document.querySelector(id)
     return node.children[index].innerText
   }, [selector, index], function (returnValues) {
-    browser.assert.equal(returnValues.value, value)
+    var testValue = returnValues.value.replace(/\r\n/g, '').replace(/\t/g, '').replace(/\s/g, '')
+    browser.assert.equal(testValue, value)
   })
   return browser
 }

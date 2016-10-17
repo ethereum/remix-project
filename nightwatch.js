@@ -62,7 +62,8 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'safari',
         'javascriptEnabled': true,
-        'platform': 'MAC',
+        'platform': 'OS X 10.11',
+        'version': '9.0',
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
@@ -74,6 +75,8 @@ module.exports = {
         'browserName': 'internet explorer',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
+        'platform': 'WIN8.1',
+        'version': '11',
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
       }

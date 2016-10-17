@@ -32,12 +32,16 @@ CodeListView.prototype.indexChanged = function (index) {
     if (this.itemSelected) {
       this.itemSelected.removeAttribute('selected')
       this.itemSelected.removeAttribute('style')
-      this.itemSelected.firstChild.removeAttribute('style')
+      if (this.itemSelected.firstChild) {
+        this.itemSelected.firstChild.removeAttribute('style')
+      }
     }
     this.itemSelected = this.codeView.children[index]
     this.itemSelected.setAttribute('style', ui.formatCss({'background-color': '#eeeeee'}))
     this.itemSelected.setAttribute('selected', 'selected')
-    this.itemSelected.firstChild.setAttribute('style', ui.formatCss({'margin-left': '2px'}))
+    if (this.itemSelected.firstChild) {
+      this.itemSelected.firstChild.setAttribute('style', ui.formatCss({'margin-left': '2px'}))
+    }
     this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetHeight)
   }
 }

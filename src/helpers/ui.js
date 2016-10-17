@@ -38,7 +38,11 @@ module.exports = {
     for (var arg in arguments) {
       for (var k in arguments[arg]) {
         if (arguments[arg][k] && ret.indexOf(k) === -1) {
-          ret += k + ':' + arguments[arg][k] + ';'
+          if (k.indexOf('*') === 0) {
+            ret += arguments[arg][k]
+          } else {
+            ret += k + ':' + arguments[arg][k] + ';'
+          }
         }
       }
     }

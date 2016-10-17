@@ -25,7 +25,7 @@ DropdownPanel.prototype.update = function (_data) {
   if (_data) {
     this.data = _data
   }
-  this.view.querySelector('.dropdownpanel div').innerHTML = ''
+  this.view.querySelector('.dropdownpanel div.dropdowncontent').innerHTML = ''
   if (!this.raw) {
     var data = JSON.stringify(this.data, null, '\t')
     if (!this.data || data === '[]' || data === '{}') {
@@ -41,13 +41,13 @@ DropdownPanel.prototype.update = function (_data) {
         div.appendChild(yo`<div><div style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '10%'})} >${k}</div><div style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '50%'})} >${this.data[k]}</div></div>`)
       }
     }
-    this.view.querySelector('.dropdownpanel div').appendChild(div)
+    this.view.querySelector('.dropdownpanel div.dropdowncontent').appendChild(div)
     this.view.querySelector('.btn').setAttribute('data-clipboard-text', data)
     if (Clipboard && !this.clipboard) {
       this.clipboard = new Clipboard(this.view.querySelector('.btn'))
     }
   } else {
-    this.view.querySelector('.dropdownpanel div').appendChild(this.data)
+    this.view.querySelector('.dropdownpanel div.dropdowncontent').appendChild(this.data)
     this.view.querySelector('.btn').style.display = 'none'
   }
 }
@@ -63,7 +63,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
       <button style=${ui.formatCss(style.button, styleDropdown.copyBtn)} class="btn" type="button">
         Copy to clipboard
       </button>
-      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'><span>Empty</span></div>
+      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'><div>Empty</div></div>
     </div>
     </div>`
   if (!this.view) {
