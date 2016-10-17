@@ -7,14 +7,23 @@ module.exports = {
     var ret = '0x'
     for (var i = 0; i < ints.length; i++) {
       var h = ints[i]
-      if (h) {
-        h = h.toString(16)
-        ret += ('0x' + h) < 0x10 ? '0' + h : h
-      } else {
-        ret += '00'
-      }
+      ret += (h <= 0xf ? '0' : '') + h.toString(16)
     }
     return ret
+  },
+
+  /**
+   * Converts a hex string to an array of integers.
+   */
+  hexToIntArray: function (hexString) {
+    if (hexString.slice(0, 2) === '0x') {
+      hexString = hexString.slice(2)
+    }
+    var integers = []
+    for (var i = 0; i < hexString.length; i += 2) {
+      integers.push(parseInt(hexString.slice(i, i + 2), 16))
+    }
+    return integers
   },
 
   /*
