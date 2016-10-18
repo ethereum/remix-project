@@ -4,6 +4,7 @@ var Debugger = require('./ui/Ethdebugger')
 var BasicPanel = require('./ui/BasicPanel')
 var TraceManager = require('./trace/traceManager')
 var CodeManager = require('./code/codeManager')
+var disassembler = require('./code/disassembler')
 var SourceMappingDecoder = require('./util/sourceMappingDecoder')
 var AstWalker = require('./util/astWalker')
 
@@ -18,7 +19,8 @@ if (typeof (window) !== 'undefined') {
 function modules () {
   return {
     code: {
-      codeManager: CodeManager
+      codeManager: CodeManager,
+      disassembler: disassembler
     },
     trace: {
       traceManager: TraceManager

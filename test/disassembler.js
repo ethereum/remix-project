@@ -1,7 +1,7 @@
 'use strict'
 
 var tape = require('tape')
-var disassemble = require('../src/code/disassembler.js').disassemble
+var disassemble = require('..').code.disassembler.disassemble
 
 tape('Disassembler', function (t) {
   t.test('empty', function (st) {
