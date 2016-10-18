@@ -14,7 +14,7 @@ var CodeManager = require('../code/codeManager')
 var SourceLocationTracker = require('../code/sourceLocationTracker')
 
 function Ethdebugger () {
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
 
   this.currentStepIndex = -1
   this.tx
@@ -29,22 +29,22 @@ function Ethdebugger () {
   this.sourceLocationTracker = new SourceLocationTracker(this.codeManager)
 
   var self = this
-  this.register('indexChanged', this, function (index) {
+  this.event.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
   })
 
   this.txBrowser = new TxBrowser(this)
-  this.txBrowser.register('newTxLoading', this, function () {
+  this.txBrowser.event.register('newTxLoading', this, function () {
     self.unLoad()
   })
-  this.txBrowser.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
+  this.txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
     self.startDebugging(blockNumber, txIndex, tx)
   })
-  this.txBrowser.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
+  this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
     self.unLoad()
   })
   this.stepManager = new StepManager(this, this.traceManager)
-  this.stepManager.register('stepChanged', this, function (stepIndex) {
+  this.stepManager.event.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
   })
   this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager)
@@ -56,7 +56,7 @@ Ethdebugger.prototype.web3 = function () {
 
 Ethdebugger.prototype.addProvider = function (type, obj) {
   this.web3Providers.addProvider(type, obj)
-  this.trigger('providerAdded', [type])
+  this.event.trigger('providerAdded', [type])
 }
 
 Ethdebugger.prototype.switchProvider = function (type) {
@@ -66,7 +66,7 @@ Ethdebugger.prototype.switchProvider = function (type) {
       console.log('provider ' + type + ' not defined')
     } else {
       util.web3 = obj
-      self.trigger('providerChanged', [type])
+      self.event.trigger('providerChanged', [type])
     }
   })
 }
@@ -97,12 +97,12 @@ Ethdebugger.prototype.render = function () {
 Ethdebugger.prototype.unLoad = function () {
   this.traceManager.init()
   this.stepManager.reset()
-  this.trigger('traceUnloaded')
+  this.event.trigger('traceUnloaded')
 }
 
 Ethdebugger.prototype.stepChanged = function (stepIndex) {
   this.currentStepIndex = stepIndex
-  this.trigger('indexChanged', [stepIndex])
+  this.event.trigger('indexChanged', [stepIndex])
 }
 
 Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
@@ -119,7 +119,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
     if (result) {
       self.statusMessage = ''
       yo.update(self.view, self.render())
-      self.trigger('newTraceLoaded')
+      self.event.trigger('newTraceLoaded')
     } else {
       self.statusMessage = error
       yo.update(self.view, self.render())

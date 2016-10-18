@@ -1,7 +1,6 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
 var codeResolver = require('./codeResolver')
-var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
 
 /*
@@ -14,7 +13,7 @@ var EventManager = require('../lib/eventManager')
 */
 
 function CodeManager (_traceManager) {
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
   this.isLoading = false
   this.traceManager = _traceManager
   this.codeResolver = codeResolver
@@ -22,7 +21,7 @@ function CodeManager (_traceManager) {
 
 CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   if (stepIndex < 0) return
-  this.trigger('resolvingStep')
+  this.event.trigger('resolvingStep')
   var self = this
   if (stepIndex === 0) {
     self.retrieveCodeAndTrigger(tx.to, stepIndex, tx)
@@ -72,7 +71,7 @@ CodeManager.prototype.retrieveIndexAndTrigger = function (address, step, code) {
   var self = this
   this.getInstructionIndex(address, step, function (error, result) {
     if (!error) {
-      self.trigger('changed', [code, address, result])
+      self.event.trigger('changed', [code, address, result])
     } else {
       console.log(error)
     }

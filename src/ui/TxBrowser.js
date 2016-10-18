@@ -8,7 +8,7 @@ var init = require('../helpers/init')
 var DropdownPanel = require('./DropdownPanel')
 
 function TxBrowser (_parent) {
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
 
   this.blockNumber
   this.txNumber
@@ -17,7 +17,7 @@ function TxBrowser (_parent) {
   this.basicPanel = new DropdownPanel('Transaction')
   this.basicPanel.data = {}
   var self = this
-  _parent.register('providerChanged', this, function (provider) {
+  _parent.event.register('providerChanged', this, function (provider) {
     self.displayConnectionSetting = provider === 'INTERNAL'
     self.setDefaultValues()
     if (self.view) {
@@ -44,7 +44,7 @@ TxBrowser.prototype.submit = function () {
   if (!this.txNumber) {
     return
   }
-  this.trigger('newTxLoading', [this.blockNumber, this.txNumber])
+  this.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
   try {
     var self = this
     if (this.txNumber.indexOf('0x') !== -1) {
@@ -124,7 +124,7 @@ TxBrowser.prototype.load = function (txHash) {
 }
 
 TxBrowser.prototype.unload = function (txHash) {
-  this.trigger('unloadRequested')
+  this.event.trigger('unloadRequested')
   this.init()
 }
 

@@ -1,6 +1,5 @@
 'use strict'
 var EventManager = require('../lib/eventManager')
-var util = require('../helpers/global')
 var helper = require('../helpers/traceHelper')
 var SourceMappingDecoder = require('../util/sourceMappingDecoder')
 
@@ -9,7 +8,7 @@ var SourceMappingDecoder = require('../util/sourceMappingDecoder')
  */
 function SourceLocationTracker (_codeManager) {
   this.codeManager = _codeManager
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
   this.sourceMappingDecoder = new SourceMappingDecoder()
 }
 
