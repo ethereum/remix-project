@@ -44,16 +44,27 @@ TxBrowser.prototype.submit = function () {
   if (!this.txNumber) {
     return
   }
-  this.trigger('newTxLoading', [this.blockNumber, this.txNumber, tx])
-  var tx
+  this.trigger('newTxLoading', [this.blockNumber, this.txNumber])
   try {
+    var self = this
     if (this.txNumber.indexOf('0x') !== -1) {
-      tx = util.web3.eth.getTransaction(this.txNumber)
+      util.web3.eth.getTransaction(this.txNumber, function (error, result) {
+        self.update(error, result)
+      })
     } else {
-      tx = util.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber)
+      util.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
+        self.update(error, result)
+      })
     }
   } catch (e) {
     console.log(e)
+  }
+}
+
+TxBrowser.prototype.update = function (error, tx) {
+  if (error) {
+    console.log(error)
+    return
   }
   var info = {}
   if (tx) {
