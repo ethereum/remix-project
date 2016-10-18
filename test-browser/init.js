@@ -13,7 +13,7 @@ module.exports = function (browser, callback) {
 function extendBrowser (browser) {
   browser.assertCurrentSelectedItem = function (expected) {
     browser.execute(function (id) {
-      var node = document.querySelector('#asmcodes ul li[selected="selected"] span')
+      var node = document.querySelector('#asmcodes div div[selected="selected"] span')
       return node.innerText
     }, [''], function (returnValue) {
       browser.assert.equal(returnValue.value, expected)
@@ -32,7 +32,7 @@ function extendBrowser (browser) {
   }
 
   browser.assertStepDetail = function (vmtracestepinfo, stepinfo, addmemoryinfo, gasinfo, remaininggasinfo, loadedaddressinfo) {
-    assertPanel('#stepdetail', browser, ['vmTraceStep' + vmtracestepinfo, 'step' + stepinfo, 'addmemory' + addmemoryinfo, 'gas' + gasinfo, 'remainingGas' + remaininggasinfo, 'loadedAddress' + loadedaddressinfo])
+    assertPanel('#stepdetail', browser, ['vmtracestep' + vmtracestepinfo, 'executionstep' + stepinfo, 'addmemory' + addmemoryinfo, 'gas' + gasinfo, 'remaininggas' + remaininggasinfo, 'loadedaddress' + loadedaddressinfo])
     return browser
   }
 

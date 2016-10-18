@@ -11,7 +11,7 @@ function CodeListView (_parent, _codeManager) {
   this.address
   this.codeView
   this.itemSelected
-  this.basicPanel = new DropdownPanel('Assembly', true)
+  this.basicPanel = new DropdownPanel('Instructions', true)
   this.init()
 }
 
@@ -60,11 +60,11 @@ CodeListView.prototype.changed = function (code, address, index) {
 CodeListView.prototype.renderAssemblyItems = function () {
   if (this.code) {
     var codeView = this.code.map(function (item, i) {
-      return yo`<li key=${i} value=${i}><span>${item}</span></li>`
+      return yo`<div key=${i} value=${i}><span>${item}</span></div>`
     })
-    return yo`<ul id='asmitems' ref='itemsList' style=${ui.formatCss(style.instructionsList)}>
+    return yo`<div id='asmitems' ref='itemsList' style=${ui.formatCss(style.instructionsList)}>
       ${codeView}
-    </ul>`
+    </div>`
   }
 }
 

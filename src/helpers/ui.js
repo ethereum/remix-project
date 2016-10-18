@@ -33,6 +33,17 @@ module.exports = {
     return ret
   },
 
+  /**
+   * format @args css1, css2, css3 to css inline style
+   *
+   * @param {Object} css1 - css inline declaration
+   * @param {Object} css2 - css inline declaration
+   * @param {Object} css3 - css inline declaration
+   * @param {Object} ...
+   * @return {String} css inline style
+   *                  if the key start with * the value is direcly appended to the inline style (which should be already inline style formatted)
+   *                  used if multiple occurences of the same key is needed
+   */
   formatCss: function (css1, css2) {
     var ret = ''
     for (var arg in arguments) {

@@ -38,7 +38,9 @@ function loadTraceNotFound (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .assert.attributeContains('#txinfo .dropdownpanel button', 'data-clipboard-text', '<not found>')
+    .click('#txinfo .title')
+    .click('#txinfo .dropdownpanel .btn')
+    .expect.element('#txinfo .dropdownpanel .dropdownrawcontent').text.to.contain('<not found>')
   return browser
 }
 
@@ -47,7 +49,9 @@ function loadTrace (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .assert.attributeContains('#txinfo .dropdownpanel button', 'data-clipboard-text', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    .click('#txinfo .title')
+    .click('#txinfo .dropdownpanel .btn')
+    .expect.element('#txinfo .dropdownpanel .dropdownrawcontent').text.to.contain('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
   browser.click('#unload')
     .waitForElementNotVisible('#vmdebugger', 1000)
   return browser

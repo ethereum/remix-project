@@ -9,6 +9,10 @@ module.exports = {
   font: {
     'font-family': 'arial,sans-serif'
   },
+  innerShift: {
+    'padding': '2px',
+    'margin-left': '10px'
+  },
   container: {
     'margin': '10px',
     'padding': '5px'
@@ -20,11 +24,10 @@ module.exports = {
     'font-style': 'italic'
   },
   instructionsList: {
-    'width': '72%',
+    'width': '52%',
     'overflow-y': 'scroll',
-    'list-style-type': 'none',
-    'margin': 'auto',
-    'max-height': '500px'
+    'max-height': '500px',
+    'margin': '0'
   },
   transactionInfo: {
     'margin-top': '5px'

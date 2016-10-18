@@ -18,7 +18,6 @@
   },
   "devDependencies": {
     "browserify": "^13.0.1",
-    "clipboard": "^1.5.12",
     "ethereumjs-util": "^4.5.0",
     "http-server": "^0.9.0",
     "nightwatch": "^0.9.5",

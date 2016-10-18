@@ -2,18 +2,12 @@
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var styleDropdown = require('./styles/dropdownPanel')
-var style = require('./styles/basicStyles')
 var basicStyles = require('./styles/basicStyles')
-var Clipboard
-if (ui.runInBrowser()) {
-  Clipboard = require('clipboard')
-}
 
 function DropdownPanel (_name, _raw) {
   this.data
   this.name = _name
   this.view
-  this.clipboard
   _raw = _raw === undefined ? false : _raw
   this.raw = _raw
 }
@@ -38,17 +32,16 @@ DropdownPanel.prototype.update = function (_data) {
       })
     } else {
       for (var k in this.data) {
-        div.appendChild(yo`<div><div style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '10%'})} >${k}</div><div style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '50%'})} >${this.data[k]}</div></div>`)
+        var content = typeof this.data[k] === 'string' ? this.data[k] : JSON.stringify(this.data[k])
+        div.appendChild(yo`<div><div title=${k} style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '10%'})} >${k}</div><div title=${content} style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '78%'})} >${content}</div></div>`)
       }
     }
     this.view.querySelector('.dropdownpanel div.dropdowncontent').appendChild(div)
-    this.view.querySelector('.btn').setAttribute('data-clipboard-text', data)
-    if (Clipboard && !this.clipboard) {
-      this.clipboard = new Clipboard(this.view.querySelector('.btn'))
-    }
+    this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
+    this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = data
   } else {
     this.view.querySelector('.dropdownpanel div.dropdowncontent').appendChild(this.data)
-    this.view.querySelector('.btn').style.display = 'none'
+    this.view.querySelector('.dropdownpanel button.btn').style.display = 'none'
   }
 }
 
@@ -56,20 +49,28 @@ DropdownPanel.prototype.render = function (overridestyle) {
   overridestyle === undefined ? {} : overridestyle
   var self = this
   var view = yo`<div>
-    <div style=${ui.formatCss(styleDropdown.title)}>
-      <div onclick=${function () { self.toggle() }} style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div>
+    <div class='title' style=${ui.formatCss(styleDropdown.title)} onclick=${function () { self.toggle() }}>
+      <div style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div>
     </div>
     <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
-      <button style=${ui.formatCss(style.button, styleDropdown.copyBtn)} class="btn" type="button">
-        Copy to clipboard
+      <button onclick=${function () { self.toggleRaw() }} style=${ui.formatCss(basicStyles.button, styleDropdown.copyBtn)} class="btn" type="button">
+        Raw
       </button>
       <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'><div>Empty</div></div>
+      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdownrawcontent' style='display:none'></div>
     </div>
     </div>`
   if (!this.view) {
     this.view = view
   }
   return view
+}
+
+DropdownPanel.prototype.toggleRaw = function () {
+  var raw = this.view.querySelector('.dropdownpanel .dropdownrawcontent')
+  var formatted = this.view.querySelector('.dropdownpanel .dropdowncontent')
+  raw.style.display = raw.style.display === 'none' ? 'block' : 'none'
+  formatted.style.display = formatted.style.display === 'none' ? 'block' : 'none'
 }
 
 DropdownPanel.prototype.toggle = function () {

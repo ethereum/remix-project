@@ -32,14 +32,14 @@ StepDetail.prototype.init = function () {
   this.parent.register('indexChanged', this, function (index) {
     if (index < 0) return
 
-    self.detail.vmTraceStep = index
+    self.detail['vm trace step'] = index
 
     self.traceManager.getCurrentStep(index, function (error, step) {
       if (error) {
         console.log(error)
-        self.detail.step = '-'
+        self.detail['execution step'] = '-'
       } else {
-        self.detail.step = step
+        self.detail['execution step'] = step
       }
       self.basicPanel.update(self.detail)
     })
@@ -47,9 +47,9 @@ StepDetail.prototype.init = function () {
     self.traceManager.getMemExpand(index, function (error, addmem) {
       if (error) {
         console.log(error)
-        self.detail.addmemory = '-'
+        self.detail['add memory'] = '-'
       } else {
-        self.detail.addmemory = addmem
+        self.detail['add memory'] = addmem
       }
       self.basicPanel.update(self.detail)
     })
@@ -67,9 +67,9 @@ StepDetail.prototype.init = function () {
     self.traceManager.getCurrentCalledAddressAt(index, function (error, address) {
       if (error) {
         console.log(error)
-        self.detail.loadedAddress = '-'
+        self.detail['loaded address'] = '-'
       } else {
-        self.detail.loadedAddress = address
+        self.detail['loaded address'] = address
       }
       self.basicPanel.update(self.detail)
     })
@@ -77,9 +77,9 @@ StepDetail.prototype.init = function () {
     self.traceManager.getRemainingGas(index, function (error, remaingas) {
       if (error) {
         console.log(error)
-        self.detail.remainingGas = '-'
+        self.detail['remaining gas'] = '-'
       } else {
-        self.detail.remainingGas = remaingas
+        self.detail['remaining gas'] = remaingas
       }
       self.basicPanel.update(self.detail)
     })
@@ -90,11 +90,11 @@ module.exports = StepDetail
 
 function initDetail () {
   return {
-    vmTraceStep: '-',
-    step: '-',
-    addmemory: '',
-    gas: '',
-    remainingGas: '-',
-    loadedAddress: '-'
+    'vm trace step': '-',
+    'execution step': '-',
+    'add memory': '',
+    'gas': '',
+    'remaining gas': '-',
+    'loaded address': '-'
   }
 }
