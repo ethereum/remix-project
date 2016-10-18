@@ -3,7 +3,6 @@ var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
 var TraceManager = require('../trace/traceManager')
 var VmDebugger = require('./VmDebugger')
-var Sticker = require('./Sticker')
 var style = require('./styles/basicStyles')
 var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
@@ -49,7 +48,6 @@ function Ethdebugger () {
     self.stepChanged(stepIndex)
   })
   this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager)
-  this.sticker = new Sticker(this, this.traceManager)
 }
 
 Ethdebugger.prototype.web3 = function () {
@@ -83,13 +81,9 @@ Ethdebugger.prototype.debug = function (tx) {
 
 Ethdebugger.prototype.render = function () {
   var view = yo`<div style=${ui.formatCss(style.font)}>
-        <h1 style=${ui.formatCss(style.container)}>VM Debugger</h1>
-        <div style='display:inline-block'>
+        <div style=${ui.formatCss({'max-width': '51%'}, style.innerShift)}>
           ${this.txBrowser.render()}
           ${this.stepManager.render()}
-        </div>
-        <div style='display:inline-block'>
-          ${this.sticker.render()}
         </div>
         <div style=${ui.formatCss(style.statusMessage)} >${this.statusMessage}</div>
         ${this.vmDebugger.render()}
@@ -121,7 +115,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   this.tx = tx
   var self = this
   this.traceManager.resolveTrace(tx, function (error, result) {
-    console.log('trace loaded ' + result + ' ' + error)
+    console.log('trace loaded ' + result)
     if (result) {
       self.statusMessage = ''
       yo.update(self.view, self.render())

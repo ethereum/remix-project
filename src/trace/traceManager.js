@@ -222,7 +222,11 @@ TraceManager.prototype.getReturnValue = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  callback(null, this.traceCache.returnValues[stepIndex])
+  if (!this.traceCache.returnValues[stepIndex]) {
+    callback('current step is not a return step')
+  } else {
+    callback(null, this.traceCache.returnValues[stepIndex])
+  }
 }
 
 TraceManager.prototype.getCurrentStep = function (stepIndex, callback) {

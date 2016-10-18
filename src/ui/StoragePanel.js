@@ -1,11 +1,11 @@
 'use strict'
-var BasicPanel = require('./BasicPanel')
+var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
 function StoragePanel (_parent, _traceManager, _address) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Storage Changes')
+  this.basicPanel = new DropdownPanel('Storage Changes')
   this.address = _address
   this.init()
   this.disabled = false
@@ -25,21 +25,12 @@ StoragePanel.prototype.init = function () {
     self.traceManager.getStorageAt(index, self.parent.tx, function (error, storage) {
       if (error) {
         console.log(error)
-        self.basicPanel.data = self.formatStorage(storage)
+        self.basicPanel.update({})
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.data = self.formatStorage(storage)
+        self.basicPanel.update(storage)
       }
-      self.basicPanel.update()
     }, self.address)
   })
-}
-
-StoragePanel.prototype.formatStorage = function (storage) {
-  var ret = ''
-  for (var key in storage) {
-    ret += key + '  ' + storage[key] + '\n'
-  }
-  return ret
 }
 
 module.exports = StoragePanel

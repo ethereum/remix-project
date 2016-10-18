@@ -1,12 +1,12 @@
 'use strict'
-var BasicPanel = require('./BasicPanel')
+var DropdownPanel = require('./DropdownPanel')
 var util = require('../helpers/ui')
 var yo = require('yo-yo')
 
 function MemoryPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Memory')
+  this.basicPanel = new DropdownPanel('Memory')
   this.init()
 }
 
@@ -23,11 +23,10 @@ MemoryPanel.prototype.init = function () {
     self.traceManager.getMemoryAt(index, function (error, memory) {
       if (error) {
         console.log(error)
-        self.basicPanel.data = ''
+        self.basicPanel.update({})
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.data = util.formatMemory(memory, 16)
+        self.basicPanel.update(util.formatMemory(memory, 16))
       }
-      self.basicPanel.update()
     })
   })
 }

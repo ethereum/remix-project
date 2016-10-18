@@ -5,7 +5,9 @@ var sauce = require('./sauce')
 module.exports = {
   beforeEach: function (browser, done) {
     try {
-      init(browser, done)
+      init(browser, function () {
+        done()
+      })
     } catch (e) {
       var mes = 'error ' + e.message
       console.log(mes)
@@ -14,42 +16,42 @@ module.exports = {
   },
 
   'vmdebugger': function (browser) {
-    loadTrace(browser)
-    browser.click('#unload')
     loadTraceNotFound(browser)
-    browser.click('#unload')
+    .click('#unload')
+    loadTrace(browser)
+    .click('#unload')
     panels(browser)
-    browser.click('#unload')
+    .click('#unload')
     slider(browser)
-    browser.click('#unload')
+    .click('#unload')
     stepping(browser)
-    browser.click('#unload')
-    sticker(browser)
-    browser.end()
+    .click('#unload')
+    stepdetail(browser)
+    .end()
   },
 
   tearDown: sauce
 }
 
-function loadTrace (browser) {
+function loadTraceNotFound (browser) {
   browser
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .assert.containsText('#txhash', '<not found>')
+    .click('#txinfo .title')
+    .click('#txinfo .dropdownpanel .btn')
+    .expect.element('#txinfo .dropdownpanel .dropdownrawcontent').text.to.contain('<not found>')
   return browser
 }
 
-function loadTraceNotFound (browser) {
+function loadTrace (browser) {
   browser
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .waitForElementVisible('#vmdebugger', 1000)
-    .expect.element('#txhash').text.to.equal('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
-  browser.expect.element('#txfrom').text.to.equal('0x00101c5bfa3fc8bad02c9f5fd65b069306251915')
-  browser.expect.element('#txto').text.to.equal('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
-  browser.expect.element('#txto').text.to.equal('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+    .click('#txinfo .title')
+    .click('#txinfo .dropdownpanel .btn')
+    .expect.element('#txinfo .dropdownpanel .dropdownrawcontent').text.to.contain('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
   browser.click('#unload')
     .waitForElementNotVisible('#vmdebugger', 1000)
   return browser
@@ -60,22 +62,21 @@ function panels (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .waitForElementVisible('#vmdebugger', 1000)
     .click('#nextcall')
-    .assertStack('0x\n0x60\n0x65\n0x38\n0x55\n0x60fe47b1')
-    .assertStorageChanges('0x00  0x38')
-    .assertCallData('0x60fe47b10000000000000000000000000000000000000000000000000000000000000038')
-    .assertCallStack('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+    .assertStack(['0x', '0x60', '0x65', '0x38', '0x55', '0x60fe47b1'])
+    .assertStorageChanges(['0x000x38'])
+    .assertCallData(['0x60fe47b10000000000000000000000000000000000000000000000000000000000000038'])
+    .assertCallStack(['0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5'])
     .assertStackValue(1, '0x60')
-    .assertMemoryValue(6, '0x60\t\t60606040526040516020806045833981\t????R??Q????E?9?')
-    .assertMemoryValue(7, '0x70\t\t01604052808051906020019091905050\t???R??Q???????PP')
-    .assertMemoryValue(8, '0x80\t\t5b806001016000600050819055505b50\t?????????P??UP?P')
+    .assertMemoryValue(6, '0x6060606040526040516020806045833981????R??Q????E?9?')
+    .assertMemoryValue(7, '0x7001604052808051906020019091905050???R??Q???????PP')
+    .assertMemoryValue(8, '0x805b806001016000600050819055505b50?????????P??UP?P')
     .click('#intoforward') // CREATE
-    .assertStack('')
-    .assertStorageChanges('')
-    .assertMemory('')
-    .assertCallData('0x0000000000000000000000000000000000000000000000000000000000000000000000000000006060606040526040516020806045833981016040528080519060200190919050505b806001016000600050819055')
-    .assertCallStack('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5\n(Contract Creation - Step 63)')
+    .assertStack(['Empty'])
+    .assertStorageChanges(['Empty'])
+    .assertMemory(['Empty'])
+    .assertCallData(['0x0000000000000000000000000000000000000000000000000000000000000000000000000000006060606040526040516020806045833981016040528080519060200190919050505b806001016000600050819055'])
+    .assertCallStack(['0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', '(ContractCreation-Step63)'])
   return browser
 }
 
@@ -84,7 +85,6 @@ function slider (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .waitForElementVisible('#vmdebugger', 1000)
     .click('#intoforward')
     .click('#intoforward')
     .click('#intoforward')
@@ -114,7 +114,6 @@ function stepping (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .waitForElementVisible('#vmdebugger', 1000)
     .click('#intoforward')
     .click('#intoforward')
     .assertCurrentSelectedItem('004 MSTORE')
@@ -136,12 +135,11 @@ function stepping (browser) {
   return browser
 }
 
-function sticker (browser) {
+function stepdetail (browser) {
   browser
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .waitForElementVisible('#vmdebugger', 1000)
     .click('#intoforward')
     .click('#intoforward')
     .click('#intoforward')
@@ -161,13 +159,13 @@ function sticker (browser) {
         .end()
     })
     */
-    .assertSticker('6', '6', '', '3', '84476', '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+    .assertStepDetail('6', '6', '', '3', '84476', '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
     .click('#nextcall')
-    .assertSticker('63', '63', '', '32000', '79283', '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+    .assertStepDetail('63', '63', '', '32000', '79283', '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
     .click('#intoforward')
     .click('#overforward')
-    .assertSticker('108', '44', '', '0', '27145', '(Contract Creation - Step 63)')
+    .assertStepDetail('108', '44', '', '0', '27145', '(ContractCreation-Step63)')
     .click('#intoforward')
-    .assertSticker('109', '64', '', '3', '25145', '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+    .assertStepDetail('109', '64', '', '3', '25145', '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
   return browser
 }

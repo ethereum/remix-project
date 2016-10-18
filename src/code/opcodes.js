@@ -136,11 +136,11 @@ var codes = {
   0x9e: ['SWAP', 3, 0, 0, false],
   0x9f: ['SWAP', 3, 0, 0, false],
 
-  0xa0: ['LOG', 375, 2, 0, false],
-  0xa1: ['LOG', 375, 3, 0, false],
-  0xa2: ['LOG', 375, 4, 0, false],
-  0xa3: ['LOG', 375, 5, 0, false],
-  0xa4: ['LOG', 375, 6, 0, false],
+  0xa0: ['LOG0', 375, 2, 0, false],
+  0xa1: ['LOG1', 375, 3, 0, false],
+  0xa2: ['LOG2', 375, 4, 0, false],
+  0xa3: ['LOG3', 375, 5, 0, false],
+  0xa4: ['LOG4', 375, 6, 0, false],
 
   // '0xf0' range - closures
   0xf0: ['CREATE', 32000, 3, 1, true],

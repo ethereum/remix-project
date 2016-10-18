@@ -1,11 +1,11 @@
 'use strict'
-var BasicPanel = require('./BasicPanel')
+var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
 function CalldataPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new BasicPanel('Call Data')
+  this.basicPanel = new DropdownPanel('Call Data')
   this.init()
 }
 
@@ -21,22 +21,13 @@ CalldataPanel.prototype.init = function () {
 
     self.traceManager.getCallDataAt(index, function (error, calldata) {
       if (error) {
-        self.basicPanel.data = ''
+        self.basicPanel.update({})
         console.log(error)
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.data = self.format(calldata)
+        self.basicPanel.update(calldata)
       }
-      self.basicPanel.update()
     })
   })
-}
-
-CalldataPanel.prototype.format = function (calldata) {
-  var ret = ''
-  for (var key in calldata) {
-    ret += calldata[key] + '\n'
-  }
-  return ret
 }
 
 module.exports = CalldataPanel

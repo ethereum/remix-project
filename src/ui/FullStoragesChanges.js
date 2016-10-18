@@ -1,5 +1,5 @@
 'use strict'
-var BasicPanel = require('./BasicPanel')
+var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
 function FullStoragesChanges (_parent, _traceManager) {
@@ -8,7 +8,7 @@ function FullStoragesChanges (_parent, _traceManager) {
   this.addresses = []
   this.view
   this.traceLength
-  this.basicPanel = new BasicPanel('Full Storages Changes', '1205px', '100px')
+  this.basicPanel = new DropdownPanel('Full Storages Changes')
   this.init()
 }
 
@@ -20,14 +20,6 @@ FullStoragesChanges.prototype.render = function () {
   return view
 }
 
-FullStoragesChanges.prototype.hide = function () {
-  this.view.style.display = 'none'
-}
-
-FullStoragesChanges.prototype.show = function () {
-  this.view.style.display = 'block'
-}
-
 FullStoragesChanges.prototype.init = function () {
   var self = this
   this.parent.register('newTraceLoaded', this, function (length) {
@@ -35,9 +27,7 @@ FullStoragesChanges.prototype.init = function () {
     self.traceManager.getAddresses(function (error, addresses) {
       if (!error) {
         self.addresses = addresses
-        self.basicPanel.data = ''
-        yo.update(self.view, self.render())
-        self.hide()
+        self.basicPanel.update({})
       }
     })
 
@@ -58,14 +48,10 @@ FullStoragesChanges.prototype.init = function () {
         self.traceManager.getStorageAt(index, null, function (error, result) {
           if (!error) {
             storageJSON[self.addresses[k]] = result
-            self.basicPanel.data = JSON.stringify(storageJSON, null, '\t')
-            yo.update(self.view, self.render())
-            self.show()
+            self.basicPanel.update(storageJSON)
           }
         }, self.addresses[k])
       }
-    } else {
-      self.hide()
     }
   })
 }

@@ -1,7 +1,7 @@
 'use strict'
 module.exports = {
   formatMemory: function (mem, width) {
-    var ret = ''
+    var ret = {}
     if (!mem) {
       return ret
     }
@@ -13,7 +13,7 @@ module.exports = {
     for (var k = 0; k < mem.length; k += (width * 2)) {
       var memory = mem.substr(k, width * 2)
       var content = this.tryConvertAsciiFormat(memory)
-      ret += '0x' + (k / 2).toString(16) + '\t\t' + content.raw + '\t' + content.ascii + '\n'
+      ret['0x' + (k / 2).toString(16)] = content.raw + '\t' + content.ascii
     }
     return ret
   },
@@ -33,12 +33,27 @@ module.exports = {
     return ret
   },
 
+  /**
+   * format @args css1, css2, css3 to css inline style
+   *
+   * @param {Object} css1 - css inline declaration
+   * @param {Object} css2 - css inline declaration
+   * @param {Object} css3 - css inline declaration
+   * @param {Object} ...
+   * @return {String} css inline style
+   *                  if the key start with * the value is direcly appended to the inline style (which should be already inline style formatted)
+   *                  used if multiple occurences of the same key is needed
+   */
   formatCss: function (css1, css2) {
     var ret = ''
     for (var arg in arguments) {
       for (var k in arguments[arg]) {
         if (arguments[arg][k] && ret.indexOf(k) === -1) {
-          ret += k + ':' + arguments[arg][k] + ';'
+          if (k.indexOf('*') === 0) {
+            ret += arguments[arg][k]
+          } else {
+            ret += k + ':' + arguments[arg][k] + ';'
+          }
         }
       }
     }
@@ -51,5 +66,9 @@ module.exports = {
     }
     hex = hex.replace(/^0+/, '')
     return '0x' + hex
+  },
+
+  runInBrowser: function () {
+    return typeof window !== 'undefined'
   }
 }

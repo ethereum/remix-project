@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-4.3.16-linux.tar.gz"
 SAUCECONNECT_USERNAME="yanneth"
 SAUCECONNECT_ACCESSKEY="1f5a4560-b02b-41aa-b52b-f033aad30870"
@@ -18,10 +17,29 @@ while [ ! -f $SAUCECONNECT_READYFILE ]; do
   sleep .5
 done
 
-npm run nightwatch_remote_firefox || TEST_EXITCODE=1
-npm run nightwatch_remote_chrome || TEST_EXITCODE=1
-npm run nightwatch_remote_safari || TEST_EXITCODE=1
-npm run nightwatch_remote_ie || TEST_EXITCODE=1
+npm run nightwatch_remote_firefox
+if [ $? -eq 1 ]
+then
+  TEST_EXITCODE=1
+fi
+
+npm run nightwatch_remote_chrome
+if [ $? -eq 1 ]
+then
+  TEST_EXITCODE=1
+fi
+
+npm run nightwatch_remote_safari
+if [ $? -eq 1 ]
+then
+  TEST_EXITCODE=1
+fi
+
+npm run nightwatch_remote_ie
+if [ $? -eq 1 ]
+then
+  TEST_EXITCODE=1
+fi
 
 node ci/sauceDisconnect.js $SAUCECONNECT_USERNAME $SAUCECONNECT_ACCESSKEY $SAUCECONNECT_JOBIDENTIFIER
 

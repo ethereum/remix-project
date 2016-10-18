@@ -1,11 +1,9 @@
 'use strict'
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
-var style = require('./styles/basicStyles')
 var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
-var ui = require('../helpers/ui')
 
 function StepManager (_parent, _traceManager) {
   util.extend(this, new EventManager())
@@ -49,7 +47,7 @@ function StepManager (_parent, _traceManager) {
 
 StepManager.prototype.render = function () {
   return (
-  yo`<div style=${ui.formatCss(style.container)}>
+  yo`<div>
         ${this.slider.render()}
         ${this.buttonNavigator.render()}
       </div>`
