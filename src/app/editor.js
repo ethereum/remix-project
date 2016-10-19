@@ -172,8 +172,8 @@ function Editor (loadingFromGist, storage) {
   function setupStuff (files) {
     if (files.length === 0) {
       if (loadingFromGist) return;
-      files.push(examples.ballot.name);
-      storage.set(examples.ballot.name, examples.ballot.content);
+      files.push(utils.fileKey(examples.ballot.name));
+      storage.set(utils.fileKey(examples.ballot.name), examples.ballot.content);
     }
 
     SOL_CACHE_FILE = files[0];
