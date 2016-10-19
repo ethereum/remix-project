@@ -580,15 +580,7 @@ var run = function () {
     $('#versionSelector').append(new Option('latest local version', 'builtin'));
 
     // find latest release
-    var selectedVersion = null;
-    for (var release in data.releases) {
-      if (selectedVersion === null || semver.gt(release, selectedVersion)) {
-        selectedVersion = release;
-      }
-    }
-    if (selectedVersion !== null) {
-      selectedVersion = data.releases[selectedVersion];
-    }
+    var selectedVersion = data.releases[data.latestRelease];
 
     // override with the requested version
     if (queryParams.get().version) {
