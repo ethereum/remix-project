@@ -74,7 +74,7 @@ TxBrowser.prototype.update = function (error, tx) {
     info.from = tx.from
     info.to = tx.to
     info.hash = tx.hash
-    this.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+    this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
   } else {
     var mes = '<not found>'
     info.from = mes

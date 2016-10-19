@@ -19,17 +19,17 @@ StepDetail.prototype.render = function () {
 
 StepDetail.prototype.init = function () {
   var self = this
-  this.parent.register('traceUnloaded', this, function () {
+  this.parent.event.register('traceUnloaded', this, function () {
     self.detail = initDetail()
     self.basicPanel.update(self.detail)
   })
 
-  this.parent.register('newTraceLoaded', this, function () {
+  this.parent.event.register('newTraceLoaded', this, function () {
     self.detail = initDetail()
     self.basicPanel.update(self.detail)
   })
 
-  this.parent.register('indexChanged', this, function (index) {
+  this.parent.event.register('indexChanged', this, function (index) {
     if (index < 0) return
 
     self.detail['vm trace step'] = index

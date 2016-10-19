@@ -7,7 +7,7 @@ var createExpressions = function (instructions) {
   var expressions = []
   var labels = 0
   for (var i = 0; i < instructions.length; i++) {
-    let expr = instructions[i]
+    var expr = instructions[i]
     expr.functional = false
     if (expr.name === 'JUMPDEST') {
       expr.label = 'label' + (++labels)
