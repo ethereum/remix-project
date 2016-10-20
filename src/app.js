@@ -2,7 +2,6 @@
 'use strict';
 
 var $ = require('jquery');
-var semver = require('semver');
 var base64 = require('js-base64').Base64;
 
 var utils = require('./app/utils');
@@ -555,22 +554,8 @@ var run = function () {
   });
 
   $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json').done(function (data) {
-    function buildVersion (build) {
-      if (build.prerelease && build.prerelease.length > 0) {
-        return build.version + '-' + build.prerelease;
-      } else {
-        return build.version;
-      }
-    }
-
-    // Sort builds according to semver
-    var builds = data.builds.sort(function (a, b) {
-      // NOTE: b vs. a (the order is important), because we want latest first in the list
-      return semver.compare(buildVersion(b), buildVersion(a));
-    });
-
-    // populate version dropdown with all available compiler versions
-    $.each(builds, function (i, build) {
+    // populate version dropdown with all available compiler versions (descending order)
+    $.each(data.builds.slice().reverse(), function (i, build) {
       $('#versionSelector').append(new Option(buildVersion(build), build.path));
     });
 
@@ -580,15 +565,7 @@ var run = function () {
     $('#versionSelector').append(new Option('latest local version', 'builtin'));
 
     // find latest release
-    var selectedVersion = null;
-    for (var release in data.releases) {
-      if (selectedVersion === null || semver.gt(release, selectedVersion)) {
-        selectedVersion = release;
-      }
-    }
-    if (selectedVersion !== null) {
-      selectedVersion = data.releases[selectedVersion];
-    }
+    var selectedVersion = data.releases[data.latestRelease];
 
     // override with the requested version
     if (queryParams.get().version) {
