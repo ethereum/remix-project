@@ -11,7 +11,7 @@ it will always deliver the latest version.
 
 The `gh-pages` branch always has the latest stable build of Browser-Solidity. It also contains a ZIP file with the entire build. Download it to use offline.
 
-Note: it contains the latest nightly build of Solidity available at the time of the packaging. No other compiler versions are supported.
+Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
 
 ## Building
 
