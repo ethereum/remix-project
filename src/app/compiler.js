@@ -201,13 +201,6 @@ function Compiler (editor, handleGithubCall) {
       jobs.push({sources: source});
       worker.postMessage({cmd: 'compile', job: jobs.length - 1, source: JSON.stringify(source), optimize: optimize});
     };
-    if (!url.startsWith('http') && !url.startsWith('file')) {
-      var loc = window.document.location;
-      var locStr = loc.protocol + '//' + loc.host + '/' + loc.pathname;
-      if (!locStr.endsWith('/'))
-        locStr += '/';
-      url = locStr + url;
-    }
     worker.postMessage({cmd: 'loadVersion', data: url});
   }
 

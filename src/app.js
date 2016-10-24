@@ -516,7 +516,13 @@ var run = function () {
     queryParams.update({ version: version });
     var url;
     if (version === 'builtin') {
-      url = 'soljson.js';
+      var location = window.document.location;
+      location = location.protocol + '//' + location.host + '/' + location.pathname;
+      if (!location.endsWith('/')) {
+        location += '/';
+      }
+
+      url = location + 'soljson.js';
     } else {
       url = 'https://ethereum.github.io/solc-bin/bin/' + version;
     }
