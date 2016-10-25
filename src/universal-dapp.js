@@ -49,6 +49,7 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a');
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea');
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce');
+    this.blockNumber = 1150000; // The VM is running in Homestead mode, which started at this block.
   }
 };
 
@@ -749,12 +750,16 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       tx.sign(account.privateKey);
       var block = new EthJSBlock({
         header: {
-          // FIXME: support coinbase, difficulty, number and gasLimit
-          timestamp: new Date().getTime() / 1000 | 0
+          // FIXME: support coinbase, difficulty and gasLimit
+          timestamp: new Date().getTime() / 1000 | 0,
+          number: self.blockNumber
         },
         transactions: [],
         uncleHeaders: []
       });
+      if (!args.useCall) {
+        ++self.blockNumber;
+      }
       self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
         result.transactionHash = self.txdebugger.web3().releaseCurrentHash(); // used to keep track of the transaction
         cb(err, result);
