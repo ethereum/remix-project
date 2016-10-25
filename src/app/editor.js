@@ -1,7 +1,8 @@
-/* global BALLOT_EXAMPLE, FileReader */
+/* global FileReader */
 'use strict';
 
 var utils = require('./utils');
+var examples = require('./example-contracts');
 
 var ace = require('brace');
 require('../mode-solidity.js');
@@ -169,16 +170,10 @@ function Editor (loadingFromGist, storage) {
   }
 
   function setupStuff (files) {
-    var untitledCount = '';
     if (files.length === 0) {
       if (loadingFromGist) return;
-      // Backwards-compatibility
-      while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {
-        untitledCount = (untitledCount - 0) + 1;
-      }
-      SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount;
-      files.push(SOL_CACHE_FILE);
-      storage.set(SOL_CACHE_FILE, BALLOT_EXAMPLE); // defined in assets/js/ballot.sol.js
+      files.push(utils.fileKey(examples.ballot.name));
+      storage.set(utils.fileKey(examples.ballot.name), examples.ballot.content);
     }
 
     SOL_CACHE_FILE = files[0];

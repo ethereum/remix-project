@@ -1,12 +1,12 @@
 module.exports = {
   'testSimpleContract': {
     'sources': {
-      'Untitled1': 'contract test1 {} contract test2 {}'
+      'Untitled': 'contract test1 {} contract test2 {}'
     }
   },
   'ballot': {
     'sources': {
-      'Untitled1': `pragma solidity ^0.4.0;
+      'Untitled': `pragma solidity ^0.4.0;
 contract Ballot {
 
     struct Voter {

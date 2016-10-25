@@ -14,7 +14,7 @@ function runTests (browser, testData) {
     .waitForElementVisible('.newFile', 10000);
   browser.assert.notEqual(testData, null);
   // TODO add Ballot tests. -> setValue('#input textarea', ... ) is not working properly with that contract.
-  /* testBallot(browser, testData.ballot.sources.Untitled1, function () {
+  /* testBallot(browser, testData.ballot.sources.Untitled, function () {
     browser.end();
   });*/
 }
