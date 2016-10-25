@@ -7,7 +7,11 @@ module.exports = {
     var ret = '0x'
     for (var i = 0; i < ints.length; i++) {
       var h = ints[i]
-      ret += (h <= 0xf ? '0' : '') + h.toString(16)
+      if (h) {
+        ret += (h <= 0xf ? '0' : '') + h.toString(16)
+      } else {
+        ret += '00'
+      }
     }
     return ret
   },
