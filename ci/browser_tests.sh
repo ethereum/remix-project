@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-SC_VERSION="4.3.16"
+set -e
+
+SC_VERSION="4.4.0"
 SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-$SC_VERSION-linux.tar.gz"
 SAUCECONNECT_USERNAME="chriseth"
 SAUCECONNECT_ACCESSKEY="b781828a-9e9c-43d8-89d4-2fbb879595ca"
