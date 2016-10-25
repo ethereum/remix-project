@@ -17,6 +17,9 @@
     "which": "^1.2.10"
   },
   "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-plugin-transform-es2015-block-scoping": "^6.15.0",
+    "babel-plugin-transform-es2015-template-literals": "^6.8.0",
     "browserify": "^13.0.1",
     "ethereumjs-util": "^4.5.0",
     "http-server": "^0.9.0",
@@ -32,7 +35,7 @@
     "start_node": "./runNode.sh",
     "start_eth": "eth -j --rpccorsdomain '*'",
     "start_geth": "geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
-    "build": "mkdir build; browserify src/index.js -g yo-yoify -o build/app.js",
+    "build": "mkdir build; browserify src/index.js -g yo-yoify -o build/app.js; babel --plugins babel-plugin-transform-es2015-template-literals,babel-plugin-transform-es2015-block-scoping build/app.js --out-file build/app.js",
     "test": "standard && tape ./test/tests.js",
     "serve": "http-server .",
     "nightwatch_local": "nightwatch --config nightwatch.js --env local",
