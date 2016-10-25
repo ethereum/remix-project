@@ -1,3 +1,5 @@
+'use strict'
+
 var Module = { // eslint-disable-line
   cwrap: function () { return arguments[0] === 'version' ? version : compile },
   writeStringToMemory: function () {},

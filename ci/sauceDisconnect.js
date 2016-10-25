@@ -1,3 +1,5 @@
+'use strict'
+
 const https = require('https')
 
 var userName = process.argv[2]

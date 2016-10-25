@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
   checkCompiledContracts: function (browser, compiled, callback) {
     browser.execute(function () {

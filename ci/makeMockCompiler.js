@@ -1,3 +1,5 @@
+'use strict'
+
 var fs = require('fs')
 var solc = require('solc/wrapper')
 var soljson = require('../soljson')

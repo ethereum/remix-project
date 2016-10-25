@@ -1,4 +1,5 @@
 'use strict'
+
 var testData = require('../mockcompiler/requests')
 // var contractHelper = require('../helpers/contracts')
 
