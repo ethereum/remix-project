@@ -3,7 +3,7 @@
 var TRAVIS_JOB_NUMBER = process.env.TRAVIS_JOB_NUMBER
 
 module.exports = {
-  'src_folders': ['test-browser'],
+  'src_folders': ['test-browser/tests'],
   'output_folder': 'reports',
   'custom_commands_path': '',
   'custom_assertions_path': '',
@@ -50,7 +50,8 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'safari',
         'javascriptEnabled': true,
-        'platform': 'MAC',
+        'platform': 'OS X 10.10',
+        'version': '8.0',
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
@@ -62,6 +63,8 @@ module.exports = {
         'browserName': 'internet explorer',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
+        'platform': 'WIN8.1',
+        'version': '11',
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }

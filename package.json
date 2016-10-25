@@ -8,7 +8,7 @@
     "browser-test-remote-firefox": "nightwatch --config nightwatch.js --env default",
     "browser-test-remote-ie": "nightwatch --config nightwatch.js --env ie",
     "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
-    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
+    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js; babel --plugins babel-plugin-transform-es2015-template-literals,babel-plugin-transform-es2015-block-scoping build/app.js --out-file build/app.js",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
     "downloadsolc": "rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
     "lint": "semistandard",
@@ -16,6 +16,9 @@
     "test": "node test/index.js"
   },
   "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-plugin-transform-es2015-block-scoping": "^6.15.0",
+    "babel-plugin-transform-es2015-template-literals": "^6.8.0",
     "brace": "^0.8.0",
     "browserify": "^13.0.0",
     "csslint": "^1.0.2",
