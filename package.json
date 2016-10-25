@@ -60,9 +60,7 @@
   "standard": {
     "ignore": [
       "build/",
-      "src/mode-solidity.js",
-      "nightwatch.js",
-      "ci/sauceDisconnect.js"
+      "src/mode-solidity.js"
     ]
   }
 }
