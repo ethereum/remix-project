@@ -60,7 +60,8 @@
   "standard": {
     "ignore": [
       "build/",
-      "src/mode-solidity.js"
+      "src/mode-solidity.js",
+      "soljson.js"
     ]
   }
 }
