@@ -21,7 +21,7 @@ function runTests (browser, testData) {
   browser
     .url('http://127.0.0.1:8080/#version=builtin')
     .waitForElementVisible('.newFile', 10000)
-  contractHelper.testContracts(browser, sources.sources.Untitled.replace(/(\n)/g, ' '), ['Ballot'], function () {
+  contractHelper.testContracts(browser, sources.sources.Untitled, ['Ballot'], function () {
     browser.end()
   })
 }
