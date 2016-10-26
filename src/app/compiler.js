@@ -210,6 +210,7 @@ function Compiler (editor, handleGithubCall) {
       cb(files[editor.getCacheFile()])
       return
     }
+    // eslint-disable-next-line no-useless-escape
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g
     var reloop = false
     var githubMatch
