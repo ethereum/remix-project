@@ -4,20 +4,39 @@ var fs = require('fs')
 var solc = require('solc/wrapper')
 var soljson = require('../soljson')
 var compiler = solc(soljson)
-var inputs = require('../test-browser/mockcompiler/requests.js')
-var compilationResult = gatherCompilationResults(inputs)
-replaceSolCompiler(compilationResult)
 
-function gatherCompilationResults (sol) {
-  var compilationResult = {}
-  for (var k in sol) {
-    var item = sol[k]
-    var result = compile(item, 1)
-    compilationResult[result.key] = result
-    result = compile(item, 0)
-    compilationResult[result.key] = result
+gatherCompilationResults(function (error, data) {
+  if (error) {
+    console.log(error)
+    process.exit(1)
+  } else {
+    replaceSolCompiler(data)
   }
-  return compilationResult
+})
+
+function gatherCompilationResults (callback) {
+  var compilationResult = {}
+  fs.readdir('./test-browser/tests', 'utf8', function (error, data) {
+    if (error) {
+      console.log(error)
+      process.exit(1)
+    } else {
+      data.map(function (item, i) {
+        var testDef = require('../test-browser/tests/' + item)
+        for (var k in testDef) {
+          if (k === '@Sources') {
+            var source = testDef[k]()
+            var result = compile(source, 1)
+            compilationResult[result.key] = result
+            result = compile(source, 0)
+            compilationResult[result.key] = result
+          }
+        }
+      })
+
+      callback(null, compilationResult)
+    }
+  })
 }
 
 function compile (source, optimization) {
