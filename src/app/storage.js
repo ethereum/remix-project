@@ -1,98 +1,98 @@
 /* global chrome, confirm */
-'use strict';
+'use strict'
 
-var utils = require('./utils');
+var utils = require('./utils')
 
 function Storage (updateFiles) {
-  var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache';
+  var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache'
 
   this.rename = function (originalName, newName) {
-    var content = this.get(originalName);
-    this.set(newName, content);
-    this.remove(originalName);
-  };
+    var content = this.get(originalName)
+    this.set(newName, content)
+    this.remove(originalName)
+  }
 
   this.remove = function (name) {
-    window.localStorage.removeItem(name);
-  };
+    window.localStorage.removeItem(name)
+  }
 
   this.setEditorSize = function (size) {
-    this.set(EDITOR_SIZE_CACHE_KEY, size);
-  };
+    this.set(EDITOR_SIZE_CACHE_KEY, size)
+  }
 
   this.getEditorSize = function () {
-    return this.get(EDITOR_SIZE_CACHE_KEY);
-  };
+    return this.get(EDITOR_SIZE_CACHE_KEY)
+  }
 
   this.getFileContent = function (key) {
-    return this.get(utils.fileKey(key));
-  };
+    return this.get(utils.fileKey(key))
+  }
 
   this.exists = function (key) {
-    return !!this.get(key);
-  };
+    return !!this.get(key)
+  }
 
   this.set = function (key, content) {
-    window.localStorage.setItem(key, content);
-  };
+    window.localStorage.setItem(key, content)
+  }
 
   this.get = function (key) {
-    return window.localStorage.getItem(key);
-  };
+    return window.localStorage.getItem(key)
+  }
 
   this.keys = function () {
     // NOTE: this is a workaround for some browsers
-    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined; });
-  };
+    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
+  }
 
   this.loadFile = function (filename, content) {
     if (this.exists(filename) && this.get(filename) !== content) {
-      var count = '';
-      while (this.exists(filename + count)) count = count - 1;
-      this.rename(filename, filename + count);
+      var count = ''
+      while (this.exists(filename + count)) count = count - 1
+      this.rename(filename, filename + count)
     }
-    this.set(filename, content);
-  };
+    this.set(filename, content)
+  }
 
   this.sync = function () {
     if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) {
-      return;
+      return
     }
 
-    var obj = {};
-    var done = false;
-    var count = 0;
+    var obj = {}
+    var done = false
+    var count = 0
 
     function check (key) {
       chrome.storage.sync.get(key, function (resp) {
-        console.log('comparing to cloud', key, resp);
+        console.log('comparing to cloud', key, resp)
         if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + utils.fileNameFromKey(key) + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
-          console.log('Overwriting', key);
-          window.localStorage.setItem(key, resp[key]);
-          updateFiles();
+          console.log('Overwriting', key)
+          window.localStorage.setItem(key, resp[key])
+          updateFiles()
         } else {
-          console.log('add to obj', obj, key);
-          obj[key] = window.localStorage[key];
+          console.log('add to obj', obj, key)
+          obj[key] = window.localStorage[key]
         }
-        done++;
+        done++
         if (done >= count) {
           chrome.storage.sync.set(obj, function () {
-            console.log('updated cloud files with: ', obj, this, arguments);
-          });
+            console.log('updated cloud files with: ', obj, this, arguments)
+          })
         }
-      });
+      })
     }
 
     for (var y in window.localStorage) {
-      console.log('checking', y);
-      obj[y] = window.localStorage.getItem(y);
+      console.log('checking', y)
+      obj[y] = window.localStorage.getItem(y)
       if (!utils.isCachedFile(y)) {
-        continue;
+        continue
       }
-      count++;
-      check(y);
+      count++
+      check(y)
     }
-  };
+  }
 }
 
-module.exports = Storage;
+module.exports = Storage

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   'New file test': function (browser) {
@@ -8,6 +8,6 @@ module.exports = {
       .click('.newFile')
       .pause('10000')
       .assert.containsText('.active', 'Untitled')
-      .end();
+      .end()
   }
-};
+}

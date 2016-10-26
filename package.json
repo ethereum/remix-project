@@ -11,7 +11,7 @@
     "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js; babel --plugins babel-plugin-transform-es2015-template-literals,babel-plugin-transform-es2015-block-scoping build/app.js --out-file build/app.js",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
     "downloadsolc": "rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
-    "lint": "semistandard",
+    "lint": "standard",
     "serve": "http-server .",
     "test": "node test/index.js"
   },
@@ -33,8 +33,8 @@
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
     "nightwatch": "^0.9.3",
-    "semistandard": "^7.0.0",
     "solc": "https://github.com/ethereum/solc-js",
+    "standard": "^8.5.0",
     "tape": "^4.5.1",
     "web3": "https://github.com/ethereum/web3.js#35bcace7173fda742ddb1bba84c8a70f0fa849e0",
     "webworkify": "^1.2.1",
@@ -57,12 +57,11 @@
   },
   "homepage": "https://github.com/ethereum/browser-solidity#readme",
   "private": true,
-  "semistandard": {
+  "standard": {
     "ignore": [
       "build/",
       "src/mode-solidity.js",
-      "nightwatch.js",
-      "ci/sauceDisconnect.js"
+      "soljson.js"
     ]
   }
 }

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   'Smoke test': function (browser) {
@@ -7,6 +7,6 @@ module.exports = {
       .waitForElementVisible('#righthand-panel', 10000)
       .pause('10000')
       .assert.containsText('#righthand-panel', 'Solidity version')
-      .end();
+      .end()
   }
-};
+}
