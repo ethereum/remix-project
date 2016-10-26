@@ -326,7 +326,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         address: address
       }))
     })
-    ($el || $createInterface).append($instance.append($events))
+
+    $el = $el || $createInterface
+    $el.append($instance.append($events))
   }
 
   if (!address || !$target) {
