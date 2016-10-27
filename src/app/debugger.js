@@ -24,12 +24,12 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
   })
 
   this.lastCompilationResult = null
-  this.debugger.register('newTraceLoaded', this, function () {
+  this.debugger.event.register('newTraceLoaded', this, function () {
     self.cache.clear()
     self.lastCompilationResult = self.compiler.lastCompilationResult
   })
 
-  this.debugger.register('traceUnloaded', this, function () {
+  this.debugger.event.register('traceUnloaded', this, function () {
     self.removeCurrentMarker()
     self.cache.clear()
   })
@@ -41,7 +41,7 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
   })
 
   // register selected code item, highlight the corresponding source location
-  this.debugger.codeManager.register('changed', this, function (code, address, index) {
+  this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
     if (self.lastCompilationResult) {
       this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.lastCompilationResult.data.contracts, function (error, rawLocation) {
         if (!error) {
