@@ -1,29 +1,29 @@
 'use strict'
-
-var testData = require('../mockcompiler/requests')
 var contractHelper = require('../helpers/contracts')
+var init = require('../helpers/init')
 
-module.exports = {
-  'Simple Contract': function (browser) {
-    runTests(browser, testData)
+var sources = {
+  'sources': {
+    'Untitled': 'contract test1 {} contract test2 {}'
   }
 }
 
-function runTests (browser, testData) {
-  browser
-    .url('http://127.0.0.1:8080/#version=builtin')
-    .waitForElementVisible('.newFile', 10000)
-  browser.assert.notEqual(testData, null)
-  testSimpleContract(browser, testData.testSimpleContract.sources.Untitled, function () {
-    browser.end()
-  })
+module.exports = {
+  before: function (browser, done) {
+    init(browser, done)
+  },
+  '@sources': function () {
+    return sources
+  },
+  'Simple Contract': function (browser) {
+    runTests(browser)
+  }
 }
 
-function testSimpleContract (browser, contract, callback) {
+function runTests (browser) {
   browser
-    .click('.newFile')
-    .clearValue('#input textarea')
-    .setValue('#input textarea', contract)
-    .pause('5000')
-  contractHelper.checkCompiledContracts(browser, ['test1', 'test2'], callback)
+    .waitForElementVisible('.newFile', 10000)
+  contractHelper.testContracts(browser, sources.sources.Untitled, ['test1', 'test2'], function () {
+    browser.end()
+  })
 }

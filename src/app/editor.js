@@ -12,6 +12,7 @@ function Editor (loadingFromGist, storage) {
   var SOL_CACHE_FILE = null
 
   var editor = ace.edit('input')
+  document.getElementById('input').editor = editor // required to access the editor during tests
   var sessions = {}
   var sourceAnnotations = []
 
