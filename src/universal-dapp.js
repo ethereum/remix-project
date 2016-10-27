@@ -723,12 +723,21 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       // NOTE: getAddress should be async
       if (self.getAddress) {
         tx.from = self.getAddress()
-      } else if (self.executionContext.isVM()) {
-        tx.from = Object.keys(self.accounts)[0]
+        callback()
       } else {
-        tx.from = self.web3.eth.accounts[0]
+        self.getAccounts(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          if (ret.length === 0) {
+            return callback('No accounts available')
+          }
+
+          tx.from = ret[0]
+          callback()
+        })
       }
-      callback()
     },
     // run transaction
     function (callback) {
