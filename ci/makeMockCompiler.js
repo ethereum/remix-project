@@ -16,21 +16,19 @@ gatherCompilationResults(function (error, data) {
 
 function gatherCompilationResults (callback) {
   var compilationResult = {}
-  fs.readdir('./test-browser/tests', 'utf8', function (error, data) {
+  fs.readdir('./test-browser/tests', 'utf8', function (error, filenames) {
     if (error) {
       console.log(error)
       process.exit(1)
     } else {
-      data.map(function (item, i) {
+      filenames.map(function (item, i) {
         var testDef = require('../test-browser/tests/' + item)
-        for (var k in testDef) {
-          if (k === '@Sources') {
-            var source = testDef[k]()
-            var result = compile(source, 1)
-            compilationResult[result.key] = result
-            result = compile(source, 0)
-            compilationResult[result.key] = result
-          }
+        if ('@sources' in testDef) {
+          var source = testDef['@sources']()
+          var result = compile(source, 1)
+          compilationResult[result.key] = result
+          result = compile(source, 0)
+          compilationResult[result.key] = result
         }
       })
 

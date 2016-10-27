@@ -13,7 +13,7 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
-  '@Sources': function () {
+  '@sources': function () {
     return sources
   },
   'Ballot': function (browser) {
