@@ -1,17 +1,16 @@
 'use strict'
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
-var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
 
 function StepManager (_parent, _traceManager) {
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
   this.parent = _parent
   this.traceManager = _traceManager
 
   var self = this
-  this.parent.register('newTraceLoaded', this, function () {
+  this.parent.event.register('newTraceLoaded', this, function () {
     self.traceManager.getLength(function (error, length) {
       if (error) {
         console.log(error)
@@ -23,24 +22,24 @@ function StepManager (_parent, _traceManager) {
   })
 
   this.slider = new Slider(this.traceManager)
-  this.slider.register('moved', this, function (step) {
+  this.slider.event.register('moved', this, function (step) {
     self.sliderMoved(step)
   })
 
   this.buttonNavigator = new ButtonNavigator(this.traceManager)
-  this.buttonNavigator.register('stepIntoBack', this, function () {
+  this.buttonNavigator.event.register('stepIntoBack', this, function () {
     self.stepIntoBack()
   })
-  this.buttonNavigator.register('stepIntoForward', this, function () {
+  this.buttonNavigator.event.register('stepIntoForward', this, function () {
     self.stepIntoForward()
   })
-  this.buttonNavigator.register('stepOverBack', this, function () {
+  this.buttonNavigator.event.register('stepOverBack', this, function () {
     self.stepOverBack()
   })
-  this.buttonNavigator.register('stepOverForward', this, function () {
+  this.buttonNavigator.event.register('stepOverForward', this, function () {
     self.stepOverForward()
   })
-  this.buttonNavigator.register('jumpNextCall', this, function () {
+  this.buttonNavigator.event.register('jumpNextCall', this, function () {
     self.jumpNextCall()
   })
 }
@@ -130,7 +129,7 @@ StepManager.prototype.jumpNextCall = function () {
 StepManager.prototype.changeState = function (step) {
   this.currentStepIndex = step
   this.buttonNavigator.stepChanged(step)
-  this.trigger('stepChanged', [step])
+  this.event.trigger('stepChanged', [step])
 }
 
 module.exports = StepManager

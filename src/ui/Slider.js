@@ -1,12 +1,11 @@
 'use strict'
 var style = require('./styles/sliderStyles')
-var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 
 function Slider (_traceManager) {
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
   this.traceManager = _traceManager
   this.max
   this.disabled = true
@@ -48,7 +47,7 @@ Slider.prototype.onChange = function (event) {
   var value = parseInt(document.getElementById('slider').value)
   if (value === this.previousValue) return
   this.previousValue = value
-  this.trigger('moved', [value])
+  this.event.trigger('moved', [value])
 }
 
 Slider.prototype.setValue = function (value) {

@@ -22,7 +22,7 @@ FullStoragesChanges.prototype.render = function () {
 
 FullStoragesChanges.prototype.init = function () {
   var self = this
-  this.parent.register('newTraceLoaded', this, function (length) {
+  this.parent.event.register('newTraceLoaded', this, function (length) {
     self.panels = []
     self.traceManager.getAddresses(function (error, addresses) {
       if (!error) {
@@ -38,7 +38,7 @@ FullStoragesChanges.prototype.init = function () {
     })
   })
 
-  this.parent.register('indexChanged', this, function (index) {
+  this.parent.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
 

@@ -15,7 +15,7 @@ CalldataPanel.prototype.render = function () {
 
 CalldataPanel.prototype.init = function () {
   var self = this
-  this.parent.register('indexChanged', this, function (index) {
+  this.parent.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
 

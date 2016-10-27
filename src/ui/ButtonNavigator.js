@@ -1,12 +1,11 @@
 'use strict'
-var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
 var style = require('./styles/basicStyles')
 var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
 function ButtonNavigator (_traceManager) {
-  util.extend(this, new EventManager())
+  this.event = new EventManager()
   this.intoBackDisabled = true
   this.overBackDisabled = true
   this.intoForwardDisabled = true
@@ -23,19 +22,19 @@ module.exports = ButtonNavigator
 ButtonNavigator.prototype.render = function () {
   var self = this
   var view = yo`<div>    
-    <button id='overback' style=${ui.formatCss(style.button)} onclick=${function () { self.trigger('stepOverBack') }} disabled=${this.overBackDisabled} >
+    <button id='overback' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} >
       Step Over Back
     </button>
-    <button id='intoback' style=${ui.formatCss(style.button)} onclick=${function () { self.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
+    <button id='intoback' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
       Step Into Back
     </button>    
-    <button id='intoforward' style=${ui.formatCss(style.button)} onclick=${function () { self.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
+    <button id='intoforward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
       Step Into Forward
     </button>
-    <button id='overforward' style=${ui.formatCss(style.button)} onclick=${function () { self.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
+    <button id='overforward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
       Step Over Forward
     </button>
-    <button id='nextcall' style=${ui.formatCss(style.button)} onclick=${function () { self.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
+    <button id='nextcall' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
       Jump Next Call
     </button>
   </div>`

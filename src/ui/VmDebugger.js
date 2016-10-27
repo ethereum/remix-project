@@ -22,7 +22,7 @@ function VmDebugger (_parent, _traceManager, _codeManager) {
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value')
   this.returnValuesPanel.data = {}
-  _parent.register('indexChanged', this.returnValuesPanel, function (index) {
+  _parent.event.register('indexChanged', this.returnValuesPanel, function (index) {
     var self = this
     _traceManager.getReturnValue(index, function (error, returnValue) {
       if (error) {
@@ -39,10 +39,10 @@ function VmDebugger (_parent, _traceManager, _codeManager) {
 
   this.view
   var self = this
-  _parent.register('newTraceLoaded', this, function () {
+  _parent.event.register('newTraceLoaded', this, function () {
     self.view.style.display = 'block'
   })
-  _parent.register('traceUnloaded', this, function () {
+  _parent.event.register('traceUnloaded', this, function () {
     self.view.style.display = 'none'
   })
 }

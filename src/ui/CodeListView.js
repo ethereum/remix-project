@@ -21,8 +21,8 @@ CodeListView.prototype.render = function () {
 
 CodeListView.prototype.init = function () {
   var self = this
-  this.codeManager.register('changed', this, this.changed)
-  this.parent.register('traceUnloaded', this, function () {
+  this.codeManager.event.register('changed', this, this.changed)
+  this.parent.event.register('traceUnloaded', this, function () {
     self.changed([], '', -1)
   })
 }

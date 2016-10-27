@@ -17,7 +17,7 @@ StoragePanel.prototype.render = function () {
 
 StoragePanel.prototype.init = function () {
   var self = this
-  this.parent.register('indexChanged', this, function (index) {
+  this.parent.event.register('indexChanged', this, function (index) {
     if (self.disabled) return
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
