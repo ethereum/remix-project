@@ -19,9 +19,9 @@ function checkCompiledContracts (browser, compiled, callback) {
 
 function testContracts (browser, contractCode, compiledContractNames, callback) {
   browser
-    .clearValue('#input textarea')
-    .click('.newFile')
-    .setValue('#input textarea', contractCode.replace(/(\n)/g, ' '), function () {})
-    .waitForElementPresent('.contract .create', 3000000)
+      .clearValue('#input textarea')
+      .click('.newFile')
+      .setValue('#input textarea', contractCode, function () {})
+      .waitForElementPresent('.contract .create', 3000000)
   checkCompiledContracts(browser, compiledContractNames, callback)
 }
