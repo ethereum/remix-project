@@ -9,6 +9,7 @@ var EthJSBlock = require('ethereumjs-block')
 var BN = ethJSUtil.BN
 var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
+var async = require('async')
 
 /*
   trigger debugRequested
@@ -679,41 +680,61 @@ function tryTillResponse (web3, txhash, done) {
 
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
-
-  var gasLimit = 3000000
-  if (self.getGasLimit) {
-    try {
-      gasLimit = self.getGasLimit()
-    } catch (e) {
-      return cb(e)
-    }
-  }
-
-  var value = 0
-  if (self.getValue) {
-    try {
-      value = self.getValue()
-    } catch (e) {
-      return cb(e)
-    }
-  }
-
-  var from
-  if (self.getAddress) {
-    from = self.getAddress()
-  } else if (self.executionContext.isVM()) {
-    from = Object.keys(self.accounts)[0]
-  } else {
-    from = self.web3.eth.accounts[0]
-  }
-
-  return this.rawRunTx({
-    from: args.from,
+  var tx = {
     to: args.to,
-    data: args.data,
-    value: value,
-    gasLimit: gasLimit
-  }, cb)
+    data: args.data
+  }
+
+  async.waterfall([
+    // query gas limit
+    function (callback) {
+      tx.gasLimit = 3000000
+
+      // NOTE: getGasLimit should be async
+      if (self.getGasLimit) {
+        try {
+          tx.gasLimit = self.getGasLimit()
+          callback()
+        } catch (e) {
+          callback(e)
+        }
+      } else {
+        callback()
+      }
+    },
+    // query value
+    function (callback) {
+      tx.value = 0
+
+      // NOTE: getValue should be async
+      if (self.getValue) {
+        try {
+          tx.value = self.getValue()
+          callback()
+        } catch (e) {
+          callback(e)
+        }
+      } else {
+        callback()
+      }
+    },
+    // query address
+    function (callback) {
+      // NOTE: getAddress should be async
+      if (self.getAddress) {
+        tx.from = self.getAddress()
+      } else if (self.executionContext.isVM()) {
+        tx.from = Object.keys(self.accounts)[0]
+      } else {
+        tx.from = self.web3.eth.accounts[0]
+      }
+      callback()
+    },
+    // run transaction
+    function (callback) {
+      self.rawRunTx(tx, callback)
+    }
+  ], cb)
 }
 
 UniversalDApp.prototype.rawRunTx = function (args, cb) {
