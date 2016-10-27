@@ -690,14 +690,15 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     function (callback) {
       tx.gasLimit = 3000000
 
-      // NOTE: getGasLimit should be async
       if (self.getGasLimit) {
-        try {
-          tx.gasLimit = self.getGasLimit()
+        self.getGasLimit(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          tx.gasLimit = ret
           callback()
-        } catch (e) {
-          callback(e)
-        }
+        })
       } else {
         callback()
       }
@@ -706,24 +707,30 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     function (callback) {
       tx.value = 0
 
-      // NOTE: getValue should be async
       if (self.getValue) {
-        try {
-          tx.value = self.getValue()
+        self.getValue(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          tx.value = ret
           callback()
-        } catch (e) {
-          callback(e)
-        }
+        })
       } else {
         callback()
       }
     },
     // query address
     function (callback) {
-      // NOTE: getAddress should be async
       if (self.getAddress) {
-        tx.from = self.getAddress()
-        callback()
+        self.getAddress(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          tx.from = ret
+          callback()
+        })
       } else {
         self.getAccounts(function (err, ret) {
           if (err) {

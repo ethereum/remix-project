@@ -113,14 +113,22 @@ Renderer.prototype.contracts = function (data, source) {
     return source.sources[currentFile]
   }
 
-  var getAddress = function () { return $('#txorigin').val() }
-
-  var getValue = function () {
-    var comp = $('#value').val().split(' ')
-    return self.executionContext.web3().toWei(comp[0], comp.slice(1).join(' '))
+  var getAddress = function (cb) {
+    cb(null, $('#txorigin').val())
   }
 
-  var getGasLimit = function () { return $('#gasLimit').val() }
+  var getValue = function (cb) {
+    try {
+      var comp = $('#value').val().split(' ')
+      cb(null, self.executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+    } catch (e) {
+      cb(e)
+    }
+  }
+
+  var getGasLimit = function (cb) {
+    cb(null, $('#gasLimit').val())
+  }
 
   this.udapp.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
 
