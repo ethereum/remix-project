@@ -679,11 +679,6 @@ function tryTillResponse (web3, txhash, done) {
 
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
-  var to = args.to
-  var data = args.data
-  if (data.slice(0, 2) !== '0x') {
-    data = '0x' + data
-  }
 
   var gasLimit = 3000000
   if (self.getGasLimit) {
@@ -703,10 +698,39 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     }
   }
 
+  var from
+  if (self.getAddress) {
+    from = self.getAddress()
+  } else if (self.executionContext.isVM()) {
+    from = Object.keys(self.accounts)[0]
+  } else {
+    from = self.web3.eth.accounts[0]
+  }
+
+  return this.rawRunTx({
+    from: args.from,
+    to: args.to,
+    data: args.data,
+    value: value,
+    gasLimit: gasLimit
+  }, cb)
+}
+
+UniversalDApp.prototype.rawRunTx = function (args, cb) {
+  var self = this
+  var from = args.from
+  var to = args.to
+  var data = args.data
+  if (data.slice(0, 2) !== '0x') {
+    data = '0x' + data
+  }
+  var value = args.value
+  var gasLimit = args.gasLimit
+
   var tx
   if (!self.executionContext.isVM()) {
     tx = {
-      from: self.getAddress ? self.getAddress() : self.web3.eth.accounts[0],
+      from: from,
       to: to,
       data: data,
       value: value
@@ -739,8 +763,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     }
   } else {
     try {
-      var address = self.getAddress ? self.getAddress() : Object.keys(self.accounts)[0]
-      var account = self.accounts[address]
+      var account = self.accounts[from]
       if (!account) {
         return cb('Invalid account selected')
       }
