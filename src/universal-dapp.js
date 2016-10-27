@@ -741,6 +741,9 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     try {
       var address = self.getAddress ? self.getAddress() : Object.keys(self.accounts)[0]
       var account = self.accounts[address]
+      if (!account) {
+        return cb('Invalid account selected')
+      }
       tx = new EthJSTX({
         nonce: new BN(account.nonce++),
         gasPrice: new BN(1),
