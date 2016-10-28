@@ -14,17 +14,13 @@ npm run build
 npm run serve &
 
 wget $SAUCECONNECT_URL
-tar -zxvf sc-4.3.16-linux.tar.gz
-./sc-4.3.16-linux/bin/sc -u $SAUCECONNECT_USERNAME -k $SAUCECONNECT_ACCESSKEY -i $SAUCECONNECT_JOBIDENTIFIER --readyfile $SAUCECONNECT_READYFILE &
+tar -zxvf sc-"$SC_VERSION"-linux.tar.gz
+./sc-"$SC_VERSION"-linux/bin/sc -u $SAUCECONNECT_USERNAME -k $SAUCECONNECT_ACCESSKEY -i $SAUCECONNECT_JOBIDENTIFIER --readyfile $SAUCECONNECT_READYFILE &
 while [ ! -f $SAUCECONNECT_READYFILE ]; do
   sleep .5
 done
 
-npm run nightwatch_remote_parallel
-if [ $? -eq 1 ]
-then
-  TEST_EXITCODE=1
-fi
+npm run nightwatch_remote_parallel || TEST_EXITCODE=1
 
 node ci/sauceDisconnect.js $SAUCECONNECT_USERNAME $SAUCECONNECT_ACCESSKEY $SAUCECONNECT_JOBIDENTIFIER
 
