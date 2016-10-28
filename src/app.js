@@ -455,10 +455,13 @@ var run = function () {
 
   function editorOnChange () {
     var input = editor.getValue()
+    // save contents
+    editor.setCacheFileContent(input)
+
     if (input === '') {
-      editor.setCacheFileContent('')
       return
     }
+
     if (input === previousInput) {
       return
     }

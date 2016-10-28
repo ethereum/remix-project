@@ -41,7 +41,6 @@ function Compiler (editor, handleGithubCall) {
     editor.clearAnnotations()
     self.event.trigger('compilationStarted', [])
     var input = editor.getValue()
-    editor.setCacheFileContent(input)
 
     var files = {}
     files[utils.fileNameFromKey(editor.getCacheFile())] = input
