@@ -2,6 +2,7 @@
 var contractHelper = require('../helpers/contracts')
 var examples = require('../../src/app/example-contracts')
 var init = require('../helpers/init')
+var sauce = require('./sauce')
 
 var sources = {
   'sources': {
@@ -18,7 +19,8 @@ module.exports = {
   },
   'Ballot': function (browser) {
     runTests(browser)
-  }
+  },
+  tearDown: sauce
 }
 
 function runTests (browser, testData) {

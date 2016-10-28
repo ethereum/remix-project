@@ -1,5 +1,6 @@
 'use strict'
 var init = require('../helpers/init')
+var sauce = require('./sauce')
 
 module.exports = {
   before: function (browser, done) {
@@ -10,5 +11,6 @@ module.exports = {
       .waitForElementPresent('#debugger', 10000)
       .waitForElementPresent('#debugger #slider', 10000)
       .end()
-  }
+  },
+  tearDown: sauce
 }

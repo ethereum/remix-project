@@ -1,6 +1,7 @@
 'use strict'
 var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
+var sauce = require('./sauce')
 
 var sources = {
   'sources': {
@@ -17,7 +18,8 @@ module.exports = {
   },
   'Simple Contract': function (browser) {
     runTests(browser)
-  }
+  },
+  tearDown: sauce
 }
 
 function runTests (browser) {
