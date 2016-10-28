@@ -26,6 +26,17 @@ function Compiler (editor, handleGithubCall) {
     optimize = _optimize
   }
 
+  var internalCompile = function (files, missingInputs) {
+    gatherImports(files, missingInputs, function (error, input) {
+      if (error) {
+        self.lastCompilationResult = null
+        self.event.trigger('compilationFinished', [false, { 'error': error }, files])
+      } else {
+        compileJSON(input, optimize ? 1 : 0)
+      }
+    })
+  }
+
   var compile = function (missingInputs) {
     editor.clearAnnotations()
     self.event.trigger('compilationStarted', [])
@@ -34,14 +45,7 @@ function Compiler (editor, handleGithubCall) {
 
     var files = {}
     files[utils.fileNameFromKey(editor.getCacheFile())] = input
-    gatherImports(files, missingInputs, function (input, error) {
-      if (input === null) {
-        self.lastCompilationResult = null
-        self.event.trigger('compilationFinished', [false, { 'error': error }, files])
-      } else {
-        compileJSON(input, optimize ? 1 : 0)
-      }
-    })
+    internalCompile(files, missingInputs)
   }
   this.compile = compile
 
@@ -118,7 +122,8 @@ function Compiler (editor, handleGithubCall) {
       self.lastCompilationResult = null
       self.event.trigger('compilationFinished', [false, data, source])
     } else if (missingInputs !== undefined && missingInputs.length > 0) {
-      compile(missingInputs)
+      // try compiling again with the new set of inputs
+      internalCompile(source.sources, missingInputs)
     } else {
       self.lastCompilationResult = {
         data: data,
@@ -207,9 +212,11 @@ function Compiler (editor, handleGithubCall) {
   function gatherImports (files, importHints, cb) {
     importHints = importHints || []
     if (!compilerAcceptsMultipleFiles) {
-      cb(files[editor.getCacheFile()])
+      cb(null, files[editor.getCacheFile()])
       return
     }
+    // FIXME: This will only match imports if the file begins with one.
+    //        It should tokenize by lines and check each.
     // eslint-disable-next-line no-useless-escape
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g
     var reloop = false
@@ -223,7 +230,11 @@ function Compiler (editor, handleGithubCall) {
           if (importFilePath.startsWith('./')) {
             importFilePath = importFilePath.slice(2)
           }
-          importHints.push(importFilePath)
+
+          // FIXME: should be using includes or sets, but there's also browser compatibility..
+          if (importHints.indexOf(importFilePath) === -1) {
+            importHints.push(importFilePath)
+          }
         }
       }
       while (importHints.length > 0) {
@@ -240,7 +251,7 @@ function Compiler (editor, handleGithubCall) {
         } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m))) {
           handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
             if (err) {
-              cb(null, 'Unable to import "' + m + '": ' + err)
+              cb('Unable to import "' + m + '": ' + err)
               return
             }
 
@@ -251,15 +262,15 @@ function Compiler (editor, handleGithubCall) {
           })
           return
         } else if (/^[^:]*:\/\//.exec(m)) {
-          cb(null, 'Unable to import "' + m + '": Unsupported URL')
+          cb('Unable to import "' + m + '": Unsupported URL')
           return
         } else {
-          cb(null, 'Unable to import "' + m + '": File not found')
+          cb('Unable to import "' + m + '": File not found')
           return
         }
       }
     } while (reloop)
-    cb({ 'sources': files })
+    cb(null, { 'sources': files })
   }
 }
 
