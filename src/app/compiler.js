@@ -26,14 +26,7 @@ function Compiler (editor, handleGithubCall) {
     optimize = _optimize
   }
 
-  var compile = function (missingInputs) {
-    editor.clearAnnotations()
-    self.event.trigger('compilationStarted', [])
-    var input = editor.getValue()
-    editor.setCacheFileContent(input)
-
-    var files = {}
-    files[utils.fileNameFromKey(editor.getCacheFile())] = input
+  var internalCompile = function (files, missingInputs) {
     gatherImports(files, missingInputs, function (input, error) {
       if (input === null) {
         self.lastCompilationResult = null
@@ -42,6 +35,17 @@ function Compiler (editor, handleGithubCall) {
         compileJSON(input, optimize ? 1 : 0)
       }
     })
+  }
+
+  var compile = function (missingInputs) {
+    editor.clearAnnotations()
+    self.event.trigger('compilationStarted', [])
+    var input = editor.getValue()
+    editor.setCacheFileContent(input)
+
+    var files = {}
+    files[utils.fileNameFromKey(editor.getCacheFile())] = input
+    internalCompile(files, missingInputs)
   }
   this.compile = compile
 
@@ -118,7 +122,8 @@ function Compiler (editor, handleGithubCall) {
       self.lastCompilationResult = null
       self.event.trigger('compilationFinished', [false, data, source])
     } else if (missingInputs !== undefined && missingInputs.length > 0) {
-      compile(missingInputs)
+      // try compiling again with the new set of inputs
+      internalCompile(source.sources, missingInputs)
     } else {
       self.lastCompilationResult = {
         data: data,
@@ -210,6 +215,8 @@ function Compiler (editor, handleGithubCall) {
       cb(files[editor.getCacheFile()])
       return
     }
+    // FIXME: This will only match imports if the file begins with one.
+    //        It should tokenize by lines and check each.
     // eslint-disable-next-line no-useless-escape
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g
     var reloop = false
