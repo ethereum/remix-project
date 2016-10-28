@@ -17,25 +17,7 @@ while [ ! -f $SAUCECONNECT_READYFILE ]; do
   sleep .5
 done
 
-npm run nightwatch_remote_firefox
-if [ $? -eq 1 ]
-then
-  TEST_EXITCODE=1
-fi
-
-npm run nightwatch_remote_chrome
-if [ $? -eq 1 ]
-then
-  TEST_EXITCODE=1
-fi
-
-npm run nightwatch_remote_safari
-if [ $? -eq 1 ]
-then
-  TEST_EXITCODE=1
-fi
-
-npm run nightwatch_remote_ie
+npm run nightwatch_remote_parallel
 if [ $? -eq 1 ]
 then
   TEST_EXITCODE=1
