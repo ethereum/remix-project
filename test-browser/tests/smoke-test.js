@@ -1,5 +1,6 @@
 'use strict'
 var init = require('../helpers/init')
+var sauce = require('./sauce')
 
 module.exports = {
   before: function (browser, done) {
@@ -12,5 +13,6 @@ module.exports = {
       .pause('10000')
       .assert.containsText('#righthand-panel', 'Solidity version')
       .end()
-  }
+  },
+  tearDown: sauce
 }
