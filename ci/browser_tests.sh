@@ -20,10 +20,7 @@ while [ ! -f "$SAUCECONNECT_READYFILE" ]; do
   sleep .5
 done
 
-npm run browser-test-remote-firefox || TEST_EXITCODE=1
-npm run browser-test-remote-chrome || TEST_EXITCODE=1
-npm run browser-test-remote-safari || TEST_EXITCODE=1
-npm run browser-test-remote-ie || TEST_EXITCODE=1
+npm run browser-test-remote-parallel || TEST_EXITCODE=1
 
 node ci/sauceDisconnect.js "$SAUCECONNECT_USERNAME" "$SAUCECONNECT_ACCESSKEY" "$SAUCECONNECT_JOBIDENTIFIER"
 
