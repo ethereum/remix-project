@@ -10,4 +10,5 @@ deploy:
   skip_cleanup: true
   on:
         branch: master
+cache: false
 
