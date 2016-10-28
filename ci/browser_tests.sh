@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-4.3.16-linux.tar.gz"
+set -e
+
+SC_VERSION="4.4.0"
+SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-$SC_VERSION-linux.tar.gz"
 SAUCECONNECT_USERNAME="yanneth"
 SAUCECONNECT_ACCESSKEY="1f5a4560-b02b-41aa-b52b-f033aad30870"
 SAUCECONNECT_JOBIDENTIFIER="remix_tests_${TRAVIS_JOB_NUMBER}"
