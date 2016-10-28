@@ -223,7 +223,11 @@ function Compiler (editor, handleGithubCall) {
           if (importFilePath.startsWith('./')) {
             importFilePath = importFilePath.slice(2)
           }
-          importHints.push(importFilePath)
+
+          // FIXME: should be using includes or sets, but there's also browser compatibility..
+          if (importHints.indexOf(importFilePath) === -1) {
+            importHints.push(importFilePath)
+          }
         }
       }
       while (importHints.length > 0) {
