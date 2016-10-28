@@ -27,8 +27,8 @@ function Compiler (editor, handleGithubCall) {
   }
 
   var internalCompile = function (files, missingInputs) {
-    gatherImports(files, missingInputs, function (input, error) {
-      if (input === null) {
+    gatherImports(files, missingInputs, function (error, input) {
+      if (error) {
         self.lastCompilationResult = null
         self.event.trigger('compilationFinished', [false, { 'error': error }, files])
       } else {
@@ -212,7 +212,7 @@ function Compiler (editor, handleGithubCall) {
   function gatherImports (files, importHints, cb) {
     importHints = importHints || []
     if (!compilerAcceptsMultipleFiles) {
-      cb(files[editor.getCacheFile()])
+      cb(null, files[editor.getCacheFile()])
       return
     }
     // FIXME: This will only match imports if the file begins with one.
@@ -251,7 +251,7 @@ function Compiler (editor, handleGithubCall) {
         } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m))) {
           handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
             if (err) {
-              cb(null, 'Unable to import "' + m + '": ' + err)
+              cb('Unable to import "' + m + '": ' + err)
               return
             }
 
@@ -262,15 +262,15 @@ function Compiler (editor, handleGithubCall) {
           })
           return
         } else if (/^[^:]*:\/\//.exec(m)) {
-          cb(null, 'Unable to import "' + m + '": Unsupported URL')
+          cb('Unable to import "' + m + '": Unsupported URL')
           return
         } else {
-          cb(null, 'Unable to import "' + m + '": File not found')
+          cb('Unable to import "' + m + '": File not found')
           return
         }
       }
     } while (reloop)
-    cb({ 'sources': files })
+    cb(null, { 'sources': files })
   }
 }
 
