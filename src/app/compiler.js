@@ -38,7 +38,6 @@ function Compiler (editor, handleGithubCall) {
   }
 
   var compile = function () {
-    editor.clearAnnotations()
     self.event.trigger('compilationStarted', [])
     var input = editor.getValue()
 
