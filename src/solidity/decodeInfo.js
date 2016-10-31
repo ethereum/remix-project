@@ -13,8 +13,7 @@ function Uint (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('uint', '')) / 8,
-    typeName: type,
-    name: 'uint'
+    typeName: type
   }
 }
 
@@ -28,8 +27,7 @@ function Address (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: 20,
-    typeName: 'address',
-    name: 'address'
+    typeName: 'address'
   }
 }
 
@@ -43,8 +41,7 @@ function Bool (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: 1,
-    typeName: 'bool',
-    name: 'bool'
+    typeName: 'bool'
   }
 }
 
@@ -58,8 +55,7 @@ function DynamicByteArray (type) {
   return {
     needsFreeStorageSlot: true,
     storageBytes: 32,
-    typeName: 'bytes',
-    name: 'dynamicByteArray'
+    typeName: 'bytes'
   }
 }
 
@@ -76,8 +72,7 @@ function FixedByteArray (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('bytes', '')),
-    typeName: type.split(' ')[0],
-    name: 'fixedByteArray'
+    typeName: type.split(' ')[0]
   }
 }
 
@@ -94,8 +89,7 @@ function Int (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('int', '')) / 8,
-    typeName: type,
-    name: 'int'
+    typeName: type
   }
 }
 
@@ -109,8 +103,7 @@ function StringType (type) {
   return {
     needsFreeStorageSlot: true,
     storageBytes: 32,
-    typeName: 'string',
-    name: 'stringType'
+    typeName: 'string'
   }
 }
 
@@ -153,8 +146,7 @@ function ArrayType (type, stateDefinitions) {
     storageBytes: storageBytes,
     typeName: type,
     arraySize: arraySize,
-    subArray: subArray,
-    name: 'arrayType'
+    subArray: subArray
   }
 }
 
@@ -170,8 +162,7 @@ function Enum (type, stateDefinitions) {
     needsFreeStorageSlot: false,
     storageBytes: 1,
     typeName: extracted[0] + ' ' + extracted[1],
-    enum: getEnum(type, stateDefinitions),
-    name: 'enum'
+    enum: getEnum(type, stateDefinitions)
   }
 }
 
@@ -189,8 +180,7 @@ function Struct (type, stateDefinitions) {
     needsFreeStorageSlot: true,
     storageBytes: membersDetails.storageBytes,
     typeName: type,
-    members: membersDetails.members,
-    name: 'struct'
+    members: membersDetails.members
   }
 }
 
