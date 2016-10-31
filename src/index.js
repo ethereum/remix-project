@@ -7,6 +7,8 @@ var CodeManager = require('./code/codeManager')
 var disassembler = require('./code/disassembler')
 var SourceMappingDecoder = require('./util/sourceMappingDecoder')
 var AstWalker = require('./util/astWalker')
+var decodeInfo = require('./solidity/decodeInfo')
+var astHelper = require('./solidity/astHelper')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -33,6 +35,10 @@ function modules () {
     util: {
       SourceMappingDecoder: SourceMappingDecoder,
       AstWalker: AstWalker
+    },
+    solidity: {
+      decodeInfo: decodeInfo,
+      astHelper: astHelper
     }
   }
 }
