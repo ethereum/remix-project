@@ -3,9 +3,10 @@
   * Uint decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g uint256, uint32)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function Uint (type) {
+  type === 'uint' ? 'uint256' : type
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('uint', '')) / 8,
@@ -17,9 +18,10 @@ function Uint (type) {
   * Int decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256, int32)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function Int (type) {
+  type === 'int' ? 'int256' : type
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('int', '')) / 8,
@@ -31,7 +33,7 @@ function Int (type) {
   * Address decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g address)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function Address (type) {
   return {
@@ -45,7 +47,7 @@ function Address (type) {
   * Bool decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bool)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function Bool (type) {
   return {
@@ -59,7 +61,7 @@ function Bool (type) {
   * DynamicByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function DynamicByteArray (type) {
   return {
@@ -73,16 +75,13 @@ function DynamicByteArray (type) {
   * FixedByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes16)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function FixedByteArray (type) {
-  if (type.split(' ')) {
-    type = type.split(' ')[0]
-  }
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('bytes', '')),
-    typeName: type.split(' ')[0]
+    typeName: type
   }
 }
 
@@ -90,7 +89,7 @@ function FixedByteArray (type) {
   * StringType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g string storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
   */
 function StringType (type) {
   return {
@@ -104,7 +103,7 @@ function StringType (type) {
   * ArrayType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256[] storage ref, int256[] storage ref[] storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder, arraySize, subArray}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, arraySize, subArray}
   */
 function ArrayType (type, stateDefinitions) {
   var arraySize
@@ -113,7 +112,7 @@ function ArrayType (type, stateDefinitions) {
   var underlyingType = extractUnderlyingType(type)
 
   arraySize = extractArraySize(type)
-  var dimensions = extractDimensions(type)
+  var dimensions = extractArrayInfo(type)
   type = underlyingType + dimensions.join('')
 
   var subArrayType = type.substring(0, type.lastIndexOf('['))
@@ -147,14 +146,13 @@ function ArrayType (type, stateDefinitions) {
   * Enum decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g enum enumDef)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, enum}
   */
 function Enum (type, stateDefinitions) {
-  var extracted = type.split(' ')
   return {
     needsFreeStorageSlot: false,
     storageBytes: 1,
-    typeName: extracted[0] + ' ' + extracted[1],
+    typeName: type,
     enum: getEnum(type, stateDefinitions)
   }
 }
@@ -163,24 +161,24 @@ function Enum (type, stateDefinitions) {
   * Struct decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g struct structDef storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder, members}
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, members}
   */
 function Struct (type, stateDefinitions) {
   var extracted = type.split(' ')
-  type = extracted[0] + ' ' + extracted[1]
-  var membersDetails = getStructMembers(type, stateDefinitions)
+  type = 'struct ' + extracted[1] // the second item is the name of the struct definition (newly declared type)
+  var memberDetails = getStructMembers(type, stateDefinitions) // type is used to extract the ast struct definition
   return {
     needsFreeStorageSlot: true,
-    storageBytes: membersDetails.storageBytes,
+    storageBytes: memberDetails.storageBytes,
     typeName: type,
-    members: membersDetails.members
+    members: memberDetails.members
   }
 }
 
 /**
   * retrieve enum declaration of the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g enum enumDef)
   * @param {Object} stateDefinitions  - all state declarations given by the AST (including struct and enum type declaration)
   * @return {Array} - containing all value declaration of the current enum type
   */
@@ -233,7 +231,7 @@ function getStructMembers (typeName, stateDefinitions) {
   */
 function extractArraySize (typeName) {
   if (typeName.indexOf('[') !== -1) {
-    var squareBracket = /\[([0-9]+|\s*)\]/g
+    var squareBracket = /\[[^\]]*\]/g // /\[([0-9]+|\s*)\]/g
     var dim = typeName.match(squareBracket)
     var size = dim[dim.length - 1]
     if (size === '[]') {
@@ -248,15 +246,15 @@ function extractArraySize (typeName) {
   * extract the underlying type
   *
   * @param {String} fullType - type given by the AST (ex: uint[2] storage ref[2])
-  * @return {String} return the first part of the full type. don not keep the array declaration ( uint[2] storage ref[2] will return uint)
+  * @return {String} return the first part of the full type. do not keep the array declaration ( uint[2] storage ref[2] will return uint)
   */
 function extractUnderlyingType (fullType) {
-  var splitted = fullType.split(' ')
+  var split = fullType.split(' ')
   if (fullType.indexOf('enum') === 0 || fullType.indexOf('struct') === 0) {
-    return splitted[0] + ' ' + splitted[1]
+    return split[0] + ' ' + split[1]
   }
-  if (splitted.length > 0) {
-    fullType = splitted[0]
+  if (split.length > 0) {
+    fullType = split[0]
   }
   if (fullType[fullType.length - 1] === ']') {
     return fullType.substring(0, fullType.indexOf('['))
@@ -270,7 +268,7 @@ function extractUnderlyingType (fullType) {
   * @param {String} fullType - type given by the AST
   * @return {Array} containing all the dimensions and size of the array (e.g ['[3]', '[]'] )
   */
-function extractDimensions (fullType) {
+function extractArrayInfo (fullType) {
   var ret = []
   if (fullType.indexOf('[') !== -1) {
     var squareBracket = /\[([0-9]+|\s*)\]/g
@@ -286,7 +284,7 @@ function extractDimensions (fullType) {
   * @param {String} fullType - type given by the AST (ex: uint[2] storage ref[2])
   * @return {String} returns the token type (used to instanciate the right decoder) (uint[2] storage ref[2] will return 'array', uint256 will return uintX)
   */
-function extractTokenType (fullType) {
+function typeClass (fullType) {
   if (fullType.indexOf('[') !== -1) {
     return 'array'
   }
@@ -317,7 +315,7 @@ function decode (type, stateDefinitions) {
     'int': Int,
     'uint': Uint
   }
-  var currentType = extractTokenType(type)
+  var currentType = typeClass(type)
   return decodeInfos[currentType](type, stateDefinitions)
 }
 

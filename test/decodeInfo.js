@@ -14,6 +14,8 @@ tape('solidity', function (t) {
     checkDecodeInfo(st, decodeInfo, false, 32, 'uint256')
     decodeInfo = index.solidity.decodeInfo.decode(stateDec[3].attributes.type, stateDec)
     checkDecodeInfo(st, decodeInfo, false, 32, 'uint256')
+    decodeInfo = index.solidity.decodeInfo.decode(stateDec[4].attributes.type, stateDec)
+    checkDecodeInfo(st, decodeInfo, false, 16, 'bytes16')
 
     stateDec = index.solidity.astHelper.extractStateVariables('contractStructAndArray', output.sources)
     decodeInfo = index.solidity.decodeInfo.decode(stateDec[1].attributes.type, stateDec)
@@ -30,6 +32,11 @@ tape('solidity', function (t) {
     checkDecodeInfo(st, decodeInfo, true, 32, 'int8[]')
     decodeInfo = index.solidity.decodeInfo.decode(stateDec[2].attributes.type, stateDec)
     checkDecodeInfo(st, decodeInfo, true, 4 * 32, 'int16[][3][][4]')
+
+    stateDec = index.solidity.astHelper.extractStateVariables('contractEnum', output.sources)
+    decodeInfo = index.solidity.decodeInfo.decode(stateDec[1].attributes.type, stateDec)
+    checkDecodeInfo(st, decodeInfo, false, 1, 'enum enumDef')
+
     st.end()
   })
 })
@@ -48,6 +55,7 @@ var contracts = `
     contract contractUint is baseContract {
         uint256 ui;
         uint ui1;
+        bytes16 b;
     }    
     
     contract contractStructAndArray {       
@@ -64,5 +72,13 @@ var contracts = `
         uint32[5] i32st;
         int8[] i8dyn;
         int16[][3][][4] i16dyn;    
+    }  
+    
+    contract contractEnum {
+        enum enumDef {
+            first,
+            second
+        }
+        enumDef enum1;
     }  
 `
