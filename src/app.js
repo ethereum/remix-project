@@ -452,20 +452,31 @@ var run = function () {
 
   var previousInput = ''
   var compileTimeout = null
+  var saveTimeout = null
 
   function editorOnChange () {
     var input = editor.getValue()
-    // save contents
-    editor.setCacheFileContent(input)
 
-    if (input === '') {
-      return
-    }
-
+    // if there's no change, don't do anything
     if (input === previousInput) {
       return
     }
     previousInput = input
+
+    // fire storage update
+    // NOTE: save at most once per 5 seconds
+    if (saveTimeout) {
+      window.clearTimeout(saveTimeout)
+    }
+    saveTimeout = window.setTimeout(function () {
+      var input = editor.getValue()
+      editor.setCacheFileContent(input)
+    }, 5000)
+
+    // special case: there's nothing else to do
+    if (input === '') {
+      return
+    }
 
     if (!autoCompile) {
       return
