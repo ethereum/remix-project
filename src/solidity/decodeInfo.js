@@ -1,15 +1,11 @@
 'use strict'
-
 /**
   * Uint decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g uint256, uint32)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function Uint (type) {
-  if (type.split(' ')) {
-    type = type.split(' ')[0]
-  }
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('uint', '')) / 8,
@@ -18,9 +14,23 @@ function Uint (type) {
 }
 
 /**
+  * Int decode the given @arg type
+  *
+  * @param {String} type - type given by the AST (e.g int256, int32)
+  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
+  */
+function Int (type) {
+  return {
+    needsFreeStorageSlot: false,
+    storageBytes: parseInt(type.replace('int', '')) / 8,
+    typeName: type
+  }
+}
+
+/**
   * Address decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g address)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function Address (type) {
@@ -34,7 +44,7 @@ function Address (type) {
 /**
   * Bool decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g bool)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function Bool (type) {
@@ -48,7 +58,7 @@ function Bool (type) {
 /**
   * DynamicByteArray decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g bytes storage ref)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function DynamicByteArray (type) {
@@ -62,7 +72,7 @@ function DynamicByteArray (type) {
 /**
   * FixedByteArray decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g bytes16)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function FixedByteArray (type) {
@@ -77,26 +87,9 @@ function FixedByteArray (type) {
 }
 
 /**
-  * Int decode the given @arg type
-  *
-  * @param {String} type - type given by the AST
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
-  */
-function Int (type) {
-  if (type.split(' ')) {
-    type = type.split(' ')[0]
-  }
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: parseInt(type.replace('int', '')) / 8,
-    typeName: type
-  }
-}
-
-/**
   * StringType decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g string storage ref)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function StringType (type) {
@@ -110,7 +103,7 @@ function StringType (type) {
 /**
   * ArrayType decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g int256[] storage ref, int256[] storage ref[] storage ref)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder, arraySize, subArray}
   */
 function ArrayType (type, stateDefinitions) {
@@ -153,7 +146,7 @@ function ArrayType (type, stateDefinitions) {
 /**
   * Enum decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g enum enumDef)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder}
   */
 function Enum (type, stateDefinitions) {
@@ -169,7 +162,7 @@ function Enum (type, stateDefinitions) {
 /**
   * Struct decode the given @arg type
   *
-  * @param {String} type - type given by the AST
+  * @param {String} type - type given by the AST (e.g struct structDef storage ref)
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, decoder, members}
   */
 function Struct (type, stateDefinitions) {
