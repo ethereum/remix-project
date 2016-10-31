@@ -149,11 +149,18 @@ function ArrayType (type, stateDefinitions) {
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, enum}
   */
 function Enum (type, stateDefinitions) {
+  var enumDef = getEnum(type, stateDefinitions)
+  var length = enumDef.children.length
+  var storageBytes = 0
+  while (length > 1) {
+    length = length / 255
+    storageBytes++
+  }
   return {
     needsFreeStorageSlot: false,
-    storageBytes: 1,
+    storageBytes: storageBytes,
     typeName: type,
-    enum: getEnum(type, stateDefinitions)
+    enum: enumDef
   }
 }
 
@@ -186,7 +193,7 @@ function getEnum (type, stateDefinitions) {
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
     if (dec.name === 'EnumDefinition' && type.indexOf('enum ' + dec.attributes.name) === 0) {
-      return dec.children
+      return dec
     }
   }
   return null
