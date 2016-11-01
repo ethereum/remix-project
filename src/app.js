@@ -518,7 +518,12 @@ var run = function () {
     if (compileTimeout) {
       window.clearTimeout(compileTimeout)
     }
-    compileTimeout = window.setTimeout(compiler.compile, 300)
+    compileTimeout = window.setTimeout(function () {
+      var files = {}
+      files[utils.fileNameFromKey(editor.getCacheFile())] = editor.getValue()
+
+      compiler.compile(files)
+    }, 300)
   }
 
   editor.onChangeSetup(editorOnChange)
