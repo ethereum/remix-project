@@ -128,9 +128,13 @@ function ArrayType (type, stateDefinitions) {
     storageBytes = 32
   } else {
     if (subArray) {
-      storageBytes = subArray.storageBytes // size on storage of one item of the array
+      storageBytes = subArray.storageBytes
     }
-    storageBytes = Math.ceil(storageBytes * arraySize) // size on storage of one the whole array
+    if (storageBytes > 32) {
+      storageBytes = 32 * arraySize * Math.ceil(storageBytes / 32)
+    } else {
+      storageBytes = 32 * (arraySize / Math.floor(32 / storageBytes))
+    }
   }
 
   return {

@@ -23,7 +23,7 @@ tape('solidity', function (t) {
     decodeInfo = index.solidity.decodeInfo.decode(stateDec[2].attributes.type, stateDec)
     checkDecodeInfo(st, decodeInfo, true, 192, 'struct structDef[3]')
     decodeInfo = index.solidity.decodeInfo.decode(stateDec[3].attributes.type, stateDec)
-    checkDecodeInfo(st, decodeInfo, true, 48, 'bytes12[4]')
+    checkDecodeInfo(st, decodeInfo, true, 64, 'bytes12[4]')
 
     stateDec = index.solidity.astHelper.extractStateVariables('contractArray', output.sources)
     decodeInfo = index.solidity.decodeInfo.decode(stateDec[0].attributes.type, stateDec)
