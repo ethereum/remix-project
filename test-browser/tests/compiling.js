@@ -17,7 +17,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Simple Contract': function (browser) {
+  'Compiling': function (browser) {
     runTests(browser)
   },
   tearDown: sauce
@@ -27,8 +27,7 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
   contractHelper.testContracts(browser, sources.sources.Untitled, ['TestContract'], function () {
-    browser.assert.containsText('.contract .title', 'TestContract')
-      .click('.create .constructor .call')
+    browser.click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
       .click('.instance .call[title="f"]')
       .waitForElementPresent('.output .returned')
