@@ -109,27 +109,19 @@ function ArrayType (type, stateDefinitions) {
   var arraySize
   var storageBytes
 
-  var underlyingType = extractUnderlyingType(type)
-
-  arraySize = extractArraySize(type)
-  var dimensions = extractArrayInfo(type)
-  type = underlyingType + dimensions.join('')
-
-  var subArrayType = type.substring(0, type.lastIndexOf('['))
-  var subArray = null
-  if (subArrayType.indexOf('[') !== -1) {
-    subArray = decode(subArrayType, stateDefinitions)
+  var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
+  if (!match) {
+    return null
   }
 
-  underlyingType = decode(underlyingType, stateDefinitions)
-  storageBytes = underlyingType.storageBytes
+  arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
+
+  var underlyingType = decode(match[1], stateDefinitions)
 
   if (arraySize === 'dynamic') {
     storageBytes = 32
   } else {
-    if (subArray) {
-      storageBytes = subArray.storageBytes
-    }
+    storageBytes = underlyingType.storageBytes
     if (storageBytes > 32) {
       storageBytes = 32 * arraySize * Math.ceil(storageBytes / 32)
     } else {
@@ -142,7 +134,7 @@ function ArrayType (type, stateDefinitions) {
     storageBytes: storageBytes,
     typeName: type,
     arraySize: arraySize,
-    subArray: subArray
+    underlyingType: underlyingType
   }
 }
 
@@ -175,9 +167,11 @@ function Enum (type, stateDefinitions) {
   * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, members}
   */
 function Struct (type, stateDefinitions) {
-  var extracted = type.split(' ')
-  type = 'struct ' + extracted[1] // the second item is the name of the struct definition (newly declared type)
-  var memberDetails = getStructMembers(type, stateDefinitions) // type is used to extract the ast struct definition
+  var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
+  if (!match) {
+    return null
+  }
+  var memberDetails = getStructMembers(match[1], stateDefinitions) // type is used to extract the ast struct definition
   return {
     needsFreeStorageSlot: true,
     storageBytes: memberDetails.storageBytes,
@@ -215,7 +209,7 @@ function getStructMembers (typeName, stateDefinitions) {
   var storageBytes = 0
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
-    if (dec.name === 'StructDefinition' && typeName.indexOf('struct ' + dec.attributes.name) === 0) {
+    if (dec.name === 'StructDefinition' && typeName === dec.attributes.name) {
       for (var i in dec.children) {
         var member = dec.children[i]
         var decoded = decode(member.attributes.type, stateDefinitions)
@@ -235,68 +229,13 @@ function getStructMembers (typeName, stateDefinitions) {
 }
 
 /**
-  * return the size of the current array
-  *
-  * @param {String} typeName - short type ( e.g uint[][4] )
-  * @return {String|Int} return 'dynamic' if dynamic array | return size of the array
-  */
-function extractArraySize (typeName) {
-  if (typeName.indexOf('[') !== -1) {
-    var squareBracket = /\[[^\]]*\]/g // /\[([0-9]+|\s*)\]/g
-    var dim = typeName.match(squareBracket)
-    var size = dim[dim.length - 1]
-    if (size === '[]') {
-      return 'dynamic'
-    } else {
-      return parseInt(dim[dim.length - 1].replace('[', '').replace(']'))
-    }
-  }
-}
-
-/**
-  * extract the underlying type
-  *
-  * @param {String} fullType - type given by the AST (ex: uint[2] storage ref[2])
-  * @return {String} return the first part of the full type. do not keep the array declaration ( uint[2] storage ref[2] will return uint)
-  */
-function extractUnderlyingType (fullType) {
-  var split = fullType.split(' ')
-  if (fullType.indexOf('enum') === 0 || fullType.indexOf('struct') === 0) {
-    return split[0] + ' ' + split[1]
-  }
-  if (split.length > 0) {
-    fullType = split[0]
-  }
-  if (fullType[fullType.length - 1] === ']') {
-    return fullType.substring(0, fullType.indexOf('['))
-  }
-  return fullType
-}
-
-/**
-  * get the array dimensions
-  *
-  * @param {String} fullType - type given by the AST
-  * @return {Array} containing all the dimensions and size of the array (e.g ['[3]', '[]'] )
-  */
-function extractArrayInfo (fullType) {
-  var ret = []
-  if (fullType.indexOf('[') !== -1) {
-    var squareBracket = /\[([0-9]+|\s*)\]/g
-    var dim = fullType.match(squareBracket)
-    return dim
-  }
-  return ret
-}
-
-/**
   * parse the full type
   *
   * @param {String} fullType - type given by the AST (ex: uint[2] storage ref[2])
   * @return {String} returns the token type (used to instanciate the right decoder) (uint[2] storage ref[2] will return 'array', uint256 will return uintX)
   */
 function typeClass (fullType) {
-  if (fullType.indexOf('[') !== -1) {
+  if (fullType.indexOf(']') !== -1) {
     return 'array'
   }
   if (fullType.indexOf(' ') !== -1) {
