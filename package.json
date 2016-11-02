@@ -17,6 +17,7 @@
     "test": "node test/index.js"
   },
   "devDependencies": {
+    "async": "^2.1.2",
     "babel-cli": "^6.16.0",
     "babel-plugin-transform-es2015-block-scoping": "^6.15.0",
     "babel-plugin-transform-es2015-template-literals": "^6.8.0",

@@ -9,6 +9,7 @@ var EthJSBlock = require('ethereumjs-block')
 var BN = ethJSUtil.BN
 var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
+var async = require('async')
 
 /*
   trigger debugRequested
@@ -679,34 +680,94 @@ function tryTillResponse (web3, txhash, done) {
 
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
+  var tx = {
+    to: args.to,
+    data: args.data
+  }
+
+  async.waterfall([
+    // query gas limit
+    function (callback) {
+      tx.gasLimit = 3000000
+
+      if (self.getGasLimit) {
+        self.getGasLimit(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          tx.gasLimit = ret
+          callback()
+        })
+      } else {
+        callback()
+      }
+    },
+    // query value
+    function (callback) {
+      tx.value = 0
+
+      if (self.getValue) {
+        self.getValue(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          tx.value = ret
+          callback()
+        })
+      } else {
+        callback()
+      }
+    },
+    // query address
+    function (callback) {
+      if (self.getAddress) {
+        self.getAddress(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          tx.from = ret
+          callback()
+        })
+      } else {
+        self.getAccounts(function (err, ret) {
+          if (err) {
+            return callback(err)
+          }
+
+          if (ret.length === 0) {
+            return callback('No accounts available')
+          }
+
+          tx.from = ret[0]
+          callback()
+        })
+      }
+    },
+    // run transaction
+    function (callback) {
+      self.rawRunTx(tx, callback)
+    }
+  ], cb)
+}
+
+UniversalDApp.prototype.rawRunTx = function (args, cb) {
+  var self = this
+  var from = args.from
   var to = args.to
   var data = args.data
   if (data.slice(0, 2) !== '0x') {
     data = '0x' + data
   }
-
-  var gasLimit = 3000000
-  if (self.getGasLimit) {
-    try {
-      gasLimit = self.getGasLimit()
-    } catch (e) {
-      return cb(e)
-    }
-  }
-
-  var value = 0
-  if (self.getValue) {
-    try {
-      value = self.getValue()
-    } catch (e) {
-      return cb(e)
-    }
-  }
+  var value = args.value
+  var gasLimit = args.gasLimit
 
   var tx
   if (!self.executionContext.isVM()) {
     tx = {
-      from: self.getAddress ? self.getAddress() : self.web3.eth.accounts[0],
+      from: from,
       to: to,
       data: data,
       value: value
@@ -739,8 +800,10 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     }
   } else {
     try {
-      var address = self.getAddress ? self.getAddress() : Object.keys(self.accounts)[0]
-      var account = self.accounts[address]
+      var account = self.accounts[from]
+      if (!account) {
+        return cb('Invalid account selected')
+      }
       tx = new EthJSTX({
         nonce: new BN(account.nonce++),
         gasPrice: new BN(1),
