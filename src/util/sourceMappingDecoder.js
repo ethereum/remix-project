@@ -1,5 +1,6 @@
 'use strict'
 var util = require('../helpers/util')
+var AstWalker = require('./astWalker')
 
 /**
  * Decompress the source mapping given by solc-bin.js
@@ -15,36 +16,7 @@ function SourceMappingDecoder () {
  * @param {String} mapping     - compressed source mapping given by solc-bin
  * @return {Object} returns the decompressed source mapping for the given index {start, length, file, jump}
  */
-SourceMappingDecoder.prototype.atIndex = function (index, mapping) {
-  var ret = {}
-  var map = mapping.split(';')
-  if (index >= map.length) {
-    index = map.length - 1
-  }
-  for (var k = index; k >= 0; k--) {
-    var current = map[k]
-    if (!current.length) {
-      continue
-    }
-    current = current.split(':')
-    if (ret.start === undefined && current[0] && current[0].length) {
-      ret.start = parseInt(current[0])
-    }
-    if (ret.length === undefined && current[1] && current[1].length) {
-      ret.length = parseInt(current[1])
-    }
-    if (ret.file === undefined && current[2] && current[2].length) {
-      ret.file = parseInt(current[2])
-    }
-    if (ret.jump === undefined && current[3] && current[3].length) {
-      ret.jump = current[3]
-    }
-    if (ret.start !== undefined && ret.length !== undefined && ret.file !== undefined && ret.jump !== undefined) {
-      break
-    }
-  }
-  return ret
-}
+SourceMappingDecoder.prototype.atIndex = atIndex
 
 /**
  * Decode the source mapping for the given compressed mapping
@@ -103,6 +75,16 @@ SourceMappingDecoder.prototype.convertOffsetToLineColumn = function (sourceLocat
   }
 }
 
+/**
+ * Retrieve the first @arg astNodeType that include the source map at arg instIndex
+ *
+ * @param {String} astNodeType - node type that include the source map instIndex
+ * @param {String} instIndex - instruction index used to retrieve the source map
+ * @param {String} sourceMap - source map given by the compilation result
+ * @param {Object} ast - ast given by the compilation result
+ */
+SourceMappingDecoder.prototype.findNodeAtInstructionIndex = findNodeAtInstructionIndex
+
 function convertFromCharPosition (pos, lineBreakPositions) {
   var line = util.findLowerBound(pos, lineBreakPositions)
   if (lineBreakPositions[line] !== pos) {
@@ -114,6 +96,78 @@ function convertFromCharPosition (pos, lineBreakPositions) {
     line: line,
     column: column
   }
+}
+
+function sourceLocationFromAstNode (astNode) {
+  if (astNode.src) {
+    var split = astNode.src.split(':')
+    return {
+      start: parseInt(split[0]),
+      length: parseInt(split[1]),
+      file: parseInt(split[2])
+    }
+  }
+  return null
+}
+
+function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
+  var sourceLocation = atIndex(instIndex, sourceMap)
+  return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
+}
+
+function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
+  var astWalker = new AstWalker()
+  var callback = {}
+  var found = null
+  callback['*'] = function (node) {
+    var nodeLocation = sourceLocationFromAstNode(node)
+    if (!nodeLocation) {
+      return true
+    }
+    if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
+      if (astNodeType === node.name) {
+        found = node
+        return false
+      } else {
+        return true
+      }
+    } else {
+      return false
+    }
+  }
+  astWalker.walk(ast.AST, callback)
+  return found
+}
+
+function atIndex (index, mapping) {
+  var ret = {}
+  var map = mapping.split(';')
+  if (index >= map.length) {
+    index = map.length - 1
+  }
+  for (var k = index; k >= 0; k--) {
+    var current = map[k]
+    if (!current.length) {
+      continue
+    }
+    current = current.split(':')
+    if (ret.start === undefined && current[0] && current[0].length) {
+      ret.start = parseInt(current[0])
+    }
+    if (ret.length === undefined && current[1] && current[1].length) {
+      ret.length = parseInt(current[1])
+    }
+    if (ret.file === undefined && current[2] && current[2].length) {
+      ret.file = parseInt(current[2])
+    }
+    if (ret.jump === undefined && current[3] && current[3].length) {
+      ret.jump = current[3]
+    }
+    if (ret.start !== undefined && ret.length !== undefined && ret.file !== undefined && ret.jump !== undefined) {
+      break
+    }
+  }
+  return ret
 }
 
 module.exports = SourceMappingDecoder
