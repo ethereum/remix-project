@@ -1,8 +1,9 @@
-var ethJSUtil = require('ethereumjs-util')
 var util = require('../helpers/util')
+var Web3 = require('web3')
 
 function web3VmProvider () {
   var self = this
+  this.web3 = new Web3()
   this.vm
   this.vmTraces = {}
   this.txs = {}
@@ -42,7 +43,7 @@ web3VmProvider.prototype.releaseCurrentHash = function () {
 
 web3VmProvider.prototype.txWillProcess = function (self, data) {
   self.incr++
-  self.processingHash = '0x' + ethJSUtil.sha3([data.r, data.s, data.v, self.incr]).join('')
+  self.processingHash = this.web3.sha3([data.r, data.s, data.v, self.incr].join(''))
   self.vmTraces[self.processingHash] = {
     gas: '0x0',
     return: '0x0',
