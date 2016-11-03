@@ -85,11 +85,6 @@ Renderer.prototype.contracts = function (data, source) {
     })
   }
 
-  // rendering function used by udapp. they need data and source
-  var combined = function (contractName, jsonInterface, bytecode) {
-    return JSON.stringify([{ name: contractName, interface: jsonInterface, bytecode: bytecode }])
-  }
-
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
     if (contract.bytecode) {
@@ -100,12 +95,11 @@ Renderer.prototype.contracts = function (data, source) {
 
     if (contract.bytecode) {
       $contractOutput.append(uiHelper.textRow('Web3 deploy', uiHelper.gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
-      $contractOutput.append(uiHelper.textRow('uDApp', combined(contractName, contract['interface'], contract.bytecode), 'deploy'))
     }
     var ctrSource = getSource(contractName, source, data)
     return $contractOutput.append(uiHelper.getDetails(contract, ctrSource, contractName))
   }
-  // //
+
   var self = this
 
   var getSource = function (contractName, source, data) {
