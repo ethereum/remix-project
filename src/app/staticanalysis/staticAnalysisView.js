@@ -57,7 +57,7 @@ staticAnalysisView.prototype.run = function () {
   }
   var selected = this.selectedModules()
   var warningContainer = $('#staticanalysisresult')
-  warningContainer.html('')
+  warningContainer.empty()
   if (this.lastASTs) {
     var self = this
     this.runner.run(this.lastASTs, selected, function (results) {
