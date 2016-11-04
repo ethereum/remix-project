@@ -16,13 +16,6 @@ module.exports = {
       $('<input readonly="readonly"/>').val(data))
   },
 
-  textRow: function (description, data, cls) {
-    return this.tableRowItems(
-      $('<strong/>').text(description),
-      $('<textarea readonly="readonly" class="gethDeployText"/>').val(data),
-      cls)
-  },
-
   preRow: function (description, data) {
     return this.tableRowItems(
       $('<span/>').text(description),
