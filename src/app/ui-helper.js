@@ -141,7 +141,9 @@ module.exports = {
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n'
     }
-    details.append(this.preRow('Functions', funHashes))
+    if (funHashes.length > 0) {
+      details.append(this.preRow('Functions', funHashes))
+    }
 
     var gasEstimates = this.formatGasEstimates(contract.gasEstimates)
     if (gasEstimates) {
