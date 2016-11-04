@@ -16,13 +16,6 @@ module.exports = {
       $('<input readonly="readonly"/>').val(data))
   },
 
-  textRow: function (description, data, cls) {
-    return this.tableRowItems(
-      $('<strong/>').text(description),
-      $('<textarea readonly="readonly" class="gethDeployText"/>').val(data),
-      cls)
-  },
-
   preRow: function (description, data) {
     return this.tableRowItems(
       $('<span/>').text(description),
@@ -141,7 +134,9 @@ module.exports = {
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n'
     }
-    details.append(this.preRow('Functions', funHashes))
+    if (funHashes.length > 0) {
+      details.append(this.preRow('Functions', funHashes))
+    }
 
     var gasEstimates = this.formatGasEstimates(contract.gasEstimates)
     if (gasEstimates) {

@@ -349,13 +349,6 @@ body {
     margin: 0.5em;
 }
 
-.gethDeployText {
-    border-color: #bebebe;
-    height: 2.5em;
-    width: 100%;
-    display: block;
-}
-
 .contractDetails button {
     background-color: transparent;
     border: 0 none;
