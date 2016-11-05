@@ -828,9 +828,15 @@ UniversalDApp.prototype.rawRunTx = function (args, cb) {
       })
       if (!args.useCall) {
         ++self.blockNumber
+      } else {
+        self.vm.stateManager.checkpoint()
       }
+
       self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
         var transactionHash = self.txdebugger.web3().releaseCurrentHash() // used to keep track of the transaction
+        if (args.useCall) {
+          self.vm.stateManager.revert()
+        }
         cb(err, {
           result: result,
           transactionHash: transactionHash
