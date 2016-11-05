@@ -682,7 +682,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = {
     to: args.to,
-    data: args.data
+    data: args.data,
+    useCall: args.useCall
   }
 
   async.waterfall([
