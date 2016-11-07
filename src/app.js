@@ -613,7 +613,7 @@ var run = function () {
       selectedVersion = queryParams.get().version
     }
 
-    loadVersion(selectedVersion)    
+    loadVersion(selectedVersion)
   }).fail(function (xhr, text, err) {
     // loading failed for some reason, fall back to local compiler
     $('#versionSelector').append(new Option('latest local version', 'builtin'))
