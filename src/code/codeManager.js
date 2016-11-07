@@ -2,13 +2,12 @@
 var traceHelper = require('../helpers/traceHelper')
 var codeResolver = require('./codeResolver')
 var EventManager = require('../lib/eventManager')
+var SourceMappingDecoder = require('../util/sourceMappingDecoder')
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
   events:
-   - indexChanged: triggered when an item is selected
-   - codeChanged: triggered when an item (in a different context) is selected
-   - loadingCode: triggerred when loading new code
+   - changed: triggered when an item is selected
    - resolvingStep: when CodeManager resolves code/selected instruction of a new step
 */
 
@@ -19,34 +18,35 @@ function CodeManager (_traceManager) {
   this.codeResolver = codeResolver
 }
 
+/**
+ * resolve the code of the given @arg stepIndex and trigger appropriate event
+ *
+ * @param {String} stepIndex - vm trace step
+ * @param {Object} tx - transaction (given by web3)
+ */
 CodeManager.prototype.resolveStep = function (stepIndex, tx) {
   if (stepIndex < 0) return
   this.event.trigger('resolvingStep')
   var self = this
   if (stepIndex === 0) {
-    self.retrieveCodeAndTrigger(tx.to, stepIndex, tx)
+    retrieveCodeAndTrigger(self, tx.to, stepIndex, tx)
   } else {
     this.traceManager.getCurrentCalledAddressAt(stepIndex, function (error, address) {
       if (error) {
         console.log(error)
       } else {
-        self.retrieveCodeAndTrigger(address, stepIndex, tx)
+        retrieveCodeAndTrigger(self, address, stepIndex, tx)
       }
     })
   }
 }
 
-CodeManager.prototype.retrieveCodeAndTrigger = function (address, stepIndex, tx) {
-  var self = this
-  this.getCode(address, function (error, result) {
-    if (!error) {
-      self.retrieveIndexAndTrigger(address, stepIndex, result.instructions)
-    } else {
-      console.log(error)
-    }
-  })
-}
-
+/**
+ * Retrieve the code located at the given @arg address
+ *
+ * @param {String} address - address of the contract to get the code from
+ * @param {Function} cb - callback function, return the bytecode
+ */
 CodeManager.prototype.getCode = function (address, cb) {
   if (traceHelper.isContractCreation(address)) {
     var codes = codeResolver.getExecutingCodeFromCache(address)
@@ -67,25 +67,82 @@ CodeManager.prototype.getCode = function (address, cb) {
   }
 }
 
-CodeManager.prototype.retrieveIndexAndTrigger = function (address, step, code) {
+/**
+ * Retrieve the called function for the current vm step for the given @arg address
+ *
+ * @param {String} stepIndex - vm trace step
+ * @param {String} sourceMap - source map given byt the compilation result
+ * @param {Object} ast - ast given by the compilation result
+ * @return {Object} return the ast node of the function
+ */
+CodeManager.prototype.getFunctionFromStep = function (stepIndex, sourceMap, ast) {
   var self = this
-  this.getInstructionIndex(address, step, function (error, result) {
+  this.traceManager.getCurrentCalledAddressAt(stepIndex, function (error, address) {
+    if (error) {
+      console.log(error)
+      return { error: 'Cannot retrieve current address for ' + stepIndex }
+    } else {
+      self.traceManager.getCurrentPC(stepIndex, function (error, pc) {
+        if (error) {
+          console.log(error)
+          return { error: 'Cannot retrieve current PC for ' + stepIndex }
+        } else {
+          return self.getFunctionFromPC(address, pc, sourceMap, ast)
+        }
+      })
+    }
+  })
+}
+
+/**
+ * Retrieve the instruction index of the given @arg step
+ *
+ * @param {String} address - address of the current context
+ * @param {String} step - vm trace step
+ * @param {Function} callback - instruction index
+ */
+CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
+  this.traceManager.getCurrentPC(step, function (error, pc) {
+    if (error) {
+      console.log(error)
+      callback('Cannot retrieve current PC for ' + step, null)
+    } else {
+      var itemIndex = codeResolver.getInstructionIndex(address, pc)
+      callback(null, itemIndex)
+    }
+  })
+}
+
+/**
+ * Retrieve the called function for the given @arg pc and @arg address
+ *
+ * @param {String} address - address of the current context (used to resolve instruction index)
+ * @param {String} pc - pc that point to the instruction index
+ * @param {String} sourceMap - source map given byt the compilation result
+ * @param {Object} ast - ast given by the compilation result
+ * @return {Object} return the ast node of the function
+ */
+CodeManager.prototype.getFunctionFromPC = function (address, pc, sourceMap, ast) {
+  var instIndex = codeResolver.getInstructionIndex(address, pc)
+  return SourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', instIndex, sourceMap, ast)
+}
+
+function retrieveCodeAndTrigger (codeMananger, address, stepIndex, tx) {
+  codeMananger.getCode(address, function (error, result) {
     if (!error) {
-      self.event.trigger('changed', [code, address, result])
+      retrieveIndexAndTrigger(codeMananger, address, stepIndex, result.instructions)
     } else {
       console.log(error)
     }
   })
 }
 
-CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
-  this.traceManager.getCurrentPC(step, function (error, instIndex) {
-    if (error) {
-      console.log(error)
-      callback('Cannot retrieve current PC for ' + step, null)
+function retrieveIndexAndTrigger (codeMananger, address, step, code) {
+  codeMananger.getInstructionIndex(address, step, function (error, result) {
+    if (!error) {
+      codeMananger.event.trigger('changed', [code, address, result])
     } else {
-      var itemIndex = codeResolver.getInstructionIndex(address, instIndex)
-      callback(null, itemIndex)
+      console.log(error)
     }
   })
 }

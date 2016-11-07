@@ -29,7 +29,8 @@
     "tape": "^4.6.0",
     "web3": "^0.15.3",
     "yo-yo": "^1.2.1",
-    "yo-yoify": "^3.1.0"
+    "yo-yoify": "^3.1.0",
+    "solc": "^0.4.3"
   },
   "scripts": {
     "start_node": "./runNode.sh",
