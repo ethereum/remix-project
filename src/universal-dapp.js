@@ -674,7 +674,9 @@ function tryTillResponse (web3, txhash, done) {
       // Try again with a bit of delay
       setTimeout(function () { tryTillResponse(web3, txhash, done) }, 500)
     } else {
-      done(err, address)
+      done(err, {
+        result: address
+      })
     }
   })
 }
