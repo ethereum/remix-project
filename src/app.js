@@ -445,7 +445,7 @@ var run = function () {
 
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
 
-  var staticanalysis = new StaticAnalysis(compiler, renderer)
+  var staticanalysis = new StaticAnalysis(compiler.event, renderer)
   $('#staticanalysisView').append(staticanalysis.render())
 
   var autoCompile = document.querySelector('#autoCompile').checked

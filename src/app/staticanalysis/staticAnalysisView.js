@@ -3,14 +3,14 @@ var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
 
-function staticAnalysisView (compiler, renderer) {
+function staticAnalysisView (compilerEvent, renderer) {
   this.view = null
   this.renderer = renderer
   this.runner = new StaticAnalysisRunner()
   this.modulesView = renderModules(this.runner.modules())
   this.lastASTs = null
   var self = this
-  compiler.event.register('compilationFinished', function (success, data, source) {
+  compilerEvent.register('compilationFinished', function (success, data, source) {
     self.lastASTs = null
     if (success) {
       self.lastASTs = data.sources
