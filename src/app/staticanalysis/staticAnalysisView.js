@@ -3,17 +3,20 @@ var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
 
-function staticAnalysisView (compilerEvent, renderer) {
+function staticAnalysisView (compilerEvent, renderer, editor, offsetToColumnConverter) {
   this.view = null
   this.renderer = renderer
+  this.editor = editor
   this.runner = new StaticAnalysisRunner()
+  this.offsetToColumnConverter = offsetToColumnConverter
   this.modulesView = renderModules(this.runner.modules())
-  this.lastASTs = null
+  this.lastCompilationResult = null
   var self = this
   compilerEvent.register('compilationFinished', function (success, data, source) {
-    self.lastASTs = null
+    self.lastCompilationResult = null
+    $('#staticanalysisresult').empty()
     if (success) {
-      self.lastASTs = data.sources
+      self.lastCompilationResult = data
     }
   })
 }
@@ -58,11 +61,21 @@ staticAnalysisView.prototype.run = function () {
   var selected = this.selectedModules()
   var warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
-  if (this.lastASTs) {
+  if (this.lastCompilationResult) {
     var self = this
-    this.runner.run(this.lastASTs, selected, function (results) {
-      results.map(function (item, i) {
-        self.renderer.error(item.name + ':\n\n' + item.report, warningContainer, null, 'warning')
+    this.runner.run(this.lastCompilationResult.sources, selected, function (results) {
+      results.map(function (result, i) {
+        result.report.map(function (item, i) {
+          var split = item.location.split(':')
+          var file = split[2]
+          var location = {
+            start: parseInt(split[0]),
+            length: parseInt(split[1])
+          }
+          location = self.offsetToColumnConverter.offsetToLineColumn(location, file, self.editor, self.lastCompilationResult)
+          location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
+          self.renderer.error(location + ' ' + item.warning, warningContainer, false, 'warning')
+        })
       })
     })
   } else {
