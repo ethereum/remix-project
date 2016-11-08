@@ -31,7 +31,7 @@
     "ethereumjs-block": "^1.2.2",
     "ethereumjs-tx": "^1.1.1",
     "ethereumjs-util": "^4.4.0",
-    "ethereumjs-vm": "^1.4.0",
+    "ethereumjs-vm": "^2.0.1",
     "http-server": "0.9.0",
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
