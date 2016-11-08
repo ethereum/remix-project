@@ -520,9 +520,11 @@ var run = function () {
     }
     compileTimeout = window.setTimeout(function () {
       var files = {}
-      files[utils.fileNameFromKey(editor.getCacheFile())] = editor.getValue()
+      var target = utils.fileNameFromKey(editor.getCacheFile())
 
-      compiler.compile(files)
+      files[target] = editor.getValue()
+
+      compiler.compile(files, target)
     }, 300)
   }
 
