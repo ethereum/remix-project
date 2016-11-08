@@ -35,9 +35,11 @@ function Renderer (editor, web3, updateFiles, udapp, executionContext, formalVer
   })
 }
 
-Renderer.prototype.error = function (message, container, noAnnotations) {
+Renderer.prototype.error = function (message, container, noAnnotations, type) {
   var self = this
-  var type = utils.errortype(message)
+  if (!type) {
+    type = utils.errortype(message)
+  }
   var $pre = $('<pre />').text(message)
   var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre)
   if (container === undefined) {
@@ -66,12 +68,12 @@ Renderer.prototype.error = function (message, container, noAnnotations) {
       }
       self.editor.handleErrorClick(errLine, errCol)
     })
-    $error.find('.close').click(function (ev) {
-      ev.preventDefault()
-      $error.remove()
-      return false
-    })
   }
+  $error.find('.close').click(function (ev) {
+    ev.preventDefault()
+    $error.remove()
+    return false
+  })
 }
 
 Renderer.prototype.contracts = function (data, source) {

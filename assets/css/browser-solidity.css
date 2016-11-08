@@ -228,6 +228,10 @@ body {
     display: block;
 }
 
+#header #optionViews.staticanalysisView #staticanalysisView {
+    display: block;
+}
+
 #header #optionViews.txView input,
 #header #optionViews.txView select {
     max-width: 13em;
@@ -271,6 +275,19 @@ body {
 }
 
 #publishView button {
+    background-color: #C6CFF7;
+    font-size: 12px;
+    padding: 0.25em;
+    margin-bottom: .5em;
+    color: black;
+    border:0 none;
+    border-radius: 3px;
+    width: 8em;
+    margin-right: 1em;
+    cursor: pointer;
+}
+
+#staticanalysisView button {
     background-color: #C6CFF7;
     font-size: 12px;
     padding: 0.25em;

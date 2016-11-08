@@ -19,6 +19,7 @@ var UniversalDApp = require('./universal-dapp.js')
 var Debugger = require('./app/debugger')
 var FormalVerification = require('./app/formalVerification')
 var EventManager = require('./lib/eventManager')
+var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -443,6 +444,9 @@ var run = function () {
   })
 
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
+
+  var staticanalysis = new StaticAnalysis(compiler, renderer)
+  $('#staticanalysisView').append(staticanalysis.render())
 
   var autoCompile = document.querySelector('#autoCompile').checked
 
