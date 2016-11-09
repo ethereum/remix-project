@@ -19,7 +19,9 @@ function staticAnalysisView (compilerEvent, renderer, editor, offsetToColumnConv
     $('#staticanalysisresult').empty()
     if (success) {
       self.lastCompilationResult = data
-      self.run()
+      if (self.view.querySelector('#autorunstaticanalysis').checked) {
+        self.run()
+      }
     }
   })
 }
@@ -28,7 +30,8 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`<div>
     <strong>Static Analysis</strong>
-    <div>Select analyser to run against current compiled contracts</div>
+    <div>Select analyser to run against current compiled contracts <label><input id="autorunstaticanalysis" type="checkbox" checked="true">Auto run Static Analysis</label></div>    
+    <br />
     ${this.modulesView}
     <div>
       <button onclick=${function () { self.run() }} >Run</button>
@@ -95,6 +98,6 @@ module.exports = staticAnalysisView
 
 function renderModules (modules) {
   return modules.map(function (item, i) {
-    return yo`<div><input type="checkbox" name="staticanalysismodule" checked='true' index=${i} >${item.name} (${item.description})</div>`
+    return yo`<label><input id="staticanalysismodule${i}" type="checkbox" name="staticanalysismodule" index=${i} checked="true">${item.name} (${item.description})</label>`
   })
 }
