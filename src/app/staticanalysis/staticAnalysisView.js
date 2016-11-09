@@ -2,8 +2,10 @@
 var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
+var EventManager = require('../../lib/eventManager')
 
 function staticAnalysisView (compilerEvent, renderer, editor, offsetToColumnConverter) {
+  this.event = new EventManager()
   this.view = null
   this.renderer = renderer
   this.editor = editor
@@ -17,6 +19,7 @@ function staticAnalysisView (compilerEvent, renderer, editor, offsetToColumnConv
     $('#staticanalysisresult').empty()
     if (success) {
       self.lastCompilationResult = data
+      self.run()
     }
   })
 }
@@ -77,16 +80,21 @@ staticAnalysisView.prototype.run = function () {
           self.renderer.error(location + ' ' + item.warning, warningContainer, false, 'warning')
         })
       })
+      if (warningContainer.html() === '') {
+        warningContainer.html('No warning to report')
+      } else {
+        self.event.trigger('warning', [])
+      }
     })
   } else {
     warningContainer.html('No compiled AST available')
   }
 }
 
+module.exports = staticAnalysisView
+
 function renderModules (modules) {
   return modules.map(function (item, i) {
     return yo`<div><input type="checkbox" name="staticanalysismodule" checked='true' index=${i} >${item.name} (${item.description})</div>`
   })
 }
-
-module.exports = staticAnalysisView

@@ -110,6 +110,27 @@ var run = function () {
     self.event.trigger('tabChanged', [cls])
   }
 
+  function triggerTabWarning (target, cb) {
+    target = '#header #menu ' + target
+    $(target).css('background-color', '#d2ca24')
+    animateTab(target, function () {
+      $(target).css('opacity', '1')
+      animateTab(target, function () {
+        $(target).css('background-color', 'transparent')
+        $(target).css('opacity', '1')
+        if (cb) { cb() }
+      })
+    })
+  }
+
+  function animateTab (target, cb) {
+    $(target).animate({
+      'opacity': 0.3
+    }, 800, function () {
+      cb()
+    })
+  }
+
   // ------------------ gist publish --------------
 
   $('#gist').click(function () {
@@ -449,6 +470,9 @@ var run = function () {
 
   var staticanalysis = new StaticAnalysis(compiler.event, renderer, editor, offsetToLineColumnConverter)
   $('#staticanalysisView').append(staticanalysis.render())
+  staticanalysis.event.register('warning', function () {
+    triggerTabWarning('.staticanalysisView')
+  })
 
   var autoCompile = document.querySelector('#autoCompile').checked
 
