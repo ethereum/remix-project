@@ -20,7 +20,7 @@ txOrigin.prototype.report = function (node) {
   var report = []
   this.txOriginNode.map(function (item, i) {
     report.push({
-      warning: 'use of tx.origin',
+      warning: 'use of tx.origin: "tx.origin" is useful only in very exceptional cases.\nIf you use it for authentication, you usually want to replace it by "msg.sender", because otherwise any contract you call can act on your behalf.',
       location: item.src
     })
   })
