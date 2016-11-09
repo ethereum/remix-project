@@ -110,13 +110,18 @@ function ArrayType (type, stateDefinitions) {
   var storageBytes
 
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
-  if (!match) {
+  if (!match || match.length < 3) {
+    console.log('unable to parse type ' + type)
     return null
   }
 
   arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
 
   var underlyingType = decode(match[1], stateDefinitions)
+  if (underlyingType === null) {
+    console.log('unable to parse type ' + type)
+    return null
+  }
 
   if (arraySize === 'dynamic') {
     storageBytes = 32
@@ -146,10 +151,14 @@ function ArrayType (type, stateDefinitions) {
   */
 function Enum (type, stateDefinitions) {
   var enumDef = getEnum(type, stateDefinitions)
+  if (enumDef === null) {
+    console.log('unable to retrieve decode info of ' + type)
+    return null
+  }
   var length = enumDef.children.length
   var storageBytes = 0
   while (length > 1) {
-    length = length / 255
+    length = length / 256
     storageBytes++
   }
   return {
@@ -190,7 +199,7 @@ function Struct (type, stateDefinitions) {
 function getEnum (type, stateDefinitions) {
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
-    if (dec.name === 'EnumDefinition' && type.indexOf('enum ' + dec.attributes.name) === 0) {
+    if (type === 'enum ' + dec.attributes.name) {
       return dec
     }
   }
@@ -213,6 +222,10 @@ function getStructMembers (typeName, stateDefinitions) {
       for (var i in dec.children) {
         var member = dec.children[i]
         var decoded = decode(member.attributes.type, stateDefinitions)
+        if (!decoded) {
+          console.log('unable to retrieve decode info of ' + member.attributes.type)
+          continue
+        }
         members.push(decoded)
         if (decoded.needsFreeStorageSlot) {
           storageBytes = Math.ceil(storageBytes / 32) * 32
@@ -266,6 +279,10 @@ function decode (type, stateDefinitions) {
     'uint': Uint
   }
   var currentType = typeClass(type)
+  if (currentType === null) {
+    console.log('unable to retrieve decode info of ' + type)
+    return null
+  }
   return decodeInfos[currentType](type, stateDefinitions)
 }
 
