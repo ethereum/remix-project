@@ -8,15 +8,15 @@ var Range = ace.acequire('ace/range').Range
 /**
  * Manage remix and source highlighting
  */
-function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
+function Debugger (id, editor, compiler, executionContextEvent, switchToFile, offsetToLineColumnConverter) {
   this.el = document.querySelector(id)
+  this.offsetToLineColumnConverter = offsetToLineColumnConverter
   this.debugger = new remix.ui.Debugger()
   this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
   this.el.appendChild(this.debugger.render())
   this.editor = editor
   this.switchToFile = switchToFile
   this.compiler = compiler
-  this.cache = new Cache()
 
   var self = this
   executionContextEvent.register('contextChanged', this, function (context) {
@@ -25,13 +25,11 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
 
   this.lastCompilationResult = null
   this.debugger.event.register('newTraceLoaded', this, function () {
-    self.cache.clear()
     self.lastCompilationResult = self.compiler.lastCompilationResult
   })
 
   this.debugger.event.register('traceUnloaded', this, function () {
     self.removeCurrentMarker()
-    self.cache.clear()
   })
 
   this.editor.onChangeSetup(function () {
@@ -45,10 +43,7 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile) {
     if (self.lastCompilationResult) {
       this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.lastCompilationResult.data.contracts, function (error, rawLocation) {
         if (!error) {
-          if (!self.cache.lineBreakPositionsByContent[address]) {
-            self.cache.lineBreakPositionsByContent[address] = self.sourceMappingDecoder.getLinebreakPositions(self.editor.getFile(self.lastCompilationResult.data.sourceList[rawLocation.file]))
-          }
-          var lineColumnPos = self.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, self.cache.lineBreakPositionsByContent[address])
+          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.lastCompilationResult)
           self.highlight(lineColumnPos, rawLocation)
         } else {
           self.removeCurrentMarker()
@@ -123,14 +118,6 @@ Debugger.prototype.removeCurrentMarker = function () {
     this.editor.removeMarker(this.currentMarker)
     this.currentMarker = null
   }
-}
-
-function Cache () {
-  this.contentLineBreakPosition = {}
-}
-
-Cache.prototype.clear = function () {
-  this.lineBreakPositionsByContent = {}
 }
 
 module.exports = Debugger

@@ -30,7 +30,7 @@ function runTests (browser) {
     .click('.staticanalysisView')
     .click('#staticanalysisView button')
     .waitForElementPresent('#staticanalysisresult .warning')
-    .assert.containsText('#staticanalysisresult .warning pre', '1 use of tx.origin')
+    .assert.containsText('#staticanalysisresult .warning pre', 'Untitled:1:33: use of tx.origin')
     .end()
   })
 }

@@ -20,6 +20,7 @@ var Debugger = require('./app/debugger')
 var FormalVerification = require('./app/formalVerification')
 var EventManager = require('./lib/eventManager')
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
+var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -423,12 +424,13 @@ var run = function () {
         cb(err || 'Unknown transport error')
       })
   }
-
   var executionContext = new ExecutionContext()
   var compiler = new Compiler(editor, handleGithubCall)
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
 
-  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile)
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+
+  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile, offsetToLineColumnConverter)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.switchProvider('vm')
   transactionDebugger.addProvider('injected', executionContext.web3())
@@ -445,7 +447,7 @@ var run = function () {
 
   var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
 
-  var staticanalysis = new StaticAnalysis(compiler, renderer)
+  var staticanalysis = new StaticAnalysis(compiler.event, renderer, editor, offsetToLineColumnConverter)
   $('#staticanalysisView').append(staticanalysis.render())
 
   var autoCompile = document.querySelector('#autoCompile').checked

@@ -17,9 +17,12 @@ txOrigin.prototype.visit = function (node) {
 }
 
 txOrigin.prototype.report = function (node) {
-  var report = this.txOriginNode.length + ' use of tx.origin\n'
+  var report = []
   this.txOriginNode.map(function (item, i) {
-    report += item.src + '\n'
+    report.push({
+      warning: 'use of tx.origin: "tx.origin" is useful only in very exceptional cases.\nIf you use it for authentication, you usually want to replace it by "msg.sender", because otherwise any contract you call can act on your behalf.',
+      location: item.src
+    })
   })
   return {
     name: name,
