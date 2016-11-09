@@ -554,8 +554,6 @@ var run = function () {
 
   compiler.event.register('compilationStarted', this, function () {
     editor.clearAnnotations()
-    var input = editor.getValue()
-    editor.setCacheFileContent(input)
   })
 
   function startdebugging (txHash) {
