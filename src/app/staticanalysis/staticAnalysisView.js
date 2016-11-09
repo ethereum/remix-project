@@ -31,7 +31,6 @@ staticAnalysisView.prototype.render = function () {
   var view = yo`<div>
     <strong>Static Analysis</strong>
     <div>Select analyser to run against current compiled contracts <label><input id="autorunstaticanalysis" type="checkbox" checked="true">Auto run Static Analysis</label></div>    
-    <br />
     ${this.modulesView}
     <div>
       <button onclick=${function () { self.run() }} >Run</button>
