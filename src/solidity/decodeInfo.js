@@ -181,6 +181,7 @@ function Struct (type, stateDefinitions) {
     return null
   }
   var memberDetails = getStructMembers(match[1], stateDefinitions) // type is used to extract the ast struct definition
+  if (!memberDetails) return null
   return {
     needsFreeStorageSlot: true,
     storageBytes: memberDetails.storageBytes,
@@ -224,7 +225,7 @@ function getStructMembers (typeName, stateDefinitions) {
         var decoded = decode(member.attributes.type, stateDefinitions)
         if (!decoded) {
           console.log('unable to retrieve decode info of ' + member.attributes.type)
-          continue
+          return null
         }
         members.push(decoded)
         if (decoded.needsFreeStorageSlot) {
@@ -263,7 +264,7 @@ function typeClass (fullType) {
   *
   * @param {Object} type - type name given by the ast node
   * @param {Object} stateDefinitions - all state stateDefinitions given by the AST (including struct and enum type declaration)
-  * @return {Object} - return the corresponding decoder
+  * @return {Object} - return the corresponding decoder or null on error
   */
 function decode (type, stateDefinitions) {
   var decodeInfos = {
