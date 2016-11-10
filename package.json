@@ -34,8 +34,8 @@
   },
   "scripts": {
     "start_node": "./runNode.sh",
-    "start_eth": "eth -j --rpccorsdomain '*'",
-    "start_geth": "geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
+    "start_eth": "npm run warning_message; eth -j --rpccorsdomain '*'",
+    "start_geth": "npm run warning_message; geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
     "build": "mkdir build; browserify src/index.js -g yo-yoify -o build/app.js; babel --plugins babel-plugin-transform-es2015-template-literals,babel-plugin-transform-es2015-block-scoping build/app.js --out-file build/app.js",
     "test": "standard && tape ./test/tests.js",
     "serve": "http-server .",
@@ -44,7 +44,8 @@
     "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
     "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
-    "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env ie,safari,chrome,default"
+    "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env ie,safari,chrome,default",
+    "warning_message": "echo 'DO NOT DO THIS IF eth/geth STORES PRIVATE KEYS!! External system might be able to access your node through the RPC server.\n\n';"
   },
   "repository": {
     "type": "git",

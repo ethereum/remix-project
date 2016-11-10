@@ -11,7 +11,7 @@ Note that connecting to Geth does not work through https.
 
 You'll have to run your own node using the following parameters:
 
-*DO NOT DO THIS IF geth/eth STORES PRIVATE KEYS*
+*DO NOT DO THIS IF geth/eth STORES PRIVATE KEYS* External system might be able to access your node through the RPC server.
 
 Using Geth:
 
