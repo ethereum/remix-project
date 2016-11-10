@@ -11,6 +11,8 @@ Note that connecting to Geth does not work through https.
 
 You'll have to run your own node using the following parameters:
 
+*DO NOT DO THIS IF geth/eth STORES PRIVATE KEYS*
+
 Using Geth:
 
     geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
