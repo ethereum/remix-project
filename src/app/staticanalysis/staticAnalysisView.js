@@ -2,10 +2,8 @@
 var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
-var EventManager = require('../../lib/eventManager')
 
 function staticAnalysisView (compilerEvent, renderer, editor, offsetToColumnConverter) {
-  this.event = new EventManager()
   this.view = null
   this.renderer = renderer
   this.editor = editor
@@ -83,9 +81,10 @@ staticAnalysisView.prototype.run = function () {
         })
       })
       if (warningContainer.html() === '') {
+        $('#header #menu .staticanalysisView').css('color', '')
         warningContainer.html('No warning to report')
       } else {
-        self.event.trigger('warning', [])
+        $('#header #menu .staticanalysisView').css('color', '#FF8B8B')
       }
     })
   } else {
