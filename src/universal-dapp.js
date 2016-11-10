@@ -669,13 +669,14 @@ UniversalDApp.prototype.clickContractAt = function (self, $output, contract) {
 }
 
 function tryTillResponse (web3, txhash, done) {
-  web3.eth.getTransactionReceipt(txhash, function (err, address) {
-    if (!err && !address) {
+  web3.eth.getTransactionReceipt(txhash, function (err, result) {
+    if (!err && !result) {
       // Try again with a bit of delay
       setTimeout(function () { tryTillResponse(web3, txhash, done) }, 500)
     } else {
       done(err, {
-        result: address
+        result: result,
+        transactionHash: result.transactionHash
       })
     }
   })
