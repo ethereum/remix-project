@@ -43,7 +43,7 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
     if (self.lastCompilationResult) {
       this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.lastCompilationResult.data.contracts, function (error, rawLocation) {
         if (!error) {
-          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.lastCompilationResult)
+          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.lastCompilationResult.data)
           self.highlight(lineColumnPos, rawLocation)
         } else {
           self.removeCurrentMarker()
