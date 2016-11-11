@@ -30,6 +30,19 @@ AstWalker.prototype.walk = function (ast, callback) {
   }
 }
 
+/**
+ +  * walk the given @astList
+ +  *
+ +  * @param {Object} sourcesList - sources list (containing root AST node)
+ +  * @param {Function} - callback used by AstWalker to compute response
+ +  */
+AstWalker.prototype.walkAstList = function (sourcesList, callback) {
+  var walker = new AstWalker()
+  for (var k in sourcesList) {
+    walker.walk(sourcesList[k].AST, callback)
+  }
+}
+
 function manageCallBack (node, callback) {
   if (node.name in callback) {
     return callback[node.name](node)
