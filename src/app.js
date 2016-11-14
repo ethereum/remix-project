@@ -445,7 +445,7 @@ var run = function () {
     startdebugging(txResult.transactionHash)
   })
 
-  var renderer = new Renderer(editor, executionContext.web3(), updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
+  var renderer = new Renderer(editor, updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
 
   var staticanalysis = new StaticAnalysis(compiler.event, renderer, editor, offsetToLineColumnConverter)
   $('#staticanalysisView').append(staticanalysis.render())
