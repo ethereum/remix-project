@@ -200,7 +200,7 @@ function Struct (type, stateDefinitions) {
 function getEnum (type, stateDefinitions) {
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
-    if (type === 'enum ' + dec.attributes.name) {
+    if (dec.attributes && dec.attributes.name && type === 'enum ' + dec.attributes.name) {
       return dec
     }
   }
