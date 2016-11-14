@@ -1,6 +1,7 @@
 {
+  "private": true,
   "name": "browser-solidity",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Minimalistic browser-based Solidity IDE",
   "scripts": {
     "browser-test": "nightwatch --config nightwatch.js --env local",
@@ -75,7 +76,6 @@
     "url": "https://github.com/ethereum/browser-solidity/issues"
   },
   "homepage": "https://github.com/ethereum/browser-solidity#readme",
-  "private": true,
   "standard": {
     "ignore": [
       "build/",
