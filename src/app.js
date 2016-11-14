@@ -547,6 +547,9 @@ var run = function () {
     if (version === 'builtin') {
       var location = window.document.location
       location = location.protocol + '//' + location.host + '/' + location.pathname
+      if (location.endsWith('index.html')) {
+        location = location.substring(0, location.length - 10)
+      }
       if (!location.endsWith('/')) {
         location += '/'
       }
