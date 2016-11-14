@@ -1,7 +1,0 @@
-assets
-index.html
-soljson.js
-bin/list.*
-bin/soljson-v*
-.travis.yml
-deployment/*
