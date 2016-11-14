@@ -589,17 +589,9 @@ var run = function () {
   })
 
   $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json').done(function (data) {
-    function buildVersion (build) {
-      if (build.prerelease && build.prerelease.length > 0) {
-        return build.version + '-' + build.prerelease
-      } else {
-        return build.version
-      }
-    }
-
     // populate version dropdown with all available compiler versions (descending order)
     $.each(data.builds.slice().reverse(), function (i, build) {
-      $('#versionSelector').append(new Option(buildVersion(build), build.path))
+      $('#versionSelector').append(new Option(build.longVersion, build.path))
     })
 
     $('#versionSelector').attr('disabled', false)
