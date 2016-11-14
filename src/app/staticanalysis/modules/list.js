@@ -1,3 +1,4 @@
 module.exports = [
-  require('./txOrigin')
+  require('./txOrigin'),
+  require('./gasCosts')
 ]

@@ -10,7 +10,7 @@
     "browser-test-remote-ie": "nightwatch --config nightwatch.js --env ie",
     "browser-test-remote-safari": "nightwatch --config nightwatch.js --env safari",
     "browser-test-remote-parallel": "nightwatch --config nightwatch.js --env safari,ie,default,chrome",
-    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js; babel build/app.js --out-file build/app.js",
+    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js; babel build/app.js -s --out-file build/app.js",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
     "downloadsolc": "rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
     "lint": "standard",
