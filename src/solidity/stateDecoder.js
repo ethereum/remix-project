@@ -1,6 +1,5 @@
 var astHelper = require('./astHelper')
 var decodeInfo = require('./decodeInfo')
-var locationDecoder = require('./locationDecoder')
 
 /**
   * decode the contract state storage
@@ -44,13 +43,24 @@ function extractStateVariables (contractName, sourcesList) {
     if (variable.name === 'VariableDeclaration') {
       var decoded = decodeInfo.decode(variable.attributes.type, stateDefinitions)
       var type = new types[decoded.typeName](decoded)
-      var loc = locationDecoder.walkStorage(type, location)
+      if (location.offset + type.storageBytes > 32) {
+        location.slot++
+        location.offset = 0
+      }
       ret.push({
         name: variable.attributes.name,
         type: type,
-        location: loc.currentLocation
+        location: {
+          offset: location.offset,
+          slot: location.slot
+        }
       })
-      location = loc.endLocation
+      if (type.storageSlots === 1 && location.offset + type.storageBytes <= 32) {
+        location.offset += type.storageBytes
+      } else {
+        location.slot += type.storageSlots
+        location.offset = 0
+      }
     }
   }
   return ret

@@ -3,12 +3,12 @@
   * Uint decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g uint256, uint32)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Uint (type) {
   type === 'uint' ? 'uint256' : type
   return {
-    needsFreeStorageSlot: false,
+    storageSlots: 1,
     storageBytes: parseInt(type.replace('uint', '')) / 8,
     typeName: 'uint'
   }
@@ -18,12 +18,12 @@ function Uint (type) {
   * Int decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256, int32)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Int (type) {
   type === 'int' ? 'int256' : type
   return {
-    needsFreeStorageSlot: false,
+    storageSlots: 1,
     storageBytes: parseInt(type.replace('int', '')) / 8,
     typeName: 'int'
   }
@@ -33,11 +33,11 @@ function Int (type) {
   * Address decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g address)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Address (type) {
   return {
-    needsFreeStorageSlot: false,
+    storageSlots: 1,
     storageBytes: 20,
     typeName: 'address'
   }
@@ -47,11 +47,11 @@ function Address (type) {
   * Bool decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bool)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Bool (type) {
   return {
-    needsFreeStorageSlot: false,
+    storageSlots: 1,
     storageBytes: 1,
     typeName: 'bool'
   }
@@ -61,11 +61,11 @@ function Bool (type) {
   * DynamicByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function DynamicByteArray (type) {
   return {
-    needsFreeStorageSlot: true,
+    storageSlots: 1,
     storageBytes: 32,
     typeName: 'bytes'
   }
@@ -75,11 +75,11 @@ function DynamicByteArray (type) {
   * FixedByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes16)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function FixedByteArray (type) {
   return {
-    needsFreeStorageSlot: false,
+    storageSlots: 1,
     storageBytes: parseInt(type.replace('bytes', '')),
     typeName: 'bytesX'
   }
@@ -89,11 +89,11 @@ function FixedByteArray (type) {
   * StringType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g string storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function StringType (type) {
   return {
-    needsFreeStorageSlot: true,
+    storageSlots: 1,
     storageBytes: 32,
     typeName: 'string'
   }
@@ -103,11 +103,10 @@ function StringType (type) {
   * ArrayType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256[] storage ref, int256[] storage ref[] storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, arraySize, subArray}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
 function ArrayType (type, stateDefinitions) {
   var arraySize
-  var storageBytes
 
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match || match.length < 3) {
@@ -123,20 +122,21 @@ function ArrayType (type, stateDefinitions) {
     return null
   }
 
+  var storageSlots
   if (arraySize === 'dynamic') {
-    storageBytes = 32
+    storageSlots = 1
   } else {
-    storageBytes = underlyingType.storageBytes
-    if (storageBytes > 32) {
-      storageBytes = 32 * arraySize * Math.ceil(storageBytes / 32)
+    if (underlyingType.storageBytes < 32) {
+      var itemPerSlot = Math.floor(32 / underlyingType.storageBytes)
+      storageSlots = Math.ceil(arraySize / itemPerSlot)
     } else {
-      storageBytes = 32 * (arraySize / Math.floor(32 / storageBytes))
+      storageSlots = arraySize * underlyingType.storageSlots
     }
   }
 
   return {
-    needsFreeStorageSlot: true,
-    storageBytes: storageBytes,
+    storageSlots: storageSlots,
+    storageBytes: 32,
     typeName: 'array',
     arraySize: arraySize,
     underlyingType: underlyingType
@@ -147,7 +147,7 @@ function ArrayType (type, stateDefinitions) {
   * Enum decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g enum enumDef)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, enum}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName, enum}
   */
 function Enum (type, stateDefinitions) {
   var enumDef = getEnum(type, stateDefinitions)
@@ -162,7 +162,7 @@ function Enum (type, stateDefinitions) {
     storageBytes++
   }
   return {
-    needsFreeStorageSlot: false,
+    storageSlots: 1,
     storageBytes: storageBytes,
     typeName: 'enum',
     enum: enumDef
@@ -173,7 +173,7 @@ function Enum (type, stateDefinitions) {
   * Struct decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g struct structDef storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, members}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
 function Struct (type, stateDefinitions) {
   var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
@@ -183,8 +183,8 @@ function Struct (type, stateDefinitions) {
   var memberDetails = getStructMembers(match[1], stateDefinitions) // type is used to extract the ast struct definition
   if (!memberDetails) return null
   return {
-    needsFreeStorageSlot: true,
-    storageBytes: memberDetails.storageBytes,
+    storageSlots: Math.ceil(memberDetails.storageBytes / 32),
+    storageBytes: 32,
     typeName: 'struct',
     members: memberDetails.members
   }
@@ -228,9 +228,6 @@ function getStructMembers (typeName, stateDefinitions) {
           return null
         }
         members.push(decoded)
-        if (decoded.needsFreeStorageSlot) {
-          storageBytes = Math.ceil(storageBytes / 32) * 32
-        }
         storageBytes += decoded.storageBytes
       }
       break
