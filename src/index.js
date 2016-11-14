@@ -8,6 +8,7 @@ var disassembler = require('./code/disassembler')
 var SourceMappingDecoder = require('./util/sourceMappingDecoder')
 var AstWalker = require('./util/astWalker')
 var decodeInfo = require('./solidity/decodeInfo')
+var stateDecoder = require('./solidity/stateDecoder')
 var astHelper = require('./solidity/astHelper')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
@@ -38,7 +39,8 @@ function modules () {
     },
     solidity: {
       decodeInfo: decodeInfo,
-      astHelper: astHelper
+      astHelper: astHelper,
+      stateDecoder: stateDecoder
     }
   }
 }
