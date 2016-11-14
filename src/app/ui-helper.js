@@ -70,8 +70,8 @@ module.exports = {
 
     code += '\n   {' +
       '\n     from: web3.eth.accounts[0], ' +
-      "\n     data: '" + bytecode + "', " +
-      '\n     gas: 4700000' +
+      "\n     data: '0x" + bytecode + "', " +
+      "\n     gas: '4700000'" +
       '\n   }, function (e, contract){' +
       '\n    console.log(e, contract);' +
       "\n    if (typeof contract.address !== 'undefined') {" +
