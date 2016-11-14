@@ -5,9 +5,8 @@ var $ = require('jquery')
 var utils = require('./utils')
 var uiHelper = require('./ui-helper')
 
-function Renderer (editor, web3, updateFiles, udapp, executionContext, formalVerificationEvent, compilerEvent) {
+function Renderer (editor, updateFiles, udapp, executionContext, formalVerificationEvent, compilerEvent) {
   this.editor = editor
-  this.web3 = web3
   this.updateFiles = updateFiles
   this.udapp = udapp
   this.executionContext = executionContext
