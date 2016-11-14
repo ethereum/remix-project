@@ -41,8 +41,7 @@ function extractStateVariables (contractName, sourcesList) {
   for (var k in stateDefinitions) {
     var variable = stateDefinitions[k]
     if (variable.name === 'VariableDeclaration') {
-      var decoded = decodeInfo.parseType(variable.attributes.type, stateDefinitions)
-      var type = new types[decoded.typeName](decoded)
+      var type = decodeInfo.parseType(variable.attributes.type, stateDefinitions)
       if (location.offset + type.storageBytes > 32) {
         location.slot++
         location.offset = 0
@@ -85,15 +84,3 @@ module.exports = {
   decodeState: decodeState
 }
 
-var types = {
-  'address': require('./types/Address'),
-  'array': require('./types/ArrayType'),
-  'bool': require('./types/Bool'),
-  'bytes': require('./types/DynamicByteArray'),
-  'bytesX': require('./types/FixedByteArray'),
-  'enum': require('./types/Enum'),
-  'string': require('./types/StringType'),
-  'struct': require('./types/Struct'),
-  'int': require('./types/Int'),
-  'uint': require('./types/Uint')
-}
