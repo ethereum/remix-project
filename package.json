@@ -53,6 +53,7 @@
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
     "nightwatch": "^0.9.3",
+    "semver": "^5.3.0",
     "solc": "https://github.com/ethereum/solc-js",
     "standard": "^8.5.0",
     "tape": "^4.5.1",

@@ -2,6 +2,7 @@
 
 var solc = require('solc/wrapper')
 
+var semver = require('semver')
 var webworkify = require('webworkify')
 var utils = require('./utils')
 
@@ -19,6 +20,8 @@ function Compiler (editor, handleGithubCall) {
 
   var cachedRemoteFiles = {}
   var worker = null
+
+  var currentVersion
 
   var optimize = false
 
@@ -53,6 +56,7 @@ function Compiler (editor, handleGithubCall) {
   this.setCompileJSON = setCompileJSON // this is exposed for testing
 
   function onCompilerLoaded (version) {
+    currentVersion = version
     self.event.trigger('compilerLoaded', [version])
   }
 
@@ -294,11 +298,14 @@ function Compiler (editor, handleGithubCall) {
 
         // add "payable" to everything
         // FIXME: only for compiler <0.4.0
-        item.payable = true
+        if (semver.lt(currentVersion, '0.4.0')) {
+          item.payable = true
+        }
       }
 
       // FIXME: only for compiler <0.x.y
-      if (!hasConstructor) {
+      //        0.1.2 from Aug 2015 had it. The code has it since May 2015 (e7931ade)
+      if (!hasConstructor && semver.lt(currentVersion, '0.1.2')) {
         abi.push({
           type: 'constructor',
           payable: true,
@@ -307,7 +314,7 @@ function Compiler (editor, handleGithubCall) {
       }
 
       // FIXME: only for compiler <0.4.0
-      if (!hasFallback) {
+      if (!hasFallback && semver.lt(currentVersion, '0.4.0')) {
         abi.push({
           type: 'fallback',
           payable: true
