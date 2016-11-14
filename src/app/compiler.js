@@ -123,6 +123,8 @@ function Compiler (editor, handleGithubCall) {
       // try compiling again with the new set of inputs
       internalCompile(source.sources, missingInputs)
     } else {
+      data = updateInterface(data)
+
       self.lastCompilationResult = {
         data: data,
         source: source
@@ -269,6 +271,55 @@ function Compiler (editor, handleGithubCall) {
       }
     } while (reloop)
     cb(null, { 'sources': files })
+  }
+
+  function updateInterface (data) {
+    console.log(data)
+    
+    for (var contract in data.contracts) {
+      var abi = JSON.parse(data.contracts[contract].interface)
+      console.log(abi)
+
+      var hasConstructor = false
+      var hasFallback = false
+
+      for (var i = 0; i < abi.length; i++) {
+        var item = abi[i]
+
+        if (item.type === "constructor") {
+          hasConstructor = true
+        } else if (item.type === "fallback") {
+          hasFallback = true
+        }
+
+        // add "payable" to everything
+        // FIXME: only for compiler <0.4.0
+        item.payable = true
+      }
+
+      // FIXME: only for compiler <0.x.y
+      if (!hasConstructor) {
+        abi.push({
+          type: 'constructor',
+          payable: true,
+          inputs: []
+        })
+      }
+
+      // FIXME: only for compiler <0.4.0
+      if (!hasFallback) {
+        abi.push({
+          type: 'fallback',
+          payable: true
+        })
+      }
+
+      console.log(abi)
+
+      data.contracts[contract].interface = JSON.stringify(abi)
+    }
+
+    return data
   }
 }
 
