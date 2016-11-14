@@ -43,7 +43,7 @@ web3VmProvider.prototype.releaseCurrentHash = function () {
 
 web3VmProvider.prototype.txWillProcess = function (self, data) {
   self.incr++
-  self.processingHash = this.web3.sha3([data.r, data.s, data.v, self.incr].join(''))
+  self.processingHash = util.hexConvert(data.hash())
   self.vmTraces[self.processingHash] = {
     gas: '0x0',
     return: '0x0',
