@@ -10,7 +10,7 @@ function Uint (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('uint', '')) / 8,
-    typeName: type
+    typeName: 'uint'
   }
 }
 
@@ -25,7 +25,7 @@ function Int (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('int', '')) / 8,
-    typeName: type
+    typeName: 'int'
   }
 }
 
@@ -81,7 +81,7 @@ function FixedByteArray (type) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: parseInt(type.replace('bytes', '')),
-    typeName: type
+    typeName: 'bytesX'
   }
 }
 
@@ -137,7 +137,7 @@ function ArrayType (type, stateDefinitions) {
   return {
     needsFreeStorageSlot: true,
     storageBytes: storageBytes,
-    typeName: type,
+    typeName: 'array',
     arraySize: arraySize,
     underlyingType: underlyingType
   }
@@ -164,7 +164,7 @@ function Enum (type, stateDefinitions) {
   return {
     needsFreeStorageSlot: false,
     storageBytes: storageBytes,
-    typeName: type,
+    typeName: 'enum',
     enum: enumDef
   }
 }
@@ -185,7 +185,7 @@ function Struct (type, stateDefinitions) {
   return {
     needsFreeStorageSlot: true,
     storageBytes: memberDetails.storageBytes,
-    typeName: type,
+    typeName: 'struct',
     members: memberDetails.members
   }
 }
