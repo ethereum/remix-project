@@ -263,7 +263,7 @@ function typeClass (fullType) {
   * @param {Object} stateDefinitions - all state stateDefinitions given by the AST (including struct and enum type declaration)
   * @return {Object} - return the corresponding decoder or null on error
   */
-function decode (type, stateDefinitions) {
+function parseType (type, stateDefinitions) {
   var decodeInfos = {
     'address': Address,
     'array': ArrayType,
@@ -285,7 +285,7 @@ function decode (type, stateDefinitions) {
 }
 
 module.exports = {
-  decode: decode,
+  decode: parseType,
   Uint: Uint,
   Address: Address,
   Bool: Bool,

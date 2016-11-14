@@ -41,7 +41,7 @@ function extractStateVariables (contractName, sourcesList) {
   for (var k in stateDefinitions) {
     var variable = stateDefinitions[k]
     if (variable.name === 'VariableDeclaration') {
-      var decoded = decodeInfo.decode(variable.attributes.type, stateDefinitions)
+      var decoded = decodeInfo.parseType(variable.attributes.type, stateDefinitions)
       var type = new types[decoded.typeName](decoded)
       if (location.offset + type.storageBytes > 32) {
         location.slot++
