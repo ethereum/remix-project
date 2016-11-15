@@ -9,10 +9,6 @@ var decodeInfo = require('./decodeInfo')
   * @return {Map} - decoded state variable
   */
 function decodeState (stateVars, storageContent) {
-  if (storageContent['0x']) {
-    storageContent['0x00'] = storageContent['0x']
-    storageContent['0x'] = undefined
-  }
   var ret = {}
   for (var k in stateVars) {
     var stateVar = stateVars[k]
