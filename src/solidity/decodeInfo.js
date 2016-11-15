@@ -19,12 +19,8 @@ var UintType = require('./types/Uint')
   */
 function Uint (type) {
   type === 'uint' ? 'uint256' : type
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: parseInt(type.replace('uint', '')) / 8,
-    typeName: 'uint'
-  }
-  return new UintType(decodeInfo)
+  var storageBytes = parseInt(type.replace('uint', '')) / 8
+  return new UintType(storageBytes)
 }
 
 /**
@@ -35,12 +31,8 @@ function Uint (type) {
   */
 function Int (type) {
   type === 'int' ? 'int256' : type
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: parseInt(type.replace('int', '')) / 8,
-    typeName: 'int'
-  }
-  return new IntType(decodeInfo)
+  var storageBytes = parseInt(type.replace('int', '')) / 8
+  return new IntType(storageBytes)
 }
 
 /**
@@ -50,12 +42,7 @@ function Int (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Address (type) {
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: 20,
-    typeName: 'address'
-  }
-  return new AddressType(decodeInfo)
+  return new AddressType()
 }
 
 /**
@@ -65,12 +52,7 @@ function Address (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Bool (type) {
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: 1,
-    typeName: 'bool'
-  }
-  return new BoolType(decodeInfo)
+  return new BoolType()
 }
 
 /**
@@ -80,12 +62,7 @@ function Bool (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function DynamicByteArray (type) {
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: 32,
-    typeName: 'bytes'
-  }
-  return new BytesType(decodeInfo)
+  return new BytesType()
 }
 
 /**
@@ -95,12 +72,8 @@ function DynamicByteArray (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function FixedByteArray (type) {
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: parseInt(type.replace('bytes', '')),
-    typeName: 'bytesX'
-  }
-  return new BytesXType(decodeInfo)
+  var storageBytes = parseInt(type.replace('bytes', ''))
+  return new BytesXType(storageBytes)
 }
 
 /**
@@ -110,12 +83,7 @@ function FixedByteArray (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function String (type) {
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: 32,
-    typeName: 'string'
-  }
-  return new StringType(decodeInfo)
+  return new StringType()
 }
 
 /**
@@ -126,41 +94,18 @@ function String (type) {
   */
 function Array (type, stateDefinitions) {
   var arraySize
-
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match || match.length < 3) {
     console.log('unable to parse type ' + type)
     return null
   }
-
   arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
-
   var underlyingType = parseType(match[1], stateDefinitions)
   if (underlyingType === null) {
     console.log('unable to parse type ' + type)
     return null
   }
-
-  var storageSlots
-  if (arraySize === 'dynamic') {
-    storageSlots = 1
-  } else {
-    if (underlyingType.storageBytes < 32) {
-      var itemPerSlot = Math.floor(32 / underlyingType.storageBytes)
-      storageSlots = Math.ceil(arraySize / itemPerSlot)
-    } else {
-      storageSlots = arraySize * underlyingType.storageSlots
-    }
-  }
-
-  var decodeInfo = {
-    storageSlots: storageSlots,
-    storageBytes: 32,
-    typeName: 'array',
-    arraySize: arraySize,
-    underlyingType: underlyingType
-  }
-  return new ArrayType(decodeInfo)
+  return new ArrayType(underlyingType, arraySize)
 }
 
 /**
@@ -175,19 +120,7 @@ function Enum (type, stateDefinitions) {
     console.log('unable to retrieve decode info of ' + type)
     return null
   }
-  var length = enumDef.children.length
-  var storageBytes = 0
-  while (length > 1) {
-    length = length / 256
-    storageBytes++
-  }
-  var decodeInfo = {
-    storageSlots: 1,
-    storageBytes: storageBytes,
-    typeName: 'enum',
-    enum: enumDef
-  }
-  return new EnumType(decodeInfo)
+  return new EnumType(enumDef)
 }
 
 /**
@@ -203,13 +136,7 @@ function Struct (type, stateDefinitions) {
   }
   var memberDetails = getStructMembers(match[1], stateDefinitions) // type is used to extract the ast struct definition
   if (!memberDetails) return null
-  var decodeInfo = {
-    storageSlots: Math.ceil(memberDetails.storageBytes / 32),
-    storageBytes: 32,
-    typeName: 'struct',
-    members: memberDetails.members
-  }
-  return new StructType(decodeInfo)
+  return new StructType(memberDetails)
 }
 
 /**

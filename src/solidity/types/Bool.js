@@ -1,8 +1,9 @@
 'use strict'
-var baseType = require('./baseType')
 
-function Bool (decoder) {
-  baseType(this, decoder)
+function Bool () {
+  this.storageSlots = 1
+  this.storageBytes = 1
+  this.typeName = 'bool'
 }
 
 Bool.prototype.decodeFromStorage = function (location, storageContent) {

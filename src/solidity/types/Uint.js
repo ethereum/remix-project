@@ -1,8 +1,9 @@
 'use strict'
-var baseType = require('./baseType')
 
-function Uint (decoder) {
-  baseType(this, decoder)
+function Uint (storageBytes) {
+  this.storageSlots = 1
+  this.storageBytes = storageBytes
+  this.typeName = 'uint'
 }
 
 Uint.prototype.decodeFromStorage = function (location, storageContent) {

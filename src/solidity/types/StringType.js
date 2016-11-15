@@ -1,8 +1,9 @@
 'use strict'
-var baseType = require('./baseType')
 
-function StringType (decoder) {
-  baseType(this, decoder)
+function StringType () {
+  this.storageSlots = 1
+  this.storageBytes = 32
+  this.typeName = 'string'
 }
 
 StringType.prototype.decodeFromStorage = function (location, storageContent) {

@@ -1,8 +1,9 @@
 'use strict'
-var baseType = require('./baseType')
 
-function DynamicByteArray (decoder) {
-  baseType(this, decoder)
+function DynamicByteArray () {
+  this.storageSlots = 1
+  this.storageBytes = 32
+  this.typeName = 'bytes'
 }
 
 DynamicByteArray.prototype.decodeFromStorage = function (location, storageContent) {

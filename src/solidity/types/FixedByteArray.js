@@ -1,8 +1,9 @@
 'use strict'
-var baseType = require('./baseType')
 
-function FixedByteArray (decoder) {
-  baseType(this, decoder)
+function FixedByteArray (storageBytes) {
+  this.storageSlots = 1
+  this.storageBytes = storageBytes
+  this.typeName = 'bytesX'
 }
 
 FixedByteArray.prototype.decodeFromStorage = function (location, storageContent) {
