@@ -834,13 +834,12 @@ UniversalDApp.prototype.rawRunTx = function (args, cb) {
       }
 
       self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-        var transactionHash = self.txdebugger.web3().releaseCurrentHash() // used to keep track of the transaction
         if (args.useCall) {
-          self.vm.stateManager.revert()
+          self.vm.stateManager.revert(function () {})
         }
         cb(err, {
           result: result,
-          transactionHash: transactionHash
+          transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
         })
       })
     } catch (e) {
