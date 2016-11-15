@@ -19,7 +19,7 @@ gasCosts.prototype.report = function (compilationResults) {
       if (fallback === null || fallback >= 2100) {
         report.push({
           warning: `Fallback function of contract ${contractName} requires too much gas (${fallback}).\n
-          If the fallback function requires too much gas, the contract cannot receive Ether.`
+          If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`
         })
       }
     }
