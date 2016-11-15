@@ -1,153 +1,118 @@
 'use strict'
+
+var AddressType = require('./types/Address')
+var ArrayType = require('./types/ArrayType')
+var BoolType = require('./types/Bool')
+var BytesType = require('./types/DynamicByteArray')
+var BytesXType = require('./types/FixedByteArray')
+var EnumType = require('./types/Enum')
+var StringType = require('./types/StringType')
+var StructType = require('./types/Struct')
+var IntType = require('./types/Int')
+var UintType = require('./types/Uint')
+
 /**
   * Uint decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g uint256, uint32)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Uint (type) {
   type === 'uint' ? 'uint256' : type
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: parseInt(type.replace('uint', '')) / 8,
-    typeName: type
-  }
+  var storageBytes = parseInt(type.replace('uint', '')) / 8
+  return new UintType(storageBytes)
 }
 
 /**
   * Int decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256, int32)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Int (type) {
   type === 'int' ? 'int256' : type
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: parseInt(type.replace('int', '')) / 8,
-    typeName: type
-  }
+  var storageBytes = parseInt(type.replace('int', '')) / 8
+  return new IntType(storageBytes)
 }
 
 /**
   * Address decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g address)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Address (type) {
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: 20,
-    typeName: 'address'
-  }
+  return new AddressType()
 }
 
 /**
   * Bool decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bool)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function Bool (type) {
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: 1,
-    typeName: 'bool'
-  }
+  return new BoolType()
 }
 
 /**
   * DynamicByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function DynamicByteArray (type) {
-  return {
-    needsFreeStorageSlot: true,
-    storageBytes: 32,
-    typeName: 'bytes'
-  }
+  return new BytesType()
 }
 
 /**
   * FixedByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes16)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function FixedByteArray (type) {
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: parseInt(type.replace('bytes', '')),
-    typeName: type
-  }
+  var storageBytes = parseInt(type.replace('bytes', ''))
+  return new BytesXType(storageBytes)
 }
 
 /**
   * StringType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g string storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function StringType (type) {
-  return {
-    needsFreeStorageSlot: true,
-    storageBytes: 32,
-    typeName: 'string'
-  }
+function String (type) {
+  return new StringType()
 }
 
 /**
   * ArrayType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256[] storage ref, int256[] storage ref[] storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, arraySize, subArray}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
-function ArrayType (type, stateDefinitions) {
+function Array (type, stateDefinitions) {
   var arraySize
-  var storageBytes
-
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match || match.length < 3) {
     console.log('unable to parse type ' + type)
     return null
   }
-
   arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
-
-  var underlyingType = decode(match[1], stateDefinitions)
+  var underlyingType = parseType(match[1], stateDefinitions)
   if (underlyingType === null) {
     console.log('unable to parse type ' + type)
     return null
   }
-
-  if (arraySize === 'dynamic') {
-    storageBytes = 32
-  } else {
-    storageBytes = underlyingType.storageBytes
-    if (storageBytes > 32) {
-      storageBytes = 32 * arraySize * Math.ceil(storageBytes / 32)
-    } else {
-      storageBytes = 32 * (arraySize / Math.floor(32 / storageBytes))
-    }
-  }
-
-  return {
-    needsFreeStorageSlot: true,
-    storageBytes: storageBytes,
-    typeName: type,
-    arraySize: arraySize,
-    underlyingType: underlyingType
-  }
+  return new ArrayType(underlyingType, arraySize)
 }
 
 /**
   * Enum decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g enum enumDef)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, enum}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName, enum}
   */
 function Enum (type, stateDefinitions) {
   var enumDef = getEnum(type, stateDefinitions)
@@ -155,25 +120,14 @@ function Enum (type, stateDefinitions) {
     console.log('unable to retrieve decode info of ' + type)
     return null
   }
-  var length = enumDef.children.length
-  var storageBytes = 0
-  while (length > 1) {
-    length = length / 256
-    storageBytes++
-  }
-  return {
-    needsFreeStorageSlot: false,
-    storageBytes: storageBytes,
-    typeName: type,
-    enum: enumDef
-  }
+  return new EnumType(enumDef)
 }
 
 /**
   * Struct decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g struct structDef storage ref)
-  * @return {Object} returns decoded info about the current type: { needsFreeStorageSlot, storageBytes, typeName, members}
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
 function Struct (type, stateDefinitions) {
   var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
@@ -182,12 +136,7 @@ function Struct (type, stateDefinitions) {
   }
   var memberDetails = getStructMembers(match[1], stateDefinitions) // type is used to extract the ast struct definition
   if (!memberDetails) return null
-  return {
-    needsFreeStorageSlot: true,
-    storageBytes: memberDetails.storageBytes,
-    typeName: type,
-    members: memberDetails.members
-  }
+  return new StructType(memberDetails)
 }
 
 /**
@@ -200,7 +149,7 @@ function Struct (type, stateDefinitions) {
 function getEnum (type, stateDefinitions) {
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
-    if (type === 'enum ' + dec.attributes.name) {
+    if (dec.attributes && dec.attributes.name && type === 'enum ' + dec.attributes.name) {
       return dec
     }
   }
@@ -222,15 +171,12 @@ function getStructMembers (typeName, stateDefinitions) {
     if (dec.name === 'StructDefinition' && typeName === dec.attributes.name) {
       for (var i in dec.children) {
         var member = dec.children[i]
-        var decoded = decode(member.attributes.type, stateDefinitions)
+        var decoded = parseType(member.attributes.type, stateDefinitions)
         if (!decoded) {
           console.log('unable to retrieve decode info of ' + member.attributes.type)
           return null
         }
         members.push(decoded)
-        if (decoded.needsFreeStorageSlot) {
-          storageBytes = Math.ceil(storageBytes / 32) * 32
-        }
         storageBytes += decoded.storageBytes
       }
       break
@@ -266,15 +212,15 @@ function typeClass (fullType) {
   * @param {Object} stateDefinitions - all state stateDefinitions given by the AST (including struct and enum type declaration)
   * @return {Object} - return the corresponding decoder or null on error
   */
-function decode (type, stateDefinitions) {
+function parseType (type, stateDefinitions) {
   var decodeInfos = {
     'address': Address,
-    'array': ArrayType,
+    'array': Array,
     'bool': Bool,
     'bytes': DynamicByteArray,
     'bytesX': FixedByteArray,
     'enum': Enum,
-    'string': StringType,
+    'string': String,
     'struct': Struct,
     'int': Int,
     'uint': Uint
@@ -288,15 +234,15 @@ function decode (type, stateDefinitions) {
 }
 
 module.exports = {
-  decode: decode,
+  parseType: parseType,
   Uint: Uint,
   Address: Address,
   Bool: Bool,
   DynamicByteArray: DynamicByteArray,
   FixedByteArray: FixedByteArray,
   Int: Int,
-  StringType: StringType,
-  ArrayType: ArrayType,
+  String: String,
+  Array: Array,
   Enum: Enum,
   Struct: Struct
 }
