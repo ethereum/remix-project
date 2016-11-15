@@ -165,26 +165,41 @@ function getEnum (type, stateDefinitions) {
   */
 function getStructMembers (typeName, stateDefinitions) {
   var members = []
-  var storageBytes = 0
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
     if (dec.name === 'StructDefinition' && typeName === dec.attributes.name) {
+      var location = {
+        offset: 0,
+        slot: 0
+      }
       for (var i in dec.children) {
         var member = dec.children[i]
-        var decoded = parseType(member.attributes.type, stateDefinitions)
-        if (!decoded) {
+        var type = parseType(member.attributes.type, stateDefinitions)
+        if (location.offset + type.storageBytes > 32) {
+          location.slot++
+          location.offset = 0
+        }
+        if (!type) {
           console.log('unable to retrieve decode info of ' + member.attributes.type)
           return null
         }
-        members.push(decoded)
-        storageBytes += decoded.storageBytes
+        members.push(type)
+        if (type.storageSlots === 1 && location.offset + type.storageBytes <= 32) {
+          location.offset += type.storageBytes
+        } else {
+          location.slot += type.storageSlots
+          location.offset = 0
+        }
+      }
+      if (location.offset > 0) {
+        location.slot++
       }
       break
     }
   }
   return {
     members: members,
-    storageBytes: storageBytes
+    storageBytes: location.slot
   }
 }
 
