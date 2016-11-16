@@ -25,40 +25,13 @@ function decodeState (stateVars, storageContent) {
   * @return {Object} - return the location of all contract variables in the storage
   */
 function extractStateVariables (contractName, sourcesList) {
-  var stateDefinitions = astHelper.extractStateVariables(contractName, sourcesList)
+  var state = astHelper.extractState(contractName, sourcesList)
   var ret = []
-  if (!stateDefinitions) {
+  if (!state) {
     return ret
   }
-  var location = {
-    offset: 0,
-    slot: 0
-  }
-  for (var k in stateDefinitions) {
-    var variable = stateDefinitions[k]
-    if (variable.name === 'VariableDeclaration') {
-      var type = decodeInfo.parseType(variable.attributes.type, stateDefinitions)
-      if (location.offset + type.storageBytes > 32) {
-        location.slot++
-        location.offset = 0
-      }
-      ret.push({
-        name: variable.attributes.name,
-        type: type,
-        location: {
-          offset: location.offset,
-          slot: location.slot
-        }
-      })
-      if (type.storageSlots === 1 && location.offset + type.storageBytes <= 32) {
-        location.offset += type.storageBytes
-      } else {
-        location.slot += type.storageSlots
-        location.offset = 0
-      }
-    }
-  }
-  return ret
+  var offsets = decodeInfo.computeOffsets(state.stateVariables, state.stateItems)
+  return offsets.typesOffsets
 }
 
 /**
@@ -79,4 +52,3 @@ module.exports = {
   extractStateVariables: extractStateVariables,
   decodeState: decodeState
 }
-

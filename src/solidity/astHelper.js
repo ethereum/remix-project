@@ -37,28 +37,37 @@ function getLinearizedBaseContracts (id, contractsById) {
   *
   * @param {String} contractName - contract for which state var should be resolved
   * @param {Object} sourcesList - sources list (containing root AST node)
-  * @return {Array} - return an array of AST node of all state variables (including inherited) (this will include all enum/struct declarations)
+  * @return {Object} - return an object containing: stateItems - list of all the children node of the @arg contractName
+  *                                                 stateVariables - list of all the variable declaration of the @arg contractName
   */
-function extractStateVariables (contractName, sourcesList) {
+function extractState (contractName, sourcesList) {
   var contracts = extractContractDefinitions(sourcesList)
   var node = contracts.contractsByName[contractName]
   if (node) {
+    var stateItems = []
     var stateVar = []
     var baseContracts = getLinearizedBaseContracts(node.id, contracts.contractsById)
     baseContracts.reverse()
     for (var k in baseContracts) {
       var ctr = baseContracts[k]
       for (var i in ctr.children) {
-        stateVar.push(ctr.children[i])
+        var item = ctr.children[i]
+        stateItems.push(item)
+        if (item.name === 'VariableDeclaration') {
+          stateVar.push(item)
+        }
       }
     }
-    return stateVar
+    return {
+      stateItems: stateItems,
+      stateVariables: stateVar
+    }
   }
   return null
 }
 
 module.exports = {
-  extractStateVariables: extractStateVariables,
+  extractState: extractState,
   extractContractDefinitions: extractContractDefinitions,
   getLinearizedBaseContracts: getLinearizedBaseContracts
 }

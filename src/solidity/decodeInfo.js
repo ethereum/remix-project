@@ -164,28 +164,17 @@ function getEnum (type, stateDefinitions) {
   * @return {Array} containing all members of the current struct type
   */
 function getStructMembers (typeName, stateDefinitions) {
-  var members = []
-  var storageBytes = 0
   for (var k in stateDefinitions) {
     var dec = stateDefinitions[k]
     if (dec.name === 'StructDefinition' && typeName === dec.attributes.name) {
-      for (var i in dec.children) {
-        var member = dec.children[i]
-        var decoded = parseType(member.attributes.type, stateDefinitions)
-        if (!decoded) {
-          console.log('unable to retrieve decode info of ' + member.attributes.type)
-          return null
-        }
-        members.push(decoded)
-        storageBytes += decoded.storageBytes
+      var offsets = computeOffsets(dec.children, stateDefinitions)
+      return {
+        members: offsets.typesOffsets,
+        storageSlots: offsets.endLocation.slot
       }
-      break
     }
   }
-  return {
-    members: members,
-    storageBytes: storageBytes
-  }
+  return null
 }
 
 /**
@@ -233,8 +222,57 @@ function parseType (type, stateDefinitions) {
   return decodeInfos[currentType](type, stateDefinitions)
 }
 
+/**
+  * compute offset (slot offset and byte offset of the @arg list of types)
+  *
+  * @param {Array} types - list of types
+  * @param {Object} stateItems - all state definitions given by the AST (including struct and enum type declaration)
+  * @return {Array} - return an array of types item: {name, type, location}. location defines the byte offset and slot offset
+  */
+function computeOffsets (types, stateItems, cb) {
+  var ret = []
+  var location = {
+    offset: 0,
+    slot: 0
+  }
+  for (var i in types) {
+    var variable = types[i]
+    var type = parseType(variable.attributes.type, stateItems)
+    if (!type) {
+      console.log('unable to retrieve decode info of ' + variable.attributes.type)
+      return null
+    }
+    if (location.offset + type.storageBytes > 32) {
+      location.slot++
+      location.offset = 0
+    }
+    ret.push({
+      name: variable.attributes.name,
+      type: type,
+      location: {
+        offset: location.offset,
+        slot: location.slot
+      }
+    })
+    if (type.storageSlots === 1 && location.offset + type.storageBytes <= 32) {
+      location.offset += type.storageBytes
+    } else {
+      location.slot += type.storageSlots
+      location.offset = 0
+    }
+  }
+  if (location.offset > 0) {
+    location.slot++
+  }
+  return {
+    typesOffsets: ret,
+    endLocation: location
+  }
+}
+
 module.exports = {
   parseType: parseType,
+  computeOffsets: computeOffsets,
   Uint: Uint,
   Address: Address,
   Bool: Bool,
