@@ -1,7 +1,7 @@
 'use strict'
 
 function Struct (memberDetails) {
-  this.storageSlots = memberDetails.storageBytes
+  this.storageSlots = memberDetails.storageSlots
   this.storageBytes = 32
   this.members = memberDetails.members
   this.typeName = 'struct'

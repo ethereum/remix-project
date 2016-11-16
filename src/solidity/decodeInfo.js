@@ -170,7 +170,7 @@ function getStructMembers (typeName, stateDefinitions) {
       var offsets = computeOffsets(dec.children, stateDefinitions)
       return {
         members: offsets.typesOffsets,
-        storageBytes: offsets.endLocation.slot
+        storageSlots: offsets.endLocation.slot
       }
     }
   }
@@ -238,13 +238,13 @@ function computeOffsets (types, stateItems, cb) {
   for (var i in types) {
     var variable = types[i]
     var type = parseType(variable.attributes.type, stateItems)
-    if (location.offset + type.storageBytes > 32) {
-      location.slot++
-      location.offset = 0
-    }
     if (!type) {
       console.log('unable to retrieve decode info of ' + variable.attributes.type)
       return null
+    }
+    if (location.offset + type.storageBytes > 32) {
+      location.slot++
+      location.offset = 0
     }
     ret.push({
       name: variable.attributes.name,
