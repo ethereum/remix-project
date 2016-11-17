@@ -1,4 +1,5 @@
 'use strict'
+var util = require('./util')
 
 function Struct (memberDetails) {
   this.storageSlots = memberDetails.storageSlots
@@ -12,7 +13,7 @@ Struct.prototype.decodeFromStorage = function (location, storageContent) {
   this.members.map(function (item, i) {
     var globalLocation = {
       offset: location.offset + item.location.offset,
-      slot: location.slot + item.location.slot
+      slot: util.add(location.slot, item.location.slot)
     }
     ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
   })

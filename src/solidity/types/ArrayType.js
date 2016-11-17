@@ -1,4 +1,6 @@
 'use strict'
+var util = require('./util')
+var BN = require('ethereumjs-util').BN
 
 function ArrayType (underlyingType, arraySize) {
   this.typeName = 'array'
@@ -19,7 +21,42 @@ function ArrayType (underlyingType, arraySize) {
 }
 
 ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  var ret = []
+  var size = null
+  var slotValue = util.extractValue(location, storageContent, this.storageBytes)
+  if (!slotValue) {
+    return []
+  }
+  var currentLocation = {
+    offset: 0,
+    slot: location.slot
+  }
+  if (this.arraySize === 'dynamic') {
+    size = util.toBN(slotValue)
+    currentLocation.slot = util.dynamicTypePointer(location.slot)
+    if (!storageContent[currentLocation.slot]) {
+      return []
+    }
+  } else {
+    size = new BN(this.arraySize)
+  }
+  var k = util.toBN(0)
+  var one = util.toBN(1)
+  while (k.lt(size)) {
+    if (currentLocation.offset + this.underlyingType.storageBytes > 32) {
+      currentLocation.offset = 0
+      currentLocation.slot = '0x' + util.add(currentLocation.slot, one).toString(16)
+    }
+    ret.push(this.underlyingType.decodeFromStorage(currentLocation, storageContent))
+    if (this.underlyingType.storageSlots === 1 && location.offset + this.underlyingType.storageBytes <= 32) {
+      currentLocation.offset += this.underlyingType.storageBytes
+    } else {
+      currentLocation.slot = '0x' + util.add(currentLocation.slot, this.underlyingType.storageSlots).toString(16)
+      currentLocation.offset = 0
+    }
+    k = k.add(one)
+  }
+  return ret
 }
 
 module.exports = ArrayType

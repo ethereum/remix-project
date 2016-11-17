@@ -34,15 +34,21 @@ function readFromStorage (slot, storageContent) {
     return extractSlotValue(storageContent[slot], storageBytes, location)
   },
 
-  dynamicTypePointer: function getDynamicPointer (location) {
-    var remoteSlot = formatSlot(location.slot)
+  dynamicTypePointer: function (slot) {
+    var remoteSlot = toLongHex(slot)
     var key = ethutil.sha3(remoteSlot)
     return ethutil.bufferToHex(key)
-  }
+  },
 
+  toLongHex: toLongHex,
+  toBN: toBN,
+  add: add
 }
 
-function formatSlot (slot) {
+function toLongHex (slot) {
+  if (slot instanceof BN) {
+    slot = '0x' + slot.toString(16)
+  }
   return ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
 }
 
@@ -74,6 +80,21 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
   return slotValue.substr(offset, 2 * byteLength)
 }
 
+function toBN (value) {
+  if (value instanceof BN) {
+    return value
+  } else if (value.indexOf && value.indexOf('0x') === 0) {
+    value = ethutil.unpad(value.replace('Ox', ''))
+    value = new BN(value === '' ? '0' : value, 16)
+  } else if (!isNaN(value)) {
+    value = new BN(value)
+  }
+  return value
+}
+
+function add (value1, value2) {
+  return toBN(value1).add(toBN(value2))
+}
 /**
  * @returns a hex encoded storage content at the given @arg location. it does not have Ox prefix but always has the full length.
  *
