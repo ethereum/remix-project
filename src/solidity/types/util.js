@@ -1,13 +1,46 @@
+'use strict'
+var ethutil = require('ethereumjs-util')
+var BN = require('ethereumjs-util').BN
+
 module.exports = {
-  extractValue: function (slotValue, storageBytes, location) {
-    slotValue = slotValue.replace('0x', '')
-    var offset = slotValue.length - 2 * location.offset - storageBytes / 4
-    if (offset >= 0) {
-      return '0x' + slotValue.substr(offset, storageBytes / 4)
-    } else if (offset + storageBytes > 0) {
-      return '0x' + slotValue.substr(0, storageBytes / 4 + offset)
+  extractHexByteSlice: extractHexByteSlice,
+  extractSlotValue: extractSlotValue,
+  decodeInt: decodeInt
+}
+
+function decodeInt (location, storageContent, byteLength) {
+  var slotvalue = extractSlotValue(location.slot, storageContent)
+  if (slotvalue === null) {
+    return '0'
+  }
+  var value = extractHexByteSlice(slotvalue, byteLength, location.offset)
+  var bigNumber = new BN(value, 16)
+  bigNumber = bigNumber.fromTwos(8 * byteLength)
+  return bigNumber.toString(10)
+}
+
+function extractSlotValue (slot, storageContent) {
+  var hexSlot = ethutil.bufferToHex(slot)
+  if (storageContent[hexSlot] !== undefined) {
+    return storageContent[hexSlot]
+  } else {
+    hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
+    if (storageContent[hexSlot]) {
+      return storageContent[hexSlot]
     } else {
-      return '0x0'
+      return null
     }
   }
+}
+
+function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
+  if (slotValue === undefined) {
+    slotValue = '0'
+  }
+  slotValue = slotValue.replace('0x', '')
+  if (slotValue.length < 64) {
+    slotValue = (new Array(64 - slotValue.length + 1).join('0')) + slotValue
+  }
+  var offset = slotValue.length - 2 * offsetFromLSB - 2 * byteLength
+  return slotValue.substr(offset, 2 * byteLength)
 }
