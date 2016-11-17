@@ -7,6 +7,7 @@ tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
     testIntStorage(st)
     testByteStorage(st)
+    testStructArrayStorage(st)
     st.end()
   })
 })
@@ -196,4 +197,16 @@ function shrinkStorage (storage) {
     shrinkedStorage[key.replace(regex, '0x$2')] = value.replace(regex, '0x$2')
   }
   return shrinkedStorage
+}
+
+function testStructArrayStorage (st) {
+  var structArrayStorage = require('./contracts/structArrayStorage')
+  var output = compiler.compile(structArrayStorage.contract, 0)
+  var decoded = stateDecoder.solidityState(structArrayStorage.storage, output.sources, 'structArrayStorage')
+  st.equal(decoded['intStructDec']['i8'], '32')
+  st.equal(decoded['intStructDec']['i16'], '-54')
+  st.equal(decoded['intStructDec']['ui32'], '128')
+  st.equal(decoded['intStructDec']['i256'], '-1243565465756')
+  st.equal(decoded['intStructDec']['ui16'], '34556')
+  st.equal(decoded['intStructDec']['i32'], '-345446546')
 }

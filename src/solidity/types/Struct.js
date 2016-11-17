@@ -8,7 +8,15 @@ function Struct (memberDetails) {
 }
 
 Struct.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  var ret = {}
+  this.members.map(function (item, i) {
+    var globalLocation = {
+      offset: location.offset + item.location.offset,
+      slot: location.slot + item.location.slot
+    }
+    ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
+  })
+  return ret
 }
 
 module.exports = Struct
