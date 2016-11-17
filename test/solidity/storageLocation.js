@@ -2,7 +2,7 @@
 var tape = require('tape')
 var compiler = require('solc')
 var index = require('../../src/index')
-var contracts = require('./contracts')
+var contracts = require('./contracts/miscContracts')
 
 tape('solidity', function (t) {
   t.test('storage location', function (st) {
