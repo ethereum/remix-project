@@ -31,6 +31,30 @@ function readFromStorage (slot, storageContent) {
     } else {
       ret = '000000000000000000000000000000000000000000000000000000000000000'
     }
+    return extractSlotValue(storageContent[slot], storageBytes, location)
+  },
+
+  dynamicTypePointer: function getDynamicPointer (location) {
+    var remoteSlot = formatSlot(location.slot)
+    var key = ethutil.sha3(remoteSlot)
+    return ethutil.bufferToHex(key)
+  }
+
+}
+
+function formatSlot (slot) {
+  return ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
+}
+
+function extractSlotValue (slotValue, storageBytes, location) {
+  slotValue = slotValue.replace('0x', '')
+  var offset = slotValue.length - 2 * location.offset - 2 * storageBytes
+  if (offset >= 0) {
+    return '0x' + slotValue.substr(offset, 2 * storageBytes)
+  } else if (offset + 2 * storageBytes > 0) {
+    return '0x' + slotValue.substr(0, 2 * storageBytes + offset)
+  } else {
+    return '0x0'
   }
   if (ret.length < 64) {
     ret = (new Array(64 - ret.length + 1).join('0')) + ret
