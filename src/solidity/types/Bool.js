@@ -1,4 +1,5 @@
 'use strict'
+var util = require('./util')
 
 function Bool () {
   this.storageSlots = 1
@@ -7,7 +8,8 @@ function Bool () {
 }
 
 Bool.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  var value = util.extractValue(location, storageContent, this.storageBytes)
+  return value !== '0x00'
 }
 
 module.exports = Bool

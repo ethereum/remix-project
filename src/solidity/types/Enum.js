@@ -1,4 +1,5 @@
 'use strict'
+var util = require('./util')
 
 function Enum (enumDef) {
   this.enumDef = enumDef
@@ -13,7 +14,9 @@ function Enum (enumDef) {
 }
 
 Enum.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  var value = util.extractValue(location, storageContent, this.storageBytes)
+  value = parseInt(value)
+  return this.enumDef.children[value].attributes.name
 }
 
 module.exports = Enum

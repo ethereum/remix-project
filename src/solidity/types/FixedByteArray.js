@@ -1,4 +1,6 @@
 'use strict'
+var util = require('./util')
+var utileth = require('ethereumjs-util')
 
 function FixedByteArray (storageBytes) {
   this.storageSlots = 1
@@ -7,7 +9,8 @@ function FixedByteArray (storageBytes) {
 }
 
 FixedByteArray.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  var value = util.extractValue(location, storageContent, this.storageBytes)
+  return '0x' + utileth.unpad(value.replace('0x', '')).toUpperCase()
 }
 
 module.exports = FixedByteArray
