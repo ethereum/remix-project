@@ -40,7 +40,12 @@ Renderer.prototype.error = function (message, container, options) {
   if (!opt.type) {
     opt.type = utils.errortype(message)
   }
-  var $pre = $(opt.useSpan ? '<span />' : '<pre />').text(message)
+  var $pre
+  if (opt.isHTML) {
+    $pre = $(opt.useSpan ? '<span />' : '<pre />').html(message)
+  } else {
+    $pre = $(opt.useSpan ? '<span />' : '<pre />').text(message)
+  }
   var $error = $('<div class="sol ' + opt.type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre)
   if (container === undefined) {
     container = $('#output')

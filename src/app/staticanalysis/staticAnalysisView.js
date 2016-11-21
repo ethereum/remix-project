@@ -78,7 +78,7 @@ staticAnalysisView.prototype.run = function () {
             location = self.offsetToColumnConverter.offsetToLineColumn(location, file, self.editor, self.lastCompilationResult)
             location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
-          self.renderer.error(location + ' ' + item.warning, warningContainer, {type: 'warning', useSpan: true})
+          self.renderer.error(location + ' ' + item.warning, warningContainer, {type: 'warning', useSpan: true, isHTML: true})
         })
       })
       if (warningContainer.html() === '') {

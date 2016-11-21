@@ -33,7 +33,6 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
   contractHelper.testContracts(browser, sources.sources.Untitled, ['TooMuchGas', 'test1', 'test2'], function () {
-    console.log('pppzzz?')
     browser
       .click('.staticanalysisView')
       .click('#staticanalysisView button')
