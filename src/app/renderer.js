@@ -11,9 +11,9 @@ function Renderer (editor, updateFiles, udapp, executionContext, formalVerificat
   this.udapp = udapp
   this.executionContext = executionContext
   var self = this
-  formalVerificationEvent.register('compilationFinished', this, function (success, message, container, noAnnotations) {
+  formalVerificationEvent.register('compilationFinished', this, function (success, message, container, options) {
     if (!success) {
-      self.error(message, container, noAnnotations)
+      self.error(message, container, options)
     }
   })
   compilerEvent.register('compilationFinished', this, function (success, data, source) {
@@ -34,13 +34,19 @@ function Renderer (editor, updateFiles, udapp, executionContext, formalVerificat
   })
 }
 
-Renderer.prototype.error = function (message, container, noAnnotations, type) {
+Renderer.prototype.error = function (message, container, options) {
   var self = this
-  if (!type) {
-    type = utils.errortype(message)
+  var opt = options || {}
+  if (!opt.type) {
+    opt.type = utils.errortype(message)
   }
-  var $pre = $('<pre />').text(message)
-  var $error = $('<div class="sol ' + type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre)
+  var $pre
+  if (opt.isHTML) {
+    $pre = $(opt.useSpan ? '<span />' : '<pre />').html(message)
+  } else {
+    $pre = $(opt.useSpan ? '<span />' : '<pre />').text(message)
+  }
+  var $error = $('<div class="sol ' + opt.type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre)
   if (container === undefined) {
     container = $('#output')
   }
@@ -50,12 +56,12 @@ Renderer.prototype.error = function (message, container, noAnnotations, type) {
     var errFile = err[1]
     var errLine = parseInt(err[2], 10) - 1
     var errCol = err[4] ? parseInt(err[4], 10) : 0
-    if (!noAnnotations && (errFile === '' || errFile === utils.fileNameFromKey(self.editor.getCacheFile()))) {
+    if (!opt.noAnnotations && (errFile === '' || errFile === utils.fileNameFromKey(self.editor.getCacheFile()))) {
       self.editor.addAnnotation({
         row: errLine,
         column: errCol,
         text: message,
-        type: type
+        type: opt.type
       })
     }
     $error.click(function (ev) {
@@ -63,7 +69,6 @@ Renderer.prototype.error = function (message, container, noAnnotations, type) {
         // Switch to file
         self.editor.setCacheFile(utils.fileKey(errFile))
         self.updateFiles()
-      // @TODO could show some error icon in files with errors
       }
       self.editor.handleErrorClick(errLine, errCol)
     })

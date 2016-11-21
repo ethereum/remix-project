@@ -299,6 +299,9 @@ body {
     margin-right: 1em;
     cursor: pointer;
 }
+#staticanalysismodules label {
+    display: block;
+}
 
 #header .origin,
 #header #executionContext {

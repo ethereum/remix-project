@@ -25,7 +25,10 @@ function FormalVerification (outputElement, compilerEvent) {
 
 FormalVerification.prototype.compilationFinished = function (compilationResult) {
   if (compilationResult.formal === undefined) {
-    this.event.trigger('compilationFinished', [false, 'Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), true])
+    this.event.trigger(
+      'compilationFinished',
+      [false, 'Formal verification not supported by this compiler version.', $('#formalVerificationErrors'), {noAnnotations: true}]
+    )
   } else {
     if (compilationResult.formal['why3'] !== undefined) {
       $('#formalVerificationInput', this.outputElement).val(
@@ -37,10 +40,10 @@ FormalVerification.prototype.compilationFinished = function (compilationResult) 
     if (compilationResult.formal.errors !== undefined) {
       var errors = compilationResult.formal.errors
       for (var i = 0; i < errors.length; i++) {
-        this.event.trigger('compilationFinished', [false, errors[i], $('#formalVerificationErrors'), true])
+        this.event.trigger('compilationFinished', [false, errors[i], $('#formalVerificationErrors'), {noAnnotations: true}])
       }
     } else {
-      this.event.trigger('compilationFinished', [true, null, null, true])
+      this.event.trigger('compilationFinished', [true, null, null, {noAnnotations: true}])
     }
   }
 }

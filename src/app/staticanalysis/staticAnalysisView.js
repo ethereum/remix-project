@@ -28,8 +28,10 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`<div>
     <strong>Static Analysis</strong>
-    <div>Select analyser to run against current compiled contracts <label><input id="autorunstaticanalysis" type="checkbox" checked="true">Auto run Static Analysis</label></div>    
+    <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" checked="true">Auto run</label>
+    <div id="staticanalysismodules">
     ${this.modulesView}
+    </div>
     <div>
       <button onclick=${function () { self.run() }} >Run</button>
     </div>
@@ -45,14 +47,10 @@ staticAnalysisView.prototype.selectedModules = function () {
   if (!this.view) {
     return []
   }
-  var selected = this.view.querySelectorAll('[name="staticanalysismodule"]')
+  var selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
   var toRun = []
   for (var i = 0; i < selected.length; i++) {
-    var el = selected[i]
-    if (el.checked) {
-      var analyser = this.runner.modules()[el.attributes['index'].value]
-      toRun.push(new analyser.Module())
-    }
+    toRun.push(selected[i].attributes['index'].value)
   }
   return toRun
 }
@@ -66,18 +64,21 @@ staticAnalysisView.prototype.run = function () {
   warningContainer.empty()
   if (this.lastCompilationResult) {
     var self = this
-    this.runner.run(this.lastCompilationResult.sources, selected, function (results) {
+    this.runner.run(this.lastCompilationResult, selected, function (results) {
       results.map(function (result, i) {
         result.report.map(function (item, i) {
-          var split = item.location.split(':')
-          var file = split[2]
-          var location = {
-            start: parseInt(split[0]),
-            length: parseInt(split[1])
+          var location = ''
+          if (item.location !== undefined) {
+            var split = item.location.split(':')
+            var file = split[2]
+            location = {
+              start: parseInt(split[0]),
+              length: parseInt(split[1])
+            }
+            location = self.offsetToColumnConverter.offsetToLineColumn(location, file, self.editor, self.lastCompilationResult)
+            location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
-          location = self.offsetToColumnConverter.offsetToLineColumn(location, file, self.editor, self.lastCompilationResult)
-          location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
-          self.renderer.error(location + ' ' + item.warning, warningContainer, false, 'warning')
+          self.renderer.error(location + ' ' + item.warning, warningContainer, {type: 'warning', useSpan: true, isHTML: true})
         })
       })
       if (warningContainer.html() === '') {
