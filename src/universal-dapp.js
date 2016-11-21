@@ -3,13 +3,12 @@
 
 var $ = require('jquery')
 var ethJSUtil = require('ethereumjs-util')
-var EthJSTX = require('ethereumjs-tx')
 var ethJSABI = require('ethereumjs-abi')
-var EthJSBlock = require('ethereumjs-block')
 var BN = ethJSUtil.BN
 var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
+var TxRunner = require('./app/txRunner')
 
 /*
   trigger debugRequested
@@ -34,10 +33,18 @@ function UniversalDApp (executionContext, options, txdebugger) {
   self.executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
+  self.txRunner = new TxRunner(executionContext, {
+    queueTxs: true,
+    personalMode: true
+  })
 }
 
 UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGasLimit, renderer) {
   this.$el.empty()
+  this.txRunner = new TxRunner(this.executionContext, {
+    queueTxs: true,
+    personalMode: true
+  })
   this.contracts = contracts
   this.getAddress = getAddress
   this.getValue = getValue
@@ -50,7 +57,6 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a')
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce')
-    this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
   }
 }
 
@@ -668,20 +674,6 @@ UniversalDApp.prototype.clickContractAt = function (self, $output, contract) {
   self.getInstanceInterface(contract, address, $output)
 }
 
-function tryTillResponse (web3, txhash, done) {
-  web3.eth.getTransactionReceipt(txhash, function (err, result) {
-    if (!err && !result) {
-      // Try again with a bit of delay
-      setTimeout(function () { tryTillResponse(web3, txhash, done) }, 500)
-    } else {
-      done(err, {
-        result: result,
-        transactionHash: result.transactionHash
-      })
-    }
-  })
-}
-
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = {
@@ -689,7 +681,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     data: args.data,
     useCall: args.useCall
   }
-
+  var accounts = this.accounts
   async.waterfall([
     // query gas limit
     function (callback) {
@@ -733,7 +725,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback(err)
           }
 
-          tx.from = ret
+          tx.from = accounts[ret]
           callback()
         })
       } else {
@@ -746,115 +738,19 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback('No accounts available')
           }
 
-          tx.from = ret[0]
+          tx.from = accounts[ret[0]]
+          if (self.executionContext.isVM() && !self.accounts[tx.from]) {
+            return callback('Invalid account selected')
+          }
           callback()
         })
       }
     },
     // run transaction
     function (callback) {
-      self.rawRunTx(tx, callback)
+      self.txRunner.rawRun(tx, function (error, result) { callback(error, result) })
     }
   ], cb)
-}
-
-UniversalDApp.prototype.rawRunTx = function (args, cb) {
-  var self = this
-  var from = args.from
-  var to = args.to
-  var data = args.data
-  if (data.slice(0, 2) !== '0x') {
-    data = '0x' + data
-  }
-  var value = args.value
-  var gasLimit = args.gasLimit
-
-  var tx
-  if (!self.executionContext.isVM()) {
-    tx = {
-      from: from,
-      to: to,
-      data: data,
-      value: value
-    }
-    if (args.useCall) {
-      tx.gas = gasLimit
-      var callhash = self.web3.sha3(JSON.stringify(tx))
-      self.web3.eth.call(tx, function (error, result) {
-        if (error) {
-          return cb(error)
-        }
-        cb(null, {
-          result: result,
-          transactionHash: callhash
-        })
-      })
-    } else {
-      self.web3.eth.estimateGas(tx, function (err, resp) {
-        if (err) {
-          return cb(err, resp)
-        }
-
-        if (resp > gasLimit) {
-          return cb('Gas required exceeds limit: ' + resp)
-        }
-
-        tx.gas = resp
-
-        var sendTransaction = self.personalMode ? self.web3.personal.unlockAccountAndSendTransaction : self.web3.eth.sendTransaction
-
-        sendTransaction(tx, function (err, resp) {
-          if (err) {
-            return cb(err, resp)
-          }
-
-          tryTillResponse(self.web3, resp, cb)
-        })
-      })
-    }
-  } else {
-    try {
-      var account = self.accounts[from]
-      if (!account) {
-        return cb('Invalid account selected')
-      }
-      tx = new EthJSTX({
-        nonce: new BN(account.nonce++),
-        gasPrice: new BN(1),
-        gasLimit: new BN(gasLimit, 10),
-        to: to,
-        value: new BN(value, 10),
-        data: new Buffer(data.slice(2), 'hex')
-      })
-      tx.sign(account.privateKey)
-      var block = new EthJSBlock({
-        header: {
-          // FIXME: support coinbase, difficulty and gasLimit
-          timestamp: new Date().getTime() / 1000 | 0,
-          number: self.blockNumber
-        },
-        transactions: [],
-        uncleHeaders: []
-      })
-      if (!args.useCall) {
-        ++self.blockNumber
-      } else {
-        self.vm.stateManager.checkpoint()
-      }
-
-      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-        if (args.useCall) {
-          self.vm.stateManager.revert(function () {})
-        }
-        cb(err, {
-          result: result,
-          transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
-        })
-      })
-    } catch (e) {
-      cb(e, null)
-    }
-  }
 }
 
 module.exports = UniversalDApp
