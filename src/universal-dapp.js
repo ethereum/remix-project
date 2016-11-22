@@ -779,7 +779,16 @@ UniversalDApp.prototype.rawRunTx = function (args, cb) {
     }
     if (args.useCall) {
       tx.gas = gasLimit
-      self.web3.eth.call(tx, cb)
+      var callhash = self.web3.sha3(JSON.stringify(tx))
+      self.web3.eth.call(tx, function (error, result) {
+        if (error) {
+          return cb(error)
+        }
+        cb(null, {
+          result: result,
+          transactionHash: callhash
+        })
+      })
     } else {
       self.web3.eth.estimateGas(tx, function (err, resp) {
         if (err) {
