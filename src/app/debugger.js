@@ -23,11 +23,6 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
     self.switchProvider(context)
   })
 
-  this.lastCompilationResult = null
-  this.debugger.event.register('newTraceLoaded', this, function () {
-    self.lastCompilationResult = self.compiler.lastCompilationResult
-  })
-
   this.debugger.event.register('traceUnloaded', this, function () {
     self.removeCurrentMarker()
   })
@@ -40,10 +35,10 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
 
   // register selected code item, highlight the corresponding source location
   this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
-    if (self.lastCompilationResult) {
-      this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.lastCompilationResult.data.contracts, function (error, rawLocation) {
+    if (self.compiler.lastCompilationResult) {
+      this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
         if (!error) {
-          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.lastCompilationResult.data)
+          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.compiler.lastCompilationResult.data)
           self.highlight(lineColumnPos, rawLocation)
         } else {
           self.removeCurrentMarker()
@@ -62,6 +57,7 @@ Debugger.prototype.debug = function (txHash) {
   var self = this
   this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
+      self.debugger.setCompilationResult(self.compiler.lastCompilationResult.data)
       self.debugger.debug(tx)
     }
   })
@@ -75,7 +71,7 @@ Debugger.prototype.debug = function (txHash) {
  */
 Debugger.prototype.highlight = function (lineColumnPos, rawLocation) {
   var name = utils.fileNameFromKey(this.editor.getCacheFile()) // current opened tab
-  var source = this.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
+  var source = this.compiler.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
   this.removeCurrentMarker()
   if (name !== source) {
     this.switchToFile(source) // command the app to swicth to the next file
