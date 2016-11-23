@@ -35,7 +35,7 @@ function UniversalDApp (executionContext, options, txdebugger) {
   })
   self.txRunner = new TxRunner(executionContext, {
     queueTxs: true,
-    personalMode: true
+    personalMode: this.personalMode
   })
 }
 
@@ -43,7 +43,7 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
   this.$el.empty()
   this.txRunner = new TxRunner(this.executionContext, {
     queueTxs: true,
-    personalMode: true
+    personalMode: this.personalMode
   })
   this.contracts = contracts
   this.getAddress = getAddress
@@ -57,6 +57,17 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a')
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce')
+  } else {
+    var self = this
+    this.getAccounts(function (error, accounts) {
+      if (error) {
+        console.log('cannot retrieve accounts from web3')
+      } else {
+        accounts.map(function (item, index) {
+          self.accounts[item] = item
+        })
+      }
+    })
   }
 }
 
@@ -549,11 +560,14 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
     var decoded
     self.runTx({ to: args.address, data: data, useCall: args.abi.constant && !isConstructor }, function (err, txResult) {
-      var result = txResult.result
+      var result
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'))
       // VM only
-      } else if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
+      } else {
+        result = txResult.result
+      }
+      if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'))
         $result.append(getDebugTransaction(txResult))
       // VM only
