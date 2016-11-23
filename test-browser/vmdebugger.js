@@ -105,7 +105,7 @@ function slider (browser) {
     .sendKeys('#slider', browser.Keys.RIGHT_ARROW)
     .sendKeys('#slider', browser.Keys.LEFT_ARROW)
     */
-    .assertCurrentSelectedItem('041 PUSH 60fe47b1')
+    .assertCurrentSelectedItem('041 PUSH4 60fe47b1')
   return browser
 }
 
@@ -120,7 +120,7 @@ function stepping (browser) {
     .click('#intoforward')
     .click('#intoback')
     .click('#intoback')
-    .assertCurrentSelectedItem('002 PUSH 40')
+    .assertCurrentSelectedItem('002 PUSH1 40')
     .click('#nextcall')
     .assertCurrentSelectedItem('181 CREATE')
     .click('#intoforward')
