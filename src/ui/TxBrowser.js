@@ -148,10 +148,9 @@ TxBrowser.prototype.render = function () {
         ${this.connectionSetting()}
         <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
         <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
-        <button id='load' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
-          Load
+        <button id='load' class='fa fa-play' title='start debugging' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
         </button>
-        <button id='unload' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}>Reset</button>
+        <button id='unload' class='fa fa-stop' title='stop debugging' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}></button>
         <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
           ${this.basicPanel.render()}
         </div>

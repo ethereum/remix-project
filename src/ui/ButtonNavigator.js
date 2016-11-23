@@ -22,20 +22,15 @@ module.exports = ButtonNavigator
 ButtonNavigator.prototype.render = function () {
   var self = this
   var view = yo`<div>    
-    <button id='overback' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} >
-      Step Over Back
+    <button id='overback' title='step over back' class='fa fa-fast-backward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} >
     </button>
-    <button id='intoback' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
-      Step Into Back
+    <button id='intoback' title='step into back' class='fa fa-backward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
     </button>    
-    <button id='intoforward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
-      Step Into Forward
+    <button id='intoforward' title='step into forward'  class='fa fa-forward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
     </button>
-    <button id='overforward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
-      Step Over Forward
+    <button id='overforward' title='step over forward' class='fa fa-fast-forward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
     </button>
-    <button id='nextcall' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
-      Jump Next Call
+    <button id='nextcall'  title='step next call' class='fa fa-chevron-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
     </button>
   </div>`
   if (!this.view) {
