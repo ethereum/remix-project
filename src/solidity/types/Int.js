@@ -8,7 +8,7 @@ function Int (storageBytes) {
 }
 
 Int.prototype.decodeFromStorage = function (location, storageContent) {
-  return util.decodeInt(location, storageContent, this.storageBytes)
+  return util.decodeInt(location, storageContent, this.storageBytes, true)
 }
 
 module.exports = Int

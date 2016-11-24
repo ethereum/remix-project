@@ -8,14 +8,16 @@ module.exports = {
   decodeInt: decodeInt
 }
 
-function decodeInt (location, storageContent, byteLength) {
+function decodeInt (location, storageContent, byteLength, signed) {
   var slotvalue = extractSlotValue(location.slot, storageContent)
   if (slotvalue === null) {
     return '0'
   }
   var value = extractHexByteSlice(slotvalue, byteLength, location.offset)
   var bigNumber = new BN(value, 16)
-  bigNumber = bigNumber.fromTwos(8 * byteLength)
+  if (signed) {
+    bigNumber = bigNumber.fromTwos(8 * byteLength)
+  }
   return bigNumber.toString(10)
 }
 

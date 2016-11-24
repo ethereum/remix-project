@@ -10,7 +10,7 @@ function Uint (storageBytes) {
 }
 
 Uint.prototype.decodeFromStorage = function (location, storageContent) {
-  return util.decodeInt(location, storageContent, this.storageBytes)
+  return util.decodeInt(location, storageContent, this.storageBytes, false)
 }
 
 module.exports = Uint
