@@ -57,7 +57,7 @@ function testByteStorage (st) {
   for (var storage of [byteStorage.storage, shrinkStorage(byteStorage.storage)]) {
     var decoded = stateDecoder.solidityState(storage, output.sources, 'byteStorage')
     st.equal(decoded['b1'], false)
-    st.equal(decoded['a1'], '0xfe350f199f244ac9a79038d254400b632a633225')
+    st.equal(decoded['a1'], '0xFE350F199F244AC9A79038D254400B632A633225')
     st.equal(decoded['b2'], true)
     st.equal(decoded['dynb1'], '0x64796e616d69636279746573')
     st.equal(decoded['stab'], '0x1')
@@ -100,7 +100,7 @@ function testByteStorage (st) {
 
   decoded = stateDecoder.solidityState({}, output.sources, 'byteStorage')
   st.equal(decoded['b1'], false)
-  st.equal(decoded['a1'], '0x0000000000000000000000000000000000000000')
+  st.equal(decoded['a1'], '0x')
   st.equal(decoded['b2'], false)
   st.equal(decoded['dynb1'], '0x')
   st.equal(decoded['stab'], '0x')

@@ -1,5 +1,6 @@
 'use strict'
 var util = require('./util')
+var utileth = require('ethereumjs-util')
 
 function Address () {
   this.storageSlots = 1
@@ -8,7 +9,8 @@ function Address () {
 }
 
 Address.prototype.decodeFromStorage = function (location, storageContent) {
-  return '0x' + util.extractHexByte(location, storageContent, this.storageBytes)
+  var value = util.extractHexByte(location, storageContent, this.storageBytes)
+  return '0x' + utileth.unpad(value).toUpperCase()
 }
 
 module.exports = Address
