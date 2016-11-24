@@ -4,15 +4,12 @@ var BN = require('ethereumjs-util').BN
 
 module.exports = {
   extractHexByteSlice: extractHexByteSlice,
-  extractSlotValue: extractSlotValue,
+  readFromStorage: readFromStorage,
   decodeInt: decodeInt
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
-  var slotvalue = extractSlotValue(location.slot, storageContent)
-  if (slotvalue === null) {
-    return '0'
-  }
+  var slotvalue = readFromStorage(location.slot, storageContent)
   var value = extractHexByteSlice(slotvalue, byteLength, location.offset)
   var bigNumber = new BN(value, 16)
   if (signed) {
@@ -21,24 +18,21 @@ function decodeInt (location, storageContent, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-function extractSlotValue (slot, storageContent) {
+function readFromStorage (slot, storageContent) {
   var hexSlot = ethutil.bufferToHex(slot)
   if (storageContent[hexSlot] !== undefined) {
     return storageContent[hexSlot]
   } else {
     hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
-    if (storageContent[hexSlot]) {
+    if (storageContent[hexSlot] !== undefined) {
       return storageContent[hexSlot]
     } else {
-      return null
+      return '0x0'
     }
   }
 }
 
 function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
-  if (slotValue === undefined) {
-    slotValue = '0'
-  }
   slotValue = slotValue.replace('0x', '')
   if (slotValue.length < 64) {
     slotValue = (new Array(64 - slotValue.length + 1).join('0')) + slotValue
