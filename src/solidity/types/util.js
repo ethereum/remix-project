@@ -3,9 +3,10 @@ var ethutil = require('ethereumjs-util')
 var BN = require('ethereumjs-util').BN
 
 module.exports = {
-  extractHexByteSlice: extractHexByteSlice,
   readFromStorage: readFromStorage,
-  decodeInt: decodeInt
+  decodeInt: decodeInt,
+  extractHexByte: extractHexByte,
+  sha3: sha3
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
@@ -39,4 +40,15 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
   }
   var offset = slotValue.length - 2 * offsetFromLSB - 2 * byteLength
   return slotValue.substr(offset, 2 * byteLength)
+}
+
+function extractHexByte (location, storageContent, byteLength) {
+  var slotvalue = readFromStorage(location.slot, storageContent)
+  return extractHexByteSlice(slotvalue, byteLength, location.offset)
+}
+
+function sha3 (slot) {
+  var remoteSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
+  var key = ethutil.sha3(remoteSlot)
+  return ethutil.bufferToHex(key)
 }

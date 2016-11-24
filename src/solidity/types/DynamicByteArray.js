@@ -9,26 +9,23 @@ function DynamicByteArray () {
 }
 
 DynamicByteArray.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractValue(location, storageContent, this.storageBytes)
-  var key = util.dynamicTypePointer(location)
+  var value = util.extractHexByte(location, storageContent, this.storageBytes)
+  var key = util.sha3(location.slot)
   if (storageContent[key] && storageContent[key] !== '0x') {
     var ret = ''
-    var length = parseInt(value) - 1
-    var slots = Math.ceil(length / 64)
     var currentSlot = storageContent[key]
     key = new BN(key.replace('0x', ''), 16)
-    for (var k = 0; k < slots; k++) {
-      if (!currentSlot) {
-        break
-      }
-      ret += currentSlot.replace('0x', '')
+    var regex = /(00)+$/
+    while (currentSlot) {
+      currentSlot = currentSlot.replace('0x', '').replace(regex, '')
+      ret += currentSlot
       key = key.add(new BN(1))
       currentSlot = storageContent['0x' + key.toString(16)]
     }
-    return ret.substr(0, length)
+    return '0x' + ret
   } else {
     var size = value.substr(value.length - 2, 2)
-    return value.substr(0, parseInt(size, 16) + 2)
+    return '0x' + value.substr(0, parseInt(size, 16))
   }
 }
 

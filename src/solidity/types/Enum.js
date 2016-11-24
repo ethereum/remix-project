@@ -14,7 +14,7 @@ function Enum (enumDef) {
 }
 
 Enum.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractValue(location, storageContent, this.storageBytes)
+  var value = util.extractHexByte(location, storageContent, this.storageBytes)
   value = parseInt(value)
   return this.enumDef.children[value].attributes.name
 }

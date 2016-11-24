@@ -9,8 +9,8 @@ function FixedByteArray (storageBytes) {
 }
 
 FixedByteArray.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractValue(location, storageContent, this.storageBytes)
-  return '0x' + utileth.unpad(value.replace('0x', '')).toUpperCase()
+  var value = util.extractHexByte(location, storageContent, this.storageBytes)
+  return '0x' + utileth.unpad(value).toUpperCase()
 }
 
 module.exports = FixedByteArray

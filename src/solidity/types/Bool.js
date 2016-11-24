@@ -8,8 +8,8 @@ function Bool () {
 }
 
 Bool.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractValue(location, storageContent, this.storageBytes)
-  return value !== '0x00'
+  var value = util.extractHexByte(location, storageContent, this.storageBytes)
+  return value !== '00'
 }
 
 module.exports = Bool

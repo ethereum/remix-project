@@ -8,7 +8,7 @@ function Address () {
 }
 
 Address.prototype.decodeFromStorage = function (location, storageContent) {
-  return util.extractValue(location, storageContent, this.storageBytes)
+  return '0x' + util.extractHexByte(location, storageContent, this.storageBytes)
 }
 
 module.exports = Address

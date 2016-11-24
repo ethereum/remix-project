@@ -10,8 +10,8 @@ function StringType () {
 
 StringType.prototype.decodeFromStorage = function (location, storageContent) {
   var value = this.dynamicBytes.decodeFromStorage(location, storageContent)
-  value = value.replace('0x', '')
   var ret = ''
+  value = value.replace('0x', '')
   for (var k = 0; k < value.length; k += 2) {
     var raw = value.substr(k, 2)
     var str = String.fromCharCode(parseInt(raw, 16))

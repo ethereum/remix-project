@@ -49,7 +49,6 @@ function testIntStorage (st) {
   st.equal(decoded['i256'], '0')
   st.equal(decoded['i'], '0')
   st.equal(decoded['ishrink'], '0')
-  st.end()
 }
 
 function testByteStorage (st) {
