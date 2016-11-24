@@ -24,13 +24,13 @@
     "ethereumjs-util": "^4.5.0",
     "http-server": "^0.9.0",
     "nightwatch": "^0.9.5",
+    "solc": "^0.4.3",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
     "tape": "^4.6.0",
     "web3": "^0.15.3",
     "yo-yo": "^1.2.1",
-    "yo-yoify": "^3.1.0",
-    "solc": "^0.4.3"
+    "yo-yoify": "^3.1.0"
   },
   "scripts": {
     "start_node": "./runNode.sh",

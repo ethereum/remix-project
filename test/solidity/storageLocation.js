@@ -2,10 +2,10 @@
 var tape = require('tape')
 var compiler = require('solc')
 var index = require('../../src/index')
-var contracts = require('./contracts')
+var contracts = require('./contracts/miscContracts')
 
 tape('solidity', function (t) {
-  t.test('astHelper, decodeInfo', function (st) {
+  t.test('storage location', function (st) {
     var output = compiler.compile(contracts, 0)
     var stateDec = index.solidity.stateDecoder.extractStateVariables('contractUint', output.sources)
     checkLocation(st, stateDec[0].location, 0, 0)

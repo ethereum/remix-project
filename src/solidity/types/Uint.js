@@ -1,13 +1,16 @@
 'use strict'
+var IntType = require('./Int')
+var util = require('./util')
 
 function Uint (storageBytes) {
   this.storageSlots = 1
   this.storageBytes = storageBytes
   this.typeName = 'uint'
+  this.decodeInt = new IntType(storageBytes)
 }
 
 Uint.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  return util.decodeInt(location, storageContent, this.storageBytes, false)
 }
 
 module.exports = Uint

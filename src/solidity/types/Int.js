@@ -1,4 +1,5 @@
 'use strict'
+var util = require('./util')
 
 function Int (storageBytes) {
   this.storageSlots = 1
@@ -7,7 +8,7 @@ function Int (storageBytes) {
 }
 
 Int.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  return util.decodeInt(location, storageContent, this.storageBytes, true)
 }
 
 module.exports = Int
