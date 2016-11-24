@@ -16,7 +16,11 @@ function Enum (enumDef) {
 Enum.prototype.decodeFromStorage = function (location, storageContent) {
   var value = util.extractHexByte(location, storageContent, this.storageBytes)
   value = parseInt(value)
-  return this.enumDef.children[value].attributes.name
+  if (this.enumDef.children.length > value) {
+    return this.enumDef.children[value].attributes.name
+  } else {
+    return 'INVALID_ENUM<' + value + '>'
+  }
 }
 
 module.exports = Enum
