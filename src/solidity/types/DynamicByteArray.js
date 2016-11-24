@@ -10,8 +10,10 @@ function DynamicByteArray () {
 
 DynamicByteArray.prototype.decodeFromStorage = function (location, storageContent) {
   var value = util.extractHexByte(location, storageContent, this.storageBytes)
-  var key = util.sha3(location.slot)
-  if (storageContent[key] && storageContent[key] !== '0x') {
+  var bn = new BN(value.substr(62, 2), 16)
+  bn = bn.toString(2)
+  if (bn[bn.length - 1] === '1') {
+    var key = util.sha3(location.slot)
     var ret = ''
     var currentSlot = storageContent[key]
     key = new BN(key.replace('0x', ''), 16)
