@@ -20,31 +20,32 @@ function decodeInt (location, storageContent, byteLength, signed) {
 }
 
 function readFromStorage (slot, storageContent) {
+  var ret
   var hexSlot = ethutil.bufferToHex(slot)
   if (storageContent[hexSlot] !== undefined) {
-    return storageContent[hexSlot]
+    ret = storageContent[hexSlot].replace(/^0x/, '')
   } else {
     hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
     if (storageContent[hexSlot] !== undefined) {
-      return storageContent[hexSlot]
+      ret = storageContent[hexSlot].replace(/^0x/, '')
     } else {
-      return '0x0'
+      ret = '0000000000000000000000000000000000000000000000000000000000000000'
     }
   }
+  if (ret.length < 64) {
+    ret = (new Array(64 - ret.length + 1).join('0')) + ret
+  }
+  return ret
 }
 
 /**
  * @returns a hex encoded byte slice of length @arg byteLength from inside @arg slotValue.
  *
- * @param {String} slotValue  - right aligned hex encoded value to extract the byte slice from (can have 0x prefix)
+ * @param {String} slotValue  - hex encoded value to extract the byte slice from
  * @param {Int} byteLength  - Length of the byte slice to extract
  * @param {Int} offsetFromLSB  - byte distance from the right end slot value to the right end of the byte slice
  */
 function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
-  slotValue = slotValue.replace('0x', '')
-  if (slotValue.length < 64) {
-    slotValue = (new Array(64 - slotValue.length + 1).join('0')) + slotValue
-  }
   var offset = slotValue.length - 2 * offsetFromLSB - 2 * byteLength
   return slotValue.substr(offset, 2 * byteLength)
 }

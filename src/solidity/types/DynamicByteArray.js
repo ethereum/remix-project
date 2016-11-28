@@ -10,23 +10,28 @@ function DynamicByteArray () {
 
 DynamicByteArray.prototype.decodeFromStorage = function (location, storageContent) {
   var value = util.extractHexByte(location, storageContent, this.storageBytes)
-  var bn = new BN(value.substr(62, 2), 16)
-  bn = bn.toString(2)
-  if (bn[bn.length - 1] === '1') {
-    var key = util.sha3(location.slot)
+  var bn = new BN(value, 16)
+  if (bn.testn(0)) {
+    var length = bn.div(new BN(2))
+    var dataPos = new BN(util.sha3(location.slot).replace('0x', ''), 16)
     var ret = ''
-    var currentSlot = storageContent[key]
-    key = new BN(key.replace('0x', ''), 16)
-    while (currentSlot) {
+    var currentSlot = util.readFromStorage(dataPos, storageContent)
+    while (length.gt(ret.length) && ret.length < 32000) {
       currentSlot = currentSlot.replace('0x', '')
       ret += currentSlot
-      key = key.add(new BN(1))
-      currentSlot = storageContent['0x' + key.toString(16)]
+      dataPos = dataPos.add(new BN(1))
+      currentSlot = util.readFromStorage(dataPos, storageContent)
     }
-    return '0x' + ret.replace(/(00)+$/, '')
+    return {
+      value: '0x' + ret.replace(/(00)+$/, ''),
+      length: '0x' + length.toString(16)
+    }
   } else {
-    var size = value.substr(value.length - 2, 2)
-    return '0x' + value.substr(0, parseInt(size, 16))
+    var size = parseInt(value.substr(value.length - 2, 2), 16) / 2
+    return {
+      value: '0x' + value.substr(0, size * 2),
+      length: '0x' + size.toString(16)
+    }
   }
 }
 

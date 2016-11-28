@@ -9,7 +9,8 @@ function StringType () {
 }
 
 StringType.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = this.dynamicBytes.decodeFromStorage(location, storageContent)
+  var decoded = this.dynamicBytes.decodeFromStorage(location, storageContent)
+  var value = decoded.value
   var ret = ''
   value = value.replace('0x', '')
   for (var k = 0; k < value.length; k += 2) {
@@ -17,7 +18,10 @@ StringType.prototype.decodeFromStorage = function (location, storageContent) {
     var str = String.fromCharCode(parseInt(raw, 16))
     ret += str
   }
-  return ret
+  return {
+    value: ret,
+    length: decoded.length
+  }
 }
 
 module.exports = StringType

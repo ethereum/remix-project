@@ -59,7 +59,8 @@ function testByteStorage (st) {
     st.equal(decoded['b1'], false)
     st.equal(decoded['a1'], '0xFE350F199F244AC9A79038D254400B632A633225')
     st.equal(decoded['b2'], true)
-    st.equal(decoded['dynb1'], '0x64796e616d69636279746573')
+    st.equal(decoded['dynb1'].value, '0x64796e616d69636279746573')
+    st.equal(decoded['dynb1'].length, '0xc')
     st.equal(decoded['stab'], '0x1')
     st.equal(decoded['stab1'], '0x12')
     st.equal(decoded['stab2'], '0x1579')
@@ -94,15 +95,16 @@ function testByteStorage (st) {
     st.equal(decoded['stab31'], '0x3245435123')
     st.equal(decoded['stab32'], '0x324324423432543543AB')
     st.equal(decoded['enumDec'], 'e240')
-    st.equal(decoded['str1'], 'short')
-    st.equal(decoded['str2'], 'long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long')
+    st.equal(decoded['str1'].value, 'short')
+    st.equal(decoded['str2'].value, 'long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long')
   }
 
   decoded = stateDecoder.solidityState({}, output.sources, 'byteStorage')
   st.equal(decoded['b1'], false)
   st.equal(decoded['a1'], '0x0000000000000000000000000000000000000000')
   st.equal(decoded['b2'], false)
-  st.equal(decoded['dynb1'], '0x')
+  st.equal(decoded['dynb1'].value, '0x')
+  st.equal(decoded['dynb1'].length, '0x0')
   st.equal(decoded['stab'], '0x')
   st.equal(decoded['stab1'], '0x')
   st.equal(decoded['stab2'], '0x')
@@ -137,8 +139,10 @@ function testByteStorage (st) {
   st.equal(decoded['stab31'], '0x')
   st.equal(decoded['stab32'], '0x')
   st.equal(decoded['enumDec'], 'e0')
-  st.equal(decoded['str1'], '')
-  st.equal(decoded['str2'], '')
+  st.equal(decoded['str1'].length, '0x0')
+  st.equal(decoded['str2'].length, '0x0')
+  st.equal(decoded['str1'].value, '')
+  st.equal(decoded['str2'].value, '')
 }
 
 function shrinkStorage (storage) {
