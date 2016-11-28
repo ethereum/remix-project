@@ -9,7 +9,7 @@ function DynamicByteArray () {
 }
 
 DynamicByteArray.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractHexByte(location, storageContent, this.storageBytes)
+  var value = util.extractHexValue(location, storageContent, this.storageBytes)
   var bn = new BN(value, 16)
   if (bn.testn(0)) {
     var length = bn.div(new BN(2))

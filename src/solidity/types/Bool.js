@@ -8,7 +8,7 @@ function Bool () {
 }
 
 Bool.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractHexByte(location, storageContent, this.storageBytes)
+  var value = util.extractHexValue(location, storageContent, this.storageBytes)
   return value !== '00'
 }
 

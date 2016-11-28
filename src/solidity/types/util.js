@@ -5,7 +5,7 @@ var BN = require('ethereumjs-util').BN
 module.exports = {
   readFromStorage: readFromStorage,
   decodeInt: decodeInt,
-  extractHexByte: extractHexByte,
+  extractHexValue: extractHexValue,
   sha3: sha3
 }
 
@@ -29,7 +29,7 @@ function readFromStorage (slot, storageContent) {
     if (storageContent[hexSlot] !== undefined) {
       ret = storageContent[hexSlot].replace(/^0x/, '')
     } else {
-      ret = '0000000000000000000000000000000000000000000000000000000000000000'
+      ret = '000000000000000000000000000000000000000000000000000000000000000'
     }
   }
   if (ret.length < 64) {
@@ -57,7 +57,7 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @param {Object} storageContent  - full storage mapping.
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
-function extractHexByte (location, storageContent, byteLength) {
+function extractHexValue (location, storageContent, byteLength) {
   var slotvalue = readFromStorage(location.slot, storageContent)
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
 }
