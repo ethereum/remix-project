@@ -24,9 +24,6 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
   var ret = []
   var size = null
   var slotValue = util.extractHexValue(location, storageContent, this.storageBytes)
-  if (!slotValue) {
-    return []
-  }
   var currentLocation = {
     offset: 0,
     slot: location.slot
@@ -34,28 +31,22 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
   if (this.arraySize === 'dynamic') {
     size = util.toBN('0x' + slotValue)
     currentLocation.slot = util.sha3(location.slot)
-    if (!storageContent[currentLocation.slot]) {
-      return []
-    }
   } else {
     size = new BN(this.arraySize)
   }
   var k = util.toBN(0)
-  var one = util.toBN(1)
-  var max = new BN(300)
-  while (k.lt(size) && k.lt(max)) {
-    if (currentLocation.offset + this.underlyingType.storageBytes > 32) {
-      currentLocation.offset = 0
-      currentLocation.slot = '0x' + util.add(currentLocation.slot, one).toString(16)
-    }
+  for (; k.lt(size) && k.ltn(300); k.iaddn(1)) {
     ret.push(this.underlyingType.decodeFromStorage(currentLocation, storageContent))
     if (this.underlyingType.storageSlots === 1 && location.offset + this.underlyingType.storageBytes <= 32) {
       currentLocation.offset += this.underlyingType.storageBytes
+      if (currentLocation.offset + this.underlyingType.storageBytes > 32) {
+        currentLocation.offset = 0
+        currentLocation.slot = '0x' + util.add(currentLocation.slot, 1).toString(16)
+      }
     } else {
       currentLocation.slot = '0x' + util.add(currentLocation.slot, this.underlyingType.storageSlots).toString(16)
       currentLocation.offset = 0
     }
-    k = k.add(one)
   }
   return {
     value: ret,
