@@ -57,17 +57,6 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a')
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce')
-  } else {
-    var self = this
-    this.getAccounts(function (error, accounts) {
-      if (error) {
-        console.log('cannot retrieve accounts from web3')
-      } else {
-        accounts.map(function (item, index) {
-          self.accounts[item] = item
-        })
-      }
-    })
   }
 }
 
@@ -695,7 +684,6 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     data: args.data,
     useCall: args.useCall
   }
-  var accounts = this.accounts
   async.waterfall([
     // query gas limit
     function (callback) {
@@ -739,7 +727,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback(err)
           }
 
-          tx.from = accounts[ret]
+          tx.from = self.executionContext.isVM() ? self.accounts[ret] : ret
+
           callback()
         })
       } else {
@@ -752,10 +741,12 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback('No accounts available')
           }
 
-          tx.from = accounts[ret[0]]
-          if (self.executionContext.isVM() && !self.accounts[tx.from]) {
+          if (self.executionContext.isVM() && !self.accounts[ret[0]]) {
             return callback('Invalid account selected')
           }
+
+          tx.from = self.executionContext.isVM() ? self.accounts[ret[0]] : ret[0]
+
           callback()
         })
       }
