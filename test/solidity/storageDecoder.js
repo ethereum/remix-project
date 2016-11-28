@@ -100,7 +100,7 @@ function testByteStorage (st) {
 
   decoded = stateDecoder.solidityState({}, output.sources, 'byteStorage')
   st.equal(decoded['b1'], false)
-  st.equal(decoded['a1'], '0x')
+  st.equal(decoded['a1'], '0x0000000000000000000000000000000000000000')
   st.equal(decoded['b2'], false)
   st.equal(decoded['dynb1'], '0x')
   st.equal(decoded['stab'], '0x')
