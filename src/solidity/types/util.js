@@ -6,7 +6,9 @@ module.exports = {
   readFromStorage: readFromStorage,
   decodeInt: decodeInt,
   extractHexValue: extractHexValue,
-  sha3: sha3
+  sha3: sha3,
+  toBN: toBN,
+  add: add
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
@@ -66,4 +68,20 @@ function sha3 (slot) {
   var remoteSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
   var key = ethutil.sha3(remoteSlot)
   return ethutil.bufferToHex(key)
+}
+
+function toBN (value) {
+  if (value instanceof BN) {
+    return value
+  } else if (value.indexOf && value.indexOf('0x') === 0) {
+    value = ethutil.unpad(value.replace('Ox', ''))
+    value = new BN(value === '' ? '0' : value, 16)
+  } else if (!isNaN(value)) {
+    value = new BN(value)
+  }
+  return value
+}
+
+function add (value1, value2) {
+  return toBN(value1).add(toBN(value2))
 }
