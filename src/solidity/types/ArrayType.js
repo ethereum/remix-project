@@ -42,7 +42,8 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
   }
   var k = util.toBN(0)
   var one = util.toBN(1)
-  while (k.lt(size)) {
+  var max = new BN(300)
+  while (k.lt(size) && k.lt(max)) {
     if (currentLocation.offset + this.underlyingType.storageBytes > 32) {
       currentLocation.offset = 0
       currentLocation.slot = '0x' + util.add(currentLocation.slot, one).toString(16)
@@ -56,7 +57,10 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
     }
     k = k.add(one)
   }
-  return ret
+  return {
+    value: ret,
+    length: '0x' + size.toString(16)
+  }
 }
 
 module.exports = ArrayType
