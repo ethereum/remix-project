@@ -93,7 +93,7 @@ function testByteStorage (st) {
     st.equal(decoded['stab30'], '0x3245435232423')
     st.equal(decoded['stab31'], '0x3245435123')
     st.equal(decoded['stab32'], '0x324324423432543543AB')
-    st.equal(decoded['enumDec'], 'd')
+    st.equal(decoded['enumDec'], 'e240')
     st.equal(decoded['str1'], 'short')
     st.equal(decoded['str2'], 'long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long')
   }
@@ -136,7 +136,7 @@ function testByteStorage (st) {
   st.equal(decoded['stab30'], '0x')
   st.equal(decoded['stab31'], '0x')
   st.equal(decoded['stab32'], '0x')
-  st.equal(decoded['enumDec'], 'a')
+  st.equal(decoded['enumDec'], 'e0')
   st.equal(decoded['str1'], '')
   st.equal(decoded['str2'], '')
 }

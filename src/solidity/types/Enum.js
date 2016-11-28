@@ -15,7 +15,7 @@ function Enum (enumDef) {
 
 Enum.prototype.decodeFromStorage = function (location, storageContent) {
   var value = util.extractHexByte(location, storageContent, this.storageBytes)
-  value = parseInt(value)
+  value = parseInt(value, 16)
   if (this.enumDef.children.length > value) {
     return this.enumDef.children[value].attributes.name
   } else {
