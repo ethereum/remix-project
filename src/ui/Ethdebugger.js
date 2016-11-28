@@ -18,6 +18,8 @@ function Ethdebugger () {
 
   this.currentStepIndex = -1
   this.tx
+  this.sources
+  this.contractsDetail
   this.statusMessage = ''
 
   this.view
@@ -71,6 +73,16 @@ Ethdebugger.prototype.switchProvider = function (type) {
   })
 }
 
+Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
+  if (compilationResult && compilationResult.sources && compilationResult.contracts) {
+    this.sources = compilationResult.sources
+    this.contractsDetail = compilationResult.contracts
+  } else {
+    this.sources = null
+    this.contractsDetail = null
+  }
+}
+
 Ethdebugger.prototype.debug = function (tx) {
   if (tx instanceof Object) {
     this.txBrowser.load(tx.hash)
@@ -96,6 +108,7 @@ Ethdebugger.prototype.render = function () {
 
 Ethdebugger.prototype.unLoad = function () {
   this.traceManager.init()
+  this.codeManager.clear()
   this.stepManager.reset()
   this.event.trigger('traceUnloaded')
 }

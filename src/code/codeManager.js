@@ -19,6 +19,14 @@ function CodeManager (_traceManager) {
 }
 
 /**
+ * clear the cache
+ *
+ */
+CodeManager.prototype.clear = function () {
+  this.codeResolver.clear()
+}
+
+/**
  * resolve the code of the given @arg stepIndex and trigger appropriate event
  *
  * @param {String} stepIndex - vm trace step

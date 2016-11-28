@@ -7,6 +7,12 @@ module.exports = {
   instructionsByAddress: {}, // assembly items instructions list by contract addesses
   instructionsIndexByBytesOffset: {}, // mapping between bytes offset and instructions index.
 
+  clear: function () {
+    this.bytecodeByAddress = {}
+    this.instructionsByAddress = {}
+    this.instructionsIndexByBytesOffset = {}
+  },
+
   resolveCode: function (address, callBack) {
     var cache = this.getExecutingCodeFromCache(address)
     if (cache) {
