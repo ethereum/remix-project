@@ -246,7 +246,7 @@ function Compiler (editor, handleGithubCall) {
         } else if (m in cachedRemoteFiles) {
           files[m] = cachedRemoteFiles[m]
           reloop = true
-        } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^\/]*\/[^\/]*)\/(.*)/.exec(m))) {
+        } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(m))) {
           handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
             if (err) {
               cb('Unable to import "' + m + '": ' + err)
