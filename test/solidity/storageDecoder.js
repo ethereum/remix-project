@@ -96,6 +96,7 @@ function testByteStorage (st) {
     st.equal(decoded['stab32'], '0x324324423432543543AB00000000000000000000000000000000000000000000')
     st.equal(decoded['enumDec'], 'e240')
     st.equal(decoded['str1'].value, 'short')
+    st.equal(decoded['str12'].value, 'шеллы')
     st.equal(decoded['str2'].value, 'long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long__long')
   }
 
@@ -142,6 +143,7 @@ function testByteStorage (st) {
   st.equal(decoded['str1'].length, '0x0')
   st.equal(decoded['str2'].length, '0x0')
   st.equal(decoded['str1'].value, '')
+  st.equal(decoded['str12'].value, '')
   st.equal(decoded['str2'].value, '')
 }
 

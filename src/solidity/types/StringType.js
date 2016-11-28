@@ -11,17 +11,18 @@ function StringType () {
 StringType.prototype.decodeFromStorage = function (location, storageContent) {
   var decoded = this.dynamicBytes.decodeFromStorage(location, storageContent)
   var value = decoded.value
-  var ret = ''
-  value = value.replace('0x', '')
-  for (var k = 0; k < value.length; k += 2) {
-    var raw = value.substr(k, 2)
-    var str = String.fromCharCode(parseInt(raw, 16))
-    ret += str
+  value = value.replace('0x', '').replace(/(..)/g, '%$1')
+  var ret = {
+    length: decoded.length,
+    raw: decoded.value
   }
-  return {
-    value: ret,
-    length: decoded.length
+  try {
+    ret.value = decodeURIComponent(value)
+  } catch (e) {
+    ret.error = 'Invalid UTF8 encoding'
+    ret.raw = decoded.value
   }
+  return ret
 }
 
 module.exports = StringType
