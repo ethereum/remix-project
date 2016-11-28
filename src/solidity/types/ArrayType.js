@@ -23,7 +23,7 @@ function ArrayType (underlyingType, arraySize) {
 ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
   var ret = []
   var size = null
-  var slotValue = util.extractValue(location, storageContent, this.storageBytes)
+  var slotValue = util.extractHexValue(location, storageContent, this.storageBytes)
   if (!slotValue) {
     return []
   }
@@ -32,8 +32,8 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
     slot: location.slot
   }
   if (this.arraySize === 'dynamic') {
-    size = util.toBN(slotValue)
-    currentLocation.slot = util.dynamicTypePointer(location.slot)
+    size = util.toBN('0x' + slotValue)
+    currentLocation.slot = util.sha3(location.slot)
     if (!storageContent[currentLocation.slot]) {
       return []
     }
