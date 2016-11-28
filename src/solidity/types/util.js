@@ -33,6 +33,13 @@ function readFromStorage (slot, storageContent) {
   }
 }
 
+/**
+ * @returns a hex encoded byte slice of length @arg byteLength from inside @arg slotValue.
+ *
+ * @param {String} slotValue  - right aligned hex encoded value to extract the byte slice from (can have 0x prefix)
+ * @param {Int} byteLength  - Length of the byte slice to extract
+ * @param {Int} offsetFromLSB  - byte distance from the right end slot value to the right end of the byte slice
+ */
 function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
   slotValue = slotValue.replace('0x', '')
   if (slotValue.length < 64) {
@@ -42,6 +49,13 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
   return slotValue.substr(offset, 2 * byteLength)
 }
 
+/**
+ * @returns a hex encoded storage content at the given @arg location. it does not have Ox prefix but always has the full length.
+ *
+ * @param {Object} location  - object containing the slot and offset of the data to extract.
+ * @param {Object} storageContent  - full storage mapping.
+ * @param {Int} byteLength  - Length of the byte slice to extract
+ */
 function extractHexByte (location, storageContent, byteLength) {
   var slotvalue = readFromStorage(location.slot, storageContent)
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
