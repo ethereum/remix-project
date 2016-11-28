@@ -1,4 +1,5 @@
 'use strict'
+var util = require('./util')
 
 function Address () {
   this.storageSlots = 1
@@ -7,7 +8,8 @@ function Address () {
 }
 
 Address.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented yet>'
+  var value = util.extractHexValue(location, storageContent, this.storageBytes)
+  return '0x' + value.toUpperCase()
 }
 
 module.exports = Address
