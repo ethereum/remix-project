@@ -286,20 +286,6 @@ tape('TraceManager', function (t) {
     st.end()
   })
 
-  t.test('TraceManager.findStepOutBack', function (st) {
-    var result = traceManager.findStepOutBack(70)
-    console.log(result)
-    st.ok(result === 63)
-    st.end()
-  })
-
-  t.test('TraceManager.findStepOutForward', function (st) {
-    var result = traceManager.findStepOutForward(15)
-    console.log(result)
-    st.ok(result === 142)
-    st.end()
-  })
-
   t.test('TraceManager.findNextCall', function (st) {
     var result = traceManager.findNextCall(10)
     console.log(result)

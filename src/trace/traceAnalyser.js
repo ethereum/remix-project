@@ -16,11 +16,7 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     lastCallIndex: 0
   }
   var callStack = [tx.to]
-  this.traceCache.pushCallChanges(0, 0, callStack[0])
-  this.traceCache.pushCallStack(0, {
-    callStack: callStack.slice(0)
-  })
-
+  this.traceCache.pushCall(trace[0], 0, callStack[0], callStack.slice(0))
   if (traceHelper.isContractCreation(tx.to)) {
     this.traceCache.pushContractCreation(tx.to, tx.input)
   }
@@ -110,10 +106,7 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, conte
         console.log('unable to build depth changes. ' + index + ' does not match with a CALL. depth changes will be corrupted')
       }
     }
-    this.traceCache.pushCallChanges(step, index + 1, newAddress)
-    this.traceCache.pushCallStack(index + 1, {
-      callStack: callStack.slice(0)
-    })
+    this.traceCache.pushCall(step, index + 1, newAddress, callStack.slice(0))
     this.buildCalldata(index, step, tx, true)
     this.traceCache.pushSteps(index, context.currentCallIndex)
     context.lastCallIndex = context.currentCallIndex
@@ -121,10 +114,7 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, conte
   } else if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step)) {
     if (index + 1 < this.trace.length) {
       callStack.pop()
-      this.traceCache.pushCallChanges(step, index + 1)
-      this.traceCache.pushCallStack(index + 1, {
-        callStack: callStack.slice(0)
-      })
+      this.traceCache.pushCall(step, index + 1, null, callStack.slice(0))
       this.buildCalldata(index, step, tx, false)
       this.traceCache.pushSteps(index, context.currentCallIndex)
       context.currentCallIndex = context.lastCallIndex + 1

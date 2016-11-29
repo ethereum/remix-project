@@ -135,7 +135,7 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
   }
   var callStackChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
   if (callStackChange === null) return callback('no callstack found', null)
-  callback(null, this.traceCache.callStack[callStackChange].callStack)
+  callback(null, this.traceCache.calls[callStackChange].callStack)
 }
 
 TraceManager.prototype.getStackAt = function (stepIndex, callback) {
@@ -179,7 +179,7 @@ TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback
       if (addressIndex === 0) {
         callback(null, self.tx.to)
       } else {
-        var callStack = self.traceCache.callStack[addressIndex].callStack
+        var callStack = self.traceCache.calls[addressIndex].callStack
         var calledAddress = callStack[callStack.length - 1]
         if (calledAddress) {
           callback(null, calledAddress)
@@ -272,14 +272,6 @@ TraceManager.prototype.findStepOverBack = function (currentStep) {
 
 TraceManager.prototype.findStepOverForward = function (currentStep) {
   return this.traceStepManager.findStepOverForward(currentStep)
-}
-
-TraceManager.prototype.findStepOutBack = function (currentStep) {
-  return this.traceStepManager.findStepOutBack(currentStep)
-}
-
-TraceManager.prototype.findStepOutForward = function (currentStep) {
-  return this.traceStepManager.findStepOutForward(currentStep)
 }
 
 TraceManager.prototype.findNextCall = function (currentStep) {
