@@ -5,6 +5,8 @@ var $ = require('jquery')
 var Web3 = require('web3')
 var EventManager = require('../lib/eventManager')
 var EthJSVM = require('ethereumjs-vm')
+var ethUtil = require('ethereumjs-util')
+var StateManager = require('ethereumjs-vm/lib/stateManager')
 
 var injectedProvider
 
@@ -16,10 +18,41 @@ if (typeof window.web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
 
+/*
+  extend vm state manager and instanciate VM
+*/
+var stateManager = new StateManager({})
+stateManager.keyHashes = {}
+var base = stateManager.putContractStorage
+stateManager.putContractStorage = function (address, key, value, cb) {
+  stateManager.keyHashes[ethUtil.sha3(key)] = ethUtil.bufferToHex(key)
+  base.apply(stateManager, [address, key, value, cb])
+}
+
+stateManager.dumpStorage = function (address, cb) {
+  stateManager._getStorageTrie(address, function (err, trie) {
+    if (err) {
+      return cb(err)
+    }
+    var storage = {}
+    var stream = trie.createReadStream()
+    stream.on('data', function (val) {
+      storage[stateManager.keyHashes[val.key]] = val.value.toString('hex')
+    })
+    stream.on('end', function () {
+      cb(storage)
+    })
+  })
+}
+
 var vm = new EthJSVM({
   enableHomestead: true,
   activatePrecompiles: true
 })
+
+vm.stateManager = stateManager
+vm.blockchain = stateManager.blockchain
+vm.trie = stateManager.trie
 vm.stateManager.checkpoint()
 
 /*
