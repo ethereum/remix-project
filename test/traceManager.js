@@ -275,14 +275,14 @@ tape('TraceManager', function (t) {
   t.test('TraceManager.findStepOverBack', function (st) {
     var result = traceManager.findStepOverBack(116)
     console.log(result)
-    st.ok(result === -1)
+    st.ok(result === 115)
     st.end()
   })
 
   t.test('TraceManager.findStepOverForward', function (st) {
     var result = traceManager.findStepOverForward(66)
     console.log(result)
-    st.ok(result === 108)
+    st.ok(result === 67)
     st.end()
   })
 
