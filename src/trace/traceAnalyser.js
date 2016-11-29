@@ -10,8 +10,7 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
   this.trace = trace
   this.traceCache.pushStoreChanges(0, tx.to)
   var context = {
-    currentStorageAddress: tx.to,
-    previousStorageAddress: tx.to,
+    storageContext: [tx.to],
     currentCallIndex: 0,
     lastCallIndex: 0
   }
@@ -80,16 +79,16 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
   if (traceHelper.newContextStorage(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
     var calledAddress = traceHelper.resolveCalledAddress(index, this.trace)
     if (calledAddress) {
-      context.currentStorageAddress = calledAddress
+      context.storageContext.push(calledAddress)
     } else {
       console.log('unable to build storage changes. ' + index + ' does not match with a CALL. storage changes will be corrupted')
     }
-    this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress)
+    this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
   } else if (traceHelper.isSSTOREInstruction(step)) {
-    this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress, step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
+    this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1], step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
   } else if (traceHelper.isReturnInstruction(step)) {
-    context.currentStorageAddress = context.previousStorageAddress
-    this.traceCache.pushStoreChanges(index + 1, context.currentStorageAddress)
+    context.storageContext.pop()
+    this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
   }
   return context
 }

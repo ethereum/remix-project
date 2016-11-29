@@ -84,14 +84,8 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
     if (stoChange === null) return callback('no storage found', null)
     address = this.traceCache.sstore[stoChange].address
   }
-  var storage = {}
-  storage = this.traceCache.rebuildStorage(address, storage, stepIndex)
-  callback(null, storage)
-  /*
-  // TODO: use it if we need the full storage to be loaded
   var self = this
   if (this.traceRetriever.debugStorageAtAvailable()) {
-    var address = this.traceCache.sstore[stoChange].address
     this.traceRetriever.getStorage(tx, address, function (error, result) {
       if (error) {
         console.log(error)
@@ -104,7 +98,6 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
   } else {
     callback(null, this.trace[stoChange].storage)
   }
-  */
 }
 
 TraceManager.prototype.getAddresses = function (callback) {

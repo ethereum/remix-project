@@ -1,4 +1,5 @@
 var util = require('../helpers/util')
+var traceHelper = require('../helpers/traceHelper')
 var Web3 = require('web3')
 
 function web3VmProvider () {
@@ -19,6 +20,7 @@ function web3VmProvider () {
   this.debug.storageAt = function (blockNumber, txIndex, address, cb) { return self.storageAt(blockNumber, txIndex, address, cb) }
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': 'vm provider'}
+  this.storageCache = {}
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
@@ -62,6 +64,12 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
     tx.value = util.hexConvert(data.value)
   }
   self.txs[self.processingHash] = tx
+  self.storageCache[self.processingHash] = {}
+  if (tx.to) {
+    self.vm.stateManager.dumpStorage(tx.to, function (storage) {
+      self.storageCache[self.processingHash][tx.to] = storage
+    })
+  }
 }
 
 web3VmProvider.prototype.txProcessed = function (self, data) {
@@ -88,6 +96,14 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     gas: data.gasLeft.toString()
   }
   self.vmTraces[self.processingHash].structLogs.push(step)
+  if (traceHelper.newContextStorage(step)) {
+    if (!self.storageCache[self.processingHash][address]) {
+      var address = step.stack[step.stack.length - 2]
+      self.vm.stateManager.dumpStorage(address, function (storage) {
+        self.storageCache[self.processingHash][address] = storage
+      })
+    }
+  }
 }
 
 web3VmProvider.prototype.getCode = function (address, cb) {
@@ -111,7 +127,14 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
   }
 }
 
-web3VmProvider.prototype.storageAt = function (blockNumber, txIndex, address, cb) { cb(null, {}) }
+web3VmProvider.prototype.storageAt = function (blockNumber, txIndex, address, cb) { // txIndex is the hash in the case of the VM
+  if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
+    var storage = this.storageCache[txIndex][address]
+    return cb(null, JSON.parse(JSON.stringify(storage))) // copy creation...
+  } else {
+    cb('unable to retrieve storage ' + txIndex + ' ' + address)
+  }
+}
 
 web3VmProvider.prototype.getBlockNumber = function (cb) { cb(null, 'vm provider') }
 
