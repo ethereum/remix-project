@@ -549,14 +549,15 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
     var decoded
     self.runTx({ to: args.address, data: data, useCall: args.abi.constant && !isConstructor }, function (err, txResult) {
-      var result
+      if (!txResult) {
+        replaceOutput($result, $('<span/>').text('callback contain no result ' + err).addClass('error'))
+        return
+      }
+      var result = txResult.result
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'))
       // VM only
-      } else {
-        result = txResult.result
-      }
-      if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
+      } else if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
         replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'))
         $result.append(getDebugTransaction(txResult))
       // VM only
