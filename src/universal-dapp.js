@@ -33,7 +33,7 @@ function UniversalDApp (executionContext, options, txdebugger) {
   self.executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
-  self.txRunner = new TxRunner(executionContext, {
+  self.txRunner = new TxRunner(executionContext, {}, {
     queueTxs: true,
     personalMode: this.personalMode
   })
@@ -41,10 +41,6 @@ function UniversalDApp (executionContext, options, txdebugger) {
 
 UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGasLimit, renderer) {
   this.$el.empty()
-  this.txRunner = new TxRunner(this.executionContext, {
-    queueTxs: true,
-    personalMode: this.personalMode
-  })
   this.contracts = contracts
   this.getAddress = getAddress
   this.getValue = getValue
@@ -58,6 +54,10 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce')
   }
+  this.txRunner = new TxRunner(this.executionContext, this.accounts, {
+    queueTxs: true,
+    personalMode: this.personalMode
+  })
 }
 
 UniversalDApp.prototype.newAccount = function (password) {
@@ -728,7 +728,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback(err)
           }
 
-          tx.from = self.executionContext.isVM() ? self.accounts[ret] : ret
+          tx.from = ret
 
           callback()
         })
@@ -746,7 +746,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback('Invalid account selected')
           }
 
-          tx.from = self.executionContext.isVM() ? self.accounts[ret[0]] : ret[0]
+          tx.from = ret[0]
 
           callback()
         })
