@@ -90,9 +90,11 @@ function String (type) {
   * ArrayType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g int256[] storage ref, int256[] storage ref[] storage ref)
+  * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
-function Array (type, stateDefinitions) {
+function Array (type, stateDefinitions, contractName) {
   var arraySize
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match || match.length < 3) {
@@ -100,7 +102,7 @@ function Array (type, stateDefinitions) {
     return null
   }
   arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
-  var underlyingType = parseType(match[1], stateDefinitions)
+  var underlyingType = parseType(match[1], stateDefinitions, contractName)
   if (underlyingType === null) {
     console.log('unable to parse type ' + type)
     return null
@@ -112,10 +114,13 @@ function Array (type, stateDefinitions) {
   * Enum decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g enum enumDef)
+  * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, enum}
   */
-function Enum (type, stateDefinitions) {
-  var enumDef = getEnum(type, stateDefinitions)
+function Enum (type, stateDefinitions, contractName) {
+  var match = type.match(/enum (.*)/)
+  var enumDef = getEnum(match[1], stateDefinitions, contractName)
   if (enumDef === null) {
     console.log('unable to retrieve decode info of ' + type)
     return null
@@ -127,14 +132,16 @@ function Enum (type, stateDefinitions) {
   * Struct decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g struct structDef storage ref)
+  * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
-function Struct (type, stateDefinitions) {
+function Struct (type, stateDefinitions, contractName) {
   var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
   if (!match) {
     return null
   }
-  var memberDetails = getStructMembers(match[1], stateDefinitions) // type is used to extract the ast struct definition
+  var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
   if (!memberDetails) return null
   return new StructType(memberDetails)
 }
@@ -143,14 +150,23 @@ function Struct (type, stateDefinitions) {
   * retrieve enum declaration of the given @arg type
   *
   * @param {String} type - type given by the AST (e.g enum enumDef)
-  * @param {Object} stateDefinitions  - all state declarations given by the AST (including struct and enum type declaration)
+  * @param {Object} stateDefinitions  - all state declarations given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Array} - containing all value declaration of the current enum type
   */
-function getEnum (type, stateDefinitions) {
-  for (var k in stateDefinitions) {
-    var dec = stateDefinitions[k]
-    if (dec.attributes && dec.attributes.name && type === 'enum ' + dec.attributes.name) {
-      return dec
+function getEnum (type, stateDefinitions, contractName) {
+  var split = type.split('.')
+  if (!split.length) {
+    type = contractName + '.' + type
+  } else {
+    contractName = split[0]
+  }
+  var state = stateDefinitions[contractName]
+  if (state) {
+    for (var dec of state.stateDefinitions) {
+      if (dec.attributes && dec.attributes.name && type === contractName + '.' + dec.attributes.name) {
+        return dec
+      }
     }
   }
   return null
@@ -160,17 +176,26 @@ function getEnum (type, stateDefinitions) {
   * retrieve memebers declared in the given @arg tye
   *
   * @param {String} typeName - name of the struct type (e.g struct <name>)
-  * @param {Object} stateDefinitions  - all state definition given by the AST (including struct and enum type declaration)
+  * @param {Object} stateDefinitions  - all state definition given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Array} containing all members of the current struct type
   */
-function getStructMembers (typeName, stateDefinitions) {
-  for (var k in stateDefinitions) {
-    var dec = stateDefinitions[k]
-    if (dec.name === 'StructDefinition' && typeName === dec.attributes.name) {
-      var offsets = computeOffsets(dec.children, stateDefinitions)
-      return {
-        members: offsets.typesOffsets,
-        storageSlots: offsets.endLocation.slot
+function getStructMembers (type, stateDefinitions, contractName) {
+  var split = type.split('.')
+  if (!split.length) {
+    type = contractName + '.' + type
+  } else {
+    contractName = split[0]
+  }
+  var state = stateDefinitions[contractName]
+  if (state) {
+    for (var dec of state.stateDefinitions) {
+      if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
+        var offsets = computeOffsets(dec.children, stateDefinitions, contractName)
+        return {
+          members: offsets.typesOffsets,
+          storageSlots: offsets.endLocation.slot
+        }
       }
     }
   }
@@ -198,10 +223,11 @@ function typeClass (fullType) {
   * parse the type and return an object representing the type
   *
   * @param {Object} type - type name given by the ast node
-  * @param {Object} stateDefinitions - all state stateDefinitions given by the AST (including struct and enum type declaration)
+  * @param {Object} stateDefinitions - all state stateDefinitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} - return the corresponding decoder or null on error
   */
-function parseType (type, stateDefinitions) {
+function parseType (type, stateDefinitions, contractName) {
   var decodeInfos = {
     'address': Address,
     'array': Array,
@@ -219,17 +245,18 @@ function parseType (type, stateDefinitions) {
     console.log('unable to retrieve decode info of ' + type)
     return null
   }
-  return decodeInfos[currentType](type, stateDefinitions)
+  return decodeInfos[currentType](type, stateDefinitions, contractName)
 }
 
 /**
   * compute offset (slot offset and byte offset of the @arg list of types)
   *
   * @param {Array} types - list of types
-  * @param {Object} stateItems - all state definitions given by the AST (including struct and enum type declaration)
+  * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {String} contractName - contract the @args typeName belongs to
   * @return {Array} - return an array of types item: {name, type, location}. location defines the byte offset and slot offset
   */
-function computeOffsets (types, stateItems, cb) {
+function computeOffsets (types, stateDefinitions, contractName) {
   var ret = []
   var location = {
     offset: 0,
@@ -237,7 +264,7 @@ function computeOffsets (types, stateItems, cb) {
   }
   for (var i in types) {
     var variable = types[i]
-    var type = parseType(variable.attributes.type, stateItems)
+    var type = parseType(variable.attributes.type, stateDefinitions, contractName)
     if (!type) {
       console.log('unable to retrieve decode info of ' + variable.attributes.type)
       return null
