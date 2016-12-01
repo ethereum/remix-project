@@ -75,6 +75,10 @@ tape('solidity', function (t) {
     stateDef = state.stateDefinitions
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[0].attributes.type, states, 'test1')
     checkDecodeInfo(st, decodeInfo, 0, 32, 'struct')
+
+    state = index.solidity.stateDecoder.extractStateVariables('test2', output.sources)
+    checkDecodeInfo(st, decodeInfo, 0, 32, 'struct')
+
     st.end()
   })
 })
