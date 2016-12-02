@@ -91,6 +91,13 @@ Renderer.prototype.contracts = function (data, source) {
     })
   }
 
+  var retrieveMetadataHash = function (bytecode) {
+    var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
+    if (match) {
+      return match[1]
+    }
+  }
+
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
     if (contract.bytecode) {
@@ -101,6 +108,12 @@ Renderer.prototype.contracts = function (data, source) {
 
     if (contract.bytecode) {
       $contractOutput.append(uiHelper.preRow('Web3 deploy', uiHelper.gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
+
+      // check if there's a metadata hash appended
+      var metadataHash = retrieveMetadataHash(contract.bytecode)
+      if (metadataHash) {
+        $contractOutput.append(uiHelper.tableRow('Metadata location', 'bzzr://' + metadataHash))
+      }
     }
 
     var ctrSource = getSource(contractName, source, data)
