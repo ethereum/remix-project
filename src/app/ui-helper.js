@@ -130,6 +130,10 @@ module.exports = {
     var button = $('<button>Toggle Details</button>')
     var details = $('<div style="display: none;"/>')
 
+    if (contract.metadata) {
+      details.append(this.preRow('Metadata', contract.metadata))
+    }
+
     var funHashes = ''
     for (var fun in contract.functionHashes) {
       funHashes += contract.functionHashes[fun] + ' ' + fun + '\n'
