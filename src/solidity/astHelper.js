@@ -37,11 +37,14 @@ function getLinearizedBaseContracts (id, contractsById) {
   *
   * @param {String} contractName - contract for which state var should be resolved
   * @param {Object} sourcesList - sources list (containing root AST node)
+  * @param {Object} [contracts] - map of contract definitions (contains contractsById, contractsByName)
   * @return {Object} - return an object containing: stateItems - list of all the children node of the @arg contractName
   *                                                 stateVariables - list of all the variable declaration of the @arg contractName
   */
-function extractState (contractName, sourcesList) {
-  var contracts = extractContractDefinitions(sourcesList)
+function extractStateDefinitions (contractName, sourcesList, contracts) {
+  if (!contracts) {
+    contracts = extractContractDefinitions(sourcesList)
+  }
   var node = contracts.contractsByName[contractName]
   if (node) {
     var stateItems = []
@@ -59,15 +62,32 @@ function extractState (contractName, sourcesList) {
       }
     }
     return {
-      stateItems: stateItems,
+      stateDefinitions: stateItems,
       stateVariables: stateVar
     }
   }
   return null
 }
 
+/**
+  * return state var and type definition of all the contracts from the given @args sourcesList
+  *
+  * @param {Object} sourcesList - sources list (containing root AST node)
+  * @return {Object} - returns a mapping between contract name and contract state
+  */
+function extractStatesDefinitions (sourcesList) {
+  var contracts = extractContractDefinitions(sourcesList)
+  var ret = {}
+  for (var contract in contracts.contractsById) {
+    var name = contracts.contractsById[contract].attributes.name
+    ret[name] = extractStateDefinitions(name, sourcesList, contracts)
+  }
+  return ret
+}
+
 module.exports = {
-  extractState: extractState,
+  extractStatesDefinitions: extractStatesDefinitions,
+  extractStateDefinitions: extractStateDefinitions,
   extractContractDefinitions: extractContractDefinitions,
   getLinearizedBaseContracts: getLinearizedBaseContracts
 }
