@@ -1,8 +1,8 @@
 'use strict'
 
 var solc = require('solc/wrapper')
+var solcABI = require('solc/abi')
 
-var semver = require('semver')
 var webworkify = require('webworkify')
 var utils = require('./utils')
 
@@ -278,51 +278,9 @@ function Compiler (editor, handleGithubCall) {
   }
 
   function updateInterface (data) {
-    console.log(data)
-    
     for (var contract in data.contracts) {
       var abi = JSON.parse(data.contracts[contract].interface)
-      console.log(abi)
-
-      var hasConstructor = false
-      var hasFallback = false
-
-      for (var i = 0; i < abi.length; i++) {
-        var item = abi[i]
-
-        if (item.type === "constructor") {
-          hasConstructor = true
-        } else if (item.type === "fallback") {
-          hasFallback = true
-        }
-
-        // add "payable" to everything
-        // FIXME: only for compiler <0.4.0
-        if (semver.lt(currentVersion, '0.4.0')) {
-          item.payable = true
-        }
-      }
-
-      // FIXME: only for compiler <0.x.y
-      //        0.1.2 from Aug 2015 had it. The code has it since May 2015 (e7931ade)
-      if (!hasConstructor && semver.lt(currentVersion, '0.1.2')) {
-        abi.push({
-          type: 'constructor',
-          payable: true,
-          inputs: []
-        })
-      }
-
-      // FIXME: only for compiler <0.4.0
-      if (!hasFallback && semver.lt(currentVersion, '0.4.0')) {
-        abi.push({
-          type: 'fallback',
-          payable: true
-        })
-      }
-
-      console.log(abi)
-
+      abi = solcABI.update(currentVersion, abi)
       data.contracts[contract].interface = JSON.stringify(abi)
     }
 
