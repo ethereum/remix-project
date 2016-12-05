@@ -380,6 +380,8 @@ UniversalDApp.prototype.getConstructorInterface = function (abi) {
       return abi[i]
     }
   }
+
+  return { 'type': 'constructor', 'payable': false, 'inputs': [] }
 }
 
 UniversalDApp.prototype.getFallbackInterface = function (abi) {
