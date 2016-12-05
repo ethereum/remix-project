@@ -21,30 +21,37 @@ if (typeof window.web3 !== 'undefined') {
 /*
   extend vm state manager and instanciate VM
 */
-var stateManager = new StateManager({})
-stateManager.keyHashes = {}
-var base = stateManager.putContractStorage
-stateManager.putContractStorage = function (address, key, value, cb) {
-  stateManager.keyHashes[ethUtil.sha3(key)] = ethUtil.bufferToHex(key)
-  base.apply(stateManager, [address, key, value, cb])
+
+class StateManagerCommonStorageDump extends StateManager {
+  constructor (arg) {
+    super(arg)
+    this.keyHashes = {}
+  }
+
+  putContractStorage (address, key, value, cb) {
+    this.keyHashes[ethUtil.sha3(key)] = ethUtil.bufferToHex(key)
+    super.putContractStorage(address, key, value, cb)
+  }
+
+  dumpStorage (address, cb) {
+    var self = this
+    this._getStorageTrie(address, function (err, trie) {
+      if (err) {
+        return cb(err)
+      }
+      var storage = {}
+      var stream = trie.createReadStream()
+      stream.on('data', function (val) {
+        storage[self.keyHashes[val.key]] = val.value.toString('hex')
+      })
+      stream.on('end', function () {
+        cb(storage)
+      })
+    })
+  }
 }
 
-stateManager.dumpStorage = function (address, cb) {
-  stateManager._getStorageTrie(address, function (err, trie) {
-    if (err) {
-      return cb(err)
-    }
-    var storage = {}
-    var stream = trie.createReadStream()
-    stream.on('data', function (val) {
-      storage[stateManager.keyHashes[val.key]] = val.value.toString('hex')
-    })
-    stream.on('end', function () {
-      cb(storage)
-    })
-  })
-}
-
+var stateManager = new StateManagerCommonStorageDump({})
 var vm = new EthJSVM({
   enableHomestead: true,
   activatePrecompiles: true
