@@ -400,12 +400,14 @@ UniversalDApp.prototype.getCallButton = function (args) {
   var lookupOnly = (args.abi.constant && !isConstructor)
 
   var inputs = ''
-  $.each(args.abi.inputs, function (i, inp) {
-    if (inputs !== '') {
-      inputs += ', '
-    }
-    inputs += inp.type + ' ' + inp.name
-  })
+  if (args.abi.inputs) {
+    $.each(args.abi.inputs, function (i, inp) {
+      if (inputs !== '') {
+        inputs += ', '
+      }
+      inputs += inp.type + ' ' + inp.name
+    })
+  }
   var inputField = $('<input/>').attr('placeholder', inputs).attr('title', inputs)
   var $outputOverride = $('<div class="value" />')
   var outputSpan = $('<div class="output"/>')
@@ -535,7 +537,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
     var decodeResponse = function (response) {
       // Only decode if there supposed to be fields
-      if (args.abi.outputs.length > 0) {
+      if (args.abi.outputs && args.abi.outputs.length > 0) {
         try {
           var i
 
@@ -638,7 +640,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
   var $contractProperty = $('<div class="contractProperty"/>')
   $contractProperty
     .toggleClass('constant', !isConstructor && args.abi.constant)
-    .toggleClass('hasArgs', args.abi.inputs.length > 0)
+    .toggleClass('hasArgs', args.abi.inputs && args.abi.inputs.length > 0)
     .toggleClass('constructor', isConstructor)
     .append(button)
     .append((lookupOnly && !inputs.length) ? $outputOverride : inputField)
