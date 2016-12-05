@@ -4,7 +4,7 @@ var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 
-function TxRunner (executionContext, opts) {
+function TxRunner (executionContext, vmaccounts, opts) {
   this.executionContext = executionContext
   this.web3 = executionContext.web3()
   this.vm = executionContext.vm()
@@ -16,6 +16,7 @@ function TxRunner (executionContext, opts) {
   }
   this.running = false
   this.pendingTxs = []
+  this.vmaccounts = vmaccounts
 }
 
 TxRunner.prototype.rawRun = function (args, cb) {
@@ -83,15 +84,19 @@ TxRunner.prototype.execute = function () {
     }
   } else {
     try {
+      var account = self.vmaccounts[from]
+      if (!account) {
+        return cb('Invalid account selected')
+      }
       tx = new EthJSTX({
-        nonce: new BN(from.nonce++),
+        nonce: new BN(account.nonce++),
         gasPrice: new BN(1),
         gasLimit: new BN(gasLimit, 10),
         to: to,
         value: new BN(value, 10),
         data: new Buffer(data.slice(2), 'hex')
       })
-      tx.sign(from.privateKey)
+      tx.sign(account.privateKey)
       var block = new EthJSBlock({
         header: {
           // FIXME: support coinbase, difficulty and gasLimit

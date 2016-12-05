@@ -33,18 +33,14 @@ function UniversalDApp (executionContext, options, txdebugger) {
   self.executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
-  self.txRunner = new TxRunner(executionContext, {
+  self.txRunner = new TxRunner(executionContext, {}, {
     queueTxs: true,
-    personalMode: true
+    personalMode: this.personalMode
   })
 }
 
 UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGasLimit, renderer) {
   this.$el.empty()
-  this.txRunner = new TxRunner(this.executionContext, {
-    queueTxs: true,
-    personalMode: true
-  })
   this.contracts = contracts
   this.getAddress = getAddress
   this.getValue = getValue
@@ -58,6 +54,10 @@ UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGa
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce')
   }
+  this.txRunner = new TxRunner(this.executionContext, this.accounts, {
+    queueTxs: true,
+    personalMode: this.personalMode
+  })
 }
 
 UniversalDApp.prototype.newAccount = function (password) {
@@ -549,6 +549,10 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
     var decoded
     self.runTx({ to: args.address, data: data, useCall: args.abi.constant && !isConstructor }, function (err, txResult) {
+      if (!txResult) {
+        replaceOutput($result, $('<span/>').text('callback contain no result ' + err).addClass('error'))
+        return
+      }
       var result = txResult.result
       if (err) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'))
@@ -681,7 +685,6 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     data: args.data,
     useCall: args.useCall
   }
-  var accounts = this.accounts
   async.waterfall([
     // query gas limit
     function (callback) {
@@ -725,7 +728,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback(err)
           }
 
-          tx.from = accounts[ret]
+          tx.from = ret
+
           callback()
         })
       } else {
@@ -738,10 +742,12 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback('No accounts available')
           }
 
-          tx.from = accounts[ret[0]]
-          if (self.executionContext.isVM() && !self.accounts[tx.from]) {
+          if (self.executionContext.isVM() && !self.accounts[ret[0]]) {
             return callback('Invalid account selected')
           }
+
+          tx.from = ret[0]
+
           callback()
         })
       }
