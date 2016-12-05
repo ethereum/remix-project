@@ -57,6 +57,7 @@ var vm = new EthJSVM({
   activatePrecompiles: true
 })
 
+// FIXME: move state manager in EthJSVM ctr
 vm.stateManager = stateManager
 vm.blockchain = stateManager.blockchain
 vm.trie = stateManager.trie
