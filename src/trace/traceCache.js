@@ -9,6 +9,7 @@ TraceCache.prototype.init = function () {
   this.returnValues = {}
   this.callChanges = []
   this.calls = {}
+  this.callsRef = [0] // track of calls during the vm trace analysis
   this.callsData = {}
   this.contractCreation = {}
   this.steps = {}
@@ -18,7 +19,6 @@ TraceCache.prototype.init = function () {
   this.memoryChanges = []
   this.storageChanges = []
   this.sstore = {} // all sstore occurence in the trace
-  this.callStack = {} // contains all callStack by vmtrace index (we need to rebuild it, callstack is not included in the vmtrace)
 }
 
 TraceCache.prototype.pushSteps = function (index, currentCallIndex) {
@@ -34,11 +34,19 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
   this.memoryChanges.push(value)
 }
 
-TraceCache.prototype.pushCallChanges = function (step, value, address) {
-  this.callChanges.push(value)
-  this.calls[value] = {
+TraceCache.prototype.pushCall = function (step, index, address, callStack) {
+  this.callChanges.push(index)
+  this.calls[index] = {
     op: step.op,
-    address: address
+    address: address,
+    callStack: callStack
+  }
+  if (step.op === 'RETURN' || step.op === 'STOP') {
+    var call = this.callsRef.pop()
+    this.calls[index].call = call
+    this.calls[call].return = index
+  } else {
+    this.callsRef.push(index)
   }
 }
 
@@ -56,10 +64,6 @@ TraceCache.prototype.pushContractCreationFromMemory = function (index, token, tr
 
 TraceCache.prototype.pushContractCreation = function (token, code) {
   this.contractCreation[token] = code
-}
-
-TraceCache.prototype.pushCallStack = function (index, callStack) {
-  this.callStack[index] = callStack
 }
 
 TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {

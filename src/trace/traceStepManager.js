@@ -1,5 +1,6 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
+var util = require('../helpers/util')
 
 function TraceStepManager (_traceAnalyser) {
   this.traceAnalyser = _traceAnalyser
@@ -16,66 +17,30 @@ TraceStepManager.prototype.isReturnInstruction = function (index) {
 }
 
 TraceStepManager.prototype.findStepOverBack = function (currentStep) {
-  if (currentStep === 0) return 0
-  return this.findStepOutBack(currentStep)
+  if (this.isReturnInstruction(currentStep - 1)) {
+    return this.traceAnalyser.traceCache.calls[currentStep].call - 1
+  } else {
+    return currentStep > 0 ? currentStep - 1 : 0
+  }
 }
 
 TraceStepManager.prototype.findStepOverForward = function (currentStep) {
-  if (currentStep === this.traceAnalyser.trace.length - 1) return currentStep
-  return this.findStepOutForward(currentStep)
-}
-
-TraceStepManager.prototype.findStepOutBack = function (currentStep) {
-  if (!this.traceAnalyser.trace) {
-    return currentStep
+  if (this.isCallInstruction(currentStep)) {
+    return this.traceAnalyser.traceCache.calls[currentStep + 1].return
+  } else {
+    return this.traceAnalyser.trace.length >= currentStep + 1 ? currentStep + 1 : currentStep
   }
-  var i = currentStep - 1
-  var depth = 0
-  while (--i >= 0) {
-    if (this.isCallInstruction(i)) {
-      if (depth === 0) {
-        break
-      } else {
-        depth--
-      }
-    } else if (this.isReturnInstruction(i)) {
-      depth++
-    }
-  }
-  return i
-}
-
-TraceStepManager.prototype.findStepOutForward = function (currentStep) {
-  if (!this.traceAnalyser.trace) {
-    return currentStep
-  }
-  var i = currentStep
-  var depth = 0
-  while (++i < this.traceAnalyser.trace.length) {
-    if (this.isReturnInstruction(i)) {
-      if (depth === 0) {
-        break
-      } else {
-        depth--
-      }
-    } else if (this.isCallInstruction(i)) {
-      depth++
-    }
-  }
-  return i
 }
 
 TraceStepManager.prototype.findNextCall = function (currentStep) {
-  if (!this.traceAnalyser.trace) {
+  var callChanges = this.traceAnalyser.traceCache.callChanges
+  var stepIndex = util.findLowerBound(currentStep, callChanges)
+  var callchange = callChanges[stepIndex + 1]
+  if (callchange && this.isCallInstruction(callchange - 1)) {
+    return callchange - 1
+  } else {
     return currentStep
   }
-  var i = currentStep
-  while (++i < this.traceAnalyser.trace.length) {
-    if (this.isCallInstruction(i)) {
-      return i
-    }
-  }
-  return currentStep
 }
 
 module.exports = TraceStepManager
