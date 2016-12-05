@@ -277,10 +277,18 @@ function Compiler (editor, handleGithubCall) {
     cb(null, { 'sources': files })
   }
 
+  function truncateVersion (version) {
+    var tmp = /^(\d+.\d+.\d+)/.exec(version)
+    if (tmp) {
+      return tmp[1]
+    }
+    return version
+  }
+
   function updateInterface (data) {
     for (var contract in data.contracts) {
       var abi = JSON.parse(data.contracts[contract].interface)
-      abi = solcABI.update(currentVersion, abi)
+      abi = solcABI.update(truncateVersion(currentVersion), abi)
       data.contracts[contract].interface = JSON.stringify(abi)
     }
 
