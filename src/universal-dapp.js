@@ -639,11 +639,21 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var $contractProperty = $('<div class="contractProperty"/>')
   $contractProperty
-    .toggleClass('constant', lookupOnly)
-    .toggleClass('hasArgs', args.abi.inputs && args.abi.inputs.length > 0)
-    .toggleClass('constructor', isConstructor)
     .append(button)
     .append((lookupOnly && !inputs.length) ? $outputOverride : inputField)
+
+  if (isConstructor) {
+    $contractProperty.addClass('constructor')
+  }
+
+  if (lookupOnly) {
+    $contractProperty.addClass('constant')
+  }
+
+  if (args.abi.inputs && args.abi.inputs.length > 0) {
+    $contractProperty.addClass('hasArgs')
+  }
+
   return $contractProperty.append(outputSpan)
 }
 
