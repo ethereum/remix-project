@@ -568,7 +568,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
     }
 
     var decoded
-    self.runTx({ to: args.address, data: data, useCall: args.abi.constant && !isConstructor }, function (err, txResult) {
+    self.runTx({ to: args.address, data: data, useCall: lookupOnly }, function (err, txResult) {
       if (!txResult) {
         replaceOutput($result, $('<span/>').text('callback contain no result ' + err).addClass('error'))
         return
@@ -597,12 +597,12 @@ UniversalDApp.prototype.getCallButton = function (args) {
         if (decoded) {
           $result.append(decoded)
         }
-        if (args.abi.constant) {
+        if (lookupOnly) {
           $result.append(getDebugCall(txResult))
         } else {
           $result.append(getDebugTransaction(txResult))
         }
-      } else if (args.abi.constant && !isConstructor) {
+      } else if (lookupOnly) {
         clearOutput($result)
         $result.append(getReturnOutput(result)).append(getGasUsedOutput({}))
 
@@ -639,7 +639,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var $contractProperty = $('<div class="contractProperty"/>')
   $contractProperty
-    .toggleClass('constant', !isConstructor && args.abi.constant)
+    .toggleClass('constant', lookupOnly)
     .toggleClass('hasArgs', args.abi.inputs && args.abi.inputs.length > 0)
     .toggleClass('constructor', isConstructor)
     .append(button)
