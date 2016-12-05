@@ -11,7 +11,7 @@ git rm --cached -r .
 echo "# Automatic build" > README.md
 echo "Built website from {$SHA}. See https://github.com/ethereum/remix/ for details." >> README.md
 # -f is needed because "build" is part of .gitignore
-git add -f README.md index.html build/app.js
+git add -f README.md index.html build/app.js assets
 git commit -m "Built website from {$SHA}."
 
 ENCRYPTION_LABEL=fade88419824
