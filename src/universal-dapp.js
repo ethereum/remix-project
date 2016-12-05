@@ -616,10 +616,17 @@ UniversalDApp.prototype.getCallButton = function (args) {
     })
   }
 
+  var title
+  if (isConstructor) {
+    title = 'Create'
+  } else {
+    title = args.abi.name
+  }
+
   var button = $('<button />')
     .addClass('call')
-    .attr('title', args.abi.name)
-    .text(args.bytecode ? 'Create' : args.abi.name)
+    .attr('title', title)
+    .text(title)
     .click(handleCallButtonClick)
 
   if (lookupOnly && !inputs.length) {
