@@ -29,7 +29,7 @@ SolidityState.prototype.init = function () {
       return
     }
 
-    self.traceManager.getStorageAt(index, null, function (error, storage) {
+    self.traceManager.getStorageAt(index, this.parent.tx, function (error, storage) {
       if (error) {
         self.basicPanel.update({ info: error })
       } else {
