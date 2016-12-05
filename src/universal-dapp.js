@@ -319,7 +319,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var fallback = self.getFallbackInterface(abi)
     if (fallback) {
       $instance.append(self.getCallButton({
-        abi: { constant: false, inputs: [], name: '(fallback)', outputs: [], type: 'function' },
+        abi: fallback,
         encode: function (args) {
           return ''
         },
@@ -619,8 +619,10 @@ UniversalDApp.prototype.getCallButton = function (args) {
   var title
   if (isConstructor) {
     title = 'Create'
-  } else {
+  } else if (args.abi.name) {
     title = args.abi.name
+  } else {
+    title = '(fallback)'
   }
 
   var button = $('<button />')
