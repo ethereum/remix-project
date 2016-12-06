@@ -50,7 +50,10 @@
     "tape": "^4.6.0",
     "web3": "^0.15.3",
     "yo-yo": "^1.2.1",
-    "yo-yoify": "^3.1.0"
+    "yo-yoify": "^3.1.0",
+    "ethereumjs-block": "^1.2.2",
+    "ethereumjs-tx": "^1.1.1",
+    "ethereumjs-vm": "^2.0.1"
   },
   "scripts": {
     "start_node": "./runNode.sh",
