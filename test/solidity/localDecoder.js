@@ -13,6 +13,7 @@ var Web3Providers = require('../../src/web3Provider/web3Providers')
 var traceHelper = require('../../src/helpers/traceHelper')
 var util = require('../../src/helpers/global')
 var LocalDecoder = require('../../src/solidity/localDecoder')
+var SolidityProxy = require('../../src/solidity/solidityProxy')
 
 tape('solidity', function (t) {
   t.test('local decoder', function (st) {
@@ -32,7 +33,9 @@ tape('solidity', function (t) {
             tx.to = traceHelper.contractCreationToken('0')
             var traceManager = new TraceManager()
             var codeManager = new CodeManager(traceManager)
-            var localDecoder = new LocalDecoder(output, codeManager, traceManager.traceAnalyser.event)
+            var solidityProxy = new SolidityProxy(traceManager, codeManager)
+            solidityProxy.reset(output)
+            var localDecoder = new LocalDecoder(codeManager, traceManager.traceAnalyser.event, solidityProxy)
             traceManager.resolveTrace(tx, function (error, result) {
               if (error) {
                 st.fail(error)

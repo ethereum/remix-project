@@ -11,7 +11,7 @@ var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
 var yo = require('yo-yo')
 
-function VmDebugger (_parent, _traceManager, _codeManager) {
+function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.asmCode = new CodeListView(_parent, _codeManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
@@ -19,7 +19,7 @@ function VmDebugger (_parent, _traceManager, _codeManager) {
   this.calldataPanel = new CalldataPanel(_parent, _traceManager)
   this.callstackPanel = new CallstackPanel(_parent, _traceManager)
   this.stepDetail = new StepDetail(_parent, _traceManager)
-  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager)
+  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager, _solidityProxy)
 
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value')

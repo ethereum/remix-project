@@ -11,16 +11,14 @@ var ui = require('../helpers/ui')
 var Web3Providers = require('../web3Provider/web3Providers')
 var DummyProvider = require('../web3Provider/dummyProvider')
 var CodeManager = require('../code/codeManager')
-var SourceLocationTracker = require('../code/sourceLocationTracker')
 var LocalDecoder = require('../solidity/localDecoder')
+var SolidityProxy = require('../solidity/solidityProxy')
 
 function Ethdebugger () {
   this.event = new EventManager()
 
   this.currentStepIndex = -1
   this.tx
-  this.sources
-  this.contracts
   this.statusMessage = ''
 
   this.view
@@ -29,9 +27,8 @@ function Ethdebugger () {
   this.switchProvider('DUMMYWEB3')
   this.traceManager = new TraceManager()
   this.codeManager = new CodeManager(this.traceManager)
-  this.sourceLocationTracker = new SourceLocationTracker(this.codeManager)
-  this.locals = new LocalDecoder(this, this.codeManager, this.traceManager.traceAnalyser.event)
-
+  this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
+  this.locals = new LocalDecoder(this.codeManager, this.traceManager.traceAnalyser.event, this.solidityProxy)
   var self = this
   this.event.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
@@ -51,7 +48,7 @@ function Ethdebugger () {
   this.stepManager.event.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
   })
-  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager)
+  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy)
 }
 
 Ethdebugger.prototype.web3 = function () {
@@ -77,13 +74,9 @@ Ethdebugger.prototype.switchProvider = function (type) {
 
 Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
   if (compilationResult && compilationResult.sources && compilationResult.contracts) {
-    this.sources = compilationResult.sources
-    this.sourceList = compilationResult.sourceList
-    this.contracts = compilationResult.contracts
+    this.solidityProxy.reset(compilationResult)
   } else {
-    this.sources = null
-    this.contracts = null
-    this.sourceList = null
+    this.solidityProxy.reset({})
   }
 }
 

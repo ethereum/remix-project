@@ -1,13 +1,13 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
-var traceHelper = require('../helpers/traceHelper')
 var stateDecoder = require('../solidity/stateDecoder')
 var yo = require('yo-yo')
 
-function SolidityState (_parent, _traceManager, _codeManager) {
+function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.parent = _parent
   this.traceManager = _traceManager
   this.codeManager = _codeManager
+  this.solidityProxy = _solidityProxy
   this.basicPanel = new DropdownPanel('Solidity State')
   this.init()
 }
@@ -24,7 +24,7 @@ SolidityState.prototype.init = function () {
       return
     }
     if (self.parent.currentStepIndex !== index) return
-    if (!this.parent.contracts || !this.parent.sources) {
+    if (!this.solidityProxy.loaded()) {
       self.basicPanel.update({info: 'no source has been specified'})
       return
     }
@@ -33,39 +33,16 @@ SolidityState.prototype.init = function () {
       if (error) {
         self.basicPanel.update({ info: error })
       } else {
-        self.traceManager.getCurrentCalledAddressAt(index, function (error, address) {
+        self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
           if (error) {
             self.basicPanel.update({ info: error })
           } else {
-            self.codeManager.getCode(address, function (error, code) {
-              if (error) {
-                self.basicPanel.update({ info: error })
-              } else {
-                var contractName = contractNameFromCode(self.parent.contracts, code.bytecode, address)
-                if (contractName === null) {
-                  self.basicPanel.update({ info: 'could not find compiled contract with address ' + address })
-                } else {
-                  var state = stateDecoder.solidityState(storage, self.parent.sources, contractName)
-                  self.basicPanel.update(state)
-                }
-              }
-            })
+            self.basicPanel.update(stateDecoder.decodeState(stateVars, storage))
           }
         })
       }
     })
   })
-}
-
-function contractNameFromCode (contracts, code, address) {
-  var isCreation = traceHelper.isContractCreation(address)
-  var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
-  for (var k in contracts) {
-    if ('0x' + contracts[k][byteProp] === code) {
-      return k
-    }
-  }
-  return null
 }
 
 module.exports = SolidityState

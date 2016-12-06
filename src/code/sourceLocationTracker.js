@@ -20,18 +20,13 @@ function SourceLocationTracker (_codeManager) {
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocation = function (address, index, contracts, cb) {
+SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function (address, index, contracts, cb) {
   var self = this
-  this.codeManager.getCode(address, function (error, result) {
-    if (!error) {
-      var sourceMap = getSourceMap(address, result.bytecode, contracts)
-      if (sourceMap) {
-        cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
-      } else {
-        cb('no srcmap associated with the code ' + address)
-      }
-    } else {
+  extractSourceMap(this.codeManager, address, contracts, function (error, sourceMap) {
+    if (error) {
       cb(error)
+    } else {
+      cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
     }
   })
 }
@@ -44,22 +39,17 @@ SourceLocationTracker.prototype.getSourceLocation = function (address, index, co
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocation = function (address, vmtraceStepIndex, contracts, cb) {
+SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (address, vmtraceStepIndex, contracts, cb) {
   var self = this
-  this.codeManager.getCode(address, function (error, result) {
+  extractSourceMap(this.codeManager, address, contracts, function (error, sourceMap) {
     if (!error) {
-      var sourceMap = getSourceMap(address, result.bytecode, contracts)
-      if (sourceMap) {
-        self.codeManager.getInstructionIndex(address, vmtraceStepIndex, function (error, index) {
-          if (error) {
-            cb(error)
-          } else {
-            cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
-          }
-        })
-      } else {
-        cb('no srcmap associated with the code ' + address)
-      }
+      self.codeManager.getInstructionIndex(address, vmtraceStepIndex, function (error, index) {
+        if (error) {
+          cb(error)
+        } else {
+          cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
+        }
+      })
     } else {
       cb(error)
     }
@@ -82,6 +72,21 @@ function getSourceMap (address, code, contracts) {
     }
   }
   return null
+}
+
+function extractSourceMap (codeManager, address, contracts, cb) {
+  codeManager.getCode(address, function (error, result) {
+    if (!error) {
+      var sourceMap = getSourceMap(address, result.bytecode, contracts)
+      if (sourceMap) {
+        cb(null, sourceMap)
+      } else {
+        cb('no srcmap associated with the code ' + address)
+      }
+    } else {
+      cb(error)
+    }
+  })
 }
 
 module.exports = SourceLocationTracker
