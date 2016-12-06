@@ -12,6 +12,7 @@ var Web3Providers = require('../web3Provider/web3Providers')
 var DummyProvider = require('../web3Provider/dummyProvider')
 var CodeManager = require('../code/codeManager')
 var SourceLocationTracker = require('../code/sourceLocationTracker')
+var LocalDecoder = require('../solidity/localDecoder')
 
 function Ethdebugger () {
   this.event = new EventManager()
@@ -29,6 +30,7 @@ function Ethdebugger () {
   this.traceManager = new TraceManager()
   this.codeManager = new CodeManager(this.traceManager)
   this.sourceLocationTracker = new SourceLocationTracker(this.codeManager)
+  this.locals = new LocalDecoder(this, this.codeManager, this.traceManager.traceAnalyser.event)
 
   var self = this
   this.event.register('indexChanged', this, function (index) {
@@ -76,10 +78,12 @@ Ethdebugger.prototype.switchProvider = function (type) {
 Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
   if (compilationResult && compilationResult.sources && compilationResult.contracts) {
     this.sources = compilationResult.sources
+    this.sourceList = compilationResult.sourceList
     this.contractsDetail = compilationResult.contracts
   } else {
     this.sources = null
     this.contractsDetail = null
+    this.sourceList = null
   }
 }
 
