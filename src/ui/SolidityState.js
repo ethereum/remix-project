@@ -24,7 +24,7 @@ SolidityState.prototype.init = function () {
       return
     }
     if (self.parent.currentStepIndex !== index) return
-    if (!this.parent.contractsDetail || !this.parent.sources) {
+    if (!this.parent.contracts || !this.parent.sources) {
       self.basicPanel.update({info: 'no source has been specified'})
       return
     }
@@ -41,7 +41,7 @@ SolidityState.prototype.init = function () {
               if (error) {
                 self.basicPanel.update({ info: error })
               } else {
-                var contractName = contractNameFromCode(self.parent.contractsDetail, code.bytecode, address)
+                var contractName = contractNameFromCode(self.parent.contracts, code.bytecode, address)
                 if (contractName === null) {
                   self.basicPanel.update({ info: 'could not find compiled contract with address ' + address })
                 } else {

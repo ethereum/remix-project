@@ -20,7 +20,7 @@ function Ethdebugger () {
   this.currentStepIndex = -1
   this.tx
   this.sources
-  this.contractsDetail
+  this.contracts
   this.statusMessage = ''
 
   this.view
@@ -79,10 +79,10 @@ Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
   if (compilationResult && compilationResult.sources && compilationResult.contracts) {
     this.sources = compilationResult.sources
     this.sourceList = compilationResult.sourceList
-    this.contractsDetail = compilationResult.contracts
+    this.contracts = compilationResult.contracts
   } else {
     this.sources = null
-    this.contractsDetail = null
+    this.contracts = null
     this.sourceList = null
   }
 }
