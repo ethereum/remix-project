@@ -3,7 +3,7 @@
 module.exports = {
   contract: `
  contract intLocal {
-    function set () {
+    function intLocal () {
     uint8 ui8 = 130;
     uint16 ui16 = 456;
     uint32 ui32 = 4356;

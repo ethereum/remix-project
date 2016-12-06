@@ -32,12 +32,27 @@ tape('solidity', function (t) {
             tx.to = traceHelper.contractCreationToken('0')
             var traceManager = new TraceManager()
             var codeManager = new CodeManager(traceManager)
-            var locals = new LocalDecoder(output, codeManager, traceManager.traceAnalyser.event)
+            var localDecoder = new LocalDecoder(output, codeManager, traceManager.traceAnalyser.event)
             traceManager.resolveTrace(tx, function (error, result) {
               if (error) {
                 st.fail(error)
               } else {
-                console.log(locals)
+                var locals = localDecoder.locals
+                st.equals(locals['ui8'].type.typeName, 'uint')
+                st.equals(locals['ui16'].type.typeName, 'uint')
+                st.equals(locals['ui32'].type.typeName, 'uint')
+                st.equals(locals['ui64'].type.typeName, 'uint')
+                st.equals(locals['ui128'].type.typeName, 'uint')
+                st.equals(locals['ui256'].type.typeName, 'uint')
+                st.equals(locals['ui'].type.typeName, 'uint')
+                st.equals(locals['i8'].type.typeName, 'int')
+                st.equals(locals['i16'].type.typeName, 'int')
+                st.equals(locals['i32'].type.typeName, 'int')
+                st.equals(locals['i64'].type.typeName, 'int')
+                st.equals(locals['i128'].type.typeName, 'int')
+                st.equals(locals['i256'].type.typeName, 'int')
+                st.equals(locals['i'].type.typeName, 'int')
+                st.equals(locals['ishrink'].type.typeName, 'int')
               }
             })
           }

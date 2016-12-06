@@ -33,11 +33,11 @@ LocalDecoder.prototype.push = function (index, step, callStack, cache) {
         console.log(error)
       } else {
         var file = self.parent.sourceList[result.file]
-        var ast = self.parent.sources[file]
-        this.astWalker.walk(ast, function (node) {
+        var ast = self.parent.sources[file].AST
+        self.astWalker.walk(ast, function (node) {
           if (node.name === 'VariableDeclaration' && node.src.indexOf(result.start + ':' + result.length) === 0) {
             self.locals[node.attributes.name] = {
-              type: decodeInfo.parseType(node, []),
+              type: decodeInfo.parseType(node.attributes.type, []),
               stack: step.stack
             }
             return false
