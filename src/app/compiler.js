@@ -1,6 +1,7 @@
 'use strict'
 
 var solc = require('solc/wrapper')
+var solcABI = require('solc/abi')
 
 var webworkify = require('webworkify')
 var utils = require('./utils')
@@ -19,6 +20,8 @@ function Compiler (editor, handleGithubCall) {
 
   var cachedRemoteFiles = {}
   var worker = null
+
+  var currentVersion
 
   var optimize = false
 
@@ -53,6 +56,7 @@ function Compiler (editor, handleGithubCall) {
   this.setCompileJSON = setCompileJSON // this is exposed for testing
 
   function onCompilerLoaded (version) {
+    currentVersion = version
     self.event.trigger('compilerLoaded', [version])
   }
 
@@ -123,6 +127,8 @@ function Compiler (editor, handleGithubCall) {
       // try compiling again with the new set of inputs
       internalCompile(source.sources, missingInputs)
     } else {
+      data = updateInterface(data)
+
       self.lastCompilationResult = {
         data: data,
         source: source
@@ -269,6 +275,24 @@ function Compiler (editor, handleGithubCall) {
       }
     } while (reloop)
     cb(null, { 'sources': files })
+  }
+
+  function truncateVersion (version) {
+    var tmp = /^(\d+.\d+.\d+)/.exec(version)
+    if (tmp) {
+      return tmp[1]
+    }
+    return version
+  }
+
+  function updateInterface (data) {
+    for (var contract in data.contracts) {
+      var abi = JSON.parse(data.contracts[contract].interface)
+      abi = solcABI.update(truncateVersion(currentVersion), abi)
+      data.contracts[contract].interface = JSON.stringify(abi)
+    }
+
+    return data
   }
 }
 
