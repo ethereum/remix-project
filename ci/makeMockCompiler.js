@@ -63,6 +63,7 @@ function replaceSolCompiler (results) {
       process.exit(1)
       return
     }
+    data = data + '\n\nvar mockCompilerVersion = \'' + compiler.version() + '\''
     data = data + '\n\nvar mockData = ' + JSON.stringify(results) + ';\n'
     fs.writeFile('./soljson.js', data, 'utf8', function (error) {
       if (error) {

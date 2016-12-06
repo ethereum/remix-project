@@ -39,5 +39,5 @@ function compile (source, optimization, missingInputs) {
 }
 
 function version () {
-  return 'mock compiler'
+  return mockCompilerVersion // eslint-disable-line
 }
