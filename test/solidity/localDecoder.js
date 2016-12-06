@@ -15,7 +15,7 @@ var util = require('../../src/helpers/global')
 var LocalDecoder = require('../../src/solidity/localDecoder')
 
 tape('solidity', function (t) {
-  t.test('storage decoder', function (st) {
+  t.test('local decoder', function (st) {
     var privateKey = new Buffer('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
     var address = utileth.privateToAddress(privateKey)
     var vm = initVM(st, address)

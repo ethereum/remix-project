@@ -20,11 +20,11 @@ function SourceLocationTracker (_codeManager) {
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocation = function (address, index, contractsDetails, cb) {
+SourceLocationTracker.prototype.getSourceLocation = function (address, index, contracts, cb) {
   var self = this
   this.codeManager.getCode(address, function (error, result) {
     if (!error) {
-      var sourceMap = getSourceMap(address, result.bytecode, contractsDetails)
+      var sourceMap = getSourceMap(address, result.bytecode, contracts)
       if (sourceMap) {
         cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
       } else {
@@ -44,11 +44,11 @@ SourceLocationTracker.prototype.getSourceLocation = function (address, index, co
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocation = function (address, vmtraceStepIndex, contractsDetails, cb) {
+SourceLocationTracker.prototype.getSourceLocation = function (address, vmtraceStepIndex, contracts, cb) {
   var self = this
   this.codeManager.getCode(address, function (error, result) {
     if (!error) {
-      var sourceMap = getSourceMap(address, result.bytecode, contractsDetails)
+      var sourceMap = getSourceMap(address, result.bytecode, contracts)
       if (sourceMap) {
         self.codeManager.getInstructionIndex(address, vmtraceStepIndex, function (error, index) {
           if (error) {
@@ -73,12 +73,12 @@ function srcmapRuntime (contract) {
   return contract.srcmapRuntime ? contract.srcmapRuntime : contract['srcmap-runtime']
 }
 
-function getSourceMap (address, code, contractsDetails) {
+function getSourceMap (address, code, contracts) {
   var isCreation = helper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
-  for (var k in contractsDetails) {
-    if ('0x' + contractsDetails[k][byteProp] === code) {
-      return isCreation ? contractsDetails[k].srcmap : srcmapRuntime(contractsDetails[k])
+  for (var k in contracts) {
+    if ('0x' + contracts[k][byteProp] === code) {
+      return isCreation ? contracts[k].srcmap : srcmapRuntime(contracts[k])
     }
   }
   return null

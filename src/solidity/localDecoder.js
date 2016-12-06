@@ -5,7 +5,7 @@ var decodeInfo = require('../solidity/decodeInfo')
 
 function LocalDecoder (parent, codeManager, traceAnalyserEvent) {
   this.astWalker = new AstWalker()
-  this.codeManager = this.codeManager
+  this.codeManager = codeManager
   this.parent = parent
   this.locals = {}
   this.loading = false
@@ -26,7 +26,7 @@ LocalDecoder.prototype.push = function (index, step, callStack, cache) {
   if (!this.parent.sources) return
   if (step.op.indexOf('PUSH') === 0) {
     var self = this
-    var compiledContracts = this.parent.contractsDetail
+    var compiledContracts = this.parent.contracts
     var address = callStack[callStack.length - 1]
     this.sourceLocationTracker.getSourceLocation(address, index, compiledContracts, function (error, result) {
       if (error) {
