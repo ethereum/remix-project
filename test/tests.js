@@ -10,4 +10,5 @@ require('./sourceMappingDecoder.js')
 require('./solidity/decodeInfo.js')
 require('./solidity/storageLocation.js')
 require('./solidity/storageDecoder.js')
+require('./solidity/localDecoder.js')
 
