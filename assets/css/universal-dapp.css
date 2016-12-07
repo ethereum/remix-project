@@ -223,8 +223,8 @@
 }
 
 .udapp .contractProperty .call {
-	background-color: #FF8B8B;
-	border-color: #FF8B8B;
+	background-color: #FFB9B9;
+	border-color: #FFB9B9;
 }
 
 .udapp .contractProperty .debug {
@@ -235,6 +235,12 @@
 .udapp .contractProperty.constant .call {
 	background-color: #9DC1F5;
 	border-color: #9DC1F5;
+	width: 25%;
+}
+
+.udapp .contractProperty.payable .call {
+	background-color: #FF8B8B;
+	border-color: #FF8B8B;
 	width: 25%;
 }
 

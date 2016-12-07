@@ -654,6 +654,10 @@ UniversalDApp.prototype.getCallButton = function (args) {
     $contractProperty.addClass('hasArgs')
   }
 
+  if (args.abi.payable === true) {
+    $contractProperty.addClass('payable')
+  }
+
   return $contractProperty.append(outputSpan)
 }
 
