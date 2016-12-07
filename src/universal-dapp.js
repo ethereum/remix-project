@@ -152,6 +152,7 @@ UniversalDApp.prototype.render = function () {
   var $legend = $('<div class="legend" />')
     .append($('<div class="attach"/>').text('Attach'))
     .append($('<div class="transact"/>').text('Transact'))
+    .append($('<div class="payable"/>').text('Transact (Payable)'))
     .append($('<div class="call"/>').text('Call'))
 
   self.$el.append($legend)
@@ -652,6 +653,10 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   if (args.abi.inputs && args.abi.inputs.length > 0) {
     $contractProperty.addClass('hasArgs')
+  }
+
+  if (args.abi.payable === true) {
+    $contractProperty.addClass('payable')
   }
 
   return $contractProperty.append(outputSpan)

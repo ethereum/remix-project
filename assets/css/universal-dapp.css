@@ -223,8 +223,8 @@
 }
 
 .udapp .contractProperty .call {
-	background-color: #FF8B8B;
-	border-color: #FF8B8B;
+	background-color: #FFB9B9;
+	border-color: #FFB9B9;
 }
 
 .udapp .contractProperty .debug {
@@ -235,6 +235,12 @@
 .udapp .contractProperty.constant .call {
 	background-color: #9DC1F5;
 	border-color: #9DC1F5;
+	width: 25%;
+}
+
+.udapp .contractProperty.payable .call {
+	background-color: #FF8B8B;
+	border-color: #FF8B8B;
 	width: 25%;
 }
 
@@ -307,13 +313,17 @@
 }
 
 .udapp .legend .attach:before {
-	background-color: #62B762;
+	background-color: #B1EAC5;
 }
 
 .udapp .legend .transact:before {
-	background-color: #D42828;
+	background-color: #FFB9B9;
+}
+
+.udapp .legend .payable:before {
+	background-color: #FF8B8B;
 }
 
 .udapp .legend .call:before {
-	background-color: #556DF3;
+	background-color: #9DC1F5;
 }
