@@ -102,11 +102,16 @@ TxRunner.prototype.execute = function () {
         data: new Buffer(data.slice(2), 'hex')
       })
       tx.sign(account.privateKey)
+
+      const coinbases = [ '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e' ]
+      const difficulties = [ new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10) ]
       var block = new EthJSBlock({
         header: {
-          // FIXME: support coinbase, difficulty and gasLimit
           timestamp: new Date().getTime() / 1000 | 0,
-          number: self.blockNumber
+          number: self.blockNumber,
+          coinbase: coinbases[self.blockNumber % coinbases.length],
+          difficulty: difficulties[self.blockNumber % difficulties.length],
+          gasLimit: new BN(gasLimit, 10).imuln(2)
         },
         transactions: [],
         uncleHeaders: []
