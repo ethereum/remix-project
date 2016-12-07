@@ -58,7 +58,12 @@ TxRunner.prototype.execute = function () {
     }
     if (args.useCall) {
       tx.gas = gasLimit
-      self.web3.eth.call(tx, callback)
+      self.web3.eth.call(tx, function (error, result) {
+        callback(error, {
+          result: result,
+          transactionHash: result.transactionHash
+        })
+      })
     } else {
       self.web3.eth.estimateGas(tx, function (err, resp) {
         if (err) {
