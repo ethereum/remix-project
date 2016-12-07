@@ -17,7 +17,7 @@ function web3VmProvider () {
   this.eth.getTransactionFromBlock = function (blockNumber, txIndex, cb) { return self.getTransactionFromBlock(blockNumber, txIndex, cb) }
   this.eth.getBlockNumber = function (cb) { return self.getBlockNumber(cb) }
   this.debug.traceTransaction = function (hash, options, cb) { return self.traceTransaction(hash, options, cb) }
-  this.debug.storageAt = function (blockNumber, txIndex, address, cb) { return self.storageAt(blockNumber, txIndex, address, cb) }
+  this.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { return self.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': 'vm provider'}
   this.storageCache = {}
@@ -127,10 +127,14 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
   }
 }
 
-web3VmProvider.prototype.storageAt = function (blockNumber, txIndex, address, cb) { // txIndex is the hash in the case of the VM
+web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { // txIndex is the hash in the case of the VM
+  // we don't use the range params here
   if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
     var storage = this.storageCache[txIndex][address]
-    return cb(null, JSON.parse(JSON.stringify(storage))) // copy creation...
+    return cb(null, {
+      storage: JSON.parse(JSON.stringify(storage)), // copy
+      complete: true
+    })
   } else {
     cb('unable to retrieve storage ' + txIndex + ' ' + address)
   }

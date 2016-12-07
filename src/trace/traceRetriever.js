@@ -21,9 +21,16 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
   if (traceHelper.isContractCreation(address)) {
     callback(null, {})
   } else {
-    util.web3.debug.storageAt(null, tx.hash, address, function (error, result) {
-      callback(error, result)
-    })
+    if (util.web3.debug.storageRangeAt) {
+      var maxLength = 100000
+      // The VM gives only a tx hash
+      // TODO: get rid of that and use the range parameters
+      util.web3.debug.storageRangeAt(tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex, address, '0x0', '0x' + (maxLength - 1).toString(16), maxLength, function (error, result) {
+        callback(error, result.storage)
+      })
+    } else {
+      callback('no storageRangeAt endpoint found')
+    }
   }
 }
 
