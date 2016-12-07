@@ -1,6 +1,7 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
 var util = require('../helpers/global')
+var BN = require('ethereumjs-util').BN
 
 function TraceRetriever () {
 }
@@ -22,10 +23,11 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
     callback(null, {})
   } else {
     if (util.web3.debug.storageRangeAt) {
-      var maxLength = 100000
+      var end = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+      var maxSize = 10000
       // The VM gives only a tx hash
       // TODO: get rid of that and use the range parameters
-      util.web3.debug.storageRangeAt(tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex, address, '0x0', '0x' + (maxLength - 1).toString(16), maxLength, function (error, result) {
+      util.web3.debug.storageRangeAt(tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex, address, '0x0', '0x' + end, maxSize, function (error, result) {
         callback(error, result.storage)
       })
     } else {
