@@ -16,8 +16,8 @@ class LocalDecoder {
     traceAnalyserEvent.register('onOp', function (index, step, callStack, cache) {
       self.push(index, step, callStack, cache)
     })
-    traceAnalyserEvent.register('finishAnalysing', function (index, step) {
-    })
+    traceAnalyserEvent.register('finishAnalysing', function (index, step) {})
+    this.variableDeclarationByFile = {}
   }
 
   push (index, step, callStack, cache) {
@@ -28,22 +28,23 @@ class LocalDecoder {
         if (error) {
           console.log(error)
         } else {
-          var ast = this.solidityProxy.ast(result)
+          if (!this.variableDeclarationByFile[result.file]) {
+            var ast = this.solidityProxy.ast(result)
+            this.variableDeclarationByFile[result.file] = extractVariableDeclarations(ast, this.astWalker)
+          }
+          var variableDeclarations = this.variableDeclarationByFile[result.file]
           this.solidityProxy.extractStateVariablesAt(index, (error, stateVars) => { // cached
             if (error) {
               console.log(error)
             } else {
-              this.astWalker.walk(ast, (node) => {
-                if (node.name === 'VariableDeclaration' && node.src.indexOf(result.start + ':' + result.length) === 0) {
-                  this.locals[node.attributes.name] = {
-                    type: decodeInfo.parseType(node.attributes.type, stateVars),
+              for (var dec of variableDeclarations) {
+                if (dec.src.indexOf(result.start + ':' + result.length) === 0) {
+                  this.locals[dec.attributes.name] = {
+                    type: decodeInfo.parseType(dec.attributes.type, stateVars),
                     stack: step.stack
                   }
-                  return false
-                } else {
-                  return true
                 }
-              })
+              }
             }
           })
         }
@@ -53,7 +54,19 @@ class LocalDecoder {
 
   clear () {
     this.locals = {}
+    this.variableDeclarationByFile = {}
   }
+}
+
+function extractVariableDeclarations (ast, astWalker) {
+  var ret = []
+  astWalker.walk(ast, (node) => {
+    if (node.name === 'VariableDeclaration') {
+      ret.push(node)
+    }
+    return true
+  })
+  return ret
 }
 
 module.exports = LocalDecoder
