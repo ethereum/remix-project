@@ -1,0 +1,139 @@
+'use strict'
+var SourceLocationTracker = require('../code/sourceLocationTracker')
+var AstWalker = require('./astWalker')
+var EventManager = require('../lib/eventManager')
+var decodeInfo = require('../solidity/decodeInfo')
+var util = require('../helpers/util')
+
+class InternalCallTree {
+  constructor (debuggerEvent, traceManager, solidityProxy, codeManager, opts) {
+    this.includeLocalsVariables = opts.includeLocalsVariables
+    this.event = new EventManager()
+    this.solidityProxy = solidityProxy
+    this.traceManager = traceManager
+    this.sourceLocationTracker = new SourceLocationTracker(codeManager)
+    debuggerEvent.register('newTraceLoaded', (trace) => {
+      this.reset()
+      this.buildTree(trace)
+      this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+    })
+  }
+
+  buildTree (trace) {
+    buildTree(this, 0, '', trace)
+  }
+
+  reset () {
+    this.scopes = {}
+    this.scopeStarts = {}
+    this.variableDeclarationByFile = {}
+    this.astWalker = new AstWalker()
+  }
+
+  findScope (vmtraceIndex) {
+    var scopeId = util.findLowerBoundValue(vmtraceIndex, Object.keys(this.scopeStarts))
+    var scopes = this.scopes[scopeId]
+    var reg = /(.\d)$/
+    while (scopes.lastStep < vmtraceIndex) {
+      scopeId = scopeId.match(reg)
+      scopes = this.scopes[scopeId[1]]
+    }
+    return scopes
+  }
+}
+
+function buildTree (tree, step, scopeId, trace) {
+  let subScope = 1
+  tree.scopeStarts[step] = scopeId
+  tree.scopes[scopeId] = { firstStep: step }
+  while (step < trace.length) {
+    var sourceLocation
+    extractSourceLocation(tree, step, (error, src) => {
+      if (error) {
+        console.log(error)
+      } else {
+        sourceLocation = src
+      }
+    })
+    if (sourceLocation.jump === 'i') {
+      step = buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, trace)
+      subScope++
+    } else if (sourceLocation.jump === 'o') {
+      tree.scopes[scopeId].lastStep = step
+      return step + 1
+    } else {
+      if (tree.includeLocalsVariables) {
+        var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
+        if (variableDeclaration) {
+          if (!tree.scopes[scopeId].locals) {
+            tree.scopes[scopeId].locals = {}
+          }
+          tree.traceManager.getStackAt(step, (error, stack) => {
+            if (!error) {
+              tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
+                if (!error) {
+                  tree.solidityProxy.extractStateVariablesAt(step, (error, stateVars) => { // cached
+                    if (!error) {
+                      tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
+                        name: variableDeclaration.attributes.name,
+                        type: decodeInfo.parseType(variableDeclaration.attributes.type, contractName, stateVars),
+                        stackHeight: stack.length
+                      }
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      }
+
+      step++
+    }
+  }
+}
+
+function extractSourceLocation (tree, step, cb) {
+  tree.traceManager.getCurrentCalledAddressAt(step, (error, address) => {
+    if (!error) {
+      tree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, tree.solidityProxy.contracts, (error, sourceLocation) => {
+        if (!error) {
+          cb(null, sourceLocation)
+        } else {
+          cb('InternalCallTree - Cannot retrieve sourcelocation for step ' + step)
+        }
+      })
+    } else {
+      cb('InternalCallTree - Cannot retrieve address for step ' + step)
+    }
+  })
+}
+
+function resolveVariableDeclaration (tree, step, sourceLocation) {
+  if (!tree.variableDeclarationByFile[sourceLocation.file]) {
+    tree.variableDeclarationByFile[sourceLocation.file] = extractVariableDeclarations(tree.solidityProxy.ast(sourceLocation), tree.astWalker)
+  }
+  var variableDeclarations = tree.variableDeclarationByFile[sourceLocation.file]
+  var ret = null
+  tree.solidityProxy.extractStateVariablesAt(step, (error, stateVars) => { // cached
+    if (error) {
+      console.log(error)
+    } else {
+      ret = variableDeclarations[sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
+    }
+  })
+  return ret
+}
+
+function extractVariableDeclarations (ast, astWalker) {
+  var ret = {}
+  astWalker.walk(ast, (node) => {
+    if (node.name === 'VariableDeclaration') {
+      ret[node.src] = node
+    }
+    return true
+  })
+  return ret
+}
+
+module.exports = InternalCallTree
