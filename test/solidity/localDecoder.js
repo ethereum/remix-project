@@ -15,6 +15,7 @@ var util = require('../../src/helpers/global')
 var SolidityProxy = require('../../src/solidity/solidityProxy')
 var InternalCallTree = require('../../src/util/internalCallTree')
 var EventManager = require('../../src/lib/eventManager')
+var localDecoder = require('../../src/solidity/localDecoder')
 
 tape('solidity', function (t) {
   t.test('local decoder', function (st) {
@@ -65,6 +66,18 @@ tape('solidity', function (t) {
               st.equals(scopes['2'].locals['ui81'].type.typeName, 'uint')
               st.equals(scopes['3'].locals['ui8'].type.typeName, 'uint')
               st.equals(scopes['3.1'].locals['ui81'].type.typeName, 'uint')
+
+              decodeLocal(st, 105, traceManager, callTree, function (locals) {
+                st.equals(Object.keys(locals).length, 15)
+              })
+
+              decodeLocal(st, 157, traceManager, callTree, function (locals) {
+                try {
+                  st.equals(locals['ui8'], '')
+                } catch (e) {
+                  st.fail(e.message)
+                }
+              })
             })
             traceManager.resolveTrace(tx, (error, result) => {
               if (error) {
@@ -80,6 +93,27 @@ tape('solidity', function (t) {
   })
 })
 
+/*
+  Decode local variable
+*/
+function decodeLocal (st, index, traceManager, callTree, verifier) {
+  traceManager.waterfall([
+    traceManager.getStackAt,
+    traceManager.getMemoryAt],
+    index,
+    function (error, result) {
+      if (!error) {
+        var locals = localDecoder.solidityLocals(index, callTree, result[0].value, result[1].value)
+        verifier(locals)
+      } else {
+        st.fail(error)
+      }
+    })
+}
+
+/*
+  Init VM / Send Transaction
+*/
 function initVM (st, address) {
   var vm = new VM({
     enableHomestead: true,
