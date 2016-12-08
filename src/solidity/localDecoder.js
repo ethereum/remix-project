@@ -1,16 +1,19 @@
 'use strict'
 
-class LocalDecoder {
-  solidityLocals (vmtraceIndex, internalTreeCall, stack, memory) {
-    var scope = this.internalTreeCall.findScope(vmtraceIndex)
-    var locals = {}
-    for (var local of scope.locals) {
-      if (local.type.decodeLocals) {
-        locals[local.name] = local.type.decodeLocals(local.stackHeight, stack, memory)
-      }
+function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory) {
+  var scope = internalTreeCall.findScope(vmtraceIndex)
+  var locals = {}
+  for (var local in scope.locals) {
+    let variable = scope.locals[local]
+    if (variable.type.decodeLocals) {
+      locals[variable.name] = variable.type.decodeLocals(variable.stackHeight, stack, memory)
+    } else {
+      locals[variable.name] = ''
     }
-    return locals
   }
+  return locals
 }
 
-module.exports = LocalDecoder
+module.exports = {
+  solidityLocals: solidityLocals
+}
