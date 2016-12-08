@@ -3,6 +3,7 @@
 
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
+var swarmgw = require('swarmgw')
 
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
@@ -516,11 +517,23 @@ var run = function () {
   }
 
   function handleImportCall (url, cb) {
-    var githubMatch
+    var match
     if (files.exists(url)) {
       cb(null, files.get(url))
     } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
       handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
+        if (err) {
+          cb('Unable to import "' + url + '": ' + err)
+          return
+        }
+
+        // FIXME: at some point we should invalidate the cache
+        files.addReadOnly(url, content)
+        cb(null, content)
+      })
+    } else if ((match = /^bzzr:\/\/?([0-9a-fA-F]{64}$)/.exec(url))) {
+      $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
+      swarmgw.get(match[1], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
           return
