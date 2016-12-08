@@ -19,7 +19,7 @@ web3Override.debug.traceTransaction = function (txHash, options, callback) {
 }
 
 web3Override.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxSize, callback) {
-  callback(null, {})
+  callback(null, { storage: {}, complete: true })
 }
 
 web3Override.eth.getTransaction = function (txHash, callback) {
