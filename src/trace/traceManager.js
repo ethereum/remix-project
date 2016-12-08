@@ -285,7 +285,7 @@ TraceManager.prototype.waterfall = function (calls, stepindex, cb) {
   var ret = []
   var retError = null
   for (var call in calls) {
-    call.apply(this, [stepindex, function (error, result) {
+    calls[call].apply(this, [stepindex, function (error, result) {
       retError = error
       ret.push({ error: error, value: result })
     }])
