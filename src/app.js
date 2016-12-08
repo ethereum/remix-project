@@ -424,8 +424,35 @@ var run = function () {
         cb(err || 'Unknown transport error')
       })
   }
+
+  // FIXME: at some point we should invalidate the cache
+  var cachedRemoteFiles = {}
+
+  function handleImportCall (url, cb) {
+    var githubMatch
+    if (editor.hasFile(url)) {
+      cb(null, editor.getFile(url))
+    } else if (url in cachedRemoteFiles) {
+      cb(null, cachedRemoteFiles[url])
+    } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
+      handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
+        if (err) {
+          cb('Unable to import "' + url + '": ' + err)
+          return
+        }
+
+        cachedRemoteFiles[url] = content
+        cb(null, content)
+      })
+    } else if (/^[^:]*:\/\//.exec(url)) {
+      cb('Unable to import "' + url + '": Unsupported URL')
+    } else {
+      cb('Unable to import "' + url + '": File not found')
+    }
+  }
+
   var executionContext = new ExecutionContext()
-  var compiler = new Compiler(editor, handleGithubCall)
+  var compiler = new Compiler(editor, handleImportCall)
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)

@@ -11,14 +11,13 @@ var EventManager = require('../lib/eventManager')
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted
 */
-function Compiler (editor, handleGithubCall) {
+function Compiler (editor, handleImportCall) {
   var self = this
   this.event = new EventManager()
 
   var compileJSON
   var compilerAcceptsMultipleFiles
 
-  var cachedRemoteFiles = {}
   var worker = null
 
   var currentVersion
@@ -219,61 +218,45 @@ function Compiler (editor, handleGithubCall) {
       cb(null, files[editor.getCacheFile()])
       return
     }
+
     // FIXME: This will only match imports if the file begins with one.
     //        It should tokenize by lines and check each.
     // eslint-disable-next-line no-useless-escape
     var importRegex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"];/g
-    var reloop = false
-    var githubMatch
-    do {
-      reloop = false
-      for (var fileName in files) {
-        var match
-        while ((match = importRegex.exec(files[fileName]))) {
-          var importFilePath = match[1]
-          if (importFilePath.startsWith('./')) {
-            importFilePath = importFilePath.slice(2)
-          }
 
-          // FIXME: should be using includes or sets, but there's also browser compatibility..
-          if (importHints.indexOf(importFilePath) === -1) {
-            importHints.push(importFilePath)
-          }
+    for (var fileName in files) {
+      var match
+      while ((match = importRegex.exec(files[fileName]))) {
+        var importFilePath = match[1]
+        if (importFilePath.startsWith('./')) {
+          importFilePath = importFilePath.slice(2)
+        }
+
+        // FIXME: should be using includes or sets, but there's also browser compatibility..
+        if (importHints.indexOf(importFilePath) === -1) {
+          importHints.push(importFilePath)
         }
       }
-      while (importHints.length > 0) {
-        var m = importHints.pop()
-        if (m in files) {
-          continue
-        }
-        if (editor.hasFile(m)) {
-          files[m] = editor.getFile(m)
-          reloop = true
-        } else if (m in cachedRemoteFiles) {
-          files[m] = cachedRemoteFiles[m]
-          reloop = true
-        } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(m))) {
-          handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
-            if (err) {
-              cb('Unable to import "' + m + '": ' + err)
-              return
-            }
+    }
 
-            cachedRemoteFiles[m] = content
-            files[m] = content
+    while (importHints.length > 0) {
+      var m = importHints.pop()
+      if (m in files) {
+        continue
+      }
 
-            gatherImports(files, importHints, cb)
-          })
-          return
-        } else if (/^[^:]*:\/\//.exec(m)) {
-          cb('Unable to import "' + m + '": Unsupported URL')
-          return
+      handleImportCall(m, function (err, content) {
+        if (err) {
+          cb(err)
         } else {
-          cb('Unable to import "' + m + '": File not found')
-          return
+          files[m] = content
+          gatherImports(files, importHints, cb)
         }
-      }
-    } while (reloop)
+      })
+
+      return
+    }
+
     cb(null, { 'sources': files })
   }
 
