@@ -1,15 +1,12 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
-var EventManager = require('../lib/eventManager')
 
 function TraceAnalyser (_cache) {
-  this.event = new EventManager()
   this.traceCache = _cache
   this.trace = null
 }
 
 TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
-  this.event.trigger('startAnalysing')
   this.trace = trace
   this.traceCache.pushStoreChanges(0, tx.to)
   var context = {
@@ -29,10 +26,8 @@ TraceAnalyser.prototype.analyse = function (trace, tx, callback) {
     context = this.buildDepth(k, step, tx, callStack, context)
     context = this.buildStorage(k, step, context)
     this.buildReturnValues(k, step)
-    this.event.trigger('onOp', [k, step, callStack, this.traceCache])
   }
   callback(null, true)
-  this.event.trigger('finishAnalysing')
 }
 
 TraceAnalyser.prototype.buildReturnValues = function (index, step) {
