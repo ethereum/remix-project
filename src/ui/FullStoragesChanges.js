@@ -45,7 +45,7 @@ FullStoragesChanges.prototype.init = function () {
     if (index === self.traceLength - 1) {
       var storageJSON = {}
       for (var k in self.addresses) {
-        self.traceManager.getStorageAt(index, null, function (error, result) {
+        self.traceManager.getStorageAt(index, this.parent.tx, function (error, result) {
           if (!error) {
             storageJSON[self.addresses[k]] = result
             self.basicPanel.update(storageJSON)

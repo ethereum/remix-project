@@ -28,8 +28,8 @@ function loadTestWeb3 (data) {
     callback(null, data.testTraces[txHash])
   }
 
-  uiTestweb3.debug.storageAt = function (blockNumber, txIndex, address, callback) {
-    callback(null, {})
+  uiTestweb3.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, size, callback) {
+    callback(null, { storage: {}, complete: true })
   }
 
   uiTestweb3.eth.getTransaction = function (txHash, callback) {

@@ -7,7 +7,7 @@ function dummyProvider () {
   this.eth.getTransactionFromBlock = function (blockNumber, txIndex, cb) { return self.getTransactionFromBlock(blockNumber, txIndex, cb) }
   this.eth.getBlockNumber = function (cb) { return self.getBlockNumber(cb) }
   this.debug.traceTransaction = function (hash, options, cb) { return self.traceTransaction(hash, options, cb) }
-  this.debug.storageAt = function (blockNumber, txIndex, address, cb) { return self.storageAt(blockNumber, txIndex, address, cb) }
+  this.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { return self.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': ''}
 }
@@ -25,7 +25,7 @@ dummyProvider.prototype.traceTransaction = function (txHash, options, cb) {
   return {}
 }
 
-dummyProvider.prototype.storageAt = function (blockNumber, txIndex, address, cb) { cb(null, {}) }
+dummyProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { cb(null, {}) }
 
 dummyProvider.prototype.getBlockNumber = function (cb) { cb(null, '') }
 

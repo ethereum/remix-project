@@ -1,6 +1,9 @@
 'use strict'
 module.exports = {
   extend: function (web3) {
+    if (!web3._extend) {
+      return
+    }
     // DEBUG
     var methods = []
     if (!(web3.debug && web3.debug.traceTransaction)) {
@@ -12,12 +15,12 @@ module.exports = {
       }))
     }
 
-    if (!(web3.debug && web3.debug.storageAt)) {
+    if (!(web3.debug && web3.debug.storageRangeAt)) {
       methods.push(new web3._extend.Method({
-        name: 'storageAt',
-        call: 'debug_storageAt',
-        inputFormatter: [null, null, null],
-        params: 3
+        name: 'storageRangeAt',
+        call: 'debug_storageRangeAt',
+        inputFormatter: [null, null, null, null, null, null],
+        params: 6
       }))
     }
     if (methods.length > 0) {

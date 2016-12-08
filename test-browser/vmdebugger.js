@@ -64,6 +64,7 @@ function panels (browser) {
     .click('#load')
     .click('#nextcall')
     .assertStack(['0x', '0x60', '0x65', '0x38', '0x55', '0x60fe47b1'])
+    .pause(5000)
     .assertStorageChanges(['0x000x38'])
     .assertCallData(['0x60fe47b10000000000000000000000000000000000000000000000000000000000000038'])
     .assertCallStack(['0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5'])
