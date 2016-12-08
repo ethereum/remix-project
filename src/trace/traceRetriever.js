@@ -1,7 +1,6 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
 var util = require('../helpers/global')
-var BN = require('ethereumjs-util').BN
 
 function TraceRetriever () {
 }
