@@ -10,6 +10,11 @@ class SolidityProxy {
     this.codeManager = codeManager
   }
 
+  /**
+    * reset the cache and apply a new @arg compilationResult
+    *
+    * @param {Object} compilationResult  - result os a compilatiion (diectly returned by the compiler)
+    */
   reset (compilationResult) {
     this.sources = compilationResult.sources
     this.sourceList = compilationResult.sourceList
@@ -17,10 +22,21 @@ class SolidityProxy {
     this.cache.reset()
   }
 
+  /**
+    * check if the object has been properly loaded
+    *
+    * @return {Bool} - returns true if a compilation result has been applied
+    */
   loaded () {
     return this.contracts !== undefined
   }
 
+  /**
+    * retrieve the compiled contract name at the @arg vmTraceIndex (cached)
+    *
+    * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
+    * @param {Function} cb  - callback returns (error, contractName)
+    */
   contractNameAt (vmTraceIndex, cb) {
     this.traceManager.getCurrentCalledAddressAt(vmTraceIndex, (error, address) => {
       if (error) {
@@ -43,6 +59,12 @@ class SolidityProxy {
     })
   }
 
+  /**
+    * extract the state variables of the given compiled @arg contractName (cached)
+    *
+    * @param {String} contractName  - name of the contract to retrieve state variables from
+    * @return {Object} - returns state variables of @args contractName
+    */
   extractStateVariables (contractName) {
     if (!this.cache.stateVariablesByContractName[contractName]) {
       this.cache.stateVariablesByContractName[contractName] = stateDecoder.extractStateVariables(contractName, this.sources)
@@ -50,6 +72,12 @@ class SolidityProxy {
     return this.cache.stateVariablesByContractName[contractName]
   }
 
+  /**
+    * extract the state variables of the given compiled @arg vmtraceIndex (cached)
+    *
+    * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the state variables
+    * @return {Object} - returns state variables of @args vmTraceIndex
+    */
   extractStateVariablesAt (vmtraceIndex, cb) {
     this.contractNameAt(vmtraceIndex, (error, contractName) => {
       if (error) {
@@ -60,6 +88,12 @@ class SolidityProxy {
     })
   }
 
+  /**
+    * get the AST of the file declare in the @arg sourceLocation
+    *
+    * @param {Object} sourceLocation  - source location containing the 'file' to retrieve the AST from
+    * @return {Object} - AST of the current file
+    */
   ast (sourceLocation) {
     var file = this.sourceList[sourceLocation.file]
     return this.sources[file].AST
