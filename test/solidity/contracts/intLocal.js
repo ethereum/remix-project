@@ -17,8 +17,19 @@ module.exports = {
     int64 i64 = -35566;
     int128 i128 = -444444;
     int256 i256 = 3434343;
-    int i = -32432423423;
+    int i = -32432423423;    
     int32 ishrink = 2;   
+    level11();
+    level12();
+    level11();
+    }
+    
+    function level11() {
+      uint8 ui8 = 123;
+      level12();
+    }
+    function level12() {
+      uint8 ui81 = 12;
     }
   }
 `}

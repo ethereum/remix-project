@@ -11,10 +11,11 @@ var ui = require('../helpers/ui')
 var Web3Providers = require('../web3Provider/web3Providers')
 var DummyProvider = require('../web3Provider/dummyProvider')
 var CodeManager = require('../code/codeManager')
-var LocalDecoder = require('../solidity/localDecoder')
 var SolidityProxy = require('../solidity/solidityProxy')
+var InternalCallTree = require('../util/internalCallTree')
 
 function Ethdebugger () {
+  var self = this
   this.event = new EventManager()
 
   this.currentStepIndex = -1
@@ -28,8 +29,9 @@ function Ethdebugger () {
   this.traceManager = new TraceManager()
   this.codeManager = new CodeManager(this.traceManager)
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
-  this.locals = new LocalDecoder(this.codeManager, this.traceManager.traceAnalyser.event, this.solidityProxy)
-  var self = this
+
+  var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager)
+
   this.event.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
   })
@@ -48,7 +50,7 @@ function Ethdebugger () {
   this.stepManager.event.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
   })
-  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy)
+  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy, callTree)
 }
 
 Ethdebugger.prototype.web3 = function () {
@@ -129,7 +131,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
     if (result) {
       self.statusMessage = ''
       yo.update(self.view, self.render())
-      self.event.trigger('newTraceLoaded')
+      self.event.trigger('newTraceLoaded', [self.traceManager.trace])
     } else {
       self.statusMessage = error
       yo.update(self.view, self.render())
