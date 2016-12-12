@@ -16,8 +16,23 @@ function Enum (enumDef) {
 Enum.prototype.decodeFromStorage = function (location, storageContent) {
   var value = util.extractHexValue(location, storageContent, this.storageBytes)
   value = parseInt(value, 16)
-  if (this.enumDef.children.length > value) {
-    return this.enumDef.children[value].attributes.name
+  return output(value, this.enumDef)
+}
+
+Enum.prototype.decodeLocals = function (stackHeight, stack, memory) {
+  var defaultValue = 0
+  if (stack.length - 1 < stackHeight) {
+    defaultValue = 0
+  } else {
+    defaultValue = util.extractHexByteSlice(stack[stack.length - 1 - stackHeight], this.storageBytes, 0)
+    defaultValue = parseInt(defaultValue, 16)
+  }
+  return output(defaultValue, this.enumDef)
+}
+
+function output (value, enumDef) {
+  if (enumDef.children.length > value) {
+    return enumDef.children[value].attributes.name
   } else {
     return 'INVALID_ENUM<' + value + '>'
   }
