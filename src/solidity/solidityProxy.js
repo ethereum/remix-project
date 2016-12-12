@@ -1,6 +1,7 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
 var stateDecoder = require('./stateDecoder')
+var astHelper = require('./astHelper')
 
 class SolidityProxy {
   constructor (traceManager, codeManager) {
@@ -65,6 +66,22 @@ class SolidityProxy {
     * @param {String} contractName  - name of the contract to retrieve state variables from
     * @return {Object} - returns state variables of @args contractName
     */
+  extractStatesDefinitions () {
+    if (!this.cache.contractDeclarations) {
+      this.cache.contractDeclarations = astHelper.extractContractDefinitions(this.sources)
+    }
+    if (!this.cache.statesDefinitions) {
+      this.cache.statesDefinitions = astHelper.extractStatesDefinitions(this.sources, this.cache.contractDeclarations)
+    }
+    return this.cache.statesDefinitions
+  }
+
+  /**
+    * extract the state variables of the given compiled @arg contractName (cached)
+    *
+    * @param {String} contractName  - name of the contract to retrieve state variables from
+    * @return {Object} - returns state variables of @args contractName
+    */
   extractStateVariables (contractName) {
     if (!this.cache.stateVariablesByContractName[contractName]) {
       this.cache.stateVariablesByContractName[contractName] = stateDecoder.extractStateVariables(contractName, this.sources)
@@ -118,6 +135,8 @@ class Cache {
   reset () {
     this.contractNameByAddress = {}
     this.stateVariablesByContractName = {}
+    this.contractDeclarations = null
+    this.statesDefinitions = null
   }
 }
 
