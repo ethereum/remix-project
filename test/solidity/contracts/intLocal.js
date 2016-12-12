@@ -2,7 +2,7 @@
 
 module.exports = {
   contract: `
- contract proxy {
+contract proxy {
     struct testStruct {
         int one;
         uint two;
