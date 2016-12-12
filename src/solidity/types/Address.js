@@ -13,7 +13,7 @@ Address.prototype.decodeFromStorage = function (location, storageContent) {
 }
 
 Address.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+  if (stackHeight >= stack.length) {
     return '0x0000000000000000000000000000000000000000'
   } else {
     return '0x' + util.extractHexByteSlice(stack[stack.length - 1 - stackHeight], this.storageBytes, 0)
