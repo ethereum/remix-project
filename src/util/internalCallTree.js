@@ -74,15 +74,12 @@ function buildTree (tree, step, scopeId, trace) {
             if (!error) {
               tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
                 if (!error) {
-                  tree.solidityProxy.extractStateVariablesAt(step, (error, stateVars) => { // cached
-                    if (!error) {
-                      tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
-                        name: variableDeclaration.attributes.name,
-                        type: decodeInfo.parseType(variableDeclaration.attributes.type, contractName, stateVars),
-                        stackHeight: stack.length
-                      }
-                    }
-                  })
+                  var states = tree.solidityProxy.extractStatesDefinitions()
+                  tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
+                    name: variableDeclaration.attributes.name,
+                    type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
+                    stackHeight: stack.length
+                  }
                 }
               })
             }
@@ -116,15 +113,7 @@ function resolveVariableDeclaration (tree, step, sourceLocation) {
     tree.variableDeclarationByFile[sourceLocation.file] = extractVariableDeclarations(tree.solidityProxy.ast(sourceLocation), tree.astWalker)
   }
   var variableDeclarations = tree.variableDeclarationByFile[sourceLocation.file]
-  var ret = null
-  tree.solidityProxy.extractStateVariablesAt(step, (error, stateVars) => { // cached
-    if (error) {
-      console.log(error)
-    } else {
-      ret = variableDeclarations[sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
-    }
-  })
-  return ret
+  return variableDeclarations[sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
 }
 
 function extractVariableDeclarations (ast, astWalker) {
