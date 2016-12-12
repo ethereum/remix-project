@@ -2,13 +2,13 @@
 var tape = require('tape')
 var compiler = require('solc')
 var intLocal = require('./contracts/intLocal')
-var addressLocal = require('./contracts/addressLocal')
+var miscLocal = require('./contracts/miscLocal')
 var VM = require('ethereumjs-vm')
 var utileth = require('ethereumjs-util')
 var Web3Providers = require('../../src/web3Provider/web3Providers')
 var util = require('../../src/helpers/global')
 var intLocalTest = require('./localsTests/int')
-var addressLocalTest = require('./localsTests/address')
+var miscLocalTest = require('./localsTests/misc')
 
 tape('solidity', function (t) {
   t.test('local decoder', function (st) {
@@ -46,7 +46,7 @@ function initVM (st, address) {
 function test (st, vm, privateKey) {
   var output = compiler.compile(intLocal.contract, 0)
   intLocalTest(st, vm, privateKey, output.contracts['intLocal'].bytecode, output, function () {
-    output = compiler.compile(addressLocal.contract, 0)
-    addressLocalTest(st, vm, privateKey, output.contracts['addressLocal'].bytecode, output, function () {})
+    output = compiler.compile(miscLocal.contract, 0)
+    miscLocalTest(st, vm, privateKey, output.contracts['miscLocal'].bytecode, output, function () {})
   })
 }
