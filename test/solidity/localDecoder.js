@@ -41,11 +41,11 @@ tape('solidity', function (t) {
             var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalsVariables: true })
             callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
               st.equals(scopeStarts[0], '')
-              st.equals(scopeStarts[77], '1')
-              st.equals(scopeStarts[92], '1.1')
-              st.equals(scopeStarts[115], '2')
-              st.equals(scopeStarts[134], '3')
-              st.equals(scopeStarts[149], '3.1')
+              st.equals(scopeStarts[97], '1')
+              st.equals(scopeStarts[112], '1.1')
+              st.equals(scopeStarts[135], '2')
+              st.equals(scopeStarts[154], '3')
+              st.equals(scopeStarts[169], '3.1')
               st.equals(scopes[''].locals['ui8'].type.typeName, 'uint')
               st.equals(scopes[''].locals['ui16'].type.typeName, 'uint')
               st.equals(scopes[''].locals['ui32'].type.typeName, 'uint')
@@ -67,13 +67,14 @@ tape('solidity', function (t) {
               st.equals(scopes['3'].locals['ui8'].type.typeName, 'uint')
               st.equals(scopes['3.1'].locals['ui81'].type.typeName, 'uint')
 
-              decodeLocal(st, 105, traceManager, callTree, function (locals) {
-                st.equals(Object.keys(locals).length, 15)
+              decodeLocal(st, 125, traceManager, callTree, function (locals) {
+                st.equals(Object.keys(locals).length, 16)
               })
 
-              decodeLocal(st, 157, traceManager, callTree, function (locals) {
+              decodeLocal(st, 177, traceManager, callTree, function (locals) {
                 try {
                   st.equals(locals['ui8'], '')
+                  st.equals(Object.keys(locals).length, 1)
                 } catch (e) {
                   st.fail(e.message)
                 }
