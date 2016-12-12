@@ -12,7 +12,7 @@ Uint.prototype.decodeFromStorage = function (location, storageContent) {
 }
 
 Uint.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length < stackHeight) {
+  if (stack.length - 1 < stackHeight) {
     return '0'
   } else {
     return util.decodeIntFromHex(stack[stack.length - 1 - stackHeight].replace('0x', ''), this.storageBytes, false)
