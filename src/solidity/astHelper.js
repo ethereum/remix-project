@@ -73,10 +73,13 @@ function extractStateDefinitions (contractName, sourcesList, contracts) {
   * return state var and type definition of all the contracts from the given @args sourcesList
   *
   * @param {Object} sourcesList - sources list (containing root AST node)
+  * @param {Object} [contracts] - map of contract definitions (contains contractsById, contractsByName)
   * @return {Object} - returns a mapping between contract name and contract state
   */
-function extractStatesDefinitions (sourcesList) {
-  var contracts = extractContractDefinitions(sourcesList)
+function extractStatesDefinitions (sourcesList, contracts) {
+  if (!contracts) {
+    contracts = extractContractDefinitions(sourcesList)
+  }
   var ret = {}
   for (var contract in contracts.contractsById) {
     var name = contracts.contractsById[contract].attributes.name
