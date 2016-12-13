@@ -55,7 +55,7 @@ class InternalCallTree {
 function buildTree (tree, step, scopeId, trace) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step }
+  tree.scopes[scopeId] = { firstStep: step, locals: {} }
   while (step < trace.length) {
     var sourceLocation
     extractSourceLocation(tree, step, (error, src) => {
@@ -74,10 +74,7 @@ function buildTree (tree, step, scopeId, trace) {
     } else {
       if (tree.includeLocalsVariables) {
         var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
-        if (variableDeclaration) {
-          if (!tree.scopes[scopeId].locals) {
-            tree.scopes[scopeId].locals = {}
-          }
+        if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
           tree.traceManager.getStackAt(step, (error, stack) => {
             if (!error) {
               tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
