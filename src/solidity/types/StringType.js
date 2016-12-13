@@ -10,6 +10,15 @@ function StringType () {
 
 StringType.prototype.decodeFromStorage = function (location, storageContent) {
   var decoded = this.dynamicBytes.decodeFromStorage(location, storageContent)
+  return format(decoded)
+}
+
+StringType.prototype.decodeLocals = function (stackHeight, stack, memory) {
+  var decoded = this.dynamicBytes.decodeLocals(stackHeight, stack, memory)
+  return format(decoded)
+}
+
+function format (decoded) {
   var value = decoded.value
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
   var ret = {
