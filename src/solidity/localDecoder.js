@@ -6,6 +6,7 @@ function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory) {
     return { 'error': 'Can\'t display locals. reason: compilation result might not have been provided' }
   }
   var locals = {}
+  memory = formatMemory(memory)
   for (var local in scope.locals) {
     let variable = scope.locals[local]
     if (variable.type.decodeLocals) {
@@ -15,6 +16,13 @@ function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory) {
     }
   }
   return locals
+}
+
+function formatMemory (memory) {
+  if (memory instanceof Array) {
+    memory = memory.join('').replace(/0x/g, '')
+  }
+  return memory
 }
 
 module.exports = {
