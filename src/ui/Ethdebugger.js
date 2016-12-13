@@ -31,7 +31,8 @@ function Ethdebugger () {
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
 
   var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
-  this.callTree = callTree
+  this.callTree = callTree // TODO: currently used by browser solidity, we should improve the API
+
   this.event.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
   })
