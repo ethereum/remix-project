@@ -57,4 +57,22 @@ DynamicByteArray.prototype.decodeFromMemory = function (offset, memory) {
   }
 }
 
+DynamicByteArray.prototype.decodeLocals = function (stackHeight, stack, memory) {
+  if (stack.length - 1 < stackHeight) {
+    return {
+      value: '0x',
+      length: '0x'
+    }
+  } else {
+    var offset = stack[stack.length - 1 - stackHeight]
+    offset = 2 * parseInt(offset, 16)
+    var length = memory.substr(offset, 64)
+    length = parseInt(length, 16)
+    return {
+      length: 2 * length,
+      value: '0x' + memory.substr(offset + 64, 2 * length)
+    }
+  }
+}
+
 module.exports = DynamicByteArray
