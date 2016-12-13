@@ -9,6 +9,7 @@ var Web3Providers = require('../../src/web3Provider/web3Providers')
 var util = require('../../src/helpers/global')
 var intLocalTest = require('./localsTests/int')
 var miscLocalTest = require('./localsTests/misc')
+var misc2LocalTest = require('./localsTests/misc2')
 
 tape('solidity', function (t) {
   t.test('local decoder', function (st) {
@@ -47,6 +48,9 @@ function test (st, vm, privateKey) {
   var output = compiler.compile(intLocal.contract, 0)
   intLocalTest(st, vm, privateKey, output.contracts['intLocal'].bytecode, output, function () {
     output = compiler.compile(miscLocal.contract, 0)
-    miscLocalTest(st, vm, privateKey, output.contracts['miscLocal'].bytecode, output, function () {})
+    miscLocalTest(st, vm, privateKey, output.contracts['miscLocal'].bytecode, output, function () {
+      output = compiler.compile(miscLocal.contract, 0)
+      misc2LocalTest(st, vm, privateKey, output.contracts['miscLocal2'].bytecode, output, function () {})
+    })
   })
 }
