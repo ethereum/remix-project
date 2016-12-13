@@ -29,4 +29,11 @@ contract miscLocal {
             bytes32 __bytes32 = hex"9999ABD41799ABD417";
         }
   }
+  
+  contract miscLocal2 {
+      function miscLocal2 () {
+           bytes memory dynbytes = "dynamicbytes";
+           string memory smallstring = "test_test_test";
+        }
+  }
 `}
