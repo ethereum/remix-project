@@ -29,11 +29,11 @@ class SolidityLocals {
         this.traceManager.getStackAt,
         this.traceManager.getMemoryAt],
         index,
-        function (error, result) {
+        (error, result) => {
           if (!error) {
             var stack = result[0].value
             var memory = result[1].value
-            var locals = localDecoder.soliditylocals(index, this.internalTreeCall, stack, memory)
+            var locals = localDecoder.solidityLocals(index, this.internalTreeCall, stack, memory)
             this.basicPanel.update(locals)
           }
         })
