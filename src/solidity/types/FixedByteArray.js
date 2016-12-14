@@ -17,8 +17,13 @@ FixedByteArray.prototype.decodeLocals = function (stackHeight, stack, memory) {
     return '0x'
   } else {
     var value = stack[stack.length - 1 - stackHeight]
-    return '0x' + value.substr(2, 2 * this.storageBytes).toUpperCase() // util.extractHexByteSlice(stack[stack.length - 1 - stackHeight], this.storageBytes, this.storageBytes)
+    return '0x' + value.substr(2, 2 * this.storageBytes).toUpperCase()
   }
+}
+
+FixedByteArray.prototype.decodeFromMemory = function (offset, memory) {
+  var value = memory.substr(offset, 64)
+  return util.extractHexByteSlice(value, this.storageBytes, 0).toUpperCase()
 }
 
 module.exports = FixedByteArray
