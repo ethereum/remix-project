@@ -20,4 +20,10 @@ Address.prototype.decodeLocals = function (stackHeight, stack, memory) {
   }
 }
 
+Address.prototype.decodeFromMemory = function (offset, memory) {
+  var value = memory.substr(offset, 64)
+  value = util.extractHexByteSlice(value, this.storageBytes, 0)
+  return value
+}
+
 module.exports = Address
