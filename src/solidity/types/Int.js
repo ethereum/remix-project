@@ -19,4 +19,9 @@ Int.prototype.decodeLocals = function (stackHeight, stack, memory) {
   }
 }
 
+Int.prototype.decodeFromMemory = function (offset, memory) {
+  var value = memory.substr(offset, 64)
+  return util.decodeIntFromHex(value, 32, true)
+}
+
 module.exports = Int
