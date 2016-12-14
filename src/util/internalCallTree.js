@@ -20,7 +20,11 @@ class InternalCallTree {
   }
 
   buildTree (trace) {
-    buildTree(this, 0, '', trace)
+    if (!this.solidityProxy.loaded()) {
+      console.log('compilation result not loaded. Cannot build internal call tree')
+    } else {
+      buildTree(this, 0, '', trace)
+    }
   }
 
   reset () {
@@ -31,7 +35,11 @@ class InternalCallTree {
   }
 
   findScope (vmtraceIndex) {
-    var scopeId = util.findLowerBoundValue(vmtraceIndex, Object.keys(this.scopeStarts))
+    var scopes = Object.keys(this.scopeStarts)
+    if (!scopes.length) {
+      return null
+    }
+    var scopeId = util.findLowerBoundValue(vmtraceIndex, scopes)
     scopeId = this.scopeStarts[scopeId]
     var scope = this.scopes[scopeId]
     var reg = /(.\d|\d)$/
