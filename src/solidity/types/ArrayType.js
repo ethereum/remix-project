@@ -54,4 +54,41 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
   }
 }
 
+ArrayType.prototype.decodeLocals = function (stackHeight, stack, memory) {
+  if (stack.length - 1 < stackHeight) {
+    return []
+  } else { // TODO manage decoding locals from storage
+    var offset = stack[stack.length - 1 - stackHeight]
+    offset = 2 * parseInt(offset, 16)
+    return this.decodeFromMemory(offset, memory)
+  }
+}
+
+ArrayType.prototype.decodeFromMemory = function (offset, memory) {
+  var ret = []
+  var length = extractLength(this, offset, memory)
+  if (this.arraySize === 'dynamic') {
+    offset = offset + 64
+  }
+  for (var k = 0; k < length; k++) {
+    var contentOffset = offset
+    if (this.underlyingType.typeName === 'bytes' || this.underlyingType.typeName === 'string' || this.underlyingType.typeName === 'array' || this.underlyingType.typeName === 'struct') {
+      contentOffset = memory.substr(offset, 64)
+      contentOffset = 2 * parseInt(contentOffset, 16)
+    }
+    ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
+    offset += 64
+  }
+  return ret
+}
+
+function extractLength (type, offset, memory) {
+  var length = type.arraySize
+  if (length === 'dynamic') {
+    length = memory.substr(offset, 64)
+    length = parseInt(length, 16)
+  }
+  return length
+}
+
 module.exports = ArrayType
