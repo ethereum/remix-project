@@ -39,17 +39,21 @@ DynamicByteArray.prototype.decodeLocals = function (stackHeight, stack, memory) 
   if (stack.length - 1 < stackHeight) {
     return {
       value: '0x',
-      length: '0x'
+      length: '0x0'
     }
   } else {
     var offset = stack[stack.length - 1 - stackHeight]
     offset = 2 * parseInt(offset, 16)
-    var length = memory.substr(offset, 64)
-    length = parseInt(length, 16)
-    return {
-      length: 2 * length,
-      value: '0x' + memory.substr(offset + 64, 2 * length)
-    }
+    return this.decodeFromMemory(offset, memory)
+  }
+}
+
+DynamicByteArray.prototype.decodeFromMemory = function (offset, memory) {
+  var length = memory.substr(offset, 64)
+  length = 2 * parseInt(length, 16)
+  return {
+    length: '0x' + length.toString(16),
+    value: '0x' + memory.substr(offset + 64, length)
   }
 }
 
