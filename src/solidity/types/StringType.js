@@ -18,6 +18,11 @@ StringType.prototype.decodeLocals = function (stackHeight, stack, memory) {
   return format(decoded)
 }
 
+StringType.prototype.decodeFromMemory = function (offset, memory) {
+  var decoded = this.dynamicBytes.decodeFromMemory(offset, memory)
+  return format(decoded)
+}
+
 function format (decoded) {
   var value = decoded.value
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
