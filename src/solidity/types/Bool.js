@@ -20,4 +20,9 @@ Bool.prototype.decodeLocals = function (stackHeight, stack, memory) {
   }
 }
 
+Bool.prototype.decodeFromMemory = function (offset, memory) {
+  var value = memory.substr(offset, 64)
+  return util.extractHexByteSlice(value, this.storageBytes, 0) !== '00'
+}
+
 module.exports = Bool
