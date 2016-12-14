@@ -30,6 +30,13 @@ Enum.prototype.decodeLocals = function (stackHeight, stack, memory) {
   return output(defaultValue, this.enumDef)
 }
 
+Enum.prototype.decodeFromMemory = function (offset, memory) {
+  var value = memory.substr(offset, 64)
+  value = util.extractHexByteSlice(value, this.storageBytes, 0)
+  value = parseInt(value, 16)
+  return output(value, this.enumDef)
+}
+
 function output (value, enumDef) {
   if (enumDef.children.length > value) {
     return enumDef.children[value].attributes.name
