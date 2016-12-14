@@ -19,4 +19,9 @@ Uint.prototype.decodeLocals = function (stackHeight, stack, memory) {
   }
 }
 
+Uint.prototype.decodeFromMemory = function (offset, memory) {
+  var value = memory.substr(offset, 64)
+  return util.decodeIntFromHex(value, this.storageBytes, false)
+}
+
 module.exports = Uint
