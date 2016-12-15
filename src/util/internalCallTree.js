@@ -8,6 +8,7 @@ var util = require('../helpers/util')
 /**
  * Tree representing internal jump into function.
  * Trigger `callTreeReady` event when tree is ready
+ * Trigger `callTreeBuildFailed` event when tree fails to build
  */
 class InternalCallTree {
   /**
@@ -30,9 +31,14 @@ class InternalCallTree {
       if (!this.solidityProxy.loaded()) {
         console.log('compilation result not loaded. Cannot build internal call tree')
       } else {
-        buildTree(this, 0, '', trace)
+        buildTree(this, 0, '', (error) => {
+          if (!error) {
+            this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+          } else {
+            this.event.trigger('callTreeBuildFailed', [error])
+          }
+        })
       }
-      this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
     })
   }
 
@@ -76,60 +82,79 @@ class InternalCallTree {
   }
 }
 
- /**
-   * build tree (called recursively)
-   *
-   * @param {Object} tree  - instance of InternalCallTree
-   * @param {Int} step  - index on the vm trace
-   * @param {String} scopeId  - deepness of the current scope
-   * @param {Object} trace  - vm trace
-   */
-function buildTree (tree, step, scopeId, trace) {
+/**
+  * build tree (called recursively)
+  *
+  * @param {Object} tree  - instance of InternalCallTree
+  * @param {Int} step  - index on the vm trace
+  * @param {String} scopeId  - deepness of the current scope
+  * @param {Function} cb  - callback
+  */
+function buildTree (tree, step, scopeId, cb) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step }
-  while (step < trace.length) {
-    var sourceLocation
-    extractSourceLocation(tree, step, (error, src) => {
-      if (error) {
-        console.log(error)
-      } else {
-        sourceLocation = src
-      }
-    })
-    if (sourceLocation.jump === 'i') {
-      step = buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, trace)
-      subScope++
-    } else if (sourceLocation.jump === 'o') {
-      tree.scopes[scopeId].lastStep = step
-      return step + 1
-    } else {
-      if (tree.includeLocalVariables) {
-        var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
-        if (variableDeclaration) {
-          if (!tree.scopes[scopeId].locals) {
-            tree.scopes[scopeId].locals = {}
-          }
-          tree.traceManager.getStackAt(step, (error, stack) => {
-            if (!error) {
-              tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
-                if (!error) {
-                  var states = tree.solidityProxy.extractStatesDefinitions()
-                  tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
-                    name: variableDeclaration.attributes.name,
-                    type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
-                    stackHeight: stack.length
-                  }
-                }
-              })
-            }
-          })
-        }
-      }
+  tree.scopes[scopeId] = { firstStep: step, locals: {} }
+  visitStep(tree, step, scopeId, subScope, function (error, result) {
+    cb(error, result)
+  })
+}
 
-      step++
+/**
+  * visit a step (called recursively)
+  *
+  * @param {Object} tree  - instance of InternalCallTree
+  * @param {Int} step  - index on the vm trace
+  * @param {String} scopeId  - deepness of the current scope
+  * @param {Int} subScope  - index of the next scope from current scope
+  * @param {Function} cb  - callback
+  */
+function visitStep (tree, step, scopeId, subScope, cb) {
+  extractSourceLocation(tree, step, (error, sourceLocation) => {
+    if (error) {
+      console.log(error)
+    } else {
+      if (sourceLocation.jump === 'i') {
+        buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, function (error, outStep) {
+          if (!error) {
+            visitStep(tree, outStep, scopeId, subScope + 1, cb)
+          } else {
+            cb('error computing jump')
+          }
+        })
+        return
+      } else if (sourceLocation.jump === 'o') {
+        tree.scopes[scopeId].lastStep = step
+        cb(null, step + 1)
+        return
+      } else {
+        if (tree.includeLocalVariables) {
+          var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
+          if (variableDeclaration) {
+            tree.traceManager.getStackAt(step, (error, stack) => {
+              if (!error) {
+                tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
+                  if (!error) {
+                    var states = tree.solidityProxy.extractStatesDefinitions()
+                    tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
+                      name: variableDeclaration.attributes.name,
+                      type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
+                      stackHeight: stack.length
+                    }
+                  }
+                })
+              }
+            })
+          }
+        }
+        step++
+      }
+      if (tree.traceManager.inRange(step)) {
+        visitStep(tree, step, scopeId, subScope, cb)
+      } else {
+        cb(null, step)
+      }
     }
-  }
+  })
 }
 
 function extractSourceLocation (tree, step, cb) {
