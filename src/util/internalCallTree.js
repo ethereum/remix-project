@@ -14,17 +14,13 @@ class InternalCallTree {
     this.sourceLocationTracker = new SourceLocationTracker(codeManager)
     debuggerEvent.register('newTraceLoaded', (trace) => {
       this.reset()
-      this.buildTree(trace)
+      if (!this.solidityProxy.loaded()) {
+        console.log('compilation result not loaded. Cannot build internal call tree')
+      } else {
+        buildTree(this, 0, '', trace)
+      }
       this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
     })
-  }
-
-  buildTree (trace) {
-    if (!this.solidityProxy.loaded()) {
-      console.log('compilation result not loaded. Cannot build internal call tree')
-    } else {
-      buildTree(this, 0, '', trace)
-    }
   }
 
   reset () {
