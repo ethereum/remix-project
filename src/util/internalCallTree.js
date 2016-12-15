@@ -5,7 +5,20 @@ var EventManager = require('../lib/eventManager')
 var decodeInfo = require('../solidity/decodeInfo')
 var util = require('../helpers/util')
 
+/**
+ * Tree representing internal jump into function.
+ * Trigger `callTreeReady` event when tree is ready
+ */
 class InternalCallTree {
+  /**
+    * constructor
+    *
+    * @param {Object} debuggerEvent  - event declared by the debugger (EthDebugger)
+    * @param {Object} traceManager  - trace manager
+    * @param {Object} solidityProxy  - solidity proxy
+    * @param {Object} codeManager  - code manager
+    * @param {Object} opts  - { includeLocalVariables }
+    */
   constructor (debuggerEvent, traceManager, solidityProxy, codeManager, opts) {
     this.includeLocalVariables = opts.includeLocalVariables
     this.event = new EventManager()
@@ -23,13 +36,28 @@ class InternalCallTree {
     })
   }
 
+  /**
+    * reset tree
+    *
+    */
   reset () {
+    /*
+      scopes: map of scopes defined by range in the vmtrace {firstStep, lastStep, locals}. Keys represent the level of deepness (scopeId)
+    */
     this.scopes = {}
+    /*
+      scopeStart: represent start of a new scope. Keys are index in the vmtrace, values are scopeId
+    */
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
     this.astWalker = new AstWalker()
   }
 
+  /**
+    * find the scope given @arg vmTraceIndex
+    *
+    * @param {Int} vmtraceIndex  - index on the vm trace
+    */
   findScope (vmtraceIndex) {
     var scopes = Object.keys(this.scopeStarts)
     if (!scopes.length) {
@@ -48,6 +76,14 @@ class InternalCallTree {
   }
 }
 
+ /**
+   * build tree (called recursively)
+   *
+   * @param {Object} tree  - instance of InternalCallTree
+   * @param {Int} step  - index on the vm trace
+   * @param {String} scopeId  - deepness of the current scope
+   * @param {Object} trace  - vm trace
+   */
 function buildTree (tree, step, scopeId, trace) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
