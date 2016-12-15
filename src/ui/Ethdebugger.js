@@ -30,7 +30,7 @@ function Ethdebugger () {
   this.codeManager = new CodeManager(this.traceManager)
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
 
-  var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalsVariables: true })
+  var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
 
   this.event.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
