@@ -7,7 +7,7 @@ var util = require('../helpers/util')
 
 class InternalCallTree {
   constructor (debuggerEvent, traceManager, solidityProxy, codeManager, opts) {
-    this.includeLocalsVariables = opts.includeLocalsVariables
+    this.includeLocalVariables = opts.includeLocalVariables
     this.event = new EventManager()
     this.solidityProxy = solidityProxy
     this.traceManager = traceManager
@@ -68,7 +68,7 @@ function buildTree (tree, step, scopeId, trace) {
       tree.scopes[scopeId].lastStep = step
       return step + 1
     } else {
-      if (tree.includeLocalsVariables) {
+      if (tree.includeLocalVariables) {
         var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
         if (variableDeclaration) {
           if (!tree.scopes[scopeId].locals) {
