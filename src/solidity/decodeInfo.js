@@ -10,6 +10,17 @@ var StringType = require('./types/StringType')
 var StructType = require('./types/Struct')
 var IntType = require('./types/Int')
 var UintType = require('./types/Uint')
+var MappingType = require('./types/Mapping')
+
+/**
+  * mapping decode the given @arg type
+  *
+  * @param {String} type - type given by the AST
+  * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
+  */
+function Mapping (type) {
+  return new MappingType()
+}
 
 /**
   * Uint decode the given @arg type
@@ -212,6 +223,9 @@ function typeClass (fullType) {
   if (fullType.indexOf(']') !== -1) {
     return 'array'
   }
+  if (fullType.indexOf('mapping') === 0) {
+    return 'mapping'
+  }
   if (fullType.indexOf(' ') !== -1) {
     fullType = fullType.split(' ')[0]
   }
@@ -238,7 +252,8 @@ function parseType (type, stateDefinitions, contractName) {
     'string': String,
     'struct': Struct,
     'int': Int,
-    'uint': Uint
+    'uint': Uint,
+    'mapping': Mapping
   }
   var currentType = typeClass(type)
   if (currentType === null) {
