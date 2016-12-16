@@ -483,6 +483,15 @@ var run = function () {
     autoCompile = document.querySelector('#autoCompile').checked
   })
 
+  function runCompiler () {
+    var files = {}
+    var target = utils.fileNameFromKey(editor.getCacheFile())
+
+    files[target] = editor.getValue()
+
+    compiler.compile(files, target)
+  }
+
   var previousInput = ''
   var compileTimeout = null
   var saveTimeout = null
@@ -518,28 +527,21 @@ var run = function () {
     if (compileTimeout) {
       window.clearTimeout(compileTimeout)
     }
-    compileTimeout = window.setTimeout(function () {
-      var files = {}
-      var target = utils.fileNameFromKey(editor.getCacheFile())
-
-      files[target] = editor.getValue()
-
-      compiler.compile(files, target)
-    }, 300)
+    compileTimeout = window.setTimeout(runCompiler, 300)
   }
 
   editor.onChangeSetup(editorOnChange)
 
   $('#compile').click(function () {
-    compiler.compile()
+    runCompiler()
   })
 
   executionContext.event.register('contextChanged', this, function (context) {
-    compiler.compile()
+    runCompiler()
   })
 
   executionContext.event.register('web3EndpointChanged', this, function (context) {
-    compiler.compile()
+    runCompiler()
   })
 
   compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
@@ -549,7 +551,7 @@ var run = function () {
   compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
     setVersionText(version)
-    compiler.compile()
+    runCompiler()
 
     if (queryParams.get().endpointurl) {
       executionContext.setEndPointUrl(queryParams.get().endpointurl)
@@ -611,7 +613,7 @@ var run = function () {
     var optimize = document.querySelector('#optimize').checked
     queryParams.update({ optimize: optimize })
     compiler.setOptimize(optimize)
-    compiler.compile()
+    runCompiler()
   })
 
   // ----------------- version selector-------------
