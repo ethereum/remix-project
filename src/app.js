@@ -452,7 +452,7 @@ var run = function () {
   }
 
   var executionContext = new ExecutionContext()
-  var compiler = new Compiler(editor, handleImportCall)
+  var compiler = new Compiler(handleImportCall)
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)

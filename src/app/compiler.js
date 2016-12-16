@@ -11,7 +11,7 @@ var EventManager = require('../lib/eventManager')
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted
 */
-function Compiler (editor, handleImportCall) {
+function Compiler (handleImportCall) {
   var self = this
   this.event = new EventManager()
 
