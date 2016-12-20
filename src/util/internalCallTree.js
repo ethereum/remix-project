@@ -109,52 +109,54 @@ function buildTree (tree, step, scopeId, cb) {
   * @param {Function} cb  - callback
   */
 function visitStep (tree, step, scopeId, subScope, cb) {
-  extractSourceLocation(tree, step, (error, sourceLocation) => {
-    if (error) {
-      console.log(error)
-    } else {
-      if (sourceLocation.jump === 'i') {
-        buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, function (error, outStep) {
-          if (!error) {
-            visitStep(tree, outStep, scopeId, subScope + 1, cb)
-          } else {
-            cb('error computing jump')
-          }
-        })
-        return
-      } else if (sourceLocation.jump === 'o') {
-        tree.scopes[scopeId].lastStep = step
-        cb(null, step + 1)
-        return
+  setTimeout(() => {
+    extractSourceLocation(tree, step, (error, sourceLocation) => {
+      if (error) {
+        cb(error)
       } else {
-        if (tree.includeLocalVariables) {
-          var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
-          if (variableDeclaration) {
-            tree.traceManager.getStackAt(step, (error, stack) => {
-              if (!error) {
-                tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
-                  if (!error) {
-                    var states = tree.solidityProxy.extractStatesDefinitions()
-                    tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
-                      name: variableDeclaration.attributes.name,
-                      type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
-                      stackHeight: stack.length
+        if (sourceLocation.jump === 'i') {
+          buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, function (error, outStep) {
+            if (!error) {
+              visitStep(tree, outStep, scopeId, subScope + 1, cb)
+            } else {
+              cb('error computing jump')
+            }
+          })
+          return
+        } else if (sourceLocation.jump === 'o') {
+          tree.scopes[scopeId].lastStep = step
+          cb(null, step + 1)
+          return
+        } else {
+          if (tree.includeLocalVariables) {
+            var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
+            if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
+              tree.traceManager.getStackAt(step, (error, stack) => {
+                if (!error) {
+                  tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
+                    if (!error) {
+                      var states = tree.solidityProxy.extractStatesDefinitions()
+                      tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
+                        name: variableDeclaration.attributes.name,
+                        type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
+                        stackHeight: stack.length
+                      }
                     }
-                  }
-                })
-              }
-            })
+                  })
+                }
+              })
+            }
           }
+          step++
         }
-        step++
+        if (tree.traceManager.inRange(step)) {
+          visitStep(tree, step, scopeId, subScope, cb)
+        } else {
+          cb(null, step)
+        }
       }
-      if (tree.traceManager.inRange(step)) {
-        visitStep(tree, step, scopeId, subScope, cb)
-      } else {
-        cb(null, step)
-      }
-    }
-  })
+    })
+  }, 0)
 }
 
 function extractSourceLocation (tree, step, cb) {
