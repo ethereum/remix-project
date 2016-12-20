@@ -39,6 +39,10 @@ tape('solidity', function (t) {
             solidityProxy.reset(output)
             var debuggerEvent = new EventManager()
             var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+            callTree.event.register('callTreeBuildFailed', (error) => {
+              st.fail(error)
+            })
+
             callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
               st.equals(scopeStarts[0], '')
               st.equals(scopeStarts[97], '1')
