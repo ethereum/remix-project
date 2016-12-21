@@ -11,7 +11,7 @@ var EventManager = require('../lib/eventManager')
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted
 */
-function Compiler (editor, handleImportCall) {
+function Compiler (handleImportCall) {
   var self = this
   this.event = new EventManager()
 
@@ -28,8 +28,8 @@ function Compiler (editor, handleImportCall) {
     optimize = _optimize
   }
 
-  var internalCompile = function (files, missingInputs) {
-    gatherImports(files, missingInputs, function (error, input) {
+  var internalCompile = function (files, target, missingInputs) {
+    gatherImports(files, target, missingInputs, function (error, input) {
       if (error) {
         self.lastCompilationResult = null
         self.event.trigger('compilationFinished', [false, { 'error': error }, files])
@@ -39,13 +39,9 @@ function Compiler (editor, handleImportCall) {
     })
   }
 
-  var compile = function () {
+  var compile = function (files, target) {
     self.event.trigger('compilationStarted', [])
-    var input = editor.getValue()
-
-    var files = {}
-    files[utils.fileNameFromKey(editor.getCacheFile())] = input
-    internalCompile(files)
+    internalCompile(files, target)
   }
   this.compile = compile
 
@@ -124,7 +120,7 @@ function Compiler (editor, handleImportCall) {
       self.event.trigger('compilationFinished', [false, data, source])
     } else if (missingInputs !== undefined && missingInputs.length > 0) {
       // try compiling again with the new set of inputs
-      internalCompile(source.sources, missingInputs)
+      internalCompile(source.sources, source.target, missingInputs)
     } else {
       data = updateInterface(data)
 
@@ -212,10 +208,10 @@ function Compiler (editor, handleImportCall) {
     worker.postMessage({cmd: 'loadVersion', data: url})
   }
 
-  function gatherImports (files, importHints, cb) {
+  function gatherImports (files, target, importHints, cb) {
     importHints = importHints || []
     if (!compilerAcceptsMultipleFiles) {
-      cb(null, files[editor.getCacheFile()])
+      cb(null, files[target])
       return
     }
 
@@ -250,14 +246,14 @@ function Compiler (editor, handleImportCall) {
           cb(err)
         } else {
           files[m] = content
-          gatherImports(files, importHints, cb)
+          gatherImports(files, target, importHints, cb)
         }
       })
 
       return
     }
 
-    cb(null, { 'sources': files })
+    cb(null, { 'sources': files, 'target': target })
   }
 
   function truncateVersion (version) {
