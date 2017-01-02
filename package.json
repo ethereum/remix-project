@@ -57,7 +57,7 @@
     "start_eth": "npm run warning_message; eth -j --rpccorsdomain '*'",
     "start_geth": "npm run warning_message; geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
     "build": "mkdir build; browserify src/index.js -g yo-yoify -o build/app.js -t [ babelify ]; babel --plugins=transform-es2015-template-literals build/app.js --out-file build/app.js",
-    "test": "babel src --out-dir babelify-src; tape ./test/tests.js",
+    "test": "standard; babel src --out-dir babelify-src; tape ./test/tests.js",
     "serve": "http-server .",
     "nightwatch_local": "nightwatch --config nightwatch.js --env local",
     "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
