@@ -31,11 +31,12 @@ class InternalCallTree {
       if (!this.solidityProxy.loaded()) {
         console.log('compilation result not loaded. Cannot build internal call tree')
       } else {
-        buildTree(this, 0, '', (error) => {
-          if (!error) {
-            this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+        buildTree(this, 0, '').then((result) => {
+          if (result.error) {
+            this.event.trigger('callTreeBuildFailed', [result])
           } else {
-            this.event.trigger('callTreeBuildFailed', [error])
+            console.log('ready')
+            this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
         })
       }
@@ -82,96 +83,72 @@ class InternalCallTree {
   }
 }
 
-/**
-  * build tree (called recursively)
-  *
-  * @param {Object} tree  - instance of InternalCallTree
-  * @param {Int} step  - index on the vm trace
-  * @param {String} scopeId  - deepness of the current scope
-  * @param {Function} cb  - callback
-  */
-function buildTree (tree, step, scopeId, cb) {
+async function buildTree (tree, step, scopeId) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {} }
-  visitStep(tree, step, scopeId, subScope, function (error, result) {
-    cb(error, result)
-  })
-}
-
-/**
-  * visit a step (called recursively)
-  *
-  * @param {Object} tree  - instance of InternalCallTree
-  * @param {Int} step  - index on the vm trace
-  * @param {String} scopeId  - deepness of the current scope
-  * @param {Int} subScope  - index of the next scope from current scope
-  * @param {Function} cb  - callback
-  */
-function visitStep (tree, step, scopeId, subScope, cb) {
-  setTimeout(() => {
-    extractSourceLocation(tree, step, (error, sourceLocation) => {
-      if (error) {
-        cb(error)
+  while (step < tree.traceManager.trace.length) {
+    var sourceLocation
+    try {
+      sourceLocation = await extractSourceLocation(tree, step)
+    } catch (e) {
+      return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.messager }
+    }
+    if (!sourceLocation) {
+      return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
+    }
+    if (sourceLocation.jump === 'i') {
+      var result = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
+      if (result.error) {
+        return result
       } else {
-        if (sourceLocation.jump === 'i') {
-          buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, function (error, outStep) {
+        step = result.outStep
+        subScope++
+      }
+    } else if (sourceLocation.jump === 'o') {
+      tree.scopes[scopeId].lastStep = step
+      return { outStep: step + 1 }
+    } else {
+      if (tree.includeLocalVariables) {
+        var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
+        if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
+          tree.traceManager.getStackAt(step, (error, stack) => {
             if (!error) {
-              visitStep(tree, outStep, scopeId, subScope + 1, cb)
-            } else {
-              cb('error computing jump')
-            }
-          })
-          return
-        } else if (sourceLocation.jump === 'o') {
-          tree.scopes[scopeId].lastStep = step
-          cb(null, step + 1)
-          return
-        } else {
-          if (tree.includeLocalVariables) {
-            var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
-            if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
-              tree.traceManager.getStackAt(step, (error, stack) => {
+              tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
                 if (!error) {
-                  tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
-                    if (!error) {
-                      var states = tree.solidityProxy.extractStatesDefinitions()
-                      tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
-                        name: variableDeclaration.attributes.name,
-                        type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
-                        stackHeight: stack.length
-                      }
-                    }
-                  })
+                  var states = tree.solidityProxy.extractStatesDefinitions()
+                  tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
+                    name: variableDeclaration.attributes.name,
+                    type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
+                    stackHeight: stack.length
+                  }
                 }
               })
             }
-          }
-          step++
-        }
-        if (tree.traceManager.inRange(step)) {
-          visitStep(tree, step, scopeId, subScope, cb)
-        } else {
-          cb(null, step)
+          })
         }
       }
-    })
-  }, 0)
+      step++
+    }
+  }
+  return { outStep: step }
 }
 
-function extractSourceLocation (tree, step, cb) {
-  tree.traceManager.getCurrentCalledAddressAt(step, (error, address) => {
-    if (!error) {
-      tree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, tree.solidityProxy.contracts, (error, sourceLocation) => {
-        if (!error) {
-          cb(null, sourceLocation)
-        } else {
-          cb('InternalCallTree - Cannot retrieve sourcelocation for step ' + step)
-        }
-      })
-    } else {
-      cb('InternalCallTree - Cannot retrieve address for step ' + step)
-    }
+function extractSourceLocation (tree, step) {
+  return new Promise(function (resolve, reject) {
+    tree.traceManager.getCurrentCalledAddressAt(step, (error, address) => {
+      if (!error) {
+        tree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, tree.solidityProxy.contracts, (error, sourceLocation) => {
+          if (!error) {
+            return resolve(sourceLocation)
+          } else {
+            return reject('InternalCallTree - Cannot retrieve sourcelocation for step ' + step)
+          }
+        })
+      } else {
+        return reject('InternalCallTree - Cannot retrieve address for step ' + step)
+      }
+    })
   })
 }
 
