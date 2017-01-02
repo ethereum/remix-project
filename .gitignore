@@ -4,3 +4,4 @@ npm-debug.log
 lint.xml
 .vscode
 test-browser/reports/*
+babelify-src

@@ -1,6 +1,6 @@
 'use strict'
 var tape = require('tape')
-var EventManager = require('../src/lib/eventManager')
+var EventManager = require('../babelify-src/lib/eventManager')
 tape('eventManager', function (t) {
   t.test('eventManager', function (st) {
     var events = new EventManager()
