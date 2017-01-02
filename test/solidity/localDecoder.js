@@ -40,7 +40,7 @@ tape('solidity', function (t) {
             var debuggerEvent = new EventManager()
             var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
             callTree.event.register('callTreeBuildFailed', (error) => {
-              st.fail(error)
+              st.fail(JSON.stringify(error))
             })
 
             callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
