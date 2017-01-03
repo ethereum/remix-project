@@ -86,9 +86,6 @@ TxBrowser.prototype.update = function (error, tx) {
   }
   this.basicPanel.data = info
   this.basicPanel.update()
-  if (error) {
-    this.basicPanel.show()
-  }
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {
