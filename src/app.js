@@ -531,7 +531,7 @@ var run = function () {
         files.addReadOnly(url, content)
         cb(null, content)
       })
-    } else if ((match = /^bzzr:\/\/?([0-9a-fA-F]{64}$)/.exec(url))) {
+    } else if ((match = /^(bzzr?:\/\/?.*)$/.exec(url))) {
       $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
       swarmgw.get(match[1], function (err, content) {
         if (err) {
