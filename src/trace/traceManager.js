@@ -271,6 +271,10 @@ TraceManager.prototype.findNextCall = function (currentStep) {
   return this.traceStepManager.findNextCall(currentStep)
 }
 
+TraceManager.prototype.findStepOut = function (currentStep) {
+  return this.traceStepManager.findStepOut(currentStep)
+}
+
 // util
 TraceManager.prototype.checkRequestedStep = function (stepIndex) {
   if (!this.trace) {

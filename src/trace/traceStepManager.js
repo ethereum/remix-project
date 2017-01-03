@@ -43,4 +43,15 @@ TraceStepManager.prototype.findNextCall = function (currentStep) {
   }
 }
 
+TraceStepManager.prototype.findStepOut = function (currentStep) {
+  var callChanges = this.traceAnalyser.traceCache.callChanges
+  var stepIndex = util.findLowerBound(currentStep, callChanges)
+  var call = this.traceAnalyser.traceCache.calls[callChanges[stepIndex]]
+  if (call && call.return) {
+    return call.return
+  } else {
+    return currentStep
+  }
+}
+
 module.exports = TraceStepManager

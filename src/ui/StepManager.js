@@ -42,6 +42,9 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpNextCall', this, function () {
     self.jumpNextCall()
   })
+  this.buttonNavigator.event.register('jumpOut', this, function () {
+    self.jumpOut()
+  })
 }
 
 StepManager.prototype.render = function () {
@@ -122,6 +125,15 @@ StepManager.prototype.jumpNextCall = function () {
     return
   }
   var step = this.traceManager.findNextCall(this.currentStepIndex)
+  this.slider.setValue(step)
+  this.changeState(step)
+}
+
+StepManager.prototype.jumpOut = function () {
+  if (!this.traceManager.isLoaded()) {
+    return
+  }
+  var step = this.traceManager.findStepOut(this.currentStepIndex)
   this.slider.setValue(step)
   this.changeState(step)
 }

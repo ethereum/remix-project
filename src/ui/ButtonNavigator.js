@@ -11,6 +11,7 @@ function ButtonNavigator (_traceManager) {
   this.intoForwardDisabled = true
   this.overForwardDisabled = true
   this.nextCallDisabled = true
+  this.jumpOutDisabled = true
 
   this.traceManager = _traceManager
 
@@ -29,8 +30,10 @@ ButtonNavigator.prototype.render = function () {
     <button id='intoforward' title='step into forward'  class='fa fa-angle-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
     </button>
     <button id='overforward' title='step over forward' class='fa fa-angle-double-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
-    </button>
+    </button>    
     <button id='nextcall'  title='step next call' class='fa fa-chevron-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
+    </button>
+    <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
     </button>
   </div>`
   if (!this.view) {
@@ -45,11 +48,13 @@ ButtonNavigator.prototype.reset = function () {
   this.intoForwardDisabled = true
   this.overForwardDisabled = true
   this.nextCallDisabled = true
+  this.jumpOutDisabled = true
 }
 
 ButtonNavigator.prototype.stepChanged = function (step) {
   this.intoBackDisabled = step <= 0
   this.overBackDisabled = step <= 0
+  this.jumpOutDisabled = step <= 0
   if (!this.traceManager) {
     this.intoForwardDisabled = true
     this.overForwardDisabled = true
@@ -77,6 +82,7 @@ ButtonNavigator.prototype.updateAll = function () {
   this.updateDisabled('overforward', this.overForwardDisabled)
   this.updateDisabled('intoforward', this.intoForwardDisabled)
   this.updateDisabled('nextcall', this.nextCallDisabled)
+  this.updateDisabled('jumpout', this.jumpOutDisabled)
 }
 
 ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
