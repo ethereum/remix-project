@@ -87,7 +87,7 @@ TxBrowser.prototype.update = function (error, tx) {
   this.basicPanel.data = info
   this.basicPanel.update()
   if (error) {
-    this.basicPanel.toggle()
+    this.basicPanel.show()
   }
 }
 

@@ -86,4 +86,9 @@ DropdownPanel.prototype.hide = function () {
   el.style.display = 'none'
 }
 
+DropdownPanel.prototype.show = function () {
+  var el = this.view.querySelector('.dropdownpanel')
+  el.style.display = ''
+}
+
 module.exports = DropdownPanel
