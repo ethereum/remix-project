@@ -37,6 +37,7 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.connectInfo = ''
   this.basicPanel.data = {}
   this.basicPanel.update()
+  this.basicPanel.hide()
   this.updateWeb3Url(util.web3.currentProvider.host)
 }
 
@@ -57,33 +58,37 @@ TxBrowser.prototype.submit = function () {
       })
     }
   } catch (e) {
-    console.log(e)
+    self.update(e.message)
   }
 }
 
 TxBrowser.prototype.update = function (error, tx) {
+  var info = {}
   if (error) {
     console.log(error)
-    return
-  }
-  var info = {}
-  if (tx) {
-    if (!tx.to) {
-      tx.to = traceHelper.contractCreationToken('0')
-    }
-    info.from = tx.from
-    info.to = tx.to
-    info.hash = tx.hash
-    this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+    info[''] = error
   } else {
-    var mes = '<not found>'
-    info.from = mes
-    info.to = mes
-    info.hash = mes
-    console.log('cannot find ' + this.blockNumber + ' ' + this.txNumber)
+    if (tx) {
+      if (!tx.to) {
+        tx.to = traceHelper.contractCreationToken('0')
+      }
+      info.from = tx.from
+      info.to = tx.to
+      info.hash = tx.hash
+      this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+    } else {
+      var mes = '<not found>'
+      info.from = mes
+      info.to = mes
+      info.hash = mes
+      console.log('cannot find ' + this.blockNumber + ' ' + this.txNumber)
+    }
   }
   this.basicPanel.data = info
   this.basicPanel.update()
+  if (error) {
+    this.basicPanel.toggle()
+  }
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {

@@ -81,4 +81,9 @@ DropdownPanel.prototype.toggle = function () {
   }
 }
 
+DropdownPanel.prototype.hide = function () {
+  var el = this.view.querySelector('.dropdownpanel')
+  el.style.display = 'none'
+}
+
 module.exports = DropdownPanel
