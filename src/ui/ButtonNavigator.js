@@ -54,11 +54,9 @@ ButtonNavigator.prototype.reset = function () {
 ButtonNavigator.prototype.stepChanged = function (step) {
   this.intoBackDisabled = step <= 0
   this.overBackDisabled = step <= 0
-  this.jumpOutDisabled = step <= 0
   if (!this.traceManager) {
     this.intoForwardDisabled = true
     this.overForwardDisabled = true
-    this.nextCallDisabled = true
   } else {
     var self = this
     this.traceManager.getLength(function (error, length) {
@@ -68,7 +66,10 @@ ButtonNavigator.prototype.stepChanged = function (step) {
       } else {
         self.intoForwardDisabled = step >= length - 1
         self.overForwardDisabled = step >= length - 1
-        self.nextCallDisabled = step >= length - 1
+        var nextCall = self.traceManager.findNextCall(step)
+        self.nextCallDisabled = nextCall === step
+        var stepOut = self.traceManager.findStepOut(step)
+        self.jumpOutDisabled = stepOut === step
       }
       self.updateAll()
     })
