@@ -2,8 +2,6 @@ var util = require('../helpers/util')
 var uiutil = require('../helpers/ui')
 var traceHelper = require('../helpers/traceHelper')
 var Web3 = require('web3')
-var fees = require('ethereum-common')
-var ethutil = require('ethereumjs-util')
 
 function web3VmProvider () {
   var self = this
@@ -14,6 +12,7 @@ function web3VmProvider () {
   this.processingHash
   this.processingAddress
   this.processingIndex
+  this.previousDepth = 0
   this.incr = 0
   this.eth = {}
   this.debug = {}
@@ -48,7 +47,7 @@ web3VmProvider.prototype.releaseCurrentHash = function () {
   return ret
 }
 
-web3VmProvider.prototype.txWillProcess = function (self, data) {  
+web3VmProvider.prototype.txWillProcess = function (self, data) {
   self.incr++
   self.processingHash = util.hexConvert(data.hash())
   self.vmTraces[self.processingHash] = {
@@ -88,12 +87,19 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   }
   this.processingIndex = null
   this.processingAddress = null
+  this.previousDepth = 0
 }
 
 web3VmProvider.prototype.pushTrace = function (self, data) {
+  var depth = data.depth + 1 // geth starts the depth from 1
   if (!self.processingHash) {
     console.log('no tx processing')
     return
+  }
+  if (this.previousDepth > depth) {
+    // returning from context, set error it is not STOP, RETURN
+    var previousopcode = self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]
+    previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
   }
   var step = {
     stack: util.hexListConvert(data.stack),
@@ -102,23 +108,11 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     op: data.opcode.name,
     pc: data.pc,
     gasCost: data.opcode.fee.toString(),
-    gas: data.gasLeft.toString()
+    gas: data.gasLeft.toString(),
+    depth: depth,
+    error: data.error === false ? undefined : data.error
   }
-  if (data.opcode.name === 'SSTORE') {
-    var currentStorage = this.storageCache[this.processingHash][this.processingAddress]
-    var key = step.stack[step.stack.length - 1]
-    var value = step.stack[step.stack.length - 2]
-    value = util.hexToIntArray(value)
-    value = ethutil.unpad(value)
-    if (value.length === 0) {
-      data.opcode.fee = fees.sstoreResetGas.v
-    } else if (currentStorage[key] === undefined) {
-      data.opcode.fee = fees.sstoreSetGas.v
-    } else {
-      data.opcode.fee = fees.sstoreResetGas.v
-    }
-    step.gasCost = data.opcode.fee
-  }
+  console.log(JSON.stringify(step))
   self.vmTraces[self.processingHash].structLogs.push(step)
   if (traceHelper.newContextStorage(step)) {
     if (step.op === 'CREATE') {
@@ -134,6 +128,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     }
   }
   this.processingIndex++
+  this.previousDepth = depth
 }
 
 web3VmProvider.prototype.getCode = function (address, cb) {
