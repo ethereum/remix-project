@@ -69,21 +69,26 @@ TxRunner.prototype.execute = function () {
         if (err) {
           return callback(err, resp)
         }
-
-        if (resp > gasLimit) {
-          return callback('Gas required exceeds limit: ' + resp)
-        }
-
-        tx.gas = resp
-
-        var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
-
-        sendTransaction(tx, function (err, resp) {
+        self.web3.eth.getBlock('latest', function (err, block) {
           if (err) {
-            return callback(err, resp)
-          }
+            return callback(err)
+          } else {
+            var blockGasLimit = Math.floor(block.gasLimit - block.gasLimit / 1024)
+            tx.gas = blockGasLimit < resp ? blockGasLimit : resp
 
-          tryTillResponse(self.web3, resp, callback)
+            if (tx.gas > gasLimit) {
+              return callback('Gas required exceeds limit: ' + tx.gas)
+            }
+
+            var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
+            sendTransaction(tx, function (err, resp) {
+              if (err) {
+                return callback(err, resp)
+              }
+
+              tryTillResponse(self.web3, resp, callback)
+            })
+          }
         })
       })
     }
