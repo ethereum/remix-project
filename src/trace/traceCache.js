@@ -9,7 +9,7 @@ TraceCache.prototype.init = function () {
   this.returnValues = {}
   this.callChanges = []
   this.calls = {}
-  this.callsRef = [0] // track of calls during the vm trace analysis
+  this.callsRef = [] // track of calls during the vm trace analysis
   this.callsData = {}
   this.contractCreation = {}
   this.steps = {}
@@ -35,18 +35,23 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
 }
 
 TraceCache.prototype.pushCall = function (step, index, address, callStack, outofGas) {
-  this.callChanges.push(index)
-  this.calls[index] = {
+  var call = {
     op: step.op,
     address: address,
     callStack: callStack,
     outofGas: outofGas
   }
   if (step.op === 'RETURN' || step.op === 'STOP' || outofGas) {
-    var call = this.callsRef.pop()
-    this.calls[index].call = call
-    this.calls[call].return = index
+    if (this.callsRef.length > 1) { // we are returning from an internal call
+      this.callChanges.push(index)
+      this.calls[index] = call
+      var callIndex = this.callsRef.pop()
+      this.calls[index].call = callIndex
+      this.calls[callIndex].return = index
+    }
   } else {
+    this.callChanges.push(index)
+    this.calls[index] = call
     this.callsRef.push(index)
   }
 }
