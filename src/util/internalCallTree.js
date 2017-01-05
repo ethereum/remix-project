@@ -97,12 +97,16 @@ async function buildTree (tree, step, scopeId) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
     if (sourceLocation.jump === 'i') {
-      var result = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
-      if (result.error) {
-        return result
-      } else {
-        step = result.outStep
-        subScope++
+      try {
+        var result = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
+        if (result.error) {
+          return { outStep: step, error: 'InternalCallTree - ' + result.error }
+        } else {
+          step = result.outStep
+          subScope++
+        }
+      } catch (e) {
+        return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
     } else if (sourceLocation.jump === 'o') {
       tree.scopes[scopeId].lastStep = step
