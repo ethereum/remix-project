@@ -109,28 +109,32 @@ async function buildTree (tree, step, scopeId) {
       return { outStep: step + 1 }
     } else {
       if (tree.includeLocalVariables) {
-        var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
-        if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
-          tree.traceManager.getStackAt(step, (error, stack) => {
-            if (!error) {
-              tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
-                if (!error) {
-                  var states = tree.solidityProxy.extractStatesDefinitions()
-                  tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
-                    name: variableDeclaration.attributes.name,
-                    type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
-                    stackHeight: stack.length
-                  }
-                }
-              })
-            }
-          })
-        }
+        includeVariableDeclaration(tree, step, sourceLocation, scopeId)
       }
       step++
     }
   }
   return { outStep: step }
+}
+
+function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
+  var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
+  if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
+    tree.traceManager.getStackAt(step, (error, stack) => {
+      if (!error) {
+        tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
+          if (!error) {
+            var states = tree.solidityProxy.extractStatesDefinitions()
+            tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
+              name: variableDeclaration.attributes.name,
+              type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
+              stackHeight: stack.length
+            }
+          }
+        })
+      }
+    })
+  }
 }
 
 function extractSourceLocation (tree, step) {
