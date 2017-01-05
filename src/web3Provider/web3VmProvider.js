@@ -112,7 +112,6 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     depth: depth,
     error: data.error === false ? undefined : data.error
   }
-  console.log(JSON.stringify(step))
   self.vmTraces[self.processingHash].structLogs.push(step)
   if (traceHelper.newContextStorage(step)) {
     if (step.op === 'CREATE') {
