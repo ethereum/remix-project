@@ -4,7 +4,7 @@ var style = require('./styles/basicStyles')
 var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
-function ButtonNavigator (_traceManager) {
+function ButtonNavigator (_parent, _traceManager) {
   this.event = new EventManager()
   this.intoBackDisabled = true
   this.overBackDisabled = true
@@ -14,6 +14,42 @@ function ButtonNavigator (_traceManager) {
   this.jumpOutDisabled = true
 
   this.traceManager = _traceManager
+  this.currentCall = null
+  this.revertionPoint = null
+
+  _parent.event.register('indexChanged', this, (index) => {
+    if (index < 0) return
+    if (_parent.currentStepIndex !== index) return
+
+    this.traceManager.buildCallsPath(index, (error, callsPath) => {
+      if (error) {
+        console.log(error)
+        resetWarning(this)
+      } else {
+        this.currentCall = callsPath[callsPath.length - 1]
+        if (this.currentCall.reverted) {
+          this.revertionPoint = this.currentCall.return
+          this.view.querySelector('#reverted').style.display = 'block'
+          this.view.querySelector('#reverted #outofgas').style.display = this.currentCall.outOfGas ? 'block' : 'none'
+          this.view.querySelector('#reverted #parenthasthrown').style.display = 'none'
+        } else {
+          var k = callsPath.length - 2
+          while (k > 0) {
+            var parent = callsPath[k]
+            if (parent.reverted) {
+              this.revertionPoint = parent.return
+              this.view.querySelector('#reverted').style.display = 'block'
+              this.view.querySelector('#reverted #parenthasthrown').style.display = parent ? 'block' : 'none'
+              this.view.querySelector('#reverted #outofgas').style.display = 'none'
+              return
+            }
+            k--
+          }
+          resetWarning(this)
+        }
+      }
+    })
+  })
 
   this.view
 }
@@ -35,6 +71,13 @@ ButtonNavigator.prototype.render = function () {
     </button>
     <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
     </button>
+    <div id='reverted' style="display:none">
+      <span>State changes made during this call were reverted.</span>
+      <span id='outofgas' style="display:none">This call ran out of gas</span>
+      <span id='parenthasthrown' style="display:none">The parent call has trown an exception</span>
+      <button id='jumptoexception' title='jump to exception' class='fa fa-exclamation-triangle' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpToException', [self.revertionPoint]) }} disabled=${this.jumpOutDisabled} >
+      </button>
+    </div>
   </div>`
   if (!this.view) {
     this.view = view
@@ -49,6 +92,7 @@ ButtonNavigator.prototype.reset = function () {
   this.overForwardDisabled = true
   this.nextCallDisabled = true
   this.jumpOutDisabled = true
+  resetWarning(this)
 }
 
 ButtonNavigator.prototype.stepChanged = function (step) {
@@ -84,6 +128,7 @@ ButtonNavigator.prototype.updateAll = function () {
   this.updateDisabled('intoforward', this.intoForwardDisabled)
   this.updateDisabled('nextcall', this.nextCallDisabled)
   this.updateDisabled('jumpout', this.jumpOutDisabled)
+  this.updateDisabled('jumptoexception', this.jumpOutDisabled)
 }
 
 ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
@@ -92,6 +137,12 @@ ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
   } else {
     document.getElementById(id).removeAttribute('disabled')
   }
+}
+
+function resetWarning (self) {
+  self.view.querySelector('#reverted #outofgas').style.display = 'none'
+  self.view.querySelector('#reverted #parenthasthrown').style.display = 'none'
+  self.view.querySelector('#reverted').style.display = 'none'
 }
 
 module.exports = ButtonNavigator
