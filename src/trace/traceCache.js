@@ -33,17 +33,18 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
   this.memoryChanges.push(value)
 }
 
-TraceCache.prototype.pushCall = function (step, index, address, callStack, outofGas) {
-  if (step.op === 'RETURN' || step.op === 'STOP' || outofGas) {
-    this.currentCall.call.return = index
+TraceCache.prototype.pushCall = function (step, index, address, callStack, reverted, outOfGas) {
+  if (step.op === 'RETURN' || step.op === 'STOP' || reverted) {
+    this.currentCall.call.return = index - 1
+    this.currentCall.call.reverted = reverted
+    this.currentCall.call.outOfGas = outOfGas
     var parent = this.currentCall.parent
-    this.currentCall = { call: parent.call, parent: parent.parent }
+    this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
   } else {
     var call = {
       op: step.op,
       address: address,
       callStack: callStack,
-      outofGas: outofGas,
       calls: {},
       start: index
     }

@@ -112,9 +112,9 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, conte
     context.lastCallIndex = context.currentCallIndex
     context.currentCallIndex = 0
   } else if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step) || outOfGas || step.error || step.invalidDepthChange) {
-    if (index + 1 < this.trace.length) {
+    if (index < this.trace.length) {
       callStack.pop()
-      this.traceCache.pushCall(step, index + 1, null, callStack.slice(0), outOfGas)
+      this.traceCache.pushCall(step, index + 1, null, callStack.slice(0), outOfGas || step.error || step.invalidDepthChange, outOfGas)
       this.buildCalldata(index, step, tx, false)
       this.traceCache.pushSteps(index, context.currentCallIndex)
       context.currentCallIndex = context.lastCallIndex + 1
