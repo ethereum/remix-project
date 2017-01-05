@@ -73,9 +73,8 @@ class InternalCallTree {
     var scopeId = util.findLowerBoundValue(vmtraceIndex, scopes)
     scopeId = this.scopeStarts[scopeId]
     var scope = this.scopes[scopeId]
-    var reg = /(.\d|\d)$/
     while (scope.lastStep && scope.lastStep < vmtraceIndex) {
-      var matched = scopeId.match(reg)
+      var matched = scopeId.match(/(.\d|\d)$/)
       scopeId = scopeId.replace(matched[1], '')
       scope = this.scopes[scopeId]
     }
