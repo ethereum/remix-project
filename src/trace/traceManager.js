@@ -101,14 +101,7 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
 }
 
 TraceManager.prototype.getAddresses = function (callback) {
-  var addresses = [ this.tx.to ]
-  for (var k in this.traceCache.calls) {
-    var address = this.traceCache.calls[k].address
-    if (address && addresses.join('').indexOf(address) === -1) {
-      addresses.push(address)
-    }
-  }
-  callback(null, addresses)
+  callback(null, this.traceCache.addresses)
 }
 
 TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
@@ -126,9 +119,9 @@ TraceManager.prototype.getCallStackAt = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callStackChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
-  if (callStackChange === null) return callback('no callstack found', null)
-  callback(null, this.traceCache.calls[callStackChange].callStack)
+  var call = util.findCall(stepIndex, this.traceCache.callsTree.call)
+  if (call === null) return callback('no callstack found', null)
+  callback(null, call.callStack)
 }
 
 TraceManager.prototype.getStackAt = function (stepIndex, callback) {
@@ -151,7 +144,7 @@ TraceManager.prototype.getLastCallChangeSince = function (stepIndex, callback) {
   if (check) {
     return callback(check, null)
   }
-  var callChange = util.findLowerBoundValue(stepIndex, this.traceCache.callChanges)
+  var callChange = util.findCall(stepIndex, this.traceCache.callsTree.call)
   if (callChange === null) {
     callback(null, 0)
   } else {
@@ -164,21 +157,14 @@ TraceManager.prototype.getCurrentCalledAddressAt = function (stepIndex, callback
   if (check) {
     return callback(check, null)
   }
-  var self = this
-  this.getLastCallChangeSince(stepIndex, function (error, addressIndex) {
+  this.getLastCallChangeSince(stepIndex, function (error, resp) {
     if (error) {
       callback(error, null)
     } else {
-      if (addressIndex === 0) {
-        callback(null, self.tx.to)
+      if (resp) {
+        callback(null, resp.address)
       } else {
-        var callStack = self.traceCache.calls[addressIndex].callStack
-        var calledAddress = callStack[callStack.length - 1]
-        if (calledAddress) {
-          callback(null, calledAddress)
-        } else {
-          callback('unable to get current called address. ' + stepIndex + ' does not match with a CALL', null)
-        }
+        callback('unable to get current called address. ' + stepIndex + ' does not match with a CALL')
       }
     }
   })

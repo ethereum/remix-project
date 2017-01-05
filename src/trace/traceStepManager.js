@@ -33,25 +33,18 @@ TraceStepManager.prototype.findStepOverForward = function (currentStep) {
 }
 
 TraceStepManager.prototype.findNextCall = function (currentStep) {
-  var callChanges = this.traceAnalyser.traceCache.callChanges
-  var stepIndex = util.findLowerBound(currentStep, callChanges)
-  var callchange = callChanges[stepIndex + 1]
-  if (callchange && this.isCallInstruction(callchange - 1)) {
-    return callchange - 1
+  var call = util.findCall(currentStep, this.traceAnalyser.traceCache.callsTree.call)
+  var subCalls = Object.keys(call.calls)
+  if (subCalls.length) {
+    return call.calls[subCalls[0]].start - 1
   } else {
     return currentStep
   }
 }
 
 TraceStepManager.prototype.findStepOut = function (currentStep) {
-  var callChanges = this.traceAnalyser.traceCache.callChanges
-  var stepIndex = util.findLowerBound(currentStep, callChanges)
-  var call = this.traceAnalyser.traceCache.calls[callChanges[stepIndex]]
-  if (call && call.return) {
-    return call.return
-  } else {
-    return currentStep
-  }
+  var call = util.findCall(currentStep, this.traceAnalyser.traceCache.callsTree.call)
+  return call.return
 }
 
 module.exports = TraceStepManager
