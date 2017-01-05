@@ -29,11 +29,11 @@ class InternalCallTree {
     debuggerEvent.register('newTraceLoaded', (trace) => {
       this.reset()
       if (!this.solidityProxy.loaded()) {
-        console.log('compilation result not loaded. Cannot build internal call tree')
+        this.event.trigger('callTreeBuildFailed', ['compilation result not loaded. Cannot build internal call tree'])
       } else {
         buildTree(this, 0, '').then((result) => {
           if (result.error) {
-            this.event.trigger('callTreeBuildFailed', [result])
+            this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
             console.log('ready')
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
