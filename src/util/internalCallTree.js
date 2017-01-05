@@ -7,8 +7,8 @@ var util = require('../helpers/util')
 
 /**
  * Tree representing internal jump into function.
- * Trigger `callTreeReady` event when tree is ready
- * Trigger `callTreeBuildFailed` event when tree fails to build
+ * Triggers `callTreeReady` event when tree is ready
+ * Triggers `callTreeBuildFailed` event when tree fails to build
  */
 class InternalCallTree {
   /**
