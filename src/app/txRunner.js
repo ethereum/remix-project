@@ -65,16 +65,16 @@ TxRunner.prototype.execute = function () {
         })
       })
     } else {
-      self.web3.eth.estimateGas(tx, function (err, resp) {
+      self.web3.eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
-          return callback(err, resp)
+          return callback(err, gasEstimation)
         }
         self.web3.eth.getBlock('latest', function (err, block) {
           if (err) {
             return callback(err)
           } else {
             var blockGasLimit = Math.floor(block.gasLimit - block.gasLimit / 1024)
-            tx.gas = blockGasLimit < resp ? blockGasLimit : resp
+            tx.gas = blockGasLimit < gasEstimation ? blockGasLimit : gasEstimation
 
             if (tx.gas > gasLimit) {
               return callback('Gas required exceeds limit: ' + tx.gas)
