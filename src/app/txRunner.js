@@ -65,25 +65,32 @@ TxRunner.prototype.execute = function () {
         })
       })
     } else {
-      self.web3.eth.estimateGas(tx, function (err, resp) {
+      self.web3.eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
-          return callback(err, resp)
+          return callback(err, gasEstimation)
         }
-
-        if (resp > gasLimit) {
-          return callback('Gas required exceeds limit: ' + resp)
-        }
-
-        tx.gas = resp
-
-        var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
-
-        sendTransaction(tx, function (err, resp) {
+        self.web3.eth.getBlock('latest', function (err, block) {
           if (err) {
-            return callback(err, resp)
-          }
+            return callback(err)
+          } else {
+            // NOTE: estimateGas very likely will return a large limit if execution of the code failed
+            //       we want to be able to run the code in order to debug and find the cause for the failure
+            var blockGasLimit = Math.floor(block.gasLimit - block.gasLimit / 1024)
+            tx.gas = blockGasLimit < gasEstimation ? blockGasLimit : gasEstimation
 
-          tryTillResponse(self.web3, resp, callback)
+            if (tx.gas > gasLimit) {
+              return callback('Gas required exceeds limit: ' + tx.gas)
+            }
+
+            var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
+            sendTransaction(tx, function (err, resp) {
+              if (err) {
+                return callback(err, resp)
+              }
+
+              tryTillResponse(self.web3, resp, callback)
+            })
+          }
         })
       })
     }
