@@ -516,12 +516,23 @@ var run = function () {
       })
   }
 
+  function handleSwarmImport (url, cb) {
+    swarmgw.get(url, function (err, content) {
+      // retry if this failed and we're connected via RPC
+      if (err && !executionContext.isVM()) {
+        var web3 = executionContext.web3()
+        web3.swarm.download(url, cb)
+      } else {
+        cb(err, content)
+      }
+    })
+  }
   function handleImportCall (url, cb) {
     var match
     if (files.exists(url)) {
       cb(null, files.get(url))
-    } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
-      handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
+    } else if ((match = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
+      handleGithubCall(match[3], match[4], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
           return
@@ -533,7 +544,7 @@ var run = function () {
       })
     } else if ((match = /^(bzzr?:\/\/?.*)$/.exec(url))) {
       $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
-      swarmgw.get(match[1], function (err, content) {
+      handleSwarmImport(match[1], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
           return
