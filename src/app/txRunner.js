@@ -76,7 +76,7 @@ TxRunner.prototype.execute = function () {
 
         tx.gas = resp
 
-        var sendTransaction = self.personalMode ? self.web3.personal.unlockAccountAndSendTransaction : self.web3.eth.sendTransaction
+        var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
 
         sendTransaction(tx, function (err, resp) {
           if (err) {
