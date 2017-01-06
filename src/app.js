@@ -209,7 +209,7 @@ var run = function () {
     var fileList = $('input.inputFile')[0].files
     for (var i = 0; i < fileList.length; i++) {
       var name = fileList[i].name
-      if (!storage.exists(utils.fileKey(name)) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
+      if (!editor.hasFile(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
         editor.uploadFile(fileList[i], updateFiles)
       }
     }
@@ -241,7 +241,7 @@ var run = function () {
       $fileNameInputEl.off('keyup')
 
       if (newName !== originalName && confirm(
-          storage.exists(utils.fileKey(newName))
+          editor.hasFile(newName)
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
         storage.rename(utils.fileKey(originalName), utils.fileKey(newName))
