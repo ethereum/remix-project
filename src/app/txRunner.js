@@ -73,6 +73,8 @@ TxRunner.prototype.execute = function () {
           if (err) {
             return callback(err)
           } else {
+            // NOTE: estimateGas very likely will return a large limit if execution of the code failed
+            //       we want to be able to run the code in order to debug and find the cause for the failure
             var blockGasLimit = Math.floor(block.gasLimit - block.gasLimit / 1024)
             tx.gas = blockGasLimit < gasEstimation ? blockGasLimit : gasEstimation
 
