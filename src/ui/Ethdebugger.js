@@ -11,15 +11,15 @@ var ui = require('../helpers/ui')
 var Web3Providers = require('../web3Provider/web3Providers')
 var DummyProvider = require('../web3Provider/dummyProvider')
 var CodeManager = require('../code/codeManager')
-var SourceLocationTracker = require('../code/sourceLocationTracker')
+var SolidityProxy = require('../solidity/solidityProxy')
+var InternalCallTree = require('../util/internalCallTree')
 
 function Ethdebugger () {
+  var self = this
   this.event = new EventManager()
 
   this.currentStepIndex = -1
   this.tx
-  this.sources
-  this.contractsDetail
   this.statusMessage = ''
 
   this.view
@@ -28,9 +28,10 @@ function Ethdebugger () {
   this.switchProvider('DUMMYWEB3')
   this.traceManager = new TraceManager()
   this.codeManager = new CodeManager(this.traceManager)
-  this.sourceLocationTracker = new SourceLocationTracker(this.codeManager)
+  this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
 
-  var self = this
+  var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+  this.callTree = callTree
   this.event.register('indexChanged', this, function (index) {
     self.codeManager.resolveStep(index, self.tx)
   })
@@ -49,7 +50,7 @@ function Ethdebugger () {
   this.stepManager.event.register('stepChanged', this, function (stepIndex) {
     self.stepChanged(stepIndex)
   })
-  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager)
+  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy, callTree)
 }
 
 Ethdebugger.prototype.web3 = function () {
@@ -75,11 +76,9 @@ Ethdebugger.prototype.switchProvider = function (type) {
 
 Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
   if (compilationResult && compilationResult.sources && compilationResult.contracts) {
-    this.sources = compilationResult.sources
-    this.contractsDetail = compilationResult.contracts
+    this.solidityProxy.reset(compilationResult)
   } else {
-    this.sources = null
-    this.contractsDetail = null
+    this.solidityProxy.reset({})
   }
 }
 
@@ -132,7 +131,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
     if (result) {
       self.statusMessage = ''
       yo.update(self.view, self.render())
-      self.event.trigger('newTraceLoaded')
+      self.event.trigger('newTraceLoaded', [self.traceManager.trace])
     } else {
       self.statusMessage = error
       yo.update(self.view, self.render())

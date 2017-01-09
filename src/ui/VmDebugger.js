@@ -9,9 +9,10 @@ var FullStoragesChangesPanel = require('./FullStoragesChanges')
 var StepDetail = require('./StepDetail')
 var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
+var SolidityLocals = require('./SolidityLocals')
 var yo = require('yo-yo')
 
-function VmDebugger (_parent, _traceManager, _codeManager) {
+function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {
   this.asmCode = new CodeListView(_parent, _codeManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
@@ -19,7 +20,8 @@ function VmDebugger (_parent, _traceManager, _codeManager) {
   this.calldataPanel = new CalldataPanel(_parent, _traceManager)
   this.callstackPanel = new CallstackPanel(_parent, _traceManager)
   this.stepDetail = new StepDetail(_parent, _traceManager)
-  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager)
+  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager, _solidityProxy)
+  this.solidityLocals = new SolidityLocals(_parent, _traceManager, _callTree)
 
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value')
@@ -53,6 +55,7 @@ VmDebugger.prototype.render = function () {
   var view = yo`<div id='vmdebugger' style='display:none'>
         <div>
             ${this.asmCode.render()}
+            ${this.solidityLocals.render()}
             ${this.solidityState.render()}
             ${this.stepDetail.render()}
             ${this.stackPanel.render()}

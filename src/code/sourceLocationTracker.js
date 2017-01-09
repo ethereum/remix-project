@@ -20,16 +20,36 @@ function SourceLocationTracker (_codeManager) {
  * @param {Object} contractDetails - AST of compiled contracts
  * @param {Function} cb - callback function
  */
-SourceLocationTracker.prototype.getSourceLocation = function (address, index, contractsDetails, cb) {
+SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function (address, index, contracts, cb) {
   var self = this
-  this.codeManager.getCode(address, function (error, result) {
+  extractSourceMap(this.codeManager, address, contracts, function (error, sourceMap) {
+    if (error) {
+      cb(error)
+    } else {
+      cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
+    }
+  })
+}
+
+/**
+ * Return the source location associated with the given @arg pc
+ *
+ * @param {String} address - contract address from which the source location is retrieved
+ * @param {Int} vmtraceStepIndex - index of the current code in the vmtrace
+ * @param {Object} contractDetails - AST of compiled contracts
+ * @param {Function} cb - callback function
+ */
+SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (address, vmtraceStepIndex, contracts, cb) {
+  var self = this
+  extractSourceMap(this.codeManager, address, contracts, function (error, sourceMap) {
     if (!error) {
-      var sourceMap = getSourceMap(address, result.bytecode, contractsDetails)
-      if (sourceMap) {
-        cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
-      } else {
-        cb('no srcmap associated with the code ' + address)
-      }
+      self.codeManager.getInstructionIndex(address, vmtraceStepIndex, function (error, index) {
+        if (error) {
+          cb(error)
+        } else {
+          cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
+        }
+      })
     } else {
       cb(error)
     }
@@ -43,15 +63,30 @@ function srcmapRuntime (contract) {
   return contract.srcmapRuntime ? contract.srcmapRuntime : contract['srcmap-runtime']
 }
 
-function getSourceMap (address, code, contractsDetails) {
+function getSourceMap (address, code, contracts) {
   var isCreation = helper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
-  for (var k in contractsDetails) {
-    if ('0x' + contractsDetails[k][byteProp] === code) {
-      return isCreation ? contractsDetails[k].srcmap : srcmapRuntime(contractsDetails[k])
+  for (var k in contracts) {
+    if ('0x' + contracts[k][byteProp] === code) {
+      return isCreation ? contracts[k].srcmap : srcmapRuntime(contracts[k])
     }
   }
   return null
+}
+
+function extractSourceMap (codeManager, address, contracts, cb) {
+  codeManager.getCode(address, function (error, result) {
+    if (!error) {
+      var sourceMap = getSourceMap(address, result.bytecode, contracts)
+      if (sourceMap) {
+        cb(null, sourceMap)
+      } else {
+        cb('no srcmap associated with the code ' + address)
+      }
+    } else {
+      cb(error)
+    }
+  })
 }
 
 module.exports = SourceLocationTracker

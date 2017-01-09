@@ -1,5 +1,13 @@
 {
-  "plugins": ["fast-async",
+  "plugins": [["fast-async", {
+                  "runtimePatten": null,
+                  "compiler": {
+                    "promises": true,
+                    "es7": true,
+                    "noRuntime": true,
+                    "wrapAwait": true
+                  }
+                  }],
               "check-es2015-constants",
               "transform-es2015-arrow-functions",
               "transform-es2015-block-scoped-functions",

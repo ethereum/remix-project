@@ -281,4 +281,16 @@ TraceManager.prototype.checkRequestedStep = function (stepIndex) {
   return undefined
 }
 
+TraceManager.prototype.waterfall = function (calls, stepindex, cb) {
+  var ret = []
+  var retError = null
+  for (var call in calls) {
+    calls[call].apply(this, [stepindex, function (error, result) {
+      retError = error
+      ret.push({ error: error, value: result })
+    }])
+  }
+  cb(retError, ret)
+}
+
 module.exports = TraceManager
