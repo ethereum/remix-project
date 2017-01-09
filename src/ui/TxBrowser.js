@@ -33,12 +33,14 @@ function TxBrowser (_parent) {
 // invokation: 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51
 
 TxBrowser.prototype.setDefaultValues = function () {
-  this.blockNumber = null
+  this.blockNumber = ''
+  this.txNumber = ''
   this.connectInfo = ''
   this.basicPanel.data = {}
   this.basicPanel.update()
   this.basicPanel.hide()
   this.updateWeb3Url(util.web3.currentProvider.host)
+  yo.update(this.view, this.render())
 }
 
 TxBrowser.prototype.submit = function () {
@@ -81,7 +83,7 @@ TxBrowser.prototype.update = function (error, tx) {
       info.from = mes
       info.to = mes
       info.hash = mes
-      this.view.querySelector('#error').innerHTML = 'cannot find ' + this.blockNumber + ' ' + this.txNumber
+      this.view.querySelector('#error').innerHTML = 'cannot find transaction with reference. block number: ' + this.blockNumber + '. transaction index/hash: ' + this.txNumber
     }
   }
   this.basicPanel.data = info
