@@ -1,10 +1,11 @@
 'use strict'
 var util = require('./util')
+var ValueType = require('./ValueType')
 
-function Uint (storageBytes) {
-  this.storageSlots = 1
-  this.storageBytes = storageBytes
-  this.typeName = 'uint'
+class Uint extends ValueType {
+  constructor (storageBytes) {
+    super(1, storageBytes, 'uint')
+  }
 }
 
 Uint.prototype.decodeFromStorage = function (location, storageContent) {

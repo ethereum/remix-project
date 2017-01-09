@@ -1,10 +1,11 @@
 'use strict'
 var util = require('./util')
+var ValueType = require('./ValueType')
 
-function Bool () {
-  this.storageSlots = 1
-  this.storageBytes = 1
-  this.typeName = 'bool'
+class Bool extends ValueType {
+  constructor () {
+    super(1, 1, 'bool')
+  }
 }
 
 Bool.prototype.decodeFromStorage = function (location, storageContent) {

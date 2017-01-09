@@ -1,13 +1,15 @@
 'use strict'
 
-function Mapping () {
-  this.storageSlots = 1
-  this.storageBytes = 32
-  this.typeName = 'mapping'
-}
+class Mapping {
+  constructor () {
+    this.storageSlots = 1
+    this.storageBytes = 32
+    this.typeName = 'mapping'
+  }
 
-Mapping.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented>'
+  decodeFromStorage (location, storageContent) {
+    return '<not implemented>'
+  }
 }
 
 module.exports = Mapping

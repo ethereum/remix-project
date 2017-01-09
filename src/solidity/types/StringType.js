@@ -1,31 +1,26 @@
 'use strict'
 var DynamicBytes = require('./DynamicByteArray')
 
-function StringType () {
-  this.storageSlots = 1
-  this.storageBytes = 32
-  this.typeName = 'string'
-  this.dynamicBytes = new DynamicBytes()
-}
+class StringType extends DynamicBytes {
+  constructor () {
+    super()
+    this.typeName = 'string'
+  }
 
-StringType.prototype.decodeFromStorage = function (location, storageContent) {
-  var decoded = this.dynamicBytes.decodeFromStorage(location, storageContent)
-  return format(decoded)
-}
+  decodeFromStorage (location, storageContent) {
+    var decoded = super.decodeFromStorage(location, storageContent)
+    return format(decoded)
+  }
 
-StringType.prototype.decodeLocals = function (stackDepth, stack, memory) {
-  var decoded = this.dynamicBytes.decodeLocals(stackDepth, stack, memory)
-  return format(decoded)
-}
+  decodeLocals (stackDepth, stack, memory) {
+    var decoded = super.decodeLocals(stackDepth, stack, memory)
+    return format(decoded)
+  }
 
-StringType.prototype.decodeFromMemory = function (offset, memory) {
-  var decoded = this.dynamicBytes.decodeFromMemory(offset, memory)
-  return format(decoded)
-}
-
-StringType.prototype.decodeFromMemory = function (offset, memory) {
-  var decoded = this.dynamicBytes.decodeFromMemory(offset, memory)
-  return format(decoded)
+  decodeFromMemory (offset, memory) {
+    var decoded = super.decodeFromMemory(offset, memory)
+    return format(decoded)
+  }
 }
 
 function format (decoded) {
