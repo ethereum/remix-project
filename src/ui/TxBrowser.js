@@ -85,7 +85,7 @@ TxBrowser.prototype.update = function (error, tx) {
       info.from = mes
       info.to = mes
       info.hash = mes
-      this.view.querySelector('#error').innerHTML = 'cannot find transaction with reference. block number: ' + this.blockNumber + '. transaction index/hash: ' + this.txNumber
+      this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
     }
   }
   this.basicPanel.data = info
