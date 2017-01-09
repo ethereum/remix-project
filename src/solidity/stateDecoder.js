@@ -31,6 +31,9 @@ function extractStateVariables (contractName, sourcesList) {
   }
   var types = states[contractName].stateVariables
   var offsets = decodeInfo.computeOffsets(types, states, contractName)
+  if (!offsets) {
+    return [] // TODO should maybe return an error
+  }
   return offsets.typesOffsets
 }
 

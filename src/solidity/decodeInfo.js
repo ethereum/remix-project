@@ -203,6 +203,9 @@ function getStructMembers (type, stateDefinitions, contractName) {
     for (var dec of state.stateDefinitions) {
       if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
         var offsets = computeOffsets(dec.children, stateDefinitions, contractName)
+        if (!offsets) {
+          return null
+        }
         return {
           members: offsets.typesOffsets,
           storageSlots: offsets.endLocation.slot
@@ -244,6 +247,7 @@ function typeClass (fullType) {
 function parseType (type, stateDefinitions, contractName) {
   var decodeInfos = {
     'address': Address,
+    'contract': Address,
     'array': Array,
     'bool': Bool,
     'bytes': DynamicByteArray,
@@ -260,7 +264,11 @@ function parseType (type, stateDefinitions, contractName) {
     console.log('unable to retrieve decode info of ' + type)
     return null
   }
-  return decodeInfos[currentType](type, stateDefinitions, contractName)
+  if (decodeInfos[currentType]) {
+    return decodeInfos[currentType](type, stateDefinitions, contractName)
+  } else {
+    return null
+  }
 }
 
 /**
