@@ -1,4 +1,5 @@
 var util = require('../helpers/util')
+var uiutil = require('../helpers/ui')
 var traceHelper = require('../helpers/traceHelper')
 var Web3 = require('web3')
 
@@ -9,6 +10,9 @@ function web3VmProvider () {
   this.vmTraces = {}
   this.txs = {}
   this.processingHash
+  this.processingAddress
+  this.processingIndex
+  this.previousDepth = 0
   this.incr = 0
   this.eth = {}
   this.debug = {}
@@ -57,6 +61,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
   if (data.to && data.to.length) {
     tx.to = util.hexConvert(data.to)
   }
+  this.processingAddress = tx.to
   tx.data = util.hexConvert(data.data)
   tx.input = util.hexConvert(data.input)
   tx.gas = util.hexConvert(data.gas)
@@ -70,6 +75,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
       self.storageCache[self.processingHash][tx.to] = storage
     })
   }
+  this.processingIndex = 0
 }
 
 web3VmProvider.prototype.txProcessed = function (self, data) {
@@ -79,12 +85,21 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   } else {
     self.vmTraces[self.processingHash].return = util.hexConvert(data.vm.return)
   }
+  this.processingIndex = null
+  this.processingAddress = null
+  this.previousDepth = 0
 }
 
 web3VmProvider.prototype.pushTrace = function (self, data) {
+  var depth = data.depth + 1 // geth starts the depth from 1
   if (!self.processingHash) {
     console.log('no tx processing')
     return
+  }
+  if (this.previousDepth > depth) {
+    // returning from context, set error it is not STOP, RETURN
+    var previousopcode = self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]
+    previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
   }
   var step = {
     stack: util.hexListConvert(data.stack),
@@ -93,17 +108,26 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     op: data.opcode.name,
     pc: data.pc,
     gasCost: data.opcode.fee.toString(),
-    gas: data.gasLeft.toString()
+    gas: data.gasLeft.toString(),
+    depth: depth,
+    error: data.error === false ? undefined : data.error
   }
   self.vmTraces[self.processingHash].structLogs.push(step)
   if (traceHelper.newContextStorage(step)) {
-    if (!self.storageCache[self.processingHash][address]) {
-      var address = step.stack[step.stack.length - 2]
-      self.vm.stateManager.dumpStorage(address, function (storage) {
-        self.storageCache[self.processingHash][address] = storage
-      })
+    if (step.op === 'CREATE') {
+      this.processingAddress = traceHelper.contractCreationToken(this.processingIndex)
+      this.storageCache[this.processingHash][this.processingAddress] = {}
+    } else {
+      this.processingAddress = uiutil.normalizeHex(step.stack[step.stack.length - 2])
+      if (!self.storageCache[self.processingHash][this.processingAddress]) {
+        self.vm.stateManager.dumpStorage(this.processingAddress, function (storage) {
+          self.storageCache[self.processingHash][this.processingAddress] = storage
+        })
+      }
     }
   }
+  this.processingIndex++
+  this.previousDepth = depth
 }
 
 web3VmProvider.prototype.getCode = function (address, cb) {

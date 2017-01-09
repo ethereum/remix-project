@@ -26,7 +26,7 @@ function StepManager (_parent, _traceManager) {
     self.sliderMoved(step)
   })
 
-  this.buttonNavigator = new ButtonNavigator(this.traceManager)
+  this.buttonNavigator = new ButtonNavigator(_parent, this.traceManager)
   this.buttonNavigator.event.register('stepIntoBack', this, function () {
     self.stepIntoBack()
   })
@@ -41,6 +41,12 @@ function StepManager (_parent, _traceManager) {
   })
   this.buttonNavigator.event.register('jumpNextCall', this, function () {
     self.jumpNextCall()
+  })
+  this.buttonNavigator.event.register('jumpOut', this, function () {
+    self.jumpOut()
+  })
+  this.buttonNavigator.event.register('jumpToException', this, function (exceptionIndex) {
+    self.jumpTo(exceptionIndex)
   })
 }
 
@@ -66,6 +72,14 @@ StepManager.prototype.init = function () {
 
 StepManager.prototype.newTraceAvailable = function () {
   this.init()
+}
+
+StepManager.prototype.jumpTo = function (step) {
+  if (!this.traceManager.inRange(step)) {
+    return
+  }
+  this.slider.setValue(step)
+  this.changeState(step)
 }
 
 StepManager.prototype.sliderMoved = function (step) {
@@ -122,6 +136,15 @@ StepManager.prototype.jumpNextCall = function () {
     return
   }
   var step = this.traceManager.findNextCall(this.currentStepIndex)
+  this.slider.setValue(step)
+  this.changeState(step)
+}
+
+StepManager.prototype.jumpOut = function () {
+  if (!this.traceManager.isLoaded()) {
+    return
+  }
+  var step = this.traceManager.findStepOut(this.currentStepIndex)
   this.slider.setValue(step)
   this.changeState(step)
 }

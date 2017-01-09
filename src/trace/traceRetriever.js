@@ -27,7 +27,13 @@ TraceRetriever.prototype.getStorage = function (tx, address, callback) {
       // The VM gives only a tx hash
       // TODO: get rid of that and use the range parameters
       util.web3.debug.storageRangeAt(tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex, address, '0x0', '0x' + end, maxSize, function (error, result) {
-        callback(error, result.storage)
+        if (error) {
+          callback(error)
+        } else if (result.storage) {
+          callback(null, result.storage)
+        } else {
+          callback('storage has not been provided')
+        }
       })
     } else {
       callback('no storageRangeAt endpoint found')

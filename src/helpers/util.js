@@ -83,5 +83,48 @@ module.exports = {
   findLowerBoundValue: function (target, array) {
     var index = this.findLowerBound(target, array)
     return index >= 0 ? array[index] : null
+  },
+
+  /**
+  * Find the call from @args rootCall which contains @args index (recursive)
+  *
+  * @param {Int} index - index of the vmtrace
+  * @param {Object} rootCall  - call tree, built by the trace analyser
+  * @return {Object} - return the call which include the @args index
+  */
+  findCall: findCall,
+
+  buildCallPath: buildCallPath
+}
+
+/**
+  * Find calls path from @args rootCall which leads to @args index (recursive)
+  *
+  * @param {Int} index - index of the vmtrace
+  * @param {Object} rootCall  - call tree, built by the trace analyser
+  * @return {Array} - return the calls path to @args index
+  */
+function buildCallPath (index, rootCall) {
+  var ret = []
+  findCallInternal(index, rootCall, ret)
+  return ret
+}
+
+function findCall (index, rootCall) {
+  var ret = buildCallPath(index, rootCall)
+  return ret[ret.length - 1]
+}
+
+function findCallInternal (index, rootCall, callsPath) {
+  var calls = Object.keys(rootCall.calls)
+  var ret = rootCall
+  callsPath.push(rootCall)
+  for (var k in calls) {
+    var subCall = rootCall.calls[calls[k]]
+    if (index >= subCall.start && index <= subCall.return) {
+      findCallInternal(index, subCall, callsPath)
+      break
+    }
   }
+  return ret
 }
