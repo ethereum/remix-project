@@ -40,7 +40,9 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.basicPanel.update()
   this.basicPanel.hide()
   this.updateWeb3Url(util.web3.currentProvider.host)
-  yo.update(this.view, this.render())
+  if (this.view) {
+    yo.update(this.view, this.render())
+  }
 }
 
 TxBrowser.prototype.submit = function () {
