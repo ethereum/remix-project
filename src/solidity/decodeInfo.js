@@ -265,7 +265,7 @@ function parseType (type, stateDefinitions, contractName) {
     return null
   }
   if (decodeInfos[currentType]) {
-    return decodeInfos[currentType](type, stateDefinitions, contractName)  
+    return decodeInfos[currentType](type, stateDefinitions, contractName)
   } else {
     return null
   }
