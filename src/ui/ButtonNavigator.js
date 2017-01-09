@@ -21,7 +21,7 @@ function ButtonNavigator (_parent, _traceManager) {
     if (index < 0) return
     if (_parent.currentStepIndex !== index) return
 
-    this.traceManager.buildCallsPath(index, (error, callsPath) => {
+    this.traceManager.buildCallPath(index, (error, callsPath) => {
       if (error) {
         console.log(error)
         resetWarning(this)
@@ -66,7 +66,7 @@ ButtonNavigator.prototype.render = function () {
     <button id='intoforward' title='step into forward'  class='fa fa-angle-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
     </button>
     <button id='overforward' title='step over forward' class='fa fa-angle-double-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
-    </button>    
+    </button>
     <button id='nextcall'  title='step next call' class='fa fa-chevron-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
     </button>
     <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >

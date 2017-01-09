@@ -85,8 +85,16 @@ module.exports = {
     return index >= 0 ? array[index] : null
   },
 
+  /**
+  * Find the call from @args rootCall which contains @args index (recursive)
+  *
+  * @param {Int} index - index of the vmtrace
+  * @param {Object} rootCall  - call tree, built by the trace analyser
+  * @return {Object} - return the call which include the @args index
+  */
   findCall: findCall,
-  buildCallsPath: buildCallsPath
+
+  buildCallPath: buildCallPath
 }
 
 /**
@@ -96,21 +104,14 @@ module.exports = {
   * @param {Object} rootCall  - call tree, built by the trace analyser
   * @return {Array} - return the calls path to @args index
   */
-function buildCallsPath (index, rootCall) {
+function buildCallPath (index, rootCall) {
   var ret = []
   findCallInternal(index, rootCall, ret)
   return ret
 }
 
-/**
-  * Find the call from @args rootCall which contains @args index (recursive)
-  *
-  * @param {Int} index - index of the vmtrace
-  * @param {Object} rootCall  - call tree, built by the trace analyser
-  * @return {Object} - return the call which include the @args index
-  */
 function findCall (index, rootCall) {
-  var ret = buildCallsPath(index, rootCall)
+  var ret = buildCallPath(index, rootCall)
   return ret[ret.length - 1]
 }
 

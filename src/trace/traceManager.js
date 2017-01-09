@@ -114,12 +114,12 @@ TraceManager.prototype.getCallDataAt = function (stepIndex, callback) {
   callback(null, [this.traceCache.callsData[callDataChange]])
 }
 
-TraceManager.prototype.buildCallsPath = function (stepIndex, callback) {
+TraceManager.prototype.buildCallPath = function (stepIndex, callback) {
   var check = this.checkRequestedStep(stepIndex)
   if (check) {
     return callback(check, null)
   }
-  var callsPath = util.buildCallsPath(stepIndex, this.traceCache.callsTree.call)
+  var callsPath = util.buildCallPath(stepIndex, this.traceCache.callsTree.call)
   if (callsPath === null) return callback('no call path built', null)
   callback(null, callsPath)
 }
