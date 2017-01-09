@@ -153,7 +153,7 @@ TxBrowser.prototype.render = function () {
         <button id='load' class='fa fa-play' title='start debugging' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
         </button>
         <button id='unload' class='fa fa-stop' title='stop debugging' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}></button>
-        <span id='error'><span>
+        <span id='error'></span>
         <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
           ${this.basicPanel.render()}
         </div>
