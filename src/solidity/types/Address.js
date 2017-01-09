@@ -12,11 +12,11 @@ Address.prototype.decodeFromStorage = function (location, storageContent) {
   return '0x' + value.toUpperCase()
 }
 
-Address.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stackHeight >= stack.length) {
+Address.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stackDepth >= stack.length) {
     return '0x0000000000000000000000000000000000000000'
   } else {
-    return '0x' + util.extractHexByteSlice(stack[stack.length - 1 - stackHeight], this.storageBytes, 0)
+    return '0x' + util.extractHexByteSlice(stack[stack.length - 1 - stackDepth], this.storageBytes, 0)
   }
 }
 

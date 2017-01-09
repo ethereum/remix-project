@@ -11,11 +11,11 @@ Int.prototype.decodeFromStorage = function (location, storageContent) {
   return util.decodeInt(location, storageContent, this.storageBytes, true)
 }
 
-Int.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stackHeight >= stack.length) {
+Int.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stackDepth >= stack.length) {
     return '0'
   } else {
-    return util.decodeIntFromHex(stack[stack.length - 1 - stackHeight].replace('0x', ''), 32, true)
+    return util.decodeIntFromHex(stack[stack.length - 1 - stackDepth].replace('0x', ''), 32, true)
   }
 }
 

@@ -54,11 +54,11 @@ ArrayType.prototype.decodeFromStorage = function (location, storageContent) {
   }
 }
 
-ArrayType.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+ArrayType.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stack.length - 1 < stackDepth) {
     return []
   } else { // TODO manage decoding locals from storage
-    var offset = stack[stack.length - 1 - stackHeight]
+    var offset = stack[stack.length - 1 - stackDepth]
     offset = 2 * parseInt(offset, 16)
     return this.decodeFromMemory(offset, memory)
   }

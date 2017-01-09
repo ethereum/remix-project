@@ -13,8 +13,8 @@ StringType.prototype.decodeFromStorage = function (location, storageContent) {
   return format(decoded)
 }
 
-StringType.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  var decoded = this.dynamicBytes.decodeLocals(stackHeight, stack, memory)
+StringType.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  var decoded = this.dynamicBytes.decodeLocals(stackDepth, stack, memory)
   return format(decoded)
 }
 

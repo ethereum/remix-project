@@ -19,12 +19,12 @@ Enum.prototype.decodeFromStorage = function (location, storageContent) {
   return output(value, this.enumDef)
 }
 
-Enum.prototype.decodeLocals = function (stackHeight, stack, memory) {
+Enum.prototype.decodeLocals = function (stackDepth, stack, memory) {
   var defaultValue = 0
-  if (stack.length - 1 < stackHeight) {
+  if (stack.length - 1 < stackDepth) {
     defaultValue = 0
   } else {
-    defaultValue = util.extractHexByteSlice(stack[stack.length - 1 - stackHeight], this.storageBytes, 0)
+    defaultValue = util.extractHexByteSlice(stack[stack.length - 1 - stackDepth], this.storageBytes, 0)
     defaultValue = parseInt(defaultValue, 16)
   }
   return output(defaultValue, this.enumDef)

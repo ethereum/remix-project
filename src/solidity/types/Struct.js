@@ -20,11 +20,11 @@ Struct.prototype.decodeFromStorage = function (location, storageContent) {
   return ret
 }
 
-Struct.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+Struct.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stack.length - 1 < stackDepth) {
     return {}
   } else { // TODO manage decoding locals from storage
-    var offset = stack[stack.length - 1 - stackHeight]
+    var offset = stack[stack.length - 1 - stackDepth]
     offset = 2 * parseInt(offset, 16)
     return this.decodeFromMemory(offset, memory)
   }
@@ -45,11 +45,11 @@ Struct.prototype.decodeFromMemory = function (offset, memory) {
   return ret
 }
 
-Struct.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+Struct.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stack.length - 1 < stackDepth) {
     return {}
   } else { // TODO manage decoding locals from storage
-    var offset = stack[stack.length - 1 - stackHeight]
+    var offset = stack[stack.length - 1 - stackDepth]
     offset = 2 * parseInt(offset, 16)
     return this.decodeFromMemory(offset, memory)
   }

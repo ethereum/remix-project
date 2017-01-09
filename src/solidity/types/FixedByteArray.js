@@ -12,11 +12,11 @@ FixedByteArray.prototype.decodeFromStorage = function (location, storageContent)
   return '0x' + value.toUpperCase()
 }
 
-FixedByteArray.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+FixedByteArray.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stack.length - 1 < stackDepth) {
     return '0x'
   } else {
-    var value = stack[stack.length - 1 - stackHeight]
+    var value = stack[stack.length - 1 - stackDepth]
     return '0x' + value.substr(2, 2 * this.storageBytes).toUpperCase()
   }
 }

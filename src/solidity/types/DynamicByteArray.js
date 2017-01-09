@@ -35,14 +35,14 @@ DynamicByteArray.prototype.decodeFromStorage = function (location, storageConten
   }
 }
 
-DynamicByteArray.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+DynamicByteArray.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stack.length - 1 < stackDepth) {
     return {
       value: '0x',
       length: '0x0'
     }
   } else {
-    var offset = stack[stack.length - 1 - stackHeight]
+    var offset = stack[stack.length - 1 - stackDepth]
     offset = 2 * parseInt(offset, 16)
     return this.decodeFromMemory(offset, memory)
   }
@@ -57,14 +57,14 @@ DynamicByteArray.prototype.decodeFromMemory = function (offset, memory) {
   }
 }
 
-DynamicByteArray.prototype.decodeLocals = function (stackHeight, stack, memory) {
-  if (stack.length - 1 < stackHeight) {
+DynamicByteArray.prototype.decodeLocals = function (stackDepth, stack, memory) {
+  if (stack.length - 1 < stackDepth) {
     return {
       value: '0x',
       length: '0x0'
     }
   } else {
-    var offset = stack[stack.length - 1 - stackHeight]
+    var offset = stack[stack.length - 1 - stackDepth]
     offset = 2 * parseInt(offset, 16)
     return this.decodeFromMemory(offset, memory)
   }

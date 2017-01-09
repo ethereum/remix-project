@@ -132,7 +132,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
             tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
               name: variableDeclaration.attributes.name,
               type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
-              stackHeight: stack.length
+              stackDepth: stack.stackDepth
             }
           }
         })
