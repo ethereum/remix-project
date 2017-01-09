@@ -30,7 +30,7 @@ function ButtonNavigator (_parent, _traceManager) {
         if (this.currentCall.reverted) {
           this.revertionPoint = this.currentCall.return
           this.view.querySelector('#reverted').style.display = 'block'
-          this.view.querySelector('#reverted #outofgas').style.display = this.currentCall.outOfGas ? 'block' : 'none'
+          this.view.querySelector('#reverted #outofgas').style.display = this.currentCall.outOfGas ? 'inline' : 'none'
           this.view.querySelector('#reverted #parenthasthrown').style.display = 'none'
         } else {
           var k = callsPath.length - 2
@@ -39,7 +39,7 @@ function ButtonNavigator (_parent, _traceManager) {
             if (parent.reverted) {
               this.revertionPoint = parent.return
               this.view.querySelector('#reverted').style.display = 'block'
-              this.view.querySelector('#reverted #parenthasthrown').style.display = parent ? 'block' : 'none'
+              this.view.querySelector('#reverted #parenthasthrown').style.display = parent ? 'inline' : 'none'
               this.view.querySelector('#reverted #outofgas').style.display = 'none'
               return
             }
@@ -72,11 +72,11 @@ ButtonNavigator.prototype.render = function () {
     <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
     </button>
     <div id='reverted' style="display:none">
-      <span>State changes made during this call were reverted.</span>
-      <span id='outofgas' style="display:none">This call ran out of gas</span>
-      <span id='parenthasthrown' style="display:none">The parent call has trown an exception</span>
       <button id='jumptoexception' title='jump to exception' class='fa fa-exclamation-triangle' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpToException', [self.revertionPoint]) }} disabled=${this.jumpOutDisabled} >
       </button>
+      <span>State changes made during this call will be reverted.</span>
+      <span id='outofgas' style="display:none">This call will run out of gas.</span>
+      <span id='parenthasthrown' style="display:none">The parent call will throw an exception</span>
     </div>
   </div>`
   if (!this.view) {
