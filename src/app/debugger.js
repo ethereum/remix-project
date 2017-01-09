@@ -36,7 +36,7 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
   // register selected code item, highlight the corresponding source location
   this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
     if (self.compiler.lastCompilationResult) {
-      this.debugger.sourceLocationTracker.getSourceLocation(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+      this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
         if (!error) {
           var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.compiler.lastCompilationResult.data)
           self.highlight(lineColumnPos, rawLocation)
