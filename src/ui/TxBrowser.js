@@ -65,10 +65,10 @@ TxBrowser.prototype.submit = function () {
 TxBrowser.prototype.update = function (error, tx) {
   var info = {}
   if (error) {
-    console.log(error)
-    info[''] = error
+    this.view.querySelector('#error').innerHTML = error
   } else {
     if (tx) {
+      this.view.querySelector('#error').innerHTML = ''
       if (!tx.to) {
         tx.to = traceHelper.contractCreationToken('0')
       }
@@ -81,7 +81,7 @@ TxBrowser.prototype.update = function (error, tx) {
       info.from = mes
       info.to = mes
       info.hash = mes
-      console.log('cannot find ' + this.blockNumber + ' ' + this.txNumber)
+      this.view.querySelector('#error').innerHTML = 'cannot find ' + this.blockNumber + ' ' + this.txNumber
     }
   }
   this.basicPanel.data = info
@@ -153,6 +153,7 @@ TxBrowser.prototype.render = function () {
         <button id='load' class='fa fa-play' title='start debugging' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
         </button>
         <button id='unload' class='fa fa-stop' title='stop debugging' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}></button>
+        <span id="error"><span>
         <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
           ${this.basicPanel.render()}
         </div>
