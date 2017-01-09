@@ -87,5 +87,8 @@
       "test/resources/*"
     ],
     "parser": "babel-eslint"
+  },
+  "browserify": {
+    "transform": ["babelify"]
   }
 }

@@ -33,11 +33,16 @@ function TxBrowser (_parent) {
 // invokation: 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51
 
 TxBrowser.prototype.setDefaultValues = function () {
-  this.blockNumber = null
+  this.blockNumber = ''
+  this.txNumber = ''
   this.connectInfo = ''
   this.basicPanel.data = {}
   this.basicPanel.update()
+  this.basicPanel.hide()
   this.updateWeb3Url(util.web3.currentProvider.host)
+  if (this.view) {
+    yo.update(this.view, this.render())
+  }
 }
 
 TxBrowser.prototype.submit = function () {
@@ -57,30 +62,31 @@ TxBrowser.prototype.submit = function () {
       })
     }
   } catch (e) {
-    console.log(e)
+    self.update(e.message)
   }
 }
 
 TxBrowser.prototype.update = function (error, tx) {
-  if (error) {
-    console.log(error)
-    return
-  }
   var info = {}
-  if (tx) {
-    if (!tx.to) {
-      tx.to = traceHelper.contractCreationToken('0')
-    }
-    info.from = tx.from
-    info.to = tx.to
-    info.hash = tx.hash
-    this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+  if (error) {
+    this.view.querySelector('#error').innerHTML = error
   } else {
-    var mes = '<not found>'
-    info.from = mes
-    info.to = mes
-    info.hash = mes
-    console.log('cannot find ' + this.blockNumber + ' ' + this.txNumber)
+    if (tx) {
+      this.view.querySelector('#error').innerHTML = ''
+      if (!tx.to) {
+        tx.to = traceHelper.contractCreationToken('0')
+      }
+      info.from = tx.from
+      info.to = tx.to
+      info.hash = tx.hash
+      this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+    } else {
+      var mes = '<not found>'
+      info.from = mes
+      info.to = mes
+      info.hash = mes
+      this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
+    }
   }
   this.basicPanel.data = info
   this.basicPanel.update()
@@ -151,6 +157,7 @@ TxBrowser.prototype.render = function () {
         <button id='load' class='fa fa-play' title='start debugging' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
         </button>
         <button id='unload' class='fa fa-stop' title='stop debugging' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}></button>
+        <span id='error'></span>
         <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
           ${this.basicPanel.render()}
         </div>
