@@ -133,7 +133,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
       yo.update(self.view, self.render())
       self.event.trigger('newTraceLoaded', [self.traceManager.trace])
     } else {
-      self.statusMessage = error
+      self.statusMessage = error ? error.message : 'Trace not loaded'
       yo.update(self.view, self.render())
     }
   })
