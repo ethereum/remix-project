@@ -26,7 +26,7 @@ module.exports = {
   instructionsList: {
     'width': '52%',
     'overflow-y': 'scroll',
-    'max-height': '500px',
+    'max-height': '250px',
     'margin': '0'
   },
   transactionInfo: {
