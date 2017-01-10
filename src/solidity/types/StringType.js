@@ -12,8 +12,8 @@ class StringType extends DynamicBytes {
     return format(decoded)
   }
 
-  decodeLocals (stackDepth, stack, memory) {
-    var decoded = super.decodeLocals(stackDepth, stack, memory)
+  decodeFromStack (stackDepth, stack, memory) {
+    var decoded = super.decodeFromStack(stackDepth, stack, memory)
     return format(decoded)
   }
 

@@ -13,7 +13,7 @@ Bool.prototype.decodeFromStorage = function (location, storageContent) {
   return value !== '00'
 }
 
-Bool.prototype.decodeLocals = function (stackDepth, stack, memory) {
+Bool.prototype.decodeFromStack = function (stackDepth, stack, memory) {
   if (stack.length - 1 < stackDepth) {
     return false
   } else {

@@ -12,7 +12,7 @@ Int.prototype.decodeFromStorage = function (location, storageContent) {
   return util.decodeInt(location, storageContent, this.storageBytes, true)
 }
 
-Int.prototype.decodeLocals = function (stackDepth, stack, memory) {
+Int.prototype.decodeFromStack = function (stackDepth, stack, memory) {
   if (stackDepth >= stack.length) {
     return '0'
   } else {

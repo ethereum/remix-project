@@ -12,7 +12,7 @@ class Address extends ValueType {
     return '0x' + value.toUpperCase()
   }
 
-  decodeLocals (stackDepth, stack, memory) {
+  decodeFromStack (stackDepth, stack, memory) {
     if (stackDepth >= stack.length) {
       return '0x0000000000000000000000000000000000000000'
     } else {

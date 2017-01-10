@@ -12,7 +12,7 @@ class FixedByteArray extends ValueType {
     return '0x' + value.toUpperCase()
   }
 
-  decodeLocals (stackDepth, stack, memory) {
+  decodeFromStack (stackDepth, stack, memory) {
     if (stack.length - 1 < stackDepth) {
       return '0x'
     } else {

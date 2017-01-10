@@ -21,7 +21,7 @@ Enum.prototype.decodeFromStorage = function (location, storageContent) {
   return output(value, this.enumDef)
 }
 
-Enum.prototype.decodeLocals = function (stackDepth, stack, memory) {
+Enum.prototype.decodeFromStack = function (stackDepth, stack, memory) {
   var defaultValue = 0
   if (stack.length - 1 < stackDepth) {
     defaultValue = 0

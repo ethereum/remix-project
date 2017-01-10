@@ -56,7 +56,7 @@ class ArrayType {
     }
   }
 
-  decodeLocals (stackDepth, stack, memory) {
+  decodeFromStack (stackDepth, stack, memory) {
     if (stack.length - 1 < stackDepth) {
       return []
     } else { // TODO manage decoding locals from storage

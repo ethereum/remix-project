@@ -35,7 +35,7 @@ class DynamicByteArray extends ValueType {
     }
   }
 
-  decodeLocals (stackDepth, stack, memory) {
+  decodeFromStack (stackDepth, stack, memory) {
     if (stack.length - 1 < stackDepth) {
       return {
         value: '0x',

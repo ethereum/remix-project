@@ -9,8 +9,8 @@ function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory) {
   memory = formatMemory(memory)
   for (var local in scope.locals) {
     let variable = scope.locals[local]
-    if (variable.type.decodeLocals) {
-      locals[variable.name] = variable.type.decodeLocals(variable.stackDepth, stack, memory)
+    if (variable.type.decodeFromStack) {
+      locals[variable.name] = variable.type.decodeFromStack(variable.stackDepth, stack, memory)
     } else {
       locals[variable.name] = ''
     }
