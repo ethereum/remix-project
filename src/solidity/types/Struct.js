@@ -1,12 +1,11 @@
 'use strict'
 var util = require('./util')
+var RefType = require('./RefType')
 
-class Struct {
-  constructor (memberDetails) {
-    this.storageSlots = memberDetails.storageSlots
-    this.storageBytes = 32
+class Struct extends RefType {
+  constructor (memberDetails, location) {
+    super(memberDetails.storageSlots, 32, 'struct', location)
     this.members = memberDetails.members
-    this.typeName = 'struct'
   }
 
   decodeFromStorage (location, storageContent) {
@@ -19,16 +18,6 @@ class Struct {
       ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
     })
     return ret
-  }
-
-  decodeFromStack (stackDepth, stack, memory) {
-    if (stack.length - 1 < stackDepth) {
-      return {}
-    } else { // TODO manage decoding locals from storage
-      var offset = stack[stack.length - 1 - stackDepth]
-      offset = 2 * parseInt(offset, 16)
-      return this.decodeFromMemory(offset, memory)
-    }
   }
 
   decodeFromMemory (offset, memory) {
