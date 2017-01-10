@@ -7,20 +7,8 @@ class Uint extends ValueType {
     super(1, storageBytes, 'uint')
   }
 
-  decodeFromStorage (location, storageContent) {
-    return util.decodeInt(location, storageContent, this.storageBytes, false)
-  }
-
-  decodeFromStack (stackDepth, stack, memory) {
-    if (stackDepth >= stack.length) {
-      return '0'
-    } else {
-      return util.decodeIntFromHex(stack[stack.length - 1 - stackDepth].replace('0x', ''), this.storageBytes, false)
-    }
-  }
-
-  decodeFromMemory (offset, memory) {
-    var value = memory.substr(offset, 64)
+  decodeValue (value) {
+    value = util.extractHexByteSlice(value, this.storageBytes, 0)
     return util.decodeIntFromHex(value, this.storageBytes, false)
   }
 }

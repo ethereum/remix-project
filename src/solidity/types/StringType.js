@@ -7,6 +7,11 @@ class StringType extends DynamicBytes {
     this.typeName = 'string'
   }
 
+  decodeValue (value) {
+    var decoded = super.decodeValue(value)
+    return format(decoded)
+  }
+
   decodeFromStorage (location, storageContent) {
     var decoded = super.decodeFromStorage(location, storageContent)
     return format(decoded)

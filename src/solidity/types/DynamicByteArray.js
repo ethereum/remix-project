@@ -8,6 +8,10 @@ class DynamicByteArray extends ValueType {
     super(1, 32, 'bytes')
   }
 
+  decodeValue (value) {
+    return '0x' + value.toUpperCase()
+  }
+
   decodeFromStorage (location, storageContent) {
     var value = util.extractHexValue(location, storageContent, this.storageBytes)
     var bn = new BN(value, 16)

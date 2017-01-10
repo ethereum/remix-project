@@ -1,5 +1,4 @@
 'use strict'
-var util = require('./util')
 var ValueType = require('./ValueType')
 
 class Enum extends ValueType {
@@ -14,36 +13,17 @@ class Enum extends ValueType {
     this.enumDef = enumDef
   }
 
-  decodeFromStorage (location, storageContent) {
-    var value = util.extractHexValue(location, storageContent, this.storageBytes)
-    value = parseInt(value, 16)
-    return output(value, this.enumDef)
-  }
-
-  decodeFromStack (stackDepth, stack, memory) {
-    var defaultValue = 0
-    if (stack.length - 1 < stackDepth) {
-      defaultValue = 0
+  decodeValue (value) {
+    if (!value) {
+      return this.enumDef.children[0].attributes.name
     } else {
-      defaultValue = util.extractHexByteSlice(stack[stack.length - 1 - stackDepth], this.storageBytes, 0)
-      defaultValue = parseInt(defaultValue, 16)
+      value = parseInt(value, 16)
+      if (this.enumDef.children.length > value) {
+        return this.enumDef.children[value].attributes.name
+      } else {
+        return 'INVALID_ENUM<' + value + '>'
+      }
     }
-    return output(defaultValue, this.enumDef)
-  }
-
-  decodeFromMemory (offset, memory) {
-    var value = memory.substr(offset, 64)
-    value = util.extractHexByteSlice(value, this.storageBytes, 0)
-    value = parseInt(value, 16)
-    return output(value, this.enumDef)
-  }
-}
-
-function output (value, enumDef) {
-  if (enumDef.children.length > value) {
-    return enumDef.children[value].attributes.name
-  } else {
-    return 'INVALID_ENUM<' + value + '>'
   }
 }
 
