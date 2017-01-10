@@ -118,7 +118,8 @@ function Array (type, stateDefinitions, contractName) {
     console.log('unable to parse type ' + type)
     return null
   }
-  return new ArrayType(underlyingType, arraySize)
+  var location = match[3].trim()
+  return new ArrayType(underlyingType, arraySize, location)
 }
 
 /**
@@ -149,12 +150,13 @@ function Enum (type, stateDefinitions, contractName) {
   */
 function Struct (type, stateDefinitions, contractName) {
   var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
-  if (!match) {
+  if (match && match.length > 2) {
+    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
+    if (!memberDetails) return null
+    return new StructType(memberDetails, match[2].trim())
+  } else {
     return null
   }
-  var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
-  if (!memberDetails) return null
-  return new StructType(memberDetails)
 }
 
 /**

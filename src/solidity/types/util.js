@@ -10,7 +10,9 @@ module.exports = {
   extractHexByteSlice: extractHexByteSlice,
   sha3: sha3,
   toBN: toBN,
-  add: add
+  add: add,
+  storageStore: storageStore,
+  memoryStore: memoryStore
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
@@ -90,4 +92,12 @@ function toBN (value) {
 
 function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
+}
+
+function storageStore (type) {
+  return type.location.indexOf('storage') === 0
+}
+
+function memoryStore (type) {
+  return type.location.indexOf('memory') === 0
 }

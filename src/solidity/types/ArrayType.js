@@ -1,25 +1,25 @@
 'use strict'
 var util = require('./util')
 var BN = require('ethereumjs-util').BN
+var RefType = require('./RefType')
 
-class ArrayType {
+class ArrayType extends RefType {
 
-  constructor (underlyingType, arraySize) {
-    this.typeName = 'array'
-    this.storageBytes = 32
-    this.underlyingType = underlyingType
-    this.arraySize = arraySize
-    this.storageSlots = null
+  constructor (underlyingType, arraySize, location) {
+    var storageSlots = null
     if (arraySize === 'dynamic') {
-      this.storageSlots = 1
+      storageSlots = 1
     } else {
       if (underlyingType.storageBytes < 32) {
         var itemPerSlot = Math.floor(32 / underlyingType.storageBytes)
-        this.storageSlots = Math.ceil(arraySize / itemPerSlot)
+        storageSlots = Math.ceil(arraySize / itemPerSlot)
       } else {
-        this.storageSlots = arraySize * underlyingType.storageSlots
+        storageSlots = arraySize * underlyingType.storageSlots
       }
     }
+    super(storageSlots, 32, 'array', location)
+    this.underlyingType = underlyingType
+    this.arraySize = arraySize
   }
 
   decodeFromStorage (location, storageContent) {
@@ -53,16 +53,6 @@ class ArrayType {
     return {
       value: ret,
       length: '0x' + size.toString(16)
-    }
-  }
-
-  decodeFromStack (stackDepth, stack, memory) {
-    if (stack.length - 1 < stackDepth) {
-      return []
-    } else { // TODO manage decoding locals from storage
-      var offset = stack[stack.length - 1 - stackDepth]
-      offset = 2 * parseInt(offset, 16)
-      return this.decodeFromMemory(offset, memory)
     }
   }
 
