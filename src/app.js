@@ -370,6 +370,7 @@ var run = function () {
   // ----------------- resizeable ui ---------------
 
   var EDITOR_SIZE_KEY = 'editor-size-cache'
+  var EDITOR_WINDOW_SIZE = 'editorWindowSize'
 
   var dragging = false
   $('#dragbar').mousedown(function (e) {
@@ -407,15 +408,23 @@ var run = function () {
       $(document).unbind('mousemove')
       dragging = false
       setEditorSize(delta)
-      storage.set(EDITOR_SIZE_KEY, delta)
+      config.set(EDITOR_WINDOW_SIZE, delta)
       reAdjust()
     }
   })
 
+  // convert old browser-solidity
   if (storage.exists(EDITOR_SIZE_KEY)) {
-    setEditorSize(storage.get(EDITOR_SIZE_KEY))
+    if (!config.exists(EDITOR_WINDOW_SIZE)) {
+      config.set(EDITOR_WINDOW_SIZE, storage.get(EDITOR_SIZE_KEY))
+    }
+    storage.remove(EDITOR_SIZE_KEY)
+  }
+
+  if (config.exists(EDITOR_WINDOW_SIZE)) {
+    setEditorSize(config.get(EDITOR_WINDOW_SIZE))
   } else {
-    storage.set(EDITOR_SIZE_KEY, getEditorSize())
+    config.set(EDITOR_WINDOW_SIZE, getEditorSize())
   }
 
   // ----------------- toggle right hand panel -----------------
@@ -423,7 +432,7 @@ var run = function () {
   var hidingRHP = false
   $('.toggleRHP').click(function () {
     hidingRHP = !hidingRHP
-    setEditorSize(hidingRHP ? 0 : storage.get(EDITOR_SIZE_KEY))
+    setEditorSize(hidingRHP ? 0 : config.get(EDITOR_WINDOW_SIZE))
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
   })
