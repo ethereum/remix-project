@@ -75,7 +75,7 @@ function Bool (type) {
 function DynamicByteArray (type) {
   var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match.length > 1) {
-    return new BytesType(match[1].trim())  
+    return new BytesType(match[1].trim())
   } else {
     return null
   }
