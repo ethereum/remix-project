@@ -1,7 +1,5 @@
 'use strict'
 
-var utils = require('./utils')
-
 function Storage () {
   this.rename = function (originalName, newName) {
     var content = this.get(originalName)
@@ -11,10 +9,6 @@ function Storage () {
 
   this.remove = function (name) {
     window.localStorage.removeItem(name)
-  }
-
-  this.getFileContent = function (key) {
-    return this.get(utils.fileKey(key))
   }
 
   this.exists = function (key) {
