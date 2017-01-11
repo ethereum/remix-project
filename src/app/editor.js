@@ -36,11 +36,11 @@ function Editor (doNotLoadStorage, storage) {
 
   this.uploadFile = function (file, callback) {
     var fileReader = new FileReader()
-    var cacheName = file.name
+    var name = file.name
 
     fileReader.onload = function (e) {
-      storage.set(cacheName, e.target.result)
-      SOL_CACHE_FILE = cacheName
+      storage.set(name, e.target.result)
+      SOL_CACHE_FILE = name
       callback()
     }
     fileReader.readAsText(file)
