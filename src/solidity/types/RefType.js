@@ -10,6 +10,14 @@ class RefType {
     this.basicType = 'RefType'
   }
 
+  /**
+    * decode the type from the stack
+    *
+    * @param {Int} stackDepth - position of the type in the stack
+    * @param {Array} stack - stack
+    * @return {String} - memory
+    * @return {Object} - storage
+    */
   decodeFromStack (stackDepth, stack, memory, storage) {
     if (stack.length - 1 < stackDepth) {
       return { error: '<decoding failed - stack underflow ' + stackDepth + '>' }
@@ -19,6 +27,13 @@ class RefType {
     return decodeInternal(this, offset, memory, storage)
   }
 
+  /**
+    * decode the type with the @arg offset location from the memory or storage
+    *
+    * @param {Int} offset - position of the type in the memory
+    * @return {String} - memory
+    * @return {Object} - storage
+    */
   decode (offset, memory, storage) {
     offset = memory.substr(2 * offset, 64)
     offset = parseInt(offset, 16)
