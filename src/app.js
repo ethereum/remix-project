@@ -696,8 +696,6 @@ var run = function () {
 
     loadVersion('builtin')
   })
-
-  chromeCloudSync()
 }
 
 module.exports = {
