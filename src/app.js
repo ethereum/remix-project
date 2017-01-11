@@ -11,6 +11,7 @@ var GistHandler = require('./app/gist-handler')
 var gistHandler = new GistHandler()
 
 var Storage = require('./app/storage')
+var Config = require('./app/config')
 var Editor = require('./app/editor')
 var Renderer = require('./app/renderer')
 var Compiler = require('./app/compiler')
@@ -40,6 +41,7 @@ var run = function () {
   var self = this
   this.event = new EventManager()
   var storage = new Storage()
+  var config = new Config(storage)
 
   function loadFiles (files) {
     for (var f in files) {
