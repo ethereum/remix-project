@@ -4,8 +4,6 @@
 var utils = require('./utils')
 
 function Storage (updateFiles) {
-  var EDITOR_SIZE_CACHE_KEY = 'editor-size-cache'
-
   this.rename = function (originalName, newName) {
     var content = this.get(originalName)
     this.set(newName, content)
@@ -14,14 +12,6 @@ function Storage (updateFiles) {
 
   this.remove = function (name) {
     window.localStorage.removeItem(name)
-  }
-
-  this.setEditorSize = function (size) {
-    this.set(EDITOR_SIZE_CACHE_KEY, size)
-  }
-
-  this.getEditorSize = function () {
-    return this.get(EDITOR_SIZE_CACHE_KEY)
   }
 
   this.getFileContent = function (key) {

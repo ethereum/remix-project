@@ -335,6 +335,8 @@ var run = function () {
 
   // ----------------- resizeable ui ---------------
 
+  var EDITOR_SIZE_KEY = 'editor-size-cache'
+
   var dragging = false
   $('#dragbar').mousedown(function (e) {
     e.preventDefault()
@@ -361,7 +363,7 @@ var run = function () {
   }
 
   function getEditorSize () {
-    storage.setEditorSize($('#righthand-panel').width())
+    return $('#righthand-panel').width()
   }
 
   $(document).mouseup(function (e) {
@@ -371,15 +373,16 @@ var run = function () {
       $(document).unbind('mousemove')
       dragging = false
       setEditorSize(delta)
-      storage.setEditorSize(delta)
+      storage.set(EDITOR_SIZE_KEY, delta)
       reAdjust()
     }
   })
 
-  // set cached defaults
-  var cachedSize = storage.getEditorSize()
-  if (cachedSize) setEditorSize(cachedSize)
-  else getEditorSize()
+  if (storage.exists(EDITOR_SIZE_KEY)) {
+    setEditorSize(storage.get(EDITOR_SIZE_KEY))
+  } else {
+    storage.set(EDITOR_SIZE_KEY, getEditorSize())
+  }
 
   // ----------------- toggle right hand panel -----------------
 
