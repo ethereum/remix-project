@@ -26,8 +26,11 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           solidityProxy.reset(compilationResult)
           var debuggerEvent = new EventManager()
           var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+          callTree.event.register('callTreeBuildFailed', (error) => {
+            st.fail(error)
+          })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
-            helper.decodeLocals(st, 1899, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 1814, traceManager, callTree, function (locals) {
               try {
                 st.equals(locals['bytesSimple'].length, '0x14')
                 st.equals(locals['bytesSimple'].value, '0x746573745f7375706572')

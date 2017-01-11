@@ -26,6 +26,9 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           solidityProxy.reset(compilationResult)
           var debuggerEvent = new EventManager()
           var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+          callTree.event.register('callTreeBuildFailed', (error) => {
+            st.fail(error)
+          })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
             try {
               st.equals(scopeStarts[0], '')
