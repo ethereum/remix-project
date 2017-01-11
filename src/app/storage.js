@@ -1,16 +1,16 @@
 'use strict'
 
 function Storage () {
-  this.exists = function (key) {
-    return !!this.get(key)
+  this.exists = function (name) {
+    return !!this.get(name)
   }
 
-  this.get = function (key) {
-    return window.localStorage.getItem(key)
+  this.get = function (name) {
+    return window.localStorage.getItem(name)
   }
 
-  this.set = function (key, content) {
-    window.localStorage.setItem(key, content)
+  this.set = function (name, content) {
+    window.localStorage.setItem(name, content)
   }
 
   this.keys = function () {
