@@ -113,7 +113,12 @@ class SolidityProxy {
     */
   ast (sourceLocation) {
     var file = this.sourceList[sourceLocation.file]
-    return this.sources[file].AST
+    if (this.sources[file]) {
+      return this.sources[file].AST
+    } else {
+      console.log('AST not found for file id ' + sourceLocation.file)
+      return null
+    }
   }
 }
 
