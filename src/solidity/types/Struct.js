@@ -24,10 +24,6 @@ class Struct extends RefType {
     var ret = {}
     this.members.map((item, i) => {
       var contentOffset = offset
-      if (item.type.basicType === 'RefType') {
-        contentOffset = memory.substr(2 * contentOffset, 64)
-        contentOffset = parseInt(contentOffset, 16)
-      }
       item.type.location = this.location
       var member = item.type.decode(contentOffset, memory)
       ret[item.name] = member

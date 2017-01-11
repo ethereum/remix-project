@@ -67,10 +67,6 @@ class ArrayType extends RefType {
     this.underlyingType.location = this.location
     for (var k = 0; k < length; k++) {
       var contentOffset = offset
-      if (this.underlyingType.basicType === 'RefType') {
-        contentOffset = memory.substr(2 * contentOffset, 64)
-        contentOffset = parseInt(contentOffset, 16)
-      }
       ret.push(this.underlyingType.decode(contentOffset, memory))
       offset += 32
     }
