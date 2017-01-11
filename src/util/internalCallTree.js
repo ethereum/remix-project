@@ -91,7 +91,7 @@ async function buildTree (tree, step, scopeId) {
     try {
       sourceLocation = await extractSourceLocation(tree, step)
     } catch (e) {
-      return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.messager }
+      return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.message }
     }
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
@@ -149,11 +149,11 @@ function extractSourceLocation (tree, step) {
           if (!error) {
             return resolve(sourceLocation)
           } else {
-            return reject('InternalCallTree - Cannot retrieve sourcelocation for step ' + step)
+            return reject('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
           }
         })
       } else {
-        return reject('InternalCallTree - Cannot retrieve address for step ' + step)
+        return reject('InternalCallTree - Cannot retrieve address for step ' + step + ' ' + error)
       }
     })
   })
@@ -161,10 +161,15 @@ function extractSourceLocation (tree, step) {
 
 function resolveVariableDeclaration (tree, step, sourceLocation) {
   if (!tree.variableDeclarationByFile[sourceLocation.file]) {
-    tree.variableDeclarationByFile[sourceLocation.file] = extractVariableDeclarations(tree.solidityProxy.ast(sourceLocation), tree.astWalker)
+    var ast = tree.solidityProxy.ast(sourceLocation)
+    if (ast) {
+      tree.variableDeclarationByFile[sourceLocation.file] = extractVariableDeclarations(ast, tree.astWalker)
+    } else {
+      console.log('Ast not found for step ' + step + '. file ' + sourceLocation.file)
+      return null
+    }
   }
-  var variableDeclarations = tree.variableDeclarationByFile[sourceLocation.file]
-  return variableDeclarations[sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
+  return tree.variableDeclarationByFile[sourceLocation.file][sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
 }
 
 function extractVariableDeclarations (ast, astWalker) {
