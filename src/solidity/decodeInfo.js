@@ -73,7 +73,12 @@ function Bool (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function DynamicByteArray (type) {
-  return new BytesType()
+  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
+  if (match.length > 1) {
+    return new BytesType(match[1].trim())  
+  } else {
+    return null
+  }
 }
 
 /**
@@ -94,7 +99,12 @@ function FixedByteArray (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function String (type) {
-  return new StringType()
+  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
+  if (match.length > 1) {
+    return new StringType(match[1].trim())
+  } else {
+    return null
+  }
 }
 
 /**
