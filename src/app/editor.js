@@ -7,7 +7,6 @@ var ace = require('brace')
 require('../mode-solidity.js')
 
 function Editor (doNotLoadStorage, storage) {
-  var SOL_CACHE_UNTITLED = 'Untitled'
   var SOL_CACHE_FILE = null
 
   var editor = ace.edit('input')
@@ -27,10 +26,10 @@ function Editor (doNotLoadStorage, storage) {
 
   this.newFile = function () {
     var untitledCount = ''
-    while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {
+    while (storage.exists('Untitled' + untitledCount)) {
       untitledCount = (untitledCount - 0) + 1
     }
-    SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount
+    SOL_CACHE_FILE = 'Untitled' + untitledCount
     this.setCacheFileContent('')
   }
 
