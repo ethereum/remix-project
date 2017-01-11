@@ -280,11 +280,6 @@ var run = function () {
     return false
   }
 
-  function activeFileTab () {
-    var name = utils.fileNameFromKey(editor.getCacheFile())
-    return $('#files .file').filter(function () { return $(this).find('.name').text() === name })
-  }
-
   function updateFiles () {
     var $filesEl = $('#files')
     var files = editor.getFiles()
@@ -298,7 +293,8 @@ var run = function () {
     }
 
     if (editor.cacheFileIsPresent()) {
-      var active = activeFileTab()
+      var currentFileName = utils.fileNameFromKey(editor.getCacheFile())
+      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFileName })
       active.addClass('active')
       editor.resetSession()
     }
