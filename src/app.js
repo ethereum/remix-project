@@ -369,7 +369,6 @@ var run = function () {
 
   // ----------------- resizeable ui ---------------
 
-  var EDITOR_SIZE_KEY = 'editor-size-cache'
   var EDITOR_WINDOW_SIZE = 'editorWindowSize'
 
   var dragging = false
@@ -412,14 +411,6 @@ var run = function () {
       reAdjust()
     }
   })
-
-  // convert old browser-solidity
-  if (storage.exists(EDITOR_SIZE_KEY)) {
-    if (!config.exists(EDITOR_WINDOW_SIZE)) {
-      config.set(EDITOR_WINDOW_SIZE, storage.get(EDITOR_SIZE_KEY))
-    }
-    storage.remove(EDITOR_SIZE_KEY)
-  }
 
   if (config.exists(EDITOR_WINDOW_SIZE)) {
     setEditorSize(config.get(EDITOR_WINDOW_SIZE))

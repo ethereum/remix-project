@@ -49,6 +49,9 @@ function Storage () {
       window.localStorage.removeItem(name)
     }
   })
+
+  // remove obsolete key
+  window.localStorage.removeItem('editor-size-cache')
 }
 
 module.exports = Storage
