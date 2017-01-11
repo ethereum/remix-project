@@ -1,31 +1,31 @@
 'use strict'
 
 function Storage () {
-  this.rename = function (originalName, newName) {
-    var content = this.get(originalName)
-    this.set(newName, content)
-    this.remove(originalName)
-  }
-
-  this.remove = function (name) {
-    window.localStorage.removeItem(name)
-  }
-
   this.exists = function (key) {
     return !!this.get(key)
-  }
-
-  this.set = function (key, content) {
-    window.localStorage.setItem(key, content)
   }
 
   this.get = function (key) {
     return window.localStorage.getItem(key)
   }
 
+  this.set = function (key, content) {
+    window.localStorage.setItem(key, content)
+  }
+
   this.keys = function () {
     // NOTE: this is a workaround for some browsers
     return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
+  }
+
+  this.remove = function (name) {
+    window.localStorage.removeItem(name)
+  }
+
+  this.rename = function (originalName, newName) {
+    var content = this.get(originalName)
+    this.set(newName, content)
+    this.remove(originalName)
   }
 
   this.loadFile = function (filename, content) {
