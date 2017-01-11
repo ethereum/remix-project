@@ -57,33 +57,25 @@ class ArrayType extends RefType {
   }
 
   decodeFromMemory (offset, memory) {
-    offset = 2 * offset
     var ret = []
-    var length = extractLength(this, offset, memory)
+    var length = this.arraySize
     if (this.arraySize === 'dynamic') {
-      offset = offset + 64
+      length = memory.substr(2 * offset, 64)
+      length = parseInt(length, 16)
+      offset = offset + 32
     }
     this.underlyingType.location = this.location
     for (var k = 0; k < length; k++) {
       var contentOffset = offset
       if (this.underlyingType.basicType === 'RefType') {
-        contentOffset = memory.substr(offset, 64)
+        contentOffset = memory.substr(2 * contentOffset, 64)
         contentOffset = parseInt(contentOffset, 16)
       }
       ret.push(this.underlyingType.decode(contentOffset, memory))
-      offset += 64
+      offset += 32
     }
     return ret
   }
-}
-
-function extractLength (type, offset, memory) {
-  var length = type.arraySize
-  if (length === 'dynamic') {
-    length = memory.substr(offset, 64)
-    length = parseInt(length, 16)
-  }
-  return length
 }
 
 module.exports = ArrayType

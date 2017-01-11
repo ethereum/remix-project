@@ -28,7 +28,6 @@ class ValueType {
   }
 
   decode (offset, memory) {
-    offset = offset / 2
     return this.decodeFromMemory(offset, memory)
   }
 }
