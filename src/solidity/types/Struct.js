@@ -21,14 +21,16 @@ class Struct extends RefType {
   }
 
   decodeFromMemory (offset, memory) {
+    offset = 2 * offset
     var ret = {}
-    this.members.map(function (item, i) {
+    this.members.map((item, i) => {
       var contentOffset = offset
-      if (item.type.typeName === 'bytes' || item.type.typeName === 'string' || item.type.typeName === 'array' || item.type.typeName === 'struct') {
-        contentOffset = memory.substr(offset, 64)
-        contentOffset = 2 * parseInt(contentOffset, 16)
+      if (item.type.basicType === 'RefType') {
+        contentOffset = memory.substr(contentOffset, 64)
+        contentOffset = parseInt(contentOffset, 16)
       }
-      var member = item.type.decodeFromMemory(contentOffset, memory)
+      item.type.location = this.location
+      var member = item.type.decode(contentOffset, memory)
       ret[item.name] = member
       offset += 64
     })

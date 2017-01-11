@@ -6,6 +6,7 @@ class ValueType {
     this.storageSlots = storageSlots
     this.storageBytes = storageBytes
     this.typeName = typeName
+    this.basicType = 'ValueType'
   }
 
   decodeFromStorage (location, storageContent) {
@@ -22,8 +23,13 @@ class ValueType {
   }
 
   decodeFromMemory (offset, memory) {
-    var value = memory.substr(offset, 64)
+    var value = memory.substr(2 * offset, 64)
     return this.decodeValue(util.extractHexByteSlice(value, this.storageBytes, 0))
+  }
+
+  decode (offset, memory) {
+    offset = offset / 2
+    return this.decodeFromMemory(offset, memory)
   }
 }
 

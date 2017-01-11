@@ -2,14 +2,9 @@
 var DynamicBytes = require('./DynamicByteArray')
 
 class StringType extends DynamicBytes {
-  constructor () {
-    super()
+  constructor (location) {
+    super(location)
     this.typeName = 'string'
-  }
-
-  decodeValue (value) {
-    var decoded = super.decodeValue(value)
-    return format(decoded)
   }
 
   decodeFromStorage (location, storageContent) {
@@ -18,8 +13,7 @@ class StringType extends DynamicBytes {
   }
 
   decodeFromStack (stackDepth, stack, memory) {
-    var decoded = super.decodeFromStack(stackDepth, stack, memory)
-    return format(decoded)
+    return super.decodeFromStack(stackDepth, stack, memory)
   }
 
   decodeFromMemory (offset, memory) {
@@ -29,6 +23,9 @@ class StringType extends DynamicBytes {
 }
 
 function format (decoded) {
+  if (decoded.error) {
+    return decoded
+  }
   var value = decoded.value
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
   var ret = {

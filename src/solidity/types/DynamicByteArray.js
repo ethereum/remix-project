@@ -1,15 +1,11 @@
 'use strict'
 var util = require('./util')
 var BN = require('ethereumjs-util').BN
-var ValueType = require('./ValueType')
+var RefType = require('./RefType')
 
-class DynamicByteArray extends ValueType {
-  constructor () {
-    super(1, 32, 'bytes')
-  }
-
-  decodeValue (value) {
-    return '0x' + value.toUpperCase()
+class DynamicByteArray extends RefType {
+  constructor (location) {
+    super(1, 32, 'bytes', location)
   }
 
   decodeFromStorage (location, storageContent) {
@@ -39,20 +35,8 @@ class DynamicByteArray extends ValueType {
     }
   }
 
-  decodeFromStack (stackDepth, stack, memory) {
-    if (stack.length - 1 < stackDepth) {
-      return {
-        value: '0x',
-        length: '0x0'
-      }
-    } else {
-      var offset = stack[stack.length - 1 - stackDepth]
-      offset = 2 * parseInt(offset, 16)
-      return this.decodeFromMemory(offset, memory)
-    }
-  }
-
   decodeFromMemory (offset, memory) {
+    offset = 2 * offset
     var length = memory.substr(offset, 64)
     length = 2 * parseInt(length, 16)
     return {
