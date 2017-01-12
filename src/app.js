@@ -429,7 +429,7 @@ var run = function () {
   var hidingRHP = false
   $('.toggleRHP').click(function () {
     hidingRHP = !hidingRHP
-    setEditorSize(hidingRHP ? 0 : storage.getEditorSize())
+    setEditorSize(hidingRHP ? 0 : storage.get(EDITOR_SIZE_KEY))
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
   })
