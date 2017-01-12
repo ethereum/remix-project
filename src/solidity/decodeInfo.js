@@ -119,7 +119,7 @@ function stringType (type) {
 function array (type, stateDefinitions, contractName) {
   var arraySize
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
-  if (!match || match.length < 3) {
+  if (!match) {
     console.log('unable to parse type ' + type)
     return null
   }
@@ -161,7 +161,7 @@ function enumType (type, stateDefinitions, contractName) {
   */
 function struct (type, stateDefinitions, contractName) {
   var match = type.match(/struct (\S*?)( storage ref| storage pointer| memory| calldata)?$/)
-  if (match && match.length > 2) {
+  if (match) {
     var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
     if (!memberDetails) return null
     return new StructType(memberDetails, match[2].trim())
