@@ -179,6 +179,12 @@
 	padding: 0.25em;
 }
 
+.udapp button:disabled {
+	cursor: not-allowed;
+	background-color: white;
+	border-color: lightgray;
+}
+
 .udapp .atAddress {
 	background-color: #B1EAC5;
 	border-color: #B1EAC5;
