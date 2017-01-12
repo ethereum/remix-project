@@ -12,8 +12,8 @@ class Struct extends RefType {
     var ret = {}
     this.members.map(function (item, i) {
       var globalLocation = {
-        offset: location.offset + item.location.offset,
-        slot: util.add(location.slot, item.location.slot)
+        offset: location.offset + item.storagelocation.offset,
+        slot: util.add(location.slot, item.storagelocation.slot)
       }
       ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
     })

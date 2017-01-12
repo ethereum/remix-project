@@ -286,7 +286,7 @@ function parseType (type, stateDefinitions, contractName) {
   */
 function computeOffsets (types, stateDefinitions, contractName) {
   var ret = []
-  var location = {
+  var storagelocation = {
     offset: 0,
     slot: 0
   }
@@ -297,31 +297,31 @@ function computeOffsets (types, stateDefinitions, contractName) {
       console.log('unable to retrieve decode info of ' + variable.attributes.type)
       return null
     }
-    if (location.offset + type.storageBytes > 32) {
-      location.slot++
-      location.offset = 0
+    if (storagelocation.offset + type.storageBytes > 32) {
+      storagelocation.slot++
+      storagelocation.offset = 0
     }
     ret.push({
       name: variable.attributes.name,
       type: type,
-      location: {
-        offset: location.offset,
-        slot: location.slot
+      storagelocation: {
+        offset: storagelocation.offset,
+        slot: storagelocation.slot
       }
     })
-    if (type.storageSlots === 1 && location.offset + type.storageBytes <= 32) {
-      location.offset += type.storageBytes
+    if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {
+      storagelocation.offset += type.storageBytes
     } else {
-      location.slot += type.storageSlots
-      location.offset = 0
+      storagelocation.slot += type.storageSlots
+      storagelocation.offset = 0
     }
   }
-  if (location.offset > 0) {
-    location.slot++
+  if (storagelocation.offset > 0) {
+    storagelocation.slot++
   }
   return {
     typesOffsets: ret,
-    endLocation: location
+    endLocation: storagelocation
   }
 }
 

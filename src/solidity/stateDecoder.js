@@ -12,7 +12,7 @@ function decodeState (stateVars, storageContent) {
   var ret = {}
   for (var k in stateVars) {
     var stateVar = stateVars[k]
-    ret[stateVar.name] = stateVar.type.decodeFromStorage(stateVar.location, storageContent)
+    ret[stateVar.name] = stateVar.type.decodeFromStorage(stateVar.storagelocation, storageContent)
   }
   return ret
 }
