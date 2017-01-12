@@ -71,10 +71,15 @@ function bool (type) {
   * DynamicByteArray decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g bytes storage ref)
+  * @param {null} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {null} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function dynamicByteArray (type) {
-  var location = util.extractLocation(type)
+function dynamicByteArray (type, stateDefinitions, contractName, location) {
+  if (!location) {
+    location = util.extractLocation(type)
+  }
   if (location) {
     return new BytesType(location)
   } else {
@@ -97,10 +102,15 @@ function fixedByteArray (type) {
   * StringType decode the given @arg type
   *
   * @param {String} type - type given by the AST (e.g string storage ref)
+  * @param {null} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
+  * @param {null} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function stringType (type) {
-  var location = util.extractLocation(type)
+function stringType (type, stateDefinitions, contractName, location) {
+  if (!location) {
+    location = util.extractLocation(type)
+  }
   if (location) {
     return new StringType(location)
   } else {
@@ -114,22 +124,25 @@ function stringType (type) {
   * @param {String} type - type given by the AST (e.g int256[] storage ref, int256[] storage ref[] storage ref)
   * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
   * @param {String} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
-function array (type, stateDefinitions, contractName) {
+function array (type, stateDefinitions, contractName, location) {
   var arraySize
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match) {
     console.log('unable to parse type ' + type)
     return null
   }
+  if (!location) {
+    location = match[3].trim()
+  }
   arraySize = match[2] === '' ? 'dynamic' : parseInt(match[2])
-  var underlyingType = parseType(match[1], stateDefinitions, contractName)
+  var underlyingType = parseType(match[1], stateDefinitions, contractName, location)
   if (underlyingType === null) {
     console.log('unable to parse type ' + type)
     return null
   }
-  var location = match[3].trim()
   return new ArrayType(underlyingType, arraySize, location)
 }
 
@@ -157,14 +170,18 @@ function enumType (type, stateDefinitions, contractName) {
   * @param {String} type - type given by the AST (e.g struct structDef storage ref)
   * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
   * @param {String} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
-function struct (type, stateDefinitions, contractName) {
+function struct (type, stateDefinitions, contractName, location) {
   var match = type.match(/struct (\S*?)( storage ref| storage pointer| memory| calldata)?$/)
   if (match) {
-    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
+    if (!location) {
+      location = match[2].trim()
+    }
+    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
     if (!memberDetails) return null
-    return new StructType(memberDetails, match[2].trim())
+    return new StructType(memberDetails, location)
   } else {
     return null
   }
@@ -202,9 +219,10 @@ function getEnum (type, stateDefinitions, contractName) {
   * @param {String} typeName - name of the struct type (e.g struct <name>)
   * @param {Object} stateDefinitions  - all state definition given by the AST (including struct and enum type declaration) for all contracts
   * @param {String} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Array} containing all members of the current struct type
   */
-function getStructMembers (type, stateDefinitions, contractName) {
+function getStructMembers (type, stateDefinitions, contractName, location) {
   var split = type.split('.')
   if (!split.length) {
     type = contractName + '.' + type
@@ -215,7 +233,7 @@ function getStructMembers (type, stateDefinitions, contractName) {
   if (state) {
     for (var dec of state.stateDefinitions) {
       if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
-        var offsets = computeOffsets(dec.children, stateDefinitions, contractName)
+        var offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
         return {
           members: offsets.typesOffsets,
           storageSlots: offsets.endLocation.slot
@@ -252,9 +270,10 @@ function typeClass (fullType) {
   * @param {Object} type - type name given by the ast node
   * @param {Object} stateDefinitions - all state stateDefinitions given by the AST (including struct and enum type declaration) for all contracts
   * @param {String} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Object} - return the corresponding decoder or null on error
   */
-function parseType (type, stateDefinitions, contractName) {
+function parseType (type, stateDefinitions, contractName, location) {
   var decodeInfos = {
     'address': address,
     'array': array,
@@ -273,7 +292,7 @@ function parseType (type, stateDefinitions, contractName) {
     console.log('unable to retrieve decode info of ' + type)
     return null
   }
-  return decodeInfos[currentType](type, stateDefinitions, contractName)
+  return decodeInfos[currentType](type, stateDefinitions, contractName, location)
 }
 
 /**
@@ -282,9 +301,10 @@ function parseType (type, stateDefinitions, contractName) {
   * @param {Array} types - list of types
   * @param {Object} stateDefinitions - all state definitions given by the AST (including struct and enum type declaration) for all contracts
   * @param {String} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Array} - return an array of types item: {name, type, location}. location defines the byte offset and slot offset
   */
-function computeOffsets (types, stateDefinitions, contractName) {
+function computeOffsets (types, stateDefinitions, contractName, location) {
   var ret = []
   var storagelocation = {
     offset: 0,
@@ -292,7 +312,7 @@ function computeOffsets (types, stateDefinitions, contractName) {
   }
   for (var i in types) {
     var variable = types[i]
-    var type = parseType(variable.attributes.type, stateDefinitions, contractName)
+    var type = parseType(variable.attributes.type, stateDefinitions, contractName, location)
     if (!type) {
       console.log('unable to retrieve decode info of ' + variable.attributes.type)
       return null

@@ -24,7 +24,6 @@ class Struct extends RefType {
     var ret = {}
     this.members.map((item, i) => {
       var contentOffset = offset
-      item.type.location = this.location
       var member = item.type.decode(contentOffset, memory)
       ret[item.name] = member
       offset += 32
