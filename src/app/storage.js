@@ -1,37 +1,31 @@
 'use strict'
 
-var utils = require('./utils')
-
 function Storage () {
-  this.rename = function (originalName, newName) {
-    var content = this.get(originalName)
-    this.set(newName, content)
-    this.remove(originalName)
+  this.exists = function (name) {
+    return !!this.get(name)
+  }
+
+  this.get = function (name) {
+    return window.localStorage.getItem(name)
+  }
+
+  this.set = function (name, content) {
+    window.localStorage.setItem(name, content)
+  }
+
+  this.keys = function () {
+    // NOTE: this is a workaround for some browsers
+    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
   }
 
   this.remove = function (name) {
     window.localStorage.removeItem(name)
   }
 
-  this.getFileContent = function (key) {
-    return this.get(utils.fileKey(key))
-  }
-
-  this.exists = function (key) {
-    return !!this.get(key)
-  }
-
-  this.set = function (key, content) {
-    window.localStorage.setItem(key, content)
-  }
-
-  this.get = function (key) {
-    return window.localStorage.getItem(key)
-  }
-
-  this.keys = function () {
-    // NOTE: this is a workaround for some browsers
-    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
+  this.rename = function (originalName, newName) {
+    var content = this.get(originalName)
+    this.set(newName, content)
+    this.remove(originalName)
   }
 
   this.loadFile = function (filename, content) {

@@ -209,7 +209,7 @@ var run = function () {
     var fileList = $('input.inputFile')[0].files
     for (var i = 0; i < fileList.length; i++) {
       var name = fileList[i].name
-      if (!storage.exists(utils.fileKey(name)) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
+      if (!editor.hasFile(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
         editor.uploadFile(fileList[i], updateFiles)
       }
     }
@@ -241,7 +241,7 @@ var run = function () {
       $fileNameInputEl.off('keyup')
 
       if (newName !== originalName && confirm(
-          storage.exists(utils.fileKey(newName))
+          editor.hasFile(newName)
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
         storage.rename(utils.fileKey(originalName), utils.fileKey(newName))
@@ -280,11 +280,6 @@ var run = function () {
     return false
   }
 
-  function activeFileTab () {
-    var name = utils.fileNameFromKey(editor.getCacheFile())
-    return $('#files .file').filter(function () { return $(this).find('.name').text() === name })
-  }
-
   function updateFiles () {
     var $filesEl = $('#files')
     var files = editor.getFiles()
@@ -293,22 +288,19 @@ var run = function () {
     $('#output').empty()
 
     for (var f in files) {
-      $filesEl.append(fileTabTemplate(files[f]))
+      var name = utils.fileNameFromKey(files[f])
+      $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
     if (editor.cacheFileIsPresent()) {
-      var active = activeFileTab()
+      var currentFileName = utils.fileNameFromKey(editor.getCacheFile())
+      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFileName })
       active.addClass('active')
       editor.resetSession()
     }
     $('#input').toggle(editor.cacheFileIsPresent())
     $('#output').toggle(editor.cacheFileIsPresent())
     reAdjust()
-  }
-
-  function fileTabTemplate (key) {
-    var name = utils.fileNameFromKey(key)
-    return $('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>')
   }
 
   var $filesWrapper = $('.files-wrapper')
