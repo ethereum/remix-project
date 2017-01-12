@@ -645,6 +645,11 @@ var run = function () {
     startdebugging(txResult.transactionHash)
   })
 
+  udapp.event.register('publishContract', this, function (contract) {
+    console.log('Publish contract...', contract)
+    alert('Publishing a contract is not supported yet.')
+  })
+
   // ----------------- Renderer -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
