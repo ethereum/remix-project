@@ -160,7 +160,7 @@ function enumType (type, stateDefinitions, contractName) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
 function struct (type, stateDefinitions, contractName) {
-  var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
+  var match = type.match(/struct (\S*?)( storage ref| storage pointer| memory| calldata)?$/)
   if (match && match.length > 2) {
     var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
     if (!memberDetails) return null
