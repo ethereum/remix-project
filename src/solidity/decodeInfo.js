@@ -18,7 +18,7 @@ var MappingType = require('./types/Mapping')
   * @param {String} type - type given by the AST
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function Mapping (type) {
+function mapping (type) {
   return new MappingType()
 }
 
@@ -28,7 +28,7 @@ function Mapping (type) {
   * @param {String} type - type given by the AST (e.g uint256, uint32)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function Uint (type) {
+function uint (type) {
   type === 'uint' ? 'uint256' : type
   var storageBytes = parseInt(type.replace('uint', '')) / 8
   return new UintType(storageBytes)
@@ -40,7 +40,7 @@ function Uint (type) {
   * @param {String} type - type given by the AST (e.g int256, int32)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function Int (type) {
+function int (type) {
   type === 'int' ? 'int256' : type
   var storageBytes = parseInt(type.replace('int', '')) / 8
   return new IntType(storageBytes)
@@ -52,7 +52,7 @@ function Int (type) {
   * @param {String} type - type given by the AST (e.g address)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function Address (type) {
+function address (type) {
   return new AddressType()
 }
 
@@ -62,7 +62,7 @@ function Address (type) {
   * @param {String} type - type given by the AST (e.g bool)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function Bool (type) {
+function bool (type) {
   return new BoolType()
 }
 
@@ -72,7 +72,7 @@ function Bool (type) {
   * @param {String} type - type given by the AST (e.g bytes storage ref)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function DynamicByteArray (type) {
+function dynamicByteArray (type) {
   var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match.length > 1) {
     return new BytesType(match[1].trim())
@@ -87,7 +87,7 @@ function DynamicByteArray (type) {
   * @param {String} type - type given by the AST (e.g bytes16)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function FixedByteArray (type) {
+function fixedByteArray (type) {
   var storageBytes = parseInt(type.replace('bytes', ''))
   return new BytesXType(storageBytes)
 }
@@ -98,7 +98,7 @@ function FixedByteArray (type) {
   * @param {String} type - type given by the AST (e.g string storage ref)
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function String (type) {
+function stringType (type) {
   var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
   if (match.length > 1) {
     return new StringType(match[1].trim())
@@ -115,7 +115,7 @@ function String (type) {
   * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, arraySize, subArray}
   */
-function Array (type, stateDefinitions, contractName) {
+function array (type, stateDefinitions, contractName) {
   var arraySize
   var match = type.match(/(.*)\[(.*?)\]( storage ref| storage pointer| memory| calldata)?$/)
   if (!match || match.length < 3) {
@@ -140,7 +140,7 @@ function Array (type, stateDefinitions, contractName) {
   * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, enum}
   */
-function Enum (type, stateDefinitions, contractName) {
+function enumType (type, stateDefinitions, contractName) {
   var match = type.match(/enum (.*)/)
   var enumDef = getEnum(match[1], stateDefinitions, contractName)
   if (enumDef === null) {
@@ -158,7 +158,7 @@ function Enum (type, stateDefinitions, contractName) {
   * @param {String} contractName - contract the @args typeName belongs to
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName, members}
   */
-function Struct (type, stateDefinitions, contractName) {
+function struct (type, stateDefinitions, contractName) {
   var match = type.match(/struct (.*?)( storage ref| storage pointer| memory| calldata)?$/)
   if (match && match.length > 2) {
     var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
@@ -255,17 +255,17 @@ function typeClass (fullType) {
   */
 function parseType (type, stateDefinitions, contractName) {
   var decodeInfos = {
-    'address': Address,
-    'array': Array,
-    'bool': Bool,
-    'bytes': DynamicByteArray,
-    'bytesX': FixedByteArray,
-    'enum': Enum,
-    'string': String,
-    'struct': Struct,
-    'int': Int,
-    'uint': Uint,
-    'mapping': Mapping
+    'address': address,
+    'array': array,
+    'bool': bool,
+    'bytes': dynamicByteArray,
+    'bytesX': fixedByteArray,
+    'enum': enumType,
+    'string': stringType,
+    'struct': struct,
+    'int': int,
+    'uint': uint,
+    'mapping': mapping
   }
   var currentType = typeClass(type)
   if (currentType === null) {
@@ -327,14 +327,14 @@ function computeOffsets (types, stateDefinitions, contractName) {
 module.exports = {
   parseType: parseType,
   computeOffsets: computeOffsets,
-  Uint: Uint,
-  Address: Address,
-  Bool: Bool,
-  DynamicByteArray: DynamicByteArray,
-  FixedByteArray: FixedByteArray,
-  Int: Int,
-  String: String,
-  Array: Array,
-  Enum: Enum,
-  Struct: Struct
+  Uint: uint,
+  Address: address,
+  Bool: bool,
+  DynamicByteArray: dynamicByteArray,
+  FixedByteArray: fixedByteArray,
+  Int: int,
+  String: stringType,
+  Array: array,
+  Enum: enumType,
+  Struct: struct
 }
