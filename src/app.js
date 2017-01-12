@@ -529,6 +529,22 @@ var run = function () {
       }
     })
   }
+
+  function handleIPFS (url, cb) {
+    // replace ipfs:// with /ipfs/
+    url = url.replace(/^ipfs:\/\/?/, '/ipfs/')
+
+    $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
+    return $.get('https://gateway.ipfs.io/' + url)
+      .done(function (data) {
+        cb(null, data)
+      })
+      .fail(function (xhr, text, err) {
+        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
+        cb(err || 'Unknown transport error')
+      })
+  }
+
   function handleImportCall (url, cb) {
     var match
     if (files.exists(url)) {
@@ -548,6 +564,17 @@ var run = function () {
       // Supported: bzz:, bzzr:, bzzi:
       $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
       handleSwarmImport(match[1], function (err, content) {
+        if (err) {
+          cb('Unable to import "' + url + '": ' + err)
+          return
+        }
+
+        // FIXME: at some point we should invalidate the cache
+        files.addReadOnly(url, content)
+        cb(null, content)
+      })
+    } else if ((match = /^(\/?ipfs:?\/\/?.+)/.exec(url))) {
+      handleIPFS(match[1], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
           return
