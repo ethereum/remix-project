@@ -38,7 +38,12 @@ TraceStepManager.prototype.findNextCall = function (currentStep) {
   var call = util.findCall(currentStep, this.traceAnalyser.traceCache.callsTree.call)
   var subCalls = Object.keys(call.calls)
   if (subCalls.length) {
-    return call.calls[subCalls[0]].start - 1
+    var callStart = util.findLowerBound(currentStep, subCalls) + 1
+    if (subCalls.length > callStart) {
+      return subCalls[callStart] - 1
+    } else {
+      return currentStep
+    }
   } else {
     return currentStep
   }
