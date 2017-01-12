@@ -1,5 +1,4 @@
 'use strict'
-var util = require('./util')
 
 class RefType {
   constructor (storageSlots, storageBytes, typeName, location) {
@@ -39,15 +38,34 @@ class RefType {
     offset = parseInt(offset, 16)
     return decodeInternal(this, offset, memory, storage)
   }
+
+  /**
+    * current type defined in storage
+    *
+    * @return {Bool} - return true if the type is defined in the storage
+    */
+  storageStore () {
+    return this.location.indexOf('storage') === 0
+  }
+
+  /**
+    * current type defined in memory
+    *
+    * @return {Bool} - return true if the type is defined in the memory
+    */
+  memoryStore () {
+    return this.location.indexOf('memory') === 0
+  }
+
 }
 
 function decodeInternal (self, offset, memory, storage) {
   if (!storage) {
     storage = {} // TODO this is a fallback, should manage properly locals store in storage
   }
-  if (util.storageStore(self)) {
+  if (self.storageStore()) {
     return self.decodeFromStorage({ offset: 0, slot: offset }, storage)
-  } else if (util.memoryStore(self)) {
+  } else if (self.memoryStore()) {
     return self.decodeFromMemory(offset, memory)
   } else {
     return { error: '<decoding failed - no decoder for ' + self.location + '>' }

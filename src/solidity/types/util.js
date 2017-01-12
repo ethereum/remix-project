@@ -11,8 +11,6 @@ module.exports = {
   sha3: sha3,
   toBN: toBN,
   add: add,
-  storageStore: storageStore,
-  memoryStore: memoryStore,
   extractLocation: extractLocation
 }
 
@@ -102,12 +100,4 @@ function extractLocation (type) {
   } else {
     return null
   }
-}
-
-function storageStore (type) {
-  return type.location.indexOf('storage') === 0
-}
-
-function memoryStore (type) {
-  return type.location.indexOf('memory') === 0
 }
