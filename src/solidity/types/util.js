@@ -12,7 +12,8 @@ module.exports = {
   toBN: toBN,
   add: add,
   storageStore: storageStore,
-  memoryStore: memoryStore
+  memoryStore: memoryStore,
+  extractLocation: extractLocation
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
@@ -92,6 +93,15 @@ function toBN (value) {
 
 function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
+}
+
+function extractLocation (type) {
+  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
+  if (match[1] !== '') {
+    return match[1].trim()
+  } else {
+    return null
+  }
 }
 
 function storageStore (type) {

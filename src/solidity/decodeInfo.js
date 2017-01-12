@@ -11,6 +11,7 @@ var StructType = require('./types/Struct')
 var IntType = require('./types/Int')
 var UintType = require('./types/Uint')
 var MappingType = require('./types/Mapping')
+var util = require('./types/util')
 
 /**
   * mapping decode the given @arg type
@@ -73,9 +74,9 @@ function bool (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function dynamicByteArray (type) {
-  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
-  if (match.length > 1) {
-    return new BytesType(match[1].trim())
+  var location = util.extractLocation(type)
+  if (location) {
+    return new BytesType(location)
   } else {
     return null
   }
@@ -99,9 +100,9 @@ function fixedByteArray (type) {
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function stringType (type) {
-  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
-  if (match.length > 1) {
-    return new StringType(match[1].trim())
+  var location = util.extractLocation(type)
+  if (location) {
+    return new StringType(location)
   } else {
     return null
   }
