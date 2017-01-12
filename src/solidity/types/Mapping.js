@@ -9,6 +9,14 @@ class Mapping extends RefType {
   decodeValue (value) {
     return '<not implemented>'
   }
+
+  decodeFromStorage (location, storageContent) {
+    return '<not implemented>'
+  }
+
+  decodeFromMemoryInternal (offset, memory) {
+    return '<not implemented>'
+  }
 }
 
 module.exports = Mapping
