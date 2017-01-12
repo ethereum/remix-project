@@ -33,8 +33,6 @@ function TxBrowser (_parent) {
 // invokation: 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51
 
 TxBrowser.prototype.setDefaultValues = function () {
-  this.blockNumber = ''
-  this.txNumber = ''
   this.connectInfo = ''
   this.basicPanel.data = {}
   this.basicPanel.update()
