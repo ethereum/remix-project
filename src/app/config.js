@@ -8,9 +8,12 @@ function Config (storage) {
   this.items = {}
 
   // load on instantiation
-  var config = storage.get(CONFIG_FILE)
-  if (config) {
-    this.items = JSON.parse(config)
+  try {
+    var config = storage.get(CONFIG_FILE)
+    if (config) {
+      this.items = JSON.parse(config)
+    }
+  } catch (exception) {
   }
 
   this.exists = function (key) {
@@ -23,7 +26,10 @@ function Config (storage) {
 
   this.set = function (key, content) {
     this.items[key] = content
-    storage.set(CONFIG_FILE, JSON.stringify(this.items))
+    try {
+      storage.set(CONFIG_FILE, JSON.stringify(this.items))
+    } catch (exception) {
+    }
   }
 }
 
