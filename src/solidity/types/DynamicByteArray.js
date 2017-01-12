@@ -35,7 +35,7 @@ class DynamicByteArray extends RefType {
     }
   }
 
-  decodeFromMemory (offset, memory) {
+  decodeFromMemoryInternal (offset, memory) {
     offset = 2 * offset
     var length = memory.substr(offset, 64)
     length = 2 * parseInt(length, 16)

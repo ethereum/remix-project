@@ -56,7 +56,7 @@ class ArrayType extends RefType {
     }
   }
 
-  decodeFromMemory (offset, memory) {
+  decodeFromMemoryInternal (offset, memory) {
     var ret = []
     var length = this.arraySize
     if (this.arraySize === 'dynamic') {
@@ -66,7 +66,7 @@ class ArrayType extends RefType {
     }
     for (var k = 0; k < length; k++) {
       var contentOffset = offset
-      ret.push(this.underlyingType.decode(contentOffset, memory))
+      ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
       offset += 32
     }
     return ret

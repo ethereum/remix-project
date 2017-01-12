@@ -16,8 +16,8 @@ class StringType extends DynamicBytes {
     return super.decodeFromStack(stackDepth, stack, memory)
   }
 
-  decodeFromMemory (offset, memory) {
-    var decoded = super.decodeFromMemory(offset, memory)
+  decodeFromMemoryInternal (offset, memory) {
+    var decoded = super.decodeFromMemoryInternal(offset, memory)
     return format(decoded)
   }
 }

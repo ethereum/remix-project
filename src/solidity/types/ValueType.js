@@ -48,17 +48,6 @@ class ValueType {
     var value = memory.substr(2 * offset, 64)
     return this.decodeValue(util.extractHexByteSlice(value, this.storageBytes, 0))
   }
-
-  /**
-    * decode the type with the @arg offset location from the memory
-    *
-    * @param {Int} offset - position of the type in the memory
-    * @return {String} - memory
-    * @return {Object} - storage
-    */
-  decode (offset, memory) {
-    return this.decodeFromMemory(offset, memory)
-  }
 }
 
 module.exports = ValueType
