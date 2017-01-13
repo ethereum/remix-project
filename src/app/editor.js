@@ -95,7 +95,8 @@ function Editor (loadingFromGist, storage) {
   function getFiles () {
     var files = []
     storage.keys().forEach(function (f) {
-      if (utils.isCachedFile(f)) {
+      // NOTE: as a temporary measure do not show the config file in the editor
+      if (utils.isCachedFile(f) && (f !== (utils.fileKey('.browser-solidity.json')))) {
         files.push(f)
         if (!sessions[f]) sessions[f] = newEditorSession(f)
       }
