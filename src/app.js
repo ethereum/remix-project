@@ -4,7 +4,6 @@
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
 
-var utils = require('./app/utils')
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
 var GistHandler = require('./app/gist-handler')
@@ -45,11 +44,10 @@ var run = function () {
 
   function loadFiles (files) {
     for (var f in files) {
-      var key = utils.fileKey(f)
-      var content = files[f].content
-      storage.loadFile(key, content)
+      storage.loadFile(f, files[f].content)
     }
-    editor.setCacheFile(utils.fileKey(Object.keys(files)[0]))
+    // Set the first file as current tab
+    editor.setCacheFile(Object.keys(files)[0])
     updateFiles()
   }
 
@@ -100,7 +98,7 @@ var run = function () {
     function check (key) {
       chrome.storage.sync.get(key, function (resp) {
         console.log('comparing to cloud', key, resp)
-        if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + utils.fileNameFromKey(key) + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
+        if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
           console.log('Overwriting', key)
           storage.set(key, resp[key])
           updateFiles()
@@ -120,9 +118,6 @@ var run = function () {
     for (var y in storage.keys()) {
       console.log('checking', y)
       obj[y] = storage.get(y)
-      if (!utils.isCachedFile(y)) {
-        continue
-      }
       count++
       check(y)
     }
@@ -246,9 +241,9 @@ var run = function () {
           editor.hasFile(newName)
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-        storage.rename(utils.fileKey(originalName), utils.fileKey(newName))
-        editor.renameSession(utils.fileKey(originalName), utils.fileKey(newName))
-        editor.setCacheFile(utils.fileKey(newName))
+        storage.rename(originalName, newName)
+        editor.renameSession(originalName, newName)
+        editor.setCacheFile(newName)
       }
 
       updateFiles()
@@ -263,16 +258,16 @@ var run = function () {
     var name = $(this).parent().find('.name').text()
 
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-      storage.remove(utils.fileKey(name))
-      editor.removeSession(utils.fileKey(name))
-      editor.setNextFile(utils.fileKey(name))
+      storage.remove(name)
+      editor.removeSession(name)
+      editor.setNextFile(name)
       updateFiles()
     }
     return false
   })
 
   function swicthToFile (file) {
-    editor.setCacheFile(utils.fileKey(file))
+    editor.setCacheFile(file)
     updateFiles()
   }
 
@@ -290,12 +285,12 @@ var run = function () {
     $('#output').empty()
 
     for (var f in files) {
-      var name = utils.fileNameFromKey(files[f])
+      var name = files[f]
       $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
     if (editor.cacheFileIsPresent()) {
-      var currentFileName = utils.fileNameFromKey(editor.getCacheFile())
+      var currentFileName = editor.getCacheFile()
       var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFileName })
       active.addClass('active')
       editor.resetSession()
@@ -522,7 +517,7 @@ var run = function () {
 
   function runCompiler () {
     var files = {}
-    var target = utils.fileNameFromKey(editor.getCacheFile())
+    var target = editor.getCacheFile()
 
     files[target] = editor.getValue()
 

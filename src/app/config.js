@@ -1,8 +1,6 @@
 'use strict'
 
-var utils = require('./utils')
-
-var CONFIG_FILE = utils.fileKey('.browser-solidity.json')
+var CONFIG_FILE = '.browser-solidity.json'
 
 function Config (storage) {
   this.items = {}
