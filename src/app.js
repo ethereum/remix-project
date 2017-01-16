@@ -42,6 +42,7 @@ var run = function () {
   var storage = new Storage()
   var config = new Config(storage)
 
+  // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (files) {
     for (var f in files) {
       storage.loadFile(f, files[f].content)
@@ -51,10 +52,12 @@ var run = function () {
     updateFiles()
   }
 
+  // Replace early callback with instant response
   loadFilesCallback = function (files) {
     loadFiles(files)
   }
 
+  // Run if we did receive an event from remote instance while starting up
   if (filesToLoad !== null) {
     loadFiles(filesToLoad)
   }
@@ -216,8 +219,10 @@ var run = function () {
     })
   })
 
+  // Switch tab
   $filesEl.on('click', '.file:not(.active)', showFileHandler)
 
+  // Edit name of current tab
   $filesEl.on('click', '.file.active', function (ev) {
     var $fileTabEl = $(this)
     var originalName = $fileTabEl.find('.name').text()
@@ -253,6 +258,7 @@ var run = function () {
     return false
   })
 
+  // Remove current tab
   $filesEl.on('click', '.file .remove', function (ev) {
     ev.preventDefault()
     var name = $(this).parent().find('.name').text()
@@ -277,6 +283,7 @@ var run = function () {
     return false
   }
 
+  // Synchronise tab list with file names known to the editor
   function updateFiles () {
     var $filesEl = $('#files')
     var files = editor.getFiles()
