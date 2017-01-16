@@ -138,6 +138,7 @@ var run = function () {
     var $el = $(this)
     selectTab($el)
   })
+
   var selectTab = function (el) {
     var match = /[a-z]+View/.exec(el.get(0).className)
     if (!match) return
@@ -220,7 +221,11 @@ var run = function () {
   })
 
   // Switch tab
-  $filesEl.on('click', '.file:not(.active)', showFileHandler)
+  $filesEl.on('click', '.file:not(.active)', function (ev) {
+    ev.preventDefault()
+    swicthToFile($(this).find('.name').text())
+    return false
+  })
 
   // Edit name of current tab
   $filesEl.on('click', '.file.active', function (ev) {
@@ -275,12 +280,6 @@ var run = function () {
   function swicthToFile (file) {
     editor.setCacheFile(file)
     updateFiles()
-  }
-
-  function showFileHandler (ev) {
-    ev.preventDefault()
-    swicthToFile($(this).find('.name').text())
-    return false
   }
 
   // Synchronise tab list with file names known to the editor
