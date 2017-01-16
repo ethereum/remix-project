@@ -19,7 +19,7 @@ function Storage () {
   }
 
   this.keys = function () {
-    return safeKeys().filter(function (item) { return item.replace('sol:', '') })
+    return safeKeys().filter(function (item) { return item.replace(/^\.sol:/, '') })
   }
 
   this.remove = function (name) {
@@ -45,7 +45,7 @@ function Storage () {
   safeKeys().forEach(function (name) {
     if (name.indexOf('sol-cache-file-', 0) === 0) {
       var content = window.localStorage.getItem(name)
-      window.localStorage.setItem('sol:' + name.replace('sol-cache-file-', ''), content)
+      window.localStorage.setItem(name.replace(/^sol-cache-file-/, 'sol:'), content)
       window.localStorage.removeItem(name)
     }
   })
