@@ -223,7 +223,7 @@ var run = function () {
   // Switch tab
   $filesEl.on('click', '.file:not(.active)', function (ev) {
     ev.preventDefault()
-    swicthToFile($(this).find('.name').text())
+    switchToFile($(this).find('.name').text())
     return false
   })
 
@@ -277,7 +277,7 @@ var run = function () {
     return false
   })
 
-  function swicthToFile (file) {
+  function switchToFile (file) {
     editor.setCacheFile(file)
     updateFiles()
   }
@@ -495,7 +495,7 @@ var run = function () {
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
-  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile, offsetToLineColumnConverter)
+  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, switchToFile, offsetToLineColumnConverter)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.switchProvider('vm')
   transactionDebugger.addProvider('injected', executionContext.web3())
