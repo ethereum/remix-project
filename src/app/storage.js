@@ -19,7 +19,11 @@ function Storage () {
   }
 
   this.keys = function () {
-    return safeKeys().filter(function (item) { return item.replace(/^\.sol:/, '') })
+    return safeKeys()
+      // filter any names not including sol:
+      .filter(function (item) { return item.indexOf('sol:', 0) === 0 })
+      // remove sol: from filename
+      .map(function (item) { return item.replace(/^sol:/, '') })
   }
 
   this.remove = function (name) {
