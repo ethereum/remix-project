@@ -34,7 +34,7 @@ function ButtonNavigator (_parent, _traceManager) {
           this.view.querySelector('#reverted #parenthasthrown').style.display = 'none'
         } else {
           var k = callsPath.length - 2
-          while (k > 0) {
+          while (k >= 0) {
             var parent = callsPath[k]
             if (parent.reverted) {
               this.revertionPoint = parent.return

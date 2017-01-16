@@ -79,6 +79,8 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
 }
 
 web3VmProvider.prototype.txProcessed = function (self, data) {
+  var lastOp = self.vmTraces[self.processingHash].structLogs[self.processingIndex - 1]
+  lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP'
   self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
   if (data.createdAddress) {
     self.vmTraces[self.processingHash].return = util.hexConvert(data.createdAddress)
