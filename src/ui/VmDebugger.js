@@ -30,11 +30,10 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
     var self = this
     _traceManager.getReturnValue(index, function (error, returnValue) {
       if (error) {
-        self.data = [error]
+        self.update([error])
       } else if (_parent.currentStepIndex === index) {
-        self.data = [returnValue]
+        self.update([returnValue])
       }
-      self.update()
     })
   })
   /* Return values - */

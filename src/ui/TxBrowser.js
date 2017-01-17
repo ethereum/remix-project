@@ -36,8 +36,7 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.blockNumber = ''
   this.txNumber = ''
   this.connectInfo = ''
-  this.basicPanel.data = {}
-  this.basicPanel.update()
+  this.basicPanel.update({})
   this.basicPanel.hide()
   this.updateWeb3Url(util.web3.currentProvider.host)
   if (this.view) {
