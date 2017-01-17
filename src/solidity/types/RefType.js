@@ -27,9 +27,9 @@ class RefType {
     }
     var offset = stack[stack.length - 1 - stackDepth]
     offset = parseInt(offset, 16)
-    if (this.storageStore()) {
+    if (this.isInStorage()) {
       return this.decodeFromStorage({ offset: 0, slot: offset }, storage)
-    } else if (this.memoryStore()) {
+    } else if (this.isInMemory()) {
       return this.decodeFromMemoryInternal(offset, memory)
     } else {
       return { error: '<decoding failed - no decoder for ' + this.location + '>' }
@@ -54,7 +54,7 @@ class RefType {
     *
     * @return {Bool} - return true if the type is defined in the storage
     */
-  storageStore () {
+  isInStorage () {
     return this.location.indexOf('storage') === 0
   }
 
@@ -63,7 +63,7 @@ class RefType {
     *
     * @return {Bool} - return true if the type is defined in the memory
     */
-  memoryStore () {
+  isInMemory () {
     return this.location.indexOf('memory') === 0
   }
 }
