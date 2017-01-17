@@ -88,8 +88,7 @@ TxBrowser.prototype.update = function (error, tx) {
       this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
     }
   }
-  this.basicPanel.data = info
-  this.basicPanel.update()
+  this.basicPanel.update(info)
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {
