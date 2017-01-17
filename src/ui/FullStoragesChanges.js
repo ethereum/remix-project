@@ -8,7 +8,7 @@ function FullStoragesChanges (_parent, _traceManager) {
   this.addresses = []
   this.view
   this.traceLength
-  this.basicPanel = new DropdownPanel('Full Storages Changes')
+  this.basicPanel = new DropdownPanel('Full Storages Changes', {json: true})
   this.init()
 }
 

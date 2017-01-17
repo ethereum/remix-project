@@ -11,7 +11,7 @@ function CodeListView (_parent, _codeManager) {
   this.address
   this.codeView
   this.itemSelected
-  this.basicPanel = new DropdownPanel('Instructions', true)
+  this.basicPanel = new DropdownPanel('Instructions', {json: false})
   this.init()
 }
 
@@ -51,8 +51,7 @@ CodeListView.prototype.changed = function (code, address, index) {
     this.code = code
     this.address = address
     this.codeView = this.renderAssemblyItems()
-    this.basicPanel.data = this.codeView
-    this.basicPanel.update()
+    this.basicPanel.setContent(this.codeView)
   }
   this.indexChanged(index)
 }

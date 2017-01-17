@@ -24,7 +24,7 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   this.solidityLocals = new SolidityLocals(_parent, _traceManager, _callTree)
 
   /* Return values - */
-  this.returnValuesPanel = new DropdownPanel('Return Value')
+  this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
   this.returnValuesPanel.data = {}
   _parent.event.register('indexChanged', this.returnValuesPanel, function (index) {
     var self = this

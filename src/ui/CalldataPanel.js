@@ -5,7 +5,7 @@ var yo = require('yo-yo')
 function CalldataPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new DropdownPanel('Call Data')
+  this.basicPanel = new DropdownPanel('Call Data', {json: true})
   this.init()
 }
 

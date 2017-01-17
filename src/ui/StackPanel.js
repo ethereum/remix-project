@@ -6,7 +6,7 @@ var yo = require('yo-yo')
 function StackPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new DropdownPanel('Stack')
+  this.basicPanel = new DropdownPanel('Stack', {json: true})
   this.init()
 }
 

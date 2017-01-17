@@ -8,7 +8,7 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.traceManager = _traceManager
   this.codeManager = _codeManager
   this.solidityProxy = _solidityProxy
-  this.basicPanel = new DropdownPanel('Solidity State')
+  this.basicPanel = new DropdownPanel('Solidity State', {json: true})
   this.init()
 }
 

@@ -9,7 +9,7 @@ class SolidityLocals {
     this.parent = _parent
     this.internalTreeCall = internalTreeCall
     this.traceManager = _traceManager
-    this.basicPanel = new DropdownPanel('Solidity Locals')
+    this.basicPanel = new DropdownPanel('Solidity Locals', {json: true})
     this.init()
   }
 
