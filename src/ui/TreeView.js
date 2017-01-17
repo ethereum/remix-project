@@ -16,8 +16,8 @@ class TreeView {
   }
 
   render (json) {
-    if (!json) {
-      json = {}
+    if (!json || !Object.keys(json).length) {
+      json = {' - ': ' - '}
     }
     var view = yo`<div>${this.renderProperties(json, true)}</div>`
     if (!this.view) {
