@@ -6,7 +6,7 @@ var examples = require('./example-contracts')
 var ace = require('brace')
 require('../mode-solidity.js')
 
-function Editor (loadingFromGist, storage) {
+function Editor (doNotLoadStorage, storage) {
   var SOL_CACHE_UNTITLED = 'Untitled'
   var SOL_CACHE_FILE = null
 
@@ -172,7 +172,7 @@ function Editor (loadingFromGist, storage) {
 
   function setupStuff (files) {
     if (files.length === 0) {
-      if (loadingFromGist) return
+      if (doNotLoadStorage) return
       files.push(examples.ballot.name)
       storage.set(examples.ballot.name, examples.ballot.content)
     }
