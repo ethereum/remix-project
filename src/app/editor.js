@@ -29,7 +29,7 @@ function Editor (doNotLoadStorage, storage) {
     while (storage.exists('Untitled' + untitledCount)) {
       untitledCount = (untitledCount - 0) + 1
     }
-    SOL_CACHE_FILE = 'Untitled' + untitledCount
+    this.setCacheFile('Untitled' + untitledCount)
     this.setCacheFileContent('')
   }
 
@@ -37,9 +37,10 @@ function Editor (doNotLoadStorage, storage) {
     var fileReader = new FileReader()
     var name = file.name
 
+    var self = this
     fileReader.onload = function (e) {
-      storage.set(name, e.target.result)
-      SOL_CACHE_FILE = name
+      self.setCacheFile(name)
+      self.setCacheFileContent(e.target.result)
       callback()
     }
     fileReader.readAsText(file)
@@ -67,7 +68,7 @@ function Editor (doNotLoadStorage, storage) {
   }
 
   this.resetSession = function () {
-    editor.setSession(sessions[SOL_CACHE_FILE])
+    editor.setSession(sessions[this.getCacheFile()])
     editor.focus()
   }
 
@@ -185,13 +186,13 @@ function Editor (doNotLoadStorage, storage) {
       storage.set(examples.ballot.name, examples.ballot.content)
     }
 
-    SOL_CACHE_FILE = files[0]
+    this.setCacheFile(files[0])
 
     for (var x in files) {
       sessions[files[x]] = newEditorSession(files[x])
     }
 
-    editor.setSession(sessions[SOL_CACHE_FILE])
+    editor.setSession(sessions[this.getCacheFile()])
     editor.resize(true)
   }
 }
