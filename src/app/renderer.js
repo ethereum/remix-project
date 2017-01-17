@@ -55,7 +55,7 @@ Renderer.prototype.error = function (message, container, options) {
     var errFile = err[1]
     var errLine = parseInt(err[2], 10) - 1
     var errCol = err[4] ? parseInt(err[4], 10) : 0
-    if (!opt.noAnnotations && (errFile === '' || errFile === utils.fileNameFromKey(self.editor.getCacheFile()))) {
+    if (!opt.noAnnotations && (errFile === '' || errFile === self.editor.getCacheFile())) {
       self.editor.addAnnotation({
         row: errLine,
         column: errCol,
@@ -64,9 +64,9 @@ Renderer.prototype.error = function (message, container, options) {
       })
     }
     $error.click(function (ev) {
-      if (errFile !== '' && errFile !== utils.fileNameFromKey(self.editor.getCacheFile()) && self.editor.hasFile(errFile)) {
+      if (errFile !== '' && errFile !== self.editor.getCacheFile() && self.editor.hasFile(errFile)) {
         // Switch to file
-        self.editor.setCacheFile(utils.fileKey(errFile))
+        self.editor.setCacheFile(errFile)
         self.updateFiles()
       }
       self.editor.handleErrorClick(errLine, errCol)
@@ -287,7 +287,7 @@ Renderer.prototype.contracts = function (data, source) {
   var self = this
 
   var getSource = function (contractName, source, data) {
-    var currentFile = utils.fileNameFromKey(self.editor.getCacheFile())
+    var currentFile = self.editor.getCacheFile()
     return source.sources[currentFile]
   }
 

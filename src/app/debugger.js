@@ -1,7 +1,6 @@
 'use strict'
 
 var remix = require('ethereum-remix')
-var utils = require('./utils')
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
 
@@ -70,7 +69,7 @@ Debugger.prototype.debug = function (txHash) {
  * @param {Object} rawLocation - raw position of the source code to hightlight {start, length, file, jump}
  */
 Debugger.prototype.highlight = function (lineColumnPos, rawLocation) {
-  var name = utils.fileNameFromKey(this.editor.getCacheFile()) // current opened tab
+  var name = this.editor.getCacheFile() // current opened tab
   var source = this.compiler.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
   this.removeCurrentMarker()
   if (name !== source) {

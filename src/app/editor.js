@@ -1,14 +1,13 @@
 /* global FileReader */
 'use strict'
 
-var utils = require('./utils')
 var examples = require('./example-contracts')
 
 var ace = require('brace')
 require('../mode-solidity.js')
 
 function Editor (loadingFromGist, storage) {
-  var SOL_CACHE_UNTITLED = utils.fileKey('Untitled')
+  var SOL_CACHE_UNTITLED = 'Untitled'
   var SOL_CACHE_FILE = null
 
   var editor = ace.edit('input')
@@ -37,7 +36,7 @@ function Editor (loadingFromGist, storage) {
 
   this.uploadFile = function (file, callback) {
     var fileReader = new FileReader()
-    var cacheName = utils.fileKey(file.name)
+    var cacheName = file.name
 
     fileReader.onload = function (e) {
       storage.set(cacheName, e.target.result)
@@ -85,18 +84,18 @@ function Editor (loadingFromGist, storage) {
   }
 
   this.hasFile = function (name) {
-    return this.getFiles().indexOf(utils.fileKey(name)) !== -1
+    return this.getFiles().indexOf(name) !== -1
   }
 
   this.getFile = function (name) {
-    return storage.get(utils.fileKey(name))
+    return storage.get(name)
   }
 
   function getFiles () {
     var files = []
     storage.keys().forEach(function (f) {
       // NOTE: as a temporary measure do not show the config file in the editor
-      if (utils.isCachedFile(f) && (f !== (utils.fileKey('.browser-solidity.json')))) {
+      if (f !== '.browser-solidity.json') {
         files.push(f)
         if (!sessions[f]) sessions[f] = newEditorSession(f)
       }
@@ -110,7 +109,7 @@ function Editor (loadingFromGist, storage) {
     var filesArr = this.getFiles()
 
     for (var f in filesArr) {
-      files[utils.fileNameFromKey(filesArr[f])] = {
+      files[filesArr[f]] = {
         content: storage.get(filesArr[f])
       }
     }
@@ -174,8 +173,8 @@ function Editor (loadingFromGist, storage) {
   function setupStuff (files) {
     if (files.length === 0) {
       if (loadingFromGist) return
-      files.push(utils.fileKey(examples.ballot.name))
-      storage.set(utils.fileKey(examples.ballot.name), examples.ballot.content)
+      files.push(examples.ballot.name)
+      storage.set(examples.ballot.name, examples.ballot.content)
     }
 
     SOL_CACHE_FILE = files[0]
