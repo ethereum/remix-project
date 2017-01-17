@@ -7,9 +7,8 @@ TraceCache.prototype.init = function () {
   // ...Changes contains index in the vmtrace of the corresponding changes
 
   this.returnValues = {}
-  this.callChanges = []
-  this.calls = {}
-  this.callsRef = [0] // track of calls during the vm trace analysis
+  this.currentCall = null
+  this.callsTree = null
   this.callsData = {}
   this.contractCreation = {}
   this.steps = {}
@@ -34,19 +33,30 @@ TraceCache.prototype.pushMemoryChanges = function (value) {
   this.memoryChanges.push(value)
 }
 
-TraceCache.prototype.pushCall = function (step, index, address, callStack) {
-  this.callChanges.push(index)
-  this.calls[index] = {
-    op: step.op,
-    address: address,
-    callStack: callStack
-  }
-  if (step.op === 'RETURN' || step.op === 'STOP') {
-    var call = this.callsRef.pop()
-    this.calls[index].call = call
-    this.calls[call].return = index
+TraceCache.prototype.pushCall = function (step, index, address, callStack, reverted, outOfGas) {
+  if (step.op === 'RETURN' || step.op === 'STOP' || reverted) {
+    if (this.currentCall) {
+      this.currentCall.call.return = index - 1
+      this.currentCall.call.reverted = reverted
+      this.currentCall.call.outOfGas = outOfGas
+      var parent = this.currentCall.parent
+      this.currentCall = parent ? { call: parent.call, parent: parent.parent } : null
+    }
   } else {
-    this.callsRef.push(index)
+    var call = {
+      op: step.op,
+      address: address,
+      callStack: callStack,
+      calls: {},
+      start: index
+    }
+    this.addresses.push(address)
+    if (this.currentCall) {
+      this.currentCall.call.calls[index] = call
+    } else {
+      this.callsTree = { call: call }
+    }
+    this.currentCall = { call: call, parent: this.currentCall }
   }
 }
 

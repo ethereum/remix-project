@@ -233,7 +233,10 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   if (state) {
     for (var dec of state.stateDefinitions) {
       if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
-        var offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
+        var offsets = computeOffsets(dec.children, stateDefinitions, contractName)
+        if (!offsets) {
+          return null
+        }
         return {
           members: offsets.typesOffsets,
           storageSlots: offsets.endLocation.slot
@@ -292,7 +295,11 @@ function parseType (type, stateDefinitions, contractName, location) {
     console.log('unable to retrieve decode info of ' + type)
     return null
   }
-  return decodeInfos[currentType](type, stateDefinitions, contractName, location)
+  if (decodeInfos[currentType]) {
+    return decodeInfos[currentType](type, stateDefinitions, contractName)
+  } else {
+    return null
+  }
 }
 
 /**

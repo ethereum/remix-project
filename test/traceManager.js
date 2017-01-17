@@ -125,7 +125,7 @@ tape('TraceManager', function (t) {
       if (error) {
         st.fail(error)
       } else {
-        st.ok(result === 0)
+        st.ok(result.start === 0)
       }
     })
 
@@ -134,7 +134,7 @@ tape('TraceManager', function (t) {
       if (error) {
         st.fail(error)
       } else {
-        st.ok(result === 64)
+        st.ok(result.start === 64)
       }
     })
 
@@ -143,7 +143,9 @@ tape('TraceManager', function (t) {
       if (error) {
         st.fail(error)
       } else {
-        st.ok(result === 109)
+        st.ok(result.start === 0)
+        // this was 109 before: 111 is targeting the root call (starting index 0)
+        // this test make more sense as it is now (109 is the index of RETURN).
       }
     })
   })
