@@ -524,9 +524,14 @@ var run = function () {
   $('#staticanalysisView').append(staticanalysis.render())
 
   var autoCompile = document.querySelector('#autoCompile').checked
+  if (config.exists('autoCompile')) {
+    autoCompile = config.get('autoCompile')
+    $('#autoCompile').checked = autoCompile
+  }
 
   document.querySelector('#autoCompile').addEventListener('change', function () {
     autoCompile = document.querySelector('#autoCompile').checked
+    config.set('autoCompile', autoCompile)
   })
 
   function runCompiler () {
