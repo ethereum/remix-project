@@ -11,8 +11,8 @@ class TreeView {
     this.beforeJsonNodeRendered = opts.beforeJsonNodeRendered || noop
     this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
     this.view = null
-    this.cssLabel = ui.formatCss(style.label)
-    this.cssList = ui.formatCss(style.list)
+    this.cssLabel = ui.formatCss(opts.css || {}, style.label)
+    this.cssList = ui.formatCss(opts.css || {}, style.list)
   }
 
   render (json) {

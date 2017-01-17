@@ -6,7 +6,11 @@ var yo = require('yo-yo')
 function MemoryPanel (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new DropdownPanel('Memory', {json: true})
+  this.basicPanel = new DropdownPanel('Memory', {
+    json: true,
+    css: {
+      'font-family': 'monospace'
+    }})
   this.init()
 }
 
