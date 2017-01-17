@@ -171,6 +171,10 @@ function Editor (doNotLoadStorage, storage) {
   }
 
   function setupStuff () {
+    // Unmap ctrl-t & ctrl-f
+    editor.commands.bindKeys({ 'ctrl-t': null })
+    editor.commands.bindKeys({ 'ctrl-f': null })
+
     var files = getFiles()
 
     if (files.length === 0) {
@@ -187,10 +191,6 @@ function Editor (doNotLoadStorage, storage) {
 
     editor.setSession(sessions[SOL_CACHE_FILE])
     editor.resize(true)
-
-    // Unmap ctrl-t & ctrl-f
-    editor.commands.bindKeys({ 'ctrl-t': null })
-    editor.commands.bindKeys({ 'ctrl-f': null })
   }
 }
 
