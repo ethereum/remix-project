@@ -175,10 +175,13 @@ function Editor (doNotLoadStorage, storage) {
     editor.commands.bindKeys({ 'ctrl-t': null })
     editor.commands.bindKeys({ 'ctrl-f': null })
 
+    if (doNotLoadStorage) {
+      return
+    }
+
     var files = getFiles()
 
     if (files.length === 0) {
-      if (doNotLoadStorage) return
       files.push(examples.ballot.name)
       storage.set(examples.ballot.name, examples.ballot.content)
     }
