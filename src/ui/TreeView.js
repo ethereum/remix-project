@@ -16,9 +16,6 @@ class TreeView {
   }
 
   render (json) {
-    if (!json || !Object.keys(json).length) {
-      json = {' - ': ' - '}
-    }
     var view = yo`<div>${this.renderProperties(json, true)}</div>`
     if (!this.view) {
       this.view = view
@@ -58,7 +55,7 @@ class TreeView {
       if (this.beforeJsonValueRendered) {
         this.beforeJsonValueRendered(label, item, key)
       }
-      return yo`<li style=${this.cssList}>${label} : <span style=${this.cssLabel} >${item}</span></li>`
+      return yo`<li style=${this.cssList}>${label}: <span style=${this.cssLabel} >${item}</span></li>`
     }
   }
 
