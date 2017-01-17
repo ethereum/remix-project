@@ -6,7 +6,7 @@ var examples = require('./example-contracts')
 var ace = require('brace')
 require('../mode-solidity.js')
 
-function Editor (loadingFromGist, storage) {
+function Editor (doNotLoadStorage, storage) {
   var SOL_CACHE_UNTITLED = 'Untitled'
   var SOL_CACHE_FILE = null
 
@@ -15,7 +15,7 @@ function Editor (loadingFromGist, storage) {
   var sessions = {}
   var sourceAnnotations = []
 
-  setupStuff(getFiles())
+  setupStuff()
 
   this.addMarker = function (range, cssClass) {
     return editor.session.addMarker(range, cssClass)
@@ -170,9 +170,18 @@ function Editor (loadingFromGist, storage) {
     return s
   }
 
-  function setupStuff (files) {
+  function setupStuff () {
+    // Unmap ctrl-t & ctrl-f
+    editor.commands.bindKeys({ 'ctrl-t': null })
+    editor.commands.bindKeys({ 'ctrl-f': null })
+
+    if (doNotLoadStorage) {
+      return
+    }
+
+    var files = getFiles()
+
     if (files.length === 0) {
-      if (loadingFromGist) return
       files.push(examples.ballot.name)
       storage.set(examples.ballot.name, examples.ballot.content)
     }
@@ -185,10 +194,6 @@ function Editor (loadingFromGist, storage) {
 
     editor.setSession(sessions[SOL_CACHE_FILE])
     editor.resize(true)
-
-    // Unmap ctrl-t & ctrl-f
-    editor.commands.bindKeys({ 'ctrl-t': null })
-    editor.commands.bindKeys({ 'ctrl-f': null })
   }
 }
 
