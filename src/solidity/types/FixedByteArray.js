@@ -1,15 +1,14 @@
 'use strict'
-var util = require('./util')
+var ValueType = require('./ValueType')
 
-function FixedByteArray (storageBytes) {
-  this.storageSlots = 1
-  this.storageBytes = storageBytes
-  this.typeName = 'bytesX'
-}
+class FixedByteArray extends ValueType {
+  constructor (storageBytes) {
+    super(1, storageBytes, 'bytesX')
+  }
 
-FixedByteArray.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractHexValue(location, storageContent, this.storageBytes)
-  return '0x' + value.toUpperCase()
+  decodeValue (value) {
+    return '0x' + value.substr(0, 2 * this.storageBytes).toUpperCase()
+  }
 }
 
 module.exports = FixedByteArray

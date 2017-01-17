@@ -5,15 +5,22 @@ var BN = require('ethereumjs-util').BN
 module.exports = {
   readFromStorage: readFromStorage,
   decodeInt: decodeInt,
+  decodeIntFromHex: decodeIntFromHex,
   extractHexValue: extractHexValue,
+  extractHexByteSlice: extractHexByteSlice,
   sha3: sha3,
   toBN: toBN,
-  add: add
+  add: add,
+  extractLocation: extractLocation
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
   var slotvalue = readFromStorage(location.slot, storageContent)
   var value = extractHexByteSlice(slotvalue, byteLength, location.offset)
+  return decodeIntFromHex(value, byteLength, signed)
+}
+
+function decodeIntFromHex (value, byteLength, signed) {
   var bigNumber = new BN(value, 16)
   if (signed) {
     bigNumber = bigNumber.fromTwos(8 * byteLength)
@@ -84,4 +91,13 @@ function toBN (value) {
 
 function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
+}
+
+function extractLocation (type) {
+  var match = type.match(/( storage ref| storage pointer| memory| calldata)?$/)
+  if (match[1] !== '') {
+    return match[1].trim()
+  } else {
+    return null
+  }
 }

@@ -1,13 +1,22 @@
 'use strict'
+var RefType = require('./RefType')
 
-function Mapping () {
-  this.storageSlots = 1
-  this.storageBytes = 32
-  this.typeName = 'mapping'
-}
+class Mapping extends RefType {
+  constructor () {
+    super(1, 32, 'mapping')
+  }
 
-Mapping.prototype.decodeFromStorage = function (location, storageContent) {
-  return '<not implemented>'
+  decodeValue (value) {
+    return '<not implemented>'
+  }
+
+  decodeFromStorage (location, storageContent) {
+    return '<not implemented>'
+  }
+
+  decodeFromMemoryInternal (offset, memory) {
+    return '<not implemented>'
+  }
 }
 
 module.exports = Mapping

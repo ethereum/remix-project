@@ -1,15 +1,20 @@
 'use strict'
+var ValueType = require('./ValueType')
 var util = require('./util')
 
-function Bool () {
-  this.storageSlots = 1
-  this.storageBytes = 1
-  this.typeName = 'bool'
-}
+class Bool extends ValueType {
+  constructor () {
+    super(1, 1, 'bool')
+  }
 
-Bool.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractHexValue(location, storageContent, this.storageBytes)
-  return value !== '00'
+  decodeValue (value) {
+    if (!value) {
+      return false
+    } else {
+      value = util.extractHexByteSlice(value, this.storageBytes, 0)
+      return value !== '00'
+    }
+  }
 }
 
 module.exports = Bool

@@ -1,15 +1,19 @@
 'use strict'
 var util = require('./util')
+var ValueType = require('./ValueType')
 
-function Address () {
-  this.storageSlots = 1
-  this.storageBytes = 20
-  this.typeName = 'address'
-}
+class Address extends ValueType {
+  constructor () {
+    super(1, 20, 'address')
+  }
 
-Address.prototype.decodeFromStorage = function (location, storageContent) {
-  var value = util.extractHexValue(location, storageContent, this.storageBytes)
-  return '0x' + value.toUpperCase()
+  decodeValue (value) {
+    if (!value) {
+      return '0x0000000000000000000000000000000000000000'
+    } else {
+      return '0x' + util.extractHexByteSlice(value, this.storageBytes, 0).toUpperCase()
+    }
+  }
 }
 
 module.exports = Address
