@@ -4,7 +4,7 @@
 
 Browser-Solidity is a browser-based Solidity compiler and IDE.
 
-Visit [https://ethereum.github.io/browser-solidity](https://ethereum.github.io/browser-solidity) to use;
+Visit [https://remix.ethereum.org](https://remix.ethereum.org) to use;
 it will always deliver the latest version.
 
 ## Offline Usage
