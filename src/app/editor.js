@@ -15,7 +15,7 @@ function Editor (doNotLoadStorage, storage) {
   var sessions = {}
   var sourceAnnotations = []
 
-  setupStuff(getFiles())
+  setupStuff()
 
   this.addMarker = function (range, cssClass) {
     return editor.session.addMarker(range, cssClass)
@@ -170,7 +170,9 @@ function Editor (doNotLoadStorage, storage) {
     return s
   }
 
-  function setupStuff (files) {
+  function setupStuff () {
+    var files = getFiles()
+
     if (files.length === 0) {
       if (doNotLoadStorage) return
       files.push(examples.ballot.name)
