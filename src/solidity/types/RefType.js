@@ -20,7 +20,10 @@ class RefType {
     */
   decodeFromStack (stackDepth, stack, memory, storage) {
     if (stack.length - 1 < stackDepth) {
-      return { error: '<decoding failed - stack underflow ' + stackDepth + '>' }
+      return {
+        error: '<decoding failed - stack underflow ' + stackDepth + '>',
+        type: this.typeName
+      }
     }
     if (!storage) {
       storage = {} // TODO this is a fallback, should manage properly locals store in storage
@@ -32,7 +35,10 @@ class RefType {
     } else if (this.isInMemory()) {
       return this.decodeFromMemoryInternal(offset, memory)
     } else {
-      return { error: '<decoding failed - no decoder for ' + this.location + '>' }
+      return {
+        error: '<decoding failed - no decoder for ' + this.location + '>',
+        type: this.typeName
+      }
     }
   }
 
