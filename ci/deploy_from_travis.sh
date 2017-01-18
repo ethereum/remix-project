@@ -38,6 +38,6 @@ ssh-add -D
 
 echo -n "remix.ethereum.org" > CNAME
 git add CNAME
-git commit --amend
+git commit --amend -m "Built website from {$SHA}."
 ssh-add deploy_key_remix-live
 git push -f git@github.com:ethereum/remix-live.git gh-pages
