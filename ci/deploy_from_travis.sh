@@ -33,7 +33,7 @@ openssl aes-256-cbc -K $ENCRYPTED_KEY1 -iv $ENCRYPTED_IV1 -in ci/deploy_key.enc 
 openssl aes-256-cbc -K $ENCRYPTED_KEY2 -iv $ENCRYPTED_IV2 -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
 eval `ssh-agent -s`
 ssh-add deploy_key
-ssh-add deploy_key_remix-live
-
 git push -f git@github.com:ethereum/browser-solidity.git gh-pages
+ssh-add -D
+ssh-add deploy_key_remix-live
 git push -f git@github.com:ethereum/remix-live.git gh-pages
