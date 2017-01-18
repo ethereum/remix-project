@@ -52,7 +52,8 @@ class ArrayType extends RefType {
     }
     return {
       value: ret,
-      length: '0x' + size.toString(16)
+      length: '0x' + size.toString(16),
+      type: this.typeName
     }
   }
 
@@ -69,7 +70,11 @@ class ArrayType extends RefType {
       ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
       offset += 32
     }
-    return ret
+    return {
+      value: ret,
+      length: '0x' + length.toString(16),
+      type: this.typeName
+    }
   }
 }
 

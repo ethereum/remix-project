@@ -17,7 +17,10 @@ class Struct extends RefType {
       }
       ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
     })
-    return ret
+    return {
+      value: ret,
+      type: this.typeName
+    }
   }
 
   decodeFromMemoryInternal (offset, memory) {
@@ -28,7 +31,10 @@ class Struct extends RefType {
       ret[item.name] = member
       offset += 32
     })
-    return ret
+    return {
+      value: ret,
+      type: this.typeName
+    }
   }
 }
 
