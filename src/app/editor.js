@@ -14,8 +14,6 @@ function Editor (doNotLoadStorage, storage) {
   var sessions = {}
   var sourceAnnotations = []
 
-  setupStuff()
-
   this.addMarker = function (range, cssClass) {
     return editor.session.addMarker(range, cssClass)
   }
@@ -170,31 +168,31 @@ function Editor (doNotLoadStorage, storage) {
     return s
   }
 
-  function setupStuff () {
-    // Unmap ctrl-t & ctrl-f
-    editor.commands.bindKeys({ 'ctrl-t': null })
-    editor.commands.bindKeys({ 'ctrl-f': null })
+  // Do setup on initialisation here
 
-    if (doNotLoadStorage) {
-      return
-    }
+  // Unmap ctrl-t & ctrl-f
+  editor.commands.bindKeys({ 'ctrl-t': null })
+  editor.commands.bindKeys({ 'ctrl-f': null })
 
-    var files = getFiles()
-
-    if (files.length === 0) {
-      files.push(examples.ballot.name)
-      storage.set(examples.ballot.name, examples.ballot.content)
-    }
-
-    this.setCacheFile(files[0])
-
-    for (var x in files) {
-      sessions[files[x]] = newEditorSession(files[x])
-    }
-
-    editor.setSession(sessions[this.getCacheFile()])
-    editor.resize(true)
+  if (doNotLoadStorage) {
+    return
   }
+
+  var files = getFiles()
+
+  if (files.length === 0) {
+    files.push(examples.ballot.name)
+    storage.set(examples.ballot.name, examples.ballot.content)
+  }
+
+  this.setCacheFile(files[0])
+
+  for (var x in files) {
+    sessions[files[x]] = newEditorSession(files[x])
+  }
+
+  editor.setSession(sessions[this.getCacheFile()])
+  editor.resize(true)
 }
 
 module.exports = Editor
