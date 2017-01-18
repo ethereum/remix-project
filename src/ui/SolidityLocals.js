@@ -1,6 +1,7 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
 var localDecoder = require('../solidity/localDecoder')
+var solidityTypeFormatter = require('./SolidityTypeFormatter')
 var yo = require('yo-yo')
 
 class SolidityLocals {
@@ -9,7 +10,11 @@ class SolidityLocals {
     this.parent = _parent
     this.internalTreeCall = internalTreeCall
     this.traceManager = _traceManager
-    this.basicPanel = new DropdownPanel('Solidity Locals', {json: true})
+    this.basicPanel = new DropdownPanel('Solidity Locals', {
+      json: true,
+      formatData: solidityTypeFormatter.formatData,
+      extractData: solidityTypeFormatter.extractData
+    })
     this.init()
   }
 

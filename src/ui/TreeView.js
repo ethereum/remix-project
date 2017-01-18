@@ -40,7 +40,7 @@ class TreeView {
     var children = Object.keys(data.children).map((innerkey) => {
       return this.renderObject(data.children[innerkey], innerkey, expand)
     })
-    return this.formatData(key, data.self, children, expand)
+    return this.formatDataInternal(key, data, children, expand)
   }
 
   renderProperties (json, expand) {
@@ -50,8 +50,8 @@ class TreeView {
     return yo`<ul style=${this.cssList}>${children}</ul>`
   }
 
-  formatDataDefault (key, self, children, expand) {
-    var label = yo`<span style=${this.cssLabel}><label style='width: 10px'></label><label>${key}: ${self}</label></span>`
+  formatDataInternal (key, data, children, expand) {
+    var label = yo`<span style=${this.cssLabel}><label style='width: 10px'></label>${this.formatData(key, data)}</span>`
     var renderedChildren = ''
     if (children.length) {
       renderedChildren = yo`<ul style=${this.cssList}>${children}</ul>`
@@ -64,6 +64,10 @@ class TreeView {
       }
     }
     return yo`<li style=${this.cssList}>${label}${renderedChildren}</li>`
+  }
+
+  formatDataDefault (key, data) {
+    return yo`<label>${key}: ${data.self}</label>`
   }
 
   extractDataDefault (item, key) {

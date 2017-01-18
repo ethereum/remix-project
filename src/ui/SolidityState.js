@@ -1,6 +1,7 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
 var stateDecoder = require('../solidity/stateDecoder')
+var solidityTypeFormatter = require('./SolidityTypeFormatter')
 var yo = require('yo-yo')
 
 function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
@@ -8,7 +9,11 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.traceManager = _traceManager
   this.codeManager = _codeManager
   this.solidityProxy = _solidityProxy
-  this.basicPanel = new DropdownPanel('Solidity State', {json: true})
+  this.basicPanel = new DropdownPanel('Solidity State', {
+    json: true,
+    formatData: solidityTypeFormatter.formatData,
+    extractData: solidityTypeFormatter.extractData
+  })
   this.init()
 }
 
