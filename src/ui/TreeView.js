@@ -48,7 +48,7 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], innerkey, expand)
     })
-    return yo`<li style=${this.cssList}>${children}</li>`
+    return yo`<ul style=${this.cssList}>${children}</ul>`
   }
 
   formatDataDefault (key, self, children, expand) {
