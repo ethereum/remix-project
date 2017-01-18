@@ -63,7 +63,7 @@ function panels (browser) {
     .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
     .click('#nextcall')
-    .assertStack(['0:0x1:0x602:0x653:0x384:0x555:0x60fe47b1'])
+    .assertStack(['0:0x', '1:0x60', '2:0x65', '3:0x38', '4:0x55', '5:0x60fe47b1'])
     .assertStorageChanges(['0x00:0x38'])
     .assertCallData(['0:0x60fe47b10000000000000000000000000000000000000000000000000000000000000038'])
     .assertCallStack(['0:0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5'])
