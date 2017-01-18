@@ -51,7 +51,7 @@ class TreeView {
   }
 
   formatDataInternal (key, data, children, expand) {
-    var label = yo`<span style=${this.cssLabel}><label style='width: 10px'></label>${this.formatData(key, data)}</span>`
+    var label = yo`<span style=${this.cssLabel}><label style='position:absolute;margin-top: 2px'></label><span style='margin-left: 10px'>${this.formatData(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
       renderedChildren = yo`<ul style=${this.cssList}>${children}</ul>`
