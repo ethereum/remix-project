@@ -10,6 +10,8 @@ class TreeView {
     }
     this.beforeJsonNodeRendered = opts.beforeJsonNodeRendered || noop
     this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
+    this.extractData = opts.extractData || this.extractDataDefault
+    this.formatData = opts.formatData || this.formatDataDefault
     this.view = null
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
     this.cssList = ui.formatCss(opts.css || {}, style.list)
@@ -34,36 +36,49 @@ class TreeView {
   }
 
   renderObject (item, key, expand) {
-    var label
-    if (item instanceof Array || item instanceof Object) {
-      var properties = this.renderProperties(item, false)
-      label = yo`<span style=${this.cssLabel}><label style='width: 10px' id='caret'></label><label>${key} - ${properties.length} items</label></span>`
-      var list = yo`<ul style=${this.cssList}>${properties}</ol>`
-      list.style.display = expand ? 'block' : 'none'
+    var data = this.extractData(item, key)
+    var children = Object.keys(data.children).map((innerkey) => {
+      return this.renderObject(data.children[innerkey], innerkey, expand)
+    })
+    return this.formatData(key, data.self, children, expand)
+  }
+
+  renderProperties (json, expand) {
+    var children = Object.keys(json).map((innerkey) => {
+      return this.renderObject(json[innerkey], innerkey, expand)
+    })
+    return yo`<ul style=${this.cssList}>${children}</ul>`
+  }
+
+  formatDataDefault (key, self, children, expand) {
+    var label = yo`<span style=${this.cssLabel}><label style='width: 10px'></label><label>${key}: ${self}</label></span>`
+    var renderedChildren = ''
+    if (children.length) {
+      renderedChildren = yo`<ul style=${this.cssList}>${children}</ul>`
+      renderedChildren.style.display = expand ? 'block' : 'none'
       label.firstElementChild.className = expand ? 'fa fa-caret-down' : 'fa fa-caret-right'
       label.onclick = function () {
         this.firstElementChild.className = this.firstElementChild.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
         var list = this.parentElement.querySelector('ul')
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
       }
-      if (this.beforeJsonNodeRendered) {
-        this.beforeJsonNodeRendered(label, item, key)
-      }
-      return yo`<li style=${this.cssList}>${label}${list}</li>`
-    } else {
-      label = yo`<label style=${this.cssLabel}>${key}</label>`
-      if (this.beforeJsonValueRendered) {
-        this.beforeJsonValueRendered(label, item, key)
-      }
-      return yo`<li style=${this.cssList}>${label}: <span style=${this.cssLabel} >${item}</span></li>`
     }
+    return yo`<li style=${this.cssList}>${label}${renderedChildren}</li>`
   }
 
-  renderProperties (json, expand) {
-    var properties = Object.keys(json).map((innerkey) => {
-      return this.renderObject(json[innerkey], innerkey, expand)
-    })
-    return properties
+  extractDataDefault (item, key) {
+    var ret = {}
+    if (item instanceof Array) {
+      ret.children = item
+      ret.self = 'Array'
+    } else if (item instanceof Object) {
+      ret.children = item
+      ret.self = 'Object'
+    } else {
+      ret.self = item
+      ret.children = []
+    }
+    return ret
   }
 }
 
