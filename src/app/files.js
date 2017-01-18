@@ -1,6 +1,10 @@
 'use strict'
 
+var EventManager = require('../lib/eventManager')
+
 function Files (storage) {
+  var event = new EventManager()
+  this.event = event
   var readonly = {}
 
   this.exists = function (path) {
@@ -36,13 +40,20 @@ function Files (storage) {
     }
 
     if (!this.isReadOnly(path)) {
+      var exists = storage.exists(path)
       storage.set(path, content)
+      if (!exists) {
+        event.trigger('fileAdded', [path])
+      } else {
+        event.trigger('fileChanged', [path])
+      }
     }
   }
 
   this.addReadOnly = function (path, content) {
     if (!storage.exists(path)) {
       readonly[path] = content
+      event.trigger('fileAdded', [path])
     }
   }
 
@@ -60,11 +71,13 @@ function Files (storage) {
     } else {
       storage.remove(path)
     }
+    event.trigger('fileRemoved', [path])
   }
 
   this.rename = function (oldPath, newPath) {
     if (!this.isReadOnly(oldPath) && storage.exists(oldPath)) {
       storage.rename(oldPath, newPath)
+      event.trigger('fileRenamed', [oldPath, newPath])
     }
   }
 
