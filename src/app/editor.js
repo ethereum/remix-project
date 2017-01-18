@@ -7,15 +7,12 @@ var ace = require('brace')
 require('../mode-solidity.js')
 
 function Editor (doNotLoadStorage, storage) {
-  var SOL_CACHE_UNTITLED = 'Untitled'
   var SOL_CACHE_FILE = null
 
   var editor = ace.edit('input')
   document.getElementById('input').editor = editor // required to access the editor during tests
   var sessions = {}
   var sourceAnnotations = []
-
-  setupStuff()
 
   this.addMarker = function (range, cssClass) {
     return editor.session.addMarker(range, cssClass)
@@ -27,20 +24,21 @@ function Editor (doNotLoadStorage, storage) {
 
   this.newFile = function () {
     var untitledCount = ''
-    while (storage.exists(SOL_CACHE_UNTITLED + untitledCount)) {
+    while (storage.exists('Untitled' + untitledCount)) {
       untitledCount = (untitledCount - 0) + 1
     }
-    SOL_CACHE_FILE = SOL_CACHE_UNTITLED + untitledCount
+    this.setCacheFile('Untitled' + untitledCount)
     this.setCacheFileContent('')
   }
 
   this.uploadFile = function (file, callback) {
     var fileReader = new FileReader()
-    var cacheName = file.name
+    var name = file.name
 
+    var self = this
     fileReader.onload = function (e) {
-      storage.set(cacheName, e.target.result)
-      SOL_CACHE_FILE = cacheName
+      self.setCacheFile(name)
+      self.setCacheFileContent(e.target.result)
       callback()
     }
     fileReader.readAsText(file)
@@ -68,7 +66,7 @@ function Editor (doNotLoadStorage, storage) {
   }
 
   this.resetSession = function () {
-    editor.setSession(sessions[SOL_CACHE_FILE])
+    editor.setSession(sessions[this.getCacheFile()])
     editor.focus()
   }
 
@@ -170,31 +168,31 @@ function Editor (doNotLoadStorage, storage) {
     return s
   }
 
-  function setupStuff () {
-    // Unmap ctrl-t & ctrl-f
-    editor.commands.bindKeys({ 'ctrl-t': null })
-    editor.commands.bindKeys({ 'ctrl-f': null })
+  // Do setup on initialisation here
 
-    if (doNotLoadStorage) {
-      return
-    }
+  // Unmap ctrl-t & ctrl-f
+  editor.commands.bindKeys({ 'ctrl-t': null })
+  editor.commands.bindKeys({ 'ctrl-f': null })
 
-    var files = getFiles()
-
-    if (files.length === 0) {
-      files.push(examples.ballot.name)
-      storage.set(examples.ballot.name, examples.ballot.content)
-    }
-
-    SOL_CACHE_FILE = files[0]
-
-    for (var x in files) {
-      sessions[files[x]] = newEditorSession(files[x])
-    }
-
-    editor.setSession(sessions[SOL_CACHE_FILE])
-    editor.resize(true)
+  if (doNotLoadStorage) {
+    return
   }
+
+  var files = getFiles()
+
+  if (files.length === 0) {
+    files.push(examples.ballot.name)
+    storage.set(examples.ballot.name, examples.ballot.content)
+  }
+
+  this.setCacheFile(files[0])
+
+  for (var x in files) {
+    sessions[files[x]] = newEditorSession(files[x])
+  }
+
+  editor.setSession(sessions[this.getCacheFile()])
+  editor.resize(true)
 }
 
 module.exports = Editor

@@ -42,6 +42,7 @@ var run = function () {
   var storage = new Storage()
   var config = new Config(storage)
 
+  // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (files) {
     for (var f in files) {
       storage.loadFile(f, files[f].content)
@@ -51,10 +52,12 @@ var run = function () {
     updateFiles()
   }
 
+  // Replace early callback with instant response
   loadFilesCallback = function (files) {
     loadFiles(files)
   }
 
+  // Run if we did receive an event from remote instance while starting up
   if (filesToLoad !== null) {
     loadFiles(filesToLoad)
   }
@@ -135,6 +138,7 @@ var run = function () {
     var $el = $(this)
     selectTab($el)
   })
+
   var selectTab = function (el) {
     var match = /[a-z]+View/.exec(el.get(0).className)
     if (!match) return
@@ -216,8 +220,14 @@ var run = function () {
     })
   })
 
-  $filesEl.on('click', '.file:not(.active)', showFileHandler)
+  // Switch tab
+  $filesEl.on('click', '.file:not(.active)', function (ev) {
+    ev.preventDefault()
+    switchToFile($(this).find('.name').text())
+    return false
+  })
 
+  // Edit name of current tab
   $filesEl.on('click', '.file.active', function (ev) {
     var $fileTabEl = $(this)
     var originalName = $fileTabEl.find('.name').text()
@@ -253,6 +263,7 @@ var run = function () {
     return false
   })
 
+  // Remove current tab
   $filesEl.on('click', '.file .remove', function (ev) {
     ev.preventDefault()
     var name = $(this).parent().find('.name').text()
@@ -266,17 +277,12 @@ var run = function () {
     return false
   })
 
-  function swicthToFile (file) {
+  function switchToFile (file) {
     editor.setCacheFile(file)
     updateFiles()
   }
 
-  function showFileHandler (ev) {
-    ev.preventDefault()
-    swicthToFile($(this).find('.name').text())
-    return false
-  }
-
+  // Synchronise tab list with file names known to the editor
   function updateFiles () {
     var $filesEl = $('#files')
     var files = editor.getFiles()
@@ -489,7 +495,7 @@ var run = function () {
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
-  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, swicthToFile, offsetToLineColumnConverter)
+  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, switchToFile, offsetToLineColumnConverter)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.switchProvider('vm')
   transactionDebugger.addProvider('injected', executionContext.web3())
