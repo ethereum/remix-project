@@ -3,7 +3,7 @@ var ValueType = require('./ValueType')
 
 class FixedByteArray extends ValueType {
   constructor (storageBytes) {
-    super(1, storageBytes, 'bytesX')
+    super(1, storageBytes, 'bytes' + storageBytes)
   }
 
   decodeValue (value) {
