@@ -3,49 +3,40 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var styleDropdown = require('./styles/dropdownPanel')
 var basicStyles = require('./styles/basicStyles')
+var TreeView = require('./TreeView')
 
-function DropdownPanel (_name, _raw) {
-  this.data
+function DropdownPanel (_name, _opts) {
+  if (!_opts) {
+    _opts = {}
+  }
   this.name = _name
+  this.json = _opts.json
+  if (this.json) {
+    this.treeView = new TreeView(_opts)
+  }
   this.view
-  _raw = _raw === undefined ? false : _raw
-  this.raw = _raw
 }
 
 DropdownPanel.prototype.update = function (_data) {
-  if (!this.view) {
-    return
-  }
-  if (_data) {
-    this.data = _data
-  }
-  this.view.querySelector('.dropdownpanel div.dropdowncontent').innerHTML = ''
-  if (!this.raw) {
-    var data = JSON.stringify(this.data, null, '\t')
-    if (!this.data || data === '[]' || data === '{}') {
-      this.data = ['Empty']
-    }
-    var div = document.createElement('div')
-    if (Array.isArray(this.data)) {
-      this.data.map(function (item, i) {
-        div.appendChild(yo`<div>${item}</div>`)
-      })
-    } else {
-      for (var k in this.data) {
-        var content = typeof this.data[k] === 'string' ? this.data[k] : JSON.stringify(this.data[k])
-        div.appendChild(yo`<div><div title=${k} style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '10%'})} >${k}</div><div title=${content} style=${ui.formatCss(basicStyles.truncate, {display: 'inline-block', 'width': '78%'})} >${content}</div></div>`)
-      }
-    }
-    this.view.querySelector('.dropdownpanel div.dropdowncontent').appendChild(div)
+  if (this.view) {
+    this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
     this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
-    this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = data
-  } else {
-    this.view.querySelector('.dropdownpanel div.dropdowncontent').appendChild(this.data)
-    this.view.querySelector('.dropdownpanel button.btn').style.display = 'none'
+    if (this.json) {
+      this.treeView.update(_data)
+    }
   }
 }
 
+DropdownPanel.prototype.setContent = function (node) {
+  var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
+  parent.replaceChild(node, parent.firstElementChild)
+}
+
 DropdownPanel.prototype.render = function (overridestyle) {
+  var content = yo`<div>Empty</div>`
+  if (this.json) {
+    content = this.treeView.render({})
+  }
   overridestyle === undefined ? {} : overridestyle
   var self = this
   var view = yo`<div>
@@ -55,7 +46,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
     <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
       <button onclick=${function () { self.toggleRaw() }} style=${ui.formatCss(basicStyles.button, styleDropdown.copyBtn)} title='raw' class="btn fa fa-eye" type="button">
       </button>
-      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'><div>Empty</div></div>
+      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'>${content}</div>
       <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdownrawcontent' style='display:none'></div>
     </div>
     </div>`

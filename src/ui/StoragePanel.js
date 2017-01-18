@@ -5,7 +5,7 @@ var yo = require('yo-yo')
 function StoragePanel (_parent, _traceManager, _address) {
   this.parent = _parent
   this.traceManager = _traceManager
-  this.basicPanel = new DropdownPanel('Storage Changes')
+  this.basicPanel = new DropdownPanel('Storage Changes', {json: true})
   this.address = _address
   this.init()
   this.disabled = false

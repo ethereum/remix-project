@@ -24,17 +24,16 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   this.solidityLocals = new SolidityLocals(_parent, _traceManager, _callTree)
 
   /* Return values - */
-  this.returnValuesPanel = new DropdownPanel('Return Value')
+  this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
   this.returnValuesPanel.data = {}
   _parent.event.register('indexChanged', this.returnValuesPanel, function (index) {
     var self = this
     _traceManager.getReturnValue(index, function (error, returnValue) {
       if (error) {
-        self.data = [error]
+        self.update([error])
       } else if (_parent.currentStepIndex === index) {
-        self.data = [returnValue]
+        self.update([returnValue])
       }
-      self.update()
     })
   })
   /* Return values - */

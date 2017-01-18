@@ -32,7 +32,7 @@ function extendBrowser (browser) {
   }
 
   browser.assertStepDetail = function (vmtracestepinfo, stepinfo, addmemoryinfo, gasinfo, remaininggasinfo, loadedaddressinfo) {
-    assertPanel('#stepdetail', browser, ['vmtracestep' + vmtracestepinfo, 'executionstep' + stepinfo, 'addmemory' + addmemoryinfo, 'gas' + gasinfo, 'remaininggas' + remaininggasinfo, 'loadedaddress' + loadedaddressinfo])
+    assertPanel('#stepdetail', browser, ['vmtracestep:' + vmtracestepinfo, 'executionstep:' + stepinfo, 'addmemory:' + addmemoryinfo, 'gas:' + gasinfo, 'remaininggas:' + remaininggasinfo, 'loadedaddress:' + loadedaddressinfo])
     return browser
   }
 
@@ -141,8 +141,12 @@ function assertPanel (id, browser, value) {
     return ret
   }, [id, selector], function (returnValues) {
     value.map(function (item, index) {
-      var testValue = returnValues.value[index].replace(/\r\n/g, '').replace(/\t/g, '').replace(/\s/g, '')
-      browser.assert.equal(testValue, value[index])
+      if (returnValues.value.length) {
+        var testValue = returnValues.value[index].replace(/\r\n/g, '').replace(/\t/g, '').replace(/\s/g, '')
+        browser.assert.equal(testValue, value[index])
+      } else {
+        browser.assert.equal(item, '')
+      }
     })
   })
   return browser

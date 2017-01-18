@@ -14,7 +14,7 @@ function TxBrowser (_parent) {
   this.txNumber
   this.view
   this.displayConnectionSetting = true
-  this.basicPanel = new DropdownPanel('Transaction')
+  this.basicPanel = new DropdownPanel('Transaction', {json: true})
   this.basicPanel.data = {}
   var self = this
   _parent.event.register('providerChanged', this, function (provider) {
@@ -34,8 +34,7 @@ function TxBrowser (_parent) {
 
 TxBrowser.prototype.setDefaultValues = function () {
   this.connectInfo = ''
-  this.basicPanel.data = {}
-  this.basicPanel.update()
+  this.basicPanel.update({})
   this.basicPanel.hide()
   this.updateWeb3Url(util.web3.currentProvider.host)
   if (this.view) {
@@ -86,8 +85,7 @@ TxBrowser.prototype.update = function (error, tx) {
       this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
     }
   }
-  this.basicPanel.data = info
-  this.basicPanel.update()
+  this.basicPanel.update(info)
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {
