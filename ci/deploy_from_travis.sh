@@ -35,5 +35,9 @@ eval `ssh-agent -s`
 ssh-add deploy_key
 git push -f git@github.com:ethereum/browser-solidity.git gh-pages
 ssh-add -D
+
+echo -n "remix.ethereum.org" > CNAME
+git add CNAME
+git commit --amend
 ssh-add deploy_key_remix-live
 git push -f git@github.com:ethereum/remix-live.git gh-pages
