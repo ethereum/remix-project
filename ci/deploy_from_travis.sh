@@ -17,16 +17,20 @@ zip -r remix-$SHA.zip $FILES_TO_PACKAGE
 git add -f $FILES_TO_PACKAGE remix-$SHA.zip
 git commit -m "Built website from {$SHA}."
 
-ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+ENCRYPTED_KEY_VAR1="encrypted_${ENCRYPTION_LABEL1}_key"
+ENCRYPTED_IV_VAR1="encrypted_${ENCRYPTION_LABEL1}_iv"
+ENCRYPTED_KEY1=${!ENCRYPTED_KEY_VAR1}
+ENCRYPTED_IV1=${!ENCRYPTED_IV_VAR1}
+ENCRYPTED_KEY_VAR2="encrypted_${ENCRYPTION_LABEL2}_key"
+ENCRYPTED_IV_VAR2="encrypted_${ENCRYPTION_LABEL2}_iv"
+ENCRYPTED_KEY2=${!ENCRYPTED_KEY_VAR2}
+ENCRYPTED_IV2=${!ENCRYPTED_IV_VAR2}
 
 touch deploy_key
 touch deploy_key_remix-live
 chmod 600 deploy_key deploy_key_remix-live
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ci/deploy_key.enc -out deploy_key -d
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
+openssl aes-256-cbc -K $ENCRYPTED_KEY1 -iv $ENCRYPTED_IV1 -in ci/deploy_key.enc -out deploy_key -d
+openssl aes-256-cbc -K $ENCRYPTED_KEY2 -iv $ENCRYPTED_IV2 -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
 eval `ssh-agent -s`
 ssh-add deploy_key
 ssh-add deploy_key_remix-live
