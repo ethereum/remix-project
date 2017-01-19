@@ -10,7 +10,12 @@ function Storage () {
   }
 
   this.set = function (name, content) {
-    window.localStorage.setItem('sol:' + name, content)
+    try {
+      window.localStorage.setItem('sol:' + name, content)
+    } catch (exception) {
+      return false
+    }
+    return true
   }
 
   function safeKeys () {
@@ -28,12 +33,16 @@ function Storage () {
 
   this.remove = function (name) {
     window.localStorage.removeItem('sol:' + name)
+    return true
   }
 
   this.rename = function (originalName, newName) {
     var content = this.get(originalName)
-    this.set(newName, content)
+    if (!this.set(newName, content)) {
+      return false
+    }
     this.remove(originalName)
+    return true
   }
 
   this.loadFile = function (filename, content) {
