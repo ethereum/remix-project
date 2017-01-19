@@ -15,22 +15,30 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
     extractData: solidityTypeFormatter.extractData
   })
   this.init()
+  this.view
 }
 
 SolidityState.prototype.render = function () {
-  return yo`<div id='soliditystate' >${this.basicPanel.render()}</div>`
+  this.view = yo`<div id='soliditystate' >
+      <div id='warning'></div>
+      ${this.basicPanel.render()}
+    </div>`
+  return this.view
 }
 
 SolidityState.prototype.init = function () {
   var self = this
   this.parent.event.register('indexChanged', this, function (index) {
+    var warningDiv = this.view.querySelector('#warning')
+    warningDiv.innerHTML = ''
     if (index < 0) {
-      self.basicPanel.update({info: 'invalid step index'})
+      warningDiv.innerHTML = 'invalid step index'
       return
     }
+
     if (self.parent.currentStepIndex !== index) return
     if (!this.solidityProxy.loaded()) {
-      self.basicPanel.update({info: 'no source has been specified'})
+      warningDiv.innerHTML = 'no source has been specified'
       return
     }
 
