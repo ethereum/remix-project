@@ -13,7 +13,8 @@ class SolidityLocals {
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
       formatData: solidityTypeFormatter.formatData,
-      extractData: solidityTypeFormatter.extractData
+      extractData: solidityTypeFormatter.extractData,
+      extractProperties: solidityTypeFormatter.extractProperties
     })
     this.init()
     this.view

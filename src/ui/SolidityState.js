@@ -12,7 +12,8 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.basicPanel = new DropdownPanel('Solidity State', {
     json: true,
     formatData: solidityTypeFormatter.formatData,
-    extractData: solidityTypeFormatter.extractData
+    extractData: solidityTypeFormatter.extractData,
+    extractProperties: solidityTypeFormatter.extractProperties
   })
   this.init()
   this.view

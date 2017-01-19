@@ -12,6 +12,7 @@ class TreeView {
     this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatData = opts.formatData || this.formatDataDefault
+    this.extractProperties = opts.extractProperties || this.extractPropertiesDefault
     this.view = null
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
     this.cssList = ui.formatCss(opts.css || {}, style.list)
@@ -40,7 +41,8 @@ class TreeView {
     var children = Object.keys(data.children).map((innerkey) => {
       return this.renderObject(data.children[innerkey], data, innerkey, expand)
     })
-    return this.formatDataInternal(key, data, children, expand)
+    var properties = this.extractProperties(item, parent, key)
+    return this.formatDataInternal(key, data, children, properties, expand)
   }
 
   renderProperties (json, expand) {
@@ -50,11 +52,14 @@ class TreeView {
     return yo`<ul style=${this.cssList}>${children}</ul>`
   }
 
-  formatDataInternal (key, data, children, expand) {
+  formatDataInternal (key, data, children, properties, expand) {
+    var renderedProperties = Object.keys(properties).map((item) => {
+      return this.formatDataInternal(item, properties[item], [], [], false)
+    })
     var label = yo`<span style=${this.cssLabel}><label style='position:absolute;margin-top: 2px'></label><span style='margin-left: 10px'>${this.formatData(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
-      renderedChildren = yo`<ul style=${this.cssList}>${children}</ul>`
+      renderedChildren = yo`<ul style=${this.cssList}>${renderedProperties}${children}</ul>`
       renderedChildren.style.display = expand ? 'block' : 'none'
       label.firstElementChild.className = expand ? 'fa fa-caret-down' : 'fa fa-caret-right'
       label.onclick = function () {
@@ -64,6 +69,10 @@ class TreeView {
       }
     }
     return yo`<li style=${this.cssList}>${label}${renderedChildren}</li>`
+  }
+
+  extractPropertiesDefault (key, data) {
+    return {}
   }
 
   formatDataDefault (key, data) {
