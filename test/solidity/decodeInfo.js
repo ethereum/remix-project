@@ -13,11 +13,11 @@ tape('solidity', function (t) {
     var states = index.solidity.astHelper.extractStatesDefinitions(output.sources)
     var stateDef = state.stateDefinitions
     var decodeInfo = index.solidity.decodeInfo.parseType(stateDef[0].attributes.type, states, 'contractUint')
-    checkDecodeInfo(st, decodeInfo, 1, 1, 'uint')
+    checkDecodeInfo(st, decodeInfo, 1, 1, 'uint8')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[2].attributes.type, states, 'contractUint')
-    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint')
+    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint256')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[3].attributes.type, states, 'contractUint')
-    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint')
+    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint256')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[4].attributes.type, states, 'contractUint')
     checkDecodeInfo(st, decodeInfo, 1, 16, 'bytes16')
 
@@ -33,11 +33,11 @@ tape('solidity', function (t) {
     state = index.solidity.astHelper.extractStateDefinitions('contractArray', output.sources)
     stateDef = state.stateDefinitions
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[0].attributes.type, states, 'contractArray')
-    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint[5]')
+    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint32[5]')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[1].attributes.type, states, 'contractArray')
-    checkDecodeInfo(st, decodeInfo, 1, 32, 'int[dynamic]')
+    checkDecodeInfo(st, decodeInfo, 1, 32, 'int8[]')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[2].attributes.type, states, 'contractArray')
-    checkDecodeInfo(st, decodeInfo, 4, 32, 'int[dynamic][3][dynamic][4]')
+    checkDecodeInfo(st, decodeInfo, 4, 32, 'int16[][3][][4]')
 
     state = index.solidity.astHelper.extractStateDefinitions('contractEnum', output.sources)
     stateDef = state.stateDefinitions
@@ -47,17 +47,17 @@ tape('solidity', function (t) {
     state = index.solidity.astHelper.extractStateDefinitions('contractSmallVariable', output.sources)
     stateDef = state.stateDefinitions
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[0].attributes.type, states, 'contractSmallVariable')
-    checkDecodeInfo(st, decodeInfo, 1, 1, 'int')
+    checkDecodeInfo(st, decodeInfo, 1, 1, 'int8')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[1].attributes.type, states, 'contractSmallVariable')
-    checkDecodeInfo(st, decodeInfo, 1, 1, 'uint')
+    checkDecodeInfo(st, decodeInfo, 1, 1, 'uint8')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[2].attributes.type, states, 'contractSmallVariable')
-    checkDecodeInfo(st, decodeInfo, 1, 2, 'uint')
+    checkDecodeInfo(st, decodeInfo, 1, 2, 'uint16')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[3].attributes.type, states, 'contractSmallVariable')
-    checkDecodeInfo(st, decodeInfo, 1, 4, 'int')
+    checkDecodeInfo(st, decodeInfo, 1, 4, 'int32')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[4].attributes.type, states, 'contractSmallVariable')
-    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint')
+    checkDecodeInfo(st, decodeInfo, 1, 32, 'uint256')
     decodeInfo = index.solidity.decodeInfo.parseType(stateDef[5].attributes.type, states, 'contractSmallVariable')
-    checkDecodeInfo(st, decodeInfo, 1, 2, 'int')
+    checkDecodeInfo(st, decodeInfo, 1, 2, 'int16')
 
     output = compiler.compile(simplecontracts, 0)
 
