@@ -41,6 +41,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
   var self = this
   var view = yo`<div>
     <div class='title' style=${ui.formatCss(styleDropdown.title)} onclick=${function () { self.toggle() }}>
+      <div style=${ui.formatCss(styleDropdown.caret)} class='fa fa-caret-right'></div>
       <div style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div>
     </div>
     <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
@@ -65,24 +66,31 @@ DropdownPanel.prototype.toggleRaw = function () {
 
 DropdownPanel.prototype.toggle = function () {
   var el = this.view.querySelector('.dropdownpanel')
+  var caret = this.view.querySelector('.title').firstElementChild
   if (el.style.display === '') {
     el.style.display = 'none'
+    caret.className = 'fa fa-caret-right'
   } else {
     el.style.display = ''
+    caret.className = 'fa fa-caret-down'
   }
 }
 
 DropdownPanel.prototype.hide = function () {
   if (this.view) {
+    var caret = this.view.querySelector('.title').firstElementChild
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = 'none'
+    caret.className = 'fa fa-caret-right'
   }
 }
 
 DropdownPanel.prototype.show = function () {
   if (this.view) {
+    var caret = this.view.querySelector('.title').firstElementChild
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = ''
+    caret.className = 'fa fa-caret-down'
   }
 }
 
