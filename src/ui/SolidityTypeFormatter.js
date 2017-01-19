@@ -35,7 +35,7 @@ function extractData (item, parent, key) {
     ret.length = item.length
   } else if (item.type.indexOf('struct') === 0) {
     ret.children = item.value || []
-    ret.self = 'Struct' + '{' + Object.keys(ret.children).length + '}'
+    ret.self = item.type
     ret.isStruct = true
   } else {
     ret.children = []
