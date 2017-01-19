@@ -13,7 +13,8 @@ module.exports = {
   },
   content: {
     'color': '#111111',
-    'width': '100%'
+    'width': '100%',
+    'min-height': '20px'
   },
   inner: {
     'padding': '2px',
