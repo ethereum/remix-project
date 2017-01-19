@@ -10,7 +10,8 @@ module.exports = {
 
 function formatData (key, data) {
   var style = fontColor(data)
-  return yo`<label>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty ? '' : data.type}</label></label>`
+  var keyStyle = data.isProperty ? 'color:#847979' : ''
+  return yo`<label style=${keyStyle}>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty ? '' : data.type}</label></label>`
 }
 
 function extractProperties (data, parent, key) {
