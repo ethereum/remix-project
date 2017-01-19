@@ -11,6 +11,9 @@ module.exports = {
 function formatData (key, data) {
   var style = fontColor(data)
   var keyStyle = data.isProperty ? 'color:#847979' : ''
+  if (data.type === 'string') {
+    data.self = '"' + data.self + '"'
+  }
   return yo`<label style=${keyStyle}>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty ? '' : data.type}</label></label>`
 }
 
