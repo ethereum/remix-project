@@ -15,11 +15,12 @@ class TreeView {
     this.extractProperties = opts.extractProperties || this.extractPropertiesDefault
     this.view = null
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
-    this.cssList = ui.formatCss(opts.css || {}, style.list)
+    this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
+    this.cssLi = ui.formatCss(opts.css || {}, style.cssLi)
   }
 
   render (json) {
-    var view = yo`<div>${this.renderProperties(json, true)}</div>`
+    var view = this.renderProperties(json, true)
     if (!this.view) {
       this.view = view
     }
@@ -49,17 +50,17 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand)
     })
-    return yo`<ul style=${this.cssList}>${children}</ul>`
+    return yo`<ul style=${this.cssUl}>${children}</ul>`
   }
 
   formatDataInternal (key, data, children, properties, expand) {
     var renderedProperties = Object.keys(properties).map((item) => {
       return this.formatDataInternal(item, properties[item], [], [], false)
     })
-    var label = yo`<span style=${this.cssLabel}><label style='position:absolute;margin-top: 2px'></label><span style='margin-left: 10px'>${this.formatData(key, data)}</span></span>`
+    var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatData(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
-      renderedChildren = yo`<ul style=${this.cssList}>${renderedProperties}${children}</ul>`
+      renderedChildren = yo`<ul style=${this.cssUl}>${renderedProperties}${children}</ul>`
       renderedChildren.style.display = expand ? 'block' : 'none'
       label.firstElementChild.className = expand ? 'fa fa-caret-down' : 'fa fa-caret-right'
       label.onclick = function () {
@@ -68,7 +69,7 @@ class TreeView {
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
       }
     }
-    return yo`<li style=${this.cssList}>${label}${renderedChildren}</li>`
+    return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
   }
 
   extractPropertiesDefault (key, data) {
