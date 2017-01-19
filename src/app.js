@@ -493,15 +493,10 @@ var run = function () {
       })
   }
 
-  // FIXME: at some point we should invalidate the cache
-  var cachedRemoteFiles = {}
-
   function handleImportCall (url, cb) {
     var githubMatch
     if (files.exists(url)) {
       cb(null, files.get(url))
-    } else if (url in cachedRemoteFiles) {
-      cb(null, cachedRemoteFiles[url])
     } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
       handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
         if (err) {
@@ -509,7 +504,8 @@ var run = function () {
           return
         }
 
-        cachedRemoteFiles[url] = content
+        // FIXME: at some point we should invalidate the cache
+        files.addReadOnly(url, content)
         cb(null, content)
       })
     } else if (/^[^:]*:\/\//.exec(url)) {
