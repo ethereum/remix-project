@@ -4,7 +4,7 @@ var ValueType = require('./ValueType')
 
 class Int extends ValueType {
   constructor (storageBytes) {
-    super(1, storageBytes, 'int')
+    super(1, storageBytes, 'int' + storageBytes * 8)
   }
 
   decodeValue (value) {
