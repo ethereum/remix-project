@@ -1,122 +1,73 @@
-/* global FileReader */
 'use strict'
 
 var EventManager = require('../lib/eventManager')
-var examples = require('./example-contracts')
 
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
 require('../mode-solidity.js')
 
-function Editor (doNotLoadStorage, storage) {
-  var SOL_CACHE_FILE = null
-
+function Editor () {
   var editor = ace.edit('input')
   document.getElementById('input').editor = editor // required to access the editor during tests
   var event = new EventManager()
   this.event = event
   var sessions = {}
   var sourceAnnotations = []
+  var readOnlySessions = {}
+  var currentSession
 
-  this.addMarker = function (lineColumnPos, cssClass) {
-    var currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
-    return editor.session.addMarker(currentRange, cssClass)
+  var emptySession = createSession('')
+
+  function createSession (content) {
+    var s = new ace.EditSession(content, 'ace/mode/javascript')
+    s.setUndoManager(new ace.UndoManager())
+    s.setTabSize(4)
+    s.setUseSoftTabs(true)
+    return s
   }
 
-  this.removeMarker = function (markerId) {
-    editor.session.removeMarker(markerId)
-  }
-
-  this.newFile = function () {
-    var untitledCount = ''
-    while (storage.exists('Untitled' + untitledCount)) {
-      untitledCount = (untitledCount - 0) + 1
-    }
-    this.setCacheFile('Untitled' + untitledCount)
-    this.setCacheFileContent('')
-  }
-
-  this.uploadFile = function (file, callback) {
-    var fileReader = new FileReader()
-    var name = file.name
-
-    var self = this
-    fileReader.onload = function (e) {
-      self.setCacheFile(name)
-      self.setCacheFileContent(e.target.result)
-      callback()
-    }
-    fileReader.readAsText(file)
-  }
-
-  this.setCacheFileContent = function (content) {
-    storage.set(SOL_CACHE_FILE, content)
-  }
-
-  this.setCacheFile = function (cacheFile) {
-    SOL_CACHE_FILE = cacheFile
-  }
-
-  this.getCacheFile = function () {
-    return SOL_CACHE_FILE
-  }
-
-  this.cacheFileIsPresent = function () {
-    return !!SOL_CACHE_FILE
-  }
-
-  this.setNextFile = function (fileKey) {
-    var index = this.getFiles().indexOf(fileKey)
-    this.setCacheFile(this.getFiles()[ Math.max(0, index - 1) ])
-  }
-
-  this.resetSession = function () {
-    editor.setSession(sessions[this.getCacheFile()])
+  function switchSession (path) {
+    currentSession = path
+    editor.setSession(sessions[currentSession])
+    editor.setReadOnly(readOnlySessions[currentSession])
     editor.focus()
   }
 
-  this.removeSession = function (fileKey) {
-    delete sessions[fileKey]
+  this.open = function (path, content) {
+    if (!sessions[path]) {
+      var session = createSession(content)
+      sessions[path] = session
+      readOnlySessions[path] = false
+    }
+    switchSession(path)
   }
 
-  this.renameSession = function (oldFileKey, newFileKey) {
-    if (oldFileKey !== newFileKey) {
-      sessions[newFileKey] = sessions[oldFileKey]
-      this.removeSession(oldFileKey)
+  this.openReadOnly = function (path, content) {
+    if (!sessions[path]) {
+      var session = createSession(content)
+      sessions[path] = session
+      readOnlySessions[path] = true
+    }
+    switchSession(path)
+  }
+
+  this.get = function (path) {
+    if (currentSession === path) {
+      return editor.getValue()
     }
   }
 
-  this.hasFile = function (name) {
-    return this.getFiles().indexOf(name) !== -1
-  }
-
-  this.getFile = function (name) {
-    return storage.get(name)
-  }
-
-  function getFiles () {
-    var files = []
-    storage.keys().forEach(function (f) {
-      // NOTE: as a temporary measure do not show the config file in the editor
-      if (f !== '.browser-solidity.json') {
-        files.push(f)
-        if (!sessions[f]) sessions[f] = newEditorSession(f)
-      }
-    })
-    return files
-  }
-  this.getFiles = getFiles
-
-  this.packageFiles = function () {
-    var files = {}
-    var filesArr = this.getFiles()
-
-    for (var f in filesArr) {
-      files[filesArr[f]] = {
-        content: storage.get(filesArr[f])
-      }
+  this.current = function (path) {
+    if (editor.getSession() === emptySession) {
+      return
     }
-    return files
+    return currentSession
+  }
+
+  this.discard = function (path) {
+    if (currentSession !== path) {
+      delete sessions[path]
+    }
   }
 
   this.resize = function () {
@@ -133,8 +84,13 @@ function Editor (doNotLoadStorage, storage) {
     }
   }
 
-  this.getValue = function () {
-    return editor.getValue()
+  this.addMarker = function (lineColumnPos, cssClass) {
+    var currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
+    return editor.session.addMarker(currentRange, cssClass)
+  }
+
+  this.removeMarker = function (markerId) {
+    editor.session.removeMarker(markerId)
   }
 
   this.clearAnnotations = function () {
@@ -156,15 +112,6 @@ function Editor (doNotLoadStorage, storage) {
     editor.gotoLine(line + 1, col - 1, true)
   }
 
-  function newEditorSession (filekey) {
-    var s = new ace.EditSession(storage.get(filekey), 'ace/mode/javascript')
-    s.setUndoManager(new ace.UndoManager())
-    s.setTabSize(4)
-    s.setUseSoftTabs(true)
-    sessions[filekey] = s
-    return s
-  }
-
   // Do setup on initialisation here
   editor.on('changeSession', function () {
     event.trigger('sessionSwitched', [])
@@ -178,24 +125,6 @@ function Editor (doNotLoadStorage, storage) {
   editor.commands.bindKeys({ 'ctrl-t': null })
   editor.commands.bindKeys({ 'ctrl-f': null })
 
-  if (doNotLoadStorage) {
-    return
-  }
-
-  var files = getFiles()
-
-  if (files.length === 0) {
-    files.push(examples.ballot.name)
-    storage.set(examples.ballot.name, examples.ballot.content)
-  }
-
-  this.setCacheFile(files[0])
-
-  for (var x in files) {
-    sessions[files[x]] = newEditorSession(files[x])
-  }
-
-  editor.setSession(sessions[this.getCacheFile()])
   editor.resize(true)
 }
 
