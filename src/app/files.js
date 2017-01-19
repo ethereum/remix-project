@@ -10,7 +10,7 @@ function Files (storage) {
   this.exists = function (path) {
     // NOTE: ignore the config file
     if (path === '.browser-solidity.json') {
-      return
+      return false
     }
 
     if (this.isReadOnly(path)) {
@@ -23,7 +23,7 @@ function Files (storage) {
   this.get = function (path) {
     // NOTE: ignore the config file
     if (path === '.browser-solidity.json') {
-      return
+      return null
     }
 
     if (this.isReadOnly(path)) {
@@ -36,25 +36,33 @@ function Files (storage) {
   this.set = function (path, content) {
     // NOTE: ignore the config file
     if (path === '.browser-solidity.json') {
-      return
+      return false
     }
 
     if (!this.isReadOnly(path)) {
       var exists = storage.exists(path)
-      storage.set(path, content)
+      if (!storage.set(path, content)) {
+        return false
+      }
       if (!exists) {
         event.trigger('fileAdded', [path])
       } else {
         event.trigger('fileChanged', [path])
       }
+      return true
     }
+
+    return false
   }
 
   this.addReadOnly = function (path, content) {
     if (!storage.exists(path)) {
       readonly[path] = content
       event.trigger('fileAdded', [path])
+      return true
     }
+
+    return false
   }
 
   this.isReadOnly = function (path) {
@@ -63,22 +71,29 @@ function Files (storage) {
 
   this.remove = function (path) {
     if (!this.exists(path)) {
-      return
+      return false
     }
 
     if (this.isReadOnly(path)) {
       readonly[path] = undefined
     } else {
-      storage.remove(path)
+      if (!storage.remove(path)) {
+        return false
+      }
     }
     event.trigger('fileRemoved', [path])
+    return true
   }
 
   this.rename = function (oldPath, newPath) {
     if (!this.isReadOnly(oldPath) && storage.exists(oldPath)) {
-      storage.rename(oldPath, newPath)
+      if (!storage.rename(oldPath, newPath)) {
+        return false
+      }
       event.trigger('fileRenamed', [oldPath, newPath])
+      return true
     }
+    return false
   }
 
   this.list = function () {
