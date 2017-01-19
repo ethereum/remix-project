@@ -35,9 +35,9 @@ class SolidityLocals {
         warningDiv.innerHTML = 'invalid step index'
         return
       }
-      
+
       if (this.parent.currentStepIndex !== index) return
-      
+
       this.traceManager.waterfall([
         this.traceManager.getStackAt,
         this.traceManager.getMemoryAt],
