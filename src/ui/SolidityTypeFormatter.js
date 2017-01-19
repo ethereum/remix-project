@@ -51,5 +51,5 @@ function isArray (type) {
 }
 
 function isStruct (type) {
-  return type.indexOf('struct') === 0
+  return type.indexOf('struct') === 0 && !isArray(type)
 }
