@@ -35,17 +35,17 @@ class TreeView {
     }
   }
 
-  renderObject (item, key, expand) {
-    var data = this.extractData(item, key)
+  renderObject (item, parent, key, expand) {
+    var data = this.extractData(item, parent, key)
     var children = Object.keys(data.children).map((innerkey) => {
-      return this.renderObject(data.children[innerkey], innerkey, expand)
+      return this.renderObject(data.children[innerkey], data, innerkey, expand)
     })
     return this.formatDataInternal(key, data, children, expand)
   }
 
   renderProperties (json, expand) {
     var children = Object.keys(json).map((innerkey) => {
-      return this.renderObject(json[innerkey], innerkey, expand)
+      return this.renderObject(json[innerkey], json, innerkey, expand)
     })
     return yo`<ul style=${this.cssList}>${children}</ul>`
   }
@@ -70,7 +70,7 @@ class TreeView {
     return yo`<label>${key}: ${data.self}</label>`
   }
 
-  extractDataDefault (item, key) {
+  extractDataDefault (item, parent, key) {
     var ret = {}
     if (item instanceof Array) {
       ret.children = item

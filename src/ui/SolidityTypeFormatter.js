@@ -9,31 +9,34 @@ module.exports = {
 function formatData (key, data) {
   var style = fontColor(data)
   var type = ''
-  if (!isArray(data.type) && !isStruct(data.type)) {
-    type = data.type
-  }
   return yo`<label>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${type}</label></label>`
 }
 
-function extractData (item, key) {
+function extractData (item, parent, key) {
   var ret = {}
-  if (isArray(item.type)) {
+  if (item.type.lastIndexOf(']') === item.type.length - 1) {
     ret.children = item.value || []
-    ret.self = item.type
-  } else if (isStruct(item.type)) {
+    ret.isArray = true
+    if (!parent.isArray) {
+      ret.self = item.type
+    } else {
+      ret.self = 'Array'
+    }
+  } else if (item.type.indexOf('struct') === 0) {
     ret.children = item.value || []
     ret.self = 'Struct' + '{' + Object.keys(ret.children).length + '}'
+    ret.isStruct = true
   } else {
     ret.children = []
     ret.self = item.value
+    ret.type = item.type
   }
-  ret.type = item.type
   return ret
 }
 
 function fontColor (data) {
   var color = '#124B46'
-  if (isArray(data.type) || isStruct(data.type)) {
+  if (data.isArray || data.isStruct) {
     color = '#847979'
   } else if (data.type.indexOf('uint') === 0 ||
               data.type.indexOf('int') === 0 ||
@@ -44,12 +47,4 @@ function fontColor (data) {
     color = '#E91E0C'
   }
   return 'color:' + color
-}
-
-function isArray (type) {
-  return type.lastIndexOf(']') === type.length - 1
-}
-
-function isStruct (type) {
-  return type.indexOf('struct') === 0 && !isArray(type)
 }
