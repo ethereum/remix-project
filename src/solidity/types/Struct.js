@@ -3,8 +3,8 @@ var util = require('./util')
 var RefType = require('./RefType')
 
 class Struct extends RefType {
-  constructor (memberDetails, location) {
-    super(memberDetails.storageSlots, 32, 'struct', location)
+  constructor (memberDetails, location, fullType) {
+    super(memberDetails.storageSlots, 32, 'struct ' + fullType, location)
     this.members = memberDetails.members
   }
 

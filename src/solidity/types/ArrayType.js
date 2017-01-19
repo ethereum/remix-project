@@ -17,7 +17,7 @@ class ArrayType extends RefType {
         storageSlots = arraySize * underlyingType.storageSlots
       }
     }
-    super(storageSlots, 32, 'array', location)
+    super(storageSlots, 32, underlyingType.typeName + '[' + arraySize + ']', location)
     this.underlyingType = underlyingType
     this.arraySize = arraySize
   }

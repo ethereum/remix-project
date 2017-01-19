@@ -9,7 +9,7 @@ module.exports = {
 function formatData (key, data) {
   var style = fontColor(data)
   var type = ''
-  if (data.type !== 'array' && data.type !== 'struct') {
+  if (!isArray(data.type) && !isStruct(data.type)) {
     type = data.type
   }
   return yo`<label>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${type}</label></label>`
@@ -17,10 +17,10 @@ function formatData (key, data) {
 
 function extractData (item, key) {
   var ret = {}
-  if (item.type === 'array') {
+  if (isArray(item.type)) {
     ret.children = item.value || []
-    ret.self = 'Array' + '[' + ret.children.length + ']'
-  } else if (item.type === 'struct') {
+    ret.self = item.type
+  } else if (isStruct(item.type)) {
     ret.children = item.value || []
     ret.self = 'Struct' + '{' + Object.keys(ret.children).length + '}'
   } else {
@@ -33,7 +33,7 @@ function extractData (item, key) {
 
 function fontColor (data) {
   var color = '#124B46'
-  if (data.type === 'array' || data.type === 'struct') {
+  if (isArray(data.type) || isStruct(data.type)) {
     color = '#847979'
   } else if (data.type.indexOf('uint') === 0 ||
               data.type.indexOf('int') === 0 ||
@@ -44,4 +44,12 @@ function fontColor (data) {
     color = '#E91E0C'
   }
   return 'color:' + color
+}
+
+function isArray (type) {
+  return type.lastIndexOf(']') === type.length - 1
+}
+
+function isStruct (type) {
+  return type.indexOf('struct') === 0
 }
