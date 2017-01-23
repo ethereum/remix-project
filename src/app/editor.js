@@ -1,6 +1,7 @@
 /* global FileReader */
 'use strict'
 
+var EventManager = require('../lib/eventManager')
 var examples = require('./example-contracts')
 
 var ace = require('brace')
@@ -11,6 +12,8 @@ function Editor (doNotLoadStorage, storage) {
 
   var editor = ace.edit('input')
   document.getElementById('input').editor = editor // required to access the editor during tests
+  var event = new EventManager()
+  this.event = event
   var sessions = {}
   var sourceAnnotations = []
 
