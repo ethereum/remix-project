@@ -4,7 +4,6 @@ var BN = require('ethereumjs-util').BN
 
 module.exports = {
   formatData: formatData,
-  extractProperties: extractProperties,
   extractData: extractData
 }
 
@@ -17,28 +16,29 @@ function formatData (key, data) {
   return yo`<label style=${keyStyle}>${key}: <label style=${style}>${data.self}</label><label style='font-style:italic'> ${data.isProperty ? '' : data.type}</label></label>`
 }
 
-function extractProperties (data, parent, key) {
-  var ret = {}
-  if (isArray(data.type)) {
-    var length = new BN(data.length.replace('0x', ''), 16)
-    ret['length'] = {
-      self: length.toString(10),
-      type: 'uint',
-      isProperty: true
-    }
-  }
-  return ret
-}
-
 function extractData (item, parent, key) {
   var ret = {}
+  if (item.isProperty) {
+    return item
+  }
   if (item.type.lastIndexOf(']') === item.type.length - 1) {
-    ret.children = item.value || []
+    ret.children = (item.value || []).map(function (item, index) {
+      return {key: index, value: item}
+    })
+    ret.children.unshift({
+      key: 'length',
+      value: {
+        self: (new BN(item.length.replace('0x', ''), 16)).toString(10),
+        type: 'uint',
+        isProperty: true
+      }
+    })
     ret.isArray = true
     ret.self = parent.isArray ? 'Array' : item.type
-    ret.length = item.length
   } else if (item.type.indexOf('struct') === 0) {
-    ret.children = item.value || []
+    ret.children = Object.keys((item.value || {})).map(function (key) {
+      return {key: key, value: item.value[key]}
+    })
     ret.self = item.type
     ret.isStruct = true
   } else {

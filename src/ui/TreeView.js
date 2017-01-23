@@ -39,11 +39,10 @@ class TreeView {
 
   renderObject (item, parent, key, expand) {
     var data = this.extractData(item, parent, key)
-    var children = Object.keys(data.children).map((innerkey) => {
-      return this.renderObject(data.children[innerkey], data, innerkey, expand)
+    var children = (data.children || []).map((child, index) => {
+      return this.renderObject(child.value, data, child.key, expand)
     })
-    var properties = this.extractProperties(item, parent, key)
-    return this.formatDataInternal(key, data, children, properties, expand)
+    return this.formatDataInternal(key, data, children, expand)
   }
 
   renderProperties (json, expand) {
@@ -53,14 +52,11 @@ class TreeView {
     return yo`<ul style=${this.cssUl}>${children}</ul>`
   }
 
-  formatDataInternal (key, data, children, properties, expand) {
-    var renderedProperties = Object.keys(properties).map((item) => {
-      return this.formatDataInternal(item, properties[item], [], [], false)
-    })
+  formatDataInternal (key, data, children, expand) {
     var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatData(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
-      renderedChildren = yo`<ul style=${this.cssUl}>${renderedProperties}${children}</ul>`
+      renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
       renderedChildren.style.display = expand ? 'block' : 'none'
       label.firstElementChild.className = expand ? 'fa fa-caret-down' : 'fa fa-caret-right'
       label.onclick = function () {
@@ -83,10 +79,14 @@ class TreeView {
   extractDataDefault (item, parent, key) {
     var ret = {}
     if (item instanceof Array) {
-      ret.children = item
+      ret.children = item.map((item, index) => {
+        return {key: index, value: item}
+      })
       ret.self = 'Array'
     } else if (item instanceof Object) {
-      ret.children = item
+      ret.children = Object.keys(item).map((key) => {
+        return {key: key, value: item[key]}
+      })
       ret.self = 'Object'
     } else {
       ret.self = item
