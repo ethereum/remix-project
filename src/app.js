@@ -277,7 +277,7 @@ var run = function () {
     return false
   })
 
-  editor.event.register('switched', updateFiles)
+  editor.event.register('sessionSwitched', updateFiles)
 
   function switchToFile (file) {
     editor.setCacheFile(file)
@@ -577,7 +577,7 @@ var run = function () {
 
   editor.event.register('changed', editorOnChange)
   // in order to save the file when switching
-  editor.event.register('switched', editorOnChange)
+  editor.event.register('sessionSwitched', editorOnChange)
 
   $('#compile').click(function () {
     runCompiler()

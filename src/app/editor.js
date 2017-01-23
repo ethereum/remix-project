@@ -165,7 +165,7 @@ function Editor (doNotLoadStorage, storage) {
 
   // Do setup on initialisation here
   editor.on('changeSession', function () {
-    event.trigger('switched', [])
+    event.trigger('sessionSwitched', [])
 
     editor.getSession().on('change', function () {
       event.trigger('changed', [])
