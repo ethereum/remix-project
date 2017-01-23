@@ -575,7 +575,7 @@ var run = function () {
     compileTimeout = window.setTimeout(runCompiler, 300)
   }
 
-  editor.event.register('changed', editorOnChange)
+  editor.event.register('contentChanged', editorOnChange)
   // in order to save the file when switching
   editor.event.register('sessionSwitched', editorOnChange)
 

@@ -168,7 +168,7 @@ function Editor (doNotLoadStorage, storage) {
     event.trigger('sessionSwitched', [])
 
     editor.getSession().on('change', function () {
-      event.trigger('changed', [])
+      event.trigger('contentChanged', [])
     })
   })
 

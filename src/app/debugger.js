@@ -27,7 +27,7 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
   })
 
   // unload if a file has changed (but not if tabs were switched)
-  editor.event.register('changed', function () {
+  editor.event.register('contentChanged', function () {
     self.debugger.unLoad()
   })
 
