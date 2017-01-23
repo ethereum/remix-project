@@ -3,11 +3,11 @@ var yo = require('yo-yo')
 var BN = require('ethereumjs-util').BN
 
 module.exports = {
-  formatData: formatData,
+  formatSelf: formatSelf,
   extractData: extractData
 }
 
-function formatData (key, data) {
+function formatSelf (key, data) {
   var style = fontColor(data)
   var keyStyle = data.isProperty ? 'color:#847979' : ''
   if (data.type === 'string') {

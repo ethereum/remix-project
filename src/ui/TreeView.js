@@ -11,7 +11,7 @@ class TreeView {
     this.beforeJsonNodeRendered = opts.beforeJsonNodeRendered || noop
     this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
     this.extractData = opts.extractData || this.extractDataDefault
-    this.formatData = opts.formatData || this.formatDataDefault
+    this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
     this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
@@ -38,7 +38,7 @@ class TreeView {
     var children = (data.children || []).map((child, index) => {
       return this.renderObject(child.value, data, child.key, expand, keyPath + '_' + child.key)
     })
-    return this.formatDataInternal(key, data, children, expand, keyPath)
+    return this.formatData(key, data, children, expand, keyPath)
   }
 
   renderProperties (json, expand) {
@@ -48,8 +48,8 @@ class TreeView {
     return yo`<ul style=${this.cssUl}>${children}</ul>`
   }
 
-  formatDataInternal (key, data, children, expand, keyPath) {
-    var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatData(key, data)}</span></span>`
+  formatData (key, data, children, expand, keyPath) {
+    var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatSelf(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
       renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
@@ -66,7 +66,7 @@ class TreeView {
     return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
   }
 
-  formatDataDefault (key, data) {
+  formatSelfDefault (key, data) {
     return yo`<label>${key}: ${data.self}</label>`
   }
 

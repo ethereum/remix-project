@@ -12,7 +12,7 @@ class SolidityLocals {
     this.traceManager = _traceManager
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
-      formatData: solidityTypeFormatter.formatData,
+      formatSelf: solidityTypeFormatter.formatSelf,
       extractData: solidityTypeFormatter.extractData
     })
     this.init()
