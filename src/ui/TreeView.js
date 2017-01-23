@@ -12,7 +12,6 @@ class TreeView {
     this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatData = opts.formatData || this.formatDataDefault
-    this.extractProperties = opts.extractProperties || this.extractPropertiesDefault
     this.view = null
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
     this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
@@ -66,10 +65,6 @@ class TreeView {
       }
     }
     return yo`<li id=${key + (new Date().getUTCMilliseconds())} style=${this.cssLi}>${label}${renderedChildren}</li>`
-  }
-
-  extractPropertiesDefault (key, data) {
-    return {}
   }
 
   formatDataDefault (key, data) {
