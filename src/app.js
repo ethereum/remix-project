@@ -47,8 +47,11 @@ var run = function () {
   var config = new Config(storage)
   var currentFile
 
+  // return all the files, except the temporary/readonly ones
   function packageFiles () {
-    return files.list().map(function (path) { return { content: files.get(path) } })
+    return files.list()
+      .filter(function (path) { if (!files.isReadOnly(path)) { return path } })
+      .map(function (path) { return { content: files.get(path) } })
   }
 
   function createNonClashingName (path) {
