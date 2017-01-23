@@ -45,7 +45,7 @@ function Files (storage) {
         return false
       }
       if (!exists) {
-        event.trigger('fileAdded', [path])
+        event.trigger('fileAdded', [path, false])
       } else {
         event.trigger('fileChanged', [path])
       }
@@ -58,7 +58,7 @@ function Files (storage) {
   this.addReadOnly = function (path, content) {
     if (!storage.exists(path)) {
       readonly[path] = content
-      event.trigger('fileAdded', [path])
+      event.trigger('fileAdded', [path, true])
       return true
     }
 
