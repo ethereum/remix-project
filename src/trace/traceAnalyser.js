@@ -90,7 +90,6 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
 }
 
 TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, context) {
-  var outOfGas = runOutOfGas(step)
   if (traceHelper.isCallInstruction(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
     var newAddress
     if (traceHelper.isCreateInstruction(step)) {
@@ -111,10 +110,10 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, conte
     this.traceCache.pushSteps(index, context.currentCallIndex)
     context.lastCallIndex = context.currentCallIndex
     context.currentCallIndex = 0
-  } else if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step) || outOfGas || step.error || step.invalidDepthChange) {
+  } else if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step) || step.error || step.invalidDepthChange) {
     if (index < this.trace.length) {
       callStack.pop()
-      this.traceCache.pushCall(step, index + 1, null, callStack.slice(0), outOfGas || step.error || step.invalidDepthChange, outOfGas)
+      this.traceCache.pushCall(step, index + 1, null, callStack.slice(0), step.error || step.invalidDepthChange)
       this.buildCalldata(index, step, tx, false)
       this.traceCache.pushSteps(index, context.currentCallIndex)
       context.currentCallIndex = context.lastCallIndex + 1
@@ -124,10 +123,6 @@ TraceAnalyser.prototype.buildDepth = function (index, step, tx, callStack, conte
     context.currentCallIndex++
   }
   return context
-}
-
-function runOutOfGas (step) {
-  return parseInt(step.gas) - parseInt(step.gasCost) < 0
 }
 
 module.exports = TraceAnalyser
