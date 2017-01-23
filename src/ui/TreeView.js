@@ -16,7 +16,7 @@ class TreeView {
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
     this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
     this.cssLi = ui.formatCss(opts.css || {}, style.cssLi)
-    this.keyPaths = {}
+    this.nodeIsExpanded = {}
   }
 
   render (json) {
@@ -36,7 +36,7 @@ class TreeView {
   renderObject (item, parent, key, expand, keyPath) {
     var data = this.extractData(item, parent, key)
     var children = (data.children || []).map((child, index) => {
-      return this.renderObject(child.value, data, child.key, expand, keyPath + '_' + child.key)
+      return this.renderObject(child.value, data, child.key, expand, keyPath + ',' + child.key)
     })
     return this.formatData(key, data, children, expand, keyPath)
   }
@@ -53,14 +53,14 @@ class TreeView {
     var renderedChildren = ''
     if (children.length) {
       renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
-      renderedChildren.style.display = this.keyPaths[keyPath] ? this.keyPaths[keyPath] : expand ? 'block' : 'none'
+      renderedChildren.style.display = this.nodeIsExpanded[keyPath] !== undefined ? (this.nodeIsExpanded[keyPath] ? 'block' : 'none') : (expand ? 'block' : 'none')
       label.firstElementChild.className = renderedChildren.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
       var self = this
       label.onclick = function () {
         this.firstElementChild.className = this.firstElementChild.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
         var list = this.parentElement.querySelector('ul')
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
-        self.keyPaths[keyPath] = list.style.display
+        self.nodeIsExpanded[keyPath] = list.style.display === 'block'
       }
     }
     return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
