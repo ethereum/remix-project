@@ -277,6 +277,8 @@ var run = function () {
     return false
   })
 
+  editor.event.register('switched', updateFiles)
+
   function switchToFile (file) {
     editor.setCacheFile(file)
     updateFiles()
@@ -573,7 +575,9 @@ var run = function () {
     compileTimeout = window.setTimeout(runCompiler, 300)
   }
 
-  editor.onChangeSetup(editorOnChange)
+  editor.event.register('changed', editorOnChange)
+  // in order to save the file when switching
+  editor.event.register('switched', editorOnChange)
 
   $('#compile').click(function () {
     runCompiler()
