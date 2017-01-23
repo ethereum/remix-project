@@ -26,10 +26,9 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
     self.removeCurrentMarker()
   })
 
-  this.editor.onChangeSetup(function () {
-    if (arguments.length > 0) { // if arguments.length === 0 this is a session change, we don't want to stop debugging in that case
-      self.debugger.unLoad()
-    }
+  // unload if a file has changed (but not if tabs were switched)
+  editor.event.register('contentChanged', function () {
+    self.debugger.unLoad()
   })
 
   // register selected code item, highlight the corresponding source location

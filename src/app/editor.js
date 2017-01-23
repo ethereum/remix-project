@@ -1,6 +1,7 @@
 /* global FileReader */
 'use strict'
 
+var EventManager = require('../lib/eventManager')
 var examples = require('./example-contracts')
 
 var ace = require('brace')
@@ -11,6 +12,8 @@ function Editor (doNotLoadStorage, storage) {
 
   var editor = ace.edit('input')
   document.getElementById('input').editor = editor // required to access the editor during tests
+  var event = new EventManager()
+  this.event = event
   var sessions = {}
   var sourceAnnotations = []
 
@@ -146,14 +149,6 @@ function Editor (doNotLoadStorage, storage) {
     editor.getSession().setAnnotations(sourceAnnotations)
   }
 
-  this.onChangeSetup = function (onChange) {
-    editor.getSession().on('change', onChange)
-    editor.on('changeSession', function () {
-      editor.getSession().on('change', onChange)
-      onChange()
-    })
-  }
-
   this.handleErrorClick = function (errLine, errCol) {
     editor.focus()
     editor.gotoLine(errLine + 1, errCol - 1, true)
@@ -169,6 +164,13 @@ function Editor (doNotLoadStorage, storage) {
   }
 
   // Do setup on initialisation here
+  editor.on('changeSession', function () {
+    event.trigger('sessionSwitched', [])
+
+    editor.getSession().on('change', function () {
+      event.trigger('contentChanged', [])
+    })
+  })
 
   // Unmap ctrl-t & ctrl-f
   editor.commands.bindKeys({ 'ctrl-t': null })
