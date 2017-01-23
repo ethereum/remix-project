@@ -3,8 +3,8 @@ var util = require('./util')
 var RefType = require('./RefType')
 
 class Struct extends RefType {
-  constructor (memberDetails, location) {
-    super(memberDetails.storageSlots, 32, 'struct', location)
+  constructor (memberDetails, location, fullType) {
+    super(memberDetails.storageSlots, 32, 'struct ' + fullType, location)
     this.members = memberDetails.members
   }
 
@@ -17,7 +17,10 @@ class Struct extends RefType {
       }
       ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
     })
-    return ret
+    return {
+      value: ret,
+      type: this.typeName
+    }
   }
 
   decodeFromMemoryInternal (offset, memory) {
@@ -28,7 +31,10 @@ class Struct extends RefType {
       ret[item.name] = member
       offset += 32
     })
-    return ret
+    return {
+      value: ret,
+      type: this.typeName
+    }
   }
 }
 

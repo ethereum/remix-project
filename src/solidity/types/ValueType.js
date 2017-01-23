@@ -18,7 +18,10 @@ class ValueType {
     */
   decodeFromStorage (location, storageContent) {
     var value = util.extractHexValue(location, storageContent, this.storageBytes)
-    return this.decodeValue(value)
+    return {
+      value: this.decodeValue(value),
+      type: this.typeName
+    }
   }
 
   /**
@@ -30,10 +33,15 @@ class ValueType {
     * @return {Object} - decoded value
     */
   decodeFromStack (stackDepth, stack, memory) {
+    var value
     if (stackDepth >= stack.length) {
-      return this.decodeValue('')
+      value = this.decodeValue('')
     } else {
-      return this.decodeValue(stack[stack.length - 1 - stackDepth].replace('0x', ''))
+      value = this.decodeValue(stack[stack.length - 1 - stackDepth].replace('0x', ''))
+    }
+    return {
+      value: value,
+      type: this.typeName
     }
   }
 
@@ -46,7 +54,10 @@ class ValueType {
     */
   decodeFromMemory (offset, memory) {
     var value = memory.substr(2 * offset, 64)
-    return this.decodeValue(util.extractHexByteSlice(value, this.storageBytes, 0))
+    return {
+      value: this.decodeValue(util.extractHexByteSlice(value, this.storageBytes, 0)),
+      type: this.typeName
+    }
   }
 }
 

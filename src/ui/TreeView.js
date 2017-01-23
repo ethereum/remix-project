@@ -11,14 +11,16 @@ class TreeView {
     this.beforeJsonNodeRendered = opts.beforeJsonNodeRendered || noop
     this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
     this.extractData = opts.extractData || this.extractDataDefault
-    this.formatData = opts.formatData || this.formatDataDefault
+    this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
-    this.cssList = ui.formatCss(opts.css || {}, style.list)
+    this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
+    this.cssLi = ui.formatCss(opts.css || {}, style.cssLi)
+    this.nodeIsExpanded = {}
   }
 
   render (json) {
-    var view = yo`<div>${this.renderProperties(json, true)}</div>`
+    var view = this.renderProperties(json, false)
     if (!this.view) {
       this.view = view
     }
@@ -27,52 +29,58 @@ class TreeView {
 
   update (json) {
     if (this.view) {
-      yo.update(this.view, this.render(json), {onBeforeElUpdated: (fromEl, toEl) => {
-        toEl.style.display = fromEl.style.display
-        toEl.className = fromEl.className
-        return true
-      }})
+      yo.update(this.view, this.render(json))
     }
   }
 
-  renderObject (item, key, expand) {
-    var data = this.extractData(item, key)
-    var children = Object.keys(data.children).map((innerkey) => {
-      return this.renderObject(data.children[innerkey], innerkey, expand)
+  renderObject (item, parent, key, expand, keyPath) {
+    var data = this.extractData(item, parent, key)
+    var children = (data.children || []).map((child, index) => {
+      return this.renderObject(child.value, data, child.key, expand, keyPath + ',' + child.key)
     })
-    return this.formatData(key, data.self, children, expand)
+    return this.formatData(key, data, children, expand, keyPath)
   }
 
   renderProperties (json, expand) {
     var children = Object.keys(json).map((innerkey) => {
-      return this.renderObject(json[innerkey], innerkey, expand)
+      return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul style=${this.cssList}>${children}</ul>`
+    return yo`<ul style=${this.cssUl}>${children}</ul>`
   }
 
-  formatDataDefault (key, self, children, expand) {
-    var label = yo`<span style=${this.cssLabel}><label style='width: 10px'></label><label>${key}: ${self}</label></span>`
+  formatData (key, data, children, expand, keyPath) {
+    var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatSelf(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
-      renderedChildren = yo`<ul style=${this.cssList}>${children}</ul>`
-      renderedChildren.style.display = expand ? 'block' : 'none'
-      label.firstElementChild.className = expand ? 'fa fa-caret-down' : 'fa fa-caret-right'
+      renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
+      renderedChildren.style.display = this.nodeIsExpanded[keyPath] !== undefined ? (this.nodeIsExpanded[keyPath] ? 'block' : 'none') : (expand ? 'block' : 'none')
+      label.firstElementChild.className = renderedChildren.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
+      var self = this
       label.onclick = function () {
         this.firstElementChild.className = this.firstElementChild.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
         var list = this.parentElement.querySelector('ul')
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
+        self.nodeIsExpanded[keyPath] = list.style.display === 'block'
       }
     }
-    return yo`<li style=${this.cssList}>${label}${renderedChildren}</li>`
+    return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
   }
 
-  extractDataDefault (item, key) {
+  formatSelfDefault (key, data) {
+    return yo`<label>${key}: ${data.self}</label>`
+  }
+
+  extractDataDefault (item, parent, key) {
     var ret = {}
     if (item instanceof Array) {
-      ret.children = item
+      ret.children = item.map((item, index) => {
+        return {key: index, value: item}
+      })
       ret.self = 'Array'
     } else if (item instanceof Object) {
-      ret.children = item
+      ret.children = Object.keys(item).map((key) => {
+        return {key: key, value: item[key]}
+      })
       ret.self = 'Object'
     } else {
       ret.self = item

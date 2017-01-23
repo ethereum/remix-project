@@ -13,15 +13,18 @@ module.exports = {
   },
   content: {
     'color': '#111111',
-    'width': '100%'
+    'width': '100%',
+    'min-height': '20px'
   },
   inner: {
     'padding': '2px',
-    'margin-left': '10px',
     'word-break': 'break-all'
   },
   copyBtn: {
     'float': 'right',
     'margin-top': '3px'
+  },
+  caret: {
+    'margin-left': '5px'
   }
 }

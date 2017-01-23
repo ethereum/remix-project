@@ -30,7 +30,8 @@ function format (decoded) {
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
   var ret = {
     length: decoded.length,
-    raw: decoded.value
+    raw: decoded.value,
+    type: 'string'
   }
   try {
     ret.value = decodeURIComponent(value)

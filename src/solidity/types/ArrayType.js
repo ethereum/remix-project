@@ -17,7 +17,8 @@ class ArrayType extends RefType {
         storageSlots = arraySize * underlyingType.storageSlots
       }
     }
-    super(storageSlots, 32, 'array', location)
+    var size = arraySize !== 'dynamic' ? arraySize : ''
+    super(storageSlots, 32, underlyingType.typeName + '[' + size + ']', location)
     this.underlyingType = underlyingType
     this.arraySize = arraySize
   }
@@ -52,7 +53,8 @@ class ArrayType extends RefType {
     }
     return {
       value: ret,
-      length: '0x' + size.toString(16)
+      length: '0x' + size.toString(16),
+      type: this.typeName
     }
   }
 
@@ -69,7 +71,11 @@ class ArrayType extends RefType {
       ret.push(this.underlyingType.decodeFromMemory(contentOffset, memory))
       offset += 32
     }
-    return ret
+    return {
+      value: ret,
+      length: '0x' + length.toString(16),
+      type: this.typeName
+    }
   }
 }
 

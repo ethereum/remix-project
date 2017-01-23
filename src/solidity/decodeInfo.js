@@ -181,7 +181,7 @@ function struct (type, stateDefinitions, contractName, location) {
     }
     var memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
     if (!memberDetails) return null
-    return new StructType(memberDetails, location)
+    return new StructType(memberDetails, location, match[1])
   } else {
     return null
   }

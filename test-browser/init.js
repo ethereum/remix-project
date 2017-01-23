@@ -128,7 +128,7 @@ browser.fireEvent = function (el, key, times, callback) {
 }
 
 function assertPanel (id, browser, value) {
-  var selector = '.dropdownpanel div.dropdowncontent div ul'
+  var selector = '.dropdownpanel div.dropdowncontent ul'
   browser.execute(function (id, selector) {
     var el = document.getElementById(id.replace('#', '').replace('.', ''))
     var node = el.querySelector(selector)
@@ -153,7 +153,7 @@ function assertPanel (id, browser, value) {
 }
 
 function assertPanelValue (id, browser, index, value) {
-  var selector = id + ' .dropdownpanel .dropdowncontent div ul'
+  var selector = id + ' .dropdownpanel .dropdowncontent ul'
   browser.execute(function (id, index) {
     var node = document.querySelector(id)
     return node.children[index].innerText

@@ -27,7 +27,9 @@ module.exports = {
     'width': '52%',
     'overflow-y': 'scroll',
     'max-height': '250px',
-    'margin': '0'
+    'margin': '0',
+    'margin-left': '10px',
+    'padding': '2px'
   },
   transactionInfo: {
     'margin-top': '5px'

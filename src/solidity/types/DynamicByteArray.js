@@ -30,7 +30,8 @@ class DynamicByteArray extends RefType {
       var size = parseInt(value.substr(value.length - 2, 2), 16) / 2
       return {
         value: '0x' + value.substr(0, size * 2),
-        length: '0x' + size.toString(16)
+        length: '0x' + size.toString(16),
+        type: this.typeName
       }
     }
   }
@@ -41,7 +42,8 @@ class DynamicByteArray extends RefType {
     length = 2 * parseInt(length, 16)
     return {
       length: '0x' + length.toString(16),
-      value: '0x' + memory.substr(offset + 64, length)
+      value: '0x' + memory.substr(offset + 64, length),
+      type: this.typeName
     }
   }
 }
