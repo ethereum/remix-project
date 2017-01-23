@@ -65,7 +65,7 @@ class TreeView {
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
       }
     }
-    return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
+    return yo`<li id=${key + (new Date().getUTCMilliseconds())} style=${this.cssLi}>${label}${renderedChildren}</li>`
   }
 
   extractPropertiesDefault (key, data) {
