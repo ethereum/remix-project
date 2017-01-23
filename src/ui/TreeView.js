@@ -16,10 +16,11 @@ class TreeView {
     this.cssLabel = ui.formatCss(opts.css || {}, style.label)
     this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
     this.cssLi = ui.formatCss(opts.css || {}, style.cssLi)
+    this.keyPaths = {}
   }
 
   render (json) {
-    var view = this.renderProperties(json, true)
+    var view = this.renderProperties(json, false)
     if (!this.view) {
       this.view = view
     }
@@ -28,43 +29,41 @@ class TreeView {
 
   update (json) {
     if (this.view) {
-      yo.update(this.view, this.render(json), {onBeforeElUpdated: (fromEl, toEl) => {
-        toEl.style.display = fromEl.style.display
-        toEl.className = fromEl.className
-        return true
-      }})
+      yo.update(this.view, this.render(json))
     }
   }
 
-  renderObject (item, parent, key, expand) {
+  renderObject (item, parent, key, expand, keyPath) {
     var data = this.extractData(item, parent, key)
     var children = (data.children || []).map((child, index) => {
-      return this.renderObject(child.value, data, child.key, expand)
+      return this.renderObject(child.value, data, child.key, expand, keyPath + '_' + child.key)
     })
-    return this.formatDataInternal(key, data, children, expand)
+    return this.formatDataInternal(key, data, children, expand, keyPath)
   }
 
   renderProperties (json, expand) {
     var children = Object.keys(json).map((innerkey) => {
-      return this.renderObject(json[innerkey], json, innerkey, expand)
+      return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
     return yo`<ul style=${this.cssUl}>${children}</ul>`
   }
 
-  formatDataInternal (key, data, children, expand) {
+  formatDataInternal (key, data, children, expand, keyPath) {
     var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatData(key, data)}</span></span>`
     var renderedChildren = ''
     if (children.length) {
       renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
-      renderedChildren.style.display = expand ? 'block' : 'none'
-      label.firstElementChild.className = expand ? 'fa fa-caret-down' : 'fa fa-caret-right'
+      renderedChildren.style.display = this.keyPaths[keyPath] ? this.keyPaths[keyPath] : expand ? 'block' : 'none'
+      label.firstElementChild.className = renderedChildren.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
+      var self = this
       label.onclick = function () {
         this.firstElementChild.className = this.firstElementChild.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
         var list = this.parentElement.querySelector('ul')
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
+        self.keyPaths[keyPath] = list.style.display
       }
     }
-    return yo`<li id=${key + (new Date().getUTCMilliseconds())} style=${this.cssLi}>${label}${renderedChildren}</li>`
+    return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
   }
 
   formatDataDefault (key, data) {
