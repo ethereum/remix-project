@@ -123,11 +123,11 @@ var run = function () {
         console.log('comparing to cloud', key, resp)
         if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
           console.log('Overwriting', key)
-          storage.set(key, resp[key])
+          files.set(key, resp[key])
           updateFiles()
         } else {
           console.log('add to obj', obj, key)
-          obj[key] = storage.get(key)
+          obj[key] = files.get(key)
         }
         done++
         if (done >= count) {
@@ -138,9 +138,9 @@ var run = function () {
       })
     }
 
-    for (var y in storage.keys()) {
+    for (var y in files.list()) {
       console.log('checking', y)
-      obj[y] = storage.get(y)
+      obj[y] = files.get(y)
       count++
       check(y)
     }
