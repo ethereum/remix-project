@@ -64,7 +64,3 @@ function fontColor (data) {
   return 'color:' + color
 }
 
-function isArray (type) {
-  return type.lastIndexOf(']') === type.length - 1
-}
-
