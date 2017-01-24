@@ -13,11 +13,7 @@ function Files (storage) {
       return false
     }
 
-    if (this.isReadOnly(path)) {
-      return true
-    } else {
-      return storage.exists(path)
-    }
+    return this.isReadOnly(path) || storage.exists(path)
   }
 
   this.get = function (path) {
@@ -26,11 +22,7 @@ function Files (storage) {
       return null
     }
 
-    if (this.isReadOnly(path)) {
-      return readonly[path]
-    } else {
-      return storage.get(path)
-    }
+    return readonly[path] || storage.get(path)
   }
 
   this.set = function (path, content) {
