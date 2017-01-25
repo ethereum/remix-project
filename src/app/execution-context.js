@@ -71,6 +71,10 @@ function ExecutionContext () {
   this.event = new EventManager()
   var executionContext = injectedProvider ? 'injected' : 'vm'
 
+  this.getProvider = function () {
+    return executionContext
+  }
+
   this.isVM = function () {
     return executionContext === 'vm'
   }

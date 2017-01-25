@@ -499,9 +499,9 @@ var run = function () {
 
   var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, switchToFile, offsetToLineColumnConverter)
   transactionDebugger.addProvider('vm', executionContext.vm())
-  transactionDebugger.switchProvider('vm')
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
+  transactionDebugger.switchProvider(executionContext.getProvider())
 
   var udapp = new UniversalDApp(executionContext, {
     removable: false,
