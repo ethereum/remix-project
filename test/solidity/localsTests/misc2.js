@@ -42,7 +42,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
 
             helper.decodeLocals(st, 7, traceManager, callTree, function (locals) {
               try {
-                st.equals(Object.keys(locals).length, 2)
+                st.equals(Object.keys(locals).length, 0)
               } catch (e) {
                 st.fail(e.message)
               }
