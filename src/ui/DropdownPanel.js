@@ -4,8 +4,10 @@ var ui = require('../helpers/ui')
 var styleDropdown = require('./styles/dropdownPanel')
 var basicStyles = require('./styles/basicStyles')
 var TreeView = require('./TreeView')
+var EventManager = require('../lib/eventManager')
 
 function DropdownPanel (_name, _opts) {
+  this.event = new EventManager()
   if (!_opts) {
     _opts = {}
   }
@@ -82,6 +84,7 @@ DropdownPanel.prototype.hide = function () {
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = 'none'
     caret.className = 'fa fa-caret-right'
+    this.event.trigger('hide', [])
   }
 }
 
@@ -91,6 +94,7 @@ DropdownPanel.prototype.show = function () {
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = ''
     caret.className = 'fa fa-caret-down'
+    this.event.trigger('show', [])
   }
 }
 
