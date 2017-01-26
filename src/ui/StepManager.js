@@ -20,7 +20,6 @@ function StepManager (_parent, _traceManager) {
         console.log(error)
       } else {
         self.slider.init(length)
-        self.soliditySlider.init(self.parent.callTree.reducedTraceBySourceLocation.length)
         self.init()
       }
     })
@@ -32,11 +31,24 @@ function StepManager (_parent, _traceManager) {
     self.soliditySlider.setValue(step)
   })
 
-  this.soliditySlider = new SoliditySlider(this.traceManager, self.parent.callTree.reducedTraceBySourceLocation)
-  this.soliditySlider.event.register('moved', this, function (srcLocationStep) {
-    var step = self.parent.callTree.reducedTraceBySourceLocation[srcLocationStep]
-    self.sliderMoved(step)
-    self.slider.setValue(step)
+  this.soliditySlider = new SoliditySlider(this.traceManager)
+
+  this.parent.callTree.event.register('callTreeReady', () => {
+    this.soliditySlider.setReducedTrace(this.parent.callTree.reducedTraceBySourceLocation)
+    this.soliditySlider.event.register('moved', this, function (srcLocationStep) {
+      var step = self.parent.callTree.reducedTraceBySourceLocation[srcLocationStep]
+      self.sliderMoved(step)
+      self.slider.setValue(step)
+    })
+
+    this.parent.vmDebugger.asmCode.event.register('hide', () => {
+      this.soliditySlider.show()
+      this.slider.hide()
+    })
+    this.parent.vmDebugger.asmCode.event.register('show', () => {
+      this.soliditySlider.hide()
+      this.slider.show()
+    })
   })
 
   this.buttonNavigator = new ButtonNavigator(_parent, this.traceManager)
@@ -61,17 +73,6 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpToException', this, function (exceptionIndex) {
     self.jumpTo(exceptionIndex)
   })
-
-  if (this.parent.solidityProxy.loaded()) {
-    this.parent.vmDebugger.asmCode.register('hide', () => {
-      this.soliditySlider.show()
-      this.slider.hide()
-    })
-    this.parent.vmDebugger.asmCode.register('show', () => {
-      this.soliditySlider.hide()
-      this.slider.show()
-    })
-  }
 }
 
 StepManager.prototype.render = function () {
