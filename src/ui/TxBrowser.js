@@ -36,7 +36,6 @@ TxBrowser.prototype.setDefaultValues = function () {
   this.connectInfo = ''
   this.basicPanel.update({})
   this.basicPanel.hide()
-  this.updateWeb3Url(util.web3.currentProvider.host)
   if (this.view) {
     yo.update(this.view, this.render())
   }
