@@ -72,9 +72,11 @@ DropdownPanel.prototype.toggle = function () {
   if (el.style.display === '') {
     el.style.display = 'none'
     caret.className = 'fa fa-caret-right'
+    this.event.trigger('hide', [])
   } else {
     el.style.display = ''
     caret.className = 'fa fa-caret-down'
+    this.event.trigger('show', [])
   }
 }
 
