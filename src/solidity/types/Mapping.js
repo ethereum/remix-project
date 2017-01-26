@@ -6,16 +6,20 @@ class Mapping extends RefType {
     super(1, 32, 'mapping')
   }
 
-  decodeValue (value) {
-    return '<not implemented>'
-  }
-
   decodeFromStorage (location, storageContent) {
-    return '<not implemented>'
+    return {
+      value: '<not implemented>',
+      length: '0x',
+      type: this.typeName
+    }
   }
 
   decodeFromMemoryInternal (offset, memory) {
-    return '<not implemented>'
+    return {
+      value: '<not implemented>',
+      length: '0x',
+      type: this.typeName
+    }
   }
 }
 
