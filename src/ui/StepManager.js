@@ -1,13 +1,17 @@
 'use strict'
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
+var SoliditySlider = require('./SoliditySlider')
 var EventManager = require('../lib/eventManager')
+var SourceMappingDecoder = require('../util/sourceMappingDecoder')
 var yo = require('yo-yo')
 
 function StepManager (_parent, _traceManager) {
   this.event = new EventManager()
+  this.sourceMappingDecoder = new SourceMappingDecoder()
   this.parent = _parent
   this.traceManager = _traceManager
+  this.sourceMapByAddress = {}
 
   var self = this
   this.parent.event.register('newTraceLoaded', this, function () {
@@ -16,6 +20,7 @@ function StepManager (_parent, _traceManager) {
         console.log(error)
       } else {
         self.slider.init(length)
+        self.soliditySlider.init(self.parent.callTree.reducedTraceBySourceLocation.length)
         self.init()
       }
     })
@@ -24,6 +29,14 @@ function StepManager (_parent, _traceManager) {
   this.slider = new Slider(this.traceManager)
   this.slider.event.register('moved', this, function (step) {
     self.sliderMoved(step)
+    self.soliditySlider.setValue(step)
+  })
+
+  this.soliditySlider = new SoliditySlider(this.traceManager, self.parent.callTree.reducedTraceBySourceLocation)
+  this.soliditySlider.event.register('moved', this, function (srcLocationStep) {
+    var step = self.parent.callTree.reducedTraceBySourceLocation[srcLocationStep]
+    self.sliderMoved(step)
+    self.slider.setValue(step)
   })
 
   this.buttonNavigator = new ButtonNavigator(_parent, this.traceManager)
@@ -48,12 +61,24 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpToException', this, function (exceptionIndex) {
     self.jumpTo(exceptionIndex)
   })
+
+  if (this.parent.solidityProxy.loaded()) {
+    this.parent.vmDebugger.asmCode.register('hide', () => {
+      this.soliditySlider.show()
+      this.slider.hide()
+    })
+    this.parent.vmDebugger.asmCode.register('show', () => {
+      this.soliditySlider.hide()
+      this.slider.show()
+    })
+  }
 }
 
 StepManager.prototype.render = function () {
   return (
   yo`<div>
         ${this.slider.render()}
+        ${this.soliditySlider.render()}
         ${this.buttonNavigator.render()}
       </div>`
   )
@@ -61,12 +86,14 @@ StepManager.prototype.render = function () {
 
 StepManager.prototype.reset = function () {
   this.slider.setValue(0)
+  this.soliditySlider.setValue(0)
   this.currentStepIndex = 0
   this.buttonNavigator.reset()
 }
 
 StepManager.prototype.init = function () {
   this.slider.setValue(0)
+  this.soliditySlider.setValue(0)
   this.changeState(0)
 }
 
@@ -79,6 +106,7 @@ StepManager.prototype.jumpTo = function (step) {
     return
   }
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
@@ -98,6 +126,7 @@ StepManager.prototype.stepIntoForward = function () {
     return
   }
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
@@ -110,6 +139,7 @@ StepManager.prototype.stepIntoBack = function () {
     return
   }
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
@@ -119,6 +149,7 @@ StepManager.prototype.stepOverForward = function () {
   }
   var step = this.traceManager.findStepOverForward(this.currentStepIndex)
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
@@ -128,6 +159,7 @@ StepManager.prototype.stepOverBack = function () {
   }
   var step = this.traceManager.findStepOverBack(this.currentStepIndex)
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
@@ -137,6 +169,7 @@ StepManager.prototype.jumpNextCall = function () {
   }
   var step = this.traceManager.findNextCall(this.currentStepIndex)
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
@@ -146,6 +179,7 @@ StepManager.prototype.jumpOut = function () {
   }
   var step = this.traceManager.findStepOut(this.currentStepIndex)
   this.slider.setValue(step)
+  this.soliditySlider.setValue(step)
   this.changeState(step)
 }
 
