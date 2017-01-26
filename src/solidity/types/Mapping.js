@@ -3,19 +3,23 @@ var RefType = require('./RefType')
 
 class Mapping extends RefType {
   constructor () {
-    super(1, 32, 'mapping')
-  }
-
-  decodeValue (value) {
-    return '<not implemented>'
+    super(1, 32, 'mapping', 'storage')
   }
 
   decodeFromStorage (location, storageContent) {
-    return '<not implemented>'
+    return {
+      value: '<not implemented>',
+      length: '0x',
+      type: this.typeName
+    }
   }
 
   decodeFromMemoryInternal (offset, memory) {
-    return '<not implemented>'
+    return {
+      value: '<not implemented>',
+      length: '0x',
+      type: this.typeName
+    }
   }
 }
 
