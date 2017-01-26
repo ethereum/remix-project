@@ -3,7 +3,7 @@ var RefType = require('./RefType')
 
 class Mapping extends RefType {
   constructor () {
-    super(1, 32, 'mapping')
+    super(1, 32, 'mapping', 'storage')
   }
 
   decodeFromStorage (location, storageContent) {
