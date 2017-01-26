@@ -3,8 +3,10 @@ var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var DropdownPanel = require('./DropdownPanel')
+var EventManager = require('../lib/eventManager')
 
 function CodeListView (_parent, _codeManager) {
+  this.event = new EventManager()
   this.parent = _parent
   this.codeManager = _codeManager
   this.code
@@ -12,6 +14,12 @@ function CodeListView (_parent, _codeManager) {
   this.codeView
   this.itemSelected
   this.basicPanel = new DropdownPanel('Instructions', {json: false})
+  this.basicPanel.event.register('hide', () => {
+    this.event.trigger('hide', [])
+  })
+  this.basicPanel.event.register('show', () => {
+    this.event.trigger('show', [])
+  })
   this.init()
 }
 
