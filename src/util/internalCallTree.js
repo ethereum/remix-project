@@ -87,17 +87,17 @@ async function buildTree (tree, step, scopeId) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {} }
+  var currentSourceLocation = {}
   while (step < tree.traceManager.trace.length) {
     var sourceLocation
     try {
       sourceLocation = await extractSourceLocation(tree, step)
-      var previous = this.reducedTraceBySourceLocation[this.reducedTraceBySourceLocation.length - 1]
-      if (previous &&
-      (sourceLocation.jump !== previous.jump ||
-      sourceLocation.start !== previous.start ||
-      sourceLocation.length !== previous.length ||
-      sourceLocation.file !== previous.file)) {
-        this.reducedTraceBySourceLocation.push(step)
+      if (sourceLocation.jump !== currentSourceLocation.jump ||
+      sourceLocation.start !== currentSourceLocation.start ||
+      sourceLocation.length !== currentSourceLocation.length ||
+      sourceLocation.file !== currentSourceLocation.file) {
+        tree.reducedTraceBySourceLocation.push(step)
+        currentSourceLocation = sourceLocation
       }
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.message }
