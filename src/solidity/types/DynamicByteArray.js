@@ -24,7 +24,8 @@ class DynamicByteArray extends RefType {
       }
       return {
         value: '0x' + ret.replace(/(00)+$/, ''),
-        length: '0x' + length.toString(16)
+        length: '0x' + length.toString(16),
+        type: this.typeName
       }
     } else {
       var size = parseInt(value.substr(value.length - 2, 2), 16) / 2

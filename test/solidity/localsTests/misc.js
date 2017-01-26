@@ -56,23 +56,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
 
             helper.decodeLocals(st, 7, traceManager, callTree, function (locals) {
               try {
-                st.equals(locals['boolFalse'].value, false)
-                st.equals(locals['boolTrue'].value, false)
-                st.equals(locals['testEnum'].value, 'one')
-                st.equals(locals['sender'].value, '0x0000000000000000000000000000000000000000')
-                st.equals(locals['_bytes1'].value, '0x')
-                st.equals(locals['__bytes1'].value, '0x')
-                st.equals(locals['__bytes2'].value, '0x')
-                st.equals(locals['__bytes4'].value, '0x')
-                st.equals(locals['__bytes6'].value, '0x')
-                st.equals(locals['__bytes7'].value, '0x')
-                st.equals(locals['__bytes8'].value, '0x')
-                st.equals(locals['__bytes9'].value, '0x')
-                st.equals(locals['__bytes13'].value, '0x')
-                st.equals(locals['__bytes16'].value, '0x')
-                st.equals(locals['__bytes24'].value, '0x')
-                st.equals(locals['__bytes32'].value, '0x')
-                st.equals(Object.keys(locals).length, 16)
+                st.equals(Object.keys(locals).length, 0)
               } catch (e) {
                 st.fail(e.message)
               }
