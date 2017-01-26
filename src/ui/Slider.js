@@ -36,7 +36,7 @@ class Slider {
   }
 
   init (length) {
-    var slider = document.getElementById('slider')
+    var slider = this.view.querySelector('#slider')
     slider.setAttribute('max', length - 1)
     this.max = length - 1
     this.updateDisabled(length === 0)
@@ -45,14 +45,14 @@ class Slider {
   }
 
   onChange (event) {
-    var value = parseInt(document.getElementById('slider').value)
+    var value = parseInt(this.view.querySelector('#slider').value)
     if (value === this.previousValue) return
     this.previousValue = value
     this.event.trigger('moved', [value])
   }
 
   setValue (value) {
-    var slider = document.getElementById('slider')
+    var slider = this.view.querySelector('#slider')
     var diff = value - slider.value
     if (diff > 0) {
       slider.stepUp(diff)
@@ -63,9 +63,9 @@ class Slider {
 
   updateDisabled (disabled) {
     if (disabled) {
-      document.getElementById('slider').setAttribute('disabled', true)
+      this.view.querySelector('#slider').setAttribute('disabled', true)
     } else {
-      document.getElementById('slider').removeAttribute('disabled')
+      this.view.querySelector('#slider').removeAttribute('disabled')
     }
   }
 
