@@ -58,6 +58,7 @@ class InternalCallTree {
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
     this.astWalker = new AstWalker()
+    this.reducedTraceBySourceLocation = []
   }
 
   /**
@@ -90,6 +91,14 @@ async function buildTree (tree, step, scopeId) {
     var sourceLocation
     try {
       sourceLocation = await extractSourceLocation(tree, step)
+      var previous = this.reducedTraceBySourceLocation[this.reducedTraceBySourceLocation.length - 1]
+      if (previous &&
+      (sourceLocation.jump !== previous.jump ||
+      sourceLocation.start !== previous.start ||
+      sourceLocation.length !== previous.length ||
+      sourceLocation.file !== previous.file)) {
+        this.reducedTraceBySourceLocation.push(step)
+      }
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.message }
     }
