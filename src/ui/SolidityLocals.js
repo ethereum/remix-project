@@ -38,26 +38,24 @@ class SolidityLocals {
 
       if (this.parent.currentStepIndex !== index) return
 
-      this.traceManager.waterfall([
-        this.traceManager.getStackAt,
-        this.traceManager.getMemoryAt],
-        index,
-        (error, result) => {
-          if (!error) {
-            var stack = result[0].value
-            var memory = result[1].value
-            try {
-              this.traceManager.getStorageAt(index, this.parent.tx, (error, storage) => {
-                if (!error) {
-                  var locals = localDecoder.solidityLocals(index, this.internalTreeCall, stack, memory, storage)
-                  this.basicPanel.update(locals)
-                }
-              })
-            } catch (e) {
-              warningDiv.innerHTML = e.message
+      this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
+        this.traceManager.waterfall([
+          this.traceManager.getStackAt,
+          this.traceManager.getMemoryAt],
+          index,
+          (error, result) => {
+            if (!error) {
+              var stack = result[0].value
+              var memory = result[1].value
+              try {
+                var locals = localDecoder.solidityLocals(index, this.internalTreeCall, stack, memory, sourceLocation)
+                this.basicPanel.update(locals)
+              } catch (e) {
+                warningDiv.innerHTML = e.message
+              }
             }
-          }
-        })
+          })
+      })
     })
   }
 }
