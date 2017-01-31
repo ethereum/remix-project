@@ -254,11 +254,11 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   * @return {String} returns the token type (used to instanciate the right decoder) (uint[2] storage ref[2] will return 'array', uint256 will return uintX)
   */
 function typeClass (fullType) {
-  if (fullType.indexOf(']') !== -1) {
-    return 'array'
-  }
   if (fullType.indexOf('mapping') === 0) {
     return 'mapping'
+  }
+  if (fullType.indexOf(']') !== -1) {
+    return 'array'
   }
   if (fullType.indexOf(' ') !== -1) {
     fullType = fullType.split(' ')[0]
