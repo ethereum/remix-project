@@ -1,4 +1,5 @@
 'use strict'
+var util = require('./util')
 
 class RefType {
   constructor (storageSlots, storageBytes, typeName, location) {
@@ -29,10 +30,11 @@ class RefType {
       storage = {} // TODO this is a fallback, should manage properly locals store in storage
     }
     var offset = stack[stack.length - 1 - stackDepth]
-    offset = parseInt(offset, 16)
     if (this.isInStorage()) {
+      offset = util.toBN(offset)
       return this.decodeFromStorage({ offset: 0, slot: offset }, storage)
     } else if (this.isInMemory()) {
+      offset = parseInt(offset, 16)
       return this.decodeFromMemoryInternal(offset, memory)
     } else {
       return {
