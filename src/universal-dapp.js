@@ -706,11 +706,11 @@ UniversalDApp.prototype.deployLibrary = function (contractName, cb) {
       else self.deployLibrary(contractName, cb)
     })
   } else {
-    self.runTx({ data: bytecode, useCall: false }, function (err, result) {
+    self.runTx({ data: bytecode, useCall: false }, function (err, txResult) {
       if (err) {
         return cb(err)
       }
-      var address = self.executionContext.isVM() ? result.createdAddress : result.contractAddress
+      var address = self.executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       self.getContractByName(contractName).address = address
       cb(err, address)
     })
