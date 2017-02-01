@@ -1,6 +1,6 @@
 'use strict'
 
-require('es6-shim')
+require('babel-polyfill')
 var app = require('./app.js')
 var $ = require('jquery')
 
