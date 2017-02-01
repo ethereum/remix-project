@@ -40,8 +40,12 @@ class SolidityLocals {
             var stack = result[0].value
             var memory = result[1].value
             try {
-              var locals = localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, sourceLocation)
-              this.basicPanel.update(locals)
+              this.traceManager.getStorageAt(this.parent.currentStepIndex, this.parent.tx, (error, storage) => {
+                if (!error) {
+                  var locals = localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storage, sourceLocation)
+                  this.basicPanel.update(locals)
+                }
+              })
             } catch (e) {
               warningDiv.innerHTML = e.message
             }
