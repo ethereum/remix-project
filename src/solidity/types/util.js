@@ -11,7 +11,8 @@ module.exports = {
   sha3: sha3,
   toBN: toBN,
   add: add,
-  extractLocation: extractLocation
+  extractLocation: extractLocation,
+  removeLocation: removeLocation
 }
 
 function decodeInt (location, storageContent, byteLength, signed) {
@@ -91,6 +92,10 @@ function toBN (value) {
 
 function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
+}
+
+function removeLocation (type) {
+  return type.replace(/( storage ref| storage pointer| memory| calldata)/g, '')
 }
 
 function extractLocation (type) {
