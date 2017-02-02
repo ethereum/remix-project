@@ -52,6 +52,14 @@ function Ethdebugger () {
     self.stepChanged(stepIndex)
   })
   this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy, callTree)
+
+  this.codeManager.event.register('changed', this, (code, address, instIndex) => {
+    this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.solidityProxy.contracts, (error, sourceLocation) => {
+      if (!error) {
+        this.event.trigger('sourceLocationChanged', [sourceLocation])
+      }
+    })
+  })
 }
 
 Ethdebugger.prototype.web3 = function () {

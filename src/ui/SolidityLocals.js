@@ -28,28 +28,21 @@ class SolidityLocals {
   }
 
   init () {
-    this.parent.event.register('indexChanged', this, (index) => {
+    this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
       var warningDiv = this.view.querySelector('#warning')
       warningDiv.innerHTML = ''
-      if (index < 0) {
-        warningDiv.innerHTML = 'invalid step index'
-        return
-      }
-
-      if (this.parent.currentStepIndex !== index) return
-
       this.traceManager.waterfall([
         this.traceManager.getStackAt,
         this.traceManager.getMemoryAt],
-        index,
+        this.parent.currentStepIndex,
         (error, result) => {
           if (!error) {
             var stack = result[0].value
             var memory = result[1].value
             try {
-              this.traceManager.getStorageAt(index, this.parent.tx, (error, storage) => {
+              this.traceManager.getStorageAt(this.parent.currentStepIndex, this.parent.tx, (error, storage) => {
                 if (!error) {
-                  var locals = localDecoder.solidityLocals(index, this.internalTreeCall, stack, memory, storage)
+                  var locals = localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storage, sourceLocation)
                   this.basicPanel.update(locals)
                 }
               })

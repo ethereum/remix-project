@@ -12,7 +12,7 @@ function decodeLocal (st, index, traceManager, callTree, verifier) {
       index,
       function (error, result) {
         if (!error) {
-          var locals = localDecoder.solidityLocals(index, callTree, result[0].value, result[1].value)
+          var locals = localDecoder.solidityLocals(index, callTree, result[0].value, result[1].value, {}, {start: 5000})
           verifier(locals)
         } else {
           st.fail(error)
