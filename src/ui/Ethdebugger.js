@@ -62,6 +62,10 @@ function Ethdebugger () {
   })
 }
 
+Ethdebugger.prototype.setBreakpointManager = function (breakpointManager) {
+  this.breakpointManager = breakpointManager
+}
+
 Ethdebugger.prototype.web3 = function () {
   return util.web3
 }
