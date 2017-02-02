@@ -4,7 +4,6 @@ var AstWalker = require('./astWalker')
 var EventManager = require('../lib/eventManager')
 var decodeInfo = require('../solidity/decodeInfo')
 var util = require('../helpers/util')
-var traceHelper = require('../helpers/traceHelper')
 
 /**
  * Tree representing internal jump into function.
@@ -83,6 +82,25 @@ class InternalCallTree {
     }
     return scope
   }
+
+  extractSourceLocation (step) {
+    var self = this
+    return new Promise(function (resolve, reject) {
+      self.traceManager.getCurrentCalledAddressAt(step, (error, address) => {
+        if (!error) {
+          self.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, self.solidityProxy.contracts, (error, sourceLocation) => {
+            if (!error) {
+              return resolve(sourceLocation)
+            } else {
+              return reject('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
+            }
+          })
+        } else {
+          return reject('InternalCallTree - Cannot retrieve address for step ' + step + ' ' + error)
+        }
+      })
+    })
+  }
 }
 
 async function buildTree (tree, step, scopeId) {
@@ -93,7 +111,7 @@ async function buildTree (tree, step, scopeId) {
   while (step < tree.traceManager.trace.length) {
     var sourceLocation
     try {
-      sourceLocation = await extractSourceLocation(tree, step)
+      sourceLocation = await tree.extractSourceLocation(step)
       if (sourceLocation.start !== currentSourceLocation.start ||
       sourceLocation.length !== currentSourceLocation.length ||
       sourceLocation.file !== currentSourceLocation.file) {
@@ -154,24 +172,6 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
       }
     })
   }
-}
-
-function extractSourceLocation (tree, step) {
-  return new Promise(function (resolve, reject) {
-    tree.traceManager.getCurrentCalledAddressAt(step, (error, address) => {
-      if (!error) {
-        tree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, tree.solidityProxy.contracts, (error, sourceLocation) => {
-          if (!error) {
-            return resolve(sourceLocation)
-          } else {
-            return reject('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
-          }
-        })
-      } else {
-        return reject('InternalCallTree - Cannot retrieve address for step ' + step + ' ' + error)
-      }
-    })
-  })
 }
 
 function resolveVariableDeclaration (tree, step, sourceLocation) {
