@@ -20,7 +20,7 @@ class breakpointManager {
         } catch (e) {
           console.log('cannot jump to breakpoint ' + e.message)
         }
-        if (this.checkSourceLocation(sourceLocation)) {
+        if (this.checkSourceLocation(sourceLocation, currentStep)) {
           this.debugger.stepManager.jumpTo(currentStep)
           this.event.trigger('breakpointHit', [sourceLocation])
           break
@@ -29,15 +29,15 @@ class breakpointManager {
     }
   }
 
-  checkSourceLocation (sourceLocation) {
+  checkSourceLocation (sourceLocation, currentStep) {
     if (this.breakpoints[sourceLocation.file]) {
       var sources = this.breakpoints[sourceLocation.file]
       for (var k in sources) {
         var source = sources[k]
         if (sourceLocation.start >= source.start &&
           sourceLocation.start < source.end &&
-          (this.breakpointHits[source.file][source.row] === this.debugger.currentStepIndex || this.breakpointHits[source.file][source.row] === -1)) {
-          this.breakpointHits[source.file][source.row] = this.debugger.currentStepIndex
+          (this.breakpointHits[source.file][source.row] === currentStep || this.breakpointHits[source.file][source.row] === -1)) {
+          this.breakpointHits[source.file][source.row] = currentStep
           return true
         }
       }
