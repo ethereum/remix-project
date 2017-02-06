@@ -26,7 +26,7 @@ module.exports = {
 function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
-  contractHelper.testContracts(browser, sources.sources.Untitled, ['TestContract'], function () {
+  contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:TestContract'], function () {
     browser.click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
       .click('.instance .call[title="f"]')

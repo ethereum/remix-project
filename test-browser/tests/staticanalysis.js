@@ -32,13 +32,13 @@ module.exports = {
 function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
-  contractHelper.testContracts(browser, sources.sources.Untitled, ['TooMuchGas', 'test1', 'test2'], function () {
+  contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:TooMuchGas', 'Untitled:test1', 'Untitled:test2'], function () {
     browser
       .click('.staticanalysisView')
       .click('#staticanalysisView button')
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         dom.listSelectorContains(['Untitled:1:34: use of tx.origin',
-          'Fallback function of contract TooMuchGas requires too much gas'],
+          'Fallback function of contract Untitled:TooMuchGas requires too much gas'],
           '#staticanalysisresult .warning span',
           browser, function () {
             browser.end()

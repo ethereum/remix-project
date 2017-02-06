@@ -25,7 +25,7 @@ module.exports = {
 function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
-  contractHelper.testContracts(browser, sources.sources.Untitled, ['test1', 'test2'], function () {
+  contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:test1', 'Untitled:test2'], function () {
     browser.end()
   })
 }
