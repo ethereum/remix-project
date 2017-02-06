@@ -4,6 +4,7 @@ var Slider = require('./Slider')
 var EventManager = require('../lib/eventManager')
 var SourceMappingDecoder = require('../util/sourceMappingDecoder')
 var yo = require('yo-yo')
+var utils = require('../helpers/util.js')
 
 function StepManager (_parent, _traceManager) {
   this.event = new EventManager()
@@ -11,6 +12,7 @@ function StepManager (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
   this.sourceMapByAddress = {}
+  this.solidityMode = false
 
   var self = this
   this.parent.event.register('newTraceLoaded', this, function () {
@@ -30,12 +32,12 @@ function StepManager (_parent, _traceManager) {
   })
 
   this.parent.callTree.event.register('callTreeReady', () => {
-    this.slider.setReducedTrace(this.parent.callTree.reducedTrace)
+    this.solidityMode = true
     this.parent.vmDebugger.asmCode.event.register('hide', () => {
-      this.slider.setSolidityMode(true)
+      this.solidityMode = true
     })
     this.parent.vmDebugger.asmCode.event.register('show', () => {
-      this.slider.setSolidityMode(false)
+      this.solidityMode = false
     })
   })
 
@@ -61,6 +63,15 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpToException', this, function (exceptionIndex) {
     self.jumpTo(exceptionIndex)
   })
+}
+
+StepManager.prototype.resolveToReducedTrace = function (value, incr) {
+  if (this.parent.callTree.reducedTrace.length) {
+    var nextSource = utils.findLowerBound(value, this.parent.callTree.reducedTrace)
+    nextSource = nextSource < this.parent.callTree.reducedTrace.length - 1 ? nextSource + incr : nextSource
+    return this.parent.callTree.reducedTrace[nextSource]
+  }
+  return value
 }
 
 StepManager.prototype.render = function () {
@@ -99,6 +110,10 @@ StepManager.prototype.sliderMoved = function (step) {
   if (!this.traceManager.inRange(step)) {
     return
   }
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, 0)
+    this.slider.setValue(step)
+  }
   this.changeState(step)
 }
 
@@ -106,7 +121,12 @@ StepManager.prototype.stepIntoForward = function () {
   if (!this.traceManager.isLoaded()) {
     return
   }
-  var step = this.currentStepIndex + 1
+  var step = this.currentStepIndex
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, 1)
+  } else {
+    step += 1
+  }
   if (!this.traceManager.inRange(step)) {
     return
   }
@@ -118,7 +138,12 @@ StepManager.prototype.stepIntoBack = function () {
   if (!this.traceManager.isLoaded()) {
     return
   }
-  var step = this.currentStepIndex - 1
+  var step = this.currentStepIndex
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, -1)
+  } else {
+    step -= 1
+  }
   if (!this.traceManager.inRange(step)) {
     return
   }
@@ -131,6 +156,9 @@ StepManager.prototype.stepOverForward = function () {
     return
   }
   var step = this.traceManager.findStepOverForward(this.currentStepIndex)
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, 0)
+  }
   this.slider.setValue(step)
   this.changeState(step)
 }
@@ -140,6 +168,9 @@ StepManager.prototype.stepOverBack = function () {
     return
   }
   var step = this.traceManager.findStepOverBack(this.currentStepIndex)
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, 0)
+  }
   this.slider.setValue(step)
   this.changeState(step)
 }
@@ -149,6 +180,9 @@ StepManager.prototype.jumpNextCall = function () {
     return
   }
   var step = this.traceManager.findNextCall(this.currentStepIndex)
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, 0)
+  }
   this.slider.setValue(step)
   this.changeState(step)
 }
@@ -158,6 +192,9 @@ StepManager.prototype.jumpOut = function () {
     return
   }
   var step = this.traceManager.findStepOut(this.currentStepIndex)
+  if (this.solidityMode) {
+    step = this.resolveToReducedTrace(step, 0)
+  }
   this.slider.setValue(step)
   this.changeState(step)
 }

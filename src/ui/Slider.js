@@ -2,7 +2,6 @@
 var style = require('./styles/sliderStyles')
 var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
-var utils = require('../helpers/util.js')
 var ui = require('../helpers/ui')
 
 class Slider {
@@ -48,10 +47,6 @@ class Slider {
 
   onChange (event) {
     var value = parseInt(this.view.querySelector('#slider').value)
-    if (this.solidityMode) {
-      value = utils.findLowerBound(value, this.reducedTrace)
-      this.view.querySelector('#slider').value = value
-    }
     if (value === this.previousValue) return
     this.previousValue = value
     this.event.trigger('moved', [value])
@@ -72,7 +67,7 @@ class Slider {
   }
 
   setSolidityMode (mode) {
-    this.solidityMode = false
+    this.solidityMode = mode
   }
 
   updateDisabled (disabled) {
