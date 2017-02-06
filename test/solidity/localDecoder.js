@@ -48,13 +48,13 @@ function initVM (st, address) {
 
 function test (st, vm, privateKey) {
   var output = compiler.compile(intLocal.contract, 0)
-  intLocalTest(st, vm, privateKey, output.contracts['intLocal'].bytecode, output, function () {
+  intLocalTest(st, vm, privateKey, output.contracts[':intLocal'].bytecode, output, function () {
     output = compiler.compile(miscLocal.contract, 0)
-    miscLocalTest(st, vm, privateKey, output.contracts['miscLocal'].bytecode, output, function () {
+    miscLocalTest(st, vm, privateKey, output.contracts[':miscLocal'].bytecode, output, function () {
       output = compiler.compile(miscLocal.contract, 0)
-      misc2LocalTest(st, vm, privateKey, output.contracts['miscLocal2'].bytecode, output, function () {
+      misc2LocalTest(st, vm, privateKey, output.contracts[':miscLocal2'].bytecode, output, function () {
         output = compiler.compile(structArrayLocal.contract, 0)
-        structArrayLocalTest(st, vm, privateKey, output.contracts['structArrayLocal'].bytecode, output, function () {})
+        structArrayLocalTest(st, vm, privateKey, output.contracts[':structArrayLocal'].bytecode, output, function () {})
       })
     })
   })
