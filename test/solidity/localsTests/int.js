@@ -32,11 +32,12 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
             try {
               st.equals(scopeStarts[0], '')
-              st.equals(scopeStarts[97], '1')
-              st.equals(scopeStarts[112], '1.1')
-              st.equals(scopeStarts[135], '2')
-              st.equals(scopeStarts[154], '3')
-              st.equals(scopeStarts[169], '3.1')
+              st.equals(scopeStarts[12], '1')
+              st.equals(scopeStarts[106], '2')
+              st.equals(scopeStarts[121], '2.1')
+              st.equals(scopeStarts[144], '3')
+              st.equals(scopeStarts[163], '4')
+              st.equals(scopeStarts[178], '4.1')
               st.equals(scopes[''].locals['ui8'].type.typeName, 'uint8')
               st.equals(scopes[''].locals['ui16'].type.typeName, 'uint16')
               st.equals(scopes[''].locals['ui32'].type.typeName, 'uint32')
@@ -52,16 +53,16 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
               st.equals(scopes[''].locals['i256'].type.typeName, 'int256')
               st.equals(scopes[''].locals['i'].type.typeName, 'int256')
               st.equals(scopes[''].locals['ishrink'].type.typeName, 'int32')
-              st.equals(scopes['1'].locals['ui8'].type.typeName, 'uint8')
-              st.equals(scopes['1.1'].locals['ui81'].type.typeName, 'uint8')
-              st.equals(scopes['2'].locals['ui81'].type.typeName, 'uint8')
-              st.equals(scopes['3'].locals['ui8'].type.typeName, 'uint8')
-              st.equals(scopes['3.1'].locals['ui81'].type.typeName, 'uint8')
+              st.equals(scopes['2'].locals['ui8'].type.typeName, 'uint8')
+              st.equals(scopes['2.1'].locals['ui81'].type.typeName, 'uint8')
+              st.equals(scopes['3'].locals['ui81'].type.typeName, 'uint8')
+              st.equals(scopes['4'].locals['ui8'].type.typeName, 'uint8')
+              st.equals(scopes['4.1'].locals['ui81'].type.typeName, 'uint8')
             } catch (e) {
               st.fail(e.message)
             }
 
-            helper.decodeLocals(st, 125, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 95, traceManager, callTree, function (locals) {
               st.equals(Object.keys(locals).length, 16)
               st.equals(locals['ui8'].value, '130')
               st.equals(locals['ui16'].value, '456')

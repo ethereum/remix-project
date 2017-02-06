@@ -7,9 +7,9 @@ tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
     var output = compiler.compile(contracts, 0)
     var sourceMappingDecoder = new SourceMappingDecoder()
-    var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test'].srcmapRuntime, output.sources[''])
+    var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts[':test'].srcmapRuntime, output.sources[''])
     st.equal(node, null)
-    node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 37, output.contracts['test'].srcmapRuntime, output.sources[''])
+    node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 37, output.contracts[':test'].srcmapRuntime, output.sources[''])
     st.notEqual(node, null)
     if (node) {
       st.equal(node.attributes.name, 'f1')
