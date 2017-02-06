@@ -69,7 +69,7 @@ ButtonNavigator.prototype.render = function () {
     </button>
     <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
     </button>
-    <button id='play' title='play' class='fa fa-play' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('play') }} disabled=${this.playDisabled} >
+    <button id='play' title='jump to the next breakpoint' class='fa fa-play' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('play') }} disabled=${this.playDisabled} >
     </button>
     <div id='reverted' style="display:none">
       <button id='jumptoexception' title='jump to exception' class='fa fa-exclamation-triangle' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpToException', [self.revertionPoint]) }} disabled=${this.jumpOutDisabled} >
