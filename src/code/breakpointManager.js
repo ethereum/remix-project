@@ -2,42 +2,45 @@
 var EventManager = require('../lib/eventManager')
 
 class breakpointManager {
-  constructor (_debugger) {
+  constructor (_debugger, _locationToRowConverter) {
     this.event = new EventManager()
     this.debugger = _debugger
     this.breakpoints = {}
     this.isPlaying = false
-    this.breakpointHits = {}
+    this.locationToRowConverter = _locationToRowConverter
+    this.currentLine
   }
 
   async play () {
-    if (this.hasBreakpoint()) {
-      this.isPlaying = true
-      var sourceLocation
-      for (var currentStep = this.debugger.currentStepIndex; currentStep < this.debugger.traceManager.trace.length; currentStep++) {
-        try {
-          sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
-        } catch (e) {
-          console.log('cannot jump to breakpoint ' + e.message)
+    this.isPlaying = true
+    var sourceLocation
+    for (var currentStep = this.debugger.currentStepIndex + 1; currentStep < this.debugger.traceManager.trace.length; currentStep++) {
+      try {
+        sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
+      } catch (e) {
+        console.log('cannot jump to breakpoint ' + e.message)
+      }
+      if (this.locationToRowConverter) {
+        var lineColumn = this.locationToRowConverter(sourceLocation)
+        if (this.currentLine === lineColumn.start.line) {
+          continue
         }
-        if (this.checkSourceLocation(sourceLocation, currentStep)) {
-          this.debugger.stepManager.jumpTo(currentStep)
-          this.event.trigger('breakpointHit', [sourceLocation])
-          break
-        }
+        this.currentLine = lineColumn.start.line
+      }
+      if (this.checkSourceLocation(sourceLocation, currentStep, this.currentLine)) {
+        this.debugger.stepManager.jumpTo(currentStep)
+        this.event.trigger('breakpointHit', [sourceLocation])
+        break
       }
     }
   }
 
-  checkSourceLocation (sourceLocation, currentStep) {
+  checkSourceLocation (sourceLocation, currentStep, currentLine) {
     if (this.breakpoints[sourceLocation.file]) {
       var sources = this.breakpoints[sourceLocation.file]
       for (var k in sources) {
         var source = sources[k]
-        if (sourceLocation.start >= source.start &&
-          sourceLocation.start < source.end &&
-          (this.breakpointHits[source.file][source.row] === currentStep || this.breakpointHits[source.file][source.row] === -1)) {
-          this.breakpointHits[source.file][source.row] = currentStep
+        if (currentLine === source.row) {
           return true
         }
       }
@@ -59,10 +62,6 @@ class breakpointManager {
       this.breakpoints[sourceLocation.file] = []
     }
     this.breakpoints[sourceLocation.file].push(sourceLocation)
-    if (!this.breakpointHits[sourceLocation.file]) {
-      this.breakpointHits[sourceLocation.file] = {}
-    }
-    this.breakpointHits[sourceLocation.file][sourceLocation.row] = -1
   }
 
   remove (sourceLocation) {
@@ -72,7 +71,6 @@ class breakpointManager {
         var source = sources[k]
         if (sourceLocation.start === source.start && sourceLocation.length === source.length) {
           sources.splice(k, 1)
-          this.breakpointHits[sourceLocation.file][source.row] = undefined
           break
         }
       }
