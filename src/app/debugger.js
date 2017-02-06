@@ -12,7 +12,10 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   this.el.appendChild(this.debugger.render())
   this.appAPI = appAPI
   this.markers = {}
-  this.breakPointManager = new remix.code.BreakpointManager(this.debugger)
+  this.breakPointManager = new remix.code.BreakpointManager(this.debugger, (sourceLocation) => {
+    return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.editor, this.compiler.lastCompilationResult.data)
+  })
+
   this.debugger.setBreakpointManager(this.breakPointManager)
   this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {
     this.editor.setBreakpoint(this.touchedBreakpoint, 'breakpointUntouched')
