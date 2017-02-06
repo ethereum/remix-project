@@ -35,8 +35,6 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
         break
       }
     }
-    source.start = self.offsetToLineColumnConverter.lineBreakPositionsByContent[source.file][row > 0 ? row - 1 : 0]
-    source.end = self.offsetToLineColumnConverter.lineBreakPositionsByContent[source.file][row]
     source.row = row
     return source
   }
