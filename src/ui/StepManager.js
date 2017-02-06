@@ -2,13 +2,11 @@
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
 var EventManager = require('../lib/eventManager')
-var SourceMappingDecoder = require('../util/sourceMappingDecoder')
 var yo = require('yo-yo')
 var utils = require('../helpers/util.js')
 
 function StepManager (_parent, _traceManager) {
   this.event = new EventManager()
-  this.sourceMappingDecoder = new SourceMappingDecoder()
   this.parent = _parent
   this.traceManager = _traceManager
   this.sourceMapByAddress = {}
