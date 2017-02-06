@@ -77,14 +77,6 @@ class Slider {
       this.view.querySelector('#slider').removeAttribute('disabled')
     }
   }
-
-  show () {
-    this.view.style.display = 'block'
-  }
-
-  hide () {
-    this.view.style.display = 'none'
-  }
 }
 
 module.exports = Slider
