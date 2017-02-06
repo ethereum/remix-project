@@ -58,7 +58,7 @@ class InternalCallTree {
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
     this.astWalker = new AstWalker()
-    this.reducedTraceBySourceLocation = []
+    this.reducedTrace = []
   }
 
   /**
@@ -96,7 +96,7 @@ async function buildTree (tree, step, scopeId) {
       sourceLocation.start !== currentSourceLocation.start ||
       sourceLocation.length !== currentSourceLocation.length ||
       sourceLocation.file !== currentSourceLocation.file) {
-        tree.reducedTraceBySourceLocation.push(step)
+        tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
       }
     } catch (e) {
