@@ -67,7 +67,7 @@ function getSourceMap (address, code, contracts) {
   var isCreation = helper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
   for (var k in contracts) {
-    if ('0x' + contracts[k][byteProp] === code) {
+    if (code.indexOf('0x' + contracts[k][byteProp]) === 0) {
       return isCreation ? contracts[k].srcmap : srcmapRuntime(contracts[k])
     }
   }
