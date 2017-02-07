@@ -61,7 +61,7 @@ function StepManager (_parent, _traceManager) {
     self.jumpTo(exceptionIndex)
   })
   this.buttonNavigator.event.register('play', (exceptionIndex) => {
-    self.parent.breakpointManager.play()
+    self.parent.breakpointManager.play(true)
   })
 }
 
