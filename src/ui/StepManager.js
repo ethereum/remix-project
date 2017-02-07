@@ -34,7 +34,7 @@ function StepManager (_parent, _traceManager) {
   this.parent.callTree.event.register('callTreeReady', () => {
     this.solidityMode = true
     this.parent.vmDebugger.asmCode.event.register('hide', () => {
-      this.solidityMode = true
+      this.solidityMode = this.parent.callTree.reducedTrace.length !== 0
     })
     this.parent.vmDebugger.asmCode.event.register('show', () => {
       this.solidityMode = false
