@@ -165,6 +165,7 @@ Renderer.prototype.contracts = function (data, source) {
       code += 'var ' + inp.name + ' = /* var of type ' + inp.type + ' here */ ;\n'
     })
 
+    contractName = contractName.replace(/[:./]/g, '_')
     code += 'var ' + contractName + 'Contract = web3.eth.contract(' + jsonInterface.replace('\n', '') + ');' +
       '\nvar ' + contractName + ' = ' + contractName + 'Contract.new('
 
