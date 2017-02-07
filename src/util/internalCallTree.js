@@ -119,7 +119,7 @@ async function buildTree (tree, step, scopeId) {
         currentSourceLocation = sourceLocation
       }
     } catch (e) {
-      return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.message }
+      return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e }
     }
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }

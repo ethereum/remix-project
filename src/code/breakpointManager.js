@@ -33,7 +33,7 @@ class breakpointManager {
       try {
         sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
       } catch (e) {
-        console.log('cannot jump to breakpoint ' + e.message)
+        console.log('cannot jump to breakpoint ' + e)
       }
       if (this.locationToRowConverter) {
         var lineColumn = this.locationToRowConverter(sourceLocation)
