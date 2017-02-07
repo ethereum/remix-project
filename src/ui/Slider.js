@@ -5,13 +5,14 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 
 class Slider {
-  constructor (_traceManager) {
+  constructor (_traceManager, _stepOverride) {
     this.event = new EventManager()
     this.traceManager = _traceManager
     this.max
     this.disabled = true
     this.view
     this.solidityMode = false
+    this.stepOverride = _stepOverride
 
     this.previousValue = null
   }
@@ -47,19 +48,17 @@ class Slider {
 
   onChange (event) {
     var value = parseInt(this.view.querySelector('#slider').value)
+    if (this.stepOverride) {
+      value = this.stepOverride(value)
+      this.setValue(value)
+    }
     if (value === this.previousValue) return
     this.previousValue = value
     this.event.trigger('moved', [value])
   }
 
   setValue (value) {
-    var slider = this.view.querySelector('#slider')
-    var diff = value - slider.value
-    if (diff > 0) {
-      slider.stepUp(diff)
-    } else {
-      slider.stepDown(Math.abs(diff))
-    }
+    this.view.querySelector('#slider').value = value
   }
 
   setReducedTrace (trace) {
