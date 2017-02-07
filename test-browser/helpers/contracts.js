@@ -21,7 +21,7 @@ function testContracts (browser, contractCode, compiledContractNames, callback) 
       .clearValue('#input textarea')
       .click('.newFile')
       .setValue('#input textarea', contractCode, function () {})
-      .waitForElementPresent('.contract .create', 2000, true, function () {
+      .waitForElementPresent('.contract .create', 5000, true, function () {
         checkCompiledContracts(browser, compiledContractNames, callback)
       })
 }
