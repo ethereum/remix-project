@@ -26,7 +26,7 @@ class breakpointManager {
     * start looking for the next breakpoint
     *
     */
-  async play () {
+  async play (defaultToEnd) {
     this.isPlaying = true
     var sourceLocation
     for (var currentStep = this.debugger.currentStepIndex + 1; currentStep < this.debugger.traceManager.trace.length; currentStep++) {
@@ -38,6 +38,9 @@ class breakpointManager {
       if (this.locationToRowConverter) {
         var lineColumn = this.locationToRowConverter(sourceLocation)
         if (this.currentLine === lineColumn.start.line) {
+          if (defaultToEnd && currentStep === this.debugger.traceManager.trace.length - 1) {
+            this.debugger.stepManager.jumpTo(currentStep) // jump to the end
+          }
           continue
         }
         this.currentLine = lineColumn.start.line
