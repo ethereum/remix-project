@@ -26,7 +26,7 @@ class breakpointManager {
     * start looking for the next breakpoint
     *
     */
-  async play (defaultToEnd) {
+  async jumpNextBreakpoint (defaultToEnd) {
     this.isPlaying = true
     var sourceLocation
     for (var currentStep = this.debugger.currentStepIndex + 1; currentStep < this.debugger.traceManager.trace.length; currentStep++) {
