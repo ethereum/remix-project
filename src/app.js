@@ -497,7 +497,47 @@ var run = function () {
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
-  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, switchToFile, offsetToLineColumnConverter)
+  var contentToolAPI = {
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
+    }
+  }
+
+  var ethToolAPI = {
+    toWei: (value, unit) => {
+      return executionContext.web3().toWei(value, unit)
+    }
+  }
+
+  var compilerAPI = {
+    lastCompilationResult: () => {
+      return compiler.lastCompilationResult
+    }
+  }
+
+  var editorAPI = {
+    currentOpenedFile: () => {
+      return editor.getCacheFile()
+    },
+    addMarker: (range, css) => {
+      return editor.addMarker(range, css)
+    },
+    removeMarker: (markerId) => {
+      return editor.removeMarker(markerId)
+    },
+    addAnnotation: (info) => {
+      return editor.addAnnotation(info)
+    },
+    hasFile: (file) => {
+      return editor.hasFile(file)
+    },
+    gotoLine: (line, col) => {
+      return editor.gotoLine(line, col)
+    },
+    switchToFile: switchToFile
+  }
+
+  var transactionDebugger = new Debugger('#debugger', executionContext.event, editor.event, editorAPI, compilerAPI, contentToolAPI)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
@@ -508,13 +548,30 @@ var run = function () {
     removable_instances: true
   }, transactionDebugger)
 
+  var udappAPI = {
+    reset: (udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier) => {
+      udapp.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
+    },
+    render: () => {
+      return udapp.render()
+    },
+    getAccounts: (callback) => {
+      udapp.getAccounts(callback)
+    }
+  }
+
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
   })
 
-  var renderer = new Renderer(editor, updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
+  var renderer = new Renderer(editorAPI, udappAPI, ethToolAPI, formalVerification.event, compiler.event) // eslint-disable-line  
+  var rendererAPI = {
+    renderItem: (label, warningContainer, type) => {
+      return renderer.error(label, warningContainer, type)
+    }
+  }
 
-  var staticanalysis = new StaticAnalysis(compiler.event, renderer, editor, offsetToLineColumnConverter)
+  var staticanalysis = new StaticAnalysis(compiler.event, rendererAPI, contentToolAPI)
   $('#staticanalysisView').append(staticanalysis.render())
 
   var autoCompile = document.querySelector('#autoCompile').checked
