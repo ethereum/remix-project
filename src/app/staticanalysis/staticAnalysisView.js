@@ -3,14 +3,13 @@ var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
 
-function staticAnalysisView (compilerEvent, renderer, editor, offsetToColumnConverter) {
+function staticAnalysisView (compilerEvent, rendererAPI, contentToolAPI) {
   this.view = null
-  this.renderer = renderer
-  this.editor = editor
+  this.rendererAPI = rendererAPI
   this.runner = new StaticAnalysisRunner()
-  this.offsetToColumnConverter = offsetToColumnConverter
   this.modulesView = renderModules(this.runner.modules())
   this.lastCompilationResult = null
+  this.contentToolAPI = contentToolAPI
   var self = this
   compilerEvent.register('compilationFinished', function (success, data, source) {
     self.lastCompilationResult = null
@@ -75,10 +74,10 @@ staticAnalysisView.prototype.run = function () {
               start: parseInt(split[0]),
               length: parseInt(split[1])
             }
-            location = self.offsetToColumnConverter.offsetToLineColumn(location, file, self.editor, self.lastCompilationResult)
+            location = self.contentToolAPI.offsetToLineColumn(location, file)
             location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
-          self.renderer.error(location + ' ' + item.warning, warningContainer, {type: 'warning', useSpan: true, isHTML: true})
+          self.rendererAPI.renderItem(location + ' ' + item.warning, warningContainer, {type: 'warning', useSpan: true, isHTML: true})
         })
       })
       if (warningContainer.html() === '') {
