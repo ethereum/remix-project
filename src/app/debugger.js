@@ -7,16 +7,14 @@ var Range = ace.acequire('ace/range').Range
 /**
  * Manage remix and source highlighting
  */
-function Debugger (id, editor, compiler, executionContextEvent, switchToFile, offsetToLineColumnConverter) {
+function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAPI, contentToolAPI) {
   this.el = document.querySelector(id)
-  this.offsetToLineColumnConverter = offsetToLineColumnConverter
+  this.contentToolAPI = contentToolAPI
   this.debugger = new remix.ui.Debugger()
   this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
   this.el.appendChild(this.debugger.render())
-  this.editor = editor
-  this.switchToFile = switchToFile
-  this.compiler = compiler
-  this.markers = {}
+  this.compilerAPI = compilerAPI
+  this.editorAPI = editorAPI
 
   var self = this
   executionContextEvent.register('contextChanged', this, function (context) {
@@ -28,16 +26,16 @@ function Debugger (id, editor, compiler, executionContextEvent, switchToFile, of
   })
 
   // unload if a file has changed (but not if tabs were switched)
-  editor.event.register('contentChanged', function () {
+  editorEvent.register('contentChanged', function () {
     self.debugger.unLoad()
   })
 
   // register selected code item, highlight the corresponding source location
   this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
-    if (self.compiler.lastCompilationResult) {
-      this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+    if (self.compilerAPI.lastCompilationResult()) {
+      this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.compilerAPI.lastCompilationResult().data.contracts, function (error, rawLocation) {
         if (!error) {
-          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.editor, self.compiler.lastCompilationResult.data)
+          var lineColumnPos = self.contentToolAPI.offsetToLineColumn(rawLocation, rawLocation.file)
           self.highlight(lineColumnPos, rawLocation)
         } else {
           self.unhighlight()
@@ -56,7 +54,7 @@ Debugger.prototype.debug = function (txHash) {
   var self = this
   this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
-      self.debugger.setCompilationResult(self.compiler.lastCompilationResult.data)
+      self.debugger.setCompilationResult(self.compilerAPI.lastCompilationResult().data)
       self.debugger.debug(tx)
     }
   })
@@ -69,11 +67,11 @@ Debugger.prototype.debug = function (txHash) {
  * @param {Object} rawLocation - raw position of the source code to hightlight {start, length, file, jump}
  */
 Debugger.prototype.highlight = function (lineColumnPos, rawLocation) {
-  this.unhighlight()
-  var name = this.editor.getCacheFile() // current opened tab
-  var source = this.compiler.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
+  var name = this.editorAPI.currentOpenedFile() // current opened tab
+  var source = this.compilerAPI.lastCompilationResult().data.sourceList[rawLocation.file] // auto switch to that tab
+  this.removeCurrentMarker()
   if (name !== source) {
-    this.switchToFile(source) // command the app to swicth to the next file
+    this.editorAPI.switchToFile(source) // command the app to swicth to the next file
   }
   var range = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
   this.markers['highlightcode'] = this.editor.addMarker(range, 'highlightcode')
@@ -92,6 +90,8 @@ Debugger.prototype.highlight = function (lineColumnPos, rawLocation) {
 Debugger.prototype.unhighlight = function (lineColumnPos, rawLocation, cssCode) {
   this.removeMarker('highlightcode')
   this.removeMarker('highlightcode_fullLine')
+  this.currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
+  this.currentMarker = this.editorAPI.addMarker(this.currentRange, 'highlightcode')
 }
 
 /**
