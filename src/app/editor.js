@@ -149,9 +149,9 @@ function Editor (doNotLoadStorage, storage) {
     editor.getSession().setAnnotations(sourceAnnotations)
   }
 
-  this.handleErrorClick = function (errLine, errCol) {
+  this.gotoLine = function (line, col) {
     editor.focus()
-    editor.gotoLine(errLine + 1, errCol - 1, true)
+    editor.gotoLine(line + 1, col - 1, true)
   }
 
   function newEditorSession (filekey) {

@@ -4,11 +4,10 @@ var $ = require('jquery')
 
 var utils = require('./utils')
 
-function Renderer (editor, updateFiles, udapp, executionContext, formalVerificationEvent, compilerEvent) {
-  this.editor = editor
-  this.updateFiles = updateFiles
-  this.udapp = udapp
-  this.executionContext = executionContext
+function Renderer (editorAPI, udappAPI, ethToolAPI, formalVerificationEvent, compilerEvent) {
+  this.editorAPI = editorAPI
+  this.udappAPI = udappAPI
+  this.ethToolAPI = ethToolAPI
   var self = this
   formalVerificationEvent.register('compilationFinished', this, function (success, message, container, options) {
     if (!success) {
@@ -55,8 +54,8 @@ Renderer.prototype.error = function (message, container, options) {
     var errFile = err[1]
     var errLine = parseInt(err[2], 10) - 1
     var errCol = err[4] ? parseInt(err[4], 10) : 0
-    if (!opt.noAnnotations && (errFile === '' || errFile === self.editor.getCacheFile())) {
-      self.editor.addAnnotation({
+    if (!opt.noAnnotations && (errFile === '' || errFile === self.editorAPI.currentOpenedFile())) {
+      self.editorAPI.addAnnotation({
         row: errLine,
         column: errCol,
         text: message,
@@ -64,12 +63,11 @@ Renderer.prototype.error = function (message, container, options) {
       })
     }
     $error.click(function (ev) {
-      if (errFile !== '' && errFile !== self.editor.getCacheFile() && self.editor.hasFile(errFile)) {
+      if (errFile !== '' && errFile !== self.editorAPI.currentOpenedFile() && self.editorAPI.hasFile(errFile)) {
         // Switch to file
-        self.editor.setCacheFile(errFile)
-        self.updateFiles()
+        self.editorAPI.switchToFile(errFile)
       }
-      self.editor.handleErrorClick(errLine, errCol)
+      self.editorAPI.gotoLine(errLine, errCol)
     })
   }
   $error.find('.close').click(function (ev) {
@@ -288,7 +286,7 @@ Renderer.prototype.contracts = function (data, source) {
   var self = this
 
   var getSource = function (contractName, source, data) {
-    var currentFile = self.editor.getCacheFile()
+    var currentFile = self.editorAPI.currentOpenedFile()
     return source.sources[currentFile]
   }
 
@@ -299,7 +297,7 @@ Renderer.prototype.contracts = function (data, source) {
   var getValue = function (cb) {
     try {
       var comp = $('#value').val().split(' ')
-      cb(null, self.executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+      cb(null, self.ethToolAPI.toWei(comp[0], comp.slice(1).join(' ')))
     } catch (e) {
       cb(e)
     }
@@ -309,13 +307,13 @@ Renderer.prototype.contracts = function (data, source) {
     cb(null, $('#gasLimit').val())
   }
 
-  this.udapp.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
+  this.udappAPI.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
 
-  var $contractOutput = this.udapp.render()
+  var $contractOutput = this.udappAPI.render()
 
   var $txOrigin = $('#txorigin')
 
-  this.udapp.getAccounts(function (err, accounts) {
+  this.udappAPI.getAccounts(function (err, accounts) {
     if (err) {
       self.error(err.message)
     }
