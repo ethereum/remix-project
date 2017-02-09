@@ -120,6 +120,16 @@ class SolidityProxy {
       return null
     }
   }
+
+  /**
+   * get the filename refering to the index from the compilation result
+   *
+   * @param {Int} index  - index of the filename
+   * @return {String} - filename
+   */
+  fileNameFromIndex (index) {
+    return this.sourceList[index]
+  }
 }
 
 function contractNameFromCode (contracts, code, address) {

@@ -113,8 +113,9 @@ class BreakpointManager {
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
   hasBreakpointAtLine (fileIndex, line) {
-    if (this.breakpoints[fileIndex]) {
-      var sources = this.breakpoints[fileIndex]
+    var filename = this.debugger.solidityProxy.fileNameFromIndex(fileIndex)
+    if (filename && this.breakpoints[filename]) {
+      var sources = this.breakpoints[filename]
       for (var k in sources) {
         var source = sources[k]
         if (line === source.row) {
@@ -145,10 +146,10 @@ class BreakpointManager {
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
   add (sourceLocation) {
-    if (!this.breakpoints[sourceLocation.file]) {
-      this.breakpoints[sourceLocation.file] = []
+    if (!this.breakpoints[sourceLocation.fileName]) {
+      this.breakpoints[sourceLocation.fileName] = []
     }
-    this.breakpoints[sourceLocation.file].push(sourceLocation)
+    this.breakpoints[sourceLocation.fileName].push(sourceLocation)
     this.event.trigger('breakpointAdded', [sourceLocation])
   }
 
@@ -158,8 +159,8 @@ class BreakpointManager {
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
   remove (sourceLocation) {
-    if (this.breakpoints[sourceLocation.file]) {
-      var sources = this.breakpoints[sourceLocation.file]
+    if (this.breakpoints[sourceLocation.fileName]) {
+      var sources = this.breakpoints[sourceLocation.fileName]
       for (var k in sources) {
         var source = sources[k]
         if (sourceLocation.row === source.row) {
