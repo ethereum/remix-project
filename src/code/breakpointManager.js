@@ -1,5 +1,6 @@
 'use strict'
 var EventManager = require('../lib/eventManager')
+var helper = require('../helpers/traceHelper')
 
 /**
   * allow to manage breakpoint
@@ -50,10 +51,26 @@ class BreakpointManager {
       console.log('row converter not provided')
       return
     }
+
+    function hitLine (currentStep, sourceLocation, self) {
+      if (helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) ||
+      helper.isReturnInstruction(self.debugger.traceManager.trace[currentStep - 1]) ||
+      helper.isStopInstruction(self.debugger.traceManager.trace[currentStep - 1])) {
+        return false
+      } else {
+        self.debugger.stepManager.jumpTo(currentStep)
+        self.event.trigger('breakpointHit', [sourceLocation])
+        return true
+      }
+    }
+
     var sourceLocation
+    var previousSourceLocation
     var currentStep = this.debugger.currentStepIndex + direction
+    var lineHadBreakpoint = false
     while (currentStep > 0 && currentStep < this.debugger.traceManager.trace.length) {
       try {
+        previousSourceLocation = sourceLocation
         sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
@@ -61,11 +78,23 @@ class BreakpointManager {
       }
       var lineColumn = this.locationToRowConverter(sourceLocation)
       if (this.previousLine !== lineColumn.start.line) {
+        if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
+          if (hitLine(currentStep + 1, previousSourceLocation, this)) {
+            break
+          } else {
+            lineHadBreakpoint = false
+          }
+        }
         this.previousLine = lineColumn.start.line
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
-          this.debugger.stepManager.jumpTo(currentStep)
-          this.event.trigger('breakpointHit', [sourceLocation])
-          break
+          lineHadBreakpoint = true
+          if (direction === 1) {
+            if (hitLine(currentStep, sourceLocation, this)) {
+              break
+            } else {
+              lineHadBreakpoint = false
+            }
+          }
         }
       }
       currentStep += direction
