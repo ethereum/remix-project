@@ -47,6 +47,7 @@ class BreakpointManager {
     */
   async jump (direction, defaultToLimit) {
     if (!this.locationToRowConverter) {
+      console.log('row converter not provided')
       return
     }
     var sourceLocation
@@ -56,11 +57,12 @@ class BreakpointManager {
         sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
+        return
       }
       var lineColumn = this.locationToRowConverter(sourceLocation)
       if (this.previousLine !== lineColumn.start.line) {
         this.previousLine = lineColumn.start.line
-        if (this.checkSourceLocation(sourceLocation.file, lineColumn.start.line)) {
+        if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           this.debugger.stepManager.jumpTo(currentStep)
           this.event.trigger('breakpointHit', [sourceLocation])
           break
@@ -81,7 +83,7 @@ class BreakpointManager {
     * @param {Int} line - line number where looking for breakpoint
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
-  checkSourceLocation (fileIndex, line) {
+  hasBreakpointAtLine (fileIndex, line) {
     if (this.breakpoints[fileIndex]) {
       var sources = this.breakpoints[fileIndex]
       for (var k in sources) {
