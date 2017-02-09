@@ -17,37 +17,58 @@ class breakpointManager {
     this.event = new EventManager()
     this.debugger = _debugger
     this.breakpoints = {}
-    this.isPlaying = false
     this.locationToRowConverter = _locationToRowConverter
-    this.currentLine
+    this.previousLine
   }
 
   /**
     * start looking for the next breakpoint
+    * @param {Bool} defaultToLimit - if true jump to the enf of the trace if no more breakpoint found
     *
     */
-  async jumpNextBreakpoint (defaultToEnd) {
-    this.isPlaying = true
+  async jumpNextBreakpoint (defaultToLimit) {
+    this.jump(1, defaultToLimit)
+  }
+
+  /**
+    * start looking for the previous breakpoint
+    * @param {Bool} defaultToLimit - if true jump to the enf of the trace if no more breakpoint found
+    *
+    */
+  async jumpPreviousBreakpoint (defaultToLimit) {
+    this.jump(-1, defaultToLimit)
+  }
+
+   /**
+    * start looking for the previous or next breakpoint
+    * @param {Int} direction - 1 or -1 direction of the search
+    * @param {Bool} defaultToLimit - if true jump to the enf of the trace if no more breakpoint found
+    *
+    */
+  async jump (direction, defaultToLimit) {
+    if (!this.locationToRowConverter) {
+      return
+    }
     var sourceLocation
-    for (var currentStep = this.debugger.currentStepIndex + 1; currentStep < this.debugger.traceManager.trace.length; currentStep++) {
+    var currentStep = this.debugger.currentStepIndex + direction
+    while (currentStep > 0 && currentStep < this.debugger.traceManager.trace.length) {
       try {
         sourceLocation = await this.debugger.callTree.extractSourceLocation(currentStep)
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
       }
-      if (this.locationToRowConverter) {
-        var lineColumn = this.locationToRowConverter(sourceLocation)
-        if (this.currentLine === lineColumn.start.line) {
-          if (defaultToEnd && currentStep === this.debugger.traceManager.trace.length - 1) {
-            this.debugger.stepManager.jumpTo(currentStep) // jump to the end
-          }
-          continue
+      var lineColumn = this.locationToRowConverter(sourceLocation)
+      if (this.previousLine !== lineColumn.start.line) {
+        this.previousLine = lineColumn.start.line
+        if (this.checkSourceLocation(sourceLocation.file, lineColumn.start.line)) {
+          this.debugger.stepManager.jumpTo(currentStep)
+          this.event.trigger('breakpointHit', [sourceLocation])
+          break
         }
-        this.currentLine = lineColumn.start.line
       }
-      if (this.checkSourceLocation(sourceLocation.file, this.currentLine)) {
+      currentStep += direction
+      if (defaultToLimit && (currentStep === this.debugger.traceManager.trace.length - 1 || currentStep === 0)) {
         this.debugger.stepManager.jumpTo(currentStep)
-        this.event.trigger('breakpointHit', [sourceLocation])
         break
       }
     }

@@ -12,6 +12,7 @@ function ButtonNavigator (_parent, _traceManager) {
   this.overForwardDisabled = true
   this.jumpOutDisabled = true
   this.jumpNextBreakpointDisabled = true
+  this.jumpPreviousBreakpointDisabled = true
 
   this.traceManager = _traceManager
   this.currentCall = null
@@ -69,6 +70,8 @@ ButtonNavigator.prototype.render = function () {
     </button>
     <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
     </button>
+    <button id='jumppreviousbreakpoint' title='jump to the previous breakpoint' class='fa fa-step-backward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpPreviousBreakpoint') }} disabled=${this.jumpPreviousBreakpointDisabled} >
+    </button>
     <button id='jumpnextbreakpoint' title='jump to the next breakpoint' class='fa fa-step-forward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextBreakpoint') }} disabled=${this.jumpNextBreakpointDisabled} >
     </button>
     <div id='reverted' style="display:none">
@@ -92,6 +95,7 @@ ButtonNavigator.prototype.reset = function () {
   this.overForwardDisabled = true
   this.jumpOutDisabled = true
   this.jumpNextBreakpointDisabled = true
+  this.jumpPreviousBreakpointDisabled = true
   resetWarning(this)
 }
 
@@ -109,6 +113,7 @@ ButtonNavigator.prototype.stepChanged = function (step) {
         console.log(error)
       } else {
         self.jumpNextBreakpointDisabled = step >= length - 1
+        self.jumpPreviousBreakpointDisabled = step <= 0
         self.intoForwardDisabled = step >= length - 1
         self.overForwardDisabled = step >= length - 1
         var stepOut = self.traceManager.findStepOut(step)
@@ -128,6 +133,7 @@ ButtonNavigator.prototype.updateAll = function () {
   this.updateDisabled('jumpout', this.jumpOutDisabled)
   this.updateDisabled('jumptoexception', this.jumpOutDisabled)
   this.updateDisabled('jumpnextbreakpoint', this.jumpNextBreakpointDisabled)
+  this.updateDisabled('jumppreviousbreakpoint', this.jumpPreviousBreakpointDisabled)
 }
 
 ButtonNavigator.prototype.updateDisabled = function (id, disabled) {

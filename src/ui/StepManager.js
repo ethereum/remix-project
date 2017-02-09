@@ -63,6 +63,9 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
     self.parent.breakpointManager.jumpNextBreakpoint(true)
   })
+  this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
+    self.parent.breakpointManager.jumpPreviousBreakpoint(true)
+  })
 }
 
 StepManager.prototype.resolveToReducedTrace = function (value, incr) {
