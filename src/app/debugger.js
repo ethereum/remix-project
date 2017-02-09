@@ -17,29 +17,18 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
-  this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {})
-
-  function convertSourceLocation (self, fileName, row) {
-    var source = {}
-    for (let file in self.compiler.lastCompilationResult.data.sourceList) {
-      if (self.compiler.lastCompilationResult.data.sourceList[file] === fileName) {
-        source.file = file
-        break
-      }
-    }
-    source.row = row
-    return source
-  }
+  this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {
+  })
 
   editorEvent.register('breakpointCleared', (fileName, row) => {
     if (self.compiler.lastCompilationResult.data) {
-      this.breakPointManager.remove(convertSourceLocation(this, fileName, row))
+      this.breakPointManager.remove({fileName: fileName, row: row})
     }
   })
 
   editorEvent.register('breakpointAdded', (fileName, row) => {
     if (self.compiler.lastCompilationResult.data) {
-      this.breakPointManager.add(convertSourceLocation(this, fileName, row))
+      this.breakPointManager.add({fileName: fileName, row: row})
     }
   })
 
@@ -90,9 +79,11 @@ Debugger.prototype.debug = function (txHash) {
 
 Debugger.prototype.switchFile = function (rawLocation) {
   var name = this.editor.getCacheFile() // current opened tab
-  var source = this.compiler.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
-  if (name !== source) {
-    this.switchToFile(source) // command the app to swicth to the next file
+  if (this.compiler.lastCompilationResult.data) {
+    var source = this.compiler.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
+    if (name !== source) {
+      this.switchToFile(source) // command the app to swicth to the next file
+    }
   }
 }
 
