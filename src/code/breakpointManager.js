@@ -6,7 +6,7 @@ var EventManager = require('../lib/eventManager')
   *
   * Trigger events: breakpointHit, breakpointAdded, breakpointRemoved
   */
-class breakpointManager {
+class BreakpointManager {
   /**
     * constructor
     *
@@ -141,4 +141,4 @@ class breakpointManager {
   }
 }
 
-module.exports = breakpointManager
+module.exports = BreakpointManager
