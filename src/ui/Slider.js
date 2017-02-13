@@ -64,14 +64,6 @@ class Slider {
     this.view.querySelector('#slider').value = value
   }
 
-  setReducedTrace (trace) {
-    this.reducedTrace = trace
-  }
-
-  setSolidityMode (mode) {
-    this.solidityMode = mode
-  }
-
   updateDisabled (disabled) {
     if (disabled) {
       this.view.querySelector('#slider').setAttribute('disabled', true)
