@@ -153,7 +153,7 @@ StepManager.prototype.stepOverForward = function () {
   }
   var step = this.traceManager.findStepOverForward(this.currentStepIndex)
   if (this.solidityMode) {
-    step = this.resolveToReducedTrace(step, 0)
+    step = this.resolveToReducedTrace(step, 1)
   }
   this.slider.setValue(step)
   this.changeState(step)
@@ -165,7 +165,7 @@ StepManager.prototype.stepOverBack = function () {
   }
   var step = this.traceManager.findStepOverBack(this.currentStepIndex)
   if (this.solidityMode) {
-    step = this.resolveToReducedTrace(step, 0)
+    step = this.resolveToReducedTrace(step, -1)
   }
   this.slider.setValue(step)
   this.changeState(step)
