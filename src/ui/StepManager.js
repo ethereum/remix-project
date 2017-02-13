@@ -64,7 +64,7 @@ function StepManager (_parent, _traceManager) {
 
 StepManager.prototype.resolveToReducedTrace = function (value, incr) {
   if (this.parent.callTree.reducedTrace.length) {
-    var nextSource = utils.findLowerBound(value, this.parent.callTree.reducedTrace)
+    var nextSource = utils.findLowerClosestBound(value, this.parent.callTree.reducedTrace)
     nextSource = nextSource < this.parent.callTree.reducedTrace.length - 1 ? nextSource + incr : nextSource
     return this.parent.callTree.reducedTrace[nextSource]
   }

@@ -85,6 +85,20 @@ module.exports = {
     return index >= 0 ? array[index] : null
   },
 
+  /*
+    Binary Search:
+    Assumes that @arg array is sorted increasingly
+    return (saying middle=(array[i] + array[i + 1]) / 2 <= target) return i if target < middle; return i + 1 if target >= middle; return array.length - 1 if index > array.length; return null if array[0] > target || array is empty
+  */
+  findLowerClosestBound: function (target, array) {
+    var index = this.findLowerBound(target, array)
+    if (index > array.length) {
+      return index
+    }
+    var middle = (array[index] + array[index + 1]) / 2
+    return target >= middle ? index + 1 : index
+  },
+
   /**
   * Find the call from @args rootCall which contains @args index (recursive)
   *
