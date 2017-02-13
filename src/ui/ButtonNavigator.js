@@ -10,7 +10,6 @@ function ButtonNavigator (_parent, _traceManager) {
   this.overBackDisabled = true
   this.intoForwardDisabled = true
   this.overForwardDisabled = true
-  this.nextCallDisabled = true
   this.jumpOutDisabled = true
 
   this.traceManager = _traceManager
@@ -67,8 +66,6 @@ ButtonNavigator.prototype.render = function () {
     </button>
     <button id='overforward' title='step over forward' class='fa fa-angle-double-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
     </button>
-    <button id='nextcall'  title='step next call' class='fa fa-chevron-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextCall') }} disabled=${this.nextCallDisabled} >
-    </button>
     <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
     </button>
     <div id='reverted' style="display:none">
@@ -90,7 +87,6 @@ ButtonNavigator.prototype.reset = function () {
   this.overBackDisabled = true
   this.intoForwardDisabled = true
   this.overForwardDisabled = true
-  this.nextCallDisabled = true
   this.jumpOutDisabled = true
   resetWarning(this)
 }
@@ -110,8 +106,6 @@ ButtonNavigator.prototype.stepChanged = function (step) {
       } else {
         self.intoForwardDisabled = step >= length - 1
         self.overForwardDisabled = step >= length - 1
-        var nextCall = self.traceManager.findNextCall(step)
-        self.nextCallDisabled = nextCall === step
         var stepOut = self.traceManager.findStepOut(step)
         self.jumpOutDisabled = stepOut === step
       }
@@ -126,7 +120,6 @@ ButtonNavigator.prototype.updateAll = function () {
   this.updateDisabled('overback', this.overBackDisabled)
   this.updateDisabled('overforward', this.overForwardDisabled)
   this.updateDisabled('intoforward', this.intoForwardDisabled)
-  this.updateDisabled('nextcall', this.nextCallDisabled)
   this.updateDisabled('jumpout', this.jumpOutDisabled)
   this.updateDisabled('jumptoexception', this.jumpOutDisabled)
 }

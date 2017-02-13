@@ -54,9 +54,6 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('stepOverForward', this, function () {
     self.stepOverForward()
   })
-  this.buttonNavigator.event.register('jumpNextCall', this, function () {
-    self.jumpNextCall()
-  })
   this.buttonNavigator.event.register('jumpOut', this, function () {
     self.jumpOut()
   })
@@ -166,18 +163,6 @@ StepManager.prototype.stepOverBack = function () {
   var step = this.traceManager.findStepOverBack(this.currentStepIndex)
   if (this.solidityMode) {
     step = this.resolveToReducedTrace(step, -1)
-  }
-  this.slider.setValue(step)
-  this.changeState(step)
-}
-
-StepManager.prototype.jumpNextCall = function () {
-  if (!this.traceManager.isLoaded()) {
-    return
-  }
-  var step = this.traceManager.findNextCall(this.currentStepIndex)
-  if (this.solidityMode) {
-    step = this.resolveToReducedTrace(step, 0)
   }
   this.slider.setValue(step)
   this.changeState(step)
