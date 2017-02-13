@@ -49,8 +49,11 @@ class Slider {
   onChange (event) {
     var value = parseInt(this.view.querySelector('#slider').value)
     if (this.stepOverride) {
-      value = this.stepOverride(value)
-      this.setValue(value)
+      var correctedValue = this.stepOverride(value)
+      if (correctedValue !== value) {
+        this.setValue(correctedValue)
+        value = correctedValue
+      }
     }
     if (value === this.previousValue) return
     this.previousValue = value
