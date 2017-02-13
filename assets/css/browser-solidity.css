@@ -478,5 +478,12 @@ input[type="file"] {
 .highlightcode {
     position:absolute;
     z-index:20;
-    background-color:#F4B9B7;
+    background-color:#F77E79;
 } 
+
+.highlightcode_fullLine {
+    position:absolute;
+    z-index:20;
+    background-color:#F4B9B7;
+    opacity: 0.5;
+}
