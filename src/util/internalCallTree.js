@@ -97,7 +97,7 @@ async function buildTree (tree, step, scopeId) {
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
-    if (sourceLocation.jump === 'i' || traceHelper.isCallInstruction(tree.traceManager.trace[step])) {
+    if (sourceLocation.jump === 'i') {
       try {
         var result = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
         if (result.error) {
@@ -109,8 +109,7 @@ async function buildTree (tree, step, scopeId) {
       } catch (e) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
-    } else if (sourceLocation.jump === 'o' || traceHelper.isReturnInstruction(tree.traceManager.trace[step]) || traceHelper.isStopInstruction(tree.traceManager.trace[step])) {
-      // traceHelper.isReturnInstruction should be replaced by a more complex structure so it can handle out of gas
+    } else if (sourceLocation.jump === 'o') {
       tree.scopes[scopeId].lastStep = step
       return { outStep: step + 1 }
     } else {
