@@ -4,9 +4,8 @@ var $ = require('jquery')
 
 var utils = require('./utils')
 
-function Renderer (editorAPI, udappAPI, formalVerificationEvent, compilerEvent) {
-  this.editorAPI = editorAPI
-  this.udappAPI = udappAPI
+function Renderer (appAPI, formalVerificationEvent, compilerEvent) {
+  this.appAPI = appAPI
   var self = this
   formalVerificationEvent.register('compilationFinished', this, function (success, message, container, options) {
     if (!success) {
@@ -54,7 +53,7 @@ Renderer.prototype.error = function (message, container, options) {
     var errLine = parseInt(err[2], 10) - 1
     var errCol = err[4] ? parseInt(err[4], 10) : 0
     if (!opt.noAnnotations) {
-      self.editorAPI.error(errFile, {
+      self.appAPI.error(errFile, {
         row: errLine,
         column: errCol,
         text: message,
@@ -62,7 +61,7 @@ Renderer.prototype.error = function (message, container, options) {
       })
     }
     $error.click(function (ev) {
-      self.editorAPI.errorClick(errFile, errLine, errCol)
+      self.appAPI.errorClick(errFile, errLine, errCol)
     })
   }
   $error.find('.close').click(function (ev) {
@@ -275,20 +274,20 @@ Renderer.prototype.contracts = function (data, source) {
       }
     }
 
-    var ctrSource = self.editorAPI.currentCompiledSourceCode()
+    var ctrSource = self.appAPI.currentCompiledSourceCode()
     if (ctrSource) {
       $contractOutput.append(getDetails(contract, ctrSource, contractName))
     }
     return $contractOutput
   }
 
-  this.udappAPI.reset(udappContracts, renderOutputModifier)
+  this.appAPI.resetDapp(udappContracts, renderOutputModifier)
 
-  var $contractOutput = this.udappAPI.render()
+  var $contractOutput = this.appAPI.renderDapp()
 
   var $txOrigin = $('#txorigin')
 
-  this.udappAPI.getAccounts(function (err, accounts) {
+  this.appAPI.getAccounts(function (err, accounts) {
     if (err) {
       self.error(err.message)
     }

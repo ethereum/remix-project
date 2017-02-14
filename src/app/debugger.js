@@ -5,14 +5,12 @@ var remix = require('ethereum-remix')
 /**
  * Manage remix and source highlighting
  */
-function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAPI, contentToolAPI) {
+function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   this.el = document.querySelector(id)
-  this.contentToolAPI = contentToolAPI
   this.debugger = new remix.ui.Debugger()
   this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
   this.el.appendChild(this.debugger.render())
-  this.compilerAPI = compilerAPI
-  this.editorAPI = editorAPI
+  this.appAPI = appAPI
 
   var self = this
   executionContextEvent.register('contextChanged', this, function (context) {
@@ -20,7 +18,7 @@ function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAP
   })
 
   this.debugger.event.register('traceUnloaded', this, function () {
-    self.editorAPI.currentSourceLocation(null)
+    self.appAPI.currentSourceLocation(null)
   })
 
   // unload if a file has changed (but not if tabs were switched)
@@ -30,13 +28,13 @@ function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAP
 
   // register selected code item, highlight the corresponding source location
   this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
-    if (self.compilerAPI.lastCompilationResult()) {
-      this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.compilerAPI.lastCompilationResult().data.contracts, function (error, rawLocation) {
+    if (self.appAPI.lastCompilationResult()) {
+      this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.appAPI.lastCompilationResult().data.contracts, function (error, rawLocation) {
         if (!error) {
-          var lineColumnPos = self.contentToolAPI.offsetToLineColumn(rawLocation, rawLocation.file)
-          self.editorAPI.currentSourceLocation(lineColumnPos, rawLocation)
+          var lineColumnPos = self.appAPI.offsetToLineColumn(rawLocation, rawLocation.file)
+          self.appAPI.currentSourceLocation(lineColumnPos, rawLocation)
         } else {
-          self.editorAPI.currentSourceLocation(null)
+          self.appAPI.currentSourceLocation(null)
         }
       })
     }
@@ -52,7 +50,7 @@ Debugger.prototype.debug = function (txHash) {
   var self = this
   this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
-      self.debugger.setCompilationResult(self.compilerAPI.lastCompilationResult().data)
+      self.debugger.setCompilationResult(self.appAPI.lastCompilationResult().data)
       self.debugger.debug(tx)
     }
   })

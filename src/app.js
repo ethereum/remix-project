@@ -494,39 +494,10 @@ var run = function () {
   var executionContext = new ExecutionContext()
   var compiler = new Compiler(handleImportCall)
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
-
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
-  var contentToolAPI = {
-    offsetToLineColumn: (location, file) => {
-      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
-    }
-  }
-
-  var transactionContextAPI = {
-    getAddress: (cb) => {
-      cb(null, $('#txorigin').val())
-    },
-    getValue: (cb) => {
-      try {
-        var comp = $('#value').val().split(' ')
-        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
-      } catch (e) {
-        cb(e)
-      }
-    },
-    getGasLimit: (cb) => {
-      cb(null, $('#gasLimit').val())
-    }
-  }
-
-  var compilerAPI = {
-    lastCompilationResult: () => {
-      return compiler.lastCompilationResult
-    }
-  }
-
-  var editorAPIDebug = {
+  // ----------------- Debugger -----------------
+  var debugAPI = {
     statementMarker: null,
     fullLineMarker: null,
     currentSourceLocation: (lineColumnPos, location) => {
@@ -554,37 +525,49 @@ var run = function () {
           }, 'highlightcode_fullLine')
         }
       }
+    },
+    lastCompilationResult: () => {
+      return compiler.lastCompilationResult
+    },
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
     }
   }
-
-  var transactionDebugger = new Debugger('#debugger', executionContext.event, editor.event, editorAPIDebug, compilerAPI, contentToolAPI)
+  var transactionDebugger = new Debugger('#debugger', debugAPI, executionContext.event, editor.event)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
   transactionDebugger.switchProvider(executionContext.getProvider())
 
+  // ----------------- UniversalDApp -----------------
   var udapp = new UniversalDApp(executionContext, {
     removable: false,
     removable_instances: true
-  }, transactionDebugger)
-
-  var udappAPI = {
-    reset: (udappContracts, renderOutputModifier) => {
-      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
-    },
-    render: () => {
-      return udapp.render()
-    },
-    getAccounts: (callback) => {
-      udapp.getAccounts(callback)
-    }
-  }
+  })
 
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
   })
 
-  var editorAPIRenderer = {
+  // ----------------- Renderer -----------------
+  var transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var comp = $('#value').val().split(' ')
+        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
+
+  var rendererAPI = {
     error: (file, error) => {
       if (file === editor.getCacheFile()) {
         editor.addAnnotation(error)
@@ -601,18 +584,32 @@ var run = function () {
         return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
       }
       return ''
+    },
+    resetDapp: (udappContracts, renderOutputModifier) => {
+      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
+    },
+    renderDapp: () => {
+      return udapp.render()
+    },
+    getAccounts: (callback) => {
+      udapp.getAccounts(callback)
     }
   }
-  var renderer = new Renderer(editorAPIRenderer, udappAPI, formalVerification.event, compiler.event) // eslint-disable-line  
-  var rendererAPI = {
-    renderItem: (label, warningContainer, type) => {
-      return renderer.error(label, warningContainer, type)
-    }
-  }
+  var renderer = new Renderer(rendererAPI, formalVerification.event, compiler.event)
 
-  var staticanalysis = new StaticAnalysis(compiler.event, rendererAPI, contentToolAPI)
+  // ----------------- StaticAnalysis -----------------
+  var staticAnalysisAPI = {
+    renderWarning: (label, warningContainer, type) => {
+      return renderer.error(label, warningContainer, type)
+    },
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
+    }
+  }
+  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
   $('#staticanalysisView').append(staticanalysis.render())
 
+  // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
   if (config.exists('autoCompile')) {
     autoCompile = config.get('autoCompile')
