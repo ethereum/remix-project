@@ -44,11 +44,13 @@ SolidityState.prototype.init = function () {
 
     self.traceManager.getStorageAt(index, this.parent.tx, function (error, storage) {
       if (error) {
-        self.basicPanel.update({ info: error })
+        self.basicPanel.update({})
+        console.log(error)
       } else {
         self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
           if (error) {
-            self.basicPanel.update({ info: error })
+            self.basicPanel.update({})
+            console.log(error)
           } else {
             self.basicPanel.update(stateDecoder.decodeState(stateVars, storage))
           }

@@ -279,6 +279,7 @@ function typeClass (fullType) {
   */
 function parseType (type, stateDefinitions, contractName, location) {
   var decodeInfos = {
+    'contract': address,
     'address': address,
     'array': array,
     'bool': bool,
