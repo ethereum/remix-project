@@ -309,7 +309,10 @@ var run = function () {
   }
 
   function switchToNextFile () {
-    switchToFile(Object.keys(files.list())[0])
+    var fileList = Object.keys(files.list())
+    if (fileList.length) {
+      switchToFile(fileList[0])
+    }
   }
 
   switchToNextFile()
