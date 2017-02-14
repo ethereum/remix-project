@@ -2,6 +2,7 @@
 var VMDebugger = require('./ui/VmDebugger')
 var Debugger = require('./ui/Ethdebugger')
 var BasicPanel = require('./ui/BasicPanel')
+var TreeView = require('./ui/TreeView')
 var TraceManager = require('./trace/traceManager')
 var CodeManager = require('./code/codeManager')
 var disassembler = require('./code/disassembler')
@@ -31,7 +32,8 @@ function modules () {
     ui: {
       Debugger: Debugger,
       VMdebugger: VMDebugger,
-      BasicPanel: BasicPanel
+      BasicPanel: BasicPanel,
+      TreeView: TreeView
     },
     util: {
       SourceMappingDecoder: SourceMappingDecoder,
