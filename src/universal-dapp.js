@@ -13,7 +13,7 @@ var TxRunner = require('./app/txRunner')
 /*
   trigger debugRequested
 */
-function UniversalDApp (executionContext, options, txdebugger) {
+function UniversalDApp (executionContext, options) {
   this.event = new EventManager()
   var self = this
 
@@ -22,7 +22,6 @@ function UniversalDApp (executionContext, options, txdebugger) {
   self.personalMode = self.options.personalMode || false
   self.contracts
   self.transactionContextAPI
-  self.txdebugger = txdebugger // temporary: will not be needed anymore when we'll add memory support to the VM
   var defaultRenderOutputModifier = function (name, content) { return content }
   self.renderOutputModifier = defaultRenderOutputModifier
   self.web3 = executionContext.web3()
