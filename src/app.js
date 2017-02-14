@@ -518,7 +518,7 @@ var run = function () {
   var editorAPIDebug = {
     statementMarker: null,
     fullLineMarker: null,
-    sourceLocation: (lineColumnPos, location) => {
+    currentSourceLocation: (lineColumnPos, location) => {
       if (this.statementMarker) editor.removeMarker(this.statementMarker)
       if (this.fullLineMarker) editor.removeMarker(this.fullLineMarker)
       this.statementMarker = null

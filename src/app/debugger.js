@@ -20,7 +20,7 @@ function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAP
   })
 
   this.debugger.event.register('traceUnloaded', this, function () {
-    self.editorAPI.sourceLocation(null)
+    self.editorAPI.currentSourceLocation(null)
   })
 
   // unload if a file has changed (but not if tabs were switched)
@@ -34,9 +34,9 @@ function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAP
       this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.compilerAPI.lastCompilationResult().data.contracts, function (error, rawLocation) {
         if (!error) {
           var lineColumnPos = self.contentToolAPI.offsetToLineColumn(rawLocation, rawLocation.file)
-          self.editorAPI.sourceLocation(lineColumnPos, rawLocation)
+          self.editorAPI.currentSourceLocation(lineColumnPos, rawLocation)
         } else {
-          self.editorAPI.sourceLocation(null)
+          self.editorAPI.currentSourceLocation(null)
         }
       })
     }
