@@ -4,10 +4,9 @@ var $ = require('jquery')
 
 var utils = require('./utils')
 
-function Renderer (editorAPI, udappAPI, ethToolAPI, formalVerificationEvent, compilerEvent) {
+function Renderer (editorAPI, udappAPI, formalVerificationEvent, compilerEvent) {
   this.editorAPI = editorAPI
   this.udappAPI = udappAPI
-  this.ethToolAPI = ethToolAPI
   var self = this
   formalVerificationEvent.register('compilationFinished', this, function (success, message, container, options) {
     if (!success) {
@@ -283,24 +282,7 @@ Renderer.prototype.contracts = function (data, source) {
     return $contractOutput
   }
 
-  var getAddress = function (cb) {
-    cb(null, $('#txorigin').val())
-  }
-
-  var getValue = function (cb) {
-    try {
-      var comp = $('#value').val().split(' ')
-      cb(null, self.ethToolAPI.toWei(comp[0], comp.slice(1).join(' ')))
-    } catch (e) {
-      cb(e)
-    }
-  }
-
-  var getGasLimit = function (cb) {
-    cb(null, $('#gasLimit').val())
-  }
-
-  this.udappAPI.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
+  this.udappAPI.reset(udappContracts, renderOutputModifier)
 
   var $contractOutput = this.udappAPI.render()
 

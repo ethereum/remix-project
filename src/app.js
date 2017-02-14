@@ -503,9 +503,20 @@ var run = function () {
     }
   }
 
-  var ethToolAPI = {
-    toWei: (value, unit) => {
-      return executionContext.web3().toWei(value, unit)
+  var transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var comp = $('#value').val().split(' ')
+        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
     }
   }
 
@@ -558,8 +569,8 @@ var run = function () {
   }, transactionDebugger)
 
   var udappAPI = {
-    reset: (udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier) => {
-      udapp.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
+    reset: (udappContracts, renderOutputModifier) => {
+      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
     },
     render: () => {
       return udapp.render()
@@ -592,7 +603,7 @@ var run = function () {
       return ''
     }
   }
-  var renderer = new Renderer(editorAPIRenderer, udappAPI, ethToolAPI, formalVerification.event, compiler.event) // eslint-disable-line  
+  var renderer = new Renderer(editorAPIRenderer, udappAPI, formalVerification.event, compiler.event) // eslint-disable-line  
   var rendererAPI = {
     renderItem: (label, warningContainer, type) => {
       return renderer.error(label, warningContainer, type)

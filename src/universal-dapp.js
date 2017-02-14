@@ -21,9 +21,7 @@ function UniversalDApp (executionContext, options, txdebugger) {
   self.$el = $('<div class="udapp" />')
   self.personalMode = self.options.personalMode || false
   self.contracts
-  self.getAddress
-  self.getValue
-  self.getGasLimit
+  self.transactionContextAPI
   self.txdebugger = txdebugger // temporary: will not be needed anymore when we'll add memory support to the VM
   var defaultRenderOutputModifier = function (name, content) { return content }
   self.renderOutputModifier = defaultRenderOutputModifier
@@ -39,12 +37,10 @@ function UniversalDApp (executionContext, options, txdebugger) {
   })
 }
 
-UniversalDApp.prototype.reset = function (contracts, getAddress, getValue, getGasLimit, renderer) {
+UniversalDApp.prototype.reset = function (contracts, transactionContextAPI, renderer) {
   this.$el.empty()
   this.contracts = contracts
-  this.getAddress = getAddress
-  this.getValue = getValue
-  this.getGasLimit = getGasLimit
+  this.transactionContextAPI = transactionContextAPI
   this.renderOutputModifier = renderer
   this.accounts = {}
   if (this.executionContext.isVM()) {
@@ -734,8 +730,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     function (callback) {
       tx.gasLimit = 3000000
 
-      if (self.getGasLimit) {
-        self.getGasLimit(function (err, ret) {
+      if (self.transactionContextAPI.getGasLimit) {
+        self.transactionContextAPI.getGasLimit(function (err, ret) {
           if (err) {
             return callback(err)
           }
@@ -751,8 +747,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     function (callback) {
       tx.value = 0
 
-      if (self.getValue) {
-        self.getValue(function (err, ret) {
+      if (self.transactionContextAPI.getValue) {
+        self.transactionContextAPI.getValue(function (err, ret) {
           if (err) {
             return callback(err)
           }
@@ -766,8 +762,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     },
     // query address
     function (callback) {
-      if (self.getAddress) {
-        self.getAddress(function (err, ret) {
+      if (self.transactionContextAPI.getAddress) {
+        self.transactionContextAPI.getAddress(function (err, ret) {
           if (err) {
             return callback(err)
           }
