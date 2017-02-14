@@ -494,29 +494,122 @@ var run = function () {
   var executionContext = new ExecutionContext()
   var compiler = new Compiler(handleImportCall)
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
-
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
-  var transactionDebugger = new Debugger('#debugger', editor, compiler, executionContext.event, switchToFile, offsetToLineColumnConverter)
+  // ----------------- Debugger -----------------
+  var debugAPI = {
+    statementMarker: null,
+    fullLineMarker: null,
+    currentSourceLocation: (lineColumnPos, location) => {
+      if (this.statementMarker) editor.removeMarker(this.statementMarker)
+      if (this.fullLineMarker) editor.removeMarker(this.fullLineMarker)
+      this.statementMarker = null
+      this.fullLineMarker = null
+      if (lineColumnPos) {
+        var name = editor.getCacheFile() // current opened tab
+        var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
+        if (name !== source) {
+          switchToFile(source)
+        }
+        this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
+        if (lineColumnPos.start.line === lineColumnPos.end.line) {
+          this.fullLineMarker = editor.addMarker({
+            start: {
+              line: lineColumnPos.start.line,
+              column: 0
+            },
+            end: {
+              line: lineColumnPos.start.line + 1,
+              column: 0
+            }
+          }, 'highlightcode_fullLine')
+        }
+      }
+    },
+    lastCompilationResult: () => {
+      return compiler.lastCompilationResult
+    },
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
+    }
+  }
+  var transactionDebugger = new Debugger('#debugger', debugAPI, executionContext.event, editor.event)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
   transactionDebugger.switchProvider(executionContext.getProvider())
 
+  // ----------------- UniversalDApp -----------------
   var udapp = new UniversalDApp(executionContext, {
     removable: false,
     removable_instances: true
-  }, transactionDebugger)
+  })
 
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
   })
 
-  var renderer = new Renderer(editor, updateFiles, udapp, executionContext, formalVerification.event, compiler.event) // eslint-disable-line
+  // ----------------- Renderer -----------------
+  var transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var comp = $('#value').val().split(' ')
+        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
 
-  var staticanalysis = new StaticAnalysis(compiler.event, renderer, editor, offsetToLineColumnConverter)
+  var rendererAPI = {
+    error: (file, error) => {
+      if (file === editor.getCacheFile()) {
+        editor.addAnnotation(error)
+      }
+    },
+    errorClick: (errFile, errLine, errCol) => {
+      if (errFile !== editor.getCacheFile() && editor.hasFile(errFile)) {
+        switchToFile(errFile)
+      }
+      editor.gotoLine(errLine, errCol)
+    },
+    currentCompiledSourceCode: () => {
+      if (compiler.lastCompilationResult.source) {
+        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
+      }
+      return ''
+    },
+    resetDapp: (udappContracts, renderOutputModifier) => {
+      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
+    },
+    renderDapp: () => {
+      return udapp.render()
+    },
+    getAccounts: (callback) => {
+      udapp.getAccounts(callback)
+    }
+  }
+  var renderer = new Renderer(rendererAPI, formalVerification.event, compiler.event)
+
+  // ----------------- StaticAnalysis -----------------
+  var staticAnalysisAPI = {
+    renderWarning: (label, warningContainer, type) => {
+      return renderer.error(label, warningContainer, type)
+    },
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
+    }
+  }
+  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
   $('#staticanalysisView').append(staticanalysis.render())
 
+  // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
   if (config.exists('autoCompile')) {
     autoCompile = config.get('autoCompile')

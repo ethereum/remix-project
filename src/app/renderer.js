@@ -4,11 +4,8 @@ var $ = require('jquery')
 
 var utils = require('./utils')
 
-function Renderer (editor, updateFiles, udapp, executionContext, formalVerificationEvent, compilerEvent) {
-  this.editor = editor
-  this.updateFiles = updateFiles
-  this.udapp = udapp
-  this.executionContext = executionContext
+function Renderer (appAPI, formalVerificationEvent, compilerEvent) {
+  this.appAPI = appAPI
   var self = this
   formalVerificationEvent.register('compilationFinished', this, function (success, message, container, options) {
     if (!success) {
@@ -55,8 +52,8 @@ Renderer.prototype.error = function (message, container, options) {
     var errFile = err[1]
     var errLine = parseInt(err[2], 10) - 1
     var errCol = err[4] ? parseInt(err[4], 10) : 0
-    if (!opt.noAnnotations && (errFile === '' || errFile === self.editor.getCacheFile())) {
-      self.editor.addAnnotation({
+    if (!opt.noAnnotations) {
+      self.appAPI.error(errFile, {
         row: errLine,
         column: errCol,
         text: message,
@@ -64,12 +61,7 @@ Renderer.prototype.error = function (message, container, options) {
       })
     }
     $error.click(function (ev) {
-      if (errFile !== '' && errFile !== self.editor.getCacheFile() && self.editor.hasFile(errFile)) {
-        // Switch to file
-        self.editor.setCacheFile(errFile)
-        self.updateFiles()
-      }
-      self.editor.handleErrorClick(errLine, errCol)
+      self.appAPI.errorClick(errFile, errLine, errCol)
     })
   }
   $error.find('.close').click(function (ev) {
@@ -263,6 +255,7 @@ Renderer.prototype.contracts = function (data, source) {
     return $('<div class="contractDetails"/>').append(button).append(details)
   }
 
+  var self = this
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
     if (contract.bytecode) {
@@ -281,41 +274,20 @@ Renderer.prototype.contracts = function (data, source) {
       }
     }
 
-    var ctrSource = getSource(contractName, source, data)
-    return $contractOutput.append(getDetails(contract, ctrSource, contractName))
-  }
-
-  var self = this
-
-  var getSource = function (contractName, source, data) {
-    var currentFile = self.editor.getCacheFile()
-    return source.sources[currentFile]
-  }
-
-  var getAddress = function (cb) {
-    cb(null, $('#txorigin').val())
-  }
-
-  var getValue = function (cb) {
-    try {
-      var comp = $('#value').val().split(' ')
-      cb(null, self.executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
-    } catch (e) {
-      cb(e)
+    var ctrSource = self.appAPI.currentCompiledSourceCode()
+    if (ctrSource) {
+      $contractOutput.append(getDetails(contract, ctrSource, contractName))
     }
+    return $contractOutput
   }
 
-  var getGasLimit = function (cb) {
-    cb(null, $('#gasLimit').val())
-  }
+  this.appAPI.resetDapp(udappContracts, renderOutputModifier)
 
-  this.udapp.reset(udappContracts, getAddress, getValue, getGasLimit, renderOutputModifier)
-
-  var $contractOutput = this.udapp.render()
+  var $contractOutput = this.appAPI.renderDapp()
 
   var $txOrigin = $('#txorigin')
 
-  this.udapp.getAccounts(function (err, accounts) {
+  this.appAPI.getAccounts(function (err, accounts) {
     if (err) {
       self.error(err.message)
     }
