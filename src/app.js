@@ -515,29 +515,38 @@ var run = function () {
     }
   }
 
-  var editorAPI = {
-    currentOpenedFile: () => {
-      return editor.getCacheFile()
-    },
-    addMarker: (range, css) => {
-      return editor.addMarker(range, css)
-    },
-    removeMarker: (markerId) => {
-      return editor.removeMarker(markerId)
-    },
-    addAnnotation: (info) => {
-      return editor.addAnnotation(info)
-    },
-    hasFile: (file) => {
-      return editor.hasFile(file)
-    },
-    gotoLine: (line, col) => {
-      return editor.gotoLine(line, col)
-    },
-    switchToFile: switchToFile
+  var editorAPIDebug = {
+    statementMarker: null,
+    fullLineMarker: null,
+    sourceLocation: (lineColumnPos, location) => {
+      if (this.statementMarker) editor.removeMarker(this.statementMarker)
+      if (this.fullLineMarker) editor.removeMarker(this.fullLineMarker)
+      this.statementMarker = null
+      this.fullLineMarker = null
+      if (lineColumnPos) {
+        var name = editor.getCacheFile() // current opened tab
+        var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
+        if (name !== source) {
+          switchToFile(source)
+        }
+        this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
+        if (lineColumnPos.start.line === lineColumnPos.end.line) {
+          this.fullLineMarker = editor.addMarker({
+            start: {
+              line: lineColumnPos.start.line,
+              column: 0
+            },
+            end: {
+              line: lineColumnPos.start.line + 1,
+              column: 0
+            }
+          }, 'highlightcode_fullLine')
+        }
+      }
+    }
   }
 
-  var transactionDebugger = new Debugger('#debugger', executionContext.event, editor.event, editorAPI, compilerAPI, contentToolAPI)
+  var transactionDebugger = new Debugger('#debugger', executionContext.event, editor.event, editorAPIDebug, compilerAPI, contentToolAPI)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
@@ -564,7 +573,26 @@ var run = function () {
     startdebugging(txResult.transactionHash)
   })
 
-  var renderer = new Renderer(editorAPI, udappAPI, ethToolAPI, formalVerification.event, compiler.event) // eslint-disable-line  
+  var editorAPIRenderer = {
+    error: (file, error) => {
+      if (file === editor.getCacheFile()) {
+        editor.addAnnotation(error)
+      }
+    },
+    errorClick: (errFile, errLine, errCol) => {
+      if (errFile !== editor.getCacheFile() && editor.hasFile(errFile)) {
+        switchToFile(errFile)
+      }
+      editor.gotoLine(errLine, errCol)
+    },
+    currentCompiledSourceCode: () => {
+      if (compiler.lastCompilationResult.source) {
+        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
+      }
+      return ''
+    }
+  }
+  var renderer = new Renderer(editorAPIRenderer, udappAPI, ethToolAPI, formalVerification.event, compiler.event) // eslint-disable-line  
   var rendererAPI = {
     renderItem: (label, warningContainer, type) => {
       return renderer.error(label, warningContainer, type)

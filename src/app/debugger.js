@@ -1,8 +1,6 @@
 'use strict'
 
 var remix = require('ethereum-remix')
-var ace = require('brace')
-var Range = ace.acequire('ace/range').Range
 
 /**
  * Manage remix and source highlighting
@@ -22,7 +20,7 @@ function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAP
   })
 
   this.debugger.event.register('traceUnloaded', this, function () {
-    self.removeMarkers()
+    self.editorAPI.sourceLocation(null)
   })
 
   // unload if a file has changed (but not if tabs were switched)
@@ -36,9 +34,9 @@ function Debugger (id, executionContextEvent, editorEvent, editorAPI, compilerAP
       this.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self.compilerAPI.lastCompilationResult().data.contracts, function (error, rawLocation) {
         if (!error) {
           var lineColumnPos = self.contentToolAPI.offsetToLineColumn(rawLocation, rawLocation.file)
-          self.highlight(lineColumnPos, rawLocation)
+          self.editorAPI.sourceLocation(lineColumnPos, rawLocation)
         } else {
-          self.unhighlight()
+          self.editorAPI.sourceLocation(null)
         }
       })
     }
@@ -58,40 +56,6 @@ Debugger.prototype.debug = function (txHash) {
       self.debugger.debug(tx)
     }
   })
-}
-
-/**
- * highlight the given @arg lineColumnPos
- *
- * @param {Object} lineColumnPos - position of the source code to hightlight {start: {line, column}, end: {line, column}}
- * @param {Object} rawLocation - raw position of the source code to hightlight {start, length, file, jump}
- */
-Debugger.prototype.highlight = function (lineColumnPos, rawLocation) {
-  var name = this.editorAPI.currentOpenedFile() // current opened tab
-  var source = this.compilerAPI.lastCompilationResult().data.sourceList[rawLocation.file] // auto switch to that tab
-  this.removeCurrentMarker()
-  if (name !== source) {
-    this.editorAPI.switchToFile(source) // command the app to swicth to the next file
-  }
-  var range = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
-  this.markers['highlightcode'] = this.editor.addMarker(range, 'highlightcode')
-  if (lineColumnPos.start.line === lineColumnPos.end.line) {
-    var fullrange = new Range(lineColumnPos.start.line, 0, lineColumnPos.start.line + 1, 0)
-    this.markers['highlightcode_fullLine'] = this.editor.addMarker(fullrange, 'highlightcode_fullLine')
-  }
-}
-
-/**
- * unhighlight the given @arg lineColumnPos
- *
- * @param {Object} lineColumnPos - position of the source code to hightlight {start: {line, column}, end: {line, column}}
- * @param {Object} rawLocation - raw position of the source code to hightlight {start, length, file, jump}
- */
-Debugger.prototype.unhighlight = function (lineColumnPos, rawLocation, cssCode) {
-  this.removeMarker('highlightcode')
-  this.removeMarker('highlightcode_fullLine')
-  this.currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
-  this.currentMarker = this.editorAPI.addMarker(this.currentRange, 'highlightcode')
 }
 
 /**
@@ -118,25 +82,6 @@ Debugger.prototype.switchProvider = function (type) {
  */
 Debugger.prototype.web3 = function (type) {
   return this.debugger.web3()
-}
-
-/**
- * unhighlight highlighted statements
- */
-Debugger.prototype.removeMarkers = function () {
-  for (var k in this.markers) {
-    this.removeMarker(k)
-  }
-}
-
-/**
- * unhighlight the current highlighted statement
- */
-Debugger.prototype.removeMarker = function (key) {
-  if (this.markers[key]) {
-    this.editor.removeMarker(this.markers[key])
-    this.markers[key] = null
-  }
 }
 
 module.exports = Debugger

@@ -54,8 +54,8 @@ Renderer.prototype.error = function (message, container, options) {
     var errFile = err[1]
     var errLine = parseInt(err[2], 10) - 1
     var errCol = err[4] ? parseInt(err[4], 10) : 0
-    if (!opt.noAnnotations && (errFile === '' || errFile === self.editorAPI.currentOpenedFile())) {
-      self.editorAPI.addAnnotation({
+    if (!opt.noAnnotations) {
+      self.editorAPI.error(errFile, {
         row: errLine,
         column: errCol,
         text: message,
@@ -63,11 +63,7 @@ Renderer.prototype.error = function (message, container, options) {
       })
     }
     $error.click(function (ev) {
-      if (errFile !== '' && errFile !== self.editorAPI.currentOpenedFile() && self.editorAPI.hasFile(errFile)) {
-        // Switch to file
-        self.editorAPI.switchToFile(errFile)
-      }
-      self.editorAPI.gotoLine(errLine, errCol)
+      self.editorAPI.errorClick(errFile, errLine, errCol)
     })
   }
   $error.find('.close').click(function (ev) {
@@ -261,6 +257,7 @@ Renderer.prototype.contracts = function (data, source) {
     return $('<div class="contractDetails"/>').append(button).append(details)
   }
 
+  var self = this
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
     if (contract.bytecode) {
@@ -279,15 +276,11 @@ Renderer.prototype.contracts = function (data, source) {
       }
     }
 
-    var ctrSource = getSource(contractName, source, data)
-    return $contractOutput.append(getDetails(contract, ctrSource, contractName))
-  }
-
-  var self = this
-
-  var getSource = function (contractName, source, data) {
-    var currentFile = self.editorAPI.currentOpenedFile()
-    return source.sources[currentFile]
+    var ctrSource = self.editorAPI.currentCompiledSourceCode()
+    if (ctrSource) {
+      $contractOutput.append(getDetails(contract, ctrSource, contractName))
+    }
+    return $contractOutput
   }
 
   var getAddress = function (cb) {

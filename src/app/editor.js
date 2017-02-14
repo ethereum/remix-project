@@ -5,6 +5,7 @@ var EventManager = require('../lib/eventManager')
 var examples = require('./example-contracts')
 
 var ace = require('brace')
+var Range = ace.acequire('ace/range').Range
 require('../mode-solidity.js')
 
 function Editor (doNotLoadStorage, storage) {
@@ -17,8 +18,9 @@ function Editor (doNotLoadStorage, storage) {
   var sessions = {}
   var sourceAnnotations = []
 
-  this.addMarker = function (range, cssClass) {
-    return editor.session.addMarker(range, cssClass)
+  this.addMarker = function (lineColumnPos, cssClass) {
+    var currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
+    return editor.session.addMarker(currentRange, cssClass)
   }
 
   this.removeMarker = function (markerId) {
