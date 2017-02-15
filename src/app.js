@@ -281,6 +281,7 @@ var run = function () {
         if (!files.rename(originalName, newName)) {
           alert('Error while renaming file')
         } else {
+          currentFile = null
           switchToFile(newName)
           editor.discard(originalName)
         }
@@ -301,6 +302,7 @@ var run = function () {
       if (!files.remove(name)) {
         alert('Error while removing file')
       } else {
+        currentFile = null
         switchToNextFile()
         editor.discard(name)
       }
@@ -666,16 +668,18 @@ var run = function () {
 
   function runCompiler () {
     var files = {}
-    var target = currentFile
-
-    files[target] = editor.get(currentFile)
-
-    compiler.compile(files, target)
+    if (currentFile) {
+      var target = currentFile
+      files[target] = editor.get(currentFile)
+      compiler.compile(files, target)
+    }
   }
 
   function editorSyncFile () {
-    var input = editor.get(currentFile)
-    files.set(currentFile, input)
+    if (currentFile) {
+      var input = editor.get(currentFile)
+      files.set(currentFile, input)
+    }
   }
 
   var previousInput = ''
@@ -683,6 +687,9 @@ var run = function () {
   var saveTimeout = null
 
   function editorOnChange () {
+    if (!currentFile) {
+      return
+    }
     var input = editor.get(currentFile)
 
     // if there's no change, don't do anything

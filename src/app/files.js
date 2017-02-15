@@ -58,7 +58,7 @@ function Files (storage) {
   }
 
   this.isReadOnly = function (path) {
-    return !!readonly[path]
+    return readonly[path] !== undefined
   }
 
   this.remove = function (path) {
