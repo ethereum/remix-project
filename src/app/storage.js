@@ -45,15 +45,6 @@ function Storage () {
     return true
   }
 
-  this.loadFile = function (filename, content) {
-    if (this.exists(filename) && this.get(filename) !== content) {
-      var count = ''
-      while (this.exists(filename + count)) count = count - 1
-      this.rename(filename, filename + count)
-    }
-    this.set(filename, content)
-  }
-
   // on startup, upgrade the old storage layout
   safeKeys().forEach(function (name) {
     if (name.indexOf('sol-cache-file-', 0) === 0) {
