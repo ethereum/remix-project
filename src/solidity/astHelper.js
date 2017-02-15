@@ -10,14 +10,18 @@ var AstWalker = require('../util/astWalker')
 function extractContractDefinitions (sourcesList) {
   var ret = {
     contractsById: {},
-    contractsByName: {}
+    contractsByName: {},
+    sourcesByContract: {}
   }
   var walker = new AstWalker()
-  walker.walkAstList(sourcesList, { 'ContractDefinition': function (node) {
-    ret.contractsById[node.id] = node
-    ret.contractsByName[node.attributes.name] = node
-    return false
-  }})
+  for (var k in sourcesList) {
+    walker.walk(sourcesList[k].AST, { 'ContractDefinition': function (node) {
+      ret.contractsById[node.id] = node
+      ret.sourcesByContract[node.id] = k
+      ret.contractsByName[k + ':' + node.attributes.name] = node
+      return false
+    }})
+  }
   return ret
 }
 
@@ -83,7 +87,11 @@ function extractStatesDefinitions (sourcesList, contracts) {
   var ret = {}
   for (var contract in contracts.contractsById) {
     var name = contracts.contractsById[contract].attributes.name
-    ret[name] = extractStateDefinitions(name, sourcesList, contracts)
+    var source = contracts.sourcesByContract[contract]
+    var fullName = source + ':' + name
+    var state = extractStateDefinitions(fullName, sourcesList, contracts)
+    ret[fullName] = state
+    ret[name] = state // solc < 0.4.9
   }
   return ret
 }
