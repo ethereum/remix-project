@@ -299,6 +299,8 @@ var run = function () {
   editor.event.register('sessionSwitched', updateFiles)
 
   function switchToFile (file) {
+    editorSyncFile()
+
     currentFile = file
 
     if (files.isReadOnly(file)) {
@@ -659,6 +661,11 @@ var run = function () {
     compiler.compile(files, target)
   }
 
+  function editorSyncFile () {
+    var input = editor.get(currentFile)
+    files.set(currentFile, input)
+  }
+
   var previousInput = ''
   var compileTimeout = null
   var saveTimeout = null
@@ -677,10 +684,7 @@ var run = function () {
     if (saveTimeout) {
       window.clearTimeout(saveTimeout)
     }
-    saveTimeout = window.setTimeout(function () {
-      var input = editor.get(currentFile)
-      files.set(currentFile, input)
-    }, 5000)
+    saveTimeout = window.setTimeout(editorSyncFile, 5000)
 
     // special case: there's nothing else to do
     if (input === '') {
