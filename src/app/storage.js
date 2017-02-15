@@ -18,19 +18,6 @@ function Storage () {
     return true
   }
 
-  function safeKeys () {
-    // NOTE: this is a workaround for some browsers
-    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
-  }
-
-  this.keys = function () {
-    return safeKeys()
-      // filter any names not including sol:
-      .filter(function (item) { return item.indexOf('sol:', 0) === 0 })
-      // remove sol: from filename
-      .map(function (item) { return item.replace(/^sol:/, '') })
-  }
-
   this.remove = function (name) {
     window.localStorage.removeItem('sol:' + name)
     return true
@@ -43,6 +30,19 @@ function Storage () {
     }
     this.remove(originalName)
     return true
+  }
+
+  function safeKeys () {
+    // NOTE: this is a workaround for some browsers
+    return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
+  }
+
+  this.keys = function () {
+    return safeKeys()
+      // filter any names not including sol:
+      .filter(function (item) { return item.indexOf('sol:', 0) === 0 })
+      // remove sol: from filename
+      .map(function (item) { return item.replace(/^sol:/, '') })
   }
 
   // on startup, upgrade the old storage layout
