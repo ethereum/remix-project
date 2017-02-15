@@ -220,8 +220,11 @@ var run = function () {
 
   $('.newFile').on('click', function () {
     var newName = createNonClashingName('Untitled')
-    files.set(newName, '')
-    switchToFile(newName)
+    if (!files.set(newName, '')) {
+      alert('Failed to create file ' + newName)
+    } else {
+      switchToFile(newName)
+    }
   })
 
   // ----------------- file upload -------------
@@ -233,8 +236,11 @@ var run = function () {
       if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
         var fileReader = new FileReader()
         fileReader.onload = function (ev) {
-          files.set(name, ev.target.result)
-          switchToFile(name)
+          if (!files.set(name, ev.target.result)) {
+            alert('Failed to create file ' + name)
+          } else {
+            switchToFile(name)
+          }
         }
         fileReader.readAsText(fileList[i])
       }
