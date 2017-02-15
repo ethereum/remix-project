@@ -272,9 +272,12 @@ var run = function () {
           files.exists(newName)
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-        files.rename(originalName, newName)
-        switchToFile(newName)
-        editor.discard(originalName)
+        if (!files.rename(originalName, newName)) {
+          alert('Error while renaming file')
+        } else {
+          switchToFile(newName)
+          editor.discard(originalName)
+        }
       }
 
       return false
@@ -289,9 +292,12 @@ var run = function () {
     var name = $(this).parent().find('.name').text()
 
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-      files.remove(name)
-      switchToNextFile()
-      editor.discard(name)
+      if (!files.remove(name)) {
+        alert('Error while removing file')
+      } else {
+        switchToNextFile()
+        editor.discard(name)
+      }
     }
     return false
   })
