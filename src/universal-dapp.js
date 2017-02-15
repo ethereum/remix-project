@@ -55,18 +55,19 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI, rend
   })
 }
 
-UniversalDApp.prototype.newAccount = function (password) {
+UniversalDApp.prototype.newAccount = function (password, cb) {
   if (!this.executionContext.isVM()) {
     if (!this.personalMode) {
-      throw new Error('Not running in personal mode')
+      return cb('Not running in personal mode')
     }
-    this.web3.personal.newAccount(password)
+    this.web3.personal.newAccount(password, cb)
   } else {
     var privateKey
     do {
       privateKey = crypto.randomBytes(32)
     } while (!ethJSUtil.isValidPrivate(privateKey))
     this._addAccount(privateKey)
+    cb(null, '0x' + ethJSUtil.privateToAddress(privateKey))
   }
 }
 
