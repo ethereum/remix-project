@@ -1,4 +1,4 @@
-/* global alert, confirm, prompt, Option, Worker, chrome */
+/* global alert, confirm, prompt, FileReader, Option, Worker, chrome */
 'use strict'
 
 var $ = require('jquery')
@@ -10,6 +10,7 @@ var GistHandler = require('./app/gist-handler')
 var gistHandler = new GistHandler()
 
 var Storage = require('./app/storage')
+var Files = require('./app/files')
 var Config = require('./app/config')
 var Editor = require('./app/editor')
 var Renderer = require('./app/renderer')
@@ -21,6 +22,8 @@ var FormalVerification = require('./app/formalVerification')
 var EventManager = require('./lib/eventManager')
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
+
+var examples = require('./app/example-contracts')
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -40,16 +43,31 @@ var run = function () {
   var self = this
   this.event = new EventManager()
   var storage = new Storage()
+  var files = new Files(storage)
   var config = new Config(storage)
+  var currentFile
+
+  // return all the files, except the temporary/readonly ones
+  function packageFiles () {
+    return files.list()
+      .filter(function (path) { if (!files.isReadOnly(path)) { return path } })
+      .map(function (path) { return { content: files.get(path) } })
+  }
+
+  function createNonClashingName (path) {
+    var counter = ''
+    while (files.exists(path + counter)) {
+      counter = (counter | 0) + 1
+    }
+    return path + counter
+  }
 
   // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (files) {
     for (var f in files) {
-      storage.loadFile(f, files[f].content)
+      files.set(createNonClashingName(f), files[f].content)
     }
-    // Set the first file as current tab
-    editor.setCacheFile(Object.keys(files)[0])
-    updateFiles()
+    switchToNextFile()
   }
 
   // Replace early callback with instant response
@@ -87,6 +105,11 @@ var run = function () {
     })
   })
 
+  // insert ballot contract if there are no files available
+  if (!loadingFromGist && (files.list().length === 0)) {
+    files.set(examples.ballot.name, examples.ballot.content)
+  }
+
   // ----------------- Chrome cloud storage sync --------------------
 
   function chromeCloudSync () {
@@ -103,11 +126,11 @@ var run = function () {
         console.log('comparing to cloud', key, resp)
         if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
           console.log('Overwriting', key)
-          storage.set(key, resp[key])
+          files.set(key, resp[key])
           updateFiles()
         } else {
           console.log('add to obj', obj, key)
-          obj[key] = storage.get(key)
+          obj[key] = files.get(key)
         }
         done++
         if (done >= count) {
@@ -118,9 +141,9 @@ var run = function () {
       })
     }
 
-    for (var y in storage.keys()) {
+    for (var y in files.list()) {
       console.log('checking', y)
-      obj[y] = storage.get(y)
+      obj[y] = files.get(y)
       count++
       check(y)
     }
@@ -131,7 +154,7 @@ var run = function () {
 
   // ----------------- editor ----------------------
 
-  var editor = new Editor(loadingFromGist, storage)
+  var editor = new Editor()
 
   // ----------------- tabbed menu -------------------
   $('#options li').click(function (ev) {
@@ -155,7 +178,7 @@ var run = function () {
 
   $('#gist').click(function () {
     if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
-      var files = editor.packageFiles()
+      var files = packageFiles()
       var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
 
       $.ajax({
@@ -182,7 +205,7 @@ var run = function () {
     if (target === null) {
       return
     }
-    var files = editor.packageFiles()
+    var files = packageFiles()
     $('<iframe/>', {
       src: target,
       style: 'display:none;',
@@ -196,12 +219,9 @@ var run = function () {
   var FILE_SCROLL_DELTA = 300
 
   $('.newFile').on('click', function () {
-    editor.newFile()
-    updateFiles()
-
-    $filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
-      reAdjust()
-    })
+    var newName = createNonClashingName('Untitled')
+    files.set(newName, '')
+    switchToFile(newName)
   })
 
   // ----------------- file upload -------------
@@ -210,14 +230,15 @@ var run = function () {
     var fileList = $('input.inputFile')[0].files
     for (var i = 0; i < fileList.length; i++) {
       var name = fileList[i].name
-      if (!editor.hasFile(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
-        editor.uploadFile(fileList[i], updateFiles)
+      if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
+        var fileReader = new FileReader()
+        fileReader.onload = function (ev) {
+          files.set(name, ev.target.result)
+          switchToFile(name)
+        }
+        fileReader.readAsText(fileList[i])
       }
     }
-
-    $filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
-      reAdjust()
-    })
   })
 
   // Switch tab
@@ -248,15 +269,14 @@ var run = function () {
       $fileNameInputEl.off('keyup')
 
       if (newName !== originalName && confirm(
-          editor.hasFile(newName)
+          files.exists(newName)
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-        storage.rename(originalName, newName)
-        editor.renameSession(originalName, newName)
-        editor.setCacheFile(newName)
+        files.rename(originalName, newName)
+        switchToFile(newName)
+        editor.discard(originalName)
       }
 
-      updateFiles()
       return false
     }
 
@@ -269,10 +289,9 @@ var run = function () {
     var name = $(this).parent().find('.name').text()
 
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-      storage.remove(name)
-      editor.removeSession(name)
-      editor.setNextFile(name)
-      updateFiles()
+      files.remove(name)
+      switchToNextFile()
+      editor.discard(name)
     }
     return false
   })
@@ -280,32 +299,49 @@ var run = function () {
   editor.event.register('sessionSwitched', updateFiles)
 
   function switchToFile (file) {
-    editor.setCacheFile(file)
-    updateFiles()
+    currentFile = file
+
+    if (files.isReadOnly(file)) {
+      editor.openReadOnly(file, files.get(file))
+    } else {
+      editor.open(file, files.get(file))
+    }
   }
+
+  function switchToNextFile () {
+    var fileList = Object.keys(files.list())
+    if (fileList.length) {
+      switchToFile(fileList[0])
+    }
+  }
+
+  switchToNextFile()
 
   // Synchronise tab list with file names known to the editor
   function updateFiles () {
     var $filesEl = $('#files')
-    var files = editor.getFiles()
+    var fileNames = Object.keys(files.list())
 
     $filesEl.find('.file').remove()
     $('#output').empty()
 
-    for (var f in files) {
-      var name = files[f]
+    for (var f in fileNames) {
+      var name = fileNames[f]
       $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
-    if (editor.cacheFileIsPresent()) {
-      var currentFileName = editor.getCacheFile()
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFileName })
+    var currentFileOpen = !!currentFile
+
+    if (currentFileOpen) {
+      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFile })
       active.addClass('active')
-      editor.resetSession()
     }
-    $('#input').toggle(editor.cacheFileIsPresent())
-    $('#output').toggle(editor.cacheFileIsPresent())
-    reAdjust()
+    $('#input').toggle(currentFileOpen)
+    $('#output').toggle(currentFileOpen)
+
+    $filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
+      reAdjust()
+    })
   }
 
   var $filesWrapper = $('.files-wrapper')
@@ -367,8 +403,6 @@ var run = function () {
       reAdjust()
     })
   })
-
-  updateFiles()
 
   // ----------------- resizeable ui ---------------
 
@@ -465,15 +499,10 @@ var run = function () {
       })
   }
 
-  // FIXME: at some point we should invalidate the cache
-  var cachedRemoteFiles = {}
-
   function handleImportCall (url, cb) {
     var githubMatch
-    if (editor.hasFile(url)) {
-      cb(null, editor.getFile(url))
-    } else if (url in cachedRemoteFiles) {
-      cb(null, cachedRemoteFiles[url])
+    if (files.exists(url)) {
+      cb(null, files.get(url))
     } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
       handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
         if (err) {
@@ -481,7 +510,8 @@ var run = function () {
           return
         }
 
-        cachedRemoteFiles[url] = content
+        // FIXME: at some point we should invalidate the cache
+        files.addReadOnly(url, content)
         cb(null, content)
       })
     } else if (/^[^:]*:\/\//.exec(url)) {
@@ -506,9 +536,8 @@ var run = function () {
       this.statementMarker = null
       this.fullLineMarker = null
       if (lineColumnPos) {
-        var name = editor.getCacheFile() // current opened tab
         var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
-        if (name !== source) {
+        if (currentFile !== source) {
           switchToFile(source)
         }
         this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
@@ -569,12 +598,12 @@ var run = function () {
 
   var rendererAPI = {
     error: (file, error) => {
-      if (file === editor.getCacheFile()) {
+      if (file === currentFile) {
         editor.addAnnotation(error)
       }
     },
     errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== editor.getCacheFile() && editor.hasFile(errFile)) {
+      if (errFile !== currentFile && files.exists(errFile)) {
         switchToFile(errFile)
       }
       editor.gotoLine(errLine, errCol)
@@ -623,9 +652,9 @@ var run = function () {
 
   function runCompiler () {
     var files = {}
-    var target = editor.getCacheFile()
+    var target = currentFile
 
-    files[target] = editor.getValue()
+    files[target] = editor.get(currentFile)
 
     compiler.compile(files, target)
   }
@@ -635,7 +664,7 @@ var run = function () {
   var saveTimeout = null
 
   function editorOnChange () {
-    var input = editor.getValue()
+    var input = editor.get(currentFile)
 
     // if there's no change, don't do anything
     if (input === previousInput) {
@@ -649,8 +678,8 @@ var run = function () {
       window.clearTimeout(saveTimeout)
     }
     saveTimeout = window.setTimeout(function () {
-      var input = editor.getValue()
-      editor.setCacheFileContent(input)
+      var input = editor.get(currentFile)
+      files.set(currentFile, input)
     }, 5000)
 
     // special case: there's nothing else to do
