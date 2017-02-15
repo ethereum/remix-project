@@ -127,7 +127,7 @@ var run = function () {
         if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
           console.log('Overwriting', key)
           files.set(key, resp[key])
-          updateFiles()
+          refreshTabs()
         } else {
           console.log('add to obj', obj, key)
           obj[key] = files.get(key)
@@ -296,7 +296,7 @@ var run = function () {
     return false
   })
 
-  editor.event.register('sessionSwitched', updateFiles)
+  editor.event.register('sessionSwitched', refreshTabs)
 
   function switchToFile (file) {
     currentFile = file
@@ -318,7 +318,7 @@ var run = function () {
   switchToNextFile()
 
   // Synchronise tab list with file names known to the editor
-  function updateFiles () {
+  function refreshTabs () {
     var $filesEl = $('#files')
     var fileNames = Object.keys(files.list())
 
