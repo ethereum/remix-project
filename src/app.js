@@ -220,8 +220,11 @@ var run = function () {
 
   $('.newFile').on('click', function () {
     var newName = createNonClashingName('Untitled')
-    files.set(newName, '')
-    switchToFile(newName)
+    if (!files.set(newName, '')) {
+      alert('Failed to create file ' + newName)
+    } else {
+      switchToFile(newName)
+    }
   })
 
   // ----------------- file upload -------------
@@ -233,8 +236,11 @@ var run = function () {
       if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
         var fileReader = new FileReader()
         fileReader.onload = function (ev) {
-          files.set(name, ev.target.result)
-          switchToFile(name)
+          if (!files.set(name, ev.target.result)) {
+            alert('Failed to create file ' + name)
+          } else {
+            switchToFile(name)
+          }
         }
         fileReader.readAsText(fileList[i])
       }
@@ -272,9 +278,13 @@ var run = function () {
           files.exists(newName)
             ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
             : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-        files.rename(originalName, newName)
-        switchToFile(newName)
-        editor.discard(originalName)
+        if (!files.rename(originalName, newName)) {
+          alert('Error while renaming file')
+        } else {
+          currentFile = null
+          switchToFile(newName)
+          editor.discard(originalName)
+        }
       }
 
       return false
@@ -289,9 +299,13 @@ var run = function () {
     var name = $(this).parent().find('.name').text()
 
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-      files.remove(name)
-      switchToNextFile()
-      editor.discard(name)
+      if (!files.remove(name)) {
+        alert('Error while removing file')
+      } else {
+        currentFile = null
+        switchToNextFile()
+        editor.discard(name)
+      }
     }
     return false
   })
@@ -654,16 +668,18 @@ var run = function () {
 
   function runCompiler () {
     var files = {}
-    var target = currentFile
-
-    files[target] = editor.get(currentFile)
-
-    compiler.compile(files, target)
+    if (currentFile) {
+      var target = currentFile
+      files[target] = editor.get(currentFile)
+      compiler.compile(files, target)
+    }
   }
 
   function editorSyncFile () {
-    var input = editor.get(currentFile)
-    files.set(currentFile, input)
+    if (currentFile) {
+      var input = editor.get(currentFile)
+      files.set(currentFile, input)
+    }
   }
 
   var previousInput = ''
@@ -671,6 +687,9 @@ var run = function () {
   var saveTimeout = null
 
   function editorOnChange () {
+    if (!currentFile) {
+      return
+    }
     var input = editor.get(currentFile)
 
     // if there's no change, don't do anything
