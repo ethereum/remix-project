@@ -52,10 +52,15 @@ class BreakpointManager {
       return
     }
 
+    function depthChange (step, trace) {
+      return trace[step].depth !== trace[step - 1].depth
+    }
+
     function hitLine (currentStep, sourceLocation, self) {
+      // isJumpDestInstruction -> returning from a internal function call
+      // depthChange -> returning from an external call
       if (helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) ||
-        helper.isReturnInstruction(self.debugger.traceManager.trace[currentStep - 1]) ||
-        helper.isStopInstruction(self.debugger.traceManager.trace[currentStep - 1])) {
+        depthChange(currentStep, self.debugger.traceManager.trace)) {
         return false
       } else {
         self.debugger.stepManager.jumpTo(currentStep)
@@ -79,10 +84,9 @@ class BreakpointManager {
       var lineColumn = this.locationToRowConverter(sourceLocation)
       if (this.previousLine !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
+          lineHadBreakpoint = false
           if (hitLine(currentStep + 1, previousSourceLocation, this)) {
             return
-          } else {
-            lineHadBreakpoint = false
           }
         }
         this.previousLine = lineColumn.start.line
@@ -91,8 +95,6 @@ class BreakpointManager {
           if (direction === 1) {
             if (hitLine(currentStep, sourceLocation, this)) {
               return
-            } else {
-              lineHadBreakpoint = false
             }
           }
         }
