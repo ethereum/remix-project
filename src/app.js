@@ -106,7 +106,7 @@ var run = function () {
   })
 
   // insert ballot contract if there are no files available
-  if (!loadingFromGist && (files.list().length === 0)) {
+  if (!loadingFromGist && Object.keys(files.list()).length === 0) {
     files.set(examples.ballot.name, examples.ballot.content)
   }
 
