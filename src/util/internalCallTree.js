@@ -36,7 +36,7 @@ class InternalCallTree {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
             console.log('ready')
-            this.reducedTrace.push(traceManager.trace.length - 1)
+            createReducedTrace(this, traceManager.trace.length - 1)
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
         })
@@ -128,6 +128,10 @@ async function buildTree (tree, step, scopeId) {
     }
   }
   return { outStep: step }
+}
+
+function createReducedTrace (tree, index) {
+  tree.reducedTrace.push(index)
 }
 
 function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
