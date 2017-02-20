@@ -5,3 +5,4 @@ lint.xml
 .vscode
 test-browser/reports/*
 babelify-src
+docs/_build
