@@ -88,15 +88,22 @@ module.exports = {
   /*
     Binary Search:
     Assumes that @arg array is sorted increasingly
-    return (saying middle=(array[i] + array[i + 1]) / 2 <= target) return i if target < middle; return i + 1 if target >= middle; return array.length - 1 if index > array.length; return null if array[0] > target || array is empty
+    return Return i such that |array[i] - target| is smallest among all i and -1 for an empty array.
+    Returns the smallest i for multiple candidates.
   */
-  findLowerClosestBound: function (target, array) {
-    var index = this.findLowerBound(target, array)
-    if (index > array.length) {
-      return index
+  findClosestIndex: function (target, array) {
+    if (array.length === 0) {
+      return -1
     }
-    var middle = (array[index] + array[index + 1]) / 2
-    return target >= middle ? index + 1 : index
+    var index = this.findLowerBound(target, array)
+    if (index < 0) {
+      return array[0]
+    } else if (index >= array.length - 1) {
+      return array[array.length - 1]
+    } else {
+      var middle = (array[index] + array[index + 1]) / 2
+      return target <= middle ? index : index + 1
+    }
   },
 
   /**
