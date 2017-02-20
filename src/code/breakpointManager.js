@@ -54,8 +54,8 @@ class BreakpointManager {
 
     function hitLine (currentStep, sourceLocation, self) {
       if (helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) ||
-      helper.isReturnInstruction(self.debugger.traceManager.trace[currentStep - 1]) ||
-      helper.isStopInstruction(self.debugger.traceManager.trace[currentStep - 1])) {
+        helper.isReturnInstruction(self.debugger.traceManager.trace[currentStep - 1]) ||
+        helper.isStopInstruction(self.debugger.traceManager.trace[currentStep - 1])) {
         return false
       } else {
         self.debugger.stepManager.jumpTo(currentStep)
@@ -80,7 +80,7 @@ class BreakpointManager {
       if (this.previousLine !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
           if (hitLine(currentStep + 1, previousSourceLocation, this)) {
-            break
+            return
           } else {
             lineHadBreakpoint = false
           }
@@ -90,7 +90,7 @@ class BreakpointManager {
           lineHadBreakpoint = true
           if (direction === 1) {
             if (hitLine(currentStep, sourceLocation, this)) {
-              break
+              return
             } else {
               lineHadBreakpoint = false
             }
@@ -98,9 +98,12 @@ class BreakpointManager {
         }
       }
       currentStep += direction
-      if (defaultToLimit && (currentStep === this.debugger.traceManager.trace.length - 1 || currentStep === 0)) {
-        this.debugger.stepManager.jumpTo(currentStep)
-        break
+    }
+    if (defaultToLimit) {
+      if (direction === -1) {
+        this.debugger.stepManager.jumpTo(0)
+      } else if (direction === 1) {
+        this.debugger.stepManager.jumpTo(this.debugger.traceManager.trace.length - 1)
       }
     }
   }
