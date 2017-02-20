@@ -24,7 +24,7 @@ class BreakpointManager {
 
   /**
     * start looking for the next breakpoint
-    * @param {Bool} defaultToLimit - if true jump to the enf of the trace if no more breakpoint found
+    * @param {Bool} defaultToLimit - if true jump to the end of the trace if no more breakpoint found
     *
     */
   async jumpNextBreakpoint (defaultToLimit) {
@@ -33,7 +33,7 @@ class BreakpointManager {
 
   /**
     * start looking for the previous breakpoint
-    * @param {Bool} defaultToLimit - if true jump to the enf of the trace if no more breakpoint found
+    * @param {Bool} defaultToLimit - if true jump to the start of the trace if no more breakpoint found
     *
     */
   async jumpPreviousBreakpoint (defaultToLimit) {
@@ -43,7 +43,7 @@ class BreakpointManager {
    /**
     * start looking for the previous or next breakpoint
     * @param {Int} direction - 1 or -1 direction of the search
-    * @param {Bool} defaultToLimit - if true jump to the enf of the trace if no more breakpoint found
+    * @param {Bool} defaultToLimit - if true jump to the limit (end if direction is 1, beginning if direction is -1) of the trace if no more breakpoint found
     *
     */
   async jump (direction, defaultToLimit) {
