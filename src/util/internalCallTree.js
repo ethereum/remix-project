@@ -106,7 +106,15 @@ class InternalCallTree {
 async function buildTree (tree, step, scopeId) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step, locals: {} }
+  tree.scopes[scopeId] = { firstStep: step, locals: {} } 
+
+  function checkDepth (step, trace) {
+    if (step + 1 < trace.length) {
+      return trace[step].depth !== trace[step + 1].depth
+    }
+    return false
+  }
+
   var currentSourceLocation = {}
   while (step < tree.traceManager.trace.length) {
     var sourceLocation
@@ -124,19 +132,23 @@ async function buildTree (tree, step, scopeId) {
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
-    if (sourceLocation.jump === 'i') {
+    if (traceHelper.isCallInstruction(tree.traceManager.trace[step]) ||
+        sourceLocation.jump === 'i') {
       try {
-        var result = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
-        if (result.error) {
-          return { outStep: step, error: 'InternalCallTree - ' + result.error }
+        if (sourceLocation.jump === 'i') {
+          step++
+        }
+        var externalCallResult = await buildTree(tree, step, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
+        if (externalCallResult.error) {
+          return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
-          step = result.outStep
+          step = externalCallResult.outStep
           subScope++
         }
       } catch (e) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
-    } else if (sourceLocation.jump === 'o') {
+    } else if (sourceLocation.jump === 'o' || checkDepth(step, tree.traceManager.trace)) {
       tree.scopes[scopeId].lastStep = step
       return { outStep: step + 1 }
     } else {
