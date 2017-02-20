@@ -1,4 +1,10 @@
-Remix IDE
-========
+Remix - Solidity IDE
+====================
 
-Remix is an IDE. Its purpose is to develop Ethereum contracts written in Solidity. 
+Tutorial
+--------
+
+.. toctree::
+   :maxdepth: 1
+   
+   tutorial_mist.rst
