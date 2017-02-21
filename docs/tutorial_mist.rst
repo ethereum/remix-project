@@ -3,18 +3,18 @@ Debugging a Dapp using Remix - Mist - Geth
 
 .. _tutorial-mist-geth:
 
-The ultimate goal of this tutorial is to debug transactions that has been created by a dapp front end.
+The ultimate goal of this tutorial is to debug transactions that have been created by a dapp front end.
 
-It is easy in Remix to debug a transaction created from its own GUI. Setting up an environment that allow to
+It is easy in Remix to debug a transaction created from its own GUI. Setting up an environment that allows to
 debug transactions created outside of Remix require a bit more of complexity.
 
 We will need four tools for that :
 
- - Geth - this is the center piece and provide the blockchain environment. We will basically run geth in a `dev` mode.
+ - Geth - this is the center piece and provides the blockchain environment. We will basically run geth in a `dev` mode.
 
  - Mist - this is the Ethereum dapp browser. We will use it to browse our front end.
 
- - Remix - this is the Ethereum IDE. we will use it to develop our Solidity contract.
+ - Remix - this is the Ethereum IDE. We will use it to develop our Solidity contract.
 
  - Any code editor you want - in order to write your front end :)
 
@@ -26,7 +26,7 @@ Install Mist
 
 Mist is the Ethereum browser and the entry point of a Dapp.
 
-Please download `the last version <http://github.com/ethereum/mist/releases>`_ (at least 0.8.9).
+Please download `the latest version <http://github.com/ethereum/mist/releases>`_ (at least 0.8.9).
 
 Basically we will always run our front end in Mist (note that it is also possible to use `Metamask <http://metamask.io>`_).
 
@@ -50,11 +50,11 @@ We will run a test node. This node will have a new empty state and will not be s
 
 ``<test-chain-directory>`` is the folder where keys and chain data will be stored.
 
-``--ipcpath`` defines the end point where other app (like Mist) use to talk to geth.
+``--ipcpath`` defines the end point that other apps (like Mist) use to talk to geth.
 
-``--datadir`` is the data directory.
+``--datadir`` specifies the data directory.
 
-``--dev`` set the node as a private node and add some debugging flags.
+``--dev`` sets the node into private chain mode and adds some debugging flags.
 
 Then we need to create accounts and mine a bit to generate some Ether:
 
@@ -70,7 +70,7 @@ Next time we run Geth, we will only need to mine transactions (no need to recrea
 Run Mist
 ~~~~~~~~
 
-If we run Mist without any argument, its internal GEth node will run. As we have our onwn we need to specify the ipc path of the node installed above.
+If we run Mist without any argument, its internal Geth node will run. As we have our own we need to specify the ipc path of the node installed above.
 
 ::
 
@@ -80,28 +80,22 @@ If we run Mist without any argument, its internal GEth node will run. As we have
 
 Once Mist is started, Verify that it is connected to the test node (that's important !!).
 
-On the bottom left check that the network is ``Private-net`` and that the block number is the same that the test node not we are currently runnning.
+On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently runnning.
 
-.. image:: mist1.png
-
-Clicking on `Wallet` will allow you to send transactions and check accounts balance (if you are currently mining you should see the balance increasing).
+Clicking on `Wallet` will allow you to send transactions and check account balances (if you are currently mining you should see the balance increasing).
 
 Starting Remix
 ~~~~~~~~~~~~~~
 
 In Mist click on ``Develop`` / ``Open Remix IDE``
 
-Remix will open in a new window. If this is the first time it run, the ``Ballot`` contract is loaded.
+Remix will open in a new window. If this is the first time it is run, the ``Ballot`` contract is loaded.
 
-We need now to check if Remix is connected to Mist :
+Now, we need to check if Remix is connected to Mist:
 
 Right panel / third tab from the left, ``Injected Provider`` should be checked.
 
-.. image:: remix4.png
-
 Right panel / second tab from the left, ``Transaction Origin`` should contain accounts we have previously created in Geth.
-
-.. image:: remix5.png
 
 Developping contract / front end
 -------------------------------
@@ -115,18 +109,18 @@ Copy and paste the following inside remix:
 
 .. code-block:: none
 
-    contract donation {
+    contract Donation {
         address owner;
         event fundMoved(address _to, uint _amount);
         modifier onlyowner { if (msg.sender == owner) _; }
         address[] _giver;
         uint[] _values;
         
-        function donation() {
+        function Donation() {
             owner = msg.sender;
         }
         
-        function () payable {
+        function donate() payable {
             addGiver(msg.value);
         }
     
@@ -145,10 +139,8 @@ Copy and paste the following inside remix:
         }
         
         function addGiver(uint _amount) internal {
-            _giver.length = _giver.length + 1;
-            _giver[_giver.length - 1] = msg.sender;
-            _values.length = _values.length + 1;
-            _values[_values.length - 1] = _amount;
+            _giver.push(msg.sender);
+            _values.push(_amount);
         }
     }
     
@@ -167,7 +159,7 @@ and here is the front end:
         <br/>
         <div>
             <br/>
-            <input id='fromGive' placeholder='from' ></intput><input placeholder='amount' id='valueGive'></intput><button id="fallbackbtn" onclick="fallback()">give</button>
+            <input id='fromGive' placeholder='from' ></intput><input placeholder='amount' id='valueGive'></intput><button id="fallbackbtn" onclick="donate()">give</button>
             <br/>
             <br/>
             <input id='fromMoveFund' placeholder='from' ></intput><input id='moveFundTo' placeholder='move to' ></intput><input id='amountToMove' placeholder='amount' ></intput><button id="movefundbtn" onclick="movefund()">moveFund</button>
@@ -182,10 +174,10 @@ and here is the front end:
     </div>
 
     <script type="text/javascript">
-    function fallback () {
-        web3.eth.sendTransaction({
+    function donate () {
+        var donation = contractspec.at(document.getElementById('contractaddress').value)
+        donation.donate({
             from: document.getElementById('fromGive').value, 
-            to: document.getElementById('contractaddress').value,
             value: document.getElementById('valueGive').value
         }, function (error, txHash) {       
             tryTillResponse(txHash, function (error, receipt) {
@@ -206,22 +198,22 @@ and here is the front end:
             })
     }
 
-    var contractspec = web3.eth.contract([{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_amount","type":"uint256"}],"name":"moveFund","outputs":[],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"},{"payable":true,"type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_to","type":"address"},{"indexed":false,"name":"_amount","type":"uint256"}],"name":"fundMoved","type":"event"}]);
+    var contractspec = web3.eth.contract([{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_amount","type":"uint256"}],"name":"moveFund","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"donate","outputs":[],"payable":true,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_to","type":"address"},{"indexed":false,"name":"_amount","type":"uint256"}],"name":"fundMoved","type":"event"}]);
 
     function tryTillResponse (txhash, done) {
-    document.getElementById('wait').innerHTML = 'waiting for the transaction to be mined ...'
-    web3.eth.getTransactionReceipt(txhash, function (err, result) {
-        if (!err && !result) {
-        // Try again with a bit of delay
-        setTimeout(function () { tryTillResponse(txhash, done) }, 500)
-        } else {
-        document.getElementById('wait').innerHTML = ''
-        var log = document.createElement("div")
-        log.innerHTML = JSON.stringify(result)
-        document.getElementById('log').appendChild(log)
-        done(err,result)
-        }
-    })
+        document.getElementById('wait').innerHTML = 'waiting for the transaction to be mined ...'
+        web3.eth.getTransactionReceipt(txhash, function (err, result) {
+            if (!err && !result) {
+                // Try again with a bit of delay
+                setTimeout(function () { tryTillResponse(txhash, done) }, 500)
+            } else {
+                document.getElementById('wait').innerHTML = ''
+                var log = document.createElement("div")
+                log.innerHTML = JSON.stringify(result)
+                document.getElementById('log').appendChild(log)
+                done(err,result)
+            }
+        })
     }
     </script>
     
@@ -237,17 +229,13 @@ Deploying
 
 Remix - Right panel / Red button ``Create``
 
-.. image:: remix1.png
-
 This create a new transaction that deploy the ``Donation`` contract (Mist will ask for the usual pasphrase check).
 
 Wait for the transaction to be mined (don't forget to activate mining ``miner.start()``).
-Once this is done, you can use it by executing the ``moveFund`` and ``fallback`` function. But this is not what we
+Once this is done, you can use it by executing the ``moveFund`` and ``donate`` function. But this is not what we
 want to achieve. We want to run and debug those functions from the front end.
 
 Remix also display the address of the contract. Save it, we'll need this address later.
-
-.. image:: remix2.png
 
 Debugging
 ---------
@@ -263,23 +251,24 @@ The value should be no more than the actual balance of the account - the unit is
 Click on ``Give`` and wait for the transaction to be mined.
 
 The HTML block with id ``log`` is filled by all the transactions created from the front end.
-it was easier for the purpose of this tutorial to just log transactions in a div but you can have your own logging mechanism.
+It was easier for the purpose of this tutorial to just log transactions in a div but you can have your own logging mechanism.
 
-There's only one field that we need, this is the ``transactionHash``.
+There is only one field that we need, this is the ``transactionHash``.
 
-Copy it and switch to Remix.
-Right panel / 5th tab from the left, that's the debugger. 
+Copy it and switch to Remix. On the right half, the fifth panel shows a small "bug" icon, that is the debugger.
 
-Paste the hash and click on the ``play`` button.
+Paste the hash into the transaction field and click on the ``play`` button.
 
-.. image:: remix3.png
+You are now entering a debug session for the call to ``donate``.
 
-You are now entering a debug session (debugging the call to ``give``).
-You can use every debugging features Remix provide like breakpoint, local and state variables watcher ...
+Debugging in Remix is not much easier than with common tools like gdb because you can freely move in time.
+Use the slider to change the current step and click on the panels below to expand them and explore the curret state, local variables, etc.
+There are also breakpoints to move between sections of the code quickly, but more on all that later.
 
-At the time I write this tutorial there is an issue that could break the contract creation.
-There's a work around for that https://github.com/ethereum/go-ethereum/issues/3653.
-Please follow the work around or wait for this issue to be closed.
 
-Also, though retrieving a contract storage when Remix run the JavaScript VM is working well,
-There are still work to be done when Remix is running through an injected provider (eth or geth as backend).
+At the time of writing there is an issue that could break the contract creation.
+There is a workaround for that at https://github.com/ethereum/go-ethereum/issues/3653 .
+Please follow the workaround or wait for this issue to be closed.
+
+Also, though retrieving a contract's storage when Remix is using the JavaScript VM is working well,
+there is still work to be done when Remix is using eth or geth as backend.
