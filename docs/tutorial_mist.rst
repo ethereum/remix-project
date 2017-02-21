@@ -276,3 +276,10 @@ Paste the hash and click on the ``play`` button.
 
 You are now entering a debug session (debugging the call to ``give``).
 You can use every debugging features Remix provide like breakpoint, local and state variables watcher ...
+
+At the time I write this tutorial there is an issue that could break the contract creation.
+There's a work around for that https://github.com/ethereum/go-ethereum/issues/3653.
+Please follow the work around or wait for this issue to be closed.
+
+Also, though retrieving a contract storage when Remix run the JavaScript VM is working well,
+There are still work to be done when Remix is running through an injected provider (eth or geth as backend).
