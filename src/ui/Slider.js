@@ -4,19 +4,22 @@ var EventManager = require('../lib/eventManager')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 
-function Slider (_traceManager) {
-  this.event = new EventManager()
-  this.traceManager = _traceManager
-  this.max
-  this.disabled = true
-  this.view
+class Slider {
+  constructor (_traceManager, _stepOverride) {
+    this.event = new EventManager()
+    this.traceManager = _traceManager
+    this.max
+    this.disabled = true
+    this.view
+    this.solidityMode = false
+    this.stepOverride = _stepOverride
 
-  this.previousValue = null
-}
+    this.previousValue = null
+  }
 
-Slider.prototype.render = function () {
-  var self = this
-  var view = yo`<div>
+  render () {
+    var self = this
+    var view = yo`<div>
         <input
           id='slider'
           style=${ui.formatCss(style.rule)}
@@ -28,43 +31,45 @@ Slider.prototype.render = function () {
           oninput=${function () { self.onChange() }}
           disabled=${this.disabled} />
       </div>`
-  if (!this.view) {
-    this.view = view
+    if (!this.view) {
+      this.view = view
+    }
+    return view
   }
-  return view
-}
 
-Slider.prototype.init = function (length) {
-  var slider = document.getElementById('slider')
-  slider.setAttribute('max', length - 1)
-  this.max = length - 1
-  this.updateDisabled(length === 0)
-  this.disabled = length === 0
-  this.setValue(0)
-}
-
-Slider.prototype.onChange = function (event) {
-  var value = parseInt(document.getElementById('slider').value)
-  if (value === this.previousValue) return
-  this.previousValue = value
-  this.event.trigger('moved', [value])
-}
-
-Slider.prototype.setValue = function (value) {
-  var slider = document.getElementById('slider')
-  var diff = value - slider.value
-  if (diff > 0) {
-    slider.stepUp(diff)
-  } else {
-    slider.stepDown(Math.abs(diff))
+  init (length) {
+    var slider = this.view.querySelector('#slider')
+    slider.setAttribute('max', length - 1)
+    this.max = length - 1
+    this.updateDisabled(length === 0)
+    this.disabled = length === 0
+    this.setValue(0)
   }
-}
 
-Slider.prototype.updateDisabled = function (disabled) {
-  if (disabled) {
-    document.getElementById('slider').setAttribute('disabled', true)
-  } else {
-    document.getElementById('slider').removeAttribute('disabled')
+  onChange (event) {
+    var value = parseInt(this.view.querySelector('#slider').value)
+    if (this.stepOverride) {
+      var correctedValue = this.stepOverride(value)
+      if (correctedValue !== value) {
+        this.setValue(correctedValue)
+        value = correctedValue
+      }
+    }
+    if (value === this.previousValue) return
+    this.previousValue = value
+    this.event.trigger('moved', [value])
+  }
+
+  setValue (value) {
+    this.view.querySelector('#slider').value = value
+  }
+
+  updateDisabled (disabled) {
+    if (disabled) {
+      this.view.querySelector('#slider').setAttribute('disabled', true)
+    } else {
+      this.view.querySelector('#slider').removeAttribute('disabled')
+    }
   }
 }
 

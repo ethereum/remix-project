@@ -37,6 +37,7 @@ class InternalCallTree {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
             console.log('ready')
+            createReducedTrace(this, traceManager.trace.length - 1)
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
         })
@@ -59,6 +60,7 @@ class InternalCallTree {
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
     this.astWalker = new AstWalker()
+    this.reducedTrace = []
   }
 
   /**
@@ -87,10 +89,17 @@ async function buildTree (tree, step, scopeId) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {} }
+  var currentSourceLocation = {}
   while (step < tree.traceManager.trace.length) {
     var sourceLocation
     try {
       sourceLocation = await extractSourceLocation(tree, step)
+      if (sourceLocation.start !== currentSourceLocation.start ||
+      sourceLocation.length !== currentSourceLocation.length ||
+      sourceLocation.file !== currentSourceLocation.file) {
+        tree.reducedTrace.push(step)
+        currentSourceLocation = sourceLocation
+      }
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e.message }
     }
@@ -120,6 +129,10 @@ async function buildTree (tree, step, scopeId) {
     }
   }
   return { outStep: step }
+}
+
+function createReducedTrace (tree, index) {
+  tree.reducedTrace.push(index)
 }
 
 function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {

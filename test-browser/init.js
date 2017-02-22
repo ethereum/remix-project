@@ -11,6 +11,13 @@ module.exports = function (browser, callback) {
 }
 
 function extendBrowser (browser) {
+  browser.multipleClick = function (id, time) {
+    for (var k = 0; k < time; k++) {
+      browser.click(id)
+    }
+    return browser
+  }
+
   browser.assertCurrentSelectedItem = function (expected) {
     browser.execute(function (id) {
       var node = document.querySelector('#asmcodes div div[selected="selected"] span')
