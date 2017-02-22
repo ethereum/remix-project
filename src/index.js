@@ -6,6 +6,7 @@ var TreeView = require('./ui/TreeView')
 var TraceManager = require('./trace/traceManager')
 var CodeManager = require('./code/codeManager')
 var disassembler = require('./code/disassembler')
+var BreakpointManager = require('./code/breakpointManager')
 var SourceMappingDecoder = require('./util/sourceMappingDecoder')
 var AstWalker = require('./util/astWalker')
 var decodeInfo = require('./solidity/decodeInfo')
@@ -24,7 +25,8 @@ function modules () {
   return {
     code: {
       codeManager: CodeManager,
-      disassembler: disassembler
+      disassembler: disassembler,
+      BreakpointManager: BreakpointManager
     },
     trace: {
       traceManager: TraceManager

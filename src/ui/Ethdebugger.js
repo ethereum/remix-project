@@ -62,6 +62,10 @@ function Ethdebugger () {
   })
 }
 
+Ethdebugger.prototype.setBreakpointManager = function (breakpointManager) {
+  this.breakpointManager = breakpointManager
+}
+
 Ethdebugger.prototype.web3 = function () {
   return util.web3
 }
@@ -141,6 +145,9 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
       self.statusMessage = ''
       yo.update(self.view, self.render())
       self.event.trigger('newTraceLoaded', [self.traceManager.trace])
+      if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
+        self.breakpointManager.jumpNextBreakpoint(false)
+      }
     } else {
       self.statusMessage = error ? error.message : 'Trace not loaded'
       yo.update(self.view, self.render())

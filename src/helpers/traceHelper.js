@@ -25,6 +25,10 @@ module.exports = {
     return step.op === 'RETURN'
   },
 
+  isJumpDestInstruction: function (step) {
+    return step.op === 'JUMPDEST'
+  },
+
   isStopInstruction: function (step) {
     return step.op === 'STOP'
   },
