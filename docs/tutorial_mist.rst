@@ -82,6 +82,8 @@ Once Mist is started, Verify that it is connected to the test node (that's impor
 
 On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently runnning.
 
+.. image:: mist1.png
+
 Clicking on `Wallet` will allow you to send transactions and check account balances (if you are currently mining you should see the balance increasing).
 
 Starting Remix
@@ -95,7 +97,11 @@ Now, we need to check if Remix is connected to Mist:
 
 Right panel / third tab from the left, ``Injected Provider`` should be checked.
 
+.. image:: remix4.png
+
 Right panel / second tab from the left, ``Transaction Origin`` should contain accounts we have previously created in Geth.
+
+.. image:: remix5.png
 
 Developping contract / front end
 -------------------------------
@@ -229,6 +235,8 @@ Deploying
 
 Remix - Right panel / Red button ``Create``
 
+.. image:: remix1.png
+
 This create a new transaction that deploy the ``Donation`` contract (Mist will ask for the usual pasphrase check).
 
 Wait for the transaction to be mined (don't forget to activate mining ``miner.start()``).
@@ -236,6 +244,8 @@ Once this is done, you can use it by executing the ``moveFund`` and ``donate`` f
 want to achieve. We want to run and debug those functions from the front end.
 
 Remix also display the address of the contract. Save it, we'll need this address later.
+
+.. image:: remix2.png
 
 Debugging
 ---------
@@ -258,6 +268,8 @@ There is only one field that we need, this is the ``transactionHash``.
 Copy it and switch to Remix. On the right half, the fifth panel shows a small "bug" icon, that is the debugger.
 
 Paste the hash into the transaction field and click on the ``play`` button.
+
+.. image:: remix3.png
 
 You are now entering a debug session for the call to ``donate``.
 
