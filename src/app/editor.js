@@ -28,14 +28,14 @@ function Editor () {
     var breakpoints = e.editor.session.getBreakpoints()
     for (var k in breakpoints) {
       if (k === row.toString()) {
-        event.trigger('breakpointCleared', [self.getCacheFile(), row])
+        event.trigger('breakpointCleared', [currentSession, row])
         e.editor.session.clearBreakpoint(row)
         e.stop()
         return
       }
     }
     self.setBreakpoint(row)
-    event.trigger('breakpointAdded', [self.getCacheFile(), row])
+    event.trigger('breakpointAdded', [currentSession, row])
     e.stop()
   })
 

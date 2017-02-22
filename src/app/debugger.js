@@ -11,28 +11,28 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
   this.el.appendChild(this.debugger.render())
   this.appAPI = appAPI
-  this.markers = {}
+
   this.breakPointManager = new remix.code.BreakpointManager(this.debugger, (sourceLocation) => {
-    return this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.editor, this.compiler.lastCompilationResult.data)
+    return appAPI.offsetToLineColumn(sourceLocation, sourceLocation.file, this.editor, this.appAPI.lastCompilationResult().data)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
   this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {
   })
 
+  var self = this
   editorEvent.register('breakpointCleared', (fileName, row) => {
-    if (self.compiler.lastCompilationResult.data) {
+    if (self.appAPI.lastCompilationResult().data) {
       this.breakPointManager.remove({fileName: fileName, row: row})
     }
   })
 
   editorEvent.register('breakpointAdded', (fileName, row) => {
-    if (self.compiler.lastCompilationResult.data) {
+    if (self.appAPI.lastCompilationResult().data) {
       this.breakPointManager.add({fileName: fileName, row: row})
     }
   })
 
-  var self = this
   executionContextEvent.register('contextChanged', this, function (context) {
     self.switchProvider(context)
   })
@@ -44,7 +44,6 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   // unload if a file has changed (but not if tabs were switched)
   editorEvent.register('contentChanged', function () {
     self.debugger.unLoad()
-    self.removeMarkers()
   })
 
   // register selected code item, highlight the corresponding source location
@@ -75,16 +74,6 @@ Debugger.prototype.debug = function (txHash) {
       self.debugger.debug(tx)
     }
   })
-}
-
-Debugger.prototype.switchFile = function (rawLocation) {
-  var name = this.editor.getCacheFile() // current opened tab
-  if (this.compiler.lastCompilationResult.data) {
-    var source = this.compiler.lastCompilationResult.data.sourceList[rawLocation.file] // auto switch to that tab
-    if (name !== source) {
-      this.switchToFile(source) // command the app to swicth to the next file
-    }
-  }
 }
 
 /**
