@@ -18,6 +18,31 @@ function Editor () {
 
   var emptySession = createSession('')
 
+  var self = this
+  editor.on('guttermousedown', function (e) {
+    var target = e.domEvent.target
+    if (target.className.indexOf('ace_gutter-cell') === -1) {
+      return
+    }
+    var row = e.getDocumentPosition().row
+    var breakpoints = e.editor.session.getBreakpoints()
+    for (var k in breakpoints) {
+      if (k === row.toString()) {
+        event.trigger('breakpointCleared', [currentSession, row])
+        e.editor.session.clearBreakpoint(row)
+        e.stop()
+        return
+      }
+    }
+    self.setBreakpoint(row)
+    event.trigger('breakpointAdded', [currentSession, row])
+    e.stop()
+  })
+
+  this.setBreakpoint = function (row, css) {
+    editor.session.setBreakpoint(row, css)
+  }
+
   function createSession (content) {
     var s = new ace.EditSession(content, 'ace/mode/javascript')
     s.setUndoManager(new ace.UndoManager())

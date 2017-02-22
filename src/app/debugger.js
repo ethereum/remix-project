@@ -12,7 +12,27 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   this.el.appendChild(this.debugger.render())
   this.appAPI = appAPI
 
+  this.breakPointManager = new remix.code.BreakpointManager(this.debugger, (sourceLocation) => {
+    return appAPI.offsetToLineColumn(sourceLocation, sourceLocation.file, this.editor, this.appAPI.lastCompilationResult().data)
+  })
+
+  this.debugger.setBreakpointManager(this.breakPointManager)
+  this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {
+  })
+
   var self = this
+  editorEvent.register('breakpointCleared', (fileName, row) => {
+    if (self.appAPI.lastCompilationResult().data) {
+      this.breakPointManager.remove({fileName: fileName, row: row})
+    }
+  })
+
+  editorEvent.register('breakpointAdded', (fileName, row) => {
+    if (self.appAPI.lastCompilationResult().data) {
+      this.breakPointManager.add({fileName: fileName, row: row})
+    }
+  })
+
   executionContextEvent.register('contextChanged', this, function (context) {
     self.switchProvider(context)
   })
