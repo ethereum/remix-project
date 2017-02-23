@@ -17,3 +17,4 @@ Tutorial
    :maxdepth: 1
    
    tutorial_mist.rst
+   tutorial_debug.rst
