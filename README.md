@@ -9,7 +9,7 @@ it will always deliver the latest version.
 
 ## Offline Usage
 
-The `gh-pages` branch always has the latest stable build of Browser-Solidity. It also contains a ZIP file with the entire build. Download it to use offline.
+The `gh-pages` branch always has the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
 
 Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
 
@@ -29,6 +29,7 @@ Here are some things to consider if you have trouble building the package.
 - Make sure that you have the correct version of `node`, `npm` and `nvm`. You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/browser-solidity).
 
 Run:
+
 	node --version
 	npm --version
 	nvm --version
