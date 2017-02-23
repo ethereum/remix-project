@@ -72,6 +72,13 @@ Renderer.prototype.error = function (message, container, options) {
 }
 
 Renderer.prototype.contracts = function (data, source) {
+  var retrieveMetadataHash = function (bytecode) {
+    var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
+    if (match) {
+      return match[1]
+    }
+  }
+
   var udappContracts = []
   for (var contractName in data.contracts) {
     var contract = data.contracts[contractName]
@@ -79,15 +86,9 @@ Renderer.prototype.contracts = function (data, source) {
       name: contractName,
       interface: contract['interface'],
       bytecode: contract.bytecode,
-      metadata: contract.metadata
+      metadata: contract.metadata,
+      metadataHash: contract.bytecode && retrieveMetadataHash(contract.bytecode)
     })
-  }
-
-  var retrieveMetadataHash = function (bytecode) {
-    var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
-    if (match) {
-      return match[1]
-    }
   }
 
   var tableRowItems = function (first, second, cls) {

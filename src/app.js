@@ -659,11 +659,11 @@ var run = function () {
 
   udapp.event.register('publishContract', this, function (contract) {
     console.log('Publish contract...', contract)
-    swarmgw.put(contract.metadata, function (err, ret) {
+    swarmVerifiedPublish(contract.metadata, contract.metadataHash, function (err) {
       if (err) {
         alert('Failed to publish metadata: ' + err)
       } else {
-        alert('Published metadata: ' + ret)
+        alert('Published metadata')
       }
     })
   })
