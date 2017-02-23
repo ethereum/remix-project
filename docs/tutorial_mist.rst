@@ -98,10 +98,10 @@ Right panel / third tab from the left, ``Injected Provider`` should be checked.
 Right panel / second tab from the left, ``Transaction Origin`` should contain accounts we have previously created in Geth.
 
 Developping contract / front end
--------------------------------
+--------------------------------
 
 Donation contract - Dapp Back end
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here is a sample solidity contract.
 
@@ -146,7 +146,7 @@ Copy and paste the following inside remix:
     
     
 Dapp Front end
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 and here is the front end:
 
@@ -227,7 +227,7 @@ you need to copy the new abi from remix to the front end.
 Deploying
 ---------
 
-Remix - Right panel / Red button ``Create``
+Right panel / Red button ``Create``
 
 This create a new transaction that deploy the ``Donation`` contract (Mist will ask for the usual pasphrase check).
 
