@@ -645,6 +645,18 @@ var run = function () {
     startdebugging(txResult.transactionHash)
   })
 
+  function swarmVerifiedPublish (content, expectedHash, cb) {
+    swarmgw.put(content, function (err, ret) {
+      if (err) {
+        cb(err)
+      } else if (ret !== expectedHash) {
+        cb('Hash mismatch')
+      } else {
+        cb()
+      }
+    })
+  }
+
   udapp.event.register('publishContract', this, function (contract) {
     console.log('Publish contract...', contract)
     swarmgw.put(contract.metadata, function (err, ret) {
