@@ -3,6 +3,7 @@
 
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
+var swarmgw = require('swarmgw')
 
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
@@ -515,12 +516,36 @@ var run = function () {
       })
   }
 
+  function handleSwarmImport (url, cb) {
+    swarmgw.get(url, function (err, content) {
+      // retry if this failed and we're connected via RPC
+      if (err && !executionContext.isVM()) {
+        var web3 = executionContext.web3()
+        web3.swarm.download(url, cb)
+      } else {
+        cb(err, content)
+      }
+    })
+  }
   function handleImportCall (url, cb) {
-    var githubMatch
+    var match
     if (files.exists(url)) {
       cb(null, files.get(url))
-    } else if ((githubMatch = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
-      handleGithubCall(githubMatch[3], githubMatch[4], function (err, content) {
+    } else if ((match = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
+      handleGithubCall(match[3], match[4], function (err, content) {
+        if (err) {
+          cb('Unable to import "' + url + '": ' + err)
+          return
+        }
+
+        // FIXME: at some point we should invalidate the cache
+        files.addReadOnly(url, content)
+        cb(null, content)
+      })
+    } else if ((match = /^(bzz[ri]?:\/\/?.*)$/.exec(url))) {
+      // Supported: bzz:, bzzr:, bzzi:
+      $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
+      handleSwarmImport(match[1], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
           return
