@@ -50,9 +50,11 @@ var run = function () {
 
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
-    return files.list()
+    var ret = {}
+    Object.keys(files.list())
       .filter(function (path) { if (!files.isReadOnly(path)) { return path } })
-      .map(function (path) { return { content: files.get(path) } })
+      .map(function (path) { ret[path] = { content: files.get(path) } })
+    return ret
   }
 
   function createNonClashingName (path) {
