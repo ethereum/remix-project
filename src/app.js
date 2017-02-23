@@ -694,10 +694,11 @@ var run = function () {
   })
 
   function runCompiler () {
+    editorSyncFile()
     if (currentFile) {
       var target = currentFile
       var sources = {}
-      sources[target] = editor.get(target)
+      sources[target] = files.get(target)
       compiler.compile(sources, target)
     }
   }
