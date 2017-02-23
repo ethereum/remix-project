@@ -542,7 +542,8 @@ var run = function () {
         files.addReadOnly(url, content)
         cb(null, content)
       })
-    } else if ((match = /^(bzzr?:\/\/?.*)$/.exec(url))) {
+    } else if ((match = /^(bzz[ri]?:\/\/?.*)$/.exec(url))) {
+      // Supported: bzz:, bzzr:, bzzi:
       $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
       handleSwarmImport(match[1], function (err, content) {
         if (err) {
