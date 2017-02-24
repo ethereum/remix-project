@@ -1,6 +1,6 @@
 'use strict'
 
-var CONFIG_FILE = '.browser-solidity.json'
+var CONFIG_FILE = '.remix.config'
 
 function Config (storage) {
   this.items = {}

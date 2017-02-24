@@ -9,7 +9,7 @@ function Files (storage) {
 
   this.exists = function (path) {
     // NOTE: ignore the config file
-    if (path === '.browser-solidity.json') {
+    if (path === '.remix.config') {
       return false
     }
 
@@ -18,7 +18,7 @@ function Files (storage) {
 
   this.get = function (path) {
     // NOTE: ignore the config file
-    if (path === '.browser-solidity.json') {
+    if (path === '.remix.config') {
       return null
     }
 
@@ -27,7 +27,7 @@ function Files (storage) {
 
   this.set = function (path, content) {
     // NOTE: ignore the config file
-    if (path === '.browser-solidity.json') {
+    if (path === '.remix.config') {
       return false
     }
 
@@ -94,7 +94,7 @@ function Files (storage) {
     // add r/w files to the list
     storage.keys().forEach(function (path) {
       // NOTE: as a temporary measure do not show the config file
-      if (path !== '.browser-solidity.json') {
+      if (path !== '.remix.config') {
         files[path] = false
       }
     })
@@ -105,6 +105,11 @@ function Files (storage) {
     })
 
     return files
+  }
+
+  // rename .browser-solidity.json to .remix.config
+  if (this.exists('.browser-solidity.json')) {
+    this.rename('.browser-solidity.json', '.remix.config')
   }
 }
 
