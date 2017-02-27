@@ -61,7 +61,9 @@ class BreakpointManager {
       // depthChange -> returning from an external call
       // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
       if (helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) && previousSourceLocation.jump === 'o' ||
-        depthChange(currentStep, self.debugger.traceManager.trace)) {
+        depthChange(currentStep, self.debugger.traceManager.trace) ||
+        (sourceLocation.start <= previousSourceLocation.start &&
+        sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
         return false
       } else {
         self.debugger.stepManager.jumpTo(currentStep)
