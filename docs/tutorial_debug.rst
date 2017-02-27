@@ -1,4 +1,4 @@
-Debugging a transaction
+Debugging a Transaction
 =======================
 
 .. _tutorial-debug:
