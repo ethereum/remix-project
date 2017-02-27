@@ -1,31 +1,35 @@
-Using the Solidity ``import`` 
-=======================
+Importing Source Files in Solidity
+==================================
 
 .. _tutorial-import:
 
-This tutorial will show how to import local file and external file.
+This tutorial will show you how to import local and external files.
 
-The compilation result will contain contracts implemented in imported file.
+The compilation result will also contain contracts implemented in the imported files.
 
-For a detailed explanation of the ``import`` keyword. see the ``Solidity`` `documentation <http://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files>`_
+For a detailed explanation of the ``import`` keyword see the ``Solidity``
+`documentation <http://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files>`_
 
 Importing a local file
 ----------------------
 
-That is the common way.
+Other files in Remix can be imported just by specifying their path.
+Please use `./` for relative paths to increase portability.
 
 .. image:: tuto_basicimport.png
 
 Importing from Github
 ----------------------
 
-.. image:: tuto_importgit.png
+It is possible to import files directly from github with URLs like
+``http://github.com/<owner>/<repo>/<path to the file>``.
 
-the URL should be like: ``http://github.com/<owner>/<repo>/<path to the file>``
+.. image:: tuto_importgit.png
 
 Importing from Swarm
 --------------------
 
+Files can be imported using all URLs supported by swarm. If you do not have a swarm
+node, swarm-gateways.net will be used instead.
+
 .. image:: tuto_importswarm.png
-
-
