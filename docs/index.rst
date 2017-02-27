@@ -1,14 +1,14 @@
 Remix - Solidity IDE
 ====================
 
-Remix is an Solidity IDE. 
-It allows developing / debugging Solidity smart contract.
+Remix is an IDE for the smart contract programming language Solidity and has
+as integrated debugger and testing environment.
 
-An online version is accessible at `remix.ethereum.org <http://remix.ethereum.org>`_
+An up to date online version is accessible at `remix.ethereum.org <http://remix.ethereum.org>`_
 
 This page will host documentation and tutorial about features Remix provides.
 
-Please browse `solidity.readthedocs.io <http://solidity.readthedocs.io>`_ for any information regarding ``Solidity``
+Please go to `solidity.readthedocs.io <http://solidity.readthedocs.io>`_ for any information regarding ``Solidity``
 
 Tutorial
 --------
