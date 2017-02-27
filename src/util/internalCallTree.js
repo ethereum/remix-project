@@ -106,9 +106,9 @@ class InternalCallTree {
 async function buildTree (tree, step, scopeId) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step, locals: {} } 
+  tree.scopes[scopeId] = { firstStep: step, locals: {} }
 
-  function checkDepth (step, trace) {
+  function callDepthChange (step, trace) {
     if (step + 1 < trace.length) {
       return trace[step].depth !== trace[step + 1].depth
     }
@@ -148,7 +148,7 @@ async function buildTree (tree, step, scopeId) {
       } catch (e) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
-    } else if (sourceLocation.jump === 'o' || checkDepth(step, tree.traceManager.trace)) {
+    } else if (sourceLocation.jump === 'o' || callDepthChange(step, tree.traceManager.trace)) {
       tree.scopes[scopeId].lastStep = step
       return { outStep: step + 1 }
     } else {
