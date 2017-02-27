@@ -3,7 +3,7 @@ Debugging a Transaction
 
 .. _tutorial-debug:
 
-The goal of this tutorial is to explain how to debug transaction using Remix
+The goal of this tutorial is to explain how to debug transaction using Remix.
 
 Start debugging
 ---------------
@@ -13,8 +13,8 @@ There are two different ways to start debugging, each way correspond to a differ
 From the Transaction GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-We will not explain in detail here how to write / deploy contract.
-Let's put a basic contract (replace this one by yours):
+We will not explain in detail here how to write or deploy contract.
+Let us start with a basic contract (replace this one by yours):
 
 .. code-block:: none
 
@@ -53,9 +53,7 @@ Let's put a basic contract (replace this one by yours):
         }
     }
     
-For the purpose of this tutorial we will run the ``JavaScript VM`` (that's the default mode if don't use Remix with Mist or Metamask).
-
-You could do the same using a backend node.
+For the purpose of this tutorial we will run the ``JavaScript VM`` (that's the default mode if you don't use Remix with Mist or Metamask) which simulates a custom blockchain. You could do the same using a proper backend node.
 
 Let's deploy the contract:
 
@@ -63,9 +61,9 @@ Right panel / Red button ``Create``
 
 .. image:: remix1.png
 
-Then we should call the ``Donate`` function (that will send ether to the contract). 
+Then we should call the ``Donate`` function (that will send Ether to the contract). 
 
-Let's set the amount of ether:
+Let's set the amount of Ether:
 
 Right panel / second tab from the left - fill in the ´´value´´ input (´1 ether´ for instance)
 
@@ -73,7 +71,7 @@ Right panel / second tab from the left - fill in the ´´value´´ input (´1 et
 
 Then click on ``Donate``. As we are using the ``JavaScript VM``, everything goes almost instantly.
 
-Remix display also some information related to each transaction result. On the right of each transaction result
+Remix displays also some information related to each transaction result. On the right of each transaction result
 you can start debugging the corresponding transaction.
 
 .. image:: remix_startdebugging.png
@@ -81,7 +79,7 @@ you can start debugging the corresponding transaction.
 From the Debugger
 ~~~~~~~~~~~~~~~~~
 
-Right panel / 5th tab from the left. that's the debugger.
+The debugger can be found in the right panel / 5th tab from the left.
 
 You can start a debug session by providing either a ``transaction hash`` or a ``block number`` and ``transaction index``
 
@@ -99,7 +97,7 @@ First the transaction panel display basic and simple information about the curre
 
 .. image:: remix_debugtransactioninfo.png
 
-The navigation part contains a slider and buttons used to step over the transaction execution.
+The navigation part contains a slider and buttons that can be used to step through the transaction execution.
 
 From the left to the right: 
 
@@ -107,32 +105,32 @@ step over back, step into back, step into forward, step over forward, jump out (
 
 .. image:: remix_navigation.png
 
-11 panels will give detailed informations about the execution:
+11 panels give detailed informations about the execution:
 
 Instructions
 ~~~~~~~~~~~~
 
 .. image:: remix_debuginstructions.png
 
-This panel will display the bytecode of the current executing contract. the current step is highlighted.
+This panel displays the bytecode of the current executing contract, the current step is highlighted.
 
 Important note: 
-When this panel is hidden, the slider will only enable step that have different source location.
-When the panel is diplayed, it will be possible to step over every opcode, even those that refers to the same source location.
+When this panel is hidden, the slider will have a courser granularity and only stop at expression boundaries, even if they are compiled into multiple EVM instructions.
+When the panel is diplayed, it will be possible to step over every instruction, even those that refers to the same expression.
 
 Solidity Locals
 ~~~~~~~~~~~~~~~
 
 .. image:: remix_soliditylocals.png
 
-That panel display local variables associated with the current context.
+That panel displays local variables associated with the current context.
 
 Solidity State
 ~~~~~~~~~~~~~~
 
 .. image:: remix_soliditystate.png
 
-That panel display state variables of the current executing contract.
+That panel displays state variables of the current executing contract.
 
 Low level panels
 ~~~~~~~~~~~~~~~~
@@ -144,8 +142,8 @@ These panels display low level informations about the execution:
  - Memory
  - Call Data
  - Call Stack
- - Return Value (only if the current step in a RETURN opcode)
- - Full Storages Changes (only at the end of the execution - display every storage change of every contract)
+ - Return Value (only if the current step is a RETURN opcode)
+ - Full Storages Changes (only at the end of the execution - display every storage change of every modified contract)
  
 Reverted Transaction
 ~~~~~~~~~~~~~~~~~~~~
@@ -154,7 +152,7 @@ A transaction could be reverted (either because of out of gas exception, Solidit
 
 In that case it is important to be aware of the exception and to locate where the exception is in the source code.
 
-Remix will warn you when the execution throw an exception. The ``warning`` button will jump the execution to the last opcode before the exception happened.
+Remix will warn you when the execution throws an exception. The ``warning`` button will jump to the last opcode before the exception happened.
 
 .. image:: remix_executionexception.png
 
@@ -163,14 +161,16 @@ Breakpoints
 
 The two last buttons from the navigation area are used to jump either back to the previous breakpoint or forward to the next breakpoint.
 
-Adding/removing a breakpoint is done like in a normal IDE.
+Breakpoints can be added and removed by clicking on the line number.
 
 .. image:: remix_breakpoint.png
 
-When a debug session is started, the executing will jump to the first encountered breakpoint.
+When a debug session is started, the execution will jump to the first encountered breakpoint.
+
 Important note: 
-There are two phases in the EVM execution. the local variables declaration and the proper execution.
-It means that saying this contract:
+If you add a breakpoint to a line that declares a variable, it might be triggered twice: Once for initializing the
+variable to zero and second time for assigning the actual value.
+As an example, assume you are debugging the following contract:
 
 .. code-block:: none
 
@@ -183,7 +183,7 @@ It means that saying this contract:
         }
     }
     
-Let's says that breakpoints are set for : 
+And let's says that breakpoints are set for the lines 
 
 ``uint p = 45;``
 
@@ -192,7 +192,7 @@ Let's says that breakpoints are set for :
 ``uint l = 34;``
 
 
-clicking on ``Jump to next breakpoint`` will in order jump to :
+then clicking on ``Jump to next breakpoint`` will stop at the following lines in the given order:
 
  ``uint p = 45;``   (declaration of p)
  
@@ -203,4 +203,3 @@ clicking on ``Jump to next breakpoint`` will in order jump to :
  ``m = 89;``    (89 assigned to m)
  
  ``uint l = 34;``   (34 assigned to l)
- 
