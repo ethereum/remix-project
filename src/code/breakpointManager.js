@@ -56,10 +56,11 @@ class BreakpointManager {
       return trace[step].depth !== trace[step - 1].depth
     }
 
-    function hitLine (currentStep, sourceLocation, self) {
+    function hitLine (currentStep, sourceLocation, previousSourceLocation, self) {
       // isJumpDestInstruction -> returning from a internal function call
       // depthChange -> returning from an external call
-      if (helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) ||
+      // sourceLocation.start <= previousSourceLocation.start && ... -> previous src is contained in the current one
+      if (helper.isJumpDestInstruction(self.debugger.traceManager.trace[currentStep]) && previousSourceLocation.jump === 'o' ||
         depthChange(currentStep, self.debugger.traceManager.trace)) {
         return false
       } else {
@@ -85,7 +86,7 @@ class BreakpointManager {
       if (this.previousLine !== lineColumn.start.line) {
         if (direction === -1 && lineHadBreakpoint) { // TODO : improve this when we will build the correct structure before hand
           lineHadBreakpoint = false
-          if (hitLine(currentStep + 1, previousSourceLocation, this)) {
+          if (hitLine(currentStep + 1, previousSourceLocation, sourceLocation, this)) {
             return
           }
         }
@@ -93,7 +94,7 @@ class BreakpointManager {
         if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
           lineHadBreakpoint = true
           if (direction === 1) {
-            if (hitLine(currentStep, sourceLocation, this)) {
+            if (hitLine(currentStep, sourceLocation, previousSourceLocation, this)) {
               return
             }
           }
