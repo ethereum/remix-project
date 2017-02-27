@@ -104,10 +104,10 @@ Right panel / second tab from the left, ``Transaction Origin`` should contain ac
 .. image:: remix5.png
 
 Developping contract / front end
--------------------------------
+--------------------------------
 
 Donation contract - Dapp Back end
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here is a sample solidity contract.
 
@@ -152,7 +152,7 @@ Copy and paste the following inside remix:
     
     
 Dapp Front end
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 and here is the front end:
 
@@ -233,7 +233,7 @@ you need to copy the new abi from remix to the front end.
 Deploying
 ---------
 
-Remix - Right panel / Red button ``Create``
+Right panel / Red button ``Create``
 
 .. image:: remix1.png
 
