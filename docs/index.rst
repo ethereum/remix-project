@@ -18,3 +18,4 @@ Tutorial
    
    tutorial_mist.rst
    tutorial_debug.rst
+   tutorial_import.rst
