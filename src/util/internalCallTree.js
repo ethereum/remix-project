@@ -136,10 +136,7 @@ async function buildTree (tree, step, scopeId) {
     if (traceHelper.isCallInstruction(tree.traceManager.trace[step]) ||
         sourceLocation.jump === 'i') {
       try {
-        if (sourceLocation.jump === 'i') {
-          step++
-        }
-        var externalCallResult = await buildTree(tree, step, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
+        var externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
