@@ -4,6 +4,7 @@ var AstWalker = require('./astWalker')
 var EventManager = require('../lib/eventManager')
 var decodeInfo = require('../solidity/decodeInfo')
 var util = require('../helpers/util')
+var traceHelper = require('../helpers/traceHelper')
 
 /**
  * Tree representing internal jump into function.
