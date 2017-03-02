@@ -66,9 +66,9 @@ var run = function () {
   }
 
   // Add files received from remote instance (i.e. another browser-solidity)
-  function loadFiles (files) {
-    for (var f in files) {
-      files.set(createNonClashingName(f), files[f].content)
+  function loadFiles (filesSet) {
+    for (var f in filesSet) {
+      files.set(createNonClashingName(f), filesSet[f].content)
     }
     switchToNextFile()
   }
