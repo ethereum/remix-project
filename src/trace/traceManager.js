@@ -89,6 +89,7 @@ TraceManager.prototype.getStorageAt = function (stepIndex, tx, callback, address
     this.traceRetriever.getStorage(tx, address, function (error, result) {
       if (error) {
         // TODO throws proper error when debug_storageRangeAt will be available
+        console.log(error)
         result = {}
       }
       var storage = self.traceCache.rebuildStorage(address, result, stepIndex)
