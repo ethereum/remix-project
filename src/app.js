@@ -535,7 +535,7 @@ var run = function () {
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
     $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
-    return $.get('https://gateway.ipfs.io/' + url)
+    return $.ajax({ type: 'GET', url: 'https://gateway.ipfs.io/' + url })
       .done(function (data) {
         cb(null, data)
       })
