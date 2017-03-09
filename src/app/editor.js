@@ -95,10 +95,10 @@ function Editor () {
     }
   }
 
-  this.resize = function () {
+  this.resize = function (useWrapMode) {
     editor.resize()
     var session = editor.getSession()
-    session.setUseWrapMode(document.querySelector('#editorWrap').checked)
+    session.setUseWrapMode(useWrapMode)
     if (session.getUseWrapMode()) {
       var characterWidth = editor.renderer.characterWidth
       var contentWidth = editor.container.ownerDocument.getElementsByClassName('ace_scroller')[0].clientWidth

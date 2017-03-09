@@ -487,7 +487,7 @@ var run = function () {
   // ----------------- editor resize ---------------
 
   function onResize () {
-    editor.resize()
+    editor.resize(document.querySelector('#editorWrap').checked)
     reAdjust()
   }
   window.onresize = onResize
