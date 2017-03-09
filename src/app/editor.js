@@ -6,9 +6,9 @@ var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
 require('../mode-solidity.js')
 
-function Editor () {
-  var editor = ace.edit('input')
-  document.getElementById('input').editor = editor // required to access the editor during tests
+function Editor (editorElement) {
+  var editor = ace.edit(editorElement)
+  document.getElementById(editorElement).editor = editor // required to access the editor during tests
   var event = new EventManager()
   this.event = event
   var sessions = {}
