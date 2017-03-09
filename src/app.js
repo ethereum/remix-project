@@ -157,7 +157,7 @@ var run = function () {
 
   // ----------------- editor ----------------------
 
-  var editor = new Editor('input')
+  var editor = new Editor(document.getElementById('input'))
 
   // ----------------- tabbed menu -------------------
   $('#options li').click(function (ev) {

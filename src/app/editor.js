@@ -8,7 +8,7 @@ require('../mode-solidity.js')
 
 function Editor (editorElement) {
   var editor = ace.edit(editorElement)
-  document.getElementById(editorElement).editor = editor // required to access the editor during tests
+  editorElement.editor = editor // required to access the editor during tests
   var event = new EventManager()
   this.event = event
   var sessions = {}
