@@ -503,7 +503,6 @@ var run = function () {
   // ----------------- compiler ----------------------
 
   function handleGithubCall (root, path, cb) {
-    $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + root + '/' + path + ' ...')))
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
       .done(function (data) {
         if ('content' in data) {
@@ -534,7 +533,6 @@ var run = function () {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
-    $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
     return $.ajax({ type: 'GET', url: 'https://gateway.ipfs.io/' + url })
       .done(function (data) {
         cb(null, data)
@@ -550,6 +548,7 @@ var run = function () {
     if (files.exists(url)) {
       cb(null, files.get(url))
     } else if ((match = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
+      $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + match[3] + '/' + match[4] + ' ...')))
       handleGithubCall(match[3], match[4], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
@@ -574,6 +573,7 @@ var run = function () {
         cb(null, content)
       })
     } else if ((match = /^(ipfs:\/\/?.+)/.exec(url))) {
+      $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
       handleIPFS(match[1], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
