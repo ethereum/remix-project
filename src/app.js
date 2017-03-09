@@ -532,7 +532,7 @@ var run = function () {
 
   function handleIPFS (url, cb) {
     // replace ipfs:// with /ipfs/
-    url = url.replace(/^ipfs:\/\/?/, '/ipfs/')
+    url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
     $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
     return $.get('https://gateway.ipfs.io/' + url)
@@ -573,7 +573,7 @@ var run = function () {
         files.addReadOnly(url, content)
         cb(null, content)
       })
-    } else if ((match = /^(\/?ipfs:?\/\/?.+)/.exec(url))) {
+    } else if ((match = /^(ipfs:\/\/?.+)/.exec(url))) {
       handleIPFS(match[1], function (err, content) {
         if (err) {
           cb('Unable to import "' + url + '": ' + err)
