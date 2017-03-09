@@ -6,9 +6,9 @@ var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
 require('../mode-solidity.js')
 
-function Editor () {
-  var editor = ace.edit('input')
-  document.getElementById('input').editor = editor // required to access the editor during tests
+function Editor (editorElement) {
+  var editor = ace.edit(editorElement)
+  editorElement.editor = editor // required to access the editor during tests
   var event = new EventManager()
   this.event = event
   var sessions = {}
@@ -95,10 +95,10 @@ function Editor () {
     }
   }
 
-  this.resize = function () {
+  this.resize = function (useWrapMode) {
     editor.resize()
     var session = editor.getSession()
-    session.setUseWrapMode(document.querySelector('#editorWrap').checked)
+    session.setUseWrapMode(useWrapMode)
     if (session.getUseWrapMode()) {
       var characterWidth = editor.renderer.characterWidth
       var contentWidth = editor.container.ownerDocument.getElementsByClassName('ace_scroller')[0].clientWidth

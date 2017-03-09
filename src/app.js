@@ -157,7 +157,7 @@ var run = function () {
 
   // ----------------- editor ----------------------
 
-  var editor = new Editor()
+  var editor = new Editor(document.getElementById('input'))
 
   // ----------------- tabbed menu -------------------
   $('#options li').click(function (ev) {
@@ -487,7 +487,7 @@ var run = function () {
   // ----------------- editor resize ---------------
 
   function onResize () {
-    editor.resize()
+    editor.resize(document.querySelector('#editorWrap').checked)
     reAdjust()
   }
   window.onresize = onResize
