@@ -1,5 +1,6 @@
 var name = 'gas costs'
 var desc = 'Warn if the gas requiremets of functions are too high.'
+var categories = require('./categories')
 
 function gasCosts () {
 }
@@ -46,5 +47,6 @@ gasCosts.prototype.report = function (compilationResults) {
 module.exports = {
   name: name,
   description: desc,
+  category: categories.GAS,
   Module: gasCosts
 }

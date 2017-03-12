@@ -2,6 +2,7 @@
 var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
+var utils = require('../utils')
 
 function staticAnalysisView (appAPI, compilerEvent) {
   this.view = null
@@ -26,7 +27,7 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`<div>
     <strong>Static Analysis</strong>
-    <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" checked="true">Auto run</label>
+    <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
     <div id="staticanalysismodules">
     ${this.modulesView}
     </div>
@@ -94,7 +95,38 @@ staticAnalysisView.prototype.run = function () {
 module.exports = staticAnalysisView
 
 function renderModules (modules) {
-  return modules.map(function (item, i) {
-    return yo`<label><input id="staticanalysismodule${i}" type="checkbox" name="staticanalysismodule" index=${i} checked="true">${item.name} (${item.description})</label>`
+  var groupedModules = utils.groupBy(preProcessModules(modules), 'categoryId')
+  return Object.keys(groupedModules).map((categoryId, i) => {
+    var category = groupedModules[categoryId]
+    var entriesDom = category.map((item, i) => {
+      return yo`<label>
+                  <input id="staticanalysismodule_${categoryId}_${i}"
+                         type="checkbox"
+                         name="staticanalysismodule"
+                         index=${item._index}
+                         checked="true" style="vertical-align:bottom">${item.name} (${item.description})
+                </label>`
+    })
+    return yo`<div>
+                <label>
+                <b>${category[0].categoryDisplayName}</b> (
+                <input id="staticanalysismodule_${categoryId}"
+                        type="checkbox"
+                        checked="true"
+                        style="vertical-align:bottom; margin-left:0"
+                        onchange=${function () { $('[id^=' + this.id + ']').prop('checked', this.checked) }}/> all/none)
+                </label> 
+                ${entriesDom}
+              </div>`
   })
 }
+
+function preProcessModules (arr) {
+  return arr.map((item, i) => {
+    item['_index'] = i
+    item.categoryDisplayName = item.category.displayName
+    item.categoryId = item.category.id
+    return item
+  })
+}
+

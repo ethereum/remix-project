@@ -1,5 +1,6 @@
 var name = 'tx origin'
 var desc = 'warn if tx.origin is used'
+var categories = require('./categories')
 
 function txOrigin () {
   this.txOriginNodes = []
@@ -29,5 +30,6 @@ txOrigin.prototype.report = function () {
 module.exports = {
   name: name,
   description: desc,
+  category: categories.SECURITY,
   Module: txOrigin
 }
