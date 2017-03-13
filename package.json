@@ -46,7 +46,7 @@
     "browserify": "^13.0.0",
     "csslint": "^1.0.2",
     "ethereum-remix": "https://github.com/ethereum/remix",
-    "ethereumjs-abi": "^0.6.4",
+    "ethereumjs-abi": "https://github.com/ethereumjs/ethereumjs-abi",
     "ethereumjs-block": "^1.2.2",
     "ethereumjs-tx": "^1.1.1",
     "ethereumjs-util": "^4.4.0",
