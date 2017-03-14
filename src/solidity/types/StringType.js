@@ -12,8 +12,8 @@ class StringType extends DynamicBytes {
     return format(decoded)
   }
 
-  decodeFromStack (stackDepth, stack, memory) {
-    return super.decodeFromStack(stackDepth, stack, memory)
+  async decodeFromStack (stackDepth, stack, memory) {
+    return await super.decodeFromStack(stackDepth, stack, memory)
   }
 
   decodeFromMemoryInternal (offset, memory) {

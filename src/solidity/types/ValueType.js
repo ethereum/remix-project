@@ -32,7 +32,7 @@ class ValueType {
     * @param {String} - memory
     * @return {Object} - decoded value
     */
-  decodeFromStack (stackDepth, stack, memory) {
+  async decodeFromStack (stackDepth, stack, memory) {
     var value
     if (stackDepth >= stack.length) {
       value = this.decodeValue('')
