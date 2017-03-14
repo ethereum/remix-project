@@ -2,7 +2,8 @@
 var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
-function FullStoragesChanges (_parent, _traceManager) {
+function FullStoragesChanges (_parent, _traceManager, _storageResolver) {
+  this.storageResolver = _storageResolver
   this.parent = _parent
   this.traceManager = _traceManager
   this.addresses = []
@@ -45,13 +46,16 @@ FullStoragesChanges.prototype.init = function () {
     if (index === self.traceLength - 1) {
       var storageJSON = {}
       for (var k in self.addresses) {
-        self.traceManager.getStorageAt(index, this.parent.tx, function (error, result) {
+        var address = self.addresses[k]
+        self.storageResolver.storageRange(function (error, result) {
           if (!error) {
-            storageJSON[self.addresses[k]] = result
+            storageJSON[address] = result
             self.basicPanel.update(storageJSON)
           }
-        }, self.addresses[k])
+        })
       }
+    } else {
+      self.basicPanel.update({})
     }
   })
 }
