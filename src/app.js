@@ -462,6 +462,7 @@ var run = function () {
       $('#ghostbar').remove()
       $(document).unbind('mousemove')
       dragging = false
+      delta = (delta<50)?50:delta
       setEditorSize(delta)
       config.set(EDITOR_WINDOW_SIZE, delta)
       reAdjust()
