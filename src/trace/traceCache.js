@@ -1,4 +1,6 @@
 'use strict'
+var helper = require('../helpers/util')
+
 function TraceCache () {
   this.init()
 }
@@ -84,23 +86,29 @@ TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {
   this.sstore[index] = {
     'address': address,
     'key': key,
-    'value': value
+    'value': value,
+    'hashedKey': helper.sha3(key)
   }
   this.storageChanges.push(index)
 }
 
-TraceCache.prototype.rebuildStorage = function (address, storage, index) {
+TraceCache.prototype.resolveStorage = function (index, address, storage) {
+  var ret = Object.assign({}, storage)
   for (var k in this.storageChanges) {
     var changesIndex = this.storageChanges[k]
     if (changesIndex > index) {
-      return storage
+      return ret
     }
     var sstore = this.sstore[changesIndex]
     if (sstore.address === address && sstore.key) {
-      storage[sstore.key] = sstore.value
+      ret[sstore.hashedKey] = {
+        hashedKey: sstore.hashedKey,
+        key: sstore.key,
+        value: sstore.value
+      }
     }
   }
-  return storage
+  return ret
 }
 
 module.exports = TraceCache
