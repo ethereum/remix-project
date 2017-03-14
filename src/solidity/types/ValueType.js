@@ -16,8 +16,8 @@ class ValueType {
     * @param {Object} storageContent - storageContent (storage)
     * @return {Object} - decoded value
     */
-  decodeFromStorage (location, storageContent) {
-    var value = util.extractHexValue(location, storageContent, this.storageBytes)
+  async decodeFromStorage (location, storageContent) {
+    var value = await util.extractHexValue(location, storageContent, this.storageBytes)
     return {
       value: this.decodeValue(value),
       type: this.typeName

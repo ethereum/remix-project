@@ -8,19 +8,19 @@ class DynamicByteArray extends RefType {
     super(1, 32, 'bytes', location)
   }
 
-  decodeFromStorage (location, storageContent) {
-    var value = util.extractHexValue(location, storageContent, this.storageBytes)
+  async decodeFromStorage (location, storageContent) {
+    var value = await util.extractHexValue(location, storageContent, this.storageBytes)
     var bn = new BN(value, 16)
     if (bn.testn(0)) {
       var length = bn.div(new BN(2))
       var dataPos = new BN(util.sha3(location.slot).replace('0x', ''), 16)
       var ret = ''
-      var currentSlot = util.readFromStorage(dataPos, storageContent)
+      var currentSlot = await util.readFromStorage(dataPos, storageContent)
       while (length.gt(ret.length) && ret.length < 32000) {
         currentSlot = currentSlot.replace('0x', '')
         ret += currentSlot
         dataPos = dataPos.add(new BN(1))
-        currentSlot = util.readFromStorage(dataPos, storageContent)
+        currentSlot = await util.readFromStorage(dataPos, storageContent)
       }
       return {
         value: '0x' + ret.replace(/(00)+$/, ''),

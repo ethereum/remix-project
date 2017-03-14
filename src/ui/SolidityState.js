@@ -52,7 +52,11 @@ SolidityState.prototype.init = function () {
             self.basicPanel.update({})
             console.log(error)
           } else {
-            self.basicPanel.update(stateDecoder.decodeState(stateVars, storage))
+            stateDecoder.decodeState(stateVars, storage).then((result) => {
+              if (!result.error) {
+                self.basicPanel.update(result)
+              }
+            })
           }
         })
       }

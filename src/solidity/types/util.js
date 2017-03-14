@@ -4,7 +4,6 @@ var BN = require('ethereumjs-util').BN
 
 module.exports = {
   readFromStorage: readFromStorage,
-  decodeInt: decodeInt,
   decodeIntFromHex: decodeIntFromHex,
   extractHexValue: extractHexValue,
   extractHexByteSlice: extractHexByteSlice,
@@ -15,12 +14,6 @@ module.exports = {
   removeLocation: removeLocation
 }
 
-function decodeInt (location, storageContent, byteLength, signed) {
-  var slotvalue = readFromStorage(location.slot, storageContent)
-  var value = extractHexByteSlice(slotvalue, byteLength, location.offset)
-  return decodeIntFromHex(value, byteLength, signed)
-}
-
 function decodeIntFromHex (value, byteLength, signed) {
   var bigNumber = new BN(value, 16)
   if (signed) {
@@ -29,23 +22,25 @@ function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-function readFromStorage (slot, storageContent) {
+async function readFromStorage (slot, storageContent) {
   var ret
   var hexSlot = ethutil.bufferToHex(slot)
-  if (storageContent[hexSlot] !== undefined) {
-    ret = storageContent[hexSlot].replace(/^0x/, '')
-  } else {
-    hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
+  return new Promise((resolve, reject) => {
     if (storageContent[hexSlot] !== undefined) {
       ret = storageContent[hexSlot].replace(/^0x/, '')
     } else {
-      ret = '000000000000000000000000000000000000000000000000000000000000000'
+      hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
+      if (storageContent[hexSlot] !== undefined) {
+        ret = storageContent[hexSlot].replace(/^0x/, '')
+      } else {
+        ret = '000000000000000000000000000000000000000000000000000000000000000'
+      }
     }
-  }
-  if (ret.length < 64) {
-    ret = (new Array(64 - ret.length + 1).join('0')) + ret
-  }
-  return ret
+    if (ret.length < 64) {
+      ret = (new Array(64 - ret.length + 1).join('0')) + ret
+    }
+    return resolve(ret)
+  })
 }
 
 /**
@@ -67,8 +62,8 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @param {Object} storageContent  - full storage mapping.
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
-function extractHexValue (location, storageContent, byteLength) {
-  var slotvalue = readFromStorage(location.slot, storageContent)
+async function extractHexValue (location, storageContent, byteLength) {
+  var slotvalue = await readFromStorage(location.slot, storageContent)
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
 }
 

@@ -8,11 +8,11 @@ var decodeInfo = require('./decodeInfo')
   * @param {Map} storageContent  - storage
   * @return {Map} - decoded state variable
   */
-function decodeState (stateVars, storageContent) {
+async function decodeState (stateVars, storageContent) {
   var ret = {}
   for (var k in stateVars) {
     var stateVar = stateVars[k]
-    ret[stateVar.name] = stateVar.type.decodeFromStorage(stateVar.storagelocation, storageContent)
+    ret[stateVar.name] = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageContent)
   }
   return ret
 }
