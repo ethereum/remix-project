@@ -10,18 +10,20 @@ var StepDetail = require('./StepDetail')
 var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
 var SolidityLocals = require('./SolidityLocals')
+var StorageResolver = require('../storage/storageResolver.js')
 var yo = require('yo-yo')
 
 function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {
+  var storageResolver = new StorageResolver(_parent, _traceManager)
   this.asmCode = new CodeListView(_parent, _codeManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
-  this.storagePanel = new StoragePanel(_parent, _traceManager)
+  this.storagePanel = new StoragePanel(_parent, _traceManager, storageResolver)
   this.memoryPanel = new MemoryPanel(_parent, _traceManager)
   this.calldataPanel = new CalldataPanel(_parent, _traceManager)
   this.callstackPanel = new CallstackPanel(_parent, _traceManager)
   this.stepDetail = new StepDetail(_parent, _traceManager)
-  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager, _solidityProxy)
-  this.solidityLocals = new SolidityLocals(_parent, _traceManager, _callTree)
+  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager, _solidityProxy, storageResolver)
+  this.solidityLocals = new SolidityLocals(_parent, _traceManager, _callTree, storageResolver)
 
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
@@ -38,7 +40,7 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   })
   /* Return values - */
 
-  this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parent, _traceManager)
+  this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parent, _traceManager, storageResolver)
 
   this.view
   var self = this

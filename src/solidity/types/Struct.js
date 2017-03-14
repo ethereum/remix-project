@@ -8,14 +8,14 @@ class Struct extends RefType {
     this.members = memberDetails.members
   }
 
-  async decodeFromStorage (location, storageContent) {
+  async decodeFromStorage (location, storageResolver) {
     var ret = {}
     this.members.map(async (item, i) => {
       var globalLocation = {
         offset: location.offset + item.storagelocation.offset,
         slot: util.add(location.slot, item.storagelocation.slot)
       }
-      ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageContent)
+      ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageResolver)
     })
     return {
       value: ret,

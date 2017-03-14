@@ -13,11 +13,11 @@ class ValueType {
     * decode the type with the @arg location from the storage
     *
     * @param {Object} location - containing offset and slot
-    * @param {Object} storageContent - storageContent (storage)
+    * @param {Object} storageResolver  - resolve storage queries
     * @return {Object} - decoded value
     */
-  async decodeFromStorage (location, storageContent) {
-    var value = await util.extractHexValue(location, storageContent, this.storageBytes)
+  async decodeFromStorage (location, storageResolver) {
+    var value = await util.extractHexValue(location, storageResolver, this.storageBytes)
     return {
       value: this.decodeValue(value),
       type: this.typeName

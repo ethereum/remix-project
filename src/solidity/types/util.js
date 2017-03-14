@@ -21,24 +21,26 @@ function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-async function readFromStorage (slot, storageContent) {
-  var ret
+function readFromStorage (slot, storageResolver) {
   var hexSlot = ethutil.bufferToHex(slot)
   return new Promise((resolve, reject) => {
-    if (storageContent[hexSlot] !== undefined) {
-      ret = storageContent[hexSlot].replace(/^0x/, '')
-    } else {
-      hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
-      if (storageContent[hexSlot] !== undefined) {
-        ret = storageContent[hexSlot].replace(/^0x/, '')
+    storageResolver.storageSlot(hexSlot, (error, slot) => {
+      if (error) {
+        return reject(error)
       } else {
-        ret = '000000000000000000000000000000000000000000000000000000000000000'
+        if (!slot) {
+          slot = {
+            key: slot,
+            value: ''
+          }
+        }
+        slot.value = slot.value.replace('0x', '')
+        if (slot.value.length < 64) {
+          slot.value = (new Array(64 - slot.value.length + 1).join('0')) + slot.value
+        }
+        return resolve(slot.value)
       }
-    }
-    if (ret.length < 64) {
-      ret = (new Array(64 - ret.length + 1).join('0')) + ret
-    }
-    return resolve(ret)
+    })
   })
 }
 
@@ -58,11 +60,11 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @returns a hex encoded storage content at the given @arg location. it does not have Ox prefix but always has the full length.
  *
  * @param {Object} location  - object containing the slot and offset of the data to extract.
- * @param {Object} storageContent  - full storage mapping.
+ * @param {Object} storageResolver  - storage resolver
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
-async function extractHexValue (location, storageContent, byteLength) {
-  var slotvalue = await readFromStorage(location.slot, storageContent)
+async function extractHexValue (location, storageResolver, byteLength) {
+  var slotvalue = await readFromStorage(location.slot, storageResolver)
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
 }
 

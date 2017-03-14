@@ -6,7 +6,7 @@ class Mapping extends RefType {
     super(1, 32, 'mapping', 'storage')
   }
 
-  async decodeFromStorage (location, storageContent) {
+  async decodeFromStorage (location, storageResolver) {
     return {
       value: '<not implemented>',
       length: '0x',

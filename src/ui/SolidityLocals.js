@@ -6,9 +6,10 @@ var yo = require('yo-yo')
 
 class SolidityLocals {
 
-  constructor (_parent, _traceManager, internalTreeCall) {
+  constructor (_parent, _traceManager, _internalTreeCall, _storageResolver) {
     this.parent = _parent
-    this.internalTreeCall = internalTreeCall
+    this.internalTreeCall = _internalTreeCall
+    this.storageResolver = _storageResolver
     this.traceManager = _traceManager
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
@@ -40,12 +41,8 @@ class SolidityLocals {
             var stack = result[0].value
             var memory = result[1].value
             try {
-              this.traceManager.getStorageAt(this.parent.currentStepIndex, this.parent.tx, (error, storage) => {
-                if (!error) {
-                  var locals = localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storage, sourceLocation)
-                  this.basicPanel.update(locals)
-                }
-              })
+              var locals = localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, this.storageResolver, sourceLocation)
+              this.basicPanel.update(locals)
             } catch (e) {
               warningDiv.innerHTML = e.message
             }

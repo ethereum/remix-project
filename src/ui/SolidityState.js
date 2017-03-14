@@ -4,7 +4,8 @@ var stateDecoder = require('../solidity/stateDecoder')
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
 var yo = require('yo-yo')
 
-function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
+function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy, _storageResolver) {
+  this.storageResolver = _storageResolver
   this.parent = _parent
   this.traceManager = _traceManager
   this.codeManager = _codeManager
@@ -42,7 +43,7 @@ SolidityState.prototype.init = function () {
       return
     }
 
-    self.traceManager.getStorageAt(index, this.parent.tx, function (error, storage) {
+    self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, result) => {
       if (error) {
         self.basicPanel.update({})
         console.log(error)
@@ -52,7 +53,7 @@ SolidityState.prototype.init = function () {
             self.basicPanel.update({})
             console.log(error)
           } else {
-            stateDecoder.decodeState(stateVars, storage).then((result) => {
+            stateDecoder.decodeState(stateVars, self.storageResolver).then((result) => {
               if (!result.error) {
                 self.basicPanel.update(result)
               }
