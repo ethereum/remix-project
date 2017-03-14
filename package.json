@@ -90,6 +90,9 @@
     "parser": "babel-eslint"
   },
   "browserify": {
-    "transform": ["babelify"]
+    "transform": [
+      ["babelify"],
+      ["yo-yoify"]
+    ]
   }
 }
