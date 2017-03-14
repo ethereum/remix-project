@@ -544,48 +544,45 @@ var run = function () {
   }
 
   function handleImportCall (url, cb) {
-    var match
     if (files.exists(url)) {
       cb(null, files.get(url))
-    } else if ((match = /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url))) {
-      $('#output').append($('<div/>').append($('<pre/>').text('Loading github.com/' + match[3] + '/' + match[4] + ' ...')))
-      handleGithubCall(match[3], match[4], function (err, content) {
-        if (err) {
-          cb('Unable to import "' + url + '": ' + err)
-          return
-        }
+      return
+    }
 
-        // FIXME: at some point we should invalidate the cache
-        files.addReadOnly(url, content)
-        cb(null, content)
-      })
-    } else if ((match = /^(bzz[ri]?:\/\/?.*)$/.exec(url))) {
-      // Supported: bzz:, bzzr:, bzzi:
-      $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
-      handleSwarmImport(match[1], function (err, content) {
-        if (err) {
-          cb('Unable to import "' + url + '": ' + err)
-          return
-        }
+    var handlers = [
+      { match: /^https?:\/\/?www.?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: function (match, cb) { handleGithubCall(match[3], match[4], cb) } },
+      { match: /^(bzz[ri]?:\/\/?.*)$/, handler: function (match, cb) { handleSwarmImport(match[1], cb) } },
+      { match: /^(ipfs:\/\/?.+)/, handler: function (match, cb) { handleIPFS(match[1], cb) } }
+    ]
 
-        // FIXME: at some point we should invalidate the cache
-        files.addReadOnly(url, content)
-        cb(null, content)
-      })
-    } else if ((match = /^(ipfs:\/\/?.+)/.exec(url))) {
-      $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
-      handleIPFS(match[1], function (err, content) {
-        if (err) {
-          cb('Unable to import "' + url + '": ' + err)
-          return
-        }
+    var found = false
+    handlers.forEach(function (handler) {
+      if (found) {
+        return
+      }
 
-        // FIXME: at some point we should invalidate the cache
-        files.addReadOnly(url, content)
-        cb(null, content)
-      })
+      var match = handler.match.exec(url)
+      if (match) {
+        found = true
+
+        $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
+        handler.handler(match, function (err, content) {
+          if (err) {
+            cb('Unable to import "' + url + '": ' + err)
+            return
+          }
+
+          // FIXME: at some point we should invalidate the cache
+          files.addReadOnly(url, content)
+          cb(null, content)
+        })
+      }
+    })
+
+    if (found) {
+      return
     } else if (/^[^:]*:\/\//.exec(url)) {
-      cb('Unable to import "' + url + '": Unsupported URL')
+      cb('Unable to import "' + url + '": Unsupported URL schema')
     } else {
       cb('Unable to import "' + url + '": File not found')
     }
