@@ -1,5 +1,6 @@
 'use strict'
 var util = require('./util')
+var helper = require('../../helpers/util')
 var BN = require('ethereumjs-util').BN
 var RefType = require('./RefType')
 
@@ -13,7 +14,7 @@ class DynamicByteArray extends RefType {
     var bn = new BN(value, 16)
     if (bn.testn(0)) {
       var length = bn.div(new BN(2))
-      var dataPos = new BN(util.sha3(location.slot).replace('0x', ''), 16)
+      var dataPos = new BN(helper.sha3(location.slot).replace('0x', ''), 16)
       var ret = ''
       var currentSlot = await util.readFromStorage(dataPos, storageContent)
       while (length.gt(ret.length) && ret.length < 32000) {

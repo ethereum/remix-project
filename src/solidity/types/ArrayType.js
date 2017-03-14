@@ -1,5 +1,6 @@
 'use strict'
 var util = require('./util')
+var helper = require('../../helpers/util')
 var BN = require('ethereumjs-util').BN
 var RefType = require('./RefType')
 
@@ -33,7 +34,7 @@ class ArrayType extends RefType {
     }
     if (this.arraySize === 'dynamic') {
       size = util.toBN('0x' + slotValue)
-      currentLocation.slot = util.sha3(location.slot)
+      currentLocation.slot = helper.sha3(location.slot)
     } else {
       size = new BN(this.arraySize)
     }

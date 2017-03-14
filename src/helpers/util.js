@@ -1,4 +1,6 @@
 'use strict'
+var ethutil = require('ethereumjs-util')
+
 module.exports = {
   /*
     ints: IntArray
@@ -115,7 +117,19 @@ module.exports = {
   */
   findCall: findCall,
 
-  buildCallPath: buildCallPath
+  buildCallPath: buildCallPath,
+
+  /**
+  * sha3 the given @arg value
+  *
+  * @param {String} value - value to sha3
+  * @return {Object} - return sha3ied value
+  */
+  sha3: function (value) {
+    var ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
+    ret = ethutil.sha3(ret)
+    return ethutil.bufferToHex(ret)
+  }
 }
 
 /**
