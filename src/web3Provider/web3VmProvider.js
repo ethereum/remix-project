@@ -153,7 +153,7 @@ web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
   }
 }
 
-web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { // txIndex is the hash in the case of the VM
+web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, maxLength, cb) { // txIndex is the hash in the case of the VM
   // we don't use the range params here
   if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
     var storage = this.storageCache[txIndex][address]
