@@ -40,14 +40,14 @@ function extractStateVariables (contractName, sourcesList) {
 /**
   * return the state of the given @a contractName as a json object
   *
-  * @param {Map} storageContent  - contract storage
+  * @param {Object} storageResolver  - resolve storage queries
   * @param {astList} astList  - AST nodes of all the sources
   * @param {String} contractName  - contract for which state var should be resolved
   * @return {Map} - return the state of the contract
   */
-function solidityState (storageContent, astList, contractName) {
+async function solidityState (storageResolver, astList, contractName) {
   var stateVars = extractStateVariables(contractName, astList)
-  return decodeState(stateVars, storageContent)
+  return await decodeState(stateVars, storageResolver)
 }
 
 module.exports = {
