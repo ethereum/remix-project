@@ -12,7 +12,7 @@
     "browser-test-remote-parallel": "nightwatch --config nightwatch.js --env safari,ie,default,chrome",
     "build": "mkdirp build; browserify src/index.js -g yo-yoify -o build/app.js -t [ babelify ]; babel --plugins=transform-es2015-template-literals build/app.js --out-file build/app.js",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
-    "downloadsolc": "rm soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
+    "downloadsolc": "rm -f soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
     "lint": "standard",
     "serve": "http-server .",
     "test": "standard; babel src --out-dir babelify-src; node test/index.js"
