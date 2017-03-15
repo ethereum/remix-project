@@ -550,7 +550,7 @@ var run = function () {
     }
 
     var handlers = [
-      { match: /^https?:\/\/?www.?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: function (match, cb) { handleGithubCall(match[3], match[4], cb) } },
+      { match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: function (match, cb) { handleGithubCall(match[3], match[4], cb) } },
       { match: /^(bzz[ri]?:\/\/?.*)$/, handler: function (match, cb) { handleSwarmImport(match[1], cb) } },
       { match: /^(ipfs:\/\/?.+)/, handler: function (match, cb) { handleIPFS(match[1], cb) } }
     ]
