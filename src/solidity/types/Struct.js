@@ -16,7 +16,12 @@ class Struct extends RefType {
         offset: location.offset + item.storagelocation.offset,
         slot: util.add(location.slot, item.storagelocation.slot)
       }
-      ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageResolver)
+      try {
+        ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageResolver)
+      } catch (e) {
+        console.log(e)
+        ret[item.name] = '<decoding failed - ' + e.message + '>'
+      }
     }
     return {
       value: ret,

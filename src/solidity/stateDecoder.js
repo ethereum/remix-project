@@ -12,7 +12,12 @@ async function decodeState (stateVars, storageResolver) {
   var ret = {}
   for (var k in stateVars) {
     var stateVar = stateVars[k]
-    ret[stateVar.name] = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+    try {
+      ret[stateVar.name] = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+    } catch (e) {
+      console.log(e)
+      ret[stateVar.name] = '<decoding failed - ' + e.message + '>'
+    }
   }
   return ret
 }
@@ -47,7 +52,11 @@ function extractStateVariables (contractName, sourcesList) {
   */
 async function solidityState (storageResolver, astList, contractName) {
   var stateVars = extractStateVariables(contractName, astList)
-  return await decodeState(stateVars, storageResolver)
+  try {
+    return await decodeState(stateVars, storageResolver)
+  } catch (e) {
+    return '<decoding failed - ' + e.message + '>'
+  }
 }
 
 module.exports = {

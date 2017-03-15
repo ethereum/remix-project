@@ -17,7 +17,12 @@ async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, st
         name = '<' + anonymousIncr + '>'
         anonymousIncr++
       }
-      locals[name] = await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageResolver)
+      try {
+        locals[name] = await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageResolver)
+      } catch (e) {
+        console.log(e)
+        locals[name] = '<decoding failed - ' + e.message + '>'
+      }
     }
   }
   return locals

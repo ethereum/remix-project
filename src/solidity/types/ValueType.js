@@ -17,10 +17,18 @@ class ValueType {
     * @return {Object} - decoded value
     */
   async decodeFromStorage (location, storageResolver) {
-    var value = await util.extractHexValue(location, storageResolver, this.storageBytes)
-    return {
-      value: this.decodeValue(value),
-      type: this.typeName
+    try {
+      var value = await util.extractHexValue(location, storageResolver, this.storageBytes)
+      return {
+        value: this.decodeValue(value),
+        type: this.typeName
+      }
+    } catch (e) {
+      console.log(e)
+      return {
+        value: '<decoding failed - ' + e.message + '>',
+        type: this.typeName
+      }
     }
   }
 

@@ -8,12 +8,23 @@ class StringType extends DynamicBytes {
   }
 
   async decodeFromStorage (location, storageResolver) {
-    var decoded = await super.decodeFromStorage(location, storageResolver)
+    var decoded = '0x'
+    try {
+      decoded = await super.decodeFromStorage(location, storageResolver)
+    } catch (e) {
+      console.log(e)
+      return '<decoding failed - ' + e.message + '>'
+    }
     return format(decoded)
   }
 
   async decodeFromStack (stackDepth, stack, memory) {
-    return await super.decodeFromStack(stackDepth, stack, memory)
+    try {
+      return await super.decodeFromStack(stackDepth, stack, memory)
+    } catch (e) {
+      console.log(e)
+      return '<decoding failed - ' + e.message + '>'
+    }
   }
 
   decodeFromMemoryInternal (offset, memory) {

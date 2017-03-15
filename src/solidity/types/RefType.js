@@ -29,7 +29,15 @@ class RefType {
     var offset = stack[stack.length - 1 - stackDepth]
     if (this.isInStorage()) {
       offset = util.toBN(offset)
-      return await this.decodeFromStorage({ offset: 0, slot: offset }, storageResolver)
+      try {
+        return await this.decodeFromStorage({ offset: 0, slot: offset }, storageResolver)
+      } catch (e) {
+        console.log(e)
+        return {
+          error: '<decoding failed - ' + e.message + '>',
+          type: this.typeName
+        }
+      }
     } else if (this.isInMemory()) {
       offset = parseInt(offset, 16)
       return this.decodeFromMemoryInternal(offset, memory)

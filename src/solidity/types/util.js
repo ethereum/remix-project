@@ -64,7 +64,13 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
 async function extractHexValue (location, storageResolver, byteLength) {
-  var slotvalue = await readFromStorage(location.slot, storageResolver)
+  var slotvalue
+  try {
+    slotvalue = await readFromStorage(location.slot, storageResolver)
+  } catch (e) {
+    console.log(e)
+    return '0x'
+  }
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
 }
 
