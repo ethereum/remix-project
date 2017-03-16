@@ -22,15 +22,11 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
 
   var self = this
   editorEvent.register('breakpointCleared', (fileName, row) => {
-    if (self.appAPI.lastCompilationResult().data) {
-      this.breakPointManager.remove({fileName: fileName, row: row})
-    }
+    this.breakPointManager.remove({fileName: fileName, row: row})
   })
 
   editorEvent.register('breakpointAdded', (fileName, row) => {
-    if (self.appAPI.lastCompilationResult().data) {
-      this.breakPointManager.add({fileName: fileName, row: row})
-    }
+    this.breakPointManager.add({fileName: fileName, row: row})
   })
 
   executionContextEvent.register('contextChanged', this, function (context) {
