@@ -872,6 +872,11 @@ var run = function () {
     loadVersion($('#versionSelector').val())
   })
 
+  var header = new Option('Select new compiler version to load')
+  header.disabled = true
+  header.selected = true
+  $('#versionSelector').append(header)
+
   $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json').done(function (data) {
     // populate version dropdown with all available compiler versions (descending order)
     $.each(data.builds.slice().reverse(), function (i, build) {
