@@ -76,11 +76,14 @@ TxRunner.prototype.execute = function () {
             // NOTE: estimateGas very likely will return a large limit if execution of the code failed
             //       we want to be able to run the code in order to debug and find the cause for the failure
             var blockGasLimit = Math.floor(block.gasLimit - block.gasLimit / 1024)
-            tx.gas = blockGasLimit < gasEstimation ? blockGasLimit : gasEstimation
+            // tx.gas = blockGasLimit < gasEstimation ? blockGasLimit : gasEstimation
+            tx.gas = blockGasLimit // that's temporary, uncomment when the following is fixed https://github.com/ethereum/go-ethereum/issues/3653
 
+            /* same as above
             if (tx.gas > gasLimit) {
               return callback('Gas required exceeds limit: ' + tx.gas)
             }
+            */
 
             var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
             sendTransaction(tx, function (err, resp) {
