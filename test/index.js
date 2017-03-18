@@ -1,6 +1,6 @@
 'use strict'
 var tape = require('tape')
-var init = require('../babelify-src/helpers/init')
+var init = require('../src/helpers/init')
 tape('index', function (t) {
   t.test('loadContext - web3', function (st) {
     var web3 = init.loadWeb3()

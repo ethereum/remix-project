@@ -6,10 +6,6 @@ var ui = require('../helpers/ui')
 class TreeView {
 
   constructor (opts) {
-    function noop (node) {
-    }
-    this.beforeJsonNodeRendered = opts.beforeJsonNodeRendered || noop
-    this.beforeJsonValueRendered = opts.beforeJsonValueRendered || noop
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
