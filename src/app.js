@@ -197,6 +197,8 @@ var run = function () {
         if (response.html_url && confirm('Created a gist at ' + response.html_url + ' Would you like to open it in a new window?')) {
           window.open(response.html_url, '_blank')
         }
+      }).fail(function (xhr, text, err) {
+        alert('Failed to create gist: ' + (err || 'Unknown transport error'))
       })
     }
   })
