@@ -111,7 +111,9 @@ var run = function () {
 
   // insert ballot contract if there are no files available
   if (!loadingFromGist && Object.keys(files.list()).length === 0) {
-    files.set(examples.ballot.name, examples.ballot.content)
+    if (!files.set(examples.ballot.name, examples.ballot.content)) {
+      alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
+    }
   }
 
   // ----------------- Chrome cloud storage sync --------------------
