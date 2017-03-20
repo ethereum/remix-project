@@ -1,6 +1,7 @@
 /* global alert, confirm, prompt, FileReader, Option, Worker, chrome */
 'use strict'
 
+var async = require('async')
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
@@ -644,6 +645,69 @@ var run = function () {
 
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
+  })
+
+  function swarmVerifiedPublish (content, expectedHash, cb) {
+    swarmgw.put(content, function (err, ret) {
+      if (err) {
+        cb(err)
+      } else if (ret !== expectedHash) {
+        cb('Hash mismatch')
+      } else {
+        cb()
+      }
+    })
+  }
+
+  function publishOnSwarm (contract, cb) {
+    // gather list of files to publish
+    var sources = []
+
+    sources.push({
+      content: contract.metadata,
+      hash: contract.metadataHash
+    })
+
+    var metadata
+    try {
+      metadata = JSON.parse(contract.metadata)
+    } catch (e) {
+      return cb(e)
+    }
+
+    if (metadata === undefined) {
+      return cb('No metadata')
+    }
+
+    Object.keys(metadata.sources).forEach(function (fileName) {
+      // find hash
+      var hash
+      try {
+        hash = metadata.sources[fileName].urls[0].match('bzzr://(.+)')[1]
+      } catch (e) {
+        return cb('Metadata inconsistency')
+      }
+
+      sources.push({
+        content: files.get(fileName),
+        hash: hash
+      })
+    })
+
+    // publish the list of sources in order, fail if any failed
+    async.eachSeries(sources, function (item, cb) {
+      swarmVerifiedPublish(item.content, item.hash, cb)
+    }, cb)
+  }
+
+  udapp.event.register('publishContract', this, function (contract) {
+    publishOnSwarm(contract, function (err) {
+      if (err) {
+        alert('Failed to publish metadata: ' + err)
+      } else {
+        alert('Metadata published successfully')
+      }
+    })
   })
 
   // ----------------- Renderer -----------------

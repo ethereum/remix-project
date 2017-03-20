@@ -146,6 +146,7 @@ UniversalDApp.prototype.render = function () {
   }
 
   var $legend = $('<div class="legend" />')
+    .append($('<div class="publish"/>').text('Publish'))
     .append($('<div class="attach"/>').text('Attach'))
     .append($('<div class="transact"/>').text('Transact'))
     .append($('<div class="payable"/>').text('Transact (Payable)'))
@@ -189,6 +190,10 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $close.click(function () { self.$el.remove() })
     $createInterface.append($close)
   }
+
+  var $publishButton = $('<button class="publishContract"/>').text('Publish').click(function () { self.event.trigger('publishContract', [contract]) })
+  $createInterface.append($publishButton)
+
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract) })
   $createInterface.append($atButton)
 
@@ -209,6 +214,11 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $createButton.text('Create')
     $createButton.attr('disabled', 'disabled')
     $createButton.attr('title', 'This contract does not implement all functions and thus cannot be created.')
+  }
+
+  if (contract.metadata.length === 0) {
+    $publishButton.attr('disabled', 'disabled')
+    $publishButton.attr('title', 'This contract does not implement all functions and thus cannot be published.')
   }
 
   return $createInterface

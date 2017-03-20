@@ -173,15 +173,28 @@
 
 .udapp input,
 .udapp button {
-	width: 33%;
+	width: 20%;
 	display: block;
 	float: left;
 	padding: 0.25em;
 }
 
+.udapp button:disabled {
+	cursor: not-allowed;
+	background-color: white;
+	border-color: lightgray;
+}
+
 .udapp .atAddress {
 	background-color: #B1EAC5;
 	border-color: #B1EAC5;
+	margin-right: 1em;
+	border-radius: 3px;
+}
+
+.udapp .publishContract {
+	background-color: #EC96EC;
+	border-color: #EC96EC;
 	margin-right: 1em;
 	border-radius: 3px;
 }
@@ -310,6 +323,10 @@
 	height: 1em;
 	margin-right: 0.5em;
 	width: 1em;
+}
+
+.udapp .legend .publish:before {
+	background-color: #EC96EC;
 }
 
 .udapp .legend .attach:before {
