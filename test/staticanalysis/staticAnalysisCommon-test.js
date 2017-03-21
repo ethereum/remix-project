@@ -59,16 +59,16 @@ test('staticAnalysisCommon.helpers.nodeType', function (t) {
   lowlevelAccessersCommon(t, common.helpers.nodeType, node)
 })
 
-test('staticAnalysisCommon.helpers.returnType', function (t) {
+test('staticAnalysisCommon.helpers.expressionType', function (t) {
   t.plan(9)
   var node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
   var node2 = { name: 'FunctionCall', attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
 
-  t.ok(common.helpers.returnType(node, common.basicTypes.UINT), 'should work for ident')
-  t.ok(common.helpers.returnType(node2, utils.escapeRegExp(common.basicFunctionTypes.CALL)), 'should work for funcall')
-  t.ok(common.helpers.returnType(node2, '^function \\('), 'regex should work')
+  t.ok(common.helpers.expressionType(node, common.basicTypes.UINT), 'should work for ident')
+  t.ok(common.helpers.expressionType(node2, utils.escapeRegExp(common.basicFunctionTypes.CALL)), 'should work for funcall')
+  t.ok(common.helpers.expressionType(node2, '^function \\('), 'regex should work')
 
-  lowlevelAccessersCommon(t, common.helpers.returnType, node)
+  lowlevelAccessersCommon(t, common.helpers.expressionType, node)
 })
 
 test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {

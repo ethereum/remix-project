@@ -15,7 +15,7 @@ thisLocal.prototype.report = function (compilationResults) {
   this.warningNowNodes = []
   return this.warningNodes.map(function (item, i) {
     return {
-      warning: `use of "this" for local functions: never use this to call local functions, it only consumes more gas than normal local calls.`,
+      warning: `Use of "this" for local functions: Never use this to call functions in the same contract, it only consumes more gas than normal local calls.`,
       location: item.src,
       more: 'http://solidity.readthedocs.io/en/develop/control-structures.html#external-function-calls'
     }

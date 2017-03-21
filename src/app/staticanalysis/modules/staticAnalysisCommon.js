@@ -45,7 +45,7 @@ var specialVariables = {
 // usage of now special variable
 function isNowAccess (node) {
   return nodeType(node, nodeTypes.IDENTIFIER) &&
-        returnType(node, basicTypes.UINT) &&
+        expressionType(node, basicTypes.UINT) &&
         name(node, 'now')
 }
 
@@ -93,20 +93,20 @@ function isLLDelegatecall (node) {
           undefined, basicTypes.ADDRESS, lowLevelCallTypes.DELEGATECALL.ident)
 }
 
-function isMemberAccess (node, retType, accesser, accesserType, memberName) {
+function isMemberAccess (node, retType, accessor, accessorType, memberName) {
   return nodeType(node, nodeTypes.MEMBERACCESS) &&
-        returnType(node, retType) &&
+        expressionType(node, retType) &&
         name(node, memberName) &&
         nrOfChildren(node, 1) &&
-        name(node.children[0], accesser) &&
-        returnType(node.children[0], accesserType)
+        name(node.children[0], accessor) &&
+        expressionType(node.children[0], accessorType)
 }
 
 function nrOfChildren (node, nr) {
   return (node && (nr === undefined || nr === null)) || (node && node.children && node.children.length === nr)
 }
 
-function returnType (node, typeRegex) {
+function expressionType (node, typeRegex) {
   return (node && !typeRegex) || (node && node.attributes && new RegExp(typeRegex).test(node.attributes.type))
 }
 
@@ -148,7 +148,7 @@ module.exports = {
   specialVariables: specialVariables,
   helpers: {
     nrOfChildren: nrOfChildren,
-    returnType: returnType,
+    expressionType: expressionType,
     nodeType: nodeType,
     name: name,
     buildFunctionSignature: buildFunctionSignature
