@@ -216,7 +216,7 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $createButton.attr('title', 'This contract does not implement all functions and thus cannot be created.')
   }
 
-  if (contract.metadata.length === 0) {
+  if ((contract.metadata === undefined) || (contract.metadata.length === 0)) {
     $publishButton.attr('disabled', 'disabled')
     $publishButton.attr('title', 'This contract does not implement all functions and thus cannot be published.')
   }
