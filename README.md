@@ -41,13 +41,15 @@ open `remix/index.html` in your browser.
 
 ## TEST:
 
-For unit tests run `npm test`
+* For unit tests run `npm test`
 
-For local headless browser tests run `npm run test-browser`
+* For local headless browser tests
+  * run once to install selenium: `npm run selenium-install`
+  * every time you want to run local browser tests, run: `npm run test-browser`
 
 ## DEVELOPING:
 
-Run `npm run start_dev` and open `http://10.5.50.211:8080` in your browser.
+Run `npm run start_dev` and open `http://127.0.0.1:8080` in your browser.
 
 Start developing and see your browser live reload when you save files
 
