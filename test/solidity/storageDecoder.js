@@ -1,7 +1,7 @@
 'use strict'
 var tape = require('tape')
 var compiler = require('solc')
-var stateDecoder = require('../../babelify-src/index').solidity.stateDecoder
+var stateDecoder = require('../../src/index').solidity.stateDecoder
 
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {

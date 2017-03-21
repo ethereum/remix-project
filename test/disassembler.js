@@ -1,7 +1,7 @@
 'use strict'
 
 var tape = require('tape')
-var disassemble = require('../babelify-src/code/disassembler').disassemble
+var disassemble = require('../src/code/disassembler').disassemble
 
 tape('Disassembler', function (t) {
   t.test('empty', function (st) {

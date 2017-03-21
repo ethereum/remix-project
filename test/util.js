@@ -1,8 +1,8 @@
 'use strict'
 var sourceMapping = require('./resources/sourceMapping')
-var index = require('../babelify-src/index')
+var index = require('../src/index')
 var tape = require('tape')
-var util = require('../babelify-src/helpers/util')
+var util = require('../src/helpers/util')
 
 tape('Util', function (t) {
   t.test('lowerbound', function (st) {
