@@ -77,7 +77,7 @@ staticAnalysisView.prototype.run = function () {
             location = self.appAPI.offsetToLineColumn(location, file)
             location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
-          self.appAPI.renderWarning(location + ' ' + item.warning, warningContainer, {type: 'warning', useSpan: true, isHTML: true})
+          self.appAPI.renderWarning(location + ' ' + item.warning + ((item.more) ? '<br><a href="' + item.more + '" target="blank">more</a>' : ''), warningContainer, {type: 'warning', useSpan: true, isHTML: true})
         })
       })
       if (warningContainer.html() === '') {

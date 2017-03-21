@@ -14,7 +14,17 @@ function groupBy (arr, key) {
   }, {})
 }
 
+function concatWithSeperator (list, seperator) {
+  return list.reduce((sum, item) => sum + item + seperator, '').slice(0, -seperator.length)
+}
+
+function escapeRegExp (str) {
+  return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
+}
+
 module.exports = {
   errortype: errortype,
-  groupBy: groupBy
+  groupBy: groupBy,
+  concatWithSeperator: concatWithSeperator,
+  escapeRegExp: escapeRegExp
 }

@@ -1,4 +1,5 @@
 module.exports = [
   require('./txOrigin'),
-  require('./gasCosts')
+  require('./gasCosts'),
+  require('./thisLocal')
 ]
