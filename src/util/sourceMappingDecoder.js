@@ -151,13 +151,13 @@ function atIndex (index, mapping) {
       continue
     }
     current = current.split(':')
-    if (ret.start === undefined && current[0] && current[0].length) {
+    if (ret.start === undefined && current[0] && current[0] !== '-1' && current[0].length) {
       ret.start = parseInt(current[0])
     }
-    if (ret.length === undefined && current[1] && current[1].length) {
+    if (ret.length === undefined && current[1] && current[1] !== '-1' && current[1].length) {
       ret.length = parseInt(current[1])
     }
-    if (ret.file === undefined && current[2] && current[2].length) {
+    if (ret.file === undefined && current[2] && current[2] !== '-1' && current[2].length) {
       ret.file = parseInt(current[2])
     }
     if (ret.jump === undefined && current[3] && current[3].length) {
