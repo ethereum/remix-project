@@ -1,6 +1,6 @@
 'use strict'
 var tape = require('tape')
-var SourceMappingDecoder = require('../src/util/sourceMappingDecoder')
+var SourceMappingDecoder = require('../babelify-src/util/sourceMappingDecoder')
 var compiler = require('solc')
 
 tape('SourceMappingDecoder', function (t) {

@@ -1,5 +1,5 @@
 'use strict'
-var localDecoder = require('../../../src/solidity/localDecoder')
+var localDecoder = require('../../../babelify-src/solidity/localDecoder')
 
 /*
   Decode local variable

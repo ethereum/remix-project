@@ -1,7 +1,7 @@
 'use strict'
 var tape = require('tape')
 var compiler = require('solc')
-var index = require('../../src/index')
+var index = require('../../babelify-src/index')
 var contracts = require('./contracts/miscContracts')
 
 tape('solidity', function (t) {
