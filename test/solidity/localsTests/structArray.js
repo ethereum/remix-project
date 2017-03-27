@@ -1,12 +1,12 @@
 'use strict'
-var TraceManager = require('../../../src/trace/traceManager')
-var CodeManager = require('../../../src/code/codeManager')
+var TraceManager = require('../../../babelify-src/trace/traceManager')
+var CodeManager = require('../../../babelify-src/code/codeManager')
 var vmSendTx = require('./vmCall')
-var traceHelper = require('../../../src/helpers/traceHelper')
-var util = require('../../../src/helpers/global')
-var SolidityProxy = require('../../../src/solidity/solidityProxy')
-var InternalCallTree = require('../../../src/util/internalCallTree')
-var EventManager = require('../../../src/lib/eventManager')
+var traceHelper = require('../../../babelify-src/helpers/traceHelper')
+var util = require('../../../babelify-src/helpers/global')
+var SolidityProxy = require('../../../babelify-src/solidity/solidityProxy')
+var InternalCallTree = require('../../../babelify-src/util/internalCallTree')
+var EventManager = require('../../../babelify-src/lib/eventManager')
 var helper = require('./helper')
 
 module.exports = function (st, vm, privateKey, contractBytecode, compilationResult, cb) {

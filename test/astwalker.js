@@ -1,6 +1,6 @@
 'use strict'
 var tape = require('tape')
-var AstWalker = require('../src/util/astWalker')
+var AstWalker = require('../babelify-src/util/astWalker')
 var node = require('./resources/ast')
 
 tape('ASTWalker', function (t) {
