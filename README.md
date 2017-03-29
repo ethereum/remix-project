@@ -5,9 +5,9 @@ Ethereum IDE and tools for the web
 
 ## REMIX WEBSITE:
 
-Remix is avalaible at http://ethereum.github.io/remix. 
+Remix is avalaible at http://ethereum.github.io/remix.
 You can use it either inside Mist or by connecting to geth or eth.
-Note that connecting to Geth does not work through https. 
+Note that connecting to Geth does not work through https.
 
 You'll have to run your own node using the following parameters:
 
@@ -16,7 +16,7 @@ You'll have to run your own node using the following parameters:
 Using Geth:
 
     geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
-    
+
 Using Eth:
 
     eth -j --rpccorsdomain '*'
@@ -32,11 +32,26 @@ Brief instructions to build for linux(Todo add other platforms) we will add deta
 
 Install eth or geth, npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
-    git clone https://github.com/ethereum/remix
-    cd remix
-    npm install && npm run build && npm run start_node
+    * `git clone https://github.com/ethereum/remix`
+    * `cd remix`
+    * `npm install`
+    * `npm start`
 
-open remix/index.html in your browser.
+open `remix/index.html` in your browser.
+
+## TEST:
+
+* For unit tests run `npm test`
+
+* For local headless browser tests
+  * run once to install selenium: `npm run selenium-install`
+  * every time you want to run local browser tests, run: `npm run test-browser`
+
+## DEVELOPING:
+
+Run `npm run start_dev` and open `http://127.0.0.1:8080` in your browser.
+
+Start developing and see your browser live reload when you save files
 
 ## REMIX First Step:
 
@@ -45,7 +60,7 @@ There's two way of doing that:
  - using a block number and a transaction index.
  - using a transaction hash.
 
-When loading the transaction succeed, the hash, from and to field will show up. 
+When loading the transaction succeed, the hash, from and to field will show up.
 Then the vm trace is loaded.
 
 The debugger itself contains several controls that allow stepping over the trace and seing the current state of a selected step.
@@ -61,7 +76,7 @@ Stepping actions are:
 - Jump Next Call (this will select the next state that refers to a context changes - CALL, CALLCODE, DELEGATECALL, CREATE)
 
 #### State Viewer:
- 
+
 The upper right panel contains basic informations about the current step:
 - VMTraceStep: the index in the trace of the current step.
 - Step
