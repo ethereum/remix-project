@@ -1,6 +1,6 @@
 var test = require('tape')
 
-var utils = require('../babelify-src/app/utils')
+var utils = require('../src/app/utils')
 
 test('util.groupBy on valid input', function (t) {
   t.plan(1)

@@ -2,7 +2,7 @@
 
 var test = require('tape')
 
-var GistHandler = require('../babelify-src/app/gist-handler')
+var GistHandler = require('../src/app/gist-handler')
 
 test('gistHandler.handleLoad with no gist param', function (t) {
   t.plan(1)

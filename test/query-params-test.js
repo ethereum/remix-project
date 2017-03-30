@@ -2,7 +2,7 @@
 
 var test = require('tape')
 
-var QueryParams = require('../babelify-src/app/query-params')
+var QueryParams = require('../src/app/query-params')
 
 test('queryParams.get', function (t) {
   t.plan(2)

@@ -13,14 +13,21 @@ The `gh-pages` branch always has the latest stable build of Remix. It also conta
 
 Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
 
-## Building
 
-Many dependencies are only provided via npm:
+## INSTALLATION:
 
-	npm install    # fetch dependencies
-	npm run build  # build application into build/app.js
+Install npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
-Now point your browser to `index.html` to open the application.
+    * `git clone https://github.com/ethereum/browser-solidity`
+    * `cd browser-solidity`
+    * `npm install` - fetch dependencies & executes `npm run prepublish` to build the application
+
+## DEVELOPING:
+
+Run `npm start` and open `http://127.0.0.1:8080` in your browser.
+
+Then open your `text editor` and start developing.
+The browser will automatically refresh when files are saved
 
 ### Troubleshooting building
 
@@ -38,9 +45,13 @@ Run:
 
 ## Unit Testing
 
-Register new unit test files in `test/index.js`. The tests are written using [tape](https://www.npmjs.com/package/tape). Run the tests via:
+Register new unit test files in `test/index.js`.
+The tests are written using [tape](https://www.npmjs.com/package/tape).
 
-	npm test
+Run the unit tests via: `npm test`
+
+For local headless browser tests run `npm run test-browser`
+(Requires selenium to be installed - can be done with `npm run selenium-install`)
 
 ## Browser Testing
 

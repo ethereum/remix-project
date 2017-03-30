@@ -2,7 +2,7 @@
 
 var test = require('tape')
 
-var Compiler = require('../babelify-src/app/compiler')
+var Compiler = require('../src/app/compiler')
 
 test('compiler.compile smoke', function (t) {
   t.plan(1)
