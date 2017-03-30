@@ -12,7 +12,6 @@ thisLocal.prototype.visit = function (node) {
 }
 
 thisLocal.prototype.report = function (compilationResults) {
-  this.warningNowNodes = []
   return this.warningNodes.map(function (item, i) {
     return {
       warning: `Use of "this" for local functions: Never use this to call functions in the same contract, it only consumes more gas than normal local calls.`,

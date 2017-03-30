@@ -80,7 +80,7 @@ test('staticAnalysisCommon.helpers.nrOfChildren', function (t) {
   t.ok(common.helpers.nrOfChildren(node, 2), 'should work for 2 children')
   t.notOk(common.helpers.nrOfChildren(node, '1+2'), 'regex should not work')
   t.ok(common.helpers.nrOfChildren(node2, 0), 'should work for 0 children')
-  t.notOk(common.helpers.nrOfChildren(node3, 0), 'should not work without children arr')
+  t.ok(common.helpers.nrOfChildren(node3, 0), 'should work without children arr')
 
   lowlevelAccessersCommon(t, common.helpers.nrOfChildren, node)
 })
@@ -94,8 +94,8 @@ function lowlevelAccessersCommon (t, f, someNode) {
   t.notOk(f(), 'false on no params')
 }
 
-test('staticAnalysisCommon.helpers.isLowLevelCall', function (t) {
-  t.plan(4)
+test('staticAnalysisCommon.isLowLevelCall', function (t) {
+  t.plan(6)
   var sendAst = { name: 'MemberAccess', children: [{attributes: { value: 'd', type: 'address' }}], attributes: { value: 'send', type: 'function (uint256) returns (bool)' } }
   var callAst = { name: 'MemberAccess', children: [{attributes: { value: 'f', type: 'address' }}], attributes: { member_name: 'call', type: 'function () payable returns (bool)' } }
   var callcodeAst = { name: 'MemberAccess', children: [{attributes: { value: 'f', type: 'address' }}], attributes: { member_name: 'callcode', type: 'function () payable returns (bool)' } }
@@ -103,11 +103,13 @@ test('staticAnalysisCommon.helpers.isLowLevelCall', function (t) {
 
   t.ok(common.isLowLevelSendInst(sendAst) && common.isLowLevelCall(sendAst), 'send is llc should work')
   t.ok(common.isLowLevelCallInst(callAst) && common.isLowLevelCall(callAst), 'call is llc should work')
+  t.notOk(common.isLowLevelCallInst(callcodeAst), 'callcode is not call')
   t.ok(common.isLowLevelCallcodeInst(callcodeAst) && common.isLowLevelCall(callcodeAst), 'callcode is llc should work')
+  t.notOk(common.isLowLevelCallcodeInst(callAst), 'call is not callcode')
   t.ok(common.isLowLevelDelegatecallInst(delegatecallAst) && common.isLowLevelCall(delegatecallAst), 'delegatecall is llc should work')
 })
 
-test('staticAnalysisCommon.helpers.isThisLocalCall', function (t) {
+test('staticAnalysisCommon.isThisLocalCall', function (t) {
   t.plan(3)
   var node = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
   t.ok(common.isThisLocalCall(node), 'is this.local_method() used should work')
@@ -115,7 +117,7 @@ test('staticAnalysisCommon.helpers.isThisLocalCall', function (t) {
   t.notOk(common.isNowAccess(node), 'is now used should not work')
 })
 
-test('staticAnalysisCommon.helpers.isBlockTimestampAccess', function (t) {
+test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
   t.plan(3)
   var node = { name: 'MemberAccess', children: [{attributes: { value: 'block', type: 'block' }}], attributes: { value: 'timestamp', type: 'uint256' } }
   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
@@ -123,10 +125,41 @@ test('staticAnalysisCommon.helpers.isBlockTimestampAccess', function (t) {
   t.notOk(common.isNowAccess(node), 'is now used should not work')
 })
 
-test('staticAnalysisCommon.helpers.isNowAccess', function (t) {
+test('staticAnalysisCommon.isNowAccess', function (t) {
   t.plan(3)
   var node = { name: 'Identifier', attributes: { value: 'now', type: 'uint256' } }
   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
   t.ok(common.isNowAccess(node), 'is now used should work')
+})
+
+test('staticAnalysisCommon.isExternalDirectCall', function (t) {
+  t.plan(5)
+  var node = {
+    attributes: {
+      member_name: 'info',
+      type: 'function () payable external returns (uint256)'
+    },
+    children: [
+      {
+        attributes: {
+          type: 'contract InfoFeed',
+          value: 'f'
+        },
+        id: 30,
+        name: 'Identifier',
+        src: '405:1:0'
+      }
+    ],
+    id: 32,
+    name: 'MemberAccess',
+    src: '405:6:0'
+  }
+
+  var node2 = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
+  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(node), 'is now used should not work')
+  t.ok(common.isExternalDirectCall(node), 'f.info() should be external direct call')
+  t.notOk(common.isExternalDirectCall(node2), 'local call is not an exernal call')
 })
