@@ -1,8 +1,8 @@
 'use strict'
-var TraceManager = require('../babelify-src/trace/traceManager')
+var TraceManager = require('../src/trace/traceManager')
 var tape = require('tape')
-var Web3Providers = require('../babelify-src/web3Provider/web3Providers')
-var util = require('../babelify-src/helpers/global')
+var Web3Providers = require('../src/web3Provider/web3Providers')
+var util = require('../src/helpers/global')
 var web3Test = require('./resources/testWeb3')
 
 tape('TraceManager', function (t) {
