@@ -251,7 +251,6 @@ function isBlockTimestampAccess (node) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKTIMESTAMP)
 }
 
-// usage of block timestamp
 function isBlockBlockHashAccess (node) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKHASH)
 }
