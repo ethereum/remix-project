@@ -67,12 +67,12 @@ function getType (node) {
 
 function getFunctionCallType (func) {
   if (!(isExternalDirectCall(func) || isThisLocalCall(func) || isLocalCall(func))) throw new Error('staticAnalysisCommon.js: not function call Node')
-  if (isExternalDirectCall(func)) return func.attributes.type
+  if (isExternalDirectCall(func) || isThisLocalCall(func)) return func.attributes.type
   return findFirstSubNodeLTR(func, exactMatch(nodeTypes.IDENTIFIER)).attributes.type
 }
 
 function getEffectedVariableName (effectNode) {
-  if (!isEffect(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node')
+  if (!isEffect(effectNode) || isInlineAssembly(effectNode)) throw new Error('staticAnalysisCommon.js: not an effect Node or inline assembly')
   return findFirstSubNodeLTR(effectNode, exactMatch(nodeTypes.IDENTIFIER)).attributes.value
 }
 
@@ -89,6 +89,11 @@ function getThisLocalCallName (localCallNode) {
 function getExternalDirectCallContractName (extDirectCall) {
   if (!isExternalDirectCall(extDirectCall)) throw new Error('staticAnalysisCommon.js: not an external direct call Node')
   return extDirectCall.children[0].attributes.type.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
+}
+
+function getThisLocalCallContractName (thisLocalCall) {
+  if (!isThisLocalCall(thisLocalCall)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
+  return thisLocalCall.children[0].attributes.type.replace(new RegExp(basicRegex.CONTRACTTYPE), '')
 }
 
 function getExternalDirectCallMemberName (extDirectCall) {
@@ -132,7 +137,7 @@ function getFunctionCallTypeParameterType (func) {
 
 function getFullQualifiedFunctionCallIdent (contract, func) {
   if (isLocalCall(func)) return getContractName(contract) + '.' + getLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
-  else if (isThisLocalCall(func)) return getContractName(contract) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isThisLocalCall(func)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isExternalDirectCall(func)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else throw new Error('staticAnalysisCommon.js: Can not get function name form non function call node')
 }
@@ -201,6 +206,18 @@ function isConstantFunction (node) {
   return isFunctionDefinition(node) && node.attributes.constant === true
 }
 
+function isPlusPlusUnaryOperation (node) {
+  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(utils.escapeRegExp('++')))
+}
+
+function isMinusMinusUnaryOperation (node) {
+  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(utils.escapeRegExp('--')))
+}
+
+function isFullyImplementedContract (node) {
+  return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION)) && node.attributes.fullyImplemented === true
+}
+
 function isCallToNonConstLocalFunction (node) {
   return isLocalCall(node) && !expressionType(node.children[0], basicRegex.CONSTANTFUNCTIONTYPE)
 }
@@ -216,25 +233,9 @@ function isNowAccess (node) {
         name(node, exactMatch('now'))
 }
 
-function isPlusPlusUnaryOperation (node) {
-  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(utils.escapeRegExp('++')))
-}
-
-function isMinusMinusUnaryOperation (node) {
-  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch('--'))
-}
-
-function isFullyImplementedContract (node) {
-  return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION)) && node.attributes.fullyImplemented === true
-}
-
 // usage of block timestamp
 function isBlockTimestampAccess (node) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKTIMESTAMP)
-}
-
-function isSpecialVariableAccess (node, varType) {
-  return isMemberAccess(node, varType.type, varType.obj, varType.obj, varType.member)
 }
 
 function isThisLocalCall (node) {
@@ -281,6 +282,8 @@ function isLLDelegatecall (node) {
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
 }
 
+// #################### Complex Node Identification - Private
+
 function isMemberAccess (node, retType, accessor, accessorType, memberName) {
   return nodeType(node, exactMatch(nodeTypes.MEMBERACCESS)) &&
         expressionType(node, retType) &&
@@ -288,6 +291,10 @@ function isMemberAccess (node, retType, accessor, accessorType, memberName) {
         nrOfChildren(node, 1) &&
         name(node.children[0], accessor) &&
         expressionType(node.children[0], accessorType)
+}
+
+function isSpecialVariableAccess (node, varType) {
+  return isMemberAccess(node, varType.type, varType.obj, varType.obj, varType.member)
 }
 
 // #################### Node Identification Primitives
@@ -337,6 +344,7 @@ function buildFunctionSignature (paramTypes, returnTypes, isPayable) {
 }
 
 function findFirstSubNodeLTR (node, type) {
+  if (!node || !node.children) return null
   for (let i = 0; i < node.children.length; ++i) {
     var item = node.children[i]
     if (nodeType(item, type)) return item
@@ -360,6 +368,7 @@ module.exports = {
   getLocalCallName: getLocalCallName,
   getInheritsFromName: getInheritsFromName,
   getExternalDirectCallContractName: getExternalDirectCallContractName,
+  getThisLocalCallContractName: getThisLocalCallContractName,
   getExternalDirectCallMemberName: getExternalDirectCallMemberName,
   getFunctionDefinitionName: getFunctionDefinitionName,
   getFunctionCallTypeParameterType: getFunctionCallTypeParameterType,
@@ -385,6 +394,8 @@ module.exports = {
   isExternalDirectCall: isExternalDirectCall,
   isFullyImplementedContract: isFullyImplementedContract,
   isCallToNonConstLocalFunction: isCallToNonConstLocalFunction,
+  isPlusPlusUnaryOperation: isPlusPlusUnaryOperation,
+  isMinusMinusUnaryOperation: isMinusMinusUnaryOperation,
 
   // #################### Trivial Node Identification
   isFunctionDefinition: isFunctionDefinition,
@@ -406,9 +417,11 @@ module.exports = {
   specialVariables: specialVariables,
   helpers: {
     nrOfChildren: nrOfChildren,
+    minNrOfChildren: minNrOfChildren,
     expressionType: expressionType,
     nodeType: nodeType,
     name: name,
+    operator: operator,
     buildFunctionSignature: buildFunctionSignature
   }
 }
