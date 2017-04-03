@@ -1,7 +1,7 @@
 var test = require('tape')
 
-var common = require('../../babelify-src/app/staticanalysis/modules/staticAnalysisCommon')
-var utils = require('../../babelify-src/app/utils')
+var common = require('../../src/app/staticanalysis/modules/staticAnalysisCommon')
+var utils = require('../../src/app/utils')
 
 test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
   t.plan(7)
