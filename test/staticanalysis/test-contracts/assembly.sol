@@ -1,7 +1,9 @@
-pragma solidity ^0.4.9;
+ pragma solidity ^0.4.9;
  contract test {
      
-      function at(address _addr) returns (bytes o_code) {
+     address owner;
+     
+    function at(address _addr) returns (bytes o_code) {
         assembly {
             // retrieve the size of the code, this needs assembly
             let size := extcodesize(_addr)
@@ -15,12 +17,13 @@ pragma solidity ^0.4.9;
             // actually retrieve the code, this needs assembly
             extcodecopy(_addr, add(o_code, 0x20), 0, size)
         }
-     }
+    }
      
-     function bla() {
-        msg.sender.send(19);
+    function bla() {
+        if(tx.origin == owner)
+            msg.sender.send(19);
         assembly {
              
         }
-     }
+    }
  }

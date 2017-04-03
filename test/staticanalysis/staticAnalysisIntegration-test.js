@@ -1,47 +1,192 @@
-// var test = require('tape')
+var test = require('tape')
 
-// var common = require('../../babelify-src/app/staticanalysis/modules/staticAnalysisCommon')
-// var StatRunner = require('../../babelify-src/app/staticanalysis/staticAnalysisRunner')
-// var utils = require('../../babelify-src/app/utils')
-// var Compiler = require('../../babelify-src/app/compiler')
+var StatRunner = require('../../babelify-src/app/staticanalysis/staticAnalysisRunner')
+// const util = require('util')
 
-// var fs = require('fs')
-// var path = require('path')
+var solc = require('solc')
 
-// var testFiles = [
-//   '/test-contracts/KingOfTheEtherThrone.sol',
-//   '/test-contracts/assembly.sol',
-//   '/test-contracts/ballot.sol',
-//   '/test-contracts/ballot_reentrant.sol',
-//   '/test-contracts/ballot_withoutWarning.sol',
-//   '/test-contracts/cross_contract.sol',
-//   '/test-contracts/inheritance.sol',
-//   '/test-contracts/notReentrant.sol',
-//   '/test-contracts/structReentrant.sol',
-//   '/test-contracts/thisLocal.sol',
-//   '/test-contracts/modifier1.sol',
-//   '/test-contracts/modifier2.sol'
-// ]
+var fs = require('fs')
+var path = require('path')
 
-// test('thisLocal.js', function (t) {
-//   t.plan(0)
+var testFiles = [
+  'KingOfTheEtherThrone.sol',
+  'assembly.sol',
+  'ballot.sol',
+  'ballot_reentrant.sol',
+  'ballot_withoutWarnings.sol',
+  'cross_contract.sol',
+  'inheritance.sol',
+  'modifier1.sol',
+  'modifier2.sol',
+  'notReentrant.sol',
+  'structReentrant.sol',
+  'thisLocal.sol'
+]
 
-//   var module = require('../../babelify-src/app/staticanalysis/modules/thisLocal')
+var testFileAsts = {}
 
-//   runModuleOnFiles(module, t)
-// })
+testFiles.forEach((fileName) => {
+  var contents = fs.readFileSync(path.join(__dirname, 'test-contracts', fileName), 'utf8')
+  testFileAsts[fileName] = solc.compile(contents, 0)
+})
 
-// function runModuleOnFiles (module, t) {
-//   var fakeImport = function (url, cb) { cb('Not implemented') }
-//   var compiler = new Compiler(fakeImport)
-//   var statRunner = new StatRunner()
+test('Integration test thisLocal.js', function (t) {
+  t.plan(testFiles.length)
 
-//   testFiles.map((fileName) => {
-//     var contents = fs.readFileSync(path.join(__dirname, fileName), 'utf8')
-//     var compres = compiler.compile({ 'test': contents }, 'test')
+  var module = require('../../babelify-src/app/staticanalysis/modules/thisLocal')
 
-//     statRunner.runWithModuleList(compres, [{ name: module.name, mod: new module.Module() }], (reports) => {
-//       reports.map((r) => t.comment(r.warning))
-//     })
-//   })
-// }
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 1,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 1
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of this local warnings`)
+  })
+})
+
+test('Integration test checksEffectsInteraction.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../babelify-src/app/staticanalysis/modules/checksEffectsInteraction')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 1,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 1,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 1,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of checks-effects-interaction warnings`)
+  })
+})
+
+test('Integration test constatnFunctions.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../babelify-src/app/staticanalysis/modules/constantFunctions')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 1,
+    'inheritance.sol': 0,
+    'modifier1.sol': 1,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 1
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of constant warnings`)
+  })
+})
+
+test('Integration test constantFunctions.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../babelify-src/app/staticanalysis/modules/inlineAssembly')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 2,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of inline assembly warnings`)
+  })
+})
+
+test('Integration test txOrigin.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../babelify-src/app/staticanalysis/modules/txOrigin')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 1,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of tx.origin warnings`)
+  })
+})
+
+test('Integration test gasCosts.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../babelify-src/app/staticanalysis/modules/gasCosts')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 2,
+    'assembly.sol': 2,
+    'ballot.sol': 3,
+    'ballot_reentrant.sol': 2,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 1,
+    'inheritance.sol': 1,
+    'modifier1.sol': 0,
+    'modifier2.sol': 1,
+    'notReentrant.sol': 1,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 2
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of gasCost warnings`)
+  })
+})
+
+// #################### Helpers
+function runModuleOnFiles (module, t, cb) {
+  var statRunner = new StatRunner()
+
+  testFiles.forEach((fileName) => {
+    statRunner.runWithModuleList(testFileAsts[fileName], [{ name: module.name, mod: new module.Module() }], (reports) => {
+      cb(fileName, reports[0].report)
+    })
+  })
+}

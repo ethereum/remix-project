@@ -1593,6 +1593,15 @@ test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
   t.notOk(common.isNowAccess(node), 'is now used should not work')
 })
 
+test('staticAnalysisCommon.isBlockBlockhashAccess', function (t) {
+  t.plan(4)
+  var node = { name: 'MemberAccess', children: [{attributes: { value: 'block', type: 'block' }}], attributes: { value: 'blockhash', type: 'bytes32' } }
+  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
+  t.ok(common.isBlockBlockHashAccess(node), 'blockhash should work')
+  t.notOk(common.isNowAccess(node), 'is now used should not work')
+})
+
 test('staticAnalysisCommon.isThisLocalCall', function (t) {
   t.plan(3)
   var node = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }

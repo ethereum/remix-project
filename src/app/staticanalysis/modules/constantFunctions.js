@@ -19,6 +19,8 @@ constantFunctions.prototype.report = function (compilationResults) {
 
   var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
 
+  if (this.contracts.some((item) => item.modifiers.length > 0)) this.warning.push({ warning: `Modifiers are currently not supported by this analysis.` })
+
   this.contracts.forEach((contract) => {
     if (!common.isFullyImplementedContract(contract.node)) return
 

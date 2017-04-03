@@ -226,16 +226,19 @@ function isExternalDirectCall (node) {
   return isMemberAccess(node, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node)
 }
 
-// usage of now special variable
 function isNowAccess (node) {
   return nodeType(node, exactMatch(nodeTypes.IDENTIFIER)) &&
         expressionType(node, exactMatch(basicTypes.UINT)) &&
         name(node, exactMatch('now'))
 }
 
-// usage of block timestamp
 function isBlockTimestampAccess (node) {
   return isSpecialVariableAccess(node, specialVariables.BLOCKTIMESTAMP)
+}
+
+// usage of block timestamp
+function isBlockBlockHashAccess (node) {
+  return isSpecialVariableAccess(node, specialVariables.BLOCKHASH)
 }
 
 function isThisLocalCall (node) {
@@ -382,6 +385,7 @@ module.exports = {
   isEffect: isEffect,
   isNowAccess: isNowAccess,
   isBlockTimestampAccess: isBlockTimestampAccess,
+  isBlockBlockHashAccess: isBlockBlockHashAccess,
   isThisLocalCall: isThisLocalCall,
   isLocalCall: isLocalCall,
   isWriteOnStateVariable: isWriteOnStateVariable,

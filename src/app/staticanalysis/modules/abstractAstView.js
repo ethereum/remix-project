@@ -1,5 +1,6 @@
 var common = require('./staticAnalysisCommon')
-var AstWalker = require('ethereum-remix').util.AstWalker
+// var AstWalker = require('ethereum-remix').util.AstWalker
+var AstWalker = require('../astWalker')
 
 function abstractAstView () {
   this.contracts = null
