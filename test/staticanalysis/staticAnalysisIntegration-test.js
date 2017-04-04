@@ -1,6 +1,6 @@
 var test = require('tape')
 
-var StatRunner = require('../../babelify-src/app/staticanalysis/staticAnalysisRunner')
+var StatRunner = require('../../src/app/staticanalysis/staticAnalysisRunner')
 // const util = require('util')
 
 var solc = require('solc')

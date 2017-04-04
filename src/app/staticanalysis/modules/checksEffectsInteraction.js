@@ -7,19 +7,19 @@ var AbstractAst = require('./abstractAstView')
 
 function checksEffectsInteraction () {
   this.contracts = []
-}
 
-checksEffectsInteraction.prototype.visit = new AbstractAst().builder(
-  (node) => common.isInteraction(node) || common.isEffect(node) || common.isLocalCall(node),
-  this.contracts
-)
+  checksEffectsInteraction.prototype.visit = new AbstractAst().builder(
+    (node) => common.isInteraction(node) || common.isEffect(node) || (common.isLocalCall(node) && !common.isBuiltinFunctionCall(node)),
+    this.contracts
+  )
+}
 
 checksEffectsInteraction.prototype.report = function (compilationResults) {
   var warnings = []
 
   var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
 
-  if (this.contracts.some((item) => item.modifiers.length > 0)) this.warning.push({ warning: `Modifiers are currently not supported by this analysis.` })
+  if (this.contracts.some((item) => item.modifiers.length > 0)) warnings.push({ warning: `Modifiers are currently not supported by the '${name}' static analysis.` })
 
   this.contracts.forEach((contract) => {
     contract.functions.forEach((func) => {

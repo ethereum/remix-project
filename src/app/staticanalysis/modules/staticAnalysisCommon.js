@@ -41,6 +41,17 @@ var basicFunctionTypes = {
   DELEGATECALL: buildFunctionSignature([], [basicTypes.BOOL], false)
 }
 
+var builtinFunctions = {
+  'keccak256()': true,
+  'sha3()': true,
+  'sha256()': true,
+  'ripemd160()': true,
+  'ecrecover(bytes32,uint8,bytes32,bytes32)': true,
+  'addmod(uint256,uint256,uint256)': true,
+  'mulmod(uint256,uint256,uint256)': true,
+  'selfdestruct(address)': true
+}
+
 var lowLevelCallTypes = {
   CALL: { ident: 'call', type: basicFunctionTypes.CALL },
   CALLCODE: { ident: 'callcode', type: basicFunctionTypes.CALL },
@@ -182,6 +193,10 @@ function isInlineAssembly (node) {
 
 // #################### Complex Node Identification
 
+function isBuiltinFunctionCall (node) {
+  return isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true
+}
+
 function isStorageVariableDeclaration (node) {
   return isVariableDeclaration(node) && expressionType(node, basicRegex.REFTYPE)
 }
@@ -297,7 +312,7 @@ function isMemberAccess (node, retType, accessor, accessorType, memberName) {
 }
 
 function isSpecialVariableAccess (node, varType) {
-  return isMemberAccess(node, varType.type, varType.obj, varType.obj, varType.member)
+  return isMemberAccess(node, exactMatch(utils.escapeRegExp(varType.type)), varType.obj, varType.obj, varType.member)
 }
 
 // #################### Node Identification Primitives
@@ -340,7 +355,6 @@ function exactMatch (regexStr) {
  * @param {Array} returnTypes
  *  list of return type names
  * @return {Boolean} isPayable
- *  CAUTION: only needed in low level call signature or message-calls (other contracts, this.)
  */
 function buildFunctionSignature (paramTypes, returnTypes, isPayable) {
   return 'function (' + utils.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((returnTypes.length) ? ' returns (' + utils.concatWithSeperator(returnTypes, ',') + ')' : '')
@@ -400,6 +414,7 @@ module.exports = {
   isCallToNonConstLocalFunction: isCallToNonConstLocalFunction,
   isPlusPlusUnaryOperation: isPlusPlusUnaryOperation,
   isMinusMinusUnaryOperation: isMinusMinusUnaryOperation,
+  isBuiltinFunctionCall: isBuiltinFunctionCall,
 
   // #################### Trivial Node Identification
   isFunctionDefinition: isFunctionDefinition,

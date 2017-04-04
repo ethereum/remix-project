@@ -1066,6 +1066,59 @@ test('staticAnalysisCommon.isInlineAssembly', function (t) {
 
 // #################### Complex Node Identification
 
+test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
+  t.plan(2)
+  var selfdestruct = {
+    'attributes': {
+      'type': 'tuple()',
+      'type_conversion': false
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'function (address)',
+          'value': 'selfdestruct'
+        },
+        'name': 'Identifier'
+      },
+      {
+        'attributes': {
+          'type': 'address',
+          'value': 'a'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'FunctionCall'
+  }
+  var localCall = {
+    'attributes': {
+      'type': 'tuple()',
+      'type_conversion': false
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'function (struct Ballot.Voter storage pointer)',
+          'value': 'bli'
+        },
+        'name': 'Identifier'
+      },
+      {
+        'attributes': {
+          'type': 'struct Ballot.Voter storage pointer',
+          'value': 'x'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'FunctionCall'
+  }
+
+  t.ok(common.isBuiltinFunctionCall(selfdestruct), 'selfdestruct is builtin')
+  t.notOk(common.isBuiltinFunctionCall(localCall), 'local call is not builtin')
+})
+
 test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
   t.plan(3)
   var node1 = {
@@ -1522,23 +1575,17 @@ test('staticAnalysisCommon.isCallToNonConstLocalFunction', function (t) {
           'type': 'function (struct Ballot.Voter storage pointer)',
           'value': 'bli'
         },
-        'id': 37,
-        'name': 'Identifier',
-        'src': '540:3:0'
+        'name': 'Identifier'
       },
       {
         'attributes': {
           'type': 'struct Ballot.Voter storage pointer',
           'value': 'x'
         },
-        'id': 38,
-        'name': 'Identifier',
-        'src': '544:1:0'
+        'name': 'Identifier'
       }
     ],
-    'id': 39,
-    'name': 'FunctionCall',
-    'src': '540:6:0'
+    'name': 'FunctionCall'
   }
 
   t.ok(common.isCallToNonConstLocalFunction(node1), 'should be call to non const Local func')
@@ -1595,10 +1642,26 @@ test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
 
 test('staticAnalysisCommon.isBlockBlockhashAccess', function (t) {
   t.plan(4)
-  var node = { name: 'MemberAccess', children: [{attributes: { value: 'block', type: 'block' }}], attributes: { value: 'blockhash', type: 'bytes32' } }
+  var node = {
+    'attributes': {
+      'member_name': 'blockhash',
+      'type': 'function (uint256) returns (bytes32)'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'block',
+          'value': 'block'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+
   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
-  t.ok(common.isBlockBlockHashAccess(node), 'blockhash should work')
+  t.ok(common.isBlockBlockHashAccess(node), 'blockhash should work') // todo:
   t.notOk(common.isNowAccess(node), 'is now used should not work')
 })
 

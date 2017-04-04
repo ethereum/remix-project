@@ -7,19 +7,19 @@ var AbstractAst = require('./abstractAstView')
 
 function constantFunctions () {
   this.contracts = []
-}
 
-constantFunctions.prototype.visit = new AbstractAst().builder(
-  (node) => common.isLowLevelCall(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCall(node) || common.isInlineAssembly(node),
-  this.contracts
-)
+  constantFunctions.prototype.visit = new AbstractAst().builder(
+    (node) => common.isLowLevelCall(node) || common.isExternalDirectCall(node) || common.isEffect(node) || (common.isLocalCall(node) && !common.isBuiltinFunctionCall(node)) || common.isInlineAssembly(node),
+    this.contracts
+  )
+}
 
 constantFunctions.prototype.report = function (compilationResults) {
   var warnings = []
 
   var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
 
-  if (this.contracts.some((item) => item.modifiers.length > 0)) this.warning.push({ warning: `Modifiers are currently not supported by this analysis.` })
+  if (this.contracts.some((item) => item.modifiers.length > 0)) warnings.push({ warning: `Modifiers are currently not supported by the '${name}' static analysis.` })
 
   this.contracts.forEach((contract) => {
     if (!common.isFullyImplementedContract(contract.node)) return
