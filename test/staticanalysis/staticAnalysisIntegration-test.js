@@ -33,7 +33,7 @@ testFiles.forEach((fileName) => {
 test('Integration test thisLocal.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../babelify-src/app/staticanalysis/modules/thisLocal')
+  var module = require('../../src/app/staticanalysis/modules/thisLocal')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -58,7 +58,7 @@ test('Integration test thisLocal.js', function (t) {
 test('Integration test checksEffectsInteraction.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../babelify-src/app/staticanalysis/modules/checksEffectsInteraction')
+  var module = require('../../src/app/staticanalysis/modules/checksEffectsInteraction')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
@@ -68,8 +68,8 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 1,
-    'modifier1.sol': 0,
-    'modifier2.sol': 0,
+    'modifier1.sol': 1,
+    'modifier2.sol': 1,
     'notReentrant.sol': 0,
     'structReentrant.sol': 1,
     'thisLocal.sol': 0
@@ -83,7 +83,7 @@ test('Integration test checksEffectsInteraction.js', function (t) {
 test('Integration test constatnFunctions.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../babelify-src/app/staticanalysis/modules/constantFunctions')
+  var module = require('../../src/app/staticanalysis/modules/constantFunctions')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -93,8 +93,8 @@ test('Integration test constatnFunctions.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 1,
     'inheritance.sol': 0,
-    'modifier1.sol': 1,
-    'modifier2.sol': 0,
+    'modifier1.sol': 2,
+    'modifier2.sol': 1,
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 1
@@ -108,7 +108,7 @@ test('Integration test constatnFunctions.js', function (t) {
 test('Integration test constantFunctions.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../babelify-src/app/staticanalysis/modules/inlineAssembly')
+  var module = require('../../src/app/staticanalysis/modules/inlineAssembly')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -133,7 +133,7 @@ test('Integration test constantFunctions.js', function (t) {
 test('Integration test txOrigin.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../babelify-src/app/staticanalysis/modules/txOrigin')
+  var module = require('../../src/app/staticanalysis/modules/txOrigin')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
@@ -158,7 +158,7 @@ test('Integration test txOrigin.js', function (t) {
 test('Integration test gasCosts.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../babelify-src/app/staticanalysis/modules/gasCosts')
+  var module = require('../../src/app/staticanalysis/modules/gasCosts')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 2,
