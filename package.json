@@ -151,14 +151,14 @@
     "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env ie,safari,chrome,default",
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
     "onchange": "onchange build/app.js -- npm-run-all lint",
-    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc make-mock-compiler build",
+    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc build",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "serve": "execr --silent http-server .",
     "sourcemap": "exorcist --root ../ build/app.js.map > build/app.js",
     "start": "npm-run-all -lpr serve watch onchange",
     "test": "standard; npm run csslint; node test/index.js",
-    "test-browser": "npm-run-all -lpr selenium serve browsertest",
+    "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv --delay 0 -p browserify-reload -o '| npm run sourcemap'"
   }
 }
