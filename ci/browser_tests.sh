@@ -10,7 +10,6 @@ SAUCECONNECT_JOBIDENTIFIER="browsersolidity_tests_${TRAVIS_JOB_NUMBER}"
 SAUCECONNECT_READYFILE="sc.ready"
 TEST_EXITCODE=0
 
-node ci/makeMockCompiler.js
 npm run serve &
 
 wget "$SAUCECONNECT_URL"
