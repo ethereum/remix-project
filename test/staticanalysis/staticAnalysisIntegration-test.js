@@ -20,7 +20,8 @@ var testFiles = [
   'modifier2.sol',
   'notReentrant.sol',
   'structReentrant.sol',
-  'thisLocal.sol'
+  'thisLocal.sol',
+  'globals.sol'
 ]
 
 var testFileAsts = {}
@@ -47,7 +48,8 @@ test('Integration test thisLocal.js', function (t) {
     'modifier2.sol': 0,
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
-    'thisLocal.sol': 1
+    'thisLocal.sol': 1,
+    'globals.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -72,7 +74,8 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'modifier2.sol': 1,
     'notReentrant.sol': 0,
     'structReentrant.sol': 1,
-    'thisLocal.sol': 0
+    'thisLocal.sol': 0,
+    'globals.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -80,7 +83,7 @@ test('Integration test checksEffectsInteraction.js', function (t) {
   })
 })
 
-test('Integration test constatnFunctions.js', function (t) {
+test('Integration test constantFunctions.js', function (t) {
   t.plan(testFiles.length)
 
   var module = require('../../src/app/staticanalysis/modules/constantFunctions')
@@ -97,7 +100,8 @@ test('Integration test constatnFunctions.js', function (t) {
     'modifier2.sol': 1,
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
-    'thisLocal.sol': 1
+    'thisLocal.sol': 1,
+    'globals.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -105,7 +109,7 @@ test('Integration test constatnFunctions.js', function (t) {
   })
 })
 
-test('Integration test constantFunctions.js', function (t) {
+test('Integration test inlineAssembly.js', function (t) {
   t.plan(testFiles.length)
 
   var module = require('../../src/app/staticanalysis/modules/inlineAssembly')
@@ -122,7 +126,8 @@ test('Integration test constantFunctions.js', function (t) {
     'modifier2.sol': 0,
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
-    'thisLocal.sol': 0
+    'thisLocal.sol': 0,
+    'globals.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -147,7 +152,8 @@ test('Integration test txOrigin.js', function (t) {
     'modifier2.sol': 0,
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
-    'thisLocal.sol': 0
+    'thisLocal.sol': 0,
+    'globals.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -172,7 +178,8 @@ test('Integration test gasCosts.js', function (t) {
     'modifier2.sol': 1,
     'notReentrant.sol': 1,
     'structReentrant.sol': 1,
-    'thisLocal.sol': 2
+    'thisLocal.sol': 2,
+    'globals.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {

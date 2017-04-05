@@ -77,8 +77,8 @@ function getType (node) {
 // #################### Complex Getters
 
 function getFunctionCallType (func) {
-  if (!(isExternalDirectCall(func) || isThisLocalCall(func) || isLocalCall(func))) throw new Error('staticAnalysisCommon.js: not function call Node')
-  if (isExternalDirectCall(func) || isThisLocalCall(func)) return func.attributes.type
+  if (!(isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func) || isLocalCall(func))) throw new Error('staticAnalysisCommon.js: not function call Node')
+  if (isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func)) return func.attributes.type
   return findFirstSubNodeLTR(func, exactMatch(nodeTypes.IDENTIFIER)).attributes.type
 }
 
@@ -95,6 +95,11 @@ function getLocalCallName (localCallNode) {
 function getThisLocalCallName (localCallNode) {
   if (!isThisLocalCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an this local call Node')
   return localCallNode.attributes.value
+}
+
+function getSuperLocalCallName (localCallNode) {
+  if (!isSuperLocalCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an super local call Node')
+  return localCallNode.attributes.member_name
 }
 
 function getExternalDirectCallContractName (extDirectCall) {
@@ -149,6 +154,7 @@ function getFunctionCallTypeParameterType (func) {
 function getFullQualifiedFunctionCallIdent (contract, func) {
   if (isLocalCall(func)) return getContractName(contract) + '.' + getLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isThisLocalCall(func)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isSuperLocalCall(func)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isExternalDirectCall(func)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else throw new Error('staticAnalysisCommon.js: Can not get function name form non function call node')
 }
@@ -192,6 +198,10 @@ function isInlineAssembly (node) {
 }
 
 // #################### Complex Node Identification
+
+function isLocalCallGraphRelevantNode (node) {
+  return ((isLocalCall(node) || isSuperLocalCall(node)) && !isBuiltinFunctionCall(node))
+}
 
 function isBuiltinFunctionCall (node) {
   return isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true
@@ -238,7 +248,7 @@ function isCallToNonConstLocalFunction (node) {
 }
 
 function isExternalDirectCall (node) {
-  return isMemberAccess(node, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node)
+  return isMemberAccess(node, basicRegex.EXTERNALFUNCTIONTYPE, undefined, basicRegex.CONTRACTTYPE, undefined) && !isThisLocalCall(node) && !isSuperLocalCall(node)
 }
 
 function isNowAccess (node) {
@@ -257,6 +267,10 @@ function isBlockBlockHashAccess (node) {
 
 function isThisLocalCall (node) {
   return isMemberAccess(node, basicRegex.FUNCTIONTYPE, exactMatch('this'), basicRegex.CONTRACTTYPE, undefined)
+}
+
+function isSuperLocalCall (node) {
+  return isMemberAccess(node, basicRegex.FUNCTIONTYPE, exactMatch('super'), basicRegex.CONTRACTTYPE, undefined)
 }
 
 function isLocalCall (node) {
@@ -377,6 +391,7 @@ module.exports = {
   getType: getType,
   // #################### Complex Getters
   getThisLocalCallName: getThisLocalCallName,
+  getSuperLocalCallName: getSuperLocalCallName,
   getFunctionCallType: getFunctionCallType,
   getContractName: getContractName,
   getEffectedVariableName: getEffectedVariableName,
@@ -400,6 +415,8 @@ module.exports = {
   isBlockTimestampAccess: isBlockTimestampAccess,
   isBlockBlockHashAccess: isBlockBlockHashAccess,
   isThisLocalCall: isThisLocalCall,
+  isSuperLocalCall: isSuperLocalCall,
+  isLocalCallGraphRelevantNode: isLocalCallGraphRelevantNode,
   isLocalCall: isLocalCall,
   isWriteOnStateVariable: isWriteOnStateVariable,
   isStateVariable: isStateVariable,

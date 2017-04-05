@@ -9,7 +9,7 @@ function constantFunctions () {
   this.contracts = []
 
   constantFunctions.prototype.visit = new AbstractAst().builder(
-    (node) => common.isLowLevelCall(node) || common.isExternalDirectCall(node) || common.isEffect(node) || (common.isLocalCall(node) && !common.isBuiltinFunctionCall(node)) || common.isInlineAssembly(node),
+    (node) => common.isLowLevelCall(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node),
     this.contracts
   )
 }

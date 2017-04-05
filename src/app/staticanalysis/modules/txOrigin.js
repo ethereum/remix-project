@@ -1,5 +1,5 @@
-var name = 'tx origin: '
-var desc = 'warn if tx.origin is used'
+var name = 'tx.origin: '
+var desc = 'Warn if tx.origin is used'
 var categories = require('./categories')
 
 function txOrigin () {
@@ -20,7 +20,7 @@ txOrigin.prototype.visit = function (node) {
 txOrigin.prototype.report = function () {
   return this.txOriginNodes.map(function (item, i) {
     return {
-      warning: `use of tx.origin: "tx.origin" is useful only in very exceptional cases.<br />
+      warning: `Use of tx.origin: "tx.origin" is useful only in very exceptional cases.<br />
                 If you use it for authentication, you usually want to replace it by "msg.sender", because otherwise any contract you call can act on your behalf.`,
       location: item.src
     }

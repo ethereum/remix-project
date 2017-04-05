@@ -9,7 +9,7 @@ function checksEffectsInteraction () {
   this.contracts = []
 
   checksEffectsInteraction.prototype.visit = new AbstractAst().builder(
-    (node) => common.isInteraction(node) || common.isEffect(node) || (common.isLocalCall(node) && !common.isBuiltinFunctionCall(node)),
+    (node) => common.isInteraction(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node),
     this.contracts
   )
 }
@@ -64,7 +64,7 @@ function isPotentialVulnerableFunction (func, context) {
 }
 
 function isLocalCallWithStateChange (node, context) {
-  if (common.isLocalCall(node)) {
+  if (common.isLocalCallGraphRelevantNode(node)) {
     var func = callGraph.resolveCallGraphSymbol(context.cg, common.getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
     return !func || (func && func.node.changesState)
   }

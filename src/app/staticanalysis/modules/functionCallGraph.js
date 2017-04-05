@@ -19,7 +19,7 @@ function buildLocalFuncCallGraphInternal (functions, nodeFilter, extractNodeIden
 function buildGlobalFuncCallGraph (contracts) {
   var callGraph = {}
   contracts.forEach((contract) => {
-    var filterNodes = (node) => { return common.isLocalCall(node) || common.isThisLocalCall(node) || common.isExternalDirectCall(node) }
+    var filterNodes = (node) => { return common.isLocalCallGraphRelevantNode(node) || common.isExternalDirectCall(node) }
     var getNodeIdent = (node) => { return common.getFullQualifiedFunctionCallIdent(contract.node, node) }
     var getFunDefIdent = (funcDef) => { return common.getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
 
@@ -36,7 +36,7 @@ function analyseCallGraph (cg, funcName, context, nodeCheck) {
 function analyseCallGraphInternal (cg, funcName, context, combinator, nodeCheck, visited) {
   var current = resolveCallGraphSymbol(cg, funcName)
 
-  if (!current || visited[funcName]) return true
+  if (current === undefined || visited[funcName] === true) return true
   visited[funcName] = true
 
   return combinator(current.node.relevantNodes.reduce((acc, val) => combinator(acc, nodeCheck(val, context)), false),
@@ -48,33 +48,31 @@ function resolveCallGraphSymbol (cg, funcName) {
 }
 
 function resolveCallGraphSymbolInternal (cg, funcName, silent) {
-  var current = null
+  var current
   if (funcName.includes('.')) {
     var parts = funcName.split('.')
     var contractPart = parts[0]
     var functionPart = parts[1]
     var currentContract = cg[contractPart]
-    if (currentContract) {
+    if (!(currentContract === undefined)) {
       current = currentContract.functions[funcName]
        // resolve inheritance hierarchy
-      if (!current) {
+      if (current === undefined) {
         // resolve inheritance lookup in linearized fashion
         var inheritsFromNames = currentContract.contract.inheritsFrom.reverse()
         for (var i = 0; i < inheritsFromNames.length; i++) {
           var res = resolveCallGraphSymbolInternal(cg, inheritsFromNames[i] + '.' + functionPart, true)
-          if (res) return res
+          if (!(res === undefined)) return res
         }
       }
+    } else {
+      if (!silent) console.log(`static analysis functionCallGraph.js: Contract ${contractPart} not found in function call graph.`)
     }
   } else {
     throw new Error('functionCallGraph.js: function does not have full qualified name.')
   }
-  if (!current) {
-    if (!silent) console.log(`static analysis functionCallGraph.js: ${funcName} not found in function call graph.`)
-    return null
-  } else {
-    return current
-  }
+  if (current === undefined && !silent) console.log(`static analysis functionCallGraph.js: ${funcName} not found in function call graph.`)
+  return current
 }
 
 module.exports = {

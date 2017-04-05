@@ -394,6 +394,80 @@ test('staticAnalysisCommon.getThisLocalCallName', function (t) {
   t.throws(() => common.getThisLocalCallName(localCall), undefined, 'throws on other nodes')
 })
 
+test('staticAnalysisCommon.getSuperLocalCallName', function (t) {
+  t.plan(4)
+  var superLocal = {
+    'attributes': {
+      'member_name': 'duper',
+      'type': 'function ()'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'contract super a',
+          'value': 'super'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+  var localCall = {
+    'attributes': {
+      'type': 'tuple()',
+      'type_conversion': false
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'function (struct Ballot.Voter storage pointer)',
+          'value': 'bli'
+        },
+        'id': 37,
+        'name': 'Identifier',
+        'src': '540:3:0'
+      },
+      {
+        'attributes': {
+          'type': 'struct Ballot.Voter storage pointer',
+          'value': 'x'
+        },
+        'id': 38,
+        'name': 'Identifier',
+        'src': '544:1:0'
+      }
+    ],
+    'id': 39,
+    'name': 'FunctionCall',
+    'src': '540:6:0'
+  }
+  var thisLocalCall = { name: 'MemberAccess', children: [ { attributes: { value: 'this', type: 'contract test' }, name: 'Identifier' } ], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
+  var externalDirect = {
+    attributes: {
+      member_name: 'info',
+      type: 'function () payable external returns (uint256)'
+    },
+    children: [
+      {
+        attributes: {
+          type: 'contract InfoFeed',
+          value: 'f'
+        },
+        id: 30,
+        name: 'Identifier',
+        src: '405:1:0'
+      }
+    ],
+    id: 32,
+    name: 'MemberAccess',
+    src: '405:6:0'
+  }
+  t.equal(common.getSuperLocalCallName(superLocal), 'duper', 'get local name from super local call')
+  t.throws(() => common.getSuperLocalCallName(thisLocalCall), 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(externalDirect), undefined, 'throws on other nodes')
+  t.throws(() => common.getSuperLocalCallName(localCall), undefined, 'throws on other nodes')
+})
+
 test('staticAnalysisCommon.getExternalDirectCallContractName', function (t) {
   t.plan(3)
   var localCall = {
@@ -737,7 +811,6 @@ test('staticAnalysisCommon.getStateVariableDeclarationsFormContractNode', functi
     'name': 'ContractDefinition'
   }
   var res = common.getStateVariableDeclarationsFormContractNode(contract).map(common.getDeclaredVariableName)
-  t.comment(res)
   t.ok(res[0] === 'chairperson', 'var 1 should be ')
   t.ok(res[1] === 'voters', 'var 2 should be ')
   t.ok(res[2] === 'proposals', 'var 3 should be ')
@@ -1669,6 +1742,30 @@ test('staticAnalysisCommon.isThisLocalCall', function (t) {
   t.plan(3)
   var node = { name: 'MemberAccess', children: [{attributes: { value: 'this', type: 'contract test' }}], attributes: { value: 'b', type: 'function (bytes32,address) returns (bool)' } }
   t.ok(common.isThisLocalCall(node), 'is this.local_method() used should work')
+  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(node), 'is now used should not work')
+})
+
+test('staticAnalysisCommon.isSuperLocalCall', function (t) {
+  t.plan(4)
+  var node = {
+    'attributes': {
+      'member_name': 'duper',
+      'type': 'function ()'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'contract super a',
+          'value': 'super'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+  t.ok(common.isSuperLocalCall(node), 'is super.local_method() used should work')
+  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
   t.notOk(common.isNowAccess(node), 'is now used should not work')
 })
