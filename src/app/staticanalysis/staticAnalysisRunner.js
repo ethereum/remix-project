@@ -1,6 +1,5 @@
 'use strict'
-// var AstWalker = require('ethereum-remix').util.AstWalker
-var AstWalker = require('./astWalker')
+var AstWalker = require('ethereum-remix').util.AstWalker
 var list = require('./modules/list')
 
 function staticAnalysisRunner () {
