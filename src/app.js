@@ -858,7 +858,7 @@ var run = function () {
   })
 
   compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
-    setVersionText(usingWorker ? '(loading using worker)' : '(loading)')
+    setVersionText(usingWorker ? '(loading using worker)' : '( Loading... Please, wait a moment. )')
   })
 
   compiler.event.register('compilerLoaded', this, function (version) {
@@ -940,7 +940,7 @@ var run = function () {
     loadVersion($('#versionSelector').val())
   })
 
-  var header = new Option('Select new compiler version to load')
+  var header = new Option('Click to select new compiler version')
   header.disabled = true
   header.selected = true
   $('#versionSelector').append(header)

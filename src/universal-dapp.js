@@ -9,6 +9,21 @@ var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
 var TxRunner = require('./app/txRunner')
+var csjs = require('csjs-inject')
+
+var css = csjs`
+  .options {
+      float: left;
+      padding: 0.7em 0.3em;
+      font-size: 0.9em;
+      cursor: pointer;
+      background-color: transparent;
+      margin-right: 0.5em;
+      font-size: 1em;
+  }
+`
+;[...document.querySelectorAll('#header #options li')].forEach(addCss)
+function addCss (el) { el.classList.add(css.options) }
 
 /*
   trigger debugRequested
@@ -162,6 +177,7 @@ UniversalDApp.prototype.render = function () {
     } else {
       var $title = $('<span class="title"/>').text(self.contracts[c].name)
       if (self.contracts[c].bytecode) {
+        $title.addClass('definitionTitle')
         $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'))
       }
       $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]))
