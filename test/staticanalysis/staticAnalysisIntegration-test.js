@@ -21,7 +21,8 @@ var testFiles = [
   'notReentrant.sol',
   'structReentrant.sol',
   'thisLocal.sol',
-  'globals.sol'
+  'globals.sol',
+  'library.sol'
 ]
 
 var testFileAsts = {}
@@ -49,7 +50,8 @@ test('Integration test thisLocal.js', function (t) {
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 1,
-    'globals.sol': 0
+    'globals.sol': 0,
+    'library.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -64,18 +66,19 @@ test('Integration test checksEffectsInteraction.js', function (t) {
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 1,
-    'assembly.sol': 0,
+    'assembly.sol': 1,
     'ballot.sol': 0,
     'ballot_reentrant.sol': 1,
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 1,
-    'modifier1.sol': 1,
-    'modifier2.sol': 1,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
     'notReentrant.sol': 0,
     'structReentrant.sol': 1,
     'thisLocal.sol': 0,
-    'globals.sol': 1
+    'globals.sol': 1,
+    'library.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -96,12 +99,13 @@ test('Integration test constantFunctions.js', function (t) {
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 1,
     'inheritance.sol': 0,
-    'modifier1.sol': 2,
-    'modifier2.sol': 1,
+    'modifier1.sol': 1,
+    'modifier2.sol': 0,
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 1,
-    'globals.sol': 0
+    'globals.sol': 0,
+    'library.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -127,7 +131,8 @@ test('Integration test inlineAssembly.js', function (t) {
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
-    'globals.sol': 0
+    'globals.sol': 0,
+    'library.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -153,7 +158,8 @@ test('Integration test txOrigin.js', function (t) {
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
-    'globals.sol': 1
+    'globals.sol': 1,
+    'library.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -179,7 +185,8 @@ test('Integration test gasCosts.js', function (t) {
     'notReentrant.sol': 1,
     'structReentrant.sol': 1,
     'thisLocal.sol': 2,
-    'globals.sol': 1
+    'globals.sol': 1,
+    'library.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {

@@ -147,7 +147,7 @@ test('staticAnalysisCommon.getType', function (t) {
 // #################### Complex Getter Test
 
 test('staticAnalysisCommon.getFunctionCallType', function (t) {
-  t.plan(4)
+  t.plan(5)
   var localCall = {
     'attributes': {
       'type': 'tuple()',
@@ -198,9 +198,26 @@ test('staticAnalysisCommon.getFunctionCallType', function (t) {
     name: 'MemberAccess',
     src: '405:6:0'
   }
-  t.ok(common.getFunctionCallType(thisLocalCall) === 'function (bytes32,address) returns (bool)', 'this local call returns correct type')
-  t.ok(common.getFunctionCallType(externalDirect) === 'function () payable external returns (uint256)', 'external direct call returns correct type')
-  t.ok(common.getFunctionCallType(localCall) === 'function (struct Ballot.Voter storage pointer)', 'local call returns correct type')
+  var libCall = {
+    'attributes': {
+      'member_name': 'insert',
+      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'type(library Set)',
+          'value': 'Set'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+  t.equal(common.getFunctionCallType(libCall), 'function (struct Set.Data storage pointer,uint256) returns (bool)', 'this lib call returns correct type')
+  t.equal(common.getFunctionCallType(thisLocalCall), 'function (bytes32,address) returns (bool)', 'this local call returns correct type')
+  t.equal(common.getFunctionCallType(externalDirect), 'function () payable external returns (uint256)', 'external direct call returns correct type')
+  t.equal(common.getFunctionCallType(localCall), 'function (struct Ballot.Voter storage pointer)', 'local call returns correct type')
   t.throws(() => common.getFunctionCallType({ name: 'MemberAccess' }), undefined, 'throws on wrong type')
 })
 
@@ -910,6 +927,50 @@ test('staticAnalysisCommon.getFunctionCallTypeParameterType', function (t) {
   t.throws(() => common.getFunctionCallTypeParameterType({ name: 'MemberAccess' }), undefined, 'throws on wrong type')
 })
 
+test('staticAnalysisCommon.getLibraryCallContractName', function (t) {
+  t.plan(2)
+  var node = {
+    'attributes': {
+      'member_name': 'insert',
+      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'type(library Set)',
+          'value': 'Set'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+  t.equal(common.getLibraryCallContractName(node), 'Set', 'should return correct contract name')
+  t.throws(() => common.getLibraryCallContractName({ name: 'Identifier' }), undefined, 'should throw on wrong node')
+})
+
+test('staticAnalysisCommon.getLibraryCallMemberName', function (t) {
+  t.plan(2)
+  var node = {
+    'attributes': {
+      'member_name': 'insert',
+      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'type(library Set)',
+          'value': 'Set'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+  t.equal(common.getLibraryCallMemberName(node), 'insert', 'should return correct member name')
+  t.throws(() => common.getLibraryCallMemberName({ name: 'Identifier' }), undefined, 'should throw on wrong node')
+})
+
 test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
   t.plan(4)
   var contract = { name: 'ContractDefinition', attributes: { name: 'baz' } }
@@ -1538,7 +1599,7 @@ test('staticAnalysisCommon.isWriteOnStateVariable', function (t) {
     ],
     'name': 'VariableDeclaration'
   }
-  t.notOk(common.isWriteOnStateVariable(inlineAssembly, [node1, node2, node3]), 'inline Assembly is not write on state')
+  t.ok(common.isWriteOnStateVariable(inlineAssembly, [node1, node2, node3]), 'inline Assembly is write on state')
   t.notOk(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on non state is not write on state')
   node3.attributes.name = 'c'
   t.ok(common.isWriteOnStateVariable(assignment, [node1, node2, node3]), 'assignment on state is not write on state')
@@ -1772,6 +1833,31 @@ test('staticAnalysisCommon.isSuperLocalCall', function (t) {
     'name': 'MemberAccess'
   }
   t.ok(common.isSuperLocalCall(node), 'is super.local_method() used should work')
+  t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
+  t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
+  t.notOk(common.isNowAccess(node), 'is now used should not work')
+})
+
+test('staticAnalysisCommon.isLibraryCall', function (t) {
+  t.plan(5)
+  var node = {
+    'attributes': {
+      'member_name': 'insert',
+      'type': 'function (struct Set.Data storage pointer,uint256) returns (bool)'
+    },
+    'children': [
+      {
+        'attributes': {
+          'type': 'type(library Set)',
+          'value': 'Set'
+        },
+        'name': 'Identifier'
+      }
+    ],
+    'name': 'MemberAccess'
+  }
+  t.ok(common.isLibraryCall(node), 'is lib call should not work')
+  t.notOk(common.isSuperLocalCall(node), 'is super.local_method() used should not work')
   t.notOk(common.isThisLocalCall(node), 'is this.local_method() used should not work')
   t.notOk(common.isBlockTimestampAccess(node), 'is block.timestamp used should not work')
   t.notOk(common.isNowAccess(node), 'is now used should not work')

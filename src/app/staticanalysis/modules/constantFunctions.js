@@ -16,10 +16,9 @@ function constantFunctions () {
 
 constantFunctions.prototype.report = function (compilationResults) {
   var warnings = []
+  var hasModifiers = this.contracts.some((item) => item.modifiers.length > 0)
 
   var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
-
-  if (this.contracts.some((item) => item.modifiers.length > 0)) warnings.push({ warning: `Modifiers are currently not supported by the '${name}' static analysis.` })
 
   this.contracts.forEach((contract) => {
     if (!common.isFullyImplementedContract(contract.node)) return
@@ -32,15 +31,16 @@ constantFunctions.prototype.report = function (compilationResults) {
     contract.functions.forEach((func) => {
       if (common.isConstantFunction(func.node) !== func.potentiallyshouldBeConst) {
         var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        var comments = (hasModifiers) ? '<br/><i>Note:</i>Modifiers are currently not considered by the this static analysis.' : ''
         if (func.potentiallyshouldBeConst) {
           warnings.push({
-            warning: `<i>${funcName}</i>: Potentially should be constant but is not.`,
+            warning: `<i>${funcName}</i>: Potentially should be constant but is not.${comments}`,
             location: func.src,
             more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
           })
         } else {
           warnings.push({
-            warning: `<i>${funcName}</i>: Is constant but potentially should not be.`,
+            warning: `<i>${funcName}</i>: Is constant but potentially should not be.${comments}`,
             location: func.src,
             more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
           })

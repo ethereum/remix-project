@@ -32,7 +32,8 @@ var basicRegex = {
   EXTERNALFUNCTIONTYPE: '^function \\(.*\\).* external',
   CONSTANTFUNCTIONTYPE: '^function \\(.*\\).* constant',
   REFTYPE: '( storage )|(mapping\\()|(\\[\\])',
-  FUNCTIONSIGNATURE: '^function \\(([^\\(]*)\\)'
+  FUNCTIONSIGNATURE: '^function \\(([^\\(]*)\\)',
+  LIBRARYTYPE: '^type\\(library (.*)\\)'
 }
 
 var basicFunctionTypes = {
@@ -77,8 +78,8 @@ function getType (node) {
 // #################### Complex Getters
 
 function getFunctionCallType (func) {
-  if (!(isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func) || isLocalCall(func))) throw new Error('staticAnalysisCommon.js: not function call Node')
-  if (isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func)) return func.attributes.type
+  if (!(isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func) || isLocalCall(func) || isLibraryCall(func))) throw new Error('staticAnalysisCommon.js: not function call Node')
+  if (isExternalDirectCall(func) || isThisLocalCall(func) || isSuperLocalCall(func) || isLibraryCall(func)) return func.attributes.type
   return findFirstSubNodeLTR(func, exactMatch(nodeTypes.IDENTIFIER)).attributes.type
 }
 
@@ -151,11 +152,22 @@ function getFunctionCallTypeParameterType (func) {
   return new RegExp(basicRegex.FUNCTIONSIGNATURE).exec(getFunctionCallType(func))[1]
 }
 
+function getLibraryCallContractName (funcCall) {
+  if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an this library call Node')
+  return new RegExp(basicRegex.LIBRARYTYPE).exec(funcCall.children[0].attributes.type)[1]
+}
+
+function getLibraryCallMemberName (funcCall) {
+  if (!isLibraryCall(funcCall)) throw new Error('staticAnalysisCommon.js: not an library call Node')
+  return funcCall.attributes.member_name
+}
+
 function getFullQualifiedFunctionCallIdent (contract, func) {
   if (isLocalCall(func)) return getContractName(contract) + '.' + getLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isThisLocalCall(func)) return getThisLocalCallContractName(func) + '.' + getThisLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isSuperLocalCall(func)) return getContractName(contract) + '.' + getSuperLocalCallName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else if (isExternalDirectCall(func)) return getExternalDirectCallContractName(func) + '.' + getExternalDirectCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
+  else if (isLibraryCall(func)) return getLibraryCallContractName(func) + '.' + getLibraryCallMemberName(func) + '(' + getFunctionCallTypeParameterType(func) + ')'
   else throw new Error('staticAnalysisCommon.js: Can not get function name form non function call node')
 }
 
@@ -200,7 +212,7 @@ function isInlineAssembly (node) {
 // #################### Complex Node Identification
 
 function isLocalCallGraphRelevantNode (node) {
-  return ((isLocalCall(node) || isSuperLocalCall(node)) && !isBuiltinFunctionCall(node))
+  return ((isLocalCall(node) || isSuperLocalCall(node) || isLibraryCall(node)) && !isBuiltinFunctionCall(node))
 }
 
 function isBuiltinFunctionCall (node) {
@@ -220,7 +232,7 @@ function isEffect (node) {
 }
 
 function isWriteOnStateVariable (effectNode, stateVariables) {
-  return isEffect(effectNode) && !isInlineAssembly(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables)
+  return isInlineAssembly(effectNode) || (isEffect(effectNode) && isStateVariable(getEffectedVariableName(effectNode), stateVariables))
 }
 
 function isStateVariable (name, stateVariables) {
@@ -243,8 +255,16 @@ function isFullyImplementedContract (node) {
   return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION)) && node.attributes.fullyImplemented === true
 }
 
+function isLibrary (node) {
+  return nodeType(node, exactMatch(nodeTypes.CONTRACTDEFINITION)) && node.attributes.isLibrary === true
+}
+
 function isCallToNonConstLocalFunction (node) {
   return isLocalCall(node) && !expressionType(node.children[0], basicRegex.CONSTANTFUNCTIONTYPE)
+}
+
+function isLibraryCall (node) {
+  return isMemberAccess(node, basicRegex.FUNCTIONTYPE, undefined, basicRegex.LIBRARYTYPE, undefined)
 }
 
 function isExternalDirectCall (node) {
@@ -403,6 +423,8 @@ module.exports = {
   getExternalDirectCallMemberName: getExternalDirectCallMemberName,
   getFunctionDefinitionName: getFunctionDefinitionName,
   getFunctionCallTypeParameterType: getFunctionCallTypeParameterType,
+  getLibraryCallContractName: getLibraryCallContractName,
+  getLibraryCallMemberName: getLibraryCallMemberName,
   getFullQualifiedFunctionCallIdent: getFullQualifiedFunctionCallIdent,
   getFullQuallyfiedFuncDefinitionIdent: getFullQuallyfiedFuncDefinitionIdent,
   getStateVariableDeclarationsFormContractNode: getStateVariableDeclarationsFormContractNode,
@@ -416,6 +438,7 @@ module.exports = {
   isBlockBlockHashAccess: isBlockBlockHashAccess,
   isThisLocalCall: isThisLocalCall,
   isSuperLocalCall: isSuperLocalCall,
+  isLibraryCall: isLibraryCall,
   isLocalCallGraphRelevantNode: isLocalCallGraphRelevantNode,
   isLocalCall: isLocalCall,
   isWriteOnStateVariable: isWriteOnStateVariable,
@@ -427,6 +450,7 @@ module.exports = {
   isLowLevelSendInst: isLLSend,
   isExternalDirectCall: isExternalDirectCall,
   isFullyImplementedContract: isFullyImplementedContract,
+  isLibrary: isLibrary,
   isCallToNonConstLocalFunction: isCallToNonConstLocalFunction,
   isPlusPlusUnaryOperation: isPlusPlusUnaryOperation,
   isMinusMinusUnaryOperation: isMinusMinusUnaryOperation,

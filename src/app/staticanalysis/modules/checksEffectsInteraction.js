@@ -16,10 +16,9 @@ function checksEffectsInteraction () {
 
 checksEffectsInteraction.prototype.report = function (compilationResults) {
   var warnings = []
+  var hasModifiers = this.contracts.some((item) => item.modifiers.length > 0)
 
   var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
-
-  if (this.contracts.some((item) => item.modifiers.length > 0)) warnings.push({ warning: `Modifiers are currently not supported by the '${name}' static analysis.` })
 
   this.contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
@@ -30,8 +29,9 @@ checksEffectsInteraction.prototype.report = function (compilationResults) {
     contract.functions.forEach((func) => {
       if (isPotentialVulnerableFunction(func, getContext(cg, contract, func))) {
         var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        var comments = (hasModifiers) ? '<br/><i>Note:</i>Modifiers are currently not considered by the this static analysis.' : ''
         warnings.push({
-          warning: `Potential Violation of Checks-Effects-Interaction pattern in <i>${funcName}</i>: Could potentially lead to re-entrancy vulnerability.`,
+          warning: `Potential Violation of Checks-Effects-Interaction pattern in <i>${funcName}</i>: Could potentially lead to re-entrancy vulnerability.${comments}`,
           location: func.src,
           more: 'http://solidity.readthedocs.io/en/develop/security-considerations.html#re-entrancy'
         })
