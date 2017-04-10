@@ -17,7 +17,7 @@ class StorageResolver {
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
   storageRange (tx, stepIndex, callback) {
-    storageRangeInternal(this, '0x0', 1000, tx, stepIndex, callback)
+    storageRangeInternal(this, '0x0', true, tx, stepIndex, callback)
   }
 
   /**
@@ -28,7 +28,7 @@ class StorageResolver {
     * @param {Function} - callback - {key, hashedKey, value} -
     */
   storageSlot (slot, tx, stepIndex, callback) {
-    storageRangeInternal(this, slot, 100, tx, stepIndex, function (error, storage) {
+    storageRangeInternal(this, slot, false, tx, stepIndex, function (error, storage) {
       if (error) {
         callback(error)
       } else {
@@ -80,7 +80,8 @@ function resolveAddress (self, stepIndex, callback) {
   })
 }
 
-function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
+function storageRangeWeb3Call (tx, address, start, fullStorage, callback) {
+  var maxSize = fullStorage ? 1000 : 100
   util.web3.debug.storageRangeAt(
     tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
     address,
@@ -97,7 +98,7 @@ function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
     })
 }
 
-function storageRangeInternal (self, start, maxSize, tx, stepIndex, callback) {
+function storageRangeInternal (self, start, fullStorage, tx, stepIndex, callback) {
   resolveAddress(self, stepIndex, (error, address) => {
     if (error) {
       callback(error)
@@ -112,11 +113,11 @@ function storageRangeInternal (self, start, maxSize, tx, stepIndex, callback) {
             var cached = fromCache(self, address)
             self.accumulateStorageChanges(stepIndex, address, cached, callback)
           } else {
-            storageRangeWeb3Call(tx, address, start, maxSize, (error, storage, complete) => {
+            storageRangeWeb3Call(tx, address, start, fullStorage, (error, storage, complete) => {
               if (error) {
                 callback(error)
               } else {
-                toCache(self, address, storage, complete)
+                toCache(self, address, storage, fullStorage, complete)
                 self.accumulateStorageChanges(stepIndex, address, storage, callback)
               }
             })
@@ -148,12 +149,12 @@ function fromCache (self, address, hashedKey) {
  * @param {Object} storage  - result of `storageRangeAtInternal`, contains {key, hashedKey, value}
  * @param {Bool} complete  - True if the storage is complete
  */
-function toCache (self, address, storage, complete) {
+function toCache (self, address, storage, fullStorageRequest, complete) {
   if (!self.storageByAddress[address]) {
     self.storageByAddress[address] = {}
   }
   self.storageByAddress[address].storage = Object.assign(self.storageByAddress[address].storage || {}, storage)
-  if (complete !== undefined) {
+  if (Object.keys(storage).length < 1000 && fullStorageRequest && complete) {
     self.storageByAddress[address].complete = complete
   }
 }
