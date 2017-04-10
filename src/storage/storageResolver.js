@@ -109,9 +109,9 @@ function storageRangeInternal (self, start, fullStorage, tx, stepIndex, callback
         if (!util.web3.debug.storageRangeAt) {
           callback('no storageRangeAt endpoint found')
         } else {
-          if (self.isComplete(address)) {
-            var cached = fromCache(self, address)
-            self.accumulateStorageChanges(stepIndex, address, cached, callback)
+          var cached = fromCache(self, address, start)
+          if (cached) {
+            self.accumulateStorageChanges(stepIndex, address, cached, callback)  
           } else {
             storageRangeWeb3Call(tx, address, start, fullStorage, (error, storage, complete) => {
               if (error) {
