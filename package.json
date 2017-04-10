@@ -30,8 +30,10 @@
     "babel-plugin-transform-es2015-unicode-regex": "^6.11.0",
     "babel-plugin-transform-regenerator": "^6.16.1",
     "babel-polyfill": "^6.22.0",
+
     "babel-plugin-yo-yoify": "^0.3.3",
     "babel-preset-es2015": "^6.24.0",
+
     "babelify": "^7.3.0",
     "brace": "^0.8.0",
     "browserify": "^13.0.0",
@@ -65,7 +67,8 @@
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2"
+    "yo-yo": "^1.2.2",
+    "csjs-inject": "^1.0.1"
   },
   "repository": {
     "type": "git",
@@ -114,36 +117,24 @@
   },
   "browserify": {
     "transform": [
-      [
-        "babelify",
-        {
-          "sourceMapsAbsolute": false,
-          "sourceMaps": true,
-          "plugins": [
-            [
-              "fast-async",
-              {
-                "runtimePattern": null,
-                "compiler": {
-                  "es7": true,
-                  "noRuntime": true,
-                  "promises": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            [
-              "yo-yoify"
-            ]
-          ],
-          "presets": [
-            "es2015"
-          ]
-        }
-      ],
-      [
-        "uglifyify"
-      ]
+      ["babelify", {
+        "sourceMapsAbsolute": false,
+        "sourceMaps": true,
+        "plugins": [
+          ["fast-async", {
+            "runtimePattern": null,
+            "compiler": {
+              "es7": true,
+              "noRuntime": true,
+              "promises": true,
+              "wrapAwait": true
+            }
+          }],
+          ["yo-yoify"]
+        ],
+        "presets": ["es2015"]
+      }],
+      ["uglifyify"]
     ]
   },
   "scripts": {
@@ -170,8 +161,5 @@
     "test": "standard; npm run csslint; node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv --delay 0 -p browserify-reload -o '| npm run sourcemap'"
-  },
-  "dependencies": {
-    "csjs-inject": "^1.0.1"
   }
 }
