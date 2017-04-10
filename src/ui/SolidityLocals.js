@@ -2,6 +2,7 @@
 var DropdownPanel = require('./DropdownPanel')
 var localDecoder = require('../solidity/localDecoder')
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
 class SolidityLocals {
@@ -41,7 +42,11 @@ class SolidityLocals {
             var stack = result[0].value
             var memory = result[1].value
             try {
-              localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, this.storageResolver, sourceLocation).then((locals) => {
+              var storageViewer = new StorageViewer({
+                stepIndex: this.parent.currentStepIndex,
+                tx: this.parent.tx
+              }, this.storageResolver)
+              localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
                 if (!result.error) {
                   this.basicPanel.update(locals)
                 }

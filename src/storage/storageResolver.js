@@ -5,7 +5,6 @@ var util = require('../helpers/global')
 
 class StorageResolver {
   constructor (_debugger, _traceManager) {
-    this.debugger = _debugger
     this.traceManager = _traceManager
     this.clear()
     _debugger.event.register('newTraceLoaded', () => {
@@ -16,20 +15,23 @@ class StorageResolver {
   /**
     * return the storage for the current context (address and vm trace index)
     * by default now returns the range 0 => 1000
-    *
+    * @param {Object} - tx - transaction
+    * @param {Int} - stepIndex - Index of the stop in the vm trace
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
-  storageRange (callback) {
-    storageRangeInternal(this, '0x0', 1000, callback)
+  storageRange (tx, stepIndex, callback) {
+    storageRangeInternal(this, '0x0', 1000, tx, stepIndex, callback)
   }
 
   /**
     * return a slot value for the current context (address and vm trace index)
-    *
+    * @param {String} - slot - slot key
+    * @param {Object} - tx - transaction
+    * @param {Int} - stepIndex - Index of the stop in the vm trace
     * @param {Function} - callback - {key, hashedKey, value} -
     */
-  storageSlot (slot, callback) {
-    storageRangeInternal(this, slot, 100, function (error, storage) {
+  storageSlot (slot, tx, stepIndex, callback) {
+    storageRangeInternal(this, slot, 100, tx, stepIndex, function (error, storage) {
       if (error) {
         callback(error)
       } else {
@@ -50,37 +52,6 @@ class StorageResolver {
   }
 
   /**
-    * retrieve the storage from the cache. if @arg slot is defined, return only the desired slot, if not return the entire known storage
-    *
-    * @param {String} address  - contract address
-    * @param {String} slotKey  - key of the value to return
-    * @return {String} - either the entire known storage or a single value
-    */
-  fromCache (address, slotKey) {
-    if (!this.storageByAddress[address]) {
-      return null
-    }
-    return slotKey ? this.storageByAddress[address].storage[slotKey] : this.storageByAddress[address].storage
-  }
-
-  /**
-    * store the result of `storageRangeAtInternal`
-    *
-    * @param {String} address  - contract address
-    * @param {Object} storage  - result of `storageRangeAtInternal`, contains {key, hashedKey, value}
-    * @param {Bool} complete  - True if the storage is complete
-    */
-  toCache (address, storage, complete) {
-    if (!this.storageByAddress[address]) {
-      this.storageByAddress[address] = {}
-    }
-    this.storageByAddress[address].storage = Object.assign(this.storageByAddress[address].storage || {}, storage)
-    if (complete !== undefined) {
-      this.storageByAddress[address].complete = complete
-    }
-  }
-
-  /**
     * clear the cache
     *
     */
@@ -94,15 +65,16 @@ class StorageResolver {
     * @param {Int} index  - execution step index
     * @param {String} address  - contract address
     * @param {Map} storage  - Map of the known storage
+    * @param {Int} stepIndex  - vm trave index
     * @return {Map} - The storage resolved to the given exection point
     */
-  resolveStorage (address, storage, callback) {
-    this.traceManager.resolveStorage(this.debugger.currentStepIndex, address, storage, callback)
+  resolveStorage (stepIndex, address, storage, callback) {
+    this.traceManager.resolveStorage(stepIndex, address, storage, callback)
   }
 }
 
-function resolveAddress (self, callback) {
-  self.traceManager.getCurrentCalledAddressAt(self.debugger.currentStepIndex, (error, result) => {
+function resolveAddress (self, stepIndex, callback) {
+  self.traceManager.getCurrentCalledAddressAt(stepIndex, (error, result) => {
     if (error) {
       callback(error)
     } else {
@@ -128,8 +100,8 @@ function storageRangeAtInternal (tx, address, start, maxSize, callback) {
     })
 }
 
-function storageRangeInternal (self, start, maxSize, callback) {
-  resolveAddress(self, (error, address) => {
+function storageRangeInternal (self, start, maxSize, tx, stepIndex, callback) {
+  resolveAddress(self, stepIndex, (error, address) => {
     if (error) {
       callback(error)
     } else {
@@ -140,15 +112,15 @@ function storageRangeInternal (self, start, maxSize, callback) {
           callback('no storageRangeAt endpoint found')
         } else {
           if (self.isComplete(address)) {
-            var cached = self.fromCache(address)
-            self.resolveStorage(address, cached, callback)
+            var cached = fromCache(self, address)
+            self.resolveStorage(stepIndex, address, cached, callback)
           } else {
-            storageRangeAtInternal(self.debugger.tx, address, start, maxSize, (error, storage, complete) => {
+            storageRangeAtInternal(tx, address, start, maxSize, (error, storage, complete) => {
               if (error) {
                 callback(error)
               } else {
-                self.toCache(address, storage, complete)
-                self.resolveStorage(address, storage, callback)
+                toCache(self, address, storage, complete)
+                self.resolveStorage(stepIndex, address, storage, callback)
               }
             })
           }
@@ -156,6 +128,37 @@ function storageRangeInternal (self, start, maxSize, callback) {
       }
     }
   })
+}
+
+/**
+    * retrieve the storage from the cache. if @arg slot is defined, return only the desired slot, if not return the entire known storage
+    *
+    * @param {String} address  - contract address
+    * @param {String} slotKey  - key of the value to return
+    * @return {String} - either the entire known storage or a single value
+    */
+function fromCache (self, address, slotKey) {
+  if (!self.storageByAddress[address]) {
+    return null
+  }
+  return slotKey ? self.storageByAddress[address].storage[slotKey] : self.storageByAddress[address].storage
+}
+
+/**
+ * store the result of `storageRangeAtInternal`
+ *
+ * @param {String} address  - contract address
+ * @param {Object} storage  - result of `storageRangeAtInternal`, contains {key, hashedKey, value}
+ * @param {Bool} complete  - True if the storage is complete
+ */
+function toCache (self, address, storage, complete) {
+  if (!self.storageByAddress[address]) {
+    self.storageByAddress[address] = {}
+  }
+  self.storageByAddress[address].storage = Object.assign(self.storageByAddress[address].storage || {}, storage)
+  if (complete !== undefined) {
+    self.storageByAddress[address].complete = complete
+  }
 }
 
 module.exports = StorageResolver

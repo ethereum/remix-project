@@ -46,7 +46,7 @@ TxBrowser.prototype.submit = function () {
     return
   }
   this.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
-  try {
+  // try {
     var self = this
     if (this.txNumber.indexOf('0x') !== -1) {
       util.web3.eth.getTransaction(this.txNumber, function (error, result) {
@@ -57,9 +57,9 @@ TxBrowser.prototype.submit = function () {
         self.update(error, result)
       })
     }
-  } catch (e) {
-    self.update(e.message)
-  }
+  // } catch (e) {
+  //   self.update(e.message)
+  // }
 }
 
 TxBrowser.prototype.update = function (error, tx) {

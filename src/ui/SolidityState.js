@@ -2,6 +2,7 @@
 var DropdownPanel = require('./DropdownPanel')
 var stateDecoder = require('../solidity/stateDecoder')
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
 function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy, _storageResolver) {
@@ -53,7 +54,11 @@ SolidityState.prototype.init = function () {
             self.basicPanel.update({})
             console.log(error)
           } else {
-            stateDecoder.decodeState(stateVars, self.storageResolver).then((result) => {
+            var storageViewer = new StorageViewer({
+              stepIndex: self.parent.currentStepIndex,
+              tx: self.parent.tx
+            }, self.storageResolver)
+            stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
               if (!result.error) {
                 self.basicPanel.update(result)
               }

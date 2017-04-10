@@ -1,5 +1,6 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
 function StoragePanel (_parent, _traceManager, _storageResolver) {
@@ -22,7 +23,12 @@ StoragePanel.prototype.init = function () {
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
 
-    self.storageResolver.storageRange((error, storage) => {
+    var storageViewer = new StorageViewer({
+      stepIndex: this.parent.currentStepIndex,
+      tx: this.parent.tx
+    }, this.storageResolver)
+
+    storageViewer.storageRange((error, storage) => {
       if (error) {
         console.log(error)
         self.basicPanel.update({})
