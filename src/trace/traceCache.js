@@ -92,7 +92,7 @@ TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {
   this.storageChanges.push(index)
 }
 
-TraceCache.prototype.resolveStorage = function (index, address, storage) {
+TraceCache.prototype.accumulateStorageChanges = function (index, address, storage) {
   var ret = Object.assign({}, storage)
   for (var k in this.storageChanges) {
     var changesIndex = this.storageChanges[k]

@@ -74,8 +74,8 @@ TraceManager.prototype.getLength = function (callback) {
   }
 }
 
-TraceManager.prototype.resolveStorage = function (index, address, storageOrigin, callback) {
-  var storage = this.traceCache.resolveStorage(index, address, storageOrigin)
+TraceManager.prototype.accumulateStorageChanges = function (index, address, storageOrigin, callback) {
+  var storage = this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
   callback(null, storage)
 }
 

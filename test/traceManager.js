@@ -53,8 +53,8 @@ tape('TraceManager', function (t) {
     st.end()
   })
 
-  t.test('TraceManager.resolveStorage', function (st) {
-    traceManager.resolveStorage(110, '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', {}, function (error, result) {
+  t.test('TraceManager.accumulateStorageChanges', function (st) {
+    traceManager.accumulateStorageChanges(110, '0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', {}, function (error, result) {
       if (error) {
         st.fail(error)
       } else {

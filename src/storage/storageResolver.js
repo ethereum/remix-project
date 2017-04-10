@@ -57,7 +57,7 @@ class StorageResolver {
   }
 
   /**
-    * resolve the storage to the specified execution step @arg index. uses the traceManager.resolveStorage
+    * resolve the storage to the specified execution step @arg index. uses the traceManager.accumulateStorageChanges
     *
     * @param {Int} index  - execution step index
     * @param {String} address  - contract address
@@ -65,8 +65,8 @@ class StorageResolver {
     * @param {Int} stepIndex  - vm trave index
     * @return {Map} - The storage resolved to the given exection point
     */
-  resolveStorage (stepIndex, address, storage, callback) {
-    this.traceManager.resolveStorage(stepIndex, address, storage, callback)
+  accumulateStorageChanges (stepIndex, address, storage, callback) {
+    this.traceManager.accumulateStorageChanges(stepIndex, address, storage, callback)
   }
 }
 
