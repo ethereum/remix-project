@@ -248,6 +248,10 @@ body {
     padding: 0 0.6em;
 }
 
+#header #optionViews .hide {
+    display: none;
+}
+
 #header .info {
     font-family: monospace;
     min-height: 6em;
