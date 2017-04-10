@@ -134,11 +134,11 @@ function storageRangeInternal (self, start, maxSize, tx, stepIndex, callback) {
     * @param {String} slotKey  - key of the value to return
     * @return {String} - either the entire known storage or a single value
     */
-function fromCache (self, address, slotKey) {
+function fromCache (self, address, hashedKey) {
   if (!self.storageByAddress[address]) {
     return null
   }
-  return slotKey ? self.storageByAddress[address].storage[slotKey] : self.storageByAddress[address].storage
+  return hashedKey ? self.storageByAddress[address].storage[hashedKey] : self.storageByAddress[address].storage
 }
 
 /**
