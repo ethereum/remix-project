@@ -147,6 +147,8 @@ function ExecutionContext () {
       selectExEnv.value = executionContext
     }
   })
+  
+  selectExEnv.value = executionContext
 }
 
 module.exports = ExecutionContext
