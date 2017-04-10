@@ -3,6 +3,14 @@ var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
 var utils = require('../utils')
+var csjs = require('csjs-inject')
+
+var css = csjs`
+  .analysis {
+    margin-top: 2em;
+    font-height: 1.5em;
+  }
+`
 
 function staticAnalysisView (appAPI, compilerEvent) {
   this.view = null
@@ -25,7 +33,7 @@ function staticAnalysisView (appAPI, compilerEvent) {
 
 staticAnalysisView.prototype.render = function () {
   var self = this
-  var view = yo`<div>
+  var view = yo`<div class="${css.analysis}">
     <strong>Static Analysis</strong>
     <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
     <div id="staticanalysismodules">
@@ -99,23 +107,23 @@ function renderModules (modules) {
   return Object.keys(groupedModules).map((categoryId, i) => {
     var category = groupedModules[categoryId]
     var entriesDom = category.map((item, i) => {
-      return yo`<label>
-                  <input id="staticanalysismodule_${categoryId}_${i}"
-                         type="checkbox"
-                         name="staticanalysismodule"
-                         index=${item._index}
-                         checked="true" style="vertical-align:bottom">${item.name} (${item.description})
-                </label>`
+      return yo`
+        <label>
+          <input id="staticanalysismodule_${categoryId}_${i}"
+            type="checkbox"
+            name="staticanalysismodule"
+            index=${item._index}
+            checked="true" style="vertical-align:bottom">
+          ${item.name}
+          ${item.description}
+        </label>
+            `
     })
     return yo`<div>
+                <br>
                 <label>
-                <b>${category[0].categoryDisplayName}</b> (
-                <input id="staticanalysismodule_${categoryId}"
-                        type="checkbox"
-                        checked="true"
-                        style="vertical-align:bottom; margin-left:0"
-                        onchange=${function () { $('[id^=' + this.id + ']').prop('checked', this.checked) }}/> all/none)
-                </label> 
+                <b>${category[0].categoryDisplayName}</b>
+                </label>
                 ${entriesDom}
               </div>`
   })
@@ -129,4 +137,3 @@ function preProcessModules (arr) {
     return item
   })
 }
-

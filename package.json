@@ -67,7 +67,8 @@
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2"
+    "yo-yo": "^1.2.2",
+    "csjs-inject": "^1.0.1"
   },
   "repository": {
     "type": "git",
