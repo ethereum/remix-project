@@ -5,8 +5,8 @@ var solidityTypeFormatter = require('./SolidityTypeFormatter')
 var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
-function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy, _storageResolver) {
-  this.storageResolver = _storageResolver
+function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
+  this.storageResolver = null
   this.parent = _parent
   this.traceManager = _traceManager
   this.codeManager = _codeManager
@@ -41,6 +41,11 @@ SolidityState.prototype.init = function () {
     if (self.parent.currentStepIndex !== index) return
     if (!this.solidityProxy.loaded()) {
       warningDiv.innerHTML = 'no source has been specified'
+      return
+    }
+
+    if (!self.storageResolver) {
+      warningDiv.innerHTML = 'storage not ready'
       return
     }
 

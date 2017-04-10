@@ -3,8 +3,8 @@ var DropdownPanel = require('./DropdownPanel')
 var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
-function FullStoragesChanges (_parent, _traceManager, _storageResolver) {
-  this.storageResolver = _storageResolver
+function FullStoragesChanges (_parent, _traceManager) {
+  this.storageResolver = null
   this.parent = _parent
   this.traceManager = _traceManager
   this.addresses = []
@@ -43,6 +43,7 @@ FullStoragesChanges.prototype.init = function () {
   this.parent.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
+    if (!self.storageResolver) return
 
     if (index === self.traceLength - 1) {
       var storageJSON = {}

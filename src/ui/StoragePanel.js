@@ -3,9 +3,9 @@ var DropdownPanel = require('./DropdownPanel')
 var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
-function StoragePanel (_parent, _traceManager, _storageResolver) {
+function StoragePanel (_parent, _traceManager) {
   this.parent = _parent
-  this.storageResolver = _storageResolver
+  this.storageResolver = null
   this.traceManager = _traceManager
   this.basicPanel = new DropdownPanel('Storage', {json: true})
   this.init()
@@ -22,11 +22,12 @@ StoragePanel.prototype.init = function () {
     if (self.disabled) return
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
+    if (!self.storageResolver) return
 
     var storageViewer = new StorageViewer({
-      stepIndex: this.parent.currentStepIndex,
-      tx: this.parent.tx
-    }, this.storageResolver)
+      stepIndex: self.parent.currentStepIndex,
+      tx: self.parent.tx
+    }, self.storageResolver)
 
     storageViewer.storageRange((error, storage) => {
       if (error) {

@@ -4,12 +4,9 @@ var helper = require('../helpers/util')
 var util = require('../helpers/global')
 
 class StorageResolver {
-  constructor (_debugger, _traceManager) {
+  constructor (_traceManager) {
     this.traceManager = _traceManager
     this.clear()
-    _debugger.event.register('newTraceLoaded', () => {
-      this.clear()
-    })
   }
 
   /**

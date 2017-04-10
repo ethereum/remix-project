@@ -7,10 +7,10 @@ var yo = require('yo-yo')
 
 class SolidityLocals {
 
-  constructor (_parent, _traceManager, _internalTreeCall, _storageResolver) {
+  constructor (_parent, _traceManager, _internalTreeCall) {
     this.parent = _parent
     this.internalTreeCall = _internalTreeCall
-    this.storageResolver = _storageResolver
+    this.storageResolver = null
     this.traceManager = _traceManager
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
@@ -33,6 +33,10 @@ class SolidityLocals {
     this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
       var warningDiv = this.view.querySelector('#warning')
       warningDiv.innerHTML = ''
+      if (!this.storageResolver) {
+        warningDiv.innerHTML = 'storage not ready'
+        return
+      }
       this.traceManager.waterfall([
         this.traceManager.getStackAt,
         this.traceManager.getMemoryAt],
