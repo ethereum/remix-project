@@ -1,10 +1,11 @@
-/* global alert, confirm, prompt, FileReader, Option, Worker, chrome */
+/* global alert, confirm, prompt, Option, Worker, chrome */
 'use strict'
 
 var async = require('async')
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
+var csjs = require('csjs-inject')
 
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
@@ -24,6 +25,7 @@ var FormalVerification = require('./app/formalVerification')
 var EventManager = require('./lib/eventManager')
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
+var FilePanel = require('./app/file-panel')
 
 var examples = require('./app/example-contracts')
 
@@ -82,12 +84,6 @@ var run = function () {
   // Run if we did receive an event from remote instance while starting up
   if (filesToLoad !== null) {
     loadFiles(filesToLoad)
-  }
-
-  // -------- check file upload capabilities -------
-
-  if (!(window.File || window.FileReader || window.FileList || window.Blob)) {
-    $('.uploadFile').remove()
   }
 
   // ------------------ gist load ----------------
@@ -159,26 +155,83 @@ var run = function () {
   chromeCloudSync()
 
   // ----------------- editor ----------------------
-
   var editor = new Editor(document.getElementById('input'))
 
-  // ----------------- tabbed menu -------------------
-  $('#options li').click(function (ev) {
-    var $el = $(this)
-    selectTab($el)
-  })
+  // ---------------- FilePanel --------------------
+  /****************************************************************************
+    @TODO's
+      1. I would put a virtual file called Summary as the root entry of the treeview, which displays the list of the files with the size in bytes of each
 
-  var selectTab = function (el) {
-    var match = /[a-z]+View/.exec(el.get(0).className)
-    if (!match) return
-    var cls = match[0]
-    if (!el.hasClass('active')) {
-      el.parent().find('li').removeClass('active')
-      $('#optionViews').attr('class', '').addClass(cls)
-      el.addClass('active')
+      2. drag'n'drop to enable to rename files&folders in the file explorer into different sub folders
+
+      3. I would put a virtual file called `Summary` as the root entry of the treeview, which displays the list of the files with the size in bytes of each.
+
+      4. add maybe more tape tests
+
+      5. gist imports + copy to the browser => phase of writing
+
+      6. add filemanagement from righthand panel to filepanel compoennt (editing/imports/exports, public gist, load from github, create new project, ... setup load and modify files)
+  */
+  // var sources = {
+  //   'test/client/credit.sol': '',
+  //   'src/voting.sol': '',
+  //   'src/leasing.sol': '',
+  //   'src/gmbh/contract.sol': false,
+  //   'src/gmbh/test.sol': false,
+  //   'src/gmbh/company.sol': false,
+  //   'src/gmbh/node_modules/ballot.sol': false,
+  //   'src/ug/finance.sol': false,
+  //   'app/solidity/mode.sol': true,
+  //   'app/ethereum/constitution.sol': true
+  // }
+  // Object.keys(sources).forEach(function (key) { files.set(key, sources[key]) })
+  /****************************************************************************/
+  var css = csjs`
+    .filepanel    {
+      display     : flex;
+      width       : 200px;
     }
-    self.event.trigger('tabChanged', [cls])
+  `
+  var filepanel = document.querySelector('#filepanel')
+  filepanel.className = css.filepanel
+  var FilePanelAPI = {
+    createName: createNonClashingName,
+    switchToFile: switchToFile
   }
+  var el = new FilePanel(FilePanelAPI, files)
+  filepanel.appendChild(el)
+  var api = el.api
+
+  api.register('ui', function changeLayout (data) {
+    var value
+    if (data.type === 'minimize') {
+      value = -parseInt(window['filepanel'].style.width)
+      value = (isNaN(value) ? -window['filepanel'].getBoundingClientRect().width : value)
+      window['filepanel'].style.position = 'absolute'
+      window['filepanel'].style.left = (value - 5) + 'px'
+      window['filepanel'].style.width = -value + 'px'
+      window['tabs-bar'].style.left = '45px'
+    } else if (data.type === 'maximize') {
+      value = -parseInt(window['filepanel'].style.left) + 'px'
+      window['filepanel'].style.position = 'static'
+      window['filepanel'].style.width = value
+      window['filepanel'].style.left = ''
+      window['tabs-bar'].style.left = value
+    } else {
+      window['filepanel'].style.width = data.width + 'px'
+      window['tabs-bar'].style.left = data.width + 'px'
+    }
+  })
+  api.register('focus', function (path) {
+    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
+      if (span.innerText === path) switchToFile(path) // @TODO: scroll into view
+    })
+  })
+  files.event.register('fileRenamed', function (oldName, newName) {
+    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
+      if (span.innerText === oldName) span.innerText = newName
+    })
+  })
 
   // ------------------ gist publish --------------
 
@@ -221,39 +274,26 @@ var run = function () {
     }).appendTo('body')
   })
 
-  // ----------------- file selector-------------
+  // ---------------- tabbed menu ------------------
+  $('#options li').click(function (ev) {
+    var $el = $(this)
+    selectTab($el)
+  })
+
+  var selectTab = function (el) {
+    var match = /[a-z]+View/.exec(el.get(0).className)
+    if (!match) return
+    var cls = match[0]
+    if (!el.hasClass('active')) {
+      el.parent().find('li').removeClass('active')
+      $('#optionViews').attr('class', '').addClass(cls)
+      el.addClass('active')
+    }
+    self.event.trigger('tabChanged', [cls])
+  }
 
   var $filesEl = $('#files')
   var FILE_SCROLL_DELTA = 300
-
-  $('.newFile').on('click', function () {
-    var newName = createNonClashingName('Untitled')
-    if (!files.set(newName, '')) {
-      alert('Failed to create file ' + newName)
-    } else {
-      switchToFile(newName)
-    }
-  })
-
-  // ----------------- file upload -------------
-
-  $('.inputFile').on('change', function () {
-    var fileList = $('input.inputFile')[0].files
-    for (var i = 0; i < fileList.length; i++) {
-      var name = fileList[i].name
-      if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
-        var fileReader = new FileReader()
-        fileReader.onload = function (ev) {
-          if (!files.set(name, ev.target.result)) {
-            alert('Failed to create file ' + name)
-          } else {
-            switchToFile(name)
-          }
-        }
-        fileReader.readAsText(fileList[i])
-      }
-    }
-  })
 
   // Switch tab
   $filesEl.on('click', '.file:not(.active)', function (ev) {
@@ -325,6 +365,8 @@ var run = function () {
 
     currentFile = file
 
+    files.event.trigger('fileFocus', [file])
+
     if (files.isReadOnly(file)) {
       editor.openReadOnly(file, files.get(file))
     } else {
@@ -368,7 +410,6 @@ var run = function () {
     })
   }
 
-  var $filesWrapper = $('.files-wrapper')
   var $scrollerRight = $('.scroller-right')
   var $scrollerLeft = $('.scroller-left')
 
@@ -381,12 +422,8 @@ var run = function () {
     return itemsWidth
   }
 
-  //  function widthOfHidden () {
-  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi())
-  //  }
-
   function widthOfVisible () {
-    return $filesWrapper.outerWidth()
+    return document.querySelector('#editor-container').offsetWidth
   }
 
   function getLeftPosi () {

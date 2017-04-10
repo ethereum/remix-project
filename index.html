@@ -41,15 +41,16 @@
 	<body>
 
 		<div id="editor">
-			<span class="newFile" title="New File"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
-			<span class="uploadFile" title="Open local file"><label class="fa fa-folder-open"><input type="file" class="inputFile" multiple /></label></span>
-			<div class="files-wrapper">
+			<div id="tabs-bar">
 				<div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
 				<div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
 				<ul id="files" class="nav nav-tabs"></ul>
 			</div>
 			<span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
-			<div id="input"></div>
+			<div id="editor-container">
+				<div id="filepanel"></div>
+				<div id="input"></div>
+			</div>
 			<div id="dragbar"></div>
 		</div>
 
