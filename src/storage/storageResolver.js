@@ -80,7 +80,7 @@ function resolveAddress (self, stepIndex, callback) {
   })
 }
 
-function storageRangeAtInternal (tx, address, start, maxSize, callback) {
+function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
   util.web3.debug.storageRangeAt(
     tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
     address,
@@ -112,7 +112,7 @@ function storageRangeInternal (self, start, maxSize, tx, stepIndex, callback) {
             var cached = fromCache(self, address)
             self.accumulateStorageChanges(stepIndex, address, cached, callback)
           } else {
-            storageRangeAtInternal(tx, address, start, maxSize, (error, storage, complete) => {
+            storageRangeWeb3Call(tx, address, start, maxSize, (error, storage, complete) => {
               if (error) {
                 callback(error)
               } else {
