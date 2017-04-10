@@ -38,6 +38,7 @@
     "brace": "^0.8.0",
     "browserify": "^13.0.0",
     "browserify-reload": "^1.0.3",
+    "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "ethereum-remix": "https://github.com/ethereum/remix",
     "ethereumjs-abi": "https://github.com/ethereumjs/ethereumjs-abi",
