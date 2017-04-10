@@ -355,12 +355,12 @@ body {
     width: 100%;
 }
 
-.contract.hide {
+.contract.hidesub {
     padding-bottom: 0;
     margin: 0;
 }
 
-.contract.hide > *:not(.title) {
+.contract.hidesub > *:not(.title) {
     display: none;
 }
 
@@ -376,7 +376,7 @@ body {
     margin-top: 0.2em;
 }
 
-.contract.hide > .title:before {
+.contract.hidesub > .title:before {
     content: "\25B6";
 }
 

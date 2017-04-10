@@ -275,7 +275,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
     var $title = $('<span class="title"/>').text(contract.name + ' at ' + address + ' (' + context + ')')
     $title.click(function () {
-      $instance.toggleClass('hide')
+      $instance.toggleClass('hidesub')
     })
 
     var $events = $('<div class="events"/>')
