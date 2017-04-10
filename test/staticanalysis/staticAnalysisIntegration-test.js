@@ -3,7 +3,8 @@ var test = require('tape')
 var StatRunner = require('../../src/app/staticanalysis/staticAnalysisRunner')
 // const util = require('util')
 
-var solc = require('solc')
+var solc = require('solc/wrapper')
+var compiler = solc(require('../../soljson'))
 
 var fs = require('fs')
 var path = require('path')
@@ -29,7 +30,7 @@ var testFileAsts = {}
 
 testFiles.forEach((fileName) => {
   var contents = fs.readFileSync(path.join(__dirname, 'test-contracts', fileName), 'utf8')
-  testFileAsts[fileName] = solc.compile(contents, 0)
+  testFileAsts[fileName] = compiler.compile(contents, 0)
 })
 
 test('Integration test thisLocal.js', function (t) {
