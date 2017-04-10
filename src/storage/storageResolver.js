@@ -110,14 +110,14 @@ function storageRangeInternal (self, start, maxSize, tx, stepIndex, callback) {
         } else {
           if (self.isComplete(address)) {
             var cached = fromCache(self, address)
-            self.resolveStorage(stepIndex, address, cached, callback)
+            self.accumulateStorageChanges(stepIndex, address, cached, callback)
           } else {
             storageRangeAtInternal(tx, address, start, maxSize, (error, storage, complete) => {
               if (error) {
                 callback(error)
               } else {
                 toCache(self, address, storage, complete)
-                self.resolveStorage(stepIndex, address, storage, callback)
+                self.accumulateStorageChanges(stepIndex, address, storage, callback)
               }
             })
           }
