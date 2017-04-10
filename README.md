@@ -64,7 +64,7 @@ To run the Selenium tests via Nightwatch serve the app through a local web serve
 Then you will need to either:
 
 1. Have a Selenium server running locally on port 4444.
-	- Run: `npm run browser-test`
+	- Run: `npm run test-browser`
 2. Or, install and run SauceConnect.
 	- Run: `sc -u <USERNAME> -k <ACCESS_KEY>` (see `.travis.yml` for values)
 	- Run: `npm run browser-test-sc`
