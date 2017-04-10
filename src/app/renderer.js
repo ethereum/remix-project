@@ -306,7 +306,7 @@ Renderer.prototype.contracts = function (data, source) {
     }
   })
 
-  $contractOutput.find('.title').click(function (ev) { $(this).closest('.contract').toggleClass('hide') })
+  $contractOutput.find('.title').click(function (ev) { $(this).closest('.contract').toggleClass('hidesub') })
   $('#output').append($contractOutput)
   $('.col2 input,textarea').click(function () { this.select() })
 }
