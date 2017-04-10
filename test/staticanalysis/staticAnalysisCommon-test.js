@@ -429,9 +429,6 @@ test('staticAnalysisCommon.getSuperLocalCallName', function (t) {
     ],
     'name': 'MemberAccess'
   }
-
-test('staticAnalysisCommon.getExternalDirectCallContractName', function (t) {
-  t.plan(3)
   var localCall = {
     'attributes': {
       'type': 'tuple()',
@@ -1780,7 +1777,6 @@ test('staticAnalysisCommon.isBlockTimestampAccess', function (t) {
   t.notOk(common.isNowAccess(node), 'is now used should not work')
 })
 
-<<<<<<< 1ca54743848c4b5087105325dbc095c1b6a8b428
 test('staticAnalysisCommon.isBlockBlockhashAccess', function (t) {
   t.plan(4)
   var node = {
