@@ -159,32 +159,19 @@ var run = function () {
 
   // ---------------- FilePanel --------------------
   /****************************************************************************
-    @TODO's
-      1. I would put a virtual file called Summary as the root entry of the treeview, which displays the list of the files with the size in bytes of each
-
-      2. drag'n'drop to enable to rename files&folders in the file explorer into different sub folders
-
-      3. I would put a virtual file called `Summary` as the root entry of the treeview, which displays the list of the files with the size in bytes of each.
-
-      4. add maybe more tape tests
-
-      5. gist imports + copy to the browser => phase of writing
-
-      6. add filemanagement from righthand panel to filepanel compoennt (editing/imports/exports, public gist, load from github, create new project, ... setup load and modify files)
-  */
-  // var sources = {
-  //   'test/client/credit.sol': '',
-  //   'src/voting.sol': '',
-  //   'src/leasing.sol': '',
-  //   'src/gmbh/contract.sol': false,
-  //   'src/gmbh/test.sol': false,
-  //   'src/gmbh/company.sol': false,
-  //   'src/gmbh/node_modules/ballot.sol': false,
-  //   'src/ug/finance.sol': false,
-  //   'app/solidity/mode.sol': true,
-  //   'app/ethereum/constitution.sol': true
-  // }
-  // Object.keys(sources).forEach(function (key) { files.set(key, sources[key]) })
+  var sources = {
+    'test/client/credit.sol': '',
+    'src/voting.sol': '',
+    'src/leasing.sol': '',
+    'src/gmbh/contract.sol': false,
+    'src/gmbh/test.sol': false,
+    'src/gmbh/company.sol': false,
+    'src/gmbh/node_modules/ballot.sol': false,
+    'src/ug/finance.sol': false,
+    'app/solidity/mode.sol': true,
+    'app/ethereum/constitution.sol': true
+  }
+  Object.keys(sources).forEach(function (key) { files.set(key, sources[key]) })
   /****************************************************************************/
   var css = csjs`
     .filepanel    {
@@ -232,7 +219,9 @@ var run = function () {
       if (span.innerText === oldName) span.innerText = newName
     })
   })
-
+  files.event.register('fileRemoved', function (path) {
+    if (path === currentFile) currentFile = null
+  })
   // ------------------ gist publish --------------
 
   $('#gist').click(function () {

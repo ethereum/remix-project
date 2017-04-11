@@ -140,10 +140,8 @@ function fileExplorer (appAPI, files) {
     var label = getLabelFrom(li)
     var path = label.dataset.path
     var isFolder = !!~label.className.indexOf('folder')
-    if (confirm(`
-      Do you really want to delete "${path}" ?
-      ${isFolder ? '(and all contained files and folders)' : ''}
-    `)) {
+    if (isFolder) path += '/'
+    if (confirm(`Do you really want to delete "${path}" ?`)) {
       li.parentElement.removeChild(li)
       removeSubtree(files, path)
     }
@@ -297,8 +295,10 @@ function getLabelFrom (li) {
 }
 
 function removeSubtree (files, path) {
-  var allPaths = Object.keys(files.list()) // @TODO: change `files`
-  var removePaths = allPaths.filter(function (p) { return ~p.indexOf(path) })
+  var parts = path.split('/')
+  var isFile = parts[parts.length - 1].length
+  var removePaths = isFile ? [path] : Object.keys(files.list()).filter(keep)
+  function keep (p) { return ~p.indexOf(path) }
   removePaths.forEach(function (path) {
     [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
       if (span.innerText === path) {
