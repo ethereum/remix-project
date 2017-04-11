@@ -47,19 +47,6 @@ class StorageResolver {
   isComplete (address) {
     return this.storageByAddress[address] && this.storageByAddress[address].complete
   }
-
-  /**
-    * resolve the storage to the specified execution step @arg index. uses the traceManager.accumulateStorageChanges
-    *
-    * @param {Int} index  - execution step index
-    * @param {String} address  - contract address
-    * @param {Map} storage  - Map of the known storage
-    * @param {Int} stepIndex  - vm trave index
-    * @return {Map} - The storage resolved to the given exection point
-    */
-  accumulateStorageChanges (stepIndex, address, storage, callback) {
-    this.traceManager.accumulateStorageChanges(stepIndex, address, storage, callback)
-  }
 }
 
 function resolveAddress (self, stepIndex, callback) {
@@ -103,14 +90,14 @@ function storageRangeInternal (self, start, fullStorage, tx, stepIndex, callback
         } else {
           var cached = fromCache(self, address, start)
           if (cached) {
-            self.accumulateStorageChanges(stepIndex, address, cached, callback)  
+            self.traceManager.accumulateStorageChanges(stepIndex, address, cached, callback)  
           } else {
             storageRangeWeb3Call(tx, address, start, fullStorage, (error, storage, complete) => {
               if (error) {
                 callback(error)
               } else {
                 toCache(self, address, storage, fullStorage, complete)
-                self.accumulateStorageChanges(stepIndex, address, storage, callback)
+                self.traceManager.accumulateStorageChanges(stepIndex, address, storage, callback)
               }
             })
           }
