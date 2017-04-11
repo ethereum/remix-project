@@ -67,11 +67,11 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callba
       if (error) {
         return callback(error)
       }
-      if (!fullStorage && storageChanges[slotKey]) {
+      if (!fullStorage && storageChanges[slotKey]) { // don't need the full storage just returning the value from the storageChanges
         return callback(null, storageChanges)
       }
-      var cached = fromCache(self, address, slotKey)
-      if (cached && cached[slotKey]) { // we have the current slot in the cache and maybe the next 1000 ...
+      var cached = fromCache(self, address)
+      if (cached && cached[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
         return callback(null, Object.assign(cached, storageChanges))
       }
       storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
@@ -92,14 +92,13 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callba
   * retrieve the storage from the cache. if @arg slot is defined, return only the desired slot, if not return the entire known storage
   *
   * @param {String} address  - contract address
-  * @param {String} slotKey  - key of the value to return
   * @return {String} - either the entire known storage or a single value
   */
-function fromCache (self, address, hashedKey) {
+function fromCache (self, address) {
   if (!self.storageByAddress[address]) {
     return null
   }
-  return hashedKey ? self.storageByAddress[address].storage[hashedKey] : self.storageByAddress[address].storage
+  return self.storageByAddress[address]
 }
 
 /**
