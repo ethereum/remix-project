@@ -5,7 +5,7 @@ class MockStorageResolver {
   constructor (_storage) {
     this.storage = {}
     for (var k in _storage) {
-      var hashed = util.sha3(k)
+      var hashed = util.sha3_32(k)
       this.storage[hashed] = {
         hashed: hashed,
         key: k,
@@ -19,7 +19,7 @@ class MockStorageResolver {
   }
 
   storageSlot (slot, callback) {
-    var hashed = util.sha3(slot)
+    var hashed = util.sha3_32(slot)
     callback(null, this.storage[hashed])
   }
 

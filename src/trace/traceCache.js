@@ -87,7 +87,7 @@ TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {
     'address': address,
     'key': key,
     'value': value,
-    'hashedKey': helper.sha3(key)
+    'hashedKey': helper.sha3_32(key)
   }
   this.storageChanges.push(index)
 }

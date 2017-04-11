@@ -32,7 +32,7 @@ class StorageResolver {
       if (error) {
         callback(error)
       } else {
-        var hashed = helper.sha3(slot)
+        var hashed = helper.sha3_32(slot)
         callback(null, storage[hashed] !== undefined ? storage[hashed] : null)
       }
     })

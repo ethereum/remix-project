@@ -23,7 +23,7 @@ class DynamicByteArray extends RefType {
     var bn = new BN(value, 16)
     if (bn.testn(0)) {
       var length = bn.div(new BN(2))
-      var dataPos = new BN(helper.sha3(location.slot).replace('0x', ''), 16)
+      var dataPos = new BN(helper.sha3_32(location.slot).replace('0x', ''), 16)
       var ret = ''
       var currentSlot = '0x'
       try {

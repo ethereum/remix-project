@@ -125,7 +125,7 @@ module.exports = {
   * @param {String} value - value to sha3
   * @return {Object} - return sha3ied value
   */
-  sha3: function (value) {
+  sha3_32: function (value) {
     var ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
     ret = ethutil.sha3(ret)
     return ethutil.bufferToHex(ret)

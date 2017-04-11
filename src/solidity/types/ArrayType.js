@@ -43,7 +43,7 @@ class ArrayType extends RefType {
     }
     if (this.arraySize === 'dynamic') {
       size = util.toBN('0x' + slotValue)
-      currentLocation.slot = helper.sha3(location.slot)
+      currentLocation.slot = helper.sha3_32(location.slot)
     } else {
       size = new BN(this.arraySize)
     }
