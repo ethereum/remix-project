@@ -6,7 +6,7 @@ var util = require('../helpers/global')
 class StorageResolver {
   constructor (_traceManager) {
     this.traceManager = _traceManager
-    this.clear()
+    this.storageByAddress = {}
   }
 
   /**
@@ -46,14 +46,6 @@ class StorageResolver {
     */
   isComplete (address) {
     return this.storageByAddress[address] && this.storageByAddress[address].complete
-  }
-
-  /**
-    * clear the cache
-    *
-    */
-  clear () {
-    this.storageByAddress = {}
   }
 
   /**
