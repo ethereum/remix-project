@@ -32,7 +32,7 @@ class StorageViewer {
     * @return {Bool} - return True if the storage at @arg address is complete
     */
   isComplete (address) {
-    return this.storageResolver.storageRange(address)
+    return this.storageResolver.isComplete(address)
   }
 }
 

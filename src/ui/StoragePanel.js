@@ -34,7 +34,12 @@ StoragePanel.prototype.init = function () {
         console.log(error)
         self.basicPanel.update({})
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.update(storage)
+        this.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+          if (!error) {
+            var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
+            self.basicPanel.update(storage, header)
+          }
+        })
       }
     })
   })
