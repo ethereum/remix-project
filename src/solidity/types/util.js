@@ -22,7 +22,7 @@ function decodeIntFromHex (value, byteLength, signed) {
 }
 
 function readFromStorage (slot, storageResolver) {
-  var hexSlot = ethutil.bufferToHex(slot)
+  var hexSlot = '0x' + normalizeHex(ethutil.bufferToHex(slot))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
       if (error) {
@@ -34,11 +34,7 @@ function readFromStorage (slot, storageResolver) {
             value: ''
           }
         }
-        slot.value = slot.value.replace('0x', '')
-        if (slot.value.length < 64) {
-          slot.value = (new Array(64 - slot.value.length + 1).join('0')) + slot.value
-        }
-        return resolve(slot.value)
+        return resolve(normalizeHex(slot.value))
       }
     })
   })
@@ -101,4 +97,12 @@ function extractLocation (type) {
   } else {
     return null
   }
+}
+
+function normalizeHex (hex) {
+  hex = hex.replace('0x', '')
+  if (hex.length < 64) {
+    return (new Array(64 - hex.length + 1).join('0')) + hex
+  }
+  return hex
 }
