@@ -11,8 +11,8 @@ class StorageResolver {
   }
 
   /**
-    * return the storage for the given context (address and vm trace index)
-    * returns the range 0 => this.maxSize
+    * returns the storage for the given context (address and vm trace index)
+    * returns the range 0x0 => this.maxSize
     *
     * @param {Object} - tx - transaction
     * @param {Int} - stepIndex - Index of the stop in the vm trace
@@ -31,11 +31,11 @@ class StorageResolver {
     * @param {Function} - callback - {key, hashedKey, value} -
     */
   storageSlot (slot, tx, stepIndex, callback) {
-    storageRangeInternal(this, slot, tx, stepIndex, false, function (error, storage) {
+    var hashed = helper.sha3_32(slot)
+    storageRangeInternal(this, hashed, tx, stepIndex, false, function (error, storage) {
       if (error) {
         callback(error)
       } else {
-        var hashed = helper.sha3_32(slot)
         callback(null, storage[hashed] !== undefined ? storage[hashed] : null)
       }
     })
@@ -58,7 +58,7 @@ class StorageResolver {
   *   even if the next 1000 items are not in the cache.
   * - If @arg slot is not cached, the corresponding value will be resolved and the next 1000 slots.
   */
-function storageRangeInternal (self, slot, tx, stepIndex, fullStorage, callback) {
+function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callback) {
   resolveAddress(self, stepIndex, (error, address) => {
     if (error) {
       return callback(error)
@@ -67,19 +67,19 @@ function storageRangeInternal (self, slot, tx, stepIndex, fullStorage, callback)
       if (error) {
         return callback(error)
       }
-      if (!fullStorage && storageChanges[slot]) {
+      if (!fullStorage && storageChanges[slotKey]) {
         return callback(null, storageChanges)
       }
-      var cached = fromCache(self, address, slot)
-      if (cached && cached[slot]) { // we have the current slot in the cache and maybe the next 1000 ...
+      var cached = fromCache(self, address, slotKey)
+      if (cached && cached[slotKey]) { // we have the current slot in the cache and maybe the next 1000 ...
         return callback(null, Object.assign(cached, storageChanges))
       }
-      storageRangeWeb3Call(tx, address, slot, self.maxSize, (error, storage, complete) => {
+      storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
         if (error) {
           return callback(error)
         }
         toCache(self, address, storage)
-        if (slot === '0x0' && Object.keys(storage).length < self.maxSize) {
+        if (slotKey === '0x0' && Object.keys(storage).length < self.maxSize) {
           self.storageByAddress[address].complete = true
         }
         callback(null, Object.assign(storage, storageChanges))
