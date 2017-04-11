@@ -1,6 +1,5 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
-var helper = require('../helpers/util')
 var util = require('../helpers/global')
 
 class StorageResolver {
@@ -19,7 +18,7 @@ class StorageResolver {
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
   storageRange (tx, stepIndex, callback) {
-    storageRangeInternal(this, '0x0', tx, stepIndex, true, callback)
+    storageRangeInternal(this, '0x0000000000000000000000000000000000000000000000000000000000000000', tx, stepIndex, true, callback)
   }
 
   /**
@@ -31,12 +30,11 @@ class StorageResolver {
     * @param {Function} - callback - {key, hashedKey, value} -
     */
   storageSlot (slot, tx, stepIndex, callback) {
-    var hashed = helper.sha3_32(slot)
-    storageRangeInternal(this, hashed, tx, stepIndex, false, function (error, storage) {
+    storageRangeInternal(this, slot, tx, stepIndex, false, function (error, storage) {
       if (error) {
         callback(error)
       } else {
-        callback(null, storage[hashed] !== undefined ? storage[hashed] : null)
+        callback(null, storage[slot] !== undefined ? storage[slot] : null)
       }
     })
   }
@@ -71,15 +69,21 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callba
         return callback(null, storageChanges)
       }
       var cached = fromCache(self, address)
-      if (cached && cached[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
-        return callback(null, Object.assign(cached, storageChanges))
+      if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
+        return callback(null, Object.assign(cached.storage, storageChanges))
       }
       storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
         if (error) {
           return callback(error)
         }
+        if (!storage[slotKey]) {
+          storage[slotKey] = {
+            key: slotKey,
+            value: '0x0000000000000000000000000000000000000000000000000000000000000000'
+          }
+        }
         toCache(self, address, storage)
-        if (slotKey === '0x0' && Object.keys(storage).length < self.maxSize) {
+        if (slotKey === '0x0000000000000000000000000000000000000000000000000000000000000000' && Object.keys(storage).length < self.maxSize) {
           self.storageByAddress[address].complete = true
         }
         callback(null, Object.assign(storage, storageChanges))

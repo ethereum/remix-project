@@ -1,4 +1,5 @@
 'use strict'
+var helper = require('../helpers/util')
 
 class StorageViewer {
   constructor (_context, _storageResolver) {
@@ -22,7 +23,20 @@ class StorageViewer {
     * @param {Function} - callback - {key, hashedKey, value} -
     */
   storageSlot (slot, callback) {
-    this.storageResolver.storageSlot(slot, this.context.tx, this.context.stepIndex, callback)
+    this.storageResolver.storageSlot(slot, this.context.tx, this.context.stepIndex, (error, result) => {
+      if (error || !result || !result[slot]) {
+        var hashed = helper.sha3_32(slot)
+        this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, (error, result) => {
+          if (error) {
+            callback(error)
+          } else {
+            callback(null, result)
+          }
+        })
+      } else {
+        return callback(null, result)
+      }
+    })
   }
 
   /**
