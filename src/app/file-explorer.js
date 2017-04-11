@@ -37,6 +37,7 @@ module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
   var fileEvents = files.event
+  var appUI = appAPI.ui
   var tv = new Treeview({
     extractData: function (value, tree, key) {
       var newValue = {}
@@ -75,7 +76,7 @@ function fileExplorer (appAPI, files) {
     </span>
   `
 
-  fileEvents.register('fileFocus', fileFocus)
+  appUI.register('currentFile', fileFocus)
   fileEvents.register('fileRemoved', fileRemoved)
   fileEvents.register('fileRenamed', fileRenamed)
   fileEvents.register('fileAdded', fileAdded)
@@ -182,7 +183,7 @@ function fileExplorer (appAPI, files) {
       var allPaths = Object.keys(files.list())
       for (var i = 0, len = allPaths.length, path, err; i < len; i++) {
         path = allPaths[i]
-        if (files.IsReadOnly(path)) {
+        if (files.isReadOnly(path)) {
           err = 'path contains readonly elements'
           break
         } else if (path.indexOf(newPath) === 0) {

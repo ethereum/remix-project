@@ -46,10 +46,13 @@ window.addEventListener('message', function (ev) {
 var run = function () {
   var self = this
   this.event = new EventManager()
-  var storage = new Storage()
-  var files = new Files(storage)
-  var config = new Config(storage)
-  var currentFile
+  var fileStorage = new Storage('sol:')
+  var files = new Files(fileStorage)
+  var config = new Config(fileStorage)
+  var uiStorage = new Storage('sol-ui:')
+  var ui = new Files(uiStorage)
+
+  ui.set('currentFile', '')
 
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
@@ -183,7 +186,8 @@ var run = function () {
   filepanel.className = css.filepanel
   var FilePanelAPI = {
     createName: createNonClashingName,
-    switchToFile: switchToFile
+    switchToFile: switchToFile,
+    ui: ui.event
   }
   var el = new FilePanel(FilePanelAPI, files)
   filepanel.appendChild(el)
@@ -220,7 +224,7 @@ var run = function () {
     })
   })
   files.event.register('fileRemoved', function (path) {
-    if (path === currentFile) currentFile = null
+    if (path === ui.get('currentFile')) ui.set('currentFile', '')
   })
   // ------------------ gist publish --------------
 
@@ -318,7 +322,7 @@ var run = function () {
         if (!files.rename(originalName, newName)) {
           alert('Error while renaming file')
         } else {
-          currentFile = null
+          ui.set('currentFile', '')
           switchToFile(newName)
           editor.discard(originalName)
         }
@@ -339,7 +343,7 @@ var run = function () {
       if (!files.remove(name)) {
         alert('Error while removing file')
       } else {
-        currentFile = null
+        ui.set('currentFile', '')
         switchToNextFile()
         editor.discard(name)
       }
@@ -352,9 +356,7 @@ var run = function () {
   function switchToFile (file) {
     editorSyncFile()
 
-    currentFile = file
-
-    files.event.trigger('fileFocus', [file])
+    ui.set('currentFile', file)
 
     if (files.isReadOnly(file)) {
       editor.openReadOnly(file, files.get(file))
@@ -385,10 +387,10 @@ var run = function () {
       $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
-    var currentFileOpen = !!currentFile
+    var currentFileOpen = !!ui.get('currentFile')
 
     if (currentFileOpen) {
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFile })
+      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === ui.get('currentFile') })
       active.addClass('active')
     }
     $('#input').toggle(currentFileOpen)
@@ -636,7 +638,7 @@ var run = function () {
       this.fullLineMarker = null
       if (lineColumnPos) {
         var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
-        if (currentFile !== source) {
+        if (ui.get('currentFile') !== source) {
           switchToFile(source)
         }
         this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
@@ -760,12 +762,12 @@ var run = function () {
 
   var rendererAPI = {
     error: (file, error) => {
-      if (file === currentFile) {
+      if (file === ui.get('currentFile')) {
         editor.addAnnotation(error)
       }
     },
     errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== currentFile && files.exists(errFile)) {
+      if (errFile !== ui.get('currentFile') && files.exists(errFile)) {
         switchToFile(errFile)
       }
       editor.gotoLine(errLine, errCol)
@@ -814,6 +816,7 @@ var run = function () {
 
   function runCompiler () {
     editorSyncFile()
+    var currentFile = ui.get('currentFile')
     if (currentFile) {
       var target = currentFile
       var sources = {}
@@ -823,6 +826,7 @@ var run = function () {
   }
 
   function editorSyncFile () {
+    var currentFile = ui.get('currentFile')
     if (currentFile) {
       var input = editor.get(currentFile)
       files.set(currentFile, input)
@@ -834,6 +838,7 @@ var run = function () {
   var saveTimeout = null
 
   function editorOnChange () {
+    var currentFile = ui.get('currentFile')
     if (!currentFile) {
       return
     }
