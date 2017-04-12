@@ -18,7 +18,7 @@ class StorageResolver {
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
   storageRange (tx, stepIndex, callback) {
-    storageRangeInternal(this, '0x0000000000000000000000000000000000000000000000000000000000000000', tx, stepIndex, true, callback)
+    storageRangeInternal(this, zeroSlot, tx, stepIndex, true, callback)
   }
 
   /**
@@ -79,11 +79,11 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callba
         if (!storage[slotKey]) {
           storage[slotKey] = {
             key: slotKey,
-            value: '0x0000000000000000000000000000000000000000000000000000000000000000'
+            value: zeroSlot
           }
         }
         toCache(self, address, storage)
-        if (slotKey === '0x0000000000000000000000000000000000000000000000000000000000000000' && Object.keys(storage).length < self.maxSize) {
+        if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) {
           self.storageByAddress[address].complete = true
         }
         callback(null, Object.assign(storage, storageChanges))
@@ -91,6 +91,8 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callba
     })
   })
 }
+
+var zeroSlot = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 /**
   * retrieve the storage from the cache. if @arg slot is defined, return only the desired slot, if not return the entire known storage
