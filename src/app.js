@@ -1,10 +1,11 @@
-/* global alert, confirm, prompt, FileReader, Option, Worker, chrome */
+/* global alert, confirm, prompt, Option, Worker, chrome */
 'use strict'
 
 var async = require('async')
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
+var csjs = require('csjs-inject')
 
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
@@ -24,6 +25,7 @@ var FormalVerification = require('./app/formalVerification')
 var EventManager = require('./lib/eventManager')
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
+var FilePanel = require('./app/file-panel')
 
 var examples = require('./app/example-contracts')
 
@@ -44,10 +46,13 @@ window.addEventListener('message', function (ev) {
 var run = function () {
   var self = this
   this.event = new EventManager()
-  var storage = new Storage()
-  var files = new Files(storage)
-  var config = new Config(storage)
-  var currentFile
+  var fileStorage = new Storage('sol:')
+  var files = new Files(fileStorage)
+  var config = new Config(fileStorage)
+  var uiStorage = new Storage('sol-ui:')
+  var ui = new Files(uiStorage)
+
+  ui.set('currentFile', '')
 
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
@@ -82,12 +87,6 @@ var run = function () {
   // Run if we did receive an event from remote instance while starting up
   if (filesToLoad !== null) {
     loadFiles(filesToLoad)
-  }
-
-  // -------- check file upload capabilities -------
-
-  if (!(window.File || window.FileReader || window.FileList || window.Blob)) {
-    $('.uploadFile').remove()
   }
 
   // ------------------ gist load ----------------
@@ -159,27 +158,74 @@ var run = function () {
   chromeCloudSync()
 
   // ----------------- editor ----------------------
-
   var editor = new Editor(document.getElementById('input'))
 
-  // ----------------- tabbed menu -------------------
-  $('#options li').click(function (ev) {
-    var $el = $(this)
-    selectTab($el)
-  })
-
-  var selectTab = function (el) {
-    var match = /[a-z]+View/.exec(el.get(0).className)
-    if (!match) return
-    var cls = match[0]
-    if (!el.hasClass('active')) {
-      el.parent().find('li').removeClass('active')
-      $('#optionViews').attr('class', '').addClass(cls)
-      el.addClass('active')
-    }
-    self.event.trigger('tabChanged', [cls])
+  // ---------------- FilePanel --------------------
+  /****************************************************************************
+  var sources = {
+    'test/client/credit.sol': '',
+    'src/voting.sol': '',
+    'src/leasing.sol': '',
+    'src/gmbh/contract.sol': false,
+    'src/gmbh/test.sol': false,
+    'src/gmbh/company.sol': false,
+    'src/gmbh/node_modules/ballot.sol': false,
+    'src/ug/finance.sol': false,
+    'app/solidity/mode.sol': true,
+    'app/ethereum/constitution.sol': true
   }
+  Object.keys(sources).forEach(function (key) { files.set(key, sources[key]) })
+  /****************************************************************************/
+  var css = csjs`
+    .filepanel    {
+      display     : flex;
+      width       : 200px;
+    }
+  `
+  var filepanel = document.querySelector('#filepanel')
+  filepanel.className = css.filepanel
+  var FilePanelAPI = {
+    createName: createNonClashingName,
+    switchToFile: switchToFile,
+    ui: ui.event
+  }
+  var el = new FilePanel(FilePanelAPI, files)
+  filepanel.appendChild(el)
+  var api = el.api
 
+  api.register('ui', function changeLayout (data) {
+    var value
+    if (data.type === 'minimize') {
+      value = -parseInt(window['filepanel'].style.width)
+      value = (isNaN(value) ? -window['filepanel'].getBoundingClientRect().width : value)
+      window['filepanel'].style.position = 'absolute'
+      window['filepanel'].style.left = (value - 5) + 'px'
+      window['filepanel'].style.width = -value + 'px'
+      window['tabs-bar'].style.left = '45px'
+    } else if (data.type === 'maximize') {
+      value = -parseInt(window['filepanel'].style.left) + 'px'
+      window['filepanel'].style.position = 'static'
+      window['filepanel'].style.width = value
+      window['filepanel'].style.left = ''
+      window['tabs-bar'].style.left = value
+    } else {
+      window['filepanel'].style.width = data.width + 'px'
+      window['tabs-bar'].style.left = data.width + 'px'
+    }
+  })
+  api.register('focus', function (path) {
+    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
+      if (span.innerText === path) switchToFile(path) // @TODO: scroll into view
+    })
+  })
+  files.event.register('fileRenamed', function (oldName, newName) {
+    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
+      if (span.innerText === oldName) span.innerText = newName
+    })
+  })
+  files.event.register('fileRemoved', function (path) {
+    if (path === ui.get('currentFile')) ui.set('currentFile', '')
+  })
   // ------------------ gist publish --------------
 
   $('#gist').click(function () {
@@ -221,39 +267,26 @@ var run = function () {
     }).appendTo('body')
   })
 
-  // ----------------- file selector-------------
+  // ---------------- tabbed menu ------------------
+  $('#options li').click(function (ev) {
+    var $el = $(this)
+    selectTab($el)
+  })
+
+  var selectTab = function (el) {
+    var match = /[a-z]+View/.exec(el.get(0).className)
+    if (!match) return
+    var cls = match[0]
+    if (!el.hasClass('active')) {
+      el.parent().find('li').removeClass('active')
+      $('#optionViews').attr('class', '').addClass(cls)
+      el.addClass('active')
+    }
+    self.event.trigger('tabChanged', [cls])
+  }
 
   var $filesEl = $('#files')
   var FILE_SCROLL_DELTA = 300
-
-  $('.newFile').on('click', function () {
-    var newName = createNonClashingName('Untitled')
-    if (!files.set(newName, '')) {
-      alert('Failed to create file ' + newName)
-    } else {
-      switchToFile(newName)
-    }
-  })
-
-  // ----------------- file upload -------------
-
-  $('.inputFile').on('change', function () {
-    var fileList = $('input.inputFile')[0].files
-    for (var i = 0; i < fileList.length; i++) {
-      var name = fileList[i].name
-      if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
-        var fileReader = new FileReader()
-        fileReader.onload = function (ev) {
-          if (!files.set(name, ev.target.result)) {
-            alert('Failed to create file ' + name)
-          } else {
-            switchToFile(name)
-          }
-        }
-        fileReader.readAsText(fileList[i])
-      }
-    }
-  })
 
   // Switch tab
   $filesEl.on('click', '.file:not(.active)', function (ev) {
@@ -289,7 +322,7 @@ var run = function () {
         if (!files.rename(originalName, newName)) {
           alert('Error while renaming file')
         } else {
-          currentFile = null
+          ui.set('currentFile', '')
           switchToFile(newName)
           editor.discard(originalName)
         }
@@ -310,7 +343,7 @@ var run = function () {
       if (!files.remove(name)) {
         alert('Error while removing file')
       } else {
-        currentFile = null
+        ui.set('currentFile', '')
         switchToNextFile()
         editor.discard(name)
       }
@@ -323,7 +356,7 @@ var run = function () {
   function switchToFile (file) {
     editorSyncFile()
 
-    currentFile = file
+    ui.set('currentFile', file)
 
     if (files.isReadOnly(file)) {
       editor.openReadOnly(file, files.get(file))
@@ -354,10 +387,10 @@ var run = function () {
       $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
-    var currentFileOpen = !!currentFile
+    var currentFileOpen = !!ui.get('currentFile')
 
     if (currentFileOpen) {
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === currentFile })
+      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === ui.get('currentFile') })
       active.addClass('active')
     }
     $('#input').toggle(currentFileOpen)
@@ -368,7 +401,6 @@ var run = function () {
     })
   }
 
-  var $filesWrapper = $('.files-wrapper')
   var $scrollerRight = $('.scroller-right')
   var $scrollerLeft = $('.scroller-left')
 
@@ -381,12 +413,8 @@ var run = function () {
     return itemsWidth
   }
 
-  //  function widthOfHidden () {
-  //    return ($filesWrapper.outerWidth() - widthOfList() - getLeftPosi())
-  //  }
-
   function widthOfVisible () {
-    return $filesWrapper.outerWidth()
+    return document.querySelector('#editor-container').offsetWidth
   }
 
   function getLeftPosi () {
@@ -610,7 +638,7 @@ var run = function () {
       this.fullLineMarker = null
       if (lineColumnPos) {
         var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
-        if (currentFile !== source) {
+        if (ui.get('currentFile') !== source) {
           switchToFile(source)
         }
         this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
@@ -734,12 +762,12 @@ var run = function () {
 
   var rendererAPI = {
     error: (file, error) => {
-      if (file === currentFile) {
+      if (file === ui.get('currentFile')) {
         editor.addAnnotation(error)
       }
     },
     errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== currentFile && files.exists(errFile)) {
+      if (errFile !== ui.get('currentFile') && files.exists(errFile)) {
         switchToFile(errFile)
       }
       editor.gotoLine(errLine, errCol)
@@ -788,6 +816,7 @@ var run = function () {
 
   function runCompiler () {
     editorSyncFile()
+    var currentFile = ui.get('currentFile')
     if (currentFile) {
       var target = currentFile
       var sources = {}
@@ -797,6 +826,7 @@ var run = function () {
   }
 
   function editorSyncFile () {
+    var currentFile = ui.get('currentFile')
     if (currentFile) {
       var input = editor.get(currentFile)
       files.set(currentFile, input)
@@ -808,6 +838,7 @@ var run = function () {
   var saveTimeout = null
 
   function editorOnChange () {
+    var currentFile = ui.get('currentFile')
     if (!currentFile) {
       return
     }

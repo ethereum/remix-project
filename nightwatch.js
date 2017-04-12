@@ -63,7 +63,6 @@ module.exports = {
         'browserName': 'internet explorer',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
-        'platform': 'WIN8.1',
         'version': '11',
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER

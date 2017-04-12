@@ -1,3 +1,6 @@
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; }
+
 body {
     padding: 0;
     font-size: 12px;
@@ -39,11 +42,11 @@ body {
     left: 0;
 }
 
-.files-wrapper {
+#tabs-bar {
     position: absolute;
     overflow: hidden;
     top: 0;
-    left: 5em;
+    left: 200px;
     right: 3em;
 }
 
@@ -75,8 +78,6 @@ body {
     color: #999;
 }
 
-.newFile,
-.uploadFile,
 .toggleRHP {
     display: block;
     float: left;
@@ -124,18 +125,6 @@ body {
     display: inline-block;
 }
 
-#input {
-    border-top: 3px solid #F4F6FF;
-    padding-top: 0.5em;
-    font-size: 15px;
-    position: absolute;
-    top: 2.5em;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    min-width: 20vw;
-}
-
 #righthand-panel {
     position: absolute;
     top: 0;
@@ -161,6 +150,7 @@ body {
     float: right;
     height: 90%;
     background-color: white;
+    padding-right: 1%;
 }
 
 #header #menu {
@@ -475,7 +465,7 @@ body {
     bottom: 0;
     cursor: col-resize;
     z-index: 999;
-    border-right: 3px solid #F4F6FF;
+    border-right: 2px solid #C6CFF7;
 }
 
 #editor .ace-tm .ace_gutter,

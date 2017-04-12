@@ -1,17 +1,17 @@
 'use strict'
 
-function Storage () {
+function Storage (prefix) {
   this.exists = function (name) {
     return this.get(name) !== null
   }
 
   this.get = function (name) {
-    return window.localStorage.getItem('sol:' + name)
+    return window.localStorage.getItem(prefix + name)
   }
 
   this.set = function (name, content) {
     try {
-      window.localStorage.setItem('sol:' + name, content)
+      window.localStorage.setItem(prefix + name, content)
     } catch (exception) {
       return false
     }
@@ -19,7 +19,7 @@ function Storage () {
   }
 
   this.remove = function (name) {
-    window.localStorage.removeItem('sol:' + name)
+    window.localStorage.removeItem(prefix + name)
     return true
   }
 
@@ -40,7 +40,7 @@ function Storage () {
   this.keys = function () {
     return safeKeys()
       // filter any names not including sol:
-      .filter(function (item) { return item.indexOf('sol:', 0) === 0 })
+      .filter(function (item) { return item.indexOf(prefix, 0) === 0 })
       // remove sol: from filename
       .map(function (item) { return item.replace(/^sol:/, '') })
   }
@@ -49,7 +49,7 @@ function Storage () {
   safeKeys().forEach(function (name) {
     if (name.indexOf('sol-cache-file-', 0) === 0) {
       var content = window.localStorage.getItem(name)
-      window.localStorage.setItem(name.replace(/^sol-cache-file-/, 'sol:'), content)
+      window.localStorage.setItem(name.replace(/^sol-cache-file-/, prefix), content)
       window.localStorage.removeItem(name)
     }
   })

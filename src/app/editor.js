@@ -2,13 +2,34 @@
 
 var EventManager = require('../lib/eventManager')
 
+var csjs = require('csjs-inject')
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
 require('../mode-solidity.js')
 
+var css = csjs`
+  .editor-container   {
+    display           : flex;
+    position          : absolute;
+    top               : 2.5em;
+    left              : 0;
+    right             : 0;
+    bottom            : 0;
+    min-width         : 20vw;
+  }
+  .ace-editor         {
+    top               : 4px;
+    border-top        : 3px solid transparent;
+    font-size         : 15px;
+    width             : 100%;
+  }
+`
+document.querySelector('#editor-container').className = css['editor-container']
+
 function Editor (editorElement) {
   var editor = ace.edit(editorElement)
   editorElement.editor = editor // required to access the editor during tests
+  editorElement.className += ' ' + css['ace-editor']
   var event = new EventManager()
   this.event = event
   var sessions = {}
