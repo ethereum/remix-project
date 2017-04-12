@@ -1,5 +1,5 @@
 'use strict'
-var util = require('../../babelify-src/helpers/util')
+var util = require('../../src/helpers/util')
 
 class MockStorageResolver {
   constructor (_storage) {
