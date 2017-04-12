@@ -106,11 +106,6 @@ TraceCache.prototype.accumulateStorageChanges = function (index, address, storag
         key: sstore.key,
         value: sstore.value
       }
-      ret[sstore.key] = {
-        hashedKey: sstore.hashedKey,
-        key: sstore.key,
-        value: sstore.value
-      }
     }
   }
   return ret
