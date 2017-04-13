@@ -51,8 +51,9 @@ FullStoragesChanges.prototype.init = function () {
         var address = self.addresses[k]
         var storageViewer = new StorageViewer({
           stepIndex: self.parent.currentStepIndex,
-          tx: self.parent.tx
-        }, self.storageResolver)
+          tx: self.parent.tx,
+          address: address
+        }, self.storageResolver, self.traceManager)
         storageViewer.storageRange(function (error, result) {
           if (!error) {
             storageJSON[address] = result

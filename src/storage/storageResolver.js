@@ -3,8 +3,7 @@ var traceHelper = require('../helpers/traceHelper')
 var util = require('../helpers/global')
 
 class StorageResolver {
-  constructor (_traceManager) {
-    this.traceManager = _traceManager
+  constructor () {
     this.storageByAddress = {}
     this.maxSize = 100
   }
@@ -15,10 +14,12 @@ class StorageResolver {
     *
     * @param {Object} - tx - transaction
     * @param {Int} - stepIndex - Index of the stop in the vm trace
+    * @param {Object} - storageChanges - contains storage changes by hashde key
+    * @param {String} - address - lookup address
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
-  storageRange (tx, stepIndex, callback) {
-    storageRangeInternal(this, zeroSlot, tx, stepIndex, true, callback)
+  storageRange (tx, stepIndex, storageChanges, address, callback) {
+    storageRangeInternal(this, zeroSlot, tx, stepIndex, true, storageChanges, address, callback)
   }
 
   /**
@@ -27,10 +28,12 @@ class StorageResolver {
     * @param {String} - slot - slot key
     * @param {Object} - tx - transaction
     * @param {Int} - stepIndex - Index of the stop in the vm trace
+    * @param {Object} - storageChanges - contains storage changes by hashde key
+    * @param {String} - address - lookup address
     * @param {Function} - callback - {key, hashedKey, value} -
     */
-  storageSlot (slot, tx, stepIndex, callback) {
-    storageRangeInternal(this, slot, tx, stepIndex, false, function (error, storage) {
+  storageSlot (slot, tx, stepIndex, storageChanges, address, callback) {
+    storageRangeInternal(this, slot, tx, stepIndex, false, storageChanges, address, function (error, storage) {
       if (error) {
         callback(error)
       } else {
@@ -56,39 +59,29 @@ class StorageResolver {
   *   even if the next 1000 items are not in the cache.
   * - If @arg slot is not cached, the corresponding value will be resolved and the next 1000 slots.
   */
-function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, callback) {
-  resolveAddress(self, stepIndex, (error, address) => {
+function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, storageChanges, address, callback) {
+  if (!fullStorage && storageChanges[slotKey]) { // don't need the full storage just returning the value from the storageChanges
+    return callback(null, storageChanges)
+  }
+  var cached = fromCache(self, address)
+  if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
+    return callback(null, Object.assign({}, cached.storage, storageChanges))
+  }
+  storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
     if (error) {
       return callback(error)
     }
-    self.traceManager.accumulateStorageChanges(stepIndex, address, {}, (error, storageChanges) => {
-      if (error) {
-        return callback(error)
+    if (!storage[slotKey]) {
+      storage[slotKey] = {
+        key: slotKey,
+        value: zeroSlot
       }
-      if (!fullStorage && storageChanges[slotKey]) { // don't need the full storage just returning the value from the storageChanges
-        return callback(null, storageChanges)
-      }
-      var cached = fromCache(self, address)
-      if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
-        return callback(null, Object.assign(cached.storage, storageChanges))
-      }
-      storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
-        if (error) {
-          return callback(error)
-        }
-        if (!storage[slotKey]) {
-          storage[slotKey] = {
-            key: slotKey,
-            value: zeroSlot
-          }
-        }
-        toCache(self, address, storage)
-        if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) {
-          self.storageByAddress[address].complete = true
-        }
-        callback(null, Object.assign(storage, storageChanges))
-      })
-    })
+    }
+    toCache(self, address, storage)
+    if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) {
+      self.storageByAddress[address].complete = true
+    }
+    callback(null, Object.assign(storage, storageChanges))
   })
 }
 
@@ -139,16 +132,6 @@ function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
         }
       })
   }
-}
-
-function resolveAddress (self, stepIndex, callback) {
-  self.traceManager.getCurrentCalledAddressAt(stepIndex, (error, result) => {
-    if (error) {
-      callback(error)
-    } else {
-      callback(null, result)
-    }
-  })
 }
 
 module.exports = StorageResolver

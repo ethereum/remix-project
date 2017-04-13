@@ -24,18 +24,19 @@ StoragePanel.prototype.init = function () {
     if (self.parent.currentStepIndex !== index) return
     if (!self.storageResolver) return
 
-    var storageViewer = new StorageViewer({
-      stepIndex: self.parent.currentStepIndex,
-      tx: self.parent.tx
-    }, self.storageResolver)
+    this.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+      if (!error) {
+        var storageViewer = new StorageViewer({
+          stepIndex: self.parent.currentStepIndex,
+          tx: self.parent.tx,
+          address: address
+        }, self.storageResolver, self.traceManager)
 
-    storageViewer.storageRange((error, storage) => {
-      if (error) {
-        console.log(error)
-        self.basicPanel.update({})
-      } else if (self.parent.currentStepIndex === index) {
-        this.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
-          if (!error) {
+        storageViewer.storageRange((error, storage) => {
+          if (error) {
+            console.log(error)
+            self.basicPanel.update({})
+          } else if (self.parent.currentStepIndex === index) {
             var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
             self.basicPanel.update(storage, header)
           }

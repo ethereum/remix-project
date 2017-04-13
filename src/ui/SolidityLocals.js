@@ -39,7 +39,8 @@ class SolidityLocals {
       }
       this.traceManager.waterfall([
         this.traceManager.getStackAt,
-        this.traceManager.getMemoryAt],
+        this.traceManager.getMemoryAt,
+        this.traceManager.getCurrentCalledAddressAt],
         this.parent.currentStepIndex,
         (error, result) => {
           if (!error) {
@@ -48,8 +49,9 @@ class SolidityLocals {
             try {
               var storageViewer = new StorageViewer({
                 stepIndex: this.parent.currentStepIndex,
-                tx: this.parent.tx
-              }, this.storageResolver)
+                tx: this.parent.tx,
+                address: result[2].value
+              }, this.storageResolver, this.traceManager)
               localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
                 if (!result.error) {
                   this.basicPanel.update(locals)
@@ -58,6 +60,8 @@ class SolidityLocals {
             } catch (e) {
               warningDiv.innerHTML = e.message
             }
+          } else {
+            console.log(error)
           }
         })
     })

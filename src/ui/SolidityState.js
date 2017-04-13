@@ -49,7 +49,7 @@ SolidityState.prototype.init = function () {
       return
     }
 
-    self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, result) => {
+    self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, address) => {
       if (error) {
         self.basicPanel.update({})
         console.log(error)
@@ -61,8 +61,9 @@ SolidityState.prototype.init = function () {
           } else {
             var storageViewer = new StorageViewer({
               stepIndex: self.parent.currentStepIndex,
-              tx: self.parent.tx
-            }, self.storageResolver)
+              tx: self.parent.tx,
+              address: address
+            }, self.storageResolver, self.traceManager)
             stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
               if (!result.error) {
                 self.basicPanel.update(result)

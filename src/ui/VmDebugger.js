@@ -44,7 +44,7 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   this.view
   var self = this
   _parent.event.register('newTraceLoaded', this, function () {
-    var storageResolver = new StorageResolver(_traceManager)
+    var storageResolver = new StorageResolver()
     self.storagePanel.storageResolver = storageResolver
     self.solidityState.storageResolver = storageResolver
     self.solidityLocals.storageResolver = storageResolver
