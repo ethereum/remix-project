@@ -13,7 +13,7 @@ var SolidityLocals = require('./SolidityLocals')
 var StorageResolver = require('../storage/storageResolver.js')
 var yo = require('yo-yo')
 
-function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {  
+function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {
   this.asmCode = new CodeListView(_parent, _codeManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
