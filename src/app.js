@@ -380,7 +380,6 @@ var run = function () {
     var fileNames = Object.keys(files.list())
 
     $filesEl.find('.file').remove()
-    $('#output').empty()
 
     for (var f in fileNames) {
       var name = fileNames[f]
@@ -815,6 +814,8 @@ var run = function () {
   })
 
   function runCompiler () {
+    if (transactionDebugger.isActive) return
+
     editorSyncFile()
     var currentFile = ui.get('currentFile')
     if (currentFile) {
