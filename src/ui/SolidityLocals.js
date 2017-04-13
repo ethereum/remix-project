@@ -53,7 +53,7 @@ class SolidityLocals {
                 address: result[2].value
               }, this.storageResolver, this.traceManager)
               localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
-                if (!result.error) {
+                if (!locals.error) {
                   this.basicPanel.update(locals)
                 }
               })
