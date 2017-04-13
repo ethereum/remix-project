@@ -78,7 +78,7 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, storag
       }
     }
     toCache(self, address, storage)
-    if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) {
+    if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) { // only working if keys are sorted !!
       self.storageByAddress[address].complete = true
     }
     callback(null, Object.assign(storage, storageChanges))
