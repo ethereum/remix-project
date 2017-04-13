@@ -10,7 +10,7 @@ async function solidityLocals (vmtraceIndex, internalTreeCall, stack, memory, st
   memory = formatMemory(memory)
   var anonymousIncr = 1
   for (var local in scope.locals) {
-    let variable = scope.locals[local]
+    var variable = scope.locals[local]
     if (variable.stackDepth < stack.length && variable.sourceLocation.start <= currentSourceLocation.start) {
       var name = variable.name
       if (name === '') {
