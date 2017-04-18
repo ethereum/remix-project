@@ -136,7 +136,7 @@ function contractNameFromCode (contracts, code, address) {
   var isCreation = traceHelper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
   for (var k in contracts) {
-    if ('0x' + contracts[k][byteProp] === code) {
+    if ('0x' + contracts[k][byteProp].replace(/.{64}0029$/, '') === code.replace(/.{64}0029$/, '')) {
       return k
     }
   }
