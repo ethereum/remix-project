@@ -30,7 +30,7 @@ class StorageViewer {
     * @param {Function} - callback - {key, hashedKey, value} -
     */
   storageSlot (slot, callback) {
-    var hashed = helper.sha3_32(slot)
+    var hashed = helper.sha3_256(slot)
     this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.storageChanges, this.context.address, (error, result) => {
       if (error) {
         callback(error)
