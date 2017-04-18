@@ -2,9 +2,11 @@
 var DropdownPanel = require('./DropdownPanel')
 var stateDecoder = require('../solidity/stateDecoder')
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
 function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
+  this.storageResolver = null
   this.parent = _parent
   this.traceManager = _traceManager
   this.codeManager = _codeManager
@@ -42,7 +44,12 @@ SolidityState.prototype.init = function () {
       return
     }
 
-    self.traceManager.getStorageAt(index, this.parent.tx, function (error, storage) {
+    if (!self.storageResolver) {
+      warningDiv.innerHTML = 'storage not ready'
+      return
+    }
+
+    self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, address) => {
       if (error) {
         self.basicPanel.update({})
         console.log(error)
@@ -52,7 +59,16 @@ SolidityState.prototype.init = function () {
             self.basicPanel.update({})
             console.log(error)
           } else {
-            self.basicPanel.update(stateDecoder.decodeState(stateVars, storage))
+            var storageViewer = new StorageViewer({
+              stepIndex: self.parent.currentStepIndex,
+              tx: self.parent.tx,
+              address: address
+            }, self.storageResolver, self.traceManager)
+            stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
+              if (!result.error) {
+                self.basicPanel.update(result)
+              }
+            })
           }
         })
       }

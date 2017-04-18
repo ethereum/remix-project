@@ -13,14 +13,22 @@ class ValueType {
     * decode the type with the @arg location from the storage
     *
     * @param {Object} location - containing offset and slot
-    * @param {Object} storageContent - storageContent (storage)
+    * @param {Object} storageResolver  - resolve storage queries
     * @return {Object} - decoded value
     */
-  decodeFromStorage (location, storageContent) {
-    var value = util.extractHexValue(location, storageContent, this.storageBytes)
-    return {
-      value: this.decodeValue(value),
-      type: this.typeName
+  async decodeFromStorage (location, storageResolver) {
+    try {
+      var value = await util.extractHexValue(location, storageResolver, this.storageBytes)
+      return {
+        value: this.decodeValue(value),
+        type: this.typeName
+      }
+    } catch (e) {
+      console.log(e)
+      return {
+        value: '<decoding failed - ' + e.message + '>',
+        type: this.typeName
+      }
     }
   }
 
@@ -32,7 +40,7 @@ class ValueType {
     * @param {String} - memory
     * @return {Object} - decoded value
     */
-  decodeFromStack (stackDepth, stack, memory) {
+  async decodeFromStack (stackDepth, stack, memory) {
     var value
     if (stackDepth >= stack.length) {
       value = this.decodeValue('')

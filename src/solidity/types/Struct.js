@@ -8,15 +8,21 @@ class Struct extends RefType {
     this.members = memberDetails.members
   }
 
-  decodeFromStorage (location, storageContent) {
+  async decodeFromStorage (location, storageResolver) {
     var ret = {}
-    this.members.map(function (item, i) {
+    for (var k in this.members) {
+      var item = this.members[k]
       var globalLocation = {
         offset: location.offset + item.storagelocation.offset,
         slot: util.add(location.slot, item.storagelocation.slot)
       }
-      ret[item.name] = item.type.decodeFromStorage(globalLocation, storageContent)
-    })
+      try {
+        ret[item.name] = await item.type.decodeFromStorage(globalLocation, storageResolver)
+      } catch (e) {
+        console.log(e)
+        ret[item.name] = '<decoding failed - ' + e.message + '>'
+      }
+    }
     return {
       value: ret,
       type: this.typeName

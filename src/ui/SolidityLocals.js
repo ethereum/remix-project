@@ -2,13 +2,15 @@
 var DropdownPanel = require('./DropdownPanel')
 var localDecoder = require('../solidity/localDecoder')
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
 class SolidityLocals {
 
-  constructor (_parent, _traceManager, internalTreeCall) {
+  constructor (_parent, _traceManager, _internalTreeCall) {
     this.parent = _parent
-    this.internalTreeCall = internalTreeCall
+    this.internalTreeCall = _internalTreeCall
+    this.storageResolver = null
     this.traceManager = _traceManager
     this.basicPanel = new DropdownPanel('Solidity Locals', {
       json: true,
@@ -31,24 +33,35 @@ class SolidityLocals {
     this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
       var warningDiv = this.view.querySelector('#warning')
       warningDiv.innerHTML = ''
+      if (!this.storageResolver) {
+        warningDiv.innerHTML = 'storage not ready'
+        return
+      }
       this.traceManager.waterfall([
         this.traceManager.getStackAt,
-        this.traceManager.getMemoryAt],
+        this.traceManager.getMemoryAt,
+        this.traceManager.getCurrentCalledAddressAt],
         this.parent.currentStepIndex,
         (error, result) => {
           if (!error) {
             var stack = result[0].value
             var memory = result[1].value
             try {
-              this.traceManager.getStorageAt(this.parent.currentStepIndex, this.parent.tx, (error, storage) => {
-                if (!error) {
-                  var locals = localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storage, sourceLocation)
+              var storageViewer = new StorageViewer({
+                stepIndex: this.parent.currentStepIndex,
+                tx: this.parent.tx,
+                address: result[2].value
+              }, this.storageResolver, this.traceManager)
+              localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
+                if (!locals.error) {
                   this.basicPanel.update(locals)
                 }
               })
             } catch (e) {
               warningDiv.innerHTML = e.message
             }
+          } else {
+            console.log(error)
           }
         })
     })

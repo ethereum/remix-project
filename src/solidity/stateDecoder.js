@@ -5,14 +5,19 @@ var decodeInfo = require('./decodeInfo')
   * decode the contract state storage
   *
   * @param {Array} storage location  - location of all state variables
-  * @param {Map} storageContent  - storage
+  * @param {Object} storageResolver  - resolve storage queries
   * @return {Map} - decoded state variable
   */
-function decodeState (stateVars, storageContent) {
+async function decodeState (stateVars, storageResolver) {
   var ret = {}
   for (var k in stateVars) {
     var stateVar = stateVars[k]
-    ret[stateVar.name] = stateVar.type.decodeFromStorage(stateVar.storagelocation, storageContent)
+    try {
+      ret[stateVar.name] = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+    } catch (e) {
+      console.log(e)
+      ret[stateVar.name] = '<decoding failed - ' + e.message + '>'
+    }
   }
   return ret
 }
@@ -40,14 +45,18 @@ function extractStateVariables (contractName, sourcesList) {
 /**
   * return the state of the given @a contractName as a json object
   *
-  * @param {Map} storageContent  - contract storage
+  * @param {Object} storageResolver  - resolve storage queries
   * @param {astList} astList  - AST nodes of all the sources
   * @param {String} contractName  - contract for which state var should be resolved
   * @return {Map} - return the state of the contract
   */
-function solidityState (storageContent, astList, contractName) {
+async function solidityState (storageResolver, astList, contractName) {
   var stateVars = extractStateVariables(contractName, astList)
-  return decodeState(stateVars, storageContent)
+  try {
+    return await decodeState(stateVars, storageResolver)
+  } catch (e) {
+    return '<decoding failed - ' + e.message + '>'
+  }
 }
 
 module.exports = {

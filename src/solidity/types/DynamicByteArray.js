@@ -1,5 +1,6 @@
 'use strict'
 var util = require('./util')
+var helper = require('../../helpers/util')
 var BN = require('ethereumjs-util').BN
 var RefType = require('./RefType')
 
@@ -8,19 +9,45 @@ class DynamicByteArray extends RefType {
     super(1, 32, 'bytes', location)
   }
 
-  decodeFromStorage (location, storageContent) {
-    var value = util.extractHexValue(location, storageContent, this.storageBytes)
+  async decodeFromStorage (location, storageResolver) {
+    var value = '0x0'
+    try {
+      value = await util.extractHexValue(location, storageResolver, this.storageBytes)
+    } catch (e) {
+      console.log(e)
+      return {
+        value: '<decoding failed - ' + e.message + '>',
+        type: this.typeName
+      }
+    }
     var bn = new BN(value, 16)
     if (bn.testn(0)) {
       var length = bn.div(new BN(2))
-      var dataPos = new BN(util.sha3(location.slot).replace('0x', ''), 16)
+      var dataPos = new BN(helper.sha3_256(location.slot).replace('0x', ''), 16)
       var ret = ''
-      var currentSlot = util.readFromStorage(dataPos, storageContent)
+      var currentSlot = '0x'
+      try {
+        currentSlot = await util.readFromStorage(dataPos, storageResolver)
+      } catch (e) {
+        console.log(e)
+        return {
+          value: '<decoding failed - ' + e.message + '>',
+          type: this.typeName
+        }
+      }
       while (length.gt(ret.length) && ret.length < 32000) {
         currentSlot = currentSlot.replace('0x', '')
         ret += currentSlot
         dataPos = dataPos.add(new BN(1))
-        currentSlot = util.readFromStorage(dataPos, storageContent)
+        try {
+          currentSlot = await util.readFromStorage(dataPos, storageResolver)
+        } catch (e) {
+          console.log(e)
+          return {
+            value: '<decoding failed - ' + e.message + '>',
+            type: this.typeName
+          }
+        }
       }
       return {
         value: '0x' + ret.replace(/(00)+$/, ''),

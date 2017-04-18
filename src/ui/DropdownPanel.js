@@ -12,6 +12,7 @@ function DropdownPanel (_name, _opts) {
     _opts = {}
   }
   this.name = _name
+  this.header = ''
   this.json = _opts.json
   if (this.json) {
     this.treeView = new TreeView(_opts)
@@ -19,10 +20,11 @@ function DropdownPanel (_name, _opts) {
   this.view
 }
 
-DropdownPanel.prototype.update = function (_data) {
+DropdownPanel.prototype.update = function (_data, _header) {
   if (this.view) {
     this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
     this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
+    this.view.querySelector('.title span').innerText = _header || ' '
     if (this.json) {
       this.treeView.update(_data)
     }
@@ -44,7 +46,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
   var view = yo`<div>
     <div class='title' style=${ui.formatCss(styleDropdown.title)} onclick=${function () { self.toggle() }}>
       <div style=${ui.formatCss(styleDropdown.caret)} class='fa fa-caret-right'></div>
-      <div style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div>
+      <div style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div><span></span>
     </div>
     <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
       <button onclick=${function () { self.toggleRaw() }} style=${ui.formatCss(basicStyles.button, styleDropdown.copyBtn)} title='raw' class="btn fa fa-eye" type="button">

@@ -10,6 +10,7 @@ var StepDetail = require('./StepDetail')
 var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
 var SolidityLocals = require('./SolidityLocals')
+var StorageResolver = require('../storage/storageResolver.js')
 var yo = require('yo-yo')
 
 function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {
@@ -43,6 +44,11 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   this.view
   var self = this
   _parent.event.register('newTraceLoaded', this, function () {
+    var storageResolver = new StorageResolver()
+    self.storagePanel.storageResolver = storageResolver
+    self.solidityState.storageResolver = storageResolver
+    self.solidityLocals.storageResolver = storageResolver
+    self.fullStoragesChangesPanel.storageResolver = storageResolver
     self.view.style.display = 'block'
   })
   _parent.event.register('traceUnloaded', this, function () {

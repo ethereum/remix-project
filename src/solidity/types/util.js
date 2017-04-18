@@ -4,21 +4,13 @@ var BN = require('ethereumjs-util').BN
 
 module.exports = {
   readFromStorage: readFromStorage,
-  decodeInt: decodeInt,
   decodeIntFromHex: decodeIntFromHex,
   extractHexValue: extractHexValue,
   extractHexByteSlice: extractHexByteSlice,
-  sha3: sha3,
   toBN: toBN,
   add: add,
   extractLocation: extractLocation,
   removeLocation: removeLocation
-}
-
-function decodeInt (location, storageContent, byteLength, signed) {
-  var slotvalue = readFromStorage(location.slot, storageContent)
-  var value = extractHexByteSlice(slotvalue, byteLength, location.offset)
-  return decodeIntFromHex(value, byteLength, signed)
 }
 
 function decodeIntFromHex (value, byteLength, signed) {
@@ -29,23 +21,23 @@ function decodeIntFromHex (value, byteLength, signed) {
   return bigNumber.toString(10)
 }
 
-function readFromStorage (slot, storageContent) {
-  var ret
-  var hexSlot = ethutil.bufferToHex(slot)
-  if (storageContent[hexSlot] !== undefined) {
-    ret = storageContent[hexSlot].replace(/^0x/, '')
-  } else {
-    hexSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
-    if (storageContent[hexSlot] !== undefined) {
-      ret = storageContent[hexSlot].replace(/^0x/, '')
-    } else {
-      ret = '000000000000000000000000000000000000000000000000000000000000000'
-    }
-  }
-  if (ret.length < 64) {
-    ret = (new Array(64 - ret.length + 1).join('0')) + ret
-  }
-  return ret
+function readFromStorage (slot, storageResolver) {
+  var hexSlot = '0x' + normalizeHex(ethutil.bufferToHex(slot))
+  return new Promise((resolve, reject) => {
+    storageResolver.storageSlot(hexSlot, (error, slot) => {
+      if (error) {
+        return reject(error)
+      } else {
+        if (!slot) {
+          slot = {
+            key: slot,
+            value: ''
+          }
+        }
+        return resolve(normalizeHex(slot.value))
+      }
+    })
+  })
 }
 
 /**
@@ -64,18 +56,18 @@ function extractHexByteSlice (slotValue, byteLength, offsetFromLSB) {
  * @returns a hex encoded storage content at the given @arg location. it does not have Ox prefix but always has the full length.
  *
  * @param {Object} location  - object containing the slot and offset of the data to extract.
- * @param {Object} storageContent  - full storage mapping.
+ * @param {Object} storageResolver  - storage resolver
  * @param {Int} byteLength  - Length of the byte slice to extract
  */
-function extractHexValue (location, storageContent, byteLength) {
-  var slotvalue = readFromStorage(location.slot, storageContent)
+async function extractHexValue (location, storageResolver, byteLength) {
+  var slotvalue
+  try {
+    slotvalue = await readFromStorage(location.slot, storageResolver)
+  } catch (e) {
+    console.log(e)
+    return '0x'
+  }
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
-}
-
-function sha3 (slot) {
-  var remoteSlot = ethutil.bufferToHex(ethutil.setLengthLeft(slot, 32))
-  var key = ethutil.sha3(remoteSlot)
-  return ethutil.bufferToHex(key)
 }
 
 function toBN (value) {
@@ -105,4 +97,12 @@ function extractLocation (type) {
   } else {
     return null
   }
+}
+
+function normalizeHex (hex) {
+  hex = hex.replace('0x', '')
+  if (hex.length < 64) {
+    return (new Array(64 - hex.length + 1).join('0')) + hex
+  }
+  return hex
 }

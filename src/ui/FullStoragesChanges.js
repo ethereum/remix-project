@@ -1,8 +1,10 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
 function FullStoragesChanges (_parent, _traceManager) {
+  this.storageResolver = null
   this.parent = _parent
   this.traceManager = _traceManager
   this.addresses = []
@@ -41,17 +43,26 @@ FullStoragesChanges.prototype.init = function () {
   this.parent.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
+    if (!self.storageResolver) return
 
     if (index === self.traceLength - 1) {
       var storageJSON = {}
       for (var k in self.addresses) {
-        self.traceManager.getStorageAt(index, this.parent.tx, function (error, result) {
+        var address = self.addresses[k]
+        var storageViewer = new StorageViewer({
+          stepIndex: self.parent.currentStepIndex,
+          tx: self.parent.tx,
+          address: address
+        }, self.storageResolver, self.traceManager)
+        storageViewer.storageRange(function (error, result) {
           if (!error) {
-            storageJSON[self.addresses[k]] = result
+            storageJSON[address] = result
             self.basicPanel.update(storageJSON)
           }
-        }, self.addresses[k])
+        })
       }
+    } else {
+      self.basicPanel.update({})
     }
   })
 }

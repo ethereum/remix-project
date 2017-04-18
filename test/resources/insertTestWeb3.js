@@ -28,7 +28,7 @@ function loadTestWeb3 (data) {
     callback(null, data.testTraces[txHash])
   }
 
-  uiTestweb3.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, size, callback) {
+  uiTestweb3.debug.storageRangeAt = function (blockNumber, txIndex, address, start, size, callback) {
     callback(null, { storage: {}, complete: true })
   }
 

@@ -1,5 +1,6 @@
 'use strict'
 var util = require('./util')
+var helper = require('../../helpers/util')
 var BN = require('ethereumjs-util').BN
 var RefType = require('./RefType')
 
@@ -23,23 +24,39 @@ class ArrayType extends RefType {
     this.arraySize = arraySize
   }
 
-  decodeFromStorage (location, storageContent) {
+  async decodeFromStorage (location, storageResolver) {
     var ret = []
     var size = null
-    var slotValue = util.extractHexValue(location, storageContent, this.storageBytes)
+    var slotValue
+    try {
+      slotValue = await util.extractHexValue(location, storageResolver, this.storageBytes)
+    } catch (e) {
+      console.log(e)
+      return {
+        value: '<decoding failed - ' + e.message + '>',
+        type: this.typeName
+      }
+    }
     var currentLocation = {
       offset: 0,
       slot: location.slot
     }
     if (this.arraySize === 'dynamic') {
       size = util.toBN('0x' + slotValue)
-      currentLocation.slot = util.sha3(location.slot)
+      currentLocation.slot = helper.sha3_256(location.slot)
     } else {
       size = new BN(this.arraySize)
     }
     var k = util.toBN(0)
     for (; k.lt(size) && k.ltn(300); k.iaddn(1)) {
-      ret.push(this.underlyingType.decodeFromStorage(currentLocation, storageContent))
+      try {
+        ret.push(await this.underlyingType.decodeFromStorage(currentLocation, storageResolver))
+      } catch (e) {
+        return {
+          value: '<decoding failed - ' + e.message + '>',
+          type: this.typeName
+        }
+      }
       if (this.underlyingType.storageSlots === 1 && location.offset + this.underlyingType.storageBytes <= 32) {
         currentLocation.offset += this.underlyingType.storageBytes
         if (currentLocation.offset + this.underlyingType.storageBytes > 32) {

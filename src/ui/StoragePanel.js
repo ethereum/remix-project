@@ -1,12 +1,13 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
+var StorageViewer = require('../storage/storageViewer')
 var yo = require('yo-yo')
 
-function StoragePanel (_parent, _traceManager, _address) {
+function StoragePanel (_parent, _traceManager) {
   this.parent = _parent
+  this.storageResolver = null
   this.traceManager = _traceManager
-  this.basicPanel = new DropdownPanel('Storage Changes', {json: true})
-  this.address = _address
+  this.basicPanel = new DropdownPanel('Storage', {json: true})
   this.init()
   this.disabled = false
 }
@@ -21,15 +22,27 @@ StoragePanel.prototype.init = function () {
     if (self.disabled) return
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
+    if (!self.storageResolver) return
 
-    self.traceManager.getStorageAt(index, self.parent.tx, function (error, storage) {
-      if (error) {
-        console.log(error)
-        self.basicPanel.update({})
-      } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.update(storage)
+    this.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+      if (!error) {
+        var storageViewer = new StorageViewer({
+          stepIndex: self.parent.currentStepIndex,
+          tx: self.parent.tx,
+          address: address
+        }, self.storageResolver, self.traceManager)
+
+        storageViewer.storageRange((error, storage) => {
+          if (error) {
+            console.log(error)
+            self.basicPanel.update({})
+          } else if (self.parent.currentStepIndex === index) {
+            var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
+            self.basicPanel.update(storage, header)
+          }
+        })
       }
-    }, self.address)
+    })
   })
 }
 
