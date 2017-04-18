@@ -14,12 +14,11 @@ class StorageResolver {
     *
     * @param {Object} - tx - transaction
     * @param {Int} - stepIndex - Index of the stop in the vm trace
-    * @param {Object} - storageChanges - contains storage changes by hashde key
     * @param {String} - address - lookup address
     * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
     */
-  storageRange (tx, stepIndex, storageChanges, address, callback) {
-    storageRangeInternal(this, zeroSlot, tx, stepIndex, true, storageChanges, address, callback)
+  storageRange (tx, stepIndex, address, callback) {
+    storageRangeInternal(this, zeroSlot, tx, stepIndex, address, callback)
   }
 
   /**
@@ -28,12 +27,11 @@ class StorageResolver {
     * @param {String} - slot - slot key
     * @param {Object} - tx - transaction
     * @param {Int} - stepIndex - Index of the stop in the vm trace
-    * @param {Object} - storageChanges - contains storage changes by hashde key
     * @param {String} - address - lookup address
     * @param {Function} - callback - {key, hashedKey, value} -
     */
-  storageSlot (slot, tx, stepIndex, storageChanges, address, callback) {
-    storageRangeInternal(this, slot, tx, stepIndex, false, storageChanges, address, function (error, storage) {
+  storageSlot (slot, tx, stepIndex, address, callback) {
+    storageRangeInternal(this, slot, tx, stepIndex, address, function (error, storage) {
       if (error) {
         callback(error)
       } else {
@@ -59,13 +57,10 @@ class StorageResolver {
   *   even if the next 1000 items are not in the cache.
   * - If @arg slot is not cached, the corresponding value will be resolved and the next 1000 slots.
   */
-function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, storageChanges, address, callback) {
-  if (!fullStorage && storageChanges[slotKey]) { // don't need the full storage just returning the value from the storageChanges
-    return callback(null, storageChanges)
-  }
+function storageRangeInternal (self, slotKey, tx, stepIndex, address, callback) {
   var cached = fromCache(self, address)
   if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
-    return callback(null, Object.assign({}, cached.storage, storageChanges))
+    return callback(null, cached.storage)
   }
   storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
     if (error) {
@@ -81,7 +76,7 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, fullStorage, storag
     if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) { // only working if keys are sorted !!
       self.storageByAddress[address].complete = true
     }
-    callback(null, Object.assign(storage, storageChanges))
+    callback(null, storage)
   })
 }
 

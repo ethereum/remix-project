@@ -21,7 +21,13 @@ class StorageViewer {
    * @param {Function} - callback - contains a map: [hashedKey] = {key, hashedKey, value}
    */
   storageRange (callback) {
-    this.storageResolver.storageRange(this.context.tx, this.context.stepIndex, this.storageChanges, this.context.address, callback)
+    this.storageResolver.storageRange(this.context.tx, this.context.stepIndex, this.context.address, (error, storage) => {
+      if (error) {
+        callback(error)
+      } else {
+        callback(null, Object.assign({}, storage, this.storageChanges))
+      }
+    })
   }
 
   /**
@@ -31,11 +37,14 @@ class StorageViewer {
     */
   storageSlot (slot, callback) {
     var hashed = helper.sha3_256(slot)
-    this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.storageChanges, this.context.address, (error, result) => {
+    if (this.storageChanges[hashed]) {
+      return callback(null, this.storageChanges[hashed])
+    }
+    this.storageResolver.storageSlot(hashed, this.context.tx, this.context.stepIndex, this.context.address, (error, storage) => {
       if (error) {
         callback(error)
       } else {
-        callback(null, result)
+        callback(null, storage[hashed] !== undefined ? storage[hashed] : null)
       }
     })
   }
