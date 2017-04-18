@@ -120,7 +120,7 @@ module.exports = {
   buildCallPath: buildCallPath,
 
   /**
-  * sha3 the given @arg value
+  * sha3 the given @arg value (left pad to 32 bytes)
   *
   * @param {String} value - value to sha3
   * @return {Object} - return sha3ied value
