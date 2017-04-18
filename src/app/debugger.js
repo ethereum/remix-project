@@ -11,6 +11,7 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
   this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
   this.el.appendChild(this.debugger.render())
   this.appAPI = appAPI
+  this.isActive = false
 
   this.breakPointManager = new remix.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return appAPI.offsetToLineColumn(sourceLocation, sourceLocation.file, this.editor, this.appAPI.lastCompilationResult().data)
@@ -33,8 +34,13 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
     self.switchProvider(context)
   })
 
+  this.debugger.event.register('newTraceLoaded', this, function () {
+    self.isActive = true
+  })
+
   this.debugger.event.register('traceUnloaded', this, function () {
     self.appAPI.currentSourceLocation(null)
+    self.isActive = false
   })
 
   // unload if a file has changed (but not if tabs were switched)
