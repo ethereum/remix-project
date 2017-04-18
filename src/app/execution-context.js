@@ -88,31 +88,27 @@ function ExecutionContext () {
   }
 
   this.setEndPointUrl = function (url) {
-    $web3endpoint.val(url)
+    setProviderFromEndpoint(url)
   }
 
-  this.setContext = function (context) {
+  this.setContext = function (context, alert) {
     executionContext = context
-    executionContextChange(context)
+    executionContextChange(context, alert)
   }
 
-  var $web3endpoint = $('#web3Endpoint')
-
-  if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider) {
-    $web3endpoint.val('ipc')
-  }
-
-  function executionContextChange (context) {
-    if (context === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
+  function executionContextChange (context, alert) {
+    if (alert && context === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
       return false
     } else if (context === 'injected' && injectedProvider === undefined) {
       return false
     } else {
       if (context === 'web3') {
         executionContext = context
-        var endpoint = prompt('Please type Web3 Provider Endpoint', 'http://localhost:8545')
-        setProviderFromEndpoint(endpoint)
-        self.event.trigger('web3EndpointChanged')
+        var endPoint = 'http://localhost:8545'
+        if (alert) {
+          endPoint = prompt('Please type Web3 Provider Endpoint', endPoint)
+        }
+        setProviderFromEndpoint(endPoint)
         self.event.trigger('contextChanged', ['web3'])
       } else if (context === 'injected') {
         executionContext = context
@@ -135,6 +131,7 @@ function ExecutionContext () {
     } else {
       web3.setProvider(new web3.providers.HttpProvider(endpoint))
     }
+    self.event.trigger('web3EndpointChanged')
   }
 
   /* ---------------------------------------------------------------------------
@@ -143,7 +140,7 @@ function ExecutionContext () {
 
   var selectExEnv = document.querySelector('#selectExEnv')
   selectExEnv.addEventListener('change', function (event) {
-    if (!executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value)) {
+    if (!executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value, true)) {
       selectExEnv.value = executionContext
     }
   })
