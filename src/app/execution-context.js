@@ -1,7 +1,6 @@
 /* global confirm, prompt */
 'use strict'
 
-var $ = require('jquery')
 var Web3 = require('web3')
 var EventManager = require('../lib/eventManager')
 var EthJSVM = require('ethereumjs-vm')
