@@ -899,11 +899,7 @@ var run = function () {
     runCompiler()
 
     if (queryParams.get().context) {
-      executionContext.setContext(queryParams.get().context, false)
-    }
-
-    if (queryParams.get().endpointurl) {
-      executionContext.setEndPointUrl(queryParams.get().endpointurl)
+      executionContext.setContext(queryParams.get().context, queryParams.get().endpointurl)
     }
 
     if (queryParams.get().debugtx) {
