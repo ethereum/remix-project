@@ -106,11 +106,13 @@ function filepanel (appAPI, files) {
     `
   }
 
-  var api = new EventManager()
+  var events = new EventManager()
   var element = template()
-  element.api = api
-  fileExplorer.api.register('focus', function (path) {
-    api.trigger('focus', [path])
+  // TODO please do not add custom javascript objects, which have no
+  // relation to the DOM to DOM nodes
+  element.events = events
+  fileExplorer.events.register('focus', function (path) {
+    appAPI.switchToFile(path)
   })
 
   return element
@@ -120,10 +122,15 @@ function filepanel (appAPI, files) {
     this.classList.toggle(css.isVisible)
     this.children[0].classList.toggle('fa-angle-double-right')
     this.children[0].classList.toggle('fa-angle-double-left')
-    api.trigger('ui', [{ type: isHidden ? 'minimize' : 'maximize' }])
+    events.trigger('ui-hidden', [isHidden])
   }
 
   function uploadFile (event) {
+    // TODO This should not go to the file explorer.
+    // The file explorer is merely a view on the current state of
+    // the files module. Please ask the user here if they want to overwrite
+    // a file and then just use `files.add`. The file explorer will
+    // pick that up via the 'fileAdded' event from the files module.
     ;[...this.files].forEach(fileExplorer.api.addFile)
   }
 
@@ -159,7 +166,8 @@ function filepanel (appAPI, files) {
     document.removeEventListener('keydown', cancelGhostbar)
     var width = (event.pageX < limit) ? limit : event.pageX
     element.style.width = width + 'px'
-    api.trigger('ui', [{ type: 'resize', width: width }])
+    // Please change this to something like 'ui-resize'
+    events.trigger('ui-resize', [width])
   }
 
   function createNewFile () {

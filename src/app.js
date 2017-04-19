@@ -63,19 +63,12 @@ window.addEventListener('message', function (ev) {
   }
 }, false)
 
-/*
-  trigger tabChanged
-*/
 var run = function () {
   var self = this
   this.event = new EventManager()
   var fileStorage = new Storage('sol:')
   var files = new Files(fileStorage)
   var config = new Config(fileStorage)
-  var uiStorage = new Storage('sol-ui:')
-  var ui = new Files(uiStorage)
-
-  ui.set('currentFile', '')
 
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
@@ -184,56 +177,57 @@ var run = function () {
   var editor = new Editor(document.getElementById('input'))
 
   // ---------------- FilePanel --------------------
+  // TODO: All FilePanel related CSS should move into file-panel.js
+  // app.js provides file-panel.js with a css selector or a DOM element
+  // and file-panel.js adds its elements (including css), see "Editor" above
   var css = csjs`
     .filepanel    {
       display     : flex;
       width       : 200px;
     }
   `
-  var filepanel = document.querySelector('#filepanel')
-  filepanel.className = css.filepanel
+  var filepanelContainer = document.querySelector('#filepanel')
+  filepanelContainer.className = css.filepanel
   var FilePanelAPI = {
     createName: createNonClashingName,
     switchToFile: switchToFile,
     event: this.event
   }
-  var el = new FilePanel(FilePanelAPI, files)
-  filepanel.appendChild(el)
-  var api = el.api
+  var filePanel = new FilePanel(FilePanelAPI, files)
+  // TODO this should happen inside file-panel.js
+  filepanelContainer.appendChild(filePanel)
 
-  api.register('ui', function changeLayout (data) {
+  filePanel.events.register('ui-hidden', function changeLayout (isHidden) {
     var value
-    if (data.type === 'minimize') {
+    if (isHidden) {
       value = -parseInt(window['filepanel'].style.width)
       value = (isNaN(value) ? -window['filepanel'].getBoundingClientRect().width : value)
       window['filepanel'].style.position = 'absolute'
       window['filepanel'].style.left = (value - 5) + 'px'
       window['filepanel'].style.width = -value + 'px'
       window['tabs-bar'].style.left = '45px'
-    } else if (data.type === 'maximize') {
+    } else {
       value = -parseInt(window['filepanel'].style.left) + 'px'
       window['filepanel'].style.position = 'static'
       window['filepanel'].style.width = value
       window['filepanel'].style.left = ''
       window['tabs-bar'].style.left = value
-    } else {
-      window['filepanel'].style.width = data.width + 'px'
-      window['tabs-bar'].style.left = data.width + 'px'
     }
   })
-  api.register('focus', function (path) {
-    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
-      if (span.innerText === path) switchToFile(path)
-    })
+  filePanel.events.register('ui-resize', function changeLayout (width) {
+    window['filepanel'].style.width = width + 'px'
+    window['tabs-bar'].style.left = width + 'px'
   })
   files.event.register('fileRenamed', function (oldName, newName) {
+    // TODO please never use 'window' when it is possible to use a variable
+    // that references the DOM node
     [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
       if (span.innerText === oldName) span.innerText = newName
     })
   })
   files.event.register('fileRemoved', function (path) {
-    if (path === ui.get('currentFile')) {
-      ui.set('currentFile', '')
+    if (path === config.get('currentFile')) {
+      config.set('currentFile', '')
       switchToNextFile()
     }
     editor.discard(path)
@@ -338,7 +332,7 @@ var run = function () {
         if (!files.rename(originalName, newName)) {
           alert('Error while renaming file')
         } else {
-          ui.set('currentFile', '')
+          config.set('currentFile', '')
           switchToFile(newName)
           editor.discard(originalName)
         }
@@ -368,7 +362,7 @@ var run = function () {
   function switchToFile (file) {
     editorSyncFile()
 
-    ui.set('currentFile', file)
+    config.set('currentFile', file)
 
     if (files.isReadOnly(file)) {
       editor.openReadOnly(file, files.get(file))
@@ -399,10 +393,10 @@ var run = function () {
       $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
-    var currentFileOpen = !!ui.get('currentFile')
+    var currentFileOpen = !!config.get('currentFile')
 
     if (currentFileOpen) {
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === ui.get('currentFile') })
+      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === config.get('currentFile') })
       active.addClass('active')
     }
     $('#input').toggle(currentFileOpen)
@@ -640,7 +634,7 @@ var run = function () {
       this.fullLineMarker = null
       if (lineColumnPos) {
         var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
-        if (ui.get('currentFile') !== source) {
+        if (config.get('currentFile') !== source) {
           switchToFile(source)
         }
         this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
@@ -764,12 +758,12 @@ var run = function () {
 
   var rendererAPI = {
     error: (file, error) => {
-      if (file === ui.get('currentFile')) {
+      if (file === config.get('currentFile')) {
         editor.addAnnotation(error)
       }
     },
     errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== ui.get('currentFile') && files.exists(errFile)) {
+      if (errFile !== config.get('currentFile') && files.exists(errFile)) {
         switchToFile(errFile)
       }
       editor.gotoLine(errLine, errCol)
@@ -821,7 +815,7 @@ var run = function () {
     if (transactionDebugger.isActive) return
 
     editorSyncFile()
-    var currentFile = ui.get('currentFile')
+    var currentFile = config.get('currentFile')
     if (currentFile) {
       var target = currentFile
       var sources = {}
@@ -831,7 +825,7 @@ var run = function () {
   }
 
   function editorSyncFile () {
-    var currentFile = ui.get('currentFile')
+    var currentFile = config.get('currentFile')
     if (currentFile) {
       var input = editor.get(currentFile)
       files.set(currentFile, input)
@@ -843,7 +837,7 @@ var run = function () {
   var saveTimeout = null
 
   function editorOnChange () {
-    var currentFile = ui.get('currentFile')
+    var currentFile = config.get('currentFile')
     if (!currentFile) {
       return
     }

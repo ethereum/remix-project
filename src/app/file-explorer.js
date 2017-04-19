@@ -37,7 +37,7 @@ module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
   var fileEvents = files.event
-  var tv = new Treeview({
+  var treeView = new Treeview({
     extractData: function (value, tree, key) {
       var newValue = {}
       // var isReadOnly = false
@@ -86,10 +86,11 @@ function fileExplorer (appAPI, files) {
   var focusElement = null
   var textUnderEdit = null
 
-  var element = tv.render(files.listAsTree())
+  var element = treeView.render(files.listAsTree())
   element.className = css.fileexplorer
 
-  var api = new EventManager()
+  var events = new EventManager()
+  var api = {}
   api.addFile = function addFile (file) {
     var name = file.name
     if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
@@ -97,7 +98,7 @@ function fileExplorer (appAPI, files) {
       fileReader.onload = function (event) {
         var success = files.set(name, event.target.result)
         if (!success) alert('Failed to create file ' + name)
-        else api.trigger('focus', [name])
+        else events.trigger('focus', [name])
       }
       fileReader.readAsText(file)
     }
@@ -113,7 +114,7 @@ function fileExplorer (appAPI, files) {
     var label = getLabelFrom(li)
     var filepath = label.dataset.path
     var isFile = label.className.indexOf('file') === 0
-    if (isFile) api.trigger('focus', [filepath])
+    if (isFile) events.trigger('focus', [filepath])
   }
 
   function hover (event) {
@@ -247,12 +248,13 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileAdded (filepath) {
-    var el = tv.render(files.listAsTree())
+    var el = treeView.render(files.listAsTree())
     el.className = css.fileexplorer
     element.parentElement.replaceChild(el, element)
     element = el
   }
 
+  element.events = events
   element.api = api
   return element
 }
