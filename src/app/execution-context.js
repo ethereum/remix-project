@@ -92,7 +92,7 @@ function ExecutionContext () {
   }
 
   function executionContextChange (context, endPointUrl) {
-    if (context === 'web3' && !confirm('Are you sure you want to connect to an external ethereum node?')) {
+    if (context === 'web3' && !confirm('Are you sure you want to connect to an ethereum node?')) {
       return false
     } else if (context === 'injected' && injectedProvider === undefined) {
       return false
