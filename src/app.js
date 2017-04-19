@@ -161,21 +161,6 @@ var run = function () {
   var editor = new Editor(document.getElementById('input'))
 
   // ---------------- FilePanel --------------------
-  /****************************************************************************
-  var sources = {
-    'test/client/credit.sol': '',
-    'src/voting.sol': '',
-    'src/leasing.sol': '',
-    'src/gmbh/contract.sol': false,
-    'src/gmbh/test.sol': false,
-    'src/gmbh/company.sol': false,
-    'src/gmbh/node_modules/ballot.sol': false,
-    'src/ug/finance.sol': false,
-    'app/solidity/mode.sol': true,
-    'app/ethereum/constitution.sol': true
-  }
-  Object.keys(sources).forEach(function (key) { files.set(key, sources[key]) })
-  /****************************************************************************/
   var css = csjs`
     .filepanel    {
       display     : flex;
@@ -215,7 +200,7 @@ var run = function () {
   })
   api.register('focus', function (path) {
     [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
-      if (span.innerText === path) switchToFile(path) // @TODO: scroll into view
+      if (span.innerText === path) switchToFile(path)
     })
   })
   files.event.register('fileRenamed', function (oldName, newName) {
@@ -224,7 +209,15 @@ var run = function () {
     })
   })
   files.event.register('fileRemoved', function (path) {
-    if (path === ui.get('currentFile')) ui.set('currentFile', '')
+    editor.discard(path)
+    if (path === ui.get('currentFile')) {
+      ui.set('currentFile', '')
+      switchToNextFile()
+    }
+    refreshTabs()
+  })
+  files.event.register('fileAdded', function (path) {
+    refreshTabs()
   })
   // ------------------ gist publish --------------
 
@@ -342,10 +335,6 @@ var run = function () {
     if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
       if (!files.remove(name)) {
         alert('Error while removing file')
-      } else {
-        ui.set('currentFile', '')
-        switchToNextFile()
-        editor.discard(name)
       }
     }
     return false
@@ -394,10 +383,6 @@ var run = function () {
     }
     $('#input').toggle(currentFileOpen)
     $('#output').toggle(currentFileOpen)
-
-    $filesEl.animate({ left: Math.max((0 - activeFilePos() + (FILE_SCROLL_DELTA / 2)), 0) + 'px' }, 'slow', function () {
-      reAdjust()
-    })
   }
 
   var $scrollerRight = $('.scroller-right')

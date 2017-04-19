@@ -76,11 +76,14 @@ function fileExplorer (appAPI, files) {
     </span>
   `
 
-  appUI.register('currentFile', fileFocus)
+  appUI.register('fileChanged', (changedFiles) => {
+    if (changedFiles[0] == 'currentFile') {
+      fileFocus(files.get('currentfile'))
+    }
+  })
   fileEvents.register('fileRemoved', fileRemoved)
   fileEvents.register('fileRenamed', fileRenamed)
   fileEvents.register('fileAdded', fileAdded)
-  fileEvents.register('fileChanged', fileChanged)
 
   var filepath = null
   var focusElement = null
@@ -216,8 +219,6 @@ function fileExplorer (appAPI, files) {
     })
   }
 
-  function fileChanged (filepath) { }
-
   function fileFocus (path) {
     if (filepath === path) return
     filepath = path
@@ -253,8 +254,6 @@ function fileExplorer (appAPI, files) {
     el.className = css.fileexplorer
     element.parentElement.replaceChild(el, element)
     element = el
-    fileFocus(filepath)
-    appAPI.switchToFile(filepath)
   }
 
   element.api = api

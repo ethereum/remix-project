@@ -39,17 +39,17 @@ function Storage (prefix) {
 
   this.keys = function () {
     return safeKeys()
-      // filter any names not including sol:
+      // filter any names not including the prefix
       .filter(function (item) { return item.indexOf(prefix, 0) === 0 })
-      // remove sol: from filename
-      .map(function (item) { return item.replace(/^sol:/, '') })
+      // remove prefix from filename
+      .map(function (item) { return item.substr(prefix.length) })
   }
 
   // on startup, upgrade the old storage layout
   safeKeys().forEach(function (name) {
     if (name.indexOf('sol-cache-file-', 0) === 0) {
       var content = window.localStorage.getItem(name)
-      window.localStorage.setItem(name.replace(/^sol-cache-file-/, prefix), content)
+      window.localStorage.setItem(name.replace(/^sol-cache-file-/, 'sol:'), content)
       window.localStorage.removeItem(name)
     }
   })
