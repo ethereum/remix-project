@@ -109,14 +109,21 @@ module.exports = {
   },
 
   /**
-  * Find the call from @args rootCall which contains @args index (recursive)
-  *
-  * @param {Int} index - index of the vmtrace
-  * @param {Object} rootCall  - call tree, built by the trace analyser
-  * @return {Object} - return the call which include the @args index
-  */
+    * Find the call from @args rootCall which contains @args index (recursive)
+    *
+    * @param {Int} index - index of the vmtrace
+    * @param {Object} rootCall  - call tree, built by the trace analyser
+    * @return {Object} - return the call which include the @args index
+    */
   findCall: findCall,
 
+   /**
+    * Find calls path from @args rootCall which leads to @args index (recursive)
+    *
+    * @param {Int} index - index of the vmtrace
+    * @param {Object} rootCall  - call tree, built by the trace analyser
+    * @return {Array} - return the calls path to @args index
+    */
   buildCallPath: buildCallPath,
 
   /**
@@ -129,16 +136,18 @@ module.exports = {
     var ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
     ret = ethutil.sha3(ret)
     return ethutil.bufferToHex(ret)
+  },
+
+  /**
+    * return a regex which extract the swarmhash from the bytecode.
+    *
+    * @return {RegEx}
+    */
+  swarmHashExtraction: function () {
+    return /a165627a7a72305820([0-9a-f]{64})0029$/
   }
 }
 
-/**
-  * Find calls path from @args rootCall which leads to @args index (recursive)
-  *
-  * @param {Int} index - index of the vmtrace
-  * @param {Object} rootCall  - call tree, built by the trace analyser
-  * @return {Array} - return the calls path to @args index
-  */
 function buildCallPath (index, rootCall) {
   var ret = []
   findCallInternal(index, rootCall, ret)
