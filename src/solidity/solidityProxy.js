@@ -2,6 +2,7 @@
 var traceHelper = require('../helpers/traceHelper')
 var stateDecoder = require('./stateDecoder')
 var astHelper = require('./astHelper')
+var util = require('../helpers/util')
 
 class SolidityProxy {
   constructor (traceManager, codeManager) {
@@ -136,7 +137,7 @@ function contractNameFromCode (contracts, code, address) {
   var isCreation = traceHelper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
   for (var k in contracts) {
-    if ('0x' + contracts[k][byteProp].replace(/.{64}0029$/, '') === code.replace(/.{64}0029$/, '')) {
+    if ('0x' + contracts[k][byteProp].replace(util.swarmHashExtraction(), '') === code.replace(util.swarmHashExtraction(), '')) {
       return k
     }
   }
