@@ -8,6 +8,7 @@
     "babel-eslint": "^7.1.1",
     "babel-plugin-yo-yoify": "^0.3.3",
     "babel-polyfill": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-es2015": "^6.24.0",
     "babelify": "^7.3.0",
     "brace": "^0.8.0",
@@ -42,8 +43,7 @@
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2",
-    "csjs-inject": "^1.0.1"
+    "yo-yo": "^1.2.2"
   },
   "repository": {
     "type": "git",
@@ -105,7 +105,7 @@
               "wrapAwait": true
             }
           }],
-          ["yo-yoify"]
+          ["yo-yoify"], ["transform-object-assign"]
         ],
         "presets": ["es2015"]
       }],
