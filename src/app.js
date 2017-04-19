@@ -898,12 +898,10 @@ var run = function () {
     setVersionText(version)
     runCompiler()
 
-    if (queryParams.get().endpointurl) {
-      executionContext.setEndPointUrl(queryParams.get().endpointurl)
-    }
     if (queryParams.get().context) {
-      executionContext.setContext(queryParams.get().context)
+      executionContext.setContext(queryParams.get().context, queryParams.get().endpointurl)
     }
+
     if (queryParams.get().debugtx) {
       startdebugging(queryParams.get().debugtx)
     }

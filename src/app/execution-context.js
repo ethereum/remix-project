@@ -1,7 +1,6 @@
 /* global confirm, prompt */
 'use strict'
 
-var $ = require('jquery')
 var Web3 = require('web3')
 var EventManager = require('../lib/eventManager')
 var EthJSVM = require('ethereumjs-vm')
@@ -87,32 +86,24 @@ function ExecutionContext () {
     return vm
   }
 
-  this.setEndPointUrl = function (url) {
-    $web3endpoint.val(url)
-  }
-
-  this.setContext = function (context) {
+  this.setContext = function (context, endPointUrl) {
     executionContext = context
-    executionContextChange(context)
+    executionContextChange(context, endPointUrl)
   }
 
-  var $web3endpoint = $('#web3Endpoint')
-
-  if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider) {
-    $web3endpoint.val('ipc')
-  }
-
-  function executionContextChange (context) {
-    if (context === 'web3' && !confirm('Are you sure you want to connect to a local ethereum node?')) {
+  function executionContextChange (context, endPointUrl) {
+    if (context === 'web3' && !confirm('Are you sure you want to connect to an ethereum node?')) {
       return false
     } else if (context === 'injected' && injectedProvider === undefined) {
       return false
     } else {
       if (context === 'web3') {
         executionContext = context
-        var endpoint = prompt('Please type Web3 Provider Endpoint', 'http://localhost:8545')
-        setProviderFromEndpoint(endpoint)
-        self.event.trigger('web3EndpointChanged')
+        if (!endPointUrl) {
+          endPointUrl = 'http://localhost:8545'
+        }
+        endPointUrl = prompt('Web3 Provider Endpoint', endPointUrl)
+        setProviderFromEndpoint(endPointUrl)
         self.event.trigger('contextChanged', ['web3'])
       } else if (context === 'injected') {
         executionContext = context
@@ -135,6 +126,7 @@ function ExecutionContext () {
     } else {
       web3.setProvider(new web3.providers.HttpProvider(endpoint))
     }
+    self.event.trigger('web3EndpointChanged')
   }
 
   /* ---------------------------------------------------------------------------
