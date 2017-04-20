@@ -66,7 +66,7 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, address, callback) 
     if (error) {
       return callback(error)
     }
-    if (!storage[slotKey]) {
+    if (!storage[slotKey] && slotKey !== zeroSlot) { // we don't cache the zero slot (could lead to inconsistency)
       storage[slotKey] = {
         key: slotKey,
         value: zeroSlot
