@@ -28,7 +28,7 @@ class StateManagerCommonStorageDump extends StateManager {
   }
 
   putContractStorage (address, key, value, cb) {
-    this.keyHashes[ethUtil.sha3(key)] = ethUtil.bufferToHex(key)
+    this.keyHashes[ethUtil.sha3(key).toString('hex')] = ethUtil.bufferToHex(key)
     super.putContractStorage(address, key, value, cb)
   }
 
@@ -41,7 +41,11 @@ class StateManagerCommonStorageDump extends StateManager {
       var storage = {}
       var stream = trie.createReadStream()
       stream.on('data', function (val) {
-        storage[self.keyHashes[val.key]] = val.value.toString('hex')
+        storage['0x' + val.key.toString('hex')] = {
+          hashedKey: '0x' + val.key.toString('hex'),
+          key: self.keyHashes[val.key.toString('hex')],
+          value: '0x' + val.value.toString('hex')
+        }
       })
       stream.on('end', function () {
         cb(storage)
