@@ -209,11 +209,11 @@ var run = function () {
     })
   })
   files.event.register('fileRemoved', function (path) {
-    editor.discard(path)
     if (path === ui.get('currentFile')) {
       ui.set('currentFile', '')
       switchToNextFile()
     }
+    editor.discard(path)
     refreshTabs()
   })
   files.event.register('fileAdded', function (path) {

@@ -77,8 +77,8 @@ function fileExplorer (appAPI, files) {
   `
 
   appUI.register('fileChanged', (changedFiles) => {
-    if (changedFiles[0] == 'currentFile') {
-      fileFocus(files.get('currentfile'))
+    if (changedFiles[0] === 'currentFile') {
+      fileFocus(files.get('currentFile'))
     }
   })
   fileEvents.register('fileRemoved', fileRemoved)
