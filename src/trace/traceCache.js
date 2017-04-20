@@ -102,7 +102,6 @@ TraceCache.prototype.accumulateStorageChanges = function (index, address, storag
     var sstore = this.sstore[changesIndex]
     if (sstore.address === address && sstore.key) {
       ret[sstore.hashedKey] = {
-        hashedKey: sstore.hashedKey,
         key: sstore.key,
         value: sstore.value
       }
