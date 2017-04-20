@@ -110,7 +110,7 @@ function toCache (self, address, storage) {
 
 function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
   if (traceHelper.isContractCreation(address)) {
-    callback(null, {}, true)
+    callback(null, {}, null)
   } else {
     util.web3.debug.storageRangeAt(
       tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
