@@ -42,7 +42,6 @@ class StateManagerCommonStorageDump extends StateManager {
       var stream = trie.createReadStream()
       stream.on('data', function (val) {
         storage['0x' + val.key.toString('hex')] = {
-          hashedKey: '0x' + val.key.toString('hex'),
           key: self.keyHashes[val.key.toString('hex')],
           value: '0x' + val.value.toString('hex')
         }
