@@ -158,7 +158,7 @@ web3VmProvider.prototype.storageRangeAt = function (blockNumber, txIndex, addres
   if (this.storageCache[txIndex] && this.storageCache[txIndex][address]) {
     var storage = this.storageCache[txIndex][address]
     return cb(null, {
-      storage: Object.assign({}, storage),
+      storage: JSON.parse(JSON.stringify(storage)),
       nextKey: null
     })
   } else {
