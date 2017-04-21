@@ -37,7 +37,6 @@ module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
   var fileEvents = files.event
-  var appUI = appAPI.ui
   var tv = new Treeview({
     extractData: function (value, tree, key) {
       var newValue = {}
@@ -76,10 +75,8 @@ function fileExplorer (appAPI, files) {
     </span>
   `
 
-  appUI.register('fileChanged', (changedFiles) => {
-    if (changedFiles[0] === 'currentFile') {
-      fileFocus(files.get('currentFile'))
-    }
+  appAPI.event.register('currentFileChanged', (newFile) => {
+    fileFocus(newFile)
   })
   fileEvents.register('fileRemoved', fileRemoved)
   fileEvents.register('fileRenamed', fileRenamed)

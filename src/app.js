@@ -172,7 +172,7 @@ var run = function () {
   var FilePanelAPI = {
     createName: createNonClashingName,
     switchToFile: switchToFile,
-    ui: ui.event
+    event: this.event
   }
   var el = new FilePanel(FilePanelAPI, files)
   filepanel.appendChild(el)
@@ -352,6 +352,7 @@ var run = function () {
     } else {
       editor.open(file, files.get(file))
     }
+    self.event.trigger('currentFileChanged', [file])
   }
 
   function switchToNextFile () {
