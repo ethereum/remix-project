@@ -138,6 +138,8 @@ function Files (storage) {
     var tree = {}
 
     var self = this
+    // This does not include '.remix.config', because it is filtered
+    // inside list().
     Object.keys(this.list()).forEach(function (path) {
       hashmapize(tree, path, {
         '/readonly': self.isReadOnly(path),
