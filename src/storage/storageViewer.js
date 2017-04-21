@@ -44,7 +44,7 @@ class StorageViewer {
       if (error) {
         callback(error)
       } else {
-        callback(null, storage[hashed] !== undefined ? storage[hashed] : null)
+        callback(null, storage)
       }
     })
   }

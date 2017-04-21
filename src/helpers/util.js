@@ -133,6 +133,9 @@ module.exports = {
   * @return {Object} - return sha3ied value
   */
   sha3_256: function (value) {
+    if (typeof value === 'string' && value.indexOf('0x') !== 0) {
+      value = '0x' + value
+    }
     var ret = ethutil.bufferToHex(ethutil.setLengthLeft(value, 32))
     ret = ethutil.sha3(ret)
     return ethutil.bufferToHex(ret)

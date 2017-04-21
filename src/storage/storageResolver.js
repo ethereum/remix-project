@@ -62,18 +62,18 @@ function storageRangeInternal (self, slotKey, tx, stepIndex, address, callback) 
   if (cached && cached.storage[slotKey]) { // we have the current slot in the cache and maybe the next 1000...
     return callback(null, cached.storage)
   }
-  storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, complete) => {
+  storageRangeWeb3Call(tx, address, slotKey, self.maxSize, (error, storage, nextKey) => {
     if (error) {
       return callback(error)
     }
-    if (!storage[slotKey]) {
+    if (!storage[slotKey] && slotKey !== zeroSlot) { // we don't cache the zero slot (could lead to inconsistency)
       storage[slotKey] = {
         key: slotKey,
         value: zeroSlot
       }
     }
     toCache(self, address, storage)
-    if (slotKey === zeroSlot && Object.keys(storage).length < self.maxSize) { // only working if keys are sorted !!
+    if (slotKey === zeroSlot && !nextKey) { // only working if keys are sorted !!
       self.storageByAddress[address].complete = true
     }
     callback(null, storage)
@@ -110,7 +110,7 @@ function toCache (self, address, storage) {
 
 function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
   if (traceHelper.isContractCreation(address)) {
-    callback(null, {}, true)
+    callback(null, {}, null)
   } else {
     util.web3.debug.storageRangeAt(
       tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
@@ -121,7 +121,7 @@ function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
         if (error) {
           callback(error)
         } else if (result.storage) {
-          callback(null, result.storage, result.complete)
+          callback(null, result.storage, result.nextKey)
         } else {
           callback('the storage has not been provided')
         }
