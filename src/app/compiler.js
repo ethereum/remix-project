@@ -77,7 +77,6 @@ function Compiler (handleImportCall) {
 
         compilationFinished(result, missingInputs, source)
       }
-
       onCompilerLoaded(compiler.version())
     }
   }
