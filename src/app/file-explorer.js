@@ -37,7 +37,6 @@ module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
   var fileEvents = files.event
-  var appUI = appAPI.ui
   var tv = new Treeview({
     extractData: function (value, tree, key) {
       var newValue = {}
@@ -76,11 +75,12 @@ function fileExplorer (appAPI, files) {
     </span>
   `
 
-  appUI.register('currentFile', fileFocus)
+  appAPI.event.register('currentFileChanged', (newFile) => {
+    fileFocus(newFile)
+  })
   fileEvents.register('fileRemoved', fileRemoved)
   fileEvents.register('fileRenamed', fileRenamed)
   fileEvents.register('fileAdded', fileAdded)
-  fileEvents.register('fileChanged', fileChanged)
 
   var filepath = null
   var focusElement = null
@@ -216,8 +216,6 @@ function fileExplorer (appAPI, files) {
     })
   }
 
-  function fileChanged (filepath) { }
-
   function fileFocus (path) {
     if (filepath === path) return
     filepath = path
@@ -253,8 +251,6 @@ function fileExplorer (appAPI, files) {
     el.className = css.fileexplorer
     element.parentElement.replaceChild(el, element)
     element = el
-    fileFocus(filepath)
-    appAPI.switchToFile(filepath)
   }
 
   element.api = api

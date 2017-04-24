@@ -138,12 +138,9 @@ function Files (storage) {
     var tree = {}
 
     var self = this
-    storage.keys().forEach(function (path) {
-      // NOTE: as a temporary measure do not show the config file
-      if (path === '.remix.config') {
-        return
-      }
-
+    // This does not include '.remix.config', because it is filtered
+    // inside list().
+    Object.keys(this.list()).forEach(function (path) {
       hashmapize(tree, path, {
         '/readonly': self.isReadOnly(path),
         '/content': self.get(path)
