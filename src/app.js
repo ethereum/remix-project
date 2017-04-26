@@ -29,6 +29,30 @@ var FilePanel = require('./app/file-panel')
 
 var examples = require('./app/example-contracts')
 
+var contractTab = require('./app/contract-tab.js')
+var settingsTab = require('./app/settings-tab.js')
+var analysisTab = require('./app/analysis-tab.js')
+var debuggerTab = require('./app/debugger-tab.js')
+var filesTab = require('./app/files-tab.js')
+/* ----------------------------------------------
+        TABS - Righthand pannel
+---------------------------------------------- */
+var contractView = contractTab()
+document.querySelector('#optionViews').appendChild(contractView)
+
+var settingsView = settingsTab()
+document.querySelector('#optionViews').appendChild(settingsView)
+
+var analysisView = analysisTab()
+document.querySelector('#optionViews').appendChild(analysisView)
+
+var debuggerView = debuggerTab()
+document.querySelector('#optionViews').appendChild(debuggerView)
+
+var filesView = filesTab()
+document.querySelector('#optionViews').appendChild(filesView)
+
+
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
 var filesToLoad = null
