@@ -50,7 +50,7 @@ CodeListView.prototype.indexChanged = function (index) {
     if (this.itemSelected.firstChild) {
       this.itemSelected.firstChild.setAttribute('style', ui.formatCss({'margin-left': '2px'}))
     }
-    this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetHeight)
+    this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetTop)
   }
 }
 
