@@ -7,7 +7,6 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .analysis {
-    margin-top: 2em;
     font-height: 1.5em;
   }
 `

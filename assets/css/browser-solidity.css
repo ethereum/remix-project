@@ -136,11 +136,6 @@ body {
     box-sizing: border-box;
 }
 
-#output {
-    display: block;
-    padding: 1em;
-}
-
 #header {
     font-size: 13px;
     height: 100%;
@@ -185,7 +180,6 @@ body {
 
 #header #optionViews > div {
     display: none;
-    padding: .5em .5em .5em;
 }
 
 #header #optionViews.txView #txView {
@@ -198,7 +192,6 @@ body {
 
 #header #optionViews.publishView #publishView {
     display: block;
-    padding: 3em;
 }
 
 #header #optionViews.envView #envView {
@@ -207,7 +200,6 @@ body {
 
 #header #optionViews.debugView #debugView {
     display: block;
-    padding: 3em;
 }
 
 #header #optionViews.verificationView #verificationView {
@@ -216,8 +208,6 @@ body {
 
 #header #optionViews.staticanalysisView #staticanalysisView {
     display: block;
-    padding: 3em;
-    line-height: 1.5em;
 }
 
 #header #optionViews.txView input,
@@ -303,23 +293,11 @@ body {
     display: block;
 }
 
-#header .origin,
-#header #executionContext {
+#header .origin {
     display: block;
     word-wrap: break-word;
     padding: 1.5em;
     font-weight: bold;
-}
-
-#selectExEnv {
-    margin-left: 0.5em;
-    text-decoration: none;
-    background-color: #C6CFF7;
-    cursor: pointer;
-    font-size: 12px;
-    color: black;
-    border-radius: 3px;
-    border: 0 none;
 }
 
 #header #versionSelector {
@@ -406,7 +384,7 @@ body {
     word-wrap: break-word;
     cursor: pointer;
     position: relative;
-    margin: 0.5em;
+    margin: 0.5em 0;
     border-radius: 0.6em;
     padding: 1em 1.5em;
 }
@@ -471,6 +449,8 @@ body {
 input[readonly] {
     display: block;
     width: 100%;
+    height: 7px;
+    padding: .8em;
 }
 
 input[type="file"] {

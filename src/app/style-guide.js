@@ -23,17 +23,17 @@ function styleGuide () {
   var texts = csjs `
     .title-XL {
       font-size             : 2em;
-      font-weight           : 500;
+      font-weight           : 700;
       letter-spacing        : .05em;
     }
 
     .title-L {
-      font-size             : .9em;
-      font-weight           : 500;
+      font-size             : 1em;
+      font-weight           : 600;
     }
 
     .title-M {
-      font-size             : .8em;
+      font-size             : 1em;
       font-weight           : 400;
     }
 
@@ -64,9 +64,9 @@ function styleGuide () {
     .info-text-box {
       background-color      : white;
       line-height           : 20px;
-      border                : .3em dotted #B1EAC5;
+      border                : .2em dotted lightGrey;
       padding               : 8px 15px;
-      border-radius         : 3px;
+      border-radius         : 5px;
       margin-bottom         : 1em;
     }
 
@@ -91,20 +91,28 @@ function styleGuide () {
   /* --------------------------------------------------------------------------
                                     BUTTONS
   -------------------------------------------------------------------------- */
-  /*
-  .button {
-    border-color: transparent;
-    margin-right: 1em;
-    border-radius: 3px;
-    cursor: pointer;
-    padding: .3em;
-  }
+  var buttons = csjs`
+    .button {
+      border-color            : transparent;
+      border-radius           : 3px;
+      cursor                  : pointer;
+      padding                 : .3em;
+    }
 
-  .button:hover {
-  	opacity: 0.8;
-  }
+    .button:hover {
+      opacity                 : 0.8;
+    }
 
-  */
+    .dropdown-menu {
+      font-size               : 1em;
+      text-decoration         : none;
+      background-color        : #C6CFF7;
+      cursor                  : pointer;
+      font-size               : 12px;
+      border                  : none;
+    }
+
+  `
 
   /* --------------------------------------------------------------------------
                                 INPUT FIELDS
@@ -118,45 +126,10 @@ function styleGuide () {
   */
   return {
     textBoxL: textBoxes['display-box-L'],
-    titleL: texts['title-L']
+    infoTextBox: textBoxes['info-text-box'],
+    titleL: texts['title-L'],
+    titleM: texts['title-M'],
+    dropdown: buttons['dropdown-menu'],
+    button: buttons['button']
   }
 }
-
-/*
-HOW TO USE IT
-var csjs = require('csjs-inject')
-var styleGuide = require('./app/style-guide')
-var styles = styleGuide()
-
-var css = csjs`
-  .foobar extends ${styles.fontXL} {
-    color: red;
-  }
-`
-var el = yo`
-  <div class=${css.foobar}> alasdalsd </div>
-`
-*/
-
-/*
-var text = 'foobar'
-
-var example1 = 'hello ' + text + ' "world"'
-var example2 = "hello " + text + " \"world\""
-var example3 = `hello ${text} "world"`
-
-// hello foobar "world"
-
-<div class='title foo'></div>
-<div class="${css.title} ${css.foo}"></div>
-
-`<div class="${css.col2} ${styles.textBoxL} ${5+5}">`
-// <div class="col2_s3ad textBoxL_13 10">
-
-'<div class="${css.col2} ${styles.textBoxL} ${5+5}">'
-// <div class="${css.col2} ${styles.textBoxL} ${5+5}">
-
-append($('<div class="col2_wefwq textBoxL_efwq">'))
-
-
-*/

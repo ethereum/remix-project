@@ -17,7 +17,6 @@ var css = csjs`
   .col1 extends ${styles.titleL} {
       width: 30%;
       float: left;
-      padding-top: 0.75em;
   }
 `
 // ----------------------------------------------

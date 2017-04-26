@@ -900,7 +900,7 @@ var run = function () {
   })
 
   compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
-    setVersionText(usingWorker ? '(loading using worker)' : '( Loading... Please, wait a moment. )')
+    setVersionText(usingWorker ? '(loading using worker)' : ' Loading... please, wait a moment! ')
   })
 
   compiler.event.register('compilerLoaded', this, function (version) {
