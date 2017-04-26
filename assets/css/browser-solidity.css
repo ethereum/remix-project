@@ -312,6 +312,7 @@ body {
 }
 
 #selectExEnv {
+    margin-left: 0.5em;
     text-decoration: none;
     background-color: #C6CFF7;
     cursor: pointer;
@@ -329,15 +330,6 @@ body {
     color: black;
     border-radius: 3px;
     border: 0 none;
-}
-
-.col1 {
-    width: 30%;
-    float: left;
-}
-.col2 {
-    width: 70%;
-    float: left;
 }
 
 #formalVerificationInput {
@@ -380,11 +372,13 @@ body {
     overflow: auto;
     display: block;
     clear: both;
-    margin: 1.5em;
+    margin: .5em .5em 0 .5em;
+    padding: .5em;
     font-weight: bold;
 }
 
 .crow #txorigin {
+    margin-left: 0.5em;
     text-decoration: none;
     background-color: #C6CFF7;
     cursor: pointer;
@@ -475,9 +469,6 @@ body {
 }
 
 input[readonly] {
-    padding: .4em;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
     display: block;
     width: 100%;
 }

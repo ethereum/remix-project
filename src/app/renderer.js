@@ -4,6 +4,24 @@ var $ = require('jquery')
 
 var utils = require('./utils')
 
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var styleGuide = require('./style-guide')
+var styles = styleGuide()
+
+var css = csjs`
+  .col2 {
+      width: 70%;
+      float: left;
+  }
+  .col1 extends ${styles.titleL} {
+      width: 30%;
+      float: left;
+      padding-top: 0.75em;
+  }
+`
+// ----------------------------------------------
+
 function Renderer (appAPI, formalVerificationEvent, compilerEvent) {
   this.appAPI = appAPI
   var self = this
@@ -96,16 +114,17 @@ Renderer.prototype.contracts = function (data, source) {
   }
 
   var tableRowItems = function (first, second, cls) {
+    second.get(0).classList.add(styles.textBoxL) // replace <pre> styling with textBoxL
     return $('<div class="crow"/>')
       .addClass(cls)
-      .append($('<div class="col1">').append(first))
-      .append($('<div class="col2">').append(second))
+      .append($(`<div class="${css.col1}">`).append(first))
+      .append($(`<div class="${css.col2}">`).append(second))
   }
 
   var tableRow = function (description, data) {
     return tableRowItems(
       $('<span/>').text(description),
-      $('<input readonly="readonly"/>').val(data))
+      $(`<input class="${css.col2} ${styles.textBoxL}" readonly="readonly"/>`).val(data))
   }
 
   var preRow = function (description, data) {
@@ -308,7 +327,7 @@ Renderer.prototype.contracts = function (data, source) {
 
   $contractOutput.find('.title').click(function (ev) { $(this).closest('.contract').toggleClass('hidesub') })
   $('#output').append($contractOutput)
-  $('.col2 input,textarea').click(function () { this.select() })
+  $('.' + css.col2 + ' input,textarea').click(function () { this.select() })
 }
 
 module.exports = Renderer
