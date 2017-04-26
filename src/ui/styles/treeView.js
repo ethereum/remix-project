@@ -22,7 +22,6 @@ module.exports = {
     'font-family': 'arial,sans-serif'
   },
   caret: {
-    'position': 'absolute',
     'margin-top': '3px'
   },
   data: {
