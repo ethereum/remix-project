@@ -44,7 +44,7 @@
 
 .udapp .create {
 	overflow: auto;
-	margin-bottom: 1em;
+	margin: 1em;
 }
 
 .udapp .title {
@@ -203,7 +203,7 @@
 }
 
 .udapp button {
-	background-color: #666;
+	padding: .36em;
 	color: #4C4B4B;
 	cursor: pointer;
 	overflow: hidden;

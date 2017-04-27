@@ -9,8 +9,12 @@ var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
 var TxRunner = require('./app/txRunner')
-var csjs = require('csjs-inject')
+var yo = require('yo-yo')
 
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var styleGuide = require('./app/style-guide')
+var styles = styleGuide()
 var css = csjs`
   .options {
       float: left;
@@ -207,7 +211,7 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $createInterface.append($close)
   }
 
-  var $publishButton = $('<button class="publishContract"/>').text('Publish').click(function () { self.event.trigger('publishContract', [contract]) })
+  var $publishButton = $(`<button class="publishContract"/>`).text('Publish').click(function () { self.event.trigger('publishContract', [contract]) })
   $createInterface.append($publishButton)
 
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract) })

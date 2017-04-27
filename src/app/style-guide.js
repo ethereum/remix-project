@@ -6,17 +6,20 @@ function styleGuide () {
   /* --------------------------------------------------------------------------
   COLORS
   -------------------------------------------------------------------------- */
-  var blue                = '#9DC1F5'
-  var lightBlue           = '#F4F6FF'
-  var greyBlue            = '#102026'
-  var grey                = '#666'
-  var lightGrey           = '#f8f8f8'
-  var red                 = '#FF8080'
-  var lightRed            = '#FFB9B9'
-  var green               = '#B1EAC5'
-  var violet              = '#C6CFF7'
-  var pink                = '#EC96EC'
-  var yellow              = '#E6E5A7'
+  var colors = {
+    blue                : '#9DC1F5',
+    lightBlue           : '#F4F6FF',
+    greyBlue            : '#102026',
+    grey                : '#666',
+    lightGrey           : '#f8f8f8',
+    red                 : '#FF8080',
+    lightRed            : '#FFB9B9',
+    green               : '#B1EAC5',
+    violet              : '#C6CFF7',
+    pink                : '#EC96EC',
+    yellow              : '#E6E5A7'
+  }
+
   /* --------------------------------------------------------------------------
                               FONTS
   -------------------------------------------------------------------------- */
@@ -130,6 +133,7 @@ function styleGuide () {
     titleL: texts['title-L'],
     titleM: texts['title-M'],
     dropdown: buttons['dropdown-menu'],
-    button: buttons['button']
+    button: buttons['button'],
+    colors: colors
   }
 }

@@ -18,6 +18,17 @@ var css = csjs`
       width: 30%;
       float: left;
   }
+  .toggle  {
+    font-size: 1em;
+    text-decoration: underline;
+    color: ${styles.colors.blue};
+    margin: 1em;
+    cursor: pointer;
+    font-weight: 400;
+  }
+  .toggle:hover {
+    opacity: .8;
+  }
 `
 // ----------------------------------------------
 
@@ -237,8 +248,24 @@ Renderer.prototype.contracts = function (data, source) {
 
   var detailsOpen = {}
   var getDetails = function (contract, source, contractName) {
-    var button = $('<button>Toggle Details</button>')
+    var button = $(`<div class="${css.toggle}"><i class="fa fa-info-circle" aria-hidden="true"></i> Contract details (bytecode, interface etc.)</div>`)
     var details = $('<div style="display: none;"/>')
+
+    if (contract.bytecode) {
+      details.append(preRow('Bytecode', contract.bytecode))
+    }
+
+    details.append(preRow('Interface', contract['interface']))
+
+    if (contract.bytecode) {
+      details.append(preRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
+
+      // check if there's a metadata hash appended
+      var metadataHash = retrieveMetadataHash(contract.bytecode)
+      if (metadataHash) {
+        details.append(preRow('Metadata location', 'bzzr://' + metadataHash))
+      }
+    }
 
     if (contract.metadata) {
       details.append(preRow('Metadata', contract.metadata))
@@ -282,22 +309,6 @@ Renderer.prototype.contracts = function (data, source) {
   var self = this
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
-    if (contract.bytecode) {
-      $contractOutput.append(tableRow('Bytecode', contract.bytecode))
-    }
-
-    $contractOutput.append(tableRow('Interface', contract['interface']))
-
-    if (contract.bytecode) {
-      $contractOutput.append(preRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
-
-      // check if there's a metadata hash appended
-      var metadataHash = retrieveMetadataHash(contract.bytecode)
-      if (metadataHash) {
-        $contractOutput.append(tableRow('Metadata location', 'bzzr://' + metadataHash))
-      }
-    }
-
     var ctrSource = self.appAPI.currentCompiledSourceCode()
     if (ctrSource) {
       $contractOutput.append(getDetails(contract, ctrSource, contractName))
