@@ -303,15 +303,22 @@
 }
 
 .udapp .legend {
-	font-size: 12px;
-	float: left;
-	color: #666;
+	background-color: white;
+	line-height: 20px;
+	border: .2em dotted lightGrey;
+	padding: 8px 15px;
+	border-radius: 5px;
+	margin-bottom: 1em;
+	display: flex;
+	justify-content: space-around;
 }
 
 .udapp .legend div {
 	display: inline-block;
 	margin-right: 0.5em;
-	margin-bottom: 1em;
+	display: flex;
+	align-items: center;
+	line-height: 0px;
 }
 
 .udapp .legend div:before {

@@ -35,7 +35,7 @@ var css = csjs`
   }
   .contract {
     display: block;
-    margin: 5em 0 2em 0;
+    margin: 4em 0 2em 0;
   }
 `
 

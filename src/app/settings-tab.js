@@ -28,9 +28,11 @@ var css = csjs`
     text-align: -webkit-center;
   }
   .col1 extends ${styles.titleL} {
-    width: 30%;
     float: left;
     align-self: center;
+  }
+  .checkboxText {
+    margin-left: 3px;
   }
 }
 `
@@ -47,16 +49,16 @@ function settingsTab () {
         <select class="${css.select}" id="versionSelector"></select>
       </div>
       <div class="${css.crow}">
-        Text Wrap
-        <input class="${css.col1}" id="editorWrap" type="checkbox">
+        <div><input class="${css.col1}" id="editorWrap" type="checkbox"></div>
+        <span class="${css.checkboxText}">Text Wrap</span>
       </div>
       <div class="${css.crow}">
-        Enable Optimization
-        <input id="optimize" type="checkbox">
+        <div><input class="${css.col1}" id="optimize" type="checkbox"></div>
+        <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
       <div class="${css.crow}">
-        Auto Compile
-        <input id="autoCompile" type="checkbox" checked>
+        <div><input class="${css.col1}" id="autoCompile" type="checkbox" checked></div>
+        <span class="${css.checkboxText}">Auto Compile</span>
       </div>
       </div>
       <div class="${css.crow}">

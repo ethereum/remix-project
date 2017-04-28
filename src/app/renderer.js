@@ -18,13 +18,19 @@ var css = csjs`
       width: 30%;
       float: left;
   }
-  .toggle  {
-    font-size: 1em;
+  .toggleText  {
     text-decoration: underline;
+    margin-left: 2px;
+    font-size: .9em;
+  }
+  .toggle  {
+    font-size: 1.1em;
     color: ${styles.colors.blue};
     margin: 1em;
     cursor: pointer;
     font-weight: 400;
+    display: flex;
+    align-items: center;
   }
   .toggle:hover {
     opacity: .8;
@@ -248,7 +254,7 @@ Renderer.prototype.contracts = function (data, source) {
 
   var detailsOpen = {}
   var getDetails = function (contract, source, contractName) {
-    var button = $(`<div class="${css.toggle}"><i class="fa fa-info-circle" aria-hidden="true"></i> Contract details (bytecode, interface etc.)</div>`)
+    var button = $(`<div class="${css.toggle}"><i class="fa fa-info-circle" aria-hidden="true"></i><div class="${css.toggleText}">Contract details (bytecode, interface etc.)</div></div>`)
     var details = $('<div style="display: none;"/>')
 
     if (contract.bytecode) {
