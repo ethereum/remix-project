@@ -7,17 +7,17 @@ function styleGuide () {
   COLORS
   -------------------------------------------------------------------------- */
   var colors = {
-    blue                : '#9DC1F5',
-    lightBlue           : '#F4F6FF',
-    greyBlue            : '#102026',
-    grey                : '#666',
-    lightGrey           : '#f8f8f8',
-    red                 : '#FF8080',
-    lightRed            : '#FFB9B9',
-    green               : '#B1EAC5',
-    violet              : '#C6CFF7',
-    pink                : '#EC96EC',
-    yellow              : '#E6E5A7'
+    blue: '#9DC1F5',
+    lightBlue: '#F4F6FF',
+    greyBlue: '#102026',
+    grey: '#666',
+    lightGrey: '#f8f8f8',
+    red: '#FF8080',
+    lightRed: '#FFB9B9',
+    green: '#B1EAC5',
+    violet: '#C6CFF7',
+    pink: '#EC96EC',
+    yellow: '#E6E5A7'
   }
 
   /* --------------------------------------------------------------------------

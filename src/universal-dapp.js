@@ -9,12 +9,9 @@ var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
 var TxRunner = require('./app/txRunner')
-var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./app/style-guide')
-var styles = styleGuide()
 var css = csjs`
   .options {
       float: left;

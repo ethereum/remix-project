@@ -52,7 +52,6 @@ document.querySelector('#optionViews').appendChild(debuggerView)
 var filesView = filesTab()
 document.querySelector('#optionViews').appendChild(filesView)
 
-
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
 var filesToLoad = null
@@ -428,12 +427,6 @@ var run = function () {
 
   function getLeftPosi () {
     return $filesEl.position().left
-  }
-
-  function activeFilePos () {
-    var el = $filesEl.find('.active')
-    var l = el.position().left
-    return l
   }
 
   function reAdjust () {
