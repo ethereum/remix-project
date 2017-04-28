@@ -55,10 +55,10 @@ var css = csjs`
   }
   .dragbar            {
     position          : relative;
-    top               : 6px;
+    top               : 4px;
     cursor            : col-resize;
     z-index           : 999;
-    border-right      : 2px solid #C6CFF7;
+    border-right      : 2px solid hsla(215, 81%, 79%, .3);
   }
   .ghostbar           {
     width             : 3px;

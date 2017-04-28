@@ -7,7 +7,7 @@ function styleGuide () {
   COLORS
   -------------------------------------------------------------------------- */
   var colors = {
-    blue: '#9DC1F5',
+    blue: '#9DC1F5',  // hsla(215, 81%, 79%, 1)
     lightBlue: '#F4F6FF',
     greyBlue: '#102026',
     grey: '#666',
@@ -17,7 +17,7 @@ function styleGuide () {
     green: '#B1EAC5',
     violet: '#C6CFF7',
     pink: '#EC96EC',
-    yellow: '#E6E5A7'
+    yellow: '#ffbd01'
   }
 
   /* --------------------------------------------------------------------------
@@ -113,6 +113,7 @@ function styleGuide () {
       cursor                  : pointer;
       font-size               : 12px;
       border                  : none;
+      height                  : 20px;
     }
 
   `

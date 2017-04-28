@@ -310,7 +310,8 @@
 	border-radius: 5px;
 	margin-bottom: 1em;
 	display: flex;
-	justify-content: space-around;
+	justify-content: initial;
+	flex-wrap: wrap;
 }
 
 .udapp .legend div {
@@ -319,6 +320,7 @@
 	display: flex;
 	align-items: center;
 	line-height: 0px;
+	padding: 5px;
 }
 
 .udapp .legend div:before {
@@ -329,6 +331,7 @@
 	height: 1em;
 	margin-right: 0.5em;
 	width: 1em;
+	border-radius: 50%;
 }
 
 .udapp .legend .publish:before {

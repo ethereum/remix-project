@@ -19,8 +19,7 @@ var css = csjs`
   }
   .ace-editor         {
     top               : 4px;
-    border-top        : 3px solid transparent;
-    font-size         : 15px;
+    font-size         : 2vmin;
     width             : 100%;
   }
 `

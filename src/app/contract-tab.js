@@ -32,6 +32,7 @@ var css = csjs`
   .select extends ${styles.dropdown} {
     width: 70%;
     float: left;
+    text-align: center;
   }
   .contract {
     display: block;

@@ -18,8 +18,8 @@ var css = csjs`
     display: flex;
   }
   .select extends ${styles.dropdown} {
-    width: 50%;
     float: left;
+    max-width: 90%;
   }
   .button extends ${styles.button} {
     background-color: #C6CFF7;

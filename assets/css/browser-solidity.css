@@ -161,6 +161,8 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: space-between;
 }
 
 #header #options li.active {
@@ -254,12 +256,12 @@ body {
 #publishView button {
     background-color: #C6CFF7;
     font-size: 12px;
-    padding: 0.25em;
     margin-bottom: .5em;
     color: black;
     border:0 none;
     border-radius: 3px;
     width: 8em;
+    height: 20px;
     margin-right: 1em;
     cursor: pointer;
 }
@@ -384,9 +386,10 @@ body {
     word-wrap: break-word;
     cursor: pointer;
     position: relative;
-    margin: 0.5em 0;
-    border-radius: 0.6em;
-    padding: 1em 1.5em;
+    margin: 0.5em 0 1em 0;
+    border-radius: 5px;
+    line-height: 20px;
+    padding: 8px 15px;
 }
 
 .sol.error pre,
@@ -410,11 +413,13 @@ body {
 }
 
 .sol.error {
-    background-color: rgba(255, 0, 0, 0.4);
+    background-color: hsla(0, 100%, 75%, 0.1);
+    border: .2em dotted #FF8080;
 }
 
 .sol.warning {
-    background-color: rgba(210, 202, 36, 0.4);
+    background-color: hsla(59, 56%, 78%, 0.5);
+    border: .2em dotted #ffbd01;
 }
 
 #ghostbar {
@@ -437,7 +442,7 @@ body {
     bottom: 0;
     cursor: col-resize;
     z-index: 999;
-    border-right: 2px solid #C6CFF7;
+    border-right: 2px solid hsla(215, 81%, 79%, .3);
 }
 
 #editor .ace-tm .ace_gutter,

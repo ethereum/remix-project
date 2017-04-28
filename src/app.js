@@ -802,7 +802,8 @@ var run = function () {
     }
   }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
-  $('#staticanalysisView').append(staticanalysis.render())
+  var node = document.getElementById('staticanalysisView')
+  node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
@@ -973,7 +974,7 @@ var run = function () {
     loadVersion($('#versionSelector').val())
   })
 
-  var header = new Option('Click to select new compiler version')
+  var header = new Option('Select new compiler version')
   header.disabled = true
   header.selected = true
   $('#versionSelector').append(header)
