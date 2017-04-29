@@ -11,7 +11,7 @@ function styleGuide () {
     lightBlue: '#F4F6FF',
     greyBlue: '#102026',
     grey: '#666',
-    lightGrey: '#f8f8f8',
+    lightGrey: '#dddddd',
     red: '#FF8080',
     lightRed: '#FFB9B9',
     green: '#B1EAC5',
@@ -90,6 +90,18 @@ function styleGuide () {
       box-shadow            : rgba(0,0,0,.2) 0 1px 4px;
       margin-bottom         : 1em;
     }
+
+    .title-box {
+      margin-bottom         : 0.4em;
+      padding               : 1em;
+      background-color      : transparent;
+      font-weight           : bold;
+      display               : flex;
+      justify-content       : space-between;
+      word-wrap             : break-word;
+      position              : relative;
+      border-radius         : 3px;
+    }
   `
   /* --------------------------------------------------------------------------
                                     BUTTONS
@@ -135,6 +147,7 @@ function styleGuide () {
     titleM: texts['title-M'],
     dropdown: buttons['dropdown-menu'],
     button: buttons['button'],
-    colors: colors
+    colors: colors,
+    titleBox: textBoxes['title-box']
   }
 }

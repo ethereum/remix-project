@@ -326,18 +326,6 @@ body {
     display: none;
 }
 
-.udapp .contract > .title {
-    cursor:pointer;
-}
-
-.udapp .contract > .title:before {
-    content: "\25BC";
-    opacity: 0.5;
-    margin-right: 0.4em;
-    font-size: 10px;
-    margin-top: 0.2em;
-}
-
 .contract.hidesub > .title:before {
     content: "\25B6";
 }

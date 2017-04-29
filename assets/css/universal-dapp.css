@@ -47,29 +47,6 @@
 	margin: 1em;
 }
 
-.udapp .title {
-	margin-bottom: 0.4em;
-	padding: 1em;
-	background-color: #C6CFF7;
-	font-weight: bold;
-	display: flex;
-	justify-content: space-between;
-	word-wrap: break-word;
-	position: relative;
-	border-radius: 3px;
-}
-
-.udapp .definitionTitle {
-	background-color: #C6CFD9;
-}
-
-.udapp .title:hover {
-	opacity: 0.8;
-}
-.udapp .title .size {
-	font-weight: normal;
-}
-
 .udapp .output {
 	padding: 1em;
 	clear: both;

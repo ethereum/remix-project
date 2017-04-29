@@ -12,6 +12,9 @@ var TxRunner = require('./app/txRunner')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
+var styleGuide = require('./app/style-guide')
+var styles = styleGuide()
+
 var css = csjs`
   .options {
       float: left;
@@ -22,7 +25,54 @@ var css = csjs`
       margin-right: 0.5em;
       font-size: 1em;
   }
+  .title extends ${styles.titleBox} {
+    cursor: pointer;
+    background-color: ${styles.colors.violet};
+  }
+  .title:hover {
+    opacity: .8;
+  }
+  .contract .title:before {
+    content: "\\25BE";
+  }
+  .contract.hidesub .title:before {
+    content: "\\25B8"
+  }
+  .contract.hidesub {
+      padding-bottom: 0;
+      margin: 0;
+  }
+  .contract.hidesub > *:not(.title) {
+      display: none;
+  }
 `
+
+var cssInstance = csjs`
+  .title extends ${styles.titleBox} {
+    font-size: .95em;
+    cursor: pointer;
+    background-color: ${styles.colors.lightGrey};
+  }
+  .title:hover {
+    opacity: .8;
+  }
+  .instance .title:before {
+    content: "\\25BE";
+    margin-right: .5em;
+  }
+  .instance.hidesub .title:before {
+    content: "\\25B8"
+    margin-right: .5em;
+  }
+  .instance.hidesub {
+      padding-bottom: 0;
+      margin: 0;
+  }
+  .instance.hidesub > *:not(.title) {
+      display: none;
+  }
+`
+
 ;[...document.querySelectorAll('#header #options li')].forEach(addCss)
 function addCss (el) { el.classList.add(css.options) }
 
@@ -171,14 +221,14 @@ UniversalDApp.prototype.render = function () {
   self.$el.append($legend)
 
   for (var c in self.contracts) {
-    var $contractEl = $('<div class="contract"/>')
+    var $contractEl = $(`<div class="${css.contract}"/>`)
 
     if (self.contracts[c].address) {
       self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl)
     } else {
-      var $title = $('<span class="title"/>').text(self.contracts[c].name)
+      var $title = $(`<span class="${css.title}"/>`).text(self.contracts[c].name)
+      $title.click(function (ev) { $(this).closest(`.${css.contract}`).toggleClass(`${css.hidesub}`) })
       if (self.contracts[c].bytecode) {
-        $title.addClass('definitionTitle')
         $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'))
       }
       $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]))
@@ -265,7 +315,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
   var $createInterface = $('<div class="createContract"/>')
 
   var appendFunctions = function (address, $el) {
-    var $instance = $('<div class="instance"/>')
+    var $instance = $(`<div class="${cssInstance.instance}"/>`)
     if (self.options.removable_instances) {
       var $close = $('<div class="udapp-close" />')
       $close.click(function () { $instance.remove() })
@@ -274,9 +324,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-    var $title = $('<span class="title"/>').text(contract.name + ' at ' + address + ' (' + context + ')')
+    var $title = $(`<span class="${cssInstance.title}"/>`).text('Contract instance for ' + contract.name + ' at ' + address + ' (' + context + ')')
     $title.click(function () {
-      $instance.toggleClass('hidesub')
+      $instance.toggleClass(`${cssInstance.hidesub}`)
     })
 
     var $events = $('<div class="events"/>')
