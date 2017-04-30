@@ -92,24 +92,39 @@
   },
   "browserify": {
     "transform": [
-      ["babelify", {
-        "sourceMapsAbsolute": false,
-        "sourceMaps": true,
-        "plugins": [
-          ["fast-async", {
-            "runtimePattern": null,
-            "compiler": {
-              "es7": true,
-              "noRuntime": true,
-              "promises": true,
-              "wrapAwait": true
-            }
-          }],
-          ["yo-yoify"], ["transform-object-assign"]
-        ],
-        "presets": ["es2015"]
-      }],
-      ["uglifyify"]
+      [
+        "babelify",
+        {
+          "sourceMapsAbsolute": false,
+          "sourceMaps": true,
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePattern": null,
+                "compiler": {
+                  "es7": true,
+                  "noRuntime": true,
+                  "promises": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            [
+              "yo-yoify"
+            ],
+            [
+              "transform-object-assign"
+            ]
+          ],
+          "presets": [
+            "es2015"
+          ]
+        }
+      ],
+      [
+        "uglifyify"
+      ]
     ]
   },
   "scripts": {
@@ -136,5 +151,8 @@
     "test": "standard; npm run csslint; node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js --transform-key=development -dv -p browserify-reload -o build/app.js"
+  },
+  "dependencies": {
+    "clipboard-copy": "^1.2.0"
   }
 }

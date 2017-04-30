@@ -7,7 +7,7 @@ function styleGuide () {
   COLORS
   -------------------------------------------------------------------------- */
   var colors = {
-    blue: '#9DC1F5',  // hsla(215, 81%, 79%, 1)
+    blue: '#9393bf',
     lightBlue: '#F4F6FF',
     greyBlue: '#102026',
     grey: '#666',

@@ -9,6 +9,10 @@ var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
 var TxRunner = require('./app/txRunner')
+var yo = require('yo-yo')
+
+// copy to copyToClipboard
+const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -49,9 +53,11 @@ var css = csjs`
 
 var cssInstance = csjs`
   .title extends ${styles.titleBox} {
+    justify-content: center;
     font-size: .95em;
     cursor: pointer;
-    background-color: ${styles.colors.lightGrey};
+    background-color: ${styles.colors.violet};
+    border: 2px dotted ${styles.colors.blue};
   }
   .title:hover {
     opacity: .8;
@@ -70,6 +76,29 @@ var cssInstance = csjs`
   }
   .instance.hidesub > *:not(.title) {
       display: none;
+  }
+  .copyToClipboard extends ${styles.infoTextBox} {
+    margin-top: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .copyToClipboard:hover {
+    background-color: ${styles.colors.green}
+  }
+  .address extends ${styles.button} {
+    text-align: center;
+    width: 100%;
+    padding: .1em;
+  }
+  .copy extends ${styles.button} {
+    text-align: center;
+    width: 75%;
+    padding: .1em;
+  }
+  .copy:hover, .address:hover {
+    opacity: 1;
   }
 `
 
@@ -221,7 +250,7 @@ UniversalDApp.prototype.render = function () {
   self.$el.append($legend)
 
   for (var c in self.contracts) {
-    var $contractEl = $(`<div class="${css.contract}"/>`)
+    var $contractEl = $(`<div class="contract ${css.contract}"/>`)
 
     if (self.contracts[c].address) {
       self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl)
@@ -324,7 +353,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-    var $title = $(`<span class="${cssInstance.title}"/>`).text('Contract instance for ' + contract.name + ' at ' + address + ' (' + context + ')')
+    var $title = $(`<span class="${cssInstance.title}"/>`).text(contract.name + '' + ' at ' + address.substring(0, 10) + '...' + ' (' + context + ')')
     $title.click(function () {
       $instance.toggleClass(`${cssInstance.hidesub}`)
     })
@@ -388,6 +417,21 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       eventFilter.watch(parseLogs)
     }
     $instance.append($title)
+
+    var instanceAddress = yo`
+      <div class="${cssInstance.copyToClipboard}" onclick=${copyToClipboard}>
+        <div class="${cssInstance.address}">${address}</div>
+        <div class="${cssInstance.copy}">
+        <i class="fa fa-clipboard" aria-hidden="true"></i>
+        Copy address to clipboard
+        </div>
+      </div>`
+    $instance.append(instanceAddress)
+
+    function copyToClipboard () {
+      var address = this.innerText.split('\n')[0]
+      copy(address)
+    }
 
     // Add the fallback function
     var fallback = self.getFallbackInterface(abi)
@@ -666,7 +710,6 @@ UniversalDApp.prototype.getCallButton = function (args) {
         var outputObj = '0x' + result.vm.return.toString('hex')
         clearOutput($result)
         $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result, result.vm))
-
         decoded = decodeResponse(result.vm.return)
         if (decoded) {
           $result.append(decoded)

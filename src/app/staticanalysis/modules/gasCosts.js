@@ -1,5 +1,5 @@
 var name = 'gas costs: '
-var desc = 'warn if the gas requiremets of functions are too high.'
+var desc = 'warn if the gas requiremets of functions are too high'
 var categories = require('./categories')
 
 function gasCosts () {
