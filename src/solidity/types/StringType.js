@@ -40,7 +40,7 @@ function format (decoded) {
   var value = decoded.value
   value = value.replace('0x', '').replace(/(..)/g, '%$1')
   var ret = {
-    length: decoded.length,
+    // length: decoded.length, // unneeded, only dynamicBytes uses length
     raw: decoded.value,
     type: 'string'
   }

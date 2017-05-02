@@ -19,8 +19,19 @@ var util = require('./types/util')
   * @param {String} type - type given by the AST
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
-function mapping (type) {
-  return new MappingType()
+function mapping (type, stateDefinitions, contractName) {
+  var match = type.match(/mapping\((.*?)( =>)? (.*)\)$/)
+  var keyTypeName = match[1]
+  var valueTypeName = match[3]
+
+  var keyType = parseType(keyTypeName, stateDefinitions, contractName, 'storage')
+  var valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
+
+  var underlyingTypes = {
+    'keyType': keyType,
+    'valueType': valueType
+  }
+  return new MappingType(underlyingTypes, 'location', util.removeLocation(type))
 }
 
 /**
@@ -179,7 +190,7 @@ function struct (type, stateDefinitions, contractName, location) {
     if (!location) {
       location = match[2].trim()
     }
-    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
+    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
     if (!memberDetails) return null
     return new StructType(memberDetails, location, match[1])
   } else {
@@ -222,7 +233,7 @@ function getEnum (type, stateDefinitions, contractName) {
   * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Array} containing all members of the current struct type
   */
-function getStructMembers (type, stateDefinitions, contractName, location) {
+function getStructMembers (type, stateDefinitions, contractName) {
   var split = type.split('.')
   if (!split.length) {
     type = contractName + '.' + type

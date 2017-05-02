@@ -1,5 +1,6 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
+var ethutil = require('ethereumjs-util')
 
 function TraceAnalyser (_cache) {
   this.traceCache = _cache
@@ -71,6 +72,18 @@ TraceAnalyser.prototype.buildMemory = function (index, step) {
   }
 }
 
+function getSha3Input (stack, memory) {
+  var memoryStart = stack[stack.length - 1]
+  var memoryLength = stack[stack.length - 2]
+  var memStartDec = (new ethutil.BN(memoryStart.replace('0x', ''), 16)).toString(10)
+  memoryStart = parseInt(memStartDec) * 2
+  var memLengthDec = (new ethutil.BN(memoryLength.replace('0x', ''), 16).toString(10))
+  memoryLength = parseInt(memLengthDec) * 2
+  var memoryHex = memory.join('')
+  var sha3Input = memoryHex.substr(memoryStart, memoryLength)
+  return sha3Input
+}
+
 TraceAnalyser.prototype.buildStorage = function (index, step, context) {
   if (traceHelper.newContextStorage(step) && !traceHelper.isCallToPrecompiledContract(index, this.trace)) {
     var calledAddress = traceHelper.resolveCalledAddress(index, this.trace)
@@ -80,6 +93,9 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
       console.log('unable to build storage changes. ' + index + ' does not match with a CALL. storage changes will be corrupted')
     }
     this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
+  } else if (traceHelper.isSHA3Instruction(step)) {
+    var sha3Input = getSha3Input(step.stack, step.memory)
+    this.traceCache.pushSha3Preimage(sha3Input, context.storageContext[context.storageContext.length - 1])
   } else if (traceHelper.isSSTOREInstruction(step)) {
     this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1], step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
   } else if (traceHelper.isReturnInstruction(step)) {
