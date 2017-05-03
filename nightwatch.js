@@ -62,8 +62,9 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'internet explorer',
         'javascriptEnabled': true,
+        'platform': 'Windows 10',
         'acceptSslCerts': true,
-        'version': '11',
+        'version': '11.103',
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }
