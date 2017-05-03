@@ -30,7 +30,11 @@ function runTests (browser) {
   contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:TestContract'], function () {
     browser.click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
-      .click('.instance .call[title="f"]')
+    if (browser.options.browserName === 'internet explorer') {
+      browser.end()
+      return
+    }
+    browser.click('.instance .call[title="f"]')
       .waitForElementPresent('.output .returned')
       .assert.containsText('.output .returned', '0x0000000000000000000000000000000000000000000000000000000000000008')
       .assert.containsText('.output .decoded li', 'uint256: 8')
