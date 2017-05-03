@@ -13,6 +13,7 @@
     "babelify": "^7.3.0",
     "brace": "^0.8.0",
     "browserify-reload": "^1.0.3",
+    "clipboard-copy": "^1.2.0",
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "ethereum-remix": "https://github.com/ethereum/remix",
@@ -151,8 +152,5 @@
     "test": "standard; npm run csslint; node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js --transform-key=development -dv -p browserify-reload -o build/app.js"
-  },
-  "dependencies": {
-    "clipboard-copy": "^1.2.0"
   }
 }
