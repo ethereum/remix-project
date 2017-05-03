@@ -49,7 +49,7 @@ function contractTab () {
         <div id="selectExEnv" class="${css.col1_1}">
           Execution environment
         </div>
-        <select class="${css.select}">
+        <select id="selectExEnvOptions" class="${css.select}">
           <option id="vm-mode"
             title="Execution environment does not connect to any node, everything is local and in memory only."
             value="vm"
