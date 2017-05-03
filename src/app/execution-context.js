@@ -136,7 +136,7 @@ function ExecutionContext () {
   DROPDOWN
   --------------------------------------------------------------------------- */
 
-  var selectExEnv = document.querySelector('#selectExEnv')
+  var selectExEnv = document.querySelector('#selectExEnvOptions')
   selectExEnv.addEventListener('change', function (event) {
     if (!executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value)) {
       selectExEnv.value = executionContext
