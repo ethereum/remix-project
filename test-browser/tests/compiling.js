@@ -30,7 +30,7 @@ function runTests (browser) {
   contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:TestContract'], function () {
     browser.click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
-    if (browser.options.browserName === 'internet explorer') {
+    if (browser.options.desiredCapabilities.browserName === 'internet explorer') {
       browser.end()
       return
     }
