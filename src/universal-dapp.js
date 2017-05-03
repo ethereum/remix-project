@@ -52,14 +52,22 @@ var css = csjs`
 `
 
 var cssInstance = csjs`
-  .title extends ${styles.titleBox} {
+  .title {
+    display: flex;
     justify-content: center;
+    margin-bottom: 1em;
+    padding: 1em;
     font-size: .95em;
     cursor: pointer;
     background-color: ${styles.colors.violet};
     border: 2px dotted ${styles.colors.blue};
+    border-radius: 5px;
   }
-  .title:hover {
+  .titleText {
+    margin-right: 1em;
+    word-break: break-all;
+  }
+  .titleText:hover {
     opacity: .8;
   }
   .instance .title:before {
@@ -77,28 +85,16 @@ var cssInstance = csjs`
   .instance.hidesub > *:not(.title) {
       display: none;
   }
-  .copyToClipboard extends ${styles.infoTextBox} {
-    margin-top: 1em;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    cursor: pointer;
-  }
-  .copyToClipboard:hover {
-    background-color: ${styles.colors.green}
-  }
-  .address extends ${styles.button} {
-    text-align: center;
-    width: 100%;
-    padding: .1em;
-  }
   .copy extends ${styles.button} {
+    border: 1px dotted ${styles.colors.grey};
+    border-radius: 5px;
     text-align: center;
-    width: 75%;
-    padding: .1em;
+    padding: 1em .3em;
+    min-width: 30%;
   }
-  .copy:hover, .address:hover {
-    opacity: 1;
+  .copy:hover{
+    background-color: ${styles.colors.lightGrey};
+    opacity: .8;
   }
 `
 
@@ -353,10 +349,19 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-    var $title = $(`<span class="${cssInstance.title}"/>`).text(contract.name + '' + ' at ' + address.substring(0, 10) + '...' + ' (' + context + ')')
-    $title.click(function () {
+    var title = yo`
+      <div class="${cssInstance.title}">
+        <div class="${cssInstance.titleText}" onclick=${toggleClass}> ${contract.name} at ${address} (${context}) </div>
+        <div class="${cssInstance.copy}" onclick=${copyToClipboard}> <i class="fa fa-clipboard" aria-hidden="true"></i> Copy address </div>
+      </div>
+    `
+    function toggleClass () {
       $instance.toggleClass(`${cssInstance.hidesub}`)
-    })
+    }
+
+    function copyToClipboard () {
+      copy(address)
+    }
 
     var $events = $('<div class="events"/>')
 
@@ -416,22 +421,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       var eventFilter = self.web3.eth.contract(abi).at(address).allEvents()
       eventFilter.watch(parseLogs)
     }
-    $instance.append($title)
-
-    var instanceAddress = yo`
-      <div class="${cssInstance.copyToClipboard}" onclick=${copyToClipboard}>
-        <div class="${cssInstance.address}">${address}</div>
-        <div class="${cssInstance.copy}">
-        <i class="fa fa-clipboard" aria-hidden="true"></i>
-        Copy address to clipboard
-        </div>
-      </div>`
-    $instance.append(instanceAddress)
-
-    function copyToClipboard () {
-      var address = this.innerText.split('\n')[0]
-      copy(address)
-    }
+    $instance.get(0).appendChild(title)
 
     // Add the fallback function
     var fallback = self.getFallbackInterface(abi)
