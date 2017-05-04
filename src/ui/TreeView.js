@@ -58,6 +58,8 @@ class TreeView {
         list.style.display = list.style.display === 'none' ? 'block' : 'none'
         self.nodeIsExpanded[keyPath] = list.style.display === 'block'
       }
+    } else {
+      label.firstElementChild.style.display = 'none'
     }
     return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
   }
