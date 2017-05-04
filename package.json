@@ -13,6 +13,7 @@
     "babelify": "^7.3.0",
     "brace": "^0.8.0",
     "browserify-reload": "^1.0.3",
+    "clipboard-copy": "^1.2.0",
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "ethereum-remix": "https://github.com/ethereum/remix",
@@ -92,24 +93,39 @@
   },
   "browserify": {
     "transform": [
-      ["babelify", {
-        "sourceMapsAbsolute": false,
-        "sourceMaps": true,
-        "plugins": [
-          ["fast-async", {
-            "runtimePattern": null,
-            "compiler": {
-              "es7": true,
-              "noRuntime": true,
-              "promises": true,
-              "wrapAwait": true
-            }
-          }],
-          ["yo-yoify"], ["transform-object-assign"]
-        ],
-        "presets": ["es2015"]
-      }],
-      ["uglifyify"]
+      [
+        "babelify",
+        {
+          "sourceMapsAbsolute": false,
+          "sourceMaps": true,
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePattern": null,
+                "compiler": {
+                  "es7": true,
+                  "noRuntime": true,
+                  "promises": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            [
+              "yo-yoify"
+            ],
+            [
+              "transform-object-assign"
+            ]
+          ],
+          "presets": [
+            "es2015"
+          ]
+        }
+      ],
+      [
+        "uglifyify"
+      ]
     ]
   },
   "scripts": {

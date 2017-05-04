@@ -4,6 +4,40 @@ var $ = require('jquery')
 
 var utils = require('./utils')
 
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var styleGuide = require('./style-guide')
+var styles = styleGuide()
+
+var css = csjs`
+  .col2 {
+      width: 70%;
+      float: left;
+  }
+  .col1 extends ${styles.titleL} {
+      width: 30%;
+      float: left;
+  }
+  .toggleText  {
+    text-decoration: underline;
+    margin-left: 2px;
+    font-size: .9em;
+  }
+  .toggle  {
+    font-size: 1.1em;
+    color: ${styles.colors.blue};
+    margin: 1em;
+    cursor: pointer;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+  }
+  .toggle:hover {
+    opacity: .8;
+  }
+`
+// ----------------------------------------------
+
 function Renderer (appAPI, formalVerificationEvent, compilerEvent) {
   this.appAPI = appAPI
   var self = this
@@ -96,16 +130,17 @@ Renderer.prototype.contracts = function (data, source) {
   }
 
   var tableRowItems = function (first, second, cls) {
+    second.get(0).classList.add(styles.textBoxL) // replace <pre> styling with textBoxL
     return $('<div class="crow"/>')
       .addClass(cls)
-      .append($('<div class="col1">').append(first))
-      .append($('<div class="col2">').append(second))
+      .append($(`<div class="${css.col1}">`).append(first))
+      .append($(`<div class="${css.col2}">`).append(second))
   }
 
   var tableRow = function (description, data) {
     return tableRowItems(
       $('<span/>').text(description),
-      $('<input readonly="readonly"/>').val(data))
+      $(`<input class="${css.col2} ${styles.textBoxL}" readonly="readonly"/>`).val(data))
   }
 
   var preRow = function (description, data) {
@@ -219,8 +254,24 @@ Renderer.prototype.contracts = function (data, source) {
 
   var detailsOpen = {}
   var getDetails = function (contract, source, contractName) {
-    var button = $('<button>Toggle Details</button>')
+    var button = $(`<div class="${css.toggle}"><i class="fa fa-info-circle" aria-hidden="true"></i><div class="${css.toggleText}">Contract details (bytecode, interface etc.)</div></div>`)
     var details = $('<div style="display: none;"/>')
+
+    if (contract.bytecode) {
+      details.append(preRow('Bytecode', contract.bytecode))
+    }
+
+    details.append(preRow('Interface', contract['interface']))
+
+    if (contract.bytecode) {
+      details.append(preRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
+
+      // check if there's a metadata hash appended
+      var metadataHash = retrieveMetadataHash(contract.bytecode)
+      if (metadataHash) {
+        details.append(preRow('Metadata location', 'bzzr://' + metadataHash))
+      }
+    }
 
     if (contract.metadata) {
       details.append(preRow('Metadata', contract.metadata))
@@ -264,22 +315,6 @@ Renderer.prototype.contracts = function (data, source) {
   var self = this
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
-    if (contract.bytecode) {
-      $contractOutput.append(tableRow('Bytecode', contract.bytecode))
-    }
-
-    $contractOutput.append(tableRow('Interface', contract['interface']))
-
-    if (contract.bytecode) {
-      $contractOutput.append(preRow('Web3 deploy', gethDeploy(contractName.toLowerCase(), contract['interface'], contract.bytecode), 'deploy'))
-
-      // check if there's a metadata hash appended
-      var metadataHash = retrieveMetadataHash(contract.bytecode)
-      if (metadataHash) {
-        $contractOutput.append(tableRow('Metadata location', 'bzzr://' + metadataHash))
-      }
-    }
-
     var ctrSource = self.appAPI.currentCompiledSourceCode()
     if (ctrSource) {
       $contractOutput.append(getDetails(contract, ctrSource, contractName))
@@ -306,9 +341,8 @@ Renderer.prototype.contracts = function (data, source) {
     }
   })
 
-  $contractOutput.find('.title').click(function (ev) { $(this).closest('.contract').toggleClass('hidesub') })
   $('#output').append($contractOutput)
-  $('.col2 input,textarea').click(function () { this.select() })
+  $('.' + css.col2 + ' input,textarea').click(function () { this.select() })
 }
 
 module.exports = Renderer

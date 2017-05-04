@@ -1,6 +1,4 @@
 .udapp {
-	padding: .5em;
-	border: 1px dotted #4D5686;
 	position: relative;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 	box-sizing: border-box;
@@ -16,7 +14,6 @@
 	color: #7A7AE2;
 }
 
-.udapp input,
 .udapp button,
 .udapp-setup textarea,
 .udapp-setup button {
@@ -47,30 +44,7 @@
 
 .udapp .create {
 	overflow: auto;
-	margin-bottom: 1em;
-}
-
-.udapp .title {
-	margin-bottom: 0.4em;
-	padding: 1em;
-	background-color: #C6CFF7;
-	font-weight: bold;
-	display: flex;
-	justify-content: space-between;
-	word-wrap: break-word;
-	position: relative;
-	border-radius: 3px;
-}
-
-.udapp .definitionTitle {
-	background-color: #C6CFD9;
-}
-
-.udapp .title:hover {
-	opacity: 0.8;
-}
-.udapp .title .size {
-	font-weight: normal;
+	margin: 1em;
 }
 
 .udapp .output {
@@ -205,12 +179,8 @@
 	border-radius: 3px;
 }
 
-.udapp input {
-	border-left: 0 none;
-}
-
 .udapp button {
-	background-color: #666;
+	padding: .36em;
 	color: #4C4B4B;
 	cursor: pointer;
 	overflow: hidden;
@@ -310,15 +280,24 @@
 }
 
 .udapp .legend {
-	font-size: 12px;
-	float: left;
-	color: #666;
+	background-color: white;
+	line-height: 20px;
+	border: .2em dotted lightGrey;
+	padding: 8px 15px;
+	border-radius: 5px;
+	margin-bottom: 1em;
+	display: flex;
+	justify-content: initial;
+	flex-wrap: wrap;
 }
 
 .udapp .legend div {
 	display: inline-block;
 	margin-right: 0.5em;
-	margin-bottom: 1em;
+	display: flex;
+	align-items: center;
+	line-height: 0px;
+	padding: 5px;
 }
 
 .udapp .legend div:before {
@@ -329,6 +308,7 @@
 	height: 1em;
 	margin-right: 0.5em;
 	width: 1em;
+	border-radius: 50%;
 }
 
 .udapp .legend .publish:before {

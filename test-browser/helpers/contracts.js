@@ -6,7 +6,7 @@ module.exports = {
 }
 
 function checkCompiledContracts (browser, compiled, callback) {
-  browser.elements('css selector', '.udapp .contract .title', function (elements) {
+  browser.elements('css selector', '.udapp .title', function (elements) {
     elements.value.map(function (item, i) {
       browser.elementIdText(item.ELEMENT, function (text) {
         browser.assert.equal(text.value.split('\n')[0], compiled[i])
@@ -21,7 +21,7 @@ function testContracts (browser, contractCode, compiledContractNames, callback) 
       .clearValue('#input textarea')
       .click('.newFile')
       .setValue('#input textarea', contractCode, function () {})
-      .waitForElementPresent('.contract .create', 5000, true, function () {
+      .waitForElementPresent('.udapp .create', 5000, true, function () {
         checkCompiledContracts(browser, compiledContractNames, callback)
       })
 }

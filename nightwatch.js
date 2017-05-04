@@ -50,8 +50,8 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'safari',
         'javascriptEnabled': true,
-        'platform': 'OS X 10.10',
-        'version': '8.0',
+        'platform': 'OS X 10.11',
+        'version': '10.0',
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
@@ -62,8 +62,9 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'internet explorer',
         'javascriptEnabled': true,
+        'platform': 'Windows 10',
         'acceptSslCerts': true,
-        'version': '11',
+        'version': '11.103',
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }

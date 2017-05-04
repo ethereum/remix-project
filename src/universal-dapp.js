@@ -9,7 +9,15 @@ var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
 var TxRunner = require('./app/txRunner')
+var yo = require('yo-yo')
+
+// copy to copyToClipboard
+const copy = require('clipboard-copy')
+
+// -------------- styling ----------------------
 var csjs = require('csjs-inject')
+var styleGuide = require('./app/style-guide')
+var styles = styleGuide()
 
 var css = csjs`
   .options {
@@ -21,7 +29,75 @@ var css = csjs`
       margin-right: 0.5em;
       font-size: 1em;
   }
+  .title extends ${styles.titleBox} {
+    cursor: pointer;
+    background-color: ${styles.colors.violet};
+  }
+  .title:hover {
+    opacity: .8;
+  }
+  .contract .title:before {
+    content: "\\25BE";
+  }
+  .contract.hidesub .title:before {
+    content: "\\25B8"
+  }
+  .contract.hidesub {
+      padding-bottom: 0;
+      margin: 0;
+  }
+  .contract.hidesub > *:not(.title) {
+      display: none;
+  }
 `
+
+var cssInstance = csjs`
+  .title {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1em;
+    padding: 1em;
+    font-size: .95em;
+    cursor: pointer;
+    background-color: ${styles.colors.violet};
+    border: 2px dotted ${styles.colors.blue};
+    border-radius: 5px;
+  }
+  .titleText {
+    margin-right: 1em;
+    word-break: break-all;
+  }
+  .titleText:hover {
+    opacity: .8;
+  }
+  .instance .title:before {
+    content: "\\25BE";
+    margin-right: .5em;
+  }
+  .instance.hidesub .title:before {
+    content: "\\25B8"
+    margin-right: .5em;
+  }
+  .instance.hidesub {
+      padding-bottom: 0;
+      margin: 0;
+  }
+  .instance.hidesub > *:not(.title) {
+      display: none;
+  }
+  .copy extends ${styles.button} {
+    border: 1px dotted ${styles.colors.grey};
+    border-radius: 5px;
+    text-align: center;
+    padding: 1em .3em;
+    min-width: 30%;
+  }
+  .copy:hover{
+    background-color: ${styles.colors.lightGrey};
+    opacity: .8;
+  }
+`
+
 ;[...document.querySelectorAll('#header #options li')].forEach(addCss)
 function addCss (el) { el.classList.add(css.options) }
 
@@ -164,20 +240,20 @@ UniversalDApp.prototype.render = function () {
     .append($('<div class="publish"/>').text('Publish'))
     .append($('<div class="attach"/>').text('Attach'))
     .append($('<div class="transact"/>').text('Transact'))
-    .append($('<div class="payable"/>').text('Transact (Payable)'))
+    .append($('<div class="payable"/>').text('Transact(Payable)'))
     .append($('<div class="call"/>').text('Call'))
 
   self.$el.append($legend)
 
   for (var c in self.contracts) {
-    var $contractEl = $('<div class="contract"/>')
+    var $contractEl = $(`<div class="contract ${css.contract}"/>`)
 
     if (self.contracts[c].address) {
       self.getInstanceInterface(self.contracts[c], self.contracts[c].address, $contractEl)
     } else {
-      var $title = $('<span class="title"/>').text(self.contracts[c].name)
+      var $title = $(`<span class="${css.title}"/>`).text(self.contracts[c].name)
+      $title.click(function (ev) { $(this).closest(`.${css.contract}`).toggleClass(`${css.hidesub}`) })
       if (self.contracts[c].bytecode) {
-        $title.addClass('definitionTitle')
         $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'))
       }
       $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]))
@@ -207,7 +283,7 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $createInterface.append($close)
   }
 
-  var $publishButton = $('<button class="publishContract"/>').text('Publish').click(function () { self.event.trigger('publishContract', [contract]) })
+  var $publishButton = $(`<button class="publishContract"/>`).text('Publish').click(function () { self.event.trigger('publishContract', [contract]) })
   $createInterface.append($publishButton)
 
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract) })
@@ -264,7 +340,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
   var $createInterface = $('<div class="createContract"/>')
 
   var appendFunctions = function (address, $el) {
-    var $instance = $('<div class="instance"/>')
+    var $instance = $(`<div class="instance ${cssInstance.instance}"/>`)
     if (self.options.removable_instances) {
       var $close = $('<div class="udapp-close" />')
       $close.click(function () { $instance.remove() })
@@ -273,10 +349,19 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-    var $title = $('<span class="title"/>').text(contract.name + ' at ' + address + ' (' + context + ')')
-    $title.click(function () {
-      $instance.toggleClass('hidesub')
-    })
+    var title = yo`
+      <div class="${cssInstance.title}">
+        <div class="${cssInstance.titleText}" onclick=${toggleClass}> ${contract.name} at ${address} (${context}) </div>
+        <div class="${cssInstance.copy}" onclick=${copyToClipboard}> <i class="fa fa-clipboard" aria-hidden="true"></i> Copy address </div>
+      </div>
+    `
+    function toggleClass () {
+      $instance.toggleClass(`${cssInstance.hidesub}`)
+    }
+
+    function copyToClipboard () {
+      copy(address)
+    }
 
     var $events = $('<div class="events"/>')
 
@@ -336,7 +421,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       var eventFilter = self.web3.eth.contract(abi).at(address).allEvents()
       eventFilter.watch(parseLogs)
     }
-    $instance.append($title)
+    $instance.get(0).appendChild(title)
 
     // Add the fallback function
     var fallback = self.getFallbackInterface(abi)
@@ -615,7 +700,6 @@ UniversalDApp.prototype.getCallButton = function (args) {
         var outputObj = '0x' + result.vm.return.toString('hex')
         clearOutput($result)
         $result.append(getReturnOutput(outputObj)).append(getGasUsedOutput(result, result.vm))
-
         decoded = decodeResponse(result.vm.return)
         if (decoded) {
           $result.append(decoded)

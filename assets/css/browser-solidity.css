@@ -136,11 +136,6 @@ body {
     box-sizing: border-box;
 }
 
-#output {
-    display: block;
-    padding: 1em;
-}
-
 #header {
     font-size: 13px;
     height: 100%;
@@ -166,6 +161,8 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: space-between;
 }
 
 #header #options li.active {
@@ -185,7 +182,6 @@ body {
 
 #header #optionViews > div {
     display: none;
-    padding: .5em .5em .5em;
 }
 
 #header #optionViews.txView #txView {
@@ -198,7 +194,6 @@ body {
 
 #header #optionViews.publishView #publishView {
     display: block;
-    padding: 3em;
 }
 
 #header #optionViews.envView #envView {
@@ -207,7 +202,6 @@ body {
 
 #header #optionViews.debugView #debugView {
     display: block;
-    padding: 3em;
 }
 
 #header #optionViews.verificationView #verificationView {
@@ -216,8 +210,6 @@ body {
 
 #header #optionViews.staticanalysisView #staticanalysisView {
     display: block;
-    padding: 3em;
-    line-height: 1.5em;
 }
 
 #header #optionViews.txView input,
@@ -264,12 +256,12 @@ body {
 #publishView button {
     background-color: #C6CFF7;
     font-size: 12px;
-    padding: 0.25em;
     margin-bottom: .5em;
     color: black;
     border:0 none;
     border-radius: 3px;
     width: 8em;
+    height: 20px;
     margin-right: 1em;
     cursor: pointer;
 }
@@ -303,22 +295,11 @@ body {
     display: block;
 }
 
-#header .origin,
-#header #executionContext {
+#header .origin {
     display: block;
     word-wrap: break-word;
     padding: 1.5em;
     font-weight: bold;
-}
-
-#selectExEnv {
-    text-decoration: none;
-    background-color: #C6CFF7;
-    cursor: pointer;
-    font-size: 12px;
-    color: black;
-    border-radius: 3px;
-    border: 0 none;
 }
 
 #header #versionSelector {
@@ -329,15 +310,6 @@ body {
     color: black;
     border-radius: 3px;
     border: 0 none;
-}
-
-.col1 {
-    width: 30%;
-    float: left;
-}
-.col2 {
-    width: 70%;
-    float: left;
 }
 
 #formalVerificationInput {
@@ -354,18 +326,6 @@ body {
     display: none;
 }
 
-.udapp .contract > .title {
-    cursor:pointer;
-}
-
-.udapp .contract > .title:before {
-    content: "\25BC";
-    opacity: 0.5;
-    margin-right: 0.4em;
-    font-size: 10px;
-    margin-top: 0.2em;
-}
-
 .contract.hidesub > .title:before {
     content: "\25B6";
 }
@@ -380,11 +340,13 @@ body {
     overflow: auto;
     display: block;
     clear: both;
-    margin: 1.5em;
+    margin: .5em .5em 0 .5em;
+    padding: .5em;
     font-weight: bold;
 }
 
 .crow #txorigin {
+    margin-left: 0.5em;
     text-decoration: none;
     background-color: #C6CFF7;
     cursor: pointer;
@@ -412,9 +374,10 @@ body {
     word-wrap: break-word;
     cursor: pointer;
     position: relative;
-    margin: 0.5em;
-    border-radius: 0.6em;
-    padding: 1em 1.5em;
+    margin: 0.5em 0 1em 0;
+    border-radius: 5px;
+    line-height: 20px;
+    padding: 8px 15px;
 }
 
 .sol.error pre,
@@ -438,11 +401,13 @@ body {
 }
 
 .sol.error {
-    background-color: rgba(255, 0, 0, 0.4);
+    background-color: hsla(0, 100%, 75%, 0.1);
+    border: .2em dotted #FF8080;
 }
 
 .sol.warning {
-    background-color: rgba(210, 202, 36, 0.4);
+    background-color: hsla(59, 56%, 78%, 0.5);
+    border: .2em dotted #ffbd01;
 }
 
 #ghostbar {
@@ -465,7 +430,7 @@ body {
     bottom: 0;
     cursor: col-resize;
     z-index: 999;
-    border-right: 2px solid #C6CFF7;
+    border-right: 2px solid hsla(215, 81%, 79%, .3);
 }
 
 #editor .ace-tm .ace_gutter,
@@ -475,11 +440,10 @@ body {
 }
 
 input[readonly] {
-    padding: .4em;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
     display: block;
     width: 100%;
+    height: 7px;
+    padding: .8em;
 }
 
 input[type="file"] {

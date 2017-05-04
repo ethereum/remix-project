@@ -7,8 +7,10 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .analysis {
-    margin-top: 2em;
     font-height: 1.5em;
+  }
+  .result {
+    margin-top: 1em;
   }
 `
 
@@ -33,17 +35,19 @@ function staticAnalysisView (appAPI, compilerEvent) {
 
 staticAnalysisView.prototype.render = function () {
   var self = this
-  var view = yo`<div class="${css.analysis}">
-    <strong>Static Analysis</strong>
-    <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
-    <div id="staticanalysismodules">
-    ${this.modulesView}
+  var view = yo`
+    <div class="${css.analysis}">
+      <strong class="${css.title}">Static Analysis</strong><br>
+      <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
+      <div id="staticanalysismodules">
+      ${this.modulesView}
+      </div>
+      <div>
+        <button onclick=${function () { self.run() }} >Run</button>
+      </div>
+      <div class="${css.result}" "id='staticanalysisresult'></div>
     </div>
-    <div>
-      <button onclick=${function () { self.run() }} >Run</button>
-    </div>
-    <div id='staticanalysisresult'></div>
-    </div>`
+  `
   if (!this.view) {
     this.view = view
   }

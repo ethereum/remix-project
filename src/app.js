@@ -29,6 +29,29 @@ var FilePanel = require('./app/file-panel')
 
 var examples = require('./app/example-contracts')
 
+var contractTab = require('./app/contract-tab.js')
+var settingsTab = require('./app/settings-tab.js')
+var analysisTab = require('./app/analysis-tab.js')
+var debuggerTab = require('./app/debugger-tab.js')
+var filesTab = require('./app/files-tab.js')
+/* ----------------------------------------------
+        TABS - Righthand pannel
+---------------------------------------------- */
+var contractView = contractTab()
+document.querySelector('#optionViews').appendChild(contractView)
+
+var settingsView = settingsTab()
+document.querySelector('#optionViews').appendChild(settingsView)
+
+var analysisView = analysisTab()
+document.querySelector('#optionViews').appendChild(analysisView)
+
+var debuggerView = debuggerTab()
+document.querySelector('#optionViews').appendChild(debuggerView)
+
+var filesView = filesTab()
+document.querySelector('#optionViews').appendChild(filesView)
+
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
 var filesToLoad = null
@@ -406,12 +429,6 @@ var run = function () {
     return $filesEl.position().left
   }
 
-  function activeFilePos () {
-    var el = $filesEl.find('.active')
-    var l = el.position().left
-    return l
-  }
-
   function reAdjust () {
     if (widthOfList() + getLeftPosi() > widthOfVisible()) {
       $scrollerRight.fadeIn('fast')
@@ -785,7 +802,8 @@ var run = function () {
     }
   }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
-  $('#staticanalysisView').append(staticanalysis.render())
+  var node = document.getElementById('staticanalysisView')
+  node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
@@ -876,7 +894,7 @@ var run = function () {
   })
 
   compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
-    setVersionText(usingWorker ? '(loading using worker)' : '( Loading... Please, wait a moment. )')
+    setVersionText(usingWorker ? '(loading using worker)' : ' Loading... please, wait a moment! ')
   })
 
   compiler.event.register('compilerLoaded', this, function (version) {
@@ -956,7 +974,7 @@ var run = function () {
     loadVersion($('#versionSelector').val())
   })
 
-  var header = new Option('Click to select new compiler version')
+  var header = new Option('Select new compiler version')
   header.disabled = true
   header.selected = true
   $('#versionSelector').append(header)
