@@ -240,7 +240,7 @@ UniversalDApp.prototype.render = function () {
     .append($('<div class="publish"/>').text('Publish'))
     .append($('<div class="attach"/>').text('Attach'))
     .append($('<div class="transact"/>').text('Transact'))
-    .append($('<div class="payable"/>').text('T/Payable'))
+    .append($('<div class="payable"/>').text('Transact(Payable)'))
     .append($('<div class="call"/>').text('Call'))
 
   self.$el.append($legend)
