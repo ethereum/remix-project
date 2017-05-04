@@ -601,11 +601,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
         replaceOutput($result, $('<span/>').text(err).addClass('error'))
       // VM only
       } else if (self.executionContext.isVM() && result.vm.exception === 0 && result.vm.exceptionError) {
-        replaceOutput($result, $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error'))
+        replaceOutput($result, $('<span/>').text('Exception during execution. (' + result.vm.exceptionError + '). Please debug the transaction for more information.').addClass('error'))
         $result.append(getDebugTransaction(txResult))
       // VM only
       } else if (self.executionContext.isVM() && result.vm.return === undefined) {
-        replaceOutput($result, $('<span/>').text('Exception during execution.').addClass('error'))
+        replaceOutput($result, $('<span/>').text('Exception during execution. Please debug the transaction for more information.').addClass('error'))
         $result.append(getDebugTransaction(txResult))
       } else if (isConstructor) {
         replaceOutput($result, getGasUsedOutput(result, result.vm))
