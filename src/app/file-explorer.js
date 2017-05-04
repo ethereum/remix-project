@@ -25,6 +25,7 @@ var css = csjs`
   }
   .activeMode         {
     display           : flex;
+    justify-content   : space-between;
     margin-right      : 10px;
     padding-right     : 19px;
   }
