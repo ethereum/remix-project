@@ -826,7 +826,7 @@ var run = function () {
 
   function editorSyncFile () {
     var currentFile = config.get('currentFile')
-    if (currentFile) {
+    if (currentFile && editor.current()) {
       var input = editor.get(currentFile)
       files.set(currentFile, input)
     }
