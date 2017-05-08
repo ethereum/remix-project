@@ -165,7 +165,6 @@ function filepanel (appAPI, files) {
     document.removeEventListener('keydown', cancelGhostbar)
     var width = (event.pageX < limit) ? limit : event.pageX
     element.style.width = width + 'px'
-    // Please change this to something like 'ui-resize'
     events.trigger('ui-resize', [width])
   }
 
