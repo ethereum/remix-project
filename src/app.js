@@ -84,7 +84,7 @@ var run = function () {
     while (files.exists(path + counter)) {
       counter = (counter | 0) + 1
     }
-    return path + counter
+    return path + counter + '.sol'
   }
 
   // Add files received from remote instance (i.e. another browser-solidity)
