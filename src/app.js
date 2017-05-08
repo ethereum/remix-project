@@ -379,7 +379,12 @@ var run = function () {
     }
   }
 
-  switchToNextFile()
+  var previouslyOpenedFile = config.get('currentFile')
+  if (previouslyOpenedFile && files.get(previouslyOpenedFile)) {
+    switchToFile(previouslyOpenedFile)
+  } else {
+    switchToNextFile()
+  }
 
   // Synchronise tab list with file names known to the editor
   function refreshTabs () {
