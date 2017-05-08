@@ -126,8 +126,7 @@ function filepanel (appAPI, files) {
   }
 
   function uploadFile (event) {
-    // TODO This should not go to the file explorer.
-    // The file explorer is merely a view on the current state of
+    // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
