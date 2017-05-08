@@ -33,13 +33,13 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.envView')
-  contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:TooMuchGas', 'Untitled:test1', 'Untitled:test2'], function () {
+  contractHelper.testContracts(browser, sources.sources['Untitled.sol'], ['Untitled.sol:TooMuchGas', 'Untitled.sol:test1', 'Untitled.sol:test2'], function () {
     browser
       .click('.staticanalysisView')
       .click('#staticanalysisView button')
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
-        dom.listSelectorContains(['Untitled:2:33: use of tx.origin',
-          'Fallback function of contract Untitled:TooMuchGas requires too much gas'],
+        dom.listSelectorContains(['Untitled.sol:2:33: use of tx.origin',
+          'Fallback function of contract Untitled.sol:TooMuchGas requires too much gas'],
           '#staticanalysisresult .warning span',
           browser, function () {
             browser.end()

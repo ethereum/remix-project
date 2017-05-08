@@ -27,7 +27,7 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.envView')
-  contractHelper.testContracts(browser, sources.sources.Untitled, ['Untitled:TestContract'], function () {
+  contractHelper.testContracts(browser, sources.sources['Untitled.sol'], ['Untitled.sol:TestContract'], function () {
     browser.click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
       .click('.instance .call[title="f"]')
