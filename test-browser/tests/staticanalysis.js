@@ -6,7 +6,7 @@ var dom = require('../helpers/dom')
 
 var sources = {
   'sources': {
-    'Untitled': `
+    'Untitled.sol': `
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {

@@ -6,7 +6,7 @@ var sauce = require('./sauce')
 
 var sources = {
   'sources': {
-    'Untitled': examples.ballot.content
+    'Untitled.sol': examples.ballot.content
   }
 }
 

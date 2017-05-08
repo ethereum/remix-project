@@ -5,7 +5,7 @@ var sauce = require('./sauce')
 
 var sources = {
   'sources': {
-    'Untitled': `pragma solidity ^0.4.0;
+    'Untitled.sol': `pragma solidity ^0.4.0;
       contract TestContract { function f() returns (uint) { return 8; } }`
   }
 }
