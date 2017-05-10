@@ -9,11 +9,36 @@ function abstractAstView () {
   this.isFunctionNotModifier = false
 }
 
+/**
+ * Builds a higher level AST view. I creates a list with each contract as an object in it.
+ * Example contractsOut:
+ *
+ * {
+ *  "node": {},                     // actual AST Node of the contract
+ *  "functions": [
+ *    {
+ *      "node": {},                // actual AST Node of the function
+ *      "relevantNodes": [],       // AST nodes in the function that are relevant for the anlysis of this function
+ *      "modifierInvocations": [], // Modifier invocation AST nodes that are applied on this function
+ *      "localVariables": [],      // Local variable declaration nodes
+ *      "parameters": []           // Parameter types of the function in order of definition
+ *    }
+ *  ],
+ *  "modifiers": [],              // Modifiers definded by the contract, format similar to functions
+ *  "inheritsFrom": [],           // Names of contract this one inherits from in order of definition
+ *  "stateVariables": []          // AST nodes of all State variables
+ * }
+ *
+ * @relevantNodeFilter {ASTNode -> bool} function that selects relevant ast nodes for analysis on function level.
+ * @contractsOut {list} return list for high level AST view
+ * @return {ASTNode -> void} returns a function that can be used as visit function for static analysis modules, to build up a higher level AST view for further analysis.
+ */
 abstractAstView.prototype.builder = function (relevantNodeFilter, contractsOut) {
   this.contracts = contractsOut
+  var that = this
   return function (node) {
     if (common.isContractDefinition(node)) {
-      setCurrentContract(this, {
+      setCurrentContract(that, {
         node: node,
         functions: [],
         modifiers: [],
@@ -21,14 +46,14 @@ abstractAstView.prototype.builder = function (relevantNodeFilter, contractsOut) 
         stateVariables: common.getStateVariableDeclarationsFormContractNode(node)
       })
     } else if (common.isInheritanceSpecifier(node)) {
-      var currentContract = getCurrentContract(this)
+      var currentContract = getCurrentContract(that)
       var inheritsFromName = common.getInheritsFromName(node)
       currentContract.inheritsFrom.push(inheritsFromName)
       // add variables from inherited contracts
-      var inheritsFrom = this.contracts.find((contract) => common.getContractName(contract.node) === inheritsFromName)
+      var inheritsFrom = that.contracts.find((contract) => common.getContractName(contract.node) === inheritsFromName)
       currentContract.stateVariables = currentContract.stateVariables.concat(inheritsFrom.stateVariables)
     } else if (common.isFunctionDefinition(node)) {
-      setCurrentFunction(this, {
+      setCurrentFunction(that, {
         node: node,
         relevantNodes: [],
         modifierInvocations: [],
@@ -36,17 +61,17 @@ abstractAstView.prototype.builder = function (relevantNodeFilter, contractsOut) 
         parameters: getLocalParameters(node)
       })
     } else if (common.isModifierDefinition(node)) {
-      setCurrentModifier(this, {
+      setCurrentModifier(that, {
         node: node,
         relevantNodes: [],
         localVariables: getLocalVariables(node),
         parameters: getLocalParameters(node)
       })
     } else if (common.isModifierInvocation(node)) {
-      if (!this.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
-      getCurrentFunction(this).modifierInvocations.push(node)
+      if (!that.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
+      getCurrentFunction(that).modifierInvocations.push(node)
     } else if (relevantNodeFilter(node)) {
-      ((this.isFunctionNotModifier) ? getCurrentFunction(this) : getCurrentModifier(this)).relevantNodes.push(node)
+      ((that.isFunctionNotModifier) ? getCurrentFunction(that) : getCurrentModifier(that)).relevantNodes.push(node)
     }
   }
 }

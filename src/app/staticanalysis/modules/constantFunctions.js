@@ -2,15 +2,16 @@ var name = 'Constant functions'
 var desc = 'Check for potentially constant functions'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
-var callGraph = require('./functionCallGraph')
+var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
 
 function constantFunctions () {
   this.contracts = []
+  var that = this
 
   constantFunctions.prototype.visit = new AbstractAst().builder(
     (node) => common.isLowLevelCall(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node),
-    this.contracts
+    that.contracts
   )
 }
 
@@ -18,17 +19,15 @@ constantFunctions.prototype.report = function (compilationResults) {
   var warnings = []
   var hasModifiers = this.contracts.some((item) => item.modifiers.length > 0)
 
-  var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
+  var callGraph = fcallGraph.buildGlobalFuncCallGraph(this.contracts)
 
   this.contracts.forEach((contract) => {
-    if (!common.isFullyImplementedContract(contract.node)) return
-
     contract.functions.forEach((func) => {
       func.potentiallyshouldBeConst = checkIfShouldBeConstant(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
-                                                              getContext(cg, contract, func))
+                                                              getContext(callGraph, contract, func))
     })
 
-    contract.functions.forEach((func) => {
+    contract.functions.filter((func) => common.hasFunctionBody(func.node)).forEach((func) => {
       if (common.isConstantFunction(func.node) !== func.potentiallyshouldBeConst) {
         var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
         var comments = (hasModifiers) ? '<br/><i>Note:</i>Modifiers are currently not considered by the this static analysis.' : ''
@@ -52,8 +51,8 @@ constantFunctions.prototype.report = function (compilationResults) {
   return warnings
 }
 
-function getContext (cg, currentContract, func) {
-  return { cg: cg, currentContract: currentContract, stateVariables: getStateVariables(currentContract, func) }
+function getContext (callGraph, currentContract, func) {
+  return { callGraph: callGraph, currentContract: currentContract, stateVariables: getStateVariables(currentContract, func) }
 }
 
 function getStateVariables (contract, func) {
@@ -61,7 +60,7 @@ function getStateVariables (contract, func) {
 }
 
 function checkIfShouldBeConstant (startFuncName, context) {
-  return !callGraph.analyseCallGraph(context.cg, startFuncName, context, isConstBreaker)
+  return !fcallGraph.analyseCallGraph(context.callGraph, startFuncName, context, isConstBreaker)
 }
 
 function isConstBreaker (node, context) {
@@ -74,7 +73,7 @@ function isConstBreaker (node, context) {
 
 function isCallOnNonConstExternalInterfaceFunction (node, context) {
   if (common.isExternalDirectCall(node)) {
-    var func = callGraph.resolveCallGraphSymbol(context.cg, common.getFullQualifiedFunctionCallIdent(context.currentContract, node))
+    var func = fcallGraph.resolveCallGraphSymbol(context.callGraph, common.getFullQualifiedFunctionCallIdent(context.currentContract, node))
     return !func || (func && !common.isConstantFunction(func.node.node))
   }
   return false

@@ -2,15 +2,16 @@ var name = 'Checks-Effects-Interaction pattern'
 var desc = 'Avoid potential reentrancy bugs'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
-var callGraph = require('./functionCallGraph')
+var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
 
 function checksEffectsInteraction () {
   this.contracts = []
+  var that = this
 
   checksEffectsInteraction.prototype.visit = new AbstractAst().builder(
     (node) => common.isInteraction(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node),
-    this.contracts
+    that.contracts
   )
 }
 
@@ -18,16 +19,16 @@ checksEffectsInteraction.prototype.report = function (compilationResults) {
   var warnings = []
   var hasModifiers = this.contracts.some((item) => item.modifiers.length > 0)
 
-  var cg = callGraph.buildGlobalFuncCallGraph(this.contracts)
+  var callGraph = fcallGraph.buildGlobalFuncCallGraph(this.contracts)
 
   this.contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
       func.changesState = checkIfChangesState(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
-                                                                                  getContext(cg, contract, func))
+                                                                                  getContext(callGraph, contract, func))
     })
 
     contract.functions.forEach((func) => {
-      if (isPotentialVulnerableFunction(func, getContext(cg, contract, func))) {
+      if (isPotentialVulnerableFunction(func, getContext(callGraph, contract, func))) {
         var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
         var comments = (hasModifiers) ? '<br/><i>Note:</i>Modifiers are currently not considered by the this static analysis.' : ''
         warnings.push({
@@ -42,8 +43,8 @@ checksEffectsInteraction.prototype.report = function (compilationResults) {
   return warnings
 }
 
-function getContext (cg, currentContract, func) {
-  return { cg: cg, currentContract: currentContract, stateVariables: getStateVariables(currentContract, func) }
+function getContext (callGraph, currentContract, func) {
+  return { callGraph: callGraph, currentContract: currentContract, stateVariables: getStateVariables(currentContract, func) }
 }
 
 function getStateVariables (contract, func) {
@@ -65,14 +66,14 @@ function isPotentialVulnerableFunction (func, context) {
 
 function isLocalCallWithStateChange (node, context) {
   if (common.isLocalCallGraphRelevantNode(node)) {
-    var func = callGraph.resolveCallGraphSymbol(context.cg, common.getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
+    var func = fcallGraph.resolveCallGraphSymbol(context.callGraph, common.getFullQualifiedFunctionCallIdent(context.currentContract.node, node))
     return !func || (func && func.node.changesState)
   }
   return false
 }
 
 function checkIfChangesState (startFuncName, context) {
-  return callGraph.analyseCallGraph(context.cg, startFuncName, context, (node, context) => common.isWriteOnStateVariable(node, context.stateVariables))
+  return fcallGraph.analyseCallGraph(context.callGraph, startFuncName, context, (node, context) => common.isWriteOnStateVariable(node, context.stateVariables))
 }
 
 module.exports = {
