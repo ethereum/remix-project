@@ -20,12 +20,9 @@ var css = csjs`
     background-color  : white;
   }
   .remove             {
-    align-self        : center;
-    padding-left      : 10px;
+    float             : right;
   }
   .activeMode         {
-    display           : flex;
-    justify-content   : space-between;
     margin-right      : 10px;
     padding-right     : 19px;
   }
@@ -70,9 +67,9 @@ function fileExplorer (appAPI, files) {
   })
 
   var deleteButton = yo`
-    <span class=${css.remove} onclick=${deletePath}>
+    <div class=${css.remove} onclick=${deletePath}>
       <i class="fa fa-trash" aria-hidden="true"></i>
-    </span>
+    </div>
   `
 
   appAPI.event.register('currentFileChanged', (newFile) => {
