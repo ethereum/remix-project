@@ -11,18 +11,15 @@ function tabbedMenu (compiler, loadingSpinner, self) {
   // initialize tabbed menu
   selectTab($('#options .envView'))
 
+  function cb (finish) {
+    compiler.event.register('compilerLoaded', finish)
+  }
   // add event listeners for loading spinner
-  // compiler.event.register('compilationStarted', function compilationStarted () {
   compiler.event.register('loadingCompiler', function compilationStarted () {
     var contractTab = document.querySelector('.envView')
     if (!contractTab.children.length) {
-      contractTab.appendChild(loadingSpinner(function cb (finish) {
-        // compiler.event.register('compilationFinished', function () {
-        compiler.event.register('compilerLoaded', finish)
-      }))
+      contractTab.appendChild(loadingSpinner(cb))
     }
-  })
-  compiler.event.register('loadingCompiler', function loadingCompiler () {
     var settingsTab = document.querySelector('.settingsView')
     if (!settingsTab.children.length) {
       settingsTab.appendChild(loadingSpinner(function cb (finish) {
