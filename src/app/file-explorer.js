@@ -67,9 +67,9 @@ function fileExplorer (appAPI, files) {
   })
 
   var deleteButton = yo`
-    <div class=${css.remove} onclick=${deletePath}>
+    <span class=${css.remove} onclick=${deletePath}>
       <i class="fa fa-trash" aria-hidden="true"></i>
-    </div>
+    </span>
   `
 
   appAPI.event.register('currentFileChanged', (newFile) => {
