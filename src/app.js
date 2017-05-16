@@ -181,13 +181,13 @@ var run = function () {
   // app.js provides file-panel.js with a css selector or a DOM element
   // and file-panel.js adds its elements (including css), see "Editor" above
   var css = csjs`
-    .filepanel    {
+    .filepanel-container    {
       display     : flex;
       width       : 200px;
     }
   `
   var filepanelContainer = document.querySelector('#filepanel')
-  filepanelContainer.className = css.filepanel
+  filepanelContainer.className = css['filepanel-container']
   var FilePanelAPI = {
     createName: createNonClashingName,
     switchToFile: switchToFile,
