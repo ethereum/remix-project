@@ -45,7 +45,7 @@ class TreeView {
   }
 
   formatData (key, data, children, expand, keyPath) {
-    var label = yo`<span style=${this.cssLabel}><label style=${ui.formatCss(style.caret)}></label><span style=${ui.formatCss(style.data)}>${this.formatSelf(key, data)}</span></span>`
+    var label = yo`<div style=${this.cssLabel}><div class="fa fa-caret-right" style=${ui.formatCss(style.caret)}></div><span style=${ui.formatCss(style.data)}>${this.formatSelf(key, data)}</span></div>`
     var renderedChildren = ''
     if (children.length) {
       renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
@@ -59,7 +59,7 @@ class TreeView {
         self.nodeIsExpanded[keyPath] = list.style.display === 'block'
       }
     } else {
-      label.firstElementChild.style.display = 'none'
+      label.firstElementChild.style.visibility = 'hidden'
     }
     return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
   }

@@ -22,9 +22,9 @@ module.exports = {
     'font-family': 'arial,sans-serif'
   },
   caret: {
-    'margin-top': '3px'
+    'margin-top': '3px',
+    'width': '10px'
   },
   data: {
-    'margin-left': '10px'
   }
 }
