@@ -6,10 +6,11 @@
   "devDependencies": {
     "async": "^2.1.2",
     "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-plugin-yo-yoify": "^0.3.3",
     "babel-polyfill": "^6.22.0",
-    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-0": "^6.24.1",
     "babelify": "^7.3.0",
     "brace": "^0.8.0",
     "browserify-reload": "^1.0.3",
