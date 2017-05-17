@@ -1,8 +1,19 @@
 var $ = require('jquery')
+var yo = require('yo-yo')
+var csjs = require('csjs-inject')
+var styleGuide = require('./style-guide')
+var styles = styleGuide()
 
 module.exports = tabbedMenu
 
 function tabbedMenu (compiler, loadingSpinner, self) {
+
+  var css = csjs`
+    .loadingMsg extends ${styles.warningTextBox} {
+      display: block;
+    }
+  `
+
   $('#options li').click(function (ev) {
     var $el = $(this)
     selectTab($el)
@@ -18,7 +29,9 @@ function tabbedMenu (compiler, loadingSpinner, self) {
   compiler.event.register('loadingCompiler', function compilationStarted () {
     var contractTab = document.querySelector('.envView')
     if (!contractTab.children.length) {
-      contractTab.appendChild(loadingSpinner(cb))
+      var el = document.querySelector('[class^=contractTabView]')
+      var loadingMsg = yo`<div class=${css.loadingMsg}>Solidity compiler is currently loading. Please wait a moment...</div>`
+      el.appendChild(loadingMsg)
     }
     var settingsTab = document.querySelector('.settingsView')
     if (!settingsTab.children.length) {
