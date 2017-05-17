@@ -17,7 +17,8 @@ var nodeTypes = {
   INHERITANCESPECIFIER: 'InheritanceSpecifier',
   USERDEFINEDTYPENAME: 'UserDefinedTypeName',
   INLINEASSEMBLY: 'InlineAssembly',
-  BLOCK: 'Block'
+  BLOCK: 'Block',
+  NEWEXPRESSION: 'NewExpression'
 }
 
 var basicTypes = {
@@ -40,7 +41,8 @@ var basicRegex = {
 var basicFunctionTypes = {
   SEND: buildFunctionSignature([basicTypes.UINT], [basicTypes.BOOL], false),
   CALL: buildFunctionSignature([], [basicTypes.BOOL], true),
-  DELEGATECALL: buildFunctionSignature([], [basicTypes.BOOL], false)
+  DELEGATECALL: buildFunctionSignature([], [basicTypes.BOOL], false),
+  TRANSFER: buildFunctionSignature([basicTypes.UINT], [], false)
 }
 
 var builtinFunctions = {
@@ -60,7 +62,8 @@ var lowLevelCallTypes = {
   CALL: { ident: 'call', type: basicFunctionTypes.CALL },
   CALLCODE: { ident: 'callcode', type: basicFunctionTypes.CALL },
   DELEGATECALL: { ident: 'delegatecall', type: basicFunctionTypes.DELEGATECALL },
-  SEND: { ident: 'send', type: basicFunctionTypes.SEND }
+  SEND: { ident: 'send', type: basicFunctionTypes.SEND },
+  TRANSFER: { ident: 'transfer', type: basicFunctionTypes.TRANSFER }
 }
 
 var specialVariables = {
@@ -351,6 +354,10 @@ function isInlineAssembly (node) {
   return nodeType(node, exactMatch(nodeTypes.INLINEASSEMBLY))
 }
 
+function isNewExpression (node) {
+  return nodeType(node, exactMatch(nodeTypes.NEWEXPRESSION))
+}
+
 // #################### Complex Node Identification
 
 /**
@@ -616,6 +623,17 @@ function isLLDelegatecall (node) {
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.DELEGATECALL.ident))
 }
 
+/**
+ * True if transfer call
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isTransfer (node) {
+  return isMemberAccess(node,
+          exactMatch(utils.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
+          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
+}
+
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node, retType, accessor, accessorType, memberName) {
@@ -733,6 +751,7 @@ module.exports = {
   isLocalCall: isLocalCall,
   isWriteOnStateVariable: isWriteOnStateVariable,
   isStateVariable: isStateVariable,
+  isTransfer: isTransfer,
   isLowLevelCall: isLowLevelCall,
   isLowLevelCallInst: isLLCall,
   isLowLevelCallcodeInst: isLLCallcode,
@@ -757,6 +776,7 @@ module.exports = {
   isContractDefinition: isContractDefinition,
   isConstantFunction: isConstantFunction,
   isInlineAssembly: isInlineAssembly,
+  isNewExpression: isNewExpression,
 
   // #################### Constants
   nodeTypes: nodeTypes,

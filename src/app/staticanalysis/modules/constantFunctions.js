@@ -10,7 +10,7 @@ function constantFunctions () {
   var that = this
 
   constantFunctions.prototype.visit = new AbstractAst().builder(
-    (node) => common.isLowLevelCall(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node),
+    (node) => common.isLowLevelCall(node) || common.isTransfer(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node) || common.isNewExpression(node),
     that.contracts
   )
 }
@@ -66,9 +66,11 @@ function checkIfShouldBeConstant (startFuncName, context) {
 function isConstBreaker (node, context) {
   return common.isWriteOnStateVariable(node, context.stateVariables) ||
         common.isLowLevelCall(node) ||
+        common.isTransfer(node) ||
         isCallOnNonConstExternalInterfaceFunction(node, context) ||
         common.isCallToNonConstLocalFunction(node) ||
-        common.isInlineAssembly(node)
+        common.isInlineAssembly(node) ||
+        common.isNewExpression(node)
 }
 
 function isCallOnNonConstExternalInterfaceFunction (node, context) {
