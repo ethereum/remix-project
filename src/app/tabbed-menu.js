@@ -22,20 +22,23 @@ function tabbedMenu (compiler, loadingSpinner, self) {
   // initialize tabbed menu
   selectTab($('#options .envView'))
 
-  function cb (finish) {
-    compiler.event.register('compilerLoaded', finish)
-  }
   // add event listeners for loading spinner
-  compiler.event.register('loadingCompiler', function compilationStarted () {
-    var contractTab = document.querySelector('.envView')
-    if (!contractTab.children.length) {
-      var el = document.querySelector('[class^=contractTabView]')
-      var loadingMsg = yo`<div class=${css.loadingMsg}>Solidity compiler is currently loading. Please wait a moment...</div>`
-      el.appendChild(loadingMsg)
-    }
+  compiler.event.register('loadingCompiler', function start () {
     var settingsTab = document.querySelector('.settingsView')
-    if (!settingsTab.children.length) {
-      settingsTab.appendChild(loadingSpinner(cb))
+    if (settingsTab.children.length) return
+
+    var contractTabView = document.querySelector('[class^=contractTabView]')
+
+    var loadingMsg = yo`<div class=${css.loadingMsg}>Solidity compiler is currently loading. Please wait a moment...</div>`
+    var spinner = loadingSpinner()
+    settingsTab.appendChild(spinner)
+    contractTabView.appendChild(loadingMsg)
+
+    compiler.event.register('compilerLoaded', finish)
+    function finish () {
+      compiler.event.unregister('compilerLoaded', finish)
+      contractTabView.removeChild(loadingMsg)
+      settingsTab.removeChild(spinner)
     }
   })
 

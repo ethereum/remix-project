@@ -1,8 +1,6 @@
 var yo = require('yo-yo')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
-var styles = styleGuide()
 
 module.exports = loadingSpinner
 
@@ -22,16 +20,7 @@ var css = csjs`
       100% { transform: rotate(360deg); }
   }
 `
-function loadingSpinner (cb) {
+function loadingSpinner () {
   var el = yo`<div class=${css.loader}></div>`
-  if (cb) {
-    cb(function finish () {
-      var p = el.parentElement
-      if (p) p.removeChild(el)
-      var node = document.querySelector('[class^=contractTabView]')
-      var loadingMsg = document.querySelector('[class^=loadingMsg]')
-      node.removeChild(loadingMsg)
-    })
-  }
   return el
 }
