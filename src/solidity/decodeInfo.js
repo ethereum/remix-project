@@ -190,7 +190,7 @@ function struct (type, stateDefinitions, contractName, location) {
     if (!location) {
       location = match[2].trim()
     }
-    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
+    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
     if (!memberDetails) return null
     return new StructType(memberDetails, location, match[1])
   } else {
@@ -233,7 +233,7 @@ function getEnum (type, stateDefinitions, contractName) {
   * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Array} containing all members of the current struct type
   */
-function getStructMembers (type, stateDefinitions, contractName) {
+function getStructMembers (type, stateDefinitions, contractName, location) {
   var split = type.split('.')
   if (!split.length) {
     type = contractName + '.' + type

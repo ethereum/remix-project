@@ -1,6 +1,5 @@
 'use strict'
 var helper = require('../helpers/util')
-var ethutil = require('ethereumjs-util')
 
 function TraceCache () {
   this.init()
@@ -21,9 +20,6 @@ TraceCache.prototype.init = function () {
   this.memoryChanges = []
   this.storageChanges = []
   this.sstore = {} // all sstore occurence in the trace
-  if (!this.sha3Preimages) { // need to accumulate the preimages over multiple tx's, so dont clear
-    this.sha3Preimages = {}
-  }
 }
 
 TraceCache.prototype.pushSteps = function (index, currentCallIndex) {
@@ -94,16 +90,6 @@ TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {
     'hashedKey': helper.sha3_256(key)
   }
   this.storageChanges.push(index)
-}
-
-TraceCache.prototype.pushSha3Preimage = function (sha3Input, address) {
-  console.log('pushSha3Preimage sha3Input:', sha3Input)
-  var preimage = sha3Input
-  var imageHash = ethutil.sha3('0x' + sha3Input).toString('hex')
-  this.sha3Preimages[imageHash] = {
-    'address': address,
-    'preimage': preimage
-  }
 }
 
 TraceCache.prototype.accumulateStorageChanges = function (index, address, storage) {

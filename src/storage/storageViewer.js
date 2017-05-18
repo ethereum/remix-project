@@ -1,10 +1,15 @@
 'use strict'
 var helper = require('../helpers/util')
+var mappingPreimagesExtractor = require('./mappingPreimages')
 
 class StorageViewer {
   constructor (_context, _storageResolver, _traceManager) {
     this.context = _context
     this.storageResolver = _storageResolver
+    // contains [mappingSlot][mappingkey] = preimage
+    // this map is renewed for each execution step
+    // this map is shared among all the mapping types
+    this.mappingsPreimages = null
     _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {}, (error, storageChanges) => {
       if (!error) {
         this.storageChanges = storageChanges
@@ -57,6 +62,13 @@ class StorageViewer {
     */
   isComplete (address) {
     return this.storageResolver.isComplete(address)
+  }
+
+  async mappingPreimages () {
+    if (!this.mappingsPreimages) {
+      this.mappingsPreimages = await mappingPreimagesExtractor.extractMappingPreimages(this)
+    }
+    return this.mappingsPreimages
   }
 }
 

@@ -1,5 +1,6 @@
 'use strict'
 var RefType = require('./RefType')
+var util = require('./util')
 var ethutil = require('ethereumjs-util')
 
 class Mapping extends RefType {
@@ -9,22 +10,26 @@ class Mapping extends RefType {
     this.valueType = underlyingTypes.valueType
   }
 
-  setMappingElements (mappingKeyPreimages) {
-    this.preimages = mappingKeyPreimages
-  }
-
   async decodeFromStorage (location, storageResolver) {
-    // location.offset should always be 0 for a mapping (?? double check)
-
+    try {
+      var mappingsPreimages = await storageResolver.mappingPreimages()
+    } catch (e) {
+      return {
+        value: '<error> ' + e.message,
+        type: this.type
+      }
+    }
+    var mapSlot = util.toBN(location.slot).toString(16)
+    mapSlot = ethutil.setLengthLeft('0x' + mapSlot, 32).toString('hex')
+    var mappingPreimages = mappingsPreimages[mapSlot]
     var ret = {}
-    for (var i in this.preimages) {
-      var preimage = this.preimages[i]
-      var mapLocation = getMappingLocation(preimage, location.slot)
+    for (var i in mappingPreimages) {
+      var mapLocation = getMappingLocation(i, location.slot)
       var globalLocation = {
         offset: location.offset,
         slot: mapLocation
       }
-      ret[preimage] = await this.valueType.decodeFromStorage(globalLocation, storageResolver)
+      ret[i] = await this.valueType.decodeFromStorage(globalLocation, storageResolver)
     }
 
     return {

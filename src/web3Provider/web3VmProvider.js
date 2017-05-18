@@ -1,6 +1,7 @@
 var util = require('../helpers/util')
 var uiutil = require('../helpers/ui')
 var traceHelper = require('../helpers/traceHelper')
+var ethutil = require('ethereumjs-util')
 var Web3 = require('web3')
 
 function web3VmProvider () {
@@ -22,9 +23,11 @@ function web3VmProvider () {
   this.eth.getBlockNumber = function (cb) { return self.getBlockNumber(cb) }
   this.debug.traceTransaction = function (hash, options, cb) { return self.traceTransaction(hash, options, cb) }
   this.debug.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { return self.storageRangeAt(blockNumber, txIndex, address, start, end, maxLength, cb) }
+  this.debug.preimage = function (hashedKey, cb) { return self.preimage(hashedKey, cb) }
   this.providers = { 'HttpProvider': function (url) {} }
   this.currentProvider = {'host': 'vm provider'}
   this.storageCache = {}
+  this.sha3Preimages = {}
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
@@ -128,6 +131,10 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
       }
     }
   }
+  if (traceHelper.isSHA3Instruction(step)) {
+    var sha3Input = getSha3Input(step.stack, step.memory)
+    pushSha3Preimage(this, sha3Input)
+  }
   this.processingIndex++
   this.previousDepth = depth
 }
@@ -187,6 +194,31 @@ web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txInde
   if (cb) {
     cb(mes, null)
   }
+}
+
+web3VmProvider.prototype.preimage = function (hashedKey, cb) {
+  hashedKey = hashedKey.replace('0x', '')
+  cb(null, this.sha3Preimages[hashedKey] !== undefined ? this.sha3Preimages[hashedKey].preimage : null)
+}
+
+function pushSha3Preimage (self, sha3Input) {
+  var preimage = sha3Input
+  var imageHash = ethutil.sha3('0x' + sha3Input).toString('hex')
+  self.sha3Preimages[imageHash] = {
+    'preimage': preimage
+  }
+}
+
+function getSha3Input (stack, memory) {
+  var memoryStart = stack[stack.length - 1]
+  var memoryLength = stack[stack.length - 2]
+  var memStartDec = (new ethutil.BN(memoryStart.replace('0x', ''), 16)).toString(10)
+  memoryStart = parseInt(memStartDec) * 2
+  var memLengthDec = (new ethutil.BN(memoryLength.replace('0x', ''), 16).toString(10))
+  memoryLength = parseInt(memLengthDec) * 2
+  var memoryHex = memory.join('')
+  var sha3Input = memoryHex.substr(memoryStart, memoryLength)
+  return sha3Input
 }
 
 module.exports = web3VmProvider
