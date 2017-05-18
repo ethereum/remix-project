@@ -35,9 +35,7 @@ function tabbedMenu (compiler, loadingSpinner, self) {
     }
     var settingsTab = document.querySelector('.settingsView')
     if (!settingsTab.children.length) {
-      settingsTab.appendChild(loadingSpinner(function cb (finish) {
-        compiler.event.register('compilerLoaded', finish)
-      }))
+      settingsTab.appendChild(loadingSpinner(cb))
     }
   })
 
