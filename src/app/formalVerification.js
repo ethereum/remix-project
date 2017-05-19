@@ -1,7 +1,7 @@
 'use strict'
 
 var $ = require('jquery')
-var EventManager = require('../lib/eventManager')
+var EventManager = require('ethereum-remix').lib.EventManager
 
 /*
   trigger compilationFinished

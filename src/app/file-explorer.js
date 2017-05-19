@@ -3,7 +3,7 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('ethereum-remix').ui.TreeView
 
-var EventManager = require('../lib/eventManager')
+var EventManager = require('ethereum-remix').lib.EventManager
 
 var css = csjs`
   .fileexplorer       {

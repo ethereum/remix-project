@@ -1,6 +1,6 @@
 'use strict'
 
-var EventManager = require('../lib/eventManager')
+var EventManager = require('ethereum-remix').lib.EventManager
 
 var csjs = require('csjs-inject')
 var ace = require('brace')
