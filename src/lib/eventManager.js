@@ -2,6 +2,7 @@
 
 function eventManager () {
   this.registered = {}
+  this.anonymous = {}
 }
 
 /*
@@ -13,15 +14,16 @@ function eventManager () {
    * @param {Func} func         - function of the listenners that will be executed
 */
 eventManager.prototype.unregister = function (eventName, obj, func) {
+  if (!this.registered[eventName]) {
+    return
+  }
   if (obj instanceof Function) {
     func = obj
-    obj = {}
+    obj = this.anonymous
   }
   for (var reg in this.registered[eventName]) {
-    if (this.registered[eventName][reg] &&
-      this.registered[eventName][reg].obj === obj && (!func || this.registered[eventName][reg].func === func)) {
+    if (this.registered[eventName][reg].obj === obj && this.registered[eventName][reg].func === func) {
       this.registered[eventName].splice(reg, 1)
-      return
     }
   }
 }
@@ -40,7 +42,7 @@ eventManager.prototype.register = function (eventName, obj, func) {
   }
   if (obj instanceof Function) {
     func = obj
-    obj = {}
+    obj = this.anonymous
   }
   this.registered[eventName].push({
     obj: obj,
@@ -56,9 +58,12 @@ eventManager.prototype.register = function (eventName, obj, func) {
    * @param {Array}j - argument that will be passed to the exectued function.
 */
 eventManager.prototype.trigger = function (eventName, args) {
+  if (!this.registered[eventName]) {
+    return
+  }
   for (var listener in this.registered[eventName]) {
     var l = this.registered[eventName][listener]
-    l.func.apply(l.obj, args)
+    l.func.apply(l.obj === this.anonymous ? {} : l.obj, args)
   }
 }
 
