@@ -816,6 +816,16 @@ var run = function () {
     config.set('autoCompile', autoCompile)
   })
 
+  var warnMsg = ' Last compilation took {X}ms. We suggest to turn off autocompilation.'
+  compiler.event.register('compilationSpeed', (speed) => {
+    $('#warnCompilationSlow').html('')
+    $('#header #menu .settingsView').css('color', '')
+    if (speed > 1000) {
+      $('#warnCompilationSlow').html(warnMsg.replace('{X}', speed))
+      $('#header #menu .settingsView').css('color', '#FF8B8B')
+    }
+  })
+
   function runCompiler () {
     if (transactionDebugger.isActive) return
 
