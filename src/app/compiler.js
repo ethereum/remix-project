@@ -6,7 +6,7 @@ var solcABI = require('solc/abi')
 var webworkify = require('webworkify')
 var utils = require('./utils')
 
-var EventManager = require('../lib/eventManager')
+var EventManager = require('ethereum-remix').lib.EventManager
 
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted
