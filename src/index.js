@@ -12,6 +12,7 @@ var AstWalker = require('./util/astWalker')
 var decodeInfo = require('./solidity/decodeInfo')
 var stateDecoder = require('./solidity/stateDecoder')
 var astHelper = require('./solidity/astHelper')
+var EventManager = require('./lib/eventManager')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -45,6 +46,9 @@ function modules () {
       decodeInfo: decodeInfo,
       astHelper: astHelper,
       stateDecoder: stateDecoder
+    },
+    lib: {
+      EventManager: EventManager
     }
   }
 }
