@@ -133,7 +133,11 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
   }
   if (traceHelper.isSHA3Instruction(step)) {
     var sha3Input = getSha3Input(step.stack, step.memory)
-    pushSha3Preimage(this, sha3Input)
+    var preimage = sha3Input
+    var imageHash = ethutil.sha3('0x' + sha3Input).toString('hex')
+    self.sha3Preimages[imageHash] = {
+      'preimage': preimage
+    }
   }
   this.processingIndex++
   this.previousDepth = depth
@@ -199,14 +203,6 @@ web3VmProvider.prototype.getTransactionFromBlock = function (blockNumber, txInde
 web3VmProvider.prototype.preimage = function (hashedKey, cb) {
   hashedKey = hashedKey.replace('0x', '')
   cb(null, this.sha3Preimages[hashedKey] !== undefined ? this.sha3Preimages[hashedKey].preimage : null)
-}
-
-function pushSha3Preimage (self, sha3Input) {
-  var preimage = sha3Input
-  var imageHash = ethutil.sha3('0x' + sha3Input).toString('hex')
-  self.sha3Preimages[imageHash] = {
-    'preimage': preimage
-  }
 }
 
 function getSha3Input (stack, memory) {
