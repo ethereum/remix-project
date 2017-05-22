@@ -74,11 +74,11 @@ function styleGuide () {
     }
 
     .warning-text-box {
-      background-color      : #E6E5A7;  // yellow
+      background-color      : hsla(59, 56%, 78%, 0.5);  // yellow
       line-height           : 20px;
-      padding               : 1em 1em .5em 1em;
-      border-radius         : 3px;
-      box-shadow            : rgba(0,0,0,.2) 0 1px 4px;
+      padding               : 8px 15px;
+      border-radius         : 5px;
+      border                : .2em dotted #ffbd01; // orange-yellow
       margin-bottom         : 1em;
     }
 
@@ -143,6 +143,7 @@ function styleGuide () {
   return {
     textBoxL: textBoxes['display-box-L'],
     infoTextBox: textBoxes['info-text-box'],
+    warningTextBox: textBoxes['warning-text-box'],
     titleL: texts['title-L'],
     titleM: texts['title-M'],
     dropdown: buttons['dropdown-menu'],

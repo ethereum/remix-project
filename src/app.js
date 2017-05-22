@@ -26,7 +26,7 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 var FilePanel = require('./app/file-panel')
-
+var tabbedMenu = require('./app/tabbed-menu')
 var examples = require('./app/example-contracts')
 
 var contractTab = require('./app/contract-tab.js')
@@ -69,6 +69,11 @@ var run = function () {
   var fileStorage = new Storage('sol:')
   var files = new Files(fileStorage)
   var config = new Config(fileStorage)
+
+  var executionContext = new ExecutionContext()
+  var compiler = new Compiler(handleImportCall)
+  var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
@@ -277,24 +282,7 @@ var run = function () {
     }).appendTo('body')
   })
 
-  // ---------------- tabbed menu ------------------
-  $('#options li').click(function (ev) {
-    var $el = $(this)
-    selectTab($el)
-  })
-
-  var selectTab = function (el) {
-    var match = /[a-z]+View/.exec(el.get(0).className)
-    if (!match) return
-    var cls = match[0]
-    if (!el.hasClass('active')) {
-      el.parent().find('li').removeClass('active')
-      $('#optionViews').attr('class', '').addClass(cls)
-      el.addClass('active')
-    }
-    self.event.trigger('tabChanged', [cls])
-  }
-
+  // --------------------Files tabs-----------------------------
   var $filesEl = $('#files')
   var FILE_SCROLL_DELTA = 300
 
@@ -623,11 +611,6 @@ var run = function () {
     }
   }
 
-  var executionContext = new ExecutionContext()
-  var compiler = new Compiler(handleImportCall)
-  var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
-
   // ----------------- Debugger -----------------
   var debugAPI = {
     statementMarker: null,
@@ -915,8 +898,8 @@ var run = function () {
   })
 
   function startdebugging (txHash) {
+    self.event.trigger('debuggingRequested', [])
     transactionDebugger.debug(txHash)
-    selectTab($('ul#options li.debugView'))
   }
 
   function setVersionText (text) {
@@ -1004,6 +987,17 @@ var run = function () {
 
     loadVersion('builtin')
   })
+
+  var tabbedMenuAPI = {
+    warnCompilerLoading: function (msg) {
+      renderer.clear()
+      if (msg) {
+        renderer.error(msg, $('#output'), {type: 'warning'})
+      }
+    }
+  }
+  // load tabbed menu component
+  tabbedMenu(tabbedMenuAPI, compiler.event, self.event)
 }
 
 module.exports = {

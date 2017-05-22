@@ -10,6 +10,7 @@ module.exports = {
   'Smoke test': function (browser) {
     browser
       .waitForElementVisible('#righthand-panel', 10000)
+      .click('.settingsView')
       .assert.containsText('#righthand-panel', 'Solidity version')
       .end()
   },
