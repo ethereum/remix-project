@@ -54,9 +54,10 @@ var css = csjs`
 var cssInstance = csjs`
   .title {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    align-items: center;
     margin-bottom: 1em;
-    padding: 1em;
+    padding: .3em;
     font-size: .95em;
     cursor: pointer;
     background-color: ${styles.colors.violet};
@@ -89,12 +90,11 @@ var cssInstance = csjs`
     border: 1px dotted ${styles.colors.grey};
     border-radius: 5px;
     text-align: center;
-    padding: 1em .3em;
+    padding: .3em .3em;
     min-width: 30%;
   }
   .copy:hover{
-    background-color: ${styles.colors.lightGrey};
-    opacity: .8;
+    opacity: .7;
   }
 `
 
@@ -349,9 +349,11 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
+    var len = address.length
+    var shortAddress = address.slice(0, 5) + '...' + address.slice(len - 5, len)
     var title = yo`
       <div class="${cssInstance.title}">
-        <div class="${cssInstance.titleText}" onclick=${toggleClass}> ${contract.name} at ${address} (${context}) </div>
+        <div class="${cssInstance.titleText}" onclick=${toggleClass}> ${contract.name} at ${shortAddress} (${context}) </div>
         <div class="${cssInstance.copy}" onclick=${copyToClipboard}> <i class="fa fa-clipboard" aria-hidden="true"></i> Copy address </div>
       </div>
     `

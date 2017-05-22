@@ -93,7 +93,7 @@ function styleGuide () {
 
     .title-box {
       margin-bottom         : 0.4em;
-      padding               : 1em;
+      padding               : .3em;
       background-color      : transparent;
       font-weight           : bold;
       display               : flex;
