@@ -19,8 +19,8 @@ class Mapping extends RefType {
         type: this.type
       }
     }
-    var mapSlot = util.toBN(location.slot).toString(16)
-    mapSlot = ethutil.setLengthLeft('0x' + mapSlot, 32).toString('hex')
+    var mapSlot = util.normalizeHex(ethutil.bufferToHex(location.slot))
+    console.log(mapSlot, mappingsPreimages)
     var mappingPreimages = mappingsPreimages[mapSlot]
     var ret = {}
     for (var i in mappingPreimages) {
