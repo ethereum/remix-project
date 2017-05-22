@@ -9,7 +9,7 @@ var utils = require('./utils')
 var EventManager = require('ethereum-remix').lib.EventManager
 
 /*
-  trigger compilationFinished, compilerLoaded, compilationStarted
+  trigger compilationFinished, compilerLoaded, compilationStarted, compilationDuration
 */
 function Compiler (handleImportCall) {
   var self = this
@@ -27,6 +27,18 @@ function Compiler (handleImportCall) {
   this.setOptimize = function (_optimize) {
     optimize = _optimize
   }
+
+  var compilationStartTime = null
+  this.event.register('compilationFinished', (success, data, source) => {
+    if (success && compilationStartTime) {
+      this.event.trigger('compilationDuration', [(new Date().getTime()) - compilationStartTime])
+    }
+    compilationStartTime = null
+  })
+
+  this.event.register('compilationStarted', () => {
+    compilationStartTime = new Date().getTime()
+  })
 
   var internalCompile = function (files, target, missingInputs) {
     gatherImports(files, target, missingInputs, function (error, input) {

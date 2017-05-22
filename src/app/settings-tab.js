@@ -34,6 +34,9 @@ var css = csjs`
   .checkboxText {
     margin-left: 3px;
   }
+  #warnCompilationSlow {
+    color: #FF8B8B;
+  }
 }
 `
 module.exports = settingsTab
@@ -58,7 +61,7 @@ function settingsTab () {
       </div>
       <div class="${css.crow}">
         <div><input class="${css.col1}" id="autoCompile" type="checkbox" checked></div>
-        <span class="${css.checkboxText}">Auto Compile</span>
+        <span class="${css.checkboxText}">Auto Compile</span><span id="warnCompilationSlow"></span>
       </div>
       </div>
       <div class="${css.crow}">
