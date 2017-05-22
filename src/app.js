@@ -26,7 +26,6 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 var FilePanel = require('./app/file-panel')
-var loadingSpinner = require('./app/loading-spinner')
 var tabbedMenu = require('./app/tabbed-menu')
 var examples = require('./app/example-contracts')
 
@@ -75,9 +74,6 @@ var run = function () {
   var compiler = new Compiler(handleImportCall)
   var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
-
-  // load tabbed menu component
-  tabbedMenu(compiler, loadingSpinner, self)
 
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
@@ -902,8 +898,8 @@ var run = function () {
   })
 
   function startdebugging (txHash) {
+    self.event.trigger('debuggingRequested', [])
     transactionDebugger.debug(txHash)
-    selectTab($('ul#options li.debugView'))
   }
 
   function setVersionText (text) {
@@ -991,6 +987,17 @@ var run = function () {
 
     loadVersion('builtin')
   })
+
+  var tabbedMenuAPI = {
+    warnCompilerLoading: function (msg) {
+      renderer.clear()
+      if (msg) {
+        renderer.error(msg, $('#output'), {type: 'warning'})
+      }
+    }
+  }
+  // load tabbed menu component
+  tabbedMenu(tabbedMenuAPI, compiler.event, self.event)
 }
 
 module.exports = {

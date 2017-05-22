@@ -68,6 +68,10 @@ function Renderer (appAPI, formalVerificationEvent, compilerEvent) {
   })
 }
 
+Renderer.prototype.clear = function () {
+  $('#output').empty()
+}
+
 Renderer.prototype.error = function (message, container, options) {
   var self = this
   var opt = options || {}

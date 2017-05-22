@@ -8,7 +8,7 @@ var css = csjs`
   .loader {
     display: inline-block;
     margin-left: .3em;
-    border: 2px solid #C6CFD9; /* Light grey */
+    border: 2px solid orange;
     border-top: 2px solid #F4F6FF; /* Light blue */
     border-radius: 50%;
     width: 8px;

@@ -1,43 +1,33 @@
 var $ = require('jquery')
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
-var styles = styleGuide()
+var loadingSpinner = require('./loading-spinner')
 
 module.exports = tabbedMenu
 
-function tabbedMenu (compiler, loadingSpinner, self) {
-
-  var css = csjs`
-    .loadingMsg extends ${styles.warningTextBox} {
-      display: block;
-    }
-  `
-
+function tabbedMenu (rendererAPI, compilerEvent, appEvent) {
   $('#options li').click(function (ev) {
     var $el = $(this)
     selectTab($el)
+  })
+
+  appEvent.register('debuggingRequested', () => {
+    selectTab($('ul#options li.debugView'))
   })
 
   // initialize tabbed menu
   selectTab($('#options .envView'))
 
   // add event listeners for loading spinner
-  compiler.event.register('loadingCompiler', function start () {
+  compilerEvent.register('loadingCompiler', function start () {
     var settingsTab = document.querySelector('.settingsView')
     if (settingsTab.children.length) return
 
-    var contractTabView = document.querySelector('[class^=contractTabView]')
-
-    var loadingMsg = yo`<div class=${css.loadingMsg}>Solidity compiler is currently loading. Please wait a moment...</div>`
     var spinner = loadingSpinner()
     settingsTab.appendChild(spinner)
-    contractTabView.appendChild(loadingMsg)
 
-    compiler.event.register('compilerLoaded', finish)
+    rendererAPI.warnCompilerLoading('Solidity compiler is currently loading. Please wait a moment...')
+    compilerEvent.register('compilerLoaded', finish)
     function finish () {
-      compiler.event.unregister('compilerLoaded', finish)
-      contractTabView.removeChild(loadingMsg)
+      compilerEvent.unregister('compilerLoaded', finish)
       settingsTab.removeChild(spinner)
     }
   })
@@ -54,6 +44,6 @@ function tabbedMenu (compiler, loadingSpinner, self) {
       $('#optionViews').attr('class', '').addClass(cls)
       el.addClass('active')
     }
-    self.event.trigger('tabChanged', [cls])
+    appEvent.trigger('tabChanged', [cls])
   }
 }
