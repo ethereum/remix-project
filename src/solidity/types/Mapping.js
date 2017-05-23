@@ -11,12 +11,13 @@ class Mapping extends RefType {
   }
 
   async decodeFromStorage (location, storageResolver) {
+    var mappingsPreimages
     try {
-      var mappingsPreimages = await storageResolver.mappingPreimages()
+      mappingsPreimages = await storageResolver.mappingsLocation()
     } catch (e) {
       return {
-        value: '<error> ' + e.message,
-        type: this.type
+        value: e.message,
+        type: this.typeName
       }
     }
     var mapSlot = util.normalizeHex(ethutil.bufferToHex(location.slot))

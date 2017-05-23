@@ -1,10 +1,16 @@
 'use strict'
 var traceHelper = require('../helpers/traceHelper')
 var util = require('../helpers/global')
+var mappingPreimages = require('./mappingPreimages')
 
+/**
+  * Basically one instance is created for one debugging session.
+  * (TODO: one instance need to be shared over all the components)
+  */
 class StorageResolver {
   constructor () {
     this.storageByAddress = {}
+    this.preimagesMappingByAddress = {}
     this.maxSize = 100
   }
 
@@ -19,6 +25,33 @@ class StorageResolver {
     */
   storageRange (tx, stepIndex, address, callback) {
     storageRangeInternal(this, zeroSlot, tx, stepIndex, address, callback)
+  }
+
+  /**
+    * compute the mappgings type locations for the current address (cached for a debugging session)
+    * note: that only retrieve the first 100 items.
+    *
+    * @param {String} address  - contract address
+    * @param {Object} address  - storage
+    * @return {Function} - callback
+    */
+  initialPreimagesMappings (tx, stepIndex, address, callback) {
+    if (this.preimagesMappingByAddress[address]) {
+      return callback(null, this.preimagesMappingByAddress[address])
+    }
+    this.storageRange(tx, stepIndex, address, (error, storage) => {
+      if (error) {
+        return callback(error)
+      }
+      mappingPreimages.decodeMappingsKeys(storage, (error, mappings) => {
+        if (error) {
+          callback(error)
+        } else {
+          this.preimagesMappingByAddress[address] = mappings
+          callback(null, mappings)
+        }
+      })
+    })
   }
 
   /**
@@ -96,11 +129,11 @@ function fromCache (self, address) {
 }
 
 /**
- * store the result of `storageRangeAtInternal`
- *
- * @param {String} address  - contract address
- * @param {Object} storage  - result of `storageRangeAtInternal`, contains {key, hashedKey, value}
- */
+  * store the result of `storageRangeAtInternal`
+  *
+  * @param {String} address  - contract address
+  * @param {Object} storage  - result of `storageRangeAtInternal`, contains {key, hashedKey, value}
+  */
 function toCache (self, address, storage) {
   if (!self.storageByAddress[address]) {
     self.storageByAddress[address] = {}
