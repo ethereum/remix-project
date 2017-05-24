@@ -1,5 +1,5 @@
-var name = 'this on local: '
-var desc = 'invocation of local functions via this'
+var name = 'this on local calls: '
+var desc = 'Invocation of local functions via this'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 
@@ -12,7 +12,6 @@ thisLocal.prototype.visit = function (node) {
 }
 
 thisLocal.prototype.report = function (compilationResults) {
-  this.warningNowNodes = []
   return this.warningNodes.map(function (item, i) {
     return {
       warning: `Use of "this" for local functions: Never use this to call functions in the same contract, it only consumes more gas than normal local calls.`,

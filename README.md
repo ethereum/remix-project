@@ -53,6 +53,8 @@ Run the unit tests via: `npm test`
 For local headless browser tests run `npm run test-browser`
 (Requires selenium to be installed - can be done with `npm run selenium-install`)
 
+Running unit tests via `npm test` requires at least node v7.0.0
+
 ## Browser Testing
 
 To run the Selenium tests via Nightwatch serve the app through a local web server:
@@ -62,7 +64,7 @@ To run the Selenium tests via Nightwatch serve the app through a local web serve
 Then you will need to either:
 
 1. Have a Selenium server running locally on port 4444.
-	- Run: `npm run browser-test`
+	- Run: `npm run test-browser`
 2. Or, install and run SauceConnect.
 	- Run: `sc -u <USERNAME> -k <ACCESS_KEY>` (see `.travis.yml` for values)
 	- Run: `npm run browser-test-sc`

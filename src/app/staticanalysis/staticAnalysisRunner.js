@@ -12,6 +12,10 @@ staticAnalysisRunner.prototype.run = function (compilationResult, toRun, callbac
     return { 'name': m.name, 'mod': new m.Module() }
   })
 
+  this.runWithModuleList(compilationResult, modules, callback)
+}
+
+staticAnalysisRunner.prototype.runWithModuleList = function (compilationResult, modules, callback) {
   // Also provide convenience analysis via the AST walker.
   var walker = new AstWalker()
   for (var k in compilationResult.sources) {
