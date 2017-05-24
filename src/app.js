@@ -21,7 +21,6 @@ var Compiler = require('./app/compiler')
 var ExecutionContext = require('./app/execution-context')
 var UniversalDApp = require('./universal-dapp.js')
 var Debugger = require('./app/debugger')
-var FormalVerification = require('./app/formalVerification')
 var EventManager = require('ethereum-remix').lib.EventManager
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
@@ -72,7 +71,6 @@ var run = function () {
 
   var executionContext = new ExecutionContext()
   var compiler = new Compiler(handleImportCall)
-  var formalVerification = new FormalVerification($('#verificationView'), compiler.event)
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
   // return all the files, except the temporary/readonly ones
@@ -772,7 +770,7 @@ var run = function () {
       udapp.getAccounts(callback)
     }
   }
-  var renderer = new Renderer(rendererAPI, formalVerification.event, compiler.event)
+  var renderer = new Renderer(rendererAPI, compiler.event)
 
   // ----------------- StaticAnalysis -----------------
   var staticAnalysisAPI = {

@@ -38,14 +38,9 @@ var css = csjs`
 `
 // ----------------------------------------------
 
-function Renderer (appAPI, formalVerificationEvent, compilerEvent) {
+function Renderer (appAPI, compilerEvent) {
   this.appAPI = appAPI
   var self = this
-  formalVerificationEvent.register('compilationFinished', this, function (success, message, container, options) {
-    if (!success) {
-      self.error(message, container, options)
-    }
-  })
   compilerEvent.register('compilationFinished', this, function (success, data, source) {
     $('#output').empty()
     if (success) {
