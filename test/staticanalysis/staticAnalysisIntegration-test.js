@@ -195,6 +195,141 @@ test('Integration test gasCosts.js', function (t) {
   })
 })
 
+test('Integration test similarVariableNames.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/app/staticanalysis/modules/similarVariableNames')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 2,
+    'ballot_reentrant.sol': 3,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 1,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of similarVariableNames warnings`)
+  })
+})
+
+test('Integration test inlineAssembly.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/app/staticanalysis/modules/inlineAssembly')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 2,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of inlineAssembly warnings`)
+  })
+})
+
+test('Integration test blockTimestamp.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/app/staticanalysis/modules/blockTimestamp')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 1,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 3,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 2,
+    'library.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of blockTimestamp warnings`)
+  })
+})
+
+test('Integration test lowLevelCalls.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/app/staticanalysis/modules/lowLevelCalls')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 1,
+    'assembly.sol': 1,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 7,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 1,
+    'inheritance.sol': 1,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 1,
+    'structReentrant.sol': 1,
+    'thisLocal.sol': 2,
+    'globals.sol': 1,
+    'library.sol': 1
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of lowLevelCalls warnings`)
+  })
+})
+
+test('Integration test blockBlockhash.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/app/staticanalysis/modules/blockBlockhash')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of blockBlockhash warnings`)
+  })
+})
+
 // #################### Helpers
 function runModuleOnFiles (module, t, cb) {
   var statRunner = new StatRunner()

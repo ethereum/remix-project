@@ -3,8 +3,6 @@ var test = require('tape')
 var common = require('../../src/app/staticanalysis/modules/staticAnalysisCommon')
 var utils = require('../../src/app/utils')
 
-// #################### helpers Test
-
 test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
   t.plan(7)
 
@@ -1254,7 +1252,6 @@ test('staticAnalysisCommon.isBuiltinFunctionCall', function (t) {
   t.ok(common.isBuiltinFunctionCall(selfdestruct), 'selfdestruct is builtin')
   t.notOk(common.isBuiltinFunctionCall(localCall), 'local call is not builtin')
 })
-
 
 test('staticAnalysisCommon.isStorageVariableDeclaration', function (t) {
   t.plan(3)
