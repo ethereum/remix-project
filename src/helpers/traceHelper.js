@@ -37,6 +37,10 @@ module.exports = {
     return step.op === 'SSTORE'
   },
 
+  isSHA3Instruction: function (step) {
+    return step.op === 'SHA3'
+  },
+
   newContextStorage: function (step) {
     return step.op === 'CREATE' || step.op === 'CALL'
   },

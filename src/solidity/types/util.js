@@ -10,7 +10,8 @@ module.exports = {
   toBN: toBN,
   add: add,
   extractLocation: extractLocation,
-  removeLocation: removeLocation
+  removeLocation: removeLocation,
+  normalizeHex: normalizeHex
 }
 
 function decodeIntFromHex (value, byteLength, signed) {

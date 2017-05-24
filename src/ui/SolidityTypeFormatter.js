@@ -41,6 +41,12 @@ function extractData (item, parent, key) {
     })
     ret.self = item.type
     ret.isStruct = true
+  } else if (item.type.indexOf('mapping') === 0) {
+    ret.children = Object.keys((item.value || {})).map(function (key) {
+      return {key: key, value: item.value[key]}
+    })
+    ret.isMapping = true
+    ret.self = item.type
   } else {
     ret.children = []
     ret.self = item.value
@@ -51,7 +57,7 @@ function extractData (item, parent, key) {
 
 function fontColor (data) {
   var color = '#124B46'
-  if (data.isArray || data.isStruct) {
+  if (data.isArray || data.isStruct || data.isMapping) {
     color = '#847979'
   } else if (data.type.indexOf('uint') === 0 ||
               data.type.indexOf('int') === 0 ||
@@ -63,4 +69,3 @@ function fontColor (data) {
   }
   return 'color:' + color
 }
-
