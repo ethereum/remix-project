@@ -11,6 +11,7 @@ class StorageViewer {
   constructor (_context, _storageResolver, _traceManager) {
     this.context = _context
     this.storageResolver = _storageResolver
+    this.completeMapingsLocationPromise = null
     _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {}, (error, storageChanges) => {
       if (!error) {
         this.storageChanges = storageChanges
@@ -71,30 +72,33 @@ class StorageViewer {
     * @param {Function} callback
     */
   async mappingsLocation () {
-    return new Promise((resolve, reject) => {
-      if (this.completeMappingsLocation) {
-        return resolve(this.completeMappingsLocation)
-      }
-      this.storageResolver.initialPreimagesMappings(this.context.tx, this.context.stepIndex, this.context.address, (error, initialMappingsLocation) => {
-        if (error) {
-          reject(error)
-        } else {
-          this.extractMappingsLocationChanges(this.storageChanges, (error, mappingsLocationChanges) => {
-            if (error) {
-              return reject(error)
-            }
-            this.completeMappingsLocation = Object.assign({}, initialMappingsLocation)
-            for (var key in mappingsLocationChanges) {
-              if (!initialMappingsLocation[key]) {
-                initialMappingsLocation[key] = {}
-              }
-              this.completeMappingsLocation[key] = Object.assign({}, initialMappingsLocation[key], mappingsLocationChanges[key])
-            }
-            resolve(this.completeMappingsLocation)
-          })
+    if (!this.completeMapingsLocationPromise) {
+      this.completeMapingsLocationPromise = new Promise((resolve, reject) => {
+        if (this.completeMappingsLocation) {
+          return this.completeMappingsLocation
         }
+        this.storageResolver.initialPreimagesMappings(this.context.tx, this.context.stepIndex, this.context.address, (error, initialMappingsLocation) => {
+          if (error) {
+            reject(error)
+          } else {
+            this.extractMappingsLocationChanges(this.storageChanges, (error, mappingsLocationChanges) => {
+              if (error) {
+                return reject(error)
+              }
+              this.completeMappingsLocation = Object.assign({}, initialMappingsLocation)
+              for (var key in mappingsLocationChanges) {
+                if (!initialMappingsLocation[key]) {
+                  initialMappingsLocation[key] = {}
+                }
+                this.completeMappingsLocation[key] = Object.assign({}, initialMappingsLocation[key], mappingsLocationChanges[key])
+              }
+              resolve(this.completeMappingsLocation)
+            })
+          }
+        })
       })
-    })
+    }
+    return this.completeMapingsLocationPromise
   }
 
   /**
