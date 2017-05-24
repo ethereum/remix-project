@@ -213,18 +213,26 @@ function getSha3Input (stack, memory) {
   var memLengthDec = (new ethutil.BN(memoryLength.replace('0x', ''), 16).toString(10))
   memoryLength = parseInt(memLengthDec) * 2
 
-  var min = Math.floor(memoryStart / 32)
-  var fillLength = Math.floor(memoryLength / 32)
-  var sha3Input = memory[min].slice(memoryStart - 32 * min)
-  min++
-  while (min < fillLength) {
-    sha3Input += memory[min]
-    min++
+  var i = Math.floor(memoryStart / 32)
+  var maxIndex = Math.floor(memoryLength / 32)
+  if (!memory[i]) {
+    return emptyFill(memoryLength)
+  }
+  var sha3Input = memory[i].slice(memoryStart - 32 * i)
+  i++
+  while (i < maxIndex) {
+    sha3Input += memory[i] ? memory[i] : emptyFill(32)
+    i++
   }
   if (sha3Input.length < memoryLength) {
-    sha3Input += memory[min].slice(0, memoryLength - sha3Input.length)
+    var leftSize = memoryLength - sha3Input.length
+    sha3Input += memory[i] ? memory[i].slice(0, leftSize) : emptyFill(leftSize)
   }
   return sha3Input
+}
+
+function emptyFill (size) {
+  return (new Array(size)).join('0')
 }
 
 module.exports = web3VmProvider
