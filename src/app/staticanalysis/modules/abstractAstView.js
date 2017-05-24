@@ -2,11 +2,20 @@ var common = require('./staticAnalysisCommon')
 var AstWalker = require('ethereum-remix').util.AstWalker
 
 function abstractAstView () {
-  this.contracts = null
+  this.contracts = []
   this.currentContractIndex = null
   this.currentFunctionIndex = null
   this.currentModifierIndex = null
   this.isFunctionNotModifier = false
+  /*
+    file1: contract c{}
+    file2: import "file1" as x; contract c{}
+    therefore we have two contracts with the same name c. At the moment this is not handled because alias name "x" is not
+    available in the current AST implementation thus can not be resolved.
+    Additionally the fullQuallified function names e.g. [contractName].[functionName](param1Type, param2Type, ... ) must be prefixed to
+    fully support this and when inheritance is resolved it must include alias resolving e.g x.c = file1.c
+  */
+  this.multipleContractsWithSameName = false
 }
 
 /**
@@ -33,8 +42,7 @@ function abstractAstView () {
  * @contractsOut {list} return list for high level AST view
  * @return {ASTNode -> void} returns a function that can be used as visit function for static analysis modules, to build up a higher level AST view for further analysis.
  */
-abstractAstView.prototype.builder = function (relevantNodeFilter, contractsOut) {
-  this.contracts = contractsOut
+abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
   var that = this
   return function (node) {
     if (common.isContractDefinition(node)) {
@@ -49,9 +57,6 @@ abstractAstView.prototype.builder = function (relevantNodeFilter, contractsOut) 
       var currentContract = getCurrentContract(that)
       var inheritsFromName = common.getInheritsFromName(node)
       currentContract.inheritsFrom.push(inheritsFromName)
-      // add variables from inherited contracts
-      var inheritsFrom = that.contracts.find((contract) => common.getContractName(contract.node) === inheritsFromName)
-      currentContract.stateVariables = currentContract.stateVariables.concat(inheritsFrom.stateVariables)
     } else if (common.isFunctionDefinition(node)) {
       setCurrentFunction(that, {
         node: node,
@@ -76,7 +81,36 @@ abstractAstView.prototype.builder = function (relevantNodeFilter, contractsOut) 
   }
 }
 
+abstractAstView.prototype.build_report = function (wrap) {
+  var that = this
+  return function (compilationResult) {
+    resolveStateVariablesInHierarchy(that.contracts)
+    return wrap(that.contracts, that.multipleContractsWithSameName)
+  }
+}
+
+function resolveStateVariablesInHierarchy (contracts) {
+  contracts.map((c) => {
+    resolveStateVariablesInHierarchyForContract(c, contracts)
+  })
+}
+function resolveStateVariablesInHierarchyForContract (currentContract, contracts) {
+  currentContract.inheritsFrom.map((inheritsFromName) => {
+    // add variables from inherited contracts
+    var inheritsFrom = contracts.find((contract) => common.getContractName(contract.node) === inheritsFromName)
+    if (inheritsFrom) {
+      currentContract.stateVariables = currentContract.stateVariables.concat(inheritsFrom.stateVariables)
+    } else {
+      console.log('abstractAstView.js: could not find contract defintion inherited from ' + inheritsFromName)
+    }
+  })
+}
 function setCurrentContract (that, contract) {
+  var name = common.getContractName(contract.node)
+  if (that.contracts.map((c) => common.getContractName(c.node)).filter((n) => n === name).length > 0) {
+    console.log('abstractAstView.js: two or more contracts with the same name dectected, import aliases not supported at the moment')
+    that.multipleContractsWithSameName = true
+  }
   that.currentContractIndex = (that.contracts.push(contract) - 1)
 }
 

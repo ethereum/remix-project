@@ -6,22 +6,26 @@ var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
 
 function constantFunctions () {
-  this.contracts = []
-  var that = this
+  this.abstractAst = new AbstractAst()
 
-  constantFunctions.prototype.visit = new AbstractAst().builder(
-    (node) => common.isLowLevelCall(node) || common.isTransfer(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node) || common.isNewExpression(node),
-    that.contracts
+  this.visit = this.abstractAst.build_visit(
+    (node) => common.isLowLevelCall(node) || common.isTransfer(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node) || common.isNewExpression(node)
   )
+
+  this.report = this.abstractAst.build_report(report)
 }
 
-constantFunctions.prototype.report = function (compilationResults) {
+constantFunctions.prototype.visit = function () { throw new Error('constantFunctions.js no visit function set upon construction') }
+
+constantFunctions.prototype.report = function () { throw new Error('constantFunctions.js no report function set upon construction') }
+
+function report (contracts, multipleContractsWithSameName) {
   var warnings = []
-  var hasModifiers = this.contracts.some((item) => item.modifiers.length > 0)
+  var hasModifiers = contracts.some((item) => item.modifiers.length > 0)
 
-  var callGraph = fcallGraph.buildGlobalFuncCallGraph(this.contracts)
+  var callGraph = fcallGraph.buildGlobalFuncCallGraph(contracts)
 
-  this.contracts.forEach((contract) => {
+  contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
       func.potentiallyshouldBeConst = checkIfShouldBeConstant(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
                                                               getContext(callGraph, contract, func))
@@ -30,16 +34,17 @@ constantFunctions.prototype.report = function (compilationResults) {
     contract.functions.filter((func) => common.hasFunctionBody(func.node)).forEach((func) => {
       if (common.isConstantFunction(func.node) !== func.potentiallyshouldBeConst) {
         var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-        var comments = (hasModifiers) ? '<br/><i>Note:</i>Modifiers are currently not considered by the this static analysis.' : ''
+        var comments = (hasModifiers) ? '<br/><i>Note:</i> Modifiers are currently not considered by this static analysis.' : ''
+        comments += (multipleContractsWithSameName) ? '<br/><i>Note:</i> Import aliases are currently not supported by this static analysis.' : ''
         if (func.potentiallyshouldBeConst) {
           warnings.push({
-            warning: `<i>${funcName}</i>: Potentially should be constant but is not.${comments}`,
+            warning: `<i>${funcName}</i>: Potentially should be constant but is not. ${comments}`,
             location: func.src,
             more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
           })
         } else {
           warnings.push({
-            warning: `<i>${funcName}</i>: Is constant but potentially should not be.${comments}`,
+            warning: `<i>${funcName}</i>: Is constant but potentially should not be. ${comments}`,
             location: func.src,
             more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
           })

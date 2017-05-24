@@ -55,7 +55,8 @@ var builtinFunctions = {
   'mulmod(uint256,uint256,uint256)': true,
   'selfdestruct(address)': true,
   'revert()': true,
-  'assert()': true
+  'assert(bool)': true,
+  'require(bool)': true
 }
 
 var lowLevelCallTypes = {

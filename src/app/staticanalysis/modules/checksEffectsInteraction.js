@@ -6,22 +6,25 @@ var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
 
 function checksEffectsInteraction () {
-  this.contracts = []
-  var that = this
-
-  checksEffectsInteraction.prototype.visit = new AbstractAst().builder(
-    (node) => common.isInteraction(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node),
-    that.contracts
+  this.abstractAst = new AbstractAst()
+  this.visit = this.abstractAst.build_visit(
+    (node) => common.isInteraction(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node)
   )
+
+  this.report = this.abstractAst.build_report(report)
 }
 
-checksEffectsInteraction.prototype.report = function (compilationResults) {
+checksEffectsInteraction.prototype.visit = function () { throw new Error('checksEffectsInteraction.js no visit function set upon construction') }
+
+checksEffectsInteraction.prototype.report = function () { throw new Error('checksEffectsInteraction.js no report function set upon construction') }
+
+function report (contracts, multipleContractsWithSameName) {
   var warnings = []
-  var hasModifiers = this.contracts.some((item) => item.modifiers.length > 0)
+  var hasModifiers = contracts.some((item) => item.modifiers.length > 0)
 
-  var callGraph = fcallGraph.buildGlobalFuncCallGraph(this.contracts)
+  var callGraph = fcallGraph.buildGlobalFuncCallGraph(contracts)
 
-  this.contracts.forEach((contract) => {
+  contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
       func.changesState = checkIfChangesState(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
                                                                                   getContext(callGraph, contract, func))
@@ -30,9 +33,10 @@ checksEffectsInteraction.prototype.report = function (compilationResults) {
     contract.functions.forEach((func) => {
       if (isPotentialVulnerableFunction(func, getContext(callGraph, contract, func))) {
         var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-        var comments = (hasModifiers) ? '<br/><i>Note:</i>Modifiers are currently not considered by the this static analysis.' : ''
+        var comments = (hasModifiers) ? '<br/><i>Note:</i> Modifiers are currently not considered by this static analysis.' : ''
+        comments += (multipleContractsWithSameName) ? '<br/><i>Note:</i> Import aliases are currently not supported by this static analysis.' : ''
         warnings.push({
-          warning: `Potential Violation of Checks-Effects-Interaction pattern in <i>${funcName}</i>: Could potentially lead to re-entrancy vulnerability.${comments}`,
+          warning: `Potential Violation of Checks-Effects-Interaction pattern in <i>${funcName}</i>: Could potentially lead to re-entrancy vulnerability. ${comments}`,
           location: func.src,
           more: 'http://solidity.readthedocs.io/en/develop/security-considerations.html#re-entrancy'
         })
