@@ -34,8 +34,8 @@ var css = csjs`
   .checkboxText {
     margin-left: 3px;
   }
-  #warnCompilationSlow {
-    color: #FF8B8B;
+  .compilationWarning extends ${styles.warningTextBox} {
+    margin-top: 1em;
   }
 }
 `
@@ -61,7 +61,8 @@ function settingsTab () {
       </div>
       <div class="${css.crow}">
         <div><input class="${css.col1}" id="autoCompile" type="checkbox" checked></div>
-        <span class="${css.checkboxText}">Auto Compile</span><span id="warnCompilationSlow"></span>
+        <span class="${css.checkboxText}">Auto Compile</span>
+        <div id="warnCompilationSlow" class="${css.compilationWarning}"></div>
       </div>
       </div>
       <div class="${css.crow}">
