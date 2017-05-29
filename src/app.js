@@ -800,8 +800,10 @@ var run = function () {
   var warnMsg = ' Last compilation took {X}ms. We suggest to turn off autocompilation.'
   compiler.event.register('compilationDuration', (speed) => {
     $('#warnCompilationSlow').html('')
+    $('#warnCompilationSlow').hide()
     $('#header #menu .settingsView').css('color', '')
     if (speed > 1000) {
+      $('#warnCompilationSlow').show()
       $('#warnCompilationSlow').html(warnMsg.replace('{X}', speed))
       $('#header #menu .settingsView').css('color', '#FF8B8B')
     }
