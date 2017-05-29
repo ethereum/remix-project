@@ -92,7 +92,9 @@ var cssInstance = csjs`
   .instance.hidesub > *:not(.title) {
       display: none;
   }
-  .copy  {
+  .copy extends ${styles.button}  {
+    border: 1px dotted ${styles.colors.grey};
+    padding: 0 .3em;
     font-weight: bold;
   }
   .copy:hover{
@@ -363,7 +365,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       $instance.toggleClass(`${cssInstance.hidesub}`)
     }
 
-    function copyToClipboard () {
+    function copyToClipboard (event) {
+      event.stopPropagation();
       copy(address)
     }
 
