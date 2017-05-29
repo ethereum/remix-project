@@ -64,7 +64,7 @@ SolidityState.prototype.init = function () {
               console.log(error)
             } else {
               self.stateVariablesByAddresses[address] = stateVars
-              extractStateVariables(self, stateVars)
+              extractStateVariables(self, stateVars, address)
             }
           })
         }

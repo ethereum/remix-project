@@ -11,7 +11,8 @@ class StorageViewer {
   constructor (_context, _storageResolver, _traceManager) {
     this.context = _context
     this.storageResolver = _storageResolver
-    this.completeMapingsLocationPromise = null
+    this.initialMappingsLocationPromise = null
+    this.currentMappingsLocationPromise = null
     _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {}, (error, storageChanges) => {
       if (!error) {
         this.storageChanges = storageChanges
@@ -67,38 +68,43 @@ class StorageViewer {
   }
 
   /**
-    * return all the possible mappings locations for the current context (cached)
+    * return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
     *
     * @param {Function} callback
     */
-  async mappingsLocation () {
-    if (!this.completeMapingsLocationPromise) {
-      this.completeMapingsLocationPromise = new Promise((resolve, reject) => {
-        if (this.completeMappingsLocation) {
-          return this.completeMappingsLocation
-        }
+  async initialMappingsLocation () {
+    if (!this.initialMappingsLocationPromise) {
+      this.initialMappingsLocationPromise = new Promise((resolve, reject) => {
         this.storageResolver.initialPreimagesMappings(this.context.tx, this.context.stepIndex, this.context.address, (error, initialMappingsLocation) => {
           if (error) {
             reject(error)
           } else {
-            this.extractMappingsLocationChanges(this.storageChanges, (error, mappingsLocationChanges) => {
-              if (error) {
-                return reject(error)
-              }
-              this.completeMappingsLocation = Object.assign({}, initialMappingsLocation)
-              for (var key in mappingsLocationChanges) {
-                if (!initialMappingsLocation[key]) {
-                  initialMappingsLocation[key] = {}
-                }
-                this.completeMappingsLocation[key] = Object.assign({}, initialMappingsLocation[key], mappingsLocationChanges[key])
-              }
-              resolve(this.completeMappingsLocation)
-            })
+            resolve(initialMappingsLocation)
           }
         })
       })
     }
-    return this.completeMapingsLocationPromise
+    return this.initialMappingsLocationPromise
+  }
+
+  /**
+    * return all the possible mappings locations for the current context (cached) and current mapping slot. returns state changes during the current transaction
+    *
+    * @param {Function} callback
+    */
+  async mappingsLocation () {
+    if (!this.currentMappingsLocationPromise) {
+      this.currentMappingsLocationPromise = new Promise((resolve, reject) => {
+        this.extractMappingsLocationChanges(this.storageChanges, (error, mappingsLocationChanges) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(mappingsLocationChanges)
+          }
+        })
+      })
+    }
+    return this.currentMappingsLocationPromise
   }
 
   /**
