@@ -127,6 +127,4 @@ class StorageViewer {
   }
 }
 
-
-
 module.exports = StorageViewer
