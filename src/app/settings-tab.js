@@ -63,12 +63,12 @@ function settingsTab () {
       <div class="${css.crow}">
         <div><input class="${css.col1}" id="autoCompile" type="checkbox" checked></div>
         <span class="${css.checkboxText}">Auto Compile</span>
-        <span id="warnCompilationSlow" class="${css.compilationWarning}"></span>
       </div>
       </div>
       <div class="${css.crow}">
         <div class="${css.button} "id="compile" title="Compile source code">Compile</div>
       </div>
+      <div id="warnCompilationSlow" class="${css.compilationWarning}"></div>
     </div>
   `
 }
