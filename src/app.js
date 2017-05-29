@@ -6,6 +6,8 @@ var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
 var csjs = require('csjs-inject')
+var styleGuide = require('./app/style-guide')
+var styles = styleGuide()
 
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
@@ -797,15 +799,20 @@ var run = function () {
     config.set('autoCompile', autoCompile)
   })
 
+  var css = csjs`
+    .compilationWarning extends ${styles.warningTextBox} {
+      margin-top: 1em;
+      margin-left: 0.5em;
+    }
+  `
   var warnMsg = ' Last compilation took {X}ms. We suggest to turn off autocompilation.'
   compiler.event.register('compilationDuration', (speed) => {
     $('#warnCompilationSlow').html('')
     $('#warnCompilationSlow').hide()
-    $('#header #menu .settingsView').css('color', '')
     if (speed > 1000) {
+      document.querySelector('#warnCompilationSlow').className=css.compilationWarning
       $('#warnCompilationSlow').show()
       $('#warnCompilationSlow').html(warnMsg.replace('{X}', speed))
-      $('#header #menu .settingsView').css('color', '#FF8B8B')
     }
   })
 

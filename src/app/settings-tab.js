@@ -34,10 +34,6 @@ var css = csjs`
   .checkboxText {
     margin-left: 3px;
   }
-  .compilationWarning extends ${styles.warningTextBox} {
-    margin-top: 1em;
-    margin-left: 0.5em;
-  }
 }
 `
 module.exports = settingsTab
