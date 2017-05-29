@@ -21,7 +21,6 @@ class Mapping extends RefType {
       }
     }
     var mapSlot = util.normalizeHex(ethutil.bufferToHex(location.slot))
-    console.log(mapSlot, mappingsPreimages)
     var mappingPreimages = mappingsPreimages[mapSlot]
     var ret = {}
     for (var i in mappingPreimages) {
