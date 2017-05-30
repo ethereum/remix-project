@@ -32,15 +32,18 @@ var css = csjs`
   .title extends ${styles.titleBox} {
     cursor: pointer;
     background-color: ${styles.colors.violet};
-  }
-  .title:hover {
-    opacity: .8;
+    justify-content: flex-start;
+    min-width: 400px;
   }
   .contract .title:before {
+    margin-right: 30%;
+    margin-left: 5%;
     content: "\\25BE";
   }
   .contract.hidesub .title:before {
-    content: "\\25B8"
+    margin-right: 30%;
+    margin-left: 5%;
+    content: "\\25B8";
   }
   .contract.hidesub {
       padding-bottom: 0;
@@ -49,12 +52,16 @@ var css = csjs`
   .contract.hidesub > *:not(.title) {
       display: none;
   }
+  .size {
+    margin-left: 20%;
+  }
 `
 
 var cssInstance = csjs`
   .title {
     display: flex;
     justify-content: space-around;
+    min-width: 400px;
     align-items: center;
     margin-bottom: 1em;
     padding: .3em;
@@ -68,16 +75,15 @@ var cssInstance = csjs`
     margin-right: 1em;
     word-break: break-all;
   }
-  .titleText:hover {
-    opacity: .8;
-  }
   .instance .title:before {
     content: "\\25BE";
     margin-right: .5em;
+    margin-left: .5em;
   }
   .instance.hidesub .title:before {
-    content: "\\25B8"
+    content: "\\25B8";
     margin-right: .5em;
+    margin-left: .5em;
   }
   .instance.hidesub {
       padding-bottom: 0;
@@ -86,12 +92,10 @@ var cssInstance = csjs`
   .instance.hidesub > *:not(.title) {
       display: none;
   }
-  .copy extends ${styles.button} {
+  .copy extends ${styles.button}  {
     border: 1px dotted ${styles.colors.grey};
-    border-radius: 5px;
-    text-align: center;
-    padding: .3em .3em;
-    min-width: 30%;
+    padding: 0 .3em;
+    font-weight: bold;
   }
   .copy:hover{
     opacity: .7;
@@ -254,7 +258,7 @@ UniversalDApp.prototype.render = function () {
       var $title = $(`<span class="${css.title}"/>`).text(self.contracts[c].name)
       $title.click(function (ev) { $(this).closest(`.${css.contract}`).toggleClass(`${css.hidesub}`) })
       if (self.contracts[c].bytecode) {
-        $title.append($('<div class="size"/>').text((self.contracts[c].bytecode.length / 2) + ' bytes'))
+        $title.append($(`<div class="${css.size}"></div>`).text((self.contracts[c].bytecode.length / 2) + ' bytes'))
       }
       $contractEl.append($title).append(self.getCreateInterface($contractEl, self.contracts[c]))
     }
@@ -352,8 +356,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var len = address.length
     var shortAddress = address.slice(0, 5) + '...' + address.slice(len - 5, len)
     var title = yo`
-      <div class="${cssInstance.title}">
-        <div class="${cssInstance.titleText}" onclick=${toggleClass}> ${contract.name} at ${shortAddress} (${context}) </div>
+      <div class="${cssInstance.title}" onclick=${toggleClass}>
+        <div class="${cssInstance.titleText}"> ${contract.name} at ${shortAddress} (${context}) </div>
         <div class="${cssInstance.copy}" onclick=${copyToClipboard}> <i class="fa fa-clipboard" aria-hidden="true"></i> Copy address </div>
       </div>
     `
@@ -361,7 +365,8 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       $instance.toggleClass(`${cssInstance.hidesub}`)
     }
 
-    function copyToClipboard () {
+    function copyToClipboard (event) {
+      event.stopPropagation();
       copy(address)
     }
 
