@@ -809,10 +809,12 @@ var run = function () {
   compiler.event.register('compilationDuration', (speed) => {
     $('#warnCompilationSlow').html('')
     $('#warnCompilationSlow').hide()
+    $('#header #menu .settingsView').css('color', '')
     if (speed > 1000) {
       document.querySelector('#warnCompilationSlow').className = cssCompilationWarning.compilationWarning
       $('#warnCompilationSlow').show()
       $('#warnCompilationSlow').html(warnMsg.replace('{X}', speed))
+      $('#header #menu .settingsView').css('color', '#FF8B8B')
     }
   })
 
