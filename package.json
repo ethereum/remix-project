@@ -1,0 +1,25 @@
+{
+  "name": "remixd",
+  "version": "0.0.1",
+  "description": "remix server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ethereum/remixd.git"
+  },
+  "keywords": [
+    "remix",
+    "ide",
+    "ethereum",
+    "solidity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remixd/issues"
+  },
+  "homepage": "https://github.com/ethereum/remixd#readme"
+}
