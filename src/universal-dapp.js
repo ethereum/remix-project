@@ -21,14 +21,17 @@ var styleGuide = require('./app/style-guide')
 var styles = styleGuide()
 
 var css = csjs`
+  html {
+    overflow: hidden;
+  }
   .options {
-      float: left;
-      padding: 0.7em 0.3em;
-      font-size: 0.9em;
-      cursor: pointer;
-      background-color: transparent;
-      margin-right: 0.5em;
-      font-size: 1em;
+    float: left;
+    padding: 0.7em 0.3em;
+    font-size: 0.9em;
+    cursor: pointer;
+    background-color: transparent;
+    margin-right: 0.5em;
+    font-size: 1em;
   }
   .title extends ${styles.titleBox} {
     cursor: pointer;
