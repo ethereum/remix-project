@@ -799,7 +799,7 @@ var run = function () {
     config.set('autoCompile', autoCompile)
   })
 
-  var css = csjs`
+  var cssCompilationWarning = csjs`
     .compilationWarning extends ${styles.warningTextBox} {
       margin-top: 1em;
       margin-left: 0.5em;
@@ -810,7 +810,7 @@ var run = function () {
     $('#warnCompilationSlow').html('')
     $('#warnCompilationSlow').hide()
     if (speed > 1000) {
-      document.querySelector('#warnCompilationSlow').className=css.compilationWarning
+      document.querySelector('#warnCompilationSlow').className = cssCompilationWarning.compilationWarning
       $('#warnCompilationSlow').show()
       $('#warnCompilationSlow').html(warnMsg.replace('{X}', speed))
     }
