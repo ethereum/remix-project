@@ -9,6 +9,7 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var crypto = require('crypto')
 var async = require('async')
 var TxRunner = require('./app/txRunner')
+var helper = require('./lib/helper')
 var yo = require('yo-yo')
 
 // copy to copyToClipboard
@@ -353,8 +354,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
     address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-    var len = address.length
-    var shortAddress = address.slice(0, 5) + '...' + address.slice(len - 5, len)
+    var shortAddress = helper.shortenAddress(address)
     var title = yo`
       <div class="${cssInstance.title}" onclick=${toggleClass}>
         <div class="${cssInstance.titleText}"> ${contract.name} at ${shortAddress} (${context}) </div>
