@@ -770,6 +770,15 @@ var run = function () {
     },
     getAccounts: (callback) => {
       udapp.getAccounts(callback)
+    },
+    getBalance: (address, callback) => {
+      udapp.getBalance(address, (error, balance) => {
+        if (error) {
+          callback(error)
+        } else {
+          callback(null, executionContext.web3().fromWei(balance, 'ether'))
+        }
+      })
     }
   }
   var renderer = new Renderer(rendererAPI, compiler.event)

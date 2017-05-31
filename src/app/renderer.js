@@ -3,6 +3,7 @@
 var $ = require('jquery')
 
 var utils = require('./utils')
+var helper = require('../lib/helper.js')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -61,6 +62,7 @@ function Renderer (appAPI, compilerEvent) {
       })
     }
   })
+  setInterval(() => { updateAccountBalances(self, appAPI) }, 1000)
 }
 
 Renderer.prototype.clear = function () {
@@ -342,6 +344,19 @@ Renderer.prototype.contracts = function (data, source) {
 
   $('#output').append($contractOutput)
   $('.' + css.col2 + ' input,textarea').click(function () { this.select() })
+}
+
+function updateAccountBalances (self, appAPI) {
+  var accounts = $('#txorigin').children('option')
+  accounts.each(function (index, value) {
+    (function (acc) {
+      appAPI.getBalance(accounts[acc].value, function (err, res) {
+        if (!err) {
+          accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res)
+        }
+      })
+    })(index)
+  })
 }
 
 module.exports = Renderer
