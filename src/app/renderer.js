@@ -61,6 +61,7 @@ function Renderer (appAPI, compilerEvent) {
       })
     }
   })
+  setInterval(() => { updateAccountBalances(appAPI) }, 1000)
 }
 
 Renderer.prototype.clear = function () {
@@ -342,6 +343,19 @@ Renderer.prototype.contracts = function (data, source) {
 
   $('#output').append($contractOutput)
   $('.' + css.col2 + ' input,textarea').click(function () { this.select() })
+}
+
+function updateAccountBalances (appAPI) {
+  var accounts = $('#txorigin').children('option')
+  accounts.each(function (index, value) {
+    (function (acc) {
+      appAPI.getBalance(accounts[acc].value, function (err, res) {
+        if (!err) {
+          accounts[acc].innerText = accounts[acc].value.substring(0, 8) + '... (' + res.toString() + ' ether)'
+        }
+      })
+    })(index)
+  })
 }
 
 module.exports = Renderer
