@@ -366,7 +366,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     }
 
     function copyToClipboard (event) {
-      event.stopPropagation();
+      event.stopPropagation()
       copy(address)
     }
 
