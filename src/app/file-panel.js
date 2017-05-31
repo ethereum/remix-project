@@ -4,6 +4,7 @@ var yo = require('yo-yo')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 var FileExplorer = require('./file-explorer')
+var modalDialog = require('./modaldialog')
 
 module.exports = filepanel
 
@@ -28,6 +29,9 @@ var css = csjs`
   .newFile            {
     padding           : 10px;
   }
+  .connectToLocalhost {
+    padding           : 10px;
+  }
   .uploadFile         {
     padding           : 10px;
   }
@@ -46,11 +50,10 @@ var css = csjs`
   }
   .isHidden {
     position          : absolute;
-    height            : 99%
+    height            : 99%;
     left              : -101%;
   }
   .treeview {
-    height            : 100%;
     background-color  : white;
   }
   .dragbar            {
@@ -83,25 +86,39 @@ var limit = 60
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
-function filepanel (appAPI, files) {
-  var fileExplorer = new FileExplorer(appAPI, files)
+function filepanel (appAPI, filesProvider) {
+  var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
+  var fileSystemExplorer = new FileExplorer(appAPI, filesProvider['localhost'])
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
+
+  function remixdDialog () {
+    return yo`<div><div>This feature allows to interact with your file system from Remix. Once the connection is made the shared folder will be available in the file explorer under <i>localhost</i></div>
+              <div><i>Remixd</i> first has to be run in your local computer. See <a href="http://remix.readthedocs.io/en/latest/tutorial_mist.html">http://remix.readthedocs.io/en/latest/remixd.html</a> for more details.</div>
+              <div>Accepting this dialog will start a session between <i>${window.location.href}</i> and your local file system <i>ws://127.0.0.1:65520</i></div>
+              <div>Please be sure your system is secured enough (port 65520 neither opened nor forwarded).</div>
+              <div><i class="fa fa-link"></i> will update the connection status.</div>
+              <div>This feature is still alpha, we recommend to keep a copy of the shared folder.</div>
+              </div>`
+  }
 
   function template () {
     return yo`
       <div class=${css.container}>
         <div class=${css.fileexplorer}>
           <div class=${css.menu}>
-            <span onclick=${createNewFile} class="newFile ${css.newFile}" title="New File">
+            <span onclick=${createNewFile} class="newFile ${css.newFile}" title="Create New File in the Browser Storage Explorer">
               <i class="fa fa-plus-circle"></i>
-            </span>
+            </span>            
             ${canUpload ? yo`
-              <span class=${css.uploadFile} title="Open local file">
+              <span class=${css.uploadFile} title="Add Local file to the Browser Storage Explorer">
                 <label class="fa fa-folder-open">
                   <input type="file" onchange=${uploadFile} multiple />
                 </label>
               </span>
             ` : ''}
+            <span onclick=${connectToLocalhost} class="${css.connectToLocalhost}">
+              <i class="websocketconn fa fa-link" title="Connect to Localhost"></i>
+            </span>
             <span class=${css.changeeditorfontsize} >
               <i class="increditorsize fa fa-plus" aria-hidden="true" title="increase editor font size"></i>
               <i class="decreditorsize fa fa-minus" aria-hidden="true" title="decrease editor font size"></i>
@@ -110,7 +127,8 @@ function filepanel (appAPI, files) {
               <i class="fa fa-angle-double-left"></i>
             </span>
           </div>
-          <div class=${css.treeview}>${fileExplorer}</div>
+          <div class=${css.treeview}>${fileExplorer.init()}</div>
+          <div class="filesystemexplorer ${css.treeview}"></div>
         </div>
         ${dragbar}
       </div>
@@ -121,10 +139,41 @@ function filepanel (appAPI, files) {
   var element = template()
   element.querySelector('.increditorsize').addEventListener('click', () => { appAPI.editorFontSize(1) })
   element.querySelector('.decreditorsize').addEventListener('click', () => { appAPI.editorFontSize(-1) })
+  var containerFileSystem = element.querySelector('.filesystemexplorer')
+  var websocketconn = element.querySelector('.websocketconn')
+  filesProvider['localhost'].remixd.event.register('connecting', (event) => {
+    websocketconn.style.color = 'orange'
+    websocketconn.setAttribute('title', 'Connecting to localhost. ' + JSON.stringify(event))
+  })
+
+  filesProvider['localhost'].remixd.event.register('connected', (event) => {
+    websocketconn.style.color = 'green'
+    websocketconn.setAttribute('title', 'Connected to localhost. ' + JSON.stringify(event))
+  })
+
+  filesProvider['localhost'].remixd.event.register('errored', (event) => {
+    websocketconn.style.color = 'red'
+    websocketconn.setAttribute('title', 'localhost connection errored. ' + JSON.stringify(event))
+    if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
+      containerFileSystem.removeChild(fileSystemExplorer.element)
+    }
+  })
+
+  filesProvider['localhost'].remixd.event.register('closed', (event) => {
+    websocketconn.style.color = '#111111'
+    websocketconn.setAttribute('title', 'localhost connection closed. ' + JSON.stringify(event))
+    if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
+      containerFileSystem.removeChild(fileSystemExplorer.element)
+    }
+  })
   // TODO please do not add custom javascript objects, which have no
   // relation to the DOM to DOM nodes
   element.events = events
   fileExplorer.events.register('focus', function (path) {
+    appAPI.switchToFile(path)
+  })
+
+  fileSystemExplorer.events.register('focus', function (path) {
     appAPI.switchToFile(path)
   })
 
@@ -182,11 +231,39 @@ function filepanel (appAPI, files) {
   }
 
   function createNewFile () {
-    var newName = appAPI.createName('Untitled')
-    if (!files.set(newName, '')) {
+    var newName = filesProvider['browser'].type + '/' + appAPI.createName('Untitled.sol')
+    if (!filesProvider['browser'].set(newName, '')) {
       alert('Failed to create file ' + newName)
     } else {
       appAPI.switchToFile(newName)
+    }
+  }
+
+  /**
+    * connect to localhost if no connection and render the explorer
+    * disconnect from localhost if connected and remove the explorer
+    *
+    * @param {String} txHash    - hash of the transaction
+    */
+  function connectToLocalhost () {
+    var container = document.querySelector('.filesystemexplorer')
+    if (filesProvider['localhost'].files !== null) {
+      filesProvider['localhost'].close((error) => {
+        if (error) console.log(error)
+      })
+    } else {
+      modalDialog('Connection to Localhost', remixdDialog(), () => {
+        filesProvider['localhost'].init((error) => {
+          if (error) {
+            console.log(error)
+          } else {
+            if (fileSystemExplorer.element && container.children.length > 0) {
+              container.removeChild(fileSystemExplorer.element)
+            }
+            container.appendChild(fileSystemExplorer.init())
+          }
+        })
+      })
     }
   }
 }

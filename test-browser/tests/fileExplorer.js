@@ -6,17 +6,17 @@ var sauce = require('./sauce')
 
 var sources = {
   'sources': {
-    'ballot.sol': examples.ballot.content,
-    'test/client/credit.sol': '',
-    'src/voting.sol': '',
-    'src/leasing.sol': '',
-    'src/gmbh/contract.sol': false,
-    'src/gmbh/test.sol': false,
-    'src/gmbh/company.sol': false,
-    'src/gmbh/node_modules/ballot.sol': false,
-    'src/ug/finance.sol': false,
-    'app/solidity/mode.sol': true,
-    'app/ethereum/constitution.sol': true
+    'browser/ballot.sol': examples.ballot.content,
+    'browser/test/client/credit.sol': '',
+    'browser/src/voting.sol': '',
+    'browser/src/leasing.sol': '',
+    'browser/src/gmbh/contract.sol': false,
+    'browser/src/gmbh/test.sol': false,
+    'browser/src/gmbh/company.sol': false,
+    'browser/src/gmbh/node_modules/ballot.sol': false,
+    'browser/src/ug/finance.sol': false,
+    'browser/app/solidity/mode.sol': true,
+    'browser/app/ethereum/constitution.sol': true
   }
 }
 

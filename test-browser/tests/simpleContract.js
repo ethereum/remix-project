@@ -5,7 +5,7 @@ var sauce = require('./sauce')
 
 var sources = {
   'sources': {
-    'Untitled.sol': 'contract test1 {} contract test2 {}'
+    'browser/Untitled.sol': 'contract test1 {} contract test2 {}'
   }
 }
 
@@ -26,7 +26,7 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.envView')
-  contractHelper.testContracts(browser, sources.sources['Untitled.sol'], ['Untitled.sol:test1', 'Untitled.sol:test2'], function () {
+  contractHelper.testContracts(browser, sources.sources['browser/Untitled.sol'], ['browser/Untitled.sol:test1', 'browser/Untitled.sol:test2'], function () {
     browser.end()
   })
 }

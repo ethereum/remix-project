@@ -59,12 +59,24 @@ function Editor (editorElement) {
     e.stop()
   })
 
+  this.displayEmptyReadOnlySession = function () {
+    currentSession = null
+    editor.setSession(emptySession)
+    editor.setReadOnly(true)
+  }
+
   this.setBreakpoint = function (row, css) {
     editor.session.setBreakpoint(row, css)
   }
 
   this.editorFontSize = function (incr) {
     editor.setFontSize(editor.getFontSize() + incr)
+  }
+
+  this.setText = function (text) {
+    if (currentSession && sessions[currentSession]) {
+      sessions[currentSession].setValue(text)
+    }
   }
 
   function createSession (content) {
@@ -87,6 +99,8 @@ function Editor (editorElement) {
       var session = createSession(content)
       sessions[path] = session
       readOnlySessions[path] = false
+    } else if (sessions[path].getValue() !== content) {
+      sessions[path].setValue(content)
     }
     switchSession(path)
   }
