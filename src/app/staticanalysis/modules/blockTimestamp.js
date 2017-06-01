@@ -16,7 +16,7 @@ blockTimestamp.prototype.visit = function (node) {
 blockTimestamp.prototype.report = function (compilationResults) {
   return this.warningNowNodes.map(function (item, i) {
     return {
-      warning: `use of "now": "now" does not mean current time now is an alias for block.timestamp. Block.timestamp can be influenced by miners to a certain degree, be carefull.`,
+      warning: `use of "now": "now" does not mean current time. Now is an alias for block.timestamp. Block.timestamp can be influenced by miners to a certain degree, be careful.`,
       location: item.src,
       more: 'http://solidity.readthedocs.io/en/develop/frequently-asked-questions.html#are-timestamps-now-block-timestamp-reliable'
     }

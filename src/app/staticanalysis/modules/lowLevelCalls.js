@@ -25,20 +25,20 @@ lowLevelCalls.prototype.report = function (compilationResults) {
     var morehref = null
     switch (item.type) {
       case common.lowLevelCallTypes.CALL:
-        text = `use of "call":  the use of low level "call" should be avoided whenever possible. It can lead to unexpected behavior if return value is not handled properly. Please use Direct Calls via specifying the called contracts interface.<br />`
+        text = `use of "call":  the use of low level "call" should be avoided whenever possible. It can lead to unexpected behavior if return value is not handled properly. Please use Direct Calls via specifying the called contract's interface.<br />`
         morehref = `http://solidity.readthedocs.io/en/develop/control-structures.html?#external-function-calls`
         // http://solidity.readthedocs.io/en/develop/frequently-asked-questions.html?#why-is-the-low-level-function-call-less-favorable-than-instantiating-a-contract-with-a-variable-contractb-b-and-executing-its-functions-b-dosomething
         break
       case common.lowLevelCallTypes.CALLCODE:
-        text = `use of "callcode":  the use of low level "callcode" should be avoided whenever possible. External code that is called can change the state of the calling contract and send ether form the callers balance. If this is wantend behaviour use the Solidity library feature if possible.<br />`
+        text = `use of "callcode":  the use of low level "callcode" should be avoided whenever possible. External code that is called can change the state of the calling contract and send ether form the caller's balance. If this is wantend behaviour use the Solidity library feature if possible.<br />`
         morehref = `http://solidity.readthedocs.io/en/develop/contracts.html#libraries`
         break
       case common.lowLevelCallTypes.DELEGATECALL:
-        text = `use of "delegatecall": the use of low level "delegatecall" should be avoided whenever possible. External code that is called can change the state of the calling contract and send ether form the callers balance. If this is wantend behaviour use the Solidity library feature if possible.<br />`
+        text = `use of "delegatecall": the use of low level "delegatecall" should be avoided whenever possible. External code that is called can change the state of the calling contract and send ether form the caller's balance. If this is wantend behaviour use the Solidity library feature if possible.<br />`
         morehref = `http://solidity.readthedocs.io/en/develop/contracts.html#libraries`
         break
       case common.lowLevelCallTypes.SEND:
-        text = `use of "send": using "send" has several quirks. "send" does not throw an exception when not successful, make sure you deal with the failure case accordingly. Use "transfer" whenever failure of the ether transfer should rollback the whole transaction. Additionally if you send ether to a contract the fallback function is called which makes reentrancy vulnerabilities possible. "send" is more or less syntactic sugar for a "call" to the fallback function with 2300 gas and a specified ether value. <br />`
+        text = `use of "send": "send" does not throw an exception when not successful, make sure you deal with the failure case accordingly. Use "transfer" whenever failure of the ether transfer should rollback the whole transaction. Additionally if you "send" ether to a contract the fallback function is called, the callees fallback function is very limited due to the limited amount of gas provided by "send". No state changes are possible but the callee can log the event or revert the transfer. "send" is syntactic sugar for a "call" to the fallback function with 2300 gas and a specified ether value. <br />`
         morehref = `http://solidity.readthedocs.io/en/develop/security-considerations.html#sending-and-receiving-ether`
         break
     }
