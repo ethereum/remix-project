@@ -1,10 +1,11 @@
 {
   "name": "remixd",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "description": "remix server",
-  "main": "index.js",
+  "main": "./src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/main.js"
   },
   "repository": {
     "type": "git",
@@ -16,10 +17,20 @@
     "ethereum",
     "solidity"
   ],
-  "author": "",
+  "author": "cpp ethereum team",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ethereum/remixd/issues"
   },
-  "homepage": "https://github.com/ethereum/remixd#readme"
+  "homepage": "https://github.com/ethereum/remixd#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "fs-extra": "^3.0.1",
+    "isbinaryfile": "^3.0.2",
+    "watch": "^1.0.2",
+    "websocket": "^1.0.24"
+  },
+  "bin": {
+    "remixd": "./src/main.js"
+  }
 }
