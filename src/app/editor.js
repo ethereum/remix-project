@@ -19,7 +19,7 @@ var css = csjs`
   }
   .ace-editor         {
     top               : 4px;
-    font-size         : 2vmin;
+    font-size         : 1.1em;
     width             : 100%;
   }
 `

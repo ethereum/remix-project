@@ -281,25 +281,27 @@ UniversalDApp.prototype.getContractByName = function (contractName) {
 
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
   var self = this
-  var $createInterface = $('<div class="create"/>')
+  var createInterface = yo`<div class="create"></div>`
   if (self.options.removable) {
-    var $close = $('<div class="udapp-close" />')
-    $close.click(function () { self.$el.remove() })
-    $createInterface.append($close)
+    var close = yo`<div class="udapp-close" onclick=${remove}></div>`
+    function remove () {
+      self.$el.remove()
+    }
+    createInterface.appendChild(close)
   }
 
   var $publishButton = $(`<button class="publishContract"/>`).text('Publish').click(function () { self.event.trigger('publishContract', [contract]) })
-  $createInterface.append($publishButton)
+  createInterface.appendChild($publishButton.get(0))
 
   var $atButton = $('<button class="atAddress"/>').text('At Address').click(function () { self.clickContractAt(self, $container.find('.createContract'), contract) })
-  $createInterface.append($atButton)
+  createInterface.appendChild($atButton.get(0))
 
   var $newButton = self.getInstanceInterface(contract)
   if (!$newButton) {
-    return $createInterface
+    return createInterface
   }
 
-  $createInterface.append($newButton)
+  createInterface.appendChild($newButton)
 
   // Only display creation interface for non-abstract contracts.
   // FIXME: maybe have a flag for this in the JSON?
@@ -318,7 +320,7 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     $publishButton.attr('title', 'This contract does not implement all functions and thus cannot be published.')
   }
 
-  return $createInterface
+  return createInterface
 }
 
 UniversalDApp.prototype.getInstanceInterface = function (contract, address, $target) {
@@ -342,14 +344,14 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     return
   }
 
-  var $createInterface = $('<div class="createContract"/>')
+  var createInterface = yo`<div class="createContract"></div>`
 
   var appendFunctions = function (address, $el) {
     var $instance = $(`<div class="instance ${cssInstance.instance}"/>`)
     if (self.options.removable_instances) {
-      var $close = $('<div class="udapp-close" />')
-      $close.click(function () { $instance.remove() })
-      $instance.append($close)
+      var close = yo`<div class="udapp-close" onclick=${remove}></div>`
+      function remove () { $instance.remove() }
+      $instance.get(0).appendChild(close)
     }
     var context = self.executionContext.isVM() ? 'memory' : 'blockchain'
 
@@ -379,13 +381,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
 
       var $event = $('<div class="event" />')
 
-      var $close = $('<div class="udapp-close" />')
-      $close.click(function () { $event.remove() })
+      var close = yo`<div class="udapp-close" onclick=${remove}></div>`
+      function remove () { $event.remove() }
 
       $event.append($('<span class="name"/>').text(response.event))
         .append($('<span class="args" />').text(JSON.stringify(response.args, null, 2)))
-        .append($close)
-
+      $event.get(0).appendChild(close)
       $events.append($event)
     }
 
@@ -461,12 +462,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       }))
     })
 
-    $el = $el || $createInterface
-    $el.append($instance.append($events))
+    $el = $el || createInterface
+    $el.appendChild($instance.append($events).get(0))
   }
 
   if (!address || !$target) {
-    $createInterface.append(self.getCallButton({
+    createInterface.appendChild(self.getCallButton({
       abi: funABI,
       encode: function (args) {
         var types = []
@@ -481,12 +482,12 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
       contractName: contract.name,
       bytecode: contract.bytecode,
       appendFunctions: appendFunctions
-    }))
+    }).get(0))
   } else {
     appendFunctions(address, $target)
   }
 
-  return $createInterface
+  return createInterface
 }
 
 UniversalDApp.prototype.getConstructorInterface = function (abi) {
@@ -535,7 +536,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var getDebugTransaction = function (result) {
     var $debugTx = $('<div class="debugTx">')
-    var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i></button>')
+    var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i>  Launch debugger </button>')
     $button.click(function () {
       self.event.trigger('debugRequested', [result])
     })
@@ -545,7 +546,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var getDebugCall = function (result) {
     var $debugTx = $('<div class="debugCall">')
-    var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i></button>')
+    var $button = $('<button title="Launch Debugger" class="debug"><i class="fa fa-bug"></i>  Launch debugger </button>')
     $button.click(function () {
       self.event.trigger('debugRequested', [result])
     })
@@ -554,7 +555,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
   }
 
   var getGasUsedOutput = function (result, vmResult) {
-    var $gasUsed = $('<div class="gasUsed">')
+    var $gasUsed = $('<div class="gasUsed"></div>')
     var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : ''
     var gas
     if (result.gasUsed) {
@@ -585,9 +586,9 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   var getOutput = function () {
     var $result = $('<div class="result" />')
-    var $close = $('<div class="udapp-close" />')
-    $close.click(function () { $result.remove() })
-    $result.append($close)
+    var close = yo`<div class="udapp-close" onclick=${remove}></div>`
+    function remove () { $result.remove() }
+    $result.get(0).appendChild(close)
     return $result
   }
   var clearOutput = function ($result) {

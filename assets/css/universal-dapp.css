@@ -80,11 +80,9 @@
 }
 
 .udapp .output .result .debugTx {
-	position: absolute;
-	top: 0.4em;
-	right: 1.4em;
 	height: 1.5em;
 	width: 2.5em;
+	margin-top: 1em;
 }
 
 .udapp .output .result:last-child {
@@ -202,7 +200,7 @@
 }
 
 .udapp .contractProperty button.debug {
-	width: 21px;
+	width: 12em;
 }
 
 .udapp .contractProperty button:disabled {
