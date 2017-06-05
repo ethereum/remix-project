@@ -103,7 +103,7 @@ Right panel / second tab from the left, ``Transaction Origin`` should contain ac
 
 .. image:: remix5.png
 
-Developping contract / front end
+Developing contract / front end
 --------------------------------
 
 Donation contract - Dapp Back end
