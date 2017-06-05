@@ -225,6 +225,8 @@ and here is the front end:
     
 I would suggest to serve this file using ``http-serve``, but you can use any web server you like.
 
+Example: Dapp Front End https://github.com/ltfschoen/dapp_front_end
+
 Important notice !
 
 The variable ``contractspec`` contains the abi of the ``donation`` contract. it means that if you change something in the contract interface (function names, parameters, ...)
