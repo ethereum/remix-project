@@ -80,7 +80,7 @@ If we run Mist without any argument, its internal Geth node will run. As we have
 
 Once Mist is started, Verify that it is connected to the test node (that's important !!).
 
-On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently runnning.
+On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently running. Run the following command in the Geth Console to check: `web3.eth.blockNumber`.
 
 .. image:: mist1.png
 
