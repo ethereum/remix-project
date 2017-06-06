@@ -307,12 +307,12 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
   // FIXME: maybe have a flag for this in the JSON?
   // FIXME: maybe fix getInstanceInterface() below for this case
   if (contract.bytecode.length === 0) {
-    var $createButton = $newButton.find('.constructor .call')
+    var $createButton = $newButton.querySelector('.constructor .call')
 
     // NOTE: we must show the button to have CSS properly lined up
-    $createButton.text('Create')
-    $createButton.attr('disabled', 'disabled')
-    $createButton.attr('title', 'This contract does not implement all functions and thus cannot be created.')
+    $createButton.innerText = 'Create'
+    $createButton.setAttribute('disabled', 'disabled')
+    $createButton.setAttribute('title', 'This contract does not implement all functions and thus cannot be created.')
   }
 
   if ((contract.metadata === undefined) || (contract.metadata.length === 0)) {
