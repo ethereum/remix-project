@@ -63,6 +63,10 @@ function Editor (editorElement) {
     editor.session.setBreakpoint(row, css)
   }
 
+  this.editorFontSize = function (incr) {
+    editor.setFontSize(editor.getFontSize() + incr)
+  }
+
   function createSession (content) {
     var s = new ace.EditSession(content, 'ace/mode/javascript')
     s.setUndoManager(new ace.UndoManager())

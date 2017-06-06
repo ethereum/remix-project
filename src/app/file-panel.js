@@ -70,6 +70,13 @@ var css = csjs`
     top               : 0;
     bottom            : 0;
   }
+  .changeeditorfontsize {
+    padding: 10px;
+  }
+  .changeeditorfontsize i {
+    display: block;
+    color: #111111;
+  }
 `
 
 var limit = 60
@@ -95,6 +102,10 @@ function filepanel (appAPI, files) {
                 </label>
               </span>
             ` : ''}
+            <span class=${css.changeeditorfontsize} >
+              <i class="increditorsize fa fa-plus" aria-hidden="true" title="increase editor font size"></i>
+              <i class="decreditorsize fa fa-minus" aria-hidden="true" title="decrease editor font size"></i>
+            </span>
             <span class=${css.toggleLHP} onclick=${toggle} title="Toggle left hand panel">
               <i class="fa fa-angle-double-left"></i>
             </span>
@@ -108,6 +119,8 @@ function filepanel (appAPI, files) {
 
   var events = new EventManager()
   var element = template()
+  element.querySelector('.increditorsize').addEventListener('click', () => { appAPI.editorFontSize(1) })
+  element.querySelector('.decreditorsize').addEventListener('click', () => { appAPI.editorFontSize(-1) })
   // TODO please do not add custom javascript objects, which have no
   // relation to the DOM to DOM nodes
   element.events = events
