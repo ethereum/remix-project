@@ -196,7 +196,10 @@ var run = function () {
   var FilePanelAPI = {
     createName: createNonClashingName,
     switchToFile: switchToFile,
-    event: this.event
+    event: this.event,
+    editorFontSize: function (incr) {
+      editor.editorFontSize(incr)
+    }
   }
   var filePanel = new FilePanel(FilePanelAPI, files)
   // TODO this should happen inside file-panel.js

@@ -19,7 +19,7 @@ var css = csjs`
   }
   .ace-editor         {
     top               : 4px;
-    font-size         : 2vmin;
+    font-size         : 1.1em;
     width             : 100%;
   }
 `
@@ -61,6 +61,10 @@ function Editor (editorElement) {
 
   this.setBreakpoint = function (row, css) {
     editor.session.setBreakpoint(row, css)
+  }
+
+  this.editorFontSize = function (incr) {
+    editor.setFontSize(editor.getFontSize() + incr)
   }
 
   function createSession (content) {
