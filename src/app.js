@@ -86,7 +86,8 @@ var run = function () {
 
   function createNonClashingName (path) {
     var counter = ''
-    while (files.exists(path + counter)) {
+    if (path.endsWith('.sol')) path = path.substring(0, path.lastIndexOf('.sol'))
+    while (files.exists(path + counter + '.sol')) {
       counter = (counter | 0) + 1
     }
     return path + counter + '.sol'
