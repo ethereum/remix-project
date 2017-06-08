@@ -80,7 +80,7 @@ If we run Mist without any argument, its internal Geth node will run. As we have
 
 Once Mist is started, Verify that it is connected to the test node (that's important !!).
 
-On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently runnning.
+On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently running. Run the following command in the Geth Console to check: `web3.eth.blockNumber`.
 
 .. image:: mist1.png
 
@@ -103,7 +103,7 @@ Right panel / second tab from the left, ``Transaction Origin`` should contain ac
 
 .. image:: remix5.png
 
-Developping contract / front end
+Developing contract / front end
 --------------------------------
 
 Donation contract - Dapp Back end
@@ -224,6 +224,8 @@ and here is the front end:
     </script>
     
 I would suggest to serve this file using ``http-serve``, but you can use any web server you like.
+
+Example: Dapp Front End https://github.com/ltfschoen/dapp_front_end
 
 Important notice !
 
