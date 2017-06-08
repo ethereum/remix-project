@@ -34,12 +34,33 @@ var css = csjs`
   .checkboxText {
     margin-left: 3px;
   }
+  .compilationWarning extends ${styles.warningTextBox} {
+    margin-top: 1em;
+    margin-left: 0.5em;
+  }
 }
 `
-module.exports = settingsTab
+module.exports = SettingsTab
 
-function settingsTab () {
-  return yo`
+function SettingsTab (container, appAPI, appEvents, opts) {
+  if (typeof container === 'string') container = document.querySelector(container)
+  if (!container) throw new Error('no container given')
+
+  var warnCompilationSlow = yo`<div id="warnCompilationSlow" class="${css.compilationWarning}"></div>`
+
+  appEvents.compiler.register('compilationDuration', function tabHighlighting (speed) {
+    warnCompilationSlow.style.visibility = 'hidden'
+    var settingsView = document.querySelector('#header #menu .settingsView')
+    settingsView.style.color = ''
+    if (speed > 1000) {
+      warnCompilationSlow.className = css.compilationWarning
+      warnCompilationSlow.style.visibility = 'visible'
+      warnCompilationSlow.innerHTML = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
+      settingsView.style.color = '#FF8B8B'
+    }
+  })
+
+  var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
       <div class="${css.info}">
         <div>Your current Solidity version is</div>
@@ -64,7 +85,8 @@ function settingsTab () {
       <div class="${css.crow}">
         <div class="${css.button} "id="compile" title="Compile source code">Compile</div>
       </div>
-      <div id="warnCompilationSlow" class="${css.compilationWarning}"></div>
+      ${warnCompilationSlow}
     </div>
   `
+  container.appendChild(el)
 }
