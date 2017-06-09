@@ -18,6 +18,7 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   })
   this.init()
   this.view
+  this.stateVariablesByAddresses = {}
 }
 
 SolidityState.prototype.render = function () {
@@ -54,25 +55,34 @@ SolidityState.prototype.init = function () {
         self.basicPanel.update({})
         console.log(error)
       } else {
-        self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
-          if (error) {
-            self.basicPanel.update({})
-            console.log(error)
-          } else {
-            var storageViewer = new StorageViewer({
-              stepIndex: self.parent.currentStepIndex,
-              tx: self.parent.tx,
-              address: address
-            }, self.storageResolver, self.traceManager)
-            stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
-              if (!result.error) {
-                self.basicPanel.update(result)
-              }
-            })
-          }
-        })
+        if (self.stateVariablesByAddresses[address]) {
+          extractStateVariables(self, self.stateVariablesByAddresses[address], address)
+        } else {
+          self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
+            if (error) {
+              self.basicPanel.update({})
+              console.log(error)
+            } else {
+              self.stateVariablesByAddresses[address] = stateVars
+              extractStateVariables(self, stateVars, address)
+            }
+          })
+        }
       }
     })
+  })
+}
+
+function extractStateVariables (self, stateVars, address) {
+  var storageViewer = new StorageViewer({
+    stepIndex: self.parent.currentStepIndex,
+    tx: self.parent.tx,
+    address: address
+  }, self.storageResolver, self.traceManager)
+  stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
+    if (!result.error) {
+      self.basicPanel.update(result)
+    }
   })
 }
 
