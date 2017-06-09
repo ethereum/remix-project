@@ -6,8 +6,6 @@ var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
 var csjs = require('csjs-inject')
-var styleGuide = require('./app/style-guide')
-var styles = styleGuide()
 
 var QueryParams = require('./app/query-params')
 var queryParams = new QueryParams()
@@ -31,27 +29,10 @@ var tabbedMenu = require('./app/tabbed-menu')
 var examples = require('./app/example-contracts')
 
 var contractTab = require('./app/contract-tab.js')
-var settingsTab = require('./app/settings-tab.js')
+var SettingsTab = require('./app/settings-tab.js')
 var analysisTab = require('./app/analysis-tab.js')
 var debuggerTab = require('./app/debugger-tab.js')
 var filesTab = require('./app/files-tab.js')
-/* ----------------------------------------------
-        TABS - Righthand pannel
----------------------------------------------- */
-var contractView = contractTab()
-document.querySelector('#optionViews').appendChild(contractView)
-
-var settingsView = settingsTab()
-document.querySelector('#optionViews').appendChild(settingsView)
-
-var analysisView = analysisTab()
-document.querySelector('#optionViews').appendChild(analysisView)
-
-var debuggerView = debuggerTab()
-document.querySelector('#optionViews').appendChild(debuggerView)
-
-var filesView = filesTab()
-document.querySelector('#optionViews').appendChild(filesView)
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -63,18 +44,32 @@ window.addEventListener('message', function (ev) {
     loadFilesCallback(ev.data[1])
   }
 }, false)
-
 var run = function () {
   var self = this
   this.event = new EventManager()
   var fileStorage = new Storage('sol:')
   var files = new Files(fileStorage)
   var config = new Config(fileStorage)
-
-  var executionContext = new ExecutionContext()
   var compiler = new Compiler(handleImportCall)
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+  /* ----------------------------------------------
+          TABS - Righthand pannel
+  ------------------------------------------------ */
+  var contractView = contractTab()
+  document.querySelector('#optionViews').appendChild(contractView)
 
+  var settingsView = new SettingsTab('#optionViews', {}, {compiler: compiler.event}, {})
+
+  var analysisView = analysisTab()
+  document.querySelector('#optionViews').appendChild(analysisView)
+
+  var debuggerView = debuggerTab()
+  document.querySelector('#optionViews').appendChild(debuggerView)
+
+  var filesView = filesTab()
+  document.querySelector('#optionViews').appendChild(filesView)
+
+  var executionContext = new ExecutionContext()
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
     var ret = {}
@@ -810,25 +805,6 @@ var run = function () {
   document.querySelector('#autoCompile').addEventListener('change', function () {
     autoCompile = document.querySelector('#autoCompile').checked
     config.set('autoCompile', autoCompile)
-  })
-
-  var cssCompilationWarning = csjs`
-    .compilationWarning extends ${styles.warningTextBox} {
-      margin-top: 1em;
-      margin-left: 0.5em;
-    }
-  `
-  var warnMsg = ' Last compilation took {X}ms. We suggest to turn off autocompilation.'
-  compiler.event.register('compilationDuration', (speed) => {
-    $('#warnCompilationSlow').html('')
-    $('#warnCompilationSlow').hide()
-    $('#header #menu .settingsView').css('color', '')
-    if (speed > 1000) {
-      document.querySelector('#warnCompilationSlow').className = cssCompilationWarning.compilationWarning
-      $('#warnCompilationSlow').show()
-      $('#warnCompilationSlow').html(warnMsg.replace('{X}', speed))
-      $('#header #menu .settingsView').css('color', '#FF8B8B')
-    }
   })
 
   function runCompiler () {
