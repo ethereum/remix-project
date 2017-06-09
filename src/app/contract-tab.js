@@ -1,4 +1,5 @@
 var yo = require('yo-yo')
+const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -38,12 +39,26 @@ var css = csjs`
     display: block;
     margin: 4em 0 2em 0;
   }
+  .copyaddress {
+    color: #C6CFF7;
+    margin-right: 0.2em;
+    margin-top: 0.3em;
+    cursor: pointer;
+  }
+  .selectAddress extends ${styles.dropdown} {
+    width: 73.5%;
+    float: left;
+    text-align: center;
+  }
 `
 
 module.exports = contractTab
 
 function contractTab () {
-  return yo`
+  function copyAddress () {
+    copy(document.querySelector('#envView #txorigin').value)
+  }
+  var el = yo`
     <div class="${css.contractTabView}" id="envView">
       <div class="${css.crow}">
         <div id="selectExEnv" class="${css.col1_1}">
@@ -73,7 +88,7 @@ function contractTab () {
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Transaction origin</div>
-        <select name="txorigin" class="${css.select}" id="txorigin"></select>
+        <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i><select name="txorigin" class="${css.selectAddress}" id="txorigin"></select>
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Transaction gas limit</div>
@@ -90,4 +105,5 @@ function contractTab () {
       <div id="output" class="${css.contract}"></div>
     </div>
   `
+  return el
 }
