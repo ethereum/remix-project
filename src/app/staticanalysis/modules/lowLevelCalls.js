@@ -38,7 +38,7 @@ lowLevelCalls.prototype.report = function (compilationResults) {
         morehref = `http://solidity.readthedocs.io/en/develop/contracts.html#libraries`
         break
       case common.lowLevelCallTypes.SEND:
-        text = `use of "send": "send" does not throw an exception when not successful, make sure you deal with the failure case accordingly. Use "transfer" whenever failure of the ether transfer should rollback the whole transaction. Additionally if you "send" ether to a contract the fallback function is called, the callees fallback function is very limited due to the limited amount of gas provided by "send". No state changes are possible but the callee can log the event or revert the transfer. "send" is syntactic sugar for a "call" to the fallback function with 2300 gas and a specified ether value. <br />`
+        text = `use of "send": "send" does not throw an exception when not successful, make sure you deal with the failure case accordingly. Use "transfer" whenever failure of the ether transfer should rollback the whole transaction. Note: if you "send/transfer" ether to a contract the fallback function is called, the callees fallback function is very limited due to the limited amount of gas provided by "send/transfer". No state changes are possible but the callee can log the event or revert the transfer. "send/transfer" is syntactic sugar for a "call" to the fallback function with 2300 gas and a specified ether value. <br />`
         morehref = `http://solidity.readthedocs.io/en/develop/security-considerations.html#sending-and-receiving-ether`
         break
     }

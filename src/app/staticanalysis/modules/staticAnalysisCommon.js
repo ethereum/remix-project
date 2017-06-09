@@ -403,7 +403,7 @@ function isStorageVariableDeclaration (node) {
  * @return {bool}
  */
 function isInteraction (node) {
-  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node)
+  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node)
 }
 
 /**

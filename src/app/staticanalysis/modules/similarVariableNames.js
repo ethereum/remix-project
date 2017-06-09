@@ -56,7 +56,7 @@ function findSimilarVarNames (vars) {
 }
 
 function isCommonPrefixedVersion (varName1, varName2) {
-  return (varName1.startsWith('_') || varName2.startsWith('_')) && (varName1.slice(1) === varName2 || varName1 === varName2.slice(1))
+  return (varName1.startsWith('_') && varName1.slice(1) === varName2) || (varName2.startsWith('_') && varName2.slice(1) === varName1)
 }
 
 function getFunctionVariables (contract, func) {

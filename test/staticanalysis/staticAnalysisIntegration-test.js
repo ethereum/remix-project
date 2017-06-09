@@ -23,7 +23,9 @@ var testFiles = [
   'structReentrant.sol',
   'thisLocal.sol',
   'globals.sol',
-  'library.sol'
+  'library.sol',
+  'transfer.sol',
+  'ctor.sol'
 ]
 
 var testFileAsts = {}
@@ -52,7 +54,9 @@ test('Integration test thisLocal.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 1,
     'globals.sol': 0,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -79,7 +83,9 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'structReentrant.sol': 1,
     'thisLocal.sol': 0,
     'globals.sol': 1,
-    'library.sol': 1
+    'library.sol': 1,
+    'transfer.sol': 1,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -106,7 +112,9 @@ test('Integration test constantFunctions.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 1,
     'globals.sol': 0,
-    'library.sol': 1
+    'library.sol': 1,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -133,7 +141,9 @@ test('Integration test inlineAssembly.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 0,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -160,7 +170,9 @@ test('Integration test txOrigin.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 1,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -187,7 +199,9 @@ test('Integration test gasCosts.js', function (t) {
     'structReentrant.sol': 1,
     'thisLocal.sol': 2,
     'globals.sol': 1,
-    'library.sol': 1
+    'library.sol': 1,
+    'transfer.sol': 1,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -214,7 +228,9 @@ test('Integration test similarVariableNames.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 0,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -241,7 +257,9 @@ test('Integration test inlineAssembly.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 0,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -268,7 +286,9 @@ test('Integration test blockTimestamp.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 2,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -295,7 +315,9 @@ test('Integration test lowLevelCalls.js', function (t) {
     'structReentrant.sol': 1,
     'thisLocal.sol': 2,
     'globals.sol': 1,
-    'library.sol': 1
+    'library.sol': 1,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -322,7 +344,9 @@ test('Integration test blockBlockhash.js', function (t) {
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
     'globals.sol': 1,
-    'library.sol': 0
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
