@@ -1,5 +1,5 @@
-var name = 'low level calls'
-var desc = 'semantics maybe unclear'
+var name = 'Low level calls: '
+var desc = 'Semantics maybe unclear'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 

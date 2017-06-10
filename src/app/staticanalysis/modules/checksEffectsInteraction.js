@@ -1,4 +1,4 @@
-var name = 'Checks-Effects-Interaction pattern'
+var name = 'Check effects: '
 var desc = 'Avoid potential reentrancy bugs'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
