@@ -25,14 +25,8 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 var FilePanel = require('./app/file-panel')
-var tabbedMenu = require('./app/tabbed-menu')
+var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
-
-var contractTab = require('./app/contract-tab.js')
-var SettingsTab = require('./app/settings-tab.js')
-var analysisTab = require('./app/analysis-tab.js')
-var debuggerTab = require('./app/debugger-tab.js')
-var filesTab = require('./app/files-tab.js')
 
 // The event listener needs to be registered as early as possible, because the
 // parent will send the message upon the "load" event.
@@ -50,26 +44,7 @@ var run = function () {
   var fileStorage = new Storage('sol:')
   var files = new Files(fileStorage)
   var config = new Config(fileStorage)
-  var compiler = new Compiler(handleImportCall)
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
-  /* ----------------------------------------------
-          TABS - Righthand pannel
-  ------------------------------------------------ */
-  var contractView = contractTab()
-  document.querySelector('#optionViews').appendChild(contractView)
 
-  var settingsView = new SettingsTab('#optionViews', {}, {compiler: compiler.event}, {})
-
-  var analysisView = analysisTab()
-  document.querySelector('#optionViews').appendChild(analysisView)
-
-  var debuggerView = debuggerTab()
-  document.querySelector('#optionViews').appendChild(debuggerView)
-
-  var filesView = filesTab()
-  document.querySelector('#optionViews').appendChild(filesView)
-
-  var executionContext = new ExecutionContext()
   // return all the files, except the temporary/readonly ones
   function packageFiles () {
     var ret = {}
@@ -174,9 +149,6 @@ var run = function () {
   window.syncStorage = chromeCloudSync
   chromeCloudSync()
 
-  // ----------------- editor ----------------------
-  var editor = new Editor(document.getElementById('input'))
-
   // ---------------- FilePanel --------------------
   // TODO: All FilePanel related CSS should move into file-panel.js
   // app.js provides file-panel.js with a css selector or a DOM element
@@ -280,6 +252,9 @@ var run = function () {
       load: function () { this.contentWindow.postMessage(['loadFiles', files], '*') }
     }).appendTo('body')
   })
+
+  // ----------------- editor ----------------------
+  var editor = new Editor(document.getElementById('input'))
 
   // --------------------Files tabs-----------------------------
   var $filesEl = $('#files')
@@ -444,68 +419,80 @@ var run = function () {
     })
   })
 
-  // ----------------- resizeable ui ---------------
+  var compiler = new Compiler(handleImportCall)
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
-  var EDITOR_WINDOW_SIZE = 'editorWindowSize'
-
-  var dragging = false
-  $('#dragbar').mousedown(function (e) {
-    e.preventDefault()
-    dragging = true
-    var main = $('#righthand-panel')
-    var ghostbar = $('<div id="ghostbar">', {
-      css: {
-        top: main.offset().top,
-        left: main.offset().left
+  // ----------------- Renderer -----------------
+  var transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var comp = $('#value').val().split(' ')
+        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+      } catch (e) {
+        cb(e)
       }
-    }).prependTo('body')
-
-    $(document).mousemove(function (e) {
-      ghostbar.css('left', e.pageX + 2)
-    })
-  })
-
-  var $body = $('body')
-
-  function setEditorSize (delta) {
-    $('#righthand-panel').css('width', delta)
-    $('#editor').css('right', delta)
-    onResize()
-  }
-
-  function getEditorSize () {
-    return $('#righthand-panel').width()
-  }
-
-  $(document).mouseup(function (e) {
-    if (dragging) {
-      var delta = $body.width() - e.pageX + 2
-      $('#ghostbar').remove()
-      $(document).unbind('mousemove')
-      dragging = false
-      delta = (delta < 50) ? 50 : delta
-      setEditorSize(delta)
-      config.set(EDITOR_WINDOW_SIZE, delta)
-      reAdjust()
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
     }
-  })
-
-  if (config.exists(EDITOR_WINDOW_SIZE)) {
-    setEditorSize(config.get(EDITOR_WINDOW_SIZE))
-  } else {
-    config.set(EDITOR_WINDOW_SIZE, getEditorSize())
   }
 
-  // ----------------- toggle right hand panel -----------------
+  var rendererAPI = {
+    error: (file, error) => {
+      if (file === config.get('currentFile')) {
+        editor.addAnnotation(error)
+      }
+    },
+    errorClick: (errFile, errLine, errCol) => {
+      if (errFile !== config.get('currentFile') && files.exists(errFile)) {
+        switchToFile(errFile)
+      }
+      editor.gotoLine(errLine, errCol)
+    },
+    currentCompiledSourceCode: () => {
+      if (compiler.lastCompilationResult.source) {
+        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
+      }
+      return ''
+    },
+    resetDapp: (udappContracts, renderOutputModifier) => {
+      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
+    },
+    renderDapp: () => {
+      return udapp.render()
+    },
+    getAccounts: (callback) => {
+      udapp.getAccounts(callback)
+    },
+    getBalance: (address, callback) => {
+      udapp.getBalance(address, (error, balance) => {
+        if (error) {
+          callback(error)
+        } else {
+          callback(null, executionContext.web3().fromWei(balance, 'ether'))
+        }
+      })
+    }
+  }
+  var renderer = new Renderer(rendererAPI, compiler.event)
 
-  var hidingRHP = false
-  $('.toggleRHP').click(function () {
-    hidingRHP = !hidingRHP
-    setEditorSize(hidingRHP ? 0 : config.get(EDITOR_WINDOW_SIZE))
-    $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
-    $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
-  })
-
+  // ---------------- Righthand-panel --------------------
+  var rhpAPI = {
+    config: config,
+    onResize: onResize,
+    reAdjust: reAdjust,
+    renderer: renderer
+  }
+  var rhpEvents = {
+    compiler: compiler.event,
+    app: self.event
+  }
+  var righthandPanel = new RighthandPanel(document.body, rhpAPI, rhpEvents, {})
+// ------------------------------------------------------------
+  var executionContext = new ExecutionContext()
   // ----------------- editor resize ---------------
 
   function onResize () {
@@ -725,63 +712,6 @@ var run = function () {
     })
   })
 
-  // ----------------- Renderer -----------------
-  var transactionContextAPI = {
-    getAddress: (cb) => {
-      cb(null, $('#txorigin').val())
-    },
-    getValue: (cb) => {
-      try {
-        var comp = $('#value').val().split(' ')
-        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
-      } catch (e) {
-        cb(e)
-      }
-    },
-    getGasLimit: (cb) => {
-      cb(null, $('#gasLimit').val())
-    }
-  }
-
-  var rendererAPI = {
-    error: (file, error) => {
-      if (file === config.get('currentFile')) {
-        editor.addAnnotation(error)
-      }
-    },
-    errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== config.get('currentFile') && files.exists(errFile)) {
-        switchToFile(errFile)
-      }
-      editor.gotoLine(errLine, errCol)
-    },
-    currentCompiledSourceCode: () => {
-      if (compiler.lastCompilationResult.source) {
-        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
-      }
-      return ''
-    },
-    resetDapp: (udappContracts, renderOutputModifier) => {
-      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
-    },
-    renderDapp: () => {
-      return udapp.render()
-    },
-    getAccounts: (callback) => {
-      udapp.getAccounts(callback)
-    },
-    getBalance: (address, callback) => {
-      udapp.getBalance(address, (error, balance) => {
-        if (error) {
-          callback(error)
-        } else {
-          callback(null, executionContext.web3().fromWei(balance, 'ether'))
-        }
-      })
-    }
-  }
-  var renderer = new Renderer(rendererAPI, compiler.event)
-
   // ----------------- StaticAnalysis -----------------
   var staticAnalysisAPI = {
     renderWarning: (label, warningContainer, type) => {
@@ -996,16 +926,6 @@ var run = function () {
     loadVersion('builtin')
   })
 
-  var tabbedMenuAPI = {
-    warnCompilerLoading: function (msg) {
-      renderer.clear()
-      if (msg) {
-        renderer.error(msg, $('#output'), {type: 'warning'})
-      }
-    }
-  }
-  // load tabbed menu component
-  tabbedMenu(tabbedMenuAPI, compiler.event, self.event)
 }
 
 module.exports = {

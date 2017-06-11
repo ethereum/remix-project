@@ -1,0 +1,120 @@
+var csjs = require('csjs-inject')
+var yo = require('yo-yo')
+var $ = require('jquery')
+
+var tabbedMenu = require('./tabbed-menu')
+var contractTab = require('./contract-tab')
+var settingsTab = require('./settings-tab')
+var analysisTab = require('./analysis-tab')
+var debuggerTab = require('./debugger-tab')
+var filesTab = require('./files-tab')
+
+// ------------------------------------------------------------------
+
+module.exports = RighthandPanel
+
+function RighthandPanel (container, API, events, opts) {
+
+  var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
+  var element = yo`
+    <div id="righthand-panel">
+      <div id="header">
+        <div id="menu">
+          <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
+          <ul id="options">
+            <li class="envView" title="Environment">Contract</li>
+            <li class="settingsView" title="Settings">Settings</li>
+            <li class="publishView" title="Publish" >Files</li>
+            <li class="debugView" title="Debugger">Debugger</li>
+            <li class="staticanalysisView" title="Static Analysis">Analysis</li>
+            <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
+          </ul>
+        </div>
+        ${optionViews}
+      </div>
+    </div>
+  `
+  contractTab(optionViews, API, events, opts)
+  settingsTab(optionViews, API, events, opts)
+  analysisTab(optionViews, API, events, opts)
+  debuggerTab(optionViews, API, events, opts)
+  filesTab(optionViews, API, events, opts)
+  container.appendChild(element)
+
+  // ----------------- toggle right hand panel -----------------
+
+  var hidingRHP = false
+  $('.toggleRHP').click(function () {
+    hidingRHP = !hidingRHP
+    setEditorSize(hidingRHP ? 0 : API.config.get(EDITOR_WINDOW_SIZE))
+    $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
+    $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
+  })
+
+  // ----------------- tabbed menu -----------------
+  var tabbedMenuAPI = {
+    warnCompilerLoading: function (msg) {
+      API.renderer.clear()
+      if (msg) {
+        API.renderer.error(msg, $('#output'), {type: 'warning'})
+      }
+    }
+  }
+  // load tabbed menu component
+  var tabContainer = undefined // @TODO
+  var tabEvents = {compiler: events.compiler, app: events.app}
+  tabbedMenu(tabContainer, tabbedMenuAPI, tabEvents, {})
+
+  // ----------------- resizeable ui ---------------
+
+  var EDITOR_WINDOW_SIZE = 'editorWindowSize'
+
+  var dragging = false
+  $('#dragbar').mousedown(function (e) {
+    e.preventDefault()
+    dragging = true
+    var main = $('#righthand-panel')
+    var ghostbar = $('<div id="ghostbar">', {
+      css: {
+        top: main.offset().top,
+        left: main.offset().left
+      }
+    }).prependTo('body')
+
+    $(document).mousemove(function (e) {
+      ghostbar.css('left', e.pageX + 2)
+    })
+  })
+
+  var $body = $('body')
+
+  function setEditorSize (delta) {
+    $('#righthand-panel').css('width', delta)
+    $('#editor').css('right', delta)
+    API.onResize()
+  }
+
+  function getEditorSize () {
+    return $('#righthand-panel').width()
+  }
+
+  $(document).mouseup(function (e) {
+    if (dragging) {
+      var delta = $body.width() - e.pageX + 2
+      $('#ghostbar').remove()
+      $(document).unbind('mousemove')
+      dragging = false
+      delta = (delta < 50) ? 50 : delta
+      setEditorSize(delta)
+      API.config.set(EDITOR_WINDOW_SIZE, delta)
+      API.reAdjust()
+    }
+  })
+
+  if (API.config.exists(EDITOR_WINDOW_SIZE)) {
+    setEditorSize(API.config.get(EDITOR_WINDOW_SIZE))
+  } else {
+    API.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
+  }
+
+}
