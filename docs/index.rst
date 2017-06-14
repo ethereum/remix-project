@@ -16,6 +16,7 @@ Tutorial
 .. toctree::
    :maxdepth: 1
    
+   tutorial_remixd_filesystem.rst
    tutorial_mist.rst
    tutorial_debug.rst
    tutorial_import.rst
