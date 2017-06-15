@@ -134,6 +134,7 @@ body {
     bottom: 0;
     overflow: auto;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 #header {
@@ -150,7 +151,6 @@ body {
 
 #header #menu {
     border-bottom: 3px solid #F4F6FF;
-    overflow: hidden;
     height: 2em;
     font-size: 1em;
     padding-top: 0.5em;
