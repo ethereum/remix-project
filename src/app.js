@@ -490,7 +490,7 @@ var run = function () {
     compiler: compiler.event,
     app: self.event
   }
-  var righthandPanel = new RighthandPanel(document.body, rhpAPI, rhpEvents, {})
+  var righthandPanel = new RighthandPanel(document.body, rhpAPI, rhpEvents, {}) // eslint-disable-line
 // ------------------------------------------------------------
   var executionContext = new ExecutionContext()
   // ----------------- editor resize ---------------
@@ -921,7 +921,6 @@ var run = function () {
 
     loadVersion('builtin')
   })
-
 }
 
 module.exports = {
