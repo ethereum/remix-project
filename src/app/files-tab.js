@@ -20,7 +20,7 @@ var css = csjs`
 
 module.exports = filesTab
 
-function filesTab (container, API, events, opts) {
+function filesTab (container, appAPI, events, opts) {
   var el = yo`
     <div class="${css.filesTabView}" id="publishView">
       <div class="${css.crow}">

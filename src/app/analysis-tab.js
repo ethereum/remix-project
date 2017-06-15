@@ -21,7 +21,7 @@ var css = csjs`
 
 module.exports = analysisTab
 
-function analysisTab (container, API, events, opts) {
+function analysisTab (container, appAPI, events, opts) {
   var el = yo`
     <div class="${css.analysisTabView} "id="staticanalysisView">
     </div>

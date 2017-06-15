@@ -1,4 +1,3 @@
-var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var $ = require('jquery')
 
@@ -13,8 +12,7 @@ var filesTab = require('./files-tab')
 
 module.exports = RighthandPanel
 
-function RighthandPanel (container, API, events, opts) {
-
+function RighthandPanel (container, appAPI, events, opts) {
   var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
   var element = yo`
     <div id="righthand-panel">
@@ -34,11 +32,11 @@ function RighthandPanel (container, API, events, opts) {
       </div>
     </div>
   `
-  contractTab(optionViews, API, events, opts)
-  settingsTab(optionViews, API, events, opts)
-  analysisTab(optionViews, API, events, opts)
-  debuggerTab(optionViews, API, events, opts)
-  filesTab(optionViews, API, events, opts)
+  contractTab(optionViews, appAPI, events, opts)
+  settingsTab(optionViews, appAPI, events, opts)
+  analysisTab(optionViews, appAPI, events, opts)
+  debuggerTab(optionViews, appAPI, events, opts)
+  filesTab(optionViews, appAPI, events, opts)
   container.appendChild(element)
 
   // ----------------- toggle right hand panel -----------------
@@ -46,7 +44,7 @@ function RighthandPanel (container, API, events, opts) {
   var hidingRHP = false
   $('.toggleRHP').click(function () {
     hidingRHP = !hidingRHP
-    setEditorSize(hidingRHP ? 0 : API.config.get(EDITOR_WINDOW_SIZE))
+    setEditorSize(hidingRHP ? 0 : appAPI.config.get(EDITOR_WINDOW_SIZE))
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
   })
@@ -54,14 +52,14 @@ function RighthandPanel (container, API, events, opts) {
   // ----------------- tabbed menu -----------------
   var tabbedMenuAPI = {
     warnCompilerLoading: function (msg) {
-      API.renderer.clear()
+      appAPI.renderer.clear()
       if (msg) {
-        API.renderer.error(msg, $('#output'), {type: 'warning'})
+        appAPI.renderer.error(msg, $('#output'), {type: 'warning'})
       }
     }
   }
   // load tabbed menu component
-  var tabContainer = undefined // @TODO
+  var tabContainer // @TODO
   var tabEvents = {compiler: events.compiler, app: events.app}
   tabbedMenu(tabContainer, tabbedMenuAPI, tabEvents, {})
 
@@ -91,7 +89,7 @@ function RighthandPanel (container, API, events, opts) {
   function setEditorSize (delta) {
     $('#righthand-panel').css('width', delta)
     $('#editor').css('right', delta)
-    API.onResize()
+    appAPI.onResize()
   }
 
   function getEditorSize () {
@@ -106,15 +104,14 @@ function RighthandPanel (container, API, events, opts) {
       dragging = false
       delta = (delta < 50) ? 50 : delta
       setEditorSize(delta)
-      API.config.set(EDITOR_WINDOW_SIZE, delta)
-      API.reAdjust()
+      appAPI.config.set(EDITOR_WINDOW_SIZE, delta)
+      appAPI.reAdjust()
     }
   })
 
-  if (API.config.exists(EDITOR_WINDOW_SIZE)) {
-    setEditorSize(API.config.get(EDITOR_WINDOW_SIZE))
+  if (appAPI.config.exists(EDITOR_WINDOW_SIZE)) {
+    setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
   } else {
-    API.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
+    appAPI.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
   }
-
 }

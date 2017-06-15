@@ -3,7 +3,7 @@ var loadingSpinner = require('./loading-spinner')
 
 module.exports = tabbedMenu
 
-function tabbedMenu (container, API, events, opts) {
+function tabbedMenu (container, appAPI, events, opts) {
   $('#options li').click(function (ev) {
     var $el = $(this)
     selectTab($el)
@@ -24,7 +24,7 @@ function tabbedMenu (container, API, events, opts) {
     var spinner = loadingSpinner()
     settingsTab.appendChild(spinner)
 
-    API.warnCompilerLoading('Solidity compiler is currently loading. Please wait a moment...')
+    appAPI.warnCompilerLoading('Solidity compiler is currently loading. Please wait a moment...')
     events.compiler.register('compilerLoaded', finish)
     function finish () {
       events.compiler.unregister('compilerLoaded', finish)
