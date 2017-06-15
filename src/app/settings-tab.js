@@ -47,14 +47,17 @@ function SettingsTab (container, appAPI, appEvents, opts) {
   if (!container) throw new Error('no container given')
 
   var warnCompilationSlow = yo`<div id="warnCompilationSlow"></div>`
-
+  warnCompilationSlow.className = css.compilationWarning
   appEvents.compiler.register('compilationDuration', function tabHighlighting (speed) {
     var settingsView = document.querySelector('#header #menu .settingsView')
     if (speed > 1000) {
-      warnCompilationSlow.className = css.compilationWarning
       warnCompilationSlow.innerHTML = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
       warnCompilationSlow.style.visibility = 'visible'
       settingsView.style.color = '#FF8B8B'
+    } else {
+      warnCompilationSlow.innerHTML = ''
+      warnCompilationSlow.style.visibility = 'hidden'
+      settingsView.style.color = ''
     }
   })
 
