@@ -3,13 +3,13 @@ var loadingSpinner = require('./loading-spinner')
 
 module.exports = tabbedMenu
 
-function tabbedMenu (rendererAPI, compilerEvent, appEvent) {
+function tabbedMenu (container, appAPI, events, opts) {
   $('#options li').click(function (ev) {
     var $el = $(this)
     selectTab($el)
   })
 
-  appEvent.register('debuggingRequested', () => {
+  events.app.register('debuggingRequested', () => {
     selectTab($('ul#options li.debugView'))
   })
 
@@ -17,17 +17,17 @@ function tabbedMenu (rendererAPI, compilerEvent, appEvent) {
   selectTab($('#options .envView'))
 
   // add event listeners for loading spinner
-  compilerEvent.register('loadingCompiler', function start () {
+  events.compiler.register('loadingCompiler', function start () {
     var settingsTab = document.querySelector('.settingsView')
     if (settingsTab.children.length) return
 
     var spinner = loadingSpinner()
     settingsTab.appendChild(spinner)
 
-    rendererAPI.warnCompilerLoading('Solidity compiler is currently loading. Please wait a moment...')
-    compilerEvent.register('compilerLoaded', finish)
+    appAPI.warnCompilerLoading('Solidity compiler is currently loading. Please wait a moment...')
+    events.compiler.register('compilerLoaded', finish)
     function finish () {
-      compilerEvent.unregister('compilerLoaded', finish)
+      events.compiler.unregister('compilerLoaded', finish)
       settingsTab.removeChild(spinner)
     }
   })
@@ -42,6 +42,6 @@ function tabbedMenu (rendererAPI, compilerEvent, appEvent) {
       $('#optionViews').attr('class', '').addClass(cls)
       el.addClass('active')
     }
-    appEvent.trigger('tabChanged', [cls])
+    events.app.trigger('tabChanged', [cls])
   }
 }

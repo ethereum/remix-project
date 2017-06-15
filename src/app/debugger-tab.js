@@ -11,6 +11,7 @@ var css = csjs`
 
 module.exports = debuggerTab
 
-function debuggerTab () {
-  return yo` <div class="${css.debuggerTabView} "id="debugView"><div id="debugger"></div></div>`
+function debuggerTab (container, appAPI, events, opts) {
+  var el = yo` <div class="${css.debuggerTabView} "id="debugView"><div id="debugger"></div></div>`
+  container.appendChild(el)
 }

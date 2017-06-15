@@ -20,8 +20,8 @@ var css = csjs`
 
 module.exports = filesTab
 
-function filesTab () {
-  return yo`
+function filesTab (container, appAPI, events, opts) {
+  var el = yo`
     <div class="${css.filesTabView}" id="publishView">
       <div class="${css.crow}">
         <button id="gist" title="Publish all files as public gist on github.com">
@@ -42,4 +42,5 @@ function filesTab () {
       </div>
     </div>
   `
+  container.appendChild(el)
 }

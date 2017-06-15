@@ -54,7 +54,7 @@ var css = csjs`
 
 module.exports = contractTab
 
-function contractTab () {
+function contractTab (container, appAPI, appEvents, opts) {
   function copyAddress () {
     copy(document.querySelector('#envView #txorigin').value)
   }
@@ -105,5 +105,5 @@ function contractTab () {
       <div id="output" class="${css.contract}"></div>
     </div>
   `
-  return el
+  container.appendChild(el)
 }
