@@ -1,5 +1,7 @@
 'use strict'
 var EventManager = require('ethereum-remix').lib.EventManager
+var modalDialog = require('../app/modaldialog')
+var yo = require('yo-yo')
 
 class Remixd {
   constructor () {
@@ -66,8 +68,11 @@ class Remixd {
   }
 
   errored (event) {
+    function remixdDialog () {
+      return yo`<div>Connection to Remixd closed. Localhost connection not available anymore.</div>`
+    }
     if (this.connected) {
-      alert('connection to Remixd lost!.') // eslint-disable-line
+      modalDialog('Lost connection to Remixd!', remixdDialog(), {}, {label: ''})
     }
     this.connected = false
     this.socket = null

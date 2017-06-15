@@ -15,7 +15,7 @@ var gistHandler = new GistHandler()
 var Remixd = require('./lib/remixd')
 var Storage = require('./app/files/storage')
 var Browserfiles = require('./app/files/browser-files')
-var Systemfiles = require('./app/files/system-files')
+var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./app/config')
 var Editor = require('./app/editor')
 var Renderer = require('./app/renderer')
@@ -48,7 +48,7 @@ var run = function () {
   var remixd = new Remixd()
   var filesProviders = {}
   filesProviders['browser'] = new Browserfiles(fileStorage)
-  filesProviders['localhost'] = new Systemfiles(remixd)
+  filesProviders['localhost'] = new SharedFolder(remixd)
 
   var tabbedFiles = {} // list of files displayed in the tabs bar
 

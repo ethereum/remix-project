@@ -1,4 +1,9 @@
-module.exports = (title, content, okFn, cancelFn) => {
+module.exports = (title, content, ok, cancel) => {
+  var okDiv = document.getElementById('modal-footer-ok')
+  var cancelDiv = document.getElementById('modal-footer-cancel')
+  okDiv.innerHTML = (ok && ok.label !== undefined) ? ok.label : 'OK'
+  cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
+
   var modal = document.querySelector('.modal-body')
   var modaltitle = document.querySelector('.modal-header h2')
 
@@ -11,27 +16,16 @@ module.exports = (title, content, okFn, cancelFn) => {
   var container = document.querySelector('.modal')
   container.style.display = container.style.display === 'block' ? hide() : show()
 
-  function ok () {
+  function okListenner () {
     hide()
-    if (okFn) okFn()
+    if (ok && ok.fn) ok.fn()
     removeEventListener()
   }
 
-  function cancel () {
+  function cancelListenner () {
     hide()
-    if (cancelFn) cancelFn()
+    if (cancel && cancel.fn) cancel.fn()
     removeEventListener()
-  }
-
-  function blur (event) {
-    if (event.target === container) {
-      cancel()
-    }
-  }
-
-  window.onclick = (event) => {
-    console.log('clicj windo')
-    blur(event)
   }
 
   function hide () {
@@ -43,10 +37,10 @@ module.exports = (title, content, okFn, cancelFn) => {
   }
 
   function removeEventListener () {
-    document.getElementById('modal-footer-ok').removeEventListener('click', ok)
-    document.getElementById('modal-footer-cancel').removeEventListener('click', cancel)
+    okDiv.removeEventListener('click', okListenner)
+    cancelDiv.removeEventListener('click', cancelListenner)
   }
 
-  document.getElementById('modal-footer-ok').addEventListener('click', ok)
-  document.getElementById('modal-footer-cancel').addEventListener('click', cancel)
+  okDiv.addEventListener('click', okListenner)
+  cancelDiv.addEventListener('click', cancelListenner)
 }

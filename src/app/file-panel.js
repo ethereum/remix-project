@@ -93,7 +93,7 @@ function filepanel (appAPI, filesProvider) {
 
   function remixdDialog () {
     return yo`<div><div>This feature allows to interact with your file system from Remix. Once the connection is made the shared folder will be available in the file explorer under <i>localhost</i></div>
-              <div><i>Remixd</i> first has to be run in your local computer. See <a href="http://remix.readthedocs.io/en/latest/tutorial_mist.html">http://remix.readthedocs.io/en/latest/remixd.html</a> for more details.</div>
+              <div><i>Remixd</i> first has to be run in your local computer. See <a target="_blank" href="http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a> for more details.</div>
               <div>Accepting this dialog will start a session between <i>${window.location.href}</i> and your local file system <i>ws://127.0.0.1:65520</i></div>
               <div>Please be sure your system is secured enough (port 65520 neither opened nor forwarded).</div>
               <div><i class="fa fa-link"></i> will update the connection status.</div>
@@ -252,18 +252,20 @@ function filepanel (appAPI, filesProvider) {
         if (error) console.log(error)
       })
     } else {
-      modalDialog('Connection to Localhost', remixdDialog(), () => {
-        filesProvider['localhost'].init((error) => {
-          if (error) {
-            console.log(error)
-          } else {
-            if (fileSystemExplorer.element && container.children.length > 0) {
-              container.removeChild(fileSystemExplorer.element)
-            }
-            container.appendChild(fileSystemExplorer.init())
-          }
-        })
-      })
+      modalDialog('Connection to Localhost', remixdDialog(),
+        { label: 'Connect',
+          fn: () => {
+            filesProvider['localhost'].init((error) => {
+              if (error) {
+                console.log(error)
+              } else {
+                if (fileSystemExplorer.element && container.children.length > 0) {
+                  container.removeChild(fileSystemExplorer.element)
+                }
+                container.appendChild(fileSystemExplorer.init())
+              }
+            })
+          }})
     }
   }
 }

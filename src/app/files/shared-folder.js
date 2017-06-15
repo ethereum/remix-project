@@ -2,7 +2,7 @@
 var async = require('async')
 var EventManager = require('ethereum-remix').lib.EventManager
 
-class SystemFiles {
+class SharedFolder {
   constructor (remixd) {
     this.event = new EventManager()
     this.remixd = remixd
@@ -14,7 +14,7 @@ class SystemFiles {
       'EEXIST': 'File already exists'
     }
     this.remixd.event.register('notified', (data) => {
-      if (data.scope === 'systemfiles') {
+      if (data.scope === 'sharedfolder') {
         if (data.name === 'created') {
           this.init(() => {
             this.event.trigger('fileAdded', [this.type + '/' + data.value.path, data.value.isReadOnly, data.value.isFolder])
@@ -24,7 +24,7 @@ class SystemFiles {
             this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
           })
         } else if (data.name === 'changed') {
-          this.remixd.call('systemfiles', 'get', {path: data.value}, (error, content) => {
+          this.remixd.call('sharedfolder', 'get', {path: data.value}, (error, content) => {
             if (error) {
               console.log(error)
             } else {
@@ -46,7 +46,7 @@ class SystemFiles {
   }
 
   init (cb) {
-    this.remixd.call('systemfiles', 'list', {}, (error, filesList) => {
+    this.remixd.call('sharedfolder', 'list', {}, (error, filesList) => {
       if (error) {
         cb(error)
       } else {
@@ -69,7 +69,7 @@ class SystemFiles {
 
   get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
-    this.remixd.call('systemfiles', 'get', {path: unprefixedpath}, (error, content) => {
+    this.remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, content) => {
       if (!error) {
         this.filesContent[path] = content
         cb(error, content)
@@ -83,7 +83,7 @@ class SystemFiles {
 
   set (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
-    this.remixd.call('systemfiles', 'set', {path: unprefixedpath, content: content}, (error, result) => {
+    this.remixd.call('sharedfolder', 'set', {path: unprefixedpath, content: content}, (error, result) => {
       if (cb) cb(error, result)
       var path = this.type + '/' + unprefixedpath
       this.filesContent[path]
@@ -116,7 +116,7 @@ class SystemFiles {
   rename (oldPath, newPath, isFolder) {
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
-    this.remixd.call('systemfiles', 'rename', {oldPath: unprefixedoldPath, newPath: unprefixednewPath}, (error, result) => {
+    this.remixd.call('sharedfolder', 'rename', {oldPath: unprefixedoldPath, newPath: unprefixednewPath}, (error, result) => {
       if (error) {
         console.log(error)
         if (this.error[error.code]) error = this.error[error.code]
@@ -198,4 +198,4 @@ function listAsTree (self, filesList, callback) {
   })
 }
 
-module.exports = SystemFiles
+module.exports = SharedFolder

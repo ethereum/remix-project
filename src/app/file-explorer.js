@@ -2,6 +2,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('ethereum-remix').ui.TreeView
+var modalDialog = require('./modaldialog')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
@@ -35,11 +36,24 @@ module.exports = fileExplorer
 function fileExplorer (appAPI, files) {
   this.files = files
 
+  function remixdDialog () {
+    return yo`<div>This file has been changed outside of Remix IDE.</div>`
+  }
+
   this.files.event.register('fileExternallyChanged', (path, content) => {
     if (appAPI.currentFile() === path && appAPI.currentContent() !== content) {
-      if (confirm('This file has been changed outside of the remix.\nDo you want to replace the content displayed in remix by the new one?')) {
-        appAPI.setText(content)
-      }
+      modalDialog(path + ' changed', remixdDialog(),
+        {
+          label: 'Keep the content displayed in Remix',
+          fn: () => {}
+        },
+        {
+          label: 'Replace by the new content',
+          fn: () => {
+            appAPI.setText(content)
+          }
+        }
+      )
     }
   })
 
@@ -70,7 +84,6 @@ function fileExplorer (appAPI, files) {
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
-        isfolder=${data.children !== undefined}
         onload=${function (el) { adaptEnvironment(el, focus, hover) }}
         onunload=${function (el) { unadaptEnvironment(el, focus, hover) }}
         onclick=${editModeOn}
@@ -187,7 +200,7 @@ function fileExplorer (appAPI, files) {
     var label = this
     if (event.which === 13) event.preventDefault()
     if ((event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
-      var isFolder = label.getAttribute('isfolder') === 'true'
+      var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save && event.which !== 13) save = confirm('Do you want to rename?')
       if (save) {
