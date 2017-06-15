@@ -505,10 +505,6 @@ var run = function () {
   document.querySelector('#editor').addEventListener('change', onResize)
   document.querySelector('#editorWrap').addEventListener('change', onResize)
 
-  // ----------------- compiler output renderer ----------------------
-
-  $('.asmOutput button').click(function () { $(this).parent().find('pre').toggle() })
-
   // ----------------- compiler ----------------------
 
   function handleGithubCall (root, path, cb) {
