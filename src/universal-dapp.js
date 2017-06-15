@@ -106,9 +106,6 @@ var cssInstance = csjs`
   }
 `
 
-;[...document.querySelectorAll('#header #options li')].forEach(addCss)
-function addCss (el) { el.classList.add(css.options) }
-
 /*
   trigger debugRequested
 */

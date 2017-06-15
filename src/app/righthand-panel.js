@@ -8,6 +8,20 @@ var analysisTab = require('./analysis-tab')
 var debuggerTab = require('./debugger-tab')
 var filesTab = require('./files-tab')
 
+var csjs = require('csjs-inject')
+
+var css = csjs`
+  .options {
+      float: left;
+      padding: 0.7em 0.3em;
+      font-size: 0.9em;
+      cursor: pointer;
+      background-color: transparent;
+      margin-right: 0.5em;
+      font-size: 1em;
+  }
+`
+
 // ------------------------------------------------------------------
 
 module.exports = RighthandPanel
@@ -38,6 +52,8 @@ function RighthandPanel (container, appAPI, events, opts) {
   debuggerTab(optionViews, appAPI, events, opts)
   filesTab(optionViews, appAPI, events, opts)
   container.appendChild(element)
+
+  ;[...container.querySelectorAll('#header #options li')].forEach((el) => { el.classList.add(css.options) })
 
   // ----------------- toggle right hand panel -----------------
 
