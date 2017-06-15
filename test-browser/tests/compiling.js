@@ -33,7 +33,11 @@ function runTests (browser) {
       .click('.instance .call[title="f"]')
       .waitForElementPresent('.output .returned')
       .assert.containsText('.output .returned', '0x0000000000000000000000000000000000000000000000000000000000000008')
-      .assert.containsText('.output .decoded li', 'uint256: 8')
-      .end()
+      .execute(function () {
+        document.querySelector('.output .decoded li').scrollIntoView()
+      }, [], function () {
+        browser.assert.containsText('.output .decoded li', 'uint256: 8')
+        .end()
+      })
   })
 }
