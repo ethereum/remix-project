@@ -91,10 +91,10 @@ function ExecutionContext () {
 
   this.setContext = function (context, endPointUrl) {
     executionContext = context
-    executionContextChange(context, endPointUrl)
+    this.executionContextChange(context, endPointUrl)
   }
 
-  function executionContextChange (context, endPointUrl) {
+  this.executionContextChange = function (context, endPointUrl) {
     if (context === 'web3' && !confirm('Are you sure you want to connect to an ethereum node?')) {
       return false
     } else if (context === 'injected' && injectedProvider === undefined) {
@@ -131,19 +131,6 @@ function ExecutionContext () {
     }
     self.event.trigger('web3EndpointChanged')
   }
-
-  /* ---------------------------------------------------------------------------
-  DROPDOWN
-  --------------------------------------------------------------------------- */
-
-  var selectExEnv = document.querySelector('#selectExEnvOptions')
-  selectExEnv.addEventListener('change', function (event) {
-    if (!executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value)) {
-      selectExEnv.value = executionContext
-    }
-  })
-
-  selectExEnv.value = executionContext
 }
 
 module.exports = ExecutionContext

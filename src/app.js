@@ -479,20 +479,106 @@ var run = function () {
   }
   var renderer = new Renderer(rendererAPI, compiler.event)
 
+  // ------------------------------------------------------------
+  var executionContext = new ExecutionContext()
+
+  // ----------------- UniversalDApp -----------------
+  var udapp = new UniversalDApp(executionContext, {
+    removable: false,
+    removable_instances: true
+  })
+
+  udapp.event.register('debugRequested', this, function (txResult) {
+    startdebugging(txResult.transactionHash)
+  })
+
+  function swarmVerifiedPublish (content, expectedHash, cb) {
+    swarmgw.put(content, function (err, ret) {
+      if (err) {
+        cb(err)
+      } else if (ret !== expectedHash) {
+        cb('Hash mismatch')
+      } else {
+        cb()
+      }
+    })
+  }
+
+  function publishOnSwarm (contract, cb) {
+    // gather list of files to publish
+    var sources = []
+
+    sources.push({
+      content: contract.metadata,
+      hash: contract.metadataHash
+    })
+
+    var metadata
+    try {
+      metadata = JSON.parse(contract.metadata)
+    } catch (e) {
+      return cb(e)
+    }
+
+    if (metadata === undefined) {
+      return cb('No metadata')
+    }
+
+    Object.keys(metadata.sources).forEach(function (fileName) {
+      // find hash
+      var hash
+      try {
+        hash = metadata.sources[fileName].urls[0].match('bzzr://(.+)')[1]
+      } catch (e) {
+        return cb('Metadata inconsistency')
+      }
+
+      sources.push({
+        content: files.get(fileName),
+        hash: hash
+      })
+    })
+
+    // publish the list of sources in order, fail if any failed
+    async.eachSeries(sources, function (item, cb) {
+      swarmVerifiedPublish(item.content, item.hash, cb)
+    }, cb)
+  }
+
+  udapp.event.register('publishContract', this, function (contract) {
+    publishOnSwarm(contract, function (err) {
+      if (err) {
+        alert('Failed to publish metadata: ' + err)
+      } else {
+        alert('Metadata published successfully')
+      }
+    })
+  })
+
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {
     config: config,
     onResize: onResize,
     reAdjust: reAdjust,
-    renderer: renderer
+    warnCompilerLoading: (msg) => {
+      renderer.clear()
+      if (msg) {
+        renderer.error(msg, $('#output'), {type: 'warning'})
+      }
+    },
+    executionContextChange: (context) => {
+      return executionContext.executionContextChange(context)
+    },
+    executionContextProvider: () => {
+      return executionContext.getProvider()
+    }
   }
   var rhpEvents = {
     compiler: compiler.event,
-    app: self.event
+    app: self.event,
+    udapp: udapp.event
   }
   var righthandPanel = new RighthandPanel(document.body, rhpAPI, rhpEvents, {}) // eslint-disable-line
-// ------------------------------------------------------------
-  var executionContext = new ExecutionContext()
   // ----------------- editor resize ---------------
 
   function onResize () {
@@ -634,79 +720,6 @@ var run = function () {
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
   transactionDebugger.switchProvider(executionContext.getProvider())
-
-  // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp(executionContext, {
-    removable: false,
-    removable_instances: true
-  })
-
-  udapp.event.register('debugRequested', this, function (txResult) {
-    startdebugging(txResult.transactionHash)
-  })
-
-  function swarmVerifiedPublish (content, expectedHash, cb) {
-    swarmgw.put(content, function (err, ret) {
-      if (err) {
-        cb(err)
-      } else if (ret !== expectedHash) {
-        cb('Hash mismatch')
-      } else {
-        cb()
-      }
-    })
-  }
-
-  function publishOnSwarm (contract, cb) {
-    // gather list of files to publish
-    var sources = []
-
-    sources.push({
-      content: contract.metadata,
-      hash: contract.metadataHash
-    })
-
-    var metadata
-    try {
-      metadata = JSON.parse(contract.metadata)
-    } catch (e) {
-      return cb(e)
-    }
-
-    if (metadata === undefined) {
-      return cb('No metadata')
-    }
-
-    Object.keys(metadata.sources).forEach(function (fileName) {
-      // find hash
-      var hash
-      try {
-        hash = metadata.sources[fileName].urls[0].match('bzzr://(.+)')[1]
-      } catch (e) {
-        return cb('Metadata inconsistency')
-      }
-
-      sources.push({
-        content: files.get(fileName),
-        hash: hash
-      })
-    })
-
-    // publish the list of sources in order, fail if any failed
-    async.eachSeries(sources, function (item, cb) {
-      swarmVerifiedPublish(item.content, item.hash, cb)
-    }, cb)
-  }
-
-  udapp.event.register('publishContract', this, function (contract) {
-    publishOnSwarm(contract, function (err) {
-      if (err) {
-        alert('Failed to publish metadata: ' + err)
-      } else {
-        alert('Metadata published successfully')
-      }
-    })
-  })
 
   // ----------------- StaticAnalysis -----------------
   var staticAnalysisAPI = {

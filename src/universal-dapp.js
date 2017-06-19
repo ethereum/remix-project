@@ -686,6 +686,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
     var decoded
     self.runTx({ to: args.address, data: data, useCall: lookupOnly }, function (err, txResult) {
+      self.event.trigger('transactionExecuted', [args.address, data, lookupOnly, txResult])
       if (!txResult) {
         replaceOutput($result, $('<span/>').text('callback contain no result ' + err).addClass('error'))
         return
@@ -865,7 +866,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     // query value
     function (callback) {
       tx.value = 0
-
+      if (tx.useCall) return callback()
       if (self.transactionContextAPI.getValue) {
         self.transactionContextAPI.getValue(function (err, ret) {
           if (err) {

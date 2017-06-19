@@ -107,5 +107,19 @@ function contractTab (container, appAPI, appEvents, opts) {
       <div id="output" class="${css.contract}"></div>
     </div>
   `
+  appEvents.udapp.register('transactionExecuted', (to, data, lookupOnly, txResult) => {
+    if (!lookupOnly) el.querySelector('#value').value = '0'
+  })
+
+  /* ---------------------------------------------------------------------------
+  DROPDOWN
+  --------------------------------------------------------------------------- */
+  var selectExEnv = el.querySelector('#selectExEnvOptions')
+  selectExEnv.addEventListener('change', function (event) {
+    if (!appAPI.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value)) {
+      selectExEnv.value = appAPI.executionContextProvider()
+    }
+  })
+  selectExEnv.value = appAPI.executionContextProvider()
   container.appendChild(el)
 }
