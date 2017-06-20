@@ -62,7 +62,7 @@ function contractTab (container, appAPI, appEvents, opts) {
     <div class="${css.contractTabView}" id="envView">
       <div class="${css.crow}">
         <div id="selectExEnv" class="${css.col1_1}">
-          Execution environment
+          Environment
         </div>
         <select id="selectExEnvOptions" class="${css.select}">
           <option id="vm-mode"
@@ -87,11 +87,11 @@ function contractTab (container, appAPI, appEvents, opts) {
         </select>
       </div>
       <div class="${css.crow}">
-        <div class="${css.col1_1}">Transaction origin</div>
+        <div class="${css.col1_1}">Account</div>
         <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i><select name="txorigin" class="${css.selectAddress}" id="txorigin"></select>
       </div>
       <div class="${css.crow}">
-        <div class="${css.col1_1}">Transaction gas limit</div>
+        <div class="${css.col1_1}">Gas limit</div>
         <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
       </div>
       <div class="${css.crow} hide">
@@ -99,7 +99,7 @@ function contractTab (container, appAPI, appEvents, opts) {
         <input type="number" class="${css.col2}" id="gasPrice" value="0">
       </div>
       <div class="${css.crow}">
-        <div class="${css.col1_1}"> Value</div>
+      <div class="${css.col1_1}">Value</div>
         <input type="text" class="${css.col2}" id="value" value="0" title="(e.g. .7 ether ...)">
       </div>
       <div id="output" class="${css.contract}"></div>

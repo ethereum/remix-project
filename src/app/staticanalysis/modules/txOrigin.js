@@ -1,4 +1,4 @@
-var name = 'tx.origin: '
+var name = 'Transaction origin: '
 var desc = 'Warn if tx.origin is used'
 var categories = require('./categories')
 

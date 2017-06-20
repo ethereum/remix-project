@@ -1,5 +1,5 @@
-var name = 'block.blockhash usage'
-var desc = 'semantics maybe unclear'
+var name = 'Block.blockhash usage: '
+var desc = 'Semantics maybe unclear'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 

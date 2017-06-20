@@ -1,4 +1,4 @@
-var name = 'this on local calls: '
+var name = 'This on local calls: '
 var desc = 'Invocation of local functions via this'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')

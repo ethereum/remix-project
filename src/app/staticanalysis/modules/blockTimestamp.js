@@ -1,5 +1,5 @@
-var name = 'block timestamp'
-var desc = 'semantics maybe unclear'
+var name = 'Block timestamp: '
+var desc = 'Semantics maybe unclear'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 

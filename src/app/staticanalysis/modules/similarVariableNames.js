@@ -1,4 +1,4 @@
-var name = 'Similar Variable Names'
+var name = 'Similar variable names: '
 var desc = 'Check if variable names are too similar'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')

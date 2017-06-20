@@ -1,4 +1,4 @@
-var name = 'Inline Assembly'
+var name = 'Inline assembly: '
 var desc = 'Use of Inline Assembly'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')

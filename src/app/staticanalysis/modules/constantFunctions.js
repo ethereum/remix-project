@@ -1,4 +1,4 @@
-var name = 'Constant functions'
+var name = 'Constant functions: '
 var desc = 'Check for potentially constant functions'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
