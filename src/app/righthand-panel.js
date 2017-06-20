@@ -67,12 +67,7 @@ function RighthandPanel (container, appAPI, events, opts) {
 
   // ----------------- tabbed menu -----------------
   var tabbedMenuAPI = {
-    warnCompilerLoading: function (msg) {
-      appAPI.renderer.clear()
-      if (msg) {
-        appAPI.renderer.error(msg, $('#output'), {type: 'warning'})
-      }
-    }
+    warnCompilerLoading: appAPI.warnCompilerLoading
   }
   // load tabbed menu component
   var tabContainer // @TODO
