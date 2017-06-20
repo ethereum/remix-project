@@ -26,7 +26,7 @@ var css = csjs`
   }
   .col2 extends ${styles.textBoxL}{
     width: 70%;
-    height: 7px;
+    height: 32px;
     float: left;
     padding: .8em;
   }
@@ -34,6 +34,7 @@ var css = csjs`
     width: 70%;
     float: left;
     text-align: center;
+    height: 32px;
   }
   .contract {
     display: block;
@@ -42,13 +43,14 @@ var css = csjs`
   .copyaddress {
     color: #C6CFF7;
     margin-right: 0.2em;
-    margin-top: 0.3em;
+    margin-top: 0.7em;
     cursor: pointer;
   }
   .selectAddress extends ${styles.dropdown} {
-    width: 73.5%;
+    width: 74%;
     float: left;
     text-align: center;
+    height: 32px;
   }
 `
 
