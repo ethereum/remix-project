@@ -19,6 +19,8 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.init()
   this.view
   this.stateVariablesByAddresses = {}
+  _parent.event.register('traceUnloaded', () => { this.stateVariablesByAddresses = {} })
+  _parent.event.register('newTraceLoaded', () => { this.stateVariablesByAddresses = {} })
 }
 
 SolidityState.prototype.render = function () {
