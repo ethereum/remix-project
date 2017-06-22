@@ -50,7 +50,7 @@ class SolidityProxy {
           this.codeManager.getCode(address, (error, code) => {
             if (error) {
               cb(error)
-            } else {              
+            } else {
               var contractName = contractNameFromCode(this.contracts, code.bytecode, address)
               this.cache.contractNameByAddress[address] = contractName
               cb(null, contractName)
