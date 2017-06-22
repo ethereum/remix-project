@@ -41,7 +41,6 @@
     "swarmgw": "^0.2.0",
     "tape": "^4.5.1",
     "uglify-js": "^2.8.16",
-    "uglifyify": "^3.0.4",
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
@@ -124,9 +123,6 @@
             "es2015"
           ]
         }
-      ],
-      [
-        "uglifyify"
       ]
     ]
   },
@@ -153,6 +149,6 @@
     "start": "npm-run-all -lpr serve watch onchange",
     "test": "standard; npm run csslint; node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
-    "watch": "watchify src/index.js --transform-key=development -dv -p browserify-reload -o build/app.js"
+    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js"
   }
 }
