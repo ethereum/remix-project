@@ -103,7 +103,7 @@ class SharedFolder {
 
   remove (path) {
     var unprefixedpath = this.removePrefix(path)
-    this.remixd.call('systemfiles', 'remove', {path: unprefixedpath}, (error, result) => {
+    this.remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
       if (error) console.log(error)
       var path = this.type + '/' + unprefixedpath
       delete this.filesContent[path]
