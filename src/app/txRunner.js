@@ -69,30 +69,23 @@ TxRunner.prototype.execute = function () {
         if (err) {
           return callback(err, gasEstimation)
         }
-        self.web3.eth.getBlock('latest', function (err, block) {
+        var blockGasLimit = self.executionContext.currentblockGasLimit()
+        // NOTE: estimateGas very likely will return a large limit if execution of the code failed
+        //       we want to be able to run the code in order to debug and find the cause for the failure
+        if (gasEstimation > gasLimit) {
+          return callback('Gas required exceeds limit: ' + gasLimit)
+        }
+        if (gasEstimation > blockGasLimit) {
+          return callback('Gas required exceeds block gas limit: ' + gasLimit)
+        }
+        tx.gas = gasEstimation
+        var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
+        sendTransaction(tx, function (err, resp) {
           if (err) {
-            return callback(err)
-          } else {
-            // NOTE: estimateGas very likely will return a large limit if execution of the code failed
-            //       we want to be able to run the code in order to debug and find the cause for the failure
-            // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-            var blockGasLimit = Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024)
-            if (gasEstimation > gasLimit) {
-              return callback('Gas required exceeds limit: ' + gasLimit)
-            }
-            if (gasEstimation > blockGasLimit) {
-              return callback('Gas required exceeds block gas limit: ' + gasLimit)
-            }
-            tx.gas = gasEstimation
-            var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
-            sendTransaction(tx, function (err, resp) {
-              if (err) {
-                return callback(err, resp)
-              }
-
-              tryTillResponse(self.web3, resp, callback)
-            })
+            return callback(err, resp)
           }
+
+          tryTillResponse(self.web3, resp, callback)
         })
       })
     }

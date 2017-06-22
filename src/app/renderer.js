@@ -111,6 +111,7 @@ Renderer.prototype.error = function (message, container, options) {
 }
 
 Renderer.prototype.contracts = function (data, source) {
+  var self = this
   var retrieveMetadataHash = function (bytecode) {
     var match = /a165627a7a72305820([0-9a-f]{64})0029$/.exec(bytecode)
     if (match) {
@@ -210,7 +211,7 @@ Renderer.prototype.contracts = function (data, source) {
     code += '\n   {' +
       '\n     from: web3.eth.accounts[0], ' +
       "\n     data: '0x" + bytecode + "', " +
-      "\n     gas: '4700000'" +
+      "\n     gas: '" + self.appAPI.currentblockGasLimit() + "'" +
       '\n   }, function (e, contract){' +
       '\n    console.log(e, contract);' +
       "\n    if (typeof contract.address !== 'undefined') {" +
@@ -313,7 +314,6 @@ Renderer.prototype.contracts = function (data, source) {
     return $('<div class="contractDetails"/>').append(button).append(details)
   }
 
-  var self = this
   var renderOutputModifier = function (contractName, $contractOutput) {
     var contract = data.contracts[contractName]
     var ctrSource = self.appAPI.currentCompiledSourceCode()

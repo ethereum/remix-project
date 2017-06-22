@@ -475,7 +475,8 @@ var run = function () {
           callback(null, executionContext.web3().fromWei(balance, 'ether'))
         }
       })
-    }
+    },
+    currentblockGasLimit: () => { return executionContext.currentblockGasLimit() }
   }
   var renderer = new Renderer(rendererAPI, compiler.event)
 
