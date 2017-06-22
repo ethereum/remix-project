@@ -30,7 +30,7 @@ var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 var modalDialogCustom = require('./app/modal-dialog-custom')
-// var Txlistener = require('./app/txListener')
+var Txlistener = require('./app/txListener')
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -749,7 +749,6 @@ function run () {
 
   // ----------------- Tx listener -----------------
   // Commented for now. will be used later.
-  /*
   var txlistener = new Txlistener({
     api: {
       web3: function () { return executionContext.web3() },
@@ -785,7 +784,6 @@ function run () {
       resolvedTransaction: resolvedTransaction
     })
   })
-  */
 
   // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
