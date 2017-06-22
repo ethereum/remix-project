@@ -153,6 +153,9 @@ function fileExplorer (appAPI, files) {
   }
 
   function hover (event) {
+    var path = this.querySelector('label').dataset.path
+    if (path === self.files.type) return // can't delete the root node
+
     if (event.type === 'mouseout') {
       var exitedTo = event.toElement || event.relatedTarget
       if (this.contains(exitedTo)) return
