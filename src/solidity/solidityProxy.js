@@ -50,7 +50,7 @@ class SolidityProxy {
           this.codeManager.getCode(address, (error, code) => {
             if (error) {
               cb(error)
-            } else {
+            } else {              
               var contractName = contractNameFromCode(this.contracts, code.bytecode, address)
               this.cache.contractNameByAddress[address] = contractName
               cb(null, contractName)
@@ -137,7 +137,7 @@ function contractNameFromCode (contracts, code, address) {
   var isCreation = traceHelper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
   for (var k in contracts) {
-    if ('0x' + contracts[k][byteProp].replace(util.swarmHashExtraction(), '') === code.replace(util.swarmHashExtraction(), '')) {
+    if (code.replace(util.swarmHashExtraction(), '').indexOf('0x' + contracts[k][byteProp].replace(util.swarmHashExtraction(), '')) === 0) {
       return k
     }
   }
