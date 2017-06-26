@@ -2,7 +2,7 @@
 var Router = require('./router')
 var program = require('commander')
 program
-.usage('remix -S <shared folder>')
+.usage('-S <shared folder>')
 .description('Provide a two ways connection between the local computer and Remix IDE')
 .option('-S, --shared-folder <path>', 'Folder to share with Remix IDE')
 .parse(process.argv)
