@@ -21,7 +21,7 @@ function testContracts (browser, contractCode, compiledContractNames, callback) 
       .clearValue('#input textarea')
       .click('.newFile')
       .setValue('#input textarea', contractCode, function () {})
-      .waitForElementPresent('.udapp .create', 5000, true, function () {
+      .waitForElementPresent('.udapp .create', 50000, true, function () {
         checkCompiledContracts(browser, compiledContractNames, callback)
       })
 }

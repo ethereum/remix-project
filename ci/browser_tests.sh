@@ -2,6 +2,23 @@
 
 set -e
 
+setupRemixd () {
+  npm install remixd
+  mkdir remixdSharedfolder
+  cd remixdSharedfolder
+  echo "contract test1 { function get () returns (uint) { return 8; }}" > contract1.sol
+  echo "contract test2 { function get () returns (uint) { return 9; }}" > contract2.sol
+  mkdir folder1
+  cd folder1
+  echo "contract test1 { function get () returns (uint) { return 10; }}" > contract1.sol
+  echo "contract test2 { function get () returns (uint) { return 11; }}" > contract2.sol
+  cd ..
+  echo 'sharing folder: '
+  echo $PWD
+  ./../node_modules/.bin/remixd -S $PWD &
+  cd ..
+}
+
 SC_VERSION="4.4.0"
 SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-$SC_VERSION-linux.tar.gz"
 SAUCECONNECT_USERNAME="chriseth"
@@ -12,9 +29,11 @@ TEST_EXITCODE=0
 
 npm run serve &
 
+setupRemixd
+
 wget "$SAUCECONNECT_URL"
 tar -zxvf sc-"$SC_VERSION"-linux.tar.gz
-./sc-"$SC_VERSION"-linux/bin/sc -u "$SAUCECONNECT_USERNAME" -k "$SAUCECONNECT_ACCESSKEY" -i "$SAUCECONNECT_JOBIDENTIFIER" --readyfile "$SAUCECONNECT_READYFILE" &
+./sc-"$SC_VERSION"-linux/bin/sc -u "$SAUCECONNECT_USERNAME" -k "$SAUCECONNECT_ACCESSKEY" -i "$SAUCECONNECT_JOBIDENTIFIER" --no-ssl-bump-domains all --readyfile "$SAUCECONNECT_READYFILE" &
 while [ ! -f "$SAUCECONNECT_READYFILE" ]; do
   sleep .5
 done
