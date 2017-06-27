@@ -9,6 +9,7 @@ class Router {
     })
     servicesList['sharedfolder'].setupNotifications(this.websocket, sharedFolder)
     servicesList['sharedfolder'].sharedFolder(sharedFolder)
+    console.log('Shared folder : ' + sharedFolder)
   }
 
   call (callid, name, fn, args) {
