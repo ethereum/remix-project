@@ -1,4 +1,4 @@
-Accessing sytem files from Remix using Remixd
+Accessing a shared folder in Remix IDE using Remixd
 ===================================================
 
 .. _tutorial-remixd-filesystem:
