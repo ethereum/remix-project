@@ -183,7 +183,7 @@ function fileExplorer (appAPI, files) {
     if (isFolder) path += '/'
     if (confirm(`Do you really want to delete "${path}" ?`)) {
       li.parentElement.removeChild(li)
-      removeSubtree(files, path)
+      removeSubtree(files, path, isFolder)
     }
   }
 
@@ -343,7 +343,7 @@ function getLabelFrom (li) {
   return li.children[0].children[1].children[0]
 }
 
-function removeSubtree (files, path) {
+function removeSubtree (files, path, isFolder) {
   var parts = path.split('/')
   var isFile = parts[parts.length - 1].length
   var removePaths = isFile ? [path] : Object.keys(files.list()).filter(keep)
@@ -357,6 +357,7 @@ function removeSubtree (files, path) {
     })
     files.remove(path)
   })
+  if (isFolder) files.remove(path)
 }
 
 function expandPathTo (li) {
