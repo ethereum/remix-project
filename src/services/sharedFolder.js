@@ -17,6 +17,7 @@ module.exports = {
 
   get: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
+    if (!isRealPath(path, cb)) return
     isbinaryfile(path, (error, isBinary) => {
       if (error) console.log(error)
       if (isBinary) {
@@ -32,6 +33,7 @@ module.exports = {
 
   set: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
+    if (!isRealPath(path, cb)) return
     this.trackDownStreamUpdate[path] = path
     fs.writeFile(path, args.content, 'utf8', (error, data) => {
       if (error) console.log(error)
@@ -42,6 +44,8 @@ module.exports = {
   rename: function (args, cb) {
     var oldpath = utils.absolutePath(args.oldPath, this.sharedFolder)
     var newpath = utils.absolutePath(args.newPath, this.sharedFolder)
+    if (!isRealPath(oldpath, cb)) return
+    if (!isRealPath(newpath, cb)) return
     fs.move(oldpath, newpath, (error, data) => {
       if (error) console.log(error)
       cb(error, data)
@@ -50,6 +54,7 @@ module.exports = {
 
   remove: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
+    if (!isRealPath(path, cb)) return
     fs.remove(path, (error, data) => {
       if (error) console.log(error)
       cb(error, data)
@@ -57,6 +62,7 @@ module.exports = {
   },
 
   setupNotifications: function (websocket, path) {
+    if (!isRealPath(path)) return
     watch.createMonitor(path, (monitor) => {
       this.monitors.push(monitor)
       monitor.on('created', (f, stat) => {
@@ -80,6 +86,17 @@ module.exports = {
       })
     })
   }
+}
+
+function isRealPath (path, cb) {
+  var realPath = fs.realpathSync(path)
+  var isRealPath = path === realPath
+  var mes = '[WARN] Symbolic link modification not allowed : ' + path + ' | ' + realPath
+  if (!isRealPath) {
+    console.log('\x1b[33m%s\x1b[0m', mes)
+  }
+  if (cb && !isRealPath) cb(mes)
+  return isRealPath
 }
 
 function message (name, value) {
