@@ -6,40 +6,52 @@ function Files (storage) {
   var event = new EventManager()
   this.event = event
   var readonly = {}
+  this.type = 'browser'
 
   this.exists = function (path) {
+    var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
     if (path === '.remix.config') {
       return false
     }
 
-    return this.isReadOnly(path) || storage.exists(path)
+    return this.isReadOnly(unprefixedpath) || storage.exists(unprefixedpath)
   }
 
-  this.get = function (path) {
+  this.init = function (cb) {
+    cb()
+  }
+
+  this.get = function (path, cb) {
+    var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
     if (path === '.remix.config') {
       return null
     }
 
-    return readonly[path] || storage.get(path)
+    var content = readonly[unprefixedpath] || storage.get(unprefixedpath)
+    if (cb) {
+      cb(null, content)
+    }
+    return content
   }
 
   this.set = function (path, content) {
+    var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
     if (path === '.remix.config') {
       return false
     }
 
-    if (!this.isReadOnly(path)) {
-      var exists = storage.exists(path)
-      if (!storage.set(path, content)) {
+    if (!this.isReadOnly(unprefixedpath)) {
+      var exists = storage.exists(unprefixedpath)
+      if (!storage.set(unprefixedpath, content)) {
         return false
       }
       if (!exists) {
-        event.trigger('fileAdded', [path, false])
+        event.trigger('fileAdded', [this.type + '/' + unprefixedpath, false])
       } else {
-        event.trigger('fileChanged', [path])
+        event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
       }
       return true
     }
@@ -48,9 +60,10 @@ function Files (storage) {
   }
 
   this.addReadOnly = function (path, content) {
-    if (!storage.exists(path)) {
-      readonly[path] = content
-      event.trigger('fileAdded', [path, true])
+    var unprefixedpath = this.removePrefix(path)
+    if (!storage.exists(unprefixedpath)) {
+      readonly[unprefixedpath] = content
+      event.trigger('fileAdded', [this.type + '/' + unprefixedpath, true])
       return true
     }
 
@@ -58,31 +71,35 @@ function Files (storage) {
   }
 
   this.isReadOnly = function (path) {
+    path = this.removePrefix(path)
     return readonly[path] !== undefined
   }
 
   this.remove = function (path) {
-    if (!this.exists(path)) {
+    var unprefixedpath = this.removePrefix(path)
+    if (!this.exists(unprefixedpath)) {
       return false
     }
 
-    if (this.isReadOnly(path)) {
-      readonly[path] = undefined
+    if (this.isReadOnly(unprefixedpath)) {
+      readonly[unprefixedpath] = undefined
     } else {
-      if (!storage.remove(path)) {
+      if (!storage.remove(unprefixedpath)) {
         return false
       }
     }
-    event.trigger('fileRemoved', [path])
+    event.trigger('fileRemoved', [this.type + '/' + unprefixedpath])
     return true
   }
 
-  this.rename = function (oldPath, newPath) {
-    if (!this.isReadOnly(oldPath) && storage.exists(oldPath)) {
-      if (!storage.rename(oldPath, newPath)) {
+  this.rename = function (oldPath, newPath, isFolder) {
+    var unprefixedoldPath = this.removePrefix(oldPath)
+    var unprefixednewPath = this.removePrefix(newPath)
+    if (!this.isReadOnly(unprefixedoldPath) && storage.exists(unprefixedoldPath)) {
+      if (!storage.rename(unprefixedoldPath, unprefixednewPath)) {
         return false
       }
-      event.trigger('fileRenamed', [oldPath, newPath])
+      event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
       return true
     }
     return false
@@ -92,19 +109,23 @@ function Files (storage) {
     var files = {}
 
     // add r/w files to the list
-    storage.keys().forEach(function (path) {
+    storage.keys().forEach((path) => {
       // NOTE: as a temporary measure do not show the config file
       if (path !== '.remix.config') {
-        files[path] = false
+        files[this.type + '/' + path] = false
       }
     })
 
     // add r/o files to the list
-    Object.keys(readonly).forEach(function (path) {
-      files[path] = true
+    Object.keys(readonly).forEach((path) => {
+      files[this.type + '/' + path] = true
     })
 
     return files
+  }
+
+  this.removePrefix = function (path) {
+    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
   }
 
   //
@@ -146,7 +167,6 @@ function Files (storage) {
         '/content': self.get(path)
       })
     })
-
     return tree
   }
 

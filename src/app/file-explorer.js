@@ -2,6 +2,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('ethereum-remix').ui.TreeView
+var modalDialog = require('./modaldialog')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
@@ -33,6 +34,30 @@ var css = csjs`
 module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
+  this.files = files
+
+  function remixdDialog () {
+    return yo`<div>This file has been changed outside of Remix IDE.</div>`
+  }
+
+  this.files.event.register('fileExternallyChanged', (path, content) => {
+    if (appAPI.currentFile() === path && appAPI.currentContent() !== content) {
+      modalDialog(path + ' changed', remixdDialog(),
+        {
+          label: 'Keep the content displayed in Remix',
+          fn: () => {}
+        },
+        {
+          label: 'Replace by the new content',
+          fn: () => {
+            appAPI.setText(content)
+          }
+        }
+      )
+    }
+  })
+
+  var self = this
   var fileEvents = files.event
   var treeView = new Treeview({
     extractData: function (value, tree, key) {
@@ -55,8 +80,10 @@ function fileExplorer (appAPI, files) {
       }
     },
     formatSelf: function (key, data) {
-      return yo`<label class=${data.children ? css.folder : css.file}
+      var isRoot = data.path.indexOf('/') === -1
+      return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
+        style="${isRoot ? 'font-weight:bold;' : ''}"
         onload=${function (el) { adaptEnvironment(el, focus, hover) }}
         onunload=${function (el) { unadaptEnvironment(el, focus, hover) }}
         onclick=${editModeOn}
@@ -66,30 +93,35 @@ function fileExplorer (appAPI, files) {
     }
   })
 
+  this.treeView = treeView
+
   var deleteButton = yo`
     <span class=${css.remove} onclick=${deletePath}>
       <i class="fa fa-trash" aria-hidden="true"></i>
     </span>
   `
 
-  appAPI.event.register('currentFileChanged', (newFile) => {
-    fileFocus(newFile)
+  appAPI.event.register('currentFileChanged', (newFile, explorer) => {
+    if (explorer === files) {
+      fileFocus(newFile)
+    } else {
+      unfocus(focusElement)
+    }
   })
   fileEvents.register('fileRemoved', fileRemoved)
   fileEvents.register('fileRenamed', fileRenamed)
+  fileEvents.register('fileRenamedError', fileRenamedError)
   fileEvents.register('fileAdded', fileAdded)
 
   var filepath = null
   var focusElement = null
   var textUnderEdit = null
 
-  var element = treeView.render(files.listAsTree())
-  element.className = css.fileexplorer
-
   var events = new EventManager()
+  this.events = events
   var api = {}
   api.addFile = function addFile (file) {
-    var name = file.name
+    var name = files.type + '/' + file.name
     if (!files.exists(name) || confirm('The file ' + name + ' already exists! Would you like to overwrite it?')) {
       var fileReader = new FileReader()
       fileReader.onload = function (event) {
@@ -100,12 +132,13 @@ function fileExplorer (appAPI, files) {
       fileReader.readAsText(file)
     }
   }
+  this.api = api
 
   function focus (event) {
     event.cancelBubble = true
     var li = this
     if (focusElement === li) return
-    if (focusElement) focusElement.classList.toggle(css.hasFocus)
+    unfocus(focusElement)
     focusElement = li
     focusElement.classList.toggle(css.hasFocus)
     var label = getLabelFrom(li)
@@ -114,7 +147,15 @@ function fileExplorer (appAPI, files) {
     if (isFile) events.trigger('focus', [filepath])
   }
 
+  function unfocus (el) {
+    if (focusElement) focusElement.classList.toggle(css.hasFocus)
+    focusElement = null
+  }
+
   function hover (event) {
+    var path = this.querySelector('label').dataset.path
+    if (path === self.files.type) return // can't delete the root node
+
     if (event.type === 'mouseout') {
       var exitedTo = event.toElement || event.relatedTarget
       if (this.contains(exitedTo)) return
@@ -128,7 +169,7 @@ function fileExplorer (appAPI, files) {
   }
 
   function getElement (path) {
-    var label = element.querySelector(`label[data-path="${path}"]`)
+    var label = self.element.querySelector(`label[data-path="${path}"]`)
     if (label) return getLiFrom(label)
   }
 
@@ -142,7 +183,7 @@ function fileExplorer (appAPI, files) {
     if (isFolder) path += '/'
     if (confirm(`Do you really want to delete "${path}" ?`)) {
       li.parentElement.removeChild(li)
-      removeSubtree(files, path)
+      removeSubtree(files, path, isFolder)
     }
   }
 
@@ -160,12 +201,26 @@ function fileExplorer (appAPI, files) {
 
   function editModeOff (event) {
     var label = this
-    if (event.type === 'blur' || event.which === 27 || event.which === 13) {
+    if (event.which === 13) event.preventDefault()
+    if ((event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
+      var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
-      if (event.which === 13) event.preventDefault()
       if (save && event.which !== 13) save = confirm('Do you want to rename?')
-      if (save) renameSubtree(label)
-      else label.innerText = textUnderEdit
+      if (save) {
+        var newPath = label.dataset.path
+        newPath = newPath.split('/')
+        newPath[newPath.length - 1] = label.innerText
+        newPath = newPath.join('/')
+        if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
+          alert('special characters are not allowsed')
+          label.innerText = textUnderEdit
+        } else if (!files.exists(newPath)) {
+          files.rename(label.dataset.path, newPath, isFolder)
+        } else {
+          alert('File already exists.')
+          label.innerText = textUnderEdit
+        }
+      } else label.innerText = textUnderEdit
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)
     }
@@ -205,8 +260,6 @@ function fileExplorer (appAPI, files) {
       var path = label.dataset.path
       var newName = path.replace(oldPath, newPath)
       label.dataset.path = newName
-      var isFile = label.className.indexOf('file') === 0
-      if (isFile) files.rename(path, newName)
       var ul = li.lastChild
       if (ul.tagName === 'UL') {
         updateAllLabels([...ul.children], oldPath, newPath)
@@ -227,7 +280,7 @@ function fileExplorer (appAPI, files) {
     if (li) li.parentElement.removeChild(li)
   }
 
-  function fileRenamed (oldName, newName) {
+  function fileRenamed (oldName, newName, isFolder) {
     var li = getElement(oldName)
     if (li) {
       oldName = oldName.split('/')
@@ -244,16 +297,16 @@ function fileExplorer (appAPI, files) {
     }
   }
 
+  function fileRenamedError (error) {
+    alert(error)
+  }
+
   function fileAdded (filepath) {
     var el = treeView.render(files.listAsTree())
     el.className = css.fileexplorer
-    element.parentElement.replaceChild(el, element)
-    element = el
+    self.element.parentElement.replaceChild(el, self.element)
+    self.element = el
   }
-
-  element.events = events
-  element.api = api
-  return element
 }
 /******************************************************************************
   HELPER FUNCTIONS
@@ -290,7 +343,7 @@ function getLabelFrom (li) {
   return li.children[0].children[1].children[0]
 }
 
-function removeSubtree (files, path) {
+function removeSubtree (files, path, isFolder) {
   var parts = path.split('/')
   var isFile = parts[parts.length - 1].length
   var removePaths = isFile ? [path] : Object.keys(files.list()).filter(keep)
@@ -304,6 +357,7 @@ function removeSubtree (files, path) {
     })
     files.remove(path)
   })
+  if (isFolder) files.remove(path)
 }
 
 function expandPathTo (li) {
@@ -311,4 +365,17 @@ function expandPathTo (li) {
     var caret = li.firstChild.firstChild
     if (caret.classList.contains('fa-caret-right')) caret.click() // expand
   }
+}
+
+fileExplorer.prototype.init = function () {
+  var files = this.files.listAsTree()
+  if (!Object.keys(files).length) {
+    files[this.files.type] = {} // default
+  }
+  var element = this.treeView.render(files)
+  element.className = css.fileexplorer
+  element.events = this.events
+  element.api = this.api
+  this.element = element
+  return element
 }

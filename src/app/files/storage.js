@@ -41,7 +41,7 @@ function Storage (prefix) {
     return safeKeys()
       // filter any names not including the prefix
       .filter(function (item) { return item.indexOf(prefix, 0) === 0 })
-      // remove prefix from filename
+      // remove prefix from filename and add the 'browser' path
       .map(function (item) { return item.substr(prefix.length) })
   }
 

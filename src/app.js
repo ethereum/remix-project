@@ -12,8 +12,10 @@ var queryParams = new QueryParams()
 var GistHandler = require('./app/gist-handler')
 var gistHandler = new GistHandler()
 
-var Storage = require('./app/storage')
-var Files = require('./app/files')
+var Remixd = require('./lib/remixd')
+var Storage = require('./app/files/storage')
+var Browserfiles = require('./app/files/browser-files')
+var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./app/config')
 var Editor = require('./app/editor')
 var Renderer = require('./app/renderer')
@@ -42,22 +44,31 @@ var run = function () {
   var self = this
   this.event = new EventManager()
   var fileStorage = new Storage('sol:')
-  var files = new Files(fileStorage)
   var config = new Config(fileStorage)
+  var remixd = new Remixd()
+  var filesProviders = {}
+  filesProviders['browser'] = new Browserfiles(fileStorage)
+  filesProviders['localhost'] = new SharedFolder(remixd)
 
-  // return all the files, except the temporary/readonly ones
-  function packageFiles () {
+  var tabbedFiles = {} // list of files displayed in the tabs bar
+
+  // return all the files, except the temporary/readonly ones.. package only files from the browser storage.
+  function packageFiles (cb) {
     var ret = {}
-    Object.keys(files.list())
-      .filter(function (path) { if (!files.isReadOnly(path)) { return path } })
-      .map(function (path) { ret[path] = { content: files.get(path) } })
-    return ret
+    var files = filesProviders['browser']
+    var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
+    async.eachSeries(filtered, function (path, cb) {
+      ret[path] = { content: files.get(path) }
+      cb()
+    }, () => {
+      cb(ret)
+    })
   }
 
   function createNonClashingName (path) {
     var counter = ''
     if (path.endsWith('.sol')) path = path.substring(0, path.lastIndexOf('.sol'))
-    while (files.exists(path + counter + '.sol')) {
+    while (filesProviders['browser'].exists(path + counter + '.sol')) {
       counter = (counter | 0) + 1
     }
     return path + counter + '.sol'
@@ -66,7 +77,7 @@ var run = function () {
   // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (filesSet) {
     for (var f in filesSet) {
-      files.set(createNonClashingName(f), filesSet[f].content)
+      filesProviders['browser'].set(createNonClashingName(f), filesSet[f].content)
     }
     switchToNextFile()
   }
@@ -101,8 +112,8 @@ var run = function () {
   })
 
   // insert ballot contract if there are no files available
-  if (!loadingFromGist && Object.keys(files.list()).length === 0) {
-    if (!files.set(examples.ballot.name, examples.ballot.content)) {
+  if (!loadingFromGist && Object.keys(filesProviders['browser'].list()).length === 0) {
+    if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
       alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
     }
   }
@@ -123,11 +134,16 @@ var run = function () {
         console.log('comparing to cloud', key, resp)
         if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
           console.log('Overwriting', key)
-          files.set(key, resp[key])
-          refreshTabs()
+          filesProviders['browser'].set(key, resp[key])
         } else {
           console.log('add to obj', obj, key)
-          obj[key] = files.get(key)
+          filesProviders['browser'].get(key, (error, content) => {
+            if (error) {
+              console.log(error)
+            } else {
+              obj[key] = content
+            }
+          })
         }
         done++
         if (done >= count) {
@@ -138,11 +154,17 @@ var run = function () {
       })
     }
 
-    for (var y in files.list()) {
+    for (var y in filesProviders['browser'].list()) {
       console.log('checking', y)
-      obj[y] = files.get(y)
-      count++
-      check(y)
+      filesProviders['browser'].get(y, (error, content) => {
+        if (error) {
+          console.log(error)
+        } else {
+          obj[y] = content
+          count++
+          check(y)
+        }
+      })
     }
   }
 
@@ -167,9 +189,18 @@ var run = function () {
     event: this.event,
     editorFontSize: function (incr) {
       editor.editorFontSize(incr)
+    },
+    currentFile: function () {
+      return config.get('currentFile')
+    },
+    currentContent: function () {
+      return editor.get(config.get('currentFile'))
+    },
+    setText: function (text) {
+      editor.setText(text)
     }
   }
-  var filePanel = new FilePanel(FilePanelAPI, files)
+  var filePanel = new FilePanel(FilePanelAPI, filesProviders)
   // TODO this should happen inside file-panel.js
   filepanelContainer.appendChild(filePanel)
 
@@ -194,45 +225,81 @@ var run = function () {
     window['filepanel'].style.width = width + 'px'
     window['tabs-bar'].style.left = width + 'px'
   })
-  files.event.register('fileRenamed', function (oldName, newName) {
+
+  function fileRenamedEvent (oldName, newName, isFolder) {
     // TODO please never use 'window' when it is possible to use a variable
     // that references the DOM node
     [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
       if (span.innerText === oldName) span.innerText = newName
     })
-  })
-  files.event.register('fileRemoved', function (path) {
+    if (!isFolder) {
+      config.set('currentFile', '')
+      editor.discard(oldName)
+      if (tabbedFiles[oldName]) {
+        delete tabbedFiles[oldName]
+        tabbedFiles[newName] = newName
+      }
+      switchToFile(newName)
+    } else {
+      var newFocus
+      for (var k in tabbedFiles) {
+        if (k.indexOf(oldName + '/') === 0) {
+          var newAbsolutePath = k.replace(oldName, newName)
+          tabbedFiles[newAbsolutePath] = newAbsolutePath
+          delete tabbedFiles[k]
+          if (config.get('currentFile') === k) {
+            newFocus = newAbsolutePath
+          }
+        }
+      }
+      if (newFocus) {
+        switchToFile(newFocus)
+      }
+    }
+    refreshTabs()
+  }
+
+  filesProviders['browser'].event.register('fileRenamed', fileRenamedEvent)
+  filesProviders['localhost'].event.register('fileRenamed', fileRenamedEvent)
+
+  function fileRemovedEvent (path) {
     if (path === config.get('currentFile')) {
       config.set('currentFile', '')
       switchToNextFile()
     }
     editor.discard(path)
+    delete tabbedFiles[path]
     refreshTabs()
-  })
-  files.event.register('fileAdded', function (path) {
-    refreshTabs()
-  })
+  }
+  filesProviders['browser'].event.register('fileRemoved', fileRemovedEvent)
+  filesProviders['localhost'].event.register('fileRemoved', fileRemovedEvent)
+
   // ------------------ gist publish --------------
 
   $('#gist').click(function () {
     if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
-      var files = packageFiles()
-      var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+      packageFiles((error, packaged) => {
+        if (error) {
+          console.log(error)
+        } else {
+          var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
 
-      $.ajax({
-        url: 'https://api.github.com/gists',
-        type: 'POST',
-        data: JSON.stringify({
-          description: description,
-          public: true,
-          files: files
-        })
-      }).done(function (response) {
-        if (response.html_url && confirm('Created a gist at ' + response.html_url + ' Would you like to open it in a new window?')) {
-          window.open(response.html_url, '_blank')
+          $.ajax({
+            url: 'https://api.github.com/gists',
+            type: 'POST',
+            data: JSON.stringify({
+              description: description,
+              public: true,
+              files: packaged
+            })
+          }).done(function (response) {
+            if (response.html_url && confirm('Created a gist at ' + response.html_url + ' Would you like to open it in a new window?')) {
+              window.open(response.html_url, '_blank')
+            }
+          }).fail(function (xhr, text, err) {
+            alert('Failed to create gist: ' + (err || 'Unknown transport error'))
+          })
         }
-      }).fail(function (xhr, text, err) {
-        alert('Failed to create gist: ' + (err || 'Unknown transport error'))
       })
     }
   })
@@ -245,12 +312,17 @@ var run = function () {
     if (target === null) {
       return
     }
-    var files = packageFiles()
-    $('<iframe/>', {
-      src: target,
-      style: 'display:none;',
-      load: function () { this.contentWindow.postMessage(['loadFiles', files], '*') }
-    }).appendTo('body')
+    packageFiles((error, packaged) => {
+      if (error) {
+        console.log(error)
+      } else {
+        $('<iframe/>', {
+          src: target,
+          style: 'display:none;',
+          load: function () { this.contentWindow.postMessage(['loadFiles', packaged], '*') }
+        }).appendTo('body')
+      }
+    })
   })
 
   // ----------------- editor ----------------------
@@ -267,97 +339,77 @@ var run = function () {
     return false
   })
 
-  // Edit name of current tab
-  $filesEl.on('click', '.file.active', function (ev) {
-    var $fileTabEl = $(this)
-    var originalName = $fileTabEl.find('.name').text()
-    ev.preventDefault()
-    if ($(this).find('input').length > 0) return false
-    var $fileNameInputEl = $('<input value="' + originalName + '"/>')
-    $fileTabEl.html($fileNameInputEl)
-    $fileNameInputEl.focus()
-    $fileNameInputEl.select()
-    $fileNameInputEl.on('blur', handleRename)
-    $fileNameInputEl.keyup(handleRename)
-
-    function handleRename (ev) {
-      ev.preventDefault()
-      if (ev.which && ev.which !== 13) return false
-      var newName = ev.target.value
-      $fileNameInputEl.off('blur')
-      $fileNameInputEl.off('keyup')
-
-      if (newName !== originalName && confirm(
-          files.exists(newName)
-            ? 'Are you sure you want to overwrite: ' + newName + ' with ' + originalName + '?'
-            : 'Are you sure you want to rename: ' + originalName + ' to ' + newName + '?')) {
-        if (!files.rename(originalName, newName)) {
-          alert('Error while renaming file')
-        } else {
-          config.set('currentFile', '')
-          switchToFile(newName)
-          editor.discard(originalName)
-        }
-      }
-
-      return false
-    }
-
-    return false
-  })
-
   // Remove current tab
   $filesEl.on('click', '.file .remove', function (ev) {
     ev.preventDefault()
     var name = $(this).parent().find('.name').text()
-
-    if (confirm('Are you sure you want to remove: ' + name + ' from local storage?')) {
-      if (!files.remove(name)) {
-        alert('Error while removing file')
-      }
+    delete tabbedFiles[name]
+    refreshTabs()
+    if (Object.keys(tabbedFiles).length) {
+      switchToFile(Object.keys(tabbedFiles)[0])
+    } else {
+      editor.displayEmptyReadOnlySession()
     }
     return false
   })
 
-  editor.event.register('sessionSwitched', refreshTabs)
-
   function switchToFile (file) {
     editorSyncFile()
-
     config.set('currentFile', file)
-
-    if (files.isReadOnly(file)) {
-      editor.openReadOnly(file, files.get(file))
-    } else {
-      editor.open(file, files.get(file))
-    }
-    self.event.trigger('currentFileChanged', [file])
+    refreshTabs(file)
+    fileProviderOf(file).get(file, (error, content) => {
+      if (error) {
+        console.log(error)
+      } else {
+        if (fileProviderOf(file).isReadOnly(file)) {
+          editor.openReadOnly(file, content)
+        } else {
+          editor.open(file, content)
+        }
+        self.event.trigger('currentFileChanged', [file, fileProviderOf(file)])
+      }
+    })
   }
 
   function switchToNextFile () {
-    var fileList = Object.keys(files.list())
+    var fileList = Object.keys(filesProviders['browser'].list())
     if (fileList.length) {
       switchToFile(fileList[0])
     }
   }
 
   var previouslyOpenedFile = config.get('currentFile')
-  if (previouslyOpenedFile && files.get(previouslyOpenedFile)) {
-    switchToFile(previouslyOpenedFile)
+  if (previouslyOpenedFile) {
+    filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
+      if (!error && content) {
+        switchToFile(previouslyOpenedFile)
+      } else {
+        switchToNextFile()
+      }
+    })
   } else {
     switchToNextFile()
   }
 
-  // Synchronise tab list with file names known to the editor
-  function refreshTabs () {
-    var $filesEl = $('#files')
-    var fileNames = Object.keys(files.list())
+  function fileProviderOf (file) {
+    var provider = file.match(/[^/]*/)
+    if (provider !== null) {
+      return filesProviders[provider[0]]
+    }
+    return null
+  }
 
+  // Display files that have already been selected
+  function refreshTabs (newfile) {
+    if (newfile) {
+      tabbedFiles[newfile] = newfile
+    }
+
+    var $filesEl = $('#files')
     $filesEl.find('.file').remove()
 
-    for (var f in fileNames) {
-      var name = fileNames[f]
-      $filesEl.append($('<li class="file"><span class="name">' + name + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
+    for (var file in tabbedFiles) {
+      $filesEl.append($('<li class="file"><span class="name">' + file + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
 
     var currentFileOpen = !!config.get('currentFile')
@@ -447,7 +499,7 @@ var run = function () {
       }
     },
     errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== config.get('currentFile') && files.exists(errFile)) {
+      if (errFile !== config.get('currentFile') && (filesProviders['browser'].exists(errFile) || filesProviders['localhost'].exists(errFile))) {
         switchToFile(errFile)
       }
       editor.gotoLine(errLine, errCol)
@@ -524,7 +576,7 @@ var run = function () {
       return cb('No metadata')
     }
 
-    Object.keys(metadata.sources).forEach(function (fileName) {
+    async.eachSeries(Object.keys(metadata.sources), function (fileName, cb) {
       // find hash
       var hash
       try {
@@ -533,16 +585,23 @@ var run = function () {
         return cb('Metadata inconsistency')
       }
 
-      sources.push({
-        content: files.get(fileName),
-        hash: hash
+      fileProviderOf(fileName).get(fileName, (error, content) => {
+        if (error) {
+          console.log(error)
+        } else {
+          sources.push({
+            content: content,
+            hash: hash
+          })
+        }
+        cb()
       })
+    }, function () {
+      // publish the list of sources in order, fail if any failed
+      async.eachSeries(sources, function (item, cb) {
+        swarmVerifiedPublish(item.content, item.hash, cb)
+      }, cb)
     })
-
-    // publish the list of sources in order, fail if any failed
-    async.eachSeries(sources, function (item, cb) {
-      swarmVerifiedPublish(item.content, item.hash, cb)
-    }, cb)
   }
 
   udapp.event.register('publishContract', this, function (contract) {
@@ -635,9 +694,9 @@ var run = function () {
   }
 
   function handleImportCall (url, cb) {
-    if (files.exists(url)) {
-      cb(null, files.get(url))
-      return
+    var provider = fileProviderOf(url)
+    if (provider && provider.exists(url)) {
+      return provider.get(url, cb)
     }
 
     var handlers = [
@@ -664,7 +723,7 @@ var run = function () {
           }
 
           // FIXME: at some point we should invalidate the cache
-          files.addReadOnly(url, content)
+          filesProviders['browser'].addReadOnly(url, content)
           cb(null, content)
         })
       }
@@ -754,8 +813,19 @@ var run = function () {
     if (currentFile) {
       var target = currentFile
       var sources = {}
-      sources[target] = files.get(target)
-      compiler.compile(sources, target)
+      var provider = fileProviderOf(currentFile)
+      if (provider) {
+        provider.get(target, (error, content) => {
+          if (error) {
+            console.log(error)
+          } else {
+            sources[target] = content
+            compiler.compile(sources, target)
+          }
+        })
+      } else {
+        console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
+      }
     }
   }
 
@@ -763,7 +833,12 @@ var run = function () {
     var currentFile = config.get('currentFile')
     if (currentFile && editor.current()) {
       var input = editor.get(currentFile)
-      files.set(currentFile, input)
+      var provider = fileProviderOf(currentFile)
+      if (provider) {
+        provider.set(currentFile, input)
+      } else {
+        console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
+      }
     }
   }
 

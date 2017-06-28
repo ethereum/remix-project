@@ -19,6 +19,7 @@ function Config (storage) {
   }
 
   this.get = function (key) {
+    this.ensureStorageUpdated(key)
     return this.items[key]
   }
 
@@ -27,6 +28,14 @@ function Config (storage) {
     try {
       storage.set(CONFIG_FILE, JSON.stringify(this.items))
     } catch (exception) {
+    }
+  }
+
+  this.ensureStorageUpdated = function (key) {
+    if (key === 'currentFile') {
+      if (this.items[key] && this.items[key] !== '' && this.items[key].indexOf('browser/') !== 0 && this.items[key].indexOf('localhost/') !== 0) {
+        this.items[key] = 'browser/' + this.items[key]
+      }
     }
   }
 }

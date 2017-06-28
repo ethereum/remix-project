@@ -5,7 +5,7 @@ var sauce = require('./sauce')
 
 var sources = {
   'sources': {
-    'Untitled.sol': `pragma solidity ^0.4.0;
+    'browser/Untitled.sol': `pragma solidity ^0.4.0;
       contract TestContract { function f() returns (uint) { return 8; } }`
   }
 }
@@ -27,7 +27,7 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.envView')
-  contractHelper.testContracts(browser, sources.sources['Untitled.sol'], ['Untitled.sol:TestContract'], function () {
+  contractHelper.testContracts(browser, sources.sources['browser/Untitled.sol'], ['browser/Untitled.sol:TestContract'], function () {
     browser.click('.create .constructor .call')
       .waitForElementPresent('.instance .call[title="f"]')
       .click('.instance .call[title="f"]')
