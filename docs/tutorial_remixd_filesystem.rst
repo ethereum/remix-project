@@ -3,7 +3,7 @@ Accessing a shared folder in Remix IDE using Remixd
 
 .. _tutorial-remixd-filesystem:
 
-Remixd is an npm module. His purpose is to share a folder from your local computer to the remix web application.
+Remixd is an npm module. Its purpose is to give the remix web application access to a folder from your local computer.
 
 The code of Remixd can be checked out `here <https://github.com/ethereum/remixd>`_ .
 
@@ -15,7 +15,8 @@ The folder is shared using a websocket connection between ``Remix IDE`` and ``Re
 
 Be sure the user executing Remix has read/write permission on the folder.
 
-Remixd listen on the port 65520. Please be sure your system is secured enough (port 65520 neither opened nor forwarded), that is not mandatory for the use of this feature but that will increase security.
+.. warning::
+  Remixd provides full read and write access to the given folder for any application that can access the TCP port 65520 on your local host.
 
 From ``Remix IDE``, you will need to activate the connection.
 
