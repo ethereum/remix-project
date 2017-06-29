@@ -69,12 +69,6 @@ function Editor (editorElement) {
     editor.session.setBreakpoint(row, css)
   }
 
-  this.setPosition = function (line, column, noClip) {
-    editor.moveCursorTo(line, column)
-    //var anchor = new ace.Anchor(editor, line, column)
-    //anchor.setPosition(line, column, noClip)
-  }
-
   this.editorFontSize = function (incr) {
     editor.setFontSize(editor.getFontSize() + incr)
   }
