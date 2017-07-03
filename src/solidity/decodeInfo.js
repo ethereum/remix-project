@@ -336,26 +336,29 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
       console.log('unable to retrieve decode info of ' + variable.attributes.type)
       return null
     }
-    if (storagelocation.offset + type.storageBytes > 32) {
+    if (!variable.attributes.constant && storagelocation.offset + type.storageBytes > 32) {
       storagelocation.slot++
       storagelocation.offset = 0
     }
     ret.push({
       name: variable.attributes.name,
       type: type,
+      constant: variable.attributes.constant,
       storagelocation: {
-        offset: storagelocation.offset,
-        slot: storagelocation.slot
+        offset: variable.attributes.constant ? 0 : storagelocation.offset,
+        slot: variable.attributes.constant ? 0 : storagelocation.slot
       }
     })
-    if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {
-      storagelocation.offset += type.storageBytes
-    } else {
-      storagelocation.slot += type.storageSlots
-      storagelocation.offset = 0
+    if (!variable.attributes.constant) {
+      if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {
+        storagelocation.offset += type.storageBytes
+      } else {
+        storagelocation.slot += type.storageSlots
+        storagelocation.offset = 0
+      }
     }
   }
-  if (storagelocation.offset > 0) {
+  if (!variable.attributes.constant && storagelocation.offset > 0) {
     storagelocation.slot++
   }
   return {
