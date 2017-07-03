@@ -358,7 +358,7 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
       }
     }
   }
-  if (!variable.attributes.constant && storagelocation.offset > 0) {
+  if (storagelocation.offset > 0) {
     storagelocation.slot++
   }
   return {
