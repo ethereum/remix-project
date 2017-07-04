@@ -13,7 +13,12 @@ async function decodeState (stateVars, storageResolver) {
   for (var k in stateVars) {
     var stateVar = stateVars[k]
     try {
-      ret[stateVar.name] = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+      var decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+      decoded.constant = stateVar.constant
+      if (decoded.constant) {
+        decoded.value = '<constant>'
+      }
+      ret[stateVar.name] = decoded
     } catch (e) {
       console.log(e)
       ret[stateVar.name] = '<decoding failed - ' + e.message + '>'
