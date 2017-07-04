@@ -137,7 +137,7 @@ function contractNameFromCode (contracts, code, address) {
   var isCreation = traceHelper.isContractCreation(address)
   var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
   for (var k in contracts) {
-    if (code.replace(util.swarmHashExtraction(), '').indexOf('0x' + contracts[k][byteProp].replace(util.swarmHashExtraction(), '')) === 0) {
+    if (util.compareByteCode(code, '0x' + contracts[k][byteProp])) {
       return k
     }
   }
