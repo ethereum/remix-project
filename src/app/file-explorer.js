@@ -21,11 +21,18 @@ var css = csjs`
     background-color  : white;
   }
   .remove             {
-    float             : right;
+    margin-left       : auto;
+    padding-left      : 5px;
+    padding-right     : 5px;
   }
   .activeMode         {
+    display           : flex;
+    width             : 100%;
     margin-right      : 10px;
     padding-right     : 19px;
+  }
+  .activeMode > div   {
+    min-width         : 10px;
   }
   ul                  {
     padding           : 0;
