@@ -15,7 +15,7 @@ module.exports = (title, content, ok, cancel) => {
   if (title) modaltitle.innerHTML = title
 
   modal.innerHTML = ''
-  //if (content) modal.appendChild(content)
+  // if (content) modal.appendChild(content)
   if (content) modal.innerHTML = content
 
   var container = document.querySelector('.modal')
