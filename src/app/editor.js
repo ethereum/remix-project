@@ -8,22 +8,12 @@ var Range = ace.acequire('ace/range').Range
 require('../mode-solidity.js')
 
 var css = csjs`
-  .editor-container   {
-    display           : flex;
-    position          : absolute;
-    top               : 2.5em;
-    left              : 0;
-    right             : 0;
-    bottom            : 0;
-    min-width         : 20vw;
-  }
   .ace-editor         {
     top               : 4px;
     font-size         : 1.1em;
     width             : 100%;
   }
 `
-document.querySelector('#editor-container').className = css['editor-container']
 
 function Editor (editorElement) {
   var editor = ace.edit(editorElement)

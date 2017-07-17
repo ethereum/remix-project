@@ -6,13 +6,15 @@ var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
 var csjs = require('csjs-inject')
+var yo = require('yo-yo')
+var EventManager = require('ethereum-remix').lib.EventManager
+
+var UniversalDApp = require('./universal-dapp.js')
+var Remixd = require('./lib/remixd')
+var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 var QueryParams = require('./app/query-params')
-var queryParams = new QueryParams()
 var GistHandler = require('./app/gist-handler')
-var gistHandler = new GistHandler()
-
-var Remixd = require('./lib/remixd')
 var Storage = require('./app/files/storage')
 var Browserfiles = require('./app/files/browser-files')
 var SharedFolder = require('./app/files/shared-folder')
@@ -21,27 +23,79 @@ var Editor = require('./app/editor')
 var Renderer = require('./app/renderer')
 var Compiler = require('./app/compiler')
 var ExecutionContext = require('./app/execution-context')
-var UniversalDApp = require('./universal-dapp.js')
 var Debugger = require('./app/debugger')
-var EventManager = require('ethereum-remix').lib.EventManager
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
-var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 var FilePanel = require('./app/file-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 
-// The event listener needs to be registered as early as possible, because the
-// parent will send the message upon the "load" event.
-var filesToLoad = null
-var loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
-
-window.addEventListener('message', function (ev) {
-  if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
-    loadFilesCallback(ev.data[1])
+var css = csjs`
+  .editor-container    {
+    display            : flex;
+    position           : absolute;
+    top                : 2.5em;
+    left               : 0;
+    right              : 0;
+    bottom             : 0;
+    min-width          : 20vw;
   }
-}, false)
-var run = function () {
+  .filepanel-container {
+    display            : flex;
+    width              : 200px;
+  }
+`
+
+class App {
+  constructor (opts = {}) {
+    var self = this
+    self._view = {}
+  }
+  init () {
+    var self = this
+    run.apply(self)
+  }
+  render () {
+    var self = this
+    if (self._view.el) return self._view.el
+    /***************************************************************************/
+    var el = yo`
+      <div id="editor">
+        <div id="tabs-bar">
+          <div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
+          <div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
+          <ul id="files" class="nav nav-tabs"></ul>
+        </div>
+        <span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
+        <div id="editor-container" class=${css['editor-container']}>
+          <div id="filepanel" class=${css['filepanel-container']}></div>
+          <div id="input"></div>
+        </div>
+        <div id="dragbar"></div>
+      </div>
+    `
+    return el
+  }
+}
+
+module.exports = App
+
+function run () {
   var self = this
+
+  var queryParams = new QueryParams()
+  var gistHandler = new GistHandler()
+
+  // The event listener needs to be registered as early as possible, because the
+  // parent will send the message upon the "load" event.
+  var filesToLoad = null
+  var loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
+
+  window.addEventListener('message', function (ev) {
+    if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
+      loadFilesCallback(ev.data[1])
+    }
+  }, false)
+
   this.event = new EventManager()
   var fileStorage = new Storage('sol:')
   var config = new Config(fileStorage)
@@ -172,17 +226,6 @@ var run = function () {
   chromeCloudSync()
 
   // ---------------- FilePanel --------------------
-  // TODO: All FilePanel related CSS should move into file-panel.js
-  // app.js provides file-panel.js with a css selector or a DOM element
-  // and file-panel.js adds its elements (including css), see "Editor" above
-  var css = csjs`
-    .filepanel-container    {
-      display     : flex;
-      width       : 200px;
-    }
-  `
-  var filepanelContainer = document.querySelector('#filepanel')
-  filepanelContainer.className = css['filepanel-container']
   var FilePanelAPI = {
     createName: createNonClashingName,
     switchToFile: switchToFile,
@@ -201,7 +244,9 @@ var run = function () {
     }
   }
   var filePanel = new FilePanel(FilePanelAPI, filesProviders)
+
   // TODO this should happen inside file-panel.js
+  var filepanelContainer = document.querySelector('#filepanel')
   filepanelContainer.appendChild(filePanel)
 
   filePanel.events.register('ui-hidden', function changeLayout (isHidden) {
@@ -1011,8 +1056,4 @@ var run = function () {
 
     loadVersion('builtin')
   })
-}
-
-module.exports = {
-  'run': run
 }
