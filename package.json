@@ -127,7 +127,7 @@
     ]
   },
   "scripts": {
-    "build": "browserify src/index.js -d | npm run minify --silent | npm run sourcemap",
+    "build": "browserify src/index.js -o build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
     "downloadsolc": "rimraf soljson.js; wget https://ethereum.github.io/solc-bin/soljson.js",
