@@ -152,6 +152,10 @@ function Editor (editorElement) {
     return editor.session.addMarker(currentRange, cssClass)
   }
 
+  this.scrollToLine = function (line, center, animate, callback) {
+    editor.scrollToLine(line, center, animate, callback)
+  }
+
   this.removeMarker = function (markerId) {
     editor.session.removeMarker(markerId)
   }
