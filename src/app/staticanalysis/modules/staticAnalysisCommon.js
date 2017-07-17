@@ -240,6 +240,7 @@ function getDeclaredVariableName (varDeclNode) {
  */
 function getStateVariableDeclarationsFormContractNode (contractNode) {
   if (!isContractDefinition(contractNode)) throw new Error('staticAnalysisCommon.js: not an contract definition declaration')
+  if (!contractNode.children) return []
   return contractNode.children.filter((el) => isVariableDeclaration(el))
 }
 
