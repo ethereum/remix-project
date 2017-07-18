@@ -41,7 +41,9 @@ function runTests (browser, testData) {
     .assert.containsText('[data-path="localhost/folder1/contract1.sol"]', 'contract1.sol')
     .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol')
     .click('[data-path="localhost/folder1/contract2.sol"]')
-  contractHelper.testContracts(browser, sources.sources['localhost/folder1/contract2.sol'], ['localhost/folder1/contract2.sol:test2'], () => {
-    browser.click('.websocketconn').end()
-  })
+    .waitForElementPresent('.udapp .create', 50000, true, function () {
+      contractHelper.checkCompiledContracts(browser, ['localhost/folder1/contract2.sol:test2'], function () {
+        browser.click('.websocketconn').end()
+      })
+    })
 }
