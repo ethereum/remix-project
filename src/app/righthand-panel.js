@@ -27,23 +27,26 @@ var css = csjs`
 
 module.exports = RighthandPanel
 
-function RighthandPanel (container, appAPI, events, opts) {
+function RighthandPanel (appAPI, events, opts) {
   var self = this
   self._api = appAPI
   var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
+  var options = yo`
+    <ul id="options">
+      <li class="envView" title="Environment">Contract</li>
+      <li class="settingsView" title="Settings">Settings</li>
+      <li class="publishView" title="Publish" >Files</li>
+      <li class="debugView" title="Debugger">Debugger</li>
+      <li class="staticanalysisView" title="Static Analysis">Analysis</li>
+      <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
+    </ul>
+  `
   var element = yo`
     <div id="righthand-panel">
       <div id="header">
         <div id="menu">
           <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
-          <ul id="options">
-            <li class="envView" title="Environment">Contract</li>
-            <li class="settingsView" title="Settings">Settings</li>
-            <li class="publishView" title="Publish" >Files</li>
-            <li class="debugView" title="Debugger">Debugger</li>
-            <li class="staticanalysisView" title="Static Analysis">Analysis</li>
-            <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
-          </ul>
+          ${options}
         </div>
         ${optionViews}
       </div>
@@ -54,9 +57,10 @@ function RighthandPanel (container, appAPI, events, opts) {
   analysisTab(optionViews, appAPI, events, opts)
   debuggerTab(optionViews, appAPI, events, opts)
   filesTab(optionViews, appAPI, events, opts)
-  container.appendChild(element)
 
-  ;[...container.querySelectorAll('#header #options li')].forEach((el) => { el.classList.add(css.options) })
+  self.render = function () { return element }
+
+  ;[...options.children].forEach((el) => { el.classList.add(css.options) })
 
   // ----------------- toggle right hand panel -----------------
 
@@ -73,9 +77,8 @@ function RighthandPanel (container, appAPI, events, opts) {
     warnCompilerLoading: appAPI.warnCompilerLoading
   }
   // load tabbed menu component
-  var tabContainer // @TODO
   var tabEvents = {compiler: events.compiler, app: events.app}
-  tabbedMenu(tabContainer, tabbedMenuAPI, tabEvents, {})
+  tabbedMenu(options, tabbedMenuAPI, tabEvents, {})
 
   // ----------------- resizeable ui ---------------
 
@@ -118,7 +121,9 @@ function RighthandPanel (container, appAPI, events, opts) {
   })
 
   if (appAPI.config.exists(EDITOR_WINDOW_SIZE)) {
-    self._api.setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
+    setTimeout(function () {
+      self._api.setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
+    }, 0)
   } else {
     appAPI.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
   }
