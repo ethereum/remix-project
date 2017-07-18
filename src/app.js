@@ -708,7 +708,8 @@ function run () {
     udapp: udapp.event
   }
   var righthandPanel = new RighthandPanel(rhpAPI, rhpEvents, {}) // eslint-disable-line
-  self._view.rightpanel.replaceWith(righthandPanel.render())
+  self._view.rightpanel.appendChild(righthandPanel.render())
+  righthandPanel.init()
 
   // ----------------- editor resize ---------------
 
