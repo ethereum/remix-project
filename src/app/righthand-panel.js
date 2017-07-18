@@ -60,71 +60,70 @@ function RighthandPanel (appAPI, events, opts) {
 
   self.render = function () { return element }
 
-  ;[...options.children].forEach((el) => { el.classList.add(css.options) })
+  self.init = function () {
+    ;[...options.children].forEach((el) => { el.classList.add(css.options) })
+      // ----------------- toggle right hand panel -----------------
 
-  // ----------------- toggle right hand panel -----------------
-
-  var hidingRHP = false
-  $('.toggleRHP').click(function () {
-    hidingRHP = !hidingRHP
-    self._api.setEditorSize(hidingRHP ? 0 : appAPI.config.get(EDITOR_WINDOW_SIZE))
-    $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
-    $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
-  })
-
-  // ----------------- tabbed menu -----------------
-  var tabbedMenuAPI = {
-    warnCompilerLoading: appAPI.warnCompilerLoading
-  }
-  // load tabbed menu component
-  var tabEvents = {compiler: events.compiler, app: events.app}
-  tabbedMenu(options, tabbedMenuAPI, tabEvents, {})
-
-  // ----------------- resizeable ui ---------------
-
-  var EDITOR_WINDOW_SIZE = 'editorWindowSize'
-
-  var dragging = false
-  $('#dragbar').mousedown(function (e) {
-    e.preventDefault()
-    dragging = true
-    var main = $('#righthand-panel')
-    var ghostbar = $('<div id="ghostbar">', {
-      css: {
-        top: main.offset().top,
-        left: main.offset().left
-      }
-    }).prependTo('body')
-
-    $(document).mousemove(function (e) {
-      ghostbar.css('left', e.pageX + 2)
+    var hidingRHP = false
+    $('.toggleRHP').click(function () {
+      hidingRHP = !hidingRHP
+      self._api.setEditorSize(hidingRHP ? 0 : appAPI.config.get(EDITOR_WINDOW_SIZE))
+      $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
+      $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
     })
-  })
 
-  var $body = $('body')
-
-  function getEditorSize () {
-    return $('#righthand-panel').width()
-  }
-
-  $(document).mouseup(function (e) {
-    if (dragging) {
-      var delta = $body.width() - e.pageX + 2
-      $('#ghostbar').remove()
-      $(document).unbind('mousemove')
-      dragging = false
-      delta = (delta < 50) ? 50 : delta
-      self._api.setEditorSize(delta)
-      appAPI.config.set(EDITOR_WINDOW_SIZE, delta)
-      appAPI.reAdjust()
+    // ----------------- tabbed menu -----------------
+    var tabbedMenuAPI = {
+      warnCompilerLoading: appAPI.warnCompilerLoading
     }
-  })
+    // load tabbed menu component
+    var tabEvents = {compiler: events.compiler, app: events.app}
+    tabbedMenu(options, tabbedMenuAPI, tabEvents, {})
 
-  if (appAPI.config.exists(EDITOR_WINDOW_SIZE)) {
-    setTimeout(function () {
+    // ----------------- resizeable ui ---------------
+
+    var EDITOR_WINDOW_SIZE = 'editorWindowSize'
+
+    var dragging = false
+    $('#dragbar').mousedown(function (e) {
+      e.preventDefault()
+      dragging = true
+      var main = $('#righthand-panel')
+      var ghostbar = $('<div id="ghostbar">', {
+        css: {
+          top: main.offset().top,
+          left: main.offset().left
+        }
+      }).prependTo('body')
+
+      $(document).mousemove(function (e) {
+        ghostbar.css('left', e.pageX + 2)
+      })
+    })
+
+    var $body = $('body')
+
+    function getEditorSize () {
+      return $('#righthand-panel').width()
+    }
+
+    $(document).mouseup(function (e) {
+      if (dragging) {
+        var delta = $body.width() - e.pageX + 2
+        $('#ghostbar').remove()
+        $(document).unbind('mousemove')
+        dragging = false
+        delta = (delta < 50) ? 50 : delta
+        self._api.setEditorSize(delta)
+        appAPI.config.set(EDITOR_WINDOW_SIZE, delta)
+        appAPI.reAdjust()
+      }
+    })
+
+    if (appAPI.config.exists(EDITOR_WINDOW_SIZE)) {
       self._api.setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
-    }, 0)
-  } else {
-    appAPI.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
+    } else {
+      appAPI.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
+    }
   }
 }
