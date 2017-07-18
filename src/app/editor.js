@@ -1,7 +1,7 @@
 'use strict'
 
 var EventManager = require('ethereum-remix').lib.EventManager
-
+var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
@@ -14,6 +14,15 @@ var css = csjs`
     width             : 100%;
   }
 `
+document.head.appendChild(yo`
+  <style>
+    .ace-tm .ace_gutter,
+    .ace-tm .ace_gutter-active-line,
+    .ace-tm .ace_marker-layer .ace_active-line {
+        background-color: rgba(225, 229, 251, 0.5);
+    }
+  </style>
+`)
 
 function Editor (editorElement) {
   var editor = ace.edit(editorElement)

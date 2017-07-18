@@ -8,15 +8,6 @@ body {
     font-weight: normal;
 }
 
-#editor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: auto;
-    bottom: 0;
-    right: 37em;
-}
-
 .scroller {
     position: absolute;
     z-index: 999;
@@ -426,12 +417,6 @@ body {
     cursor: col-resize;
     z-index: 999;
     border-right: 2px solid hsla(215, 81%, 79%, .3);
-}
-
-#editor .ace-tm .ace_gutter,
-#editor .ace-tm .ace_gutter-active-line,
-#editor .ace-tm .ace_marker-layer .ace_active-line {
-    background-color: rgba(225, 229, 251, 0.5);
 }
 
 input[readonly] {
