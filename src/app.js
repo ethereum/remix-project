@@ -30,22 +30,39 @@ var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 
 var css = csjs`
+  html { box-sizing: border-box; }
+  *, *:before, *:after { box-sizing: inherit; }
+  body                 {
+    margin             : 0;
+    padding            : 0;
+    font-size          : 12px;
+    color              : #111111;
+    font-weight        : normal;
+  }
   .browsersolidity     {
     position           : relative;
     width              : 100vw;
     height             : 100vh;
   }
-  .editor-container    {
+  .centerpanel         {
+    display            : flex;
+    flex-direction     : column;
+    position           : absolute;
+    top                : 0;
+    left               : 200px;
+    right              : 0;
+    bottom             : 0;
+  }
+  .tabsbar             {
+    overflow           : hidden;
+  }
+  .leftpanel           {
     display            : flex;
     position           : absolute;
-    top                : 2.5em;
+    top                : 0;
     left               : 0;
     right              : 0;
     bottom             : 0;
-    min-width          : 20vw;
-  }
-  .filepanel-container {
-    display            : flex;
     width              : 200px;
   }
   .dragbar2            {
@@ -73,20 +90,24 @@ class App {
     var self = this
     if (self._view.el) return self._view.el
     /***************************************************************************/
+    self._view.leftpanel = yo`<div id="filepanel" class=${css.leftpanel}></div>`
     self._view.rightpanel = yo`<div></div>`
+    self._view.tabsbar = yo`
+      <div class=${css.tabsbar}>
+        <div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
+        <div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
+        <ul id="files" class="nav nav-tabs"></ul>
+      </div>
+    `
     self._view.centerpanel = yo`
-      <div id="editor-container" class=${css['editor-container']}>
-        <div id="filepanel" class=${css['filepanel-container']}></div>
+      <div id="editor-container" class=${css.centerpanel}>
+        ${self._view.tabsbar}
         <div id="input"></div>
       </div>
     `
     self._view.el = yo`
       <div class=${css.browsersolidity}>
-        <div id="tabs-bar">
-          <div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
-          <div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
-          <ul id="files" class="nav nav-tabs"></ul>
-        </div>
+        ${self._view.leftpanel}
         <span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
         ${self._view.centerpanel}
         <div id="dragbar" class=${css.dragbar2}></div>
@@ -272,23 +293,23 @@ function run () {
   filePanel.events.register('ui-hidden', function changeLayout (isHidden) {
     var value
     if (isHidden) {
-      value = -parseInt(window['filepanel'].style.width)
-      value = (isNaN(value) ? -window['filepanel'].getBoundingClientRect().width : value)
-      window['filepanel'].style.position = 'absolute'
-      window['filepanel'].style.left = (value - 5) + 'px'
-      window['filepanel'].style.width = -value + 'px'
-      window['tabs-bar'].style.left = '45px'
+      value = -parseInt(self._view.leftpanel.style.width)
+      value = (isNaN(value) ? -self._view.leftpanel.getBoundingClientRect().width : value)
+      self._view.leftpanel.style.position = 'absolute'
+      self._view.leftpanel.style.left = (value - 5) + 'px'
+      self._view.leftpanel.style.width = -value + 'px'
+      self._view.centerpanel.style.left = '45px'
     } else {
-      value = -parseInt(window['filepanel'].style.left) + 'px'
-      window['filepanel'].style.position = 'static'
-      window['filepanel'].style.width = value
-      window['filepanel'].style.left = ''
-      window['tabs-bar'].style.left = value
+      value = -parseInt(self._view.leftpanel.style.left) + 'px'
+      self._view.leftpanel.style.position = 'static'
+      self._view.leftpanel.style.width = value
+      self._view.leftpanel.style.left = ''
+      self._view.centerpanel.style.left = value
     }
   })
   filePanel.events.register('ui-resize', function changeLayout (width) {
-    window['filepanel'].style.width = width + 'px'
-    window['tabs-bar'].style.left = width + 'px'
+    self._view.leftpanel.style.width = width + 'px'
+    self._view.centerpanel.style.left = width + 'px'
   })
 
   function fileRenamedEvent (oldName, newName, isFolder) {
