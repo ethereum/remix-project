@@ -19,7 +19,6 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     position          : relative;
-    top               : -33px;
     width             : 100%;
   }
   .menu               {
@@ -58,7 +57,8 @@ var css = csjs`
   }
   .dragbar            {
     position          : relative;
-    top               : 4px;
+    top               : 36px;
+    left              : 2px;
     cursor            : col-resize;
     z-index           : 999;
     border-right      : 2px solid hsla(215, 81%, 79%, .3);
