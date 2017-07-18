@@ -42,6 +42,6 @@ function runTests (browser, testData) {
     .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol')
     .click('[data-path="localhost/folder1/contract2.sol"]')
   contractHelper.testContracts(browser, sources.sources['localhost/folder1/contract2.sol'], ['localhost/folder1/contract2.sol:test2'], () => {
-    browser.end()
+    browser.click('.websocketconn').end()
   })
 }
