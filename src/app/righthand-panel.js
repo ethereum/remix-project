@@ -28,6 +28,8 @@ var css = csjs`
 module.exports = RighthandPanel
 
 function RighthandPanel (container, appAPI, events, opts) {
+  var self = this
+  self._api = appAPI
   var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
   var element = yo`
     <div id="righthand-panel">
@@ -61,7 +63,7 @@ function RighthandPanel (container, appAPI, events, opts) {
   var hidingRHP = false
   $('.toggleRHP').click(function () {
     hidingRHP = !hidingRHP
-    setEditorSize(hidingRHP ? 0 : appAPI.config.get(EDITOR_WINDOW_SIZE))
+    self._api.setEditorSize(hidingRHP ? 0 : appAPI.config.get(EDITOR_WINDOW_SIZE))
     $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
     $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
   })
@@ -98,12 +100,6 @@ function RighthandPanel (container, appAPI, events, opts) {
 
   var $body = $('body')
 
-  function setEditorSize (delta) {
-    $('#righthand-panel').css('width', delta)
-    $('#editor').css('right', delta)
-    appAPI.onResize()
-  }
-
   function getEditorSize () {
     return $('#righthand-panel').width()
   }
@@ -115,14 +111,14 @@ function RighthandPanel (container, appAPI, events, opts) {
       $(document).unbind('mousemove')
       dragging = false
       delta = (delta < 50) ? 50 : delta
-      setEditorSize(delta)
+      self._api.setEditorSize(delta)
       appAPI.config.set(EDITOR_WINDOW_SIZE, delta)
       appAPI.reAdjust()
     }
   })
 
   if (appAPI.config.exists(EDITOR_WINDOW_SIZE)) {
-    setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
+    self._api.setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
   } else {
     appAPI.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
   }

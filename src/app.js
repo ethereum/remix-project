@@ -30,6 +30,14 @@ var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 
 var css = csjs`
+  .browsersolidity     {
+    position           : absolute;
+    top                : 0;
+    left               : 0;
+    width              : auto;
+    bottom             : 0;
+    right              : 37em;
+  }
   .editor-container    {
     display            : flex;
     position           : absolute;
@@ -58,8 +66,8 @@ class App {
     var self = this
     if (self._view.el) return self._view.el
     /***************************************************************************/
-    var el = yo`
-      <div id="editor">
+    self._view.el = yo`
+      <div class=${css.browsersolidity}>
         <div id="tabs-bar">
           <div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
           <div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
@@ -73,7 +81,7 @@ class App {
         <div id="dragbar"></div>
       </div>
     `
-    return el
+    return self._view.el
   }
 }
 
@@ -662,7 +670,11 @@ function run () {
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {
     config: config,
-    onResize: onResize,
+    setEditorSize (delta) {
+      $('#righthand-panel').css('width', delta)
+      self._view.el.style.right = delta + 'px'
+      onResize()
+    },
     reAdjust: reAdjust,
     warnCompilerLoading: (msg) => {
       renderer.clear()
@@ -692,7 +704,7 @@ function run () {
   window.onresize = onResize
   onResize()
 
-  document.querySelector('#editor').addEventListener('change', onResize)
+  self._view.el.addEventListener('change', onResize)
   document.querySelector('#editorWrap').addEventListener('change', onResize)
 
   // ----------------- compiler ----------------------
