@@ -4,17 +4,16 @@ var loadingSpinner = require('./loading-spinner')
 module.exports = tabbedMenu
 
 function tabbedMenu (container, appAPI, events, opts) {
-  $('#options li').click(function (ev) {
-    var $el = $(this)
-    selectTab($el)
+  container.querySelectorAll('li').forEach(function (el) {
+    el.onclick = function (ev) { selectTab(this) }
   })
 
   events.app.register('debuggingRequested', () => {
-    selectTab($('ul#options li.debugView'))
+    selectTab(container.querySelector('li.debugView'))
   })
 
   // initialize tabbed menu
-  selectTab($('#options .envView'))
+  selectTab(container.querySelector('.envView'))
 
   // add event listeners for loading spinner
   events.compiler.register('loadingCompiler', function start () {
@@ -34,6 +33,7 @@ function tabbedMenu (container, appAPI, events, opts) {
 
   // select tab
   function selectTab (el) {
+    el = $(el)
     var match = /[a-z]+View/.exec(el.get(0).className)
     if (!match) return
     var cls = match[0]

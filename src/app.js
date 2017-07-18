@@ -31,12 +31,9 @@ var examples = require('./app/example-contracts')
 
 var css = csjs`
   .browsersolidity     {
-    position           : absolute;
-    top                : 0;
-    left               : 0;
-    width              : auto;
-    bottom             : 0;
-    right              : 37em;
+    position           : relative;
+    width              : 100vw;
+    height             : 100vh;
   }
   .editor-container    {
     display            : flex;
@@ -50,6 +47,16 @@ var css = csjs`
   .filepanel-container {
     display            : flex;
     width              : 200px;
+  }
+  .dragbar2            {
+    background-color   : transparent;
+    position           : absolute;
+    width              : 0.5em;
+    top                : 3em;
+    bottom             : 0;
+    cursor             : col-resize;
+    z-index            : 999;
+    border-right       : 2px solid hsla(215, 81%, 79%, .3);    
   }
 `
 
@@ -66,6 +73,13 @@ class App {
     var self = this
     if (self._view.el) return self._view.el
     /***************************************************************************/
+    self._view.rightpanel = yo`<div></div>`
+    self._view.centerpanel = yo`
+      <div id="editor-container" class=${css['editor-container']}>
+        <div id="filepanel" class=${css['filepanel-container']}></div>
+        <div id="input"></div>
+      </div>
+    `
     self._view.el = yo`
       <div class=${css.browsersolidity}>
         <div id="tabs-bar">
@@ -74,11 +88,9 @@ class App {
           <ul id="files" class="nav nav-tabs"></ul>
         </div>
         <span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
-        <div id="editor-container" class=${css['editor-container']}>
-          <div id="filepanel" class=${css['filepanel-container']}></div>
-          <div id="input"></div>
-        </div>
-        <div id="dragbar"></div>
+        ${self._view.centerpanel}
+        <div id="dragbar" class=${css.dragbar2}></div>
+        ${self._view.rightpanel}
       </div>
     `
     return self._view.el
@@ -672,7 +684,8 @@ function run () {
     config: config,
     setEditorSize (delta) {
       $('#righthand-panel').css('width', delta)
-      self._view.el.style.right = delta + 'px'
+      self._view.centerpanel.style.right = delta + 'px'
+      document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
     },
     reAdjust: reAdjust,
@@ -694,7 +707,10 @@ function run () {
     app: self.event,
     udapp: udapp.event
   }
-  var righthandPanel = new RighthandPanel(document.body, rhpAPI, rhpEvents, {}) // eslint-disable-line
+  var righthandPanel = new RighthandPanel(rhpAPI, rhpEvents, {}) // eslint-disable-line
+  self._view.rightpanel.appendChild(righthandPanel.render())
+  righthandPanel.init()
+
   // ----------------- editor resize ---------------
 
   function onResize () {
