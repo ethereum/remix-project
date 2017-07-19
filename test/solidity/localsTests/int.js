@@ -33,11 +33,11 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
             try {
               st.equals(scopeStarts[0], '')
               st.equals(scopeStarts[12], '1')
-              st.equals(scopeStarts[106], '2')
-              st.equals(scopeStarts[121], '2.1')
-              st.equals(scopeStarts[144], '3')
-              st.equals(scopeStarts[163], '4')
-              st.equals(scopeStarts[178], '4.1')
+              st.equals(scopeStarts[104], '2')
+              st.equals(scopeStarts[119], '2.1')
+              st.equals(scopeStarts[142], '3')
+              st.equals(scopeStarts[161], '4')
+              st.equals(scopeStarts[176], '4.1')
               st.equals(scopes[''].locals['ui8'].type.typeName, 'uint8')
               st.equals(scopes[''].locals['ui16'].type.typeName, 'uint16')
               st.equals(scopes[''].locals['ui32'].type.typeName, 'uint32')
@@ -81,7 +81,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
               st.equals(locals['ishrink'].value, '2')
             })
 
-            helper.decodeLocals(st, 177, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 175, traceManager, callTree, function (locals) {
               try {
                 st.equals(locals['ui8'].value, '123')
                 st.equals(Object.keys(locals).length, 1)

@@ -31,7 +31,7 @@
     "http-server": "^0.9.0",
     "nightwatch": "^0.9.5",
     "selenium-standalone": "^6.0.1",
-    "solc": "^0.4.3",
+    "solc": "^0.4.13",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
     "tape": "^4.6.0",
