@@ -23,8 +23,9 @@ module.exports = {
 }
 
 function runTests (browser, testData) {
-  if (browser.options.desiredCapabilities.browserName === 'safari') {
-    console.log('don\'t run remixd test for safari: sauce labs doesn\'t seems to handle websocket')
+  var browserName = browser.options.desiredCapabilities.browserName
+  if (browserName === 'safari' || browserName === 'internet explorer') {
+    console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
     browser.end()
     return
   }
