@@ -179,8 +179,9 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
     var address = ethJSUtil.privateToAddress(privateKey)
 
     // FIXME: we don't care about the callback, but we should still make this proper
-    self.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb () {})
-
+    self.vm.stateManager.putAccountBalance(address, balance || 'f00000000000000001', function cb () {
+      self.vm.stateManager.cache.flush(function () {})
+    })
     self.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 }
   }
 }
