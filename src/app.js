@@ -29,8 +29,8 @@ var FilePanel = require('./app/file-panel')
 var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
+var modalDialogCustom = require('./app/modal-dialog-custom')
 // var Txlistener = require('./app/txListener')
-
 
 var css = csjs`
   html { box-sizing: border-box; }
