@@ -97,14 +97,9 @@ module.exports = (title, content, ok, cancel) => {
 
   container.style.display = container.style.display === 'block' ? hide() : show()
 
-  function clickModalFooterListener (event) {
-    hide()
-    removeEventListener()
-  }
-
   function okListener () {
     hide()
-    // if (ok && ok.fn) ok.fn() - what is ok.fn doing?
+    if (ok && ok.fn) ok.fn()
     removeEventListener()
   }
 
@@ -125,12 +120,10 @@ module.exports = (title, content, ok, cancel) => {
   function removeEventListener () {
     okDiv.removeEventListener('click', okListener)
     cancelDiv.removeEventListener('click', cancelListener)
-    modal.removeEventListener('click', clickModalFooterListener)
   }
 
   okDiv.addEventListener('click', okListener)
   cancelDiv.addEventListener('click', cancelListener)
-  modalFooter.addEventListener('click', clickModalFooterListener)
 }
 
 function html () {
