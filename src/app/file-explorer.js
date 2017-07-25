@@ -1,4 +1,4 @@
-/* global FileReader, confirm, alert */
+/* global FileReader, confirm */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('ethereum-remix').ui.TreeView

@@ -87,7 +87,6 @@ module.exports = (title, content, ok, cancel) => {
 
   var modal = document.querySelector(`.${css.modalBody}`)
   var modalTitle = document.querySelector(`.${css.modalHeader} h2`)
-  var modalFooter = document.querySelector(`.${css.modalFooter}`)
 
   modalTitle.innerHTML = ''
   if (title) modalTitle.innerHTML = title
