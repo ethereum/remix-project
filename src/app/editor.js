@@ -24,12 +24,15 @@ document.head.appendChild(yo`
   </style>
 `)
 
-function Editor (editorElement) {
-  var editor = ace.edit(editorElement)
-  editorElement.editor = editor // required to access the editor during tests
-  editorElement.className += ' ' + css['ace-editor']
+function Editor (opts = {}) {
+  var self = this
+  var el = yo`<div id="input"></div>`
+  var editor = ace.edit(el)
+  el.className += ' ' + css['ace-editor']
+  el.editor = editor // required to access the editor during tests
+  self.render = function () { return el }
   var event = new EventManager()
-  this.event = event
+  self.event = event
   var sessions = {}
   var sourceAnnotations = []
   var readOnlySessions = {}
@@ -37,7 +40,6 @@ function Editor (editorElement) {
 
   var emptySession = createSession('')
 
-  var self = this
   editor.on('guttermousedown', function (e) {
     var target = e.domEvent.target
     if (target.className.indexOf('ace_gutter-cell') === -1) {

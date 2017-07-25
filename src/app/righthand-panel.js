@@ -62,15 +62,6 @@ function RighthandPanel (appAPI, events, opts) {
 
   self.init = function () {
     ;[...options.children].forEach((el) => { el.classList.add(css.options) })
-      // ----------------- toggle right hand panel -----------------
-
-    var hidingRHP = false
-    $('.toggleRHP').click(function () {
-      hidingRHP = !hidingRHP
-      self._api.setEditorSize(hidingRHP ? 0 : appAPI.config.get(EDITOR_WINDOW_SIZE))
-      $('.toggleRHP i').toggleClass('fa-angle-double-right', !hidingRHP)
-      $('.toggleRHP i').toggleClass('fa-angle-double-left', hidingRHP)
-    })
 
     // ----------------- tabbed menu -----------------
     var tabbedMenuAPI = {
@@ -116,7 +107,6 @@ function RighthandPanel (appAPI, events, opts) {
         delta = (delta < 50) ? 50 : delta
         self._api.setEditorSize(delta)
         appAPI.config.set(EDITOR_WINDOW_SIZE, delta)
-        appAPI.reAdjust()
       }
     })
 

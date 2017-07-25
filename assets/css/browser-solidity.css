@@ -1,43 +1,3 @@
-.scroller {
-    position: absolute;
-    z-index: 999;
-    text-align: center;
-    cursor: pointer;
-    display: none;
-    padding: 0 0.9em;
-    vertical-align: middle;
-    background-color: rgba(255, 255, 255, 0.8);
-    height: 100%;
-    font-size: 1.3em;
-}
-
-.scroller i {
-    line-height: 3em;
-}
-
-.scroller-right {
-    right: 0;
-}
-
-.scroller-left {
-    left: 0;
-}
-
-#files {
-    list-style: none;
-    margin: 0;
-    font-size: 15px;
-    height: 2.5em;
-    box-sizing: border-box;
-    line-height: 2em;
-    padding: 0.5em 0 0;
-    position: relative; 
-    left: 40px;
-    top:0;
-    min-width:3000px;
-    border-bottom: 0 none;
-}
-
 #files .file {
     padding: 0 0.6em;
     box-sizing: border-box;
@@ -49,22 +9,6 @@
     text-align: center;
     vertical-align: middle;
     color: #999;
-}
-
-.toggleRHP {
-    display: block;
-    float: left;
-    margin-top: 0.5em;
-    padding: 0.6em;
-    font-weight: bold;
-    cursor: pointer;
-    color: black;
-}
-
-.toggleRHP {
-    float: right;
-    position: absolute;
-    right: 0;
 }
 
 #files .file.active {

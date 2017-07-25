@@ -28,29 +28,29 @@ var css = csjs`
   .newFile            {
     padding           : 10px;
   }
+  .newFile i          {
+    cursor            : pointer;
+  }
+  .newFile i:hover    {
+    color             : orange;
+  }
   .connectToLocalhost {
     padding           : 10px;
+  }
+  .connectToLocalhost i {
+    cursor            : pointer;
+  }
+  .connectToLocalhost i:hover   {
+    color             : orange;
   }
   .uploadFile         {
     padding           : 10px;
   }
-  .toggleLHP          {
-    display           : flex;
-    justify-content   : flex-end;
-    padding           : 10px;
-    width             : 100%;
-    font-weight       : bold;
+  .uploadFile label:hover   {
+    color             : orange;
+  }
+  .uploadFile label   {
     cursor            : pointer;
-    color             : black;
-  }
-  .isVisible          {
-    position          : absolute;
-    left              : 35px;
-  }
-  .isHidden {
-    position          : absolute;
-    height            : 99%;
-    left              : -101%;
   }
   .treeview {
     background-color  : white;
@@ -73,13 +73,6 @@ var css = csjs`
     top               : 0;
     bottom            : 0;
   }
-  .changeeditorfontsize {
-    padding: 10px;
-  }
-  .changeeditorfontsize i {
-    display: block;
-    color: #111111;
-  }
 `
 
 var limit = 60
@@ -87,6 +80,7 @@ var canUpload = window.File || window.FileReader || window.FileList || window.Bl
 var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
 function filepanel (appAPI, filesProvider) {
+  var self = this
   var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
   var fileSystemExplorer = new FileExplorer(appAPI, filesProvider['localhost'])
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
@@ -119,13 +113,6 @@ function filepanel (appAPI, filesProvider) {
             <span onclick=${connectToLocalhost} class="${css.connectToLocalhost}">
               <i class="websocketconn fa fa-link" title="Connect to Localhost"></i>
             </span>
-            <span class=${css.changeeditorfontsize} >
-              <i class="increditorsize fa fa-plus" aria-hidden="true" title="increase editor font size"></i>
-              <i class="decreditorsize fa fa-minus" aria-hidden="true" title="decrease editor font size"></i>
-            </span>
-            <span class=${css.toggleLHP} onclick=${toggle} title="Toggle left hand panel">
-              <i class="fa fa-angle-double-left"></i>
-            </span>
           </div>
           <div class=${css.treeview}>${fileExplorer.init()}</div>
           <div class="filesystemexplorer ${css.treeview}"></div>
@@ -135,10 +122,10 @@ function filepanel (appAPI, filesProvider) {
     `
   }
 
-  var events = new EventManager()
+  var event = new EventManager()
+  self.event = event
   var element = template()
-  element.querySelector('.increditorsize').addEventListener('click', () => { appAPI.editorFontSize(1) })
-  element.querySelector('.decreditorsize').addEventListener('click', () => { appAPI.editorFontSize(-1) })
+
   var containerFileSystem = element.querySelector('.filesystemexplorer')
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
@@ -166,9 +153,7 @@ function filepanel (appAPI, filesProvider) {
       containerFileSystem.removeChild(fileSystemExplorer.element)
     }
   })
-  // TODO please do not add custom javascript objects, which have no
-  // relation to the DOM to DOM nodes
-  element.events = events
+
   fileExplorer.events.register('focus', function (path) {
     appAPI.switchToFile(path)
   })
@@ -177,15 +162,7 @@ function filepanel (appAPI, filesProvider) {
     appAPI.switchToFile(path)
   })
 
-  return element
-
-  function toggle (event) {
-    var isHidden = element.classList.toggle(css.isHidden)
-    this.classList.toggle(css.isVisible)
-    this.children[0].classList.toggle('fa-angle-double-right')
-    this.children[0].classList.toggle('fa-angle-double-left')
-    events.trigger('ui-hidden', [isHidden])
-  }
+  self.render = function render () { return element }
 
   function uploadFile (event) {
     // TODO The file explorer is merely a view on the current state of
@@ -227,7 +204,7 @@ function filepanel (appAPI, filesProvider) {
     document.removeEventListener('keydown', cancelGhostbar)
     var width = (event.pageX < limit) ? limit : event.pageX
     element.style.width = width + 'px'
-    events.trigger('ui-resize', [width])
+    self.event.trigger('resize', [width])
   }
 
   function createNewFile () {

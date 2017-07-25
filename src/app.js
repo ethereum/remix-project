@@ -26,6 +26,7 @@ var ExecutionContext = require('./app/execution-context')
 var Debugger = require('./app/debugger')
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var FilePanel = require('./app/file-panel')
+var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 
@@ -53,9 +54,6 @@ var css = csjs`
     right              : 0;
     bottom             : 0;
   }
-  .tabsbar             {
-    overflow           : hidden;
-  }
   .leftpanel           {
     display            : flex;
     position           : absolute;
@@ -81,6 +79,7 @@ class App {
   constructor (opts = {}) {
     var self = this
     self._view = {}
+    self._components = {}
   }
   init () {
     var self = this
@@ -89,28 +88,33 @@ class App {
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    /***************************************************************************/
-    self._view.leftpanel = yo`<div id="filepanel" class=${css.leftpanel}></div>`
-    self._view.rightpanel = yo`<div></div>`
-    self._view.tabsbar = yo`
-      <div class=${css.tabsbar}>
-        <div class="scroller scroller-left"><i class="fa fa-chevron-left "></i></div>
-        <div class="scroller scroller-right"><i class="fa fa-chevron-right "></i></div>
-        <ul id="files" class="nav nav-tabs"></ul>
+    /*************************************************************************/
+    // ----------------- editor ----------------------------
+    self._components.editor = new Editor({}) // @TODO: put into editorpanel
+    // ----------------- editor panel ----------------------
+    var opts = { api: { editor: self._components.editor } }
+    self._components.editorpanel = new EditorPanel(opts)
+    /*************************************************************************/
+    self._view.leftpanel = yo`
+      <div id="filepanel" class=${css.leftpanel}>
+        ${''}
       </div>
     `
     self._view.centerpanel = yo`
       <div id="editor-container" class=${css.centerpanel}>
-        ${self._view.tabsbar}
-        <div id="input"></div>
+        ${self._components.editorpanel.render()}
+      </div>
+    `
+    self._view.rightpanel = yo`
+      <div>
+        <div id="dragbar" class=${css.dragbar2}></div>
+        ${''}
       </div>
     `
     self._view.el = yo`
       <div class=${css.browsersolidity}>
         ${self._view.leftpanel}
-        <span class="toggleRHP" title="Toggle right hand panel"><i class="fa fa-angle-double-right"></i></span>
         ${self._view.centerpanel}
-        <div id="dragbar" class=${css.dragbar2}></div>
         ${self._view.rightpanel}
       </div>
     `
@@ -126,6 +130,7 @@ function run () {
   var queryParams = new QueryParams()
   var gistHandler = new GistHandler()
 
+  var editor = self._components.editor
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   var filesToLoad = null
@@ -271,9 +276,6 @@ function run () {
     createName: createNonClashingName,
     switchToFile: switchToFile,
     event: this.event,
-    editorFontSize: function (incr) {
-      editor.editorFontSize(incr)
-    },
     currentFile: function () {
       return config.get('currentFile')
     },
@@ -288,26 +290,9 @@ function run () {
 
   // TODO this should happen inside file-panel.js
   var filepanelContainer = document.querySelector('#filepanel')
-  filepanelContainer.appendChild(filePanel)
+  filepanelContainer.appendChild(filePanel.render())
 
-  filePanel.events.register('ui-hidden', function changeLayout (isHidden) {
-    var value
-    if (isHidden) {
-      value = -parseInt(self._view.leftpanel.style.width)
-      value = (isNaN(value) ? -self._view.leftpanel.getBoundingClientRect().width : value)
-      self._view.leftpanel.style.position = 'absolute'
-      self._view.leftpanel.style.left = (value - 5) + 'px'
-      self._view.leftpanel.style.width = -value + 'px'
-      self._view.centerpanel.style.left = '45px'
-    } else {
-      value = -parseInt(self._view.leftpanel.style.left) + 'px'
-      self._view.leftpanel.style.position = 'static'
-      self._view.leftpanel.style.width = value
-      self._view.leftpanel.style.left = ''
-      self._view.centerpanel.style.left = value
-    }
-  })
-  filePanel.events.register('ui-resize', function changeLayout (width) {
+  filePanel.event.register('resize', function changeLayout (width) {
     self._view.leftpanel.style.width = width + 'px'
     self._view.centerpanel.style.left = width + 'px'
   })
@@ -411,12 +396,8 @@ function run () {
     })
   })
 
-  // ----------------- editor ----------------------
-  var editor = new Editor(document.getElementById('input'))
-
   // --------------------Files tabs-----------------------------
   var $filesEl = $('#files')
-  var FILE_SCROLL_DELTA = 300
 
   // Switch tab
   $filesEl.on('click', '.file:not(.active)', function (ev) {
@@ -497,7 +478,6 @@ function run () {
     for (var file in tabbedFiles) {
       $filesEl.append($('<li class="file"><span class="name">' + file + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
     }
-
     var currentFileOpen = !!config.get('currentFile')
 
     if (currentFileOpen) {
@@ -506,56 +486,8 @@ function run () {
     }
     $('#input').toggle(currentFileOpen)
     $('#output').toggle(currentFileOpen)
+    self._components.editorpanel.refresh()
   }
-
-  var $scrollerRight = $('.scroller-right')
-  var $scrollerLeft = $('.scroller-left')
-
-  function widthOfList () {
-    var itemsWidth = 0
-    $('.file').each(function () {
-      var itemWidth = $(this).outerWidth()
-      itemsWidth += itemWidth
-    })
-    return itemsWidth
-  }
-
-  function widthOfVisible () {
-    return document.querySelector('#editor-container').offsetWidth
-  }
-
-  function getLeftPosi () {
-    return $filesEl.position().left
-  }
-
-  function reAdjust () {
-    if (widthOfList() + getLeftPosi() > widthOfVisible()) {
-      $scrollerRight.fadeIn('fast')
-    } else {
-      $scrollerRight.fadeOut('fast')
-    }
-
-    if (getLeftPosi() < 0) {
-      $scrollerLeft.fadeIn('fast')
-    } else {
-      $scrollerLeft.fadeOut('fast')
-      $filesEl.animate({ left: getLeftPosi() + 'px' }, 'slow')
-    }
-  }
-
-  $scrollerRight.click(function () {
-    var delta = (getLeftPosi() - FILE_SCROLL_DELTA)
-    $filesEl.animate({ left: delta + 'px' }, 'slow', function () {
-      reAdjust()
-    })
-  })
-
-  $scrollerLeft.click(function () {
-    var delta = Math.min((getLeftPosi() + FILE_SCROLL_DELTA), 0)
-    $filesEl.animate({ left: delta + 'px' }, 'slow', function () {
-      reAdjust()
-    })
-  })
 
   var compiler = new Compiler(handleImportCall)
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
@@ -709,7 +641,6 @@ function run () {
       document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
     },
-    reAdjust: reAdjust,
     warnCompilerLoading: (msg) => {
       renderer.clear()
       if (msg) {
@@ -736,7 +667,6 @@ function run () {
 
   function onResize () {
     editor.resize(document.querySelector('#editorWrap').checked)
-    reAdjust()
   }
   window.onresize = onResize
   onResize()
