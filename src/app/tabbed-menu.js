@@ -4,9 +4,10 @@ var loadingSpinner = require('./loading-spinner')
 module.exports = tabbedMenu
 
 function tabbedMenu (container, appAPI, events, opts) {
-  container.querySelectorAll('li').forEach(function (el) {
-    el.onclick = function (ev) { selectTab(this) }
-  })
+  var lis = container.querySelectorAll('li')
+  for (var li = 0; li < lis.length; ++li) {
+    lis[li].onclick = function (ev) { selectTab(this) }
+  }
 
   events.app.register('debuggingRequested', () => {
     selectTab(container.querySelector('li.debugView'))
