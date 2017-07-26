@@ -110,9 +110,13 @@ var css = csjs`
 class EditorPanel {
   constructor (opts = {}) {
     var self = this
-    self.data = {}
+    self.data = {
+      _FILE_SCROLL_DELTA: 200
+    }
     self._view = {}
     self._api = { editor: opts.api.editor }
+    self.event = new EventManager()
+    // var events = opts.events
   }
   refresh () {
     var self = this
@@ -130,12 +134,17 @@ class EditorPanel {
   _renderTabsbar () {
     var self = this
     if (self._view.tabsbar) return self._view.tabsbar
+    self._view.filetabs = yo`<ul id="files" class="${css.files} nav nav-tabs"></ul>`
     self._view.tabs = yo`
       <div class=${css.tabs} onmouseenter=${toggleScrollers} onmouseleave=${toggleScrollers}>
-        <div class="${css.scroller} ${css.hide} ${css.scrollerright}"><i class="fa fa-chevron-right "></i></div>
-        <ul id="files" class="${css.files} nav nav-tabs"></ul>
-        <div class="${css.scroller} ${css.hide} ${css.scrollerleft}"><i class="fa fa-chevron-left "></i></div>
-      </div>    
+        <div onclick=${scrollLeft} class="${css.scroller} ${css.hide} ${css.scrollerleft}">
+          <i class="fa fa-chevron-left "></i>
+        </div>
+        ${self._view.filetabs}
+        <div onclick=${scrollRight} class="${css.scroller} ${css.hide} ${css.scrollerright}">
+           <i class="fa fa-chevron-right "></i>
+        </div>
+      </div>
     `
     self._view.tabsbar = yo`
       <div class=${css.tabsbar}>
@@ -158,28 +167,74 @@ class EditorPanel {
     function toggleScrollers (event = {}) {
       if (event.type) self.data._focus = event.type
       var isMouseEnter = self.data._focus === 'mouseenter'
+      var leftArrow = this.children[0]
+      var rightArrow = this.children[2]
       if (isMouseEnter && this.children[1].offsetWidth > this.offsetWidth) {
-        this.children[0].classList.add(css.show)
-        this.children[2].classList.add(css.show)
-        this.children[0].classList.remove(css.hide)
-        this.children[2].classList.remove(css.hide)
+        var hiddenLength = self._view.filetabs.offsetWidth - self._view.tabs.offsetWidth
+        var currentLeft = self._view.filetabs.offsetLeft || 0
+        var hiddenRight = hiddenLength + currentLeft
+        if (currentLeft < 0) {
+          leftArrow.classList.add(css.show)
+          leftArrow.classList.remove(css.hide)
+        }
+        if (hiddenRight > 0) {
+          rightArrow.classList.add(css.show)
+          rightArrow.classList.remove(css.hide)
+        }
       } else {
-        this.children[0].classList.remove(css.show)
-        this.children[2].classList.remove(css.show)
-        this.children[0].classList.add(css.hide)
-        this.children[2].classList.add(css.hide)
+        leftArrow.classList.remove(css.show)
+        leftArrow.classList.add(css.hide)
+        rightArrow.classList.remove(css.show)
+        rightArrow.classList.add(css.hide)
       }
     }
     function toggleLHP (event) {
       this.children[0].classList.toggle('fa-angle-double-right')
       this.children[0].classList.toggle('fa-angle-double-left')
+      self.event.trigger('resize', [])
     }
     function toggleRHP (event) {
       this.children[0].classList.toggle('fa-angle-double-right')
       this.children[0].classList.toggle('fa-angle-double-left')
+      self.event.trigger('resize', [])
     }
     function increase () { self._api.editor.editorFontSize(1) }
     function decrease () { self._api.editor.editorFontSize(-1) }
+    function scrollLeft (event) {
+      var leftArrow = this
+      var rightArrow = this.nextElementSibling.nextElementSibling
+      var currentLeft = self._view.filetabs.offsetLeft || 0
+      if (currentLeft < 0) {
+        rightArrow.classList.add(css.show)
+        rightArrow.classList.remove(css.hide)
+        if (currentLeft < -self.data._FILE_SCROLL_DELTA) {
+          self._view.filetabs.style.left = `${currentLeft + self.data._FILE_SCROLL_DELTA}px`
+        } else {
+          self._view.filetabs.style.left = `${currentLeft - currentLeft}px`
+          leftArrow.classList.remove(css.show)
+          leftArrow.classList.add(css.hide)
+        }
+      }
+    }
+
+    function scrollRight (event) {
+      var rightArrow = this
+      var leftArrow = this.previousElementSibling.previousElementSibling
+      var hiddenLength = self._view.filetabs.offsetWidth - self._view.tabs.offsetWidth
+      var currentLeft = self._view.filetabs.offsetLeft || 0
+      var hiddenRight = hiddenLength + currentLeft
+      if (hiddenRight > 0) {
+        leftArrow.classList.add(css.show)
+        leftArrow.classList.remove(css.hide)
+        if (hiddenRight > self.data._FILE_SCROLL_DELTA) {
+          self._view.filetabs.style.left = `${currentLeft - self.data._FILE_SCROLL_DELTA}px`
+        } else {
+          self._view.filetabs.style.left = `${currentLeft - hiddenRight}px`
+          rightArrow.classList.remove(css.show)
+          rightArrow.classList.add(css.hide)
+        }
+      }
+    }
   }
 }
 

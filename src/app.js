@@ -95,6 +95,15 @@ class App {
     var opts = { api: { editor: self._components.editor } }
     self._components.editorpanel = new EditorPanel(opts)
     /*************************************************************************/
+    // self._api = opts.api
+    // self.data = {
+    //   _layout: {
+    //     seperator1:  self._api.config.get('seperator1') ||  200,
+    //     seperator2:  self._api.config.get('seperator2') ||  200,
+    //     editorsize:  self._api.config.get('editorWindowSize') || 400
+    //   }
+    // }
+    /*************************************************************************/
     self._view.leftpanel = yo`
       <div id="filepanel" class=${css.leftpanel}>
         ${''}
