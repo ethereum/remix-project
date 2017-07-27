@@ -13,6 +13,8 @@ var decodeInfo = require('./solidity/decodeInfo')
 var stateDecoder = require('./solidity/stateDecoder')
 var astHelper = require('./solidity/astHelper')
 var EventManager = require('./lib/eventManager')
+var codeUtil = require('./helpers/util')
+var web3VMProvider = require('./web3Provider/web3VmProvider')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -40,7 +42,8 @@ function modules () {
     },
     util: {
       SourceMappingDecoder: SourceMappingDecoder,
-      AstWalker: AstWalker
+      AstWalker: AstWalker,
+      code: codeUtil
     },
     solidity: {
       decodeInfo: decodeInfo,
@@ -49,6 +52,9 @@ function modules () {
     },
     lib: {
       EventManager: EventManager
+    },
+    web3: {
+      web3VMProvider: web3VMProvider
     }
   }
 }
