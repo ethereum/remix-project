@@ -164,9 +164,7 @@ class TxListener {
             if (contractName) {
               this._resolvedContracts[tx.to] = contractName
               this._resolveFunction(contractName, contracts, tx, false)
-              return cb()
             }
-            return cb()
           }
           return cb()
         })
@@ -174,7 +172,6 @@ class TxListener {
       }
       if (contractName) {
         this._resolveFunction(contractName, contracts, tx, false)
-        return cb()
       }
       return cb()
     }
