@@ -1,5 +1,7 @@
 'use strict'
 var async = require('async')
+var ethJSABI = require('ethereumjs-abi')
+var ethJSUtil = require('ethereumjs-util')
 var EventManager = require('ethereum-remix').lib.EventManager
 var remix = require('ethereum-remix')
 var codeUtil = remix.util.code
@@ -189,15 +191,19 @@ class TxListener {
   }
 
   _resolveFunction (contractName, compiledContracts, tx, isCtor) {
+    var abi = JSON.parse(compiledContracts[contractName].interface)
+    var inputData = tx.input.replace('0x', '')
     if (!isCtor) {
       for (var fn in compiledContracts[contractName].functionHashes) {
-        if (compiledContracts[contractName].functionHashes[fn] === tx.input.replace('0x', '').substring(0, 8)) {
+        if (compiledContracts[contractName].functionHashes[fn] === inputData.substring(0, 8)) {
           this._resolvedTransactions[tx.hash] = {
             to: tx.to,
             fn: fn,
-            params: null
+            params: this._decodeInputParams(inputData.substring(8), getFunction(abi, fn))
           }
+          return
         }
+      }
       // fallback function
       this._resolvedTransactions[tx.hash] = {
         to: tx.to,
@@ -205,10 +211,15 @@ class TxListener {
         params: null
       }
     } else {
+      var bytecode = compiledContracts[contractName].bytecode
+      var params = null
+      if (bytecode && bytecode.length) {
+        params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
+      }
       this._resolvedTransactions[tx.hash] = {
         to: null,
         fn: '(constructor)',
-        params: null
+        params: params
       }
     }
   }
@@ -221,6 +232,39 @@ class TxListener {
     }
     return null
   }
+
+  _decodeInputParams (data, abi) {
+    data = ethJSUtil.toBuffer('0x' + data)
+    var inputTypes = []
+    for (var i = 0; i < abi.inputs.length; i++) {
+      inputTypes.push(abi.inputs[i].type)
+    }
+    return ethJSABI.rawDecode(inputTypes, data)
+  }
+}
+
+
+// those function will be duplicate after the merged of the compile and run tabs split
+function getConstructorInterface (abi) {
+  var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] }
+  for (var i = 0; i < abi.length; i++) {
+    if (abi[i].type === 'constructor') {
+      funABI.inputs = abi[i].inputs || []
+      break
+    }
+  }
+
+  return funABI
+}
+
+function getFunction (abi, fnName) {
+  fnName = fnName.split('(')[0]
+  for (var i = 0; i < abi.length; i++) {
+    if (abi[i].name === fnName) {
+      return abi[i]
+    }
+  }
+  return null
 }
 
 module.exports = TxListener
