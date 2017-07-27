@@ -10,6 +10,7 @@ function web3VmProvider () {
   this.vm
   this.vmTraces = {}
   this.txs = {}
+  this.txsReceipt = {}
   this.processingHash
   this.processingAddress
   this.processingIndex
@@ -19,6 +20,7 @@ function web3VmProvider () {
   this.debug = {}
   this.eth.getCode = function (address, cb) { return self.getCode(address, cb) }
   this.eth.getTransaction = function (hash, cb) { return self.getTransaction(hash, cb) }
+  this.eth.getTransactionReceipt = function (hash, cb) { return self.getTransactionReceipt(hash, cb) }
   this.eth.getTransactionFromBlock = function (blockNumber, txIndex, cb) { return self.getTransactionFromBlock(blockNumber, txIndex, cb) }
   this.eth.getBlockNumber = function (cb) { return self.getBlockNumber(cb) }
   this.debug.traceTransaction = function (hash, options, cb) { return self.traceTransaction(hash, options, cb) }
@@ -72,6 +74,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
     tx.value = util.hexConvert(data.value)
   }
   self.txs[self.processingHash] = tx
+  self.txsReceipt[self.processingHash] = tx
   self.storageCache[self.processingHash] = {}
   if (tx.to) {
     self.vm.stateManager.dumpStorage(tx.to, function (storage) {
@@ -86,7 +89,9 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
   lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP'
   self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
   if (data.createdAddress) {
-    self.vmTraces[self.processingHash].return = util.hexConvert(data.createdAddress)
+    var address = util.hexConvert(data.createdAddress)
+    self.vmTraces[self.processingHash].return = address
+    self.txsReceipt[self.processingHash].contractAddress = address
   } else {
     self.vmTraces[self.processingHash].return = util.hexConvert(data.vm.return)
   }
@@ -188,6 +193,20 @@ web3VmProvider.prototype.getTransaction = function (txHash, cb) {
   } else {
     if (cb) {
       cb('unable to retrieve tx ' + txHash, null)
+    }
+  }
+}
+
+web3VmProvider.prototype.getTransactionReceipt = function (txHash, cb) {
+  // same as getTransaction but return the created address also
+  if (this.txsReceipt[txHash]) {
+    if (cb) {
+      cb(null, this.txsReceipt[txHash])
+    }
+    return this.txsReceipt[txHash]
+  } else {
+    if (cb) {
+      cb('unable to retrieve txReceipt ' + txHash, null)
     }
   }
 }
