@@ -1,5 +1,6 @@
+var csjs = require('csjs-inject')
 var yo = require('yo-yo')
-var $ = require('jquery')
+var EventManager = require('ethereum-remix').lib.EventManager
 
 var tabbedMenu = require('./tabbed-menu')
 var contractTab = require('./contract-tab')
@@ -7,8 +8,6 @@ var settingsTab = require('./settings-tab')
 var analysisTab = require('./analysis-tab')
 var debuggerTab = require('./debugger-tab')
 var filesTab = require('./files-tab')
-
-var csjs = require('csjs-inject')
 
 var css = csjs`
   .options {
@@ -21,6 +20,25 @@ var css = csjs`
       margin-right: 0.5em;
       font-size: 1em;
   }
+  .dragbar             {
+    position           : absolute;
+    width              : 0.5em;
+    top                : 3em;
+    bottom             : 0;
+    cursor             : col-resize;
+    z-index            : 999;
+    border-left        : 2px solid hsla(215, 81%, 79%, .3);    
+  }
+  .ghostbar           {
+    width             : 3px;
+    background-color  : #C6CFF7;
+    opacity           : 0.5;
+    position          : absolute;
+    cursor            : col-resize;
+    z-index           : 9999;
+    top               : 0;
+    bottom            : 0;
+  }
 `
 
 // ------------------------------------------------------------------
@@ -30,6 +48,9 @@ module.exports = RighthandPanel
 function RighthandPanel (appAPI, events, opts) {
   var self = this
   self._api = appAPI
+  self.event = new EventManager()
+  self._view = {}
+
   var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
   var options = yo`
     <ul id="options">
@@ -41,8 +62,10 @@ function RighthandPanel (appAPI, events, opts) {
       <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
     </ul>
   `
-  var element = yo`
+  self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
+  self._view.element = yo`
     <div id="righthand-panel">
+      ${self._view.dragbar}
       <div id="header">
         <div id="menu">
           <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
@@ -58,7 +81,7 @@ function RighthandPanel (appAPI, events, opts) {
   debuggerTab(optionViews, appAPI, events, opts)
   filesTab(optionViews, appAPI, events, opts)
 
-  self.render = function () { return element }
+  self.render = function () { return self._view.element }
 
   self.init = function () {
     ;[...options.children].forEach((el) => { el.classList.add(css.options) })
@@ -72,48 +95,43 @@ function RighthandPanel (appAPI, events, opts) {
     tabbedMenu(options, tabbedMenuAPI, tabEvents, {})
 
     // ----------------- resizeable ui ---------------
-
-    var EDITOR_WINDOW_SIZE = 'editorWindowSize'
-
-    var dragging = false
-    $('#dragbar').mousedown(function (e) {
-      e.preventDefault()
-      dragging = true
-      var main = $('#righthand-panel')
-      var ghostbar = $('<div id="ghostbar">', {
-        css: {
-          top: main.offset().top,
-          left: main.offset().left
-        }
-      }).prependTo('body')
-
-      $(document).mousemove(function (e) {
-        ghostbar.css('left', e.pageX + 2)
-      })
-    })
-
-    var $body = $('body')
-
-    function getEditorSize () {
-      return $('#righthand-panel').width()
-    }
-
-    $(document).mouseup(function (e) {
-      if (dragging) {
-        var delta = $body.width() - e.pageX + 2
-        $('#ghostbar').remove()
-        $(document).unbind('mousemove')
-        dragging = false
-        delta = (delta < 50) ? 50 : delta
-        self._api.setEditorSize(delta)
-        appAPI.config.set(EDITOR_WINDOW_SIZE, delta)
+    var limit = 60
+    self._view.dragbar.addEventListener('mousedown', mousedown)
+    var ghostbar = yo`<div class=${css.ghostbar}></div>`
+    function mousedown (event) {
+      event.preventDefault()
+      if (event.which === 1) {
+        moveGhostbar(event)
+        document.body.appendChild(ghostbar)
+        document.addEventListener('mousemove', moveGhostbar)
+        document.addEventListener('mouseup', removeGhostbar)
+        document.addEventListener('keydown', cancelGhostbar)
       }
-    })
-
-    if (appAPI.config.exists(EDITOR_WINDOW_SIZE)) {
-      self._api.setEditorSize(appAPI.config.get(EDITOR_WINDOW_SIZE))
-    } else {
-      appAPI.config.set(EDITOR_WINDOW_SIZE, getEditorSize())
+    }
+    function cancelGhostbar (event) {
+      if (event.keyCode === 27) {
+        document.body.removeChild(ghostbar)
+        document.removeEventListener('mousemove', moveGhostbar)
+        document.removeEventListener('mouseup', removeGhostbar)
+        document.removeEventListener('keydown', cancelGhostbar)
+      }
+    }
+    function getPosition (event) {
+      var lhp = window['filepanel'].offsetWidth
+      var max = document.body.offsetWidth - limit
+      var newpos = (event.pageX > max) ? max : event.pageX
+      newpos = (newpos > (lhp + limit)) ? newpos : lhp + limit
+      return newpos
+    }
+    function moveGhostbar (event) {
+      ghostbar.style.left = getPosition(event) + 'px'
+    }
+    function removeGhostbar (event) {
+      document.body.removeChild(ghostbar)
+      document.removeEventListener('mousemove', moveGhostbar)
+      document.removeEventListener('mouseup', removeGhostbar)
+      document.removeEventListener('keydown', cancelGhostbar)
+      self.event.trigger('resize', [document.body.offsetWidth - getPosition(event)])
     }
   }
 }

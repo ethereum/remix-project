@@ -13,6 +13,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : row;
     width             : 100%;
+    height            : 100%;
     box-sizing        : border-box;
   }
   .fileexplorer       {
@@ -56,9 +57,11 @@ var css = csjs`
     background-color  : white;
   }
   .dragbar            {
-    position          : relative;
-    top               : 36px;
-    left              : 2px;
+    position          : absolute;
+    top               : 37px;
+    width             : 0.5em;
+    right             : 0;
+    bottom            : 0;
     cursor            : col-resize;
     z-index           : 999;
     border-right      : 2px solid hsla(215, 81%, 79%, .3);
@@ -172,6 +175,7 @@ function filepanel (appAPI, filesProvider) {
     ;[...this.files].forEach(fileExplorer.api.addFile)
   }
 
+  // ----------------- resizeable ui ---------------
   function mousedown (event) {
     event.preventDefault()
     if (event.which === 1) {
@@ -190,21 +194,21 @@ function filepanel (appAPI, filesProvider) {
       document.removeEventListener('keydown', cancelGhostbar)
     }
   }
-  function moveGhostbar (event) {
-    var rhp = window['righthand-panel'].offsetLeft
+  function getPosition (event) {
+    var rhp = document.body.offsetWidth - window['righthand-panel'].offsetWidth
     var newpos = (event.pageX < limit) ? limit : event.pageX
     newpos = (newpos < (rhp - limit)) ? newpos : (rhp - limit)
-    ghostbar.style.left = newpos + 'px'
+    return newpos
   }
-
+  function moveGhostbar (event) {
+    ghostbar.style.left = getPosition(event) + 'px'
+  }
   function removeGhostbar (event) {
     document.body.removeChild(ghostbar)
     document.removeEventListener('mousemove', moveGhostbar)
     document.removeEventListener('mouseup', removeGhostbar)
     document.removeEventListener('keydown', cancelGhostbar)
-    var width = (event.pageX < limit) ? limit : event.pageX
-    element.style.width = width + 'px'
-    self.event.trigger('resize', [width])
+    self.event.trigger('resize', [getPosition(event)])
   }
 
   function createNewFile () {

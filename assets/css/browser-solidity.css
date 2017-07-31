@@ -42,18 +42,6 @@
     display: inline-block;
 }
 
-#righthand-panel {
-    position: absolute;
-    top: 0;
-    width: 37em;
-    max-width: 80vw;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
 #header {
     font-size: 13px;
     height: 100%;
@@ -320,17 +308,6 @@
 .sol.warning {
     background-color: hsla(59, 56%, 78%, 0.5);
     border: .2em dotted #ffbd01;
-}
-
-#ghostbar {
-    width: 1px;
-    background-color: red;
-    opacity: 0.5;
-    position: absolute;
-    cursor: col-resize;
-    z-index: 9999;
-    top: 0;
-    bottom: 0;
 }
 
 input[readonly] {

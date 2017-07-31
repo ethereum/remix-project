@@ -44,42 +44,89 @@ var css = csjs`
     position           : relative;
     width              : 100vw;
     height             : 100vh;
+    overflow           : hidden;
   }
   .centerpanel         {
     display            : flex;
     flex-direction     : column;
     position           : absolute;
     top                : 0;
-    left               : 200px;
-    right              : 0;
     bottom             : 0;
+    overflow           : hidden;
   }
   .leftpanel           {
     display            : flex;
+    flex-direction     : column;
     position           : absolute;
     top                : 0;
+    bottom             : 0;
     left               : 0;
+    overflow           : hidden;
+  }
+  .rightpanel          {
+    display            : flex;
+    flex-direction     : column;
+    position           : absolute;
+    top                : 0;
     right              : 0;
     bottom             : 0;
-    width              : 200px;
-  }
-  .dragbar2            {
-    background-color   : transparent;
-    position           : absolute;
-    width              : 0.5em;
-    top                : 3em;
-    bottom             : 0;
-    cursor             : col-resize;
-    z-index            : 999;
-    border-right       : 2px solid hsla(215, 81%, 79%, .3);    
+    overflow           : hidden;
   }
 `
 
 class App {
   constructor (opts = {}) {
     var self = this
+    self._api = {}
+    var fileStorage = new Storage('sol:')
+    self._api.config = new Config(fileStorage)
+    self._api.filesProviders = {}
+    self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
+    self._api.filesProviders['localhost'] = new SharedFolder(new Remixd())
     self._view = {}
     self._components = {}
+    self.data = {
+      _layout: {
+        right: {
+          offset: self._api.config.get('right-offset') || 200,
+          show: true
+        }, // @TODO: adapt sizes proportionally to browser window size
+        left: {
+          offset: self._api.config.get('left-offset') || 200,
+          show: true
+        }
+      }
+    }
+    // ----------------- editor ----------------------------
+    self._components.editor = new Editor({}) // @TODO: put into editorpanel
+    // ----------------- editor panel ----------------------
+    self._components.editorpanel = new EditorPanel({
+      api: { editor: self._components.editor },
+      data: { _layout: self.data._layout }
+    })
+    self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
+  }
+  _adjustLayout (direction, delta) {
+    var self = this
+    var layout = self.data._layout[direction]
+    if (layout) {
+      if (delta === undefined) {
+        layout.show = !layout.show
+        if (layout.show) delta = layout.offset
+        else delta = 0
+      } else {
+        self._api.config.set(`${direction}-offset`, delta)
+        layout.offset = delta
+      }
+    }
+    if (direction === 'left') {
+      self._view.leftpanel.style.width = delta + 'px'
+      self._view.centerpanel.style.left = delta + 'px'
+    }
+    if (direction === 'right') {
+      self._view.rightpanel.style.width = delta + 'px'
+      self._view.centerpanel.style.right = delta + 'px'
+    }
   }
   init () {
     var self = this
@@ -88,22 +135,6 @@ class App {
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    /*************************************************************************/
-    // ----------------- editor ----------------------------
-    self._components.editor = new Editor({}) // @TODO: put into editorpanel
-    // ----------------- editor panel ----------------------
-    var opts = { api: { editor: self._components.editor } }
-    self._components.editorpanel = new EditorPanel(opts)
-    /*************************************************************************/
-    // self._api = opts.api
-    // self.data = {
-    //   _layout: {
-    //     seperator1:  self._api.config.get('seperator1') ||  200,
-    //     seperator2:  self._api.config.get('seperator2') ||  200,
-    //     editorsize:  self._api.config.get('editorWindowSize') || 400
-    //   }
-    // }
-    /*************************************************************************/
     self._view.leftpanel = yo`
       <div id="filepanel" class=${css.leftpanel}>
         ${''}
@@ -115,8 +146,7 @@ class App {
       </div>
     `
     self._view.rightpanel = yo`
-      <div>
-        <div id="dragbar" class=${css.dragbar2}></div>
+      <div class=${css.rightpanel}>
         ${''}
       </div>
     `
@@ -127,6 +157,9 @@ class App {
         ${self._view.rightpanel}
       </div>
     `
+    // INIT
+    self._adjustLayout('left', self.data._layout.left.offset)
+    self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
   }
 }
@@ -152,12 +185,9 @@ function run () {
   }, false)
 
   this.event = new EventManager()
-  var fileStorage = new Storage('sol:')
-  var config = new Config(fileStorage)
-  var remixd = new Remixd()
-  var filesProviders = {}
-  filesProviders['browser'] = new Browserfiles(fileStorage)
-  filesProviders['localhost'] = new SharedFolder(remixd)
+
+  var config = self._api.config
+  var filesProviders = self._api.filesProviders
 
   var tabbedFiles = {} // list of files displayed in the tabs bar
 
@@ -301,10 +331,7 @@ function run () {
   var filepanelContainer = document.querySelector('#filepanel')
   filepanelContainer.appendChild(filePanel.render())
 
-  filePanel.event.register('resize', function changeLayout (width) {
-    self._view.leftpanel.style.width = width + 'px'
-    self._view.centerpanel.style.left = width + 'px'
-  })
+  filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
   function fileRenamedEvent (oldName, newName, isFolder) {
     // TODO please never use 'window' when it is possible to use a variable
@@ -644,17 +671,9 @@ function run () {
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {
     config: config,
-    setEditorSize (delta) {
-      $('#righthand-panel').css('width', delta)
-      self._view.centerpanel.style.right = delta + 'px'
-      document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
-      onResize()
-    },
     warnCompilerLoading: (msg) => {
       renderer.clear()
-      if (msg) {
-        renderer.error(msg, $('#output'), {type: 'warning'})
-      }
+      if (msg) renderer.error(msg, $('#output'), {type: 'warning'})
     },
     executionContextChange: (context) => {
       return executionContext.executionContextChange(context)
@@ -668,16 +687,17 @@ function run () {
     app: self.event,
     udapp: udapp.event
   }
-  var righthandPanel = new RighthandPanel(rhpAPI, rhpEvents, {}) // eslint-disable-line
-  self._view.rightpanel.appendChild(righthandPanel.render())
-  righthandPanel.init()
+  self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, {})
+  self._view.rightpanel.appendChild(self._components.righthandpanel.render())
+  self._components.righthandpanel.init()
+  self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
 
   // ----------------- editor resize ---------------
 
   function onResize () {
     editor.resize(document.querySelector('#editorWrap').checked)
   }
-  window.onresize = onResize
+  self._onResize = window.onresize = onResize
   onResize()
 
   self._view.el.addEventListener('change', onResize)
