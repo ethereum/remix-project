@@ -22,6 +22,7 @@ class TxListener {
     this._web3VMProvider.setVM(opt.api.vm())
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
+    this._transactionReceipts = {}
     this.init()
     opt.event.executionContext.register('contextChanged', (context) => {
       if (this.loopId) {
@@ -124,8 +125,10 @@ class TxListener {
 
   _resolve (block, callback) {
     async.each(block.transactions, (tx, cb) => {
-      this._resolveTx(tx, () => {
+      this._resolveTx(tx, (error, resolvedData) => {
+        if (error) cb(error)
         this.event.trigger('newTransaction', [tx])
+        if (resolvedData) this.event.trigger('txResolved', [tx, resolvedData])
         cb()
       })
     }, () => {
@@ -144,14 +147,15 @@ class TxListener {
       var code = tx.input
       contractName = this._tryResolveContract(code, contracts, 'bytecode')
       if (contractName) {
-        this._resolveCreationAddress(tx, (error, address) => {
+        this.resolveTransactionReceipt(tx, (error, receipt) => {
           if (error) return cb(error)
+          var address = receipt.contractAddress
           this._resolvedContracts[address] = contractName
-          this._resolveFunction(contractName, contracts, tx, true)
+          var fun = this._resolveFunction(contractName, contracts, tx, true)
           if (this._resolvedTransactions[tx.hash]) {
             this._resolvedTransactions[tx.hash].contractAddress = address
           }
-          return cb()
+          return cb(null, {to: null, contractName: contractName, function: fun, creationAddress: address})
         })
         return
       }
@@ -166,7 +170,8 @@ class TxListener {
             var contractName = this._tryResolveContract(code, contracts, 'runtimeBytecode')
             if (contractName) {
               this._resolvedContracts[tx.to] = contractName
-              this._resolveFunction(contractName, contracts, tx, false)
+              var fun = this._resolveFunction(contractName, contracts, tx, false)
+              return cb(null, {to: tx.to, contractName: contractName, function: fun})
             }
           }
           return cb()
@@ -174,16 +179,21 @@ class TxListener {
         return
       }
       if (contractName) {
-        this._resolveFunction(contractName, contracts, tx, false)
+        var fun = this._resolveFunction(contractName, contracts, tx, false)
+        return cb(null, {to: tx.to, contractName: contractName, function: fun})
       }
       return cb()
     }
   }
 
-  _resolveCreationAddress (tx, cb) {
+  resolveTransactionReceipt (tx, cb) {
+    if (this._transactionReceipts[tx.hash]) {
+      return cb(null, this._transactionReceipts[tx.hash])
+    }
     this.currentWeb3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
       if (!error) {
-        cb(null, receipt.contractAddress)
+        this._transactionReceipts[tx.hash] = receipt
+        cb(null, receipt)
       } else {
         cb(error)
       }
@@ -222,6 +232,7 @@ class TxListener {
         params: params
       }
     }
+    return this._resolvedTransactions[tx.hash]
   }
 
   _tryResolveContract (codeToResolve, compiledContracts, type) {
