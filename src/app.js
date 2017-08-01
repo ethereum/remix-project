@@ -88,7 +88,7 @@ class App {
     self.data = {
       _layout: {
         right: {
-          offset: self._api.config.get('right-offset') || 200,
+          offset: self._api.config.get('right-offset') || 400,
           show: true
         }, // @TODO: adapt sizes proportionally to browser window size
         left: {
