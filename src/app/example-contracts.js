@@ -33,35 +33,35 @@ contract Ballot {
 
     /// Delegate your vote to the voter $(to).
     function delegate(address to) {
-        Voter sender = voters[msg.sender]; // assigns reference
+        Voter storage sender = voters[msg.sender]; // assigns reference
         if (sender.voted) return;
         while (voters[to].delegate != address(0) && voters[to].delegate != msg.sender)
             to = voters[to].delegate;
         if (to == msg.sender) return;
         sender.voted = true;
         sender.delegate = to;
-        Voter delegate = voters[to];
-        if (delegate.voted)
-            proposals[delegate.vote].voteCount += sender.weight;
+        Voter storage delegateTo = voters[to];
+        if (delegateTo.voted)
+            proposals[delegateTo.vote].voteCount += sender.weight;
         else
-            delegate.weight += sender.weight;
+            delegateTo.weight += sender.weight;
     }
 
     /// Give a single vote to proposal $(proposal).
     function vote(uint8 proposal) {
-        Voter sender = voters[msg.sender];
+        Voter storage sender = voters[msg.sender];
         if (sender.voted || proposal >= proposals.length) return;
         sender.voted = true;
         sender.vote = proposal;
         proposals[proposal].voteCount += sender.weight;
     }
 
-    function winningProposal() constant returns (uint8 winningProposal) {
+    function winningProposal() constant returns (uint8 _winningProposal) {
         uint256 winningVoteCount = 0;
         for (uint8 proposal = 0; proposal < proposals.length; proposal++)
             if (proposals[proposal].voteCount > winningVoteCount) {
                 winningVoteCount = proposals[proposal].voteCount;
-                winningProposal = proposal;
+                _winningProposal = proposal;
             }
     }
 }`
