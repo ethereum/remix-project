@@ -124,7 +124,10 @@ class TxListener {
 
   _resolve (block, callback) {
     async.each(block.transactions, (tx, cb) => {
-      this._resolveTx(tx, cb)
+      this._resolveTx(tx, () => {
+        this.event.trigger('newTransaction', [tx])
+        cb()
+      })
     }, () => {
       callback()
     })

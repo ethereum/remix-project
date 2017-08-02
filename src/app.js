@@ -873,20 +873,17 @@ function run () {
 
   txlistener.startListening()
 
-  txlistener.event.register('newBlock', (block) => {
-    for (var t in block.transactions) {
-      var tx = block.transactions[t]
-      var resolvedTransaction = txlistener.resolvedTransaction(tx.hash)
-      var address = null
-      if (resolvedTransaction) {
-        address = resolvedTransaction.contractAddress ? resolvedTransaction.contractAddress : tx.to
-      }
-      console.log({
-        tx: tx,
-        resolvedContract: txlistener.resolvedContract(address),
-        resolvedTransaction: resolvedTransaction
-      })
+  txlistener.event.register('newTransaction', (tx) => {
+    var resolvedTransaction = txlistener.resolvedTransaction(tx.hash)
+    var address = null
+    if (resolvedTransaction) {
+      address = resolvedTransaction.contractAddress ? resolvedTransaction.contractAddress : tx.to
     }
+    console.log({
+      tx: tx,
+      resolvedContract: txlistener.resolvedContract(address),
+      resolvedTransaction: resolvedTransaction
+    })
   })
 
   // ----------------- autoCompile -----------------
