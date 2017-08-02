@@ -130,8 +130,12 @@
     display: block;
 }
 
-#righthand-panel #optionViews.txView input,
-#righthand-panel #optionViews.txView select {
+#header #optionViews.supportView #supportView {
+    display: block;
+}
+
+#header #optionViews.txView input,
+#header #optionViews.txView select {
     max-width: 13em;
     padding: 0.3em;
     box-sizing: border-box;
