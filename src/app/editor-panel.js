@@ -116,7 +116,6 @@ class EditorPanel {
     self._view = {}
     self._api = { editor: opts.api.editor }
     self.event = new EventManager()
-    // var events = opts.events
   }
   refresh () {
     var self = this

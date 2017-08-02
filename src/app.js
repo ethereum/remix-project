@@ -101,8 +101,7 @@ class App {
     self._components.editor = new Editor({}) // @TODO: put into editorpanel
     // ----------------- editor panel ----------------------
     self._components.editorpanel = new EditorPanel({
-      api: { editor: self._components.editor },
-      data: { _layout: self.data._layout }
+      api: { editor: self._components.editor }
     })
     self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
   }
@@ -697,7 +696,6 @@ function run () {
   function onResize () {
     editor.resize(document.querySelector('#editorWrap').checked)
   }
-  self._onResize = window.onresize = onResize
   onResize()
 
   self._view.el.addEventListener('change', onResize)
