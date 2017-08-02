@@ -1,5 +1,4 @@
 'use strict'
-var $ = require('jquery')
 var ethJSABI = require('ethereumjs-abi')
 
 /**
@@ -38,7 +37,7 @@ class EventsDecoder {
   _eventABI (contractName, compiledContracts) {
     var contractabi = JSON.parse(compiledContracts[contractName].interface)
     var eventABI = {}
-    $.each(contractabi, function (i, funABI) {
+    contractabi.forEach(function (funABI, i) {
       if (funABI.type !== 'event') {
         return
       }
