@@ -123,6 +123,23 @@ function ExecutionContext () {
     }
   }
 
+  this.currentblockGasLimit = function () {
+    return this.blockGasLimit
+  }
+
+  this.blockGasLimitDefault = 4300000
+  this.blockGasLimit = this.blockGasLimitDefault
+  setInterval(() => {
+    web3.eth.getBlock('latest', (err, block) => {
+      if (!err) {
+        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+      } else {
+        this.blockGasLimit = this.blockGasLimitDefault
+      }
+    })
+  }, 15000)
+
   function setProviderFromEndpoint (endpoint) {
     if (endpoint === 'ipc') {
       web3.setProvider(new web3.providers.IpcProvider())
