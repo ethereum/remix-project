@@ -1,4 +1,4 @@
-/* global alert, confirm, prompt, Option, Worker, chrome */
+/* global alert, confirm, Option, Worker, chrome */
 'use strict'
 
 var async = require('async')
@@ -192,15 +192,15 @@ function run () {
   var tabbedFiles = {} // list of files displayed in the tabs bar
 
   // return all the files, except the temporary/readonly ones.. package only files from the browser storage.
-  function packageFiles (cb) {
+  function packageFiles (callback) {
     var ret = {}
     var files = filesProviders['browser']
     var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
     async.eachSeries(filtered, function (path, cb) {
-      ret[path] = { content: files.get(path) }
+      ret[path.replace(files.type + '/', '')] = { content: files.get(path) }
       cb()
     }, () => {
-      cb(ret)
+      callback(null, ret)
     })
   }
 
@@ -380,57 +380,6 @@ function run () {
   }
   filesProviders['browser'].event.register('fileRemoved', fileRemovedEvent)
   filesProviders['localhost'].event.register('fileRemoved', fileRemovedEvent)
-
-  // ------------------ gist publish --------------
-
-  $('#gist').click(function () {
-    if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
-      packageFiles((error, packaged) => {
-        if (error) {
-          console.log(error)
-        } else {
-          var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
-
-          $.ajax({
-            url: 'https://api.github.com/gists',
-            type: 'POST',
-            data: JSON.stringify({
-              description: description,
-              public: true,
-              files: packaged
-            })
-          }).done(function (response) {
-            if (response.html_url && confirm('Created a gist at ' + response.html_url + ' Would you like to open it in a new window?')) {
-              window.open(response.html_url, '_blank')
-            }
-          }).fail(function (xhr, text, err) {
-            alert('Failed to create gist: ' + (err || 'Unknown transport error'))
-          })
-        }
-      })
-    }
-  })
-
-  $('#copyOver').click(function () {
-    var target = prompt(
-      'To which other browser-solidity instance do you want to copy over all files?',
-      'https://ethereum.github.io/browser-solidity/'
-    )
-    if (target === null) {
-      return
-    }
-    packageFiles((error, packaged) => {
-      if (error) {
-        console.log(error)
-      } else {
-        $('<iframe/>', {
-          src: target,
-          style: 'display:none;',
-          load: function () { this.contentWindow.postMessage(['loadFiles', packaged], '*') }
-        }).appendTo('body')
-      }
-    })
-  })
 
   // --------------------Files tabs-----------------------------
   var $filesEl = $('#files')
@@ -681,6 +630,9 @@ function run () {
     },
     executionContextProvider: () => {
       return executionContext.getProvider()
+    },
+    packageFiles: (cb) => {
+      packageFiles(cb)
     }
   }
   var rhpEvents = {
