@@ -29,6 +29,7 @@ var FilePanel = require('./app/file-panel')
 var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
+// var Txlistener = require('./app/txListener')
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -846,6 +847,46 @@ function run () {
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
   var node = document.getElementById('staticanalysisView')
   node.insertBefore(staticanalysis.render(), node.childNodes[0])
+
+  // ----------------- Tx listener -----------------
+  // Commented for now. will be used later.
+  /*
+  var txlistener = new Txlistener({
+    api: {
+      web3: function () { return executionContext.web3() },
+      isVM: function () { return executionContext.isVM() },
+      vm: function () { return executionContext.vm() },
+      contracts: function () {
+        if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
+          return compiler.lastCompilationResult.data.contracts
+        }
+        return null
+      },
+      context: function () {
+        return executionContext.getProvider()
+      }
+    },
+    event: {
+      executionContext: executionContext.event,
+      udapp: udapp.event
+    }
+  })
+
+  txlistener.startListening()
+
+  txlistener.event.register('newTransaction', (tx) => {
+    var resolvedTransaction = txlistener.resolvedTransaction(tx.hash)
+    var address = null
+    if (resolvedTransaction) {
+      address = resolvedTransaction.contractAddress ? resolvedTransaction.contractAddress : tx.to
+    }
+    console.log({
+      tx: tx,
+      resolvedContract: txlistener.resolvedContract(address),
+      resolvedTransaction: resolvedTransaction
+    })
+  })
+  */
 
   // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
