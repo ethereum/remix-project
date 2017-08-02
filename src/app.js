@@ -29,7 +29,7 @@ var FilePanel = require('./app/file-panel')
 var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
-var Txlistener = require('./app/txListener')
+// var Txlistener = require('./app/txListener')
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -849,7 +849,8 @@ function run () {
   node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- Tx listener -----------------
-
+  // Commented for now. will be used later.
+  /*
   var txlistener = new Txlistener({
     api: {
       web3: function () { return executionContext.web3() },
@@ -885,6 +886,7 @@ function run () {
       resolvedTransaction: resolvedTransaction
     })
   })
+  */
 
   // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked
