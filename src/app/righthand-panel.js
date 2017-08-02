@@ -39,6 +39,9 @@ var css = csjs`
     top               : 0;
     bottom            : 0;
   }
+  .panel              {
+    height            : 100%;  
+  }
 `
 
 // ------------------------------------------------------------------
@@ -64,7 +67,7 @@ function RighthandPanel (appAPI, events, opts) {
   `
   self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
   self._view.element = yo`
-    <div id="righthand-panel">
+    <div id="righthand-panel" class=${css.panel}>
       ${self._view.dragbar}
       <div id="header">
         <div id="menu">
