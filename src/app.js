@@ -851,7 +851,7 @@ function run () {
   // ----------------- Tx listener -----------------
 
   var txlistener = new Txlistener({
-    appAPI: {
+    api: {
       web3: function () { return executionContext.web3() },
       isVM: function () { return executionContext.isVM() },
       vm: function () { return executionContext.vm() },
@@ -865,7 +865,7 @@ function run () {
         return executionContext.getProvider()
       }
     },
-    appEvent: {
+    event: {
       executionContext: executionContext.event,
       udapp: udapp.event
     }

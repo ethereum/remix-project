@@ -17,19 +17,19 @@ var Web3VMProvider = remix.web3.web3VMProvider
 class TxListener {
   constructor (opt) {
     this.event = new EventManager()
-    this._appAPI = opt.appAPI
+    this._api = opt.api
     this._web3VMProvider = new Web3VMProvider() // TODO this should maybe be put in app.js
-    this._web3VMProvider.setVM(opt.appAPI.vm())
+    this._web3VMProvider.setVM(opt.api.vm())
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
     this.init()
-    opt.appEvent.executionContext.register('contextChanged', (context) => {
+    opt.event.executionContext.register('contextChanged', (context) => {
       if (this.loopId) {
         this.startListening(context)
       }
     })
-    opt.appEvent.udapp.register('transactionExecuted', (to, data, lookupOnly, txResult) => {
-      if (this.loopId && this._appAPI.isVM()) {
+    opt.event.udapp.register('transactionExecuted', (to, data, lookupOnly, txResult) => {
+      if (this.loopId && this._api.isVM()) {
         this._web3VMProvider.getTransaction(txResult.transactionHash, (error, tx) => {
           if (error) return console.log(error)
           this._newBlock({
@@ -59,15 +59,15 @@ class TxListener {
   startListening () {
     this.stopListening()
     this.init()
-    if (this._appAPI.context() === 'vm') {
+    if (this._api.context() === 'vm') {
       this.loopId = 'vm-listener'
     } else {
       this.loopId = setInterval(() => {
-        this._appAPI.web3().eth.getBlockNumber((error, blockNumber) => {
+        this._api.web3().eth.getBlockNumber((error, blockNumber) => {
           if (error) return console.log(error)
           if (!this.lastBlock || blockNumber > this.lastBlock) {
             this.lastBlock = blockNumber
-            this._appAPI.web3().eth.getBlock(this.lastBlock, true, (error, result) => {
+            this._api.web3().eth.getBlock(this.lastBlock, true, (error, result) => {
               if (!error) {
                 this._newBlock(Object.assign({type: 'web3'}, result))
               }
@@ -79,7 +79,7 @@ class TxListener {
   }
 
   currentWeb3 () { // TODO this should maybe be put in app.js
-    return this._appAPI.isVM() ? this._web3VMProvider : this._appAPI.web3()
+    return this._api.isVM() ? this._web3VMProvider : this._api.web3()
   }
 
   /**
@@ -131,7 +131,7 @@ class TxListener {
   }
 
   _resolveTx (tx, cb) {
-    var contracts = this._appAPI.contracts()
+    var contracts = this._api.contracts()
     if (!contracts) return cb()
     var contractName
     if (!tx.to) {
@@ -239,7 +239,6 @@ class TxListener {
     return ethJSABI.rawDecode(inputTypes, data)
   }
 }
-
 
 // those function will be duplicate after the merged of the compile and run tabs split
 function getConstructorInterface (abi) {
