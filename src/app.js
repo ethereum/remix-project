@@ -7,7 +7,8 @@ var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
-var EventManager = require('ethereum-remix').lib.EventManager
+var remix = require('ethereum-remix')
+var EventManager = remix.lib.EventManager
 
 var UniversalDApp = require('./universal-dapp.js')
 var Remixd = require('./lib/remixd')
@@ -30,10 +31,9 @@ var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 var modalDialogCustom = require('./app/modal-dialog-custom')
-/*
 var Txlistener = require('./app/txListener')
 var EventsDecoder = require('./app/eventsDecoder')
-*/
+var Web3VMProvider = remix.web3.web3VMProvider
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -752,7 +752,32 @@ function run () {
 
   // ----------------- Tx listener -----------------
   // not used right now
-  /*
+
+  // TODO the following should be put in execution context
+  var web3VM = new Web3VMProvider()
+  web3VM.setVM(executionContext.vm())
+
+  var currentWeb3 = function () {
+    return executionContext.isVM() ? web3VM : executionContext.web3()
+  }
+
+  var transactionReceiptResolver = {
+    _transactionReceipts: {},
+    resolve: function (tx, cb) {
+      if (this._transactionReceipts[tx.hash]) {
+        return cb(null, this._transactionReceipts[tx.hash])
+      }
+      currentWeb3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+        if (!error) {
+          this._transactionReceipts[tx.hash] = receipt
+          cb(null, receipt)
+        } else {
+          cb(error)
+        }
+      })
+    }
+  }
+
   var compiledContracts = function () {
     if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
       return compiler.lastCompilationResult.data.contracts
@@ -762,21 +787,28 @@ function run () {
 
   var txlistener = new Txlistener({
     api: {
-      web3: function () { return executionContext.web3() },
+      web3: function () { return currentWeb3() },
       isVM: function () { return executionContext.isVM() },
-      vm: function () { return executionContext.vm() },
       contracts: compiledContracts,
       context: function () {
         return executionContext.getProvider()
+      },
+      resolveReceipt: function (tx, cb) {
+        transactionReceiptResolver.resolve(tx, cb)
       }
     },
     event: {
       executionContext: executionContext.event,
       udapp: udapp.event
+    }})
+
+  var eventsDecoder = new EventsDecoder({
+    api: {
+      resolveReceipt: function (tx, cb) {
+        transactionReceiptResolver.resolve(tx, cb)
+      }
     }
   })
-
-  var eventsDecoder = new EventsDecoder({ txListener: txlistener })
 
   txlistener.startListening()
 
@@ -788,22 +820,27 @@ function run () {
       address = resolvedTransaction.contractAddress ? resolvedTransaction.contractAddress : tx.to
       resolvedContract = txlistener.resolvedContract(address)
       if (resolvedContract) {
-        eventsDecoder.parseLogs(tx, resolvedContract, compiledContracts(), () => {
+        eventsDecoder.parseLogs(tx, resolvedContract, compiledContracts(), (error, log) => {
           console.log({
             tx: tx,
-            resolvedContract: resolvedContract,
             resolvedTransaction: resolvedTransaction,
-            resolvedEvents: eventsDecoder.eventsOf(tx.hash)
+            resolvedContract: resolvedContract,
+            resolvedEvents: (!error ? log : error)
           })
+        })
+      } else {
+        console.log({
+          tx: tx,
+          resolvedTransaction: resolvedTransaction
         })
       }
     } else {
+      // contract unknown - just displaying raw tx.
       console.log({
         tx: tx
       })
     }
   })
-  */
 
   // ----------------- autoCompile -----------------
   var autoCompile = document.querySelector('#autoCompile').checked

@@ -8,8 +8,7 @@ var ethJSABI = require('ethereumjs-abi')
   */
 class EventsDecoder {
   constructor (opt = {}) {
-    this.txListener = opt.txListener
-    this.resolvedEvents = {}
+    this._api = opt.api
   }
 
 /**
@@ -20,19 +19,18 @@ class EventsDecoder {
   * @param {Function} cb - callback
   */
   parseLogs (tx, contractName, compiledContracts, cb) {
-    this.txListener.resolveTransactionReceipt(tx, (error, receipt) => {
+    this._api.resolveReceipt(tx, (error, receipt) => {
       if (error) cb(error)
       this._decodeLogs(tx, receipt, contractName, compiledContracts, cb)
     })
   }
 
-  eventsOf (hash) {
-    return this.resolvedEvents[hash]
-  }
-
   _decodeLogs (tx, receipt, contract, contracts, cb) {
-    if (!contract || !receipt.logs) {
-      return cb()
+    if (!contract || !receipt) {
+      return cb('cannot decode logs - contract or receipt not resolved ')
+    }
+    if (!receipt.logs) {
+      return cb(null, [])
     }
     this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
@@ -53,6 +51,7 @@ class EventsDecoder {
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventABI = this._eventABI(contractName, compiledContracts)
     // FIXME: support indexed events
+    var events = []
     for (var i in logs) {
       // [address, topics, mem]
       var log = logs[i]
@@ -70,12 +69,9 @@ class EventsDecoder {
       } catch (e) {
         decoded = log.data
       }
-      if (!this.resolvedEvents[tx.hash]) {
-        this.resolvedEvents[tx.hash] = []
-      }
-      this.resolvedEvents[tx.hash].push({ event: event, args: decoded })
+      events.push({ event: event, args: decoded })
     }
-    cb()
+    cb(null, events)
   }
 }
 
