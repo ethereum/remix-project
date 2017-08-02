@@ -1,4 +1,4 @@
-/* global confirm, prompt, Option, Worker, chrome */
+/* global confirm, Option, Worker, chrome */
 'use strict'
 
 var async = require('async')
