@@ -127,8 +127,8 @@ class TxListener {
     async.each(block.transactions, (tx, cb) => {
       this._resolveTx(tx, (error, resolvedData) => {
         if (error) cb(error)
-        this.event.trigger('newTransaction', [tx])
         if (resolvedData) this.event.trigger('txResolved', [tx, resolvedData])
+        this.event.trigger('newTransaction', [tx])
         cb()
       })
     }, () => {

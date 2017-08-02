@@ -19,10 +19,10 @@ class EventsDecoder {
   * @param {Object} tx - transaction object
   * @param {Function} cb - callback
   */
-  parseLogs (tx, resolvedData, compiledContracts) {
+  parseLogs (tx, contractName, compiledContracts, cb) {
     this.txListener.resolveTransactionReceipt(tx, (error, receipt) => {
-      if (error) console.log(error)
-      this._decodeLogs(tx, receipt, resolvedData.contractName, compiledContracts)
+      if (error) cb(error)
+      this._decodeLogs(tx, receipt, contractName, compiledContracts, cb)
     })
   }
 
@@ -30,11 +30,11 @@ class EventsDecoder {
     return this.resolvedEvents[hash]
   }
 
-  _decodeLogs (tx, receipt, contract, contracts) {
+  _decodeLogs (tx, receipt, contract, contracts, cb) {
     if (!contract || !receipt.logs) {
-      return
+      return cb()
     }
-    this._decodeEvents(tx, receipt.logs, contract, contracts)
+    this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
 
   _eventABI (contractName, compiledContracts) {
@@ -50,7 +50,7 @@ class EventsDecoder {
     return eventABI
   }
 
-  _decodeEvents (tx, logs, contractName, compiledContracts) {
+  _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventABI = this._eventABI(contractName, compiledContracts)
     // FIXME: support indexed events
     for (var i in logs) {
@@ -75,6 +75,7 @@ class EventsDecoder {
       }
       this.resolvedEvents[tx.hash].push({ event: event, args: decoded })
     }
+    cb()
   }
 }
 

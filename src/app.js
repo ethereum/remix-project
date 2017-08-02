@@ -31,7 +31,7 @@ var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
 var modalDialogCustom = require('./app/modal-dialog-custom')
 var Txlistener = require('./app/txListener')
-var EventsDecoder = require('./app/listener/eventsDecoder')
+var EventsDecoder = require('./app/eventsDecoder')
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -775,26 +775,30 @@ function run () {
 
   var eventsDecoder = new EventsDecoder({ txListener: txlistener })
 
-  txlistener.event.register('txResolved', (tx, resolvedData) => {
-    if (resolvedData) {
-      eventsDecoder.parseLogs(tx, resolvedData, compiledContracts())
-    }
-  })
-
   txlistener.startListening()
 
   txlistener.event.register('newTransaction', (tx) => {
     var resolvedTransaction = txlistener.resolvedTransaction(tx.hash)
     var address = null
     if (resolvedTransaction) {
+      var resolvedContract
       address = resolvedTransaction.contractAddress ? resolvedTransaction.contractAddress : tx.to
+      resolvedContract = txlistener.resolvedContract(address)
+      if (resolvedContract) {
+        eventsDecoder.parseLogs(tx, resolvedContract, compiledContracts(), () => {
+          console.log({
+            tx: tx,
+            resolvedContract: resolvedContract,
+            resolvedTransaction: resolvedTransaction,
+            resolvedEvents: eventsDecoder.eventsOf(tx.hash)
+          })
+        })
+      }
+    } else {
+      console.log({
+        tx: tx
+      })
     }
-    console.log({
-      tx: tx,
-      resolvedContract: txlistener.resolvedContract(address),
-      resolvedTransaction: resolvedTransaction,
-      resolvedEvents: eventsDecoder.eventsOf(tx.hash)
-    })
   })
 
   // ----------------- autoCompile -----------------
