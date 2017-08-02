@@ -26,18 +26,33 @@ ENCRYPTED_IV_VAR2="encrypted_${ENCRYPTION_LABEL2}_iv"
 ENCRYPTED_KEY2=${!ENCRYPTED_KEY_VAR2}
 ENCRYPTED_IV2=${!ENCRYPTED_IV_VAR2}
 
-touch deploy_key
-touch deploy_key_remix-live
-chmod 600 deploy_key deploy_key_remix-live
-openssl aes-256-cbc -K $ENCRYPTED_KEY1 -iv $ENCRYPTED_IV1 -in ci/deploy_key.enc -out deploy_key -d
-openssl aes-256-cbc -K $ENCRYPTED_KEY2 -iv $ENCRYPTED_IV2 -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
-eval `ssh-agent -s`
-ssh-add deploy_key
-git push -f git@github.com:ethereum/browser-solidity.git gh-pages
-ssh-add -D
 
-echo -n "remix.ethereum.org" > CNAME
-git add CNAME
-git commit --amend -m "Built website from {$SHA}."
-ssh-add deploy_key_remix-live
-git push -f git@github.com:ethereum/remix-live.git gh-pages
+
+# touch deploy_key
+# touch deploy_key_remix-live
+# chmod 600 deploy_key deploy_key_remix-live
+# openssl aes-256-cbc -K $ENCRYPTED_KEY1 -iv $ENCRYPTED_IV1 -in ci/deploy_key.enc -out deploy_key -d
+# openssl aes-256-cbc -K $ENCRYPTED_KEY2 -iv $ENCRYPTED_IV2 -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
+# eval `ssh-agent -s`
+# ssh-add deploy_key
+# git push -f git@github.com:ethereum/browser-solidity.git gh-pages
+# ssh-add -D
+
+# echo -n "remix.ethereum.org" > CNAME
+# git add CNAME
+# git commit --amend -m "Built website from {$SHA}."
+# ssh-add deploy_key_remix-live
+# git push -f git@github.com:ethereum/remix-live.git gh-pages
+
+# deploy yann300 gh-pages
+ENCRYPTED_KEY_VAR3="encrypted_${ENCRYPTION_LABEL3}_key"
+ENCRYPTED_IV_VAR3="encrypted_${ENCRYPTION_LABEL3}_iv"
+ENCRYPTED_KEY3=${!ENCRYPTED_KEY_VAR3}
+ENCRYPTED_IV3=${!ENCRYPTED_IV_VAR3}
+
+touch deploy_key_yann300_remix
+chmod 600 deploy_key_yann300_remix
+openssl aes-256-cbc -K $ENCRYPTED_KEY3 -iv $ENCRYPTED_IV3 -in ci/deploy_key_yann300_remix.enc -out deploy_key_yann300_remix -d
+eval `ssh-agent -s`
+ssh-add deploy_key_yann300_remix
+git push -f git@github.com:yann300/remix.git gh-pages
