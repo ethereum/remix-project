@@ -20,11 +20,32 @@ function DropdownPanel (_name, _opts) {
   this.view
 }
 
+DropdownPanel.prototype.setMessage = function (message) {
+  if (this.view) {
+    this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
+    this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
+    this.message(message)
+  }
+}
+
+DropdownPanel.prototype.setLoading = function () {
+  if (this.view) {
+    this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
+    this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'inline-block'
+    this.message('')
+  }
+}
+
 DropdownPanel.prototype.update = function (_data, _header) {
   if (this.view) {
+    this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
     this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
     this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
     this.view.querySelector('.title span').innerText = _header || ' '
+    this.message('')
     if (this.json) {
       this.treeView.update(_data)
     }
@@ -32,8 +53,10 @@ DropdownPanel.prototype.update = function (_data, _header) {
 }
 
 DropdownPanel.prototype.setContent = function (node) {
-  var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
-  parent.replaceChild(node, parent.firstElementChild)
+  if (this.view) {
+    var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
+    parent.replaceChild(node, parent.firstElementChild)
+  }
 }
 
 DropdownPanel.prototype.render = function (overridestyle) {
@@ -43,7 +66,19 @@ DropdownPanel.prototype.render = function (overridestyle) {
   }
   overridestyle === undefined ? {} : overridestyle
   var self = this
-  var view = yo`<div>
+  var view = yo`
+    <div>
+    <style>
+      @-moz-keyframes spin {
+        to { -moz-transform: rotate(359deg); }
+      }
+      @-webkit-keyframes spin {
+        to { -webkit-transform: rotate(359deg); }
+      }
+      @keyframes spin {
+        to {transform:rotate(359deg);}
+      }
+    </style>
     <div class='title' style=${ui.formatCss(styleDropdown.title)} onclick=${function () { self.toggle() }}>
       <div style=${ui.formatCss(styleDropdown.caret)} class='fa fa-caret-right'></div>
       <div style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div><span></span>
@@ -51,8 +86,10 @@ DropdownPanel.prototype.render = function (overridestyle) {
     <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
       <button onclick=${function () { self.toggleRaw() }} style=${ui.formatCss(basicStyles.button, styleDropdown.copyBtn)} title='raw' class="btn fa fa-eye" type="button">
       </button>
+      <i class="fa fa-refresh" style=${ui.formatCss(styleDropdown.inner, overridestyle, {display: 'none', 'margin-left': '4px', 'margin-top': '4px', 'animation': 'spin 2s linear infinite'})} aria-hidden="true"></i>
       <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'>${content}</div>
       <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdownrawcontent' style='display:none'></div>
+      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='message' style='display:none'></div>
     </div>
     </div>`
   if (!this.view) {
@@ -99,6 +136,14 @@ DropdownPanel.prototype.show = function () {
     el.style.display = ''
     caret.className = 'fa fa-caret-down'
     this.event.trigger('show', [])
+  }
+}
+
+DropdownPanel.prototype.message = function (message) {
+  if (this.view) {
+    var mes = this.view.querySelector('.dropdownpanel .message')
+    mes.innerText = message
+    mes.style.display = (message === '') ? 'none' : 'block'
   }
 }
 
