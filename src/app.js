@@ -748,17 +748,19 @@ function run () {
   var debugAPI = {
     statementMarker: null,
     fullLineMarker: null,
+    source: null,
     currentSourceLocation: (lineColumnPos, location) => {
-      if (this.statementMarker) editor.removeMarker(this.statementMarker)
-      if (this.fullLineMarker) editor.removeMarker(this.fullLineMarker)
+      if (this.statementMarker) editor.removeMarker(this.statementMarker, this.source)
+      if (this.fullLineMarker) editor.removeMarker(this.fullLineMarker, this.source)
       this.statementMarker = null
       this.fullLineMarker = null
+      this.source = null
       if (lineColumnPos) {
-        var source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
-        if (config.get('currentFile') !== source) {
-          switchToFile(source)
+        this.source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
+        if (config.get('currentFile') !== this.source) {
+          switchToFile(this.source)
         }
-        this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
+        this.statementMarker = editor.addMarker(lineColumnPos, this.source, 'highlightcode')
         editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
 
         if (lineColumnPos.start.line === lineColumnPos.end.line) {
@@ -771,7 +773,7 @@ function run () {
               line: lineColumnPos.start.line + 1,
               column: 0
             }
-          }, 'highlightcode_fullLine')
+          }, this.source, 'highlightcode_fullLine')
         }
       }
     },
