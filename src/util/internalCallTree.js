@@ -116,14 +116,21 @@ async function buildTree (tree, step, scopeId) {
     return false
   }
 
-  var currentSourceLocation = {}
+  function includedSource (source, included) {
+    return (included.start !== -1 &&
+        included.length !== -1 &&
+        included.file !== -1 &&
+        included.start >= source.start &&
+        included.start + included.length <= source.start + source.length &&
+        included.file === source.file)
+  }
+
+  var currentSourceLocation = {start: -1, length: -1, file: -1}
   while (step < tree.traceManager.trace.length) {
     var sourceLocation
     try {
       sourceLocation = await tree.extractSourceLocation(step)
-      if (sourceLocation.start !== currentSourceLocation.start ||
-      sourceLocation.length !== currentSourceLocation.length ||
-      sourceLocation.file !== currentSourceLocation.file) {
+      if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
       }
