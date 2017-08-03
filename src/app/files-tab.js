@@ -1,6 +1,7 @@
-/* global alert, confirm, prompt */
+/* global confirm, prompt */
 var yo = require('yo-yo')
 var $ = require('jquery')
+var modalDialogCustom = require('./modal-dialog-custom')
 var QueryParams = require('./query-params')
 var queryParams = new QueryParams()
 
@@ -70,7 +71,7 @@ function filesTab (container, appAPI, events, opts) {
             }
           }).fail(function (xhr, text, err) {
             console.log('fail', text)
-            alert('Failed to create gist: ' + (err || 'Unknown transport error'))
+            modalDialogCustom.alert('Failed to create gist: ' + (err || 'Unknown transport error'))
           })
         }
       })

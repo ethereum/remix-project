@@ -1,8 +1,9 @@
-/* global FileReader, confirm, alert */
+/* global FileReader, confirm */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('ethereum-remix').ui.TreeView
 var modalDialog = require('./modaldialog')
+var modalDialogCustom = require('./modal-dialog-custom')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
@@ -133,7 +134,7 @@ function fileExplorer (appAPI, files) {
       var fileReader = new FileReader()
       fileReader.onload = function (event) {
         var success = files.set(name, event.target.result)
-        if (!success) alert('Failed to create file ' + name)
+        if (!success) modalDialogCustom.alert('Failed to create file ' + name)
         else events.trigger('focus', [name])
       }
       fileReader.readAsText(file)
@@ -219,12 +220,12 @@ function fileExplorer (appAPI, files) {
         newPath[newPath.length - 1] = label.innerText
         newPath = newPath.join('/')
         if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
-          alert('special characters are not allowsed')
+          modalDialogCustom.alert('special characters are not allowsed')
           label.innerText = textUnderEdit
         } else if (!files.exists(newPath)) {
           files.rename(label.dataset.path, newPath, isFolder)
         } else {
-          alert('File already exists.')
+          modalDialogCustom.alert('File already exists.')
           label.innerText = textUnderEdit
         }
       } else label.innerText = textUnderEdit
@@ -253,7 +254,7 @@ function fileExplorer (appAPI, files) {
       }
     }
     if (err) {
-      alert(`couldn't rename - ${err}`)
+      modalDialogCustom.alert(`could not rename - ${err}`)
       label.innerText = textUnderEdit
     } else {
       textUnderEdit = label.innerText
@@ -305,7 +306,7 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileRenamedError (error) {
-    alert(error)
+    modalDialogCustom.alert(error)
   }
 
   function fileAdded (filepath) {

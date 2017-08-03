@@ -1,4 +1,4 @@
-/* global alert, confirm, Option, Worker, chrome */
+/* global confirm, Option, Worker, chrome */
 'use strict'
 
 var async = require('async')
@@ -29,6 +29,7 @@ var FilePanel = require('./app/file-panel')
 var EditorPanel = require('./app/editor-panel')
 var RighthandPanel = require('./app/righthand-panel')
 var examples = require('./app/example-contracts')
+var modalDialogCustom = require('./app/modal-dialog-custom')
 // var Txlistener = require('./app/txListener')
 
 var css = csjs`
@@ -241,7 +242,7 @@ function run () {
       success: function (response) {
         if (response.data) {
           if (!response.data.files) {
-            alert('Gist load error: ' + response.data.message)
+            modalDialogCustom.alert('Gist load error: ' + response.data.message)
             return
           }
           loadFiles(response.data.files)
@@ -253,7 +254,7 @@ function run () {
   // insert ballot contract if there are no files available
   if (!loadingFromGist && Object.keys(filesProviders['browser'].list()).length === 0) {
     if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
-      alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
+      modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
     }
   }
 
@@ -611,9 +612,9 @@ function run () {
   udapp.event.register('publishContract', this, function (contract) {
     publishOnSwarm(contract, function (err) {
       if (err) {
-        alert('Failed to publish metadata: ' + err)
+        modalDialogCustom.alert('Failed to publish metadata: ' + err)
       } else {
-        alert('Metadata published successfully')
+        modalDialogCustom.alert('Metadata published successfully')
       }
     })
   })
