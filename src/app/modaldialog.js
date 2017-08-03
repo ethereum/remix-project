@@ -63,18 +63,8 @@ var css = csjs`
 `
 
 module.exports = (title, content, ok, cancel) => {
-  var containerOrig = document.querySelector('.modal')
-  var container
-  if (!containerOrig) {
-    container = document.querySelector(`.${css.modal}`)
-    if (!container) {
-      document.querySelector('body').appendChild(html())
-      container = document.querySelector(`.${css.modal}`)
-    }
-  } else {
-    var parent = document.querySelector('body')
-    var child = document.getElementById('modaldialog')
-    parent.removeChild(child)
+  var container = document.querySelector(`.${css.modal}`)
+  if (!container) {
     document.querySelector('body').appendChild(html())
     container = document.querySelector(`.${css.modal}`)
   }
