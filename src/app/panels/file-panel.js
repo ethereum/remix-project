@@ -228,7 +228,7 @@ function filepanel (appAPI, filesProvider) {
     newpos = (newpos < (rhp - limit)) ? newpos : (rhp - limit)
     return newpos
   }
-  function moveGhostbar (event) {
+  function moveGhostbar (event) { // @NOTE VERTICAL ghostbar
     ghostbar.style.left = getPosition(event) + 'px'
   }
   function removeGhostbar (event) {

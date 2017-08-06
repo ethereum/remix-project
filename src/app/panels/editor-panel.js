@@ -2,7 +2,14 @@ var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var EventManager = require('ethereum-remix').lib.EventManager
 
+var Terminal = require('./terminal')
+
 var css = csjs`
+  .editorpanel         {
+    display            : flex;
+    flex-direction     : column;
+    height             : 100%;
+  }
   .tabsbar             {
     display            : flex;
     overflow           : hidden;
@@ -105,17 +112,76 @@ var css = csjs`
     pointer-events    : none;
     transition        : .3s opacity ease-in;
   }
+  
+  .content            {
+    position          : relative;
+    display           : flex;
+    flex-direction    : column;
+    height            : 100%;
+    width             : 100%;
+  }
 `
 
 class EditorPanel {
   constructor (opts = {}) {
     var self = this
+    self._api = { config: opts.api.config }
+    self.event = new EventManager()
     self.data = {
-      _FILE_SCROLL_DELTA: 200
+      _FILE_SCROLL_DELTA: 200,
+      _layout: {
+        top: {
+          offset: self._api.config.get('terminal-top-offset') || 500,
+          show: true
+        }
+      }
     }
     self._view = {}
-    self._api = { editor: opts.api.editor }
-    self.event = new EventManager()
+    self._components = {
+      editor: opts.api.editor, // @TODO: instantiate in eventpanel instead of passing via `opts`
+      terminal: new Terminal({
+        api: {
+          getPosition (event) {
+            var limitUp = 36
+            var limitDown = 20
+            var height = window.innerHeight
+            var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
+            newpos = (newpos < height - limitDown) ? newpos : height - limitDown
+            return newpos
+          }
+        }
+        // events: { txlistener: txlistener.event, udapp: udapp.event }
+      })
+    }
+    self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
+  }
+  _adjustLayout (direction, delta) {
+    var limitUp = 36
+    var limitDown = 20
+    var containerHeight = window.innerHeight - limitUp // - menu bar containerHeight
+    var self = this
+    var layout = self.data._layout[direction]
+    if (layout) {
+      if (delta === undefined) {
+        layout.show = !layout.show
+        if (layout.show) delta = layout.offset
+        else delta = containerHeight
+      } else {
+        layout.show = true
+        self._api.config.set(`terminal-${direction}-offset`, delta)
+        layout.offset = delta
+      }
+    }
+    var tmp = delta - limitDown
+    delta = tmp > 0 ? tmp : 0
+    if (direction === 'top') {
+      var height = containerHeight - delta
+      height = height < 0 ? 0 : height
+      self._view.editor.style.height = `${delta}px`
+      self._view.terminal.style.height = `${height}px` // - menu bar height
+      self._components.editor.resize((document.querySelector('#editorWrap') || {}).checked)
+      self._components.terminal.scroll2bottom()
+    }
   }
   refresh () {
     var self = this
@@ -124,10 +190,22 @@ class EditorPanel {
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    self._view.el = [
-      self._renderTabsbar(),
-      self._api.editor.render()
-    ]
+    self._view.editor = self._components.editor.render()
+    self._view.terminal = self._components.terminal.render()
+    self._view.content = yo`
+      <div class=${css.content}>
+        ${self._view.editor}
+        ${self._view.terminal}
+      </div>
+    `
+    self._view.el = yo`
+      <div class=${css.editorpanel}>
+        ${self._renderTabsbar()}
+        ${self._view.content}
+      </div>
+    `
+    // INIT
+    self._adjustLayout('top', self.data._layout.top.offset)
     return self._view.el
   }
   _renderTabsbar () {
@@ -197,8 +275,8 @@ class EditorPanel {
       this.children[0].classList.toggle('fa-angle-double-left')
       self.event.trigger('resize', ['right'])
     }
-    function increase () { self._api.editor.editorFontSize(1) }
-    function decrease () { self._api.editor.editorFontSize(-1) }
+    function increase () { self._components.editor.editorFontSize(1) }
+    function decrease () { self._components.editor.editorFontSize(-1) }
     function scrollLeft (event) {
       var leftArrow = this
       var rightArrow = this.nextElementSibling.nextElementSibling

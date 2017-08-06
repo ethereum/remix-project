@@ -107,7 +107,7 @@ class App {
     self._components.editor = new Editor({}) // @TODO: put into editorpanel
     // ----------------- editor panel ----------------------
     self._components.editorpanel = new EditorPanel({
-      api: { editor: self._components.editor }
+      api: { editor: self._components.editor, config: self._api.config }
     })
     self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
   }
