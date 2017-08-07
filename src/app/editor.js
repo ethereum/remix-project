@@ -148,17 +148,22 @@ function Editor (opts = {}) {
     }
   }
 
-  this.addMarker = function (lineColumnPos, cssClass) {
+  this.addMarker = function (lineColumnPos, source, cssClass) {
     var currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
-    return editor.session.addMarker(currentRange, cssClass)
+    if (sessions[source]) {
+      return sessions[source].addMarker(currentRange, cssClass)
+    }
+    return null
   }
 
   this.scrollToLine = function (line, center, animate, callback) {
     editor.scrollToLine(line, center, animate, callback)
   }
 
-  this.removeMarker = function (markerId) {
-    editor.session.removeMarker(markerId)
+  this.removeMarker = function (markerId, source) {
+    if (sessions[source]) {
+      sessions[source].removeMarker(markerId)
+    }
   }
 
   this.clearAnnotations = function () {
