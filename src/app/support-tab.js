@@ -32,6 +32,9 @@ var css = csjs`
     background-color: white;
     border: 2px dotted ${styles.colors.lightGrey};
   }
+  .chatTitle:hover {
+    background-color: ${styles.colors.lightYellow};
+  }
   .icon {
     height: 70%;
     margin-right: 2%;
@@ -76,7 +79,7 @@ function supportTab (container, appAPI, events, opts) {
         </div>
       </div>
       <div class="${css.chat}">
-        <div class="${css.chatTitle}" onclick=${link}>
+        <div class="${css.chatTitle}" onclick=${openLink} title='Click to open chat in Gitter'>
           <img class="${css.icon}" title="Solidity" src="assets/img/remix_logo_512x512.svg">
           <div class="${css.chatTitleText}">ethereum/remix community chat</div>
         </div>
@@ -87,6 +90,6 @@ function supportTab (container, appAPI, events, opts) {
   container.appendChild(el)
 }
 
-function link () {
+function openLink () {
   window.open('https://gitter.im/ethereum/remix')
 }
