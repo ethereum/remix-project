@@ -2,15 +2,15 @@
 var $ = require('jquery')
 
 var yo = require('yo-yo')
-var helper = require('../lib/helper.js')
-var txExecution = require('./execution/txExecution')
-var txFormat = require('./execution/txFormat')
-var txHelper = require('./execution/txHelper')
+var helper = require('../../lib/helper.js')
+var txExecution = require('../execution/txExecution')
+var txFormat = require('../execution/txFormat')
+var txHelper = require('../execution/txHelper')
 const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
+var styleGuide = require('../style-guide')
 var styles = styleGuide()
 
 var css = csjs`
@@ -171,7 +171,6 @@ function runTab (container, appAPI, appEvents, opts) {
   fillAccountsList(appAPI, el)
   setInterval(() => { updateAccountBalances(container, appAPI) }, 1000)
 }
-
 
 function fillAccountsList (appAPI, container) {
   var $txOrigin = $(container.querySelector('#txorigin'))
