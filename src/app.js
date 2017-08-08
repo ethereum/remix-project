@@ -479,6 +479,25 @@ function run () {
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
   // ----------------- Renderer -----------------
+  var rendererAPI = {
+    error: (file, error) => {
+      if (file === config.get('currentFile')) {
+        editor.addAnnotation(error)
+      }
+    },
+    errorClick: (errFile, errLine, errCol) => {
+      if (errFile !== config.get('currentFile') && (filesProviders['browser'].exists(errFile) || filesProviders['localhost'].exists(errFile))) {
+        switchToFile(errFile)
+      }
+      editor.gotoLine(errLine, errCol)
+    }
+  }
+  var renderer = new Renderer(rendererAPI)
+
+  // ------------------------------------------------------------
+  var executionContext = new ExecutionContext()
+
+  // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
       cb(null, $('#txorigin').val())
@@ -496,32 +515,47 @@ function run () {
     }
   }
 
-  var rendererAPI = {
-    error: (file, error) => {
-      if (file === config.get('currentFile')) {
-        editor.addAnnotation(error)
+  var udapp = new UniversalDApp(executionContext, {
+    removable: false,
+    removable_instances: true
+  })
+  udapp.reset({}, transactionContextAPI)
+  udapp.event.register('debugRequested', this, function (txResult) {
+    startdebugging(txResult.transactionHash)
+  })
+
+  // ---------------- Righthand-panel --------------------
+  var rhpAPI = {
+    config: config,
+    setEditorSize (delta) {
+      $('#righthand-panel').css('width', delta)
+      self._view.centerpanel.style.right = delta + 'px'
+      document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
+      onResize()
+    },
+    executionContextChange: (context) => {
+      return executionContext.executionContextChange(context)
+    },
+    executionContextProvider: () => {
+      return executionContext.getProvider()
+    },
+    packageFiles: (cb) => {
+      packageFiles(cb)
+    },
+    getContracts: () => {
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
+        return compiler.lastCompilationResult.data.contracts
       }
+      return null
     },
-    errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== config.get('currentFile') && (filesProviders['browser'].exists(errFile) || filesProviders['localhost'].exists(errFile))) {
-        switchToFile(errFile)
-      }
-      editor.gotoLine(errLine, errCol)
+    udapp: () => {
+      return udapp
     },
-    currentCompiledSourceCode: () => {
-      if (compiler.lastCompilationResult.source) {
-        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
-      }
-      return ''
+    executionContext: () => {
+      return executionContext
     },
-    resetDapp: (udappContracts, renderOutputModifier) => {
-      udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
-    },
-    renderDapp: () => {
-      return udapp.render()
-    },
-    getAccounts: (callback) => {
-      udapp.getAccounts(callback)
+    fileProviderOf: (path) => {
+      return fileProviderOf(path)
     },
     getBalance: (address, callback) => {
       udapp.getBalance(address, (error, balance) => {
@@ -532,114 +566,24 @@ function run () {
         }
       })
     },
-    currentblockGasLimit: () => { return executionContext.currentblockGasLimit() }
-  }
-  var renderer = new Renderer(rendererAPI, compiler.event)
-
-  // ------------------------------------------------------------
-  var executionContext = new ExecutionContext()
-
-  // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp(executionContext, {
-    removable: false,
-    removable_instances: true
-  })
-
-  udapp.event.register('debugRequested', this, function (txResult) {
-    startdebugging(txResult.transactionHash)
-  })
-
-  function swarmVerifiedPublish (content, expectedHash, cb) {
-    swarmgw.put(content, function (err, ret) {
-      if (err) {
-        cb(err)
-      } else if (ret !== expectedHash) {
-        cb('Hash mismatch')
-      } else {
-        cb()
-      }
-    })
-  }
-
-  function publishOnSwarm (contract, cb) {
-    // gather list of files to publish
-    var sources = []
-
-    sources.push({
-      content: contract.metadata,
-      hash: contract.metadataHash
-    })
-
-    var metadata
-    try {
-      metadata = JSON.parse(contract.metadata)
-    } catch (e) {
-      return cb(e)
-    }
-
-    if (metadata === undefined) {
-      return cb('No metadata')
-    }
-
-    async.eachSeries(Object.keys(metadata.sources), function (fileName, cb) {
-      // find hash
-      var hash
-      try {
-        hash = metadata.sources[fileName].urls[0].match('bzzr://(.+)')[1]
-      } catch (e) {
-        return cb('Metadata inconsistency')
-      }
-
-      fileProviderOf(fileName).get(fileName, (error, content) => {
-        if (error) {
-          console.log(error)
-        } else {
-          sources.push({
-            content: content,
-            hash: hash
-          })
-        }
-        cb()
-      })
-    }, function () {
-      // publish the list of sources in order, fail if any failed
-      async.eachSeries(sources, function (item, cb) {
-        swarmVerifiedPublish(item.content, item.hash, cb)
-      }, cb)
-    })
-  }
-
-  udapp.event.register('publishContract', this, function (contract) {
-    publishOnSwarm(contract, function (err) {
-      if (err) {
-        modalDialogCustom.alert('Failed to publish metadata: ' + err)
-      } else {
-        modalDialogCustom.alert('Metadata published successfully')
-      }
-    })
-  })
-
-  // ---------------- Righthand-panel --------------------
-  var rhpAPI = {
-    config: config,
-    warnCompilerLoading: (msg) => {
-      renderer.clear()
-      if (msg) renderer.error(msg, $('#output'), {type: 'warning'})
+    compilationMessage: (message, container, options) => {
+      renderer.error(message, container, options)
     },
-    executionContextChange: (context) => {
-      return executionContext.executionContextChange(context)
+    currentCompiledSourceCode: () => {
+      if (compiler.lastCompilationResult.source) {
+        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
+      }
+      return ''
     },
-    executionContextProvider: () => {
-      return executionContext.getProvider()
-    },
-    packageFiles: (cb) => {
-      packageFiles(cb)
+    resetDapp: (contracts) => {
+      udapp.reset(contracts, transactionContextAPI)
     }
   }
   var rhpEvents = {
     compiler: compiler.event,
     app: self.event,
-    udapp: udapp.event
+    udapp: udapp.event,
+    editor: editor.event
   }
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, {})
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
