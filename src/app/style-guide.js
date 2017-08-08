@@ -7,9 +7,12 @@ function styleGuide () {
   COLORS
   -------------------------------------------------------------------------- */
   var colors = {
-    blue: '#9393bf',
+    transparent: 'transparent',
+    white: '#fff',
+    black: '#000',
+    blue: '#C6CFF7',
     lightBlue: '#F4F6FF',
-    greyBlue: '#102026',
+    greyBlue: '#999999',
     grey: '#666',
     lightGrey: '#dddddd',
     red: '#FF8080',
@@ -17,7 +20,8 @@ function styleGuide () {
     green: '#B1EAC5',
     violet: '#C6CFF7',
     pink: '#EC96EC',
-    yellow: '#ffbd01'
+    yellow: '#ffbd01',
+    lightYellow: 'hsla(59, 56%, 78%, 0.5)'
   }
 
   /* --------------------------------------------------------------------------
@@ -53,42 +57,49 @@ function styleGuide () {
                                 TEXT-BOXES
   -------------------------------------------------------------------------- */
   var textBoxes = csjs`
-    .display-box-L {
+    .display-box {
       font-size             : 1em;
-      padding               : 8px 15px;
+      padding               : 10px 15px;
       line-height           : 20px;
-      background            : #f8f8f8;
+      background            : ${colors.white};
       border-radius         : 3px;
-      border                : 1px solid #e5e5e5;
-      overflow-x            : auto;
+      border                : 1px solid ${colors.lightGrey};
+      overflow              : hidden;
+      word-break            : break-word;
       width                 : 100%;
     }
 
     .info-text-box {
       background-color      : white;
       line-height           : 20px;
-      border                : .2em dotted lightGrey;
+      border                : .2em dotted ${colors.lightGrey};
       padding               : 8px 15px;
       border-radius         : 5px;
       margin-bottom         : 1em;
+      overflow              : hidden;
+      word-break            : break-word;
     }
 
     .warning-text-box {
-      background-color      : hsla(59, 56%, 78%, 0.5);  // yellow
+      background-color      : hsla(59, 56%, 78%, 0.5);  // light yellow
       line-height           : 20px;
       padding               : 8px 15px;
       border-radius         : 5px;
-      border                : .2em dotted #ffbd01; // orange-yellow
+      border                : .2em dotted ${colors.yellow}; // orange-yellow
       margin-bottom         : 1em;
+      overflow              : hidden;
+      word-break            : break-word;
     }
 
     .error-text-box {
-      background-color      : #FFB9B9;  // light-red
+      background-color      : ${colors.lightRed};  // light-red
       line-height           : 20px;
       padding               : 1em 1em .5em 1em;
       border-radius         : 3px;
       box-shadow            : rgba(0,0,0,.2) 0 1px 4px;
       margin-bottom         : 1em;
+      overflow              : hidden;
+      word-break            : break-word;
     }
 
     .title-box {
@@ -101,6 +112,18 @@ function styleGuide () {
       word-wrap             : break-word;
       position              : relative;
       border-radius         : 3px;
+      overflow              : hidden;
+      word-break            : normal;
+    }
+    .input {
+      border                : 1px solid ${colors.lightGrey};  // light-grey
+      margin                : .3em;
+      height                : 25px;
+      font-size             : 10px;
+      border-radius         : 3px;
+      padding               : 0 8px;
+      overflow              : hidden;
+      word-break            : normal;
     }
   `
   /* --------------------------------------------------------------------------
@@ -110,43 +133,47 @@ function styleGuide () {
     .button {
       border-color            : transparent;
       border-radius           : 3px;
+      border                  : .3px solid ${colors.lightGrey};
       cursor                  : pointer;
-      padding                 : .3em;
+      min-height              : 25px;
+      max-height              : 25px;
+      padding                 : 3px;
+      min-width               : 100px;
+      font-size               : 12px;
+      overflow              : hidden;
+      word-break            : normal;
+      background-color      : #E8E8E8;
     }
 
     .button:hover {
       opacity                 : 0.8;
     }
 
-    .dropdown-menu {
-      font-size               : 1em;
+    .dropdown {
+      font-size               : 10px;
+      padding                 : 0 8px;
       text-decoration         : none;
-      background-color        : #C6CFF7;
+      background-color        : ${colors.white};
       cursor                  : pointer;
-      font-size               : 12px;
-      border                  : none;
-      height                  : 20px;
+      border                  : 1px solid ${colors.lightGrey};
+      border-radius           : 3px;
+      height                  : 30px;
+      text-align              : center;
+      overflow              : hidden;
+      word-break            : normal;
     }
 
   `
 
-  /* --------------------------------------------------------------------------
-                                INPUT FIELDS
-  -------------------------------------------------------------------------- */
-  /*
-  .input-field {
-    border                : 1px solid #f0f0f0;  // light-grey
-    padding               : .3em;
-    margin                : .3em;
-  }
-  */
   return {
     textBoxL: textBoxes['display-box-L'],
     infoTextBox: textBoxes['info-text-box'],
+    inputField: textBoxes['input'],
+    displayBox: textBoxes['display-box'],
     warningTextBox: textBoxes['warning-text-box'],
     titleL: texts['title-L'],
     titleM: texts['title-M'],
-    dropdown: buttons['dropdown-menu'],
+    dropdown: buttons['dropdown'],
     button: buttons['button'],
     colors: colors,
     titleBox: textBoxes['title-box']
