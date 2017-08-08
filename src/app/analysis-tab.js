@@ -8,7 +8,6 @@ var styles = styleGuide()
 var css = csjs`
   .analysisTabView {
     padding: 2%;
-    margin-top: 1em;
     padding-bottom: 3em;
   }
   .infoBox extends ${styles.infoTextBox} {
