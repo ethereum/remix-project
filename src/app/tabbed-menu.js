@@ -1,5 +1,4 @@
 var $ = require('jquery')
-var loadingSpinner = require('./loading-spinner')
 
 module.exports = tabbedMenu
 
@@ -14,23 +13,7 @@ function tabbedMenu (container, appAPI, events, opts) {
   })
 
   // initialize tabbed menu
-  selectTab(container.querySelector('.envView'))
-
-  // add event listeners for loading spinner
-  events.compiler.register('loadingCompiler', function start () {
-    var settingsTab = document.querySelector('.settingsView')
-    if (settingsTab.children.length) return
-
-    var spinner = loadingSpinner()
-    settingsTab.appendChild(spinner)
-
-    appAPI.warnCompilerLoading('Solidity compiler is currently loading. Please wait a moment...')
-    events.compiler.register('compilerLoaded', finish)
-    function finish () {
-      events.compiler.unregister('compilerLoaded', finish)
-      settingsTab.removeChild(spinner)
-    }
-  })
+  selectTab(container.querySelector('.compileView'))
 
   // select tab
   function selectTab (el) {
