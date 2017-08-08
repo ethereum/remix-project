@@ -99,9 +99,7 @@ function RighthandPanel (appAPI, events, opts) {
     ;[...options.children].forEach((el) => { el.classList.add(css.options) })
 
     // ----------------- tabbed menu -----------------
-    var tabbedMenuAPI = {
-      warnCompilerLoading: appAPI.warnCompilerLoading
-    }
+    var tabbedMenuAPI = {}
     // load tabbed menu component
     var tabEvents = {compiler: events.compiler, app: events.app}
     tabbedMenu(options, tabbedMenuAPI, tabEvents, {})

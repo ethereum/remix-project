@@ -5,12 +5,26 @@ var $ = require('jquery')
 var utils = require('../utils')
 var csjs = require('csjs-inject')
 
+var styleGuide = require('../style-guide')
+var styles = styleGuide()
+
 var css = csjs`
   .analysis {
     font-height: 1.5em;
   }
   .result {
-    margin-top: 1em;
+    margin-top: 1%;
+  }
+  .buttons extends ${styles.displayBox} {
+    display: flex;
+    align-items: center;
+  }
+  .buttonRun extends ${styles.button} {
+    background-color: ${styles.colors.blue};
+    margin-right: 1%;
+  }
+  .analysisModulesContainer extends ${styles.displayBox} {
+    margin-bottom: 1%;
   }
 `
 
@@ -37,13 +51,12 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`
     <div class="${css.analysis}">
-      <strong class="${css.title}">Static Analysis</strong><br>
-      <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
       <div id="staticanalysismodules">
-      ${this.modulesView}
+        ${this.modulesView}
       </div>
-      <div>
-        <button onclick=${function () { self.run() }} >Run</button>
+      <div class="${css.buttons}">
+        <button class=${css.buttonRun} onclick=${function () { self.run() }} >Run</button>
+        <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
       </div>
       <div class="${css.result}" "id='staticanalysisresult'></div>
     </div>
@@ -93,10 +106,10 @@ staticAnalysisView.prototype.run = function () {
         })
       })
       if (warningContainer.html() === '') {
-        $('#header #menu .staticanalysisView').css('color', '')
+        $('#righthand-panel #menu .staticanalysisView').css('color', '')
         warningContainer.html('No warning to report')
       } else {
-        $('#header #menu .staticanalysisView').css('color', '#FF8B8B')
+        $('#righthand-panel #menu .staticanalysisView').css('color', '#FF8B8B')
       }
     })
   } else {
@@ -123,8 +136,7 @@ function renderModules (modules) {
         </label>
             `
     })
-    return yo`<div>
-                <br>
+    return yo`<div class="${css.analysisModulesContainer}">
                 <label>
                 <b>${category[0].categoryDisplayName}</b>
                 </label>

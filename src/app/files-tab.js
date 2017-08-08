@@ -14,12 +14,18 @@ var css = csjs`
   .filesTabView {
     padding: 2%;
   }
-  .crow {
-    margin-top: 1em;
+  .crow extends ${styles.displayBox} {
+    margin-bottom: 1%;
     display: flex;
+    flex-wrap: wrap;
   }
   .infoBox extends ${styles.infoTextBox} {
     margin-top: 2em;
+  }
+  .button extends ${styles.button} {
+    background-color: ${styles.colors.blue};
+    margin-bottom: .5em;
+    margin-right: 1em;
   }
 `
 
@@ -29,14 +35,15 @@ function filesTab (container, appAPI, events, opts) {
   var el = yo`
     <div class="${css.filesTabView}" id="publishView">
       <div class="${css.crow}">
-        <button id="gist" title="Publish all files as public gist on github.com">
+        <button class="${css.button}" id="gist" title="Publish all files as public gist on github.com">
           <i class="fa fa-github"></i>
           Publish Gist
         </button>
         Publish all open files to an anonymous github gist.<br>
       </div>
       <div class="${css.crow}">
-        <button id="copyOver" title="Copy all files to another instance of browser-solidity.">
+        <button class="${css.button}" id="copyOver" title="Copy all files to another instance of browser-solidity.">
+          <i class="fa fa-files-o" aria-hidden="true"></i>
           Copy files
         </button>
         Copy all files to another instance of Browser-solidity.
