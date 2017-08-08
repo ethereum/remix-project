@@ -6,7 +6,7 @@ const copy = require('clipboard-copy')
 
 var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
-var modalDialog = require('../modaldialog')
+var modalDialog = require('../ui/modaldialog')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')

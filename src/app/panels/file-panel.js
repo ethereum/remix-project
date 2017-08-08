@@ -4,8 +4,8 @@ var yo = require('yo-yo')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 var FileExplorer = require('../file-explorer')
-var modalDialog = require('../modaldialog')
-var modalDialogCustom = require('../modal-dialog-custom')
+var modalDialog = require('../ui/modaldialog')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 module.exports = filepanel
 

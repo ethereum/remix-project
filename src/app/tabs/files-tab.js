@@ -1,7 +1,7 @@
 /* global confirm, prompt */
 var yo = require('yo-yo')
 var $ = require('jquery')
-var modalDialogCustom = require('../modal-dialog-custom')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 
