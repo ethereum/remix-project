@@ -2,7 +2,7 @@
 
 var $ = require('jquery')
 
-var utils = require('../utils')
+var utils = require('../../lib/utils')
 
 /**
  * After refactor, the renderer is only used to render error/warning

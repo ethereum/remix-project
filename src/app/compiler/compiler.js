@@ -4,7 +4,7 @@ var solc = require('solc/wrapper')
 var solcABI = require('solc/abi')
 
 var webworkify = require('webworkify')
-var utils = require('../utils')
+var utils = require('../../lib/utils')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
