@@ -20,7 +20,7 @@ const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./app/style-guide')
+var styleGuide = require('./app/ui/style-guide')
 var styles = styleGuide()
 
 var css = csjs`
