@@ -93,19 +93,6 @@
 	display: none;
 }
 
-.udapp-close:before {
-	position: absolute;
-	font-family: monospace;
-	top: .4em;
-	right: .4em;
-	width: 1.5em;
-	height: 1.5em;
-	text-align: center;
-	content: "x";
-	cursor: pointer;
-	z-index: 9999;
-}
-
 .udapp .instance {
 	padding: 0.4em;
 	background-color: rgb(244, 246, 255);
@@ -144,7 +131,7 @@
 	content: "\25B6";
 }
 
-.udapp .contractProperty {
+#runTabView .contractProperty {
 	overflow: auto;
 	margin-bottom: 0.4em;
 }
@@ -187,69 +174,84 @@
 
 .udapp .instance input,
 .udapp .instance button {
-	width: 50%;
+	width: 25%;
 	float: left;
 	box-sizing: border-box;
 }
 
-.udapp .contractProperty.hasArgs input {
+#runTabView .contractProperty.hasArgs input {
 	width: 75%;
+	padding: .36em;
 }
-.udapp .contractProperty button {
-	width: 25%;
+#runTabView .contractProperty button {
+	border-radius           : 3px;
+	border                  : .3px solid #dddddd;
+	cursor                  : pointer;
+	min-height              : 25px;
+	max-height              : 25px;
+	padding                 : 3px;
+	min-width               : 100px;
+	width                   : 25%;
+	font-size               : 10px;
 }
 
-.udapp .contractProperty button.debug {
+#runTabView .contractProperty button.debug {
 	width: 12em;
 }
 
-.udapp .contractProperty button:disabled {
+#runTabView .contractProperty button:disabled {
 	cursor: not-allowed;
 	background-color: white;
 	border-color: lightgray;
 }
 
-.udapp .contractProperty .call {
+#runTabView .contractProperty .call {
 	background-color: #FFB9B9;
 	border-color: #FFB9B9;
 }
 
-.udapp .contractProperty .debug {
+#runTabView .contractProperty .debug {
 	background-color: #9DC1F5;
 	border-color: #9DC1F5;
 }
 
-.udapp .contractProperty.constant .call {
+#runTabView .contractProperty.constant .call {
 	background-color: #9DC1F5;
 	border-color: #9DC1F5;
 	width: 25%;
+	font-style: italic;
+	outline: none;
 }
 
-.udapp .contractProperty.payable .call {
+#runTabView .contractProperty.payable .call {
 	background-color: #FF8B8B;
 	border-color: #FF8B8B;
 	width: 25%;
 }
 
-.udapp .contractProperty input {
+#runTabView .contractProperty input {
 	display: none;
 }
 
-.udapp .contractProperty > .value {
+#runTabView .contractProperty > .value {
 	padding: 0 0.4em;
 	box-sizing: border-box;
-	width: 75%;
+	width: 25%;
 	float: left;
 	word-wrap: break-word;
 }
 
-.udapp .contractProperty.hasArgs input {
+#runTabView .contractProperty.hasArgs input {
 	display: block;
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
+	border: 1px solid #dddddd;
+	padding: .36em;
+	border-left: none;
+	padding: 8px 8px 8px 10px;
+	font-size: 10px;
+	height: 25px;
 }
 
-.udapp .contractProperty.hasArgs button {
+#runTabView .contractProperty.hasArgs button {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 	border-right: 0;
@@ -275,56 +277,4 @@
 
 .udapp .events .event .name {
 	margin-right: 0.5em;
-}
-
-.udapp .legend {
-	background-color: white;
-	line-height: 20px;
-	border: .2em dotted lightGrey;
-	padding: 8px 15px;
-	border-radius: 5px;
-	margin-bottom: 1em;
-	display: flex;
-	justify-content: initial;
-	flex-wrap: wrap;
-}
-
-.udapp .legend div {
-	display: inline-block;
-	margin-right: 0.5em;
-	display: flex;
-	align-items: center;
-	line-height: 0px;
-	padding: 5px;
-}
-
-.udapp .legend div:before {
-	content: ".";
-	color: transparent;
-	display: inline-block;
-	background-color: #ccc;
-	height: 1em;
-	margin-right: 0.5em;
-	width: 1em;
-	border-radius: 50%;
-}
-
-.udapp .legend .publish:before {
-	background-color: #EC96EC;
-}
-
-.udapp .legend .attach:before {
-	background-color: #B1EAC5;
-}
-
-.udapp .legend .transact:before {
-	background-color: #FFB9B9;
-}
-
-.udapp .legend .payable:before {
-	background-color: #FF8B8B;
-}
-
-.udapp .legend .call:before {
-	background-color: #9DC1F5;
 }

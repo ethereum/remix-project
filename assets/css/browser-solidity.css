@@ -42,27 +42,37 @@
     display: inline-block;
 }
 
-#header {
-    font-size: 13px;
-    height: 100%;
+#righthand-panel {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-#header #solIcon {
+#righthand-panel {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+}
+
+#righthand-panel #solIcon {
     float: right;
     height: 90%;
     background-color: white;
     padding-right: 1%;
 }
 
-#header #menu {
+#righthand-panel #menu {
     border-bottom: 3px solid #F4F6FF;
     height: 2em;
     font-size: 1em;
     padding-top: 0.5em;
     box-sizing: content-box;
+    display: flex;
 }
 
-#header #options {
+#righthand-panel #options {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -70,55 +80,58 @@
     justify-content: space-between;
 }
 
-#header #options li.active {
+#righthand-panel #options li.active {
     background-color: #F4F6FF;
 }
 
-#header #options li a {
+#righthand-panel #options li a {
     color: inherit;
 }
 
-#header #optionViews {
-    clear: both;
-    overflow: auto;
+#righthand-panel #optionViews {
     background-color: #F4F6FF;
+    overflow: scroll;
     height: 100%;
 }
 
-#header #optionViews > div {
+#righthand-panel #optionViews > div {
     display: none;
 }
 
-#header #optionViews.txView #txView {
+#righthand-panel #optionViews.txView #txView {
     display: block;
 }
 
-#header #optionViews.settingsView #settingsView {
+#righthand-panel #optionViews.settingsView #settingsView {
     display: block;
 }
 
-#header #optionViews.publishView #publishView {
+#righthand-panel #optionViews.publishView #publishView {
     display: block;
 }
 
-#header #optionViews.envView #envView {
+#righthand-panel #optionViews.compileView #compileTabView {
     display: block;
 }
 
-#header #optionViews.debugView #debugView {
+#righthand-panel #optionViews.runView #runTabView {
     display: block;
 }
 
-#header #optionViews.verificationView #verificationView {
+#righthand-panel #optionViews.debugView #debugView {
     display: block;
 }
 
-#header #optionViews.staticanalysisView #staticanalysisView {
+#righthand-panel #optionViews.verificationView #verificationView {
     display: block;
 }
 
-#header #optionViews.txView input,
-#header #optionViews.txView select {
+#righthand-panel #optionViews.staticanalysisView #staticanalysisView {
+    display: block;
+}
+
+#righthand-panel #optionViews.txView input,
+#righthand-panel #optionViews.txView select {
     max-width: 13em;
     padding: 0.3em;
     box-sizing: border-box;
@@ -126,7 +139,7 @@
     border-radius: 3px;
 }
 
-#header #optionViews .pre {
+#righthand-panel #optionViews .pre {
     word-wrap: break-word;
     background-color: rgba(255, 255, 255, 0.5);
     font-family: monospace;
@@ -135,11 +148,11 @@
     padding: 0 0.6em;
 }
 
-#header #optionViews .hide {
+#righthand-panel #optionViews .hide {
     display: none;
 }
 
-#header .info {
+#righthand-panel .info {
     font-family: monospace;
     min-height: 6em;
     padding: 0.25em 0;
@@ -151,31 +164,6 @@
     font-size: 12px;
     padding: 0.25em;
     margin: 3em 1em .5em 0;
-    color: black;
-    border:0 none;
-    border-radius: 3px;
-    width: 8em;
-    cursor: pointer;
-}
-
-#publishView button {
-    background-color: #C6CFF7;
-    font-size: 12px;
-    margin-bottom: .5em;
-    color: black;
-    border:0 none;
-    border-radius: 3px;
-    width: 8em;
-    height: 20px;
-    margin-right: 1em;
-    cursor: pointer;
-}
-
-#staticanalysisView button {
-    background-color: #C6CFF7;
-    font-size: 12px;
-    padding: 0.25em;
-    margin: 2em 1em .5em 0;
     color: black;
     border:0 none;
     border-radius: 3px;
@@ -207,7 +195,7 @@
     font-weight: bold;
 }
 
-#header #versionSelector {
+#righthand-panel #versionSelector {
     text-decoration: none;
     background-color: #C6CFF7;
     cursor: pointer;
@@ -269,6 +257,7 @@
     margin-bottom: 1em;
 }
 
+.sol.success,
 .sol.error,
 .sol.warning {
     word-wrap: break-word;
@@ -280,6 +269,7 @@
     padding: 8px 15px;
 }
 
+.sol.success pre,
 .sol.error pre,
 .sol.warning pre {
     background-color: transparent;
@@ -290,6 +280,7 @@
     border-radius: 0;
 }
 
+.sol.success .close,
 .sol.error .close,
 .sol.warning .close {
     font-weight: bold;
@@ -308,6 +299,22 @@
 .sol.warning {
     background-color: hsla(59, 56%, 78%, 0.5);
     border: .2em dotted #ffbd01;
+}
+
+.sol.success {
+    background-color: hsla(59, 56%, 78%, 0.5);
+    border: .2em dotted green;
+}
+
+#ghostbar {
+    width: 1px;
+    background-color: red;
+    opacity: 0.5;
+    position: absolute;
+    cursor: col-resize;
+    z-index: 9999;
+    top: 0;
+    bottom: 0;
 }
 
 input[readonly] {
@@ -355,8 +362,13 @@ input[type="file"] {
 /* Modal Header */
 .modal-header {
     padding: 2px 16px;
-    background-color: orange;
+    background-color: hsla(59, 56%, 78%, 0.5);
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
     color: white;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
 }
 
 /* Modal Body */
@@ -365,8 +377,10 @@ input[type="file"] {
 /* Modal Footer */
 .modal-footer {
     padding: 2px 16px;
-    background-color: orange;
-    color: white;
+    background-color: hsla(59, 56%, 78%, 0.5);
+    color: black;
+    display: flex;
+    justify-content: flex-end;
 }
 
 /* Modal Content */
@@ -375,13 +389,14 @@ input[type="file"] {
     background-color: #fefefe;
     margin: auto;
     padding: 0;
-    border: 1px solid #888;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
     width: 50%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
-    animation-duration: 0.4s
+    animation-duration: 0.4s;
 }
 
 #modal-footer-cancel {
@@ -395,7 +410,7 @@ input[type="file"] {
 
 /* Add Animation */
 @-webkit-keyframes animatetop {
-    from {top: -300px; opacity: 0} 
+    from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
 }
 
