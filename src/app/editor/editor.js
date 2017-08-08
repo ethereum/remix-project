@@ -5,7 +5,7 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
-require('../mode-solidity.js')
+require('./mode-solidity.js')
 
 var css = csjs`
   .ace-editor         {
