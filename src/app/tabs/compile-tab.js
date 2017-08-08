@@ -92,12 +92,17 @@ var css = csjs`
     min-width: 70px;
     margin-left: 2%;
   }
+  .log {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline
+  }
   .copyDetails {
-    margin-top: 5%;
-    font-size: 20px;
+    margin-left: 2%;
+    font-size: 14px;
     cursor: pointer;
     color: ${styles.colors.grey};
-    opacity: .5;
+    opacity: .3;
   }
   .copyDetails:hover {
     opacity: 1;
@@ -282,9 +287,13 @@ function compileTab (container, appAPI, appEvents, opts) {
     function details () {
       var select = el.querySelector('select')
       var contractName = select.children[select.selectedIndex].innerText
-      var details = JSON.stringify(contractsDetails[contractName], null, '\t')
-      var copyDetails = yo`<div class="${css.copyDetails}"><i title="Copy details" class="fa fa-clipboard" onclick=${() => { copy(details) }} aria-hidden="true"></i></div>`
-      var log = yo`<div><pre class="${css.detailsJSON}">${details} ${copyDetails}</pre></div>`
+      var details = contractsDetails[contractName]
+      var keys = Object.keys(contractsDetails[contractName])
+      var log = yo`<div class="${css.detailsJSON}"></div>`
+      keys.map(x => {
+        var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy details" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
+        log.appendChild(yo`<div class=${css.log}><pre>${x}: ${JSON.stringify(details[x], null, 4)}</pre>${copyDetails}</div>`)
+      })
       modalDialog(contractName, log, {label: 'OK'}, {label: ''})
     }
 
