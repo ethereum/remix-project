@@ -2,7 +2,7 @@
 var yo = require('yo-yo')
 var $ = require('jquery')
 var modalDialogCustom = require('../modal-dialog-custom')
-var QueryParams = require('../query-params')
+var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 
 // -------------- styling ----------------------
