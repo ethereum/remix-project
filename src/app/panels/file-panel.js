@@ -3,9 +3,9 @@ var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 
 var EventManager = require('ethereum-remix').lib.EventManager
-var FileExplorer = require('./file-explorer')
-var modalDialog = require('./modaldialog')
-var modalDialogCustom = require('./modal-dialog-custom')
+var FileExplorer = require('../file-explorer')
+var modalDialog = require('../modaldialog')
+var modalDialogCustom = require('../modal-dialog-custom')
 
 module.exports = filepanel
 
