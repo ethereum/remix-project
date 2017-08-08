@@ -31,8 +31,8 @@ var EditorPanel = require('./app/panels/editor-panel')
 var RighthandPanel = require('./app/panels/righthand-panel')
 var examples = require('./app/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
-var Txlistener = require('./app/txListener')
-var EventsDecoder = require('./app/eventsDecoder')
+var Txlistener = require('./app/execution/txListener')
+var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
 
 var css = csjs`
