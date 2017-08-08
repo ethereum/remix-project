@@ -1,6 +1,6 @@
 'use strict'
 
-var examples = require('../../src/app/example-contracts')
+var examples = require('../../src/app/editor/example-contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
