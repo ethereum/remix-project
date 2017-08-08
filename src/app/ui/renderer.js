@@ -26,7 +26,7 @@ Renderer.prototype.error = function (message, container, options) {
   } else {
     $pre = $(opt.useSpan ? '<span />' : '<pre />').text(message)
   }
-  var $error = $('<div class="sol ' + opt.type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre)  
+  var $error = $('<div class="sol ' + opt.type + '"><div class="close"><i class="fa fa-close"></i></div></div>').prepend($pre)
   container.append($error)
   var err = message.match(/^([^:]*):([0-9]*):(([0-9]*):)? /)
   if (err) {
