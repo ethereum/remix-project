@@ -2,7 +2,7 @@ var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../ui/style-guide')
+var styleGuide = require('../../style-guide')
 var styles = styleGuide()
 
 var css = csjs`
