@@ -60,7 +60,8 @@
     float: right;
     height: 90%;
     background-color: white;
-    padding-right: 1%;
+    padding-right: 5%;
+    padding-left: 5%;
 }
 
 #righthand-panel #menu {
