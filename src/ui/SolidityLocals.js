@@ -23,49 +23,57 @@ class SolidityLocals {
 
   render () {
     this.view = yo`<div id='soliditylocals' >
-    <div id='warning'></div>
     ${this.basicPanel.render()}
     </div>`
     return this.view
   }
 
   init () {
+    var decodeTimeout = null
     this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
-      var warningDiv = this.view.querySelector('#warning')
-      warningDiv.innerHTML = ''
+      this.basicPanel.setMessage('')
       if (!this.storageResolver) {
-        warningDiv.innerHTML = 'storage not ready'
+        this.basicPanel.setMessage('storage not ready')
         return
       }
-      this.traceManager.waterfall([
-        this.traceManager.getStackAt,
-        this.traceManager.getMemoryAt,
-        this.traceManager.getCurrentCalledAddressAt],
-        this.parent.currentStepIndex,
-        (error, result) => {
-          if (!error) {
-            var stack = result[0].value
-            var memory = result[1].value
-            try {
-              var storageViewer = new StorageViewer({
-                stepIndex: this.parent.currentStepIndex,
-                tx: this.parent.tx,
-                address: result[2].value
-              }, this.storageResolver, this.traceManager)
-              localDecoder.solidityLocals(this.parent.currentStepIndex, this.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
-                if (!locals.error) {
-                  this.basicPanel.update(locals)
-                }
-              })
-            } catch (e) {
-              warningDiv.innerHTML = e.message
-            }
-          } else {
-            console.log(error)
-          }
-        })
+      if (decodeTimeout) {
+        window.clearTimeout(decodeTimeout)
+      }
+      this.basicPanel.setLoading()
+      decodeTimeout = setTimeout(() => {
+        decode(this, sourceLocation)
+      }, 500)
     })
   }
 }
 
+function decode (self, sourceLocation) {
+  self.traceManager.waterfall([
+    self.traceManager.getStackAt,
+    self.traceManager.getMemoryAt,
+    self.traceManager.getCurrentCalledAddressAt],
+    self.parent.currentStepIndex,
+    (error, result) => {
+      if (!error) {
+        var stack = result[0].value
+        var memory = result[1].value
+        try {
+          var storageViewer = new StorageViewer({
+            stepIndex: self.parent.currentStepIndex,
+            tx: self.parent.tx,
+            address: result[2].value
+          }, self.storageResolver, self.traceManager)
+          localDecoder.solidityLocals(self.parent.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
+            if (!locals.error) {
+              self.basicPanel.update(locals)
+            }
+          })
+        } catch (e) {
+          self.basicPanel.setMessage(e.message)
+        }
+      } else {
+        console.log(error)
+      }
+    })
+}
 module.exports = SolidityLocals

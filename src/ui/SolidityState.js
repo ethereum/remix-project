@@ -24,54 +24,63 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
 }
 
 SolidityState.prototype.render = function () {
-  this.view = yo`<div id='soliditystate' >
-      <div id='warning'></div>
+  if (!this.view) {
+    this.view = yo`<div id='soliditystate' >
       ${this.basicPanel.render()}
     </div>`
+  }
   return this.view
 }
 
 SolidityState.prototype.init = function () {
   var self = this
+  var decodeTimeout = null
   this.parent.event.register('indexChanged', this, function (index) {
-    var warningDiv = this.view.querySelector('#warning')
-    warningDiv.innerHTML = ''
+    self.basicPanel.setMessage('')
     if (index < 0) {
-      warningDiv.innerHTML = 'invalid step index'
+      self.basicPanel.setMessage('invalid step index')
       return
     }
 
     if (self.parent.currentStepIndex !== index) return
-    if (!this.solidityProxy.loaded()) {
-      warningDiv.innerHTML = 'no source has been specified'
+    if (!self.solidityProxy.loaded()) {
+      self.basicPanel.setMessage('no source has been specified')
       return
     }
 
     if (!self.storageResolver) {
-      warningDiv.innerHTML = 'storage not ready'
       return
     }
+    if (decodeTimeout) {
+      window.clearTimeout(decodeTimeout)
+    }
+    self.basicPanel.setLoading()
+    decodeTimeout = setTimeout(() => {
+      decode(self, index)
+    }, 500)
+  })
+}
 
-    self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, address) => {
-      if (error) {
-        self.basicPanel.update({})
-        console.log(error)
+function decode (self, index) {
+  self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, address) => {
+    if (error) {
+      self.basicPanel.update({})
+      console.log(error)
+    } else {
+      if (self.stateVariablesByAddresses[address]) {
+        extractStateVariables(self, self.stateVariablesByAddresses[address], address)
       } else {
-        if (self.stateVariablesByAddresses[address]) {
-          extractStateVariables(self, self.stateVariablesByAddresses[address], address)
-        } else {
-          self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
-            if (error) {
-              self.basicPanel.update({})
-              console.log(error)
-            } else {
-              self.stateVariablesByAddresses[address] = stateVars
-              extractStateVariables(self, stateVars, address)
-            }
-          })
-        }
+        self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
+          if (error) {
+            self.basicPanel.update({})
+            console.log(error)
+          } else {
+            self.stateVariablesByAddresses[address] = stateVars
+            extractStateVariables(self, stateVars, address)
+          }
+        })
       }
-    })
+    }
   })
 }
 
@@ -82,8 +91,11 @@ function extractStateVariables (self, stateVars, address) {
     address: address
   }, self.storageResolver, self.traceManager)
   stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
+    self.basicPanel.setMessage('')
     if (!result.error) {
       self.basicPanel.update(result)
+    } else {
+      self.basicPanel.setMessage(result.error)
     }
   })
 }
