@@ -15,7 +15,7 @@ var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 var QueryParams = require('./app/query-params')
-var GistHandler = require('./app/gist-handler')
+var GistHandler = require('./lib/gist-handler')
 var Storage = require('./app/files/storage')
 var Browserfiles = require('./app/files/browser-files')
 var SharedFolder = require('./app/files/shared-folder')
