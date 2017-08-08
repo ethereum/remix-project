@@ -65,7 +65,7 @@
   "standard": {
     "ignore": [
       "build/",
-      "src/mode-solidity.js",
+      "src/app/editor/mode-solidity.js",
       "soljson.js"
     ],
     "parser": "babel-eslint"
