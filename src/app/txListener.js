@@ -5,7 +5,6 @@ var ethJSUtil = require('ethereumjs-util')
 var EventManager = require('ethereum-remix').lib.EventManager
 var remix = require('ethereum-remix')
 var codeUtil = remix.util.code
-var Web3VMProvider = remix.web3.web3VMProvider
 
 /**
   * poll web3 each 2s if web3
@@ -18,8 +17,6 @@ class TxListener {
   constructor (opt) {
     this.event = new EventManager()
     this._api = opt.api
-    this._web3VMProvider = new Web3VMProvider() // TODO this should maybe be put in app.js
-    this._web3VMProvider.setVM(opt.api.vm())
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
     this.init()
@@ -30,7 +27,7 @@ class TxListener {
     })
     opt.event.udapp.register('transactionExecuted', (to, data, lookupOnly, txResult) => {
       if (this.loopId && this._api.isVM()) {
-        this._web3VMProvider.getTransaction(txResult.transactionHash, (error, tx) => {
+        this._api.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
           if (error) return console.log(error)
           this._newBlock({
             type: 'VM',
@@ -64,6 +61,7 @@ class TxListener {
     } else {
       this.loopId = setInterval(() => {
         this._api.web3().eth.getBlockNumber((error, blockNumber) => {
+          if (this.loopId === null || this.loopId === 'vm-listener') return
           if (error) return console.log(error)
           if (!this.lastBlock || blockNumber > this.lastBlock) {
             this.lastBlock = blockNumber
@@ -76,10 +74,6 @@ class TxListener {
         })
       }, 2)
     }
-  }
-
-  currentWeb3 () { // TODO this should maybe be put in app.js
-    return this._api.isVM() ? this._web3VMProvider : this._api.web3()
   }
 
   /**
@@ -124,7 +118,9 @@ class TxListener {
 
   _resolve (block, callback) {
     async.each(block.transactions, (tx, cb) => {
-      this._resolveTx(tx, () => {
+      this._resolveTx(tx, (error, resolvedData) => {
+        if (error) cb(error)
+        if (resolvedData) this.event.trigger('txResolved', [tx, resolvedData])
         this.event.trigger('newTransaction', [tx])
         cb()
       })
@@ -144,14 +140,15 @@ class TxListener {
       var code = tx.input
       contractName = this._tryResolveContract(code, contracts, 'bytecode')
       if (contractName) {
-        this._resolveCreationAddress(tx, (error, address) => {
+        this._api.resolveReceipt(tx, (error, receipt) => {
           if (error) return cb(error)
+          var address = receipt.contractAddress
           this._resolvedContracts[address] = contractName
-          this._resolveFunction(contractName, contracts, tx, true)
+          var fun = this._resolveFunction(contractName, contracts, tx, true)
           if (this._resolvedTransactions[tx.hash]) {
             this._resolvedTransactions[tx.hash].contractAddress = address
           }
-          return cb()
+          return cb(null, {to: null, contractName: contractName, function: fun, creationAddress: address})
         })
         return
       }
@@ -160,13 +157,14 @@ class TxListener {
       // first check known contract, resolve against the `runtimeBytecode` if not known
       contractName = this._resolvedContracts[tx.to]
       if (!contractName) {
-        this.currentWeb3().eth.getCode(tx.to, (error, code) => {
+        this._api.web3().eth.getCode(tx.to, (error, code) => {
           if (error) return cb(error)
           if (code) {
             var contractName = this._tryResolveContract(code, contracts, 'runtimeBytecode')
             if (contractName) {
               this._resolvedContracts[tx.to] = contractName
-              this._resolveFunction(contractName, contracts, tx, false)
+              var fun = this._resolveFunction(contractName, contracts, tx, false)
+              return cb(null, {to: tx.to, contractName: contractName, function: fun})
             }
           }
           return cb()
@@ -174,20 +172,11 @@ class TxListener {
         return
       }
       if (contractName) {
-        this._resolveFunction(contractName, contracts, tx, false)
+        var fun = this._resolveFunction(contractName, contracts, tx, false)
+        return cb(null, {to: tx.to, contractName: contractName, function: fun})
       }
       return cb()
     }
-  }
-
-  _resolveCreationAddress (tx, cb) {
-    this.currentWeb3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
-      if (!error) {
-        cb(null, receipt.contractAddress)
-      } else {
-        cb(error)
-      }
-    })
   }
 
   _resolveFunction (contractName, compiledContracts, tx, isCtor) {
@@ -222,6 +211,7 @@ class TxListener {
         params: params
       }
     }
+    return this._resolvedTransactions[tx.hash]
   }
 
   _tryResolveContract (codeToResolve, compiledContracts, type) {
