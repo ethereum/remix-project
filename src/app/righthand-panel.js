@@ -1,22 +1,28 @@
-var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var EventManager = require('ethereum-remix').lib.EventManager
 var tabbedMenu = require('./tabbed-menu')
+var compileTab = require('./compile-tab')
+var runTab = require('./run-tab')
 var settingsTab = require('./settings-tab')
 var analysisTab = require('./analysis-tab')
 var debuggerTab = require('./debugger-tab')
 var filesTab = require('./files-tab')
 
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var styleGuide = require('./style-guide')
+var styles = styleGuide()
+
 var css = csjs`
   .options {
       float: left;
-      padding: 0.7em 0.3em;
-      min-width: 65px;
+      padding-top: 0.7em;
+      min-width: 60px;
       font-size: 0.9em;
       cursor: pointer;
-      background-color: transparent;
-      margin-right: 0.5em;
+      background-color: ${styles.colors.transparent};
       font-size: 1em;
+      text-align: center;
   }
   .dragbar             {
     position           : absolute;
@@ -40,6 +46,9 @@ var css = csjs`
   .panel              {
     height            : 100%;  
   }
+  .header             {
+    height            : 100%;
+  }
 `
 
 // ------------------------------------------------------------------
@@ -55,7 +64,8 @@ function RighthandPanel (appAPI, events, opts) {
   var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
   var options = yo`
     <ul id="options">
-      <li class="envView" title="Environment">Contract</li>
+      <li class="compileView" title="Compile">Compile</li>
+      <li class="runView" title="Run">Run</li>
       <li class="settingsView" title="Settings">Settings</li>
       <li class="publishView" title="Publish" >Files</li>
       <li class="debugView" title="Debugger">Debugger</li>
@@ -67,7 +77,7 @@ function RighthandPanel (appAPI, events, opts) {
   self._view.element = yo`
     <div id="righthand-panel" class=${css.panel}>
       ${self._view.dragbar}
-      <div id="header">
+      <div id="header" class=${css.header}>
         <div id="menu">
           <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
           ${options}
@@ -76,6 +86,8 @@ function RighthandPanel (appAPI, events, opts) {
       </div>
     </div>
   `
+  compileTab(optionViews, appAPI, events, opts)
+  runTab(optionViews, appAPI, events, opts)
   settingsTab(optionViews, appAPI, events, opts)
   analysisTab(optionViews, appAPI, events, opts)
   debuggerTab(optionViews, appAPI, events, opts)
