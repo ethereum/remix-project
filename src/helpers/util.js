@@ -99,9 +99,9 @@ module.exports = {
     }
     var index = this.findLowerBound(target, array)
     if (index < 0) {
-      return array[0]
+      return 0
     } else if (index >= array.length - 1) {
-      return array[array.length - 1]
+      return array.length - 1
     } else {
       var middle = (array[index] + array[index + 1]) / 2
       return target <= middle ? index : index + 1
