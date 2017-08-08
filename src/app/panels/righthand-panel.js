@@ -1,6 +1,6 @@
 var yo = require('yo-yo')
 var EventManager = require('ethereum-remix').lib.EventManager
-var tabbedMenu = require('../tabbed-menu')
+var tabbedMenu = require('../tabs/tabbed-menu')
 var compileTab = require('../tabs/compile-tab')
 var runTab = require('../tabs/run-tab')
 var settingsTab = require('../tabs/settings-tab')
