@@ -10,7 +10,7 @@ var yo = require('yo-yo')
 var remix = require('ethereum-remix')
 var EventManager = remix.lib.EventManager
 
-var UniversalDApp = require('./universal-dapp.js')
+var UniversalDApp = require('./app/runtime/universal-dapp.js')
 var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 

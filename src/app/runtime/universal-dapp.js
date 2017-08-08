@@ -8,19 +8,19 @@ var BN = ethJSUtil.BN
 var EventManager = require('ethereum-remix').lib.EventManager
 var crypto = require('crypto')
 var async = require('async')
-var TxRunner = require('./app/execution/txRunner')
+var TxRunner = require('../execution/txRunner')
 var yo = require('yo-yo')
-var txFormat = require('./app/execution/txFormat')
-var txHelper = require('./app/execution/txHelper')
-var txExecution = require('./app/execution/txExecution')
-var helper = require('./lib/helper')
+var txFormat = require('../execution/txFormat')
+var txHelper = require('../execution/txHelper')
+var txExecution = require('../execution/txExecution')
+var helper = require('../../lib/helper')
 
 // copy to copyToClipboard
 const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./app/ui/style-guide')
+var styleGuide = require('../ui/style-guide')
 var styles = styleGuide()
 
 var css = csjs`
