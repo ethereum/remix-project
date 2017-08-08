@@ -16,7 +16,7 @@ var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
-var Storage = require('./app/files/storage')
+var Storage = require('./storage')
 var Browserfiles = require('./app/files/browser-files')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
