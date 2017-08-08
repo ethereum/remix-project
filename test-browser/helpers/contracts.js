@@ -6,12 +6,25 @@ module.exports = {
 }
 
 function checkCompiledContracts (browser, compiled, callback) {
-  browser.elements('css selector', '.udapp .title', function (elements) {
-    elements.value.map(function (item, i) {
-      browser.elementIdText(item.ELEMENT, function (text) {
-        browser.assert.equal(text.value.split('\n')[0], compiled[i])
+  browser.execute(function () {
+    var contracts = document.querySelectorAll('#compileTabView select option')
+    if (!contracts) {
+      return null
+    } else {
+      var ret = []
+      for (var c in contracts) {
+        ret.push(contracts[c].innerText)
+      }
+      return ret
+    }
+  }, [], function (result) {
+    if (!result.value) {
+      browser.end('no compiled contracts')
+    } else {
+      result.value.map(function (item, i) {
+        browser.assert.equal(item, compiled[i])
       })
-    })
+    }
     callback()
   })
 }
@@ -21,7 +34,7 @@ function testContracts (browser, contractCode, compiledContractNames, callback) 
       .clearValue('#input textarea')
       .click('.newFile')
       .setValue('#input textarea', contractCode, function () {})
-      .waitForElementPresent('.udapp .create', 50000, true, function () {
+      .waitForElementPresent('#compileTabView select option', 50000, true, function () {
         checkCompiledContracts(browser, compiledContractNames, callback)
       })
 }
