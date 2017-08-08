@@ -2,8 +2,8 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('ethereum-remix').ui.TreeView
-var modalDialog = require('./ui/modaldialog')
-var modalDialogCustom = require('./ui/modal-dialog-custom')
+var modalDialog = require('../ui/modaldialog')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
