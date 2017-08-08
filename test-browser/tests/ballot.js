@@ -26,7 +26,7 @@ module.exports = {
 function runTests (browser, testData) {
   browser
     .waitForElementVisible('.newFile', 10000)
-    .click('.envView')
+    .click('.compileView')
   contractHelper.testContracts(browser, sources.sources['browser/Untitled.sol'], ['browser/Untitled.sol:Ballot'], function () {
     browser.end()
   })
