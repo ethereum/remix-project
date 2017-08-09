@@ -24,7 +24,7 @@ var css = csjs`
   .chatTitle {
     cursor: pointer;
     height: 40px;
-    width: 92%;
+    width: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,12 +47,12 @@ var css = csjs`
     opacity: 0.8;
   }
   .chatIframe {
-    width: 102%;
-    height: 80%;
+    width: 100%;
+    height: 100%;
     border: 2px dotted ${styles.colors.lightGrey};
     overflow: hidden;
-    transform:
-      scale(0.9);
+    transform: scale(0.9);
+    margin-bottom: 10%;
   }
   .infoBox extends ${styles.infoTextBox}{
 
