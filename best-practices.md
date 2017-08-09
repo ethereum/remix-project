@@ -7,7 +7,8 @@
 - `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
 - `opts.events` contains events manager the module will listen on.
 - A module trigger events using `event` property:
-  `self.event = new EventManager()` . Events can then be triggered:
+  `self.event = new EventManager()`. 
+  Events can then be triggered:
   `self.event.trigger('eventName', [param1, param2])`
 - `self._view` is the HTML view renderered by `yo-yo` in the `render` function.
 - `render()` this function should be called:
