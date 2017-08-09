@@ -509,9 +509,8 @@ function run () {
         if (config.get('currentFile') !== this.source) {
           fileManager.switchFile(this.source)
         }
-        this.statementMarker = editor.addMarker(lineColumnPos, this.source, 'highlightcode')
-        editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
-
+        this.statementMarker = editor.addMarker(lineColumnPos, 'highlightcode')
+        editor.gotoLine(lineColumnPos.start.line, lineColumnPos.start.column)
         if (lineColumnPos.start.line === lineColumnPos.end.line) {
           this.fullLineMarker = editor.addMarker({
             start: {
