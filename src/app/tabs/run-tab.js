@@ -257,8 +257,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
       if (!error) {
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
-          // TODO here should send the result to the dom-console
-          console.log('Contract creation', error, txResult)
           var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (!init) {
             instanceContainer.innerHTML = ''
