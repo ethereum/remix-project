@@ -473,7 +473,12 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     },
     // run transaction
     function (callback) {
-      self.txRunner.rawRun(tx, function (error, result) { callback(error, result) })
+      self.txRunner.rawRun(tx, function (error, result) {
+        if (!args.useCall) {
+          self.event.trigger('transactionExecuted', [args.to, args.data, result])
+        }
+        callback(error, result)
+      })
     }
   ], cb)
 }

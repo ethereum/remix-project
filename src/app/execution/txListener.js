@@ -25,7 +25,7 @@ class TxListener {
         this.startListening(context)
       }
     })
-    opt.event.udapp.register('transactionExecuted', (to, data, lookupOnly, txResult) => {
+    opt.event.udapp.register('transactionExecuted', (to, data, txResult) => {
       if (this.loopId && this._api.isVM()) {
         this._api.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
           if (error) return console.log(error)
