@@ -1,29 +1,23 @@
 # Current "Best Practice" Conventions
-* look them up
-* discuss them
-* update them
 
 - `ES6 class` rather than ES5 to create class.
 - CSS declaration using `csjs-inject`.
 - HTML declaration using `yo-yo`.
+- `opt` is an input parameter, it contains the `api` and `event` object.
+- `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
+- `opts.events` contains events manager the module will listen on.
 - A module trigger events using `event` property:
   `self.event = new EventManager()` . Events can then be triggered:
   `self.event.trigger('eventName', [param1, param2])`
-- `opt` is an input parameter:
 
-  ```
-  {
-    api: { .. list of function needed by the module .. },    
-    events: { .. list of event manager the module will listen on .. }    
-  }
-  ```
-  
-- `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
 - `self._view` is the HTML view renderered by `yo-yo` in the `render` function
 - `render()` this function should be called:
-   At the first rendering (make sure that the returned node element is put on the DOM), 
-   When some property has changed in order to update the view
-    
+
+   * At the first rendering (make sure that the returned node element is put on the DOM), 
+   
+   * When some property has changed in order to update the view
+   
+- look them up, discuss them, update them
     
 ## Module Definition (example)
 ```js
