@@ -17,7 +17,7 @@
    
   * When some property has changed in order to update the view.
 - `self.state` contains state properties of the module. These properties are either given from the parent through `òpts` or     computed during the life of the object.
-- `update(state)` allow the parent to update some of the state properties.
+- `update(state)` allow the parent to easily update some of the state properties.
 - for all functions / properties, prefixing by underscore (`_`) means the scope is private.
 - look them up, discuss them, update them.
     
