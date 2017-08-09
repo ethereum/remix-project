@@ -3,6 +3,28 @@
 * discuss them
 * update them
 
+- `ES6 class` rather than ES5 to create class.
+- CSS declaration using `csjs-inject`.
+- HTML declaration using `yo-yo`.
+- A module trigger events using `event` property:
+  `self.event = new EventManager()` . Events can then be triggered:
+  `self.event.trigger('eventName', [param1, param2])`
+- `opt` is an input parameter:
+
+  ```
+  {
+    api: { .. list of function needed by the module .. },    
+    events: { .. list of event manager the module will listen on .. }    
+  }
+  ```
+  
+- `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
+- `self._view` is the HTML view renderered by `yo-yo` in the `render` function
+- `render()` this function should be called:
+   At the first rendering (make sure that the returned node element is put on the DOM), 
+   When some property has changed in order to update the view
+    
+    
 ## Module Definition (example)
 ```js
 // user-card.js
@@ -37,7 +59,7 @@ class UserCard {
       surname: opts.surname,
       totalSpend: 0,
       _nickname: opts.nickname,
-      _funds: self._appAPI.getUserFunds()
+      _funds: self._api.getUserFunds()
     }
     var events = opts.events
 
@@ -46,6 +68,7 @@ class UserCard {
       self.data._funds = amount
       self.render()
     })
+    self.event.trigger('eventName', [param1, param2])
   }
   render () {
     var self = this
