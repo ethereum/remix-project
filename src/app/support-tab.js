@@ -9,7 +9,6 @@ var css = csjs`
   .supportTabView {
     height: 100vh;
     padding: 2%;
-    margin-top: 1em;
     padding-bottom: 3em;
     display: flex;
     flex-direction: column;
@@ -19,7 +18,7 @@ var css = csjs`
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
+    height: 85%;
   }
   .chatTitle {
     cursor: pointer;
@@ -52,7 +51,6 @@ var css = csjs`
     border: 2px dotted ${styles.colors.lightGrey};
     overflow: hidden;
     transform: scale(0.9);
-    margin-bottom: 10%;
   }
   .infoBox extends ${styles.infoTextBox}{
 
