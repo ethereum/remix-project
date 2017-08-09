@@ -32,6 +32,7 @@ var RighthandPanel = require('./app/panels/righthand-panel')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var Txlistener = require('./app/execution/txListener')
+var txLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
 
@@ -812,33 +813,28 @@ function run () {
 
   txlistener.startListening()
 
-  txlistener.event.register('newTransaction', (tx) => {
-    var resolvedTransaction = txlistener.resolvedTransaction(tx.hash)
-    var address = null
-    if (resolvedTransaction) {
-      var resolvedContract
-      address = resolvedTransaction.contractAddress ? resolvedTransaction.contractAddress : tx.to
-      resolvedContract = txlistener.resolvedContract(address)
-      if (resolvedContract) {
-        eventsDecoder.parseLogs(tx, resolvedContract, compiledContracts(), (error, log) => {
-          console.log({
-            tx: tx,
-            resolvedTransaction: resolvedTransaction,
-            resolvedContract: resolvedContract,
-            resolvedEvents: (!error ? log : error)
-          })
-        })
-      } else {
-        console.log({
-          tx: tx,
-          resolvedTransaction: resolvedTransaction
-        })
+  txLogger({
+    api: {
+      /**
+        * log the given transaction.
+        *
+        * @param {Object} tx - DOM element representing the transaction
+        */
+      log: function (tx) {
+        // terminal.log(tx)
+      },
+      resolvedTransaction: function (hash) {
+        return txlistener.resolvedTransaction(hash)
+      },
+      parseLogs: function (tx, contractName, contracts, cb) {
+        eventsDecoder.parseLogs(tx, contractName, contracts, cb)
+      },
+      compiledContracts: function () {
+        return compiledContracts()
       }
-    } else {
-      // contract unknown - just displaying raw tx.
-      console.log({
-        tx: tx
-      })
+    },
+    events: {
+      txListener: txlistener.event
     }
   })
 
