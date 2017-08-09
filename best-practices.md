@@ -9,15 +9,16 @@
 - A module trigger events using `event` property:
   `self.event = new EventManager()` . Events can then be triggered:
   `self.event.trigger('eventName', [param1, param2])`
-
-- `self._view` is the HTML view renderered by `yo-yo` in the `render` function
+- `self._view` is the HTML view renderered by `yo-yo` in the `render` function.
 - `render()` this function should be called:
 
-   * At the first rendering (make sure that the returned node element is put on the DOM), 
+  * At the first rendering (make sure that the returned node element is put on the DOM).
    
-   * When some property has changed in order to update the view
-   
-- look them up, discuss them, update them
+  * When some property has changed in order to update the view.
+- `self.state` contains state properties of the module. These properties are either given from the parent through `òpts` or     computed during the life of the object.
+- `update(state)` allow the parent to update some of the state properties.
+- for all functions / properties, prefixing by underscore (`_`) means the scope is private.
+- look them up, discuss them, update them.
     
 ## Module Definition (example)
 ```js
@@ -47,7 +48,7 @@ class UserCard {
     self.event = new EventManager()
     self._api = opts.api
     self._view = undefined
-    self.data = {
+    self.state = {
       title: opts.title,
       name: opts.name,
       surname: opts.surname,
@@ -58,8 +59,8 @@ class UserCard {
     var events = opts.events
 
     events.funds.register('fundsChanged', function (amount) {
-      if (amount < self.data._funds) self.data.totalSpend += self.data._funds - amount
-      self.data._funds = amount
+      if (amount < self.state._funds) self.state.totalSpend += self.state._funds - amount
+      self.state._funds = amount
       self.render()
     })
     self.event.trigger('eventName', [param1, param2])
@@ -68,10 +69,10 @@ class UserCard {
     var self = this
     var el = yo`
       <div class=${css.userCard}>
-        <h1> @${self.data._nickname} </h1>
-        <h2> Welcome, ${self.data.title || ''} ${self.data.name || 'anonymous'} ${self.data.surname} </h2>
-        <ul> <li> User Funds: $${self.data._funds} </li> </ul>
-        <ul> <li> Spent Funds: $${self.data.totalSpend} </li> </ul>
+        <h1> @${self.state._nickname} </h1>
+        <h2> Welcome, ${self.state.title || ''} ${self.state.name || 'anonymous'} ${self.state.surname} </h2>
+        <ul> <li> User Funds: $${self.state._funds} </li> </ul>
+        <ul> <li> Spent Funds: $${self.state.totalSpend} </li> </ul>
         <button class=${css.clearFunds} onclick=${e=>self._spendAll.call(self, e)}> spend all funds </button>
       </div>
     `
@@ -79,21 +80,21 @@ class UserCard {
     else self._view = el
     return self._view
   }
-  update (data = {}) {
+  update (state = {}) {
     var self = this
     if (!self._view) self._constraint('first initialize view by calling `.render()`')
-    if (data.hasOwnProperty('title')) self.data.title = data.title
-    if (data.hasOwnProperty('name')) self.data.name = data.name
-    if (data.hasOwnProperty('surname')) self.data.surname = data.surname
+    if (state.hasOwnProperty('title')) self.state.title = state.title
+    if (state.hasOwnProperty('name')) self.state.name = state.name
+    if (state.hasOwnProperty('surname')) self.state.surname = state.surname
     self.render()
   }
   getNickname () {
     var self = this
-    return `@${self.data._nickname}`
+    return `@${self.state._nickname}`
   }
   getFullName () {
     var self = this
-    return `${self.data.title} ${self.data.name} ${self.data.surname}`
+    return `${self.state.title} ${self.state.name} ${self.state.surname}`
   }
   _spendAll (event) {
     var self = this
