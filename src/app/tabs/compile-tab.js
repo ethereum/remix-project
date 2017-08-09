@@ -286,27 +286,31 @@ function compileTab (container, appAPI, appEvents, opts) {
 
     function details () {
       var select = el.querySelector('select')
-      var contractName = select.children[select.selectedIndex].innerText
-      var details = contractsDetails[contractName]
-      var keys = Object.keys(contractsDetails[contractName])
-      var log = yo`<div class="${css.detailsJSON}"></div>`
-      keys.map(x => {
-        var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy details" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
-        log.appendChild(yo`<div class=${css.log}><pre>${x}: ${JSON.stringify(details[x], null, 4)}</pre>${copyDetails}</div>`)
-      })
-      modalDialog(contractName, log, {label: 'OK'}, {label: ''})
+      if (select.children.length > 0 && select.selectedIndex >= 0) {
+        var contractName = select.children[select.selectedIndex].innerText
+        var details = contractsDetails[contractName]
+        var keys = Object.keys(contractsDetails[contractName])
+        var log = yo`<div class="${css.detailsJSON}"></div>`
+        keys.map(x => {
+          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy details" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
+          log.appendChild(yo`<div class=${css.log}><pre>${x}: ${JSON.stringify(details[x], null, 4)}</pre>${copyDetails}</div>`)
+        })
+        modalDialog(contractName, log, {label: 'OK'}, {label: ''})
+      }
     }
 
     function publish (appAPI) {
       var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-      var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerText]
-      publishOnSwarm(contract, appAPI, function (err) {
-        if (err) {
-          alert('Failed to publish metadata: ' + err)
-        } else {
-          alert('Metadata published successfully')
-        }
-      })
+      if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
+        var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerText]
+        publishOnSwarm(contract, appAPI, function (err) {
+          if (err) {
+            alert('Failed to publish metadata: ' + err)
+          } else {
+            alert('Metadata published successfully')
+          }
+        })
+      }
     }
     return el
   }

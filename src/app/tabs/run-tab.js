@@ -231,7 +231,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 
   function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
-    if (appAPI.getContracts()) {
+    if (appAPI.getContracts() && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
       var contract = appAPI.getContracts()[selectContractNames.children[selectContractNames.selectedIndex].innerText]
       var ctrabi = txHelper.getConstructorInterface(contract.interface)
       if (ctrabi.inputs.length) {
