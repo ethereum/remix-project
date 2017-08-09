@@ -1,16 +1,16 @@
 var yo = require('yo-yo')
 var EventManager = require('ethereum-remix').lib.EventManager
-var tabbedMenu = require('./tabbed-menu')
-var compileTab = require('./compile-tab')
-var runTab = require('./run-tab')
-var settingsTab = require('./settings-tab')
-var analysisTab = require('./analysis-tab')
-var debuggerTab = require('./debugger-tab')
-var filesTab = require('./files-tab')
+var tabbedMenu = require('../tabs/tabbed-menu')
+var compileTab = require('../tabs/compile-tab')
+var runTab = require('../tabs/run-tab')
+var settingsTab = require('../tabs/settings-tab')
+var analysisTab = require('../tabs/analysis-tab')
+var debuggerTab = require('../tabs/debugger-tab')
+var filesTab = require('../tabs/files-tab')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
+var styleGuide = require('../../style-guide')
 var styles = styleGuide()
 
 var css = csjs`

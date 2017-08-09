@@ -2,10 +2,10 @@
 var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
 var yo = require('yo-yo')
 var $ = require('jquery')
-var utils = require('../utils')
+var utils = require('../../lib/utils')
 var csjs = require('csjs-inject')
 
-var styleGuide = require('../style-guide')
+var styleGuide = require('../../style-guide')
 var styles = styleGuide()
 
 var css = csjs`

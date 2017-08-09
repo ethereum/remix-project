@@ -1,6 +1,6 @@
 'use strict'
 var EventManager = require('ethereum-remix').lib.EventManager
-var modalDialog = require('../app/modaldialog')
+var modalDialog = require('../app/ui/modaldialog')
 var yo = require('yo-yo')
 
 class Remixd {

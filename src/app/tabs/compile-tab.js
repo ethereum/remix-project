@@ -4,13 +4,13 @@ var $ = require('jquery')
 var yo = require('yo-yo')
 const copy = require('clipboard-copy')
 
-var parseContracts = require('./contract/contractParser')
-var publishOnSwarm = require('./contract/publishOnSwarm')
-var modalDialog = require('./modaldialog')
+var parseContracts = require('../contract/contractParser')
+var publishOnSwarm = require('../contract/publishOnSwarm')
+var modalDialog = require('../ui/modaldialog')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
+var styleGuide = require('../../style-guide')
 var styles = styleGuide()
 
 var css = csjs`

@@ -1,7 +1,7 @@
 var test = require('tape')
 
 var common = require('../../src/app/staticanalysis/modules/staticAnalysisCommon')
-var utils = require('../../src/app/utils')
+var utils = require('../../src/lib/utils')
 
 test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
   t.plan(7)

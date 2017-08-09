@@ -1,13 +1,13 @@
 /* global confirm, prompt */
 var yo = require('yo-yo')
 var $ = require('jquery')
-var modalDialogCustom = require('./modal-dialog-custom')
-var QueryParams = require('./query-params')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
+var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
+var styleGuide = require('../../style-guide')
 var styles = styleGuide()
 
 var css = csjs`
