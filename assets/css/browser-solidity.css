@@ -307,8 +307,8 @@
 }
 
 .sol.success {
-    background-color: hsla(59, 56%, 78%, 0.5);
-    border: .2em dotted green;
+    background-color: hsla(141, 58%, 95%, 1);
+    border: .2em dotted hsla(141, 40%, 48%, 1);
 }
 
 #ghostbar {
