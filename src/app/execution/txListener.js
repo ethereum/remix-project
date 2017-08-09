@@ -186,6 +186,7 @@ class TxListener {
       for (var fn in compiledContracts[contractName].functionHashes) {
         if (compiledContracts[contractName].functionHashes[fn] === inputData.substring(0, 8)) {
           this._resolvedTransactions[tx.hash] = {
+            contractName: contractName,
             to: tx.to,
             fn: fn,
             params: this._decodeInputParams(inputData.substring(8), getFunction(abi, fn))
@@ -195,6 +196,7 @@ class TxListener {
       }
       // fallback function
       this._resolvedTransactions[tx.hash] = {
+        contractName: contractName,
         to: tx.to,
         fn: '(fallback)',
         params: null
@@ -206,6 +208,7 @@ class TxListener {
         params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
       }
       this._resolvedTransactions[tx.hash] = {
+        contractName: contractName,
         to: null,
         fn: '(constructor)',
         params: params
