@@ -18,9 +18,9 @@ Note: it contains the latest release of Solidity available at the time of the pa
 
 Install npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
-    * `git clone https://github.com/ethereum/browser-solidity`
-    * `cd browser-solidity`
-    * `npm install` - fetch dependencies & executes `npm run prepublish` to build the application
+* `git clone https://github.com/ethereum/browser-solidity`
+* `cd browser-solidity`
+* `npm install` - fetch dependencies & executes `npm run prepublish` to build the application
 
 ## DEVELOPING:
 
