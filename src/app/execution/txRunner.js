@@ -14,31 +14,17 @@ function TxRunner (executionContext, vmaccounts, opts) {
   if (this.executionContext.isVM()) {
     this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
   }
-  this.running = false
-  this.pendingTxs = []
+  this.pendingTxs = {}
   this.vmaccounts = vmaccounts
 }
 
 TxRunner.prototype.rawRun = function (args, cb) {
-  this.pendingTxs.push({tx: args, cb: cb})
-  this.execute()
+  run(this, args, Date.now(), cb)
 }
 
-TxRunner.prototype.execute = function () {
+TxRunner.prototype.execute = function (args, callback) {
   var self = this
-  if (this.running || this.pendingTxs.length === 0) {
-    return
-  }
-  var args = this.pendingTxs[0].tx
-  var cb = this.pendingTxs[0].cb
-  this.pendingTxs.shift()
-  var callback = function (error, result) {
-    cb(error, result)
-    self.running = false
-    self.execute()
-  }
 
-  this.running = true
   var from = args.from
   var to = args.to
   var data = args.data
@@ -150,6 +136,14 @@ function tryTillResponse (web3, txhash, done) {
         transactionHash: result.transactionHash
       })
     }
+  })
+}
+
+function run (self, tx, stamp, callback) {
+  self.pendingTxs[stamp] = tx
+  self.execute(tx, (error, result) => {
+    delete self.pendingTxs[stamp]
+    callback(error, result)
   })
 }
 
