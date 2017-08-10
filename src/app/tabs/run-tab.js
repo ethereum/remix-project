@@ -171,7 +171,10 @@ function runTab (container, appAPI, appEvents, opts) {
   })
   selectExEnv.value = appAPI.executionContextProvider()
   fillAccountsList(appAPI, el)
-  setInterval(() => { updateAccountBalances(container, appAPI) }, 1000)
+  setInterval(() => {
+    updateAccountBalances(container, appAPI)
+    updatePendingTxs(container, appAPI)
+  }, 500)
 }
 
 function fillAccountsList (appAPI, container) {
@@ -199,6 +202,10 @@ function updateAccountBalances (container, appAPI) {
       })
     })(index)
   })
+}
+
+function updatePendingTxs (container, appAPI) {
+  container.querySelector('#pendingtxs').innerText = Object.keys(appAPI.udapp().pendingTransactions()).length + ' pending'
 }
 
 /* ------------------------------------------------
@@ -371,9 +378,10 @@ function legend () {
   var el =
   yo`
     <div class="${css.legend}">
-      <div class="${css.item}"><i class="fa fa-circle ${css.transact}" aria-hidden="true"></i>Transact</div/>
-      <div class="${css.item}"><i class="fa fa-circle ${css.payable}" aria-hidden="true"></i>Transact(Payable)</div/>
-      <div class="${css.item}"><i class="fa fa-circle ${css.call}" aria-hidden="true"></i>Call</div/>
+      <div class="${css.item}"><i class="fa fa-circle ${css.call}" aria-hidden="true"></i>Call</div>
+      <div class="${css.item}"><i class="fa fa-circle ${css.transact}" aria-hidden="true"></i>Transact</div>
+      <div class="${css.item}"><i class="fa fa-circle ${css.payable}" aria-hidden="true"></i>Transact(Payable)</div>
+      <div class="${css.item}" id="pendingtxs"></div>
     </div>
   `
   return el
