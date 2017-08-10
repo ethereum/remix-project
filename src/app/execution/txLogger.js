@@ -1,5 +1,9 @@
 'use strict'
 
+/**
+  * This just export a function that register to `newTransaction` and forward them to the logger.
+  *
+  */
 module.exports = (opts = {}) => {
   opts.events.txListener.register('newTransaction', (tx) => {
     log(tx, opts.api)
