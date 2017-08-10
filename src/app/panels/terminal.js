@@ -1,5 +1,9 @@
+/* global Node */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
+var javascriptserialize = require('javascript-serialize')
+var jsbeautify = require('js-beautify')
+var type = require('component-type')
 var EventManager = require('ethereum-remix').lib.EventManager
 
 var css = csjs`
@@ -54,10 +58,10 @@ var css = csjs`
   .block              {
     word-break        : break-all;
     white-space       : pre-wrap;
-    line-height       : 1ch;
-    min-height        : 1ch;
+    line-height       : 2ch;
     width             : 80ch;
-    background-color  : darkblue;
+    background-color  : black;
+    margin            : 1ch;
   }
 
   .cli                {
@@ -73,6 +77,15 @@ var css = csjs`
     outline           : none;
     font-family       : monospace;
   }
+  .error              {
+    color             : red;
+  }
+  .info               {
+    color             : blue;
+  }
+  .log                {
+    color             : white;
+  }
   .ghostbar           {
     position          : absolute;
     height            : 6px;
@@ -85,17 +98,55 @@ var css = csjs`
   }
 `
 
+var currentError
+
+window.addEventListener('error', function (event) {
+  currentError = new Error(event.message)
+  currentError.timeStamp = event.timeStamp
+  currentError.isTrusted = event.isTrusted
+  currentError.filename = event.filename
+  currentError.lineno = event.lineno
+  currentError.colno = event.colno
+  currentError.error = event.error
+  currentError.type = event.type
+})
+
+window.onerror = function (msg, url, lineno, col, error) {
+  if (!error) error = currentError
+  var val = { msg: msg, url: url, lineno: lineno, col: col, error: error }
+  console.error(val)
+}
+
+var KONSOLES = []
+// var KONSOLES = [{
+//   error: console.error.bind(console),
+//   info: console.info.bind(console),
+//   log: console.log.bind(console)
+// }]
+// console.error = broadcast('error')
+// console.info = broadcast('info')
+// console.log = broadcast('log')
+//
+// function broadcast (mode) {
+//   return function broadcastMode () {
+//     var args = arguments
+//     KONSOLES.forEach(function (api) { api[mode].apply(api, args) })
+//   }
+// }
+
+function register (api) { KONSOLES.push(api) }
+
 var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
 class Terminal {
-  constructor (opts = {}) {
+  constructor (opts = { auto: true }) {
     var self = this
-
     self.data = {
+      lineLength: opts.lineLength || 80,
       session: [],
       banner: opts.banner || `
 /******************************************************************************
-
+                                              
   ...........................................
   .....................:.....................
   ....................o:;....................
@@ -121,8 +172,8 @@ class Terminal {
   ....................o:;....................
   .....................:.....................
   ...........................................
-
-
+                                              
+                                              
   ########  ######## ##     ## #### ##     ## 
   ##     ## ##       ###   ###  ##   ##   ##  
   ##     ## ##       #### ####  ##    ## ##   
@@ -130,12 +181,13 @@ class Terminal {
   ##   ##   ##       ##     ##  ##    ## ##   
   ##    ##  ##       ##     ##  ##   ##   ##  
   ##     ## ######## ##     ## #### ##     ## 
-
-
+                                              
+                                              
   welcome to browser solidity
-
+                                              
   new features:
     - dom terminal v0.0.1-alpha
+                                              
 ******************************************************************************/
 `
     }
@@ -143,6 +195,7 @@ class Terminal {
     self._api = opts.api
     self._view = { panel: null, bar: null, input: null, term: null, log: null, cli: null }
     if (opts.shell) self._shell = opts.shell
+    // @TODO: listen to all relevant events
     // var events = opts.events
     // events.txlistener.register('newBlock', function (block) {
     //   self.log(block)
@@ -152,18 +205,13 @@ class Terminal {
     //   // - trans.sent and info about it once it's mined
     //   // - everything related to the address
     // })
-    // ////////
-    // make `web3` object available in the console vm
-    // web3.object creates contract
-    // * create transaction
-    // * when transaction is mined
-    //   => show all transactions, that are mined and have known addresses
+    register(self)
   }
   render () {
     var self = this
     if (self._view.panel) return self._view.panel
     self._view.log = yo`<div class=${css.log}></div>`
-    window.INPUT = self._view.input = yo`
+    self._view.input = yo`
       <span class=${css.input} contenteditable="true" onkeydown=${change}></span>
     `
     self._view.cli = yo`
@@ -179,7 +227,7 @@ class Terminal {
       </div>
     `
     self._view.term = yo`
-      <div class=${css.terminal}>
+      <div class=${css.terminal} onscroll=${reattach}>
         ${self._view.log}
         ${self._view.cli}
       </div>
@@ -191,8 +239,18 @@ class Terminal {
       </div>
     `
     self.log(self.data.banner)
-    // @TODO: on manual scroll, stop auto-scroll-to-bottom
-    // @TODO: while in stopped mode: show indicator about new lines getting logged
+
+    function reattach (event) {
+      var el = event.currentTarget
+      var isBottomed = el.scrollHeight - el.scrollTop === el.clientHeight
+      if (isBottomed) {
+        delete self.scroll2bottom
+        // @TODO: delete new message indicator
+      } else {
+        self.scroll2bottom = function () { }
+        // @TODO: while in stopped mode: show indicator about new lines getting logged
+      }
+    }
     function hover (event) { event.currentTarget.classList.toggle(css.hover) }
     function minimize (event) {
       event.preventDefault()
@@ -237,51 +295,91 @@ class Terminal {
     }
 
     return self._view.panel
+
     function change (event) {
       if (event.which === 13) {
         if (event.ctrlKey) { // <ctrl+enter>
-          // console.log('enter')
           self._view.input.appendChild(document.createElement('br'))
           self.scroll2bottom()
-        } else {
+          putCursor2End(self._view.input)
+        } else { // <enter>
           event.preventDefault()
+          self.execute(self._view.input.innerText)
+          self._view.input.innerHTML = ''
         }
       }
-      console.log(event.which, event.keyCode)
-      // console.log('----------------')
-      // console.log(event.key) // Control
-      // console.log('-----')
-      // console.log(event.code) // ControlLeft
-      // console.log('-----------')
-      // console.log('event.altKey ' + event.altKey)
-      // console.log('event.ctrlKey ' + event.ctrlKey)
-      // console.log('event.metaKey ' + event.metaKey)
-      // console.log('event.shiftKey ' + event.shiftKey)
-      // console.log(event.location)
-      // console.log('event.location')
-      // console.log(event.returnValue)
-      // console.log('event.returnValue')
-      // console.log(event.type)
-      // console.log('event.type')
-      // console.log('-----')
-      // console.log(event)
+    }
+    function putCursor2End (editable) {
+      var range = document.createRange()
+      range.selectNode(editable)
+      var child = editable
+      var chars
+
+      while (child) {
+        if (child.lastChild) child = child.lastChild
+        else break
+        if (child.nodeType === Node.TEXT_NODE) {
+          chars = child.textContent.length
+        } else {
+          chars = child.innerHTML.length
+        }
+      }
+
+      range.setEnd(child, chars)
+      var toStart = true
+      var toEnd = !toStart
+      range.collapse(toEnd)
+
+      var sel = window.getSelection()
+      sel.removeAllRanges()
+      sel.addRange(range)
+
+      editable.focus()
     }
   }
-  log (obj) {
+  _log (mode) {
     var self = this
-    // var entries = self._serialize(obj)
-    // @TODO: convert types to \n string arrays
-
-    var entries = obj.split('\n')
-    self.data.session.push(entries)
-    var block = yo`
-      <div class=${css.block}>
-        ${entries.map(str => document.createTextNode(`${str}\n`))}
-      </div>
-    `
-    self._view.log.appendChild(block)
-    self.scroll2bottom()
-    return entries
+    var modes = { log: true, info: true, error: true }
+    if (modes[mode]) {
+      return function logger () {
+        var args = [].slice.call(arguments)
+        self.data.session.push(args)
+        var types = args.map(type)
+        var values = javascriptserialize.apply(null, args).map(function (x, i) {
+          return (typeof args[i] === 'string') ? args[i] : x
+        })
+        values.forEach(function (val, idx) {
+          if (types[idx] === 'element') val = jsbeautify.html(val)
+          var pattern = '.{1,' + self.data.lineLength + '}'
+          var lines = val.match(new RegExp(pattern, 'g'))
+          var block = yo`
+            <div class="${css.block} ${css[mode]}">
+              ${lines.map(str => {
+                return document.createTextNode(`${str}\n`)
+              })}
+            </div>
+          `
+          self._view.log.appendChild(block)
+          self.scroll2bottom()
+          return lines
+        })
+      }
+    }
+  }
+  log () {
+    var self = this
+    var logger = self._log('log')
+    return logger.apply(self, arguments)
+  }
+  info () {
+    var self = this
+    var logger = self._log('info')
+    return logger.apply(self, arguments)
+  }
+  error () {
+    var self = this
+    var logger = self._log('error')
+    return logger.apply(self, arguments)
   }
   scroll2bottom () {
     var self = this
@@ -289,12 +387,33 @@ class Terminal {
       self._view.term.scrollTop = self._view.term.scrollHeight
     }, 0)
   }
-  _serialize (obj) { return JSON.stringify(obj, null, 2) }
-  _shell (text) { // default shell
+  execute (input) {
     var self = this
-    self.log(text)
-    var result = self.evaluate(text)
-    self.log(result)
+    input = String(input)
+    self.log(`> ${input}`)
+    self._shell(input, function (error, output) {
+      if (error) {
+        self.error(error)
+        return error
+      } else {
+        self.log(output)
+        return output
+      }
+    })
+  }
+  _shell (input, done) { // default shell
+    // @TODO: add environment and proxy console.log to self.log
+    // make `web3` object available in the console vm
+    // web3.object creates contract
+    // * create transaction
+    // * when transaction is mined
+    //   => show all transactions, that are mined and have known addresses
+    try {
+      var result = eval(input) // eslint-disable-line
+      done(null, result)
+    } catch (error) {
+      done(error.message)
+    }
   }
 }
 
