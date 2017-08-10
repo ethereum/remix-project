@@ -1,12 +1,11 @@
 'use strict'
 var $ = require('jquery')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
-
 var yo = require('yo-yo')
 var helper = require('../../lib/helper.js')
 var txExecution = require('../execution/txExecution')
 var txFormat = require('../execution/txFormat')
 var txHelper = require('../execution/txHelper')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
