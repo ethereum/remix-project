@@ -79,7 +79,7 @@ TxRunner.prototype.execute = function (args, callback) {
     try {
       var account = self.vmaccounts[from]
       if (!account) {
-        return cb('Invalid account selected')
+        return callback('Invalid account selected')
       }
       tx = new EthJSTX({
         nonce: new BN(account.nonce++),
