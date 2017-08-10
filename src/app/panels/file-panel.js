@@ -36,6 +36,24 @@ var css = csjs`
   .newFile i:hover    {
     color             : orange;
   }
+  .gist            {
+    padding           : 10px;
+  }
+  .gist i          {
+    cursor            : pointer;
+  }
+  .gist i:hover    {
+    color             : orange;
+  }
+  .copyFiles            {
+    padding           : 10px;
+  }
+  .copyFiles i          {
+    cursor            : pointer;
+  }
+  .copyFiles i:hover    {
+    color             : orange;
+  }
   .connectToLocalhost {
     padding           : 10px;
   }
@@ -106,7 +124,7 @@ function filepanel (appAPI, filesProvider) {
           <div class=${css.menu}>
             <span onclick=${createNewFile} class="newFile ${css.newFile}" title="Create New File in the Browser Storage Explorer">
               <i class="fa fa-plus-circle"></i>
-            </span>            
+            </span>
             ${canUpload ? yo`
               <span class=${css.uploadFile} title="Add Local file to the Browser Storage Explorer">
                 <label class="fa fa-folder-open">
@@ -114,6 +132,12 @@ function filepanel (appAPI, filesProvider) {
                 </label>
               </span>
             ` : ''}
+            <span class="${css.gist}">
+              <i class="fa fa-github"></i>
+            </span>
+            <span class="${css.copyFiles}">
+              <i class="fa fa-files-o" aria-hidden="true"></i>
+            </span>
             <span onclick=${connectToLocalhost} class="${css.connectToLocalhost}">
               <i class="websocketconn fa fa-link" title="Connect to Localhost"></i>
             </span>
