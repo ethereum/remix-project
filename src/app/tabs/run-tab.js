@@ -1,5 +1,6 @@
-/* global alert */
+'use strict'
 var $ = require('jquery')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var yo = require('yo-yo')
 var helper = require('../../lib/helper.js')
@@ -165,6 +166,7 @@ function runTab (container, appAPI, appEvents, opts) {
     }
     fillAccountsList(appAPI, el)
     instanceContainer.innerHTML = '' // clear the instances list
+    noInstancesText.style.display = 'block'
     instanceContainer.appendChild(noInstancesText)
   })
   selectExEnv.value = appAPI.executionContextProvider()
@@ -246,7 +248,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 
   selectContractNames.addEventListener('change', setInputParamsPlaceHolder)
 
-  var init = false
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
@@ -257,24 +258,22 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
       if (!error) {
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
-          var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-          if (!init) {
-            instanceContainer.innerHTML = ''
-            init = true
+          if (!error) {
+            noInstancesText.style.display = 'none'
+            var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+            instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
+          } else {
+            modalDialogCustom.alert(error)
           }
-          instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
         })
       } else {
-        alert(error)
+        modalDialogCustom.alert(error)
       }
     })
   }
 
   function loadFromAddress (appAPI) {
-    if (!init) {
-      instanceContainer.innerHTML = ''
-      init = true
-    }
+    noInstancesText.style.display = 'none'
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
     var address = atAddressButtonInput.value
