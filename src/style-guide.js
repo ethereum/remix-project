@@ -151,7 +151,8 @@ function styleGuide () {
     }
 
     .dropdown {
-      font-size               : 10px;
+      font-size               : 12px;
+      font-weight             : bold;
       padding                 : 0 8px;
       text-decoration         : none;
       background-color        : ${colors.white};
@@ -159,9 +160,10 @@ function styleGuide () {
       border                  : 1px solid ${colors.lightGrey};
       border-radius           : 3px;
       height                  : 30px;
+      width                   : 250px;
       text-align              : center;
-      overflow              : hidden;
-      word-break            : normal;
+      overflow                : hidden;
+      word-break              : normal;
     }
 
   `

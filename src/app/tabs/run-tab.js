@@ -44,8 +44,6 @@ var css = csjs`
     float: left;
   }
   .select extends ${styles.dropdown} {
-    width: 75%;
-    float: left;
     text-align: center;
   }
   .copyaddress {
@@ -58,11 +56,6 @@ var css = csjs`
   .copyaddress:hover {
     opacity: 1;
   }
-  .selectAddress extends ${styles.dropdown} {
-    width: 70%;
-    float: left;
-    text-align: center;
-  }
   .instanceContainer extends ${styles.displayBox}  {
     display: flex;
     flex-direction: column;
@@ -73,11 +66,6 @@ var css = csjs`
     margin-top: 2%;
   }
   .contractNames extends ${styles.dropdown} {
-    height: 32px;
-    font-size: 12px;
-    width: 100%;
-    font-weight: bold;
-    background-color: ${styles.colors.lightGrey}
   }
   .buttons {
     display: flex;
@@ -371,7 +359,7 @@ function settings (appAPI, appEvents) {
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Account</div>
-        <select name="txorigin" class="${css.selectAddress}" id="txorigin"></select>
+        <select name="txorigin" class="${css.select}" id="txorigin"></select>
         <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i>
       </div>
       <div class="${css.crow}">

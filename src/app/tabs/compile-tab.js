@@ -73,11 +73,7 @@ var css = csjs`
     align-items: center;
   }
   .contractNames extends ${styles.dropdown} {
-    width: 250px;
     margin-right: 5%;
-    height: 32px;
-    font-size: 12px;
-    font-weight: bold;
   }
   .contractButtons {
     display: flex;
