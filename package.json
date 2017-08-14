@@ -29,6 +29,7 @@
     "http-server": "0.9.0",
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
+    "minixhr": "^3.2.2",
     "mkdirp": "^0.5.1",
     "nightwatch": "^0.9.3",
     "notify-error": "^1.2.0",
@@ -150,8 +151,5 @@
     "test": "standard; npm run csslint; node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js"
-  },
-  "dependencies": {
-    "minixhr": "^3.2.2"
   }
 }
