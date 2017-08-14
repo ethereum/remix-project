@@ -83,7 +83,7 @@ var css = csjs`
   .info               {
     color             : blue;
   }
-  .log                {
+  .default            {
     color             : white;
   }
   .ghostbar           {
@@ -194,6 +194,10 @@ class Terminal {
     self.event = new EventManager()
     self._api = opts.api
     self._view = { panel: null, bar: null, input: null, term: null, log: null, cli: null }
+    self._templates = {}
+    self._templates.default = self._blocksRenderer('default')
+    self._templates.error = self._blocksRenderer('error')
+    self._templates.info = self._blocksRenderer('info')
     if (opts.shell) self._shell = opts.shell
     // @TODO: listen to all relevant events
     // var events = opts.events
@@ -337,49 +341,48 @@ class Terminal {
       editable.focus()
     }
   }
-  _log (mode) {
+  _blocksRenderer (mode) {
     var self = this
     var modes = { log: true, info: true, error: true }
     if (modes[mode]) {
-      return function logger () {
+      return function render () {
         var args = [].slice.call(arguments)
-        self.data.session.push(args)
         var types = args.map(type)
-        var values = javascriptserialize.apply(null, args).map(function (x, i) {
-          return (typeof args[i] === 'string') ? args[i] : x
-        })
-        values.forEach(function (val, idx) {
+        var values = javascriptserialize.apply(null, args).map(function (val, idx) {
           if (types[idx] === 'element') val = jsbeautify.html(val)
           var pattern = '.{1,' + self.data.lineLength + '}'
           var lines = val.match(new RegExp(pattern, 'g'))
-          var block = yo`
-            <div class="${css.block} ${css[mode]}">
-              ${lines.map(str => {
-                return document.createTextNode(`${str}\n`)
-              })}
-            </div>
-          `
-          self._view.log.appendChild(block)
-          self.scroll2bottom()
-          return lines
+          return lines.map(str => document.createTextNode(`${str}\n`))
         })
+        return values
       }
+    } else {
+      throw new Error('mode is not supported')
     }
+  }
+  registerType (typename, template) {
+    var self = this
+    if (typeof template !== 'function') throw new Error('invalid template')
+    self._template[typename] = template
   }
   log () {
     var self = this
-    var logger = self._log('log')
-    return logger.apply(self, arguments)
-  }
-  info () {
-    var self = this
-    var logger = self._log('info')
-    return logger.apply(self, arguments)
-  }
-  error () {
-    var self = this
-    var logger = self._log('error')
-    return logger.apply(self, arguments)
+    var args = [...arguments]
+    self.data.session.push(args)
+    args.forEach(function (data = {}) {
+      if (!data.type) data = { type: 'default', value: data }
+      var render = self._templates[data.type]
+      if (!render) render = self._templates.default
+      var blocks = render(data.value)
+      blocks.forEach(function (block) {
+        self._view.log.appendChild(yo`
+          <div class="${css.block} ${css[data.type] || data.type}">
+            ${block}
+          </div>
+        `)
+        self.scroll2bottom()
+      })
+    })
   }
   scroll2bottom () {
     var self = this

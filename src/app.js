@@ -813,6 +813,20 @@ function run () {
 
   txlistener.startListening()
 
+  self._components.editorpanel.registerType('knownTransaction', function (data) {
+    var tx = data[0]
+    var resolvedTransaction = data[1]
+    self._components.editorpanel.log(tx)
+    self._components.editorpanel.log(resolvedTransaction)
+    console.error('TERMINAL: ', {tx, resolvedTransaction})
+    return yo`<span style="color:green;"><code>knownTransaction</code> was logged</span>`
+  })
+  self._components.editorpanel.registerType('unknownTransaction', function (data) {
+    var tx = data[0]
+    self._components.editorpanel.log(tx)
+    console.error('TERMINAL: ', {tx})
+    return yo`<span style="color:yellow;"><code>unknownTransaction</code> was logged</span>`
+  })
   txLogger({
     api: {
       /**
@@ -821,7 +835,10 @@ function run () {
         * @param {Object} tx - DOM element representing the transaction
         */
       log: function (tx) {
-        // terminal.log(tx)
+        var data = JSON.parse(tx)
+        if (data.length === 2) data = { type: 'knownTransaction', value: data }
+        if (data.length === 1) data = { type: 'unknownTransaction', value: data }
+        self._components.editorpanel.log(data)
       },
       resolvedTransaction: function (hash) {
         return txlistener.resolvedTransaction(hash)

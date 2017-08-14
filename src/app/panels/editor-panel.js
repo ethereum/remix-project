@@ -208,6 +208,14 @@ class EditorPanel {
     self._adjustLayout('top', self.data._layout.top.offset)
     return self._view.el
   }
+  registerType (typename, template) {
+    var self = this
+    self._components.terminal.registerType(typename, template)
+  }
+  log () {
+    var self = this
+    self._components.terminal.log.apply(self._components.terminal, arguments)
+  }
   _renderTabsbar () {
     var self = this
     if (self._view.tabsbar) return self._view.tabsbar
