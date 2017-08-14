@@ -2,7 +2,6 @@
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var minixhr = require('minixhr')  // simple and small cross-browser XMLHttpRequest (XHR)
-var $ = require('jquery')
 var EventManager = require('ethereum-remix').lib.EventManager
 var FileExplorer = require('../files/file-explorer')
 var modalDialog = require('../ui/modaldialog')
