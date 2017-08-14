@@ -1,5 +1,6 @@
 /* global alert */
 var $ = require('jquery')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var yo = require('yo-yo')
 var helper = require('../../lib/helper.js')
@@ -265,7 +266,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
           instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
         })
       } else {
-        alert(error)
+        modalDialogCustom.alert(error)
       }
     })
   }
