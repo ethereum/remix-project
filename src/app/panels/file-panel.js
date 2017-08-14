@@ -281,6 +281,17 @@ function filepanel (appAPI, filesProvider) {
   // ------------------ gist publish --------------
 
   function publishToGist () {
+    function cb (data) {
+      if (data instanceof Error) {
+        console.log('fail', data.message)
+        modalDialogCustom.alert('Failed to create gist: ' + (data || 'Unknown transport error'))
+      } else {
+        data = JSON.parse(data)
+        if (data.html_url && confirm('Created a gist at ' + data.html_url + ' Would you like to open it in a new window?')) {
+          window.open(data.html_url, '_blank')
+        }
+      }
+    }
     if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
       appAPI.packageFiles((error, packaged) => {
         if (error) {
@@ -297,17 +308,6 @@ function filepanel (appAPI, filesProvider) {
               files: packaged
             })
           }, cb)
-          function cb(data) {
-            if (data instanceof Error) {
-              console.log('fail', data.message)
-              modalDialogCustom.alert('Failed to create gist: ' + (data || 'Unknown transport error'))
-            } else {
-              data = JSON.parse(data)
-              if (data.html_url && confirm('Created a gist at ' + data.html_url + ' Would you like to open it in a new window?')) {
-                window.open(data.html_url, '_blank')
-              }
-            }
-          }
         }
       })
     }
