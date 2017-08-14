@@ -10,7 +10,8 @@ var styles = styleGuide()
 
 var css = csjs`
   .analysis {
-    font-height: 1.5em;
+    display: flex;
+    flex-direction: column;
   }
   .result {
     margin-top: 1%;
@@ -20,11 +21,17 @@ var css = csjs`
     align-items: center;
   }
   .buttonRun extends ${styles.button} {
-    background-color: ${styles.colors.blue};
     margin-right: 1%;
   }
   .analysisModulesContainer extends ${styles.displayBox} {
     margin-bottom: 1%;
+    line-height: 2em;
+    display: flex;
+    flex-direction: column;
+  }
+  .label {
+    display: flex;
+    align-items: center;
   }
 `
 
@@ -56,7 +63,7 @@ staticAnalysisView.prototype.render = function () {
       </div>
       <div class="${css.buttons}">
         <button class=${css.buttonRun} onclick=${function () { self.run() }} >Run</button>
-        <label for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
+        <label class="${css.label}" for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
       </div>
       <div class="${css.result}" "id='staticanalysisresult'></div>
     </div>
@@ -125,7 +132,7 @@ function renderModules (modules) {
     var category = groupedModules[categoryId]
     var entriesDom = category.map((item, i) => {
       return yo`
-        <label>
+        <label class="${css.label}">
           <input id="staticanalysismodule_${categoryId}_${i}"
             type="checkbox"
             name="staticanalysismodule"
@@ -137,9 +144,7 @@ function renderModules (modules) {
             `
     })
     return yo`<div class="${css.analysisModulesContainer}">
-                <label>
-                <b>${category[0].categoryDisplayName}</b>
-                </label>
+                <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
                 ${entriesDom}
               </div>`
   })

@@ -29,16 +29,13 @@ var css = csjs`
     align-items: center;
   }
   .title extends ${styles.dropdown} {
+    width: 400px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    height: 32px;
-    font-size: 11px;
-    width: 100%;
+    align-items: center;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
-    font-weight: bold;
     background-color: ${styles.colors.white};
   }
   .titleText {

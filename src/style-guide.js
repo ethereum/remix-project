@@ -59,7 +59,7 @@ function styleGuide () {
   -------------------------------------------------------------------------- */
   var textBoxes = csjs`
     .display-box {
-      font-size             : 1em;
+      font-size             : 12px;
       padding               : 10px 15px;
       line-height           : 20px;
       background            : ${colors.white};
@@ -120,7 +120,8 @@ function styleGuide () {
       border                : 1px solid ${colors.lightGrey};  // light-grey
       margin                : .3em;
       height                : 25px;
-      font-size             : 10px;
+      width                 : 250px;
+      font-size             : 12px;
       border-radius         : 3px;
       padding               : 0 8px;
       overflow              : hidden;
@@ -132,18 +133,21 @@ function styleGuide () {
   -------------------------------------------------------------------------- */
   var buttons = csjs`
     .button {
+      display                 : flex;
+      align-items             : center;
+      justify-content         : center;
       border-color            : transparent;
       border-radius           : 3px;
       border                  : .3px solid ${colors.lightGrey};
       cursor                  : pointer;
       min-height              : 25px;
       max-height              : 25px;
-      padding                 : 3px;
-      min-width               : 100px;
+      width                   : 70px;
+      min-width               : 70px;
       font-size               : 12px;
-      overflow              : hidden;
-      word-break            : normal;
-      background-color      : #E8E8E8;
+      overflow                : hidden;
+      word-break              : normal;
+      background-color        : #E8E8E8;
     }
 
     .button:hover {
@@ -159,7 +163,7 @@ function styleGuide () {
       cursor                  : pointer;
       border                  : 1px solid ${colors.lightGrey};
       border-radius           : 3px;
-      height                  : 30px;
+      height                  : 25px;
       width                   : 250px;
       text-align              : center;
       overflow                : hidden;

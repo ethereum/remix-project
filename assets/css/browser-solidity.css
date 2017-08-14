@@ -51,7 +51,6 @@
 }
 
 #righthand-panel {
-    font-size: 13px;
     display: flex;
     flex-direction: column;
 }
@@ -147,7 +146,6 @@
 #righthand-panel #optionViews .pre {
     word-wrap: break-word;
     background-color: rgba(255, 255, 255, 0.5);
-    font-family: monospace;
     border-radius: 3px;
     display: inline-block;
     padding: 0 0.6em;
@@ -158,7 +156,6 @@
 }
 
 #righthand-panel .info {
-    font-family: monospace;
     min-height: 6em;
     padding: 0.25em 0;
     padding-left: 6em;
@@ -187,10 +184,6 @@
     width: 8em;
     margin-right: 1em;
     cursor: pointer;
-}
-
-#staticanalysismodules label {
-    display: block;
 }
 
 #header .origin {
@@ -269,7 +262,7 @@
 .sol.warning pre {
     background-color: transparent;
     margin: 0;
-    font-size: 10px;
+    font-size: 12px;
     border: 0 none;
     padding: 0;
     border-radius: 0;

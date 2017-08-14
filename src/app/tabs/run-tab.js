@@ -35,16 +35,16 @@ var css = csjs`
   .col1_1 extends ${styles.titleM} {
     font-size: 12px;
     width: 25%;
-    min-width: 50px;
+    min-width: 75px;
     float: left;
     align-self: center;
   }
   .col2 extends ${styles.inputField}{
-    width: 75%;
-    float: left;
   }
   .select extends ${styles.dropdown} {
     text-align: center;
+    font-weight: normal;
+    min-width: 150px;
   }
   .copyaddress {
     color: #C6CFF7;
@@ -81,20 +81,16 @@ var css = csjs`
     margin-top: 2%;
   }
   .atAddress extends ${styles.button} {
-    background-color: ${styles.colors.green};
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
   .create extends ${styles.button} {
-    background-color: ${styles.colors.lightRed};
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
   .input extends ${styles.inputField} {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    width: 75%;
-    font-size: 10px;
     padding-left: 10px;
   }
   .noInstancesText extends ${styles.displayBox} {

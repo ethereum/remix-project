@@ -37,7 +37,7 @@ var css = csjs`
     margin: auto;
     padding: 0;
     line-height: 18px;
-    font-size: 13px;
+    font-size: 12px;
     border: 1px solid #888;
     width: 50%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
@@ -53,7 +53,7 @@ var css = csjs`
     cursor: pointer;
   }
   @-webkit-keyframes animatetop {
-    from {top: -300px; opacity: 0} 
+    from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
   }
   @keyframes animatetop {
@@ -121,7 +121,7 @@ function html () {
     <div class="${css['modalHeader']}">
     <h2></h2>
   </div>
-  <div class="${css['modalBody']}"> - 
+  <div class="${css['modalBody']}"> -
   </div>
   <div class="${css['modalFooter']}">
     <span id="modal-footer-ok" class="modalFooterOk">OK</span><span id="modal-footer-cancel" class="modalFooterCancel">Cancel</span>

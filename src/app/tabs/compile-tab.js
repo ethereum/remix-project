@@ -26,30 +26,28 @@ var css = csjs`
   }
   .autocompileContainer {
     width: 90px;
+    display: flex;
+    align-items: center;
   }
+  .autocompile {}
   .autocompileTitle {
     font-weight: bold;
     margin: 1% 0;
   }
-  .autocompile {
-    float: left;
-    align-self: center;
-  }
   .autocompileText {
-    align-self: center;
     margin: 1% 0;
-    font-size: 11px;
+    font-size: 12px;
     overflow: hidden;
     word-break: normal;
     line-height: initial;
-    margin-left: 3%;
   }
   .warnCompilationSlow {
     color:  orange;
+    margin-left: 1%;
   }
   .compileButtons {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
   }
   .name {
@@ -59,13 +57,10 @@ var css = csjs`
     display: flex;
   }
   .compileButton extends ${styles.button} {
-    width: 130px;
-    min-width: 130px;
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
+    width: 120px;
+    min-width: 110px;
     margin-right: 1%;
-    font-size: 13px;
+    font-size: 12px;
   }
   .container extends ${styles.displayBox} {
     margin: 0;
@@ -82,10 +77,8 @@ var css = csjs`
     text-align: center;
   }
   .details extends ${styles.button} {
-    min-width: 70px;
   }
   .publish extends ${styles.button} {
-    min-width: 70px;
     margin-left: 2%;
   }
   .log {
