@@ -1,4 +1,4 @@
-/* global alert */
+'use strict'
 var $ = require('jquery')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 
