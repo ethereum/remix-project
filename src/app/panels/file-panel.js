@@ -7,7 +7,7 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var FileExplorer = require('../files/file-explorer')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
-var QueryParams = require('./query-params')
+var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 
 module.exports = filepanel
