@@ -6,7 +6,6 @@ var runTab = require('../tabs/run-tab')
 var settingsTab = require('../tabs/settings-tab')
 var analysisTab = require('../tabs/analysis-tab')
 var debuggerTab = require('../tabs/debugger-tab')
-var filesTab = require('../tabs/files-tab')
 var supportTab = require('../tabs/support-tab')
 
 // -------------- styling ----------------------
@@ -68,7 +67,6 @@ function RighthandPanel (appAPI, events, opts) {
       <li class="compileView" title="Compile">Compile</li>
       <li class="runView" title="Run">Run</li>
       <li class="settingsView" title="Settings">Settings</li>
-      <li class="publishView" title="Publish" >Files</li>
       <li class="debugView" title="Debugger">Debugger</li>
       <li class="staticanalysisView" title="Static Analysis">Analysis</li>
       <li class="supportView" title="Help and support">Support</li>
@@ -92,7 +90,6 @@ function RighthandPanel (appAPI, events, opts) {
   settingsTab(optionViews, appAPI, events, opts)
   analysisTab(optionViews, appAPI, events, opts)
   debuggerTab(optionViews, appAPI, events, opts)
-  filesTab(optionViews, appAPI, events, opts)
   supportTab(optionViews, appAPI, events, opts)
 
   self.render = function () { return self._view.element }
