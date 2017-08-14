@@ -397,6 +397,10 @@ UniversalDApp.prototype.getCallButton = function (args) {
   return $contractProperty
 }
 
+UniversalDApp.prototype.pendingTransactions = function () {
+  return this.txRunner.pendingTxs
+}
+
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = {
