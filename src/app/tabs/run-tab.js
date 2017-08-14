@@ -139,6 +139,14 @@ var css = csjs`
     color: #9DC1F5;
     margin-right: .3em;
   }
+  .pending {
+    background-color: ${styles.colors.lightRed};
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    padding-left: 10px;
+    border-radius: 3px;
+  }
 `
 
 module.exports = runTab
@@ -204,6 +212,7 @@ function updateAccountBalances (container, appAPI) {
 }
 
 function updatePendingTxs (container, appAPI) {
+
   container.querySelector('#pendingtxs').innerText = Object.keys(appAPI.udapp().pendingTransactions()).length + ' pending'
 }
 
@@ -380,7 +389,7 @@ function legend () {
       <div class="${css.item}"><i class="fa fa-circle ${css.call}" aria-hidden="true"></i>Call</div>
       <div class="${css.item}"><i class="fa fa-circle ${css.transact}" aria-hidden="true"></i>Transact</div>
       <div class="${css.item}"><i class="fa fa-circle ${css.payable}" aria-hidden="true"></i>Transact(Payable)</div>
-      <div class="${css.item}" id="pendingtxs"></div>
+      <div class="${css.item} ${css.pending}" id="pendingtxs"></div>
     </div>
   `
   return el
