@@ -76,7 +76,7 @@ function context (self, tx) {
 function value (v) {
   try {
     if (v.indexOf && v.indexOf('0x') === 0) {
-      return (new BN(v.replace('0x', ''), 12)).toString(10)
+      return (new BN(v.replace('0x', ''), 16)).toString(10)
     } else {
       return v.toString(10)
     }
