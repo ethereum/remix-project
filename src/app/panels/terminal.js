@@ -375,6 +375,7 @@ class Terminal {
       var render = self._templates[data.type]
       if (!render) render = self._templates.default
       var blocks = render(data.value)
+      blocks = blocks instanceof Array ? blocks : [blocks]
       blocks.forEach(function (block) {
         self._view.log.appendChild(yo`
           <div class="${css.block} ${css[data.type] || data.type}">
