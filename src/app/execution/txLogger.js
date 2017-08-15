@@ -15,10 +15,10 @@ class TxLogger {
   constructor (opts = {}) {
     this.event = new EventManager()
     this.opts = opts
-    opts.api.editorpanel.registerType('knownTransaction', (data) => {
+    opts.api.editorpanel.registerLogType('knownTransaction', (data) => {
       return renderKnownTransaction(this, data)
     })
-    opts.api.editorpanel.registerType('unknownTransaction', (data) => {
+    opts.api.editorpanel.registerLogType('unknownTransaction', (data) => {
       return renderUnknownTransaction(this, data)
     })
     opts.events.txListener.register('newTransaction', (tx) => {

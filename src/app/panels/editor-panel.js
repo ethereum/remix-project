@@ -208,7 +208,7 @@ class EditorPanel {
     self._adjustLayout('top', self.data._layout.top.offset)
     return self._view.el
   }
-  registerType (typename, template) {
+  registerLogType (typename, template) {
     var self = this
     self._components.terminal.registerType(typename, template)
   }
