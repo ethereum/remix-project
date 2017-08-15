@@ -251,7 +251,8 @@ class Terminal {
         delete self.scroll2bottom
         // @TODO: delete new message indicator
       } else {
-        self.scroll2bottom = function () { }
+        // self.scroll2bottom = function () { }
+        // @TODO: the reattach is not working
         // @TODO: while in stopped mode: show indicator about new lines getting logged
       }
     }
