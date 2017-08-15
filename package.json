@@ -15,6 +15,7 @@
     "brace": "^0.8.0",
     "browserify-reload": "^1.0.3",
     "clipboard-copy": "^1.2.0",
+    "component-type": "^1.2.1",
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "ethereum-remix": "https://github.com/ethereum/remix",
@@ -26,9 +27,12 @@
     "execr": "^1.0.1",
     "exorcist": "^0.4.0",
     "fast-async": "^6.1.2",
+    "fast-levenshtein": "^2.0.6",
     "http-server": "0.9.0",
+    "javascript-serialize": "^1.6.1",
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
+    "js-beautify": "^1.6.14",
     "minixhr": "^3.2.2",
     "mkdirp": "^0.5.1",
     "nightwatch": "^0.9.3",
@@ -45,8 +49,7 @@
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2",
-    "fast-levenshtein": "^2.0.6"
+    "yo-yo": "^1.2.2"
   },
   "repository": {
     "type": "git",

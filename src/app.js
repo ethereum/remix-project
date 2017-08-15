@@ -32,7 +32,7 @@ var RighthandPanel = require('./app/panels/righthand-panel')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var Txlistener = require('./app/execution/txListener')
-var txLogger = require('./app/execution/txLogger')
+var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
 
@@ -107,7 +107,7 @@ class App {
     self._components.editor = new Editor({}) // @TODO: put into editorpanel
     // ----------------- editor panel ----------------------
     self._components.editorpanel = new EditorPanel({
-      api: { editor: self._components.editor }
+      api: { editor: self._components.editor, config: self._api.config }
     })
     self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
   }
@@ -813,16 +813,9 @@ function run () {
 
   txlistener.startListening()
 
-  txLogger({
+  var txLogger = new TxLogger({
     api: {
-      /**
-        * log the given transaction.
-        *
-        * @param {Object} tx - DOM element representing the transaction
-        */
-      log: function (tx) {
-        // terminal.log(tx)
-      },
+      editorpanel: self._components.editorpanel,
       resolvedTransaction: function (hash) {
         return txlistener.resolvedTransaction(hash)
       },
@@ -831,11 +824,18 @@ function run () {
       },
       compiledContracts: function () {
         return compiledContracts()
+      },
+      context: function () {
+        return executionContext.getProvider()
       }
     },
     events: {
       txListener: txlistener.event
     }
+  })
+
+  txLogger.event.register('debugRequested', (hash) => {
+    startdebugging(hash)
   })
 
   // ----------------- autoCompile -----------------
