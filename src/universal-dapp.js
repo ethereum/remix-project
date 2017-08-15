@@ -248,63 +248,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     copy(address)
   }
 
-  var $events = $('<div class="events"/>')
-
-  var parseLogs = function (err, response) {
-    if (err) {
-      return
-    }
-
-    var $event = $('<div class="event" />')
-
-    var close = yo`<div class="udapp-close" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    function remove () { $event.remove() }
-
-    $event.append($('<span class="name"/>').text(response.event))
-      .append($('<span class="args" />').text(JSON.stringify(response.args, null, 2)))
-    $event.get(0).appendChild(close)
-    $events.append($event)
-  }
-
   var abi = txHelper.sortAbiFunction(contract)
-  if (this.executionContext.isVM()) {
-    // FIXME: support indexed events
-    var eventABI = {}
-    $.each(abi, function (i, funABI) {
-      if (funABI.type !== 'event') {
-        return
-      }
-
-      var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function (item) { return item.type }))
-      eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs }
-    })
-
-    this.vm.on('afterTx', function (response) {
-      for (var i in response.vm.logs) {
-        // [address, topics, mem]
-        var log = response.vm.logs[i]
-        var event
-        var decoded
-
-        try {
-          var abi = eventABI[log[1][0].toString('hex')]
-          event = abi.event
-          var types = abi.inputs.map(function (item) {
-            return item.type
-          })
-          decoded = ethJSABI.rawDecode(types, log[2])
-          decoded = ethJSABI.stringify(types, decoded)
-        } catch (e) {
-          decoded = '0x' + log[2].toString('hex')
-        }
-
-        parseLogs(null, { event: event, args: decoded })
-      }
-    })
-  } else {
-    var eventFilter = this.web3.eth.contract(abi).at(address).allEvents()
-    eventFilter.watch(parseLogs)
-  }
 
   $instance.get(0).appendChild(title)
 
@@ -330,7 +274,6 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     }))
   })
 
-  $instance.append($events)
   return $instance.get(0)
 }
 
