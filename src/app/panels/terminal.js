@@ -363,7 +363,7 @@ class Terminal {
   registerType (typename, template) {
     var self = this
     if (typeof template !== 'function') throw new Error('invalid template')
-    self._template[typename] = template
+    self._templates[typename] = template
   }
   log () {
     var self = this
