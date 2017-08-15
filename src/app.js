@@ -32,7 +32,7 @@ var RighthandPanel = require('./app/panels/righthand-panel')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var Txlistener = require('./app/execution/txListener')
-var txLogger = require('./app/execution/txLogger')
+var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
 
@@ -813,33 +813,9 @@ function run () {
 
   txlistener.startListening()
 
-  self._components.editorpanel.registerType('knownTransaction', function (data) {
-    var tx = data[0]
-    var resolvedTransaction = data[1]
-    self._components.editorpanel.log(tx)
-    self._components.editorpanel.log(resolvedTransaction)
-    console.error('TERMINAL: ', {tx, resolvedTransaction})
-    return yo`<span style="color:green;"><code>knownTransaction</code> was logged</span>`
-  })
-  self._components.editorpanel.registerType('unknownTransaction', function (data) {
-    var tx = data[0]
-    self._components.editorpanel.log(tx)
-    console.error('TERMINAL: ', {tx})
-    return yo`<span style="color:yellow;"><code>unknownTransaction</code> was logged</span>`
-  })
-  txLogger({
+  var txLogger = new TxLogger({
     api: {
-      /**
-        * log the given transaction.
-        *
-        * @param {Object} tx - DOM element representing the transaction
-        */
-      log: function (tx) {
-        var data = JSON.parse(tx)
-        if (data.length === 2) data = { type: 'knownTransaction', value: data }
-        if (data.length === 1) data = { type: 'unknownTransaction', value: data }
-        self._components.editorpanel.log(data)
-      },
+      editorpanel: self._components.editorpanel,
       resolvedTransaction: function (hash) {
         return txlistener.resolvedTransaction(hash)
       },
@@ -848,11 +824,18 @@ function run () {
       },
       compiledContracts: function () {
         return compiledContracts()
+      },
+      context: function () {
+        return executionContext.getProvider()
       }
     },
     events: {
       txListener: txlistener.event
     }
+  })
+
+  txLogger.event.register('debugRequested', (hash) => {
+    startdebugging(hash)
   })
 
   // ----------------- autoCompile -----------------
