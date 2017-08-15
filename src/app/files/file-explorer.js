@@ -316,9 +316,10 @@ function fileExplorer (appAPI, files) {
     self.element = el
   }
 }
-/******************************************************************************
+
+/*
   HELPER FUNCTIONS
-******************************************************************************/
+*/
 function adaptEnvironment (label, focus, hover) {
   var li = getLiFrom(label)
   li.style.position = 'relative'

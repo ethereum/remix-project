@@ -1,4 +1,5 @@
 /* global confirm, prompt */
+var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var minixhr = require('minixhr')  // simple and small cross-browser XMLHttpRequest (XHR)

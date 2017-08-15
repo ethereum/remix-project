@@ -212,7 +212,6 @@ function updateAccountBalances (container, appAPI) {
 }
 
 function updatePendingTxs (container, appAPI) {
-
   container.querySelector('#pendingtxs').innerText = Object.keys(appAPI.udapp().pendingTransactions()).length + ' pending'
 }
 

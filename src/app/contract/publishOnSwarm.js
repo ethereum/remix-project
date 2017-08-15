@@ -51,7 +51,6 @@ module.exports = (contract, appAPI, cb) => {
   })
 }
 
-
 function swarmVerifiedPublish (content, expectedHash, cb) {
   swarmgw.put(content, function (err, ret) {
     if (err) {
