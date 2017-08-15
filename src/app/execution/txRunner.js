@@ -114,6 +114,7 @@ TxRunner.prototype.execute = function (args, callback) {
         if (args.useCall) {
           self.vm.stateManager.revert(function () {})
         }
+        err = err ? err.message : err
         callback(err, {
           result: result,
           transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
