@@ -1,7 +1,10 @@
 'use strict'
 var $ = require('jquery')
 var ethJSABI = require('ethereumjs-abi')
+var ethJSUtil = require('ethereumjs-util')
+var BN = ethJSUtil.BN
 var helper = require('./txHelper')
+var TreeView = require('ethereum-remix').ui.TreeView
 
 module.exports = {
   /**
@@ -121,6 +124,18 @@ module.exports = {
 
   decodeResponse: function (response, fnabi, callback) {
     // Only decode if there supposed to be fields
+    var treeView = new TreeView({
+      extractData: (item, parent, key) => {
+        var ret = {}
+        if (BN.isBN(item)) {
+          ret.self = item.toString(10)
+          ret.children = []
+        } else {
+          ret = treeView.extractDataDefault(item, parent, key)
+        }
+        return ret
+      }
+    })
     if (fnabi.outputs && fnabi.outputs.length > 0) {
       try {
         var i
@@ -134,17 +149,17 @@ module.exports = {
         var decodedObj = ethJSABI.rawDecode(outputTypes, response)
 
         // format decoded data
-        decodedObj = ethJSABI.stringify(outputTypes, decodedObj)
+        var json = {}
         for (i = 0; i < outputTypes.length; i++) {
           var name = fnabi.outputs[i].name
           if (name.length > 0) {
-            decodedObj[i] = outputTypes[i] + ' ' + name + ': ' + decodedObj[i]
+            json[outputTypes[i] + ' ' + name] = decodedObj[i]
           } else {
-            decodedObj[i] = outputTypes[i] + ': ' + decodedObj[i]
+            json[outputTypes[i]] = decodedObj[i]
           }
         }
 
-        return callback(null, decodedObj)
+        return callback(null, treeView.render(json))
       } catch (e) {
         return callback('Failed to decode output: ' + e)
       }

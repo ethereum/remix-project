@@ -361,19 +361,28 @@ UniversalDApp.prototype.getCallButton = function (args) {
     .attr('title', title)
     .text(title)
     .click(() => {
-      txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, self.executionContext, (error, data) => {
-        if (!error) {
-          txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
-            // TODO here should send the result to the dom-console
-            console.log('function call', error, txResult)
-            alert(error + ' ' + txResult.transactionHash)
-          })
-        } else {
-          alert(error)
-        }
-      })
+      call()
     })
 
+  function call () {
+    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, self.executionContext, (error, data) => {
+      if (!error) {
+        txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
+          if (!error) {
+            if (lookupOnly) {
+              txFormat.decodeResponse(self.executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI, (error, decoded) => {
+                $outputOverride.html(error ? 'error' + error : decoded)
+              })
+            }
+          } else {
+            alert(error)
+          }
+        })
+      } else {
+        alert(error)
+      }
+    })
+  }
   // TODO the auto call to constant function has been removed. needs to readd it later.
 
   var $contractProperty = $(`<div class="contractProperty ${css.buttonsContainer}"></div>`)
@@ -383,6 +392,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   if (lookupOnly) {
     $contractProperty.addClass('constant')
+    call()
   }
 
   if (args.funABI.inputs && args.funABI.inputs.length > 0) {
