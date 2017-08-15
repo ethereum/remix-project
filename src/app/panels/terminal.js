@@ -407,10 +407,6 @@ class Terminal {
   _shell (input, done) { // default shell
     // @TODO: add environment and proxy console.log to self.log
     // make `web3` object available in the console vm
-    // web3.object creates contract
-    // * create transaction
-    // * when transaction is mined
-    //   => show all transactions, that are mined and have known addresses
     try {
       var result = eval(input) // eslint-disable-line
       done(null, result)
