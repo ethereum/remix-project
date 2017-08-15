@@ -150,7 +150,6 @@ class EditorPanel {
             return newpos
           }
         }
-        // events: { txlistener: txlistener.event, udapp: udapp.event }
       })
     }
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))

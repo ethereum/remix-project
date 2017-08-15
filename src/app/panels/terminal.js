@@ -197,16 +197,6 @@ class Terminal {
     self._templates.error = self._blocksRenderer('error')
     self._templates.info = self._blocksRenderer('info')
     if (opts.shell) self._shell = opts.shell
-    // @TODO: listen to all relevant events
-    // var events = opts.events
-    // events.txlistener.register('newBlock', function (block) {
-    //   self.log(block)
-    // })
-    // events.udapp.register('transactionExecuted', function (address, data, lookupOnly, txResult) {
-    //   self.log({ address, data, lookupOnly, txResult })
-    //   // - trans.sent and info about it once it's mined
-    //   // - everything related to the address
-    // })
     register(self)
   }
   render () {
