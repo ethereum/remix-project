@@ -14,7 +14,7 @@ var css = csjs`
     font-size         : 12px;
     font-family       : monospace;
     color             : white;
-    background-color  : black;
+    background-color  : grey;
     margin-top        : auto;
     height            : 100%;
     min-height        : 1.7em;
@@ -59,8 +59,6 @@ var css = csjs`
     word-break        : break-all;
     white-space       : pre-wrap;
     line-height       : 2ch;
-    width             : 80ch;
-    background-color  : black;
     margin            : 1ch;
   }
 
