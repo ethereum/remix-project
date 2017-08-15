@@ -343,7 +343,7 @@ class Terminal {
   }
   _blocksRenderer (mode) {
     var self = this
-    var modes = { log: true, info: true, error: true }
+    var modes = { log: true, info: true, error: true, default: true }
     if (modes[mode]) {
       return function render () {
         var args = [].slice.call(arguments)
