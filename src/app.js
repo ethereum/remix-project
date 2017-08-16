@@ -103,13 +103,6 @@ class App {
         }
       }
     }
-    // ----------------- editor ----------------------------
-    self._components.editor = new Editor({}) // @TODO: put into editorpanel
-    // ----------------- editor panel ----------------------
-    self._components.editorpanel = new EditorPanel({
-      api: { editor: self._components.editor, config: self._api.config }
-    })
-    self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
   }
   _adjustLayout (direction, delta) {
     var self = this
@@ -147,7 +140,7 @@ class App {
     `
     self._view.centerpanel = yo`
       <div id="editor-container" class=${css.centerpanel}>
-        ${self._components.editorpanel.render()}
+        ${''}
       </div>
     `
     self._view.rightpanel = yo`
@@ -173,6 +166,26 @@ module.exports = App
 
 function run () {
   var self = this
+  // ------------------------------------------------------------
+  var executionContext = new ExecutionContext()
+
+  // ----------------- editor ----------------------------
+  this._components.editor = new Editor({}) // @TODO: put into editorpanel
+  // ----------------- editor panel ----------------------
+  this._components.editorpanel = new EditorPanel({
+    api: {
+      editor: self._components.editor,
+      config: self._api.config,
+      web3: () => {
+        return executionContext.web3()
+      },
+      context: () => {
+        return executionContext.getProvider()
+      }}
+  })
+  this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
+
+  this._view.centerpanel.appendChild(this._components.editorpanel.render())
 
   var queryParams = new QueryParams()
   var gistHandler = new GistHandler()
@@ -500,9 +513,6 @@ function run () {
     }
   }
   var renderer = new Renderer(rendererAPI)
-
-  // ------------------------------------------------------------
-  var executionContext = new ExecutionContext()
 
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
