@@ -96,41 +96,7 @@ var css = csjs`
   }
 `
 
-// var currentError
-//
-// window.addEventListener('error', function (event) {
-//   currentError = new Error(event.message)
-//   currentError.timeStamp = event.timeStamp
-//   currentError.isTrusted = event.isTrusted
-//   currentError.filename = event.filename
-//   currentError.lineno = event.lineno
-//   currentError.colno = event.colno
-//   currentError.error = event.error
-//   currentError.type = event.type
-// })
-//
-// window.onerror = function (msg, url, lineno, col, error) {
-//   if (!error) error = currentError
-//   var val = { msg: msg, url: url, lineno: lineno, col: col, error: error }
-//   console.error(val)
-// }
-
 var KONSOLES = []
-// var KONSOLES = [{
-//   error: console.error.bind(console),
-//   info: console.info.bind(console),
-//   log: console.log.bind(console)
-// }]
-// console.error = broadcast('error')
-// console.info = broadcast('info')
-// console.log = broadcast('log')
-//
-// function broadcast (mode) {
-//   return function broadcastMode () {
-//     var args = arguments
-//     KONSOLES.forEach(function (api) { api[mode].apply(api, args) })
-//   }
-// }
 
 function register (api) { KONSOLES.push(api) }
 
