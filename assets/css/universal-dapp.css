@@ -151,22 +151,15 @@
 }
 
 .udapp .atAddress {
-	background-color: #B1EAC5;
-	border-color: #B1EAC5;
-	margin-right: 1em;
-	border-radius: 3px;
-}
-
-.udapp .publishContract {
-	background-color: #EC96EC;
-	border-color: #EC96EC;
+	background-color: hsla(141, 58%, 95%, .5);
+	border-color: hsla(141, 58%, 95%, .5);
 	margin-right: 1em;
 	border-radius: 3px;
 }
 
 .udapp button {
 	padding: .36em;
-	color: #4C4B4B;
+	color: hsla(0, 0%, 40%, 1);
 	cursor: pointer;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -206,25 +199,25 @@
 }
 
 #runTabView .contractProperty .call {
-	background-color: #FFB9B9;
-	border-color: #FFB9B9;
+	background-color: hsla(0, 82%, 82%, .5);  /* lightRed in style-guide.js */
+	border-color: hsla(0, 82%, 82%, .5);  /* lightRed in style-guide.js */
 }
 
 #runTabView .contractProperty .debug {
-	background-color: #9DC1F5;
-	border-color: #9DC1F5;
+	background-color: hsla(229, 75%, 87%, .5);  /* lightBlue in style-guide.js */
+	border-color: hsla(229, 75%, 87%, .5);  /* lightBlue in style-guide.js */
 }
 
 #runTabView .contractProperty.constant .call {
-	background-color: #9DC1F5;
-	border-color: #9DC1F5;
+	background-color: hsla(229, 75%, 87%, .5);  /* lightBlue in style-guide.js */
+	border-color: hsla(229, 75%, 87%, .5);  /* lightBlue in style-guide.js */
 	width: 25%;
 	outline: none;
 }
 
 #runTabView .contractProperty.payable .call {
-	background-color: #FF8B8B;
-	border-color: #FF8B8B;
+	background-color: hsla(0, 82%, 82%, .5);  /* lightRed in style-guide.js */
+	border-color: hsla(0, 82%, 82%, .5);  /* lightRed in style-guide.js */
 	width: 25%;
 }
 

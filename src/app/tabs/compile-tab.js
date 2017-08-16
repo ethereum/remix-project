@@ -42,7 +42,7 @@ var css = csjs`
     line-height: initial;
   }
   .warnCompilationSlow {
-    color:  orange;
+    color:  ${styles.colors.orange};
     margin-left: 1%;
   }
   .compileButtons {
@@ -163,7 +163,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     if (speed > 1000) {
       warnCompilationSlow.setAttribute('title', `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
       warnCompilationSlow.style.display = 'inline-block'
-      settingsView.style.color = '#FF8B8B'
+      settingsView.style.color = styles.colors.red
     } else {
       warnCompilationSlow.style.display = 'none'
       settingsView.style.color = ''
@@ -222,7 +222,7 @@ function compileTab (container, appAPI, appEvents, opts) {
       if (success) {
         document.querySelector('#righthand-panel #menu .compileView').style.color = ''
       } else {
-        document.querySelector('#righthand-panel #menu .compileView').style.color = '#FF8B8B'
+        document.querySelector('#righthand-panel #menu .compileView').style.color = styles.colors.red
       }
       // display warning error if any
       var errorContainer = container.querySelector('.error')

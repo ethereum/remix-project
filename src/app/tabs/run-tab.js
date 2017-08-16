@@ -47,20 +47,20 @@ var css = csjs`
     min-width: 150px;
   }
   .copyaddress {
-    color: #C6CFF7;
+    color: ${styles.colors.blue};
     margin-left: 0.5em;
     margin-top: 0.7em;
     cursor: pointer;
-    opacity: .7;
   }
   .copyaddress:hover {
-    opacity: 1;
+    color: ${styles.colors.grey};
   }
   .instanceContainer extends ${styles.displayBox}  {
     display: flex;
     flex-direction: column;
-    background-color: ${styles.colors.lightBlue};
+    background-color: ${styles.colors.transparent};
     margin-top: 2%;
+    border: none;
   }
   .container extends ${styles.displayBox} {
     margin-top: 2%;
@@ -77,16 +77,20 @@ var css = csjs`
   }
   .button {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     margin-top: 2%;
   }
   .atAddress extends ${styles.button} {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    background-color: ${styles.colors.lightGreen};
+    border-color: ${styles.colors.lightGreen};
   }
   .create extends ${styles.button} {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    background-color: ${styles.colors.lightRed};
+    border-color: ${styles.colors.lightRed};
   }
   .input extends ${styles.inputField} {
     border-top-left-radius: 0;
@@ -120,7 +124,7 @@ var css = csjs`
     margin-right: .3em;
   }
   .call {
-    color: #9DC1F5;
+    color: ${styles.colors.lightBlue};
     margin-right: .3em;
   }
   .pending {

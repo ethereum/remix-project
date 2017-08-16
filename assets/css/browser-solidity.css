@@ -1,14 +1,14 @@
 #files .file {
     padding: 0 0.6em;
     box-sizing: border-box;
-    background-color: #F4F6FF;
+    background-color: hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js */
     cursor: pointer;
     border-right: 0.5em solid white;
     position: relative;
     display: table-cell;
     text-align: center;
     vertical-align: middle;
-    color: #999;
+    color: hsla(0, 0%, 40%, 1); /* grey in style-guide.js */
 }
 
 #files .file.active {
@@ -24,7 +24,7 @@
     height: 1.25em;
     width: 1.25em;
     line-height: 1em;
-    color: #FF8080;
+    color: hsla(0, 82%, 82%, 1); /* red in style-guide.js */
     display: none;
     margin: 0.4em;
     text-align: center;
@@ -64,7 +64,7 @@
 }
 
 #righthand-panel #menu {
-    border-bottom: 3px solid #F4F6FF;
+    border-bottom: 3px solid hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js*/
     height: 2em;
     font-size: 1em;
     padding-top: 0.5em;
@@ -81,7 +81,7 @@
 }
 
 #righthand-panel #options li.active {
-    background-color: #F4F6FF;
+    background-color: hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js*/;
 }
 
 #righthand-panel #options li a {
@@ -89,7 +89,7 @@
 }
 
 #righthand-panel #optionViews {
-    background-color: #F4F6FF;
+    background-color: hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js*/;
     overflow: scroll;
     height: 100%;
 }
@@ -139,13 +139,13 @@
     max-width: 13em;
     padding: 0.3em;
     box-sizing: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 1px solid hsl(0, 0%, 0%); /* black in style-guide.js */
     border-radius: 3px;
 }
 
 #righthand-panel #optionViews .pre {
     word-wrap: break-word;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: hsl(0, 0%, 100%); /* white in style-guide.js */
     border-radius: 3px;
     display: inline-block;
     padding: 0 0.6em;
@@ -162,7 +162,7 @@
 }
 
 #settingsView button {
-    background-color: #C6CFF7;
+    background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
     font-size: 12px;
     padding: 0.25em;
     margin: 3em 1em .5em 0;
@@ -174,7 +174,7 @@
 }
 
 #debugView button {
-    background-color: #C6CFF7;
+    background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
     font-size: 12px;
     padding: 0.25em;
     margin-bottom: .5em;
@@ -209,7 +209,7 @@
 #output .udapp {
     border: 0 none;
     box-shadow: none;
-    border-bottom: 3px solid #F4F6FF;
+    border-bottom: 3px solid hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js*/;
 }
 
 .crow {
@@ -224,7 +224,7 @@
 .crow #txorigin {
     margin-left: 0.5em;
     text-decoration: none;
-    background-color: #C6CFF7;
+    background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
     cursor: pointer;
     font-size: 12px;
     color: black;
@@ -273,20 +273,20 @@
 .sol.warning .close {
     font-weight: bold;
     position: absolute;
-    color: rgba(0, 0, 0, 0.5);
+    color: hsl(0, 0%, 0%); /* black in style-guide.js */
     top: 0;
     right: 0;
     padding: 0.5em;
 }
 
 .sol.error {
-    background-color: hsla(0, 100%, 75%, 0.1);
-    border: .2em dotted #FF8080;
+    background-color: hsla(0, 82%, 82%, 0.1);
+    border: .2em dotted hsla(0, 82%, 82%, 1); /* red in style-guide.js */
 }
 
 .sol.warning {
     background-color: hsla(59, 56%, 78%, 0.5);
-    border: .2em dotted #ffbd01;
+    border: .2em dotted hsla(44, 100%, 50%, 1); /* orange in style-guide.js */
 }
 
 .sol.success {
@@ -296,7 +296,7 @@
 
 #ghostbar {
     width: 1px;
-    background-color: red;
+    background-color: hsla(0, 82%, 82%, 1); /* orange in style-guide.js */
     opacity: 0.5;
     position: absolute;
     cursor: col-resize;
@@ -319,18 +319,18 @@ input[type="file"] {
 .highlightcode {
     position:absolute;
     z-index:20;
-    background-color:#F77E79;
+    background-color:hsla(0, 82%, 82%, 1); /* red in style-guide.js */
 }
 
 .highlightcode_fullLine {
     position:absolute;
     z-index:20;
-    background-color:#F4B9B7;
+    background-color: hsla(0, 82%, 82%, .5); /* lightRed in style-guide.js */ ;
     opacity: 0.5;
 }
 
 .ace_gutter-cell.ace_breakpoint{
-    background-color: #F77E79;
+    background-color: hsla(0, 82%, 82%, 1); // red in style-guide.js
 }
 
 /* The Modal (background) */
@@ -343,8 +343,8 @@ input[type="file"] {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: hsla(0, 0%, 0%, 1); /* Fallback color */
+    background-color: hsla(0, 0%, 0%, .4); /* Black w/ opacity */
 }
 
 /* Modal Header */
@@ -374,7 +374,7 @@ input[type="file"] {
 /* Modal Content */
 .modal-content {
     position: relative;
-    background-color: #fefefe;
+    background-color: hsl(0, 0%, 100%); /* white in style-guide.js */
     margin: auto;
     padding: 0;
     border-top-right-radius: 3px;

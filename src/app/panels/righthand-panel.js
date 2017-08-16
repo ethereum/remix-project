@@ -35,7 +35,7 @@ var css = csjs`
   }
   .ghostbar           {
     width             : 3px;
-    background-color  : #C6CFF7;
+    background-color  : ${styles.colors.lightBlue};
     opacity           : 0.5;
     position          : absolute;
     cursor            : col-resize;

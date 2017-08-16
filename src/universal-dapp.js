@@ -68,11 +68,10 @@ var css = csjs`
     cursor: pointer;
     opacity: 0.8;
     margin-left: 3%;
-    color: ${styles.colors.black};
-    opacity: .5;
+    color: ${styles.colors.blue};
   }
   .copy:hover{
-    opacity: 1;
+    color: ${styles.colors.grey};
   }
   .buttonsContainer {
     margin-top: 2%;

@@ -116,7 +116,7 @@ staticAnalysisView.prototype.run = function () {
         $('#righthand-panel #menu .staticanalysisView').css('color', '')
         warningContainer.html('No warning to report')
       } else {
-        $('#righthand-panel #menu .staticanalysisView').css('color', '#FF8B8B')
+        $('#righthand-panel #menu .staticanalysisView').css('color', styles.colors.red)
       }
     })
   } else {

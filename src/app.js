@@ -36,6 +36,9 @@ var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
 
+var styleGuide = require('./style-guide')
+var styles = styleGuide()
+
 var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
@@ -43,7 +46,7 @@ var css = csjs`
     margin             : 0;
     padding            : 0;
     font-size          : 12px;
-    color              : #111111;
+    color              : ${styles.colors.black};
     font-weight        : normal;
   }
   .browsersolidity     {

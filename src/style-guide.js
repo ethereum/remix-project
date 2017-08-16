@@ -7,22 +7,33 @@ function styleGuide () {
   COLORS
   -------------------------------------------------------------------------- */
   var colors = {
+    // BASIC COLORS (B&W and transparent)
     transparent: 'transparent',
-    white: '#fff',
-    black: '#000',
-    blue: '#C6CFF7',
-    lightBlue: '#F4F6FF',
-    greyBlue: '#999999',
-    grey: '#666',
-    lightGrey: '#dddddd',
-    red: '#FF8080',
-    lightRed: '#FFB9B9',
-    green: 'hsla(141, 58%, 81%, 1)',
-    lightGreen: 'hsla(141, 58%, 95%, 1)',
-    violet: '#C6CFF7',
-    pink: '#EC96EC',
-    yellow: '#ffbd01',
-    lightYellow: 'hsla(59, 56%, 78%, 0.5)'
+    white: 'hsl(0, 0%, 100%)',
+    black: 'hsl(0, 0%, 0%)',
+    opacityBlack: 'hsla(0, 0%, 0%, .4)',
+    // BLUE
+    blue: 'hsla(229, 75%, 87%, 1)',
+    lightBlue: 'hsla(229, 75%, 87%, .5)',
+    backgroundBlue: 'hsla(229, 100%, 97%, 1)',
+    // GREY
+    grey: 'hsla(0, 0%, 40%, 1)',
+    lightGrey: 'hsla(0, 0%, 40%, .5)',
+    veryLightGrey: 'hsla(0, 0%, 40%, .2)',
+    // RED
+    red: 'hsla(0, 82%, 82%, 1)',
+    lightRed: 'hsla(0, 82%, 82%, .5)',
+    // GREEN
+    green: 'hsla(141, 75%, 84%, 1)',
+    lightGreen: 'hsla(141, 75%, 84%, .5)',
+    // PINK
+    pink: 'hsla(300, 69%, 76%, 1)',
+    lightPink: 'hsla(300, 69%, 76%, .5)',
+    // YELLOW
+    orange: 'hsla(44, 100%, 50%, 1)',
+    lightOrange: 'hsla(44, 100%, 50%, .5)',
+    // VIOLET
+    violet: 'hsla(240, 64%, 68%, 1)'
   }
 
   /* --------------------------------------------------------------------------
@@ -64,14 +75,14 @@ function styleGuide () {
       line-height           : 20px;
       background            : ${colors.white};
       border-radius         : 3px;
-      border                : 1px solid ${colors.lightGrey};
+      border                : 1px solid ${colors.veryLightGrey};
       overflow              : hidden;
       word-break            : break-word;
       width                 : 100%;
     }
 
     .info-text-box {
-      background-color      : white;
+      background-color      : ${colors.white};
       line-height           : 20px;
       border                : .2em dotted ${colors.lightGrey};
       padding               : 8px 15px;
@@ -82,18 +93,18 @@ function styleGuide () {
     }
 
     .warning-text-box {
-      background-color      : hsla(59, 56%, 78%, 0.5);  // light yellow
+      background-color      : ${colors.lightOrange};
       line-height           : 20px;
       padding               : 8px 15px;
       border-radius         : 5px;
-      border                : .2em dotted ${colors.yellow}; // orange-yellow
+      border                : .2em dotted ${colors.orange};
       margin-bottom         : 1em;
       overflow              : hidden;
       word-break            : break-word;
     }
 
     .error-text-box {
-      background-color      : ${colors.lightRed};  // light-red
+      background-color      : ${colors.lightRed};
       line-height           : 20px;
       padding               : 1em 1em .5em 1em;
       border-radius         : 3px;
@@ -117,8 +128,7 @@ function styleGuide () {
       word-break            : normal;
     }
     .input {
-      border                : 1px solid ${colors.lightGrey};  // light-grey
-      margin                : .3em;
+      border                : 1px solid ${colors.veryLightGrey};
       height                : 25px;
       width                 : 250px;
       font-size             : 12px;
@@ -138,7 +148,7 @@ function styleGuide () {
       justify-content         : center;
       border-color            : transparent;
       border-radius           : 3px;
-      border                  : .3px solid ${colors.lightGrey};
+      border                  : .3px solid ${colors.veryLightGrey};
       cursor                  : pointer;
       min-height              : 25px;
       max-height              : 25px;
@@ -161,7 +171,7 @@ function styleGuide () {
       text-decoration         : none;
       background-color        : ${colors.white};
       cursor                  : pointer;
-      border                  : 1px solid ${colors.lightGrey};
+      border                  : 1px solid ${colors.veryLightGrey};
       border-radius           : 3px;
       height                  : 25px;
       width                   : 250px;

@@ -10,6 +10,9 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 
+var styleGuide = require('../../style-guide')
+var styles = styleGuide()
+
 module.exports = filepanel
 
 var css = csjs`
@@ -37,7 +40,7 @@ var css = csjs`
     cursor            : pointer;
   }
   .newFile i:hover    {
-    color             : orange;
+    color             : ${styles.colors.orange};
   }
   .gist            {
     padding           : 10px;
@@ -64,19 +67,19 @@ var css = csjs`
     cursor            : pointer;
   }
   .connectToLocalhost i:hover   {
-    color             : orange;
+    color             : ${styles.colors.orange};
   }
   .uploadFile         {
     padding           : 10px;
   }
   .uploadFile label:hover   {
-    color             : orange;
+    color             : ${styles.colors.orange};
   }
   .uploadFile label   {
     cursor            : pointer;
   }
   .treeview {
-    background-color  : white;
+    background-color  : ${styles.colors.white};
   }
   .dragbar            {
     position          : absolute;
@@ -90,7 +93,7 @@ var css = csjs`
   }
   .ghostbar           {
     width             : 3px;
-    background-color  : #C6CFF7;
+    background-color  : ${styles.colors.lightBlue};
     opacity           : 0.5;
     position          : absolute;
     cursor            : col-resize;
@@ -160,17 +163,17 @@ function filepanel (appAPI, filesProvider) {
   var containerFileSystem = element.querySelector('.filesystemexplorer')
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
-    websocketconn.style.color = 'orange'
+    websocketconn.style.color = styles.colors.yellow
     websocketconn.setAttribute('title', 'Connecting to localhost. ' + JSON.stringify(event))
   })
 
   filesProvider['localhost'].remixd.event.register('connected', (event) => {
-    websocketconn.style.color = 'green'
+    websocketconn.style.color = styles.colors.green
     websocketconn.setAttribute('title', 'Connected to localhost. ' + JSON.stringify(event))
   })
 
   filesProvider['localhost'].remixd.event.register('errored', (event) => {
-    websocketconn.style.color = 'red'
+    websocketconn.style.color = styles.colors.red
     websocketconn.setAttribute('title', 'localhost connection errored. ' + JSON.stringify(event))
     if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
       containerFileSystem.removeChild(fileSystemExplorer.element)
@@ -178,7 +181,7 @@ function filepanel (appAPI, filesProvider) {
   })
 
   filesProvider['localhost'].remixd.event.register('closed', (event) => {
-    websocketconn.style.color = '#111111'
+    websocketconn.style.color = styles.colors.black
     websocketconn.setAttribute('title', 'localhost connection closed. ' + JSON.stringify(event))
     if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
       containerFileSystem.removeChild(fileSystemExplorer.element)

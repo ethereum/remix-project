@@ -1,5 +1,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
+var styleGuide = require('../../style-guide')
+var styles = styleGuide()
 
 var css = csjs`
   .modal {
@@ -11,13 +13,13 @@ var css = csjs`
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: ${styles.colors.black}; /* Fallback color */
+    background-color: ${styles.colors.opacityBlack}; /* Black w/ opacity */
   }
   .modalHeader {
     padding: 2px 16px;
-    background-color: orange;
-    color: white;
+    background-color: ${styles.colors.orange};
+    color: ${styles.colors.white};
   }
   .modalBody {
     padding: 1.5em;
@@ -25,20 +27,20 @@ var css = csjs`
   }
   .modalFooter {
     padding: 10px 30px;
-    background-color: orange;
-    color: white;
+    background-color: ${styles.colors.orange};
+    color: ${styles.colors.white};
     text-align: right;
     font-weight: 700;
     cursor: pointer;
   }
   .modalContent {
     position: relative;
-    background-color: #fefefe;
+    background-color: ${styles.colors.white};
     margin: auto;
     padding: 0;
     line-height: 18px;
     font-size: 12px;
-    border: 1px solid #888;
+    border: 1px solid ${styles.colors.grey};
     width: 50%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
