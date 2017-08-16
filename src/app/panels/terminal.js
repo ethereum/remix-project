@@ -4,7 +4,9 @@ var csjs = require('csjs-inject')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
 var type = require('component-type')
+var vm = require('vm')
 var EventManager = require('ethereum-remix').lib.EventManager
+var Web3 = require('web3')
 
 var css = csjs`
   .panel              {
@@ -162,6 +164,8 @@ class Terminal {
     self._templates.default = self._blocksRenderer('default')
     self._templates.error = self._blocksRenderer('error')
     self._templates.info = self._blocksRenderer('info')
+    self._jsSandboxContext = {}
+    self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
     register(self)
   }
@@ -371,13 +375,23 @@ class Terminal {
     })
   }
   _shell (input, done) { // default shell
-    // @TODO: add environment and proxy console.log to self.log
-    // make `web3` object available in the console vm
     try {
-      var result = eval(input) // eslint-disable-line
+      var context = vm.createContext(Object.assign(this._jsSandboxContext, domTerminalFeatures(this)))
+      var result = vm.runInContext(input, context)
+      this._jsSandboxContext = Object.assign({}, context)
       done(null, result)
     } catch (error) {
       done(error.message)
+    }
+  }
+}
+
+// @TODO add all the `console` functions
+function domTerminalFeatures (self) {
+  return {
+    web3: self._api.context() !== 'vm' ? new Web3(self._api.web3().currentProvider) : null,
+    console: {
+      log: function () { self.log.apply(self, arguments) }
     }
   }
 }

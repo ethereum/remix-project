@@ -125,7 +125,7 @@ var css = csjs`
 class EditorPanel {
   constructor (opts = {}) {
     var self = this
-    self._api = { config: opts.api.config }
+    self._api = opts.api
     self.event = new EventManager()
     self.data = {
       _FILE_SCROLL_DELTA: 200,
@@ -148,6 +148,12 @@ class EditorPanel {
             var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
             newpos = (newpos < height - limitDown) ? newpos : height - limitDown
             return newpos
+          },
+          web3 () {
+            return self._api.web3()
+          },
+          context () {
+            return self._api.context()
           }
         }
       })
