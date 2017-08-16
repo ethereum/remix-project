@@ -96,24 +96,24 @@ var css = csjs`
   }
 `
 
-var currentError
-
-window.addEventListener('error', function (event) {
-  currentError = new Error(event.message)
-  currentError.timeStamp = event.timeStamp
-  currentError.isTrusted = event.isTrusted
-  currentError.filename = event.filename
-  currentError.lineno = event.lineno
-  currentError.colno = event.colno
-  currentError.error = event.error
-  currentError.type = event.type
-})
-
-window.onerror = function (msg, url, lineno, col, error) {
-  if (!error) error = currentError
-  var val = { msg: msg, url: url, lineno: lineno, col: col, error: error }
-  console.error(val)
-}
+// var currentError
+//
+// window.addEventListener('error', function (event) {
+//   currentError = new Error(event.message)
+//   currentError.timeStamp = event.timeStamp
+//   currentError.isTrusted = event.isTrusted
+//   currentError.filename = event.filename
+//   currentError.lineno = event.lineno
+//   currentError.colno = event.colno
+//   currentError.error = event.error
+//   currentError.type = event.type
+// })
+//
+// window.onerror = function (msg, url, lineno, col, error) {
+//   if (!error) error = currentError
+//   var val = { msg: msg, url: url, lineno: lineno, col: col, error: error }
+//   console.error(val)
+// }
 
 var KONSOLES = []
 // var KONSOLES = [{
@@ -239,8 +239,7 @@ class Terminal {
         delete self.scroll2bottom
         // @TODO: delete new message indicator
       } else {
-        // self.scroll2bottom = function () { }
-        // @TODO: the reattach is not working
+        self.scroll2bottom = function () { }
         // @TODO: while in stopped mode: show indicator about new lines getting logged
       }
     }
@@ -338,6 +337,7 @@ class Terminal {
         var args = [].slice.call(arguments)
         var types = args.map(type)
         var values = javascriptserialize.apply(null, args).map(function (val, idx) {
+          if (typeof args[idx] === 'string') val = args[idx]
           if (types[idx] === 'element') val = jsbeautify.html(val)
           var pattern = '.{1,' + self.data.lineLength + '}'
           var lines = val.match(new RegExp(pattern, 'g'))
@@ -373,6 +373,16 @@ class Terminal {
         self.scroll2bottom()
       })
     })
+  }
+  info () {
+    var self = this
+    var args = [...arguments].map(x => ({ type: 'info', value: x }))
+    self.log.apply(self, args)
+  }
+  error () {
+    var self = this
+    var args = [...arguments].map(x => ({ type: 'error', value: x }))
+    self.log.apply(self, args)
   }
   scroll2bottom () {
     var self = this
