@@ -1,3 +1,4 @@
+/* global confirm */
 'use strict'
 var $ = require('jquery')
 var yo = require('yo-yo')
@@ -338,9 +339,15 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function loadFromAddress (appAPI) {
     noInstancesText.style.display = 'none'
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
     var address = atAddressButtonInput.value
-    instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
+    if (/.(.abi)$/.exec(appAPI.currentFile())) {
+      if (confirm('Do you really want to interact with ' + address + ' using the current abi definition ?')) {
+        instanceContainer.appendChild(appAPI.udapp().renderInstance(appAPI.editorContent(), address, ' - '))
+      }
+    } else {
+      var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+      instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
+    }
   }
 
   // GET NAMES OF ALL THE CONTRACTS

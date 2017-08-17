@@ -538,6 +538,12 @@ function run () {
     getSource: (fileName) => {
       return compiler.getSource(fileName)
     },
+    editorContent: () => {
+      return editor.get(editor.current())
+    },
+    currentFile: () => {
+      return config.get('currentFile')
+    },
     getContracts: () => {
       return compiler.getContracts()
     },
