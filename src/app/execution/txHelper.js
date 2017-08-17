@@ -31,8 +31,8 @@ module.exports = {
     return ethJSABI.methodID(funABI.name, types)
   },
 
-  sortAbiFunction: function (contract) {
-    var abi = contract.abi.sort(function (a, b) {
+  sortAbiFunction: function (contractabi) {
+    var abi = contractabi.sort(function (a, b) {
       if (a.name > b.name) {
         return -1
       } else {
