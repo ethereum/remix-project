@@ -236,7 +236,12 @@ function Compiler (handleImportCall) {
       while ((match = importRegex.exec(files[fileName]))) {
         var importFilePath = match[1]
         if (importFilePath.startsWith('./')) {
-          importFilePath = importFilePath.slice(2)
+          var path = /(.*\/).*/.exec(target)
+          if (path !== null) {
+            importFilePath = importFilePath.replace('./', path[1])
+          } else {
+            importFilePath = importFilePath.slice(2)
+          }
         }
 
         // FIXME: should be using includes or sets, but there's also browser compatibility..
