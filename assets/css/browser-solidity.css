@@ -312,12 +312,12 @@ input[type="file"] {
 .highlightcode_fullLine {
     position:absolute;
     z-index:20;
-    background-color: hsla(0, 82%, 82%, .5); /* lightRed in style-guide.js */ ;
+    background-color: hsla(0, 82%, 82%, .5); /* lightRed in style-guide.js */
     opacity: 0.5;
 }
 
 .ace_gutter-cell.ace_breakpoint{
-    background-color: hsla(0, 82%, 82%, 1); // red in style-guide.js
+    background-color: hsla(0, 82%, 82%, 1); /* red in style-guide.js */
 }
 
 /* The Modal (background) */
