@@ -35,49 +35,37 @@ var css = csjs`
   .col1_1 extends ${styles.titleM} {
     font-size: 12px;
     width: 25%;
-    min-width: 50px;
+    min-width: 75px;
     float: left;
     align-self: center;
   }
   .col2 extends ${styles.inputField}{
-    width: 75%;
-    float: left;
   }
   .select extends ${styles.dropdown} {
-    width: 75%;
-    float: left;
     text-align: center;
+    font-weight: normal;
+    min-width: 150px;
   }
   .copyaddress {
-    color: #C6CFF7;
+    color: ${styles.colors.blue};
     margin-left: 0.5em;
     margin-top: 0.7em;
     cursor: pointer;
-    opacity: .7;
   }
   .copyaddress:hover {
-    opacity: 1;
-  }
-  .selectAddress extends ${styles.dropdown} {
-    width: 70%;
-    float: left;
-    text-align: center;
+    color: ${styles.colors.grey};
   }
   .instanceContainer extends ${styles.displayBox}  {
     display: flex;
     flex-direction: column;
-    background-color: ${styles.colors.lightBlue};
+    background-color: ${styles.colors.transparent};
     margin-top: 2%;
+    border: none;
   }
   .container extends ${styles.displayBox} {
     margin-top: 2%;
   }
   .contractNames extends ${styles.dropdown} {
-    height: 32px;
-    font-size: 12px;
-    width: 100%;
-    font-weight: bold;
-    background-color: ${styles.colors.lightGrey}
   }
   .buttons {
     display: flex;
@@ -89,24 +77,24 @@ var css = csjs`
   }
   .button {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     margin-top: 2%;
   }
   .atAddress extends ${styles.button} {
-    background-color: ${styles.colors.green};
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    background-color: ${styles.colors.lightGreen};
+    border-color: ${styles.colors.lightGreen};
   }
   .create extends ${styles.button} {
-    background-color: ${styles.colors.lightRed};
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    background-color: ${styles.colors.lightRed};
+    border-color: ${styles.colors.lightRed};
   }
   .input extends ${styles.inputField} {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    width: 75%;
-    font-size: 10px;
     padding-left: 10px;
   }
   .noInstancesText extends ${styles.displayBox} {
@@ -114,13 +102,11 @@ var css = csjs`
     color: ${styles.colors.lightGrey};
     font-style: italic;
   }
-  .legend extends ${styles.displayBox} {
-    border-radius: 5px;
+  .legend {
+    float: right;
     display: flex;
-    justify-content: center;
-    padding: 15px 8px;
     word-break: normal;
-    flex-wrap: wrap;
+    margin-left: auto;
   }
   .item {
     margin-right: 1em;
@@ -136,7 +122,7 @@ var css = csjs`
     margin-right: .3em;
   }
   .call {
-    color: #9DC1F5;
+    color: ${styles.colors.lightBlue};
     margin-right: .3em;
   }
   .pending {
@@ -157,8 +143,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">No Contract Instanc
 function runTab (container, appAPI, appEvents, opts) {
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
-    ${settings(appAPI, appEvents)}
-    ${legend()}
+    ${settings(appAPI, appEvents)}    
     ${contractDropdown(appAPI, appEvents, instanceContainer)}
     ${instanceContainer}
   </div>
@@ -231,7 +216,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
   var el = yo`
     <div class="${css.container}">
-      ${selectContractNames}
+      ${selectContractNames} ${legend()}
       <div class="${css.buttons}">
         <div class="${css.button}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
@@ -371,7 +356,7 @@ function settings (appAPI, appEvents) {
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Account</div>
-        <select name="txorigin" class="${css.selectAddress}" id="txorigin"></select>
+        <select name="txorigin" class="${css.select}" id="txorigin"></select>
         <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i>
       </div>
       <div class="${css.crow}">

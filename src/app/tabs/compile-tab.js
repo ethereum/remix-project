@@ -26,30 +26,28 @@ var css = csjs`
   }
   .autocompileContainer {
     width: 90px;
+    display: flex;
+    align-items: center;
   }
+  .autocompile {}
   .autocompileTitle {
     font-weight: bold;
     margin: 1% 0;
   }
-  .autocompile {
-    float: left;
-    align-self: center;
-  }
   .autocompileText {
-    align-self: center;
     margin: 1% 0;
-    font-size: 11px;
+    font-size: 12px;
     overflow: hidden;
     word-break: normal;
     line-height: initial;
-    margin-left: 3%;
   }
   .warnCompilationSlow {
-    color:  orange;
+    color:  ${styles.colors.orange};
+    margin-left: 1%;
   }
   .compileButtons {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
   }
   .name {
@@ -59,13 +57,10 @@ var css = csjs`
     display: flex;
   }
   .compileButton extends ${styles.button} {
-    width: 130px;
-    min-width: 130px;
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
+    width: 120px;
+    min-width: 110px;
     margin-right: 1%;
-    font-size: 13px;
+    font-size: 12px;
   }
   .container extends ${styles.displayBox} {
     margin: 0;
@@ -73,11 +68,7 @@ var css = csjs`
     align-items: center;
   }
   .contractNames extends ${styles.dropdown} {
-    width: 250px;
     margin-right: 5%;
-    height: 32px;
-    font-size: 12px;
-    font-weight: bold;
   }
   .contractButtons {
     display: flex;
@@ -86,10 +77,8 @@ var css = csjs`
     text-align: center;
   }
   .details extends ${styles.button} {
-    min-width: 70px;
   }
   .publish extends ${styles.button} {
-    min-width: 70px;
     margin-left: 2%;
   }
   .log {
@@ -174,7 +163,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     if (speed > 1000) {
       warnCompilationSlow.setAttribute('title', `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
       warnCompilationSlow.style.display = 'inline-block'
-      settingsView.style.color = '#FF8B8B'
+      settingsView.style.color = styles.colors.red
     } else {
       warnCompilationSlow.style.display = 'none'
       settingsView.style.color = ''
@@ -233,7 +222,7 @@ function compileTab (container, appAPI, appEvents, opts) {
       if (success) {
         document.querySelector('#righthand-panel #menu .compileView').style.color = ''
       } else {
-        document.querySelector('#righthand-panel #menu .compileView').style.color = '#FF8B8B'
+        document.querySelector('#righthand-panel #menu .compileView').style.color = styles.colors.red
       }
       // display warning error if any
       var errorContainer = container.querySelector('.error')

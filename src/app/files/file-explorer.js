@@ -7,6 +7,9 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
+var styleGuide = require('../../style-guide')
+var styles = styleGuide()
+
 var css = csjs`
   .fileexplorer       {
     box-sizing        : border-box;
@@ -16,10 +19,10 @@ var css = csjs`
     font-size         : 14px;
   }
   .hasFocus           {
-    background-color  : #F4F6FF;
+    background-color  : ${styles.colors.backgroundBlue};
   }
   .rename             {
-    background-color  : white;
+    background-color  : ${styles.colors.white};
   }
   .remove             {
     margin-left       : auto;
@@ -171,7 +174,7 @@ function fileExplorer (appAPI, files) {
       this.style.paddingRight = '19px'
       return this.removeChild(deleteButton)
     }
-    this.style.backgroundColor = '#F4F6FF'
+    this.style.backgroundColor = styles.colors.backgroundBlue
     this.style.paddingRight = '0px'
     this.appendChild(deleteButton)
   }

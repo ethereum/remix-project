@@ -19,38 +19,35 @@ var css = csjs`
     flex-direction: column;
     align-items: center;
     height: 85%;
+    padding: 0;
   }
   .chatTitle {
-    cursor: pointer;
     height: 40px;
     width: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 3px;
-    background-color: white;
-    border: 2px dotted ${styles.colors.lightGrey};
+    margin-top: 15px;
   }
   .chatTitle:hover {
-    background-color: ${styles.colors.lightYellow};
+    cursor: pointer;
   }
   .icon {
     height: 70%;
     margin-right: 2%;
   }
   .chatTitleText {
-    font-size: 13px;
+    font-size: 17px;
     font-weight: bold;
   }
   .chatTitleText {
     opacity: 0.8;
   }
-  .chatIframe {
+  .chatIframe extends ${styles.displayBox} {
     width: 100%;
     height: 100%;
-    border: 2px dotted ${styles.colors.lightGrey};
-    overflow: hidden;
     transform: scale(0.9);
+    padding: 0;
   }
   .infoBox extends ${styles.infoTextBox}{
 

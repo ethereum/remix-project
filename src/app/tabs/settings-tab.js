@@ -19,8 +19,6 @@ var css = csjs`
     display: flex;
   }
   .select extends ${styles.dropdown} {
-    float: left;
-    max-width: 90%;
   }
 }
 `

@@ -29,16 +29,13 @@ var css = csjs`
     align-items: center;
   }
   .title extends ${styles.dropdown} {
+    width: 400px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    height: 32px;
-    font-size: 11px;
-    width: 100%;
+    align-items: center;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
-    font-weight: bold;
     background-color: ${styles.colors.white};
   }
   .titleText {
@@ -71,11 +68,10 @@ var css = csjs`
     cursor: pointer;
     opacity: 0.8;
     margin-left: 3%;
-    color: ${styles.colors.black};
-    opacity: .5;
+    color: ${styles.colors.blue};
   }
   .copy:hover{
-    opacity: 1;
+    color: ${styles.colors.grey};
   }
   .buttonsContainer {
     margin-top: 2%;

@@ -62,12 +62,13 @@ blockquote {
 }
 
 code, pre {
-  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal, monospace;
   color: #333;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 pre {
+  font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
   padding: 8px 15px;
   background: #f8f8f8;
   border-radius: 5px;
