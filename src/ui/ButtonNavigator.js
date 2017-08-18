@@ -4,6 +4,38 @@ var style = require('./styles/basicStyles')
 var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
+var csjs = require('csjs-inject')
+var styleGuide = require('./styles/style-guide')
+var styles = styleGuide()
+
+var css = csjs`
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .stepButtons {
+    width: 100%;
+    display: flex;
+    justify-content: center
+  }
+  .stepButton extends ${styles.button} {
+    width: 25%;
+    min-width: 30px;
+  }
+  .jumpButtons {
+    width: 100%;
+    display: flex;
+    justify-content: center
+  }
+  .jumpButton extends ${styles.button} {
+    width: 33%;
+    min-width: 30px;
+  }
+  .navigator:hover {
+    color: ${styles.colors.black}
+  }
+`
+
 function ButtonNavigator (_parent, _traceManager) {
   this.event = new EventManager()
   this.intoBackDisabled = true
@@ -59,23 +91,21 @@ module.exports = ButtonNavigator
 
 ButtonNavigator.prototype.render = function () {
   var self = this
-  var view = yo`<div>    
-    <button id='overback' title='step over back' class='fa fa-angle-double-left' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} >
-    </button>
-    <button id='intoback' title='step into back' class='fa fa-angle-left' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} >
-    </button>    
-    <button id='intoforward' title='step into forward'  class='fa fa-angle-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} >
-    </button>
-    <button id='overforward' title='step over forward' class='fa fa-angle-double-right' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} >
-    </button>
-    <button id='jumpout' title='jump out' class='fa fa-share' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} >
-    </button>
-    <button id='jumppreviousbreakpoint' title='jump to the previous breakpoint' class='fa fa-step-backward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpPreviousBreakpoint') }} disabled=${this.jumpPreviousBreakpointDisabled} >
-    </button>
-    <button id='jumpnextbreakpoint' title='jump to the next breakpoint' class='fa fa-step-forward' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpNextBreakpoint') }} disabled=${this.jumpNextBreakpointDisabled} >
-    </button>
+  var view = yo`<div class="${css.buttons}">
+    <div class="${css.stepButtons}">
+      <button id='overback' title='Step over backward' class='${css.navigator} ${css.stepButton} fa fa-reply' onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} ></button>
+      <button id='intoforward' title='Step into'  class='${css.navigator} ${css.stepButton} fa fa-level-down' onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} ></button>
+      <button id='intoback' title='Step out' class='${css.navigator} ${css.stepButton} fa fa-level-up' onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} ></button>
+      <button id='overforward' title='Step over forward' class='${css.navigator} ${css.stepButton} fa fa-share' onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} ></button>
+    </div>
+
+    <div class="${css.jumpButtons}">
+      <button id='jumppreviousbreakpoint' title='Jump to the previous breakpoint' class='${css.navigator} ${css.jumpButton} fa fa-step-backward' onclick=${function () { self.event.trigger('jumpPreviousBreakpoint') }} disabled=${this.jumpPreviousBreakpointDisabled} ></button>
+      <button id='jumpout' title='Jump out' class='${css.navigator} ${css.jumpButton} fa fa-eject' onclick=${function () { self.event.trigger('jumpOut') }} disabled=${this.jumpOutDisabled} ></button>
+      <button id='jumpnextbreakpoint' title='Jump to the next breakpoint' class='${css.navigator} ${css.jumpButton} fa fa-step-forward' onclick=${function () { self.event.trigger('jumpNextBreakpoint') }} disabled=${this.jumpNextBreakpointDisabled} ></button>
+    </div>
     <div id='reverted' style="display:none">
-      <button id='jumptoexception' title='jump to exception' class='fa fa-exclamation-triangle' style=${ui.formatCss(style.button)} onclick=${function () { self.event.trigger('jumpToException', [self.revertionPoint]) }} disabled=${this.jumpOutDisabled} >
+      <button id='jumptoexception' title='Jump to exception' class='${css.navigator} ${css.button} fa fa-exclamation-triangle' onclick=${function () { self.event.trigger('jumpToException', [self.revertionPoint]) }} disabled=${this.jumpOutDisabled} >
       </button>
       <span>State changes made during this call will be reverted.</span>
       <span id='outofgas' style="display:none">This call will run out of gas.</span>
