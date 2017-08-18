@@ -173,19 +173,6 @@
     cursor: pointer;
 }
 
-#debugView button {
-    background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
-    font-size: 12px;
-    padding: 0.25em;
-    margin-bottom: .5em;
-    color: black;
-    border:0 none;
-    border-radius: 3px;
-    width: 8em;
-    margin-right: 1em;
-    cursor: pointer;
-}
-
 #header .origin {
     display: block;
     word-wrap: break-word;
@@ -325,12 +312,12 @@ input[type="file"] {
 .highlightcode_fullLine {
     position:absolute;
     z-index:20;
-    background-color: hsla(0, 82%, 82%, .5); /* lightRed in style-guide.js */ ;
+    background-color: hsla(0, 82%, 82%, .5); /* lightRed in style-guide.js */
     opacity: 0.5;
 }
 
 .ace_gutter-cell.ace_breakpoint{
-    background-color: hsla(0, 82%, 82%, 1); // red in style-guide.js
+    background-color: hsla(0, 82%, 82%, 1); /* red in style-guide.js */
 }
 
 /* The Modal (background) */
