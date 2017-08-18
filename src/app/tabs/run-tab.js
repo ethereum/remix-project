@@ -102,13 +102,11 @@ var css = csjs`
     color: ${styles.colors.lightGrey};
     font-style: italic;
   }
-  .legend extends ${styles.displayBox} {
-    border-radius: 5px;
+  .legend {
+    float: right;
     display: flex;
-    justify-content: center;
-    padding: 15px 8px;
     word-break: normal;
-    flex-wrap: wrap;
+    margin-left: auto;
   }
   .item {
     margin-right: 1em;
@@ -145,8 +143,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">No Contract Instanc
 function runTab (container, appAPI, appEvents, opts) {
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
-    ${settings(appAPI, appEvents)}
-    ${legend()}
+    ${settings(appAPI, appEvents)}    
     ${contractDropdown(appAPI, appEvents, instanceContainer)}
     ${instanceContainer}
   </div>
@@ -219,7 +216,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
   var el = yo`
     <div class="${css.container}">
-      ${selectContractNames}
+      ${selectContractNames} ${legend()}
       <div class="${css.buttons}">
         <div class="${css.button}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
