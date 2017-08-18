@@ -334,7 +334,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   if (lookupOnly) {
     $contractProperty.addClass('constant')
-    call()
+    button.attr('title', (title + " - call)"))
   }
 
   if (args.funABI.inputs && args.funABI.inputs.length > 0) {
@@ -343,6 +343,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
 
   if (args.funABI.payable === true) {
     $contractProperty.addClass('payable')
+    button.attr('title', (title + " - transact (payable)"))
+  }
+
+  if (args.funABI.payable === false) {
+    button.attr('title', (title + " - transact (not payable)"))
   }
 
   return $contractProperty

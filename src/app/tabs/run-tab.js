@@ -76,6 +76,11 @@ var css = csjs`
   .contractNames {
     ${styles.dropdown}
   }
+  .subcontainer {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+  }
   .buttons {
     display: flex;
     cursor: pointer;
@@ -115,12 +120,6 @@ var css = csjs`
     color: ${styles.colors.lightGrey};
     font-style: italic;
   }
-  .legend {
-    float: right;
-    display: flex;
-    word-break: normal;
-    margin-left: auto;
-  }
   .item {
     margin-right: 1em;
     display: flex;
@@ -138,13 +137,21 @@ var css = csjs`
     color: ${styles.colors.lightBlue};
     margin-right: .3em;
   }
+  .pendingContainer {
+    display: flex;
+    align-items: baseline;
+  }
   .pending {
-    background-color: ${styles.colors.lightRed};
-    width: 75px;
     height: 25px;
     text-align: center;
     padding-left: 10px;
     border-radius: 3px;
+    margin-left: 5px;
+  }
+  .icon {
+    font-size: 12px;
+    color: ${styles.colors.orange};
+    margin-left: 10%;
   }
 `
 console.log(styles.displayBox.toString())
@@ -212,7 +219,7 @@ function updateAccountBalances (container, appAPI) {
 }
 
 function updatePendingTxs (container, appAPI) {
-  container.querySelector('#pendingtxs').innerText = Object.keys(appAPI.udapp().pendingTransactions()).length + ' pending'
+  container.querySelector('#pendingtxs').innerText = Object.keys(appAPI.udapp().pendingTransactions()).length
 }
 
 /* ------------------------------------------------
@@ -231,7 +238,13 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
   var el = yo`
     <div class="${css.container}">
-      ${selectContractNames} ${legend()}
+      <div class="${css.subcontainer}">
+        ${selectContractNames}
+        <div class="${css.pendingContainer}">
+          <div class="${css.pending}" id="pendingtxs"></div>
+          <i title="Contracts pending" class="${css.icon} fa fa-exclamation-triangle"></i>
+        </div>
+      </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
@@ -395,21 +408,5 @@ function settings (appAPI, appEvents) {
     if (!lookupOnly) el.querySelector('#value').value = '0'
   })
 
-  return el
-}
-
-/* ------------------------------------------------
-              section  LEGEND
------------------------------------------------- */
-function legend () {
-  var el =
-  yo`
-    <div class="${css.legend}">
-      <div class="${css.item}"><i class="fa fa-circle ${css.call}" aria-hidden="true"></i>Call</div>
-      <div class="${css.item}"><i class="fa fa-circle ${css.transact}" aria-hidden="true"></i>Transact</div>
-      <div class="${css.item}"><i class="fa fa-circle ${css.payable}" aria-hidden="true"></i>Transact(Payable)</div>
-      <div class="${css.item} ${css.pending}" id="pendingtxs"></div>
-    </div>
-  `
   return el
 }
