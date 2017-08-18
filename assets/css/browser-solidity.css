@@ -173,19 +173,6 @@
     cursor: pointer;
 }
 
-#debugView button {
-    background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
-    font-size: 12px;
-    padding: 0.25em;
-    margin-bottom: .5em;
-    color: black;
-    border:0 none;
-    border-radius: 3px;
-    width: 8em;
-    margin-right: 1em;
-    cursor: pointer;
-}
-
 #header .origin {
     display: block;
     word-wrap: break-word;
