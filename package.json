@@ -14,8 +14,6 @@
   ],
   "main": "./src/index.js",
   "dependencies": {
-    "bignumber.js": "^4.0.2",
-    "csjs-inject": "^1.0.1",
     "which": "^1.2.10"
   },
   "devDependencies": {
@@ -85,37 +83,21 @@
   },
   "browserify": {
     "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            [
-              "fast-async",
-              {
-                "runtimePatten": null,
-                "compiler": {
-                  "promises": true,
-                  "es7": true,
-                  "noRuntime": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            "transform-object-assign"
-          ]
-        }
-      ],
-      [
-        "yo-yoify"
-      ],
-      [
-        "babelify",
-        {
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
+      ["babelify", {
+        "plugins": [
+          ["fast-async", {
+            "runtimePatten": null,
+            "compiler": {
+              "promises": true,
+              "es7": true,
+              "noRuntime": true,
+              "wrapAwait": true
+            }
+          }], "transform-object-assign"
+        ]
+      }],
+      ["yo-yoify"],
+      ["babelify", { "presets": ["es2015"] }]
     ]
   }
 }

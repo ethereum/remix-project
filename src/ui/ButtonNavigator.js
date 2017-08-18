@@ -16,19 +16,19 @@ var css = csjs`
   .stepButtons {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center
   }
   .stepButton extends ${styles.button} {
-    width: 23%;
+    width: 25%;
     min-width: 30px;
   }
   .jumpButtons {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center
   }
   .jumpButton extends ${styles.button} {
-    width: 32%;
+    width: 33%;
     min-width: 30px;
   }
   .navigator:hover {
