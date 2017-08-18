@@ -1,4 +1,3 @@
-var style = require('./styles/basicStyles')
 var util = require('../helpers/global')
 var EventManager = require('../lib/eventManager')
 var traceHelper = require('../helpers/traceHelper')
@@ -6,7 +5,43 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var init = require('../helpers/init')
 var DropdownPanel = require('./DropdownPanel')
+var style = require('./styles/basicStyles')
+var csjs = require('csjs-inject')
+var styleGuide = require('./styles/style-guide')
+var styles = styleGuide()
 
+var css = csjs`
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+  .txContainer {
+    display: flex;
+    flex-direction: column;
+  }
+  .txinputs {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .txinput extends ${styles.inputField} {
+    width: 50%;
+    min-width: 30px;
+    margin: 3px;
+  }
+  .txbuttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .txbutton extends ${styles.button} {
+    width: 50%;
+    min-width: 30px;
+  }
+  .txbutton:hover {
+    color: ${styles.colors.black};
+  }
+`
 function TxBrowser (_parent) {
   this.event = new EventManager()
 
@@ -145,13 +180,18 @@ TxBrowser.prototype.connectionSetting = function () {
 
 TxBrowser.prototype.render = function () {
   var self = this
-  var view = yo`<div>
+  var view = yo`<div class="${css.container}">
         ${this.connectionSetting()}
-        <input onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
-        <input id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
-        <button id='load' class='fa fa-play' title='start debugging' onclick=${function () { self.submit() }} style=${ui.formatCss(style.button)}>
-        </button>
-        <button id='unload' class='fa fa-stop' title='stop debugging' onclick=${function () { self.unload() }} style=${ui.formatCss(style.button)}></button>
+        <div class="${css.txContainer}">
+          <div class="${css.txinputs}">
+            <input class="${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
+            <input class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
+          </div>
+          <div class="${css.txbuttons}">
+            <button id='load' class='fa fa-play ${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}></button>
+            <button id='unload' class='fa fa-stop ${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}></button>
+          </div>
+        </div>
         <span id='error'></span>
         <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
           ${this.basicPanel.render()}

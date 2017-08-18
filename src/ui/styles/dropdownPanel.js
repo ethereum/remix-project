@@ -2,7 +2,7 @@
 module.exports = {
   title: {
     'border': '1px solid #dadada',
-    'background-color': '#eeeeee',
+    'background-color': 'white',
     'width': '100%',
     'color': '#363f47',
     'margin-top': '5px',
@@ -25,6 +25,7 @@ module.exports = {
     'margin-top': '3px'
   },
   caret: {
-    'margin-left': '5px'
+    'margin-left': '10px',
+    'margin-right': '10px'
   }
 }
