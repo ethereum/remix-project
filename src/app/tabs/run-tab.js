@@ -69,6 +69,14 @@ var css = csjs`
     margin-top: 2%;
     border: none;
   }
+  .pendingTxsContainer extends ${styles.displayBox}  {
+    display: flex;
+    flex-direction: column;
+    background-color: ${styles.colors.transparent};
+    margin-top: 2%;
+    border: none;
+    padding-bottom: 0;
+  }
   .container {
     ${styles.displayBox}
     margin-top: 2%;
@@ -120,6 +128,11 @@ var css = csjs`
     color: ${styles.colors.lightGrey};
     font-style: italic;
   }
+  .pendingTxsText extends ${styles.displayBox} {
+    text-align: center;
+    color: ${styles.colors.lightGrey};
+    font-style: italic;
+  }
   .item {
     margin-right: 1em;
     display: flex;
@@ -162,15 +175,25 @@ module.exports = runTab
 var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">No Contract Instances.</div>`
 
+var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
+var pendingTxsContainer = yo`<div class="${css.pendingTxsContainer}">${pendingTxsText}</div>`
+
 function runTab (container, appAPI, appEvents, opts) {
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
     ${settings(appAPI, appEvents)}
     ${contractDropdown(appAPI, appEvents, instanceContainer)}
+    ${pendingTxsContainer}
     ${instanceContainer}
   </div>
   `
   container.appendChild(el)
+
+  // PENDING transactions
+  function updatePendingTxs (container, appAPI) {
+    var pendingCount = Object.keys(appAPI.udapp().pendingTransactions()).length
+    pendingTxsText.innerText = pendingCount + ' pending transactions'
+  }
 
   // DROPDOWN
   var selectExEnv = el.querySelector('#selectExEnvOptions')
@@ -218,10 +241,6 @@ function updateAccountBalances (container, appAPI) {
   })
 }
 
-function updatePendingTxs (container, appAPI) {
-  container.querySelector('#pendingtxs').innerText = Object.keys(appAPI.udapp().pendingTransactions()).length
-}
-
 /* ------------------------------------------------
     section CONTRACT DROPDOWN and BUTTONS
 ------------------------------------------------ */
@@ -240,10 +259,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     <div class="${css.container}">
       <div class="${css.subcontainer}">
         ${selectContractNames}
-        <div class="${css.pendingContainer}">
-          <div class="${css.pending}" id="pendingtxs"></div>
-          <i title="Contracts pending" class="${css.icon} fa fa-exclamation-triangle"></i>
-        </div>
       </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
