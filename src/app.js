@@ -1,4 +1,4 @@
-/* global confirm, Option, Worker, chrome */
+/* global confirm, chrome */
 'use strict'
 
 var async = require('async')
@@ -598,6 +598,9 @@ function run () {
     setOptimize: (optimize, runCompilation) => {
       compiler.setOptimize(optimize)
       if (runCompilation) runCompiler()
+    },
+    loadCompiler: (usingWorker, url) => {
+      compiler.loadVersion(usingWorker, url)
     }
   }
   var rhpEvents = {
@@ -959,13 +962,8 @@ function run () {
     runCompiler()
   })
 
-  compiler.event.register('loadingCompiler', this, function (url, usingWorker) {
-    setVersionText(usingWorker ? '(loading using worker)' : ' Loading... please, wait a moment! ')
-  })
-
   compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
-    setVersionText(version)
     runCompiler()
 
     if (queryParams.get().context) {
@@ -985,79 +983,4 @@ function run () {
     self.event.trigger('debuggingRequested', [])
     transactionDebugger.debug(txHash)
   }
-
-  function setVersionText (text) {
-    $('#version').text(text)
-  }
-
-  function loadVersion (version) {
-    queryParams.update({ version: version })
-    var url
-    if (version === 'builtin') {
-      var location = window.document.location
-      location = location.protocol + '//' + location.host + '/' + location.pathname
-      if (location.endsWith('index.html')) {
-        location = location.substring(0, location.length - 10)
-      }
-      if (!location.endsWith('/')) {
-        location += '/'
-      }
-
-      url = location + 'soljson.js'
-    } else {
-      url = 'https://ethereum.github.io/solc-bin/bin/' + version
-    }
-    var isFirefox = typeof InstallTrigger !== 'undefined'
-    if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
-      // Workers cannot load js on "file:"-URLs and we get a
-      // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
-      // resort to non-worker version in that case.
-      compiler.loadVersion(true, url)
-    } else {
-      compiler.loadVersion(false, url)
-    }
-  }
-
-  // ----------------- version selector-------------
-
-  // clear and disable the version selector
-  $('option', '#versionSelector').remove()
-  $('#versionSelector').attr('disabled', true)
-
-  // load the new version upon change
-  $('#versionSelector').change(function () {
-    loadVersion($('#versionSelector').val())
-  })
-
-  var header = new Option('Select new compiler version')
-  header.disabled = true
-  header.selected = true
-  $('#versionSelector').append(header)
-
-  $.getJSON('https://ethereum.github.io/solc-bin/bin/list.json').done(function (data) {
-    // populate version dropdown with all available compiler versions (descending order)
-    $.each(data.builds.slice().reverse(), function (i, build) {
-      $('#versionSelector').append(new Option(build.longVersion, build.path))
-    })
-
-    $('#versionSelector').attr('disabled', false)
-
-    // always include the local version
-    $('#versionSelector').append(new Option('latest local version', 'builtin'))
-
-    // find latest release
-    var selectedVersion = data.releases[data.latestRelease]
-
-    // override with the requested version
-    if (queryParams.get().version) {
-      selectedVersion = queryParams.get().version
-    }
-
-    loadVersion(selectedVersion)
-  }).fail(function (xhr, text, err) {
-    // loading failed for some reason, fall back to local compiler
-    $('#versionSelector').append(new Option('latest local version', 'builtin'))
-
-    loadVersion('builtin')
-  })
 }
