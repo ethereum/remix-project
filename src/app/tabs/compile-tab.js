@@ -155,6 +155,45 @@ function compileTab (container, appAPI, appEvents, opts) {
       </div>
   `
 
+  compileContainer.querySelector('#compile').addEventListener('click', () => {
+    appAPI.runCompiler()
+  })
+
+  var compileTimeout = null
+  function scheduleCompilation () {
+    if (!appAPI.config.get('autoCompile')) {
+      return
+    }
+
+    if (compileTimeout) {
+      window.clearTimeout(compileTimeout)
+    }
+    compileTimeout = window.setTimeout(() => {
+      appAPI.runCompiler()
+    }, 300)
+  }
+
+  appEvents.editor.register('contentChanged', () => {
+    scheduleCompilation()
+  })
+
+  appEvents.editor.register('sessionSwitched', () => {
+    scheduleCompilation()
+  })
+
+  // ----------------- autoCompile -----------------
+  var autoCompileInput = compileContainer.querySelector('#autoCompile')
+  if (appAPI.config.exists('autoCompile')) {
+    var autoCompile = appAPI.config.get('autoCompile')
+    if (autoCompile) {
+      autoCompileInput.setAttribute('checked', autoCompile)
+    }
+  }
+
+  autoCompileInput.addEventListener('change', function () {
+    appAPI.config.set('autoCompile', autoCompileInput.checked)
+  })
+
   // REGISTER EVENTS
 
   // compilationDuration

@@ -601,6 +601,9 @@ function run () {
     },
     loadCompiler: (usingWorker, url) => {
       compiler.loadVersion(usingWorker, url)
+    },
+    runCompiler: () => {
+      runCompiler()
     }
   }
   var rhpEvents = {
@@ -858,18 +861,6 @@ function run () {
     startdebugging(hash)
   })
 
-  // ----------------- autoCompile -----------------
-  var autoCompile = document.querySelector('#autoCompile').checked
-  if (config.exists('autoCompile')) {
-    autoCompile = config.get('autoCompile')
-    $('#autoCompile').checked = autoCompile
-  }
-
-  document.querySelector('#autoCompile').addEventListener('change', function () {
-    autoCompile = document.querySelector('#autoCompile').checked
-    config.set('autoCompile', autoCompile)
-  })
-
   function runCompiler () {
     if (transactionDebugger.isActive) return
 
@@ -908,7 +899,6 @@ function run () {
   }
 
   var previousInput = ''
-  var compileTimeout = null
   var saveTimeout = null
 
   function editorOnChange () {
@@ -930,29 +920,11 @@ function run () {
       window.clearTimeout(saveTimeout)
     }
     saveTimeout = window.setTimeout(editorSyncFile, 5000)
-
-    // special case: there's nothing else to do
-    if (input === '') {
-      return
-    }
-
-    if (!autoCompile) {
-      return
-    }
-
-    if (compileTimeout) {
-      window.clearTimeout(compileTimeout)
-    }
-    compileTimeout = window.setTimeout(runCompiler, 300)
   }
 
   editor.event.register('contentChanged', editorOnChange)
   // in order to save the file when switching
   editor.event.register('sessionSwitched', editorOnChange)
-
-  $('#compile').click(function () {
-    runCompiler()
-  })
 
   executionContext.event.register('contextChanged', this, function (context) {
     runCompiler()
