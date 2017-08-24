@@ -594,6 +594,10 @@ function run () {
     },
     resetDapp: (contracts) => {
       udapp.reset(contracts, transactionContextAPI)
+    },
+    setOptimize: (optimize, runCompilation) => {
+      compiler.setOptimize(optimize)
+      if (runCompilation) runCompiler()
     }
   }
   var rhpEvents = {
@@ -1013,17 +1017,6 @@ function run () {
       compiler.loadVersion(false, url)
     }
   }
-
-  // set default
-  $('#optimize').attr('checked', (queryParams.get().optimize === 'true'))
-  compiler.setOptimize(document.querySelector('#optimize').checked)
-
-  document.querySelector('#optimize').addEventListener('change', function () {
-    var optimize = document.querySelector('#optimize').checked
-    queryParams.update({ optimize: optimize })
-    compiler.setOptimize(optimize)
-    runCompiler()
-  })
 
   // ----------------- version selector-------------
 
