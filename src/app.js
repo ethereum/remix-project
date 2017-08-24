@@ -3,8 +3,6 @@
 
 var async = require('async')
 var $ = require('jquery')
-var base64 = require('js-base64').Base64
-var swarmgw = require('swarmgw')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var remix = require('ethereum-remix')
@@ -35,6 +33,7 @@ var Txlistener = require('./app/execution/txListener')
 var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
+var handleImports = require('./app/compiler/compiler-imports')
 
 var styleGuide = require('./style-guide')
 var styles = styleGuide()
@@ -498,7 +497,21 @@ function run () {
     self._components.editorpanel.refresh()
   }
 
-  var compiler = new Compiler(handleImportCall)
+  var compiler = new Compiler((url, cb) => {
+    var provider = fileProviderOf(url)
+    if (provider && provider.exists(url)) {
+      cb(null, provider.get(url, cb))
+    }
+    handleImports.import(url, (error, content) => {
+      if (!error) {
+        // FIXME: at some point we should invalidate the browser cache
+        filesProviders['browser'].addReadOnly(url, content)
+        cb(null, content)
+      } else {
+        modalDialogCustom.alert('Unable to import: url')
+      }
+    })
+  })
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
   // ----------------- Renderer -----------------
@@ -626,94 +639,6 @@ function run () {
 
   self._view.el.addEventListener('change', onResize)
   document.querySelector('#editorWrap').addEventListener('change', onResize)
-
-  // ----------------- compiler ----------------------
-
-  function handleGithubCall (root, path, cb) {
-    return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
-      .done(function (data) {
-        if ('content' in data) {
-          cb(null, base64.decode(data.content))
-        } else {
-          cb('Content not received')
-        }
-      })
-      .fail(function (xhr, text, err) {
-        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
-        cb(err || 'Unknown transport error')
-      })
-  }
-
-  function handleSwarmImport (url, cb) {
-    swarmgw.get(url, function (err, content) {
-      // retry if this failed and we're connected via RPC
-      if (err && !executionContext.isVM()) {
-        var web3 = executionContext.web3()
-        web3.swarm.download(url, cb)
-      } else {
-        cb(err, content)
-      }
-    })
-  }
-
-  function handleIPFS (url, cb) {
-    // replace ipfs:// with /ipfs/
-    url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
-
-    return $.ajax({ type: 'GET', url: 'https://gateway.ipfs.io/' + url })
-      .done(function (data) {
-        cb(null, data)
-      })
-      .fail(function (xhr, text, err) {
-        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
-        cb(err || 'Unknown transport error')
-      })
-  }
-
-  function handleImportCall (url, cb) {
-    var provider = fileProviderOf(url)
-    if (provider && provider.exists(url)) {
-      return provider.get(url, cb)
-    }
-
-    var handlers = [
-      { match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: function (match, cb) { handleGithubCall(match[3], match[4], cb) } },
-      { match: /^(bzz[ri]?:\/\/?.*)$/, handler: function (match, cb) { handleSwarmImport(match[1], cb) } },
-      { match: /^(ipfs:\/\/?.+)/, handler: function (match, cb) { handleIPFS(match[1], cb) } }
-    ]
-
-    var found = false
-    handlers.forEach(function (handler) {
-      if (found) {
-        return
-      }
-
-      var match = handler.match.exec(url)
-      if (match) {
-        found = true
-
-        $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
-        handler.handler(match, function (err, content) {
-          if (err) {
-            cb('Unable to import "' + url + '": ' + err)
-            return
-          }
-
-          // FIXME: at some point we should invalidate the cache
-          filesProviders['browser'].addReadOnly(url, content)
-          cb(null, content)
-        })
-      }
-    })
-
-    if (found) {
-      return
-    } else if (/^[^:]*:\/\//.exec(url)) {
-      cb('Unable to import "' + url + '": Unsupported URL schema')
-    } else {
-      cb('Unable to import "' + url + '": File not found')
-    }
-  }
 
   // ----------------- Debugger -----------------
   var debugAPI = {
