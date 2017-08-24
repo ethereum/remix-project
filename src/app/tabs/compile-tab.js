@@ -159,14 +159,11 @@ function compileTab (container, appAPI, appEvents, opts) {
 
   // compilationDuration
   appEvents.compiler.register('compilationDuration', function tabHighlighting (speed) {
-    var settingsView = document.querySelector('#righthand-panel #menu .settingsView')
     if (speed > 1000) {
       warnCompilationSlow.setAttribute('title', `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
       warnCompilationSlow.style.display = 'inline-block'
-      settingsView.style.color = styles.colors.red
     } else {
       warnCompilationSlow.style.display = 'none'
-      settingsView.style.color = ''
     }
   })
   // loadingCompiler
