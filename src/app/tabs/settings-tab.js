@@ -1,4 +1,5 @@
 var yo = require('yo-yo')
+var QueryParams = require('../../lib/query-params')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -28,6 +29,8 @@ function SettingsTab (container, appAPI, appEvents, opts) {
   if (typeof container === 'string') container = document.querySelector(container)
   if (!container) throw new Error('no container given')
 
+  var queryParams = new QueryParams()
+
   var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
       <div class="${css.info}">
@@ -47,5 +50,20 @@ function SettingsTab (container, appAPI, appEvents, opts) {
       </div>
     </div>
   `
+
+  var optimize = el.querySelector('#optimize')
+  if ((queryParams.get().optimize === 'true')) {
+    optimize.setAttribute('checked', true)
+    appAPI.setOptimize(true, false)
+  } else {
+    appAPI.setOptimize(false, false)
+  }
+
+  optimize.addEventListener('change', function () {
+    var optimize = this.checked
+    queryParams.update({ optimize: optimize })
+    appAPI.setOptimize(optimize, true)
+  })
+
   container.appendChild(el)
 }
