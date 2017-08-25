@@ -9,8 +9,6 @@ var style = require('./styles/basicStyles')
 var csjs = require('csjs-inject')
 var styleGuide = require('./styles/style-guide')
 var styles = styleGuide()
-var styles = styleGuide()
-var styles = styleGuide()
 
 var css = csjs`
   .container {
