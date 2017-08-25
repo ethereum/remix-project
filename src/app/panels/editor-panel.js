@@ -1,7 +1,8 @@
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var EventManager = require('ethereum-remix').lib.EventManager
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var Terminal = require('./terminal')

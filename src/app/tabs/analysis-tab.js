@@ -2,7 +2,8 @@ var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -12,10 +13,12 @@ var css = csjs`
     display: flex;
     flex-direction: column;
   }
-  .infoBox extends ${styles.infoTextBox} {
+  .infoBox  {
+    ${styles.infoTextBox}
     margin-bottom: 1em;
   }
-  .textBox extends ${styles.textBoxL} {
+  .textBox  {
+    ${styles.textBoxL}
     margin-bottom: 1em;
   }
 `

@@ -7,7 +7,8 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`

@@ -5,7 +5,8 @@ var QueryParams = require('../../lib/query-params')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -13,7 +14,8 @@ var css = csjs`
     padding: 2%;
     display: flex;
   }
-  .info extends ${styles.infoTextBox} {
+  .info {
+    ${styles.infoTextBox}
     margin-bottom: 2em;
     word-break: break-word;
   }
@@ -21,7 +23,8 @@ var css = csjs`
     margin-top: 1em;
     display: flex;
   }
-  .select extends ${styles.dropdown} {
+  .select {
+    ${styles.dropdown}
   }
 }
 `

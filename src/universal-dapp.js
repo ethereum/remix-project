@@ -20,7 +20,9 @@ const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./style-guide')
+
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -28,7 +30,8 @@ var css = csjs`
     display: flex;
     align-items: center;
   }
-  .title extends ${styles.dropdown} {
+  .title {
+    ${styles.dropdown}
     width: 400px;
     display: flex;
     justify-content: space-between;
@@ -43,7 +46,8 @@ var css = csjs`
     word-break: break-word;
     min-width: 230px;
   }
-  .instance extends ${styles.displayBox} {
+  .instance {
+    ${styles.displayBox}
     padding: 10px 15px 6px 15px;
   }
   .instance .title:before {

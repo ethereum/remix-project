@@ -10,7 +10,8 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 module.exports = filepanel

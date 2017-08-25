@@ -10,7 +10,8 @@ var modalDialog = require('../ui/modaldialog')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -21,7 +22,8 @@ var css = csjs`
     display: block;
     margin: 3% 0;
   }
-  .compileContainer extends ${styles.displayBox} {
+  .compileContainer  {
+    ${styles.displayBox}
     margin-bottom: 2%;
   }
   .autocompileContainer {
@@ -42,7 +44,7 @@ var css = csjs`
     line-height: initial;
   }
   .warnCompilationSlow {
-    color:  ${styles.colors.orange};
+    color: ${styles.colors.orange};
     margin-left: 1%;
   }
   .compileButtons {
@@ -56,18 +58,21 @@ var css = csjs`
   .size {
     display: flex;
   }
-  .compileButton extends ${styles.button} {
+  .compileButton {
+    ${styles.button}
     width: 120px;
     min-width: 110px;
     margin-right: 1%;
     font-size: 12px;
   }
-  .container extends ${styles.displayBox} {
+  .container {
+    ${styles.displayBox}
     margin: 0;
     display: flex;
     align-items: center;
   }
-  .contractNames extends ${styles.dropdown} {
+  .contractNames {
+    ${styles.dropdown}
     margin-right: 5%;
   }
   .contractButtons {
@@ -76,9 +81,11 @@ var css = csjs`
     justify-content: center;
     text-align: center;
   }
-  .details extends ${styles.button} {
+  .details {
+    ${styles.button}
   }
-  .publish extends ${styles.button} {
+  .publish {
+    ${styles.button}
     margin-left: 2%;
   }
   .log {

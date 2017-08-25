@@ -10,7 +10,8 @@ const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -19,7 +20,8 @@ var css = csjs`
     display: flex;
     flex-direction: column;
   }
-  .settings extends ${styles.displayBox} {
+  .settings {
+    ${styles.displayBox}
     margin-bottom: 2%;
     padding: 10px 15px 15px 15px;
   }
@@ -27,21 +29,25 @@ var css = csjs`
     margin-top: .5em;
     display: flex;
   }
-  .col1 extends ${styles.titleL} {
+  .col1 {
+    ${styles.titleL}
     width: 30%;
     float: left;
     align-self: center;
   }
-  .col1_1 extends ${styles.titleM} {
+  .col1_1 {
+    ${styles.titleM}
     font-size: 12px;
     width: 25%;
     min-width: 75px;
     float: left;
     align-self: center;
   }
-  .col2 extends ${styles.inputField}{
+  .col2 {
+    ${styles.inputField}
   }
-  .select extends ${styles.dropdown} {
+  .select {
+    ${styles.dropdown}
     text-align: center;
     font-weight: normal;
     min-width: 150px;
@@ -55,17 +61,20 @@ var css = csjs`
   .copyaddress:hover {
     color: ${styles.colors.grey};
   }
-  .instanceContainer extends ${styles.displayBox}  {
+  .instanceContainer {
+    ${styles.displayBox}
     display: flex;
     flex-direction: column;
     background-color: ${styles.colors.transparent};
     margin-top: 2%;
     border: none;
   }
-  .container extends ${styles.displayBox} {
+  .container {
+    ${styles.displayBox}
     margin-top: 2%;
   }
-  .contractNames extends ${styles.dropdown} {
+  .contractNames {
+    ${styles.dropdown}
   }
   .buttons {
     display: flex;
@@ -80,24 +89,28 @@ var css = csjs`
     align-items: center;
     margin-top: 2%;
   }
-  .atAddress extends ${styles.button} {
+  .atAddress {
+    ${styles.button}
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     background-color: ${styles.colors.lightGreen};
     border-color: ${styles.colors.lightGreen};
   }
-  .create extends ${styles.button} {
+  .create {
+    ${styles.button}
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     background-color: ${styles.colors.lightRed};
     border-color: ${styles.colors.lightRed};
   }
-  .input extends ${styles.inputField} {
+  .input {
+    ${styles.inputField}
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     padding-left: 10px;
   }
-  .noInstancesText extends ${styles.displayBox} {
+  .noInstancesText {
+    ${styles.displayBox}
     text-align: center;
     color: ${styles.colors.lightGrey};
     font-style: italic;
@@ -134,6 +147,8 @@ var css = csjs`
     border-radius: 3px;
   }
 `
+console.log(styles.displayBox.toString())
+console.log(css.settings.toString())
 
 module.exports = runTab
 
@@ -143,7 +158,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">No Contract Instanc
 function runTab (container, appAPI, appEvents, opts) {
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
-    ${settings(appAPI, appEvents)}    
+    ${settings(appAPI, appEvents)}
     ${contractDropdown(appAPI, appEvents, instanceContainer)}
     ${instanceContainer}
   </div>

@@ -36,7 +36,7 @@ var Web3VMProvider = remix.web3.web3VMProvider
 var handleImports = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 
-var styleGuide = require('./style-guide')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
