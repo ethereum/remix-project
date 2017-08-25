@@ -18,7 +18,8 @@ var css = csjs`
     display: flex;
     justify-content: center
   }
-  .stepButton extends ${styles.button} {
+  .stepButton {
+    ${styles.button}
     width: 25%;
     min-width: 30px;
   }
@@ -27,7 +28,8 @@ var css = csjs`
     display: flex;
     justify-content: center
   }
-  .jumpButton extends ${styles.button} {
+  .jumpButton {
+    ${styles.button} 
     width: 33%;
     min-width: 30px;
   }

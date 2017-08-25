@@ -9,6 +9,8 @@ var style = require('./styles/basicStyles')
 var csjs = require('csjs-inject')
 var styleGuide = require('./styles/style-guide')
 var styles = styleGuide()
+var styles = styleGuide()
+var styles = styleGuide()
 
 var css = csjs`
   .container {
@@ -24,8 +26,8 @@ var css = csjs`
     display: flex;
     justify-content: center;
   }
-  .txinput extends ${styles.inputField} {
-    width: 50%;
+  .txinput {
+    ${styles.inputField}
     min-width: 30px;
     margin: 3px;
   }
@@ -34,7 +36,8 @@ var css = csjs`
     display: flex;
     justify-content: center;
   }
-  .txbutton extends ${styles.button} {
+  .txbutton {
+    ${styles.button}
     width: 50%;
     min-width: 30px;
   }
