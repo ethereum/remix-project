@@ -24,8 +24,8 @@ var css = csjs`
     display: flex;
     justify-content: center;
   }
-  .txinput extends ${styles.inputField} {
-    width: 50%;
+  .txinput {
+    ${styles.inputField}
     min-width: 30px;
     margin: 3px;
   }
@@ -34,7 +34,8 @@ var css = csjs`
     display: flex;
     justify-content: center;
   }
-  .txbutton extends ${styles.button} {
+  .txbutton {
+    ${styles.button}
     width: 50%;
     min-width: 30px;
   }

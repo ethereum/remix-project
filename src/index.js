@@ -15,6 +15,7 @@ var astHelper = require('./solidity/astHelper')
 var EventManager = require('./lib/eventManager')
 var codeUtil = require('./helpers/util')
 var web3VMProvider = require('./web3Provider/web3VmProvider')
+var styleGuide = require('./ui/styles/style-guide')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -38,7 +39,8 @@ function modules () {
       Debugger: Debugger,
       VMdebugger: VMDebugger,
       BasicPanel: BasicPanel,
-      TreeView: TreeView
+      TreeView: TreeView,
+      styleGuide: styleGuide
     },
     util: {
       SourceMappingDecoder: SourceMappingDecoder,
@@ -58,4 +60,3 @@ function modules () {
     }
   }
 }
-

@@ -84,21 +84,37 @@
   },
   "browserify": {
     "transform": [
-      ["babelify", {
-        "plugins": [
-          ["fast-async", {
-            "runtimePatten": null,
-            "compiler": {
-              "promises": true,
-              "es7": true,
-              "noRuntime": true,
-              "wrapAwait": true
-            }
-          }], "transform-object-assign"
-        ]
-      }],
-      ["yo-yoify"],
-      ["babelify", { "presets": ["es2015"] }]
+      [
+        "babelify",
+        {
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePatten": null,
+                "compiler": {
+                  "promises": true,
+                  "es7": true,
+                  "noRuntime": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            "transform-object-assign"
+          ]
+        }
+      ],
+      [
+        "yo-yoify"
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
     ]
   }
 }
