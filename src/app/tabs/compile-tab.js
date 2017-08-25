@@ -183,12 +183,12 @@ function compileTab (container, appAPI, appEvents, opts) {
 
   // ----------------- autoCompile -----------------
   var autoCompileInput = compileContainer.querySelector('#autoCompile')
+  var autoCompile = true
   if (appAPI.config.exists('autoCompile')) {
-    var autoCompile = appAPI.config.get('autoCompile')
-    if (autoCompile) {
-      autoCompileInput.setAttribute('checked', autoCompile)
-    }
+    autoCompile = appAPI.config.get('autoCompile')
   }
+  appAPI.config.set('autoCompile', autoCompile)
+  autoCompileInput.setAttribute('checked', autoCompile)
 
   autoCompileInput.addEventListener('change', function () {
     appAPI.config.set('autoCompile', autoCompileInput.checked)

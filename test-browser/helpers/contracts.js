@@ -12,8 +12,8 @@ function checkCompiledContracts (browser, compiled, callback) {
       return null
     } else {
       var ret = []
-      for (var c in contracts) {
-        ret.push(contracts[c].innerText)
+      for (var c = 0; c < contracts.length; c++) {
+        ret.push(contracts[c].querySelector('div').innerHTML)
       }
       return ret
     }
