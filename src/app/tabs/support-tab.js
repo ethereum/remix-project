@@ -2,7 +2,8 @@ var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -14,7 +15,8 @@ var css = csjs`
     flex-direction: column;
     overflow: hidden;
   }
-  .chat extends ${styles.displayBox} {
+  .chat {
+    ${styles.displayBox}
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -43,14 +45,15 @@ var css = csjs`
   .chatTitleText {
     opacity: 0.8;
   }
-  .chatIframe extends ${styles.displayBox} {
+  .chatIframe {
+    ${styles.displayBox}
     width: 100%;
     height: 100%;
     transform: scale(0.9);
     padding: 0;
   }
-  .infoBox extends ${styles.infoTextBox}{
-
+  .infoBox {
+    ${styles.infoTextBox}
   }
 `
 

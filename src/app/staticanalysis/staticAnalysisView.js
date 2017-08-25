@@ -5,7 +5,8 @@ var $ = require('jquery')
 var utils = require('../../lib/utils')
 var csjs = require('csjs-inject')
 
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
@@ -16,14 +17,17 @@ var css = csjs`
   .result {
     margin-top: 1%;
   }
-  .buttons extends ${styles.displayBox} {
+  .buttons  {
+    ${styles.displayBox}
     display: flex;
     align-items: center;
   }
-  .buttonRun extends ${styles.button} {
+  .buttonRun  {
+    ${styles.button}
     margin-right: 1%;
   }
-  .analysisModulesContainer extends ${styles.displayBox} {
+  .analysisModulesContainer {
+    ${styles.displayBox}
     margin-bottom: 1%;
     line-height: 2em;
     display: flex;

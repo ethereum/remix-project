@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var styleGuide = require('../../style-guide')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
