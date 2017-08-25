@@ -34,6 +34,7 @@ var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var Web3VMProvider = remix.web3.web3VMProvider
 var handleImports = require('./app/compiler/compiler-imports')
+var FileManager = require('./app/files/fileManager')
 
 var styleGuide = require('./style-guide')
 var styles = styleGuide()
@@ -209,7 +210,11 @@ function run () {
   var config = self._api.config
   var filesProviders = self._api.filesProviders
 
-  var tabbedFiles = {} // list of files displayed in the tabs bar
+  var fileManager = new FileManager({
+    config: config,
+    editor: editor,
+    filesProviders: filesProviders
+  })
 
   // return all the files, except the temporary/readonly ones.. package only files from the browser storage.
   function packageFiles (callback) {
@@ -238,7 +243,7 @@ function run () {
     for (var f in filesSet) {
       filesProviders['browser'].set(createNonClashingName(f), filesSet[f].content)
     }
-    switchToNextFile()
+    fileManager.switchFile()
   }
 
   // Replace early callback with instant response
@@ -283,7 +288,9 @@ function run () {
   // ---------------- FilePanel --------------------
   var FilePanelAPI = {
     createName: createNonClashingName,
-    switchToFile: switchToFile,
+    switchFile: function (path) {
+      fileManager.switchFile(path)
+    },
     event: this.event,
     currentFile: function () {
       return config.get('currentFile')
@@ -306,149 +313,21 @@ function run () {
 
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
-  function fileRenamedEvent (oldName, newName, isFolder) {
-    // TODO please never use 'window' when it is possible to use a variable
-    // that references the DOM node
-    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
-      if (span.innerText === oldName) span.innerText = newName
-    })
-    if (!isFolder) {
-      config.set('currentFile', '')
-      editor.discard(oldName)
-      if (tabbedFiles[oldName]) {
-        delete tabbedFiles[oldName]
-        tabbedFiles[newName] = newName
-      }
-      switchToFile(newName)
-    } else {
-      var newFocus
-      for (var k in tabbedFiles) {
-        if (k.indexOf(oldName + '/') === 0) {
-          var newAbsolutePath = k.replace(oldName, newName)
-          tabbedFiles[newAbsolutePath] = newAbsolutePath
-          delete tabbedFiles[k]
-          if (config.get('currentFile') === k) {
-            newFocus = newAbsolutePath
-          }
-        }
-      }
-      if (newFocus) {
-        switchToFile(newFocus)
-      }
-    }
-    refreshTabs()
-  }
-
-  filesProviders['browser'].event.register('fileRenamed', fileRenamedEvent)
-  filesProviders['localhost'].event.register('fileRenamed', fileRenamedEvent)
-
-  function fileRemovedEvent (path) {
-    if (path === config.get('currentFile')) {
-      config.set('currentFile', '')
-      switchToNextFile()
-    }
-    editor.discard(path)
-    delete tabbedFiles[path]
-    refreshTabs()
-  }
-  filesProviders['browser'].event.register('fileRemoved', fileRemovedEvent)
-  filesProviders['localhost'].event.register('fileRemoved', fileRemovedEvent)
-
-  // --------------------Files tabs-----------------------------
-  var $filesEl = $('#files')
-
-  // Switch tab
-  $filesEl.on('click', '.file:not(.active)', function (ev) {
-    ev.preventDefault()
-    switchToFile($(this).find('.name').text())
-    return false
-  })
-
-  // Remove current tab
-  $filesEl.on('click', '.file .remove', function (ev) {
-    ev.preventDefault()
-    var name = $(this).parent().find('.name').text()
-    delete tabbedFiles[name]
-    refreshTabs()
-    if (Object.keys(tabbedFiles).length) {
-      switchToFile(Object.keys(tabbedFiles)[0])
-    } else {
-      editor.displayEmptyReadOnlySession()
-    }
-    return false
-  })
-
-  function switchToFile (file) {
-    editorSyncFile()
-    config.set('currentFile', file)
-    refreshTabs(file)
-    fileProviderOf(file).get(file, (error, content) => {
-      if (error) {
-        console.log(error)
-      } else {
-        if (fileProviderOf(file).isReadOnly(file)) {
-          editor.openReadOnly(file, content)
-        } else {
-          editor.open(file, content)
-        }
-        self.event.trigger('currentFileChanged', [file, fileProviderOf(file)])
-      }
-    })
-  }
-
-  function switchToNextFile () {
-    var fileList = Object.keys(filesProviders['browser'].list())
-    if (fileList.length) {
-      switchToFile(fileList[0])
-    }
-  }
-
   var previouslyOpenedFile = config.get('currentFile')
   if (previouslyOpenedFile) {
     filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
       if (!error && content) {
-        switchToFile(previouslyOpenedFile)
+        fileManager.switchFile(previouslyOpenedFile)
       } else {
-        switchToNextFile()
+        fileManager.switchFile()
       }
     })
   } else {
-    switchToNextFile()
-  }
-
-  function fileProviderOf (file) {
-    var provider = file.match(/[^/]*/)
-    if (provider !== null) {
-      return filesProviders[provider[0]]
-    }
-    return null
-  }
-
-  // Display files that have already been selected
-  function refreshTabs (newfile) {
-    if (newfile) {
-      tabbedFiles[newfile] = newfile
-    }
-
-    var $filesEl = $('#files')
-    $filesEl.find('.file').remove()
-
-    for (var file in tabbedFiles) {
-      $filesEl.append($('<li class="file"><span class="name">' + file + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
-    }
-    var currentFileOpen = !!config.get('currentFile')
-
-    if (currentFileOpen) {
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === config.get('currentFile') })
-      active.addClass('active')
-    }
-    $('#input').toggle(currentFileOpen)
-    $('#output').toggle(currentFileOpen)
-    self._components.editorpanel.refresh()
+    fileManager.switchFile()
   }
 
   var compiler = new Compiler((url, cb) => {
-    var provider = fileProviderOf(url)
+    var provider = fileManager.fileProviderOf(url)
     if (provider && provider.exists(url)) {
       cb(null, provider.get(url, cb))
     }
@@ -473,7 +352,7 @@ function run () {
     },
     errorClick: (errFile, errLine, errCol) => {
       if (errFile !== config.get('currentFile') && (filesProviders['browser'].exists(errFile) || filesProviders['localhost'].exists(errFile))) {
-        switchToFile(errFile)
+        fileManager.switchFile(errFile)
       }
       editor.gotoLine(errLine, errCol)
     }
@@ -535,7 +414,7 @@ function run () {
       return executionContext
     },
     fileProviderOf: (path) => {
-      return fileProviderOf(path)
+      return fileManager.fileProviderOf(path)
     },
     getBalance: (address, callback) => {
       udapp.getBalance(address, (error, balance) => {
@@ -604,7 +483,7 @@ function run () {
       if (lineColumnPos) {
         this.source = compiler.lastCompilationResult.data.sourceList[location.file] // auto switch to that tab
         if (config.get('currentFile') !== this.source) {
-          switchToFile(this.source)
+          fileManager.switchFile(this.source)
         }
         this.statementMarker = editor.addMarker(lineColumnPos, this.source, 'highlightcode')
         editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
@@ -739,12 +618,12 @@ function run () {
   function runCompiler () {
     if (transactionDebugger.isActive) return
 
-    editorSyncFile()
+    fileManager.saveCurrentFile()
     var currentFile = config.get('currentFile')
     if (currentFile) {
       var target = currentFile
       var sources = {}
-      var provider = fileProviderOf(currentFile)
+      var provider = fileManager.fileProviderOf(currentFile)
       if (provider) {
         provider.get(target, (error, content) => {
           if (error) {
@@ -756,19 +635,6 @@ function run () {
         })
       } else {
         console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
-      }
-    }
-  }
-
-  function editorSyncFile () {
-    var currentFile = config.get('currentFile')
-    if (currentFile && editor.current()) {
-      var input = editor.get(currentFile)
-      var provider = fileProviderOf(currentFile)
-      if (provider) {
-        provider.set(currentFile, input)
-      } else {
-        console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
       }
     }
   }
@@ -794,7 +660,9 @@ function run () {
     if (saveTimeout) {
       window.clearTimeout(saveTimeout)
     }
-    saveTimeout = window.setTimeout(editorSyncFile, 5000)
+    saveTimeout = window.setTimeout(() => {
+      fileManager.saveCurrentFile()
+    }, 5000)
   }
 
   editor.event.register('contentChanged', editorOnChange)

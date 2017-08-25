@@ -189,11 +189,11 @@ function filepanel (appAPI, filesProvider) {
   })
 
   fileExplorer.events.register('focus', function (path) {
-    appAPI.switchToFile(path)
+    appAPI.switchFile(path)
   })
 
   fileSystemExplorer.events.register('focus', function (path) {
-    appAPI.switchToFile(path)
+    appAPI.switchFile(path)
   })
 
   self.render = function render () { return element }
@@ -247,7 +247,7 @@ function filepanel (appAPI, filesProvider) {
     if (!filesProvider['browser'].set(newName, '')) {
       modalDialogCustom.alert('Failed to create file ' + newName)
     } else {
-      appAPI.switchToFile(newName)
+      appAPI.switchFile(newName)
     }
   }
 
