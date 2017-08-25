@@ -1,6 +1,5 @@
 'use strict'
 
-var async = require('async')
 var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
@@ -216,19 +215,6 @@ function run () {
     filesProviders: filesProviders
   })
 
-  // return all the files, except the temporary/readonly ones.. package only files from the browser storage.
-  function packageFiles (callback) {
-    var ret = {}
-    var files = filesProviders['browser']
-    var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
-    async.eachSeries(filtered, function (path, cb) {
-      ret[path.replace(files.type + '/', '')] = { content: files.get(path) }
-      cb()
-    }, () => {
-      callback(null, ret)
-    })
-  }
-
   function createNonClashingName (path) {
     var counter = ''
     if (path.endsWith('.sol')) path = path.substring(0, path.lastIndexOf('.sol'))
@@ -300,9 +286,6 @@ function run () {
     },
     setText: function (text) {
       editor.setText(text)
-    },
-    packageFiles: (cb) => {
-      packageFiles(cb)
     }
   }
   var filePanel = new FilePanel(FilePanelAPI, filesProviders)

@@ -1,4 +1,5 @@
 /* global confirm, prompt */
+var async = require('async')
 var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
@@ -296,7 +297,8 @@ function filepanel (appAPI, filesProvider) {
       }
     }
     if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
-      appAPI.packageFiles((error, packaged) => {
+      // package only files from the browser storage.
+      packageFiles(filesProvider['browser'], (error, packaged) => {
         if (error) {
           console.log(error)
         } else {
@@ -326,7 +328,8 @@ function filepanel (appAPI, filesProvider) {
     if (target === null) {
       return
     }
-    appAPI.packageFiles((error, packaged) => {
+    // package only files from the browser storage.
+    packageFiles(filesProvider['browser'], (error, packaged) => {
       if (error) {
         console.log(error)
       } else {
@@ -338,4 +341,16 @@ function filepanel (appAPI, filesProvider) {
       }
     })
   }
+}
+
+// return all the files, except the temporary/readonly ones..
+function packageFiles (files, callback) {
+  var ret = {}
+  var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
+  async.eachSeries(filtered, function (path, cb) {
+    ret[path.replace(files.type + '/', '')] = { content: files.get(path) }
+    cb()
+  }, () => {
+    callback(null, ret)
+  })
 }
