@@ -3,7 +3,6 @@
 
 var $ = require('jquery')
 var ethJSUtil = require('ethereumjs-util')
-var ethJSABI = require('ethereumjs-abi')
 var BN = ethJSUtil.BN
 var EventManager = require('ethereum-remix').lib.EventManager
 var crypto = require('crypto')

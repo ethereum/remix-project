@@ -328,8 +328,8 @@ class Terminal {
     var self = this
     var args = [...arguments]
     self.data.session.push(args)
-    args.forEach(function (data = {}) {
-      if (!data.type) data = { type: 'default', value: data }
+    args.forEach(function (data) {
+      if (!data || !data.type) data = { type: 'default', value: data }
       var render = self._templates[data.type]
       if (!render) render = self._templates.default
       var blocks = render(data.value)
