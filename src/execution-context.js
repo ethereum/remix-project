@@ -6,6 +6,8 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var EthJSVM = require('ethereumjs-vm')
 var ethUtil = require('ethereumjs-util')
 var StateManager = require('ethereumjs-vm/lib/stateManager')
+var remix = require('ethereum-remix')
+var Web3VMProvider = remix.web3.web3VMProvider
 
 var injectedProvider
 
@@ -16,6 +18,8 @@ if (typeof window.web3 !== 'undefined') {
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
+
+var blankWeb3 = new Web3()
 
 /*
   extend vm state manager and instanciate VM
@@ -65,6 +69,9 @@ vm.blockchain = stateManager.blockchain
 vm.trie = stateManager.trie
 vm.stateManager.checkpoint()
 
+var web3VM = new Web3VMProvider()
+web3VM.setVM(vm)
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -82,7 +89,11 @@ function ExecutionContext () {
   }
 
   this.web3 = function () {
-    return web3
+    return this.isVM() ? web3VM : web3
+  }
+  
+  this.blankWeb3 = function () {
+    return blankWeb3
   }
 
   this.vm = function () {
@@ -150,4 +161,4 @@ function ExecutionContext () {
   }
 }
 
-module.exports = ExecutionContext
+module.exports = new ExecutionContext()

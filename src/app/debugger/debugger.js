@@ -1,11 +1,12 @@
 'use strict'
 
 var remix = require('ethereum-remix')
+var executionContext = require('../../execution-context')
 
 /**
  * Manage remix and source highlighting
  */
-function Debugger (id, appAPI, executionContextEvent, editorEvent) {
+function Debugger (id, appAPI, editorEvent) {
   this.el = document.querySelector(id)
   this.debugger = new remix.ui.Debugger()
   this.sourceMappingDecoder = new remix.util.SourceMappingDecoder()
@@ -30,7 +31,7 @@ function Debugger (id, appAPI, executionContextEvent, editorEvent) {
     this.breakPointManager.add({fileName: fileName, row: row})
   })
 
-  executionContextEvent.register('contextChanged', this, function (context) {
+  executionContext.event.register('contextChanged', this, function (context) {
     self.switchProvider(context)
   })
 

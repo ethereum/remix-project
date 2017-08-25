@@ -5,6 +5,7 @@ var EventManager = remix.lib.EventManager
 var helper = require('../../lib/helper')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
+var executionContext = require('../../execution-context')
 
 /**
   * This just export a function that register to `newTransaction` and forward them to the logger.
@@ -66,7 +67,7 @@ function renderUnknownTransaction (self, data) {
 }
 
 function context (self, tx) {
-  if (self.opts.api.context() === 'vm') {
+  if (executionContext.getProvider() === 'vm') {
     return yo`<span>(vm)</span>`
   } else {
     return yo`<span>block:${tx.blockNumber}, txIndex:${tx.transactionIndex}`

@@ -5,6 +5,7 @@ var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var helper = require('./txHelper')
 var TreeView = require('ethereum-remix').ui.TreeView
+var executionContext = require('../../execution-context')
 
 module.exports = {
   /**
@@ -16,10 +17,9 @@ module.exports = {
     * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
     * @param {Object} params    - input paramater of the function to call
     * @param {Object} udapp    - udapp
-    * @param {Object} executionContext    - executionContext
     * @param {Function} callback    - callback
     */
-  buildData: function (contract, contracts, isConstructor, funAbi, params, udapp, executionContext, callback) {
+  buildData: function (contract, contracts, isConstructor, funAbi, params, udapp, callback) {
     var funArgs = ''
     try {
       funArgs = $.parseJSON('[' + params + ']')
@@ -47,7 +47,7 @@ module.exports = {
     if (isConstructor) {
       var bytecodeToDeploy = contract.bytecode
       if (bytecodeToDeploy.indexOf('_') >= 0) {
-        this.linkBytecode(contract, contracts, executionContext, udapp, (err, bytecode) => {
+        this.linkBytecode(contract, contracts, udapp, (err, bytecode) => {
           if (err) {
             callback('Error deploying required libraries: ' + err)
           } else {
@@ -67,7 +67,7 @@ module.exports = {
 
   atAddress: function () {},
 
-  linkBytecode: function (contract, contracts, executionContext, udapp, callback) {
+  linkBytecode: function (contract, contracts, udapp, callback) {
     var bytecode = contract.bytecode
     if (bytecode.indexOf('_') < 0) {
       return callback(null, bytecode)
@@ -81,7 +81,7 @@ module.exports = {
     if (!libraryabi) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryabi, executionContext, udapp, (err, address) => {
+    this.deployLibrary(libraryabi, udapp, (err, address) => {
       if (err) {
         return callback(err)
       }
@@ -95,11 +95,11 @@ module.exports = {
         bytecode = bytecode.replace(libLabel, hexAddress)
       }
       contract.bytecode = bytecode
-      this.linkBytecode(contract, contracts, executionContext, udapp, callback)
+      this.linkBytecode(contract, contracts, udapp, callback)
     })
   },
 
-  deployLibrary: function (libraryName, library, executionContext, udapp, callback) {
+  deployLibrary: function (libraryName, library, udapp, callback) {
     var address = library.address
     if (address) {
       return callback(null, address)

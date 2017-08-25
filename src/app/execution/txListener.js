@@ -5,6 +5,7 @@ var ethJSUtil = require('ethereumjs-util')
 var EventManager = require('ethereum-remix').lib.EventManager
 var remix = require('ethereum-remix')
 var codeUtil = remix.util.code
+var executionContext = require('../../execution-context')
 
 /**
   * poll web3 each 2s if web3
@@ -20,15 +21,15 @@ class TxListener {
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
     this.init()
-    opt.event.executionContext.register('contextChanged', (context) => {
+    executionContext.event.register('contextChanged', (context) => {
       if (this.loopId) {
         this.startListening(context)
       }
     })
     opt.event.udapp.register('transactionExecuted', (error, to, data, lookupOnly, txResult) => {
       if (error) return
-      if (this.loopId && this._api.isVM()) {
-        this._api.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
+      if (this.loopId && executionContext.isVM()) {
+        executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
           if (error) return console.log(error)
           this._newBlock({
             type: 'VM',
@@ -57,16 +58,16 @@ class TxListener {
   startListening () {
     this.stopListening()
     this.init()
-    if (this._api.context() === 'vm') {
+    if (executionContext.getProvider() === 'vm') {
       this.loopId = 'vm-listener'
     } else {
       this.loopId = setInterval(() => {
-        this._api.web3().eth.getBlockNumber((error, blockNumber) => {
+        executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
           if (this.loopId === null || this.loopId === 'vm-listener') return
           if (error) return console.log(error)
           if (!this.lastBlock || blockNumber > this.lastBlock) {
             this.lastBlock = blockNumber
-            this._api.web3().eth.getBlock(this.lastBlock, true, (error, result) => {
+            executionContext.web3().eth.getBlock(this.lastBlock, true, (error, result) => {
               if (!error) {
                 this._newBlock(Object.assign({type: 'web3'}, result))
               }
@@ -131,6 +132,7 @@ class TxListener {
   }
 
   _resolveTx (tx, cb) {
+    console.log(tx)
     var contracts = this._api.contracts()
     if (!contracts) return cb()
     var contractName
@@ -158,7 +160,7 @@ class TxListener {
       // first check known contract, resolve against the `runtimeBytecode` if not known
       contractName = this._resolvedContracts[tx.to]
       if (!contractName) {
-        this._api.web3().eth.getCode(tx.to, (error, code) => {
+        executionContext.web3().eth.getCode(tx.to, (error, code) => {
           if (error) return cb(error)
           if (code) {
             var contractName = this._tryResolveContract(code, contracts, 'runtimeBytecode')
