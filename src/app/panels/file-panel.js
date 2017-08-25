@@ -10,7 +10,7 @@ var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
-var helpers = require('../../lib/helper')
+var helper = require('../../lib/helper')
 
 var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide
@@ -246,7 +246,7 @@ function filepanel (appAPI, filesProvider) {
   }
 
   function createNewFile () {
-    var newName = filesProvider['browser'].type + '/' + helpers.createNonClashingName('Untitled.sol', filesProvider['browser'])
+    var newName = filesProvider['browser'].type + '/' + helper.createNonClashingName('Untitled.sol', filesProvider['browser'])
     if (!filesProvider['browser'].set(newName, '')) {
       modalDialogCustom.alert('Failed to create file ' + newName)
     } else {

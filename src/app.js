@@ -12,7 +12,7 @@ var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
-var helpers = require('./lib/helper')
+var helper = require('./lib/helper')
 var Storage = require('./storage')
 var Browserfiles = require('./app/files/browser-files')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
@@ -219,7 +219,7 @@ function run () {
   // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (filesSet) {
     for (var f in filesSet) {
-      filesProviders['browser'].set(helpers.createNonClashingName(f, filesProviders['browser']), filesSet[f].content)
+      filesProviders['browser'].set(helper.createNonClashingName(f, filesProviders['browser']), filesSet[f].content)
     }
     fileManager.switchFile()
   }
