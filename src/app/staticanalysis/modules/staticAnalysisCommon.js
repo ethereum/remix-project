@@ -32,7 +32,7 @@ var basicRegex = {
   CONTRACTTYPE: '^contract ',
   FUNCTIONTYPE: '^function \\(',
   EXTERNALFUNCTIONTYPE: '^function \\(.*\\).* external',
-  CONSTANTFUNCTIONTYPE: '^function \\(.*\\).* constant',
+  CONSTANTFUNCTIONTYPE: '^function \\(.*\\).* (constant|view|pure)',
   REFTYPE: '( storage )|(mapping\\()|(\\[\\])',
   FUNCTIONSIGNATURE: '^function \\(([^\\(]*)\\)',
   LIBRARYTYPE: '^type\\(library (.*)\\)'
@@ -442,7 +442,11 @@ function isStateVariable (name, stateVariables) {
  * @return {bool}
  */
 function isConstantFunction (node) {
-  return isFunctionDefinition(node) && node.attributes.constant === true
+  return isFunctionDefinition(node) && (
+    node.attributes.constant === true ||
+    node.attributes.stateMutability === 'view' ||
+    node.attributes.stateMutability === 'pure'
+  )
 }
 
 /**
