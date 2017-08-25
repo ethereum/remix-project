@@ -12,6 +12,7 @@ var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
+var helpers = require('./lib/helpers')
 var Storage = require('./storage')
 var Browserfiles = require('./app/files/browser-files')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
@@ -215,19 +216,10 @@ function run () {
     filesProviders: filesProviders
   })
 
-  function createNonClashingName (path) {
-    var counter = ''
-    if (path.endsWith('.sol')) path = path.substring(0, path.lastIndexOf('.sol'))
-    while (filesProviders['browser'].exists(path + counter + '.sol')) {
-      counter = (counter | 0) + 1
-    }
-    return path + counter + '.sol'
-  }
-
   // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (filesSet) {
     for (var f in filesSet) {
-      filesProviders['browser'].set(createNonClashingName(f), filesSet[f].content)
+      filesProviders['browser'].set(helpers.createNonClashingName(f, filesProviders['browser']), filesSet[f].content)
     }
     fileManager.switchFile()
   }
@@ -273,7 +265,6 @@ function run () {
 
   // ---------------- FilePanel --------------------
   var FilePanelAPI = {
-    createName: createNonClashingName,
     switchFile: function (path) {
       fileManager.switchFile(path)
     },

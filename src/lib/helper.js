@@ -7,5 +7,13 @@ module.exports = {
     if (data.length < 5) return data
     var len = data.length
     return data.slice(0, 5) + '...' + data.slice(len - 5, len)
+  },
+  createNonClashingName (path, fileProvider) {
+    var counter = ''
+    if (path.endsWith('.sol')) path = path.substring(0, path.lastIndexOf('.sol'))
+    while (fileProvider.exists(path + counter + '.sol')) {
+      counter = (counter | 0) + 1
+    }
+    return path + counter + '.sol'
   }
 }
