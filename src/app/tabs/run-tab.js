@@ -69,7 +69,8 @@ var css = csjs`
     margin-top: 2%;
     border: none;
   }
-  .pendingTxsContainer extends ${styles.displayBox}  {
+  .pendingTxsContainer  {
+    ${styles.displayBox}
     display: flex;
     flex-direction: column;
     background-color: ${styles.colors.transparent};
@@ -128,7 +129,8 @@ var css = csjs`
     color: ${styles.colors.lightGrey};
     font-style: italic;
   }
-  .pendingTxsText extends ${styles.displayBox} {
+  .pendingTxsText {
+    ${styles.displayBox}
     text-align: center;
     color: ${styles.colors.lightGrey};
     font-style: italic;
