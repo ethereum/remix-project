@@ -10,7 +10,7 @@ var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
-var helpers = require('../../lib/helpers')
+var helpers = require('../../lib/helper')
 
 var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide

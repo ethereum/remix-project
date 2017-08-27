@@ -12,7 +12,7 @@ var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
-var helpers = require('./lib/helpers')
+var helpers = require('./lib/helper')
 var Storage = require('./storage')
 var Browserfiles = require('./app/files/browser-files')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
