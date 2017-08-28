@@ -31,15 +31,15 @@ function web3VmProvider () {
   this.storageCache = {}
   this.sha3Preimages = {}
   // util
-  this.sha3 = function () { return self.web3.sha3.apply(web3, arguments) }
-  this.toHex = function () { return self.web3.toHex.apply(web3, arguments) }
-  this.toAscii = function () { return self.web3.toAscii.apply(web3, arguments) }
-  this.fromAscii = function () { return self.web3.fromAscii.apply(web3, arguments) }
-  this.fromDecimal = function () { return self.web3.fromDecimal.apply(web3, arguments) }
-  this.fromWei = function () { return self.web3.fromWei.apply(web3, arguments) }
-  this.toWei = function () { return self.web3.toWei.apply(web3, arguments) }
-  this.toBigNumber = function () { return self.web3.toBigNumber.apply(web3, arguments) }
-  this.isAddress = function () { return self.web3.isAddress.apply(web3, arguments) }
+  this.sha3 = function () { return self.web3.sha3.apply(self.web3, arguments) }
+  this.toHex = function () { return self.web3.toHex.apply(self.web3, arguments) }
+  this.toAscii = function () { return self.web3.toAscii.apply(self.web3, arguments) }
+  this.fromAscii = function () { return self.web3.fromAscii.apply(self.web3, arguments) }
+  this.fromDecimal = function () { return self.web3.fromDecimal.apply(self.web3, arguments) }
+  this.fromWei = function () { return self.web3.fromWei.apply(self.web3, arguments) }
+  this.toWei = function () { return self.web3.toWei.apply(self.web3, arguments) }
+  this.toBigNumber = function () { return self.web3.toBigNumber.apply(self.web3, arguments) }
+  this.isAddress = function () { return self.web3.isAddress.apply(self.web3, arguments) }
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
