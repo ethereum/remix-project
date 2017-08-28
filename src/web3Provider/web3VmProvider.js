@@ -94,7 +94,7 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
     var log = data.vm.logs[l]
     logs.push({
       data: log[2].toString('hex'),
-      topics: [log[1][0].toString('hex')],
+      topics: log[1].length > 0 ? [log[1][0].toString('hex')] : ['0x'],
       rawVMResponse: log
     })
   }
