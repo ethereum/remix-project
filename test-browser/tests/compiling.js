@@ -30,8 +30,8 @@ function runTests (browser) {
   contractHelper.testContracts(browser, sources.sources['browser/Untitled.sol'], ['browser/Untitled.sol:TestContract'], function () {
     browser.click('.runView')
     .click('#runTabView div[class^="create"]')
-    .waitForElementPresent('.instance button[title="f"]')
-    .click('.instance button[title="f"]')
+    .waitForElementPresent('.instance button[title="f - transact (not payable)"]')
+    .click('.instance button[title="f - transact (not payable)"]')
     .end()
     /*
     TODO: this will be logged in the dom console

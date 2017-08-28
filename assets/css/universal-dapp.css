@@ -216,8 +216,8 @@
 }
 
 #runTabView .contractProperty.payable .call {
-	background-color: hsla(0, 82%, 82%, .5);  /* lightRed in style-guide.js */
-	border-color: hsla(0, 82%, 82%, .5);  /* lightRed in style-guide.js */
+	background-color: hsla(0, 82%, 82%, 1);  /* red in style-guide.js */
+	border-color: hsla(0, 82%, 82%, 1);  /* red in style-guide.js */
 	width: 25%;
 }
 
