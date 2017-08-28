@@ -8,6 +8,9 @@ module.exports = {
     if (funABI.inputs && funABI.inputs.length) {
       for (var i = 0; i < funABI.inputs.length; i++) {
         types.push(funABI.inputs[i].type)
+        if (args.length < types.length) {
+          args.push('')
+        }
       }
     }
 
