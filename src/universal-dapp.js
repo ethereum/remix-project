@@ -438,6 +438,17 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         if (!args.useCall) {
           self.event.trigger('transactionExecuted', [error, args.to, args.data, false, result])
         }
+        if (error) {
+          if (typeof (error) !== 'string') {
+            if (error.message) {
+              error = error.message
+            } else {
+              try {
+                error = 'error: ' + JSON.stringify(error)
+              } catch (e) {}
+            }
+          }
+        }
         callback(error, result)
       })
     }
