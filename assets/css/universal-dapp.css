@@ -109,26 +109,12 @@
 	cursor: pointer;
 }
 
-.udapp .instance.hidesub .title {
-	margin-bottom: 0;
-	padding-right: 1.5em;
-	word-wrap: break-word;
-}
-
 .udapp .instance .title:before {
 	content: "\25BC";
 	opacity: 0.5;
 	margin-right: 0.4em;
 	font-size: 10px;
 	margin-top: 0.2em;
-}
-
-.udapp .instance.hidesub > *:not(.title) {
-	display: none;
-}
-
-.udapp .instance.hidesub > .title:before {
-	content: "\25B6";
 }
 
 #runTabView .contractProperty {

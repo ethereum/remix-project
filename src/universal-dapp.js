@@ -57,9 +57,6 @@ var css = csjs`
     content: "\\25B8";
     margin-right: 5%;
   }
-  .instance.hidesub {
-      margin: 0;
-  }
   .instance.hidesub > * {
       display: none;
   }
