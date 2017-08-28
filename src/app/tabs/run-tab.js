@@ -304,8 +304,13 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = appAPI.executionContext().isVM()
-            if (isVM && alertVMErrorIfAny(txResult)) return
-
+            if (isVM) {
+              var vmError = txExecution.checkVMError(txResult)
+              if (vmError.error) {
+                modalDialogCustom.alert(vmError.message)
+                return
+              }
+            }
             noInstancesText.style.display = 'none'
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
             instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
@@ -319,21 +324,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     })
   }
 
-  function alertVMErrorIfAny (txResult) {
-    if (!txResult.result.vm.exceptionError) {
-      return null
-    }
-    var error = yo`<span> VM error: ${txResult.result.vm.exceptionError}</span>`
-    var msg
-    if (txResult.result.vm.exceptionError === 'invalid opcode') {
-      msg = yo`<ul><li>The constructor should be payable if you send it value.</li>
-                  <li>The execution might have thrown.</li></ul>`
-    } else if (txResult.result.vm.exceptionError === 'out of gas') {
-      msg = yo`<div>The transaction ran out of gas. Please increase the Gas Limit.</div>`
-    }
-    modalDialogCustom.alert(yo`<div>${error} ${msg} Debug the transaction to get more information</div>`)
-    return error + msg
-  }
 
   function loadFromAddress (appAPI) {
     noInstancesText.style.display = 'none'
