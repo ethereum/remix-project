@@ -228,7 +228,6 @@
 #runTabView .contractProperty > .value {
 	padding: 0 0.4em;
 	box-sizing: border-box;
-	width: 25%;
 	float: left;
 	word-wrap: break-word;
 }
