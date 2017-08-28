@@ -47,7 +47,7 @@ var css = csjs`
   }
   .instance {
     ${styles.displayBox}
-    margin-bottom: 0.5%;
+    margin-bottom: 2px;
     padding: 10px 15px 6px 15px;
   }
   .instance .title:before {
