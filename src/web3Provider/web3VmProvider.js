@@ -30,6 +30,16 @@ function web3VmProvider () {
   this.currentProvider = {'host': 'vm provider'}
   this.storageCache = {}
   this.sha3Preimages = {}
+  // util
+  this.sha3 = function () { return web3.sha3.apply(web3, arguments) }
+  this.toHex = function () { return web3.toHex.apply(web3, arguments) }
+  this.toAscii = function () { return web3.toAscii.apply(web3, arguments) }
+  this.fromAscii = function () { return web3.fromAscii.apply(web3, arguments) }
+  this.fromDecimal = function () { return web3.fromDecimal.apply(web3, arguments) }
+  this.fromWei = function () { return web3.fromWei.apply(web3, arguments) }
+  this.toWei = function () { return web3.toWei.apply(web3, arguments) }
+  this.toBigNumber = function () { return web3.toBigNumber.apply(web3, arguments) }
+  this.isAddress = function () { return web3.isAddress.apply(web3, arguments) }
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
