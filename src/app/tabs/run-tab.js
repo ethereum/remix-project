@@ -324,7 +324,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     })
   }
 
-
   function loadFromAddress (appAPI) {
     noInstancesText.style.display = 'none'
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)

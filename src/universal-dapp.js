@@ -1,4 +1,4 @@
-/* global alert */
+/* global */
 'use strict'
 
 var $ = require('jquery')
