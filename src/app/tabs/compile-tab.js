@@ -339,12 +339,25 @@ function compileTab (container, appAPI, appEvents, opts) {
           log.appendChild(yo`
             <div class=${css.log}>
               <div class="${css.key}">${x} ${copyDetails}</div>
-              <pre class="${css.value}">${JSON.stringify(details[x], null, 4)}</pre>
+              ${insertValue(details, x)}
             </div>
             `)
         })
         modalDialog(contractName, log, {label: 'OK'}, {label: ''})
       }
+    }
+
+    function insertValue(details, x) {
+      var value = yo`<pre class="${css.value}"></pre>`
+      console.log(x)
+      if (x ==='bytecode'||x ==='metadataHash'||x ==='swarmLocation'||x==='Runtime Bytecode'||x==='Opcodes') {
+        var node = yo`<div>${JSON.stringify((details[x].slice(1, 40)+'...'), null, 4)}</div>`
+        value.appendChild(node)
+      } else {
+        var node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
+        value.appendChild(node)
+      }
+      return value
     }
 
     function publish (appAPI) {
