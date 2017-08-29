@@ -90,8 +90,19 @@ var css = csjs`
   }
   .log {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: baseline
+  }
+  .key {
+    margin-right: 5px;
+    color: grey;
+    text-transform: uppercase;
+    width: 100%;
+  }
+  .value {
+    display: flex;
+    width: 100%;
+    margin-top: 1.5%;
   }
   .copyDetails {
     margin-left: 2%;
@@ -324,8 +335,13 @@ function compileTab (container, appAPI, appEvents, opts) {
         var keys = Object.keys(contractsDetails[contractName])
         var log = yo`<div class="${css.detailsJSON}"></div>`
         keys.map(x => {
-          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy details" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
-          log.appendChild(yo`<div class=${css.log}><pre>${x}: ${JSON.stringify(details[x], null, 4)}</pre>${copyDetails}</div>`)
+          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
+          log.appendChild(yo`
+            <div class=${css.log}>
+              <div class="${css.key}">${x} ${copyDetails}</div>
+              <pre class="${css.value}">${JSON.stringify(details[x], null, 4)}</pre>
+            </div>
+            `)
         })
         modalDialog(contractName, log, {label: 'OK'}, {label: ''})
       }
