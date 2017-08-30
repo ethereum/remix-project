@@ -13,7 +13,7 @@ function checkCompiledContracts (browser, compiled, callback) {
     } else {
       var ret = []
       for (var c = 0; c < contracts.length; c++) {
-        ret.push(contracts[c].querySelector('div').innerHTML)
+        ret.push(contracts[c].innerHTML)
       }
       return ret
     }
