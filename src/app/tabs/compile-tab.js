@@ -7,6 +7,7 @@ const copy = require('clipboard-copy')
 var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
 var modalDialog = require('../ui/modaldialog')
+var TreeView = require('ethereum-remix').ui.TreeView
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -90,8 +91,19 @@ var css = csjs`
   }
   .log {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: baseline
+  }
+  .key {
+    margin-right: 5px;
+    color: grey;
+    text-transform: uppercase;
+    width: 100%;
+  }
+  .value {
+    display: flex;
+    width: 100%;
+    margin-top: 1.5%;
   }
   .copyDetails {
     margin-left: 2%;
@@ -103,6 +115,12 @@ var css = csjs`
   .copyDetails:hover {
     opacity: 1;
   }
+  .questionMark {
+    margin-left: 1%;
+    font-size: 14px;
+    color: ${styles.colors.grey};
+    opacity: .3;
+  },
   .detailsJSON {
     padding: 8px 0;
     background-color: ${styles.colors.white};
@@ -324,11 +342,53 @@ function compileTab (container, appAPI, appEvents, opts) {
         var keys = Object.keys(contractsDetails[contractName])
         var log = yo`<div class="${css.detailsJSON}"></div>`
         keys.map(x => {
-          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy details" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
-          log.appendChild(yo`<div class=${css.log}><pre>${x}: ${JSON.stringify(details[x], null, 4)}</pre>${copyDetails}</div>`)
+          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
+          var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[x]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
+          log.appendChild(yo`
+            <div class=${css.log}>
+              <div class="${css.key}">${x} ${copyDetails} ${questionMark}</div>
+              ${insertValue(details, x)}
+            </div>
+            `)
         })
         modalDialog(contractName, log, {label: 'OK'}, {label: ''})
       }
+    }
+
+    function insertValue (details, x) {
+      var value = yo`<pre class="${css.value}"></pre>`
+      var node
+      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes' || x === 'name') {
+        node = yo`<div>${details[x]}</div>`
+      } else if (x === 'web3Deploy') {
+        node = yo`<pre>${details[x]}</pre>`
+      } else if (x === 'interface' || x === 'metadata') {
+        var treeView = new TreeView({
+          extractData: function (item, parent, key) {
+            var ret = {}
+            if (item instanceof Array) {
+              ret.children = item.map((item, index) => {
+                return {key: index, value: item}
+              })
+              ret.self = ''
+            } else if (item instanceof Object) {
+              ret.children = Object.keys(item).map((key) => {
+                return {key: key, value: item[key]}
+              })
+              ret.self = ''
+            } else {
+              ret.self = item
+              ret.children = []
+            }
+            return ret
+          }
+        })
+        node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>`
+      } else {
+        node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
+      }
+      value.appendChild(node)
+      return value
     }
 
     function publish (appAPI) {
@@ -345,5 +405,22 @@ function compileTab (container, appAPI, appEvents, opts) {
       }
     }
     return el
+  }
+}
+
+function detailsHelpSection () {
+  return {
+    'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
+    'Opcodes': 'Assembly opcodes describing the contract',
+    'Runtime Bytecode': 'Bytecode actually store in the state and executed during normal contract call',
+    'bytecode': 'Bytecode executed during contract creation',
+    'functionHashes': 'List of declared function and their corresonding hash',
+    'gasEstimates': 'Gas estimation for each function call',
+    'metadata': 'Contain all informations related to the compilation',
+    'metadataHash': 'Hash representing all metadata information',
+    'interface': 'ABI: Describe all the functions (input/output params, scope, ...)',
+    'name': 'Name of the compiled contract',
+    'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+    'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
   }
 }
