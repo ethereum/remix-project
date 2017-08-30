@@ -351,12 +351,31 @@ function compileTab (container, appAPI, appEvents, opts) {
     function insertValue (details, x) {
       var value = yo`<pre class="${css.value}"></pre>`
       var node
-      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes') {
+      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes' || x === 'name') {
         node = yo`<div>${details[x]}</div>`
       } else if (x === 'web3Deploy') {
         node = yo`<pre>${details[x]}</pre>`
       } else if (x === 'interface' || x === 'metadata') {
-        var treeView = new TreeView({})
+        var treeView = new TreeView({
+          extractData: function (item, parent, key) {
+            var ret = {}
+            if (item instanceof Array) {
+              ret.children = item.map((item, index) => {
+                return {key: index, value: item}
+              })
+              ret.self = ''
+            } else if (item instanceof Object) {
+              ret.children = Object.keys(item).map((key) => {
+                return {key: key, value: item[key]}
+              })
+              ret.self = ''
+            } else {
+              ret.self = item
+              ret.children = []
+            }
+            return ret
+          }
+        })
         node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>`
       } else {
         node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
