@@ -347,16 +347,15 @@ function compileTab (container, appAPI, appEvents, opts) {
       }
     }
 
-    function insertValue(details, x) {
+    function insertValue (details, x) {
       var value = yo`<pre class="${css.value}"></pre>`
-      console.log(x)
-      if (x ==='bytecode'||x ==='metadataHash'||x ==='swarmLocation'||x==='Runtime Bytecode'||x==='Opcodes') {
-        var node = yo`<div>${JSON.stringify((details[x].slice(1, 40)+'...'), null, 4)}</div>`
-        value.appendChild(node)
+      var node
+      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes') {
+        node = yo`<div>${JSON.stringify((details[x].slice(1, 40) + '...'), null, 4)}</div>`
       } else {
-        var node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
-        value.appendChild(node)
+        node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
       }
+      value.appendChild(node)
       return value
     }
 
