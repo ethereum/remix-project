@@ -20,8 +20,6 @@ var css = csjs`
   }
   .stepButton {
     ${styles.button}
-    width: 25%;
-    min-width: 30px;
   }
   .jumpButtons {
     width: 100%;
@@ -30,8 +28,6 @@ var css = csjs`
   }
   .jumpButton {
     ${styles.button} 
-    width: 33%;
-    min-width: 30px;
   }
   .navigator:hover {
     color: ${styles.colors.black}
