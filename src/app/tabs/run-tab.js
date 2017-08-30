@@ -278,7 +278,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
     if (appAPI.getContracts() && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
-      var contract = appAPI.getContracts()[selectContractNames.children[selectContractNames.selectedIndex].innerText]
+      var contract = appAPI.getContracts()[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
       var ctrabi = txHelper.getConstructorInterface(contract.interface)
       if (ctrabi.inputs.length) {
         createButtonInput.setAttribute('placeholder', txHelper.inputParametersDeclarationToString(ctrabi.inputs))
@@ -296,7 +296,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var contracts = appAPI.getContracts()
-    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
     var constructor = txHelper.getConstructorInterface(contract.interface)
     var args = createButtonInput.value
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
@@ -338,7 +338,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function loadFromAddress (appAPI) {
     noInstancesText.style.display = 'none'
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
     var address = atAddressButtonInput.value
     instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
   }

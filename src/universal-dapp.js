@@ -47,6 +47,7 @@ var css = csjs`
   }
   .instance {
     ${styles.displayBox}
+    margin-bottom: 2px;
     padding: 10px 15px 6px 15px;
   }
   .instance .title:before {
@@ -56,9 +57,6 @@ var css = csjs`
   .instance.hidesub .title:before {
     content: "\\25B8";
     margin-right: 5%;
-  }
-  .instance.hidesub {
-      margin: 0;
   }
   .instance.hidesub > * {
       display: none;

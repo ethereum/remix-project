@@ -180,19 +180,6 @@
     font-weight: bold;
 }
 
-.contract.hidesub {
-    padding-bottom: 0;
-    margin: 0;
-}
-
-.contract.hidesub > *:not(.title) {
-    display: none;
-}
-
-.contract.hidesub > .title:before {
-    content: "\25B6";
-}
-
 #output .udapp {
     border: 0 none;
     box-shadow: none;

@@ -319,7 +319,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     function details () {
       var select = el.querySelector('select')
       if (select.children.length > 0 && select.selectedIndex >= 0) {
-        var contractName = select.children[select.selectedIndex].innerText
+        var contractName = select.children[select.selectedIndex].innerHTML
         var details = contractsDetails[contractName]
         var keys = Object.keys(contractsDetails[contractName])
         var log = yo`<div class="${css.detailsJSON}"></div>`
@@ -334,7 +334,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     function publish (appAPI) {
       var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
-        var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerText]
+        var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
         publishOnSwarm(contract, appAPI, function (err) {
           if (err) {
             alert('Failed to publish metadata: ' + err)
