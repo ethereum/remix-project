@@ -33,8 +33,9 @@ var css = csjs`
     width             : 100%;
   }
   .menu               {
-    display           : flex;
-    flex-direction    : row;
+    height            : 2em;
+    margin-top        : 0.5em;
+    flex-shrink       : 0;
   }
   .newFile            {
     padding           : 10px;
@@ -83,6 +84,9 @@ var css = csjs`
   }
   .treeview {
     background-color  : ${styles.colors.white};
+  }
+  .treeviews {
+    overflow-y        : auto;
   }
   .dragbar            {
     position          : absolute;
@@ -151,8 +155,10 @@ function filepanel (appAPI, filesProvider) {
               <i class="websocketconn fa fa-link" title="Connect to Localhost"></i>
             </span>
           </div>
-          <div class=${css.treeview}>${fileExplorer.init()}</div>
-          <div class="filesystemexplorer ${css.treeview}"></div>
+          <div class=${css.treeviews}>
+            <div class=${css.treeview}>${fileExplorer.init()}</div>
+            <div class="filesystemexplorer ${css.treeview}"></div>
+          </div>
         </div>
         ${dragbar}
       </div>
