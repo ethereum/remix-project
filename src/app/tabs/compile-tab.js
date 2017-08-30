@@ -115,6 +115,12 @@ var css = csjs`
   .copyDetails:hover {
     opacity: 1;
   }
+  .questionMark {
+    margin-left: 1%;
+    font-size: 14px;
+    color: ${styles.colors.grey};
+    opacity: .3;
+  },
   .detailsJSON {
     padding: 8px 0;
     background-color: ${styles.colors.white};
@@ -337,9 +343,10 @@ function compileTab (container, appAPI, appEvents, opts) {
         var log = yo`<div class="${css.detailsJSON}"></div>`
         keys.map(x => {
           var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
+          var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[x]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
           log.appendChild(yo`
             <div class=${css.log}>
-              <div class="${css.key}">${x} ${copyDetails}</div>
+              <div class="${css.key}">${x} ${copyDetails} ${questionMark}</div>
               ${insertValue(details, x)}
             </div>
             `)
@@ -398,5 +405,22 @@ function compileTab (container, appAPI, appEvents, opts) {
       }
     }
     return el
+  }
+}
+
+function detailsHelpSection () {
+  return {
+    'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
+    'Opcodes': 'Assembly opcodes describing the contract',
+    'Runtime Bytecode': 'Bytecode actually store in the state and executed during normal contract call',
+    'bytecode': 'Bytecode executed during contract creation',
+    'functionHashes': 'List of declared function and their corresonding hash',
+    'gasEstimates': 'Gas estimation for each function call',
+    'metadata': 'Contain all informations related to the compilation',
+    'metadataHash': 'Hash representing all metadata information',
+    'interface': 'ABI: Describe all the functions (input/output params, scope, ...)',
+    'name': 'Name of the compiled contract',
+    'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+    'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
   }
 }
