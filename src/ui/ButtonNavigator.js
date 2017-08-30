@@ -1,7 +1,5 @@
 'use strict'
 var EventManager = require('../lib/eventManager')
-var style = require('./styles/basicStyles')
-var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
 var csjs = require('csjs-inject')
