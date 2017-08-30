@@ -41,6 +41,8 @@ var css = csjs`
   }
   .changeeditorfontsize {
     margin            : 0;
+    font-size         : 9px;
+    margin-top        : 0.5em;
   }
   .changeeditorfontsize i {
     cursor            : pointer;
