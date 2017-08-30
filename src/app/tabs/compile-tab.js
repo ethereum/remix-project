@@ -7,6 +7,7 @@ const copy = require('clipboard-copy')
 var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
 var modalDialog = require('../ui/modaldialog')
+var TreeView = require('ethereum-remix').ui.TreeView
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -351,7 +352,12 @@ function compileTab (container, appAPI, appEvents, opts) {
       var value = yo`<pre class="${css.value}"></pre>`
       var node
       if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes') {
-        node = yo`<div>${JSON.stringify((details[x].slice(1, 40) + '...'), null, 4)}</div>`
+        node = yo`<div>${details[x]}</div>`
+      } else if (x === 'web3Deploy') {
+        node = yo`<pre>${details[x]}</pre>`
+      } else if (x === 'interface' || x === 'metadata') {
+        var treeView = new TreeView({})
+        node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>`
       } else {
         node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
       }
