@@ -32,7 +32,7 @@ class InternalCallTree {
       if (!this.solidityProxy.loaded()) {
         this.event.trigger('callTreeBuildFailed', ['compilation result not loaded. Cannot build internal call tree'])
       } else {
-        buildTree(this, 0, '').then((result) => {
+        buildTree(this, 0, '', true).then((result) => {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
@@ -104,7 +104,7 @@ class InternalCallTree {
   }
 }
 
-async function buildTree (tree, step, scopeId) {
+async function buildTree (tree, step, scopeId, isExternalCall) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {} }
@@ -140,10 +140,10 @@ async function buildTree (tree, step, scopeId) {
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
-    if (traceHelper.isCallInstruction(tree.traceManager.trace[step]) ||
-        sourceLocation.jump === 'i') {
+    var isCallInstruction = traceHelper.isCallInstruction(tree.traceManager.trace[step])
+    if (isCallInstruction || sourceLocation.jump === 'i') {
       try {
-        var externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope)
+        var externalCallResult = await buildTree(tree, step + 1, scopeId === '' ? subScope.toString() : scopeId + '.' + subScope, isCallInstruction)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
@@ -153,7 +153,7 @@ async function buildTree (tree, step, scopeId) {
       } catch (e) {
         return { outStep: step, error: 'InternalCallTree - ' + e.message }
       }
-    } else if (sourceLocation.jump === 'o' || callDepthChange(step, tree.traceManager.trace)) {
+    } else if ((isExternalCall && callDepthChange(step, tree.traceManager.trace)) || (!isExternalCall && sourceLocation.jump === 'o')) {
       tree.scopes[scopeId].lastStep = step
       return { outStep: step + 1 }
     } else {
