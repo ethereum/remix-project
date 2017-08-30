@@ -323,7 +323,7 @@ function compileTab (container, appAPI, appEvents, opts) {
           contractsDetails[name] = parseContracts(name, data.contracts[name], appAPI.currentCompiledSourceCode())
           var contractName = yo`
             <option>
-              <div class="${css.name}">${name}</div>
+              ${name}
             </option>`
           contractNames.appendChild(contractName)
         }
