@@ -50,7 +50,7 @@ function renderKnownTransaction (self, data) {
   function detail () {
     // @TODO here should open a modal containing some info (e.g input params, logs, ...)
   }
-  return yo`<span>${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData(data.tx.input)}, ${data.logs.length} logs, hash:${helper.shortenHexData((data.tx.hash))},<button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
+  return yo`<span id="tx${data.tx.hash}">${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData(data.tx.input)}, ${data.logs.length} logs, hash:${helper.shortenHexData((data.tx.hash))},<button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
 }
 
 function renderUnknownTransaction (self, data) {
@@ -62,7 +62,7 @@ function renderUnknownTransaction (self, data) {
   function detail () {
     // @TODO here should open a modal containing some info (e.g input params, logs, ...)
   }
-  return yo`<span>${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData((data.tx.input))}, hash:${helper.shortenHexData((data.tx.hash))}, <button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
+  return yo`<span id="tx${data.tx.hash}">${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData((data.tx.input))}, hash:${helper.shortenHexData((data.tx.hash))}, <button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
 }
 
 function context (self, tx) {
