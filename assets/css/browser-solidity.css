@@ -67,7 +67,7 @@
     border-bottom: 3px solid hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js*/
     height: 2em;
     font-size: 1em;
-    padding-top: 0.5em;
+    margin-top: 0.5em;
     box-sizing: content-box;
     display: flex;
 }

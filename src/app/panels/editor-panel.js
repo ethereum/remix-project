@@ -16,6 +16,8 @@ var css = csjs`
   .tabsbar             {
     display            : flex;
     overflow           : hidden;
+    height             : 2em;
+    margin-top         : 0.5em;
   }
   .tabs               {
     position          : relative;
@@ -34,7 +36,6 @@ var css = csjs`
     height            : 2.5em;
     box-sizing        : border-box;
     line-height       : 2em;
-    padding           : 0.5em 0 0;
     top               : 0;
     border-bottom     : 0 none;
   }
@@ -77,14 +78,11 @@ var css = csjs`
     z-index           : 999;
     text-align        : center;
     cursor            : pointer;
-    padding           : 0 0.9em;
     vertical-align    : middle;
     background-color  : ${styles.colors.white};
     height            : 100%;
     font-size         : 1.3em;
-  }
-  .scroller i         {
-    line-height       : 3em;
+    color             : orange;
   }
   .scrollerright      {
     right             : 0;
@@ -95,7 +93,6 @@ var css = csjs`
   }
   .toggleRHP          {
     margin-top        : 0.5em;
-    padding           : 0.6em;
     font-weight       : bold;
     color             : ${styles.colors.black};
     right             : 0;
