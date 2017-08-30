@@ -14,6 +14,7 @@ var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
+var executionContext = require('./execution-context')
 
 // copy to copyToClipboard
 const copy = require('clipboard-copy')
@@ -95,7 +96,7 @@ var css = csjs`
 /*
   trigger debugRequested
 */
-function UniversalDApp (executionContext, options) {
+function UniversalDApp (options) {
   this.event = new EventManager()
   var self = this
 
@@ -104,13 +105,10 @@ function UniversalDApp (executionContext, options) {
   self.personalMode = self.options.personalMode || false
   self.contracts
   self.transactionContextAPI
-  self.web3 = executionContext.web3()
-  self.vm = executionContext.vm()
-  self.executionContext = executionContext
-  self.executionContext.event.register('contextChanged', this, function (context) {
+  executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
-  self.txRunner = new TxRunner(executionContext, {}, {
+  self.txRunner = new TxRunner({}, {
     queueTxs: true,
     personalMode: this.personalMode
   })
@@ -121,26 +119,26 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.contracts = contracts
   this.transactionContextAPI = transactionContextAPI
   this.accounts = {}
-  if (this.executionContext.isVM()) {
+  if (executionContext.isVM()) {
     this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
     this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea', '0x56BC75E2D63100000')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
-    this.vm.stateManager.cache.flush(function () {})
+    executionContext.vm().stateManager.cache.flush(function () {})
   }
-  this.txRunner = new TxRunner(this.executionContext, this.accounts, {
+  this.txRunner = new TxRunner(this.accounts, {
     queueTxs: true,
     personalMode: this.personalMode
   })
 }
 
 UniversalDApp.prototype.newAccount = function (password, cb) {
-  if (!this.executionContext.isVM()) {
+  if (!executionContext.isVM()) {
     if (!this.personalMode) {
       return cb('Not running in personal mode')
     }
-    this.web3.personal.newAccount(password, cb)
+    executionContext.web3().personal.newAccount(password, cb)
   } else {
     var privateKey
     do {
@@ -154,7 +152,7 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
 UniversalDApp.prototype._addAccount = function (privateKey, balance) {
   var self = this
 
-  if (!self.executionContext.isVM()) {
+  if (!executionContext.isVM()) {
     throw new Error('_addAccount() cannot be called in non-VM mode')
   }
 
@@ -163,7 +161,7 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
     var address = ethJSUtil.privateToAddress(privateKey)
 
     // FIXME: we don't care about the callback, but we should still make this proper
-    self.vm.stateManager.putAccountBalance(address, balance || '0xf00000000000000001', function cb () {})
+    executionContext.vm().stateManager.putAccountBalance(address, balance || '0xf00000000000000001', function cb () {})
     self.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 }
   }
 }
@@ -171,13 +169,13 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
 UniversalDApp.prototype.getAccounts = function (cb) {
   var self = this
 
-  if (!self.executionContext.isVM()) {
+  if (!executionContext.isVM()) {
     // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
     // See: https://github.com/ethereum/web3.js/issues/442
     if (self.personalMode) {
-      self.web3.personal.getListAccounts(cb)
+      executionContext.web3().personal.getListAccounts(cb)
     } else {
-      self.web3.eth.getAccounts(cb)
+      executionContext.web3().eth.getAccounts(cb)
     }
   } else {
     if (!self.accounts) {
@@ -193,8 +191,8 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 
   address = ethJSUtil.stripHexPrefix(address)
 
-  if (!self.executionContext.isVM()) {
-    self.web3.eth.getBalance(address, function (err, res) {
+  if (!executionContext.isVM()) {
+    executionContext.web3().eth.getBalance(address, function (err, res) {
       if (err) {
         cb(err)
       } else {
@@ -206,7 +204,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       return cb('No accounts?')
     }
 
-    self.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
+    executionContext.vm().stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
       if (err) {
         cb('Account not found')
       } else {
@@ -223,7 +221,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
   function remove () { $instance.remove() }
   var $instance = $(`<div class="instance ${css.instance}"/>`)
-  var context = this.executionContext.isVM() ? 'memory' : 'blockchain'
+  var context = executionContext.isVM() ? 'memory' : 'blockchain'
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var shortAddress = helper.shortenAddress(address)
@@ -306,11 +304,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
     })
 
   function call () {
-    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, self.executionContext, (error, data) => {
+    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, (error, data) => {
       if (!error) {
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
           if (!error) {
-            var isVM = self.executionContext.isVM()
+            var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
@@ -319,7 +317,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
               }
             }
             if (lookupOnly) {
-              txFormat.decodeResponse(self.executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI, (error, decoded) => {
+              txFormat.decodeResponse(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI, (error, decoded) => {
                 $outputOverride.html(error ? 'error' + error : decoded)
               })
             }
@@ -429,7 +427,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             return callback('No accounts available')
           }
 
-          if (self.executionContext.isVM() && !self.accounts[ret[0]]) {
+          if (executionContext.isVM() && !self.accounts[ret[0]]) {
             return callback('Invalid account selected')
           }
 

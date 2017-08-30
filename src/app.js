@@ -21,7 +21,7 @@ var Config = require('./config')
 var Editor = require('./app/editor/editor')
 var Renderer = require('./app/ui/renderer')
 var Compiler = require('./app/compiler/compiler')
-var ExecutionContext = require('./execution-context')
+var executionContext = require('./execution-context')
 var Debugger = require('./app/debugger/debugger')
 var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var FilePanel = require('./app/panels/file-panel')
@@ -32,7 +32,6 @@ var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var Txlistener = require('./app/execution/txListener')
 var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
-var Web3VMProvider = remix.web3.web3VMProvider
 var handleImports = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 
@@ -169,22 +168,14 @@ module.exports = App
 
 function run () {
   var self = this
-  // ------------------------------------------------------------
-  var executionContext = new ExecutionContext()
-
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   // ----------------- editor panel ----------------------
   this._components.editorpanel = new EditorPanel({
     api: {
       editor: self._components.editor,
-      config: self._api.config,
-      web3: () => {
-        return executionContext.web3()
-      },
-      context: () => {
-        return executionContext.getProvider()
-      }}
+      config: self._api.config
+    }
   })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
 
@@ -351,7 +342,7 @@ function run () {
     }
   }
 
-  var udapp = new UniversalDApp(executionContext, {
+  var udapp = new UniversalDApp({
     removable: false,
     removable_instances: true
   })
@@ -369,12 +360,6 @@ function run () {
       document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
     },
-    executionContextChange: (context) => {
-      return executionContext.executionContextChange(context)
-    },
-    executionContextProvider: () => {
-      return executionContext.getProvider()
-    },
     getContracts: () => {
       if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
         return compiler.lastCompilationResult.data.contracts
@@ -383,9 +368,6 @@ function run () {
     },
     udapp: () => {
       return udapp
-    },
-    executionContext: () => {
-      return executionContext
     },
     fileProviderOf: (path) => {
       return fileManager.fileProviderOf(path)
@@ -483,7 +465,7 @@ function run () {
       return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
     }
   }
-  var transactionDebugger = new Debugger('#debugger', debugAPI, executionContext.event, editor.event)
+  var transactionDebugger = new Debugger('#debugger', debugAPI, editor.event)
   transactionDebugger.addProvider('vm', executionContext.vm())
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
@@ -503,15 +485,6 @@ function run () {
   node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- Tx listener -----------------
-  // not used right now
-
-  // TODO the following should be put in execution context
-  var web3VM = new Web3VMProvider()
-  web3VM.setVM(executionContext.vm())
-
-  var currentWeb3 = function () {
-    return executionContext.isVM() ? web3VM : executionContext.web3()
-  }
 
   var transactionReceiptResolver = {
     _transactionReceipts: {},
@@ -519,7 +492,7 @@ function run () {
       if (this._transactionReceipts[tx.hash]) {
         return cb(null, this._transactionReceipts[tx.hash])
       }
-      currentWeb3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
         if (!error) {
           this._transactionReceipts[tx.hash] = receipt
           cb(null, receipt)
@@ -539,18 +512,12 @@ function run () {
 
   var txlistener = new Txlistener({
     api: {
-      web3: function () { return currentWeb3() },
-      isVM: function () { return executionContext.isVM() },
       contracts: compiledContracts,
-      context: function () {
-        return executionContext.getProvider()
-      },
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
       }
     },
     event: {
-      executionContext: executionContext.event,
       udapp: udapp.event
     }})
 
@@ -575,9 +542,6 @@ function run () {
       },
       compiledContracts: function () {
         return compiledContracts()
-      },
-      context: function () {
-        return executionContext.getProvider()
       }
     },
     events: {

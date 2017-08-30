@@ -6,6 +6,7 @@ var txExecution = require('../execution/txExecution')
 var txFormat = require('../execution/txFormat')
 var txHelper = require('../execution/txHelper')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
+var executionContext = require('../../execution-context')
 const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
@@ -200,15 +201,15 @@ function runTab (container, appAPI, appEvents, opts) {
   // DROPDOWN
   var selectExEnv = el.querySelector('#selectExEnvOptions')
   selectExEnv.addEventListener('change', function (event) {
-    if (!appAPI.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value)) {
-      selectExEnv.value = appAPI.executionContextProvider()
+    if (!executionContext.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value)) {
+      selectExEnv.value = executionContext.getProvider()
     }
     fillAccountsList(appAPI, el)
     instanceContainer.innerHTML = '' // clear the instances list
     noInstancesText.style.display = 'block'
     instanceContainer.appendChild(noInstancesText)
   })
-  selectExEnv.value = appAPI.executionContextProvider()
+  selectExEnv.value = executionContext.getProvider()
   fillAccountsList(appAPI, el)
   setInterval(() => {
     updateAccountBalances(container, appAPI)
@@ -299,11 +300,11 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
     var constructor = txHelper.getConstructorInterface(contract.interface)
     var args = createButtonInput.value
-    txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
+    txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
-            var isVM = appAPI.executionContext().isVM()
+            var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {

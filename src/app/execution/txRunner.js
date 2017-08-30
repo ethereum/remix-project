@@ -3,15 +3,13 @@ var EthJSTX = require('ethereumjs-tx')
 var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
+var executionContext = require('../../execution-context')
 
-function TxRunner (executionContext, vmaccounts, opts) {
-  this.executionContext = executionContext
-  this.web3 = executionContext.web3()
-  this.vm = executionContext.vm()
+function TxRunner (vmaccounts, opts) {
   this.queueTxs = opts.queueTxs
   this.personalMode = opts.personalMode
   this.blockNumber = 0
-  if (this.executionContext.isVM()) {
+  if (executionContext.isVM()) {
     this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
   }
   this.pendingTxs = {}
@@ -35,7 +33,7 @@ TxRunner.prototype.execute = function (args, callback) {
   var gasLimit = args.gasLimit
 
   var tx
-  if (!self.executionContext.isVM()) {
+  if (!executionContext.isVM()) {
     tx = {
       from: from,
       to: to,
@@ -44,18 +42,18 @@ TxRunner.prototype.execute = function (args, callback) {
     }
     if (args.useCall) {
       tx.gas = gasLimit
-      self.web3.eth.call(tx, function (error, result) {
+      executionContext.web3().eth.call(tx, function (error, result) {
         callback(error, {
           result: result,
           transactionHash: result.transactionHash
         })
       })
     } else {
-      self.web3.eth.estimateGas(tx, function (err, gasEstimation) {
+      executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
           return callback(err, gasEstimation)
         }
-        var blockGasLimit = self.executionContext.currentblockGasLimit()
+        var blockGasLimit = executionContext.currentblockGasLimit()
         // NOTE: estimateGas very likely will return a large limit if execution of the code failed
         //       we want to be able to run the code in order to debug and find the cause for the failure
         if (gasEstimation > gasLimit) {
@@ -65,7 +63,7 @@ TxRunner.prototype.execute = function (args, callback) {
           return callback('Gas required exceeds block gas limit: ' + gasLimit)
         }
         tx.gas = gasEstimation
-        var sendTransaction = self.personalMode ? self.web3.personal.sendTransaction : self.web3.eth.sendTransaction
+        var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
         sendTransaction(tx, function (err, resp) {
           if (err) {
             return callback(err, resp)
@@ -107,12 +105,12 @@ TxRunner.prototype.execute = function (args, callback) {
       if (!args.useCall) {
         ++self.blockNumber
       } else {
-        self.vm.stateManager.checkpoint()
+        executionContext.vm().stateManager.checkpoint()
       }
 
-      self.vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
+      executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
         if (args.useCall) {
-          self.vm.stateManager.revert(function () {})
+          executionContext.vm().stateManager.revert(function () {})
         }
         err = err ? err.message : err
         callback(err, {
@@ -126,11 +124,11 @@ TxRunner.prototype.execute = function (args, callback) {
   }
 }
 
-function tryTillResponse (web3, txhash, done) {
-  web3.eth.getTransactionReceipt(txhash, function (err, result) {
+function tryTillResponse (txhash, done) {
+  executionContext.web3().eth.getTransactionReceipt(txhash, function (err, result) {
     if (!err && !result) {
       // Try again with a bit of delay
-      setTimeout(function () { tryTillResponse(web3, txhash, done) }, 500)
+      setTimeout(function () { tryTillResponse(txhash, done) }, 500)
     } else {
       done(err, {
         result: result,
