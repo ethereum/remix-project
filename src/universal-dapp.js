@@ -1,4 +1,4 @@
-/* global alert */
+/* global */
 'use strict'
 
 var $ = require('jquery')
@@ -13,6 +13,7 @@ var txFormat = require('./app/execution/txFormat')
 var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
+var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 
 // copy to copyToClipboard
 const copy = require('clipboard-copy')
@@ -309,17 +310,25 @@ UniversalDApp.prototype.getCallButton = function (args) {
       if (!error) {
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
           if (!error) {
+            var isVM = self.executionContext.isVM()
+            if (isVM) {
+              var vmError = txExecution.checkVMError(txResult)
+              if (vmError.error) {
+                modalDialogCustom.alert(vmError.message)
+                return
+              }
+            }
             if (lookupOnly) {
               txFormat.decodeResponse(self.executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI, (error, decoded) => {
                 $outputOverride.html(error ? 'error' + error : decoded)
               })
             }
           } else {
-            alert(error)
+            modalDialogCustom.alert(error)
           }
         })
       } else {
-        alert(error)
+        modalDialogCustom.alert(error)
       }
     })
   }
@@ -435,6 +444,17 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       self.txRunner.rawRun(tx, function (error, result) {
         if (!args.useCall) {
           self.event.trigger('transactionExecuted', [error, args.to, args.data, false, result])
+        }
+        if (error) {
+          if (typeof (error) !== 'string') {
+            if (error.message) {
+              error = error.message
+            } else {
+              try {
+                error = 'error: ' + JSON.stringify(error)
+              } catch (e) {}
+            }
+          }
         }
         callback(error, result)
       })
