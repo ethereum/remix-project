@@ -16,7 +16,7 @@ var css = csjs`
     font-size         : 12px;
     font-family       : monospace;
     color             : black;
-    background-color  : white;
+    background-color  : lightgrey;
     margin-top        : auto;
     height            : 100%;
     min-height        : 1.7em;
