@@ -221,7 +221,7 @@ class EditorPanel {
   }
   log () {
     var self = this
-    self._components.terminal.log.apply(self._components.terminal, arguments)
+    self._components.terminal._output.apply(self._components.terminal, arguments)
   }
   _renderTabsbar () {
     var self = this
