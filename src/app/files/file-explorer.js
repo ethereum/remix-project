@@ -46,6 +46,7 @@ var css = csjs`
 module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
+  var self = this
   this.files = files
 
   function remixdDialog () {
@@ -203,7 +204,7 @@ function fileExplorer (appAPI, files) {
     var label = this
     var li = getLiFrom(label)
     var classes = li.className
-    if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable')) {
+    if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable') && label.getAttribute('data-path') !== self.files.type) {
       textUnderEdit = label.innerText
       label.setAttribute('contenteditable', true)
       label.classList.add(css.rename)
