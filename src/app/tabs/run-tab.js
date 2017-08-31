@@ -170,8 +170,6 @@ var css = csjs`
     margin-left: 10%;
   }
 `
-console.log(styles.displayBox.toString())
-console.log(css.settings.toString())
 
 module.exports = runTab
 
