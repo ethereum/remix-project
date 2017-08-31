@@ -64,11 +64,8 @@ class Dropdown {
     var self = this
     self.event = new EventManager()
     self.data = {
-      _options: opts.options || ['script'],
+      _options: opts.options || [],
       selected: opts.defaults || []
-    }
-    if (self.data._options.indexOf('script') !== -1) {
-      if (!opts.defaults) self.data.selected.push('script')
     }
     self._view = {}
     self._api = opts.api
