@@ -224,8 +224,11 @@ function fileExplorer (appAPI, files) {
         newPath = newPath.split('/')
         newPath[newPath.length - 1] = label.innerText
         newPath = newPath.join('/')
-        if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
-          modalDialogCustom.alert('special characters are not allowsed')
+        if (label.innerText === '') {
+          modalDialogCustom.alert('File name cannot be empty')
+          label.innerText = textUnderEdit
+        } else if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
+          modalDialogCustom.alert('Special characters are not allowed')
           label.innerText = textUnderEdit
         } else if (!files.exists(newPath)) {
           files.rename(label.dataset.path, newPath, isFolder)
