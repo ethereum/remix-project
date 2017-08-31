@@ -8,6 +8,8 @@ var vm = require('vm')
 var EventManager = require('ethereum-remix').lib.EventManager
 var Web3 = require('web3')
 
+var executionContext = require('../../execution-context')
+
 var css = csjs`
   .panel              {
     position          : relative;
@@ -217,7 +219,7 @@ class Terminal {
     self._output(self.data.banner)
 
     function focusinput (event) {
-      if (self._view.journal.offsetHeight - self._view.term.scrollTop < 330) {
+      if (self._view.journal.offsetHeight - (self._view.term.scrollTop + self._view.term.offsetHeight) < 50) {
         refocus()
       }
     }
@@ -294,7 +296,6 @@ class Terminal {
         self.scroll2bottom = function () {
           var next = placeholder.nextElementSibling
           if (next) {
-            console.error('new messages')
             placeholder.style = ''
             check()
             var messages = 1
@@ -502,10 +503,10 @@ class Terminal {
   }
 }
 
-// @TODO add all the `console` functions
 function domTerminalFeatures (self) {
+  // @TODO add all the `console` functions
   return {
-    web3: self._api.context() !== 'vm' ? new Web3(self._api.web3().currentProvider) : null,
+    web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
     console: {
       log: function () { self._output.apply(self, arguments) }
     }
