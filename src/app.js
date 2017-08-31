@@ -639,6 +639,8 @@ function run () {
     editor.clearAnnotations()
   })
 
+
+
   function startdebugging (txHash) {
     self.event.trigger('debuggingRequested', [])
     transactionDebugger.debug(txHash)
