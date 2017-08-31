@@ -9,6 +9,7 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var Web3 = require('web3')
 
 var executionContext = require('../../execution-context')
+var Dropdown = require('../ui/dropdown')
 
 var css = csjs`
   .panel              {
@@ -27,17 +28,29 @@ var css = csjs`
 
   .bar                {
     display           : flex;
-    justify-content   : flex-end;
     min-height        : 1.7em;
     padding           : 2px;
-    cursor            : ns-resize;
     background-color  : #eef;
+    z-index           : 3;
+  }
+  .menu               {
+    position          : relative;
+    display           : flex;
+    align-items       : center;
+    width             : 100%;
+  }
+  .title              {
+    margin-right      : 15px;
   }
   .minimize           {
-    text-align        : center;
-    padding-top       : 3px;
+    margin-left       : auto;
     width             : 10px;
-    min-height        : 100%;
+    cursor            : pointer;
+    color             : black;
+  }
+  .clear              {
+    margin-right      : 5px;
+    font-size         : 15px;
     cursor            : pointer;
     color             : black;
   }
@@ -172,6 +185,21 @@ class Terminal {
     }
     self.event = new EventManager()
     self._api = opts.api
+    self._components = {}
+    self._components.dropdown = new Dropdown({
+      options: [
+        'knownTransaction',
+        'unknownTransaction',
+        'script'
+      ],
+      defaults: ['knownTransaction', 'script']
+    })
+    self._components.dropdown.event.register('deselect', function (label) {
+      console.log('deselect', label)
+    })
+    self._components.dropdown.event.register('select', function (label) {
+      console.log('select', label)
+    })
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._templates = {}
     self.logger = {}
@@ -198,14 +226,23 @@ class Terminal {
     `
     self._view.icon = yo`<i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize} class="${css.minimize} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
+    self._view.dropdown = self._components.dropdown.render()
     self._view.bar = yo`
       <div class=${css.bar}>
         ${self._view.dragbar}
-        ${self._view.icon}
+        <div class=${css.menu}>
+          <div class=${css.title}>Remix Terminal</div>
+          <div class=${css.clear} onclick=${clear}>
+            <i class="fa fa-ban" aria-hidden="true" onmouseenter=${hover} onmouseleave=${hover}></i>
+          </div>
+          ${self._view.dropdown}
+          <input type="text" class=${css.filter} onkeypress=${filter}></div>
+          ${self._view.icon}
+        </div>
       </div>
     `
     self._view.term = yo`
-      <div class=${css.terminal} onscroll=${throttle(reattach, 50)} onclick=${focusinput}>
+      <div class=${css.terminal} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         ${self._view.journal}
         ${self._view.cli}
       </div>
@@ -218,15 +255,14 @@ class Terminal {
     `
     self._output(self.data.banner)
 
-    function focusinput (event) {
-      if (self._view.journal.offsetHeight - (self._view.term.scrollTop + self._view.term.offsetHeight) < 50) {
-        refocus()
+    function throttle (fn, wait) {
+      var time = Date.now()
+      return function debounce () {
+        if ((time + wait - Date.now()) < 0) {
+          fn.apply(this, arguments)
+          time = Date.now()
+        }
       }
-    }
-    function refocus () {
-      self._view.input.focus()
-      reattach({ currentTarget: self._view.term })
-      self.scroll2bottom()
     }
     var css2 = csjs`
       .anchor            {
@@ -264,18 +300,20 @@ class Terminal {
     var placeholder = yo`<div class=${css2.anchor}>${background}${text}</div>`
     var inserted = false
 
-    function throttle (fn, wait) {
-      var time = Date.now()
-      return function () {
-        if ((time + wait - Date.now()) < 0) {
-          fn.apply(this, arguments)
-          time = Date.now()
-        }
+    function focusinput (event) {
+      if (self._view.journal.offsetHeight - (self._view.term.scrollTop + self._view.term.offsetHeight) < 50) {
+        refocus()
       }
+    }
+    function refocus () {
+      self._view.input.focus()
+      reattach({ currentTarget: self._view.term })
+      delete self.scroll2bottom
+      self.scroll2bottom()
     }
     function reattach (event) {
       var el = event.currentTarget
-      var isBottomed = el.scrollHeight - el.scrollTop < el.clientHeight + 30
+      var isBottomed = el.scrollHeight - el.scrollTop - el.clientHeight < 30
       if (isBottomed) {
         if (inserted) {
           text.innerText = ''
@@ -340,6 +378,16 @@ class Terminal {
         classList.toggle('fa-angle-double-up')
         self.event.trigger('resize', [])
       }
+    }
+    function filter (event) {
+      var input = event.currentTarget
+      setTimeout(function () {
+        console.log('filter', input.value)
+      }, 0)
+    }
+    function clear (event) {
+      refocus()
+      self._view.journal.innerHTML = ''
     }
     // ----------------- resizeable ui ---------------
     function mousedown (event) {
@@ -460,10 +508,6 @@ class Terminal {
       var args = [...arguments].map(x => ({ type: typename, value: x }))
       self._output.apply(self, args)
     }
-  }
-  log () {
-    // @TODO: temporary to not break stuff that uses the old API
-    this._output.apply(this, arguments)
   }
   _output () {
     var self = this
