@@ -15,11 +15,12 @@ var css = csjs`
     flex-direction    : column;
     font-size         : 12px;
     font-family       : monospace;
-    color             : white;
-    background-color  : grey;
+    color             : black;
+    background-color  : white;
     margin-top        : auto;
     height            : 100%;
     min-height        : 1.7em;
+    overflow          : hidden;
   }
 
   .bar                {
@@ -52,8 +53,7 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
-
-  .log                {
+  .journal            {
     margin-top        : auto;
     font-family       : monospace;
   }
@@ -63,7 +63,6 @@ var css = csjs`
     line-height       : 2ch;
     margin            : 1ch;
   }
-
   .cli                {
     line-height       : 1.7em;
     font-family       : monospace;
@@ -77,14 +76,26 @@ var css = csjs`
     outline           : none;
     font-family       : monospace;
   }
+  
   .error              {
     color             : red;
   }
   .info               {
     color             : blue;
   }
-  .default            {
-    color             : white;
+  .log            {
+    color             : black;
+  }
+  
+  .dragbarHorizontal  {
+    position          : absolute;
+    top               : 0;
+    height            : 0.5em;
+    right             : 0;
+    left              : 0;
+    cursor            : ns-resize;
+    z-index           : 999;
+    border-top        : 2px solid hsla(215, 81%, 79%, .3);
   }
   .ghostbar           {
     position          : absolute;
@@ -159,11 +170,12 @@ class Terminal {
     }
     self.event = new EventManager()
     self._api = opts.api
-    self._view = { panel: null, bar: null, input: null, term: null, log: null, cli: null }
+    self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._templates = {}
-    self._templates.default = self._blocksRenderer('default')
-    self._templates.error = self._blocksRenderer('error')
-    self._templates.info = self._blocksRenderer('info')
+    self.logger = {}
+    ;['log', 'info', 'error'].forEach(typename => {
+      self.registerType(typename, self._blocksRenderer(typename))
+    })
     self._jsSandboxContext = {}
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
@@ -171,56 +183,162 @@ class Terminal {
   }
   render () {
     var self = this
-    if (self._view.panel) return self._view.panel
-    self._view.log = yo`<div class=${css.log}></div>`
+    if (self._view.el) return self._view.el
+    self._view.journal = yo`<div class=${css.journal}></div>`
     self._view.input = yo`
       <span class=${css.input} contenteditable="true" onkeydown=${change}></span>
     `
     self._view.cli = yo`
-      <div class=${css.cli} onclick=${e => self._view.input.focus()}>
+      <div class=${css.cli}>
         <span class=${css.prompt}>${'>'}</span>
         ${self._view.input}
       </div>
     `
     self._view.icon = yo`<i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize} class="${css.minimize} fa fa-angle-double-down"></i>`
+    self._view.dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.bar = yo`
-      <div class=${css.bar} onmousedown=${mousedown}>
+      <div class=${css.bar}>
+        ${self._view.dragbar}
         ${self._view.icon}
       </div>
     `
     self._view.term = yo`
-      <div class=${css.terminal} onscroll=${reattach}>
-        ${self._view.log}
+      <div class=${css.terminal} onscroll=${throttle(reattach, 50)} onclick=${focusinput}>
+        ${self._view.journal}
         ${self._view.cli}
       </div>
     `
-    self._view.panel = yo`
+    self._view.el = yo`
       <div class=${css.panel}>
         ${self._view.bar}
         ${self._view.term}
       </div>
     `
-    self.log(self.data.banner)
+    self._output(self.data.banner)
 
+    function focusinput (event) {
+      if (self._view.journal.offsetHeight - self._view.term.scrollTop < 330) {
+        refocus()
+      }
+    }
+    function refocus () {
+      self._view.input.focus()
+      reattach({ currentTarget: self._view.term })
+      self.scroll2bottom()
+    }
+    var css2 = csjs`
+      .anchor            {
+        position         : static;
+        border-top       : 2px dotted blue;
+        height           : 10px;
+      }
+      .overlay           {
+        position         : absolute;
+        width            : 100%;
+        display          : flex;
+        align-items      : center;
+        justify-content  : center;
+        bottom           : 0;
+        right            : 15px;
+        height           : 20%;
+        min-height       : 50px;
+      }
+      .text              {
+        z-index          : 2;
+        color            : black;
+        font-size        : 25px;
+        font-weight      : bold;
+        pointer-events   : none;
+      }
+      .background        {
+        z-index          : 1;
+        opacity          : 0.8;
+        background-color : #a6aeba;
+        cursor           : pointer;
+      }
+    `
+    var text = yo`<div class="${css2.overlay} ${css2.text}"></div>`
+    var background = yo`<div class="${css2.overlay} ${css2.background}"></div>`
+    var placeholder = yo`<div class=${css2.anchor}>${background}${text}</div>`
+    var inserted = false
+
+    function throttle (fn, wait) {
+      var time = Date.now()
+      return function () {
+        if ((time + wait - Date.now()) < 0) {
+          fn.apply(this, arguments)
+          time = Date.now()
+        }
+      }
+    }
     function reattach (event) {
       var el = event.currentTarget
-      var isBottomed = el.scrollHeight - el.scrollTop === el.clientHeight
+      var isBottomed = el.scrollHeight - el.scrollTop < el.clientHeight + 30
       if (isBottomed) {
+        if (inserted) {
+          text.innerText = ''
+          background.onclick = undefined
+          self._view.journal.removeChild(placeholder)
+        }
+        inserted = false
         delete self.scroll2bottom
-        // @TODO: delete new message indicator
       } else {
-        self.scroll2bottom = function () { }
-        // @TODO: while in stopped mode: show indicator about new lines getting logged
+        if (!inserted) self._view.journal.appendChild(placeholder)
+        inserted = true
+        check()
+        if (!placeholder.nextElementSibling) {
+          placeholder.style.display = 'none'
+        } else {
+          placeholder.style = ''
+        }
+        self.scroll2bottom = function () {
+          var next = placeholder.nextElementSibling
+          if (next) {
+            console.error('new messages')
+            placeholder.style = ''
+            check()
+            var messages = 1
+            while ((next = next.nextElementSibling)) messages += 1
+            text.innerText = `${messages} new unread log entries`
+          } else {
+            placeholder.style.display = 'none'
+          }
+        }
+      }
+    }
+    function check () {
+      var pos1 = self._view.term.offsetHeight + self._view.term.scrollTop - (self._view.el.offsetHeight * 0.15)
+      var pos2 = placeholder.offsetTop
+      if ((pos1 - pos2) > 0) {
+        text.style.display = 'none'
+        background.style.position = 'relative'
+        background.style.opacity = 0.3
+        background.style.right = 0
+        background.style.borderBox = 'content-box'
+        background.style.padding = '2px'
+        background.style.height = (self._view.journal.offsetHeight - (placeholder.offsetTop + placeholder.offsetHeight)) + 'px'
+        background.onclick = undefined
+        background.style.cursor = 'default'
+      } else {
+        background.style = ''
+        text.style = ''
+        background.onclick = function (event) {
+          console.error('background click')
+          placeholder.scrollIntoView()
+          check()
+        }
       }
     }
     function hover (event) { event.currentTarget.classList.toggle(css.hover) }
     function minimize (event) {
       event.preventDefault()
       event.stopPropagation()
-      var classList = self._view.icon.classList
-      classList.toggle('fa-angle-double-down')
-      classList.toggle('fa-angle-double-up')
-      self.event.trigger('resize', [])
+      if (event.button === 0) {
+        var classList = self._view.icon.classList
+        classList.toggle('fa-angle-double-down')
+        classList.toggle('fa-angle-double-up')
+        self.event.trigger('resize', [])
+      }
     }
     // ----------------- resizeable ui ---------------
     function mousedown (event) {
@@ -256,7 +374,7 @@ class Terminal {
       self.event.trigger('resize', [self._api.getPosition(event)])
     }
 
-    return self._view.panel
+    return self._view.el
 
     function change (event) {
       if (event.which === 13) {
@@ -301,7 +419,7 @@ class Terminal {
   }
   _blocksRenderer (mode) {
     var self = this
-    var modes = { log: true, info: true, error: true, default: true }
+    var modes = { log: true, info: true, error: true }
     if (modes[mode]) {
       return function render () {
         var args = [].slice.call(arguments)
@@ -319,23 +437,44 @@ class Terminal {
       throw new Error('mode is not supported')
     }
   }
+  execute (script) {
+    var self = this
+    script = String(script)
+    self._output({ type: 'log', value: `> ${script}` })
+    self._shell(script, function (error, output) {
+      if (error) {
+        self._output({ type: 'error', value: error })
+        return error
+      } else {
+        self._output({ type: 'log', value: output })
+        return output
+      }
+    })
+  }
   registerType (typename, template) {
     var self = this
     if (typeof template !== 'function') throw new Error('invalid template')
     self._templates[typename] = template
+    self.logger[typename] = function () {
+      var args = [...arguments].map(x => ({ type: typename, value: x }))
+      self._output.apply(self, args)
+    }
   }
   log () {
+    // @TODO: temporary to not break stuff that uses the old API
+    this._output.apply(this, arguments)
+  }
+  _output () {
     var self = this
     var args = [...arguments]
     self.data.session.push(args)
     args.forEach(function (data) {
-      if (!data || !data.type) data = { type: 'default', value: data }
+      if (!data || !data.type) data = { type: 'log', value: data }
       var render = self._templates[data.type]
-      if (!render) render = self._templates.default
       var blocks = render(data.value)
-      blocks = blocks instanceof Array ? blocks : [blocks]
+      blocks = [].concat(blocks)
       blocks.forEach(function (block) {
-        self._view.log.appendChild(yo`
+        self._view.journal.appendChild(yo`
           <div class="${css.block} ${css[data.type] || data.type}">
             ${block}
           </div>
@@ -344,41 +483,18 @@ class Terminal {
       })
     })
   }
-  info () {
-    var self = this
-    var args = [...arguments].map(x => ({ type: 'info', value: x }))
-    self.log.apply(self, args)
-  }
-  error () {
-    var self = this
-    var args = [...arguments].map(x => ({ type: 'error', value: x }))
-    self.log.apply(self, args)
-  }
   scroll2bottom () {
     var self = this
     setTimeout(function () {
       self._view.term.scrollTop = self._view.term.scrollHeight
     }, 0)
   }
-  execute (input) {
+  _shell (script, done) { // default shell
     var self = this
-    input = String(input)
-    self.log(`> ${input}`)
-    self._shell(input, function (error, output) {
-      if (error) {
-        self.error(error)
-        return error
-      } else {
-        self.log(output)
-        return output
-      }
-    })
-  }
-  _shell (input, done) { // default shell
     try {
-      var context = vm.createContext(Object.assign(this._jsSandboxContext, domTerminalFeatures(this)))
-      var result = vm.runInContext(input, context)
-      this._jsSandboxContext = Object.assign({}, context)
+      var context = vm.createContext(Object.assign(self._jsSandboxContext, domTerminalFeatures(self)))
+      var result = vm.runInContext(script, context)
+      self._jsSandboxContext = Object.assign({}, context)
       done(null, result)
     } catch (error) {
       done(error.message)
@@ -391,7 +507,7 @@ function domTerminalFeatures (self) {
   return {
     web3: self._api.context() !== 'vm' ? new Web3(self._api.web3().currentProvider) : null,
     console: {
-      log: function () { self.log.apply(self, arguments) }
+      log: function () { self._output.apply(self, arguments) }
     }
   }
 }
