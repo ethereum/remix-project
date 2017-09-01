@@ -1,12 +1,59 @@
 'use strict'
 var yo = require('yo-yo')
+
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
 var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
+
 var EventManager = remix.lib.EventManager
 var helper = require('../../lib/helper')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 
+var css = csjs`
+  .log {
+    display: flex;
+    align-items: baseline;
+  }
+  .txTable, .tr, .td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-size: 10px;
+    color: grey;
+  }
+  .txTable {
+    width: 35%;
+  }
+  #txTable {
+    width: 200px;
+    margin-left: 20px;
+    align-self: center;
+  }
+  .tr, .td {
+    padding: 3px;
+  }
+  .buttons {
+    display: flex;
+  }
+  .debug, .details {
+    ${styles.button}
+    min-height: 18px;
+    max-height: 18px;
+    width: 45px;
+    min-width: 45px;
+    font-size: 10px;
+    margin-left: 5px;
+  }
+  .debug {
+    background-color: ${styles.colors.lightOrange};
+  }
+  .details {
+    background-color: ${styles.colors.lightGrey};
+  }
+`
 /**
   * This just export a function that register to `newTransaction` and forward them to the logger.
   * Emit debugRequested
@@ -64,10 +111,44 @@ function renderKnownTransaction (self, data) {
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
-  function detail () {
-    // @TODO here should open a modal containing some info (e.g input params, logs, ...)
+  var tx = yo`
+    <span class=${css.log} id="tx${data.tx.hash}">
+      ${context(self, data.tx)}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, ${data.logs.length} logs
+      <div class=${css.buttons}>
+        <button class=${css.details} onclick=${e => detail(e, tx)}>Details</button>
+        <button class=${css.debug} onclick=${debug}>Debug</button>
+      </div>
+    </span>
+  `
+  function detail (e, container) {
+    var el = container
+    var table = yo`
+      <table class="${css.txTable}" id="txTable">
+        <tr class="${css.tr}">
+          <td class="${css.td}">from</td>
+          <td class="${css.td}">${helper.shortenAddress(data.tx.from)}</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">to:</td>
+          <td class="${css.td}">${to}</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">value:</td>
+          <td class="${css.td}">${value(data.tx.value)} wei</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">data:</td>
+          <td class="${css.td}">${helper.shortenHexData(data.tx.input)}</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">hash:</td>
+          <td class="${css.td}">${helper.shortenHexData((data.tx.hash))}</td>
+        </tr class="${css.tr}">
+      </table>
+    `
+    el.appendChild(table)
   }
-  return yo`<span id="tx${data.tx.hash}">${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData(data.tx.input)}, ${data.logs.length} logs, hash:${helper.shortenHexData((data.tx.hash))},<button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
+  return tx
 }
 
 function renderUnknownTransaction (self, data) {
@@ -76,10 +157,44 @@ function renderUnknownTransaction (self, data) {
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
-  function detail () {
-    // @TODO here should open a modal containing some info (e.g input params, logs, ...)
+  var tx = yo`
+    <span class=${css.log} id="tx${data.tx.hash}">
+      ${context(self, data.tx)}
+      <div class=${css.buttons}>
+        <button class=${css.details} onclick=${e => detail(e, tx)}>Details</button>
+        <button class=${css.debug} onclick=${debug}>Debug</button>
+      </div>
+    </span>
+  `
+  function detail (e, container) {
+    var el = container
+    var table = yo`
+      <table class="${css.txTable}" id="txTable">
+        <tr class="${css.tr}">
+          <td class="${css.td}">from</td>
+          <td class="${css.td}">${helper.shortenAddress(data.tx.from)}</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">to:</td>
+          <td class="${css.td}">${to}</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">value:</td>
+          <td class="${css.td}">${value(data.tx.value)} wei</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">data:</td>
+          <td class="${css.td}">${helper.shortenHexData(data.tx.input)}</td>
+        </tr class="${css.tr}">
+        <tr class="${css.tr}">
+          <td class="${css.td}">hash:</td>
+          <td class="${css.td}">${helper.shortenHexData((data.tx.hash))}</td>
+        </tr class="${css.tr}">
+      </table>
+    `
+    el.appendChild(table)
   }
-  return yo`<span id="tx${data.tx.hash}">${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData((data.tx.input))}, hash:${helper.shortenHexData((data.tx.hash))}, <button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
+  return tx
 }
 
 function renderEmptyBlock (self, data) {
