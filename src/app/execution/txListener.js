@@ -67,16 +67,29 @@ class TxListener {
           if (this.loopId === null || this.loopId === 'vm-listener') return
           if (error) return console.log(error)
           if (currentLoopId === this.loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
+            if (!this.lastBlock) this.lastBlock = blockNumber - 1
+            var current = this.lastBlock + 1
             this.lastBlock = blockNumber
-            executionContext.web3().eth.getBlock(this.lastBlock, true, (error, result) => {
-              if (!error) {
-                this._newBlock(Object.assign({type: 'web3'}, result))
+            while (blockNumber >= current) {
+              try {
+                this._manageBlock(current)
+              } catch (e) {
+                console.log(e)
               }
-            })
+              current++
+            }
           }
         })
       }, 2000)
     }
+  }
+
+  _manageBlock (blockNumber) {
+    executionContext.web3().eth.getBlock(blockNumber, true, (error, result) => {
+      if (!error) {
+        this._newBlock(Object.assign({type: 'web3'}, result))
+      }
+    })
   }
 
   /**
