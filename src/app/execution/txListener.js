@@ -195,7 +195,7 @@ class TxListener {
             fn: fn,
             params: this._decodeInputParams(inputData.substring(8), getFunction(abi, fn))
           }
-          return
+          return this._resolvedTransactions[tx.hash]
         }
       }
       // fallback function
