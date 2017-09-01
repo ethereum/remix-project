@@ -383,11 +383,19 @@ function compileTab (container, appAPI, appEvents, opts) {
             return ret
           }
         })
-        node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>`
+        if (details[x] !== '') {
+          try {
+            node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>` // catch in case the parsing fails.
+          } catch (e) {
+            node = yo`<div>Unable to display "${x}": ${e.message}</div>`
+          }
+        } else {
+          node = yo`<div> - </div>`
+        }
       } else {
         node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
       }
-      value.appendChild(node)
+      if (node) value.appendChild(node)
       return value
     }
 
