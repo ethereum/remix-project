@@ -46,6 +46,7 @@ var css = csjs`
 module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
+  var self = this
   this.files = files
 
   function remixdDialog () {
@@ -203,7 +204,7 @@ function fileExplorer (appAPI, files) {
     var label = this
     var li = getLiFrom(label)
     var classes = li.className
-    if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable')) {
+    if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable') && label.getAttribute('data-path') !== self.files.type) {
       textUnderEdit = label.innerText
       label.setAttribute('contenteditable', true)
       label.classList.add(css.rename)
@@ -223,8 +224,11 @@ function fileExplorer (appAPI, files) {
         newPath = newPath.split('/')
         newPath[newPath.length - 1] = label.innerText
         newPath = newPath.join('/')
-        if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
-          modalDialogCustom.alert('special characters are not allowsed')
+        if (label.innerText === '') {
+          modalDialogCustom.alert('File name cannot be empty')
+          label.innerText = textUnderEdit
+        } else if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
+          modalDialogCustom.alert('Special characters are not allowed')
           label.innerText = textUnderEdit
         } else if (!files.exists(newPath)) {
           files.rename(label.dataset.path, newPath, isFolder)
