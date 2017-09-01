@@ -62,10 +62,11 @@ class TxListener {
       this.loopId = 'vm-listener'
     } else {
       this.loopId = setInterval(() => {
+        var currentLoopId = this.loopId
         executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
           if (this.loopId === null || this.loopId === 'vm-listener') return
           if (error) return console.log(error)
-          if (!this.lastBlock || blockNumber > this.lastBlock) {
+          if (currentLoopId === this.loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
             this.lastBlock = blockNumber
             executionContext.web3().eth.getBlock(this.lastBlock, true, (error, result) => {
               if (!error) {
@@ -74,7 +75,7 @@ class TxListener {
             })
           }
         })
-      }, 2)
+      }, 2000)
     }
   }
 
