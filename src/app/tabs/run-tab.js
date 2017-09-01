@@ -293,7 +293,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
-    appAPI.logMessage('transaction added ...')
+    // appAPI.logMessage('transaction added ...')
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var contracts = appAPI.getContracts()
     var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
@@ -301,7 +301,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var args = createButtonInput.value
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
-        // appAPI.logMessage('transaction added ...')
+        appAPI.logMessage('transaction added ...')
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
@@ -323,7 +323,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
         modalDialogCustom.alert(error)
       }
     })
-    // appAPI.logMessage('transaction added ...')
   }
 
   function loadFromAddress (appAPI) {
