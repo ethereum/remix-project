@@ -215,13 +215,9 @@ class EditorPanel {
     self._adjustLayout('top', self.data._layout.top.offset)
     return self._view.el
   }
-  registerLogType (typename, template) {
+  registerCommand (name, command) {
     var self = this
-    self._components.terminal.registerType(typename, template)
-  }
-  log () {
-    var self = this
-    self._components.terminal._output.apply(self._components.terminal, arguments)
+    return self._components.terminal.registerCommand(name, command)
   }
   _renderTabsbar () {
     var self = this

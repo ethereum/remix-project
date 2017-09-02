@@ -16,11 +16,15 @@ class TxLogger {
   constructor (opts = {}) {
     this.event = new EventManager()
     this.opts = opts
-    opts.api.editorpanel.registerLogType('knownTransaction', (data) => {
-      return renderKnownTransaction(this, data)
+    this.logKnownTX = opts.api.editorpanel.registerCommand('knownTransaction', (args, cmds, append) => {
+      var data = args[0]
+      var el = renderKnownTransaction(this, data)
+      append(el)
     })
-    opts.api.editorpanel.registerLogType('unknownTransaction', (data) => {
-      return renderUnknownTransaction(this, data)
+    this.logUnknownTX = opts.api.editorpanel.registerCommand('unknownTransaction', (args, cmds, append) => {
+      var data = args[0]
+      var el = renderUnknownTransaction(this, data)
+      append(el)
     })
     opts.api.editorpanel.registerLogType('emptyBlock', (data) => {
       return renderEmptyBlock(this, data)
@@ -43,12 +47,12 @@ function log (self, tx, api) {
   if (resolvedTransaction) {
     api.parseLogs(tx, resolvedTransaction.contractName, api.compiledContracts(), (error, logs) => {
       if (!error) {
-        api.editorpanel.log({type: 'knownTransaction', value: { tx: tx, resolvedData: resolvedTransaction, logs: logs }})
+        self.logKnownTX({ tx: tx, resolvedData: resolvedTransaction, logs: logs })
       }
     })
   } else {
     // contract unknown - just displaying raw tx.
-    api.editorpanel.log({ type: 'unknownTransaction', value: { tx: tx } })
+    self.logUnknownTX({ tx: tx })
   }
 }
 

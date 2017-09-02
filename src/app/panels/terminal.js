@@ -91,17 +91,7 @@ var css = csjs`
     outline           : none;
     font-family       : monospace;
   }
-  
-  .error              {
-    color             : red;
-  }
-  .info               {
-    color             : blue;
-  }
-  .log            {
-    color             : black;
-  }
-  
+
   .dragbarHorizontal  {
     position          : absolute;
     top               : 0;
@@ -201,10 +191,23 @@ class Terminal {
       console.log('select', label)
     })
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
-    self._templates = {}
-    self.logger = {}
-    ;['log', 'info', 'error'].forEach(typename => {
-      self.registerType(typename, self._blocksRenderer(typename))
+    self._commands = {}
+    self.commands = {}
+    self._INDEX = {}
+    self._INDEX.all = []
+    self._INDEX.allMain = []
+    self._INDEX.commands = {}
+    self._INDEX.commandsMain = {}
+    self.registerCommand('log', self._blocksRenderer('log'))
+    self.registerCommand('info', self._blocksRenderer('info'))
+    self.registerCommand('error', self._blocksRenderer('error'))
+    self.registerCommand('script', function execute (args, scopedCommands, append) {
+      var script = String(args[0])
+      scopedCommands.log(`> ${script}`)
+      self._shell(script, function (error, output) {
+        if (error) scopedCommands.error(error)
+        else scopedCommands.log(output)
+      })
     })
     self._jsSandboxContext = {}
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
@@ -253,7 +256,7 @@ class Terminal {
         ${self._view.term}
       </div>
     `
-    self._output(self.data.banner)
+    self.commands.log(self.data.banner)
 
     function throttle (fn, wait) {
       var time = Date.now()
@@ -466,12 +469,17 @@ class Terminal {
       editable.focus()
     }
   }
+  scroll2bottom () {
+    var self = this
+    setTimeout(function () {
+      self._view.term.scrollTop = self._view.term.scrollHeight
+    }, 0)
+  }
   _blocksRenderer (mode) {
     var self = this
-    var modes = { log: true, info: true, error: true }
-    if (modes[mode]) {
-      return function render () {
-        var args = [].slice.call(arguments)
+    mode = { log: 'black', info: 'blue', error: 'red' }[mode] // defaults
+    if (mode) {
+      return function logger (args, scopedCommands, append) {
         var types = args.map(type)
         var values = javascriptserialize.apply(null, args).map(function (val, idx) {
           if (typeof args[idx] === 'string') val = args[idx]
@@ -480,59 +488,67 @@ class Terminal {
           var lines = val.match(new RegExp(pattern, 'g'))
           return lines.map(str => document.createTextNode(`${str}\n`))
         })
-        return values
+        append(yo`<span style="color: ${mode};">${values}</span>`)
       }
     } else {
       throw new Error('mode is not supported')
     }
   }
-  execute (script) {
+  _scopeCommands (append) {
     var self = this
-    script = String(script)
-    self._output({ type: 'log', value: `> ${script}` })
-    self._shell(script, function (error, output) {
-      if (error) {
-        self._output({ type: 'error', value: error })
-        return error
-      } else {
-        self._output({ type: 'log', value: output })
-        return output
+    var scopedCommands = {}
+    Object.keys(self.commands).forEach(function makeScopedCommand (cmd) {
+      var command = self._commands[cmd]
+      scopedCommands[cmd] = function _command () {
+        var args = arguments
+        command(args, scopedCommands, el => append(cmd, args, el))
       }
     })
+    return scopedCommands
   }
-  registerType (typename, template) {
+  registerCommand (name, command) {
     var self = this
-    if (typeof template !== 'function') throw new Error('invalid template')
-    self._templates[typename] = template
-    self.logger[typename] = function () {
-      var args = [...arguments].map(x => ({ type: typename, value: x }))
-      self._output.apply(self, args)
-    }
-  }
-  _output () {
-    var self = this
-    var args = [...arguments]
-    self.data.session.push(args)
-    args.forEach(function (data) {
-      if (!data || !data.type) data = { type: 'log', value: data }
-      var render = self._templates[data.type]
-      var blocks = render(data.value)
-      blocks = [].concat(blocks)
-      blocks.forEach(function (block) {
+    name = String(name)
+    if (self._commands[name]) throw new Error(`command "${name}" exists already`)
+    if (typeof command !== 'function') throw new Error(`invalid command: ${command}`)
+    self._commands[name] = command
+    self._INDEX.commands[name] = []
+    self._INDEX.commandsMain[name] = []
+    self.commands[name] = function _command () {
+      var args = [...arguments]
+      var steps = []
+      var root = { steps, cmd: name }
+      var ITEM = { root, cmd: name }
+      root.gidx = self._INDEX.allMain.push(ITEM) - 1
+      root.idx = self._INDEX.commandsMain[name].push(ITEM) - 1
+      function append (cmd, params, el) {
+        var item
+        if (cmd) { // subcommand
+          item = { el, cmd, root }
+        } else { // command
+          item = ITEM
+          item.el = el
+          cmd = name
+        }
+        item.gidx = self._INDEX.all.push(item) - 1
+        item.idx = self._INDEX.commands[cmd].push(item) - 1
+        item.step = steps.push(item) - 1
+        item.args = params
         self._view.journal.appendChild(yo`
-          <div class="${css.block} ${css[data.type] || data.type}">
-            ${block}
-          </div>
+          <div data-gidx=${item.gidx} class=${css.block}>${el}</div>
         `)
         self.scroll2bottom()
-      })
-    })
-  }
-  scroll2bottom () {
-    var self = this
-    setTimeout(function () {
-      self._view.term.scrollTop = self._view.term.scrollHeight
-    }, 0)
+      }
+      var scopedCommands = self._scopeCommands(append)
+      command(args, scopedCommands, el => append(null, args, el))
+    }
+    var help = typeof command.help === 'string' ? command.help : [
+      `// no help available for:`,
+      `terminal.commands.${name}(...)`
+    ].join('\n')
+    self.commands[name].toString = _ => { return help }
+    self.commands[name].help = help
+    return self.commands[name]
   }
   _shell (script, done) { // default shell
     var self = this
@@ -552,7 +568,9 @@ function domTerminalFeatures (self) {
   return {
     web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
     console: {
-      log: function () { self._output.apply(self, arguments) }
+      log: function () { self.commands.log.apply(null, arguments) },
+      info: function () { self.commands.info.apply(null, arguments) },
+      error: function () { self.commands.error.apply(null, arguments) }
     }
   }
 }
