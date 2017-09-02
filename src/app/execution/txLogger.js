@@ -106,8 +106,19 @@ function log (self, tx, api) {
 }
 
 function renderKnownTransaction (self, data) {
-  var to = data.tx.to
-  if (to) to = helper.shortenAddress(data.tx.to)
+  if (data.tx.blockHash) {
+    var to = data.tx.to
+    to = helper.shortenAddress(data.tx.to)
+  } else if (data.tx.hash) {
+    var name = data.resolvedData.contractName
+    var fn = data.resolvedData.fn
+    if (fn === '(constructor)') {                  // create instance
+      to = name + '.' + fn + ',' + ' 0 logs'
+    } else {                                       // function call
+      var toHash = helper.shortenAddress(data.resolvedData.to)
+      to = name + '.' + fn + toHash + ',' + ' 0 logs'
+    }
+  }
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
