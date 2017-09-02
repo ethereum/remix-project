@@ -106,17 +106,20 @@ function log (self, tx, api) {
 }
 
 function renderKnownTransaction (self, data) {
+  var from = helper.shortenAddress(data.tx.from)
+  var to = ''
   if (data.tx.blockHash) {
-    var to = data.tx.to
     to = helper.shortenAddress(data.tx.to)
-  } else if (data.tx.hash) {
-    var name = data.resolvedData.contractName
-    var fn = data.resolvedData.fn
-    if (fn === '(constructor)') {                  // create instance
-      to = name + '.' + fn + ',' + ' 0 logs'
-    } else {                                       // function call
+  } else if (data.tx.hash) {  // call (constructor of function call)
+    var name = data.resolvedData.contractName + '.' + data.resolvedData.fn
+    var logs = ',' + ' 0 logs'
+    if (data.resolvedData.fn === '(constructor)') {
+      to = name + logs
+      from = from + ' ' + name + logs
+    } else {
       var toHash = helper.shortenAddress(data.resolvedData.to)
-      to = name + '.' + fn + toHash + ',' + ' 0 logs'
+      to = name + ' ' + toHash + logs
+      from = from + ' ' + name + logs
     }
   }
   function debug () {
@@ -137,7 +140,7 @@ function renderKnownTransaction (self, data) {
       <table class="${css.txTable}" id="txTable">
         <tr class="${css.tr}">
           <td class="${css.td}">from</td>
-          <td class="${css.td}">${helper.shortenAddress(data.tx.from)}</td>
+          <td class="${css.td}">${from}</td>
         </tr class="${css.tr}">
         <tr class="${css.tr}">
           <td class="${css.td}">to:</td>
@@ -163,6 +166,7 @@ function renderKnownTransaction (self, data) {
 }
 
 function renderUnknownTransaction (self, data) {
+  var from = helper.shortenAddress(data.tx.from)
   var to = data.tx.to
   if (to) to = helper.shortenAddress(data.tx.to)
   function debug () {
@@ -183,7 +187,7 @@ function renderUnknownTransaction (self, data) {
       <table class="${css.txTable}" id="txTable">
         <tr class="${css.tr}">
           <td class="${css.td}">from</td>
-          <td class="${css.td}">${helper.shortenAddress(data.tx.from)}</td>
+          <td class="${css.td}">${from}</td>
         </tr class="${css.tr}">
         <tr class="${css.tr}">
           <td class="${css.td}">to:</td>
