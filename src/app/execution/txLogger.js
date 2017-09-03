@@ -20,7 +20,6 @@ var css = csjs`
   }
   .txTable, .tr, .td {
     border: 1px solid ${styles.colors.orange};
-    background-color: ${styles.colors.veryLightGrey};
     border-collapse: collapse;
     font-size: 10px;
     color: ${styles.colors.grey};
@@ -130,39 +129,25 @@ function renderKnownTransaction (self, data) {
       <div class="${css.log}">
         ${context(self, data.tx)}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, ${data.logs.length} logs
         <div class=${css.buttons}>
-          <button class=${css.details} onclick=${detail}>Details</button>
-          <button class=${css.debug} onclick=${debug}>Debug</button>
+        <button class=${css.details} onclick=${txDetails}>Details</button>
+        <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
     </span>
   `
-  function detail () {
-    var table = yo`
-      <table class="${css.txTable}" id="txTable">
-        <tr class="${css.tr}">
-          <td class="${css.td}">from</td>
-          <td class="${css.td}">${from}</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">to:</td>
-          <td class="${css.td}">${to}</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">value:</td>
-          <td class="${css.td}">${value(data.tx.value)} wei</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">data:</td>
-          <td class="${css.td}">${helper.shortenHexData(data.tx.input)}</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">hash:</td>
-          <td class="${css.td}">${helper.shortenHexData((data.tx.hash))}</td>
-        </tr class="${css.tr}">
-      </table>
-    `
-    tx.appendChild(table)
+
+  var table
+  function txDetails () {
+    if (table && table.parentNode) {
+      tx.removeChild(table)
+    } else {
+      table = createTable({
+        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash
+      })
+      tx.appendChild(table)
+    }
   }
+
   return tx
 }
 
@@ -178,38 +163,22 @@ function renderUnknownTransaction (self, data) {
       <div class="${css.log}">
         ${context(self, data.tx)}
         <div class=${css.buttons}>
-          <button class=${css.details} onclick=${detail}>Details</button>
+          <button class=${css.details} onclick=${txDetails}>Details</button>
           <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
     </span>
   `
-  function detail () {
-    var table = yo`
-      <table class="${css.txTable}" id="txTable">
-        <tr class="${css.tr}">
-          <td class="${css.td}">from</td>
-          <td class="${css.td}">${from}</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">to:</td>
-          <td class="${css.td}">${to}</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">value:</td>
-          <td class="${css.td}">${value(data.tx.value)} wei</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">data:</td>
-          <td class="${css.td}">${helper.shortenHexData(data.tx.input)}</td>
-        </tr class="${css.tr}">
-        <tr class="${css.tr}">
-          <td class="${css.td}">hash:</td>
-          <td class="${css.td}">${helper.shortenHexData((data.tx.hash))}</td>
-        </tr class="${css.tr}">
-      </table>
-    `
-    tx.appendChild(table)
+  var table
+  function txDetails () {
+    if (table && table.parentNode) {
+      tx.removeChild(table)
+    } else {
+      table = createTable({
+        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash
+      })
+      tx.appendChild(table)
+    }
   }
   return tx
 }
@@ -240,3 +209,37 @@ function value (v) {
 }
 
 module.exports = TxLogger
+
+// helpers
+
+function createTable (opts) {
+  var from = opts.from
+  var to = opts.to
+  var val = opts.val
+  var input = opts.input
+  var hash = opts.hash
+  return yo`
+  <table class="${css.txTable}" id="txTable">
+    <tr class="${css.tr}">
+      <td class="${css.td}">from</td>
+      <td class="${css.td}">${from}</td>
+    </tr class="${css.tr}">
+    <tr class="${css.tr}">
+      <td class="${css.td}">to:</td>
+      <td class="${css.td}">${to}</td>
+    </tr class="${css.tr}">
+    <tr class="${css.tr}">
+      <td class="${css.td}">value:</td>
+      <td class="${css.td}">${value(val)} wei</td>
+    </tr class="${css.tr}">
+    <tr class="${css.tr}">
+      <td class="${css.td}">data:</td>
+      <td class="${css.td}">${helper.shortenHexData(input)}</td>
+    </tr class="${css.tr}">
+    <tr class="${css.tr}">
+      <td class="${css.td}">hash:</td>
+      <td class="${css.td}">${helper.shortenHexData((hash))}</td>
+    </tr class="${css.tr}">
+  </table>
+  `
+}
