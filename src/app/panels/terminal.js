@@ -123,58 +123,15 @@ var ghostbar = yo`<div class=${css.ghostbar}></div>`
 class Terminal {
   constructor (opts = { auto: true }) {
     var self = this
+    self.event = new EventManager()
+    self._api = opts.api
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
-      banner: opts.banner || `
-/******************************************************************************
-                                              
-  ...........................................
-  .....................:.....................
-  ....................o:;....................
-  ...................oo:;;...................
-  ..................ooo:;;;..................
-  .................oooo:;;;;.................
-  ................ooooo:;;;;;................
-  ...............oooooo:;;;;;;...............
-  ..............ooooooo:;;;;;;;..............
-  .............ooooooo;:';;;;;;;.............
-  ............ooooo;;;;:'''';;;;;............
-  ...........oo;;;;;;;;:'''''''';;...........
-  ..........;;;;;;;;;;;:'''''''''''..........
-  ..............;;;;;;;:'''''''..............
-  ...........oo...;;;;;:'''''...;;...........
-  ............oooo...;;:''...;;;;............
-  ..............oooo...:...;;;;..............
-  ...............oooooo:;;;;;;...............
-  ................ooooo:;;;;;................
-  .................oooo:;;;;.................
-  ..................ooo:;;;..................
-  ...................oo:;;...................
-  ....................o:;....................
-  .....................:.....................
-  ...........................................
-                                              
-                                              
-  ########  ######## ##     ## #### ##     ## 
-  ##     ## ##       ###   ###  ##   ##   ##  
-  ##     ## ##       #### ####  ##    ## ##   
-  ########  ######   ## ### ##  ##     ###    
-  ##   ##   ##       ##     ##  ##    ## ##   
-  ##    ##  ##       ##     ##  ##   ##   ##  
-  ##     ## ######## ##     ## #### ##     ## 
-                                              
-                                              
-  welcome to browser solidity
-                                              
-  new features:
-    - dom terminal v0.0.1-alpha
-                                              
-******************************************************************************/
-`
+      banner: opts.banner,
+      activeFilters: { commands: {}, input: '' }
     }
-    self.event = new EventManager()
-    self._api = opts.api
+    self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
     self._components.dropdown = new Dropdown({
       options: [
@@ -185,12 +142,11 @@ class Terminal {
       defaults: ['knownTransaction', 'script']
     })
     self._components.dropdown.event.register('deselect', function (label) {
-      console.log('deselect', label)
+      self.updateJournal({ type: 'deselect', value: label })
     })
     self._components.dropdown.event.register('select', function (label) {
-      console.log('select', label)
+      self.updateJournal({ type: 'select', value: label })
     })
-    self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._commands = {}
     self.commands = {}
     self._INDEX = {}
@@ -256,7 +212,7 @@ class Terminal {
         ${self._view.term}
       </div>
     `
-    self.commands.log(self.data.banner)
+    if (self.data.banner) self.commands.log(self.data.banner)
 
     function throttle (fn, wait) {
       var time = Date.now()
@@ -361,11 +317,11 @@ class Terminal {
         background.style.height = (self._view.journal.offsetHeight - (placeholder.offsetTop + placeholder.offsetHeight)) + 'px'
         background.onclick = undefined
         background.style.cursor = 'default'
+        background.style.pointerEvents = 'none'
       } else {
         background.style = ''
         text.style = ''
         background.onclick = function (event) {
-          console.error('background click')
           placeholder.scrollIntoView()
           check()
         }
@@ -385,7 +341,7 @@ class Terminal {
     function filter (event) {
       var input = event.currentTarget
       setTimeout(function () {
-        console.log('filter', input.value)
+        self.updateJournal({ type: 'search', value: input.value })
       }, 0)
     }
     function clear (event) {
@@ -469,6 +425,43 @@ class Terminal {
       editable.focus()
     }
   }
+  updateJournal (filterEvent) {
+    // @TODO: updates `self.data.activeFilters: { commands: {}, input: '' }`
+    var value = filterEvent.value
+    if (filterEvent.type === 'select') {
+      console.log(value)
+    } else if (filterEvent.type === 'deselect') {
+      console.log(value)
+    } else if (filterEvent.type === 'search') {
+      console.log(value)
+    }
+  }
+  _keep (item) {
+    // @TODO: checks `self.data.activeFilters: { commands: {}, input: '' }`
+    // @TODO: return false (if item is currently filtered out / irrelevant
+    //                      according to `self.data.activeFilters`
+    // self._INDEX.all[item.gidx]
+    //
+    // self._INDEX.allMain
+    // self._INDEX.commands
+    // self._INDEX.commandsMain
+    //
+    // if ()
+    // self.updateJournal(
+    // _INDEX
+    //
+    return true // false
+  }
+  _appendItem (item) {
+    var self = this
+    var { el, gidx } = item
+    if (self._keep(item)) {
+      self._view.journal.appendChild(yo`
+        <div data-gidx=${gidx} class=${css.block}>${el}</div>
+      `)
+      self.scroll2bottom()
+    }
+  }
   scroll2bottom () {
     var self = this
     setTimeout(function () {
@@ -534,10 +527,7 @@ class Terminal {
         item.idx = self._INDEX.commands[cmd].push(item) - 1
         item.step = steps.push(item) - 1
         item.args = params
-        self._view.journal.appendChild(yo`
-          <div data-gidx=${item.gidx} class=${css.block}>${el}</div>
-        `)
-        self.scroll2bottom()
+        self._appendItem(item)
       }
       var scopedCommands = self._scopeCommands(append)
       command(args, scopedCommands, el => append(null, args, el))
@@ -564,7 +554,6 @@ class Terminal {
 }
 
 function domTerminalFeatures (self) {
-  // @TODO add all the `console` functions
   return {
     web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
     console: {
