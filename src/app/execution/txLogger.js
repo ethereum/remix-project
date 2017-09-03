@@ -19,21 +19,19 @@ var css = csjs`
     align-items: baseline;
   }
   .txTable, .tr, .td {
-    border: 1px solid black;
+    border: 1px solid ${styles.colors.orange};
+    background-color: ${styles.colors.veryLightGrey};
     border-collapse: collapse;
     font-size: 10px;
-    color: grey;
-  }
-  .txTable {
-    width: 35%;
+    color: ${styles.colors.grey};
   }
   #txTable {
-    width: 200px;
-    margin-left: 20px;
+    width: 450px;
+    margin-top: 10px;
     align-self: center;
   }
   .tr, .td {
-    padding: 3px;
+    padding: 4px;
   }
   .buttons {
     display: flex;
@@ -108,6 +106,7 @@ function log (self, tx, api) {
 function renderKnownTransaction (self, data) {
   var from = helper.shortenAddress(data.tx.from)
   var to = ''
+
   if (data.tx.blockHash) {
     to = helper.shortenAddress(data.tx.to)
   } else if (data.tx.hash) {  // call (constructor of function call)
@@ -122,20 +121,22 @@ function renderKnownTransaction (self, data) {
       from = from + ' ' + name + logs
     }
   }
+
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
   var tx = yo`
-    <span class=${css.log} id="tx${data.tx.hash}">
-      ${context(self, data.tx)}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, ${data.logs.length} logs
-      <div class=${css.buttons}>
-        <button class=${css.details} onclick=${e => detail(e, tx)}>Details</button>
-        <button class=${css.debug} onclick=${debug}>Debug</button>
+    <span class=${css.container} id="tx${data.tx.hash}">
+      <div class="${css.log}">
+        ${context(self, data.tx)}, ${data.resolvedData.contractName}.${data.resolvedData.fn}, ${data.logs.length} logs
+        <div class=${css.buttons}>
+          <button class=${css.details} onclick=${detail}>Details</button>
+          <button class=${css.debug} onclick=${debug}>Debug</button>
+        </div>
       </div>
     </span>
   `
-  function detail (e, container) {
-    var el = container
+  function detail () {
     var table = yo`
       <table class="${css.txTable}" id="txTable">
         <tr class="${css.tr}">
@@ -160,7 +161,7 @@ function renderKnownTransaction (self, data) {
         </tr class="${css.tr}">
       </table>
     `
-    el.appendChild(table)
+    tx.appendChild(table)
   }
   return tx
 }
@@ -173,16 +174,17 @@ function renderUnknownTransaction (self, data) {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
   var tx = yo`
-    <span class=${css.log} id="tx${data.tx.hash}">
-      ${context(self, data.tx)}
-      <div class=${css.buttons}>
-        <button class=${css.details} onclick=${e => detail(e, tx)}>Details</button>
-        <button class=${css.debug} onclick=${debug}>Debug</button>
+    <span class=${css.container} id="tx${data.tx.hash}">
+      <div class="${css.log}">
+        ${context(self, data.tx)}
+        <div class=${css.buttons}>
+          <button class=${css.details} onclick=${detail}>Details</button>
+          <button class=${css.debug} onclick=${debug}>Debug</button>
+        </div>
       </div>
     </span>
   `
-  function detail (e, container) {
-    var el = container
+  function detail () {
     var table = yo`
       <table class="${css.txTable}" id="txTable">
         <tr class="${css.tr}">
@@ -207,7 +209,7 @@ function renderUnknownTransaction (self, data) {
         </tr class="${css.tr}">
       </table>
     `
-    el.appendChild(table)
+    tx.appendChild(table)
   }
   return tx
 }
