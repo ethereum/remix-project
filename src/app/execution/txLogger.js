@@ -110,7 +110,7 @@ function renderKnownTransaction (self, data) {
     to = data.tx.to
   } else if (data.tx.hash) {  // call (constructor of function call)
     var name = data.resolvedData.contractName + '.' + data.resolvedData.fn
-    var logs = ',' + data.logs.length + ' logs'
+    var logs = ', ' + data.logs.length + ' logs'
     if (data.resolvedData.fn === '(constructor)') {
       to = name + logs
     } else {
@@ -139,7 +139,7 @@ function renderKnownTransaction (self, data) {
       tx.removeChild(table)
     } else {
       table = createTable({
-        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash, gas: data.tx.gas
+        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash, gas: data.tx.gas, logs: data.logs
       })
       tx.appendChild(table)
     }
@@ -226,7 +226,7 @@ function createTable (opts) {
   var input = opts.input
   var hash = opts.hash
   var gas = opts.gas
-  return yo`
+  var table = yo`
   <table class="${css.txTable}" id="txTable">
     <tr class="${css.tr}">
       <td class="${css.td}">from</td>
@@ -241,8 +241,8 @@ function createTable (opts) {
       <td class="${css.td}">${value(val)} wei</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
-      <td class="${css.td}">data:</td>
-      <td class="${css.td}">${input}</td>
+      <td class="${css.td}">input:</td>
+      <td class="${css.td}">${helper.shortenHexData(input)}</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
       <td class="${css.td}">hash:</td>
@@ -254,4 +254,15 @@ function createTable (opts) {
     </tr class="${css.tr}">
   </table>
   `
+  if (opts.logs) {
+    var logs = opts.logs
+    var logs = yo`
+    <tr class="${css.tr}">
+    <td class="${css.td}">logs:</td>
+    <td class="${css.td}">${logs}</td>
+    </tr class="${css.tr}">
+    `
+    table.appendChild(logs)
+  }
+  return table
 }
