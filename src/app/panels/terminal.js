@@ -392,7 +392,7 @@ class Terminal {
           putCursor2End(self._view.input)
         } else { // <enter>
           event.preventDefault()
-          self.execute(self._view.input.innerText)
+          self.commands.script(self._view.input.innerText)
           self._view.input.innerHTML = ''
         }
       }
@@ -497,7 +497,7 @@ class Terminal {
     Object.keys(self.commands).forEach(function makeScopedCommand (cmd) {
       var command = self._commands[cmd]
       scopedCommands[cmd] = function _command () {
-        var args = arguments
+        var args = [...arguments]
         command(args, scopedCommands, el => append(cmd, args, el))
       }
     })
