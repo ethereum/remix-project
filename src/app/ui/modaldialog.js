@@ -55,6 +55,11 @@ var css = csjs`
   .modalFooterCancel {
     cursor: pointer;
   }
+  .modalClose {
+    margin: auto 0;
+    color: #393939;
+    cursor: pointer;
+  }
   @-webkit-keyframes animatetop {
     from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
@@ -71,6 +76,7 @@ module.exports = (title, content, ok, cancel) => {
     document.querySelector('body').appendChild(html())
     container = document.querySelector(`.${css.modal}`)
   }
+  var closeDiv = document.getElementById('modal-close')
 
   var okDiv = document.getElementById('modal-footer-ok')
   okDiv.innerHTML = (ok && ok.label !== undefined) ? ok.label : 'OK'
@@ -112,10 +118,12 @@ module.exports = (title, content, ok, cancel) => {
   function removeEventListener () {
     okDiv.removeEventListener('click', okListener)
     cancelDiv.removeEventListener('click', cancelListener)
+    closeDiv.removeEventListener('click', cancelListener)
   }
 
   okDiv.addEventListener('click', okListener)
   cancelDiv.addEventListener('click', cancelListener)
+  closeDiv.addEventListener('click', cancelListener)
 }
 
 function html () {
@@ -123,6 +131,7 @@ function html () {
   <div class="${css['modalContent']}">
     <div class="${css['modalHeader']}">
     <h2></h2>
+    <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
   </div>
   <div class="${css['modalBody']}"> -
   </div>
