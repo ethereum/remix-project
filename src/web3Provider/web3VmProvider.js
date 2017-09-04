@@ -79,7 +79,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
   this.processingAddress = tx.to
   tx.data = util.hexConvert(data.data)
   tx.input = util.hexConvert(data.input)
-  tx.gas = util.hexConvert(data.gas)
+  tx.gas = (new ethutil.BN(util.hexConvert(data.gas).replace('0x', ''), 16)).toString(10)
   if (data.value) {
     tx.value = util.hexConvert(data.value)
   }
