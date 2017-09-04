@@ -103,7 +103,6 @@ function UniversalDApp (opts = {}) {
   self._api = opts.api
   self.removable = opts.opt.removable
   self.removable_instance = opts.opt.removable_instance
-  // self.options = options || {}
   self.el = yo`<div class="udapp"></div>`
   self.personalMode = opts.opt.personalMode || false
   self.contracts
