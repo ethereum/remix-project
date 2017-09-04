@@ -426,31 +426,35 @@ class Terminal {
     }
   }
   updateJournal (filterEvent) {
-    // @TODO: updates `self.data.activeFilters: { commands: {}, input: '' }`
+    var self = this
     var value = filterEvent.value
     if (filterEvent.type === 'select') {
-      console.log(value)
+      self.data.activeFilters.commands[value] = true
+      // @TODO: add all items with `value === item.cmd`
     } else if (filterEvent.type === 'deselect') {
-      console.log(value)
+      self.data.activeFilters.commands[value] = false
+      // @TODO: remove all items with `value === item.cmd`
     } else if (filterEvent.type === 'search') {
-      console.log(value)
+      self.data.activeFilters.input = value
+      // @TODO: filter all active items with not `match(value, item.args)`
+
+      // @TODO: implement a `match(query, args)` function
+
+      // make use of:
+      // self._INDEX.all[item.gidx]
+      // self._INDEX.allMain
+      // self._INDEX.commands
+      // self._INDEX.commandsMain
     }
   }
   _keep (item) {
-    // @TODO: checks `self.data.activeFilters: { commands: {}, input: '' }`
-    // @TODO: return false (if item is currently filtered out / irrelevant
-    //                      according to `self.data.activeFilters`
-    // self._INDEX.all[item.gidx]
-    //
-    // self._INDEX.allMain
-    // self._INDEX.commands
-    // self._INDEX.commandsMain
-    //
-    // if ()
-    // self.updateJournal(
-    // _INDEX
-    //
-    return true // false
+    var self = this
+    if (self.data.activeFilters.commands[item.root.cmd]) {
+      var query = self.data.activeFilters.input
+      // @TODO: filter item if not `match(value, item.args)`
+      // @TODO: implement a `match(query, args)` function
+      if (item.args === query) return true
+    }
   }
   _appendItem (item) {
     var self = this
