@@ -358,9 +358,9 @@ function compileTab (container, appAPI, appEvents, opts) {
     function insertValue (details, x) {
       var value = yo`<pre class="${css.value}"></pre>`
       var node
-      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes' || x === 'name') {
-        node = yo`<div>${details[x]}</div>`
-      } else if (x === 'web3Deploy') {
+      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes') {
+        node = yo`<div>${details[x].slice(0, 60) + '...'}</div>`
+      } else if (x === 'web3Deploy' || x === 'name') {
         node = yo`<pre>${details[x]}</pre>`
       } else if (x === 'interface' || x === 'metadata') {
         var treeView = new TreeView({
@@ -383,11 +383,19 @@ function compileTab (container, appAPI, appEvents, opts) {
             return ret
           }
         })
-        node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>`
+        if (details[x] !== '') {
+          try {
+            node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>` // catch in case the parsing fails.
+          } catch (e) {
+            node = yo`<div>Unable to display "${x}": ${e.message}</div>`
+          }
+        } else {
+          node = yo`<div> - </div>`
+        }
       } else {
         node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
       }
-      value.appendChild(node)
+      if (node) value.appendChild(node)
       return value
     }
 
@@ -412,13 +420,13 @@ function detailsHelpSection () {
   return {
     'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
     'Opcodes': 'Assembly opcodes describing the contract',
-    'Runtime Bytecode': 'Bytecode actually store in the state and executed during normal contract call',
-    'bytecode': 'Bytecode executed during contract creation',
-    'functionHashes': 'List of declared function and their corresonding hash',
+    'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
+    'bytecode': 'Bytecode being executed during contract creation',
+    'functionHashes': 'List of declared function and their corresponding hash',
     'gasEstimates': 'Gas estimation for each function call',
-    'metadata': 'Contain all informations related to the compilation',
+    'metadata': 'Contains all informations related to the compilation',
     'metadataHash': 'Hash representing all metadata information',
-    'interface': 'ABI: Describe all the functions (input/output params, scope, ...)',
+    'interface': 'ABI: describing all the functions (input/output params, scope, ...)',
     'name': 'Name of the compiled contract',
     'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
     'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
