@@ -17,12 +17,17 @@ var css = csjs`
   .log {
     display: flex;
     align-items: baseline;
+    justify-content: space-between;
+  }
+  .txBlock, .txVM {
+    color: ${styles.colors.violet};
+    width: 45%;
   }
   .txTable, .tr, .td {
-    border: 1px solid ${styles.colors.lightOrange};
     border-collapse: collapse;
     font-size: 10px;
     color: ${styles.colors.grey};
+    border: 1px dashed ${styles.colors.black};
   }
   #txTable {
     width: 450px;
@@ -31,6 +36,9 @@ var css = csjs`
   }
   .tr, .td {
     padding: 4px;
+  }
+  .tableTitle {
+    width: 25%;
   }
   .buttons {
     display: flex;
@@ -229,36 +237,36 @@ function createTable (opts) {
   var table = yo`
   <table class="${css.txTable}" id="txTable">
     <tr class="${css.tr}">
-      <td class="${css.td}">from</td>
+      <td class="${css.td} ${css.tableTitle}"> from </td>
       <td class="${css.td}">${from}</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
-      <td class="${css.td}">to:</td>
+      <td class="${css.td}"> to </td>
       <td class="${css.td}">${to}</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
-      <td class="${css.td}">value:</td>
+      <td class="${css.td}"> value </td>
       <td class="${css.td}">${value(val)} wei</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
-      <td class="${css.td}">input:</td>
+      <td class="${css.td}"> input </td>
       <td class="${css.td}">${helper.shortenHexData(input)}</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
-      <td class="${css.td}">hash:</td>
+      <td class="${css.td}"> hash </td>
       <td class="${css.td}">${hash}</td>
     </tr class="${css.tr}">
     <tr class="${css.tr}">
-      <td class="${css.td}">gas:</td>
+      <td class="${css.td}"> gas </td>
       <td class="${css.td}">${gas}</td>
     </tr class="${css.tr}">
   </table>
   `
   if (opts.logs) {
     var logs = opts.logs
-    var logs = yo`
+    logs = yo`
     <tr class="${css.tr}">
-    <td class="${css.td}">logs:</td>
+    <td class="${css.td}"> logs </td>
     <td class="${css.td}">${logs}</td>
     </tr class="${css.tr}">
     `
