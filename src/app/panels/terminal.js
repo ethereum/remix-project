@@ -1,4 +1,4 @@
-/* global Node */
+/* global Node, requestAnimationFrame */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var javascriptserialize = require('javascript-serialize')
@@ -149,6 +149,8 @@ class Terminal {
     })
     self._commands = {}
     self.commands = {}
+    self._JOURNAL = []
+    self._jobs = []
     self._INDEX = {}
     self._INDEX.all = []
     self._INDEX.allMain = []
@@ -427,44 +429,71 @@ class Terminal {
   }
   updateJournal (filterEvent) {
     var self = this
+    var commands = self.data.activeFilters.commands
     var value = filterEvent.value
     if (filterEvent.type === 'select') {
-      self.data.activeFilters.commands[value] = true
-      // @TODO: add all items with `value === item.cmd`
+      commands[value] = true
+      if (!self._INDEX.commandsMain[value]) return
+      self._INDEX.commandsMain[value].forEach(item => {
+        item.root.steps.forEach(item => {
+          item.hide = false
+          self._JOURNAL[item.gidx] = item
+        })
+        item.hide = false
+        self._JOURNAL[item.gidx] = item
+      })
     } else if (filterEvent.type === 'deselect') {
-      self.data.activeFilters.commands[value] = false
-      // @TODO: remove all items with `value === item.cmd`
+      commands[value] = false
+      if (!self._INDEX.commandsMain[value]) return
+      self._INDEX.commandsMain[value].forEach(item => {
+        item.root.steps.forEach(item => {
+          item.hide = true
+          self._JOURNAL[item.gidx] = item
+        })
+        item.hide = true
+        self._JOURNAL[item.gidx] = item
+      })
     } else if (filterEvent.type === 'search') {
-      self.data.activeFilters.input = value
-      // @TODO: filter all active items with not `match(value, item.args)`
-
-      // @TODO: implement a `match(query, args)` function
-
-      // make use of:
-      // self._INDEX.all[item.gidx]
-      // self._INDEX.allMain
-      // self._INDEX.commands
-      // self._INDEX.commandsMain
+      var query = self.data.activeFilters.input = value
+      var items = self._JOURNAL
+      for (var gidx = 0, len = items.length; gidx < len; gidx++) {
+        var item = items[gidx]
+        if (item) {
+          var show = match(item.args, query)
+          item.hide = !show
+        }
+      }
     }
+    var df = document.createDocumentFragment()
+    // var children = self._JOURNAL.map(item => !item.hide && item.el)
+    self._JOURNAL.forEach(item => {
+      if (!item.hide && item.el) df.appendChild(item.el)
+    })
+    requestAnimationFrame(function updateDOM () {
+      self._view.journal.innerHTML = ''
+      self._view.journal.appendChild(df)
+    })
   }
-  _keep (item) {
+  _shouldAdd (item) {
     var self = this
     if (self.data.activeFilters.commands[item.root.cmd]) {
       var query = self.data.activeFilters.input
-      // @TODO: filter item if not `match(value, item.args)`
-      // @TODO: implement a `match(query, args)` function
-      if (item.args === query) return true
+      var args = item.args
+      return match(args, query)
     }
   }
   _appendItem (item) {
     var self = this
     var { el, gidx } = item
-    if (self._keep(item)) {
-      self._view.journal.appendChild(yo`
-        <div data-gidx=${gidx} class=${css.block}>${el}</div>
-      `)
-      self.scroll2bottom()
+    self._JOURNAL[gidx] = item
+    if (!self._jobs.length) {
+      requestAnimationFrame(function updateTerminal () {
+        self._jobs.forEach(el => self._view.journal.appendChild(el))
+        self.scroll2bottom()
+        self._jobs = []
+      })
     }
+    self._jobs.push(el)
   }
   scroll2bottom () {
     var self = this
@@ -498,7 +527,7 @@ class Terminal {
       var command = self._commands[cmd]
       scopedCommands[cmd] = function _command () {
         var args = [...arguments]
-        command(args, scopedCommands, el => append(cmd, args, el))
+        command(args, scopedCommands, el => append(cmd, args, blockify(el)))
       }
     })
     return scopedCommands
@@ -531,10 +560,10 @@ class Terminal {
         item.idx = self._INDEX.commands[cmd].push(item) - 1
         item.step = steps.push(item) - 1
         item.args = params
-        self._appendItem(item)
+        if (self._shouldAdd(item)) self._appendItem(item)
       }
       var scopedCommands = self._scopeCommands(append)
-      command(args, scopedCommands, el => append(null, args, el))
+      command(args, scopedCommands, el => append(null, args, blockify(el)))
     }
     var help = typeof command.help === 'string' ? command.help : [
       `// no help available for:`,
@@ -566,6 +595,43 @@ function domTerminalFeatures (self) {
       error: function () { self.commands.error.apply(null, arguments) }
     }
   }
+}
+
+function fuzzysearch (needle, haystack) {
+  var hlen = haystack.length
+  var nlen = needle.length
+  if (nlen > hlen) return
+  if (nlen === hlen) return needle === haystack
+  outer: for (var i = 0, j = 0; i < nlen; i++) { // eslint-disable-line
+    var nch = needle.charCodeAt(i)
+    while (j < hlen) if (haystack.charCodeAt(j++) === nch) continue outer // eslint-disable-line
+    return
+  }
+  return true
+}
+
+function findDeep (object, fn, found = { break: false, value: undefined }) {
+  if (typeof object !== 'object' || object === null) return
+  for (var i in object) {
+    if (found.break) break
+    var el = object[i]
+    if (!fn(el, i, object)) findDeep(el, fn, found)
+    else if (found.break = true) return found.value = el // eslint-disable-line
+  }
+  return found.value
+}
+
+function match (args, query) {
+  return findDeep(args, function check (value, key) {
+    if (value === undefined || value === null) return false
+    if (typeof value === 'function') return false
+    if (typeof value === 'object') return false
+    return fuzzysearch(query, String(value))
+  })
+}
+
+function blockify (el) {
+  return yo`<div class=${css.block}>${el}</div>`
 }
 
 module.exports = Terminal
