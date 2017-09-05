@@ -197,7 +197,7 @@ class Terminal {
             <i class="fa fa-ban" aria-hidden="true" onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
           ${self._view.dropdown}
-          <input type="text" class=${css.filter} onkeypress=${filter}></div>
+          <input type="text" class=${css.filter} onkeyup=${filter}></div>
           ${self._view.icon}
         </div>
       </div>
@@ -342,9 +342,7 @@ class Terminal {
     }
     function filter (event) {
       var input = event.currentTarget
-      setTimeout(function () {
-        self.updateJournal({ type: 'search', value: input.value })
-      }, 0)
+      self.updateJournal({ type: 'search', value: input.value })
     }
     function clear (event) {
       refocus()
@@ -454,13 +452,15 @@ class Terminal {
         self._JOURNAL[item.gidx] = item
       })
     } else if (filterEvent.type === 'search') {
-      var query = self.data.activeFilters.input = value
-      var items = self._JOURNAL
-      for (var gidx = 0, len = items.length; gidx < len; gidx++) {
-        var item = items[gidx]
-        if (item) {
-          var show = match(item.args, query)
-          item.hide = !show
+      if (value !== self.data.activeFilters.input) {
+        var query = self.data.activeFilters.input = value
+        var items = self._JOURNAL
+        for (var gidx = 0, len = items.length; gidx < len; gidx++) {
+          var item = items[gidx]
+          if (item) {
+            var show = query.length ? match(item.args, query) : true
+            item.hide = !show
+          }
         }
       }
     }
@@ -479,7 +479,7 @@ class Terminal {
     if (self.data.activeFilters.commands[item.root.cmd]) {
       var query = self.data.activeFilters.input
       var args = item.args
-      return match(args, query)
+      return query.length ? match(args, query) : true
     }
   }
   _appendItem (item) {
@@ -597,19 +597,6 @@ function domTerminalFeatures (self) {
   }
 }
 
-function fuzzysearch (needle, haystack) {
-  var hlen = haystack.length
-  var nlen = needle.length
-  if (nlen > hlen) return
-  if (nlen === hlen) return needle === haystack
-  outer: for (var i = 0, j = 0; i < nlen; i++) { // eslint-disable-line
-    var nch = needle.charCodeAt(i)
-    while (j < hlen) if (haystack.charCodeAt(j++) === nch) continue outer // eslint-disable-line
-    return
-  }
-  return true
-}
-
 function findDeep (object, fn, found = { break: false, value: undefined }) {
   if (typeof object !== 'object' || object === null) return
   for (var i in object) {
@@ -622,16 +609,17 @@ function findDeep (object, fn, found = { break: false, value: undefined }) {
 }
 
 function match (args, query) {
-  return findDeep(args, function check (value, key) {
+  query = query.trim()
+  var isMatch = !!findDeep(args, function check (value, key) {
     if (value === undefined || value === null) return false
     if (typeof value === 'function') return false
     if (typeof value === 'object') return false
-    return fuzzysearch(query, String(value))
+    var contains = String(value).indexOf(query.trim()) !== -1
+    return contains
   })
+  return isMatch
 }
 
-function blockify (el) {
-  return yo`<div class=${css.block}>${el}</div>`
-}
+function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
 
 module.exports = Terminal
