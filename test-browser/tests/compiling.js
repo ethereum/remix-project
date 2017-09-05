@@ -32,8 +32,8 @@ function runTests (browser) {
     .click('#runTabView div[class^="create"]')
     .waitForElementPresent('.instance button[title="f - transact (not payable)"]')
     .click('.instance button[title="f - transact (not payable)"]')
-    .waitForElementPresent('#editor-container div[class^="terminal"] .knownTransaction span[id="tx0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc"]')
-    .assert.containsText('#editor-container div[class^="terminal"] .knownTransaction span[id="tx0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc"]', '(vm): from:0xca3...a733c, to:0x692...77b3a, browser/Untitled.sol:TestContract.f(), value:0 wei, data:0x261...21ff0, 0 logs, hash:0xa17...523bc,DetailsDebug')
+    .waitForElementPresent('#editor-container div[class^="terminal"] span[id="tx0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc"]')
+    .assert.containsText('#editor-container div[class^="terminal"] span[id="tx0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc"]', '(vm): from:0xca3...a733c, to:0x692...77b3a, browser/Untitled.sol:TestContract.f(), value:0 wei, data:0x261...21ff0, 0 logs, hash:0xa17...523bc,DetailsDebug')
     .end()
     /*
     @TODO: need to check now the return value of the function

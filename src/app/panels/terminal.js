@@ -162,7 +162,7 @@ class Terminal {
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
       scopedCommands.log(`> ${script}`)
-      self._shell(script, function (error, output) {
+      self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else scopedCommands.log(output)
       })
@@ -564,10 +564,11 @@ class Terminal {
     self.commands[name].help = help
     return self.commands[name]
   }
-  _shell (script, done) { // default shell
+  _shell (script, scopedCommands, done) { // default shell
     var self = this
+    var context = domTerminalFeatures(self, scopedCommands)
     try {
-      var context = vm.createContext(Object.assign(self._jsSandboxContext, domTerminalFeatures(self)))
+      var context = vm.createContext(Object.assign(self._jsSandboxContext, context))
       var result = vm.runInContext(script, context)
       self._jsSandboxContext = Object.assign({}, context)
       done(null, result)
@@ -577,15 +578,15 @@ class Terminal {
   }
 }
 
-function domTerminalFeatures (self) {
-  return {
-    web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
-    console: {
-      log: function () { self.commands.log.apply(null, arguments) },
-      info: function () { self.commands.info.apply(null, arguments) },
-      error: function () { self.commands.error.apply(null, arguments) }
-    }
+function domTerminalFeatures (self, scopedCommands) {
+  var ctx = scopedCommands
+  ctx.web3 = executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
+  ctx.console = console = {
+    log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
+    info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
+    error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
   }
+  return context
 }
 
 function findDeep (object, fn, found = { break: false, value: undefined }) {
