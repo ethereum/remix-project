@@ -579,14 +579,14 @@ class Terminal {
 }
 
 function domTerminalFeatures (self, scopedCommands) {
-  var ctx = scopedCommands
-  ctx.web3 = executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
-  ctx.console = console = {
-    log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
-    info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
-    error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
+  return {
+    web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
+    console: {
+      log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
+      info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
+      error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
+    }
   }
-  return context
 }
 
 function findDeep (object, fn, found = { break: false, value: undefined }) {
