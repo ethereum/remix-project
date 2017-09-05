@@ -22,6 +22,16 @@ class TxLogger {
     opts.api.editorpanel.registerLogType('unknownTransaction', (data) => {
       return renderUnknownTransaction(this, data)
     })
+    opts.api.editorpanel.registerLogType('emptyBlock', (data) => {
+      return renderEmptyBlock(this, data)
+    })
+
+    opts.events.txListener.register('newBlock', (block) => {
+      if (!block.transactions.length) {
+        opts.api.editorpanel.log({type: 'emptyBlock', value: { block: block }})
+      }
+    })
+
     opts.events.txListener.register('newTransaction', (tx) => {
       log(this, tx, opts.api)
     })
@@ -66,11 +76,15 @@ function renderUnknownTransaction (self, data) {
   return yo`<span id="tx${data.tx.hash}">${context(self, data.tx)}: from:${helper.shortenAddress(data.tx.from)}, to:${to}, value:${value(data.tx.value)} wei, data:${helper.shortenHexData((data.tx.input))}, hash:${helper.shortenHexData((data.tx.hash))}, <button onclick=${detail}>Details</button> <button onclick=${debug}>Debug</button></span>`
 }
 
+function renderEmptyBlock (self, data) {
+  return yo`<span>block ${data.block.number} - O transactions</span>`
+}
+
 function context (self, tx) {
   if (executionContext.getProvider() === 'vm') {
     return yo`<span>(vm)</span>`
   } else {
-    return yo`<span>block:${tx.blockNumber}, txIndex:${tx.transactionIndex}`
+    return yo`<span>block:${tx.blockNumber}, txIndex:${tx.transactionIndex}</span>`
   }
 }
 

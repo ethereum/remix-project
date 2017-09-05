@@ -69,7 +69,7 @@ TxRunner.prototype.execute = function (args, callback) {
             return callback(err, resp)
           }
 
-          tryTillResponse(self.web3, resp, callback)
+          tryTillResponse(resp, callback)
         })
       })
     }
