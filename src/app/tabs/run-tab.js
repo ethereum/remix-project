@@ -300,7 +300,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var args = createButtonInput.value
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
-        appAPI.logMessage('transaction added ...')
+        appAPI.logMessage('[WEB3] transaction added ...')
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()

@@ -309,7 +309,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
       if (!error) {
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
           if (!error) {
-            self._api.logMessage('UDApp transaction added ...')
+            self._api.logMessage('[WEB3] UDApp transaction added ...')
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
