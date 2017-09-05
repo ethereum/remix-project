@@ -26,13 +26,15 @@ class TxLogger {
       var el = renderUnknownTransaction(this, data)
       append(el)
     })
-    opts.api.editorpanel.registerLogType('emptyBlock', (data) => {
-      return renderEmptyBlock(this, data)
+    this.logEmptyBlock = opts.api.editorpanel.registerCommand('emptyBlock', (args, cmds, append) => {
+      var data = args[0]
+      var el = renderEmptyBlock(this, data)
+      append(el)
     })
 
     opts.events.txListener.register('newBlock', (block) => {
       if (!block.transactions.length) {
-        opts.api.editorpanel.log({type: 'emptyBlock', value: { block: block }})
+        this.logEmptyBlock({ block: block })
       }
     })
 
