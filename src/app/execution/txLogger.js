@@ -152,7 +152,7 @@ function renderKnownTransaction (self, data) {
         gas: data.tx.gas,
         hash: data.tx.has,
         input: data.tx.input,
-        logs: JSON.stringify(data.tx.logs) || '0',
+        logs: JSON.stringify(data.logs) || '0',
         val: data.tx.value
       })
       tx.appendChild(table)
@@ -185,7 +185,7 @@ function renderUnknownTransaction (self, data) {
       tx.removeChild(table)
     } else {
       table = createTable({
-        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash, gas: data.tx.gas, logs: JSON.stringify(data.tx.logs) || '0'
+        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash, gas: data.tx.gas, logs: JSON.stringify(data.logs) || '0'
       })
       tx.appendChild(table)
     }
@@ -202,7 +202,7 @@ function context (self, data) {
   var to = ''
   if (executionContext.getProvider() === 'vm') {
     if (data.resolvedData.to) {
-      to = `${data.resolvedData.contractName}.${data.resolvedData.fn}, ${helper.shortenHexData(data.resolvedData.to)}`
+      to = `${data.resolvedData.contractName}.${data.resolvedData.fn} ${helper.shortenHexData(data.resolvedData.to)}`
     } else {
       to = `${data.resolvedData.contractName}.${data.resolvedData.fn}`
     }
