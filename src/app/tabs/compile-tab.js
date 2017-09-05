@@ -351,7 +351,7 @@ function compileTab (container, appAPI, appEvents, opts) {
             </div>
             `)
         })
-        modalDialog(contractName, log, {label: 'OK'}, {label: ''})
+        modalDialog(contractName, log, {label: ''}, {label: 'Close'})
       }
     }
 

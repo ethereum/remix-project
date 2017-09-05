@@ -108,6 +108,15 @@ var css = csjs`
     top               : 0;
     bottom            : 0;
   }
+  .dialog {
+    display: flex;
+    flex-direction: column;
+  }
+  .dialogParagraph {
+    ${styles.infoTextBox}
+    margin-bottom: 2em;
+    word-break: break-word;
+  }
 `
 
 var limit = 60
@@ -121,13 +130,19 @@ function filepanel (appAPI, filesProvider) {
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 
   function remixdDialog () {
-    return yo`<div><div>This feature allows to interact with your file system from Remix. Once the connection is made the shared folder will be available in the file explorer under <i>localhost</i></div>
-              <div><i>Remixd</i> first has to be run in your local computer. See <a target="_blank" href="http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a> for more details.</div>
-              <div>Accepting this dialog will start a session between <i>${window.location.href}</i> and your local file system <i>ws://127.0.0.1:65520</i></div>
-              <div>Please be sure your system is secured enough (port 65520 neither opened nor forwarded).</div>
-              <div><i class="fa fa-link"></i> will update the connection status.</div>
-              <div>This feature is still alpha, we recommend to keep a copy of the shared folder.</div>
-              </div>`
+    return yo`
+      <div class=${css.dialog}>
+        <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
+          Before you get started, check out <a target="_blank" href="http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">Tutorial_remixd_filesystem</a>
+          to find out how to run Remixd.
+        </div>
+        <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
+          so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
+          <i class="fa fa-link"></i> will show you current connection status.
+        </div>
+        <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
+      </div>
+    `
   }
 
   function template () {
@@ -273,7 +288,7 @@ function filepanel (appAPI, filesProvider) {
         if (error) console.log(error)
       })
     } else {
-      modalDialog('Connection to Localhost', remixdDialog(),
+      modalDialog('Connect to localhost', remixdDialog(),
         { label: 'Connect',
           fn: () => {
             filesProvider['localhost'].init((error) => {

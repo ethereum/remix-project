@@ -19,7 +19,7 @@ var css = csjs`
   }
   .modalHeader {
     padding: 2px 16px;
-    background-color: ${styles.colors.orange};
+    background-color: ${styles.colors.backgroundBlue};
     color: ${styles.colors.white};
     display: flex;
     justify-content: space-between;
@@ -29,8 +29,10 @@ var css = csjs`
     line-height: 1.5em;
   }
   .modalFooter {
+    display: flex;
+    justify-content: flex-end;
     padding: 10px 30px;
-    background-color: ${styles.colors.orange};
+    background-color: ${styles.colors.backgroundBlue};
     color: ${styles.colors.white};
     text-align: right;
     font-weight: 700;
@@ -53,12 +55,12 @@ var css = csjs`
   }
   .modalFooterOk {
     cursor: pointer;
-    color: #393939;
+    color: ${styles.colors.grey};
   }
   .modalFooterCancel {
     margin-left: 1em;
     cursor: pointer;
-    color: #393939;
+    color: ${styles.colors.grey};
   }
   .modalClose {
     margin: auto 0;
@@ -134,7 +136,7 @@ module.exports = (title, content, ok, cancel) => {
 
 function html () {
   return yo`<div id="modal-dialog" class="${css.modal}">
-  <div class="${css['modalContent']}">  
+  <div class="${css['modalContent']}">
     <div class="${css['modalHeader']}">
     <h2></h2>
     <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
