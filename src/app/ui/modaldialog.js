@@ -19,16 +19,20 @@ var css = csjs`
   }
   .modalHeader {
     padding: 2px 16px;
-    background-color: ${styles.colors.orange};
+    background-color: ${styles.colors.backgroundBlue};
     color: ${styles.colors.white};
+    display: flex;
+    justify-content: space-between;
   }
   .modalBody {
     padding: 1.5em;
     line-height: 1.5em;
   }
   .modalFooter {
+    display: flex;
+    justify-content: flex-end;
     padding: 10px 30px;
-    background-color: ${styles.colors.orange};
+    background-color: ${styles.colors.backgroundBlue};
     color: ${styles.colors.white};
     text-align: right;
     font-weight: 700;
@@ -51,8 +55,16 @@ var css = csjs`
   }
   .modalFooterOk {
     cursor: pointer;
+    color: ${styles.colors.grey};
   }
   .modalFooterCancel {
+    margin-left: 1em;
+    cursor: pointer;
+    color: ${styles.colors.grey};
+  }
+  .modalClose {
+    margin: auto 0;
+    color: #393939;
     cursor: pointer;
   }
   @-webkit-keyframes animatetop {
@@ -71,6 +83,7 @@ module.exports = (title, content, ok, cancel) => {
     document.querySelector('body').appendChild(html())
     container = document.querySelector(`.${css.modal}`)
   }
+  var closeDiv = document.getElementById('modal-close')
 
   var okDiv = document.getElementById('modal-footer-ok')
   okDiv.innerHTML = (ok && ok.label !== undefined) ? ok.label : 'OK'
@@ -103,6 +116,7 @@ module.exports = (title, content, ok, cancel) => {
 
   function hide () {
     container.style.display = 'none'
+    container.parentElement.removeChild(container)
   }
 
   function show () {
@@ -112,22 +126,25 @@ module.exports = (title, content, ok, cancel) => {
   function removeEventListener () {
     okDiv.removeEventListener('click', okListener)
     cancelDiv.removeEventListener('click', cancelListener)
+    closeDiv.removeEventListener('click', cancelListener)
   }
 
   okDiv.addEventListener('click', okListener)
   cancelDiv.addEventListener('click', cancelListener)
+  closeDiv.addEventListener('click', cancelListener)
 }
 
 function html () {
-  return yo`<div id="modal-dialog" class="${css.modal}" onclick="clickModal()" >
+  return yo`<div id="modal-dialog" class="${css.modal}">
   <div class="${css['modalContent']}">
     <div class="${css['modalHeader']}">
     <h2></h2>
+    <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
   </div>
   <div class="${css['modalBody']}"> -
   </div>
   <div class="${css['modalFooter']}">
-    <span id="modal-footer-ok" class="modalFooterOk">OK</span><span id="modal-footer-cancel" class="modalFooterCancel">Cancel</span>
+    <span id="modal-footer-ok" class=${css['modalFooterOk']}>OK</span><span id="modal-footer-cancel"  class=${css['modalFooterCancel']}>Cancel</span>
         </div>
   </div>
   </div>
