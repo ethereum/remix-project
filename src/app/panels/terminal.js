@@ -433,23 +433,15 @@ class Terminal {
       commands[value] = true
       if (!self._INDEX.commandsMain[value]) return
       self._INDEX.commandsMain[value].forEach(item => {
-        item.root.steps.forEach(item => {
-          item.hide = false
-          self._JOURNAL[item.gidx] = item
-        })
-        item.hide = false
+        item.root.steps.forEach(item => { self._JOURNAL[item.gidx] = item })
         self._JOURNAL[item.gidx] = item
       })
     } else if (filterEvent.type === 'deselect') {
       commands[value] = false
       if (!self._INDEX.commandsMain[value]) return
       self._INDEX.commandsMain[value].forEach(item => {
-        item.root.steps.forEach(item => {
-          item.hide = true
-          self._JOURNAL[item.gidx] = item
-        })
-        item.hide = true
-        self._JOURNAL[item.gidx] = item
+        item.root.steps.forEach(item => { self._JOURNAL[item.gidx] = undefined })
+        self._JOURNAL[item.gidx] = undefined
       })
     } else if (filterEvent.type === 'search') {
       if (value !== self.data.activeFilters.input) {
@@ -465,9 +457,8 @@ class Terminal {
       }
     }
     var df = document.createDocumentFragment()
-    // var children = self._JOURNAL.map(item => !item.hide && item.el)
     self._JOURNAL.forEach(item => {
-      if (!item.hide && item.el) df.appendChild(item.el)
+      if (item && item.el && !item.hide) df.appendChild(item.el)
     })
     requestAnimationFrame(function updateDOM () {
       self._view.journal.innerHTML = ''
