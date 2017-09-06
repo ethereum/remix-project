@@ -70,7 +70,6 @@ function fileExplorer (appAPI, files) {
     }
   })
 
-  var self = this
   var fileEvents = files.event
   var treeView = new Treeview({
     extractData: function (value, tree, key) {
