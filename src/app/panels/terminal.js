@@ -20,7 +20,6 @@ var css = csjs`
     font-family       : monospace;
     color             : black;
     background-color  : lightgrey;
-    margin-top        : auto;
     height            : 100%;
     min-height        : 1.7em;
     overflow          : hidden;
