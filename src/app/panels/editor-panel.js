@@ -236,6 +236,11 @@ class EditorPanel {
     var self = this
     self._view.tabs.onmouseenter()
   }
+  log (data = {}) {
+    var self = this
+    var command = self._components.terminal.commands[data.type]
+    if (typeof command === 'function') command(data.value)
+  }
   render () {
     var self = this
     if (self._view.el) return self._view.el
