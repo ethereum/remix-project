@@ -19,7 +19,7 @@ var css = csjs`
     align-items: baseline;
     justify-content: space-between;
   }
-  .txBlock, .txVM {
+  .tx {
     color: ${styles.colors.violet};
     width: 45%;
   }
@@ -112,16 +112,10 @@ function log (self, tx, api) {
 
 function renderKnownTransaction (self, data) {
   var from = data.tx.from
-  var to = ''
-
-  if (data.tx.blockHash) {
-    to = data.tx.to
-  } else if (data.tx.hash) {  // call (constructor of function call)
-    if (data.resolvedData.fn === '(constructor)') {
-      to = data.resolvedData.contractName + '.' + data.resolvedData.fn
-    } else {
-      to = data.resolvedData.to
-    }
+  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
+  if (data.resolvedData.to) {
+    to = to + data.resolvedData.to
+    var shortTo = to + helper.shortenHexData(data.resolvedData.to)
   }
 
   function debug () {
@@ -130,7 +124,7 @@ function renderKnownTransaction (self, data) {
   var tx = yo`
     <span class=${css.container} id="tx${data.tx.hash}">
       <div class="${css.log}">
-        ${context(self, data)}
+        ${context(self, {from, to: shortTo, data})}
         <div class=${css.buttons}>
         <button class=${css.details} onclick=${txDetails}>Details</button>
         <button class=${css.debug} onclick=${debug}>Debug</button>
@@ -150,7 +144,7 @@ function renderKnownTransaction (self, data) {
         from,
         to,
         gas: data.tx.gas,
-        hash: data.tx.has,
+        hash: data.tx.hash,
         input: data.tx.input,
         logs: JSON.stringify(data.logs) || '0',
         val: data.tx.value
@@ -171,7 +165,7 @@ function renderUnknownTransaction (self, data) {
   var tx = yo`
     <span class=${css.container} id="tx${data.tx.hash}">
       <div class="${css.log}">
-        ${context(self, data)}
+        ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <button class=${css.details} onclick=${txDetails}>Details</button>
           <button class=${css.debug} onclick=${debug}>Debug</button>
@@ -197,22 +191,25 @@ function renderEmptyBlock (self, data) {
   return yo`<span>block ${data.block.number} - O transactions</span>`
 }
 
-function context (self, data) {
-  var from = helper.shortenHexData(data.tx.from)
-  var to = ''
+function context (self, opts) {
+  var data = opts.data || ''
+  var from = opts.from ? helper.shortenHexData(opts.from) : ''
+  var to = opts.to || ''
+  var val = data.tx.value
+  var type = opts.type || ''
+  var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
+  var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
+  var logs = data.logs ? data.logs.length : 0
   if (executionContext.getProvider() === 'vm') {
-    if (data.resolvedData.to) {
-      to = `${data.resolvedData.contractName}.${data.resolvedData.fn} ${helper.shortenHexData(data.resolvedData.to)}`
-    } else {
-      to = `${data.resolvedData.contractName}.${data.resolvedData.fn}`
-    }
-    return yo`<span><span class='${css.txVM}'>[vm]</span> from: ${from}, to:${to}, value:${data.tx.value} wei</span>`
+    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+  } else if (executionContext.getProvider() !== 'web3' && data.resolvedData) {
+    return yo`<span><span class=${css.tx}>[web3]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else {
-    var hash = helper.shortenHexData(data.tx.blockHash)
-    var block = data.tx.blockNumber
-    var i = data.tx.transactionIndex
-    var val = data.tx.value
-    return yo`<span><span class='${css.txBlock}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${hash}, value:${value(val)} wei</span>`
+      to = helper.shortenHexData(to)
+      hash = helper.shortenHexData(data.tx.blockHash)
+      var block = data.tx.blockNumber
+      var i = data.tx.transactionIndex
+      return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${hash}, value:${value(val)} wei</span>`
   }
 }
 
@@ -235,6 +232,7 @@ module.exports = TxLogger
 
 function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
+
   var contractAddress = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> contractAddress </td>
@@ -242,14 +240,7 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.contractAddress) table.appendChild(contractAddress)
-  var data = helper.shortenHexData(opts.input)
-  data = yo`
-    <tr class="${css.tr}">
-      <td class="${css.td}"> data </td>
-      <td class="${css.td}">${data}</td>
-    </tr class="${css.tr}">
-  `
-  if (opts.data) table.appendChild(data)
+
   var from = yo`
     <tr class="${css.tr}">
       <td class="${css.td} ${css.tableTitle}"> from </td>
@@ -257,6 +248,7 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.from) table.appendChild(from)
+
   var to = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> to </td>
@@ -264,6 +256,7 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.to) table.appendChild(to)
+
   var gas = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> gas </td>
@@ -271,6 +264,7 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.gas) table.appendChild(gas)
+
   var hash = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> hash </td>
@@ -278,14 +272,15 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.hash) table.appendChild(hash)
-  var input = helper.shortenHexData(opts.input)
-  input = yo`
+
+  var input = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> input </td>
-      <td class="${css.td}">${input}</td>
+      <td class="${css.td}">${opts.input}</td>
     </tr class="${css.tr}">
   `
   if (opts.input) table.appendChild(input)
+
   var logs = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> logs </td>
@@ -293,6 +288,7 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.logs) table.appendChild(logs)
+
   var val = value(opts.val)
   val = yo`
     <tr class="${css.tr}">
@@ -301,5 +297,6 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.val) table.appendChild(val)
+
   return table
 }
