@@ -18,8 +18,8 @@ var css = csjs`
     flex-direction    : column;
     font-size         : 12px;
     font-family       : monospace;
-    color             : black;
-    background-color  : lightgrey;
+    color             : #777;
+    background-color  : #ededed;
     height            : 100%;
     min-height        : 1.7em;
     overflow          : hidden;
