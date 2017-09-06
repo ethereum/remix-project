@@ -65,7 +65,9 @@ class Dropdown {
     self.event = new EventManager()
     self.data = {
       _options: opts.options || [],
-      selected: opts.defaults || []
+      _dependencies: opts.dependencies || [],
+      selected: opts.defaults || [],
+      _elements: []
     }
     self._view = {}
     self._api = opts.api
@@ -85,11 +87,12 @@ class Dropdown {
         ${self._view.selected}
         <div class=${css.options} style="display: none;">
           ${self.data._options.map(label => {
-            var input = yo`<input onchange=${emit} type="checkbox" />`
+            var input = yo`<input data-idx=${self.data._elements.length} onchange=${emit} type="checkbox" />`
             if (self.data.selected.indexOf(label) !== -1) {
               input.checked = true
               self.event.trigger('select', [label])
             }
+            self.data._elements.push(input)
             return yo`
               <div class=${css.option}>
                 ${input}
@@ -106,13 +109,29 @@ class Dropdown {
       var label = input.nextSibling.innerText
       if (input.checked) {
         self.data.selected.push(label)
-        self.event.trigger('select', [label])
+        if (event.type === 'change') {
+          self.event.trigger('select', [label])
+          updateDependencies(label)
+        }
       } else {
         var idx = self.data.selected.indexOf(label)
         self.data.selected.splice(idx, 1)
-        self.event.trigger('deselect', [label])
+        if (event.type === 'change') {
+          self.event.trigger('deselect', [label])
+          updateDependencies(label)
+        }
       }
       self._view.selected.children[0].innerText = `[${self.data.selected.length}] ${self.data.selected.join(', ')}`
+    }
+    function updateDependencies (changed) {
+      if (self.data._dependencies[changed]) {
+        for (var dep in self.data._dependencies[changed]) {
+          var label = self.data._dependencies[changed][dep]
+          var el = self.data._elements[self.data._options.indexOf(label)]
+          el.checked = !el.checked
+          emit({currentTarget: el, type: 'changeDependencies'})
+        }
+      }
     }
     function show (event) {
       event.stopPropagation()
