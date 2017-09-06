@@ -113,18 +113,13 @@ function log (self, tx, api) {
 function renderKnownTransaction (self, data) {
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
-  if (data.resolvedData.to) {
-    to = to + data.resolvedData.to
-    var shortTo = to + helper.shortenHexData(data.resolvedData.to)
-  }
-
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
   var tx = yo`
     <span class=${css.container} id="tx${data.tx.hash}">
       <div class="${css.log}">
-        ${context(self, {from, to: shortTo, data})}
+        ${context(self, {from, to, data})}
         <div class=${css.buttons}>
         <button class=${css.details} onclick=${txDetails}>Details</button>
         <button class=${css.debug} onclick=${debug}>Debug</button>
@@ -194,22 +189,33 @@ function renderEmptyBlock (self, data) {
 function context (self, opts) {
   var data = opts.data || ''
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
-  var to = opts.to || ''
+  var to = opts.to || 'empty'
   var val = data.tx.value
-  var type = opts.type || ''
   var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var logs = data.logs ? data.logs.length : 0
+  var block = data.tx.blockNumber || ''
+  var i = data.tx.transactionIndex
   if (executionContext.getProvider() === 'vm') {
+    console.log('-----')
+    console.log('data')
+    console.log(data)
+    console.log('-----')
+    console.log('to')
+    console.log(to)
     return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
-  } else if (executionContext.getProvider() !== 'web3' && data.resolvedData) {
-    return yo`<span><span class=${css.tx}>[web3]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+  } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
+    console.log('-----')
+    console.log('data')
+    console.log(data)
+    console.log('-----')
+    console.log('to')
+    console.log(to)
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei</span>`
   } else {
-      to = helper.shortenHexData(to)
-      hash = helper.shortenHexData(data.tx.blockHash)
-      var block = data.tx.blockNumber
-      var i = data.tx.transactionIndex
-      return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${hash}, value:${value(val)} wei</span>`
+    to = helper.shortenHexData(to)
+    hash = helper.shortenHexData(data.tx.blockHash)
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei</span>`
   }
 }
 
