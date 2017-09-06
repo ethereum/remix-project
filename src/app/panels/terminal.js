@@ -88,6 +88,10 @@ var css = csjs`
     outline           : none;
     font-family       : monospace;
   }
+  .filter             {
+    padding           : 3px;
+    width             : 20em;    
+  }
 
   .dragbarHorizontal  {
     position          : absolute;

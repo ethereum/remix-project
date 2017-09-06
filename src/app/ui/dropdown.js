@@ -13,7 +13,6 @@ var css = csjs`
     display           : flex;
     align-items       : center;
     background-color  : lightgrey;
-    border-radius     : 5px;
     margin            : 3px;
     cursor            : pointer;
   }
@@ -24,6 +23,7 @@ var css = csjs`
     white-space       : nowrap;
     text-overflow     : ellipsis;
     overflow          : hidden;
+    padding           : 3px;
   }
   .icon               {
     padding           : 0px 5px;
