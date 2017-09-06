@@ -568,8 +568,8 @@ class Terminal {
     var self = this
     var context = domTerminalFeatures(self, scopedCommands)
     try {
-      var context = vm.createContext(Object.assign(self._jsSandboxContext, context))
-      var result = vm.runInContext(script, context)
+      var cmds = vm.createContext(Object.assign(self._jsSandboxContext, context))
+      var result = vm.runInContext(script, cmds)
       self._jsSandboxContext = Object.assign({}, context)
       done(null, result)
     } catch (error) {
