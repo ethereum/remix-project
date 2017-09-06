@@ -37,9 +37,7 @@ var css = csjs`
     display           : flex;
     align-items       : center;
     width             : 100%;
-  }
-  .title              {
-    margin-right      : 15px;
+    padding           : 5px;
   }
   .minimize           {
     margin-left       : auto;
@@ -191,7 +189,6 @@ class Terminal {
       <div class=${css.bar}>
         ${self._view.dragbar}
         <div class=${css.menu}>
-          <div class=${css.title}>Remix Terminal</div>
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
