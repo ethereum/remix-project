@@ -185,7 +185,7 @@ class Terminal {
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
     register(self)
-    self.updateJournal({ type: 'select', value: 'knownTransaction' })    
+    self.updateJournal({ type: 'select', value: 'knownTransaction' })
   }
   render () {
     var self = this
