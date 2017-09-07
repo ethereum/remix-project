@@ -135,7 +135,7 @@ function renderKnownTransaction (self, data) {
     } else {
       table = createTable({
         contractAddress: data.tx.contractAddress,
-        data: data.tx.data,
+        data: data.tx,
         from,
         to,
         gas: data.tx.gas,
@@ -174,7 +174,14 @@ function renderUnknownTransaction (self, data) {
       tx.removeChild(table)
     } else {
       table = createTable({
-        from, to, val: data.tx.value, input: data.tx.input, hash: data.tx.hash, gas: data.tx.gas, logs: JSON.stringify(data.logs) || '0'
+        data: data.tx,
+        from,
+        to,
+        val: data.tx.value,
+        input: data.tx.input,
+        hash: data.tx.hash,
+        gas: data.tx.gas,
+        logs: JSON.stringify(data.logs) || '0'
       })
       tx.appendChild(table)
     }
@@ -189,7 +196,8 @@ function renderEmptyBlock (self, data) {
 function context (self, opts) {
   var data = opts.data || ''
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
-  var to = opts.to || 'empty'
+  var to = opts.to
+  if (data.tx.to) to = to + ' ' +  helper.shortenHexData(data.tx.to)
   var val = data.tx.value
   var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
@@ -197,20 +205,8 @@ function context (self, opts) {
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
   if (executionContext.getProvider() === 'vm') {
-    console.log('-----')
-    console.log('data')
-    console.log(data)
-    console.log('-----')
-    console.log('to')
-    console.log(to)
     return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    console.log('-----')
-    console.log('data')
-    console.log(data)
-    console.log('-----')
-    console.log('to')
-    console.log(to)
     return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei</span>`
   } else {
     to = helper.shortenHexData(to)
@@ -255,10 +251,17 @@ function createTable (opts) {
   `
   if (opts.from) table.appendChild(from)
 
+  var toHash
+  var data = opts.data  // opts.data = data.tx
+  if (data.to) {
+    toHash = opts.to + ' ' + data.to
+  } else {
+    toHash = opts.to
+  }
   var to = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> to </td>
-      <td class="${css.td}">${opts.to}</td>
+    <td class="${css.td}"> to </td>
+    <td class="${css.td}">${toHash}</td>
     </tr class="${css.tr}">
   `
   if (opts.to) table.appendChild(to)
