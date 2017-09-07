@@ -239,13 +239,11 @@ class Terminal {
         justify-content  : center;
         bottom           : 0;
         right            : 15px;
-        height           : 20%;
-        min-height       : 50px;
+        min-height       : 20px;
       }
       .text              {
         z-index          : 2;
         color            : black;
-        font-size        : 25px;
         font-weight      : bold;
         pointer-events   : none;
       }
