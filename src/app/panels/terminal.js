@@ -17,7 +17,6 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    font-family       : monospace;
     color             : #777;
     background-color  : #ededed;
     height            : 100%;
