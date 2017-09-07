@@ -18,9 +18,8 @@ var css = csjs`
     flex-direction    : column;
     font-size         : 12px;
     font-family       : monospace;
-    color             : black;
-    background-color  : lightgrey;
-    margin-top        : auto;
+    color             : #777;
+    background-color  : #ededed;
     height            : 100%;
     min-height        : 1.7em;
     overflow          : hidden;
@@ -38,9 +37,7 @@ var css = csjs`
     display           : flex;
     align-items       : center;
     width             : 100%;
-  }
-  .title              {
-    margin-right      : 15px;
+    padding           : 5px;
   }
   .minimize           {
     margin-left       : auto;
@@ -91,6 +88,10 @@ var css = csjs`
     outline           : none;
     font-family       : monospace;
   }
+  .filter             {
+    padding           : 3px;
+    width             : 20em;    
+  }
 
   .dragbarHorizontal  {
     position          : absolute;
@@ -135,17 +136,30 @@ class Terminal {
     self._components = {}
     self._components.dropdown = new Dropdown({
       options: [
-        'knownTransaction',
-        'unknownTransaction',
+        'only remix transactions',
+        'all transactions',
         'script'
       ],
-      defaults: ['knownTransaction', 'script']
+      defaults: ['only remix transactions', 'script'],
+      dependencies: {'all transactions': ['only remix transactions'], 'only remix transactions': ['all transactions']}
     })
     self._components.dropdown.event.register('deselect', function (label) {
-      self.updateJournal({ type: 'deselect', value: label })
+      if (label === 'only remix transactions') {
+        self.updateJournal({ type: 'select', value: 'unknownTransaction' })
+      } else if (label === 'all transactions') {
+        self.updateJournal({ type: 'deselect', value: 'unknownTransaction' })
+      } else { // script
+        self.updateJournal({ type: 'deselect', value: label })
+      }
     })
     self._components.dropdown.event.register('select', function (label) {
-      self.updateJournal({ type: 'select', value: label })
+      if (label === 'only remix transactions') {
+        self.updateJournal({ type: 'deselect', value: 'unknownTransaction' })
+      } else if (label === 'all transactions') {
+        self.updateJournal({ type: 'select', value: 'unknownTransaction' })
+      } else { // script
+        self.updateJournal({ type: 'select', value: label })
+      }
     })
     self._commands = {}
     self.commands = {}
@@ -171,6 +185,7 @@ class Terminal {
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
     register(self)
+    self.updateJournal({ type: 'select', value: 'knownTransaction' })
   }
   render () {
     var self = this
@@ -192,7 +207,6 @@ class Terminal {
       <div class=${css.bar}>
         ${self._view.dragbar}
         <div class=${css.menu}>
-          <div class=${css.title}>Remix Terminal</div>
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
