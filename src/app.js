@@ -168,13 +168,89 @@ module.exports = App
 
 function run () {
   var self = this
+  // ----------------- UniversalDApp -----------------
+  var transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var comp = $('#value').val().split(' ')
+        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
+
+  var udapp = new UniversalDApp({
+    api: {
+      logMessage: (msg) => {
+        self._components.editorpanel.log({ type: 'log', value: msg })
+      }
+    },
+    opt: { removable: false, removable_instances: true }
+  })
+  udapp.reset({}, transactionContextAPI)
+  udapp.event.register('debugRequested', this, function (txResult) {
+    startdebugging(txResult.transactionHash)
+  })
+
+  // ----------------- Tx listener -----------------
+  var transactionReceiptResolver = {
+    _transactionReceipts: {},
+    resolve: function (tx, cb) {
+      if (this._transactionReceipts[tx.hash]) {
+        return cb(null, this._transactionReceipts[tx.hash])
+      }
+      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+        if (!error) {
+          this._transactionReceipts[tx.hash] = receipt
+          cb(null, receipt)
+        } else {
+          cb(error)
+        }
+      })
+    }
+  }
+
+  var compiledContracts = function () {
+    if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
+      return compiler.lastCompilationResult.data.contracts
+    }
+    return null
+  }
+  var txlistener = new Txlistener({
+    api: {
+      contracts: compiledContracts,
+      resolveReceipt: function (tx, cb) {
+        transactionReceiptResolver.resolve(tx, cb)
+      }
+    },
+    event: {
+      udapp: udapp.event
+    }})
+
+  var eventsDecoder = new EventsDecoder({
+    api: {
+      resolveReceipt: function (tx, cb) {
+        transactionReceiptResolver.resolve(tx, cb)
+      }
+    }
+  })
+
+  txlistener.startListening()
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   // ----------------- editor panel ----------------------
   this._components.editorpanel = new EditorPanel({
     api: {
       editor: self._components.editor,
-      config: self._api.config
+      config: self._api.config,
+      txListener: txlistener
     }
   })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
@@ -336,37 +412,6 @@ function run () {
   }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
 
-  // ----------------- UniversalDApp -----------------
-  var transactionContextAPI = {
-    getAddress: (cb) => {
-      cb(null, $('#txorigin').val())
-    },
-    getValue: (cb) => {
-      try {
-        var comp = $('#value').val().split(' ')
-        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
-      } catch (e) {
-        cb(e)
-      }
-    },
-    getGasLimit: (cb) => {
-      cb(null, $('#gasLimit').val())
-    }
-  }
-
-  var udapp = new UniversalDApp({
-    api: {
-      logMessage: (msg) => {
-        self._components.editorpanel.log({ type: 'log', value: msg })
-      }
-    },
-    opt: { removable: false, removable_instances: true }
-  })
-  udapp.reset({}, transactionContextAPI)
-  udapp.event.register('debugRequested', this, function (txResult) {
-    startdebugging(txResult.transactionHash)
-  })
-
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {
     config: config,
@@ -493,57 +538,6 @@ function run () {
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
   transactionDebugger.switchProvider(executionContext.getProvider())
-
-  // ----------------- Tx listener -----------------
-
-  var transactionReceiptResolver = {
-    _transactionReceipts: {},
-    resolve: function (tx, cb) {
-      if (this._transactionReceipts[tx.hash]) {
-        return cb(null, this._transactionReceipts[tx.hash])
-      }
-      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
-        if (!error) {
-          this._transactionReceipts[tx.hash] = receipt
-          cb(null, receipt)
-        } else {
-          cb(error)
-        }
-      })
-    }
-  }
-
-  var compiledContracts = function () {
-    if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-      return compiler.lastCompilationResult.data.contracts
-    }
-    return null
-  }
-
-  var txlistener = new Txlistener({
-    api: {
-      contracts: compiledContracts,
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
-    },
-    event: {
-      udapp: udapp.event
-    }})
-
-  self._components.editorpanel.terminal().event.register('listenOnNetWork', (listenOnNetWork) => {
-    txlistener.setListenOnNetwork(listenOnNetWork)
-  })
-
-  var eventsDecoder = new EventsDecoder({
-    api: {
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
-      }
-    }
-  })
-
-  txlistener.startListening()
 
   var txLogger = new TxLogger({
     api: {

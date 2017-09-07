@@ -168,6 +168,11 @@ class EditorPanel {
       })
     }
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
+    if (self._api.txListener) {
+      self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
+        self._api.txListener.setListenOnNetwork(listenOnNetWork)
+      })
+    }
   }
   _adjustLayout (direction, delta) {
     var limitUp = 36
@@ -230,9 +235,6 @@ class EditorPanel {
   registerCommand (name, command) {
     var self = this
     return self._components.terminal.registerCommand(name, command)
-  }
-  terminal () {
-    return this._components.terminal
   }
   _renderTabsbar () {
     var self = this
