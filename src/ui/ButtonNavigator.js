@@ -1,7 +1,5 @@
 'use strict'
 var EventManager = require('../lib/eventManager')
-var style = require('./styles/basicStyles')
-var ui = require('../helpers/ui')
 var yo = require('yo-yo')
 
 var csjs = require('csjs-inject')
@@ -20,8 +18,6 @@ var css = csjs`
   }
   .stepButton {
     ${styles.button}
-    width: 25%;
-    min-width: 30px;
   }
   .jumpButtons {
     width: 100%;
@@ -30,8 +26,6 @@ var css = csjs`
   }
   .jumpButton {
     ${styles.button} 
-    width: 33%;
-    min-width: 30px;
   }
   .navigator:hover {
     color: ${styles.colors.black}
@@ -95,9 +89,9 @@ ButtonNavigator.prototype.render = function () {
   var self = this
   var view = yo`<div class="${css.buttons}">
     <div class="${css.stepButtons}">
-      <button id='overback' title='Step over backward' class='${css.navigator} ${css.stepButton} fa fa-reply' onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} ></button>
+      <button id='overback' title='Step over back' class='${css.navigator} ${css.stepButton} fa fa-reply' onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} ></button>
+      <button id='intoback' title='Step back' class='${css.navigator} ${css.stepButton} fa fa-level-up' onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} ></button>
       <button id='intoforward' title='Step into'  class='${css.navigator} ${css.stepButton} fa fa-level-down' onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} ></button>
-      <button id='intoback' title='Step out' class='${css.navigator} ${css.stepButton} fa fa-level-up' onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} ></button>
       <button id='overforward' title='Step over forward' class='${css.navigator} ${css.stepButton} fa fa-share' onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} ></button>
     </div>
 

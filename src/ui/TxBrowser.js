@@ -36,8 +36,6 @@ var css = csjs`
   }
   .txbutton {
     ${styles.button}
-    width: 50%;
-    min-width: 30px;
   }
   .txbutton:hover {
     color: ${styles.colors.black};
