@@ -170,6 +170,9 @@ class Terminal {
     self._INDEX.allMain = []
     self._INDEX.commands = {}
     self._INDEX.commandsMain = {}
+    self.registerCommand('banner', function (args, scopedCommands, append) {
+      append(args[0])
+    })
     self.registerCommand('log', self._blocksRenderer('log'))
     self.registerCommand('info', self._blocksRenderer('info'))
     self.registerCommand('error', self._blocksRenderer('error'))
@@ -228,7 +231,10 @@ class Terminal {
         ${self._view.term}
       </div>
     `
-    if (self.data.banner) self.commands.log(self.data.banner)
+    if (self.data.banner) {
+      self.data.activeFilters.commands['banner'] = true
+      self.commands.banner(self.data.banner)
+    }
 
     function throttle (fn, wait) {
       var time = Date.now()
@@ -253,13 +259,11 @@ class Terminal {
         justify-content  : center;
         bottom           : 0;
         right            : 15px;
-        height           : 20%;
-        min-height       : 50px;
+        min-height       : 20px;
       }
       .text              {
         z-index          : 2;
         color            : black;
-        font-size        : 25px;
         font-weight      : bold;
         pointer-events   : none;
       }
