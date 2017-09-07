@@ -30,8 +30,8 @@ var css = csjs`
     border: 1px dashed ${styles.colors.black};
   }
   #txTable {
-    width: 450px;
-    margin-top: 10px;
+    margin-top: 1%;
+    margin-bottom: 5%;
     align-self: center;
   }
   .tr, .td {
