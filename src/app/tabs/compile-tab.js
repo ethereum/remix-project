@@ -274,6 +274,12 @@ function compileTab (container, appAPI, appEvents, opts) {
 
   function contractNames (container, appAPI, appEvents, opts) {
     var contractsDetails = {}
+
+    appEvents.compiler.register('compilationStarted', () => {
+      var errorContainer = container.querySelector('.error')
+      errorContainer.innerHTML = ''
+    })
+
     appEvents.compiler.register('compilationFinished', function (success, data, source) {
       // reset the contractMetadata list (used by the publish action)
       contractsDetails = {}
@@ -287,17 +293,33 @@ function compileTab (container, appAPI, appEvents, opts) {
       }
       // display warning error if any
       var errorContainer = container.querySelector('.error')
-      errorContainer.innerHTML = ''
+      var error = false
       if (data['error']) {
+        error = true
         appAPI.compilationMessage(data['error'], $(errorContainer))
       }
       if (data['errors']) {
+        if (data['errors'].length) error = true
         data['errors'].forEach(function (err) {
           appAPI.compilationMessage(err, $(errorContainer))
         })
       }
-      if (errorContainer.innerHTML === '') {
-        appAPI.compilationMessage('Compilation successful without warning', $(errorContainer), {type: 'success'})
+      if (!error) {
+        if (data.contracts) {
+          for (var contract in data.contracts) {
+            appAPI.compilationMessage(contract, $(errorContainer), {type: 'success'})
+          }
+        }
+      }
+    })
+
+    appEvents.staticAnalysis.register('staticAnaysisWarning', (count) => {
+      if (count) {
+        var errorContainer = container.querySelector('.error')
+        appAPI.compilationMessage(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
+          type: 'warning',
+          click: () => appAPI.switchTab('staticanalysisView')
+        })
       }
     })
 

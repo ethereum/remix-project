@@ -324,6 +324,18 @@ function run () {
   }
   var renderer = new Renderer(rendererAPI)
 
+  // ----------------- StaticAnalysis -----------------
+
+  var staticAnalysisAPI = {
+    renderWarning: (label, warningContainer, type) => {
+      return renderer.error(label, warningContainer, type)
+    },
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
+    }
+  }
+  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
+
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -415,12 +427,16 @@ function run () {
     compiler: compiler.event,
     app: self.event,
     udapp: udapp.event,
-    editor: editor.event
+    editor: editor.event,
+    staticAnalysis: staticanalysis.event
   }
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, {})
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
+
+  var node = document.getElementById('staticanalysisView')
+  node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- editor resize ---------------
 
@@ -477,19 +493,6 @@ function run () {
   transactionDebugger.addProvider('injected', executionContext.web3())
   transactionDebugger.addProvider('web3', executionContext.web3())
   transactionDebugger.switchProvider(executionContext.getProvider())
-
-  // ----------------- StaticAnalysis -----------------
-  var staticAnalysisAPI = {
-    renderWarning: (label, warningContainer, type) => {
-      return renderer.error(label, warningContainer, type)
-    },
-    offsetToLineColumn: (location, file) => {
-      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
-    }
-  }
-  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
-  var node = document.getElementById('staticanalysisView')
-  node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- Tx listener -----------------
 

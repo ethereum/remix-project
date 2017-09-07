@@ -12,6 +12,10 @@ function tabbedMenu (container, appAPI, events, opts) {
     selectTab(container.querySelector('li.debugView'))
   })
 
+  events.rhp.register('switchTab', tabName => {
+    selectTab(container.querySelector(`li.${tabName}`))
+  })
+
   // initialize tabbed menu
   selectTab(container.querySelector('.compileView'))
 
