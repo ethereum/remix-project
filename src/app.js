@@ -531,6 +531,10 @@ function run () {
       udapp: udapp.event
     }})
 
+  self._components.editorpanel.terminal().event.register('listenOnNetWork', (listenOnNetWork) => {
+    txlistener.setListenOnNetwork(listenOnNetWork)
+  })
+
   var eventsDecoder = new EventsDecoder({
     api: {
       resolveReceipt: function (tx, cb) {

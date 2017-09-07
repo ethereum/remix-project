@@ -231,6 +231,9 @@ class EditorPanel {
     var self = this
     return self._components.terminal.registerCommand(name, command)
   }
+  terminal () {
+    return this._components.terminal
+  }
   _renderTabsbar () {
     var self = this
     if (self._view.tabsbar) return self._view.tabsbar
