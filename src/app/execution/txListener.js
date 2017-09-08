@@ -20,25 +20,44 @@ class TxListener {
     this._api = opt.api
     this._resolvedTransactions = {}
     this._resolvedContracts = {}
+    this._isListening = false
+    this._listenOnNetwork = false
+    this._loopId = null
     this.init()
     executionContext.event.register('contextChanged', (context) => {
-      if (this.loopId) {
-        this.startListening(context)
+      if (this._isListening) {
+        this.stopListening()
+        this.startListening()
       }
     })
     opt.event.udapp.register('transactionExecuted', (error, to, data, lookupOnly, txResult) => {
       if (error) return
-      if (this.loopId && executionContext.isVM()) {
-        executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
-          if (error) return console.log(error)
-          this._newBlock({
-            type: 'VM',
-            number: -1,
-            transactions: [tx]
-          })
+      // we go for that case if
+      // in VM mode
+      // in web3 mode && listen remix txs only
+      if (!this._isListening) return // we don't listen
+      if (this._loopId) return // we seems to already listen on the network
+      executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
+        if (error) return console.log(error)
+        this._resolve([tx], () => {
         })
-      }
+      })
     })
+  }
+
+  /**
+    * define if txlistener should listen on the network or if only tx created from remix are managed
+    *
+    * @param {Bool} type - true if listen on the network
+    */
+  setListenOnNetwork (listenOnNetwork) {
+    this._listenOnNetwork = listenOnNetwork
+    if (this._loopId) {
+      clearInterval(this._loopId)
+    }
+    if (this._listenOnNetwork) {
+      this._startListenOnNetwork()
+    }
   }
 
   /**
@@ -56,32 +75,48 @@ class TxListener {
     * @param {Object} obj  - provider
     */
   startListening () {
-    this.stopListening()
     this.init()
-    if (executionContext.getProvider() === 'vm') {
-      this.loopId = 'vm-listener'
-    } else {
-      this.loopId = setInterval(() => {
-        var currentLoopId = this.loopId
-        executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
-          if (this.loopId === null || this.loopId === 'vm-listener') return
-          if (error) return console.log(error)
-          if (currentLoopId === this.loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
-            if (!this.lastBlock) this.lastBlock = blockNumber - 1
-            var current = this.lastBlock + 1
-            this.lastBlock = blockNumber
-            while (blockNumber >= current) {
-              try {
-                this._manageBlock(current)
-              } catch (e) {
-                console.log(e)
-              }
-              current++
-            }
-          }
-        })
-      }, 2000)
+    this._isListening = true
+    if (this._listenOnNetwork) {
+      this._startListenOnNetwork()
     }
+  }
+
+   /**
+    * stop listening for incoming transactions. do not reset the recorded pool.
+    *
+    * @param {String} type - type/name of the provider to add
+    * @param {Object} obj  - provider
+    */
+  stopListening () {
+    if (this._loopId) {
+      clearInterval(this._loopId)
+    }
+    this._loopId = null
+    this._isListening = false
+  }
+
+  _startListenOnNetwork () {
+    this._loopId = setInterval(() => {
+      var currentLoopId = this._loopId
+      executionContext.web3().eth.getBlockNumber((error, blockNumber) => {
+        if (this._loopId === null) return
+        if (error) return console.log(error)
+        if (currentLoopId === this._loopId && (!this.lastBlock || blockNumber > this.lastBlock)) {
+          if (!this.lastBlock) this.lastBlock = blockNumber - 1
+          var current = this.lastBlock + 1
+          this.lastBlock = blockNumber
+          while (blockNumber >= current) {
+            try {
+              this._manageBlock(current)
+            } catch (e) {
+              console.log(e)
+            }
+            current++
+          }
+        }
+      })
+    }, 2000)
   }
 
   _manageBlock (blockNumber) {
@@ -90,19 +125,6 @@ class TxListener {
         this._newBlock(Object.assign({type: 'web3'}, result))
       }
     })
-  }
-
-  /**
-    * stop listening for incoming transactions. do not reset the recorded pool.
-    *
-    * @param {String} type - type/name of the provider to add
-    * @param {Object} obj  - provider
-    */
-  stopListening () {
-    if (this.loopId) {
-      clearInterval(this.loopId)
-    }
-    this.loopId = null
   }
 
   /**
@@ -127,13 +149,13 @@ class TxListener {
 
   _newBlock (block) {
     this.blocks.push(block)
-    this._resolve(block, () => {
+    this._resolve(block.transactions, () => {
       this.event.trigger('newBlock', [block])
     })
   }
 
-  _resolve (block, callback) {
-    async.each(block.transactions, (tx, cb) => {
+  _resolve (transactions, callback) {
+    async.each(transactions, (tx, cb) => {
       this._resolveTx(tx, (error, resolvedData) => {
         if (error) cb(error)
         if (resolvedData) this.event.trigger('txResolved', [tx, resolvedData])

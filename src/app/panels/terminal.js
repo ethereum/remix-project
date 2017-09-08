@@ -17,7 +17,6 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    font-family       : monospace;
     color             : #777;
     background-color  : #ededed;
     height            : 100%;
@@ -215,10 +214,15 @@ class Terminal {
           </div>
           ${self._view.dropdown}
           <input type="text" class=${css.filter} onkeyup=${filter}></div>
+          <input onchange=${listenOnNetwork} type="checkbox" /><label title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created from the GUI">Listen on network</label>
           ${self._view.icon}
         </div>
       </div>
     `
+    function listenOnNetwork (ev) {
+      self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
+    }
+
     self._view.term = yo`
       <div class=${css.terminal} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         ${self._view.journal}
