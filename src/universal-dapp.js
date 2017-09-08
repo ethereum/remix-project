@@ -78,6 +78,8 @@ var css = csjs`
   }
   .buttonsContainer {
     margin-top: 2%;
+  }
+  .contractActions {
     display: flex;
   }
   .instanceButton {}
@@ -319,9 +321,8 @@ UniversalDApp.prototype.getCallButton = function (args) {
               }
             }
             if (lookupOnly) {
-              txFormat.decodeResponse(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI, (error, decoded) => {
-                $outputOverride.html(error ? 'error' + error : decoded)
-              })
+              var decoded = txFormat.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              $outputOverride.html(decoded)
             }
           } else {
             modalDialogCustom.alert(error)
@@ -332,12 +333,17 @@ UniversalDApp.prototype.getCallButton = function (args) {
       }
     })
   }
-  // TODO the auto call to constant function has been removed. needs to readd it later.
 
   var $contractProperty = $(`<div class="contractProperty ${css.buttonsContainer}"></div>`)
-  $contractProperty
-    .append(button)
-    .append((lookupOnly && !inputs.length) ? $outputOverride : inputField)
+  var $contractActions = $(`<div class="${css.contractActions}" ></div>`)
+  $contractProperty.append($contractActions)
+  $contractActions.append(button)
+  if (inputs.length) {
+    $contractActions.append(inputField)
+  }
+  if (lookupOnly) {
+    $contractProperty.append($outputOverride)
+  }
 
   if (lookupOnly) {
     $contractProperty.addClass('constant')
