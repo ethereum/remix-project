@@ -9,6 +9,8 @@ var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
+var EventManager = require('ethereum-remix').lib.EventManager
+
 var css = csjs`
   .analysis {
     display: flex;
@@ -40,6 +42,7 @@ var css = csjs`
 `
 
 function staticAnalysisView (appAPI, compilerEvent) {
+  this.event = new EventManager()
   this.view = null
   this.appAPI = appAPI
   this.runner = new StaticAnalysisRunner()
@@ -99,6 +102,7 @@ staticAnalysisView.prototype.run = function () {
   warningContainer.empty()
   if (this.lastCompilationResult) {
     var self = this
+    var warningCount = 0
     this.runner.run(this.lastCompilationResult, selected, function (results) {
       results.map(function (result, i) {
         result.report.map(function (item, i) {
@@ -113,6 +117,7 @@ staticAnalysisView.prototype.run = function () {
             location = self.appAPI.offsetToLineColumn(location, file)
             location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
+          warningCount++
           self.appAPI.renderWarning(location + ' ' + item.warning + ((item.more) ? '<br><a href="' + item.more + '" target="blank">more</a>' : ''), warningContainer, {type: 'warning', useSpan: true, isHTML: true})
         })
       })
@@ -122,6 +127,7 @@ staticAnalysisView.prototype.run = function () {
       } else {
         $('#righthand-panel #menu .staticanalysisView').css('color', styles.colors.red)
       }
+      self.event.trigger('staticAnaysisWarning', [warningCount])
     })
   } else {
     warningContainer.html('No compiled AST available')

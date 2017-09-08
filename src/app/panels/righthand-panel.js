@@ -86,6 +86,9 @@ function RighthandPanel (appAPI, events, opts) {
       </div>
     </div>
   `
+  appAPI.switchTab = (tabClass) => {
+    this.event.trigger('switchTab', [tabClass])
+  }
   compileTab(optionViews, appAPI, events, opts)
   runTab(optionViews, appAPI, events, opts)
   settingsTab(optionViews, appAPI, events, opts)
@@ -101,7 +104,7 @@ function RighthandPanel (appAPI, events, opts) {
     // ----------------- tabbed menu -----------------
     var tabbedMenuAPI = {}
     // load tabbed menu component
-    var tabEvents = {compiler: events.compiler, app: events.app}
+    var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
     tabbedMenu(options, tabbedMenuAPI, tabEvents, {})
 
     // ----------------- resizeable ui ---------------
