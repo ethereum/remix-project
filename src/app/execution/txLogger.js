@@ -141,6 +141,7 @@ function renderKnownTransaction (self, data) {
         gas: data.tx.gas,
         hash: data.tx.hash,
         input: data.tx.input,
+        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(value(data.resolvedData.params), null, '\t') : ' - ',
         logs: JSON.stringify(data.logs, null, '\t') || '0',
         val: data.tx.value
       })
@@ -217,10 +218,24 @@ function context (self, opts) {
 
 function value (v) {
   try {
-    if (v.indexOf && v.indexOf('0x') === 0) {
-      return (new BN(v.replace('0x', ''), 16)).toString(10)
-    } else {
+    if (v instanceof Array) {
+      var ret = []
+      for (var k in v) {
+        ret.push(value(v[k]))
+      }
+      return ret
+    } else if (BN.isBN(v)) {
       return v.toString(10)
+    } else if (v.indexOf && v.indexOf('0x') === 0) {
+      return (new BN(v.replace('0x', ''), 16)).toString(10)
+    } else if (typeof v === 'object') {
+      var retObject = {}
+      for (var i in v) {
+        retObject[i] = value(v[i])
+      }
+      return retObject
+    } else {
+      return v
     }
   } catch (e) {
     console.log(e)
@@ -289,6 +304,15 @@ function createTable (opts) {
     </tr class="${css.tr}">
   `
   if (opts.input) table.appendChild(input)
+
+  if (opts['decoded input']) {
+    var inputDecoded = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> decoded input </td>
+      <td class="${css.td}">${opts['decoded input']}</td>
+    </tr class="${css.tr}">`
+    table.appendChild(inputDecoded)
+  }
 
   var logs = yo`
     <tr class="${css.tr}">
