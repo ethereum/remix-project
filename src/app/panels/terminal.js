@@ -575,7 +575,7 @@ class Terminal {
       command(args, scopedCommands, el => append(null, args, blockify(el)))
     }
     var help = typeof command.help === 'string' ? command.help : [
-      `// no help available for:`,
+      '// no help available for:',
       `terminal.commands.${name}(...)`
     ].join('\n')
     self.commands[name].toString = _ => { return help }

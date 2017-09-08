@@ -44,8 +44,6 @@ class TxLogger {
   }
 }
 
-
-
 function log (self, tx, api) {
   var resolvedTransaction = api.resolvedTransaction(tx.hash)
   if (resolvedTransaction) {
