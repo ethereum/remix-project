@@ -64,13 +64,17 @@ TxRunner.prototype.execute = function (args, callback) {
         }
         tx.gas = gasEstimation
         var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
-        sendTransaction(tx, function (err, resp) {
-          if (err) {
-            return callback(err, resp)
-          }
+        try {
+          sendTransaction(tx, function (err, resp) {
+            if (err) {
+              return callback(err, resp)
+            }
 
-          tryTillResponse(resp, callback)
-        })
+            tryTillResponse(resp, callback)
+          })
+        } catch (e) {
+          return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+        }
       })
     }
   } else {
