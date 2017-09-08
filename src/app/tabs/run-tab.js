@@ -301,7 +301,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var args = createButtonInput.value
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
-        appAPI.logMessage('transaction added ...')
+        console.log(`${JSON.parse(JSON.stringify(contract.metadata, null, 4))}`)
+        appAPI.logMessage(`B creation of ${contract} pending`)
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
