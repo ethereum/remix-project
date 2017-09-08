@@ -141,7 +141,7 @@ function renderKnownTransaction (self, data) {
         gas: data.tx.gas,
         hash: data.tx.hash,
         input: data.tx.input,
-        logs: JSON.stringify(data.logs) || '0',
+        logs: JSON.stringify(data.logs, null, '\t') || '0',
         val: data.tx.value
       })
       tx.appendChild(table)
