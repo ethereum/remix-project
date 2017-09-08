@@ -197,7 +197,7 @@ function context (self, opts) {
   var data = opts.data || ''
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
   var to = opts.to
-  if (data.tx.to) to = to + ' ' +  helper.shortenHexData(data.tx.to)
+  if (data.tx.to) to = to + ' ' + helper.shortenHexData(data.tx.to)
   var val = data.tx.value
   var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
