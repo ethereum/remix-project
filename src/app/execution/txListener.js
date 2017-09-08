@@ -249,7 +249,12 @@ class TxListener {
     for (var i = 0; i < abi.inputs.length; i++) {
       inputTypes.push(abi.inputs[i].type)
     }
-    return ethJSABI.rawDecode(inputTypes, data)
+    var decoded = ethJSABI.rawDecode(inputTypes, data)
+    var ret = {}
+    for (var k in abi.inputs) {
+      ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]
+    }
+    return ret
   }
 }
 
