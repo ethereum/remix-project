@@ -410,7 +410,19 @@ function run () {
       return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
     }
   }
-  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
+
+  var udapp = new UniversalDApp({
+    api: {
+      logMessage: (msg) => {
+        self._components.editorpanel.log({ type: 'log', value: msg })
+      }
+    },
+    opt: { removable: false, removable_instances: true }
+  })
+  udapp.reset({}, transactionContextAPI)
+  udapp.event.register('debugRequested', this, function (txResult) {
+    startdebugging(txResult.transactionHash)
+  })
 
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {

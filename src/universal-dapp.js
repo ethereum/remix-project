@@ -117,7 +117,6 @@ function UniversalDApp (opts = {}) {
     personalMode: this.personalMode
   })
 }
-
 UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.el.innerHTML = ''
   this.contracts = contracts
@@ -223,6 +222,8 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
 UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
+  var self = this
+
   function remove () { $instance.remove() }
   var $instance = $(`<div class="instance ${css.instance}"/>`)
   var context = executionContext.isVM() ? 'memory' : 'blockchain'
@@ -233,7 +234,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
     <i class="fa fa-clipboard ${css.copy}" aria-hidden="true" onclick=${copyToClipboard} title='Copy to clipboard'></i>
   </div>`
-  if (this.removable_instance) {
+  if (self.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
     title.appendChild(close)
   }
@@ -257,7 +258,8 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     $instance.append(this.getCallButton({
       funABI: fallback,
       address: address,
-      contractAbi: abi
+      contractAbi: abi,
+      contractName: contractName
     }))
   }
 
@@ -269,7 +271,8 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     $instance.append(this.getCallButton({
       funABI: funABI,
       address: address,
-      contractAbi: abi
+      contractAbi: abi,
+      contractName: contractName
     }))
   })
 
@@ -303,15 +306,21 @@ UniversalDApp.prototype.getCallButton = function (args) {
     .attr('title', title)
     .text(title)
     .click(() => {
-      call()
+      call(true)
     })
 
-  function call () {
+  function call (isUserAction) {
     txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, (error, data) => {
       if (!error) {
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
           if (!error) {
-            self._api.logMessage('UDApp transaction added ...')
+            if (isUserAction) {
+              if (args.funABI.constant) {
+                self._api.logMessage(`transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
+              } else {
+                self._api.logMessage(`call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
+              }
+            }
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
@@ -348,7 +357,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
   if (lookupOnly) {
     $contractProperty.addClass('constant')
     button.attr('title', (title + ' - call'))
-    call()
+    call(false)
   }
 
   if (args.funABI.inputs && args.funABI.inputs.length > 0) {
