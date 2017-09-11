@@ -143,20 +143,14 @@ class Terminal {
       dependencies: {'all transactions': ['only remix transactions'], 'only remix transactions': ['all transactions']}
     })
     self._components.dropdown.event.register('deselect', function (label) {
-      if (label === 'only remix transactions') {
-        self.updateJournal({ type: 'select', value: 'unknownTransaction' })
-      } else if (label === 'all transactions') {
-        self.updateJournal({ type: 'deselect', value: 'unknownTransaction' })
-      } else { // script
+      self.event.trigger('filterChanged', ['deselect', label])
+      if (label === 'script') {
         self.updateJournal({ type: 'deselect', value: label })
       }
     })
     self._components.dropdown.event.register('select', function (label) {
-      if (label === 'only remix transactions') {
-        self.updateJournal({ type: 'deselect', value: 'unknownTransaction' })
-      } else if (label === 'all transactions') {
-        self.updateJournal({ type: 'select', value: 'unknownTransaction' })
-      } else { // script
+      self.event.trigger('filterChanged', ['select', label])
+      if (label === 'script') {
         self.updateJournal({ type: 'select', value: label })
       }
     })
@@ -171,10 +165,10 @@ class Terminal {
     self._INDEX.commandsMain = {}
     self.registerCommand('banner', function (args, scopedCommands, append) {
       append(args[0])
-    })
-    self.registerCommand('log', self._blocksRenderer('log'))
-    self.registerCommand('info', self._blocksRenderer('info'))
-    self.registerCommand('error', self._blocksRenderer('error'))
+    }, { activate: true })
+    self.registerCommand('log', self._blocksRenderer('log'), { activate: true })
+    self.registerCommand('info', self._blocksRenderer('info'), { activate: true })
+    self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
       scopedCommands.log(`> ${script}`)
@@ -182,12 +176,11 @@ class Terminal {
         if (error) scopedCommands.error(error)
         else scopedCommands.log(output)
       })
-    })
+    }, { activate: true })
     self._jsSandboxContext = {}
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
     register(self)
-    self.updateJournal({ type: 'select', value: 'knownTransaction' })
   }
   render () {
     var self = this
@@ -545,7 +538,7 @@ class Terminal {
     })
     return scopedCommands
   }
-  registerCommand (name, command) {
+  registerCommand (name, command, opts) {
     var self = this
     name = String(name)
     if (self._commands[name]) throw new Error(`command "${name}" exists already`)
@@ -584,6 +577,7 @@ class Terminal {
     ].join('\n')
     self.commands[name].toString = _ => { return help }
     self.commands[name].help = help
+    self.data.activeFilters.commands[name] = opts && opts.activate
     return self.commands[name]
   }
   _shell (script, scopedCommands, done) { // default shell

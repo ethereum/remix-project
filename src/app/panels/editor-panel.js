@@ -167,7 +167,9 @@ class EditorPanel {
         </div>`
       })
     }
-    self._components.terminal.updateJournal({ type: 'select', value: 'emptyBlock' })
+    self._components.terminal.event.register('filterChanged', (type, value) => {
+      this.event.trigger('terminalFilterChanged', [type, value])
+    })
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
     if (self._api.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
@@ -233,9 +235,12 @@ class EditorPanel {
     self._adjustLayout('top', self.data._layout.top.offset)
     return self._view.el
   }
-  registerCommand (name, command) {
+  registerCommand (name, command, opts) {
     var self = this
-    return self._components.terminal.registerCommand(name, command)
+    return self._components.terminal.registerCommand(name, command, opts)
+  }
+  updateTerminalFilter (filter) {
+    this._components.terminal.updateJournal(filter)
   }
   _renderTabsbar () {
     var self = this

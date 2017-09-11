@@ -76,16 +76,34 @@ class TxLogger {
       var data = args[0]
       var el = renderKnownTransaction(this, data)
       append(el)
-    })
+    }, { activate: true })
+
     this.logUnknownTX = opts.api.editorpanel.registerCommand('unknownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el = renderUnknownTransaction(this, data)
       append(el)
-    })
+    }, { activate: false })
+
     this.logEmptyBlock = opts.api.editorpanel.registerCommand('emptyBlock', (args, cmds, append) => {
       var data = args[0]
       var el = renderEmptyBlock(this, data)
       append(el)
+    }, { activate: true })
+
+    opts.api.editorpanel.event.register('terminalFilterChanged', (type, label) => {
+      if (type === 'deselect') {
+        if (label === 'only remix transactions') {
+          opts.api.editorpanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+        } else if (label === 'all transactions') {
+          opts.api.editorpanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
+        }
+      } else if (type === 'select') {
+        if (label === 'only remix transactions') {
+          opts.api.editorpanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
+        } else if (label === 'all transactions') {
+          opts.api.editorpanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+        }
+      }
     })
 
     opts.events.txListener.register('newBlock', (block) => {
