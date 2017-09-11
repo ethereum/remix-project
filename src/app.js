@@ -513,6 +513,7 @@ function run () {
         }
         this.statementMarker = editor.addMarker(lineColumnPos, this.source, 'highlightcode')
         editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
+        
         if (lineColumnPos.start.line === lineColumnPos.end.line) {
           this.fullLineMarker = editor.addMarker({
             start: {

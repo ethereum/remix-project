@@ -117,6 +117,7 @@ function UniversalDApp (opts = {}) {
     personalMode: this.personalMode
   })
 }
+
 UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.el.innerHTML = ''
   this.contracts = contracts
