@@ -1,25 +1,28 @@
 Running transactions
 ====================
 
-This tab is an important section of Remix, it allows sending transactions to the current environment.
+This tab is an important section of Remix. It allows you to send transactions to the current environment.
+
+.. image:: images/remix_runtab.png
 
 Run Setup
 ---------
 
-this includes settings that are direclty relevant to transaction execution:
+These are the settings that enables you to directly influence the transaction execution:
 
  - Environment:
-    - ``JavaScript VM``: All the transactions are executed in a sandbox blockchain in the browser. That means nothing is persisted and a page reload will restart a new blockchain from scratch, the old one will not be saved
-    
-    - ``Injected Provider``: Remix will connect to an injected web3 provider. ``Mist`` and ``Metamask`` are example of application that inject web3 and thus can be used with this option.
-    
-    - ``Web3 Provider``: Remix will connect to a remote node (an URL need to be provided). This provider can be geth, parity or any Ethereum client.
-    
+    - ``JavaScript VM``: All the transactions will be executed in a sandbox blockchain in the browser. That means nothing will be persisted and a page reload will restart a new blockchain from scratch, the old one will not be saved.
+
+    - ``Injected Provider``: Remix will connect to an injected web3 provider. ``Mist`` and ``Metamask`` are example of providers that inject web3, thus can be used with this option.
+
+    - ``Web3 Provider``: Remix will connect to a remote node. You will need to provide the URL address to the selected provider: geth, parity or any Ethereum client.
+
  - Account: list of accounts associated with the current environment (and their associated balances)
- - Gas Limit is the max amount of gas that can be set for all the transactions created in Remix.
- - Value is the amount of value set for the next to be created transaction (this value is always reset to 0 after each transaction execution).
- 
- 
+ - Gas Limit: maximum amount of gas that can be set for all the transactions created in Remix
+ - Value: amount of value for the next created transaction (this value is always reset to 0 after each transaction execution)
+
+ .. image:: images/remix_runtab_example.png
+
 Initiate Instance
 -----------------
 
@@ -42,9 +45,9 @@ This section contains list of instances to interact with.
 
 Several cases apply:
  - The called function is declared as ``constant`` or ``pure`` in Solidity. The action has a blue background, clicking on it does not create a new transaction. (this is not necessary because there is not state changes) but will update the return value of the function.
- 
+
  - The called function has no special keywords. The action has a light red background, clicking on does create a new transaction. But this transaction cannot accept any amount of Ether.
- 
+
  - The called function is declared as ``payable`` in Solidity. The action has a red background, clicking on it does create a new transaction and this transaction can accept value.
 
 For more information about Solidity modifier, see `Solidity modifier <http://solidity.readthedocs.io/en/develop/miscellaneous.html?highlight=pure#modifiers>`_ .

@@ -1,35 +1,37 @@
 File Explorer
 =============
 
-The file explorer list by default all the files (under `browser`) stored in your browser. Files can be renamed, removed, added.
+The file explorer lists by default all the files stored in your browser. You can see them in the `browser` folder. You can always rename, remove or add new files to the file explorer.
 
-Note that clearing the browser storage will permanently delete all the solidity sources you wrote.
+.. image:: images/remix_file_explorer_browser.png
 
-A solution would be to use Remixd (see :doc:`../tutorial_remixd_filesystem`)
+Note that clearing the browser storage will permanently delete all the solidity sources you wrote. To avoid this, you can use Remixd, which enables you to store and sync files in the browser with your local files (for more information see :doc:`../tutorial_remixd_filesystem`)
+
+.. image:: images/remix_file_explorer_menu.png
 
 From the left to the right:
 
 Create new File
 ---------------
 
-This action will create a new file in the `browser` explorer.
+Creates a new file in the `browser` explorer.
 
 Add Local File
 --------------
 
-This allows to select files from the filesystem and import them to the remix browser storage.
+Allows you to select files from the local file system and import them to the Remix browser storage.
 
 Publish to Gist
 ---------------
 
-This allows to publish files from the browser storage to an anonymous public gist.
+Publishes files from the browser storage to an anonymous public gist.
 
 Copy to another instance
 ------------------------
 
-This allows to copy files from the browser storage to another instance (URL) of Remix.
+Enables you to copy files from the browser storage to another instance (URL) of Remix.
 
 Connect to Localhost
 --------------------
 
-This allows to use file located in your file system (see :doc:`../tutorial_remixd_filesystem`).
+Allows to use file located in your file system (see :doc:`../tutorial_remixd_filesystem`).

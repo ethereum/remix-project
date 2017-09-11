@@ -1,12 +1,14 @@
 Terminal
 ========
 
-The Terminal is used for several use cases:
+.. image:: images/remix_terminal.png
 
-- Integrates a JavaScript interpreter and the ``web3`` object. It is possible to execute JavaScript script which interacts with the current context. (note that ``web3`` is only available if the ``web provider`` or ``injected provider`` mode is selected)
+Features, available in the terminal:
 
-- Display important action made on the GUI like sending a new transaction.
+- It integrates a JavaScript interpreter and the ``web3`` object. It enables the execution of the JavaScript script which interacts with the current context. (note that ``web3`` is only available if the ``web provider`` or ``injected provider`` mode is selected).
 
-- Display transactions that are mined in the current context. It is possible to display all transactions or only transactions that refers to contract Remix knows (e.g transaction created from the remix GUI).
+- It displays important actions made while interacting with the Remix IDE (i.e. sending a new transaction).
 
-- Allows filtering and clearing the data.
+- It displays transactions that are mined in the current context. You can choose to display all transactions or only transactions that refers to the contracts Remix knows (e.g transaction created from the Remix IDE).
+
+- It allows searching for the data and clearing the logs from the terminal.

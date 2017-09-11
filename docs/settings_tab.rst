@@ -1,11 +1,13 @@
 Settings
 ========
 
-This section contains general settings:
+This section displays the current compiler version and allows to change to another version.
 
- - It displays the current compiler version and allows to change to current version.
- - Define if the text should be wrapped in the editor.
- - Define if the compiler enables optimization during compilation. Enabling this option save execution gas.
- It is interesting to enable optimization for contracts ready to be deployed in production
- but could lead to some inconsistency when debugging such a contract. 
- 
+.. image:: images/remix_settingstab.png
+
+Settings, available here:
+
+ - Text wrap: defines if the text in the editor should be wrapped.
+ - Enable optimization: defines if the compiler should enable optimization during compilation. Enabling this option saves execution gas.
+ It is useful to enable optimization for contracts ready to be deployed in production
+ but could lead to some inconsistency when debugging such a contract.
