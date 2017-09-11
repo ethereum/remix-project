@@ -168,6 +168,7 @@ module.exports = App
 
 function run () {
   var self = this
+
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -198,6 +199,7 @@ function run () {
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
   })
+
 
   // ----------------- Tx listener -----------------
   var transactionReceiptResolver = {
@@ -399,30 +401,6 @@ function run () {
     }
   }
   var renderer = new Renderer(rendererAPI)
-
-  // ----------------- StaticAnalysis -----------------
-
-  var staticAnalysisAPI = {
-    renderWarning: (label, warningContainer, type) => {
-      return renderer.error(label, warningContainer, type)
-    },
-    offsetToLineColumn: (location, file) => {
-      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
-    }
-  }
-
-  var udapp = new UniversalDApp({
-    api: {
-      logMessage: (msg) => {
-        self._components.editorpanel.log({ type: 'log', value: msg })
-      }
-    },
-    opt: { removable: false, removable_instances: true }
-  })
-  udapp.reset({}, transactionContextAPI)
-  udapp.event.register('debugRequested', this, function (txResult) {
-    startdebugging(txResult.transactionHash)
-  })
 
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {
