@@ -122,8 +122,7 @@ module.exports = {
     }
   },
 
-  decodeResponse: function (response, fnabi, callback) {
-    // Only decode if there supposed to be fields
+  decodeResponseToTreeView: function (response, fnabi) {
     var treeView = new TreeView({
       extractData: (item, parent, key) => {
         var ret = {}
@@ -136,6 +135,11 @@ module.exports = {
         return ret
       }
     })
+    return treeView.render(this.decodeResponse(response, fnabi))
+  },
+
+  decodeResponse: function (response, fnabi) {
+    // Only decode if there supposed to be fields
     if (fnabi.outputs && fnabi.outputs.length > 0) {
       try {
         var i
@@ -159,9 +163,9 @@ module.exports = {
           }
         }
 
-        return callback(null, treeView.render(json))
+        return json
       } catch (e) {
-        return callback('Failed to decode output: ' + e)
+        return { error: 'Failed to decode output: ' + e }
       }
     }
   }

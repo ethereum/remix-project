@@ -146,6 +146,7 @@ function renderKnownTransaction (self, data) {
         hash: data.tx.hash,
         input: data.tx.input,
         'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(value(data.resolvedData.params), null, '\t') : ' - ',
+        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(value(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
         logs: JSON.stringify(data.logs, null, '\t') || '0',
         val: data.tx.value
       })
@@ -316,6 +317,15 @@ function createTable (opts) {
       <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts['decoded input']) }} title='Copy to clipboard'></i>${opts['decoded input']}</td>
     </tr class="${css.tr}">`
     table.appendChild(inputDecoded)
+  }
+
+  if (opts['decoded output']) {
+    var outputDecoded = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> decoded output </td>
+      <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}</td>
+    </tr class="${css.tr}">`
+    table.appendChild(outputDecoded)
   }
 
   var logs = yo`

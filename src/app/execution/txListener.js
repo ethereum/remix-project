@@ -6,6 +6,7 @@ var EventManager = require('ethereum-remix').lib.EventManager
 var remix = require('ethereum-remix')
 var codeUtil = remix.util.code
 var executionContext = require('../../execution-context')
+var txFormat = require('./txFormat')
 
 /**
   * poll web3 each 2s if web3
@@ -32,6 +33,7 @@ class TxListener {
     })
     opt.event.udapp.register('transactionExecuted', (error, to, data, lookupOnly, txResult) => {
       if (error) return
+      if (lookupOnly) return
       // we go for that case if
       // in VM mode
       // in web3 mode && listen remix txs only
@@ -39,6 +41,8 @@ class TxListener {
       if (this._loopId) return // we seems to already listen on the network
       executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
         if (error) return console.log(error)
+        if (txResult && txResult.result && txResult.result.vm) tx.returnValue = txResult.result.vm.return
+
         this._resolve([tx], () => {
         })
       })
@@ -158,7 +162,9 @@ class TxListener {
     async.each(transactions, (tx, cb) => {
       this._resolveTx(tx, (error, resolvedData) => {
         if (error) cb(error)
-        if (resolvedData) this.event.trigger('txResolved', [tx, resolvedData])
+        if (resolvedData) {
+          this.event.trigger('txResolved', [tx, resolvedData])
+        }
         this.event.trigger('newTransaction', [tx])
         cb()
       })
@@ -224,11 +230,15 @@ class TxListener {
     if (!isCtor) {
       for (var fn in compiledContracts[contractName].functionHashes) {
         if (compiledContracts[contractName].functionHashes[fn] === inputData.substring(0, 8)) {
+          var fnabi = getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
             contractName: contractName,
             to: tx.to,
             fn: fn,
-            params: this._decodeInputParams(inputData.substring(8), getFunction(abi, fn))
+            params: this._decodeInputParams(inputData.substring(8), fnabi)
+          }
+          if (tx.returnValue) {
+            this._resolvedTransactions[tx.hash].decodedReturnValue = txFormat.decodeResponse(tx.returnValue, fnabi)
           }
           return this._resolvedTransactions[tx.hash]
         }
