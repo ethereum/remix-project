@@ -167,6 +167,7 @@ class EditorPanel {
         </div>`
       })
     }
+    self._components.terminal.updateJournal({ type: 'select', value: 'emptyBlock' })
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
     if (self._api.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {

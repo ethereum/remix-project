@@ -196,7 +196,7 @@ function renderUnknownTransaction (self, data) {
 }
 
 function renderEmptyBlock (self, data) {
-  return yo`<span>block ${data.block.number} - O transactions</span>`
+  return yo`<span><span class='${css.tx}'>[block:${data.block.number} - 0 transactions]</span></span>`
 }
 
 function context (self, opts) {
