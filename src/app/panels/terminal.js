@@ -616,6 +616,7 @@ function findDeep (object, fn, found = { break: false, value: undefined }) {
   for (var i in object) {
     if (found.break) break
     var el = object[i]
+    if (el && el.innerText !== undefined && el.innerText !== null) el = el.innerText
     if (!fn(el, i, object)) findDeep(el, fn, found)
     else if (found.break = true) return found.value = el // eslint-disable-line
   }
