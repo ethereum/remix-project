@@ -68,10 +68,6 @@ function Editor (opts = {}) {
     editor.session.setBreakpoint(row, css)
   }
 
-  this.setPosition = function (line, column, noClip) {
-    editor.moveCursorTo(line, column)
-  }
-
   this.editorFontSize = function (incr) {
     editor.setFontSize(editor.getFontSize() + incr)
   }
