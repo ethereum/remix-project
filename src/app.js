@@ -402,6 +402,7 @@ function run () {
   }
   var renderer = new Renderer(rendererAPI)
 
+  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
   // ---------------- Righthand-panel --------------------
   var rhpAPI = {
     config: config,
