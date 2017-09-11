@@ -200,7 +200,6 @@ function run () {
     startdebugging(txResult.transactionHash)
   })
 
-
   // ----------------- Tx listener -----------------
   var transactionReceiptResolver = {
     _transactionReceipts: {},
@@ -402,8 +401,20 @@ function run () {
   }
   var renderer = new Renderer(rendererAPI)
 
+  // ----------------- StaticAnalysis -----------------
+
+  var staticAnalysisAPI = {
+    renderWarning: (label, warningContainer, type) => {
+      return renderer.error(label, warningContainer, type)
+    },
+    offsetToLineColumn: (location, file) => {
+      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
+    }
+  }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
+
   // ---------------- Righthand-panel --------------------
+
   var rhpAPI = {
     config: config,
     setEditorSize (delta) {

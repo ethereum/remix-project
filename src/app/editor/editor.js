@@ -70,8 +70,6 @@ function Editor (opts = {}) {
 
   this.setPosition = function (line, column, noClip) {
     editor.moveCursorTo(line, column)
-    //var anchor = new ace.Anchor(editor, line, column)
-    //anchor.setPosition(line, column, noClip)
   }
 
   this.editorFontSize = function (incr) {
