@@ -295,12 +295,14 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var contracts = appAPI.getContracts()
-    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
+    var contractName = contractNames.children[contractNames.selectedIndex].innerHTML
+    var contract = appAPI.getContracts()[contractName]
+
     var constructor = txHelper.getConstructorInterface(contract.interface)
     var args = createButtonInput.value
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
-        appAPI.logMessage('Transaction added ...')
+        appAPI.logMessage(`creation of ${contractName} pending...`)
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()

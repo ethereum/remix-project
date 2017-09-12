@@ -168,6 +168,7 @@ module.exports = App
 
 function run () {
   var self = this
+
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -413,6 +414,7 @@ function run () {
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
 
   // ---------------- Righthand-panel --------------------
+
   var rhpAPI = {
     config: config,
     setEditorSize (delta) {
@@ -511,7 +513,6 @@ function run () {
         }
         this.statementMarker = editor.addMarker(lineColumnPos, this.source, 'highlightcode')
         editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
-
         if (lineColumnPos.start.line === lineColumnPos.end.line) {
           this.fullLineMarker = editor.addMarker({
             start: {
