@@ -415,7 +415,7 @@ class Terminal {
           var script = self._view.input.innerText.trim()
           self._view.input.innerText = '\n'
           if (script.length) {
-            self._cmdHistory.push('\n' + script)
+            self._cmdHistory.push(script)
             self.commands.script(script)
           }
         }
