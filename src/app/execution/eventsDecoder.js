@@ -71,7 +71,7 @@ class EventsDecoder {
       }
       events.push({ event: event, args: decoded })
     }
-    cb(null, events)
+    cb(null, { decoded: events, raw: logs })
   }
 }
 

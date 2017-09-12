@@ -175,7 +175,7 @@ function renderKnownTransaction (self, data) {
         input: data.tx.input,
         'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(value(data.resolvedData.params), null, '\t') : ' - ',
         'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(value(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-        logs: JSON.stringify(data.logs, null, '\t') || '0',
+        logs: data.logs,
         val: data.tx.value
       })
       tx.appendChild(table)
@@ -240,7 +240,7 @@ function renderUnknownTransaction (self, data) {
         input: data.tx.input,
         hash: data.tx.hash,
         gas: data.tx.gas,
-        logs: JSON.stringify(data.logs) || '0'
+        logs: data.logs
       })
       tx.appendChild(table)
     }
@@ -384,7 +384,9 @@ function createTable (opts) {
   var logs = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> logs </td>
-      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.logs || '0') }} title='Copy to clipboard'></i>${opts.logs || '0'}</td>
+      <td class="${css.td}">
+      <i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(JSON.stringify(opts.logs.decoded || [], null, '\t')) }} title='Copy Logs to clipboard'></i>
+      <i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(JSON.stringify(opts.logs.raw || '0')) }} title='Copy Raw Logs to clipboard'></i>${JSON.stringify(opts.logs.decoded || [], null, '\t')}</td>
     </tr class="${css.tr}">
   `
   if (opts.logs) table.appendChild(logs)
