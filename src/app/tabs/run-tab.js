@@ -411,7 +411,7 @@ function settings (appAPI, appEvents) {
   `
 
   // EVENTS
-  appEvents.udapp.register('transactionExecuted', (error, to, data, lookupOnly, txResult) => {
+  appEvents.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
     if (error) return
     if (!lookupOnly) el.querySelector('#value').value = '0'
   })
