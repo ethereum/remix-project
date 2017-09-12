@@ -13,6 +13,7 @@ var helper = require('../../lib/helper')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
+var modalDialog = require('../ui/modal-dialog-custom')
 
 var css = csjs`
   .log {
@@ -74,7 +75,12 @@ class TxLogger {
     this.opts = opts
     this.logKnownTX = opts.api.editorpanel.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
-      var el = renderKnownTransaction(this, data)
+      var el
+      if (data.tx.isCall) {
+        el = renderCall(this, data)
+      } else {
+        el = renderKnownTransaction(this, data)
+      }
       append(el)
     }, { activate: true })
 
@@ -115,6 +121,10 @@ class TxLogger {
     opts.events.txListener.register('newTransaction', (tx) => {
       log(this, tx, opts.api)
     })
+
+    opts.events.txListener.register('newCall', (tx) => {
+      log(this, tx, opts.api)
+    })
   }
 }
 
@@ -139,7 +149,7 @@ function renderKnownTransaction (self, data) {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
   var tx = yo`
-    <span class=${css.container} id="tx${data.tx.hash}">
+    <span id="tx${data.tx.hash}">
       <div class="${css.log}">
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
@@ -175,6 +185,31 @@ function renderKnownTransaction (self, data) {
   return tx
 }
 
+function renderCall (self, data) {
+  function debug () {
+    if (data.tx.envMode === 'vm') {
+      self.event.trigger('debugRequested', [data.tx.hash])
+    } else {
+      modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
+    }
+  }
+  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn + ' ' + helper.shortenHexData(data.tx.to)
+  var from = data.tx.from ? data.tx.from : ' - '
+  var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
+  var tx = yo`
+    <span id="tx${data.tx.hash}">
+      <div class="${css.log}">
+        <span><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
+        <div class=${css.buttons}>
+          <button class=${css.debug} onclick=${debug}>Debug</button>
+        </div>
+      </div>
+      <div> ${JSON.stringify(value(data.resolvedData.decodedReturnValue), null, '\t')}</div>
+    </span>
+  `
+  return tx
+}
+
 function renderUnknownTransaction (self, data) {
   var from = data.tx.from
   var to = data.tx.to
@@ -182,7 +217,7 @@ function renderUnknownTransaction (self, data) {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
   var tx = yo`
-    <span class=${css.container} id="tx${data.tx.hash}">
+    <span id="tx${data.tx.hash}">
       <div class="${css.log}">
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
@@ -231,7 +266,7 @@ function context (self, opts) {
   if (executionContext.getProvider() === 'vm') {
     return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei</span>`
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
@@ -247,7 +282,7 @@ function value (v) {
         ret.push(value(v[k]))
       }
       return ret
-    } else if (BN.isBN(v)) {
+    } else if (BN.isBN(v) || (v.constructor && v.constructor.name === 'BigNumber')) {
       return v.toString(10)
     } else if (v.indexOf && v.indexOf('0x') === 0) {
       return (new BN(v.replace('0x', ''), 16)).toString(10)
