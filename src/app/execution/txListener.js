@@ -20,7 +20,6 @@ class TxListener {
     this.event = new EventManager()
     this._api = opt.api
     this._resolvedTransactions = {}
-    this._resolvedCalls = {}
     this._resolvedContracts = {}
     this._isListening = false
     this._listenOnNetwork = false
