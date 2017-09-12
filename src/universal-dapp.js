@@ -121,7 +121,9 @@ function UniversalDApp (opts = {}) {
 UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.el.innerHTML = ''
   this.contracts = contracts
+  if (transactionContextAPI) {
   this.transactionContextAPI = transactionContextAPI
+  }
   this.accounts = {}
   if (executionContext.isVM()) {
     this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
