@@ -313,15 +313,15 @@ UniversalDApp.prototype.getCallButton = function (args) {
   function call (isUserAction) {
     txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, (error, data) => {
       if (!error) {
+        if (isUserAction) {
+          if (!args.funABI.constant) {
+            self._api.logMessage(`transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
+          } else {
+            self._api.logMessage(`call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`)
+          }
+        }
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
           if (!error) {
-            if (isUserAction) {
-              if (args.funABI.constant) {
-                self._api.logMessage(`transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
-              } else {
-                self._api.logMessage(`call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
-              }
-            }
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
