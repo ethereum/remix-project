@@ -13,7 +13,6 @@ var txFormat = require('./app/execution/txFormat')
 var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
-var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var executionContext = require('./execution-context')
 
 // copy to copyToClipboard
@@ -313,13 +312,21 @@ UniversalDApp.prototype.getCallButton = function (args) {
     })
 
   function call (isUserAction) {
+    var logMsg
+    if (isUserAction) {
+      if (!args.funABI.constant) {
+        logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+      } else {
+        logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+      }
+    }
     txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, (error, data) => {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
-            self._api.logMessage(`transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
+            self._api.logMessage(`${logMsg} pending ... `)
           } else {
-            self._api.logMessage(`call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`)
+            self._api.logMessage(`${logMsg}`)
           }
         }
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
@@ -328,7 +335,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                modalDialogCustom.alert(vmError.message)
+                self._api.logMessage(`${logMsg} errored: ${vmError.message} `)
                 return
               }
             }
@@ -337,11 +344,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
               $outputOverride.html(decoded)
             }
           } else {
-            modalDialogCustom.alert(error)
+            self._api.logMessage(`${logMsg} errored: ${error} `)
           }
         })
       } else {
-        modalDialogCustom.alert(error)
+        self._api.logMessage(`${logMsg} errored: ${error} `)
       }
     })
   }
