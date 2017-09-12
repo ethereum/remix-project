@@ -18,6 +18,7 @@ class EventsDecoder {
   * @param {Function} cb - callback
   */
   parseLogs (tx, contractName, compiledContracts, cb) {
+    if (tx.isCall) return cb(null, [])
     this._api.resolveReceipt(tx, (error, receipt) => {
       if (error) cb(error)
       this._decodeLogs(tx, receipt, contractName, compiledContracts, cb)
