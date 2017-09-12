@@ -317,11 +317,11 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
             instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
           } else {
-            modalDialogCustom.alert(error)
+            appAPI.logMessage(`creation of ${contractName} errored: ` + error)
           }
         })
       } else {
-        modalDialogCustom.alert(error)
+        appAPI.logMessage(`creation of ${contractName} errored: ` + error)
       }
     })
   }
