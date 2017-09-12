@@ -295,8 +295,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var contracts = appAPI.getContracts()
-    var contractName = [contractNames.children[contractNames.selectedIndex].innerHTML]
-    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
+    var contractName = contractNames.children[contractNames.selectedIndex].innerHTML
+    var contract = appAPI.getContracts()[contractName]
 
     var constructor = txHelper.getConstructorInterface(contract.interface)
     var args = createButtonInput.value
