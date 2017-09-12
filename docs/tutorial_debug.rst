@@ -71,8 +71,7 @@ Right panel / second tab from the left - fill in the ´´value´´ input (´1 et
 
 Then click on ``Donate``. As we are using the ``JavaScript VM``, everything goes almost instantly.
 
-Remix displays also some information related to each transaction result. On the right of each transaction result
-you can start debugging the corresponding transaction.
+Remix displays also some information related to each transaction result. In the terminal, the transaction is logged and you can start debugging it.
 
 .. image:: remix_startdebugging.png
 
