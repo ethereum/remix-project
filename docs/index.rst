@@ -42,6 +42,11 @@ The GUI can be separated in 4 parts. Click on one the link to get more informati
     - :doc:`../debugger_tab`
     - :doc:`../analysis_tab`
     - :doc:`../support_tab`
+    
+Quick Start
+-----------
+
+(see :doc:`../quickstart_javascriptvm`)
 
 Tutorial
 --------
