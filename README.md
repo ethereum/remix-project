@@ -5,7 +5,9 @@ Ethereum IDE and tools for the web
 
 ## REMIX WEBSITE:
 
-Remix is avalaible at http://ethereum.github.io/remix.
+Remix is avalaible at http://ethereum.github.io/remix. Note that this repository hosts a debugger module.
+The Remix IDE repository is at https://github.com/ethereum/browser-solidity and an online version is at http://remix.ethereum.org.
+
 You can use it either inside Mist or by connecting to geth or eth.
 Note that connecting to Geth does not work through https.
 
