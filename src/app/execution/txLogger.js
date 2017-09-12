@@ -260,7 +260,7 @@ function context (self, opts) {
   var val = data.tx.value
   var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
-  var logs = data.logs ? data.logs.length : 0
+  var logs = data.logs && data.logs.decoded ? data.logs.decoded.length : 0
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
   if (executionContext.getProvider() === 'vm') {
