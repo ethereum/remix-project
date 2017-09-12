@@ -121,7 +121,7 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.el.innerHTML = ''
   this.contracts = contracts
   if (transactionContextAPI) {
-  this.transactionContextAPI = transactionContextAPI
+    this.transactionContextAPI = transactionContextAPI
   }
   this.accounts = {}
   if (executionContext.isVM()) {
