@@ -59,6 +59,7 @@ class InternalCallTree {
     */
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
+    this.functionDefinitionByFile = {}
     this.astWalker = new AstWalker()
     this.reducedTrace = []
   }
@@ -126,13 +127,16 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
   }
 
   var currentSourceLocation = {start: -1, length: -1, file: -1}
+  var previousSourceLocation = currentSourceLocation
   while (step < tree.traceManager.trace.length) {
     var sourceLocation
+    var newLocation = false
     try {
       sourceLocation = await tree.extractSourceLocation(step)
       if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
+        newLocation = true
       }
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e }
@@ -158,8 +162,9 @@ async function buildTree (tree, step, scopeId, isExternalCall) {
       return { outStep: step + 1 }
     } else {
       if (tree.includeLocalVariables) {
-        includeVariableDeclaration(tree, step, sourceLocation, scopeId)
+        includeVariableDeclaration(tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation)
       }
+      previousSourceLocation = sourceLocation
       step++
     }
   }
@@ -170,7 +175,7 @@ function createReducedTrace (tree, index) {
   tree.reducedTrace.push(index)
 }
 
-function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
+function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLocation, previousSourceLocation) {
   var variableDeclaration = resolveVariableDeclaration(tree, step, sourceLocation)
   if (variableDeclaration && !tree.scopes[scopeId].locals[variableDeclaration.attributes.name]) {
     tree.traceManager.getStackAt(step, (error, stack) => {
@@ -184,6 +189,24 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId) {
               stackDepth: stack.length,
               sourceLocation: sourceLocation
             }
+          }
+        })
+      }
+    })
+  }
+  var functionDefinition = resolveFunctionDefinition(tree, step, previousSourceLocation)
+  if (functionDefinition && newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1])) {
+    // means: the previous location was a function definition && JUMPDEST
+    // => we are at the beginning of the function and input/output are setup
+    tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
+      if (!error) {
+        tree.traceManager.getStackAt(step, (error, stack) => {
+          if (!error) {
+            var states = tree.solidityProxy.extractStatesDefinitions()
+            // input params
+            addParams(functionDefinition.children[0], tree, scopeId, states, contractName, previousSourceLocation, stack.length, functionDefinition.children[0].children.length, -1)
+            // output params
+            addParams(functionDefinition.children[1], tree, scopeId, states, contractName, previousSourceLocation, stack.length, 0, 1)
           }
         })
       }
@@ -204,6 +227,19 @@ function resolveVariableDeclaration (tree, step, sourceLocation) {
   return tree.variableDeclarationByFile[sourceLocation.file][sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
 }
 
+function resolveFunctionDefinition (tree, step, sourceLocation) {
+  if (!tree.functionDefinitionByFile[sourceLocation.file]) {
+    var ast = tree.solidityProxy.ast(sourceLocation)
+    if (ast) {
+      tree.functionDefinitionByFile[sourceLocation.file] = extractFunctionDefinitions(ast, tree.astWalker)
+    } else {
+      console.log('Ast not found for step ' + step + '. file ' + sourceLocation.file)
+      return null
+    }
+  }
+  return tree.functionDefinitionByFile[sourceLocation.file][sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
+}
+
 function extractVariableDeclarations (ast, astWalker) {
   var ret = {}
   astWalker.walk(ast, (node) => {
@@ -213,6 +249,30 @@ function extractVariableDeclarations (ast, astWalker) {
     return true
   })
   return ret
+}
+
+function extractFunctionDefinitions (ast, astWalker) {
+  var ret = {}
+  astWalker.walk(ast, (node) => {
+    if (node.name === 'FunctionDefinition') {
+      ret[node.src] = node
+    }
+    return true
+  })
+  return ret
+}
+
+function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
+  for (var inputParam in parameterList.children) {
+    var param = parameterList.children[inputParam]
+    tree.scopes[scopeId].locals[param.attributes.name] = {
+      name: param.attributes.name,
+      type: decodeInfo.parseType(param.attributes.type, states, contractName),
+      stackDepth: stackLength + (dir * stackPosition),
+      sourceLocation: sourceLocation
+    }
+    stackPosition += dir
+  }
 }
 
 module.exports = InternalCallTree
