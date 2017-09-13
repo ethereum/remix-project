@@ -2,16 +2,16 @@ Analysis
 ========
 
 This section gives information about the last compilation.
-A new analysis is by default run at each compilation.
+By default, a new analysis is run at each compilation.
 
-It gives detailed information about the contract code and is a good way to avoid code mistakes and enforce best practices.
+The analysis tab gives detailed information about the contract code.  It can help you avoid code mistakes and to enforce best practices.
 
 .. image:: images/remix_analysistab.png
 
-Here the list of analyzers:
+Here is the list of analyzers:
 
     - Security:
-        - Transaction origin: Warn if tx.origin is used
+        - Transaction origin: Warns if tx.origin is used
         - Check effects: Avoid potential reentrancy bugs
         - Inline assembly: Use of Inline Assembly
         - Block timestamp: Semantics maybe unclear
@@ -19,9 +19,9 @@ Here the list of analyzers:
         - Block.blockhash usage: Semantics maybe unclear
 
     - Gas & Economy:
-        - Gas costs: Warn if the gas requirements of functions are too high
+        - Gas costs: Warns if the gas requirements of the functions are too high
         - This on local calls: Invocation of local functions via this
 
     - Miscellaneous:
-        - Constant functions: Check for potentially constant functions
-        - Similar variable names: Check if variable names are too similar
+        - Constant functions: Checks for potentially constant functions
+        - Similar variable names: Checks if variable names are too similar

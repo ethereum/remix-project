@@ -1,7 +1,7 @@
 Solidity Editor
 ===============
 
-Remix editor triggers a compilation each time the current file is changed or another file is selected. It also provides syntax highlighting mapped to solidity keywords.
+The Remix editor recompiles the code each time the current file is changed or another file is selected. It also provides syntax highlighting mapped to solidity keywords.
 
 .. image:: images/remix_editor.png
 

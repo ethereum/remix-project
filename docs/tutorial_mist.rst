@@ -5,8 +5,8 @@ Debugging a Dapp using Remix - Mist - Geth
 
 The ultimate goal of this tutorial is to debug transactions that have been created by a dapp front end.
 
-It is easy in Remix to debug a transaction created from its own GUI. Setting up an environment that allows to
-debug transactions created outside of Remix require a bit more of complexity.
+It is easy in Remix to debug a transaction created from its own GUI. However, setting up an environment that allows you to
+debug transactions created outside of Remix, require a bit more of complexity.
 
 We will need four tools for that :
 
@@ -78,9 +78,9 @@ If we run Mist without any argument, its internal Geth node will run. As we have
     
 (yes the option is --rpc)
 
-Once Mist is started, Verify that it is connected to the test node (that's important !!).
+Once Mist is started, verify that it is connected to the test node (that's very important!!).
 
-On the bottom left check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently running. Run the following command in the Geth Console to check: `web3.eth.blockNumber`.
+On the bottom left, check that the network is ``Private-net`` and that the block number is the same as reported by the test node we are currently running. Run the following command in the Geth Console to check: `web3.eth.blockNumber`.
 
 .. image:: mist1.png
 
@@ -91,7 +91,7 @@ Starting Remix
 
 In Mist click on ``Develop`` / ``Open Remix IDE``
 
-Remix will open in a new window. If this is the first time it is run, the ``Ballot`` contract is loaded.
+Remix will open in a new window. If this is the first time it is run, the ``Ballot`` contract will be loaded.
 
 Now, we need to check if Remix is connected to Mist:
 
@@ -223,13 +223,14 @@ and here is the front end:
     }
     </script>
     
-I would suggest to serve this file using ``http-serve``, but you can use any web server you like.
+I would suggest serving this file using ``http-serve``, but you can use any web server you like.
 
 Example: Dapp Front End https://github.com/ltfschoen/dapp_front_end
 
 Important notice !
+~~~~~~~~~~~~~~~~~~
 
-The variable ``contractspec`` contains the abi of the ``donation`` contract. it means that if you change something in the contract interface (function names, parameters, ...)
+The variable ``contractspec`` contains the abi of the ``donation`` contract. This means that if you change something in the contract interface (function names, parameters, ...)
 you need to copy the new abi from remix to the front end.
 
 Deploying
@@ -239,7 +240,7 @@ Right panel / Red button ``Create``
 
 .. image:: remix1.png
 
-This create a new transaction that deploy the ``Donation`` contract (Mist will ask for the usual pasphrase check).
+This creates a new transaction that deploys the ``Donation`` contract (Mist will ask for the usual passphrase check).
 
 Wait for the transaction to be mined (don't forget to activate mining ``miner.start()``).
 Once this is done, you can use it by executing the ``moveFund`` and ``donate`` function. But this is not what we
@@ -253,11 +254,11 @@ Debugging
 ---------
 
 From Mist, browse the above front end.
-In the first field, paste the address of the newly created contract, and let's call the first function (label ``give``).
+In the first field, paste the address of the newly created contract. Now, let's call the first function (label ``give``).
 
 You will need an account and a value.
 
-The account could be any account that are declared in the Wallet section of Mist. This is the sender of the transaction we are going to create.
+The account could be any account that is declared in the Wallet section of Mist. This is the sender of the transaction that we are going to create.
 The value should be no more than the actual balance of the account - the unit is in `wei`, so just put ``100`` (100 wei), that should be fine.
 
 Click on ``Give`` and wait for the transaction to be mined.
@@ -267,7 +268,7 @@ It was easier for the purpose of this tutorial to just log transactions in a div
 
 There is only one field that we need, this is the ``transactionHash``.
 
-Copy it and switch to Remix. On the right half, the fifth panel shows a small "bug" icon, that is the debugger.
+Copy it and switch to Remix. On the right side, the fifth panel shows a small "bug" icon, that is the debugger.
 
 Paste the hash into the transaction field and click on the ``play`` button.
 
@@ -275,14 +276,14 @@ Paste the hash into the transaction field and click on the ``play`` button.
 
 You are now entering a debug session for the call to ``donate``.
 
-Debugging in Remix is not much easier than with common tools like gdb because you can freely move in time.
+Debugging in Remix is easier than with common tools like gdb because you can freely move in time.
 Use the slider to change the current step and click on the panels below to expand them and explore the curret state, local variables, etc.
 There are also breakpoints to move between sections of the code quickly, but more on all that later.
 
 
-At the time of writing there is an issue that could break the contract creation.
-There is a workaround for that at https://github.com/ethereum/go-ethereum/issues/3653 .
+At the time of this writing, there is an issue that could break the contract creation.
+The a workaround for that at https://github.com/ethereum/go-ethereum/issues/3653 .
 Please follow the workaround or wait for this issue to be closed.
 
-Also, though retrieving a contract's storage when Remix is using the JavaScript VM is working well,
+Also, although retrieving a contract's storage when Remix is using the JavaScript VM is working well,
 there is still work to be done when Remix is using eth or geth as backend.

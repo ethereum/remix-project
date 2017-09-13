@@ -14,7 +14,7 @@ From the Transaction GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 We will not explain in detail here how to write or deploy contract.
-Let us start with a basic contract (replace this one by yours):
+Let us start with a basic contract (replace this one by your's):
 
 .. code-block:: none
 
@@ -53,9 +53,9 @@ Let us start with a basic contract (replace this one by yours):
         }
     }
     
-For the purpose of this tutorial we will run the ``JavaScript VM`` (that's the default mode if you don't use Remix with Mist or Metamask) which simulates a custom blockchain. You could do the same using a proper backend node.
+For the purpose of this tutorial, we will run the ``JavaScript VM`` (that's the default mode when you don't use Remix with Mist or Metamask).  This simulates a custom blockchain. You could do the same using a proper backend node.
 
-Let's deploy the contract:
+Now, let's deploy the contract:
 
 Right panel / Red button ``Create``
 
@@ -80,7 +80,7 @@ From the Debugger
 
 The debugger can be found in the right panel / 5th tab from the left.
 
-You can start a debug session by providing either a ``transaction hash`` or a ``block number`` and ``transaction index``
+You can start a debug session by providing either a ``transaction hash`` or a ``block number`` and ``transaction index``.
 
 .. image:: remix3.png
 
@@ -89,10 +89,10 @@ Click the ``play`` button to start debugging.
 Using the debugger
 ------------------
 
-The debugger allows to see detailed informations about the transaction execution. It uses the editor (left panel) to display the location 
+The debugger allows one to see detailed informations about the transaction's execution. It uses the editor (left panel) to display the location 
 in the source code where the current execution is.
 
-First the transaction panel display basic and simple information about the current transaction.
+The transaction panel displays basic information about the current transaction.
 
 .. image:: remix_debugtransactioninfo.png
 
@@ -104,32 +104,32 @@ step over back, step into back, step into forward, step over forward, jump out (
 
 .. image:: remix_navigation.png
 
-11 panels give detailed informations about the execution:
+11 panels give detailed information about the execution:
 
 Instructions
 ~~~~~~~~~~~~
 
 .. image:: remix_debuginstructions.png
 
-This panel displays the bytecode of the current executing contract, the current step is highlighted.
+The Instructions panel displays the bytecode of the current executing contract- with the current step highlighted.
 
 Important note: 
 When this panel is hidden, the slider will have a courser granularity and only stop at expression boundaries, even if they are compiled into multiple EVM instructions.
-When the panel is diplayed, it will be possible to step over every instruction, even those that refers to the same expression.
+When the panel is displayed, it will be possible to step over every instruction, even those that refers to the same expression.
 
 Solidity Locals
 ~~~~~~~~~~~~~~~
 
 .. image:: remix_soliditylocals.png
 
-That panel displays local variables associated with the current context.
+The Solidity Locals panel displays local variables associated with the current context.
 
 Solidity State
 ~~~~~~~~~~~~~~
 
 .. image:: remix_soliditystate.png
 
-That panel displays state variables of the current executing contract.
+The Solidity State panel displays state variables of the current executing contract.
 
 Low level panels
 ~~~~~~~~~~~~~~~~
