@@ -56,12 +56,15 @@ TxRunner.prototype.execute = function (args, callback) {
         var blockGasLimit = executionContext.currentblockGasLimit()
         // NOTE: estimateGas very likely will return a large limit if execution of the code failed
         //       we want to be able to run the code in order to debug and find the cause for the failure
+
+        var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation).'
         if (gasEstimation > gasLimit) {
-          return callback('Gas required exceeds limit: ' + gasLimit)
+          return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
         }
         if (gasEstimation > blockGasLimit) {
-          return callback('Gas required exceeds block gas limit: ' + gasLimit)
+          return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
         }
+
         tx.gas = gasEstimation
         var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
         try {
