@@ -13,7 +13,6 @@ var txFormat = require('./app/execution/txFormat')
 var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
-var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var executionContext = require('./execution-context')
 
 // copy to copyToClipboard
@@ -121,7 +120,9 @@ function UniversalDApp (opts = {}) {
 UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.el.innerHTML = ''
   this.contracts = contracts
-  this.transactionContextAPI = transactionContextAPI
+  if (transactionContextAPI) {
+    this.transactionContextAPI = transactionContextAPI
+  }
   this.accounts = {}
   if (executionContext.isVM()) {
     this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
@@ -311,13 +312,21 @@ UniversalDApp.prototype.getCallButton = function (args) {
     })
 
   function call (isUserAction) {
+    var logMsg
+    if (isUserAction) {
+      if (!args.funABI.constant) {
+        logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+      } else {
+        logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+      }
+    }
     txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, (error, data) => {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
-            self._api.logMessage(`transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'} pending ... `)
+            self._api.logMessage(`${logMsg} pending ... `)
           } else {
-            self._api.logMessage(`call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`)
+            self._api.logMessage(`${logMsg}`)
           }
         }
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
@@ -326,7 +335,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                modalDialogCustom.alert(vmError.message)
+                self._api.logMessage(`${logMsg} errored: ${vmError.message} `)
                 return
               }
             }
@@ -335,11 +344,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
               $outputOverride.html(decoded)
             }
           } else {
-            modalDialogCustom.alert(error)
+            self._api.logMessage(`${logMsg} errored: ${error} `)
           }
         })
       } else {
-        modalDialogCustom.alert(error)
+        self._api.logMessage(`${logMsg} errored: ${error} `)
       }
     })
   }
@@ -459,7 +468,9 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     function (callback) {
       self.txRunner.rawRun(tx, function (error, result) {
         if (!args.useCall) {
-          self.event.trigger('transactionExecuted', [error, args.to, args.data, false, result])
+          self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result])
+        } else {
+          self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result])
         }
         if (error) {
           if (typeof (error) !== 'string') {

@@ -317,11 +317,11 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
             instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
           } else {
-            modalDialogCustom.alert(error)
+            appAPI.logMessage(`creation of ${contractName} errored: ` + error)
           }
         })
       } else {
-        modalDialogCustom.alert(error)
+        appAPI.logMessage(`creation of ${contractName} errored: ` + error)
       }
     })
   }
@@ -411,7 +411,7 @@ function settings (appAPI, appEvents) {
   `
 
   // EVENTS
-  appEvents.udapp.register('transactionExecuted', (error, to, data, lookupOnly, txResult) => {
+  appEvents.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
     if (error) return
     if (!lookupOnly) el.querySelector('#value').value = '0'
   })

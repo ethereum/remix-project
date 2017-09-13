@@ -31,7 +31,33 @@ class TxListener {
         this.startListening()
       }
     })
-    opt.event.udapp.register('transactionExecuted', (error, to, data, lookupOnly, txResult) => {
+
+    opt.event.udapp.register('callExecuted', (error, from, to, data, lookupOnly, txResult) => {
+      if (error) return
+      // we go for that case if
+      // in VM mode
+      // in web3 mode && listen remix txs only
+      if (!this._isListening) return // we don't listen
+      if (this._loopId && executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
+
+      var call = {
+        from: from,
+        to: to,
+        input: data,
+        hash: txResult.transactionHash ? txResult.transactionHash : 'call' + from + to + data,
+        isCall: true,
+        output: txResult.result,
+        returnValue: executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result),
+        envMode: executionContext.getProvider()
+      }
+      this._resolveTx(call, (error, resolvedData) => {
+        if (!error) {
+          this.event.trigger('newCall', [call])
+        }
+      })
+    })
+
+    opt.event.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (lookupOnly) return
       // we go for that case if
@@ -42,7 +68,7 @@ class TxListener {
       executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
         if (error) return console.log(error)
         if (txResult && txResult.result && txResult.result.vm) tx.returnValue = txResult.result.vm.return
-
+        tx.envMode = executionContext.getProvider()
         this._resolve([tx], () => {
         })
       })
@@ -174,7 +200,6 @@ class TxListener {
   }
 
   _resolveTx (tx, cb) {
-    console.log(tx)
     var contracts = this._api.contracts()
     if (!contracts) return cb()
     var contractName
