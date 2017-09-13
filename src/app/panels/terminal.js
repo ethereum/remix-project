@@ -508,7 +508,6 @@ class Terminal {
     }, 0)
   }
   _blocksRenderer (mode) {
-    var self = this
     mode = { log: 'black', info: 'blue', error: 'red' }[mode] // defaults
     if (mode) {
       return function logger (args, scopedCommands, append) {
@@ -516,9 +515,7 @@ class Terminal {
         var values = javascriptserialize.apply(null, args).map(function (val, idx) {
           if (typeof args[idx] === 'string') val = args[idx]
           if (types[idx] === 'element') val = jsbeautify.html(val)
-          var pattern = '.{1,' + self.data.lineLength + '}'
-          var lines = val.match(new RegExp(pattern, 'g'))
-          return lines.map(str => document.createTextNode(`${str}\n`))
+          return val
         })
         append(yo`<span style="color: ${mode};">${values}</span>`)
       }
