@@ -1,13 +1,16 @@
 Quick Start using the JavaScript VM
 ===================================
 
-There are 3 type of environments Remix can be plugged to (see :doc:`../run_tab`)
-both ``Web3 provider`` and ``Injected provider`` requires the use of an external tool.
+There are 3 type of environments Remix can be plugged to: ``Javascript VM``, ``Injected provider``, or ``Web3 provider``. (see :doc:`../run_tab`)
 
-An Ethereum node for ``Web3 provider`` and Mist or Metamask for ``Injected provider``.
+Both ``Web3 provider`` and ``Injected provider`` require the use of an external tool.
 
-The ``JavaScript VM`` mode is convenient because every execution run in your browser.
-Thus reloading the page will restart Remix with en empty state. it might also be better to use an external node for better performances.
+The external tool for ``Web3 provider`` is an Ethereum node the tools for ``Injected provider`` are Mist or Metamask.
+
+The ``JavaScript VM`` mode is convenient because each execution runs in your browser.
+Thus reloading the page will restart Remix with an empty state.
+
+So for performance purposes, it might also be better to use an external node.
 
 Selecting the VM mode
 ---------------------
@@ -40,24 +43,24 @@ Sample contract
         }
     }
     
-That contract is very very basic, the goal is to quiclky start to create and to interact with.
+This contract is very basic. The goal is to quickly start to create and to interact with a sample contract.
 
 Deploying an instance
 ---------------------
 
-The ``Compile tab`` displays informations related to the current contract (note that there can be more than one) (see :doc:`../compile_tab`).
+The ``Compile tab`` displays information related to the current contract (note that there can be more than one) (see :doc:`../compile_tab`).
 
-Switching now to ``Run tab`` allows to deploy an instance of the contract in the ``JavaScript VM`` state.
+Moving on, in the ``Run tab`` select, ``JavaScript VM`` to specify that you are going to deploy an instance of the contract in the ``JavaScript VM`` state.
 
 .. image:: images/remix_quickstart_javascriptvm_creation.png
 
-The constructor of ``testContract`` needs a parameter (of type ``uint``). give any value and click on ``Create``.
+The constructor of ``testContract`` needs a parameter (of type ``uint``). Give any value and click on ``Create``.
 
-The transaction which deploy the instance of ``testContract`` is created.
+The transaction which deploys the instance of ``testContract`` is created.
 
-That could take several seconds in a "normal" blockchain (time for the transaction to be mined), in our the case execution is immediate (JavaScript VM).
+In a "normal" blockchain, it can take several seconds to execute. This is the time for the transaction to be mined. However, because we are using the ``JavaScript VM``, our execution is immediate.
  
-Looking at the terminal will inform you about the transaction. You can see details and start debugging it.
+The terminal will inform you about the transaction. You can see details there and start debugging.
 
 The newly created instance is displayed in the ``run tab``.
 
