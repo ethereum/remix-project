@@ -381,12 +381,16 @@ function createTable (opts) {
     table.appendChild(outputDecoded)
   }
 
+  var stringified = ' - '
+  if (opts.logs.decoded) {
+    stringified = value(opts.logs.decoded)
+  }
   var logs = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> logs </td>
       <td class="${css.td}">
-      <i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(JSON.stringify(opts.logs.decoded || [], null, '\t')) }} title='Copy Logs to clipboard'></i>
-      <i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(JSON.stringify(opts.logs.raw || '0')) }} title='Copy Raw Logs to clipboard'></i>${JSON.stringify(opts.logs.decoded || [], null, '\t')}</td>
+      <i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(JSON.stringify(stringified, null, '\t')) }} title='Copy Logs to clipboard'></i>
+      <i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(JSON.stringify(opts.logs.raw || '0')) }} title='Copy Raw Logs to clipboard'></i>${JSON.stringify(stringified, null, '\t')}</td>
     </tr class="${css.tr}">
   `
   if (opts.logs) table.appendChild(logs)
