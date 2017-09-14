@@ -399,6 +399,7 @@ class Terminal {
     }
 
     self._cmdHistory = []
+    self._cmdIndex = -1
     self._cmdTemp = ''
 
     return self._view.el
@@ -411,31 +412,34 @@ class Terminal {
           putCursor2End(self._view.input)
           self.scroll2bottom()
         } else { // <enter>
+          self._cmdIndex = -1
+          self._cmdTemp = ''
           event.preventDefault()
           var script = self._view.input.innerText.trim()
           self._view.input.innerText = '\n'
           if (script.length) {
-            self._cmdHistory.push(script)
+            self._cmdHistory.unshift(script)
             self.commands.script(script)
           }
         }
       } else if (event.which === 38) { // <arrowUp>
         var len = self._cmdHistory.length
         if (len === 0) return event.preventDefault()
-        if (self._cmdIndex === undefined) {
-          self._cmdIndex = len - 1
-          self._cmdTemp = self._view.input.innerText
-        } else if (self._cmdIndex === 0) return
-        else self._cmdIndex -= 1
+        if (self._cmdHistory.length - 1 > self._cmdIndex) {
+          self._cmdIndex++
+        }
         self._view.input.innerText = self._cmdHistory[self._cmdIndex]
-        self.scroll2bottom()
-      } else if (event.which === 40) { // <arrowDown>
-        if (self._cmdIndex === undefined) return
-        else if (self._cmdIndex === self._cmdHistory.length - 1) self._cmdIndex = undefined
-        else self._cmdIndex += 1
-        self._view.input.innerText = self._cmdHistory[self._cmdIndex] || self._cmdTemp
         putCursor2End(self._view.input)
         self.scroll2bottom()
+      } else if (event.which === 40) { // <arrowDown>
+        if (self._cmdIndex > -1) {
+          self._cmdIndex--
+        }
+        self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+        putCursor2End(self._view.input)
+        self.scroll2bottom()
+      } else {
+        self._cmdTemp = self._view.input.innerText
       }
     }
     function putCursor2End (editable) {
