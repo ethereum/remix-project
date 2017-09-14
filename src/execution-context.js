@@ -1,4 +1,3 @@
-/* global confirm, prompt */
 'use strict'
 
 var Web3 = require('web3')
@@ -9,6 +8,7 @@ var StateManager = require('ethereumjs-vm/lib/stateManager')
 var remix = require('ethereum-remix')
 var Web3VMProvider = remix.web3.web3VMProvider
 var rlp = ethUtil.rlp
+var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 
 var injectedProvider
 
@@ -111,32 +111,39 @@ function ExecutionContext () {
     this.executionContextChange(context, endPointUrl)
   }
 
-  this.executionContextChange = function (context, endPointUrl) {
-    if (context === 'web3' && !confirm('Are you sure you want to connect to an ethereum node?')) {
-      return false
-    } else if (context === 'injected' && injectedProvider === undefined) {
-      return false
-    } else {
-      if (context === 'web3') {
-        executionContext = context
-        if (!endPointUrl) {
-          endPointUrl = 'http://localhost:8545'
-        }
-        endPointUrl = prompt('Web3 Provider Endpoint', endPointUrl)
-        setProviderFromEndpoint(endPointUrl)
+  this.executionContextChange = function (context, endPointUrl, cb) {
+    function runPrompt () {
+      console.log('runPrompt')
+      executionContext = context
+      if (!endPointUrl) {
+        endPointUrl = 'http://localhost:8545'
+      }
+      modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
+        setProviderFromEndpoint(target)
         self.event.trigger('contextChanged', ['web3'])
-      } else if (context === 'injected') {
+      })
+    }
+
+    if (context === 'web3') {
+      modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?',
+        () => { runPrompt(endPointUrl) }, () => { cb() }
+      )
+    } else if (context === 'injected' && injectedProvider === undefined) {
+      cb()
+    } else {
+      if (context === 'injected') {
         executionContext = context
         web3.setProvider(injectedProvider)
         self.event.trigger('contextChanged', ['injected'])
+        console.log('injected')
       } else if (context === 'vm') {
+        console.log('vm!!')
         executionContext = context
         vm.stateManager.revert(function () {
           vm.stateManager.checkpoint()
         })
         self.event.trigger('contextChanged', ['vm'])
       }
-      return true
     }
   }
 

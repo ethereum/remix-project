@@ -1,5 +1,5 @@
 'use strict'
-
+var modalDialogCustom = require('../app/ui/modal-dialog-custom')
 // Allowing window to be overriden for testing
 function GistHandler (_window) {
   if (_window === undefined) _window = window
@@ -8,11 +8,12 @@ function GistHandler (_window) {
     var loadingFromGist = false
     var gistId
     if (params['gist'] === '') {
-      var str = _window.prompt('Enter the URL or ID of the Gist you would like to load.')
-      if (str !== '') {
-        gistId = getGistId(str)
-        loadingFromGist = !!gistId
-      }
+      modalDialogCustom.prompt(null, 'Enter the URL or ID of the Gist you would like to load.', null, (target) => {
+        if (target !== '') {
+          gistId = getGistId(target)
+          loadingFromGist = !!gistId
+        }
+      })
     } else {
       gistId = params['gist']
       loadingFromGist = !!gistId

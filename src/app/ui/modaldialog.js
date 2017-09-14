@@ -79,10 +79,36 @@ var css = csjs`
 
 module.exports = (title, content, ok, cancel) => {
   var container = document.querySelector(`.${css.modal}`)
+  console.log('top of export')
+  // this should check to see if the child has been appended
   if (!container) {
+  // if (!document.querySelector(`.${css.modalBody}`)) {
+    console.log('no container')
     document.querySelector('body').appendChild(html())
     container = document.querySelector(`.${css.modal}`)
+    // container.style.display = 'block'
+    // console.log('LOOK HERE' + document.querySelector(`.${css.modal}`).innerHTML)
+    // console.log('HEHE ' + container.style.display)
+    // console.log('HOHO ' + document.querySelector(`.${css.modal}`).style.display)
+  } else {
+    console.log('container exists and is ' + JSON.stringify(container))
+    if (!container.innerHTML) {
+      document.querySelector('body').appendChild(html())
+      container = document.querySelector(`.${css.modal}`)
+      // console.log('container now is ' + JSON.stringify(container))
+      console.log('no display style' + container.innerHTML)
+    } else {
+      console.log('yes display style' + container.innerHTML)
+      console.log('and and console logs style' + container.style.display)
+    }
+    // but this container could just be {}
+    // document.querySelector('body').appendChild(html())
+    // container = document.querySelector(`.${css.modal}`)
+    // okDiv.addEventListener('click', okListener)
+    // cancelDiv.addEventListener('click', cancelListener)
+    // closeDiv.addEventListener('click', cancelListener)
   }
+
   var closeDiv = document.getElementById('modal-close')
 
   var okDiv = document.getElementById('modal-footer-ok')
@@ -100,35 +126,53 @@ module.exports = (title, content, ok, cancel) => {
   modal.innerHTML = ''
   if (content) modal.appendChild(content)
 
-  container.style.display = container.style.display === 'block' ? hide() : show()
+  // why the flip of display here? - when this script runs it needs to turn off or on the modal - so I guess that is the reason
+  // I don't understand the next line
+  // container.style.display = container.style.display === 'block' ? hide() : show()
+
+  // if (container.style.display === 'block') {
+  //   // container.style.display = 'none'
+  //   hide()
+  // } else {
+  //   // container.style.display = 'block'
+  //   show()
+  // }
+  show()
 
   function okListener () {
+    console.log('OK OK OK')
+    removeEventListener()
     hide()
     if (ok && ok.fn) ok.fn()
-    removeEventListener()
   }
 
   function cancelListener () {
-    hide()
     if (cancel && cancel.fn) cancel.fn()
+    hide()
     removeEventListener()
   }
 
   function hide () {
+    console.log('hit hide')
     container.style.display = 'none'
-    container.parentElement.removeChild(container)
+    // container.parentElement.removeChild(container)
+    // The next line I commented out because it made an error when okListener ran
+    // document.querySelector('body').removeChild(container)
   }
 
   function show () {
+    console.log('hit show')
     container.style.display = 'block'
+    // document.getElementById('modal-dialog').style.display = 'block'
   }
 
   function removeEventListener () {
+    console.log('removing event listeners')
     okDiv.removeEventListener('click', okListener)
     cancelDiv.removeEventListener('click', cancelListener)
     closeDiv.removeEventListener('click', cancelListener)
   }
-
+  console.log('time to add the listeners')
   okDiv.addEventListener('click', okListener)
   cancelDiv.addEventListener('click', cancelListener)
   closeDiv.addEventListener('click', cancelListener)
