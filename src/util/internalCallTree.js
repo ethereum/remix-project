@@ -57,6 +57,7 @@ class InternalCallTree {
     /*
       scopeStart: represent start of a new scope. Keys are index in the vmtrace, values are scopeId
     */
+    this.functionCallStack = []
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
     this.functionDefinitionByFile = {}
@@ -196,6 +197,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
   }
   var functionDefinition = resolveFunctionDefinition(tree, step, previousSourceLocation)
   if (functionDefinition && newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1])) {
+    tree.functionCallStack.push(step)
     // means: the previous location was a function definition && JUMPDEST
     // => we are at the beginning of the function and input/output are setup
     tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
