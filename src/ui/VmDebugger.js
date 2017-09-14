@@ -54,6 +54,14 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   _parent.event.register('traceUnloaded', this, function () {
     self.view.style.display = 'none'
   })
+  _parent.callTree.event.register('callTreeReady', () => {
+    if (_parent.callTree.reducedTrace.length) {
+      self.solidityLocals.basicPanel.show()
+      self.solidityState.basicPanel.show()
+    } else {
+      self.asmCode.basicPanel.show()
+    }
+  })
 }
 
 VmDebugger.prototype.render = function () {

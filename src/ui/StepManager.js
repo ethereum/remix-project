@@ -39,6 +39,9 @@ function StepManager (_parent, _traceManager) {
     this.parent.vmDebugger.asmCode.event.register('show', () => {
       this.solidityMode = false
     })
+    if (this.parent.callTree.functionCallStack.length) {
+      this.jumpTo(this.parent.callTree.functionCallStack[0])
+    }
   })
 
   this.buttonNavigator = new ButtonNavigator(_parent, this.traceManager)
