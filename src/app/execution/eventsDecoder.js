@@ -50,26 +50,49 @@ class EventsDecoder {
 
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventABI = this._eventABI(contractName, compiledContracts)
-    // FIXME: support indexed events
     var events = []
     for (var i in logs) {
       // [address, topics, mem]
       var log = logs[i]
-      var event
-      var decoded
-
-      try {
-        var abi = eventABI[log.topics[0].replace('0x', '')]
-        event = abi.event
-        var types = abi.inputs.map(function (item) {
-          return item.type
-        })
-        decoded = ethJSABI.rawDecode(types, new Buffer(log.data.replace('0x', ''), 'hex'))
-        decoded = ethJSABI.stringify(types, decoded)
-      } catch (e) {
-        decoded = log.data
+      var abi = eventABI[log.topics[0].replace('0x', '')]
+      if (abi) {
+        var event
+        try {
+          var decoded = new Array(abi.inputs.length)
+          event = abi.event
+          var indexed = 1
+          var nonindexed = []
+          // decode indexed param
+          abi.inputs.map(function (item, index) {
+            if (item.indexed) {
+              var encodedData = log.topics[indexed].replace('0x', '')
+              try {
+                decoded[index] = ethJSABI.rawDecode([item.type], new Buffer(encodedData, 'hex'))[0]
+              } catch (e) {
+                decoded[index] = encodedData
+              }
+              indexed++
+            } else {
+              nonindexed.push(item.type)
+            }
+          })
+          // decode non indexed param
+          nonindexed = ethJSABI.rawDecode(nonindexed, new Buffer(log.data.replace('0x', ''), 'hex'))
+          // ordering
+          var j = 0
+          abi.inputs.map(function (item, index) {
+            if (!item.indexed) {
+              decoded[index] = nonindexed[j]
+              j++
+            }
+          })
+        } catch (e) {
+          decoded = log.data
+        }
+        events.push({ event: event, args: decoded })
+      } else {
+        events.push({ data: log.data, topics: log.topics })
       }
-      events.push({ event: event, args: decoded })
     }
     cb(null, { decoded: events, raw: logs })
   }
