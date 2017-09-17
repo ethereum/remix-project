@@ -92,6 +92,68 @@ var css = csjs`
     margin-left: 3%;
     align-self: center;
   }
+  .contractProperty {
+    overflow: auto;
+    margin-bottom: 0.4em;
+  }
+  .contractProperty.hasArgs input {
+    width: 75%;
+    padding: .36em;
+  }
+  .contractProperty button {
+    border-radius           : 3px;
+    border                  : .3px solid #dddddd;
+    cursor                  : pointer;
+    min-height              : 25px;
+    max-height              : 25px;
+    padding                 : 3px;
+    min-width               : 100px;
+    width                   : 25%;
+    font-size               : 10px;
+  }
+  .contractProperty button:disabled {
+    cursor: not-allowed;
+    background-color: white;
+    border-color: lightgray;
+  }
+  .call {
+    background-color: ${styles.colors.lightRed};
+    border-color: ${styles.colors.lightRed};
+  }
+  .constant .call {
+    background-color: ${styles.colors.lightBlue};
+    border-color: ${styles.colors.lightBlue};
+    width: 25%;
+    outline: none;
+  }
+  .payable .call {
+    background-color: ${styles.colors.red};
+    border-color: ${styles.colors.red};
+    width: 25%;
+  }
+  .contractProperty input {
+    display: none;
+  }
+  .contractProperty > .value {
+    padding: 0 0.4em;
+    box-sizing: border-box;
+    float: left;
+    min-width: 100%;
+  }
+  .hasArgs input {
+    display: block;
+    border: 1px solid #dddddd;
+    padding: .36em;
+    border-left: none;
+    padding: 8px 8px 8px 10px;
+    font-size: 10px;
+    height: 25px;
+  }
+  .hasArgs button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+  }
 `
 
 /*
@@ -104,7 +166,7 @@ function UniversalDApp (opts = {}) {
   self._api = opts.api
   self.removable = opts.opt.removable
   self.removable_instance = opts.opt.removable_instance
-  self.el = yo`<div class="udapp"></div>`
+  self.el = yo`<div class=${css.udapp}></div>`
   self.personalMode = opts.opt.personalMode || false
   self.contracts
   self.transactionContextAPI
@@ -293,8 +355,11 @@ UniversalDApp.prototype.getCallButton = function (args) {
   if (args.funABI.inputs) {
     inputs = txHelper.inputParametersDeclarationToString(args.funABI.inputs)
   }
-  var inputField = $('<input/>').attr('placeholder', inputs).attr('title', inputs)
-  var $outputOverride = $('<div class="value" />')
+  var inputField = yo`<input></input>`
+  inputField.setAttribute('placeholder', inputs)
+  inputField.setAttribute('title', inputs)
+
+  var outputOverride = yo`<div class=${css.value}></div>`
 
   var title
   if (args.funABI.name) {
@@ -303,13 +368,14 @@ UniversalDApp.prototype.getCallButton = function (args) {
     title = '(fallback)'
   }
 
-  var button = $(`<button class="${css.instanceButton}"/>`)
-    .addClass('call')
-    .attr('title', title)
-    .text(title)
-    .click(() => {
-      call(true)
-    })
+  var button = yo`<button onclick=${clickButton} class="${css.instanceButton}"></button>`
+  button.classList.add(css.call)
+  button.setAttribute('title', title)
+  button.innerHTML = title
+
+  function clickButton () {
+    call(true)
+  }
 
   function call (isUserAction) {
     var logMsg
@@ -320,7 +386,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
         logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
       }
     }
-    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.val(), self, (error, data) => {
+    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.value, self, (error, data) => {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
@@ -341,7 +407,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
             }
             if (lookupOnly) {
               var decoded = txFormat.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
-              $outputOverride.html(decoded)
+              outputOverride.appendChild(decoded)
             }
           } else {
             self._api.logMessage(`${logMsg} errored: ${error} `)
@@ -353,37 +419,38 @@ UniversalDApp.prototype.getCallButton = function (args) {
     })
   }
 
-  var $contractProperty = $(`<div class="contractProperty ${css.buttonsContainer}"></div>`)
-  var $contractActions = $(`<div class="${css.contractActions}" ></div>`)
-  $contractProperty.append($contractActions)
-  $contractActions.append(button)
+  var contractProperty = yo`<div class="${css.contractProperty} ${css.buttonsContainer}"></div>`
+  var contractActions = yo`<div class="${css.contractActions}" ></div>`
+
+  contractProperty.appendChild(contractActions)
+  contractActions.appendChild(button)
   if (inputs.length) {
-    $contractActions.append(inputField)
+    contractActions.appendChild(inputField)
   }
   if (lookupOnly) {
-    $contractProperty.append($outputOverride)
+    contractProperty.appendChild(outputOverride)
   }
 
   if (lookupOnly) {
-    $contractProperty.addClass('constant')
-    button.attr('title', (title + ' - call'))
+    contractProperty.classList.add(css.constant)
+    button.setAttribute('title', (title + ' - call'))
     call(false)
   }
 
   if (args.funABI.inputs && args.funABI.inputs.length > 0) {
-    $contractProperty.addClass('hasArgs')
+    contractProperty.classList.add(css.hasArgs)
   }
 
   if (args.funABI.payable === true) {
-    $contractProperty.addClass('payable')
-    button.attr('title', (title + ' - transact (payable)'))
+    contractProperty.classList.add(css.payable)
+    button.setAttribute('title', (title + ' - transact (payable)'))
   }
 
   if (!lookupOnly && args.funABI.payable === false) {
-    button.attr('title', (title + ' - transact (not payable)'))
+    button.setAttribute('title', (title + ' - transact (not payable)'))
   }
 
-  return $contractProperty
+  return contractProperty
 }
 
 UniversalDApp.prototype.pendingTransactions = function () {
