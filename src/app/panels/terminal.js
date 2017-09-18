@@ -189,6 +189,7 @@ class Terminal {
     self._view.input = yo`
       <span class=${css.input} contenteditable="true" onkeydown=${change}></span>
     `
+    self._view.input.innerText = '\n'
     self._view.cli = yo`
       <div class=${css.cli}>
         <span class=${css.prompt}>${'>'}</span>
@@ -397,19 +398,48 @@ class Terminal {
       self.event.trigger('resize', [self._api.getPosition(event)])
     }
 
+    self._cmdHistory = []
+    self._cmdIndex = -1
+    self._cmdTemp = ''
+
     return self._view.el
 
     function change (event) {
+      if (self._view.input.innerText.length === 0) self._view.input.innerText += '\n'
       if (event.which === 13) {
         if (event.ctrlKey) { // <ctrl+enter>
-          self._view.input.appendChild(document.createElement('br'))
-          self.scroll2bottom()
+          self._view.input.innerText += '\n'
           putCursor2End(self._view.input)
+          self.scroll2bottom()
         } else { // <enter>
+          self._cmdIndex = -1
+          self._cmdTemp = ''
           event.preventDefault()
-          self.commands.script(self._view.input.innerText)
-          self._view.input.innerHTML = ''
+          var script = self._view.input.innerText.trim()
+          self._view.input.innerText = '\n'
+          if (script.length) {
+            self._cmdHistory.unshift(script)
+            self.commands.script(script)
+          }
         }
+      } else if (event.which === 38) { // <arrowUp>
+        var len = self._cmdHistory.length
+        if (len === 0) return event.preventDefault()
+        if (self._cmdHistory.length - 1 > self._cmdIndex) {
+          self._cmdIndex++
+        }
+        self._view.input.innerText = self._cmdHistory[self._cmdIndex]
+        putCursor2End(self._view.input)
+        self.scroll2bottom()
+      } else if (event.which === 40) { // <arrowDown>
+        if (self._cmdIndex > -1) {
+          self._cmdIndex--
+        }
+        self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+        putCursor2End(self._view.input)
+        self.scroll2bottom()
+      } else {
+        self._cmdTemp = self._view.input.innerText
       }
     }
     function putCursor2End (editable) {
