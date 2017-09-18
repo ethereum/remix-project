@@ -10,10 +10,9 @@ var styles = styleGuide()
 
 var EventManager = remix.lib.EventManager
 var helper = require('../../lib/helper')
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modal-dialog-custom')
+var typeConversion = require('../../lib/typeConversion')
 
 var css = csjs`
   .log {
@@ -173,8 +172,8 @@ function renderKnownTransaction (self, data) {
         gas: data.tx.gas,
         hash: data.tx.hash,
         input: data.tx.input,
-        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(value(data.resolvedData.params), null, '\t') : ' - ',
-        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(value(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
+        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
         logs: data.logs,
         val: data.tx.value
       })
@@ -204,7 +203,7 @@ function renderCall (self, data) {
           <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
-      <div> ${JSON.stringify(value(data.resolvedData.decodedReturnValue), null, '\t')}</div>
+      <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
     </span>
   `
   return tx
@@ -264,40 +263,13 @@ function context (self, opts) {
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
   if (executionContext.getProvider() === 'vm') {
-    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${typeConversion.hexToInt(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${typeConversion.hexToInt(val)} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value(val)} wei</span>`
-  }
-}
-
-function value (v) {
-  try {
-    if (v instanceof Array) {
-      var ret = []
-      for (var k in v) {
-        ret.push(value(v[k]))
-      }
-      return ret
-    } else if (BN.isBN(v) || (v.constructor && v.constructor.name === 'BigNumber')) {
-      return v.toString(10)
-    } else if (v.indexOf && v.indexOf('0x') === 0) {
-      return (new BN(v.replace('0x', ''), 16)).toString(10)
-    } else if (typeof v === 'object') {
-      var retObject = {}
-      for (var i in v) {
-        retObject[i] = value(v[i])
-      }
-      return retObject
-    } else {
-      return v
-    }
-  } catch (e) {
-    console.log(e)
-    return v
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${typeConversion.hexToInt(val)} wei</span>`
   }
 }
 
@@ -383,7 +355,7 @@ function createTable (opts) {
 
   var stringified = ' - '
   if (opts.logs.decoded) {
-    stringified = value(opts.logs.decoded)
+    stringified = typeConversion.stringify(opts.logs.decoded)
   }
   var logs = yo`
     <tr class="${css.tr}">
@@ -395,7 +367,7 @@ function createTable (opts) {
   `
   if (opts.logs) table.appendChild(logs)
 
-  var val = value(opts.val)
+  var val = typeConversion.hexToInt(opts.val)
   val = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> value </td>
