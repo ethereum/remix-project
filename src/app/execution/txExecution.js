@@ -1,5 +1,4 @@
 'use strict'
-var yo = require('yo-yo')
 
 module.exports = {
   /**
@@ -46,17 +45,16 @@ module.exports = {
     if (!txResult.result.vm.exceptionError) {
       return ret
     }
-    var error = yo`<span> VM error: ${txResult.result.vm.exceptionError}</span>`
+    var error = `VM error: ${txResult.result.vm.exceptionError}.\n`
     var msg
     if (txResult.result.vm.exceptionError === 'invalid opcode') {
-      msg = yo`<ul><li>The constructor should be payable if you send it value.</li>
-                  <li>The execution might have thrown.</li></ul>`
+      msg = `\tThe constructor should be payable if you send value.\n\tThe execution might have thrown.\n`
       ret.error = true
     } else if (txResult.result.vm.exceptionError === 'out of gas') {
-      msg = yo`<div>The transaction ran out of gas. Please increase the Gas Limit.</div>`
+      msg = `\tThe transaction ran out of gas. Please increase the Gas Limit.\n`
       ret.error = true
     }
-    ret.message = yo`<div>${error} ${msg} Debug the transaction to get more information</div>`
+    ret.message = `${error}${msg}\tDebug the transaction to get more information.`
     return ret
   }
 }
