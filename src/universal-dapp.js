@@ -407,6 +407,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
             }
             if (lookupOnly) {
               var decoded = txFormat.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              outputOverride.innerHTML = ''
               outputOverride.appendChild(decoded)
             }
           } else {
