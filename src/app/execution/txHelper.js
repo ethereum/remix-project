@@ -7,9 +7,13 @@ module.exports = {
     var types = []
     if (funABI.inputs && funABI.inputs.length) {
       for (var i = 0; i < funABI.inputs.length; i++) {
-        types.push(funABI.inputs[i].type)
+        var type = funABI.inputs[i].type
+        types.push(type)
         if (args.length < types.length) {
           args.push('')
+        }
+        if (args[i].indexOf && args[i].indexOf('0x') === 0) {
+          args[i] = new Buffer(args[i].replace('0x', ''), 'hex')
         }
       }
     }
