@@ -81,6 +81,8 @@ var css = csjs`
   .prompt             {
     margin-right      : 0.5em;
     font-family       : monospace;
+    font-weight       : bold;
+    font-size         : large;
   }
   .input              {
     word-break        : break-all;
