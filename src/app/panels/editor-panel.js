@@ -114,7 +114,6 @@ var css = csjs`
     pointer-events    : none;
     transition        : .3s opacity ease-in;
   }
-  
   .content            {
     position          : relative;
     display           : flex;
@@ -133,6 +132,46 @@ var css = csjs`
     right             : 20px;
     top               : 10px;
     width             : 20em;
+
+  #files .file {
+      padding: 0 0.6em;
+      box-sizing: border-box;
+      background-color: hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js */
+      cursor: pointer;
+      border-right: 0.5em solid white;
+      position: relative;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      color: hsla(0, 0%, 40%, 1); /* grey in style-guide.js */
+  }
+  #files .file.active {
+      color: black;
+      font-weight: bold;
+      border-bottom: 0 none;
+      padding-right: 2em;
+  }
+  #files .file .remove {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 1.25em;
+      width: 1.25em;
+      line-height: 1em;
+      color: hsla(0, 82%, 82%, 1); /* red in style-guide.js */
+      display: none;
+      margin: 0.4em;
+      text-align: center;
+  }
+  #files .file input {
+      background-color: transparent;
+      border: 0 none;
+      border-bottom: 1px dotted black;
+      line-height: 1em;
+      margin: 0.5em 0;
+  }
+  #files .file.active .remove {
+      display: inline-block;
   }
 `
 

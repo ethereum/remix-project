@@ -78,6 +78,8 @@ var css = csjs`
   }
   .buttonsContainer {
     margin-top: 2%;
+    display: flex;
+    overflow: hidden;
   }
   .contractActions {
     display: flex;
@@ -136,10 +138,10 @@ var css = csjs`
     display: none;
   }
   .contractProperty > .value {
-    padding: 0 0.4em;
     box-sizing: border-box;
     float: left;
-    min-width: 100%;
+    align-self: center;
+    color: ${styles.colors.grey};
   }
   .hasArgs input {
     display: block;

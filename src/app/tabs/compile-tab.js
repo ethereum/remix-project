@@ -291,9 +291,9 @@ function compileTab (container, appAPI, appEvents, opts) {
       getContractNames(success, data)
       // hightlight the tab if error
       if (success) {
-        document.querySelector('#righthand-panel #menu .compileView').style.color = ''
+        document.querySelector('.compileView').style.color = ''
       } else {
-        document.querySelector('#righthand-panel #menu .compileView').style.color = styles.colors.red
+        document.querySelector('.compileView').style.color = styles.colors.red
       }
       // display warning error if any
       var errorContainer = container.querySelector('.error')

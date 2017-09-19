@@ -15,6 +15,9 @@ var css = csjs`
   .fileexplorer       {
     box-sizing        : border-box;
   }
+  input[type="file"] {
+      display: none;
+  }
   .folder,
   .file               {
     font-size         : 14px;

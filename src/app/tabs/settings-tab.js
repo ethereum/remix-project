@@ -20,11 +20,17 @@ var css = csjs`
     word-break: break-word;
   }
   .crow {
-    margin-top: 1em;
     display: flex;
+    overflow: auto;
+    clear: both;
+    padding: .5em;
+    font-weight: bold;
   }
   .select {
     ${styles.dropdown}
+  }
+  input {
+    margin-right: 3px;
   }
 }
 `

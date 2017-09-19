@@ -187,7 +187,7 @@ var css = csjs`
 module.exports = runTab
 
 var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
-var noInstancesText = yo`<div class="${css.noInstancesText}">No Contract Instances.</div>`
+var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
 
 var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
 var pendingTxsContainer = yo`<div class="${css.pendingTxsContainer}">${pendingTxsText}</div>`
