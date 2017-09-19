@@ -178,7 +178,7 @@ class EditorPanel {
     }
   }
   _adjustLayout (direction, delta) {
-    var limitUp = 36
+    var limitUp = 0
     var limitDown = 20
     var containerHeight = window.innerHeight - limitUp // - menu bar containerHeight
     var self = this
