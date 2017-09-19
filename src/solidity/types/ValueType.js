@@ -63,7 +63,7 @@ class ValueType {
   decodeFromMemory (offset, memory) {
     var value = memory.substr(2 * offset, 64)
     return {
-      value: this.decodeValue(util.extractHexByteSlice(value, this.storageBytes, 0)),
+      value: this.decodeValue(value),
       type: this.typeName
     }
   }
