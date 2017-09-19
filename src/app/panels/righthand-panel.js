@@ -51,7 +51,6 @@ var css = csjs`
     min-width: 60px;
     font-size: 0.9em;
     cursor: pointer;
-    background-color: ${styles.colors.transparent};
     font-size: 1em;
     text-align: center;
   }
@@ -60,12 +59,6 @@ var css = csjs`
     list-style: none;
     margin: 0;
     padding: 0;
-  }
-  .opts_li:active {
-    background-color: ${styles.colors.backgroundBlue};
-  }
-  .opts_li a {
-    color: inherit;
   }
   .opts_li {
     display: block;
