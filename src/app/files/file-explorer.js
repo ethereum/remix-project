@@ -21,6 +21,7 @@ var css = csjs`
   .folder,
   .file               {
     font-size         : 14px;
+    cursor            : pointer;
   }
   .hasFocus           {
     background-color  : ${styles.colors.backgroundBlue};
