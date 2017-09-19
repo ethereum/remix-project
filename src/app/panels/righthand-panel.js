@@ -116,7 +116,7 @@ function RighthandPanel (appAPI, events, opts) {
   self.event = new EventManager()
   self._view = {}
 
-  var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
+  var optionViews = yo`<div id="optionViews" class="settingsView">${cssTabs}</div>`
   var options = yo`
     <ul class=${css.opts}>
       <li class="${css.opts_li} compileView" title="Compile">Compile</li>
@@ -202,3 +202,28 @@ function RighthandPanel (appAPI, events, opts) {
     }
   }
 }
+
+var cssTabs = yo`<style>#optionViews.settingsView #settingsView {
+    display: block;
+}
+
+#optionViews.compileView #compileTabView {
+    display: block;
+}
+
+#optionViews.runView #runTabView {
+    display: block;
+}
+
+#optionViews.debugView #debugView {
+    display: block;
+}
+
+
+#optionViews.staticanalysisView #staticanalysisView {
+    display: block;
+}
+
+#optionViews.supportView #supportView {
+    display: block;
+}</style>`

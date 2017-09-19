@@ -1,34 +1,3 @@
-#optionViews.settingsView #settingsView {
-    display: block;
-}
-
-#optionViews.compileView #compileTabView {
-    display: block;
-}
-
-#optionViews.runView #runTabView {
-    display: block;
-}
-
-#optionViews.debugView #debugView {
-    display: block;
-}
-
-
-#optionViews.staticanalysisView #staticanalysisView {
-    display: block;
-}
-
-#optionViews.supportView #supportView {
-    display: block;
-}
-
-
-
-
-
-
-
 .sol.success,
 .sol.error,
 .sol.warning {
