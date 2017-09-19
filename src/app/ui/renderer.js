@@ -1,8 +1,58 @@
 'use strict'
 
 var $ = require('jquery')
-
+var yo = require('yo-yo')
 var utils = require('../../lib/utils')
+
+var css = yo`<style>
+.sol.success,
+.sol.error,
+.sol.warning {
+    word-wrap: break-word;
+    cursor: pointer;
+    position: relative;
+    margin: 0.5em 0 1em 0;
+    border-radius: 5px;
+    line-height: 20px;
+    padding: 8px 15px;
+}
+
+.sol.success pre,
+.sol.error pre,
+.sol.warning pre {
+    background-color: transparent;
+    margin: 0;
+    font-size: 12px;
+    border: 0 none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.sol.success .close,
+.sol.error .close,
+.sol.warning .close {
+    font-weight: bold;
+    position: absolute;
+    color: hsl(0, 0%, 0%); /* black in style-guide.js */
+    top: 0;
+    right: 0;
+    padding: 0.5em;
+}
+
+.sol.error {
+    background-color: hsla(0, 82%, 82%, 0.1);
+    border: .2em dotted hsla(0, 82%, 82%, 1); /* red in style-guide.js */
+}
+
+.sol.warning {
+    background-color: hsla(59, 56%, 78%, 0.5);
+    border: .2em dotted hsla(44, 100%, 50%, 1); /* orange in style-guide.js */
+}
+
+.sol.success {
+    background-color: hsla(141, 58%, 95%, 1);
+    border: .2em dotted hsla(141, 40%, 48%, 1);
+}</style>`
 
 /**
  * After refactor, the renderer is only used to render error/warning
@@ -11,6 +61,9 @@ var utils = require('../../lib/utils')
  */
 function Renderer (appAPI) {
   this.appAPI = appAPI
+  if (document && document.head) {
+    document.head.appendChild(css)
+  }
 }
 
 Renderer.prototype.error = function (message, container, options) {
