@@ -132,8 +132,11 @@ var css = csjs`
     right             : 20px;
     top               : 10px;
     width             : 20em;
+  }  
+`
 
-  #files .file {
+var cssTabs = yo`<style>
+#files .file {
       padding: 0 0.6em;
       box-sizing: border-box;
       background-color: hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js */
@@ -173,7 +176,7 @@ var css = csjs`
   #files .file.active .remove {
       display: inline-block;
   }
-`
+  </style>`
 
 class EditorPanel {
   constructor (opts = {}) {
@@ -222,6 +225,9 @@ class EditorPanel {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
         self._api.txListener.setListenOnNetwork(listenOnNetWork)
       })
+    }
+    if (document && document.head) {
+      document.head.appendChild(cssTabs)
     }
   }
   _adjustLayout (direction, delta) {
