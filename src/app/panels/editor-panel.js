@@ -121,11 +121,7 @@ var css = csjs`
     height            : 100%;
     width             : 100%;
   }
-  
-  .banner             {
-    width             : 25em;
-  }
-  
+
   .contextviewcontainer{
     position          : absolute;
     z-index           : 100;
@@ -133,6 +129,10 @@ var css = csjs`
     top               : 10px;
     width             : 20em;
   }  
+  
+  .banner             {
+    width             : 25em;
+  }
 `
 
 var cssTabs = yo`<style>
