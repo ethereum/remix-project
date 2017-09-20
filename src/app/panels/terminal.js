@@ -71,6 +71,7 @@ class Terminal {
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
+      if (self._api.cmdInterpreter && self._api.cmdInterpreter.interpret(script)) return
       scopedCommands.log(`> ${script}`)
       self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
