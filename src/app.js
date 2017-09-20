@@ -536,8 +536,8 @@ function run () {
   }
   var transactionDebugger = new Debugger('#debugger', debugAPI, editor.event)
   transactionDebugger.addProvider('vm', executionContext.vm())
-  transactionDebugger.addProvider('injected', executionContext.web3())
-  transactionDebugger.addProvider('web3', executionContext.web3())
+  transactionDebugger.addProvider('injected', executionContext.internalWeb3())
+  transactionDebugger.addProvider('web3', executionContext.internalWeb3())
   transactionDebugger.switchProvider(executionContext.getProvider())
 
   var txLogger = new TxLogger({

@@ -3,8 +3,13 @@ var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 
 module.exports = {
-  hexToInt: (h) => {
-    return (new BN(h.replace('0x', ''), 16)).toString(10)
+  toInt: (h) => {
+    if (h.indexOf && h.indexOf('0x') === 0) {
+      return (new BN(h.replace('0x', ''), 16)).toString(10)
+    } else if (h.constructor && h.constructor.name === 'BigNumber' || BN.isBN(h)) {
+      return h.toString(10)
+    }
+    return h
   },
   stringify: stringify
 }

@@ -92,6 +92,10 @@ function ExecutionContext () {
     return this.isVM() ? web3VM : web3
   }
 
+  this.internalWeb3 = function () {
+    return web3
+  }
+
   this.blankWeb3 = function () {
     return blankWeb3
   }
