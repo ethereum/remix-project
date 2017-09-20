@@ -10,17 +10,17 @@ class Recorder {
     self.event = new EventManager()
     self.data = { journal: [] }
     opts.events.txlogger.register('initiatingTransaction', (stamp, tx) => {
-      var { from, to, value, gas, data /*, gasPrice?, nonce? */ } = tx
-      from = self.translate(from) // see comments above regarding what `translate(...)` is doing
+      var { from, to, value, gas, data } = tx
+      from = self.translate(from)
       to = self.translate(to)
-      var deTx = { from, to, value, gas, data /*, gasPrice?, nonce? */ }
+      var deTx = { from, to, value, gas, data }
       self.append(stamp, deTx)
     })
-    opts.events.txlogger.register('transactionExecuted', args => {
+    opts.events.udapp.register('transactionExecuted', args => {
       var [err, from, to, data, isUserCall, result, stamp] = args
       console.log('@TODO: should i do something here?')
     })
-    opts.events.txlogger.register('callExecuted', args => {
+    opts.events.udapp.register('callExecuted', args => {
       var [err, from, to, data, isUserCall, result, stamp] = args
       console.log('@TODO: should i do something here?')
     })
@@ -49,7 +49,7 @@ class Recorder {
     var self = this
     self.data.journal.push({ timestamp, record })
   }
-  getAllJSON () {
+  getAll () {
     var self = this
     var records = [].concat(self.data.journal)
     return records.sort((A, B) => {
