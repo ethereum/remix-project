@@ -6,6 +6,8 @@ var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
+var Recorder = require('./recorder')
+
 var UniversalDApp = require('./universal-dapp.js')
 var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
@@ -772,4 +774,49 @@ function run () {
     self.event.trigger('debuggingRequested', [])
     transactionDebugger.debug(txHash)
   }
+  
+  /****************************************************************************
+    RECORDER
+  ****************************************************************************/
+  var modal = { show: function showModal (args) { console.log('@TODO: open modal') } }
+
+  var recorder = new Recorder({ events: {
+    txlogger: txLogger.event,
+    executioncontext: executionContext.event
+  }})
+
+  var css = csjs`
+    .recorder {
+      background-color: red;
+    }
+    .runTxs {
+      background-color: green;
+    }
+  `
+  var recordButton = yo`<button class=${css.recorder}>copy ran transactions</button>`
+  var runButton = yo`<button class=${css.runTxs}>re-run transactions</button>`
+
+  console.error('@TODO: append record and run buttons')
+
+  recordButton.onclick = () => {
+    var txJSON = JSON.stringify(recorder.getAll(), null, 2)
+    copy2clipboard(txJSON)
+    modal.show(txJSON)
+  }
+  runButton.onclick = () => { // on modal OR run tab
+    var txArray = recorder.getAll()
+    udapp.runTx(txArray, CALLBACK) // ???
+    // OR
+    txArray.forEach(tx => udap.runTx(tx, CALLBACK)) // ???
+  }
+
+  function CALLBACK () {
+    /*
+      at each callback call, if the transaction succeed and if this is a creation transaction, we should call 
+      runtab.addInstance( ... ) which basically do:
+      instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, 
+      selectContractNames.value))
+    */
+  }
+  function copy2clipboard (json) { console.log('@TODO: copy 2 clipboard') }
 }
