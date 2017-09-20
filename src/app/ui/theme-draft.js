@@ -1,6 +1,7 @@
 // THEMEABLE parameters
 
 // REMIX
+<<<<<<< HEAD
 var remixGeneral = {
   general_BackgroundColor: {
     'background-color': ''
@@ -51,32 +52,54 @@ var remixGeneral = {
       'color': ''
     }
   }
+=======
+var remix = {
+  'background-color': '',
+  'font': '',
+  'font-size': '',
+  'color': ''
+>>>>>>> Remove styles.css and start theme-draft.js
 }
 
 // LEFT PANEL
 var filePanel = {
+<<<<<<< HEAD
   icons: {   // icons
+=======
+  icons: {
+>>>>>>> Remove styles.css and start theme-draft.js
     'color': '',
     ':hover': {
       'color': ''
     }
   },
+<<<<<<< HEAD
   togglePannel: {   // icons
+=======
+  toggle: {
+>>>>>>> Remove styles.css and start theme-draft.js
     'color': '',
     ':hover': {
       'color': ''
     }
   },
   treeview: {
+<<<<<<< HEAD
     'color': '',   // already defined in Remix general
     highlightedLine: {
       'background-color': ''  // highlight_BackgroundColor
+=======
+    'color': '',
+    highlightedLine: {
+      'background-color': ''
+>>>>>>> Remove styles.css and start theme-draft.js
     }
   }
 }
 
 // EDITOR
 var editor = {
+<<<<<<< HEAD
   'background-color': '',  // general_BackgroundColor
   'color': '',  // fonts/color
   gutter: {
@@ -90,6 +113,21 @@ var editor = {
     'color': ''  // fonts/color
   },
   icons: {  // icons
+=======
+  'background-color': '',
+  'color': '',
+  gutter: {
+    'background-color': '',
+    highlightedNumber: {
+      'background-color': ''
+    },
+  },
+  navTabs: {
+    'background-color': '',
+    'color': ''
+  }
+  icons: {
+>>>>>>> Remove styles.css and start theme-draft.js
     'color': '',
     ':hover': {
       'color': ''
@@ -98,6 +136,7 @@ var editor = {
   code: {
     // types, comments, parameters...
     highlightedLine: {
+<<<<<<< HEAD
       'background-color': ''   //highlight_BackgroundColor
     },
     debuggerMode: {
@@ -106,24 +145,48 @@ var editor = {
       }
     }
   }
+=======
+      'background-color': ''
+    },
+    debuggerMode: {
+      highlightedArea: {
+        'background-color': ''
+      },
+    }
+  }
+
+>>>>>>> Remove styles.css and start theme-draft.js
 }
 
 // TERMINAL
 var terminal = {
   menu: {
+<<<<<<< HEAD
     'background-color': '', // highlight_BackgroundColor
     'color': '',  // fonts/color
     icons: {  // icons
+=======
+    'background-color': '',
+    'color': '',
+    icon: {
+>>>>>>> Remove styles.css and start theme-draft.js
       'color': '',
       ':hover': {
         'color': ''
       }
     },
+<<<<<<< HEAD
     dropdown: {  // dropdown
       'background-color': '',
       'color': ''
     },
     togglePannel: {   // icons
+=======
+    dropdown: {
+      'background-color': ''
+    },
+    toggle: {
+>>>>>>> Remove styles.css and start theme-draft.js
       'color': '',
       ':hover': {
         'color': ''
@@ -132,15 +195,25 @@ var terminal = {
   },
   terminalWindow: {
     'background-color': '',
+<<<<<<< HEAD
     'color': '',
+=======
+>>>>>>> Remove styles.css and start theme-draft.js
     logo: {
       'url': '',
     },
     infoLog: {
+<<<<<<< HEAD
       'color': ''  // fonts/color
     },
     errorLog: {
       'color': ''  // same as border in errorMessage in rightPanel/compileTab  @TODO
+=======
+      'color': ''
+    },
+    errorLog: {
+      'color': ''
+>>>>>>> Remove styles.css and start theme-draft.js
     },
     transactionLog: {
       title: {
@@ -152,9 +225,15 @@ var terminal = {
       detailsButton: {
         'background-color': '',
         'color': ''
+<<<<<<< HEAD
       },
       debugButton: {
         'background-color': '',  // same as highlightedArea in editor/debuggerMode
+=======
+      }
+      debugButton: {
+        'background-color': '',
+>>>>>>> Remove styles.css and start theme-draft.js
         'color': ''
       }
     }
@@ -163,6 +242,7 @@ var terminal = {
 
 // RIGHT PANEL
 var rightPanel = {
+<<<<<<< HEAD
   'background-color': '',  // already defined in Remix general
   'color': '', // already defined in Remix general
   textBox: {        // already defined in Remix general
@@ -176,11 +256,15 @@ var rightPanel = {
     'color': ''
   },
   togglePannel: {   // icons
+=======
+  toggle: {
+>>>>>>> Remove styles.css and start theme-draft.js
     'color': '',
     ':hover': {
       'color': ''
     }
   },
+<<<<<<< HEAD
   logo: {
     'url': ''
   },
@@ -365,3 +449,6 @@ TERMINAL:
 
 
 */
+=======
+}
+>>>>>>> Remove styles.css and start theme-draft.js
