@@ -8,23 +8,15 @@ class CmdInterpreter {
   }
   interpret (cmd) {
     if (!cmd) return false
-    for (var c in commands) {
-      if (commands[c].exec(cmd)) {
-        commands[c].action(this, cmd)
-        return true
-      }
+    var accept = commandsRegEx.exec(cmd)
+    if (accept) {
+      this.event.trigger(accept[1], [cmd.replace(commandsRegEx, '')])
+      return accept[1]
     }
-    return false
+    return null
   }
 }
 
-var commands = [
-  {
-    command: /^debug /,
-    action: (self, command) => {
-      self.event.trigger('debug', command.replace('debug ', ''))
-    }
-  }
-]
+var commandsRegEx = /^remix:(debug|loadgist|setproviderurl|loadswarm)\s/
 
 module.exports = CmdInterpreter
