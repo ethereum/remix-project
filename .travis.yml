@@ -6,10 +6,15 @@ script:
   - ./ci/browser_tests.sh
 deploy:
   provider: script
-  script: ci/deploy_from_travis.sh
+  script: ci/deploy_from_travis_master.sh
   skip_cleanup: true
   on:
     branch: master
+  provider: script
+  script: ci/deploy_from_travis_remix-live.sh
+  skip_cleanup: true
+  on:
+    branch: remix_live
 env:
   global:
     - ENCRYPTION_LABEL1="b5c2730599da"
