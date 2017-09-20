@@ -27,6 +27,7 @@ class EditorPanel {
       editor: opts.api.editor, // @TODO: instantiate in eventpanel instead of passing via `opts`
       terminal: new Terminal({
         api: {
+          cmdInterpreter: self._api.cmdInterpreter,
           getPosition (event) {
             var limitUp = 36
             var limitDown = 20

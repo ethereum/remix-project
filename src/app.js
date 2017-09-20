@@ -40,6 +40,7 @@ var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var toolTip = require('./app/ui/tooltip')
+var CommandInterpreter = require('./lib/cmdInterpreter')
 
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
@@ -204,7 +205,7 @@ function run () {
   var self = this
 
   if (window.location.hostname === 'yann300.github.io') {
-    modalDialogCustom.alert(`This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.`)
+    modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
   } else if (window.location.hostname === 'ethereum.github.io' &&
   window.location.pathname.indexOf('/remix-live-alpha') === 0) {
     modalDialogCustom.alert(`This instance of the Remix IDE is an UNSTABLE ALPHA branch.\n
@@ -607,10 +608,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
 
+  // ----------------- Command Interpreter -----------------
+  /*
+    this module basically listen on user input (from terminal && editor)
+    and interpret them as command
+  */
+  var cmdInterpreter = new CommandInterpreter()
+  cmdInterpreter.event.register('debug', (hash) => {
+    startdebugging(hash)
+  })
+
   // ---------------- Righthand-panel --------------------
 
   var rhpAPI = {
     config: config,
+    cmdInterpreter: cmdInterpreter,
     setEditorSize (delta) {
       $('#righthand-panel').css('width', delta)
       self._view.centerpanel.style.right = delta + 'px'
