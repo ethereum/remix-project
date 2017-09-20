@@ -6,6 +6,7 @@ var yo = require('yo-yo')
 var async = require('async')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
+var swarmgw = require('swarmgw')
 
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -351,6 +352,42 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   txlistener.startListening()
+
+  // ----------------- Command Interpreter -----------------
+  /*
+    this module basically listen on user input (from terminal && editor)
+    and interpret them as commands
+  */
+  var cmdInterpreter = new CommandInterpreter()
+  cmdInterpreter.event.register('debug', (hash) => {
+    startdebugging(hash)
+  })
+  cmdInterpreter.event.register('loadgist', (id) => {
+    loadFromGist({gist: id})
+  })
+  cmdInterpreter.event.register('loadswarm', (url) => {
+    swarmgw.get(url, function (err, ret) {
+      if (err) {
+        modalDialogCustom.log(`Unable to load ${url} from swarm: ${err}`)
+      } else {
+        ret = JSON.parse(ret)
+        for (var k in ret.sources) {
+          var url = ret.sources[k].urls[0] // @TODO retrieve all other content
+          swarmgw.get(url, (error, content) => {
+            if (!error) {
+              filesProviders['browser'].addReadOnly(k, content)
+            } else {
+              filesProviders['browser'].addReadOnly(k, `Cannot retrieve the content of ${url}: ${error}`)
+            }
+          })
+        }
+      }
+    })
+  })
+  cmdInterpreter.event.register('setproviderurl', (url) => {
+    executionContext.setContext('web3', url, true)
+  })
+
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   var editor = self._components.editor // shortcut for the editor
@@ -436,6 +473,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- editor panel ----------------------
   this._components.editorpanel = new EditorPanel({
     api: {
+      cmdInterpreter: cmdInterpreter,
       editor: self._components.editor,
       config: self._api.config,
       txListener: txlistener,
@@ -503,23 +541,26 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ------------------ gist load ----------------
-
-  var loadingFromGist = gistHandler.handleLoad(queryParams.get(), function (gistId) {
-    $.ajax({
-      url: 'https://api.github.com/gists/' + gistId,
-      jsonp: 'callback',
-      dataType: 'jsonp',
-      success: function (response) {
-        if (response.data) {
-          if (!response.data.files) {
-            modalDialogCustom.alert('Gist load error: ' + response.data.message)
-            return
+  function loadFromGist (gistId) {
+    return gistHandler.handleLoad(gistId, function (gistId) {
+      $.ajax({
+        url: 'https://api.github.com/gists/' + gistId,
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function (response) {
+          if (response.data) {
+            if (!response.data.files) {
+              modalDialogCustom.alert('Gist load error: ' + response.data.message)
+              return
+            }
+            loadFiles(response.data.files, 'gist')
           }
-          loadFiles(response.data.files, 'gist')
         }
-      }
+      })
     })
-  })
+  }
+
+  var loadingFromGist = loadFromGist(queryParams.get())
 
   // insert ballot contract if there are no files available
   if (!loadingFromGist) {
@@ -608,21 +649,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
 
-  // ----------------- Command Interpreter -----------------
-  /*
-    this module basically listen on user input (from terminal && editor)
-    and interpret them as command
-  */
-  var cmdInterpreter = new CommandInterpreter()
-  cmdInterpreter.event.register('debug', (hash) => {
-    startdebugging(hash)
-  })
-
   // ---------------- Righthand-panel --------------------
 
   var rhpAPI = {
     config: config,
-    cmdInterpreter: cmdInterpreter,
     setEditorSize (delta) {
       $('#righthand-panel').css('width', delta)
       self._view.centerpanel.style.right = delta + 'px'
