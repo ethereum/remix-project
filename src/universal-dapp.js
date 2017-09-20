@@ -417,6 +417,8 @@ UniversalDApp.prototype.getCallButton = function (args) {
       } else {
         self._api.logMessage(`${logMsg} errored: ${error} `)
       }
+    }, (msg) => {
+      self._api.logMessage(msg)
     })
   }
 
