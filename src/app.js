@@ -778,10 +778,8 @@ function run () {
   /****************************************************************************
     RECORDER
   ****************************************************************************/
-  var modal = { show: function showModal (args) { console.log('@TODO: open modal') } }
-
   var recorder = new Recorder({ events: {
-    txlogger: txLogger.event,
+    udapp: udapp.event,
     executioncontext: executionContext.event
   }})
 
@@ -801,7 +799,7 @@ function run () {
   recordButton.onclick = () => {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
     copy2clipboard(txJSON)
-    modal.show(txJSON)
+    modalDialogCustom.alert(txJSON)
   }
   runButton.onclick = () => { // on modal OR run tab
     var txArray = recorder.getAll()
@@ -818,5 +816,13 @@ function run () {
       selectContractNames.value))
     */
   }
-  function copy2clipboard (json) { console.log('@TODO: copy 2 clipboard') }
+  function copy2clipboard (json) {
+    var textarea = document.createElement('textarea')
+    textarea.textContent = json
+    document.body.appendChild(textarea)
+    textarea.select()
+    try { document.execCommand('copy') }
+    catch (e) { }
+    finally { document.body.removeChild(textarea) }
+  }
 }
