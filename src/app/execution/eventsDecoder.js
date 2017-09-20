@@ -35,8 +35,8 @@ class EventsDecoder {
     this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
 
-  _eventABI (contractName, compiledContracts) {
-    var contractabi = JSON.parse(compiledContracts[contractName].interface)
+  _eventABI (contractabi) {
+    contractabi = JSON.parse(contractabi.interface)
     var eventABI = {}
     contractabi.forEach(function (funABI, i) {
       if (funABI.type !== 'event') {
@@ -48,13 +48,30 @@ class EventsDecoder {
     return eventABI
   }
 
+  _eventsABI (compiledContracts) {
+    var eventsABI = {}
+    for (var contract in compiledContracts) {
+      eventsABI[contract] = this._eventABI(compiledContracts[contract])
+    }
+    return eventsABI
+  }
+
+  _event (hash, eventsABI) {
+    for (var k in eventsABI) {
+      if (eventsABI[k][hash]) {
+        return eventsABI[k][hash]
+      }
+    }
+    return null
+  }
+
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
-    var eventABI = this._eventABI(contractName, compiledContracts)
+    var eventsABI = this._eventsABI(compiledContracts)
     var events = []
     for (var i in logs) {
       // [address, topics, mem]
       var log = logs[i]
-      var abi = eventABI[log.topics[0].replace('0x', '')]
+      var abi = this._event(log.topics[0].replace('0x', ''), eventsABI)
       if (abi) {
         var event
         try {

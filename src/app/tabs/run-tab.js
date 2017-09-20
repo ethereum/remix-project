@@ -323,6 +323,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       } else {
         appAPI.logMessage(`creation of ${contractName} errored: ` + error)
       }
+    }, (msg) => {
+      appAPI.logMessage(msg)
     })
   }
 

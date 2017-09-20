@@ -18,8 +18,9 @@ module.exports = {
     * @param {Object} params    - input paramater of the function to call
     * @param {Object} udapp    - udapp
     * @param {Function} callback    - callback
+    * @param {Function} callbackStep  - callbackStep
     */
-  buildData: function (contract, contracts, isConstructor, funAbi, params, udapp, callback) {
+  buildData: function (contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
     var funArgs = ''
     try {
       funArgs = $.parseJSON('[' + params + ']')
@@ -54,7 +55,7 @@ module.exports = {
             bytecodeToDeploy = bytecode + dataHex
             return callback(null, bytecodeToDeploy)
           }
-        })
+        }, callbackStep)
         return
       } else {
         dataHex = bytecodeToDeploy + dataHex
@@ -67,7 +68,7 @@ module.exports = {
 
   atAddress: function () {},
 
-  linkBytecode: function (contract, contracts, udapp, callback) {
+  linkBytecode: function (contract, contracts, udapp, callback, callbackStep) {
     var bytecode = contract.bytecode
     if (bytecode.indexOf('_') < 0) {
       return callback(null, bytecode)
@@ -81,7 +82,7 @@ module.exports = {
     if (!libraryabi) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryabi, udapp, (err, address) => {
+    this.deployLibrary(libraryName, libraryabi, udapp, (err, address) => {
       if (err) {
         return callback(err)
       }
@@ -95,22 +96,23 @@ module.exports = {
         bytecode = bytecode.replace(libLabel, hexAddress)
       }
       contract.bytecode = bytecode
-      this.linkBytecode(contract, contracts, udapp, callback)
-    })
+      this.linkBytecode(contract, contracts, udapp, callback, callbackStep)
+    }, callbackStep)
   },
 
-  deployLibrary: function (libraryName, library, udapp, callback) {
+  deployLibrary: function (libraryName, library, udapp, callback, callbackStep) {
     var address = library.address
     if (address) {
       return callback(null, address)
     }
     var bytecode = library.bytecode
     if (bytecode.indexOf('_') >= 0) {
-      this.linkBytecode(libraryName, (err, bytecode) => {
+      this.linkBytecode(libraryName, library, udapp, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, callback)
-      })
+        else this.deployLibrary(libraryName, library, udapp, callback, callbackStep)
+      }, callbackStep)
     } else {
+      callbackStep(`creation of library ${libraryName} pending...`)
       udapp.runTx({ data: bytecode, useCall: false }, (err, txResult) => {
         if (err) {
           return callback(err)
