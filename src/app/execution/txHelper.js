@@ -91,7 +91,7 @@ module.exports = {
 
   getContractByName: function (contractName, contracts) {
     for (var c in contracts) {
-      if (contracts[c].name === contractName) {
+      if (c === contractName) {
         return contracts[c]
       }
     }

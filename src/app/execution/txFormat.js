@@ -81,7 +81,7 @@ module.exports = {
     if (!libraryabi) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryabi, udapp, (err, address) => {
+    this.deployLibrary(libraryName, libraryabi, udapp, (err, address) => {
       if (err) {
         return callback(err)
       }
@@ -108,7 +108,7 @@ module.exports = {
     if (bytecode.indexOf('_') >= 0) {
       this.linkBytecode(libraryName, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, callback)
+        else this.deployLibrary(libraryName, library, udapp, callback)
       })
     } else {
       udapp.runTx({ data: bytecode, useCall: false }, (err, txResult) => {
