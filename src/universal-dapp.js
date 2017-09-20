@@ -534,11 +534,13 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     },
     // run transaction
     function (callback) {
+      var stamp = Date.now()
+      self.event.trigger('initiatingTransaction', [stamp, tx])
       self.txRunner.rawRun(tx, function (error, result) {
         if (!args.useCall) {
-          self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result])
+          self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result, stamp])
         } else {
-          self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result])
+          self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result, stamp])
         }
         if (error) {
           if (typeof (error) !== 'string') {
