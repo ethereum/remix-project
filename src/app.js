@@ -44,11 +44,15 @@ var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
   body                 {
+    font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin             : 0;
     padding            : 0;
     font-size          : 12px;
     color              : ${styles.colors.black};
     font-weight        : normal;
+  }
+  pre {
+    overflow-x: auto;
   }
   .browsersolidity     {
     position           : relative;

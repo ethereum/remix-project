@@ -20,7 +20,7 @@ var css = csjs`
   .modalHeader {
     padding: 2px 16px;
     background-color: ${styles.colors.backgroundBlue};
-    color: ${styles.colors.white};
+    color: ${styles.colors.grey};
     display: flex;
     justify-content: space-between;
   }

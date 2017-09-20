@@ -92,9 +92,10 @@ var css = csjs`
     width: 120px;
   }
   .log {
+    ${styles.displayBox}
     display: flex;
     flex-direction: column;
-    align-items: baseline
+    margin-bottom: 5%;
   }
   .key {
     margin-right: 5px;
