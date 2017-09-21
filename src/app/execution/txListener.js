@@ -307,6 +307,7 @@ class TxListener {
       inputTypes.push(abi.inputs[i].type)
     }
     var decoded = ethJSABI.rawDecode(inputTypes, data)
+    decoded = ethJSABI.stringify(inputTypes, decoded)
     var ret = {}
     for (var k in abi.inputs) {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]

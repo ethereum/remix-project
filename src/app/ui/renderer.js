@@ -44,13 +44,12 @@ Renderer.prototype.error = function (message, container, options) {
     $error.click(function (ev) {
       options && options.click ? options.click(errFile, errLine, errCol) : self.appAPI.errorClick(errFile, errLine, errCol)
     })
-  } else {
-    if (options.click) {
-      $error.click(function (ev) {
-        options.click(message)
-      })
-    }
+  } else if (options && options.click) {
+    $error.click(function (ev) {
+      options.click(message)
+    })
   }
+
   $error.find('.close').click(function (ev) {
     ev.preventDefault()
     $error.remove()

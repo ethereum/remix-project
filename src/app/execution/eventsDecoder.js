@@ -85,6 +85,7 @@ class EventsDecoder {
               var encodedData = log.topics[indexed].replace('0x', '')
               try {
                 decoded[index] = ethJSABI.rawDecode([item.type], new Buffer(encodedData, 'hex'))[0]
+                decoded[index] = ethJSABI.stringify([item.type], decoded[index])
               } catch (e) {
                 decoded[index] = encodedData
               }
@@ -94,7 +95,8 @@ class EventsDecoder {
             }
           })
           // decode non indexed param
-          nonindexed = ethJSABI.rawDecode(nonindexed, new Buffer(log.data.replace('0x', ''), 'hex'))
+          var nonindexededResult = ethJSABI.rawDecode(nonindexed, new Buffer(log.data.replace('0x', ''), 'hex'))
+          nonindexed = ethJSABI.stringify(nonindexed, nonindexededResult)
           // ordering
           var j = 0
           abi.inputs.map(function (item, index) {

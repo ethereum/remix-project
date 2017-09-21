@@ -12,9 +12,6 @@ module.exports = {
         if (args.length < types.length) {
           args.push('')
         }
-        if (args[i].indexOf && args[i].indexOf('0x') === 0) {
-          args[i] = new Buffer(args[i].replace('0x', ''), 'hex')
-        }
       }
     }
 
