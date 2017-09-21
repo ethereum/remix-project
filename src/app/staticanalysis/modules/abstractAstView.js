@@ -49,6 +49,7 @@ abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
       setCurrentContract(that, {
         node: node,
         functions: [],
+        relevantNodes: [],
         modifiers: [],
         inheritsFrom: [],
         stateVariables: common.getStateVariableDeclarationsFormContractNode(node)
@@ -65,6 +66,12 @@ abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
         localVariables: getLocalVariables(node),
         parameters: getLocalParameters(node)
       })
+      // push back relevant nodes to their the current fn if any
+      getCurrentContract(that).relevantNodes.map((item) => {
+        if (item.referencedDeclaration === node.id) {
+          getCurrentFunction(that).relevantNodes.push(item.node)
+        }
+      })
     } else if (common.isModifierDefinition(node)) {
       setCurrentModifier(that, {
         node: node,
@@ -76,7 +83,15 @@ abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
       if (!that.isFunctionNotModifier) throw new Error('abstractAstView.js: Found modifier invocation outside of function scope.')
       getCurrentFunction(that).modifierInvocations.push(node)
     } else if (relevantNodeFilter(node)) {
-      ((that.isFunctionNotModifier) ? getCurrentFunction(that) : getCurrentModifier(that)).relevantNodes.push(node)
+      var scope = (that.isFunctionNotModifier) ? getCurrentFunction(that) : getCurrentModifier(that)
+      if (scope) {
+        scope.relevantNodes.push(node)
+      } else {
+        scope = getCurrentContract(that) // if we are not in a function scope, add the node to the contract scope
+        if (scope && node.children[0] && node.children[0].attributes && node.children[0].attributes.referencedDeclaration) {
+          scope.relevantNodes.push({ referencedDeclaration: node.children[0].attributes.referencedDeclaration, node: node })
+        }
+      }
     }
   }
 }
