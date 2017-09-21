@@ -155,6 +155,7 @@ module.exports = {
         var decodedObj = ethJSABI.rawDecode(outputTypes, response)
 
         // format decoded data
+        decodedObj = ethJSABI.stringify(outputTypes, decodedObj)
         var json = {}
         for (i = 0; i < outputTypes.length; i++) {
           var name = fnabi.outputs[i].name
