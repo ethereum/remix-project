@@ -371,15 +371,13 @@ function run () {
   var compiler = new Compiler((url, cb) => {
     var provider = fileManager.fileProviderOf(url)
     if (provider && provider.exists(url)) {
-      cb(null, provider.get(url, cb))
+      return provider.get(url, cb)
     }
     handleImports.import(url, (error, content) => {
       if (!error) {
         // FIXME: at some point we should invalidate the browser cache
         filesProviders['browser'].addReadOnly(url, content)
         cb(null, content)
-      } else {
-        modalDialogCustom.alert('Unable to import: url')
       }
     })
   })
