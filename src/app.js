@@ -371,7 +371,7 @@ function run () {
   var compiler = new Compiler((url, cb) => {
     var provider = fileManager.fileProviderOf(url)
     if (provider && provider.exists(url)) {
-      cb(null, provider.get(url, cb))
+      return provider.get(url, cb)
     }
     handleImports.import(url, (error, content) => {
       if (!error) {
