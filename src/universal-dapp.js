@@ -31,6 +31,7 @@ var css = csjs`
     align-items: center;
   }
   .title {
+    font-size: 11px;
     ${styles.dropdown}
     width: 400px;
     display: flex;
@@ -165,7 +166,7 @@ function UniversalDApp (opts = {}) {
 
   self._api = opts.api
   self.removable = opts.opt.removable
-  self.removable_instance = opts.opt.removable_instance
+  self.removable_instances = opts.opt.removable_instances
   self.el = yo`<div class=${css.udapp}></div>`
   self.personalMode = opts.opt.personalMode || false
   self.contracts
