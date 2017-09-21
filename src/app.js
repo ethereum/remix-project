@@ -366,18 +366,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     loadFromGist({gist: id})
   })
   cmdInterpreter.event.register('loadswarm', (url) => {
-    swarmgw.get(url, function (err, ret) {
+    swarmgw.get(url, function (err, content) {
       if (err) {
         modalDialogCustom.log(`Unable to load ${url} from swarm: ${err}`)
       } else {
-        ret = JSON.parse(ret)
-        for (var k in ret.sources) {
-          var url = ret.sources[k].urls[0] // @TODO retrieve all other content
+        content = JSON.parse(content)
+        for (var k in content.sources) {
+          var url = content.sources[k].urls[0] // @TODO retrieve all other contents ?
           swarmgw.get(url, (error, content) => {
             if (!error) {
               filesProviders['browser'].addReadOnly(k, content)
             } else {
               filesProviders['browser'].addReadOnly(k, `Cannot retrieve the content of ${url}: ${error}`)
+              if (content.settings && Object.keys(content.settings.compilationTarget)[0] === k) {
+                fileManager.switchFile(Object.keys(content.settings.compilationTarget)[0])
+              }
             }
           })
         }
