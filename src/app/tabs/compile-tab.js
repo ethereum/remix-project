@@ -7,6 +7,7 @@ const copy = require('clipboard-copy')
 var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
 var modalDialog = require('../ui/modaldialog')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 var TreeView = require('ethereum-remix').ui.TreeView
 
 // -------------- styling ----------------------
@@ -88,6 +89,7 @@ var css = csjs`
   .publish {
     ${styles.button}
     margin-left: 2%;
+    width: 120px;
   }
   .log {
     display: flex;
@@ -327,8 +329,8 @@ function compileTab (container, appAPI, appEvents, opts) {
       <div class="${css.container}">
         <select class="${css.contractNames}" disabled></select>
         <div class="${css.contractButtons}">
-          <div class="${css.details}" onclick=${() => { details() }}>Details</div>
-          <div class="${css.publish}" onclick=${() => { publish(appAPI) }}>Publish</div>
+          <div title="Display Contract Details" class="${css.details}" onclick=${() => { details() }}>Details</div>
+          <div title="Publish on Swarm" class="${css.publish}" onclick=${() => { publish(appAPI) }}>Publish on Swarm</div>
         </div>
       </div>
     `
@@ -425,13 +427,17 @@ function compileTab (container, appAPI, appEvents, opts) {
       var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
         var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
-        publishOnSwarm(contract, appAPI, function (err) {
-          if (err) {
-            alert('Failed to publish metadata: ' + err)
-          } else {
-            alert('Metadata published successfully')
-          }
-        })
+        if (contract.metadata === undefined || contract.metadata.length === 0) {
+          modalDialogCustom.alert('This contract does not implement all functions and thus cannot be published.')
+        } else {
+          publishOnSwarm(contract, appAPI, function (err) {
+            if (err) {
+              alert('Failed to publish metadata: ' + err)
+            } else {
+              alert('Metadata published successfully. You\'l find the Swarm address in the Contract details.')
+            }
+          })
+        }
       }
     }
     return el
