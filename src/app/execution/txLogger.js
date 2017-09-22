@@ -175,7 +175,9 @@ function renderKnownTransaction (self, data) {
         'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
         'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
         logs: data.logs,
-        val: data.tx.value
+        val: data.tx.value,
+        transactionCost: data.tx.transactionCost,
+        executionCost: data.tx.executionCost
       })
       tx.appendChild(table)
     }
@@ -239,7 +241,9 @@ function renderUnknownTransaction (self, data) {
         input: data.tx.input,
         hash: data.tx.hash,
         gas: data.tx.gas,
-        logs: data.logs
+        logs: data.logs,
+        transactionCost: data.tx.transactionCost,
+        executionCost: data.tx.executionCost
       })
       tx.appendChild(table)
     }
@@ -314,10 +318,26 @@ function createTable (opts) {
   var gas = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> gas </td>
-      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.gas) }} title='Copy to clipboard'></i>${opts.gas}</td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.gas) }} title='Copy to clipboard'></i>${opts.gas} gas</td>
     </tr class="${css.tr}">
   `
   if (opts.gas) table.appendChild(gas)
+
+  if (opts.transactionCost) {
+    table.appendChild(yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> transaction cost </td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.transactionCost) }} title='Copy to clipboard'></i>${opts.transactionCost} gas</td>
+    </tr class="${css.tr}">`)
+  }
+
+  if (opts.executionCost) {
+    table.appendChild(yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> execution cost </td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.executionCost) }} title='Copy to clipboard'></i>${opts.executionCost} gas</td>
+    </tr class="${css.tr}">`)
+  }
 
   var hash = yo`
     <tr class="${css.tr}">

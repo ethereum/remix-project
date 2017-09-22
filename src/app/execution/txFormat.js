@@ -171,5 +171,6 @@ module.exports = {
         return { error: 'Failed to decode output: ' + e }
       }
     }
+    return {}
   }
 }

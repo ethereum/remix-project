@@ -67,7 +67,14 @@ class TxListener {
       if (this._loopId && executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
       executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
         if (error) return console.log(error)
-        if (txResult && txResult.result && txResult.result.vm) tx.returnValue = txResult.result.vm.return
+        if (txResult && txResult.result) {
+          if (txResult.result.vm) {
+            tx.returnValue = txResult.result.vm.return
+            if (txResult.result.vm.gasUsed) tx.executionCost = txResult.result.vm.gasUsed.toString(10)
+          }
+          if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
+        }
+
         tx.envMode = executionContext.getProvider()
         this._resolve([tx], () => {
         })
