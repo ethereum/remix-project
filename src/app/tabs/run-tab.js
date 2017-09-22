@@ -297,11 +297,11 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var contracts = appAPI.getContracts()
     var contractName = contractNames.children[contractNames.selectedIndex].innerHTML
     var contract = appAPI.getContracts()[contractName]
-    
+
     if (contract.bytecode.length === 0) {
       modalDialogCustom.alert('This contract does not implement all functions and thus cannot be created.')
       return
-    } 
+    }
 
     var constructor = txHelper.getConstructorInterface(contract.interface)
     var args = createButtonInput.value

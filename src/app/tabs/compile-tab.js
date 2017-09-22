@@ -436,7 +436,7 @@ function compileTab (container, appAPI, appEvents, opts) {
             } else {
               alert('Metadata published successfully. You\'l find the Swarm address in the Contract details.')
             }
-          })  
+          })
         }
       }
     }
