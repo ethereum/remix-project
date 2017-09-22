@@ -41,6 +41,9 @@ var css = csjs`
   .txbutton:hover {
     color: ${styles.colors.orange};
   }
+  .txinfo {
+    margin-top: 5px;
+  }
 `
 function TxBrowser (_parent) {
   this.event = new EventManager()
@@ -193,7 +196,7 @@ TxBrowser.prototype.render = function () {
           </div>
         </div>
         <span id='error'></span>
-        <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
+        <div style=${css.txinfo} id='txinfo'>
           ${this.basicPanel.render()}
         </div>
       </div>`

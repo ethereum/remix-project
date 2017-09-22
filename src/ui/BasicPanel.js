@@ -3,6 +3,16 @@ var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 
+var csjs = require('csjs-inject')
+var styleGuide = require('./styles/style-guide')
+var styles = styleGuide()
+
+var css = csjs`
+  .container {
+    width: 70%;
+  }
+`
+
 function BasicPanel (_name, _width, _height) {
   this.data
   this.name = _name
@@ -24,7 +34,8 @@ BasicPanel.prototype.show = function () {
 }
 
 BasicPanel.prototype.render = function () {
-  var view = yo`<div id='container' style=${ui.formatCss({'width': this.width}, style.panel.container)}>
+  var view = yo`
+    <div css=${css.container} id='container' style=${ui.formatCss({'width': this.width})}>
     <div style=${ui.formatCss(style.panel.title)}>
       ${this.name}
     </div>

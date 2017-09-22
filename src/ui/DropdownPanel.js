@@ -6,6 +6,35 @@ var basicStyles = require('./styles/basicStyles')
 var TreeView = require('./TreeView')
 var EventManager = require('../lib/eventManager')
 
+var csjs = require('csjs-inject')
+var styleGuide = require('./styles/style-guide')
+var styles = styleGuide()
+
+var css = csjs`
+  .title {
+    margin-top: 10px;
+    ${styles.dropdown}
+    display: flex;
+    align-items: center;
+  }
+  .name {
+    color: ${styles.colors.black};
+    font-weight: bold;
+  }
+  .icon {
+    color: ${styles.colors.black};
+    margin-right: 5%;
+  }
+  .eyeButton {
+    ${styles.button}
+    margin: 3px;
+    float: right;
+  }
+  .eyeButton:hover {
+    color: ${styles.colors.orange};
+  }
+`
+
 function DropdownPanel (_name, _opts) {
   this.event = new EventManager()
   if (!_opts) {
@@ -79,12 +108,12 @@ DropdownPanel.prototype.render = function (overridestyle) {
         to {transform:rotate(359deg);}
       }
     </style>
-    <div class='title' style=${ui.formatCss(styleDropdown.title)} onclick=${function () { self.toggle() }}>
-      <div style=${ui.formatCss(styleDropdown.caret)} class='fa fa-caret-right'></div>
-      <div style=${ui.formatCss(styleDropdown.inner, styleDropdown.titleInner)}>${this.name}</div><span></span>
+    <div class='${css.title} title' onclick=${function () { self.toggle() }}>
+      <div class='${css.icon} fa fa-caret-right'></div>
+      <div class=${css.name}>${this.name}</div><span></span>
     </div>
     <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
-      <button onclick=${function () { self.toggleRaw() }} style=${ui.formatCss(basicStyles.button, styleDropdown.copyBtn)} title='raw' class="btn fa fa-eye" type="button">
+      <button onclick=${function () { self.toggleRaw() }} title='raw' class="${css.eyeButton} btn fa fa-eye" type="button">
       </button>
       <i class="fa fa-refresh" style=${ui.formatCss(styleDropdown.inner, overridestyle, {display: 'none', 'margin-left': '4px', 'margin-top': '4px', 'animation': 'spin 2s linear infinite'})} aria-hidden="true"></i>
       <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'>${content}</div>
@@ -110,11 +139,11 @@ DropdownPanel.prototype.toggle = function () {
   var caret = this.view.querySelector('.title').firstElementChild
   if (el.style.display === '') {
     el.style.display = 'none'
-    caret.className = 'fa fa-caret-right'
+    caret.className = `${css.icon} fa fa-caret-right`
     this.event.trigger('hide', [])
   } else {
     el.style.display = ''
-    caret.className = 'fa fa-caret-down'
+    caret.className = `${css.icon} fa fa-caret-down`
     this.event.trigger('show', [])
   }
 }
@@ -124,7 +153,7 @@ DropdownPanel.prototype.hide = function () {
     var caret = this.view.querySelector('.title').firstElementChild
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = 'none'
-    caret.className = 'fa fa-caret-right'
+    caret.className = `${css.icon} fa fa-caret-right`
     this.event.trigger('hide', [])
   }
 }
@@ -134,7 +163,7 @@ DropdownPanel.prototype.show = function () {
     var caret = this.view.querySelector('.title').firstElementChild
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = ''
-    caret.className = 'fa fa-caret-down'
+    caret.className = `${css.icon} fa fa-caret-down`
     this.event.trigger('show', [])
   }
 }
