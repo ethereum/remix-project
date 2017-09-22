@@ -36,9 +36,10 @@ var css = csjs`
   }
   .txbutton {
     ${styles.button}
+    color: ${styles.colors.black};
   }
   .txbutton:hover {
-    color: ${styles.colors.black};
+    color: ${styles.colors.orange};
   }
 `
 function TxBrowser (_parent) {

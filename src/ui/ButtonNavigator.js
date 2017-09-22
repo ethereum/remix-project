@@ -25,10 +25,13 @@ var css = csjs`
     justify-content: center
   }
   .jumpButton {
-    ${styles.button} 
+    ${styles.button}
+  }
+  .navigator {
+    color: ${styles.colors.black}
   }
   .navigator:hover {
-    color: ${styles.colors.black}
+    color: ${styles.colors.orange}
   }
 `
 
