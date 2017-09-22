@@ -507,25 +507,31 @@ var rightPanel = {
 
 ALL:
 - text: mainText or supportText
-- unify color and hover for all icons (files panel, debuger, toggle etc.) => maybe add to styleguide
-
-COMPILE TAB:
-- details => copyToClipboard (same color and hover as other icons)
-
-RUN TAB:
-- unify copyToClipboard color and hover
 
 DEBUGGER TAB:
-- apply ${styles.button} + the rest (copy styling from below) to `eye button`
-  ${styles.button}
-  margin: 3px;
-  float: right;
+- DropdownPanel.js - refactor css
+  - apply ${styles.dropdown} to Debugger
+  - apply ${styles.button} + the rest (copy styling from below) to `eye button`
+    ${styles.button}
+    margin: 3px;
+    float: right;
 
-- Put whole debugger in textBox => then we get blue background like on other tabs + we have white background in the textBox so we can make highlighted color same as everywhere else
-- apply ${styles.dropdown} to Debugger
+---
+DONE
+ALL:
+DONE - unify color and hover for all icons (files panel, debuger, toggle etc.)
+
+COMPILE TAB:
+DONE - details => copyToClipboard (same color and hover as other icons)
+
+RUN TAB:
+DONE - unify copyToClipboard color and hover
+
+DEBUGGER TAB:
+DONE - Put whole debugger in textBox => then we get blue background like on other tabs + we have white background in the textBox so we can make highlighted color same as everywhere else
 
 TERMINAL:
-- apply ${styles.dropdown} + other fixes (already made in one PR - where is it?) to dropdown
+DONE - apply ${styles.dropdown} + other fixes (already made in one PR - where is it?) to dropdown
 
 
 */

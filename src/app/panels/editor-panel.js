@@ -71,6 +71,8 @@ var css = csjs`
   }
   .toggleLHP i        {
     cursor            : pointer;
+    font-size         : 14px;
+    font-weight       : bold;
   }
   .toggleLHP i:hover  {
     color             : ${styles.colors.orange};
@@ -94,13 +96,15 @@ var css = csjs`
     left              : 0;
   }
   .toggleRHP          {
-    margin-top        : 0.5em;
+    margin            : 0.3em;
     font-weight       : bold;
     color             : ${styles.colors.black};
     right             : 0;
   }
   .toggleRHP i        {
     cursor            : pointer;
+    font-size         : 14px;
+    font-weight       : bold;
   }
   .toggleRHP i:hover  {
     color             : ${styles.colors.orange};

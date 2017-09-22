@@ -22,13 +22,14 @@ var css = csjs`
   }
   .tx {
     color: ${styles.colors.violet};
+    font-weight: bold;
     width: 45%;
   }
   .txTable, .tr, .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: ${styles.colors.grey};
-    border: 1px dashed ${styles.colors.black};
+    color: ${styles.colors.black};
+    border: 1px solid ${styles.colors.black};
   }
   #txTable {
     margin-top: 1%;
@@ -62,7 +63,12 @@ var css = csjs`
   .clipboardCopy {
     margin-right: 0.5em;
     cursor: pointer;
-  }`
+    color: ${styles.colors.black};
+  }
+  .clipboardCopy:hover {
+    color: ${styles.colors.lightOrange};
+  }
+  `
 /**
   * This just export a function that register to `newTransaction` and forward them to the logger.
   * Emit debugRequested

@@ -54,13 +54,13 @@ var css = csjs`
     min-width: 150px;
   }
   .copyaddress {
-    color: ${styles.colors.blue};
     margin-left: 0.5em;
     margin-top: 0.7em;
     cursor: pointer;
+    color: ${styles.colors.black};
   }
   .copyaddress:hover {
-    color: ${styles.colors.grey};
+    color: ${styles.colors.lightOrange};
   }
   .instanceContainer {
     ${styles.displayBox}

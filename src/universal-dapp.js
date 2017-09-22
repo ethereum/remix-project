@@ -67,14 +67,12 @@ var css = csjs`
       display: flex;
   }
   .copy  {
-    font-size: 13px;
     cursor: pointer;
-    opacity: 0.8;
     margin-left: 3%;
-    color: ${styles.colors.blue};
+    color: ${styles.colors.black};
   }
   .copy:hover{
-    color: ${styles.colors.grey};
+    color: ${styles.colors.lightOrange};
   }
   .buttonsContainer {
     margin-top: 2%;

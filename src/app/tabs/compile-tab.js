@@ -99,7 +99,7 @@ var css = csjs`
   }
   .key {
     margin-right: 5px;
-    color: grey;
+    color: ${styles.colors.black};
     text-transform: uppercase;
     width: 100%;
   }
@@ -108,22 +108,16 @@ var css = csjs`
     width: 100%;
     margin-top: 1.5%;
   }
-  .copyDetails {
-    margin-left: 2%;
-    font-size: 14px;
-    cursor: pointer;
-    color: ${styles.colors.grey};
-    opacity: .3;
-  }
-  .copyDetails:hover {
-    opacity: 1;
-  }
+  .copyDetails,
   .questionMark {
-    margin-left: 1%;
-    font-size: 14px;
-    color: ${styles.colors.grey};
-    opacity: .3;
-  },
+    margin-left: 2%;
+    cursor: pointer;
+    color: ${styles.colors.black};
+  }
+  .copyDetails:hover,
+  .questionMark:hover {
+    color: ${styles.colors.lightOrange};
+  }
   .detailsJSON {
     padding: 8px 0;
     background-color: ${styles.colors.white};

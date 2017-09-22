@@ -2,6 +2,9 @@ var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
 
 var css = csjs`
   .debuggerTabView {
@@ -9,6 +12,7 @@ var css = csjs`
   }
   .debugger {
     margin-bottom: 1%;
+    ${styles.displayBox}
   }
 `
 

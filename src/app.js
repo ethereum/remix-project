@@ -87,15 +87,15 @@ var css = csjs`
     overflow           : hidden;
   }
   .highlightcode {
-      position:absolute;
-      z-index:20;
-      background-color: ${styles.colors.lightOrange};
+    position:absolute;
+    z-index:20;
+    background-color: ${styles.colors.lightOrange};
   }
   .highlightcode_fullLine {
-      position:absolute;
-      z-index:20;
-      background-color: ${styles.colors.lightOrange};
-      opacity: 0.5;
+    position:absolute;
+    z-index:20;
+    background-color: ${styles.colors.lightOrange};
+    opacity: 0.5;
   }
 `
 

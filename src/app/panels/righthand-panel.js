@@ -62,6 +62,11 @@ var css = csjs`
   }
   .opts_li {
     display: block;
+    font-weight: bold;
+    color: ${styles.colors.black};
+  }
+  .opts_li:hover {
+    color: ${styles.colors.orange};
   }
   .dragbar             {
     position           : absolute;

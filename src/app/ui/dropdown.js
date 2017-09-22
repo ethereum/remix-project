@@ -1,18 +1,23 @@
 var yo = require('yo-yo')
-var csjs = require('csjs-inject')
 var EventManager = require('ethereum-remix').lib.EventManager
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
 
 var css = csjs`
   .dropdown           {
+    ${styles.dropdown}
+    color:            : ${styles.colors.black};
+    overflow          : visible;
     position          : relative;
     display           : flex;
     flex-direction    : column;
-    color : black;
   }
   .selectbox          {
     display           : flex;
     align-items       : center;
-    background-color  : lightgrey;
     margin            : 3px;
     cursor            : pointer;
   }
@@ -32,12 +37,14 @@ var css = csjs`
     position          : absolute;
     display           : flex;
     flex-direction    : column;
-    min-width         : 30ch;
-    max-width         : 30ch;
-    top               : 21px;
-    left              : 10px;
+    align-items       : end;
+    top               : 24px;
+    left              : 0;
+    width             : 250px;
     background-color  : white;
-    border            : 1px solid black;
+    border            : 1px solid ${styles.colors.veryLightGrey};
+    border-radius     : 3px;
+    border-top        : 0;
   }
   .option {
     margin: 0;

@@ -1,6 +1,5 @@
 /* global Node, requestAnimationFrame */
 var yo = require('yo-yo')
-var csjs = require('csjs-inject')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
 var type = require('component-type')
@@ -10,6 +9,11 @@ var Web3 = require('web3')
 
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
 
 var css = csjs`
   .panel              {
@@ -38,15 +42,16 @@ var css = csjs`
     width             : 100%;
     padding           : 5px;
   }
-  .minimize           {
+  .toggleTerminal           {
     margin-left       : auto;
     width             : 10px;
     cursor            : pointer;
     color             : black;
+    font-size         : 14px;
+    font-weight       : bold;
   }
   .clear              {
     margin-right      : 5px;
-    font-size         : 15px;
     cursor            : pointer;
     color             : black;
   }
@@ -83,6 +88,7 @@ var css = csjs`
     font-family       : monospace;
     font-weight       : bold;
     font-size         : large;
+    color             : ${styles.colors.black}
   }
   .input              {
     word-break        : break-all;
@@ -90,8 +96,8 @@ var css = csjs`
     font-family       : monospace;
   }
   .filter             {
-    padding           : 3px;
-    width             : 20em;    
+    ${styles.inputField}
+    width             : 150px;
   }
 
   .dragbarHorizontal  {
@@ -198,7 +204,7 @@ class Terminal {
         ${self._view.input}
       </div>
     `
-    self._view.icon = yo`<i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize} class="${css.minimize} fa fa-angle-double-down"></i>`
+    self._view.icon = yo`<i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize} class="${css.toggleTerminal} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
     self._view.bar = yo`
