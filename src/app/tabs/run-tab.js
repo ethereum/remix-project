@@ -31,13 +31,11 @@ var css = csjs`
     display: flex;
   }
   .col1 {
-    ${styles.titleL}
     width: 30%;
     float: left;
     align-self: center;
   }
   .col1_1 {
-    ${styles.titleM}
     font-size: 12px;
     width: 25%;
     min-width: 75px;

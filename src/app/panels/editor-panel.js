@@ -83,7 +83,7 @@ var css = csjs`
     text-align        : center;
     cursor            : pointer;
     vertical-align    : middle;
-    background-color  : ${styles.colors.white};
+    background-color  : ${styles.colors.general_BackgroundColor};
     height            : 100%;
     font-size         : 1.3em;
     color             : orange;

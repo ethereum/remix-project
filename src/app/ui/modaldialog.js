@@ -40,7 +40,7 @@ var css = csjs`
   }
   .modalContent {
     position: relative;
-    background-color: ${styles.colors.white};
+    background-color: ${styles.colors.general_BackgroundColor};
     margin: auto;
     padding: 0;
     line-height: 18px;

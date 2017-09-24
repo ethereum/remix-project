@@ -11,6 +11,8 @@ require('./mode-solidity.js')
 
 var css = csjs`
   .ace-editor {
+    background-color  : ${styles.colors.general_BackgroundColor};
+    border-top: 20px solid ${styles.colors.backgroundBlue};
     width     : 100%;
   }
 `

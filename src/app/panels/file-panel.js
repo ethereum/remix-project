@@ -82,7 +82,7 @@ var css = csjs`
     cursor            : pointer;
   }
   .treeview {
-    background-color  : ${styles.colors.white};
+    background-color  : ${styles.colors.general_BackgroundColor};
   }
   .treeviews {
     overflow-y        : auto;

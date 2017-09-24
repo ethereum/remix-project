@@ -120,7 +120,7 @@ var css = csjs`
   }
   .detailsJSON {
     padding: 8px 0;
-    background-color: ${styles.colors.white};
+    background-color: ${styles.colors.general_BackgroundColor};
     border: none;
     color: ${styles.colors.grey};
   }

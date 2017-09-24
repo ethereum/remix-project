@@ -40,7 +40,7 @@ var css = csjs`
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
-    background-color: ${styles.colors.white};
+    background-color: ${styles.colors.general_BackgroundColor};
   }
   .titleText {
     margin-right: 1em;

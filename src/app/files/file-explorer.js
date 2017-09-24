@@ -27,7 +27,7 @@ var css = csjs`
     background-color  : ${styles.colors.backgroundBlue};
   }
   .rename             {
-    background-color  : ${styles.colors.white};
+    background-color  : ${styles.colors.general_BackgroundColor};
   }
   .remove             {
     margin-left       : auto;

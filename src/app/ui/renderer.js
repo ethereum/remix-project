@@ -20,6 +20,7 @@ var css = yo`<style>
 .sol.success pre,
 .sol.error pre,
 .sol.warning pre {
+    overflow-y: hidden;
     background-color: transparent;
     margin: 0;
     font-size: 12px;
