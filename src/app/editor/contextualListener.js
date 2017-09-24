@@ -52,7 +52,7 @@ class ContextualListener {
           self._index[node.name][node.id] = node
           if (node.name === 'FunctionCall' && node.children[0] && node.children[0].attributes) {
             var declaration = node.children[0].attributes.referencedDeclaration
-            if (!self._index['FunctionCalls'][declaration]) self._index['FunctionCalls'][declaration] = [] 
+            if (!self._index['FunctionCalls'][declaration]) self._index['FunctionCalls'][declaration] = []
             self._index['FunctionCalls'][declaration].push(node.id)
           }
         }
