@@ -7,6 +7,24 @@ function styleGuide () {
   COLORS
   -------------------------------------------------------------------------- */
   var colors = {
+    // BACKGROUND COLORS
+    general_BackgroundColor: 'hsl(0, 0%, 100%)',  // white
+    highlight_BackgroundColor: 'hsla(229, 100%, 97%, 1)', // backgroundBlue
+
+    // TEXT COLORS
+    mainText_Color: 'hsl(0, 0%, 0%)', // black
+    normalText_Color: 'hsla(0, 0%, 40%, 1)', // grey
+
+    // ICONS
+    icon_Color: 'hsl(0, 0%, 0%)', // black
+    icon_HoverColor: 'hsla(44, 100%, 50%, 1)', // orange
+
+    // DROPDOWN
+    dropdown_TextColor: 'hsl(0, 0%, 0%)', // black ,
+    dropdown_BackgroundColor: 'hsl(0, 0%, 100%)', // white
+    dropdown_BorderColor: 'hsla(0, 0%, 40%, .2)', // very light grey
+
+
     // BASIC COLORS (B&W and transparent)
     transparent: 'transparent',
     white: 'hsl(0, 0%, 100%)',
@@ -37,37 +55,6 @@ function styleGuide () {
   }
 
   /* --------------------------------------------------------------------------
-                              FONTS
-  -------------------------------------------------------------------------- */
-
-  var texts = {
-    'title-XL': `
-      font-size             : 2em;
-      font-weight           : 700;
-      letter-spacing        : .05em;
-    `,
-
-    'title-L': `
-      font-size             : 1em;
-      font-weight           : 600;
-    `,
-
-    'title-M': `
-      font-size             : 1em;
-      font-weight           : 400;
-    `,
-
-    'title-S': `
-      font-size             : .8em;
-      font-weight           : 300;
-    `,
-
-    'text': `
-      font-size             : .8em;
-    `
-  }
-
-  /* --------------------------------------------------------------------------
                                 TEXT-BOXES
   -------------------------------------------------------------------------- */
   var textBoxes = {
@@ -93,42 +80,6 @@ function styleGuide () {
       margin-bottom         : 1em;
       overflow              : hidden;
       word-break            : break-word;
-    `,
-
-    'warning-text-box': `
-      background-color      : ${colors.lightOrange};
-      line-height           : 20px;
-      padding               : 8px 15px;
-      border-radius         : 5px;
-      border                : .2em dotted ${colors.orange};
-      margin-bottom         : 1em;
-      overflow              : hidden;
-      word-break            : break-word;
-    `,
-
-    'error-text-box': `
-      background-color      : ${colors.lightRed};
-      line-height           : 20px;
-      padding               : 1em 1em .5em 1em;
-      border-radius         : 3px;
-      box-shadow            : rgba(0,0,0,.2) 0 1px 4px;
-      margin-bottom         : 1em;
-      overflow              : hidden;
-      word-break            : break-word;
-    `,
-
-    'title-box': `
-      margin-bottom         : 0.4em;
-      padding               : .3em;
-      background-color      : transparent;
-      font-weight           : bold;
-      display               : flex;
-      justify-content       : space-between;
-      word-wrap             : break-word;
-      position              : relative;
-      border-radius         : 3px;
-      overflow              : hidden;
-      word-break            : normal;
     `,
 
     'input': `
@@ -169,13 +120,14 @@ function styleGuide () {
     `,
 
     'dropdown': `
+      color                   : ${colors.dropdown_TextColor};
+      background-color        : ${colors.dropdown_BackgroundColor};
+      border                  : 1px solid ${colors.dropdown_BorderColor};
       font-size               : 12px;
       font-weight             : bold;
       padding                 : 0 8px;
       text-decoration         : none;
-      background-color        : ${colors.white};
       cursor                  : pointer;
-      border                  : 1px solid ${colors.veryLightGrey};
       border-radius           : 3px;
       height                  : 25px;
       width                   : 250px;
@@ -187,16 +139,11 @@ function styleGuide () {
   }
 
   return {
-    textBoxL: textBoxes['display-box-L'],
-    infoTextBox: textBoxes['info-text-box'],
-    inputField: textBoxes['input'],
-    displayBox: textBoxes['display-box'],
-    warningTextBox: textBoxes['warning-text-box'],
-    titleL: texts['title-L'],
-    titleM: texts['title-M'],
+    colors: colors,
     dropdown: buttons['dropdown'],
     button: buttons['button'],
-    colors: colors,
-    titleBox: textBoxes['title-box']
+    inputField: textBoxes['input'],
+    infoTextBox: textBoxes['info-text-box'],
+    displayBox: textBoxes['display-box']
   }
 }
