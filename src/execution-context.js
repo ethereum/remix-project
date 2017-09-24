@@ -8,6 +8,7 @@ var ethUtil = require('ethereumjs-util')
 var StateManager = require('ethereumjs-vm/lib/stateManager')
 var remix = require('ethereum-remix')
 var Web3VMProvider = remix.web3.web3VMProvider
+var rlp = ethUtil.rlp
 
 var injectedProvider
 
@@ -45,9 +46,10 @@ class StateManagerCommonStorageDump extends StateManager {
       var storage = {}
       var stream = trie.createReadStream()
       stream.on('data', function (val) {
+        var value = rlp.decode(val.value)
         storage['0x' + val.key.toString('hex')] = {
           key: self.keyHashes[val.key.toString('hex')],
-          value: '0x' + val.value.toString('hex')
+          value: '0x' + value.toString('hex')
         }
       })
       stream.on('end', function () {
