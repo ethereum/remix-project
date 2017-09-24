@@ -34,6 +34,7 @@ var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var handleImports = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
+var ContextualListener = require('./app/editor/contextualListener')
 
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
@@ -384,6 +385,25 @@ function run () {
     })
   })
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+
+  // ---------------- ContextualListener -----------------------
+  this._components.contextualListener = new ContextualListener({
+    getCursorPosition: () => {
+      return this._components.editor.getCursorPosition()
+    },
+    getCompilationResult: () => {
+      return compiler.lastCompilationResult
+    },
+    warnFoundCall: (position) => {
+      position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+      return editor.addMarker(position, config.get('currentFile'), 'highlightcall')
+    },
+    stopFoundCall: (event) => {
+      editor.removeMarker(event.eventId, event.fileTarget)
+    }
+  }, {
+    compiler: compiler.event
+  })
 
   // ----------------- Renderer -----------------
   var rendererAPI = {

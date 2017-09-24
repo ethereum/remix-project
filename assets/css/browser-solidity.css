@@ -290,6 +290,13 @@ input[type="file"] {
     display: none;
 }
 
+.highlightcall {
+    position:absolute;
+    z-index:20;
+    background-color: lightgrey;
+    opacity: 0.5
+}
+
 .highlightcode {
     position:absolute;
     z-index:20;
