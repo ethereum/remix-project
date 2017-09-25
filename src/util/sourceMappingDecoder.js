@@ -168,7 +168,7 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
 function nodesAtPosition (astNodeType, position, ast) {
   var astWalker = new AstWalker()
   var callback = {}
-  var found = {}
+  var found = []
   callback['*'] = function (node) {
     var nodeLocation = sourceLocationFromAstNode(node)
     if (!nodeLocation) {
@@ -176,7 +176,7 @@ function nodesAtPosition (astNodeType, position, ast) {
     }
     if (nodeLocation.start <= position && nodeLocation.start + nodeLocation.length >= position) {
       if (!astNodeType || astNodeType === node.name) {
-        found[node.name] = node
+        found.push(node)
         if (astNodeType) return false
       }
       return true
