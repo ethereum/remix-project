@@ -395,8 +395,11 @@ function run () {
       return compiler.lastCompilationResult
     },
     highlight: (position, node) => {
-      position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-      return editor.addMarker(position, config.get('currentFile'), 'highlightcall')
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.source && compiler.lastCompilationResult.source.target === config.get('currentFile')) {
+        position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+        return editor.addMarker(position, config.get('currentFile'), 'highlightcall')
+      }
+      return null
     },
     stopHighlighting: (event) => {
       editor.removeMarker(event.eventId, event.fileTarget)

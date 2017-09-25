@@ -67,7 +67,9 @@ class ContextualListener {
           var node = calls[call]
           var position = self.sourceMappingDecoder.decode(node.src)
           var eventId = self._api.highlight(position, node)
-          self._events.push({ eventId, position, fileTarget: compilationResult.source.target })
+          if (eventId) {
+            self._events.push({ eventId, position, fileTarget: compilationResult.source.target })
+          }
         }
       }
     }
