@@ -13,13 +13,12 @@ class ContextualListener {
 
     events.compiler.register('compilationFinished', (success, data, source) => {
       this._stopWarning()
+      this._index = {
+        ReferencedDeclarations: {},
+        Expressions: []
+      }
       if (success) {
         this._buildIndex(data, source)
-      } else {
-        this._index = {
-          ReferencedDeclarations: {},
-          Expressions: []
-        }
       }
     })
     this.sourceMappingDecoder = new SourceMappingDecoder()
