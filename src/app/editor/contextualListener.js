@@ -7,7 +7,7 @@ class ContextualListener {
     this._api = api
     this._index = {
       Declarations: {},
-      References: []
+      FlatReferences: {}
     }
     this._events = []
 
@@ -15,20 +15,24 @@ class ContextualListener {
       this._stopHighlighting()
       this._index = {
         Declarations: {},
-        References: []
+        FlatReferences: {}
       }
       if (success) {
         this._buildIndex(data, source)
       }
     })
+
+    events.editor.register('sessionSwitched', () => { this._stopHighlighting() })
+    events.editor.register('contentChanged', () => { this._stopHighlighting() })
+
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._highlight(api.getCursorPosition(), api.getCompilationResult())
+      this._highlightItems(api.getCursorPosition(), api.getCompilationResult())
     }, 1000)
   }
 
-  _highlight (cursorPosition, compilationResult) {
+  _highlightItems (cursorPosition, compilationResult) {
     if (this.currentPosition === cursorPosition) return
     this._stopHighlighting()
     this.currentPosition = cursorPosition
@@ -50,33 +54,39 @@ class ContextualListener {
             self._index['Declarations'][node.attributes.referencedDeclaration] = []
           }
           self._index['Declarations'][node.attributes.referencedDeclaration].push(node)
-          self._index['References'].push(node)
         }
+        self._index['FlatReferences'][node.id] = node
         return true
       }
       this.astWalker.walk(compilationResult.sources[source.target].AST, callback)
     }
   }
 
+  _highlight (node, compilationResult, type) {
+    var position = this.sourceMappingDecoder.decode(node.src)
+    var eventId = this._api.highlight(position, node, type)
+    if (eventId) {
+      this._events.push({ eventId, position, fileTarget: compilationResult.source.target })
+    }
+  }
+
   _hightlightExpressions (node, compilationResult) {
     var self = this
-    function highlight (id) {
+    function highlights (id) {
       if (self._index['Declarations'] && self._index['Declarations'][id]) {
         var calls = self._index['Declarations'][id]
         for (var call in calls) {
           var node = calls[call]
-          var position = self.sourceMappingDecoder.decode(node.src)
-          var eventId = self._api.highlight(position, node)
-          if (eventId) {
-            self._events.push({ eventId, position, fileTarget: compilationResult.source.target })
-          }
+          self._highlight(node, compilationResult, 'reference')
         }
       }
     }
     if (node.attributes && node.attributes.referencedDeclaration) {
-      highlight(node.attributes.referencedDeclaration)
+      highlights(node.attributes.referencedDeclaration)
+      var current = this._index['FlatReferences'][node.attributes.referencedDeclaration]
+      this._highlight(current, compilationResult, 'declaration')
     } else {
-      highlight(node.id)
+      highlights(node.id, 'current')
     }
   }
 
