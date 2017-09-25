@@ -19,11 +19,26 @@ function styleGuide () {
     icon_Color: 'hsl(0, 0%, 0%)', // black
     icon_HoverColor: 'hsla(44, 100%, 50%, 1)', // orange
 
-    // DROPDOWN
-    dropdown_TextColor: 'hsl(0, 0%, 0%)', // black ,
-    dropdown_BackgroundColor: 'hsl(0, 0%, 100%)', // white
-    dropdown_BorderColor: 'hsla(0, 0%, 40%, .2)', // very light grey
+    // UI ELEMENTS
+    element_TextColor: 'hsl(0, 0%, 0%)', // black ,
+    element_BackgroundColor: 'hsl(0, 0%, 100%)', // white
+    element_BorderColor: 'hsla(0, 0%, 40%, .2)', // very light grey
 
+/*
+1. most css properties can take many or infinite amounf of different values
+=> so we define a set of concrete values that we use:
+- variable just for plain colors (later also fonts, widths, paddings, border radiuses...)
+
+2. we define certain semantic names that make sense in the context of our app
+=> so we can use the values used in (1.) e.g. like 'color_red'  and assign it to e.g.
+- highlightColor: color_red
+- borderColor: color_white
+- ...
+
+3. we define a nested object that represents the component hierarchy that
+makes up our app and use semantic names defined under (2.)
+
+*/
 
     // BASIC COLORS (B&W and transparent)
     transparent: 'transparent',
@@ -54,6 +69,25 @@ function styleGuide () {
     violet: 'hsla(240, 64%, 68%, 1)'
   }
 
+var elementColors = {
+  /* -----------------------
+          BUTTONS
+  ----------------------- */
+  // DROPDOWN
+  dropdown_TextColor: colors.element_TextColor,
+  dropdown_BackgroundColor: colors.element_BackgroundColor,
+  dropdown_BorderColor: colors.element_BorderColor,
+
+  // BUTTON
+  button_TextColor: colors.element_TextColor,
+  button_BorderColor: colors.element_BorderColor,
+  rightPanel_compileTab_compileButton_BackgroundColor: 'hsla(0, 0%, 40%, .2)',
+  rightPanel_compileTab_otherButtons_BackgroundColor: 'hsla(0, 0%, 40%, .2)'
+
+  /* -----------------------
+          TEXT BOXES
+  ----------------------- */
+}
   /* --------------------------------------------------------------------------
                                 TEXT-BOXES
   -------------------------------------------------------------------------- */
@@ -98,12 +132,13 @@ function styleGuide () {
   var buttons = {
 
     'button': `
+      background-color        : ${elementColors.button_BackgroundColor};
+      border                  : .3px solid ${elementColors.button_BorderColor};
+      color                   : ${elementColors.button_TextColor};
       display                 : flex;
       align-items             : center;
       justify-content         : center;
-      border-color            : transparent;
       border-radius           : 3px;
-      border                  : .3px solid ${colors.veryLightGrey};
       cursor                  : pointer;
       min-height              : 25px;
       max-height              : 25px;
@@ -112,7 +147,6 @@ function styleGuide () {
       font-size               : 12px;
       overflow                : hidden;
       word-break              : normal;
-      background-color        : #E8E8E8;
     `,
 
     'button:hover': `
@@ -120,9 +154,9 @@ function styleGuide () {
     `,
 
     'dropdown': `
-      color                   : ${colors.dropdown_TextColor};
-      background-color        : ${colors.dropdown_BackgroundColor};
-      border                  : 1px solid ${colors.dropdown_BorderColor};
+      color                   : ${elementColors.dropdown_TextColor};
+      background-color        : ${elementColors.dropdown_BackgroundColor};
+      border                  : 1px solid ${elementColors.dropdown_BorderColor};
       font-size               : 12px;
       font-weight             : bold;
       padding                 : 0 8px;
@@ -140,6 +174,7 @@ function styleGuide () {
 
   return {
     colors: colors,
+    elementColors: elementColors,
     dropdown: buttons['dropdown'],
     button: buttons['button'],
     inputField: textBoxes['input'],
