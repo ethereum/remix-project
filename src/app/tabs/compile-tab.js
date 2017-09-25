@@ -62,6 +62,7 @@ var css = csjs`
   }
   .compileButton {
     ${styles.button}
+    background-color: ${styles.elementColors.rightPanel_compileTab_compileButton_BackgroundColor};
     width: 120px;
     min-width: 110px;
     margin-right: 1%;
@@ -85,9 +86,11 @@ var css = csjs`
   }
   .details {
     ${styles.button}
+    background-color: ${styles.elementColors.rightPanel_compileTab_otherButtons_BackgroundColor};
   }
   .publish {
     ${styles.button}
+    background-color: ${styles.elementColors.rightPanel_compileTab_otherButtons_BackgroundColor};
     margin-left: 2%;
     width: 120px;
   }

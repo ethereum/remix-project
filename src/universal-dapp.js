@@ -31,16 +31,14 @@ var css = csjs`
     align-items: center;
   }
   .title {
-    font-size: 11px;
     ${styles.dropdown}
+    font-size: 11px;
     width: 400px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
-    background-color: ${styles.colors.general_BackgroundColor};
   }
   .titleText {
     margin-right: 1em;

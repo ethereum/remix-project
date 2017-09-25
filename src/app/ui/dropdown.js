@@ -9,7 +9,6 @@ var styles = styleGuide()
 var css = csjs`
   .dropdown           {
     ${styles.dropdown}
-    color:            : ${styles.colors.black};
     overflow          : visible;
     position          : relative;
     display           : flex;

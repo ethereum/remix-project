@@ -47,7 +47,6 @@ var css = csjs`
   }
   .select {
     ${styles.dropdown}
-    text-align: center;
     font-weight: normal;
     min-width: 150px;
   }
