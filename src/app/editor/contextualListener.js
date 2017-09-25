@@ -6,16 +6,16 @@ class ContextualListener {
   constructor (api, events) {
     this._api = api
     this._index = {
-      ReferencedDeclarations: {},
-      Expressions: []
+      Declarations: {},
+      References: []
     }
     this._events = []
 
     events.compiler.register('compilationFinished', (success, data, source) => {
-      this._stopWarning()
+      this._stopHighlighting()
       this._index = {
-        ReferencedDeclarations: {},
-        Expressions: []
+        Declarations: {},
+        References: []
       }
       if (success) {
         this._buildIndex(data, source)
@@ -24,18 +24,18 @@ class ContextualListener {
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._warnExpressions(api.getCursorPosition(), api.getCompilationResult())
+      this._highlight(api.getCursorPosition(), api.getCompilationResult())
     }, 1000)
   }
 
-  _warnExpressions (cursorPosition, compilationResult) {
+  _highlight (cursorPosition, compilationResult) {
     if (this.currentPosition === cursorPosition) return
-    this._stopWarning()
+    this._stopHighlighting()
     this.currentPosition = cursorPosition
     if (compilationResult && compilationResult.data && compilationResult.source) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[compilationResult.source.target])
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
-        this._warnExpression(nodes[nodes.length - 1], compilationResult)
+        this._hightlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
     }
   }
@@ -46,11 +46,11 @@ class ContextualListener {
       var callback = {}
       callback['*'] = function (node) {
         if (node && node.attributes && node.attributes.referencedDeclaration) {
-          if (!self._index['ReferencedDeclarations'][node.attributes.referencedDeclaration]) {
-            self._index['ReferencedDeclarations'][node.attributes.referencedDeclaration] = []
+          if (!self._index['Declarations'][node.attributes.referencedDeclaration]) {
+            self._index['Declarations'][node.attributes.referencedDeclaration] = []
           }
-          self._index['ReferencedDeclarations'][node.attributes.referencedDeclaration].push(node)
-          self._index['Expressions'].push(node)
+          self._index['Declarations'][node.attributes.referencedDeclaration].push(node)
+          self._index['References'].push(node)
         }
         return true
       }
@@ -58,17 +58,19 @@ class ContextualListener {
     }
   }
 
-  _warnExpression (node, compilationResult) {
+  _hightlightExpressions (node, compilationResult) {
     var self = this
     function highlight (id) {
-      if (self._index['ReferencedDeclarations'] && self._index['ReferencedDeclarations'][id]) {
-        var calls = self._index['ReferencedDeclarations'][id]
+      if (self._index['Declarations'] && self._index['Declarations'][id]) {
+        var calls = self._index['Declarations'][id]
         for (var call in calls) {
-          self._warn(calls[call].src, compilationResult)
+          var node = calls[call]
+          var position = self.sourceMappingDecoder.decode(node.src)
+          var eventId = self._api.highlight(position, node)
+          self._events.push({ eventId, position, fileTarget: compilationResult.source.target })
         }
       }
     }
-
     if (node.attributes && node.attributes.referencedDeclaration) {
       highlight(node.attributes.referencedDeclaration)
     } else {
@@ -76,15 +78,9 @@ class ContextualListener {
     }
   }
 
-  _warn (src, compilationResult) {
-    var position = this.sourceMappingDecoder.decode(src)
-    var eventId = this._api.warnExpression(position)
-    this._events.push({ eventId, position, fileTarget: compilationResult.source.target })
-  }
-
-  _stopWarning () {
+  _stopHighlighting () {
     for (var event in this._events) {
-      this._api.stopWarningExpression(this._events[event])
+      this._api.stopHighlighting(this._events[event])
     }
     this._events = []
   }

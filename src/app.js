@@ -394,11 +394,11 @@ function run () {
     getCompilationResult: () => {
       return compiler.lastCompilationResult
     },
-    warnExpression: (position) => {
+    highlight: (position, node) => {
       position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
       return editor.addMarker(position, config.get('currentFile'), 'highlightcall')
     },
-    stopWarningExpression: (event) => {
+    stopHighlighting: (event) => {
       editor.removeMarker(event.eventId, event.fileTarget)
     }
   }, {
