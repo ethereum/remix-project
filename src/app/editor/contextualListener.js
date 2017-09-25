@@ -36,7 +36,7 @@ class ContextualListener {
     this._stopWarning()
     this.currentPosition = cursorPosition
     if (compilationResult && compilationResult.data && compilationResult.source) {
-      var nodes = this.sourceMappingDecoder.nodesAtCursorPosition(null, cursorPosition, compilationResult.data.sources[compilationResult.source.target])
+      var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[compilationResult.source.target])
       if (nodes && nodes['FunctionCall']) {
         this._highlightFunctionCall(nodes['FunctionCall'], compilationResult)
       }
