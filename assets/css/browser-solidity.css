@@ -297,6 +297,13 @@ input[type="file"] {
     opacity: 0.7
 }
 
+.highlightreferenceline {
+    position:absolute;
+    z-index:20;
+    background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
+    opacity: 0.7
+}
+
 .highlightcode {
     position:absolute;
     z-index:20;

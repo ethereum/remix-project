@@ -397,7 +397,9 @@ function run () {
     highlight: (position, node) => {
       if (compiler.lastCompilationResult && compiler.lastCompilationResult.source && compiler.lastCompilationResult.source.target === config.get('currentFile')) {
         position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+        var css = 'highlightreference'
         if (node.children && node.children.length) {
+          css = 'highlightreferenceline'
           position = {
             start: {
               line: position.start.line,
@@ -409,7 +411,7 @@ function run () {
             }
           }
         }
-        return editor.addMarker(position, config.get('currentFile'), 'highlightreference')
+        return editor.addMarker(position, config.get('currentFile'), css)
       }
       return null
     },
