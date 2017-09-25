@@ -19,6 +19,23 @@ function SourceMappingDecoder () {
 SourceMappingDecoder.prototype.atIndex = atIndex
 
 /**
+ * Decode the given @arg value
+ *
+ * @param {string} value      - source location to decode ( should be start:length:file )
+ * @return {Object} returns the decompressed source mapping {start, length, file}
+ */
+SourceMappingDecoder.prototype.decode = function (value) {
+  if (value) {
+    value = value.split(':')
+    return {
+      start: parseInt(value[0]),
+      length: parseInt(value[1]),
+      file: parseInt(value[2])
+    }
+  }
+}
+
+/**
  * Decode the source mapping for the given compressed mapping
  *
  * @param {String} mapping     - compressed source mapping given by solc-bin
