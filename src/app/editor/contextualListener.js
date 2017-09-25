@@ -6,9 +6,8 @@ class ContextualListener {
   constructor (api, events) {
     this._api = api
     this._index = {
-      FunctionDefinition: {},
-      FunctionCalls: {},
-      FunctionCall: {}
+      ReferencedDeclarations: {},
+      Expressions: []
     }
     this._events = []
 
@@ -18,27 +17,26 @@ class ContextualListener {
         this._buildIndex(data, source)
       } else {
         this._index = {
-          FunctionDefinition: {},
-          FunctionCalls: {},
-          FunctionCall: {}
+          ReferencedDeclarations: {},
+          Expressions: []
         }
       }
     })
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._context(api.getCursorPosition(), api.getCompilationResult())
+      this._warnExpressions(api.getCursorPosition(), api.getCompilationResult())
     }, 1000)
   }
 
-  _context (cursorPosition, compilationResult) {
+  _warnExpressions (cursorPosition, compilationResult) {
     if (this.currentPosition === cursorPosition) return
     this._stopWarning()
     this.currentPosition = cursorPosition
     if (compilationResult && compilationResult.data && compilationResult.source) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[compilationResult.source.target])
-      if (nodes && nodes['FunctionCall']) {
-        this._highlightFunctionCall(nodes['FunctionCall'], compilationResult)
+      if (nodes && nodes.length && nodes[nodes.length - 1]) {
+        this._warnExpression(nodes[nodes.length - 1], compilationResult)
       }
     }
   }
@@ -48,13 +46,12 @@ class ContextualListener {
       var self = this
       var callback = {}
       callback['*'] = function (node) {
-        if (node && node.name && self._index[node.name]) {
-          self._index[node.name][node.id] = node
-          if (node.name === 'FunctionCall' && node.children[0] && node.children[0].attributes) {
-            var declaration = node.children[0].attributes.referencedDeclaration
-            if (!self._index['FunctionCalls'][declaration]) self._index['FunctionCalls'][declaration] = []
-            self._index['FunctionCalls'][declaration].push(node.id)
+        if (node && node.attributes && node.attributes.referencedDeclaration) {
+          if (!self._index['ReferencedDeclarations'][node.attributes.referencedDeclaration]) {
+            self._index['ReferencedDeclarations'][node.attributes.referencedDeclaration] = []
           }
+          self._index['ReferencedDeclarations'][node.attributes.referencedDeclaration].push(node)
+          self._index['Expressions'].push(node)
         }
         return true
       }
@@ -62,20 +59,33 @@ class ContextualListener {
     }
   }
 
-  _highlightFunctionCall (node, compilationResult) {
-    if (node.name === 'FunctionCall' && node.children[0] && node.children[0].attributes) {
-      var calls = this._index['FunctionCalls'][node.children[0].attributes.referencedDeclaration]
-      for (var call in calls) {
-        var position = this.sourceMappingDecoder.decode(this._index['FunctionCall'][calls[call]].src)
-        var eventId = this._api.warnFoundCall(position)
-        this._events.push({ eventId, position, fileTarget: compilationResult.source.target })
+  _warnExpression (node, compilationResult) {
+    var self = this
+    function highlight (id) {
+      if (self._index['ReferencedDeclarations'] && self._index['ReferencedDeclarations'][id]) {
+        var calls = self._index['ReferencedDeclarations'][id]
+        for (var call in calls) {
+          self._warn(calls[call].src, compilationResult)
+        }
       }
     }
+
+    if (node.attributes && node.attributes.referencedDeclaration) {
+      highlight(node.attributes.referencedDeclaration)
+    } else {
+      highlight(node.id)
+    }
+  }
+
+  _warn (src, compilationResult) {
+    var position = this.sourceMappingDecoder.decode(src)
+    var eventId = this._api.warnExpression(position)
+    this._events.push({ eventId, position, fileTarget: compilationResult.source.target })
   }
 
   _stopWarning () {
     for (var event in this._events) {
-      this._api.stopFoundCall(this._events[event])
+      this._api.stopWarningExpression(this._events[event])
     }
     this._events = []
   }
