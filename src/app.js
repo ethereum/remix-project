@@ -394,10 +394,22 @@ function run () {
     getCompilationResult: () => {
       return compiler.lastCompilationResult
     },
-    highlight: (position, node, type) => {
+    highlight: (position, node) => {
       if (compiler.lastCompilationResult && compiler.lastCompilationResult.source && compiler.lastCompilationResult.source.target === config.get('currentFile')) {
         position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-        return editor.addMarker(position, config.get('currentFile'), 'highlight' + type)
+        if (node.children && node.children.length) {
+          position = {
+            start: {
+              line: position.start.line,
+              column: 0
+            },
+            end: {
+              line: position.start.line + 1,
+              column: 0
+            }
+          }
+        }
+        return editor.addMarker(position, config.get('currentFile'), 'highlightreference')
       }
       return null
     },

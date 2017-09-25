@@ -62,9 +62,10 @@ class ContextualListener {
     }
   }
 
-  _highlight (node, compilationResult, type) {
-    var position = this.sourceMappingDecoder.decode(node.src)
-    var eventId = this._api.highlight(position, node, type)
+  _highlight (node, compilationResult) {
+    var src = node.src
+    var position = this.sourceMappingDecoder.decode(src)
+    var eventId = this._api.highlight(position, node)
     if (eventId) {
       this._events.push({ eventId, position, fileTarget: compilationResult.source.target })
     }
@@ -77,16 +78,16 @@ class ContextualListener {
         var calls = self._index['Declarations'][id]
         for (var call in calls) {
           var node = calls[call]
-          self._highlight(node, compilationResult, 'reference')
+          self._highlight(node, compilationResult)
         }
       }
     }
     if (node.attributes && node.attributes.referencedDeclaration) {
       highlights(node.attributes.referencedDeclaration)
       var current = this._index['FlatReferences'][node.attributes.referencedDeclaration]
-      this._highlight(current, compilationResult, 'declaration')
-    } else {
-      highlights(node.id, 'current')
+      this._highlight(current, compilationResult)
+    } else if (node && node.name && node.name !== 'FunctionDefinition' && node.name !== 'ContractDefinition' && node.name !== 'Block') {
+      highlights(node.id)
     }
   }
 

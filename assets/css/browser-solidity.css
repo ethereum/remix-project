@@ -297,20 +297,6 @@ input[type="file"] {
     opacity: 0.7
 }
 
-.highlightdeclaration{
-    position:absolute;
-    z-index:20;
-    background-color: lightgrey;
-    opacity: 0.4
-}
-
-.highlightcurrent {
-    position:absolute;
-    z-index:20;
-    background-color: lightgrey;
-    opacity: 0.4
-}
-
 .highlightcode {
     position:absolute;
     z-index:20;
