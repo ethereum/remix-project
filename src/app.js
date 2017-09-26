@@ -34,6 +34,7 @@ var TxLogger = require('./app/execution/txLogger')
 var EventsDecoder = require('./app/execution/eventsDecoder')
 var handleImports = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
+var ContextualListener = require('./app/editor/contextualListener')
 
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
@@ -384,6 +385,44 @@ function run () {
     })
   })
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+
+  // ---------------- ContextualListener -----------------------
+  this._components.contextualListener = new ContextualListener({
+    getCursorPosition: () => {
+      return this._components.editor.getCursorPosition()
+    },
+    getCompilationResult: () => {
+      return compiler.lastCompilationResult
+    },
+    highlight: (position, node) => {
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data && compiler.lastCompilationResult.data.sourceList[position.file] === config.get('currentFile')) {
+        position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+        var css = 'highlightreference'
+        if (node.children && node.children.length) {
+          // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
+          css = 'highlightreferenceline'
+          position = {
+            start: {
+              line: position.start.line,
+              column: 0
+            },
+            end: {
+              line: position.start.line + 1,
+              column: 0
+            }
+          }
+        }
+        return editor.addMarker(position, config.get('currentFile'), css)
+      }
+      return null
+    },
+    stopHighlighting: (event) => {
+      editor.removeMarker(event.eventId, event.fileTarget)
+    }
+  }, {
+    compiler: compiler.event,
+    editor: editor.event
+  })
 
   // ----------------- Renderer -----------------
   var rendererAPI = {
