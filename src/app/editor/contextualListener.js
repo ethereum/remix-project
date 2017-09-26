@@ -9,7 +9,7 @@ class ContextualListener {
       Declarations: {},
       FlatReferences: {}
     }
-    this._events = []
+    this._activeHighlights = []
 
     events.compiler.register('compilationFinished', (success, data, source) => {
       this._stopHighlighting()
@@ -67,7 +67,7 @@ class ContextualListener {
     var position = this.sourceMappingDecoder.decode(src)
     var eventId = this._api.highlight(position, node)
     if (eventId) {
-      this._events.push({ eventId, position, fileTarget: compilationResult.source.target })
+      this._activeHighlights.push({ eventId, position, fileTarget: compilationResult.source.target })
     }
   }
 
@@ -86,16 +86,16 @@ class ContextualListener {
       highlights(node.attributes.referencedDeclaration)
       var current = this._index['FlatReferences'][node.attributes.referencedDeclaration]
       this._highlight(current, compilationResult)
-    } else if (node && node.name && node.name !== 'FunctionDefinition' && node.name !== 'ContractDefinition' && node.name !== 'Block') {
+    } else {
       highlights(node.id)
     }
   }
 
   _stopHighlighting () {
-    for (var event in this._events) {
-      this._api.stopHighlighting(this._events[event])
+    for (var event in this._activeHighlights) {
+      this._api.stopHighlighting(this._activeHighlights[event])
     }
-    this._events = []
+    this._activeHighlights = []
   }
 }
 
