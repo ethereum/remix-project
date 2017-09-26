@@ -399,6 +399,7 @@ function run () {
         position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
         var css = 'highlightreference'
         if (node.children && node.children.length) {
+          // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
           css = 'highlightreferenceline'
           position = {
             start: {
