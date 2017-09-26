@@ -174,7 +174,7 @@ function compileTab (container, appAPI, appEvents, opts) {
         <div class="${css.compileButtons}">
           <div class="${css.compileButton} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>
           <div class="${css.autocompileContainer}">
-            <input class="${css.autocompile}" id="autoCompile" type="checkbox" checked title="Auto compile">
+            <input class="${css.autocompile}" id="autoCompile" type="checkbox" title="Auto compile">
             <span class="${css.autocompileText}">Auto compile</span>
           </div>
           ${warnCompilationSlow}
@@ -215,7 +215,9 @@ function compileTab (container, appAPI, appEvents, opts) {
     autoCompile = appAPI.config.get('autoCompile')
   }
   appAPI.config.set('autoCompile', autoCompile)
-  autoCompileInput.setAttribute('checked', autoCompile)
+  if (autoCompile) {
+    autoCompileInput.setAttribute('checked', autoCompile)
+  }
 
   autoCompileInput.addEventListener('change', function () {
     appAPI.config.set('autoCompile', autoCompileInput.checked)
