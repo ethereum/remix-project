@@ -10,6 +10,15 @@ function SourceMappingDecoder () {
 }
 
 /**
+ * get a list of nodes that are at the given @arg position
+ *
+ * @param {String} astNodeType      - type of node to return
+ * @param {Int} position     - cursor position
+ * @return {Object} ast object given by the compiler
+ */
+SourceMappingDecoder.prototype.nodesAtPosition = nodesAtPosition
+
+/**
  * Decode the source mapping for the given @arg index
  *
  * @param {Integer} index      - source mapping index to decode
@@ -17,6 +26,23 @@ function SourceMappingDecoder () {
  * @return {Object} returns the decompressed source mapping for the given index {start, length, file, jump}
  */
 SourceMappingDecoder.prototype.atIndex = atIndex
+
+/**
+ * Decode the given @arg value
+ *
+ * @param {string} value      - source location to decode ( should be start:length:file )
+ * @return {Object} returns the decompressed source mapping {start, length, file}
+ */
+SourceMappingDecoder.prototype.decode = function (value) {
+  if (value) {
+    value = value.split(':')
+    return {
+      start: parseInt(value[0]),
+      length: parseInt(value[1]),
+      file: parseInt(value[2])
+    }
+  }
+}
 
 /**
  * Decode the source mapping for the given compressed mapping
@@ -131,6 +157,29 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
       } else {
         return true
       }
+    } else {
+      return false
+    }
+  }
+  astWalker.walk(ast.AST, callback)
+  return found
+}
+
+function nodesAtPosition (astNodeType, position, ast) {
+  var astWalker = new AstWalker()
+  var callback = {}
+  var found = []
+  callback['*'] = function (node) {
+    var nodeLocation = sourceLocationFromAstNode(node)
+    if (!nodeLocation) {
+      return
+    }
+    if (nodeLocation.start <= position && nodeLocation.start + nodeLocation.length >= position) {
+      if (!astNodeType || astNodeType === node.name) {
+        found.push(node)
+        if (astNodeType) return false
+      }
+      return true
     } else {
       return false
     }
