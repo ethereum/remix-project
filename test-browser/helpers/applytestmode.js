@@ -3,5 +3,11 @@
  *
  */
 console.log('applying test mode')
-document.getElementById('input').editor.setBehavioursEnabled(false) // disable bracket auto-match (i.e. automatic injection of closing brackets and other things), so we can enter raw source code.
+var editor = document.getElementById('input').editor
+editor.setBehavioursEnabled(false) // disable bracket auto-match (i.e. automatic injection of closing brackets and other things), so we can enter raw source code.
+editor.setOptions({
+  enableBasicAutocompletion: false,
+  enableSnippets: false,
+  enableLiveAutocompletion: false
+})
 console.log('test mode applied')
