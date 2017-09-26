@@ -39,7 +39,7 @@ class ContextualListener {
     if (compilationResult && compilationResult.data && compilationResult.source) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[compilationResult.source.target])
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
-        this._hightlightExpressions(nodes[nodes.length - 1], compilationResult)
+        this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
     }
   }
@@ -71,7 +71,7 @@ class ContextualListener {
     }
   }
 
-  _hightlightExpressions (node, compilationResult) {
+  _highlightExpressions (node, compilationResult) {
     var self = this
     function highlights (id) {
       if (self._index['Declarations'] && self._index['Declarations'][id]) {
