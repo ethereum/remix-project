@@ -10,41 +10,26 @@ class Recorder {
     opts.events.executioncontext.register('contextChanged', function () {
       self.clearAll()
     })
+    var counter = 1
+    self._addressCache = {}
     opts.events.udapp.register('initiatingTransaction', (stamp, tx) => {
       var { from, to, value, gas, data } = tx
-      var deTx = { from, to, value, gas, data, pending: true }
-      self.data._pending[stamp] = deTx
+      var record = { value, gas, data }
+      record.from = self._addressCache[from] || (self._addressCache[from] = `<account -${(++counter)}>`)
+      if (to === null) self.data._pending[stamp] = record
+      else record.to = self._addressCache[to] || (self._addressCache[to] = `<account -${(++counter)}>`)
+      self.append(stamp, record)
     })
     opts.events.udapp.register('transactionExecuted', args => {
-      var [err, from, to, data, /* isUserCall, result, */ stamp] = args
+      var err = args[0]
       if (err) console.error(err)
-      else update(stamp, from, to, data)
-    })
-    opts.events.udapp.register('callExecuted', args => {
-      var [err, from, to, data, /* isUserCall, result, */ stamp] = args
-      if (err) console.error(err)
-      else update(stamp, from, to, data)
-    })
-    function update (stamp, from, to, data) {
+      var stamp = args[6]
       var record = self._pending[stamp]
       delete self._pending[stamp]
       if (!record) return
-      // at this point you have a map 0x123789 <=> < contractName - 1>
-      // if a from` is 0x123789 you ill replace it by < contractName - 1>
-      // > if (start with 0x) do nothing (we already have a supposed address)
-      // > if not : <account - 0> is resolved to the first account in the list of accounts given from universaldapp.
-      // > <account - 1> is resolved to second first account in the list of accounts given from universaldapp.
-      // > if the account list is not large enough, we take the last one.
-      // > Real addresses should be translated into token (apply to: to / from / return value of contract creation)
-      // > e.g: from: 0x123...123 , to: 0x123...145 should be saved as: from:, to:
-      // > e.g: from: 0x123...123, to: null (cause this is a contract creation),
-      // > the return value is the address of the created contract.
-      console.log('@TODO: probably the below translation need to be adapted to the comments above')
-      record.from = from
-      record.to = to
-      record.data = data
-      self.append(stamp, record)
-    }
+      var to = args[2]
+      record.to = self._addressCache[to] || (self._addressCache[to] = `<contract -${++counter}>`)
+    })
   }
   append (timestamp, record) {
     var self = this
