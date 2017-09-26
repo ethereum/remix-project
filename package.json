@@ -58,7 +58,7 @@
     "start_dev": "npm-run-all -lpr serve watch onchange",
     "start_eth": "npm run warning_message; eth -j --rpccorsdomain '*'",
     "start_geth": "npm run warning_message; geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
-    "test": "standard; tape ./test/tests.js",
+    "test": "standard && tape ./test/tests.js",
     "test-browser": "npm-run-all -lpr selenium serve waittest",
     "waittest": "sleep 5 && npm run nightwatch_local",
     "warning_message": "echo 'DO NOT DO THIS IF eth/geth STORES PRIVATE KEYS!! External system might be able to access your node through the RPC server.\n\n';",
