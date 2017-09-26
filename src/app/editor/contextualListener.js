@@ -75,9 +75,9 @@ class ContextualListener {
     var self = this
     function highlights (id) {
       if (self._index['Declarations'] && self._index['Declarations'][id]) {
-        var calls = self._index['Declarations'][id]
-        for (var call in calls) {
-          var node = calls[call]
+        var refs = self._index['Declarations'][id]
+        for (var ref in refs) {
+          var node = refs[ref]
           self._highlight(node, compilationResult)
         }
       }
