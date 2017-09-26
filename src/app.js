@@ -395,7 +395,7 @@ function run () {
       return compiler.lastCompilationResult
     },
     highlight: (position, node) => {
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.source && compiler.lastCompilationResult.source.target === config.get('currentFile')) {
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data && compiler.lastCompilationResult.data.sourceList[position.file] === config.get('currentFile')) {
         position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
         var css = 'highlightreference'
         if (node.children && node.children.length) {
