@@ -5,6 +5,8 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
+require('brace/ext/language_tools')
+var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
 
 var css = csjs`
@@ -26,6 +28,18 @@ function Editor (opts = {}) {
   var self = this
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
+  ace.acequire('ace/ext/language_tools')
+  editor.setOptions({
+    enableBasicAutocompletion: true,
+    enableSnippets: true,
+    enableLiveAutocompletion: true
+  })
+  var flowCompleter = {
+    getCompletions: function (editor, session, pos, prefix, callback) {
+      // @TODO add here other propositions
+    }
+  }
+  langTools.addCompleter(flowCompleter)
   el.className += ' ' + css['ace-editor']
   el.editor = editor // required to access the editor during tests
   self.render = function () { return el }
