@@ -1,4 +1,4 @@
-var csjs = require('csjs-inject')
+// var csjs = require('csjs-inject')
 
 module.exports = styleGuide
 
@@ -40,32 +40,32 @@ function styleGuide () {
                               FONTS
   -------------------------------------------------------------------------- */
 
-var texts = {
-  'title-XL': `
-    font-size             : 2em;
-    font-weight           : 700;
-    letter-spacing        : .05em;
-  `,
+  var texts = {
+    'title-XL': `
+      font-size             : 2em;
+      font-weight           : 700;
+      letter-spacing        : .05em;
+    `,
 
-  'title-L': `
-    font-size             : 1em;
-    font-weight           : 600;
-  `,
+    'title-L': `
+      font-size             : 1em;
+      font-weight           : 600;
+    `,
 
-  'title-M': `
-    font-size             : 1em;
-    font-weight           : 400;
-  `,
+    'title-M': `
+      font-size             : 1em;
+      font-weight           : 400;
+    `,
 
-  'title-S': `
-    font-size             : .8em;
-    font-weight           : 300;
-  `,
+    'title-S': `
+      font-size             : .8em;
+      font-weight           : 300;
+    `,
 
-  'text': `
-    font-size             : .8em;
-  `
-}
+    'text': `
+      font-size             : .8em;
+    `
+  }
 
   /* --------------------------------------------------------------------------
                                 TEXT-BOXES

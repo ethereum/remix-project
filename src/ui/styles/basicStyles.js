@@ -65,20 +65,20 @@ module.exports = {
     'margin-bottom': '10px'
   },
   button: {
-    'border-color'            : 'transparent',
-    'border-radius'           : '3px',
-    'border'                  : '.3px solid ${colors.veryLightGrey}',
-    'cursor'                  : 'pointer',
-    'min-height'              : '25px',
-    'max-height'              : '25px',
-    'padding'                 : '3px',
-    'min-width'               : '100px',
-    'font-size'               : '12px',
-    'overflow'                : 'hidden',
-    'word-break'              : 'normal',
-    'background-color'        : 'hsla(0, 0%, 40%, .2)',
-    'color'                   : 'hsla(0, 0%, 40%, 1)',
-    'margin'                  : '3px',
-    'text-decoration'         : 'none'
+    'border-color': 'transparent',
+    'border-radius': '3px',
+    'border': '.3px solid ${colors.veryLightGrey}',
+    'cursor': 'pointer',
+    'min-height': '25px',
+    'max-height': '25px',
+    'padding': '3px',
+    'min-width': '100px',
+    'font-size': '12px',
+    'overflow': 'hidden',
+    'word-break': 'normal',
+    'background-color': 'hsla(0, 0%, 40%, .2)',
+    'color': 'hsla(0, 0%, 40%, 1)',
+    'margin': '3px',
+    'text-decoration': 'none'
   }
 }
