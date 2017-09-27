@@ -24,11 +24,11 @@ contract Ballot {
         proposals.length = _numProposals;
     }
 
-    /// Give $(voter) the right to vote on this ballot.
+    /// Give $(toVoter) the right to vote on this ballot.
     /// May only be called by $(chairperson).
-    function giveRightToVote(address voter) public {
-        if (msg.sender != chairperson || voters[voter].voted) return;
-        voters[voter].weight = 1;
+    function giveRightToVote(address toVoter) public {
+        if (msg.sender != chairperson || voters[toVoter].voted) return;
+        voters[toVoter].weight = 1;
     }
 
     /// Delegate your vote to the voter $(to).
@@ -47,21 +47,21 @@ contract Ballot {
             delegateTo.weight += sender.weight;
     }
 
-    /// Give a single vote to proposal $(proposal).
-    function vote(uint8 proposal) public {
+    /// Give a single vote to proposal $(toProposal).
+    function vote(uint8 toProposal) public {
         Voter storage sender = voters[msg.sender];
-        if (sender.voted || proposal >= proposals.length) return;
+        if (sender.voted || toProposal >= proposals.length) return;
         sender.voted = true;
-        sender.vote = proposal;
-        proposals[proposal].voteCount += sender.weight;
+        sender.vote = toProposal;
+        proposals[toProposal].voteCount += sender.weight;
     }
 
     function winningProposal() public constant returns (uint8 _winningProposal) {
         uint256 winningVoteCount = 0;
-        for (uint8 proposal = 0; proposal < proposals.length; proposal++)
-            if (proposals[proposal].voteCount > winningVoteCount) {
-                winningVoteCount = proposals[proposal].voteCount;
-                _winningProposal = proposal;
+        for (uint8 prop = 0; prop < proposals.length; prop++)
+            if (proposals[prop].voteCount > winningVoteCount) {
+                winningVoteCount = proposals[prop].voteCount;
+                _winningProposal = prop;
             }
     }
 }`
