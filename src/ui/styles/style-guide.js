@@ -48,12 +48,15 @@ function styleGuide () {
                 FONT
     ************************** */
     fonts: {
+      font: '14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif',
     },
 
     /****************************
                 BORDERS
     ************************** */
-    borders: {}
+    borders: {
+      borderRadius: '3px'
+    }
   }
 
   /* --------------------------------------------------------------------------
@@ -76,11 +79,72 @@ function styleGuide () {
     icon_Color: css_properties.colors.black,
     icon_HoverColor: css_properties.colors.orange,
 
-    // UI ELEMENTS
+    // UI ELEMENTS (dropdown, input)
     element_TextColor: css_properties.colors.black,
     element_BackgroundColor: css_properties.colors.white,
-    element_BorderColor: css_properties.colors.veryLightGrey
+    element_BorderColor: css_properties.colors.veryLightGrey,
 
+    // DROPDOWN
+    dropdown_TextColor: css_properties.colors.black,
+    dropdown_BackgroundColor: css_properties.colors.white,
+    dropdown_BorderColor: css_properties.colors.veryLightGrey,
+
+    // INPUT
+    input_TextColor: css_properties.colors.black,
+    input_BackgroundColor: css_properties.colors.white,
+    input_BorderColor: css_properties.colors.veryLightGrey,
+
+    // INFO BOX
+    infoBox_TextColor: css_properties.colors.black,
+    infoBox_BackgroundColor: css_properties.colors.white,
+    infoBox_BorderColor: css_properties.colors.veryLightGrey,
+
+    // BUTTONS
+    // Compile Tab (Right panel)
+    compileButton_TextColor: css_properties.colors.black,
+    compileButton_BackgroundColor: css_properties.colors.veryLightGrey,
+    compileButton_BorderColor: css_properties.colors.veryLightGrey,
+
+    detailsButton_TextColor: css_properties.colors.black,
+    detailsButton_BackgroundColor: css_properties.colors.veryLightGrey,
+    detailsButton_BorderColor: css_properties.colors.veryLightGrey,
+
+    publishButton_TextColor: css_properties.colors.black,
+    publishButton_BackgroundColor: css_properties.colors.veryLightGrey,
+    publishButton_BorderColor: css_properties.colors.veryLightGrey,
+
+    // Run Tab (Right panel)
+    atAddressButton_TextColor: css_properties.colors.black,
+    atAddressButton_BackgroundColor: css_properties.colors.lightGreen,
+    atAddressButton_BorderColor: css_properties.colors.lightGreen,
+
+    createButton_TextColor: css_properties.colors.black,
+    createButton_BackgroundColor: css_properties.colors.lightRed,
+    createButton_BorderColor: css_properties.colors.lightRed,
+
+    instance_callButton_TextColor: css_properties.colors.black ,
+    instance_callButton_BackgroundColor: css_properties.colors.lightBlue,
+    instance_callButton_BorderColor: css_properties.colors.lightBlue,
+
+    instance_transactButton_TextColor: css_properties.colors.black,
+    instance_transactButton_BackgroundColor: css_properties.colors.lightRed,
+    instance_transactButton_BorderColor: css_properties.colors.lightRed,
+
+    instance_transactPayableButton_TextColor: css_properties.colors.black,
+    instance_transactPayableButton_BackgroundColor: css_properties.colors.red,
+    instance_transactPayableButton_BorderColor: css_properties.colors.red,
+
+    // Debugger Tab (Right panel)
+    debuggerButton_TextColor: css_properties.colors.black,
+    debuggerButton_BackgroundColor: css_properties.colors.veryLightGrey,
+    debuggerButton_BorderColor: css_properties.colors.veryLightGrey,
+
+    // Analysis Tab (Right panel)
+    runButton_TextColor: css_properties.colors.black,
+    runButton_BackgroundColor: css_properties.colors.veryLightGrey,
+    runButton_BorderColor: css_properties.colors.veryLightGrey,
+
+    // Support Tab (Right panel)
   }
 
 /* --------------------------------------------------------------------------
@@ -95,36 +159,36 @@ var remix_properties = {
           REMIX GENERAL
   ************************** */
   remix: {
-    fonts: {
-      'font': '',
-      'font-size': '',
+    text: {
+      font: css_properties.fonts.font,
       mainText: {
-        'color': ''
+        color: app_properties.mainText_Color
       },
       supportText: {
-        'color': ''
+        color: app_properties.supportText_Color
       }
     },
+    general_BackgroundColor: app_properties.general_BackgroundColor,
+    support_BackgroundColor: app_properties.support_BackgroundColor,
     dropdown: {
-      'background-color': '',
-      'color': ''
+      background: app_properties.dropdown_BackgroundColor,
+      border: app_properties.dropdown_BorderColor,
+      color: app_properties.dropdown_TextColor
     },
     textBox: {
-      'background-color': '',
-      'border': '',
-      'color': ''
+      background: app_properties.infoBox_BackgroundColor,
+      border: app_properties.infoBox_BorderColor,
+      color: app_properties.infoBox_TextColor
     },
     infoTextBox: {
-      'background-color': '',
-      'border': '',
-      'color': ''
+      background: app_properties.infoBox_BackgroundColor,
+      border: app_properties.infoBox_BorderColor,
+      color: app_properties.infoBox_TextColor
     },
     inputField: {
-      'background-color': '',
-      'color': ''
-    },
-    butons: {
-      'background-color': ''
+      background: app_properties.input_BackgroundColor,
+      border: app_properties.input_BorderColor,
+      color: app_properties.input_TextColor
     },
     copyToClipboard: {
       color: app_properties.icon_Color,
@@ -162,8 +226,8 @@ var remix_properties = {
               EDITOR
   ************************** */
   editor: {
-    'background-color': '',  // general_BackgroundColor
-    'color': '',  // fonts/color
+    background: app_properties.general_BackgroundColor,
+    color: app_properties.mainText_Color,
     gutter: {
       background: app_properties.support_BackgroundColor,
       highlightedNumber: {
@@ -172,7 +236,7 @@ var remix_properties = {
     },
     navTabs: {
       background: app_properties.support_BackgroundColor,
-      'color': ''  // fonts/color
+      color: app_properties.mainText_Color,
     },
     icons: {
       color: app_properties.icon_Color,
@@ -181,7 +245,6 @@ var remix_properties = {
       }
     },
     code: {
-      // types, comments, parameters...
       highlightedLine: {
         background: app_properties.support_BackgroundColor   //support_BackgroundColor
       },
@@ -199,16 +262,17 @@ var remix_properties = {
   terminal: {
     menu: {
       background: app_properties.support_BackgroundColor,
-      'color': '',  // fonts/color
+      color: app_properties.mainText_Color,
       icons: {
         color: app_properties.icon_Color,
         hover: {
           color: app_properties.icon_Color
         }
       },
-      dropdown: {  // dropdown
-        'background-color': '',
-        'color': ''
+      dropdown: {
+        background: app_properties.dropdown_BackgroundColor,
+        border: app_properties.dropdown_BorderColor,
+        color: app_properties.dropdown_TextColor
       },
       togglePannel: {
         color: app_properties.icon_Color,
@@ -218,8 +282,8 @@ var remix_properties = {
       },
     },
     terminalWindow: {
-      'background-color': '',
-      'color': '',
+      background: css_properties.colors.veryLightGrey,
+      color: '',
       logo: {
         'url': '',
       },
@@ -252,17 +316,17 @@ var remix_properties = {
           RIGHT PANEL
   ************************** */
   rightPanel: {
-    'background-color': '',  // already defined in Remix general
-    'color': '', // already defined in Remix general
-    textBox: {        // already defined in Remix general
-      'background-color': '',
-      'border': '',
-      'color': ''
+    background: app_properties.general_BackgroundColor,
+    color: app_properties.mainText_Color,
+    textBox: {
+      background: app_properties.infoBox_BackgroundColor,
+      border: app_properties.infoBox_BorderColor,
+      color: app_properties.infoBox_TextColor
     },
-    infoTextBox: {     // already defined in Remix general
-      'background-color': '',
-      'border': '',
-      'color': ''
+    infoTextBox: {
+      background: app_properties.infoBox_BackgroundColor,
+      border: app_properties.infoBox_BorderColor,
+      color: app_properties.infoBox_TextColor
     },
     togglePannel: {
       color: app_properties.icon_Color,
@@ -289,33 +353,42 @@ var remix_properties = {
       'color': ''
     },
     dropdown: {
-      'background-color': '',  // dropdown
-      'color': ''
+      background: app_properties.dropdown_BackgroundColor,
+      border: app_properties.dropdown_BorderColor,
+      color: app_properties.dropdown_TextColor
     },
-    inputField: {   // inputField
-      'background-color': '',
-      'color': ''
+    inputField: {
+      background: app_properties.input_BackgroundColor,
+      border: app_properties.input_BorderColor,
+      color: app_properties.input_TextColor
     },
 
     compileTab: {
       compileButton: {
-        'background-color': '', // or import a special image 'url': ''
-        'color': ''
+        background: app_properties.compileButton_BackgroundColor,
+        border: app_properties.compileButton_BorderColor,
+        color: app_properties.compileButton_TextColor,
       },
-      buttons: {
-        'background-color': '',  // general buttons background color
-        'color': ''
+      detailsButton: {
+        background: app_properties.detailsButton_BackgroundColor,
+        border: app_properties.detailsButton_BorderColor,
+        color: app_properties.detailsButton_TextColor,
       },
-      details: {
-        'background-color': '',  // already defined in Remix general
+      PublishButton: {
+        background: app_properties.publishButton_BackgroundColor,
+        border: app_properties.publishButton_BorderColor,
+        color: app_properties.publishButton_TextColor,
+      },
+      detailsModalDialog: {
+        background: app_properties.general_BackgroundColor,
         header: {
           background: app_properties.support_BackgroundColor,
-          'color': ''
+          color: app_properties.mainText_Color,
         },
         infoTextBox: {     // already in rightPanel general theme
-          'background-color': '',
-          'border': '',
-          'color': '',
+          background: app_properties.element_BackgroundColor,
+          border: app_properties.element_BorderColor,
+          color: app_properties.element_TextColor,
           copyToClipboard: {
             color: app_properties.icon_Color,
             hover: {
@@ -329,36 +402,37 @@ var remix_properties = {
             }
           },
           title: {
-            'color': ''
+            color: app_properties.mainText_Color
           }
         }
       }
     },
 
     runTab: {
-      compileButton: {
-        'background-color': '', // or import new 'url': ''
-        'color': ''
-      },
       atAddressButton: {
-        'background-color': '',
-        'color': ''
+        background: app_properties.atAddressButton_BackgroundColor,
+        border: app_properties.atAddressButton_BorderColor,
+        color: app_properties.atAddressButton_TextColor
       },
       createButton: {
-        'background-color': '',
-        'color': ''
+        background: app_properties.createButton_BackgroundColor,
+        border: app_properties.createButton_BorderColor,
+        color: app_properties.createButton_TextColor
       },
       instance_callButton: {
-        'background-color': '',
-        'color': ''
+        background: app_properties.instance_callButton_BackgroundColor,
+        border: app_properties.instance_callButton_BorderColor,
+        color: app_properties.instance_callButton_TextColor
       },
       instance_transactButton: {
-        'background-color': '',
-        'color': ''
+        background: app_properties.instance_transactButton_BackgroundColor,
+        border: app_properties.instance_transactButton_BorderColor,
+        color: app_properties.instance_transactButton_TextColor
       },
       instance_transactPayableButton: {
-        'background-color': '',
-        'color': ''
+        background: app_properties.instance_transactPayableButton_BackgroundColor,
+        border: app_properties.instance_transactPayableButton_BorderColor,
+        color: app_properties.instance_transactPayableButton_TextColor
       },
       copyToClipboard: {
         color: app_properties.icon_Color,
@@ -369,17 +443,18 @@ var remix_properties = {
     },
 
     settingsTab: {
-      infoTextBox: {     // already in rightPanel general theme
-        'background-color': '',
-        'border': '',
-        'color': ''
+      infoTextBox: {
+        background: app_properties.infoBox_BackgroundColor,
+        border: app_properties.infoBox_BorderColor,
+        color: app_properties.infoBox_TextColor,
       }
     },
 
     debuggerTab: {
       buttons: {
-        'background-color': '',  // including eye button (needs to get ${styles.button} applied)
-        'color': '',
+        debuggerButton_TextColor: css_properties.colors.black,
+        debuggerButton_BackgroundColor: css_properties.colors.veryLightGrey,
+        debuggerButton_BorderColor: css_properties.colors.veryLightGrey,
         icons: {
           color: app_properties.icon_Color,
           hover: {
@@ -387,9 +462,10 @@ var remix_properties = {
           }
         }
       },
-      dropdowns: {  // dropdown
-        'background-color': '',  // see if ${styles.dropdown} is applied
-        'color': '',
+      dropdowns: {
+        background: app_properties.dropdown_BackgroundColor,
+        border: app_properties.dropdown_BorderColor,
+        color: app_properties.dropdown_TextColor,
         instructions: {
           highlightedKey: {
             background: app_properties.support_BackgroundColor
@@ -397,16 +473,22 @@ var remix_properties = {
         },
         solidityState: {
           label: {
-            'color': ''  // supportText
+            color: app_properties.supportText_Color
           }
         }
       }
     },
 
     analysisTab: {
+      buttons: {
+        runButton_TextColor: css_properties.colors.black,
+        runButton_BackgroundColor: css_properties.colors.veryLightGrey,
+        runButton_BorderColor: css_properties.colors.veryLightGrey
+      },
       textBox: {   // already in rightPanel general theme
-        'background-color': '',
-        'color': ''
+        background: app_properties.infoBox_BackgroundColor,
+        border: app_properties.infoBox_BorderColor,
+        color: app_properties.infoBox_TextColor
       },
       warningMessage: {  // already in rightPanel general theme
         'border': '',
@@ -417,13 +499,14 @@ var remix_properties = {
 
     supportTab: {
       textBox: {   // already in rightPanel general theme
-        'background-color': '',
-        'color': ''
+        background: app_properties.infoBox_BackgroundColor,
+        border: app_properties.infoBox_BorderColor,
+        color: app_properties.infoBox_TextColor
       },
       infoTextBox: {     // already in rightPanel general theme
-        'background-color': '',
-        'border': '',
-        'color': ''
+        background: app_properties.infoBox_BackgroundColor,
+        border: app_properties.infoBox_BorderColor,
+        color: app_properties.infoBox_TextColor
       }
     }
   }
@@ -436,9 +519,9 @@ var elementColors = {
           BUTTONS
   ----------------------- */
   // DROPDOWN
-  dropdown_TextColor: app_properties.element_TextColor,
-  dropdown_BackgroundColor: app_properties.element_BackgroundColor,
-  dropdown_BorderColor: app_properties.element_BorderColor,
+  dropdown_TextColor: app_properties.dropdown_TextColor,
+  dropdown_BackgroundColor: app_properties.dropdown_BackgroundColor,
+  dropdown_BorderColor: app_properties.dropdown_BorderColor,
 
   // BUTTON
   button_TextColor: app_properties.element_TextColor,
@@ -446,14 +529,11 @@ var elementColors = {
   rightPanel_compileTab_compileButton_BackgroundColor: 'hsla(0, 0%, 40%, .2)',
   rightPanel_compileTab_otherButtons_BackgroundColor: 'hsla(0, 0%, 40%, .2)'
 
-  /* -----------------------
-          TEXT BOXES
-  ----------------------- */
 }
   /* --------------------------------------------------------------------------
-                                TEXT-BOXES
+              UI ELEMENTS
   -------------------------------------------------------------------------- */
-  var textBoxes = {
+  var uiElements = {
 
     'display-box': `
       font-size             : 12px;
@@ -486,6 +566,23 @@ var elementColors = {
       padding               : 0 8px;
       overflow              : hidden;
       word-break            : normal;
+    `,
+
+    'dropdown': `
+      color                   : ${css_properties.colors.black};
+      background-color        : ${css_properties.colors.white};
+      border                  : 1px solid ${css_properties.colors.veryLightGrey};
+      font-size               : 12px;
+      font-weight             : bold;
+      padding                 : 0 8px;
+      text-decoration         : none;
+      cursor                  : pointer;
+      border-radius           : 3px;
+      height                  : 25px;
+      width                   : 250px;
+      text-align              : center;
+      overflow                : hidden;
+      word-break              : normal;
     `
   }
   /* --------------------------------------------------------------------------
@@ -494,9 +591,9 @@ var elementColors = {
   var buttons = {
 
     'button': `
-      background-color        : ${elementColors.button_BackgroundColor};
-      border                  : .3px solid ${elementColors.button_BorderColor};
-      color                   : ${elementColors.button_TextColor};
+      background-color        : ${css_properties.colors.veryLightGrey};
+      border                  : .3px solid ${css_properties.colors.veryLightGrey};
+      color                   : ${css_properties.colors.black};
       display                 : flex;
       align-items             : center;
       justify-content         : center;
@@ -513,23 +610,6 @@ var elementColors = {
 
     'button:hover': `
       opacity                 : 0.8;
-    `,
-
-    'dropdown': `
-      color                   : ${elementColors.dropdown_TextColor};
-      background-color        : ${elementColors.dropdown_BackgroundColor};
-      border                  : 1px solid ${elementColors.dropdown_BorderColor};
-      font-size               : 12px;
-      font-weight             : bold;
-      padding                 : 0 8px;
-      text-decoration         : none;
-      cursor                  : pointer;
-      border-radius           : 3px;
-      height                  : 25px;
-      width                   : 250px;
-      text-align              : center;
-      overflow                : hidden;
-      word-break              : normal;
     `
 
   }
@@ -537,11 +617,11 @@ var elementColors = {
   return {
     colors: css_properties.colors,
     elementColors: elementColors,
-    dropdown: buttons['dropdown'],
+    dropdown: uiElements['dropdown'],
     button: buttons['button'],
-    inputField: textBoxes['input'],
-    infoTextBox: textBoxes['info-text-box'],
-    displayBox: textBoxes['display-box']
+    inputField: uiElements['input'],
+    infoTextBox: uiElements['info-text-box'],
+    displayBox: uiElements['display-box']
   }
 }
 
