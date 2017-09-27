@@ -22,22 +22,27 @@ class ContextualListener {
       }
     })
 
-    events.editor.register('sessionSwitched', () => { this._stopHighlighting() })
     events.editor.register('contentChanged', () => { this._stopHighlighting() })
 
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._highlightItems(api.getCursorPosition(), api.getCompilationResult())
+      this._highlightItems(api.getCursorPosition(), api.getCompilationResult(), api.getCurrentFile())
     }, 1000)
   }
 
-  _highlightItems (cursorPosition, compilationResult) {
+  _highlightItems (cursorPosition, compilationResult, file) {
     if (this.currentPosition === cursorPosition) return
+    if (this.currentFile !== file) {
+      this.currentFile = file
+      this.currentPosition = cursorPosition
+      return
+    }
     this._stopHighlighting()
     this.currentPosition = cursorPosition
-    if (compilationResult && compilationResult.data && compilationResult.source) {
-      var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[compilationResult.source.target])
+    this.currentFile = file
+    if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
+      var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
@@ -58,7 +63,9 @@ class ContextualListener {
         self._index['FlatReferences'][node.id] = node
         return true
       }
-      this.astWalker.walk(compilationResult.sources[source.target].AST, callback)
+      for (var s in compilationResult.sources) {
+        this.astWalker.walk(compilationResult.sources[s].AST, callback)
+      }
     }
   }
 
@@ -67,7 +74,7 @@ class ContextualListener {
     var position = this.sourceMappingDecoder.decode(node.src)
     var eventId = this._api.highlight(position, node)
     if (eventId) {
-      this._activeHighlights.push({ eventId, position, fileTarget: compilationResult.source.target })
+      this._activeHighlights.push({ eventId, position, fileTarget: compilationResult.data.sourceList[position.file] })
     }
   }
 

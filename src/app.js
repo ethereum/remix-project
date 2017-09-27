@@ -394,25 +394,28 @@ function run () {
     getCompilationResult: () => {
       return compiler.lastCompilationResult
     },
+    getCurrentFile: () => {
+      return config.get('currentFile')
+    },
     highlight: (position, node) => {
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data && compiler.lastCompilationResult.data.sourceList[position.file] === config.get('currentFile')) {
-        position = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
+        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
         var css = 'highlightreference'
         if (node.children && node.children.length) {
           // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
           css = 'highlightreferenceline'
-          position = {
+          lineColumn = {
             start: {
-              line: position.start.line,
+              line: lineColumn.start.line,
               column: 0
             },
             end: {
-              line: position.start.line + 1,
+              line: lineColumn.start.line + 1,
               column: 0
             }
           }
         }
-        return editor.addMarker(position, config.get('currentFile'), css)
+        return editor.addMarker(lineColumn, compiler.lastCompilationResult.data.sourceList[position.file], css)
       }
       return null
     },
