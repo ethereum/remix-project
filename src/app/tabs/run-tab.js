@@ -252,7 +252,11 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
 
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
-    getContractNames(success, data)
+    if (success) {
+      getContractNames(success, data)
+    } else {
+      modalDialogCustom.alert('failed to compile')
+    }
   })
 
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
