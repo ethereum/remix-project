@@ -35,6 +35,7 @@ var EventsDecoder = require('./app/execution/eventsDecoder')
 var handleImports = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 var ContextualListener = require('./app/editor/contextualListener')
+var ContextView = require('./app/editor/ContextView')
 
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
@@ -425,6 +426,13 @@ function run () {
   }, {
     compiler: compiler.event,
     editor: editor.event
+  })
+
+  // ---------------- ContextView -----------------------
+  this._components.contextView = new ContextView({
+    contextualListener: this._components.contextualListener
+  }, {
+    contextualListener: this._components.contextualListener.event
   })
 
   // ----------------- Renderer -----------------
