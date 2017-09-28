@@ -12,6 +12,9 @@ function GistHandler (_window) {
         if (target !== '') {
           gistId = getGistId(target)
           loadingFromGist = !!gistId
+          if (loadingFromGist) {
+            cb(gistId)
+          }
         }
       })
     } else {
