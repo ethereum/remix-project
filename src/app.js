@@ -35,7 +35,7 @@ var EventsDecoder = require('./app/execution/eventsDecoder')
 var handleImports = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 var ContextualListener = require('./app/editor/contextualListener')
-var ContextView = require('./app/editor/ContextView')
+var ContextView = require('./app/editor/contextView')
 
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
@@ -171,6 +171,24 @@ module.exports = App
 function run () {
   var self = this
 
+  // ----------------- Compiler -----------------
+  var compiler = new Compiler((url, cb) => {
+    var provider = fileManager.fileProviderOf(url)
+    if (provider && provider.exists(url)) {
+      return provider.get(url, cb)
+    }
+    handleImports.import(url, (error, content) => {
+      if (!error) {
+        // FIXME: at some point we should invalidate the browser cache
+        filesProviders['browser'].addReadOnly(url, content)
+        cb(null, content)
+      } else {
+        cb(error)
+      }
+    })
+  })
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -248,12 +266,63 @@ function run () {
   txlistener.startListening()
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
+  var editor = self._components.editor // shortcut for the editor
+
+  // ---------------- ContextualListener -----------------------
+  this._components.contextualListener = new ContextualListener({
+    getCursorPosition: () => {
+      return this._components.editor.getCursorPosition()
+    },
+    getCompilationResult: () => {
+      return compiler.lastCompilationResult
+    },
+    getCurrentFile: () => {
+      return config.get('currentFile')
+    },
+    highlight: (position, node) => {
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
+        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+        var css = 'highlightreference'
+        if (node.children && node.children.length) {
+          // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
+          css = 'highlightreferenceline'
+          lineColumn = {
+            start: {
+              line: lineColumn.start.line,
+              column: 0
+            },
+            end: {
+              line: lineColumn.start.line + 1,
+              column: 0
+            }
+          }
+        }
+        return editor.addMarker(lineColumn, compiler.lastCompilationResult.data.sourceList[position.file], css)
+      }
+      return null
+    },
+    stopHighlighting: (event) => {
+      editor.removeMarker(event.eventId, event.fileTarget)
+    }
+  }, {
+    compiler: compiler.event,
+    editor: editor.event
+  })
+
+  // ---------------- ContextView -----------------------
+  this._components.contextView = new ContextView({
+    contextualListener: this._components.contextualListener
+  }, {
+    contextualListener: this._components.contextualListener.event
+  })
+
   // ----------------- editor panel ----------------------
   this._components.editorpanel = new EditorPanel({
     api: {
       editor: self._components.editor,
       config: self._api.config,
-      txListener: txlistener
+      txListener: txlistener,
+      contextview: self._components.contextView
     }
   })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
@@ -263,7 +332,6 @@ function run () {
   var queryParams = new QueryParams()
   var gistHandler = new GistHandler()
 
-  var editor = self._components.editor
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   var filesToLoad = null
@@ -369,71 +437,6 @@ function run () {
   } else {
     fileManager.switchFile()
   }
-
-  var compiler = new Compiler((url, cb) => {
-    var provider = fileManager.fileProviderOf(url)
-    if (provider && provider.exists(url)) {
-      return provider.get(url, cb)
-    }
-    handleImports.import(url, (error, content) => {
-      if (!error) {
-        // FIXME: at some point we should invalidate the browser cache
-        filesProviders['browser'].addReadOnly(url, content)
-        cb(null, content)
-      } else {
-        cb(error)
-      }
-    })
-  })
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
-
-  // ---------------- ContextualListener -----------------------
-  this._components.contextualListener = new ContextualListener({
-    getCursorPosition: () => {
-      return this._components.editor.getCursorPosition()
-    },
-    getCompilationResult: () => {
-      return compiler.lastCompilationResult
-    },
-    getCurrentFile: () => {
-      return config.get('currentFile')
-    },
-    highlight: (position, node) => {
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-        var css = 'highlightreference'
-        if (node.children && node.children.length) {
-          // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
-          css = 'highlightreferenceline'
-          lineColumn = {
-            start: {
-              line: lineColumn.start.line,
-              column: 0
-            },
-            end: {
-              line: lineColumn.start.line + 1,
-              column: 0
-            }
-          }
-        }
-        return editor.addMarker(lineColumn, compiler.lastCompilationResult.data.sourceList[position.file], css)
-      }
-      return null
-    },
-    stopHighlighting: (event) => {
-      editor.removeMarker(event.eventId, event.fileTarget)
-    }
-  }, {
-    compiler: compiler.event,
-    editor: editor.event
-  })
-
-  // ---------------- ContextView -----------------------
-  this._components.contextView = new ContextView({
-    contextualListener: this._components.contextualListener
-  }, {
-    contextualListener: this._components.contextualListener.event
-  })
 
   // ----------------- Renderer -----------------
   var rendererAPI = {
