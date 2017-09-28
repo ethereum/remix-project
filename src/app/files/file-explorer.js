@@ -240,8 +240,6 @@ function fileExplorer (appAPI, files) {
 
     function cancelRename () {
       label.innerText = textUnderEdit
-      label.removeAttribute('contenteditable')
-      label.classList.remove(css.rename)
     }
 
     if (event.which === 13) event.preventDefault()
@@ -251,6 +249,8 @@ function fileExplorer (appAPI, files) {
       if (save && event.which !== 13) {
         modalDialogCustom.confirm(null, `Do you want to rename?`, () => { rename() }, () => { cancelRename() })
       }
+      label.removeAttribute('contenteditable')
+      label.classList.remove(css.rename)
     }
   }
 
