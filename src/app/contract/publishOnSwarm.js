@@ -43,11 +43,15 @@ module.exports = (contract, appAPI, cb) => {
       }
       cb()
     })
-  }, function () {
-    // publish the list of sources in order, fail if any failed
-    async.eachSeries(sources, function (item, cb) {
-      swarmVerifiedPublish(item.content, item.hash, cb)
-    }, cb)
+  }, function (error) {
+    if (error) {
+      cb(error)
+    } else {
+      // publish the list of sources in order, fail if any failed
+      async.eachSeries(sources, function (item, cb) {
+        swarmVerifiedPublish(item.content, item.hash, cb)
+      }, cb)
+    }
   })
 }
 

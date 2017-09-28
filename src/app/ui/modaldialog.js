@@ -83,6 +83,7 @@ module.exports = (title, content, ok, cancel) => {
     document.querySelector('body').appendChild(html())
     container = document.querySelector(`.${css.modal}`)
   }
+
   var closeDiv = document.getElementById('modal-close')
 
   var okDiv = document.getElementById('modal-footer-ok')
@@ -100,23 +101,22 @@ module.exports = (title, content, ok, cancel) => {
   modal.innerHTML = ''
   if (content) modal.appendChild(content)
 
-  container.style.display = container.style.display === 'block' ? hide() : show()
+  show()
 
   function okListener () {
+    removeEventListener()
     hide()
     if (ok && ok.fn) ok.fn()
-    removeEventListener()
   }
 
   function cancelListener () {
+    removeEventListener()
     hide()
     if (cancel && cancel.fn) cancel.fn()
-    removeEventListener()
   }
 
   function hide () {
     container.style.display = 'none'
-    container.parentElement.removeChild(container)
   }
 
   function show () {
@@ -128,7 +128,6 @@ module.exports = (title, content, ok, cancel) => {
     cancelDiv.removeEventListener('click', cancelListener)
     closeDiv.removeEventListener('click', cancelListener)
   }
-
   okDiv.addEventListener('click', okListener)
   cancelDiv.addEventListener('click', cancelListener)
   closeDiv.addEventListener('click', cancelListener)

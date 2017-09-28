@@ -1,4 +1,3 @@
-/* global confirm, prompt */
 var async = require('async')
 var $ = require('jquery')
 var csjs = require('csjs-inject')
@@ -314,13 +313,15 @@ function filepanel (appAPI, filesProvider) {
         modalDialogCustom.alert('Failed to create gist: ' + (data || 'Unknown transport error'))
       } else {
         data = JSON.parse(data)
-        if (data.html_url && confirm('Created a gist at ' + data.html_url + ' Would you like to open it in a new window?')) {
-          window.open(data.html_url, '_blank')
+        if (data.html_url) {
+          modalDialogCustom.confirm(null, `Created a gist at ${data.html_url}. Would you like to open it in a new window?`, () => {
+            window.open(data.html_url, '_blank')
+          })
         }
       }
     }
-    if (confirm('Are you sure you want to publish all your files anonymously as a public gist on github.com?')) {
-      // package only files from the browser storage.
+
+    function toGist () {
       packageFiles(filesProvider['browser'], (error, packaged) => {
         if (error) {
           console.log(error)
@@ -339,30 +340,31 @@ function filepanel (appAPI, filesProvider) {
         }
       })
     }
+    modalDialogCustom.confirm(null, `Are you very sure you want to publish all your files anonymously as a public gist on github.com?`, () => {
+      toGist()
+    })
   }
 
   // ------------------ copy files --------------
 
   function copyFiles () {
-    var target = prompt(
-      'To which other browser-solidity instance do you want to copy over all files?',
-      'https://ethereum.github.io/browser-solidity/'
-    )
-    if (target === null) {
-      return
-    }
-    // package only files from the browser storage.
-    packageFiles(filesProvider['browser'], (error, packaged) => {
-      if (error) {
-        console.log(error)
-      } else {
-        $('<iframe/>', {
-          src: target,
-          style: 'display:none;',
-          load: function () { this.contentWindow.postMessage(['loadFiles', packaged], '*') }
-        }).appendTo('body')
-      }
+    modalDialogCustom.prompt(null, 'To which other browser-solidity instance do you want to copy over all files?', 'https://ethereum.github.io/browser-solidity/', (target) => {
+      doCopy(target)
     })
+    function doCopy (target) {
+      // package only files from the browser storage.
+      packageFiles(filesProvider['browser'], (error, packaged) => {
+        if (error) {
+          console.log(error)
+        } else {
+          $('<iframe/>', {
+            src: target,
+            style: 'display:none;',
+            load: function () { this.contentWindow.postMessage(['loadFiles', packaged], '*') }
+          }).appendTo('body')
+        }
+      })
+    }
   }
 }
 

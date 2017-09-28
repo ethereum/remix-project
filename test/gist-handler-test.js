@@ -18,10 +18,10 @@ test('gistHandler.handleLoad with no gist param', function (t) {
 test('gistHandler.handleLoad with blank gist param, and invalid user input', function (t) {
   t.plan(3)
 
-  var fakeWindow = {prompt: function (message) {
+  var fakeWindow = {prompt: function (title, message, input, cb) {
     t.ok(message)
     t.ok(message.match(/gist/i))
-    return 'invalid'
+    cb('invalid')
   }}
 
   var gistHandler = new GistHandler(fakeWindow)
@@ -29,16 +29,16 @@ test('gistHandler.handleLoad with blank gist param, and invalid user input', fun
   var params = {'gist': ''}
   var result = gistHandler.handleLoad(params, null)
 
-  t.equal(result, false)
+  t.equal(result, true)
 })
 
 test('gistHandler.handleLoad with blank gist param, and valid user input', function (t) {
   t.plan(4)
 
-  var fakeWindow = {prompt: function (message) {
+  var fakeWindow = {prompt: function (title, message, input, cb) {
     t.ok(message)
     t.ok(message.match(/gist/i))
-    return 'Beef1234'
+    cb('Beef1234')
   }}
 
   var cb = function (gistId) {

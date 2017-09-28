@@ -1,5 +1,6 @@
-/* global confirm, chrome */
+/* global chrome */
 'use strict'
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 module.exports = function (filesProviders) {
   if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) {
@@ -13,9 +14,18 @@ module.exports = function (filesProviders) {
   function check (key) {
     chrome.storage.sync.get(key, function (resp) {
       console.log('comparing to cloud', key, resp)
-      if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
-        console.log('Overwriting', key)
-        filesProviders['browser'].set(key, resp[key])
+
+      function confirmDialog (callback) {
+        modalDialogCustom.confirm('', 'Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.', () => { callback(true) }, () => { callback(false) })
+      }
+
+      if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key]) {
+        confirmDialog((result) => {
+          if (result) {
+            console.log('Overwriting', key)
+            filesProviders['browser'].set(key, resp[key])
+          }
+        })
       } else {
         console.log('add to obj', obj, key)
         filesProviders['browser'].get(key, (error, content) => {
@@ -26,6 +36,7 @@ module.exports = function (filesProviders) {
           }
         })
       }
+
       done++
       if (done >= count) {
         chrome.storage.sync.set(obj, function () {
