@@ -1,4 +1,4 @@
-/* global alert */
+/* global */
 var $ = require('jquery')
 
 var yo = require('yo-yo')
