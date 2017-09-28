@@ -432,9 +432,13 @@ function compileTab (container, appAPI, appEvents, opts) {
         } else {
           publishOnSwarm(contract, appAPI, function (err) {
             if (err) {
-              alert('Failed to publish metadata: ' + err)
+              try {
+                err = JSON.stringify(err)
+              } catch (e) {}
+              modalDialogCustom.alert(yo`<span>Failed to publish metadata file to swarm, please check the Swarm gateways is available ( swarm-gateways.net ).<br />
+              ${err}</span>`)
             } else {
-              alert('Metadata published successfully. You\'l find the Swarm address in the Contract details.')
+              modalDialogCustom.alert(yo`<span>Metadata published successfully.<br />The Swarm address of the metadata file is available in the contract details.</span>`)
             }
           })
         }
