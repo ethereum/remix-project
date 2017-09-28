@@ -123,8 +123,16 @@ var css = csjs`
     width             : 100%;
   }
   
-  .banner     {
+  .banner             {
     width             : 25em;
+  }
+  
+  .contextviewcontainer{
+    position          : absolute;
+    z-index           : 100;
+    right             : 20px;
+    top               : 20px;
+    width             : 20em;
   }
 `
 
@@ -221,6 +229,9 @@ class EditorPanel {
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
+        <div class=${css.contextviewcontainer}>
+          ${self._api.contextview.render()}
+        </div>      
         ${self._view.editor}
         ${self._view.terminal}
       </div>
