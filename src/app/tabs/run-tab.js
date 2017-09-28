@@ -200,7 +200,7 @@ function runTab (container, appAPI, appEvents, opts) {
   var selectExEnv = el.querySelector('#selectExEnvOptions')
   selectExEnv.addEventListener('change', function (event) {
     executionContext.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value, null, () => {
-      // set the new context. if that fails, rollback the current one.
+      // set the final context. Cause it is possible that this is not the one we've originaly selected
       selectExEnv.value = executionContext.getProvider()
     })
 

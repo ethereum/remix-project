@@ -112,8 +112,8 @@ function ExecutionContext () {
   }
 
   this.executionContextChange = function (context, endPointUrl, cb) {
+    if (!cb) cb = () => {}
     function runPrompt () {
-      console.log('runPrompt')
       executionContext = context
       if (!endPointUrl) {
         endPointUrl = 'http://localhost:8545'
@@ -121,6 +121,10 @@ function ExecutionContext () {
       modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
         setProviderFromEndpoint(target)
         self.event.trigger('contextChanged', ['web3'])
+        cb()
+      }, () => {
+        self.event.trigger('contextChanged', ['web3'])
+        cb()
       })
     }
 
@@ -135,9 +139,7 @@ function ExecutionContext () {
         executionContext = context
         web3.setProvider(injectedProvider)
         self.event.trigger('contextChanged', ['injected'])
-        console.log('injected')
       } else if (context === 'vm') {
-        console.log('vm!!')
         executionContext = context
         vm.stateManager.revert(function () {
           vm.stateManager.checkpoint()
