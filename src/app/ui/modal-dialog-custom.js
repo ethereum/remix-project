@@ -12,6 +12,7 @@ module.exports = {
     modal('', yo`<div>${text}</div>`, null, { label: null })
   },
   prompt: function (title, text, inputValue, ok, cancel) {
+    if (!inputValue) inputValue = ''
     modal(title,
   yo`<div>${text}<div><input type='text' name='prompt_text' id='prompt_text' class="${css['prompt_text']}" value='${inputValue}' ></div></div>`,
       {
