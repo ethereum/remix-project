@@ -1,5 +1,5 @@
 'use strict'
-var remix = require('ethereum-remix').util.AstWalker
+var remix = require('ethereum-remix')
 var SourceMappingDecoder = remix.util.SourceMappingDecoder
 var AstWalker = remix.util.AstWalker
 var EventManager = remix.lib.EventManager
@@ -38,10 +38,14 @@ class ContextualListener {
   }
 
   declarationOf (node) {
-    if (node.attributes.referencedDeclaration) {
-      return this._index['Declarations'][node.attributes.referencedDeclaration]
+    if (node.attributes && node.attributes.referencedDeclaration) {
+      return this._index['FlatReferences'][node.attributes.referencedDeclaration]
     }
     return null
+  }
+
+  referencesOf (node) {
+    return this._index['Declarations'][node.id]
   }
 
   _highlightItems (cursorPosition, compilationResult, file) {
