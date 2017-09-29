@@ -118,10 +118,7 @@ function ExecutionContext () {
         endPointUrl = 'http://localhost:8545'
       }
       modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
-        executionContext = context
-        setProviderFromEndpoint(target)
-        self.event.trigger('contextChanged', ['web3'])
-        cb()
+        setProviderFromEndpoint(target, context, cb)
       }, () => {
         cb()
       })
@@ -176,13 +173,26 @@ function ExecutionContext () {
     }
   }, 15000)
 
-  function setProviderFromEndpoint (endpoint) {
+  function setProviderFromEndpoint (endpoint, context, cb) {
+    var oldProvider = web3.currentProvider
+
     if (endpoint === 'ipc') {
       web3.setProvider(new web3.providers.IpcProvider())
     } else {
       web3.setProvider(new web3.providers.HttpProvider(endpoint))
     }
-    self.event.trigger('web3EndpointChanged')
+    if (web3.isConnected()) {
+      executionContext = context
+      self.event.trigger('contextChanged', ['web3'])
+      self.event.trigger('web3EndpointChanged')
+      cb()
+    } else {
+      web3.setProvider(oldProvider)
+      var alertMsg = 'Not possible to connect to the Web3 provider. '
+      alertMsg += 'Make sure the provider is running and a connection is open (via IPC or RPC).'
+      modalDialogCustom.alert(alertMsg)
+      cb()
+    }
   }
 }
 
