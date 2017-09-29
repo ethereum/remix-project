@@ -128,24 +128,28 @@ function ExecutionContext () {
       })
     }
 
+    if (context === 'vm') {
+      executionContext = context
+      vm.stateManager.revert(function () {
+        vm.stateManager.checkpoint()
+      })
+      self.event.trigger('contextChanged', ['vm'])
+    }
+
+    if (context === 'injected') {
+      if (injectedProvider === undefined) {
+        cb()
+      } else {
+        executionContext = context
+        web3.setProvider(injectedProvider)
+        self.event.trigger('contextChanged', ['injected'])
+      }
+    }
+
     if (context === 'web3') {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?',
         () => { runPrompt(endPointUrl) }, () => { cb() }
       )
-    } else if (context === 'injected' && injectedProvider === undefined) {
-      cb()
-    } else {
-      if (context === 'injected') {
-        executionContext = context
-        web3.setProvider(injectedProvider)
-        self.event.trigger('contextChanged', ['injected'])
-      } else if (context === 'vm') {
-        executionContext = context
-        vm.stateManager.revert(function () {
-          vm.stateManager.checkpoint()
-        })
-        self.event.trigger('contextChanged', ['vm'])
-      }
     }
   }
 
