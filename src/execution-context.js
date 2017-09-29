@@ -134,6 +134,7 @@ function ExecutionContext () {
         vm.stateManager.checkpoint()
       })
       self.event.trigger('contextChanged', ['vm'])
+      cb()
     }
 
     if (context === 'injected') {
@@ -146,6 +147,7 @@ function ExecutionContext () {
         executionContext = context
         web3.setProvider(injectedProvider)
         self.event.trigger('contextChanged', ['injected'])
+        cb()
       }
     }
 
