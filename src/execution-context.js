@@ -138,6 +138,9 @@ function ExecutionContext () {
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
+        var alertMsg = 'No injected Web3 provider found. '
+        alertMsg += 'Make sure your provider (e.g. MetaMask) is active and running.'
+        modalDialogCustom.alert(alertMsg)
         cb()
       } else {
         executionContext = context
