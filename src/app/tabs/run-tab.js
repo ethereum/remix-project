@@ -169,6 +169,19 @@ var css = csjs`
     color: ${styles.colors.orange};
     margin-left: 10%;
   }
+  .errorIcon {
+    color: ${styles.colors.red};;
+    margin-left: 15px;
+  }
+  .errorIcon {
+    color: ${styles.colors.red};;
+    margin-left: 15px;
+  }
+  .failDesc {
+    color: ${styles.colors.red};;
+    padding-left: 10px;
+    display: inline;
+  }
 `
 
 module.exports = runTab
@@ -249,13 +262,33 @@ function updateAccountBalances (container, appAPI) {
 ------------------------------------------------ */
 
 function contractDropdown (appAPI, appEvents, instanceContainer) {
+  var iconContainer
+  var iFail
+  var errOn
+  var failCont
+  var iFailDesc
   instanceContainer.appendChild(noInstancesText)
-
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
     if (success) {
       getContractNames(success, data)
+      if (errOn) {
+        iconContainer.removeChild(failCont)
+        errOn = false
+      }
     } else {
-      modalDialogCustom.alert('failed to compile')
+      if (!errOn) {
+        iconContainer = document.querySelector(`.${css.runTabView} .${css.subcontainer}`)
+        failCont = document.createElement('div')
+        iFail = document.createElement('i')
+        iFailDesc = document.createElement('p')
+        iFailDesc.innerHTML = 'Compiler ERROR'
+        iFailDesc.className = `${css.failDesc}`
+        iconContainer.appendChild(failCont)
+        failCont.appendChild(iFail)
+        failCont.appendChild(iFailDesc)
+        iFail.className = `fa fa-thumbs-down fa-2x ${css.errorIcon}`
+        errOn = true
+      }
     }
   })
 
