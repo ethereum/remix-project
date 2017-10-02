@@ -2,11 +2,12 @@
 var yo = require('yo-yo')
 var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide
+var SourceMappingDecoder = remix.util.SourceMappingDecoder
 var styles = styleGuide()
 var csjs = require('csjs-inject')
 
 var css = csjs`
-  .contextview           {
+  .contextview            {
       background-color  : ${styles.colors.backgroundBlue};
       opacity           : 0.8;
       width             : 20em;
@@ -18,19 +19,25 @@ var css = csjs`
   .container              {
     padding             : 1em;
   }
-  .type                  {
+  .type                   {
     font-style        : italic;
     text-overflow     : ellipsis;
     width             : 18em;
     overflow          : hidden;
     white-space       : nowrap;
   }
-  .name                  {
+  .name                   {
     font-weight       : bold;
     text-overflow     : ellipsis;
     width             : 18em;
     overflow          : hidden;
     white-space       : nowrap;
+  }
+  .jumpto                 {
+    cursor            : pointer;
+  }
+  .referencesnb           {
+    float             : right;
   }
 `
 
@@ -48,6 +55,7 @@ class ContextView {
     this._view
     this._nodes
     this._current
+    this.sourceMappingDecoder = new SourceMappingDecoder()
     event.contextualListener.register('contextChanged', nodes => {
       this._nodes = nodes
       this.update()
@@ -104,13 +112,25 @@ class ContextView {
 
   _render (node) {
     if (!node) return yo`<div></div>`
+    var self = this
     var references = this._api.contextualListener.referencesOf(node)
     var type = node.attributes.type ? node.attributes.type : node.name
-    references = yo`<div>${references ? references.length : '0'} references</div>`
+    references = `${references ? references.length : '0'} reference(s)`
+
+    function jumpTo () {
+      if (node && node.src) {
+        var position = self.sourceMappingDecoder.decode(node.src)
+        if (position) {
+          self._api.jumpTo(position)
+        }
+      }
+    }
+
     return yo`<div>
-      <div class=${css.type} >${type}</div>
-      <div class=${css.name} >${node.attributes.name}</div>
-      <div>${references}</div>
+      <div title=${type} class=${css.type} >${type}</div>
+      <div title=${node.attributes.name} class=${css.name} >${node.attributes.name}</div>
+      <i title='Go to Definition' class="fa fa-share ${css.jumpto}" aria-hidden="true" onclick=${jumpTo}></i>
+      <span class=${css.referencesnb}>${references}</span>
     </div>`
   }
 }

@@ -131,7 +131,7 @@ var css = csjs`
     position          : absolute;
     z-index           : 100;
     right             : 20px;
-    top               : 20px;
+    top               : 10px;
     width             : 20em;
   }
 `

@@ -311,7 +311,19 @@ function run () {
 
   // ---------------- ContextView -----------------------
   this._components.contextView = new ContextView({
-    contextualListener: this._components.contextualListener
+    contextualListener: this._components.contextualListener,
+    jumpTo: (position) => {
+      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
+        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
+        var filename = compiler.lastCompilationResult.data.sourceList[position.file]
+        if (filename !== config.get('currentFile') && (filesProviders['browser'].exists(filename) || filesProviders['localhost'].exists(filename))) {
+          fileManager.switchFile(filename)
+        }
+        if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
+          editor.gotoLine(lineColumn.start.line, lineColumn.start.column + 1)
+        }
+      }
+    }
   }, {
     contextualListener: this._components.contextualListener.event
   })
