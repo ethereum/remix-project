@@ -71,9 +71,10 @@ function styleGuide () {
   /********************************************************
                         BACKGROUND COLORS
   ******************************************************** */
-    primary_BackgroundColor: css_properties.colors.white,
-    secondary_BackgroundColor: css_properties.colors.backgroundBlue,
+    primary_BackgroundColor: css_properties.colors.red,
+    secondary_BackgroundColor: css_properties.colors.blue,
     dark_BackgroundColor: css_properties.colors.veryLightGrey,
+    light_BackgroundColor: css_properties.colors.white,
 
   /********************************************************
                             RESIZING
@@ -117,7 +118,7 @@ function styleGuide () {
                         DROPDOWN
   ******************************************************** */
     dropdown_TextColor: css_properties.colors.black,
-    dropdown_BackgroundColor: css_properties.colors.white,
+    dropdown_BackgroundColor: css_properties.colors.violet,
     dropdown_BorderColor: css_properties.colors.veryLightGrey,
 
   /********************************************************
@@ -219,7 +220,7 @@ function styleGuide () {
       `,
 
       dottedBorderBox: (opts = {}) => `
-        background-color      : ${opts.BackgroundColor}};
+        background-color      : ${opts.BackgroundColor};
         border                : .2em dotted ${opts.BorderColor};
         color                 : ${opts.Color};
         border-radius         : ${css_properties.borders.secondary_borderRadius};
@@ -230,9 +231,9 @@ function styleGuide () {
         word-break            : break-word;
       `,
 
-      inputField: (opts = {}) =>`
-        background-color      : ${opts.BackgroundColor}};
-        border                : .2em dotted ${opts.BorderColor};
+      inputField: (opts = {}) => `
+        background-color      : ${opts.BackgroundColor};
+        border                : 1px solid ${opts.BorderColor};
         color                 : ${opts.Color};
         border-radius         : ${css_properties.borders.secondary_borderRadius};
         height                : 25px;
@@ -243,7 +244,7 @@ function styleGuide () {
       `,
 
       dropdown: (opts = {}) => `
-        background-color      : ${opts.BackgroundColor}};
+        background-color      : ${opts.BackgroundColor};
         border                : 1px solid ${opts.BorderColor};
         color                 : ${opts.Color};
         font-size               : 12px;
@@ -321,10 +322,12 @@ var remix_properties = {
   editor: {
 
     backgroundColor_Panel: app_properties.primary_BackgroundColor,
+    backgroundColor_Editor: app_properties.light_BackgroundColor,
     backgroundColor_Tabs_Highlights: app_properties.secondary_BackgroundColor,
-    backgroundColor_DebuggerMode: app_properties.secondary_BackgroundColor,
+    backgroundColor_DebuggerMode: app_properties.warning_BackgroundColor,
 
     text_Primary: app_properties.mainText_Color,
+    text_Secondary: app_properties.supportText_Color,
     text_Editor: '',
 
     icon_Color_Editor: app_properties.icon_Color,
@@ -694,10 +697,13 @@ var elementColors = {
 
   return {
     colors: css_properties.colors,
+    borders: css_properties.borders,
     leftPanel: remix_properties.leftPanel,
     editor: remix_properties.editor,
     terminal: remix_properties.terminal,
     rightPanel: remix_properties.rightPanel,
+
+    app_properties: app_properties,
 
     elementColors: elementColors,
     dropdown: uiElements['dropdown'],
