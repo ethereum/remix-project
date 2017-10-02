@@ -114,38 +114,44 @@ function ExecutionContext () {
   this.executionContextChange = function (context, endPointUrl, cb) {
     if (!cb) cb = () => {}
     function runPrompt () {
-      executionContext = context
       if (!endPointUrl) {
         endPointUrl = 'http://localhost:8545'
       }
       modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
-        setProviderFromEndpoint(target)
-        self.event.trigger('contextChanged', ['web3'])
-        cb()
+        setProviderFromEndpoint(target, context, cb)
       }, () => {
-        self.event.trigger('contextChanged', ['web3'])
         cb()
       })
+    }
+
+    if (context === 'vm') {
+      executionContext = context
+      vm.stateManager.revert(function () {
+        vm.stateManager.checkpoint()
+      })
+      self.event.trigger('contextChanged', ['vm'])
+      cb()
+    }
+
+    if (context === 'injected') {
+      if (injectedProvider === undefined) {
+        var alertMsg = 'No injected Web3 provider found. '
+        alertMsg += 'Make sure your provider (e.g. MetaMask) is active and running '
+        alertMsg += '(when recently activated you may have to reload the page).'
+        modalDialogCustom.alert(alertMsg)
+        cb()
+      } else {
+        executionContext = context
+        web3.setProvider(injectedProvider)
+        self.event.trigger('contextChanged', ['injected'])
+        cb()
+      }
     }
 
     if (context === 'web3') {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?',
         () => { runPrompt(endPointUrl) }, () => { cb() }
       )
-    } else if (context === 'injected' && injectedProvider === undefined) {
-      cb()
-    } else {
-      if (context === 'injected') {
-        executionContext = context
-        web3.setProvider(injectedProvider)
-        self.event.trigger('contextChanged', ['injected'])
-      } else if (context === 'vm') {
-        executionContext = context
-        vm.stateManager.revert(function () {
-          vm.stateManager.checkpoint()
-        })
-        self.event.trigger('contextChanged', ['vm'])
-      }
     }
   }
 
@@ -168,13 +174,26 @@ function ExecutionContext () {
     }
   }, 15000)
 
-  function setProviderFromEndpoint (endpoint) {
+  function setProviderFromEndpoint (endpoint, context, cb) {
+    var oldProvider = web3.currentProvider
+
     if (endpoint === 'ipc') {
       web3.setProvider(new web3.providers.IpcProvider())
     } else {
       web3.setProvider(new web3.providers.HttpProvider(endpoint))
     }
-    self.event.trigger('web3EndpointChanged')
+    if (web3.isConnected()) {
+      executionContext = context
+      self.event.trigger('contextChanged', ['web3'])
+      self.event.trigger('web3EndpointChanged')
+      cb()
+    } else {
+      web3.setProvider(oldProvider)
+      var alertMsg = 'Not possible to connect to the Web3 provider. '
+      alertMsg += 'Make sure the provider is running and a connection is open (via IPC or RPC).'
+      modalDialogCustom.alert(alertMsg)
+      cb()
+    }
   }
 }
 
