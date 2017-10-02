@@ -34,10 +34,10 @@ Brief instructions to build for linux(Todo add other platforms) we will add deta
 
 Install eth or geth, npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
-    * `git clone https://github.com/ethereum/remix`
-    * `cd remix`
-    * `npm install`
-    * `npm start`
+* `git clone https://github.com/ethereum/remix`
+* `cd remix`
+* `npm install`
+* `npm start`
 
 open `remix/index.html` in your browser.
 
