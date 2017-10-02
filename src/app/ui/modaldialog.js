@@ -19,12 +19,13 @@ var css = csjs`
   }
   .modalHeader {
     padding: 2px 16px;
-    background-color: ${styles.colors.backgroundBlue};
-    color: ${styles.colors.grey};
+    background-color: ${styles.remix.modalDialog_Header_Footer_BackgroundColor};
+    color: ${styles.remix.modalDialog_Header_Footer_Color};
     display: flex;
     justify-content: space-between;
   }
   .modalBody {
+    background-color: ${styles.remix.modalDialog_BackgroundColor_Primary};
     padding: 1.5em;
     line-height: 1.5em;
   }
@@ -32,15 +33,15 @@ var css = csjs`
     display: flex;
     justify-content: flex-end;
     padding: 10px 30px;
-    background-color: ${styles.colors.backgroundBlue};
-    color: ${styles.colors.white};
+    background-color: ${styles.remix.modalDialog_Header_Footer_BackgroundColor};
+    color: ${styles.remix.modalDialog_Header_Footer_Color};
     text-align: right;
     font-weight: 700;
     cursor: pointer;
   }
   .modalContent {
     position: relative;
-    background-color: ${styles.colors.general_BackgroundColor};
+    background-color: ${styles.colors.black};
     margin: auto;
     padding: 0;
     line-height: 18px;
@@ -55,16 +56,16 @@ var css = csjs`
   }
   .modalFooterOk {
     cursor: pointer;
-    color: ${styles.colors.grey};
+    color: ${styles.remix.modalDialog_Header_Footer_Color};
   }
   .modalFooterCancel {
     margin-left: 1em;
     cursor: pointer;
-    color: ${styles.colors.grey};
+    color: ${styles.remix.modalDialog_Header_Footer_Color};
   }
   .modalClose {
     margin: auto 0;
-    color: #393939;
+    color: ${styles.remix.modalDialog_Header_Footer_Color};
     cursor: pointer;
   }
   @-webkit-keyframes animatetop {

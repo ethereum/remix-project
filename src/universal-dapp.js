@@ -31,11 +31,13 @@ var css = csjs`
     align-items: center;
   }
   .title {
-    ${styles.dropdown}
-    font-size: 11px;
-    width: 400px;
+    ${styles.rightPanel.runTab.dropdown_RunTab}
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    width: 75%;
+    min-width: 500px;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
@@ -46,7 +48,7 @@ var css = csjs`
     min-width: 230px;
   }
   .instance {
-    ${styles.displayBox}
+    ${styles.rightPanel.runTab.box_Instance}
     margin-bottom: 2px;
     padding: 10px 15px 6px 15px;
   }
@@ -67,10 +69,10 @@ var css = csjs`
   .copy  {
     cursor: pointer;
     margin-left: 3%;
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.runTab.icon_Color_Instance_CopyToClipboard};
   }
   .copy:hover{
-    color: ${styles.colors.lightOrange};
+    color: ${styles.rightPanel.runTab.icon_HoverColor_Instance_CopyToClipboard};
   }
   .buttonsContainer {
     margin-top: 2%;

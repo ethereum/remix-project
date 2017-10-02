@@ -16,7 +16,7 @@ var css = csjs`
     overflow: hidden;
   }
   .chat {
-    ${styles.displayBox}
+    ${styles.rightPanel.supportTab.box_IframeContainer}
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,14 +46,13 @@ var css = csjs`
     opacity: 0.8;
   }
   .chatIframe {
-    ${styles.displayBox}
     width: 100%;
     height: 100%;
     transform: scale(0.9);
     padding: 0;
   }
   .infoBox {
-    ${styles.infoTextBox}
+    ${styles.rightPanel.supportTab.box_SupportInfo}
   }
 `
 

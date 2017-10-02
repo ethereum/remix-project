@@ -21,7 +21,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    color             : ${styles.terminal.text_Regular_TransactionLog}
+    color             : ${styles.terminal.text_Regular_TransactionLog};
     background-color  : ${styles.terminal.backgroundColor_Terminal};
     height            : 100%;
     min-height        : 1.7em;
@@ -83,6 +83,7 @@ var css = csjs`
     white-space       : pre-wrap;
     line-height       : 2ch;
     margin            : 1ch;
+    margin-top        : 2ch;
   }
   .cli                {
     line-height       : 1.7em;
@@ -551,7 +552,7 @@ class Terminal {
     }, 0)
   }
   _blocksRenderer (mode) {
-    mode = { log: 'black', info: 'blue', error: 'red' }[mode] // defaults
+    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
     if (mode) {
       return function logger (args, scopedCommands, append) {
         var types = args.map(type)

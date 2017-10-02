@@ -4,6 +4,12 @@ var $ = require('jquery')
 var yo = require('yo-yo')
 var utils = require('../../lib/utils')
 
+// -------------- styling ----------------------
+// var csjs = require('csjs-inject')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
+
 var css = yo`<style>
 .sol.success,
 .sol.error,
@@ -41,18 +47,21 @@ var css = yo`<style>
 }
 
 .sol.error {
-    background-color: hsla(0, 82%, 82%, 0.1);
-    border: .2em dotted hsla(0, 82%, 82%, 1); /* red in style-guide.js */
+    background-color: ${styles.rightPanel.message_Error_BackgroundColor};
+    border: .2em dotted ${styles.rightPanel.message_Error_BorderColor};
+    color: ${styles.rightPanel.message_Error_Color};
 }
 
 .sol.warning {
-    background-color: hsla(59, 56%, 78%, 0.5);
-    border: .2em dotted hsla(44, 100%, 50%, 1); /* orange in style-guide.js */
+  background-color: ${styles.rightPanel.message_Warning_BackgroundColor};
+  border: .2em dotted ${styles.rightPanel.message_Warning_BorderColor};
+  color: ${styles.rightPanel.message_Warning_Color};
 }
 
 .sol.success {
-    background-color: hsla(141, 58%, 95%, 1);
-    border: .2em dotted hsla(141, 40%, 48%, 1);
+  background-color: ${styles.rightPanel.message_Success_BackgroundColor};
+  border: .2em dotted ${styles.rightPanel.message_Success_BorderColor};
+  color: ${styles.rightPanel.message_Success_Color};
 }</style>`
 
 /**

@@ -25,7 +25,7 @@ var css = csjs`
     margin: 3% 0;
   }
   .compileContainer  {
-    ${styles.displayBox}
+    ${styles.rightPanel.compileTab.box_CompileContainer}
     margin-bottom: 2%;
   }
   .autocompileContainer {
@@ -46,7 +46,7 @@ var css = csjs`
     line-height: initial;
   }
   .warnCompilationSlow {
-    color: ${styles.colors.orange};
+    color: ${styles.rightPanel.compileTab.icon_WarnCompilation_Color};
     margin-left: 1%;
   }
   .compileButtons {
@@ -61,21 +61,20 @@ var css = csjs`
     display: flex;
   }
   .compileButton {
-    ${styles.button}
-    background-color: ${styles.elementColors.rightPanel_compileTab_compileButton_BackgroundColor};
+    ${styles.rightPanel.compileTab.button_Compile}
     width: 120px;
     min-width: 110px;
     margin-right: 1%;
     font-size: 12px;
   }
   .container {
-    ${styles.displayBox}
+    ${styles.rightPanel.compileTab.box_CompileContainer}
     margin: 0;
     display: flex;
     align-items: center;
   }
   .contractNames {
-    ${styles.dropdown}
+    ${styles.rightPanel.compileTab.dropdown_CompileContract}
     margin-right: 5%;
   }
   .contractButtons {
@@ -85,24 +84,22 @@ var css = csjs`
     text-align: center;
   }
   .details {
-    ${styles.button}
-    background-color: ${styles.elementColors.rightPanel_compileTab_otherButtons_BackgroundColor};
+    ${styles.rightPanel.compileTab.button_Details}
   }
   .publish {
-    ${styles.button}
-    background-color: ${styles.elementColors.rightPanel_compileTab_otherButtons_BackgroundColor};
+    ${styles.rightPanel.compileTab.button_Publish}
     margin-left: 2%;
     width: 120px;
   }
   .log {
-    ${styles.displayBox}
+    ${styles.rightPanel.compileTab.box_CompileContainer}
     display: flex;
     flex-direction: column;
     margin-bottom: 5%;
   }
   .key {
     margin-right: 5px;
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.text_Primary};
     text-transform: uppercase;
     width: 100%;
   }
@@ -115,17 +112,17 @@ var css = csjs`
   .questionMark {
     margin-left: 2%;
     cursor: pointer;
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.icon_Color_TogglePanel};
   }
   .copyDetails:hover,
   .questionMark:hover {
-    color: ${styles.colors.lightOrange};
+    color: ${styles.rightPanel.icon_HoverColor_TogglePanel};
   }
   .detailsJSON {
     padding: 8px 0;
-    background-color: ${styles.colors.general_BackgroundColor};
+    background-color: ${styles.rightPanel.modalDialog_BackgroundColor_Primary};
     border: none;
-    color: ${styles.colors.grey};
+    color: ${styles.rightPanel.modalDialog_text_Secondary};
   }
   .icon {
     margin-right: 3%;
@@ -149,7 +146,7 @@ var css = csjs`
   }
   70% {
     margin-bottom: 0;
-    color: ${styles.colors.grey};
+    color: ${styles.rightPanel.text_Secondary};
   }
   100% {
     margin-bottom: 0;

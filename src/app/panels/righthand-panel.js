@@ -25,7 +25,7 @@ var css = csjs`
     overflow: hidden;
   }
   #optionViews {
-    background-color: ${styles.colors.backgroundBlue};
+    background-color: ${styles.rightPanel.backgroundColor_Tab};
     overflow: scroll;
     height: 100%;
   }
@@ -34,7 +34,7 @@ var css = csjs`
   }
   #optionViews .pre {
     word-wrap: break-word;
-    background-color: hsl(0, 0%, 100%); /* white in style-guide.js */
+    background-color: ${styles.rightPanel.BackgroundColor_Pre};
     border-radius: 3px;
     display: inline-block;
     padding: 0 0.6em;
@@ -63,10 +63,10 @@ var css = csjs`
   .opts_li {
     display: block;
     font-weight: bold;
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.text_Primary};
   }
   .opts_li:hover {
-    color: ${styles.colors.grey};
+    color: ${styles.rightPanel.text_Secondary};
   }
   .dragbar             {
     position           : absolute;
@@ -75,11 +75,11 @@ var css = csjs`
     bottom             : 0;
     cursor             : col-resize;
     z-index            : 999;
-    border-left        : 2px solid hsla(215, 81%, 79%, .3);
+    border-left        : 2px solid ${styles.rightPanel.bar_Dragging};
   }
   .ghostbar           {
     width             : 3px;
-    background-color  : ${styles.colors.lightBlue};
+    background-color  : ${styles.rightPanel.bar_Ghost};
     opacity           : 0.5;
     position          : absolute;
     cursor            : col-resize;

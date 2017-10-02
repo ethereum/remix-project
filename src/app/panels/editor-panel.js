@@ -91,13 +91,13 @@ var css = csjs`
   .changeeditorfontsize i {
     cursor            : pointer;
     display           : block;
-    color             : ${styles.colors.black};
+    color             : ${styles.editor.icon_Color_Editor};
   }
   .changeeditorfontsize i {
     cursor            : pointer;
   }
   .changeeditorfontsize i:hover {
-    color             : ${styles.colors.orange};
+    color             : ${styles.editor.icon_HoverColor_Editor};
   }
   .buttons            {
     display           : flex;
@@ -142,7 +142,7 @@ var css = csjs`
   .toggleRHP          {
     margin            : 0.5em;
     font-weight       : bold;
-    color             : ${styles.colors.black};
+    color             : ${styles.rightPanel.icon_Color_TogglePanel};
     right             : 0;
   }
   .toggleRHP i        {
@@ -151,7 +151,7 @@ var css = csjs`
     font-weight       : bold;
   }
   .toggleRHP i:hover  {
-    color             : ${styles.colors.orange};
+    color             : ${styles.rightPanel.icon_HoverColor_TogglePanel};
   }
   .show               {
     opacity           : 1;

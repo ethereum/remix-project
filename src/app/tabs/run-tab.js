@@ -22,7 +22,7 @@ var css = csjs`
     flex-direction: column;
   }
   .settings {
-    ${styles.displayBox}
+    ${styles.rightPanel.runTab.box_RunTab}
     margin-bottom: 2%;
     padding: 10px 15px 15px 15px;
   }
@@ -43,10 +43,10 @@ var css = csjs`
     align-self: center;
   }
   .col2 {
-    ${styles.inputField}
+    ${styles.rightPanel.runTab.input_RunTab}
   }
   .select {
-    ${styles.dropdown}
+    ${styles.rightPanel.runTab.dropdown_RunTab}
     font-weight: normal;
     min-width: 150px;
   }
@@ -54,34 +54,33 @@ var css = csjs`
     margin-left: 0.5em;
     margin-top: 0.7em;
     cursor: pointer;
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.runTab.icon_Color_Instance_CopyToClipboard};
   }
   .copyaddress:hover {
-    color: ${styles.colors.lightOrange};
+    color: ${styles.rightPanel.runTab.icon_HoverColor_Instance_CopyToClipboard};
   }
   .instanceContainer {
-    ${styles.displayBox}
+    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
-    background-color: ${styles.colors.transparent};
     margin-top: 2%;
     border: none;
+    text-align: center;
   }
   .pendingTxsContainer  {
-    ${styles.displayBox}
+    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
-    background-color: ${styles.colors.transparent};
     margin-top: 2%;
     border: none;
-    padding-bottom: 0;
+    text-align: center;
   }
   .container {
-    ${styles.displayBox}
+    ${styles.rightPanel.runTab.box_RunTab}
     margin-top: 2%;
   }
   .contractNames {
-    ${styles.dropdown}
+    ${styles.rightPanel.runTab.dropdown_RunTab}
   }
   .subcontainer {
     display: flex;
@@ -102,35 +101,20 @@ var css = csjs`
     margin-top: 2%;
   }
   .atAddress {
-    ${styles.button}
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    background-color: ${styles.colors.lightGreen};
-    border-color: ${styles.colors.lightGreen};
+    ${styles.rightPanel.runTab.button_atAddress}
   }
   .create {
-    ${styles.button}
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    background-color: ${styles.colors.lightRed};
-    border-color: ${styles.colors.lightRed};
+    ${styles.rightPanel.runTab.button_Create}
   }
   .input {
-    ${styles.inputField}
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding-left: 10px;
+    ${styles.rightPanel.runTab.input_RunTab}
   }
   .noInstancesText {
-    ${styles.displayBox}
-    text-align: center;
-    color: ${styles.colors.lightGrey};
+    ${styles.rightPanel.runTab.box_Instance}
     font-style: italic;
   }
   .pendingTxsText {
-    ${styles.displayBox}
-    text-align: center;
-    color: ${styles.colors.lightGrey};
+    ${styles.rightPanel.runTab.box_Instance}
     font-style: italic;
   }
   .item {

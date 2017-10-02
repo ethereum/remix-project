@@ -10,7 +10,7 @@ module.exports = tabbedMenu
 
 var css = csjs`
   .active {
-    background-color: ${styles.colors.backgroundBlue};
+    background-color: ${styles.rightPanel.backgroundColor_Tab};
   }
 `
 

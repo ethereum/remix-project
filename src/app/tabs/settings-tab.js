@@ -15,7 +15,7 @@ var css = csjs`
     display: flex;
   }
   .info {
-    ${styles.infoTextBox}
+    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
     margin-bottom: 2em;
     word-break: break-word;
   }
@@ -27,7 +27,7 @@ var css = csjs`
     font-weight: bold;
   }
   .select {
-    ${styles.dropdown}
+    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
   }
   input {
     margin-right: 3px;

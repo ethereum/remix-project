@@ -12,7 +12,7 @@ var css = csjs`
   }
   .debugger {
     margin-bottom: 1%;
-    ${styles.displayBox}
+    ${styles.rightPanel.debuggerTab.box_Debugger}
   }
 `
 

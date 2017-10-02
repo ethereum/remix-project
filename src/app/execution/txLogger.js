@@ -17,19 +17,19 @@ var typeConversion = require('../../lib/typeConversion')
 var css = csjs`
   .log {
     display: flex;
-    align-items: baseline;
+    align-items: end;
     justify-content: space-between;
   }
   .tx {
-    color: ${styles.colors.violet};
+    color: ${styles.terminal.text_Title_TransactionLog};
     font-weight: bold;
     width: 45%;
   }
   .txTable, .tr, .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: ${styles.colors.black};
-    border: 1px solid ${styles.colors.black};
+    color: ${styles.terminal.text_Primary};
+    border: 1px solid ${styles.terminal.text_Primary};
   }
   #txTable {
     margin-top: 1%;
@@ -45,8 +45,13 @@ var css = csjs`
   .buttons {
     display: flex;
   }
+  .debug {
+    ${styles.terminal.button_Log_Debug}
+  }
+  .details {
+    ${styles.terminal.button_Log_Details}
+  }
   .debug, .details {
-    ${styles.button}
     min-height: 18px;
     max-height: 18px;
     width: 45px;
@@ -54,19 +59,13 @@ var css = csjs`
     font-size: 10px;
     margin-left: 5px;
   }
-  .debug {
-    background-color: ${styles.colors.lightOrange};
-  }
-  .details {
-    background-color: ${styles.colors.lightGrey};
-  }
   .clipboardCopy {
     margin-right: 0.5em;
     cursor: pointer;
-    color: ${styles.colors.black};
+    color: ${styles.terminal.icon_Color_CopyToClipboard};
   }
   .clipboardCopy:hover {
-    color: ${styles.colors.lightOrange};
+    color: ${styles.terminal.icon_HoverColor_CopyToClipboard};
   }
   `
 /**
