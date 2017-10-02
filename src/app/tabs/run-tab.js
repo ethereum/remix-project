@@ -202,9 +202,9 @@ function runTab (container, appAPI, appEvents, opts) {
     executionContext.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value, null, () => {
       // set the final context. Cause it is possible that this is not the one we've originaly selected
       selectExEnv.value = executionContext.getProvider()
+      fillAccountsList(appAPI, el)
     })
 
-    fillAccountsList(appAPI, el)
     instanceContainer.innerHTML = '' // clear the instances list
     noInstancesText.style.display = 'block'
     instanceContainer.appendChild(noInstancesText)
