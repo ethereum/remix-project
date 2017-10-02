@@ -21,8 +21,8 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    color             : #777;
-    background-color  : #ededed;
+    color             : ${styles.terminal.text_Regular_TransactionLog}
+    background-color  : ${styles.terminal.backgroundColor_Terminal};
     height            : 100%;
     min-height        : 1.7em;
     overflow          : hidden;
@@ -30,12 +30,13 @@ var css = csjs`
 
   .bar                {
     display           : flex;
-    min-height        : 1.7em;
+    min-height        : 3em;
     padding           : 2px;
-    background-color  : #eef;
+    background-color  : ${styles.terminal.backgroundColor_Menu};
     z-index           : 3;
   }
   .menu               {
+    color             : ${styles.terminal.text_Primary};
     position          : relative;
     display           : flex;
     align-items       : center;
@@ -46,20 +47,24 @@ var css = csjs`
     margin-left       : auto;
     width             : 10px;
     cursor            : pointer;
-    color             : black;
+    color             : ${styles.terminal.icon_Color_TogglePanel};
     font-size         : 14px;
     font-weight       : bold;
+  }
+  .toggleTerminal:hover              {
+    color             : ${styles.terminal.icon_HoverColor_TogglePanel};
   }
   .clear              {
     margin-right      : 5px;
     cursor            : pointer;
-    color             : black;
+    color             : ${styles.terminal.icon_Color_Menu};
   }
-  .hover              {
-    color             : orange;
+  .clear:hover              {
+    color             : ${styles.terminal.icon_HoverColor_Menu};
   }
 
   .terminal           {
+    background-color  : ${styles.terminal.backgroundColor_Terminal};
     display           : flex;
     flex-direction    : column;
     height            : 100%;
@@ -88,7 +93,7 @@ var css = csjs`
     font-family       : monospace;
     font-weight       : bold;
     font-size         : large;
-    color             : ${styles.colors.black}
+    color             : ${styles.colors.black};
   }
   .input              {
     word-break        : break-all;
@@ -96,7 +101,7 @@ var css = csjs`
     font-family       : monospace;
   }
   .filter             {
-    ${styles.inputField}
+    ${styles.terminal.input_Search_MenuBar}
     width             : 150px;
   }
 
@@ -108,12 +113,12 @@ var css = csjs`
     left              : 0;
     cursor            : ns-resize;
     z-index           : 999;
-    border-top        : 2px solid hsla(215, 81%, 79%, .3);
+    border-top        : 2px solid ${styles.terminal.bar_Dragging};
   }
   .ghostbar           {
     position          : absolute;
     height            : 6px;
-    background-color  : #C6CFF7;
+    background-color  : ${styles.terminal.bar_Ghost};
     opacity           : 0.5;
     cursor            : row-resize;
     z-index           : 9999;

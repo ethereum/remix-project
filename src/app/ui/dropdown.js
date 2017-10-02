@@ -8,11 +8,12 @@ var styles = styleGuide()
 
 var css = csjs`
   .dropdown           {
-    ${styles.dropdown}
+    ${styles.terminal.dropdown_Filter_MenuBar}
     overflow          : visible;
     position          : relative;
     display           : flex;
     flex-direction    : column;
+    margin-right      : 3px;
   }
   .selectbox          {
     display           : flex;
@@ -40,8 +41,8 @@ var css = csjs`
     top               : 24px;
     left              : 0;
     width             : 250px;
-    background-color  : white;
-    border            : 1px solid ${styles.colors.veryLightGrey};
+    background-color  : ${styles.app_properties.dropdown_BackgroundColor};
+    border            : 1px solid ${styles.app_properties.dropdown_BorderColor};
     border-radius     : 3px;
     border-top        : 0;
   }

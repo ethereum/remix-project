@@ -66,7 +66,7 @@ var css = csjs`
     color: ${styles.colors.black};
   }
   .opts_li:hover {
-    color: ${styles.colors.orange};
+    color: ${styles.colors.grey};
   }
   .dragbar             {
     position           : absolute;
@@ -98,9 +98,9 @@ var css = csjs`
     margin-right: 30px;
     display: flex;
     align-self: center;
-    height: 20px;
+    height: 29px;
     width: 20px;
-    background-color: white;
+    background-color: ${styles.colors.transparent};
   }
 `
 

@@ -24,10 +24,10 @@ var css = csjs`
     cursor            : pointer;
   }
   .hasFocus           {
-    background-color  : ${styles.colors.backgroundBlue};
+    background-color  : ${styles.leftPanel.backgroundColor_FileExplorer};
   }
   .rename             {
-    background-color  : ${styles.colors.general_BackgroundColor};
+    background-color  : ${styles.leftPanel.backgroundColor_Panel};
   }
   .remove             {
     margin-left       : auto;
@@ -186,7 +186,7 @@ function fileExplorer (appAPI, files) {
       this.style.paddingRight = '19px'
       return this.removeChild(deleteButton)
     }
-    this.style.backgroundColor = styles.colors.backgroundBlue
+    this.style.backgroundColor = styles.leftPanel.backgroundColor_FileExplorer
     this.style.paddingRight = '0px'
     this.appendChild(deleteButton)
   }

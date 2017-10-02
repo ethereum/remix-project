@@ -7,6 +7,49 @@ var styles = styleGuide()
 
 var Terminal = require('./terminal')
 
+var cssTabs = yo`
+  <style>
+    #files .file {
+      padding: 0 0.6em;
+      box-sizing: border-box;
+      background-color: ${styles.editor.backgroundColor_Tabs_Highlights};
+      cursor: pointer;
+      margin-right: 10px;
+      margin-top: 5px;
+      position: relative;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      color: ${styles.editor.text_Secondary};
+    }
+    #files .file.active {
+      color: ${styles.editor.text_Primary};
+      font-weight: bold;
+      border-bottom: 0 none;
+      padding-right: 1.5em;
+    }
+    #files .file .remove {
+      font-size: 12px;
+      display: flex;
+      color: ${styles.editor.text_Primary};
+      position: absolute;
+      top: -7px;
+      right: 5px;
+      display: none;
+    }
+    #files .file input {
+      background-color: ${styles.colors.transparent};
+      border: 0 none;
+      border-bottom: 1px dotted ${styles.editor.text_Primary};
+      line-height: 1em;
+      margin: 0.5em 0;
+    }
+    #files .file.active .remove {
+      display: inline-block;
+    }
+  </style>
+`
+
 var css = csjs`
   .editorpanel         {
     display            : flex;
@@ -14,10 +57,10 @@ var css = csjs`
     height             : 100%;
   }
   .tabsbar             {
+    background-color   : ${styles.editor.backgroundColor_Panel};
     display            : flex;
     overflow           : hidden;
-    height             : 2em;
-    margin-top         : 0.5em;
+    height             : 30px;
   }
   .tabs               {
     position          : relative;
@@ -29,6 +72,7 @@ var css = csjs`
     overflow          : hidden;
   }
   .files              {
+    display           : flex;
     position          : relative;
     list-style        : none;
     margin            : 0;
@@ -67,7 +111,7 @@ var css = csjs`
     padding           : 10px;
     width             : 100%;
     font-weight       : bold;
-    color             : ${styles.colors.black};
+    color             : ${styles.leftPanel.icon_Color_TogglePanel};
   }
   .toggleLHP i        {
     cursor            : pointer;
@@ -75,7 +119,7 @@ var css = csjs`
     font-weight       : bold;
   }
   .toggleLHP i:hover  {
-    color             : ${styles.colors.orange};
+    color             : ${styles.leftPanel.icon_HoverColor_TogglePanel};
   }
   .scroller           {
     position          : absolute;
@@ -96,7 +140,7 @@ var css = csjs`
     left              : 0;
   }
   .toggleRHP          {
-    margin            : 0.3em;
+    margin            : 0.5em;
     font-weight       : bold;
     color             : ${styles.colors.black};
     right             : 0;
@@ -138,49 +182,6 @@ var css = csjs`
     width             : 25em;
   }
 `
-
-var cssTabs = yo`<style>
-#files .file {
-      padding: 0 0.6em;
-      box-sizing: border-box;
-      background-color: hsla(229, 100%, 97%, 1); /* backgroundBlue in style-guide.js */
-      cursor: pointer;
-      border-right: 0.5em solid white;
-      position: relative;
-      display: table-cell;
-      text-align: center;
-      vertical-align: middle;
-      color: hsla(0, 0%, 40%, 1); /* grey in style-guide.js */
-  }
-  #files .file.active {
-      color: black;
-      font-weight: bold;
-      border-bottom: 0 none;
-      padding-right: 2em;
-  }
-  #files .file .remove {
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 1.25em;
-      width: 1.25em;
-      line-height: 1em;
-      color: hsla(0, 82%, 82%, 1); /* red in style-guide.js */
-      display: none;
-      margin: 0.4em;
-      text-align: center;
-  }
-  #files .file input {
-      background-color: transparent;
-      border: 0 none;
-      border-bottom: 1px dotted black;
-      line-height: 1em;
-      margin: 0.5em 0;
-  }
-  #files .file.active .remove {
-      display: inline-block;
-  }
-  </style>`
 
 class EditorPanel {
   constructor (opts = {}) {
@@ -236,7 +237,7 @@ class EditorPanel {
   }
   _adjustLayout (direction, delta) {
     var limitUp = 0
-    var limitDown = 20
+    var limitDown = 32
     var containerHeight = window.innerHeight - limitUp // - menu bar containerHeight
     var self = this
     var layout = self.data._layout[direction]
