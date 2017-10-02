@@ -14,24 +14,24 @@ var css = csjs`
   .stepButtons {
     width: 100%;
     display: flex;
-    justify-content: center
+    justify-content: center;
   }
   .stepButton {
-    ${styles.button}
+    ${styles.rightPanel.debuggerTab.button_Debugger}
   }
   .jumpButtons {
     width: 100%;
     display: flex;
-    justify-content: center
+    justify-content: center;
   }
   .jumpButton {
-    ${styles.button}
+    ${styles.rightPanel.debuggerTab.button_Debugger}
   }
   .navigator {
-    color: ${styles.colors.black}
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
   }
   .navigator:hover {
-    color: ${styles.colors.orange}
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
 `
 

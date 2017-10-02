@@ -25,7 +25,7 @@ var css = csjs`
     justify-content: center;
   }
   .txinput {
-    ${styles.inputField}
+    ${styles.rightPanel.debuggerTab.input_Debugger}
     min-width: 30px;
     margin: 3px;
   }
@@ -35,11 +35,11 @@ var css = csjs`
     justify-content: center;
   }
   .txbutton {
-    ${styles.button}
-    color: ${styles.colors.black};
+    ${styles.rightPanel.debuggerTab.button_Debugger}
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
   }
   .txbutton:hover {
-    color: ${styles.colors.orange};
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
   .txinfo {
     margin-top: 5px;

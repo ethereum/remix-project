@@ -13,25 +13,25 @@ var styles = styleGuide()
 var css = csjs`
   .title {
     margin-top: 10px;
-    ${styles.dropdown}
+    ${styles.rightPanel.debuggerTab.dropdown_Debugger}
     display: flex;
     align-items: center;
   }
   .name {
-    color: ${styles.colors.black};
     font-weight: bold;
   }
   .icon {
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
     margin-right: 5%;
   }
   .eyeButton {
-    ${styles.button}
+    ${styles.rightPanel.debuggerTab.button_Debugger}
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
     margin: 3px;
     float: right;
   }
   .eyeButton:hover {
-    color: ${styles.colors.orange};
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
 `
 
