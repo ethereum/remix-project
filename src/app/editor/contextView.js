@@ -10,11 +10,28 @@ var css = csjs`
       background-color  : ${styles.colors.backgroundBlue};
       opacity           : 0.8;
       width             : 20em;
-      height            : 5em;
+      height            : 6em;
       border-color      : transparent;
       border-radius     : 3px;
       border            : .3px solid hsla(0, 0%, 40%, .2);
     }
+  .container              {
+    padding             : 1em;
+  }
+  .type                  {
+    font-style        : italic;
+    text-overflow     : ellipsis;
+    width             : 18em;
+    overflow          : hidden;
+    white-space       : nowrap;
+  }
+  .name                  {
+    font-weight       : bold;
+    text-overflow     : ellipsis;
+    width             : 18em;
+    overflow          : hidden;
+    white-space       : nowrap;
+  }
 `
 
 /*
@@ -39,8 +56,8 @@ class ContextView {
 
   render () {
     var view = yo`<div class=${css.contextview}>
-      <div>
-        <span>${this._renderTarget()}</span>
+      <div class=${css.container}>
+        ${this._renderTarget()}
       </div>
     </div>`
     if (!this._view) {
@@ -73,7 +90,7 @@ class ContextView {
     this._current = null
     if (this._nodes && this._nodes.length) {
       var last = this._nodes[this._nodes.length - 1]
-      if (last.name === 'ContractDefinition' || last.name === 'FunctionDefinition' || last.name === 'ModifierDefinition' || last.name === 'VariableDeclaration') {
+      if (isDefinition(last)) {
         this._current = last
       } else {
         var target = this._api.contextualListener.declarationOf(last)
@@ -82,17 +99,28 @@ class ContextView {
         }
       }
     }
-    return this._renderDeclarations(this._current)
+    return this._render(this._current)
   }
 
-  _renderDeclarations (node) {
+  _render (node) {
     if (!node) return yo`<div></div>`
     var references = this._api.contextualListener.referencesOf(node)
+    var type = node.attributes.type ? node.attributes.type : node.name
     references = yo`<div>${references ? references.length : '0'} references</div>`
-    return yo`<div><div>${node.attributes.type} ${node.attributes.name} (${node.name})</div>
+    return yo`<div>
+      <div class=${css.type} >${type}</div>
+      <div class=${css.name} >${node.attributes.name}</div>
       <div>${references}</div>
     </div>`
   }
+}
+
+function isDefinition (node) {
+  return node.name === 'ContractDefinition' ||
+  node.name === 'FunctionDefinition' ||
+  node.name === 'ModifierDefinition' ||
+  node.name === 'VariableDeclaration' ||
+  node.name === 'StructDefinition'
 }
 
 module.exports = ContextView
