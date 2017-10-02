@@ -128,6 +128,7 @@ function fileExplorer (appAPI, files) {
   var filepath = null
   var focusElement = null
   var textUnderEdit = null
+  var textInRename = false
 
   var events = new EventManager()
   this.events = events
@@ -243,14 +244,16 @@ function fileExplorer (appAPI, files) {
     }
 
     if (event.which === 13) event.preventDefault()
-    if ((event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
+    if (!textInRename && (event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
+      textInRename = true
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
-      if (save && event.which !== 13) {
+      if (save) {
         modalDialogCustom.confirm(null, `Do you want to rename?`, () => { rename() }, () => { cancelRename() })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)
+      textInRename = false
     }
   }
 
