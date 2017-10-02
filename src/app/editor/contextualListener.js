@@ -1,9 +1,15 @@
 'use strict'
-var SourceMappingDecoder = require('ethereum-remix').util.SourceMappingDecoder
-var AstWalker = require('ethereum-remix').util.AstWalker
+var remix = require('ethereum-remix')
+var SourceMappingDecoder = remix.util.SourceMappingDecoder
+var AstWalker = remix.util.AstWalker
+var EventManager = remix.lib.EventManager
 
+/*
+  trigger contextChanged(nodes)
+*/
 class ContextualListener {
   constructor (api, events) {
+    this.event = new EventManager()
     this._api = api
     this._index = {
       Declarations: {},
@@ -31,6 +37,17 @@ class ContextualListener {
     }, 1000)
   }
 
+  declarationOf (node) {
+    if (node.attributes && node.attributes.referencedDeclaration) {
+      return this._index['FlatReferences'][node.attributes.referencedDeclaration]
+    }
+    return null
+  }
+
+  referencesOf (node) {
+    return this._index['Declarations'][node.id]
+  }
+
   _highlightItems (cursorPosition, compilationResult, file) {
     if (this.currentPosition === cursorPosition) return
     if (this.currentFile !== file) {
@@ -43,6 +60,7 @@ class ContextualListener {
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
+      this.event.trigger('contextChanged', [nodes])
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
