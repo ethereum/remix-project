@@ -31,7 +31,6 @@ function Editor (opts = {}) {
   ace.acequire('ace/ext/language_tools')
   editor.setOptions({
     enableBasicAutocompletion: true,
-    enableSnippets: true,
     enableLiveAutocompletion: true
   })
   var flowCompleter = {
