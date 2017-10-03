@@ -142,16 +142,16 @@ function styleGuide () {
     /* .................
           PRIMARY
     .................. */
-    primaryButton_TextColor: css_properties.colors.white,
-    primaryButton_BackgroundColor: css_properties.colors.blue,
-    primaryButton_BorderColor: css_properties.colors.blue,
+    primaryButton_TextColor: css_properties.colors.black,
+    primaryButton_BackgroundColor: css_properties.colors.lightBlue,
+    primaryButton_BorderColor: css_properties.colors.lightBlue,
 
     /* .................
           SECONDARY
     .................. */
     secondaryButton_TextColor: css_properties.colors.black,
-    secondaryButton_BackgroundColor: css_properties.colors.lightGrey,
-    secondaryButton_BorderColor: css_properties.colors.lightGrey,
+    secondaryButton_BackgroundColor: css_properties.colors.veryLightGrey,
+    secondaryButton_BorderColor: css_properties.colors.veryLightGrey,
 
     /* .................
           SUCCESS
@@ -567,9 +567,9 @@ var remix_properties = {
       }),
 
       button_Debugger: app_properties.uiElements.button({
-        BackgroundColor: app_properties.primaryButton_BackgroundColor,
-        BorderColor: app_properties.primaryButton_BorderColor,
-        Color: app_properties.primaryButton_TextColor
+        BackgroundColor: app_properties.secondaryButton_BackgroundColor,
+        BorderColor: app_properties.secondaryButton_BorderColor,
+        Color: app_properties.secondaryButton_TextColor
       }),
 
       button_Debugger_icon_Color: app_properties.icon_Color,
