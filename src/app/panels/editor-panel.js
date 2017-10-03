@@ -169,7 +169,6 @@ var css = csjs`
     height            : 100%;
     width             : 100%;
   }
-
   .contextviewcontainer{
     position          : absolute;
     z-index           : 100;
@@ -177,7 +176,6 @@ var css = csjs`
     top               : 10px;
     width             : 20em;
   }  
-  
   .banner             {
     width             : 25em;
   }
@@ -217,9 +215,26 @@ class EditorPanel {
             return self._api.context()
           }
         },
-        banner: yo`<div>
-          <img class=${css.banner} title="Remix" src="assets/img/remix_logo_512x512.svg" alt="Remix">
-        </div>`
+        banner: yo`
+        <div>
+          <div class=${css.banner} title="Remix" alt="Remix">
+
+            ########  ######## ##     ## #### ##     ##
+            ##     ## ##       ###   ###  ##   ##   ##
+            ##     ## ##       #### ####  ##    ## ##
+            ########  ######   ## ### ##  ##     ###
+            ##   ##   ##       ##     ##  ##    ## ##
+            ##    ##  ##       ##     ##  ##   ##   ##
+            ##     ## ######## ##     ## #### ##     ##
+
+
+            welcome to browser solidity
+
+            new features:
+            - dom terminal v0.0.1-alpha
+          </div>
+        </div>
+        `
       })
     }
     self._components.terminal.event.register('filterChanged', (type, value) => {
