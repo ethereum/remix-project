@@ -370,9 +370,11 @@ function compileTab (container, appAPI, appEvents, opts) {
         keys.map(x => {
           var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
           var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[x]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
+          var keyDisplayName
+          (x === 'interface') ? keyDisplayName = 'interface - abi' : keyDisplayName = x
           log.appendChild(yo`
             <div class=${css.log}>
-              <div class="${css.key}">${x} ${copyDetails} ${questionMark}</div>
+              <div class="${css.key}">${keyDisplayName} ${copyDetails} ${questionMark}</div>
               ${insertValue(details, x)}
             </div>
             `)
