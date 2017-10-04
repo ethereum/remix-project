@@ -140,7 +140,8 @@ function isDefinition (node) {
   node.name === 'FunctionDefinition' ||
   node.name === 'ModifierDefinition' ||
   node.name === 'VariableDeclaration' ||
-  node.name === 'StructDefinition'
+  node.name === 'StructDefinition' ||
+  node.name === 'EventDefinition'
 }
 
 module.exports = ContextView
