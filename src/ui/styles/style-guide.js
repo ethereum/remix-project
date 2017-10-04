@@ -203,76 +203,76 @@ function styleGuide () {
 
     uiElements: {
       solidBorderBox: (opts = {}) => `
-        background-color      : ${opts.BackgroundColor}
-        border                : 1px solid ${opts.BorderColor}
-        color                 : ${opts.Color}
-        border-radius         : ${cssProperties.borders.primary_borderRadius}
-        font-size             : 12px
-        padding               : 10px 15px
-        line-height           : 20px
-        overflow              : hidden
-        word-break            : break-word
-        width                 : 100%
+        background-color      : ${opts.BackgroundColor};
+        border                : 1px solid ${opts.BorderColor};
+        color                 : ${opts.Color};
+        border-radius         : ${cssProperties.borders.primary_borderRadius};
+        font-size             : 12px;
+        padding               : 10px 15px;
+        line-height           : 20px;
+        overflow              : hidden;
+        word-break            : break-word;
+        width                 : 100%;
       `,
 
       dottedBorderBox: (opts = {}) => `
-        background-color      : ${opts.BackgroundColor}
-        border                : .2em dotted ${opts.BorderColor}
-        color                 : ${opts.Color}
-        border-radius         : ${cssProperties.borders.secondary_borderRadius}
-        line-height           : 20px
-        padding               : 8px 15px
-        margin-bottom         : 1em
-        overflow              : hidden
-        word-break            : break-word
+        background-color      : ${opts.BackgroundColor};
+        border                : .2em dotted ${opts.BorderColor};
+        color                 : ${opts.Color};
+        border-radius         : ${cssProperties.borders.secondary_borderRadius};
+        line-height           : 20px;
+        padding               : 8px 15px;
+        margin-bottom         : 1em;
+        overflow              : hidden;
+        word-break            : break-word;
       `,
 
       inputField: (opts = {}) => `
-        background-color      : ${opts.BackgroundColor}
-        border                : 1px solid ${opts.BorderColor}
-        color                 : ${opts.Color}
-        border-radius         : ${cssProperties.borders.secondary_borderRadius}
-        height                : 25px
-        width                 : 250px
-        padding               : 0 8px
-        overflow              : hidden
-        word-break            : normal
+        background-color      : ${opts.BackgroundColor};
+        border                : 1px solid ${opts.BorderColor};
+        color                 : ${opts.Color};
+        border-radius         : ${cssProperties.borders.secondary_borderRadius};
+        height                : 25px;
+        width                 : 250px;
+        padding               : 0 8px;
+        overflow              : hidden;
+        word-break            : normal;
       `,
 
       dropdown: (opts = {}) => `
-        background-color      : ${opts.BackgroundColor}
-        border                : 1px solid ${opts.BorderColor}
-        color                 : ${opts.Color}
-        font-size               : 12px
-        font-weight             : bold
-        padding                 : 0 8px
-        text-decoration         : none
-        cursor                  : pointer
-        border-radius           : 3px
-        height                  : 25px
-        width                   : 250px
-        text-align              : center
-        overflow                : hidden
-        word-break              : normal
+        background-color      : ${opts.BackgroundColor};
+        border                : 1px solid ${opts.BorderColor};
+        color                 : ${opts.Color};
+        font-size               : 12px;
+        font-weight             : bold;
+        padding                 : 0 8px;
+        text-decoration         : none;
+        cursor                  : pointer;
+        border-radius           : 3px;
+        height                  : 25px;
+        width                   : 250px;
+        text-align              : center;
+        overflow                : hidden;
+        word-break              : normal;
       `,
 
       button: (opts = {}) => `
-      margin                  : 1px
-      background-color        : ${opts.BackgroundColor}
-      border                  : .3px solid ${opts.BorderColor}
-      color                   : ${opts.Color}
-      display                 : flex
-      align-items             : center
-      justify-content         : center
-      border-radius           : 3px
-      cursor                  : pointer
-      min-height              : 25px
-      max-height              : 25px
-      width                   : 70px
-      min-width               : 70px
-      font-size               : 12px
-      overflow                : hidden
-      word-break              : normal
+      margin                  : 1px;
+      background-color        : ${opts.BackgroundColor};
+      border                  : .3px solid ${opts.BorderColor};
+      color                   : ${opts.Color};
+      display                 : flex;
+      align-items             : center;
+      justify-content         : center;
+      border-radius           : 3px;
+      cursor                  : pointer;
+      min-height              : 25px;
+      max-height              : 25px;
+      width                   : 70px;
+      min-width               : 70px;
+      font-size               : 12px;
+      overflow                : hidden;
+      word-break              : normal;
       `
     }
   }
