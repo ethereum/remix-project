@@ -6,26 +6,27 @@ class Recorder {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
-    self.data = { journal: [], _pending: {} }
+    self.data = { journal: [], _pendingCreation: {} }
     opts.events.executioncontext.register('contextChanged', function () {
       self.clearAll()
     })
-    var counter = 1
+    var counter = 0
     self._addressCache = {}
-    opts.events.udapp.register('initiatingTransaction', (stamp, tx) => {
+    opts.events.udapp.register('initiatingTransaction', (timestamp, tx) => {
       var { from, to, value, gas, data } = tx
       var record = { value, gas, data }
       record.from = self._addressCache[from] || (self._addressCache[from] = `<account -${(++counter)}>`)
-      if (to === null) self.data._pending[stamp] = record
+      if (to === null) self.data._pendingCreation[timestamp] = record
       else record.to = self._addressCache[to] || (self._addressCache[to] = `<account -${(++counter)}>`)
-      self.append(stamp, record)
+      self.append(timestamp, record)
     })
-    opts.events.udapp.register('transactionExecuted', args => {
+    opts.events.udapp.register('transactionExecuted', (...args) => {
       var err = args[0]
       if (err) console.error(err)
-      var stamp = args[6]
-      var record = self._pending[stamp]
-      delete self._pending[stamp]
+      var timestamp = args[6]
+      // update transaction which was pending with correct `to` address
+      var record = self._pendingCreation[timestamp]
+      delete self._pendingCreation[timestamp]
       if (!record) return
       var to = args[2]
       record.to = self._addressCache[to] || (self._addressCache[to] = `<contract -${++counter}>`)
