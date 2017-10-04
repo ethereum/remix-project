@@ -25,7 +25,7 @@ var css = csjs`
     margin: 3% 0;
   }
   .compileContainer  {
-    ${styles.rightPanel.compileTab.box_CompileContainer}
+    ${styles.rightPanel.compileTab.box_CompileContainer};
     margin-bottom: 2%;
   }
   .autocompileContainer {
@@ -61,20 +61,20 @@ var css = csjs`
     display: flex;
   }
   .compileButton {
-    ${styles.rightPanel.compileTab.button_Compile}
+    ${styles.rightPanel.compileTab.button_Compile};
     width: 120px;
     min-width: 110px;
     margin-right: 1%;
     font-size: 12px;
   }
   .container {
-    ${styles.rightPanel.compileTab.box_CompileContainer}
+    ${styles.rightPanel.compileTab.box_CompileContainer};
     margin: 0;
     display: flex;
     align-items: center;
   }
   .contractNames {
-    ${styles.rightPanel.compileTab.dropdown_CompileContract}
+    ${styles.rightPanel.compileTab.dropdown_CompileContract};
     margin-right: 5%;
   }
   .contractButtons {
@@ -84,15 +84,15 @@ var css = csjs`
     text-align: center;
   }
   .details {
-    ${styles.rightPanel.compileTab.button_Details}
+    ${styles.rightPanel.compileTab.button_Details};
   }
   .publish {
-    ${styles.rightPanel.compileTab.button_Publish}
+    ${styles.rightPanel.compileTab.button_Publish};
     margin-left: 2%;
     width: 120px;
   }
   .log {
-    ${styles.rightPanel.compileTab.box_CompileContainer}
+    ${styles.rightPanel.compileTab.box_CompileContainer};
     display: flex;
     flex-direction: column;
     margin-bottom: 5%;

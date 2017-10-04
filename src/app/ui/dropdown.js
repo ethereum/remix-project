@@ -41,8 +41,8 @@ var css = csjs`
     top               : 24px;
     left              : 0;
     width             : 250px;
-    background-color  : ${styles.app_properties.dropdown_BackgroundColor};
-    border            : 1px solid ${styles.app_properties.dropdown_BorderColor};
+    background-color  : ${styles.appProperties.dropdown_BackgroundColor};
+    border            : 1px solid ${styles.appProperties.dropdown_BorderColor};
     border-radius     : 3px;
     border-top        : 0;
   }
