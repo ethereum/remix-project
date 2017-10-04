@@ -210,7 +210,7 @@ class Terminal {
           </div>
           ${self._view.dropdown}
           <input type="text" class=${css.filter} onkeyup=${filter}>
-          <input onchange=${listenOnNetwork} type="checkbox" /><label title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created from the GUI">Listen on network</label>
+          <input onchange=${listenOnNetwork} type="checkbox"><label title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created from the GUI">Listen on network</label>
           ${self._view.icon}
         </div>
       </div>
