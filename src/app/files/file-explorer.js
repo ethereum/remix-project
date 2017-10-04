@@ -253,7 +253,7 @@ function fileExplorer (appAPI, files) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm(null, `Do you want to rename?`, () => { rename() }, () => { cancelRename() })
+        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { cancelRename() })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)

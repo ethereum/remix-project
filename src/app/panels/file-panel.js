@@ -340,7 +340,7 @@ function filepanel (appAPI, filesProvider) {
         }
       })
     }
-    modalDialogCustom.confirm(null, `Are you very sure you want to publish all your files anonymously as a public gist on github.com?`, () => {
+    modalDialogCustom.confirm(null, 'Are you very sure you want to publish all your files anonymously as a public gist on github.com?', () => {
       toGist()
     })
   }
