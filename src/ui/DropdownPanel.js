@@ -2,7 +2,6 @@
 var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var styleDropdown = require('./styles/dropdownPanel')
-var basicStyles = require('./styles/basicStyles')
 var TreeView = require('./TreeView')
 var EventManager = require('../lib/eventManager')
 

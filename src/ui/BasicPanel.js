@@ -4,8 +4,6 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 
 var csjs = require('csjs-inject')
-var styleGuide = require('./styles/style-guide')
-var styles = styleGuide()
 
 var css = csjs`
   .container {
