@@ -215,26 +215,9 @@ class EditorPanel {
             return self._api.context()
           }
         },
-        banner: yo`
-        <div>
-          <div class=${css.banner} title="Remix" alt="Remix">
-
-            ########  ######## ##     ## #### ##     ##
-            ##     ## ##       ###   ###  ##   ##   ##
-            ##     ## ##       #### ####  ##    ## ##
-            ########  ######   ## ### ##  ##     ###
-            ##   ##   ##       ##     ##  ##    ## ##
-            ##    ##  ##       ##     ##  ##   ##   ##
-            ##     ## ######## ##     ## #### ##     ##
-
-
-            welcome to browser solidity
-
-            new features:
-            - dom terminal v0.0.1-alpha
-          </div>
-        </div>
-        `
+        banner: yo`<div>
+          <img class=${css.banner} title="Remix" src="assets/img/remix_logo_512x512.svg" alt="Remix">
+        </div>`
       })
     }
     self._components.terminal.event.register('filterChanged', (type, value) => {
