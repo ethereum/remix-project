@@ -169,6 +169,19 @@ var css = csjs`
     color: ${styles.colors.orange};
     margin-left: 10%;
   }
+  .errorIcon {
+    color: ${styles.colors.red};;
+    margin-left: 15px;
+  }
+  .errorIcon {
+    color: ${styles.colors.red};;
+    margin-left: 15px;
+  }
+  .failDesc {
+    color: ${styles.colors.red};;
+    padding-left: 10px;
+    display: inline;
+  }
 `
 
 module.exports = runTab
@@ -250,9 +263,14 @@ function updateAccountBalances (container, appAPI) {
 
 function contractDropdown (appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
-
+  var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
     getContractNames(success, data)
+    if (success) {
+      compFails.style.display = 'none'
+    } else {
+      compFails.style.display = 'block'
+    }
   })
 
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
@@ -261,7 +279,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
-        ${selectContractNames}
+        ${selectContractNames} ${compFails}
       </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
