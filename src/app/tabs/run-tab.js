@@ -262,33 +262,14 @@ function updateAccountBalances (container, appAPI) {
 ------------------------------------------------ */
 
 function contractDropdown (appAPI, appEvents, instanceContainer) {
-  var iconContainer
-  var iFail
-  var errOn
-  var failCont
-  var iFailDesc
   instanceContainer.appendChild(noInstancesText)
+  var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
+    getContractNames(success, data)
     if (success) {
-      getContractNames(success, data)
-      if (errOn) {
-        iconContainer.removeChild(failCont)
-        errOn = false
-      }
+      compFails.style.display = 'none'
     } else {
-      if (!errOn) {
-        iconContainer = document.querySelector(`.${css.runTabView} .${css.subcontainer}`)
-        failCont = document.createElement('div')
-        iFail = document.createElement('i')
-        iFailDesc = document.createElement('p')
-        iFailDesc.innerHTML = 'Compiler ERROR'
-        iFailDesc.className = `${css.failDesc}`
-        iconContainer.appendChild(failCont)
-        failCont.appendChild(iFail)
-        failCont.appendChild(iFailDesc)
-        iFail.className = `fa fa-thumbs-down fa-2x ${css.errorIcon}`
-        errOn = true
-      }
+      compFails.style.display = 'block'
     }
   })
 
@@ -298,7 +279,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
-        ${selectContractNames}
+        ${selectContractNames} ${compFails}
       </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
