@@ -329,6 +329,8 @@ function styleGuide () {
       backgroundColor_Panel: appProperties.primary_BackgroundColor,
       backgroundColor_Editor: appProperties.light_BackgroundColor,
       backgroundColor_Tabs_Highlights: appProperties.secondary_BackgroundColor,
+      backgroundColor_Editor_Context_Highlights: appProperties.dark_BackgroundColor,
+      backgroundColor_Editor_Context_Error_Highlights: appProperties.error_BackgroundColor,
       backgroundColor_DebuggerMode: appProperties.warning_BackgroundColor,
 
       text_Primary: appProperties.mainText_Color,
