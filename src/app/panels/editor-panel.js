@@ -170,12 +170,10 @@ var css = csjs`
     width             : 100%;
   }
   .contextviewcontainer{
-    position          : absolute;
-    z-index           : 100;
-    right             : 20px;
-    top               : 10px;
-    width             : 20em;
-  }  
+    width             : 100%;
+    height            : 30px;
+    background-color  : ${styles.editor.backgroundColor_Tabs_Highlights};
+  }
   .banner             {
     width             : 25em;
   }
@@ -279,7 +277,7 @@ class EditorPanel {
       <div class=${css.content}>
         <div class=${css.contextviewcontainer}>
           ${self._api.contextview.render()}
-        </div>      
+        </div>
         ${self._view.editor}
         ${self._view.terminal}
       </div>

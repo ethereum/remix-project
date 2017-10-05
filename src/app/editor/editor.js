@@ -15,7 +15,6 @@ var styles = styleGuide()
 var css = csjs`
   .ace-editor {
     background-color  : ${styles.editor.backgroundColor_Editor};
-    border-top: 20px solid ${styles.editor.backgroundColor_Tabs_Highlights};
     width     : 100%;
   }
 `
@@ -47,7 +46,7 @@ document.head.appendChild(yo`
       position:absolute;
       z-index:20;
       background-color:hsla(0, 82%, 82%, 1); /* red in style-guide.js */
-     }    
+     }
   </style>
 `)
 
