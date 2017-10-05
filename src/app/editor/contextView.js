@@ -11,7 +11,7 @@ var css = csjs`
       opacity           : 0.8;
     }
   .container              {
-    padding             : 5px 15px;
+    padding             : 1px 15px;
   }
   .line                   {
     display             : flex;

@@ -31,21 +31,21 @@ document.head.appendChild(yo`
     .highlightreference {
       position:absolute;
       z-index:20;
-      background-color: lightgrey;
+      background-color: ${styles.editor.backgroundColor_Editor_Context_Highlights};
       opacity: 0.7
     }
 
     .highlightreferenceline {
       position:absolute;
       z-index:20;
-      background-color: hsla(229, 75%, 87%, .5); /* lightBlue in style-guide.js*/
+      background-color: ${styles.editor.backgroundColor_Editor_Context_Highlights};
       opacity: 0.7
     }
 
     .highlightcode {
       position:absolute;
       z-index:20;
-      background-color:hsla(0, 82%, 82%, 1); /* red in style-guide.js */
+      background-color: ${styles.editor.backgroundColor_Editor_Context_Error_Highlights};
      }
   </style>
 `)

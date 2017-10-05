@@ -171,7 +171,7 @@ var css = csjs`
   }
   .contextviewcontainer{
     width             : 100%;
-    height            : 30px;
+    height            : 20px;
     background-color  : ${styles.editor.backgroundColor_Tabs_Highlights};
   }
 `
