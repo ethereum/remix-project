@@ -71,7 +71,8 @@ class EventsDecoder {
     for (var i in logs) {
       // [address, topics, mem]
       var log = logs[i]
-      var abi = this._event(log.topics[0].replace('0x', ''), eventsABI)
+      var topicId = log.topics[0]
+      var abi = this._event(topicId.replace('0x', ''), eventsABI)
       if (abi) {
         var event
         try {
@@ -108,7 +109,7 @@ class EventsDecoder {
         } catch (e) {
           decoded = log.data
         }
-        events.push({ event: event, args: decoded })
+        events.push({ topic: topicId, event: event, args: decoded })
       } else {
         events.push({ data: log.data, topics: log.topics })
       }
