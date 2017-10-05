@@ -44,12 +44,14 @@ class TxListener {
         from: from,
         to: to,
         input: data,
-        hash: txResult.transactionHash ? txResult.transactionHash : 'call' + from + to + data,
+        hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
         output: txResult.result,
         returnValue: executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result),
         envMode: executionContext.getProvider()
       }
+
+      addExecutionCosts(txResult, call)
       this._resolveTx(call, (error, resolvedData) => {
         if (!error) {
           this.event.trigger('newCall', [call])
@@ -67,20 +69,24 @@ class TxListener {
       if (this._loopId && executionContext.getProvider() !== 'vm') return // we seems to already listen on a "web3" network
       executionContext.web3().eth.getTransaction(txResult.transactionHash, (error, tx) => {
         if (error) return console.log(error)
-        if (txResult && txResult.result) {
-          if (txResult.result.vm) {
-            tx.returnValue = txResult.result.vm.return
-            if (txResult.result.vm.gasUsed) tx.executionCost = txResult.result.vm.gasUsed.toString(10)
-          }
-          if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
-        }
 
+        addExecutionCosts(txResult, tx)
         tx.envMode = executionContext.getProvider()
         tx.status = txResult.result.status // 0x0 or 0x1
         this._resolve([tx], () => {
         })
       })
     })
+
+    function addExecutionCosts (txResult, tx) {
+      if (txResult && txResult.result) {
+        if (txResult.result.vm) {
+          tx.returnValue = txResult.result.vm.return
+          if (txResult.result.vm.gasUsed) tx.executionCost = txResult.result.vm.gasUsed.toString(10)
+        }
+        if (txResult.result.gasUsed) tx.transactionCost = txResult.result.gasUsed.toString(10)
+      }
+    }
   }
 
   /**
