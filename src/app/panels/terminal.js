@@ -74,6 +74,19 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
+  .terminal::after {
+    content           : "";
+    background-image  : url(assets/img/remix_logo_512x512.svg);
+    opacity           : 0.1;
+    top               : 15%;
+    left              : 33%;
+    bottom            : 0;
+    right             : 0;
+    position          : absolute;
+    z-index           : -1;
+    background-repeat : no-repeat;
+    background-size   : 45%;
+  }
   .journal            {
     margin-top        : auto;
     font-family       : monospace;
@@ -142,7 +155,6 @@ class Terminal {
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
-      banner: opts.banner,
       activeFilters: { commands: {}, input: '' }
     }
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
@@ -177,9 +189,6 @@ class Terminal {
     self._INDEX.allMain = []
     self._INDEX.commands = {}
     self._INDEX.commandsMain = {}
-    self.registerCommand('banner', function (args, scopedCommands, append) {
-      append(args[0])
-    }, { activate: true })
     self.registerCommand('log', self._blocksRenderer('log'), { activate: true })
     self.registerCommand('info', self._blocksRenderer('info'), { activate: true })
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
@@ -243,10 +252,6 @@ class Terminal {
         ${self._view.term}
       </div>
     `
-    if (self.data.banner) {
-      self.data.activeFilters.commands['banner'] = true
-      self.commands.banner(self.data.banner)
-    }
 
     function throttle (fn, wait) {
       var time = Date.now()

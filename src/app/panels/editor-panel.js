@@ -174,9 +174,6 @@ var css = csjs`
     height            : 30px;
     background-color  : ${styles.editor.backgroundColor_Tabs_Highlights};
   }
-  .banner             {
-    width             : 25em;
-  }
 `
 
 class EditorPanel {
@@ -212,10 +209,7 @@ class EditorPanel {
           context () {
             return self._api.context()
           }
-        },
-        banner: yo`<div>
-          <img class=${css.banner} title="Remix" src="assets/img/remix_logo_512x512.svg" alt="Remix">
-        </div>`
+        }
       })
     }
     self._components.terminal.event.register('filterChanged', (type, value) => {
