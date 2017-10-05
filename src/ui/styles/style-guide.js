@@ -27,6 +27,7 @@ function styleGuide () {
       lightGrey: 'hsla(0, 0%, 40%, .5)',
       veryLightGrey: 'hsla(0, 0%, 40%, .2)',
       // RED
+      strongRed: 'hsla(0, 100%, 71%, 1)',
       red: 'hsla(0, 82%, 82%, 1)',
       lightRed: 'hsla(0, 82%, 82%, .5)',
       // GREEN
@@ -72,7 +73,6 @@ function styleGuide () {
     secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
     dark_BackgroundColor: cssProperties.colors.veryLightGrey,
     light_BackgroundColor: cssProperties.colors.white,
-
     /* ------------------------------------------------------
                               RESIZING
     ******************************************************** */
@@ -84,9 +84,9 @@ function styleGuide () {
     ******************************************************** */
     mainText_Color: cssProperties.colors.black,
     supportText_Color: cssProperties.colors.grey,
-    errorText_Color: cssProperties.colors.red,
+    errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
-
+    infoText_Color: cssProperties.colors.violet,
     /* ------------------------------------------------------
                               ICONS
     ******************************************************** */
@@ -168,8 +168,8 @@ function styleGuide () {
           WARNING
     .................. */
     warningButton_TextColor: cssProperties.colors.white,
-    warningButton_BackgroundColor: cssProperties.colors.orange,
-    warningButton_BorderColor: cssProperties.colors.orange,
+    warningButton_BackgroundColor: cssProperties.colors.lightOrange,
+    warningButton_BorderColor: cssProperties.colors.lightOrange,
 
     /* .................
           INFO
@@ -352,7 +352,7 @@ function styleGuide () {
       text_RegularLog: appProperties.mainText_Color,
       text_InfoLog: appProperties.supportText_Color,
       text_ErrorLog: appProperties.errorText_Color,
-      text_Title_TransactionLog: appProperties.warningText_Color,
+      text_Title_TransactionLog: appProperties.infoText_Color,
       text_Regular_TransactionLog: appProperties.supportText_Color,
 
       icon_Color_TogglePanel: appProperties.icon_Color,
@@ -385,8 +385,8 @@ function styleGuide () {
 
       button_Log_Details: appProperties.uiElements.button({
         BackgroundColor: appProperties.secondaryButton_BackgroundColor,
-        BorderColor: appProperties.secondaryButton_BorderColor,
-        Color: appProperties.secondaryButton_TextColor
+        BorderColor: appProperties.warningButton_BorderColor,
+        Color: appProperties.warningButton_TextColor
       })
 
     },
