@@ -3,10 +3,12 @@ var tape = require('tape')
 var compiler = require('solc')
 var index = require('../../src/index')
 var contracts = require('./contracts/miscContracts')
+var helpers = require('../helpers.js')
 
 tape('solidity', function (t) {
   t.test('storage location', function (st) {
-    var output = compiler.compile(contracts, 0)
+    var output = compiler.compileStandardWrapper(helpers.compilerInput(contracts))
+    output = JSON.parse(output)
     var stateDec = index.solidity.stateDecoder.extractStateVariables('contractUint', output.sources)
     checkLocation(st, stateDec[0].storagelocation, 0, 0)
     checkLocation(st, stateDec[1].storagelocation, 1, 0)

@@ -57,19 +57,15 @@ SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (ad
   })
 }
 
-/**
- * backwards compatibility - attribute name will certainly be changed
- */
-function srcmapRuntime (contract) {
-  return contract.srcmapRuntime ? contract.srcmapRuntime : contract['srcmap-runtime']
-}
-
 function getSourceMap (address, code, contracts) {
   var isCreation = helper.isContractCreation(address)
-  var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
-  for (var k in contracts) {
-    if (util.compareByteCode(code, '0x' + contracts[k][byteProp])) {
-      return isCreation ? contracts[k].srcmap : srcmapRuntime(contracts[k])
+  var bytes
+  for (var file in contracts) {
+    for (var contract in contracts[file]) {
+      bytes = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
+      if (util.compareByteCode(code, '0x' + bytes)) {
+        return isCreation ? contracts[file][contract].evm.bytecode.sourceMap : contracts[file][contract].evm.deployedBytecode.sourceMap
+      }
     }
   }
   return null
@@ -82,7 +78,7 @@ function extractSourceMap (codeManager, address, contracts, cb) {
       if (sourceMap) {
         cb(null, sourceMap)
       } else {
-        cb('no srcmap associated with the code ' + address)
+        cb('no sourcemap associated with the code ' + address)
       }
     } else {
       cb(error)

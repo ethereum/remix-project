@@ -19,7 +19,6 @@ class SolidityProxy {
     */
   reset (compilationResult) {
     this.sources = compilationResult.sources
-    this.sourceList = compilationResult.sourceList
     this.contracts = compilationResult.contracts
     this.cache.reset()
   }
@@ -113,9 +112,9 @@ class SolidityProxy {
     * @return {Object} - AST of the current file
     */
   ast (sourceLocation) {
-    var file = this.sourceList[sourceLocation.file]
+    var file = this.fileNameFromIndex(sourceLocation.file)
     if (this.sources[file]) {
-      return this.sources[file].AST
+      return this.sources[file].legacyAST
     } else {
       console.log('AST not found for file id ' + sourceLocation.file)
       return null
@@ -129,16 +128,18 @@ class SolidityProxy {
    * @return {String} - filename
    */
   fileNameFromIndex (index) {
-    return this.sourceList[index]
+    return Object.keys(this.contracts)[index]
   }
 }
 
 function contractNameFromCode (contracts, code, address) {
   var isCreation = traceHelper.isContractCreation(address)
-  var byteProp = isCreation ? 'bytecode' : 'runtimeBytecode'
-  for (var k in contracts) {
-    if (util.compareByteCode(code, '0x' + contracts[k][byteProp])) {
-      return k
+  for (var file in contracts) {
+    for (var contract in contracts[file]) {
+      var bytecode = isCreation ? contracts[file][contract].evm.bytecode.object : contracts[file][contract].evm.deployedBytecode.object
+      if (util.compareByteCode(code, '0x' + bytecode)) {
+        return contract
+      }
     }
   }
   return null

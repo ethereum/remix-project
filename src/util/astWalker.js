@@ -39,7 +39,7 @@ AstWalker.prototype.walk = function (ast, callback) {
 AstWalker.prototype.walkAstList = function (sourcesList, callback) {
   var walker = new AstWalker()
   for (var k in sourcesList) {
-    walker.walk(sourcesList[k].AST, callback)
+    walker.walk(sourcesList[k].legacyAST, callback)
   }
 }
 

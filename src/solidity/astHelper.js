@@ -15,7 +15,7 @@ function extractContractDefinitions (sourcesList) {
   }
   var walker = new AstWalker()
   for (var k in sourcesList) {
-    walker.walk(sourcesList[k].AST, { 'ContractDefinition': function (node) {
+    walker.walk(sourcesList[k].legacyAST, { 'ContractDefinition': function (node) {
       ret.contractsById[node.id] = node
       ret.sourcesByContract[node.id] = k
       ret.contractsByName[k + ':' + node.attributes.name] = node
