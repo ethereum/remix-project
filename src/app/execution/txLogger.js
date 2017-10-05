@@ -208,12 +208,38 @@ function renderCall (self, data) {
       <div class="${css.log}">
         <span><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
         <div class=${css.buttons}>
+          <button class=${css.details} onclick=${txDetails}>Details</button>
           <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
       <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
     </span>
   `
+
+  var table
+  function txDetails () {
+    if (table && table.parentNode) {
+      tx.removeChild(table)
+    } else {
+      table = createTable({
+        isCall: data.tx.isCall,
+        contractAddress: data.tx.contractAddress,
+        data: data.tx,
+        from,
+        to,
+        gas: data.tx.gas,
+        hash: data.tx.hash,
+        input: data.tx.input,
+        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
+        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+        logs: data.logs,
+        val: data.tx.value,
+        transactionCost: data.tx.transactionCost,
+        executionCost: data.tx.executionCost
+      })
+      tx.appendChild(table)
+    }
+  }
   return tx
 }
 
@@ -344,11 +370,15 @@ function createTable (opts) {
   `
   if (opts.gas) table.appendChild(gas)
 
+  var callWarning = ''
+  if (opts.isCall) {
+    callWarning = '(Cost only applies when called by a contract)'
+  }
   if (opts.transactionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> transaction cost </td>
-      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.transactionCost) }} title='Copy to clipboard'></i>${opts.transactionCost} gas</td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.transactionCost) }} title='Copy to clipboard'></i>${opts.transactionCost} gas ${callWarning}</td>
     </tr class="${css.tr}">`)
   }
 
@@ -356,7 +386,7 @@ function createTable (opts) {
     table.appendChild(yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> execution cost </td>
-      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.executionCost) }} title='Copy to clipboard'></i>${opts.executionCost} gas</td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.executionCost) }} title='Copy to clipboard'></i>${opts.executionCost} gas ${callWarning}</td>
     </tr class="${css.tr}">`)
   }
 
@@ -408,7 +438,7 @@ function createTable (opts) {
   `
   if (opts.logs) table.appendChild(logs)
 
-  var val = typeConversion.toInt(opts.val)
+  var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   val = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> value </td>
