@@ -38,9 +38,10 @@ function tabbedMenu (container, appAPI, events, opts) {
     if (!match) return
     var cls = match[0]
     if (!el.classList.contains(css.active)) {
-      el.parentNode.querySelectorAll('li').forEach(function (x) {
-        x.classList.remove(css.active)
-      })
+      var nodes = el.parentNode.querySelectorAll('li')
+      for (var i = 0; i < nodes.length; ++i) {
+        nodes[i].classList.remove(css.active)
+      }
       $('#optionViews').attr('class', '').addClass(cls)
       el.classList.add(css.active)
     }
