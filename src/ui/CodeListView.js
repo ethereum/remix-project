@@ -4,7 +4,18 @@ var yo = require('yo-yo')
 var ui = require('../helpers/ui')
 var DropdownPanel = require('./DropdownPanel')
 var EventManager = require('../lib/eventManager')
+var csjs = require('csjs-inject')
+var styleGuide = require('./styles/style-guide')
+var styles = styleGuide()
 
+var css = csjs`
+  .instructions {
+    ${styles.rightPanel.debuggerTab.box_Debugger}
+    width: 75%;
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+`
 function CodeListView (_parent, _codeManager) {
   this.event = new EventManager()
   this.parent = _parent
@@ -69,7 +80,7 @@ CodeListView.prototype.renderAssemblyItems = function () {
     var codeView = this.code.map(function (item, i) {
       return yo`<div key=${i} value=${i}><span>${item}</span></div>`
     })
-    return yo`<div id='asmitems' ref='itemsList' style=${ui.formatCss(style.instructionsList)}>
+    return yo`<div class=${css.instructions} id='asmitems' ref='itemsList'>
       ${codeView}
     </div>`
   }

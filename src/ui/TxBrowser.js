@@ -25,7 +25,7 @@ var css = csjs`
     justify-content: center;
   }
   .txinput {
-    ${styles.inputField}
+    ${styles.rightPanel.debuggerTab.input_Debugger}
     min-width: 30px;
     margin: 3px;
   }
@@ -35,10 +35,14 @@ var css = csjs`
     justify-content: center;
   }
   .txbutton {
-    ${styles.button}
+    ${styles.rightPanel.debuggerTab.button_Debugger}
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
   }
   .txbutton:hover {
-    color: ${styles.colors.black};
+    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
+  }
+  .txinfo {
+    margin-top: 5px;
   }
 `
 function TxBrowser (_parent) {
@@ -192,7 +196,7 @@ TxBrowser.prototype.render = function () {
           </div>
         </div>
         <span id='error'></span>
-        <div style=${ui.formatCss(style.transactionInfo)} id='txinfo'>
+        <div style=${css.txinfo} id='txinfo'>
           ${this.basicPanel.render()}
         </div>
       </div>`
