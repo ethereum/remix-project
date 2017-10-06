@@ -1,6 +1,18 @@
 var $ = require('jquery')
 
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
+
 module.exports = tabbedMenu
+
+var css = csjs`
+  .active {
+    background-color: ${styles.rightPanel.backgroundColor_Tab};
+  }
+`
 
 function tabbedMenu (container, appAPI, events, opts) {
   var lis = container.querySelectorAll('li')
@@ -20,15 +32,18 @@ function tabbedMenu (container, appAPI, events, opts) {
   selectTab(container.querySelector('.compileView'))
 
   // select tab
+
   function selectTab (el) {
-    el = $(el)
-    var match = /[a-z]+View/.exec(el.get(0).className)
+    var match = /[a-z]+View/.exec(el.className)
     if (!match) return
     var cls = match[0]
-    if (!el.hasClass('active')) {
-      el.parent().find('li').removeClass('active')
+    if (!el.classList.contains(css.active)) {
+      var nodes = el.parentNode.querySelectorAll('li')
+      for (var i = 0; i < nodes.length; ++i) {
+        nodes[i].classList.remove(css.active)
+      }
       $('#optionViews').attr('class', '').addClass(cls)
-      el.addClass('active')
+      el.classList.add(css.active)
     }
     events.app.trigger('tabChanged', [cls])
   }

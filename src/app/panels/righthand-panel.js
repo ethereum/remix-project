@@ -15,15 +15,58 @@ var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
+  #righthand-panel {
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  #optionViews {
+    background-color: ${styles.rightPanel.backgroundColor_Tab};
+    overflow: scroll;
+    height: 100%;
+  }
+  #optionViews > div {
+    display: none;
+  }
+  #optionViews .pre {
+    word-wrap: break-word;
+    background-color: ${styles.rightPanel.BackgroundColor_Pre};
+    border-radius: 3px;
+    display: inline-block;
+    padding: 0 0.6em;
+  }
+  #optionViews .hide {
+    display: none;
+  }
+  .menu {
+    display: flex;
+  }
   .options {
-      float: left;
-      padding-top: 0.7em;
-      min-width: 60px;
-      font-size: 0.9em;
-      cursor: pointer;
-      background-color: ${styles.colors.transparent};
-      font-size: 1em;
-      text-align: center;
+    float: left;
+    padding-top: 0.7em;
+    min-width: 60px;
+    font-size: 0.9em;
+    cursor: pointer;
+    font-size: 1em;
+    text-align: center;
+  }
+  .opts {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .opts_li {
+    display: block;
+    font-weight: bold;
+    color: ${styles.rightPanel.text_Primary};
+  }
+  .opts_li:hover {
+    color: ${styles.rightPanel.text_Secondary};
   }
   .dragbar             {
     position           : absolute;
@@ -32,11 +75,11 @@ var css = csjs`
     bottom             : 0;
     cursor             : col-resize;
     z-index            : 999;
-    border-left        : 2px solid hsla(215, 81%, 79%, .3);
+    border-left        : 2px solid ${styles.rightPanel.bar_Dragging};
   }
   .ghostbar           {
     width             : 3px;
-    background-color  : ${styles.colors.lightBlue};
+    background-color  : ${styles.rightPanel.bar_Ghost};
     opacity           : 0.5;
     position          : absolute;
     cursor            : col-resize;
@@ -50,6 +93,15 @@ var css = csjs`
   .header             {
     height            : 100%;
   }
+  .solIcon {
+    margin-left: 10px;
+    margin-right: 30px;
+    display: flex;
+    align-self: center;
+    height: 29px;
+    width: 20px;
+    background-color: ${styles.colors.transparent};
+  }
 `
 
 // ------------------------------------------------------------------
@@ -62,15 +114,15 @@ function RighthandPanel (appAPI, events, opts) {
   self.event = new EventManager()
   self._view = {}
 
-  var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
+  var optionViews = yo`<div id="optionViews" class="settingsView">${cssTabs}</div>`
   var options = yo`
-    <ul id="options">
-      <li class="compileView" title="Compile">Compile</li>
-      <li class="runView" title="Run">Run</li>
-      <li class="settingsView" title="Settings">Settings</li>
-      <li class="debugView" title="Debugger">Debugger</li>
-      <li class="staticanalysisView" title="Static Analysis">Analysis</li>
-      <li class="supportView" title="Help and support">Support</li>
+    <ul class=${css.opts}>
+      <li class="${css.opts_li} compileView" title="Compile">Compile</li>
+      <li class="${css.opts_li} runView" title="Run">Run</li>
+      <li class="${css.opts_li} settingsView" title="Settings">Settings</li>
+      <li class="${css.opts_li} debugView" title="Debugger">Debugger</li>
+      <li class="${css.opts_li} staticanalysisView" title="Static Analysis">Analysis</li>
+      <li class="${css.opts_li} supportView" title="Help and support">Support</li>
     </ul>
   `
   self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
@@ -78,8 +130,8 @@ function RighthandPanel (appAPI, events, opts) {
     <div id="righthand-panel" class=${css.panel}>
       ${self._view.dragbar}
       <div id="header" class=${css.header}>
-        <div id="menu">
-          <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
+        <div class=${css.menu}>
+          <img class=${css.solIcon} title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
           ${options}
         </div>
         ${optionViews}
@@ -148,3 +200,27 @@ function RighthandPanel (appAPI, events, opts) {
     }
   }
 }
+
+var cssTabs = yo`<style>#optionViews.settingsView #settingsView {
+    display: block;
+}
+
+#optionViews.compileView #compileTabView {
+    display: block;
+}
+
+#optionViews.runView #runTabView {
+    display: block;
+}
+
+#optionViews.debugView #debugView {
+    display: block;
+}
+
+#optionViews.staticanalysisView #staticanalysisView {
+    display: block;
+}
+
+#optionViews.supportView #supportView {
+    display: block;
+}</style>`

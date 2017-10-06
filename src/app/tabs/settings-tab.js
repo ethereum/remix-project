@@ -15,16 +15,22 @@ var css = csjs`
     display: flex;
   }
   .info {
-    ${styles.infoTextBox}
+    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
     margin-bottom: 2em;
     word-break: break-word;
   }
   .crow {
-    margin-top: 1em;
     display: flex;
+    overflow: auto;
+    clear: both;
+    padding: .5em;
+    font-weight: bold;
   }
   .select {
-    ${styles.dropdown}
+    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
+  }
+  input {
+    margin-right: 3px;
   }
 }
 `

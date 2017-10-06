@@ -31,16 +31,16 @@ var css = csjs`
     align-items: center;
   }
   .title {
-    font-size: 11px;
-    ${styles.dropdown}
-    width: 400px;
+    ${styles.rightPanel.runTab.dropdown_RunTab}
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 11px;
+    width: 75%;
+    min-width: 500px;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
-    background-color: ${styles.colors.white};
   }
   .titleText {
     margin-right: 1em;
@@ -48,7 +48,7 @@ var css = csjs`
     min-width: 230px;
   }
   .instance {
-    ${styles.displayBox}
+    ${styles.rightPanel.runTab.box_Instance}
     margin-bottom: 2px;
     padding: 10px 15px 6px 15px;
   }
@@ -67,17 +67,17 @@ var css = csjs`
       display: flex;
   }
   .copy  {
-    font-size: 13px;
     cursor: pointer;
-    opacity: 0.8;
     margin-left: 3%;
-    color: ${styles.colors.blue};
+    color: ${styles.rightPanel.runTab.icon_Color_Instance_CopyToClipboard};
   }
   .copy:hover{
-    color: ${styles.colors.grey};
+    color: ${styles.rightPanel.runTab.icon_HoverColor_Instance_CopyToClipboard};
   }
   .buttonsContainer {
     margin-top: 2%;
+    display: flex;
+    overflow: hidden;
   }
   .contractActions {
     display: flex;
@@ -136,10 +136,10 @@ var css = csjs`
     display: none;
   }
   .contractProperty > .value {
-    padding: 0 0.4em;
     box-sizing: border-box;
     float: left;
-    min-width: 100%;
+    align-self: center;
+    color: ${styles.colors.grey};
   }
   .hasArgs input {
     display: block;

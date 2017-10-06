@@ -1,40 +1,43 @@
 'use strict'
 var yo = require('yo-yo')
+var csjs = require('csjs-inject')
 var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide
-var SourceMappingDecoder = remix.util.SourceMappingDecoder
 var styles = styleGuide()
-var csjs = require('csjs-inject')
+var SourceMappingDecoder = remix.util.SourceMappingDecoder
 
 var css = csjs`
   .contextview            {
-      background-color  : ${styles.colors.backgroundBlue};
       opacity           : 0.8;
-      width             : 20em;
-      height            : 6em;
-      border-color      : transparent;
-      border-radius     : 3px;
-      border            : .3px solid hsla(0, 0%, 40%, .2);
     }
   .container              {
-    padding             : 1em;
+    padding             : 1px 15px;
+  }
+  .line                   {
+    display             : flex;
+    justify-content     : flex-end;
+    align-items         : center;
+    text-overflow       : ellipsis;
+    overflow            : hidden;
+    white-space         : nowrap;
+    color               : ${styles.editor.text_Primary};
+    font-size           : 11px;
   }
   .type                   {
     font-style        : italic;
-    text-overflow     : ellipsis;
-    width             : 18em;
-    overflow          : hidden;
-    white-space       : nowrap;
+    margin-right      : 5px;
   }
   .name                   {
     font-weight       : bold;
-    text-overflow     : ellipsis;
-    width             : 18em;
-    overflow          : hidden;
-    white-space       : nowrap;
+    margin-right      : 15px;
   }
   .jumpto                 {
     cursor            : pointer;
+    margin-right      : 5px;
+    color             : ${styles.editor.icon_Color_Editor};
+  }
+  jumpto:hover            {
+    color             : ${styles.editor.icon_HoverColor_Editor};
   }
   .referencesnb           {
     float             : right;
@@ -126,7 +129,7 @@ class ContextView {
       }
     }
 
-    return yo`<div>
+    return yo`<div class=${css.line}>
       <div title=${type} class=${css.type} >${type}</div>
       <div title=${node.attributes.name} class=${css.name} >${node.attributes.name}</div>
       <i title='Go to Definition' class="fa fa-share ${css.jumpto}" aria-hidden="true" onclick=${jumpTo}></i>

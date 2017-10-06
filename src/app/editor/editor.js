@@ -8,9 +8,13 @@ var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
 
 var css = csjs`
   .ace-editor {
+    background-color  : ${styles.editor.backgroundColor_Editor};
     width     : 100%;
   }
 `
@@ -19,8 +23,30 @@ document.head.appendChild(yo`
     .ace-tm .ace_gutter,
     .ace-tm .ace_gutter-active-line,
     .ace-tm .ace_marker-layer .ace_active-line {
-        background-color: rgba(225, 229, 251, 0.5);
+        background-color: ${styles.editor.backgroundColor_Tabs_Highlights};
     }
+    .ace_gutter-cell.ace_breakpoint{
+      background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    }
+    .highlightreference {
+      position:absolute;
+      z-index:20;
+      background-color: ${styles.editor.backgroundColor_Editor_Context_Highlights};
+      opacity: 0.7
+    }
+
+    .highlightreferenceline {
+      position:absolute;
+      z-index:20;
+      background-color: ${styles.editor.backgroundColor_Editor_Context_Highlights};
+      opacity: 0.7
+    }
+
+    .highlightcode {
+      position:absolute;
+      z-index:20;
+      background-color: ${styles.editor.backgroundColor_Editor_Context_Error_Highlights};
+     }
   </style>
 `)
 

@@ -20,16 +20,16 @@ var css = csjs`
     margin-top: 1%;
   }
   .buttons  {
-    ${styles.displayBox}
+    ${styles.rightPanel.analysisTab.box_AnalysisContainer}
     display: flex;
     align-items: center;
   }
   .buttonRun  {
-    ${styles.button}
+    ${styles.rightPanel.analysisTab.button_Run_AnalysisTab}
     margin-right: 1%;
   }
   .analysisModulesContainer {
-    ${styles.displayBox}
+    ${styles.rightPanel.analysisTab.box_AnalysisContainer}
     margin-bottom: 1%;
     line-height: 2em;
     display: flex;

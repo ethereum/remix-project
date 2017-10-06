@@ -15,15 +15,19 @@ var css = csjs`
   .fileexplorer       {
     box-sizing        : border-box;
   }
+  input[type="file"] {
+      display: none;
+  }
   .folder,
   .file               {
     font-size         : 14px;
+    cursor            : pointer;
   }
   .hasFocus           {
-    background-color  : ${styles.colors.backgroundBlue};
+    background-color  : ${styles.leftPanel.backgroundColor_FileExplorer};
   }
   .rename             {
-    background-color  : ${styles.colors.white};
+    background-color  : ${styles.leftPanel.backgroundColor_Panel};
   }
   .remove             {
     margin-left       : auto;
@@ -182,7 +186,7 @@ function fileExplorer (appAPI, files) {
       this.style.paddingRight = '19px'
       return this.removeChild(deleteButton)
     }
-    this.style.backgroundColor = styles.colors.backgroundBlue
+    this.style.backgroundColor = styles.leftPanel.backgroundColor_FileExplorer
     this.style.paddingRight = '0px'
     this.appendChild(deleteButton)
   }
@@ -249,7 +253,7 @@ function fileExplorer (appAPI, files) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm(null, `Do you want to rename?`, () => { rename() }, () => { cancelRename() })
+        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { cancelRename() })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)

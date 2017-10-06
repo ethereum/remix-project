@@ -13,6 +13,9 @@ var css = csjs`
     display: flex;
     flex-direction: column;
   }
+  #staticanalysisView {
+    display: block;
+  }
   .infoBox  {
     ${styles.infoTextBox}
     margin-bottom: 1em;

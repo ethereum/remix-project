@@ -1,6 +1,5 @@
 /* global Node, requestAnimationFrame */
 var yo = require('yo-yo')
-var csjs = require('csjs-inject')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
 var type = require('component-type')
@@ -10,6 +9,11 @@ var Web3 = require('web3')
 
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
+// -------------- styling ----------------------
+var csjs = require('csjs-inject')
+var remix = require('ethereum-remix')
+var styleGuide = remix.ui.styleGuide
+var styles = styleGuide()
 
 var css = csjs`
   .panel              {
@@ -17,8 +21,8 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    color             : #777;
-    background-color  : #ededed;
+    color             : ${styles.terminal.text_Regular_TransactionLog};
+    background-color  : ${styles.terminal.backgroundColor_Terminal};
     height            : 100%;
     min-height        : 1.7em;
     overflow          : hidden;
@@ -26,35 +30,41 @@ var css = csjs`
 
   .bar                {
     display           : flex;
-    min-height        : 1.7em;
+    min-height        : 3em;
     padding           : 2px;
-    background-color  : #eef;
+    background-color  : ${styles.terminal.backgroundColor_Menu};
     z-index           : 3;
   }
   .menu               {
+    color             : ${styles.terminal.text_Primary};
     position          : relative;
     display           : flex;
     align-items       : center;
     width             : 100%;
     padding           : 5px;
   }
-  .minimize           {
+  .toggleTerminal           {
     margin-left       : auto;
     width             : 10px;
     cursor            : pointer;
-    color             : black;
+    color             : ${styles.terminal.icon_Color_TogglePanel};
+    font-size         : 14px;
+    font-weight       : bold;
+  }
+  .toggleTerminal:hover              {
+    color             : ${styles.terminal.icon_HoverColor_TogglePanel};
   }
   .clear              {
     margin-right      : 5px;
-    font-size         : 15px;
     cursor            : pointer;
-    color             : black;
+    color             : ${styles.terminal.icon_Color_Menu};
   }
-  .hover              {
-    color             : orange;
+  .clear:hover              {
+    color             : ${styles.terminal.icon_HoverColor_Menu};
   }
 
   .terminal           {
+    background-color  : ${styles.terminal.backgroundColor_Terminal};
     display           : flex;
     flex-direction    : column;
     height            : 100%;
@@ -63,6 +73,19 @@ var css = csjs`
     padding-bottom    : 3px;
     overflow-y        : auto;
     font-family       : monospace;
+  }
+  .terminal::after {
+    content           : "";
+    background-image  : url(assets/img/remix_logo_512x512.svg);
+    opacity           : 0.1;
+    top               : 15%;
+    left              : 33%;
+    bottom            : 0;
+    right             : 0;
+    position          : absolute;
+    z-index           : -1;
+    background-repeat : no-repeat;
+    background-size   : 45%;
   }
   .journal            {
     margin-top        : auto;
@@ -73,6 +96,7 @@ var css = csjs`
     white-space       : pre-wrap;
     line-height       : 2ch;
     margin            : 1ch;
+    margin-top        : 2ch;
   }
   .cli                {
     line-height       : 1.7em;
@@ -83,6 +107,7 @@ var css = csjs`
     font-family       : monospace;
     font-weight       : bold;
     font-size         : large;
+    color             : ${styles.colors.black};
   }
   .input              {
     word-break        : break-all;
@@ -90,8 +115,8 @@ var css = csjs`
     font-family       : monospace;
   }
   .filter             {
-    padding           : 3px;
-    width             : 20em;    
+    ${styles.terminal.input_Search_MenuBar}
+    width             : 150px;
   }
 
   .dragbarHorizontal  {
@@ -102,12 +127,12 @@ var css = csjs`
     left              : 0;
     cursor            : ns-resize;
     z-index           : 999;
-    border-top        : 2px solid hsla(215, 81%, 79%, .3);
+    border-top        : 2px solid ${styles.terminal.bar_Dragging};
   }
   .ghostbar           {
     position          : absolute;
     height            : 6px;
-    background-color  : #C6CFF7;
+    background-color  : ${styles.terminal.bar_Ghost};
     opacity           : 0.5;
     cursor            : row-resize;
     z-index           : 9999;
@@ -130,7 +155,6 @@ class Terminal {
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
-      banner: opts.banner,
       activeFilters: { commands: {}, input: '' }
     }
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
@@ -165,9 +189,6 @@ class Terminal {
     self._INDEX.allMain = []
     self._INDEX.commands = {}
     self._INDEX.commandsMain = {}
-    self.registerCommand('banner', function (args, scopedCommands, append) {
-      append(args[0])
-    }, { activate: true })
     self.registerCommand('log', self._blocksRenderer('log'), { activate: true })
     self.registerCommand('info', self._blocksRenderer('info'), { activate: true })
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
@@ -198,7 +219,7 @@ class Terminal {
         ${self._view.input}
       </div>
     `
-    self._view.icon = yo`<i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize} class="${css.minimize} fa fa-angle-double-down"></i>`
+    self._view.icon = yo`<i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize} class="${css.toggleTerminal} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
     self._view.bar = yo`
@@ -231,10 +252,6 @@ class Terminal {
         ${self._view.term}
       </div>
     `
-    if (self.data.banner) {
-      self.data.activeFilters.commands['banner'] = true
-      self.commands.banner(self.data.banner)
-    }
 
     function throttle (fn, wait) {
       var time = Date.now()
@@ -540,7 +557,7 @@ class Terminal {
     }, 0)
   }
   _blocksRenderer (mode) {
-    mode = { log: 'black', info: 'blue', error: 'red' }[mode] // defaults
+    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
     if (mode) {
       return function logger (args, scopedCommands, append) {
         var types = args.map(type)

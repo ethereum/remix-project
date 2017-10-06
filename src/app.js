@@ -44,11 +44,15 @@ var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
   body                 {
+    font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin             : 0;
     padding            : 0;
     font-size          : 12px;
-    color              : ${styles.colors.black};
+    color              : ${styles.leftPanel.text_Primary};
     font-weight        : normal;
+  }
+  pre {
+    overflow-x: auto;
   }
   .browsersolidity     {
     position           : relative;
@@ -57,6 +61,7 @@ var css = csjs`
     overflow           : hidden;
   }
   .centerpanel         {
+    background-color  : ${styles.colors.transparent};
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -65,6 +70,7 @@ var css = csjs`
     overflow           : hidden;
   }
   .leftpanel           {
+    background-color  : ${styles.leftPanel.backgroundColor_Panel};
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -74,6 +80,7 @@ var css = csjs`
     overflow           : hidden;
   }
   .rightpanel          {
+    background-color  : ${styles.rightPanel.backgroundColor_Panel};
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -81,6 +88,17 @@ var css = csjs`
     right              : 0;
     bottom             : 0;
     overflow           : hidden;
+  }
+  .highlightcode {
+    position:absolute;
+    z-index:20;
+    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+  }
+  .highlightcode_fullLine {
+    position:absolute;
+    z-index:20;
+    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    opacity: 0.5;
   }
 `
 
@@ -576,7 +594,7 @@ function run () {
         if (config.get('currentFile') !== this.source) {
           fileManager.switchFile(this.source)
         }
-        this.statementMarker = editor.addMarker(lineColumnPos, this.source, 'highlightcode')
+        this.statementMarker = editor.addMarker(lineColumnPos, this.source, css.highlightcode)
         editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
         if (lineColumnPos.start.line === lineColumnPos.end.line) {
           this.fullLineMarker = editor.addMarker({
@@ -588,7 +606,7 @@ function run () {
               line: lineColumnPos.start.line + 1,
               column: 0
             }
-          }, this.source, 'highlightcode_fullLine')
+          }, this.source, css.highlightcode_fullLine)
         }
       }
     },

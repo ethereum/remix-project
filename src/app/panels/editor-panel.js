@@ -7,6 +7,49 @@ var styles = styleGuide()
 
 var Terminal = require('./terminal')
 
+var cssTabs = yo`
+  <style>
+    #files .file {
+      padding: 0 0.6em;
+      box-sizing: border-box;
+      background-color: ${styles.editor.backgroundColor_Tabs_Highlights};
+      cursor: pointer;
+      margin-right: 10px;
+      margin-top: 5px;
+      position: relative;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      color: ${styles.editor.text_Secondary};
+    }
+    #files .file.active {
+      color: ${styles.editor.text_Primary};
+      font-weight: bold;
+      border-bottom: 0 none;
+      padding-right: 1.5em;
+    }
+    #files .file .remove {
+      font-size: 12px;
+      display: flex;
+      color: ${styles.editor.text_Primary};
+      position: absolute;
+      top: -7px;
+      right: 5px;
+      display: none;
+    }
+    #files .file input {
+      background-color: ${styles.colors.transparent};
+      border: 0 none;
+      border-bottom: 1px dotted ${styles.editor.text_Primary};
+      line-height: 1em;
+      margin: 0.5em 0;
+    }
+    #files .file.active .remove {
+      display: inline-block;
+    }
+  </style>
+`
+
 var css = csjs`
   .editorpanel         {
     display            : flex;
@@ -14,10 +57,10 @@ var css = csjs`
     height             : 100%;
   }
   .tabsbar             {
+    background-color   : ${styles.editor.backgroundColor_Panel};
     display            : flex;
     overflow           : hidden;
-    height             : 2em;
-    margin-top         : 0.5em;
+    height             : 30px;
   }
   .tabs               {
     position          : relative;
@@ -29,6 +72,7 @@ var css = csjs`
     overflow          : hidden;
   }
   .files              {
+    display           : flex;
     position          : relative;
     list-style        : none;
     margin            : 0;
@@ -47,13 +91,13 @@ var css = csjs`
   .changeeditorfontsize i {
     cursor            : pointer;
     display           : block;
-    color             : ${styles.colors.black};
+    color             : ${styles.editor.icon_Color_Editor};
   }
   .changeeditorfontsize i {
     cursor            : pointer;
   }
   .changeeditorfontsize i:hover {
-    color             : ${styles.colors.orange};
+    color             : ${styles.editor.icon_HoverColor_Editor};
   }
   .buttons            {
     display           : flex;
@@ -67,13 +111,15 @@ var css = csjs`
     padding           : 10px;
     width             : 100%;
     font-weight       : bold;
-    color             : ${styles.colors.black};
+    color             : ${styles.leftPanel.icon_Color_TogglePanel};
   }
   .toggleLHP i        {
     cursor            : pointer;
+    font-size         : 14px;
+    font-weight       : bold;
   }
   .toggleLHP i:hover  {
-    color             : ${styles.colors.orange};
+    color             : ${styles.leftPanel.icon_HoverColor_TogglePanel};
   }
   .scroller           {
     position          : absolute;
@@ -81,7 +127,7 @@ var css = csjs`
     text-align        : center;
     cursor            : pointer;
     vertical-align    : middle;
-    background-color  : ${styles.colors.white};
+    background-color  : ${styles.colors.general_BackgroundColor};
     height            : 100%;
     font-size         : 1.3em;
     color             : orange;
@@ -94,16 +140,18 @@ var css = csjs`
     left              : 0;
   }
   .toggleRHP          {
-    margin-top        : 0.5em;
+    margin            : 0.5em;
     font-weight       : bold;
-    color             : ${styles.colors.black};
+    color             : ${styles.rightPanel.icon_Color_TogglePanel};
     right             : 0;
   }
   .toggleRHP i        {
     cursor            : pointer;
+    font-size         : 14px;
+    font-weight       : bold;
   }
   .toggleRHP i:hover  {
-    color             : ${styles.colors.orange};
+    color             : ${styles.rightPanel.icon_HoverColor_TogglePanel};
   }
   .show               {
     opacity           : 1;
@@ -114,7 +162,6 @@ var css = csjs`
     pointer-events    : none;
     transition        : .3s opacity ease-in;
   }
-  
   .content            {
     position          : relative;
     display           : flex;
@@ -122,17 +169,10 @@ var css = csjs`
     height            : 100%;
     width             : 100%;
   }
-  
-  .banner             {
-    width             : 25em;
-  }
-  
   .contextviewcontainer{
-    position          : absolute;
-    z-index           : 100;
-    right             : 20px;
-    top               : 10px;
-    width             : 20em;
+    width             : 100%;
+    height            : 20px;
+    background-color  : ${styles.editor.backgroundColor_Tabs_Highlights};
   }
 `
 
@@ -169,10 +209,7 @@ class EditorPanel {
           context () {
             return self._api.context()
           }
-        },
-        banner: yo`<div>
-          <img class=${css.banner} title="Remix" src="assets/img/remix_logo_512x512.svg" alt="Remix">
-        </div>`
+        }
       })
     }
     self._components.terminal.event.register('filterChanged', (type, value) => {
@@ -184,10 +221,13 @@ class EditorPanel {
         self._api.txListener.setListenOnNetwork(listenOnNetWork)
       })
     }
+    if (document && document.head) {
+      document.head.appendChild(cssTabs)
+    }
   }
   _adjustLayout (direction, delta) {
     var limitUp = 0
-    var limitDown = 20
+    var limitDown = 32
     var containerHeight = window.innerHeight - limitUp // - menu bar containerHeight
     var self = this
     var layout = self.data._layout[direction]
@@ -231,7 +271,7 @@ class EditorPanel {
       <div class=${css.content}>
         <div class=${css.contextviewcontainer}>
           ${self._api.contextview.render()}
-        </div>      
+        </div>
         ${self._view.editor}
         ${self._view.terminal}
       </div>
