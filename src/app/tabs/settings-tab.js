@@ -140,6 +140,10 @@ function loadVersion (version, queryParams, appAPI, el) {
 
     url = location + 'soljson.js'
   } else {
+    if (version.indexOf('soljson') !== 0 || version.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) != null) {
+      console.log('loading ' + version + ' not allowed')
+      return
+    }
     url = 'https://ethereum.github.io/solc-bin/bin/' + version
   }
   var isFirefox = typeof InstallTrigger !== 'undefined'
