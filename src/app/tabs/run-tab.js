@@ -278,18 +278,28 @@ function makeRecorder (appAPI, appEvents) {
     copy(txJSON)
     modalDialogCustom.alert(txJSON)
   }
-  runButton.onclick = () => { // on modal OR run tab
-    var txArray = recorder.getAll()
-    udapp.runTx(txArray, CALLBACK) // ???
-    // OR
-    // txArray.forEach(tx => udapp.runTx(tx, CALLBACK)) // ???
+  runButton.onclick = () => {
+    var opts = { title: `Enter Transactions`, text: `Paste the array of transaction you want to replay here`, inputValue: '', multiline: true }
+    modalDialogCustom.prompt(opts, function confirm (json = '[]') {
+      try {
+        var txArray = JSON.parse(json)
+      } catch (e) {
+        modalDialogCustom.alert('Invalid JSON, please try again')
+      }
+      if (txArray.length) {
+        txArray.forEach(tx => udapp.runTx(tx, CALLBACK))
+      }
+    }, function cancel () { })
   }
-  function CALLBACK () {
+  function CALLBACK (...args) {
+    console.log(args)
     /*
-      at each callback call, if the transaction succeed and if this is a creation transaction, we should call
-      runtab.addInstance( ... ) which basically do:
-      instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address,
-      selectContractNames.value))
+      at each callback call, if the transaction succeed and if this is a creation transaction,
+      we should call
+
+      runtab.addInstance( ... ) // which basically do:
+
+      instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
     */
   }
   return el
