@@ -7,6 +7,8 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var EventManager = require('ethereum-remix').lib.EventManager
 
+var helper = require('../../lib/helper')
+
 var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
@@ -141,6 +143,10 @@ function fileExplorer (appAPI, files) {
     function loadFile () {
       var fileReader = new FileReader()
       fileReader.onload = function (event) {
+        if (helper.checkSpecialChars(name)) {
+          modalDialogCustom.alert('Special characters are not allowed')
+          return
+        }
         var success = files.set(name, event.target.result)
         if (!success) modalDialogCustom.alert('Failed to create file ' + name)
         else events.trigger('focus', [name])
@@ -232,7 +238,7 @@ function fileExplorer (appAPI, files) {
       if (label.innerText === '') {
         modalDialogCustom.alert('File name cannot be empty')
         label.innerText = textUnderEdit
-      } else if (label.innerText.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) !== null) {
+      } else if (helper.checkSpecialChars(label.innerText)) {
         modalDialogCustom.alert('Special characters are not allowed')
         label.innerText = textUnderEdit
       } else if (!files.exists(newPath)) {

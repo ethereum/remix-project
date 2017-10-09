@@ -16,5 +16,8 @@ module.exports = {
       counter = (counter | 0) + 1
     }
     return path + counter + '.sol'
+  },
+  checkSpecialChars (name) {
+    return name.match(/[/:*?"<>\\'|]/) != null
   }
 }

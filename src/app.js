@@ -387,7 +387,12 @@ function run () {
   // Add files received from remote instance (i.e. another browser-solidity)
   function loadFiles (filesSet) {
     for (var f in filesSet) {
-      filesProviders['browser'].set(helper.createNonClashingName(f, filesProviders['browser']), filesSet[f].content)
+      var name = helper.createNonClashingName(f, filesProviders['browser'])
+      if (helper.checkSpecialChars(name)) {
+        modalDialogCustom.alert('Special characters are not allowed')
+        return
+      }
+      filesProviders['browser'].set(name, filesSet[f].content)
     }
     fileManager.switchFile()
   }
