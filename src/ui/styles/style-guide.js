@@ -40,7 +40,8 @@ function styleGuide () {
       orange: 'hsla(44, 100%, 50%, 1)',
       lightOrange: 'hsla(44, 100%, 50%, .5)',
       // VIOLET
-      violet: 'hsla(240, 64%, 68%, 1)'
+      violet: 'hsla(240, 64%, 68%, 1)',
+      lightViolet: 'hsla(240, 64%, 68%, .5)'
     },
 
     /* ------------------------------------------------------
@@ -73,6 +74,7 @@ function styleGuide () {
     secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
     dark_BackgroundColor: cssProperties.colors.veryLightGrey,
     light_BackgroundColor: cssProperties.colors.white,
+    debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
     /* ------------------------------------------------------
                               RESIZING
     ******************************************************** */
@@ -174,7 +176,7 @@ function styleGuide () {
     /* .................
           INFO
     .................. */
-    infoButton_TextColor: cssProperties.colors.black,
+    infoButton_TextColor: cssProperties.colors.violet,
     infoButton_BackgroundColor: cssProperties.colors.white,
     infoButton_BorderColor: cssProperties.colors.veryLightGrey,
 
@@ -331,7 +333,7 @@ function styleGuide () {
       backgroundColor_Tabs_Highlights: appProperties.secondary_BackgroundColor,
       backgroundColor_Editor_Context_Highlights: appProperties.dark_BackgroundColor,
       backgroundColor_Editor_Context_Error_Highlights: appProperties.error_BackgroundColor,
-      backgroundColor_DebuggerMode: appProperties.warning_BackgroundColor,
+      backgroundColor_DebuggerMode: appProperties.debuggingMode_BackgroundColor,
 
       text_Primary: appProperties.mainText_Color,
       text_Secondary: appProperties.supportText_Color,
@@ -380,9 +382,9 @@ function styleGuide () {
       }),
 
       button_Log_Debug: appProperties.uiElements.button({
-        BackgroundColor: appProperties.warningButton_BackgroundColor,
-        BorderColor: appProperties.warningButton_BorderColor,
-        Color: appProperties.warningButton_TextColor
+        BackgroundColor: appProperties.infoButton_BackgroundColor,
+        BorderColor: appProperties.infoButton_BorderColor,
+        Color: appProperties.infoButton_TextColor
       }),
 
       button_Log_Details: appProperties.uiElements.button({
@@ -495,9 +497,9 @@ function styleGuide () {
         }),
 
         button_Create: appProperties.uiElements.button({
-          BackgroundColor: appProperties.primaryButton_BackgroundColor,
-          BorderColor: appProperties.primaryButton_BorderColor,
-          Color: appProperties.primaryButton_TextColor
+          BackgroundColor: appProperties.transactButton_BackgroundColor,
+          BorderColor: appProperties.transactButton_BorderColor,
+          Color: appProperties.transactButton_TextColor
         }),
 
         button_Instance_Call: appProperties.uiElements.button({
