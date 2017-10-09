@@ -389,8 +389,8 @@ function styleGuide () {
 
       button_Log_Details: appProperties.uiElements.button({
         BackgroundColor: appProperties.secondaryButton_BackgroundColor,
-        BorderColor: appProperties.warningButton_BorderColor,
-        Color: appProperties.warningButton_TextColor
+        BorderColor: appProperties.secondaryButton_BorderColor,
+        Color: appProperties.secondaryButton_TextColor
       })
 
     },
