@@ -45,10 +45,6 @@ class SharedFolder {
     cb()
   }
 
-  checkSpecialChars (name) {
-    return name.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) != null
-  }
-
   init (cb) {
     this.remixd.call('sharedfolder', 'list', {}, (error, filesList) => {
       if (error) {

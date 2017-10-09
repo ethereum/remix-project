@@ -22,10 +22,6 @@ function Files (storage) {
     cb()
   }
 
-  this.checkSpecialChars = function (name) {
-    return name.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) != null
-  }
-
   this.get = function (path, cb) {
     var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file

@@ -8,6 +8,7 @@ var csjs = require('csjs-inject')
 var remix = require('ethereum-remix')
 var styleGuide = remix.ui.styleGuide
 var styles = styleGuide()
+var helper = require('../../lib/helper')
 
 var css = csjs`
   .settingsTabView {
@@ -140,7 +141,7 @@ function loadVersion (version, queryParams, appAPI, el) {
 
     url = location + 'soljson.js'
   } else {
-    if (version.indexOf('soljson') !== 0 || version.match(/(\/|:|\*|\?|"|<|>|\\|\||')/) != null) {
+    if (version.indexOf('soljson') !== 0 || helper.checkSpecialChars(version)) {
       console.log('loading ' + version + ' not allowed')
       return
     }

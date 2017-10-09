@@ -370,7 +370,7 @@ function run () {
   function loadFiles (filesSet) {
     for (var f in filesSet) {
       var name = helper.createNonClashingName(f, filesProviders['browser'])
-      if (filesProviders['browser'].checkSpecialChars(name)) {
+      if (helper.checkSpecialChars(name)) {
         modalDialogCustom.alert('Special characters are not allowed')
         return
       }
