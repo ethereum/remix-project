@@ -23,7 +23,7 @@ var getDetails = function (contractName, contract, source) {
 
     detail.metadataHash = retrieveMetadataHash(contract.bytecode)
     if (detail.metadataHash) {
-      detail.swarmLocation = 'bzz://' + detail.metadataHash
+      detail.swarmLocation = 'bzzr://' + detail.metadataHash
     }
   }
 
