@@ -359,18 +359,17 @@ function compileTab (container, appAPI, appEvents, opts) {
       var select = el.querySelector('select')
       if (select.children.length > 0 && select.selectedIndex >= 0) {
         var contractName = select.children[select.selectedIndex].innerHTML
-        var details = contractsDetails[contractName]
-        var keys = Object.keys(contractsDetails[contractName])
+        var contractProperties = contractsDetails[contractName]
         var log = yo`<div class="${css.detailsJSON}"></div>`
-        keys.map(x => {
-          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(details[x]) }} aria-hidden="true"></i></span>`
-          var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[x]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
+        Object.keys(contractProperties).map(propertyName => {
+          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(contractProperties[propertyName]) }} aria-hidden="true"></i></span>`
+          var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
           var keyDisplayName
-          (x === 'interface') ? keyDisplayName = 'interface - abi' : keyDisplayName = x
+          (propertyName === 'interface') ? keyDisplayName = 'interface - abi' : keyDisplayName = propertyName
           log.appendChild(yo`
             <div class=${css.log}>
               <div class="${css.key}">${keyDisplayName} ${copyDetails} ${questionMark}</div>
-              ${insertValue(details, x)}
+              ${insertValue(contractProperties, propertyName)}
             </div>
             `)
         })
@@ -378,14 +377,14 @@ function compileTab (container, appAPI, appEvents, opts) {
       }
     }
 
-    function insertValue (details, x) {
+    function insertValue (details, propertyName) {
       var value = yo`<pre class="${css.value}"></pre>`
       var node
-      if (x === 'bytecode' || x === 'metadataHash' || x === 'swarmLocation' || x === 'Runtime Bytecode' || x === 'Opcodes') {
-        node = yo`<div>${details[x].slice(0, 60) + '...'}</div>`
-      } else if (x === 'web3Deploy' || x === 'name') {
-        node = yo`<pre>${details[x]}</pre>`
-      } else if (x === 'interface' || x === 'metadata') {
+      if (propertyName === 'bytecode' || propertyName === 'metadataHash' || propertyName === 'swarmLocation' || propertyName === 'Runtime Bytecode' || propertyName === 'Opcodes') {
+        node = yo`<div>${details[propertyName].slice(0, 60) + '...'}</div>`
+      } else if (propertyName === 'web3Deploy' || propertyName === 'name') {
+        node = yo`<pre>${details[propertyName]}</pre>`
+      } else if (propertyName === 'interface' || propertyName === 'metadata') {
         var treeView = new TreeView({
           extractData: function (item, parent, key) {
             var ret = {}
@@ -406,17 +405,17 @@ function compileTab (container, appAPI, appEvents, opts) {
             return ret
           }
         })
-        if (details[x] !== '') {
+        if (details[propertyName] !== '') {
           try {
-            node = yo`<div>${treeView.render(JSON.parse(details[x]))}</div>` // catch in case the parsing fails.
+            node = yo`<div>${treeView.render(JSON.parse(details[propertyName]))}</div>` // catch in case the parsing fails.
           } catch (e) {
-            node = yo`<div>Unable to display "${x}": ${e.message}</div>`
+            node = yo`<div>Unable to display "${propertyName}": ${e.message}</div>`
           }
         } else {
           node = yo`<div> - </div>`
         }
       } else {
-        node = yo`<div>${JSON.stringify(details[x], null, 4)}</div>`
+        node = yo`<div>${JSON.stringify(details[propertyName], null, 4)}</div>`
       }
       if (node) value.appendChild(node)
       return value
