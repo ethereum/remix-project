@@ -73,11 +73,11 @@ module.exports = {
     if (bytecode.indexOf('_') < 0) {
       return callback(null, bytecode)
     }
-    var m = bytecode.match(/__([^_]{1,36})__/)
-    if (!m) {
+    var libraryRefMatch = bytecode.match(/__([^_]{1,36})__/)
+    if (!libraryRefMatch) {
       return callback('Invalid bytecode format.')
     }
-    var libraryName = m[1]
+    var libraryName = libraryRefMatch[1]
     var libraryabi = helper.getContractByName(libraryName, contracts)
     if (!libraryabi) {
       return callback('Library ' + libraryName + ' not found.')
