@@ -36,8 +36,8 @@ function runTests (browser) {
 }
 
 function testSimpleContract (browser, callback) {
-  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['browser/Untitled.sol:test1', 'browser/Untitled.sol:test2'], function () {
-    callback(null, browser)
+  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['test1', 'test2'], function () {
+    browser.end()
   })
 }
 

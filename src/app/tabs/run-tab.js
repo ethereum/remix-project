@@ -277,9 +277,9 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 
   function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
-    if (appAPI.getContracts() && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
-      var contract = appAPI.getContracts()[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
-      var ctrabi = txHelper.getConstructorInterface(contract.interface)
+    if (appAPI.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
+      var contract = appAPI.getContract(selectContractNames.children[selectContractNames.selectedIndex].innerHTML)
+      var ctrabi = txHelper.getConstructorInterface(contract.object.abi)
       if (ctrabi.inputs.length) {
         createButtonInput.setAttribute('placeholder', txHelper.inputParametersDeclarationToString(ctrabi.inputs))
         createButtonInput.removeAttribute('disabled')
@@ -295,18 +295,17 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contracts = appAPI.getContracts()
     var contractName = contractNames.children[contractNames.selectedIndex].innerHTML
-    var contract = appAPI.getContracts()[contractName]
+    var contract = appAPI.getContract(contractName)
 
-    if (contract.bytecode.length === 0) {
+    if (contract.object.evm.bytecode.object.length === 0) {
       modalDialogCustom.alert('This contract does not implement all functions and thus cannot be created.')
       return
     }
 
-    var constructor = txHelper.getConstructorInterface(contract.interface)
+    var constructor = txHelper.getConstructorInterface(contract.object.abi)
     var args = createButtonInput.value
-    txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), (error, data) => {
+    txFormat.buildData(contract.object, appAPI.getContracts(), true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
         appAPI.logMessage(`creation of ${contractName} pending...`)
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
@@ -321,7 +320,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
             }
             noInstancesText.style.display = 'none'
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
+            instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
           } else {
             appAPI.logMessage(`creation of ${contractName} errored: ` + error)
           }
@@ -337,9 +336,9 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function loadFromAddress (appAPI) {
     noInstancesText.style.display = 'none'
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
+    var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
     var address = atAddressButtonInput.value
-    instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
+    instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
   }
 
   // GET NAMES OF ALL THE CONTRACTS
@@ -348,9 +347,9 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     contractNames.innerHTML = ''
     if (success) {
       selectContractNames.removeAttribute('disabled')
-      for (var name in data.contracts) {
-        contractNames.appendChild(yo`<option>${name}</option>`)
-      }
+      appAPI.visitContracts((contract) => {
+        contractNames.appendChild(yo`<option>${contract.name}</option>`)
+      })
     } else {
       selectContractNames.setAttribute('disabled', true)
     }

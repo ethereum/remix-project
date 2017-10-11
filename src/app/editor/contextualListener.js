@@ -82,7 +82,7 @@ class ContextualListener {
         return true
       }
       for (var s in compilationResult.sources) {
-        this.astWalker.walk(compilationResult.sources[s].AST, callback)
+        this.astWalker.walk(compilationResult.sources[s].legacyAST, callback)
       }
     }
   }
@@ -92,7 +92,7 @@ class ContextualListener {
     var position = this.sourceMappingDecoder.decode(node.src)
     var eventId = this._api.highlight(position, node)
     if (eventId) {
-      this._activeHighlights.push({ eventId, position, fileTarget: compilationResult.data.sourceList[position.file] })
+      this._activeHighlights.push({ eventId, position, fileTarget: this._api.getSourceName(position.file) })
     }
   }
 

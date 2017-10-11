@@ -2,7 +2,6 @@
 
 var $ = require('jquery')
 var yo = require('yo-yo')
-var utils = require('../../lib/utils')
 
 // -------------- styling ----------------------
 // var csjs = require('csjs-inject')
@@ -93,10 +92,8 @@ Renderer.prototype.error = function (message, container, opt) {
     message = yo`<span>${message}</span>`
   } else if (message.innerText) {
     text = message.innerText
-  }
-
-  if (!opt.type) {
-    opt.type = utils.errortype(text)
+  } else if (message.formattedMessage) {
+    text = message.formattedMessage
   }
 
   var errLocation = text.match(/^([^:]*):([0-9]*):(([0-9]*):)? /)

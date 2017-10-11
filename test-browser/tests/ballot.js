@@ -4,9 +4,9 @@ var examples = require('../../src/app/editor/example-contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
-var sources = [
-  {'browser/Untitled.sol': examples.ballot.content}
-]
+var sources = {
+  'browser/Untitled.sol': { content: examples.ballot.content }
+}
 
 module.exports = {
   before: function (browser, done) {

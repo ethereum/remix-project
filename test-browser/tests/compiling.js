@@ -131,15 +131,15 @@ function testInputValues (browser, callback) {
 // @TODO test: bytes8[3][] type as input
 
 var sources = [
-  {'browser/Untitled.sol': `pragma solidity ^0.4.0;
+  {'browser/Untitled.sol': {content: `pragma solidity ^0.4.0;
       contract TestContract { function f() returns (uint) { return 8; } 
       function g() returns (uint, string, bool, uint) {  
         uint payment = 345;
         bool payed = true;
         string memory comment = "comment_comment_";
         uint month = 4;
-        return (payment, comment, payed, month); } }`},
-  {'browser/returnValues.sol': `pragma solidity ^0.4.0;
+        return (payment, comment, payed, month); } }`}},
+  {'browser/returnValues.sol': {content: `pragma solidity ^0.4.0;
     contract testReturnValues {
     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
     function retunValues1 () returns (bool _b, uint _u, int _i, address _a)  {
@@ -169,8 +169,8 @@ var sources = [
        a[2] = [int(1),10,-5435,45,-7];
       _a1 = a;
     }
-  }`},
-  {'browser/inputValues.sol': `pragma solidity ^0.4.0;
+  }`}},
+  {'browser/inputValues.sol': {content: `pragma solidity ^0.4.0;
   contract test {
       event event1(int _i, uint indexed _u, string indexed _str, bytes4 _b, string _notIndexed);
       function inputValue1 (uint _u, int _i, string _str) returns (uint _uret, int _iret, string _strret) {
@@ -183,5 +183,5 @@ var sources = [
           _b8ret = _b8;
           event1(-123, 123, "test", 0x1234, "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ");
       }
-  }`}
+  }`}}
 ]
