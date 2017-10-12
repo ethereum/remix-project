@@ -200,7 +200,7 @@ function renderCall (self, data) {
       modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
     }
   }
-  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn + ' ' + helper.shortenHexData(data.tx.to)
+  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var tx = yo`
