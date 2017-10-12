@@ -228,7 +228,6 @@ function renderCall (self, data) {
         from,
         to,
         gas: data.tx.gas,
-        hash: data.tx.hash,
         input: data.tx.input,
         'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
         'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
