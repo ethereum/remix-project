@@ -357,7 +357,7 @@ function createTable (opts) {
   var to = yo`
     <tr class="${css.tr}">
     <td class="${css.td}"> to </td>
-    <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.toHash) }} title='Copy to clipboard'></i>${toHash}</td>
+    <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(data.to ? data.to : toHash) }} title='Copy to clipboard'></i>${toHash}</td>
     </tr class="${css.tr}">
   `
   if (opts.to) table.appendChild(to)
