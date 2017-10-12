@@ -299,14 +299,15 @@ function context (self, opts) {
   var logs = data.logs && data.logs.decoded ? data.logs.decoded.length : 0
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
+  var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
-    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${typeConversion.toInt(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${typeConversion.toInt(val)} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${typeConversion.toInt(val)} wei</span>`
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei</span>`
   }
 }
 
