@@ -161,15 +161,15 @@ var css = csjs`
     margin-left: 10%;
   }
   .errorIcon {
-    color: ${styles.colors.red};;
+    color: ${styles.colors.red};
     margin-left: 15px;
   }
   .errorIcon {
-    color: ${styles.colors.red};;
+    color: ${styles.colors.red};
     margin-left: 15px;
   }
   .failDesc {
-    color: ${styles.colors.red};;
+    color: ${styles.colors.red};
     padding-left: 10px;
     display: inline;
   }
@@ -264,7 +264,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     }
   })
 
-  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter address of contract you want to load" title="atAddress" />`
+  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
   var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
   var el = yo`
@@ -422,10 +422,12 @@ function settings (appAPI, appEvents) {
       </div>
       <div class="${css.crow}">
       <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2_1}" id="value" value="0" title="Default the value is set to be in ether, if you want the value to be in wei, type i.e. 7 wei.">
+        <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
         <select name="unit" class="${css.col2_2}" id="unit">
-          <option id="unit-eth">eth</option>
-          <option id="unit-wei">wei</option>
+          <option data-unit="wei">wei</option>
+          <option data-unit="mwei">mwei</option>
+          <option data-unit="microether">microether</option>
+          <option data-unit="ether">ether</option>
         </select>
       </div>
     </div>

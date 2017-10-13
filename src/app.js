@@ -217,9 +217,17 @@ function run () {
         var number = document.querySelector('#value').value
         var select = document.getElementById('unit')
         var index = select.selectedIndex
-        var selectedUnit = select.querySelectorAll('option')[index].innerHTML
-        var unit = ''
-        if (selectedUnit === 'wei') { unit = 'wei' }
+        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        var unit = 'ether' // default
+        if (selectedUnit === 'ether') {
+          unit = 'ether'
+        } else if (selectedUnit === 'microether') {
+          unit = 'microether'
+        } else if (selectedUnit === 'mwei') {
+          unit = 'mwei'
+        } else if (selectedUnit === 'wei') {
+          unit = 'wei'
+        }
         cb(null, executionContext.web3().toWei(number, unit))
       } catch (e) {
         cb(e)
