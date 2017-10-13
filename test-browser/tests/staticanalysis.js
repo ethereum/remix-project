@@ -4,17 +4,16 @@ var init = require('../helpers/init')
 var sauce = require('./sauce')
 var dom = require('../helpers/dom')
 
-var sources = {
-  'sources': {
+var sources = [
+  {
     'browser/Untitled.sol': `
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
   uint x;
   function() { x++; }
-}`
-  }
-}
+}`}
+]
 
 module.exports = {
   before: function (browser, done) {
@@ -33,7 +32,7 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')
-  contractHelper.testContracts(browser, sources.sources['browser/Untitled.sol'], ['browser/Untitled.sol:TooMuchGas', 'browser/Untitled.sol:test1', 'browser/Untitled.sol:test2'], function () {
+  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['browser/Untitled.sol:TooMuchGas', 'browser/Untitled.sol:test1', 'browser/Untitled.sol:test2'], function () {
     browser
       .click('.staticanalysisView')
       .click('#staticanalysisView button')

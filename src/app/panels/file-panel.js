@@ -266,12 +266,14 @@ function filepanel (appAPI, filesProvider) {
   }
 
   function createNewFile () {
-    var newName = filesProvider['browser'].type + '/' + helper.createNonClashingName('Untitled.sol', filesProvider['browser'])
-    if (!filesProvider['browser'].set(newName, '')) {
-      modalDialogCustom.alert('Failed to create file ' + newName)
-    } else {
-      appAPI.switchFile(newName)
-    }
+    modalDialogCustom.prompt(null, 'File Name', 'Untitled.sol', (input) => {
+      var newName = filesProvider['browser'].type + '/' + helper.createNonClashingName(input, filesProvider['browser'])
+      if (!filesProvider['browser'].set(newName, '')) {
+        modalDialogCustom.alert('Failed to create file ' + newName)
+      } else {
+        appAPI.switchFile(newName)
+      }
+    })
   }
 
   /**
