@@ -246,10 +246,15 @@ function updateAccountBalances (container, appAPI) {
 ------------------------------------------------ */
 function makeRecorder (appAPI, appEvents) {
   var udapp = appAPI.udapp()
-  var recorder = new Recorder({ events: {
-    udapp: appEvents.udapp,
-    executioncontext: executionContext.event
-  }})
+  var recorder = new Recorder({
+    events: {
+      udapp: appEvents.udapp,
+      executioncontext: executionContext.event
+    },
+    api: {
+      getAccounts (cb) { udapp.getAccounts(cb) }
+    }
+  })
   var css = csjs`
     .container {
       margin-top: 10px;

@@ -469,10 +469,14 @@ function execute (pipeline, env, callback) {
 
 UniversalDApp.prototype.replayTx = function (args, cb) {
   var self = this
-  var tx = { to: args.to, data: args.data, useCall: args.useCall }
-  var pipeline = [runTransaction]
-  var env = { self, args, tx }
-  execute(pipeline, env, cb)
+  self.getAccounts(function (err, accounts = []) {
+    if (err) console.error(err)
+    if (args.to[0] === '<') args.to = accounts[args.to.split('>')[0].slice(11)]
+    if (args.from && args.from[0] === '<') args.from = accounts[args.from.split('>')[0].slice(11)]
+    var pipeline = [runTransaction]
+    var env = { self, args, tx: { to: args.to, from: args.from, data: args.data, useCall: args.useCall } }
+    execute(pipeline, env, cb)
+  })
 }
 
 UniversalDApp.prototype.runTx = function (args, cb) {

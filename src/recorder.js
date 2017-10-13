@@ -11,14 +11,23 @@ class Recorder {
       self.clearAll()
     })
     var counter = 0
+    function getIndex (accounts, address) {
+      var index
+      accounts.forEach((addr, idx) => { if (address === addr) index = idx })
+      if (!index) index = (++counter)
+      return index
+    }
     self._addressCache = {}
     opts.events.udapp.register('initiatingTransaction', (timestamp, tx) => {
       var { from, to, value, gas, data } = tx
       var record = { value, gas, data }
-      record.from = self._addressCache[from] || (self._addressCache[from] = `<account -${(++counter)}>`)
-      if (to === null) self.data._pendingCreation[timestamp] = record
-      else record.to = self._addressCache[to] || (self._addressCache[to] = `<account -${(++counter)}>`)
-      self.append(timestamp, record)
+      self._api.getAccounts(function (err, accounts = []) {
+        if (err) console.error(err)
+        record.from = self._addressCache[from] || (self._addressCache[from] = `<account - ${getIndex(accounts, from)}>`)
+        if (to === null) self.data._pendingCreation[timestamp] = record
+        else record.to = self._addressCache[to] || (self._addressCache[to] = `<account - ${getIndex(accounts, to)}>`)
+        self.append(timestamp, record)
+      })
     })
     opts.events.udapp.register('transactionExecuted', (...args) => {
       var err = args[0]
