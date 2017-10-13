@@ -458,82 +458,103 @@ UniversalDApp.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }
 
+function execute (pipeline, env, callback) {
+  function next (err, env) {
+    if (err) return callback(err)
+    var step = pipeline.shift()
+    if (step) step(env, next)
+    else callback(null, env.result)
+  }
+  next(null, env)
+}
+
+UniversalDApp.prototype.replayTx = function (args, cb) {
+  var self = this
+  var tx = { to: args.to, data: args.data, useCall: args.useCall }
+  var pipeline = [runTransaction]
+  var env = { self, args, tx }
+  execute(pipeline, env, cb)
+}
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
-  var tx = {
-    to: args.to,
-    data: args.data,
-    useCall: args.useCall
-  }
-  async.waterfall([
-    // query gas limit
-    function (callback) {
+  var tx = { to: args.to, data: args.data, useCall: args.useCall }
+  var pipeline = [queryGasLimit, queryValue, queryAddress, runTransaction]
+  var env = { self, args, tx }
+  execute(pipeline, env, cb)
+}
+
+
+    function queryGasLimit (env, next) {
+      var { self, args, tx } = env
       tx.gasLimit = 3000000
 
       if (self.transactionContextAPI.getGasLimit) {
         self.transactionContextAPI.getGasLimit(function (err, ret) {
           if (err) {
-            return callback(err)
+            return next(err)
           }
 
           tx.gasLimit = ret
-          callback()
+          next(null, env)
         })
       } else {
-        callback()
+        next(null, env)
       }
-    },
-    // query value
-    function (callback) {
+    }
+
+    function queryGasLimit (env, next) {
+      var { self, args, tx } = env
       tx.value = 0
-      if (tx.useCall) return callback()
+      if (tx.useCall) return next(null, env)
       if (self.transactionContextAPI.getValue) {
         self.transactionContextAPI.getValue(function (err, ret) {
           if (err) {
-            return callback(err)
+            return next(err)
           }
 
           tx.value = ret
-          callback()
+          next(null, env)
         })
       } else {
-        callback()
+        next(null, env)
       }
-    },
-    // query address
-    function (callback) {
+    }
+
+    function queryAddress (env, next) {
+      var { self, args, tx } = env
       if (self.transactionContextAPI.getAddress) {
         self.transactionContextAPI.getAddress(function (err, ret) {
           if (err) {
-            return callback(err)
+            return next(err)
           }
 
           tx.from = ret
 
-          callback()
+          next(null, env)
         })
       } else {
         self.getAccounts(function (err, ret) {
           if (err) {
-            return callback(err)
+            return next(err)
           }
 
           if (ret.length === 0) {
-            return callback('No accounts available')
+            return next('No accounts available')
           }
 
           if (executionContext.isVM() && !self.accounts[ret[0]]) {
-            return callback('Invalid account selected')
+            return next('Invalid account selected')
           }
 
           tx.from = ret[0]
 
-          callback()
+          next(null, env)
         })
       }
-    },
-    // run transaction
-    function (callback) {
+    }
+
+    function runTransaction (env, next) {
+      var { self, args, tx } = env
       var timestamp = Date.now()
       self.event.trigger('initiatingTransaction', [timestamp, tx])
       self.txRunner.rawRun(tx, function (error, result) {
@@ -553,10 +574,9 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             }
           }
         }
-        callback(error, result)
+        env.result = result
+        next(error, env)
       })
     }
-  ], cb)
-}
 
 module.exports = UniversalDApp
