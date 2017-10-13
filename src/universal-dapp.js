@@ -7,7 +7,6 @@ var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var crypto = require('crypto')
-var async = require('async')
 var TxRunner = require('./app/execution/txRunner')
 var yo = require('yo-yo')
 var txFormat = require('./app/execution/txFormat')
@@ -475,6 +474,7 @@ UniversalDApp.prototype.replayTx = function (args, cb) {
   var env = { self, args, tx }
   execute(pipeline, env, cb)
 }
+
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = { to: args.to, data: args.data, useCall: args.useCall }
@@ -483,100 +483,73 @@ UniversalDApp.prototype.runTx = function (args, cb) {
   execute(pipeline, env, cb)
 }
 
+function queryGasLimit (env, next) {
+  var { self, tx } = env
+  tx.gasLimit = 3000000
+  if (self.transactionContextAPI.getGasLimit) {
+    self.transactionContextAPI.getGasLimit(function (err, ret) {
+      if (err) return next(err)
+      tx.gasLimit = ret
+      next(null, env)
+    })
+  } else next(null, env)
+}
 
-    function queryGasLimit (env, next) {
-      var { self, args, tx } = env
-      tx.gasLimit = 3000000
+function queryValue (env, next) {
+  var { self, tx } = env
+  tx.value = 0
+  if (tx.useCall) return next(null, env)
+  if (self.transactionContextAPI.getValue) {
+    self.transactionContextAPI.getValue(function (err, ret) {
+      if (err) return next(err)
+      tx.value = ret
+      next(null, env)
+    })
+  } else next(null, env)
+}
 
-      if (self.transactionContextAPI.getGasLimit) {
-        self.transactionContextAPI.getGasLimit(function (err, ret) {
-          if (err) {
-            return next(err)
-          }
-
-          tx.gasLimit = ret
-          next(null, env)
-        })
-      } else {
-        next(null, env)
+function queryAddress (env, next) {
+  var { self, tx } = env
+  if (self.transactionContextAPI.getAddress) {
+    self.transactionContextAPI.getAddress(function (err, ret) {
+      if (err) return next(err)
+      tx.from = ret
+      next(null, env)
+    })
+  } else {
+    self.getAccounts(function (err, ret) {
+      if (err) return next(err)
+      if (ret.length === 0) return next('No accounts available')
+      if (executionContext.isVM() && !self.accounts[ret[0]]) {
+        return next('Invalid account selected')
       }
+      tx.from = ret[0]
+      next(null, env)
+    })
+  }
+}
+
+function runTransaction (env, next) {
+  var { self, args, tx } = env
+  var timestamp = Date.now()
+  self.event.trigger('initiatingTransaction', [timestamp, tx])
+  self.txRunner.rawRun(tx, function (error, result) {
+    if (!args.useCall) {
+      self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result, timestamp])
+    } else {
+      self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result, timestamp])
     }
-
-    function queryGasLimit (env, next) {
-      var { self, args, tx } = env
-      tx.value = 0
-      if (tx.useCall) return next(null, env)
-      if (self.transactionContextAPI.getValue) {
-        self.transactionContextAPI.getValue(function (err, ret) {
-          if (err) {
-            return next(err)
-          }
-
-          tx.value = ret
-          next(null, env)
-        })
-      } else {
-        next(null, env)
-      }
-    }
-
-    function queryAddress (env, next) {
-      var { self, args, tx } = env
-      if (self.transactionContextAPI.getAddress) {
-        self.transactionContextAPI.getAddress(function (err, ret) {
-          if (err) {
-            return next(err)
-          }
-
-          tx.from = ret
-
-          next(null, env)
-        })
-      } else {
-        self.getAccounts(function (err, ret) {
-          if (err) {
-            return next(err)
-          }
-
-          if (ret.length === 0) {
-            return next('No accounts available')
-          }
-
-          if (executionContext.isVM() && !self.accounts[ret[0]]) {
-            return next('Invalid account selected')
-          }
-
-          tx.from = ret[0]
-
-          next(null, env)
-        })
-      }
-    }
-
-    function runTransaction (env, next) {
-      var { self, args, tx } = env
-      var timestamp = Date.now()
-      self.event.trigger('initiatingTransaction', [timestamp, tx])
-      self.txRunner.rawRun(tx, function (error, result) {
-        if (!args.useCall) {
-          self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result, timestamp])
-        } else {
-          self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result, timestamp])
+    if (error) {
+      if (typeof (error) !== 'string') {
+        if (error.message) error = error.message
+        else {
+          try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
         }
-        if (error) {
-          if (typeof (error) !== 'string') {
-            if (error.message) {
-              error = error.message
-            } else {
-              try {
-                error = 'error: ' + JSON.stringify(error)
-              } catch (e) {}
-            }
-          }
-        }
-        env.result = result
-        next(error, env)
-      })
+      }
     }
+    env.result = result
+    next(error, env)
+  })
+}
 
 module.exports = UniversalDApp
