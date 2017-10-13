@@ -25,8 +25,8 @@ class Recorder {
       if (err) console.error(err)
       var timestamp = args[6]
       // update transaction which was pending with correct `to` address
-      var record = self._pendingCreation[timestamp]
-      delete self._pendingCreation[timestamp]
+      var record = self.data._pendingCreation[timestamp]
+      delete self.data._pendingCreation[timestamp]
       if (!record) return
       var to = args[2]
       record.to = self._addressCache[to] || (self._addressCache[to] = `<contract -${++counter}>`)
