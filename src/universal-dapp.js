@@ -36,11 +36,14 @@ var css = csjs`
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    width: 75%;
-    min-width: 500px;
+    min-width: 350px;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
+  }
+  .titleLine {
+    display: flex;
+    align-items: baseline;
   }
   .titleText {
     margin-right: 1em;
@@ -295,13 +298,17 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var shortAddress = helper.shortenAddress(address)
-  var title = yo`<div class="${css.title}" onclick=${toggleClass}>
-    <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
-    <i class="fa fa-clipboard ${css.copy}" aria-hidden="true" onclick=${copyToClipboard} title='Copy to clipboard'></i>
-  </div>`
+  var title = yo`
+    <div class=${css.titleLine}>
+      <div class="${css.title}" onclick=${toggleClass}>
+        <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
+      </div>
+      <i class="fa fa-clipboard ${css.copy}" aria-hidden="true" onclick=${copyToClipboard} title='Copy to clipboard'></i>
+    </div>
+  `
   if (self.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    title.appendChild(close)
+    title.querySelector(`.${css.title}`).appendChild(close)
   }
 
   function toggleClass () {

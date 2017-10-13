@@ -45,6 +45,16 @@ var css = csjs`
   .col2 {
     ${styles.rightPanel.runTab.input_RunTab}
   }
+  .col2_1 {
+    ${styles.rightPanel.runTab.input_RunTab}
+    width: 165px;
+    min-width: 165px;
+  }
+  .col2_2 {
+    ${styles.rightPanel.runTab.dropdown_RunTab}
+    width: 82px;
+    min-width: 82px;
+  }
   .select {
     ${styles.rightPanel.runTab.dropdown_RunTab}
     font-weight: normal;
@@ -254,8 +264,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     }
   })
 
-  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
-  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="create" />`
+  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter address of contract you want to load" title="atAddress" />`
+  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
   var el = yo`
     <div class="${css.container}">
@@ -264,12 +274,12 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
-          ${atAddressButtonInput}
+        ${createButtonInput}
+        <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
         </div>
         <div class="${css.button}">
-          <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
-          ${createButtonInput}
+          ${atAddressButtonInput}
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>Load</div>
         </div>
       </div>
     </div>
@@ -412,7 +422,11 @@ function settings (appAPI, appEvents) {
       </div>
       <div class="${css.crow}">
       <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2}" id="value" value="0" title="(e.g. .7 ether ...)">
+        <input type="text" class="${css.col2_1}" id="value" value="0" title="Default the value is set to be in ether, if you want the value to be in wei, type i.e. 7 wei.">
+        <select name="unit" class="${css.col2_2}" id="unit">
+          <option id="unit-eth">eth</option>
+          <option id="unit-wei">wei</option>
+        </select>
       </div>
     </div>
   `
