@@ -1,7 +1,7 @@
 'use strict'
 var codes = {
   // 0x0 range - arithmetic ops
-  // name, baseCost, off stack, on stack, dynamic
+  // name, baseCost, off stack, on stack, dynamic, async
   0x00: ['STOP', 0, 0, 0, false],
   0x01: ['ADD', 3, 2, 1, false],
   0x02: ['MUL', 5, 2, 1, false],
@@ -13,7 +13,7 @@ var codes = {
   0x08: ['ADDMOD', 8, 3, 1, false],
   0x09: ['MULMOD', 8, 3, 1, false],
   0x0a: ['EXP', 10, 2, 1, false],
-  0x0b: ['SIGNEXTEND', 5, 1, 1, false],
+  0x0b: ['SIGNEXTEND', 5, 2, 1, false],
 
   // 0x10 range - bit ops
   0x10: ['LT', 3, 2, 1, false],
@@ -33,7 +33,7 @@ var codes = {
 
   // 0x30 range - closure state
   0x30: ['ADDRESS', 2, 0, 1, true],
-  0x31: ['BALANCE', 20, 1, 1, true],
+  0x31: ['BALANCE', 400, 1, 1, true, true],
   0x32: ['ORIGIN', 2, 0, 1, true],
   0x33: ['CALLER', 2, 0, 1, true],
   0x34: ['CALLVALUE', 2, 0, 1, true],
@@ -43,11 +43,13 @@ var codes = {
   0x38: ['CODESIZE', 2, 0, 1, false],
   0x39: ['CODECOPY', 3, 3, 0, false],
   0x3a: ['GASPRICE', 2, 0, 1, false],
-  0x3b: ['EXTCODESIZE', 20, 1, 1, true],
-  0x3c: ['EXTCODECOPY', 20, 4, 0, true],
+  0x3b: ['EXTCODESIZE', 700, 1, 1, true, true],
+  0x3c: ['EXTCODECOPY', 700, 4, 0, true, true],
+  0x3d: ['RETURNDATASIZE', 2, 0, 1, true],
+  0x3e: ['RETURNDATACOPY', 3, 3, 0, true],
 
   // '0x40' range - block operations
-  0x40: ['BLOCKHASH', 20, 1, 1, true],
+  0x40: ['BLOCKHASH', 20, 1, 1, true, true],
   0x41: ['COINBASE', 2, 0, 1, true],
   0x42: ['TIMESTAMP', 2, 0, 1, true],
   0x43: ['NUMBER', 2, 0, 1, true],
@@ -59,8 +61,8 @@ var codes = {
   0x51: ['MLOAD', 3, 1, 1, false],
   0x52: ['MSTORE', 3, 2, 0, false],
   0x53: ['MSTORE8', 3, 2, 0, false],
-  0x54: ['SLOAD', 50, 1, 1, true],
-  0x55: ['SSTORE', 0, 2, 0, true],
+  0x54: ['SLOAD', 200, 1, 1, true, true],
+  0x55: ['SSTORE', 0, 2, 0, true, true],
   0x56: ['JUMP', 8, 1, 0, false],
   0x57: ['JUMPI', 10, 2, 0, false],
   0x58: ['PC', 2, 0, 1, false],
@@ -143,18 +145,21 @@ var codes = {
   0xa4: ['LOG4', 375, 6, 0, false],
 
   // '0xf0' range - closures
-  0xf0: ['CREATE', 32000, 3, 1, true],
-  0xf1: ['CALL', 40, 7, 1, true],
-  0xf2: ['CALLCODE', 40, 7, 1, true],
+  0xf0: ['CREATE', 32000, 3, 1, true, true],
+  0xf1: ['CALL', 700, 7, 1, true, true],
+  0xf2: ['CALLCODE', 700, 7, 1, true, true],
   0xf3: ['RETURN', 0, 2, 0, false],
-  0xf4: ['DELEGATECALL', 40, 6, 1, true],
+  0xf4: ['DELEGATECALL', 700, 6, 1, true, true],
+  0xfa: ['STATICCALL', 700, 6, 1, true, true],
+  0xfd: ['REVERT', 0, 2, 0, false],
 
   // '0x70', range - other
-  0xff: ['SUICIDE', 0, 1, 0, false]
+  0xfe: ['INVALID', 0, 0, 0, false],
+  0xff: ['SELFDESTRUCT', 5000, 1, 0, false, true]
 }
 
 module.exports = function (op, full) {
-  var code = codes[op] ? codes[op] : ['INVALID', 0]
+  var code = codes[op] ? codes[op] : ['INVALID', 0, 0, 0, false, false]
   var opcode = code[0]
 
   if (full) {
