@@ -91,6 +91,7 @@ var css = csjs`
   }
   .contractNames {
     ${styles.rightPanel.runTab.dropdown_RunTab}
+    width: 100%;
   }
   .subcontainer {
     display: flex;
@@ -274,8 +275,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
-        ${createButtonInput}
-        <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
+          ${createButtonInput}
+          <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
         </div>
         <div class="${css.button}">
           ${atAddressButtonInput}
@@ -425,8 +426,8 @@ function settings (appAPI, appEvents) {
         <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
         <select name="unit" class="${css.col2_2}" id="unit">
           <option data-unit="wei">wei</option>
-          <option data-unit="mwei">mwei</option>
-          <option data-unit="microether">microether</option>
+          <option data-unit="gwei">gwei</option>
+          <option data-unit="finney">finney</option>
           <option data-unit="ether">ether</option>
         </select>
       </div>

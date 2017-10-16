@@ -221,10 +221,10 @@ function run () {
         var unit = 'ether' // default
         if (selectedUnit === 'ether') {
           unit = 'ether'
-        } else if (selectedUnit === 'microether') {
-          unit = 'microether'
-        } else if (selectedUnit === 'mwei') {
-          unit = 'mwei'
+        } else if (selectedUnit === 'finney') {
+          unit = 'finney'
+        } else if (selectedUnit === 'gwei') {
+          unit = 'gwei'
         } else if (selectedUnit === 'wei') {
           unit = 'wei'
         }
