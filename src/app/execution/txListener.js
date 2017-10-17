@@ -76,6 +76,7 @@ class TxListener {
         }
 
         tx.envMode = executionContext.getProvider()
+        tx.status = txResult.result.status // 0x0 or 0x1
         this._resolve([tx], () => {
         })
       })

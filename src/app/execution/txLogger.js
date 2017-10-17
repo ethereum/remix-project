@@ -182,7 +182,8 @@ function renderKnownTransaction (self, data) {
         logs: data.logs,
         val: data.tx.value,
         transactionCost: data.tx.transactionCost,
-        executionCost: data.tx.executionCost
+        executionCost: data.tx.executionCost,
+        status: data.tx.status
       })
       tx.appendChild(table)
     }
@@ -248,7 +249,8 @@ function renderUnknownTransaction (self, data) {
         gas: data.tx.gas,
         logs: data.logs,
         transactionCost: data.tx.transactionCost,
-        executionCost: data.tx.executionCost
+        executionCost: data.tx.executionCost,
+        status: data.tx.status
       })
       tx.appendChild(table)
     }
@@ -288,6 +290,20 @@ module.exports = TxLogger
 
 function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
+
+  if (opts.status) {
+    var msg = ''
+    if (opts.status === '0x0') {
+      msg = ' Transaction mined but execution failed'
+    } else if (opts.status === '0x1') {
+      msg = ' Transaction mined and execution succeed'
+    }
+    table.appendChild(yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> status </td>
+      <td class="${css.td}">${opts.status}${msg}</td>
+    </tr class="${css.tr}">`)
+  }
 
   var contractAddress = yo`
     <tr class="${css.tr}">

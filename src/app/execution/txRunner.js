@@ -120,6 +120,7 @@ TxRunner.prototype.execute = function (args, callback) {
           executionContext.vm().stateManager.revert(function () {})
         }
         err = err ? err.message : err
+        result.status = '0x' + result.vm.exception.toString(16)
         callback(err, {
           result: result,
           transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
