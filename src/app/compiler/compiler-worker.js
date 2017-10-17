@@ -33,8 +33,7 @@ module.exports = function (self) {
 
         self.postMessage({
           cmd: 'versionLoaded',
-          data: compiler.version(),
-          acceptsMultipleFiles: compiler.supportsMulti
+          data: compiler.version()
         })
         break
       case 'compile':

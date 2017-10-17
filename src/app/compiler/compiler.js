@@ -19,7 +19,6 @@ function Compiler (handleImportCall) {
   this.event = new EventManager()
 
   var compileJSON
-  var compilerAcceptsMultipleFiles
 
   var worker = null
 
@@ -73,8 +72,6 @@ function Compiler (handleImportCall) {
   function onInternalCompilerLoaded () {
     if (worker === null) {
       var compiler = solc(window.Module)
-
-      compilerAcceptsMultipleFiles = compiler.supportsMulti
 
       compileJSON = function (source, optimize, cb) {
         var missingInputs = []
@@ -261,7 +258,6 @@ function Compiler (handleImportCall) {
       var data = msg.data
       switch (data.cmd) {
         case 'versionLoaded':
-          compilerAcceptsMultipleFiles = !!data.acceptsMultipleFiles
           onCompilerLoaded(data.data)
           break
         case 'compiled':
@@ -295,10 +291,6 @@ function Compiler (handleImportCall) {
 
   function gatherImports (files, target, importHints, cb) {
     importHints = importHints || []
-    if (!compilerAcceptsMultipleFiles) {
-      cb(null, files[target])
-      return
-    }
 
     // FIXME: This will only match imports if the file begins with one.
     //        It should tokenize by lines and check each.
