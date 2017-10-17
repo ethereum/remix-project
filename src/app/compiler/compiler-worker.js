@@ -1,7 +1,6 @@
 'use strict'
 
 var solc = require('solc/wrapper')
-var compilerInput = require('./compiler-input')
 
 var compileJSON = function () { return '' }
 var missingInputs = []
@@ -21,11 +20,9 @@ module.exports = function (self) {
 
         var compiler = solc(self.Module)
 
-        compileJSON = function (input, optimize) {
+        compileJSON = function (input) {
           try {
-            input = JSON.parse(input)
-            var inputStandard = compilerInput(input.sources, {optimize: optimize, target: input.target})
-            return compiler.compileStandardWrapper(inputStandard, function (path) {
+            return compiler.compileStandardWrapper(input, function (path) {
               missingInputs.push(path)
               return { 'error': 'Deferred import' }
             })
@@ -42,7 +39,7 @@ module.exports = function (self) {
         break
       case 'compile':
         missingInputs.length = 0
-        self.postMessage({cmd: 'compiled', job: data.job, data: compileJSON(data.source, data.optimize), missingInputs: missingInputs})
+        self.postMessage({cmd: 'compiled', job: data.job, data: compileJSON(data.input), missingInputs: missingInputs})
         break
     }
   }, false)

@@ -288,7 +288,7 @@ function Compiler (handleImportCall) {
     })
     compileJSON = function (source, optimize) {
       jobs.push({sources: source})
-      worker.postMessage({cmd: 'compile', job: jobs.length - 1, source: JSON.stringify(source), optimize: optimize})
+      worker.postMessage({cmd: 'compile', job: jobs.length - 1, input: compilerInput(source.sources, {optimize: optimize, target: source.target})})
     }
     worker.postMessage({cmd: 'loadVersion', data: url})
   }
