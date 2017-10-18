@@ -296,16 +296,26 @@ function makeRecorder (appAPI, appEvents) {
       }
     }, function cancel () { })
   }
-  function CALLBACK (...args) {
-    console.log(args)
-    /*
-      at each callback call, if the transaction succeed and if this is a creation transaction,
-      we should call
+  function CALLBACK (err, result) {
+    if (err) console.error(err)
+    else {
+      console.log(result)
+      // {
+      //   "result": {
+      //     "gasUsed": "5318",
+      //     "vm": { "exception": 1, "selfdestruct": {} },
+      //     "bloom": { "bitvector": { "type": "Buffer", "data": [0, /* ... */ 0, 0] } },
+      //     "amountSpent": "5318"
+      //   },
+      //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
+      // }
+      /*
+        at each callback call, if the transaction succeed and if this is a creation transaction, we should call
 
-      runtab.addInstance( ... ) // which basically do:
-
-      instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
-    */
+        runtab.addInstance( ... ) // which basically does:
+        instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
+      */
+    }
   }
   return el
 }

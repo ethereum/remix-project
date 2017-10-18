@@ -24,8 +24,8 @@ class Recorder {
       self._api.getAccounts(function (err, accounts = []) {
         if (err) console.error(err)
         record.from = self._addressCache[from] || (self._addressCache[from] = `<account - ${getIndex(accounts, from)}>`)
-        if (to === null) self.data._pendingCreation[timestamp] = record
-        else record.to = self._addressCache[to] || (self._addressCache[to] = `<account - ${getIndex(accounts, to)}>`)
+        if (to) record.to = self._addressCache[to] || (self._addressCache[to] = `<account - ${getIndex(accounts, to)}>`)
+        else self.data._pendingCreation[timestamp] = record
         self.append(timestamp, record)
       })
     })
@@ -38,7 +38,10 @@ class Recorder {
       delete self.data._pendingCreation[timestamp]
       if (!record) return
       var to = args[2]
-      record.to = self._addressCache[to] || (self._addressCache[to] = `<contract -${++counter}>`)
+      self._api.getAccounts(function (err, accounts = []) {
+        if (err) console.error(err)
+        if (to) record.to = self._addressCache[to] || (self._addressCache[to] = `<contract - ${getIndex(accounts, to)}>`)
+      })
     })
   }
   append (timestamp, record) {
