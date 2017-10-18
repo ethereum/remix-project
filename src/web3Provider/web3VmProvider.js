@@ -43,6 +43,7 @@ function web3VmProvider () {
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
+  if (this.vm === vm) return
   var self = this
   this.vm = vm
   this.vm.on('step', function (data) {
