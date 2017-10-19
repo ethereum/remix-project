@@ -143,7 +143,7 @@ function fileExplorer (appAPI, files) {
     function loadFile () {
       var fileReader = new FileReader()
       fileReader.onload = function (event) {
-        if (helper.checkSpecialChars(name)) {
+        if (helper.checkSpecialChars(file.name)) {
           modalDialogCustom.alert('Special characters are not allowed')
           return
         }
