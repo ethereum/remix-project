@@ -200,7 +200,7 @@ function renderCall (self, data) {
       modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
     }
   }
-  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn + ' ' + helper.shortenHexData(data.tx.to)
+  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var tx = yo`
@@ -208,12 +208,37 @@ function renderCall (self, data) {
       <div class="${css.log}">
         <span><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
         <div class=${css.buttons}>
+          <button class=${css.details} onclick=${txDetails}>Details</button>
           <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
       <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
     </span>
   `
+
+  var table
+  function txDetails () {
+    if (table && table.parentNode) {
+      tx.removeChild(table)
+    } else {
+      table = createTable({
+        isCall: data.tx.isCall,
+        contractAddress: data.tx.contractAddress,
+        data: data.tx,
+        from,
+        to,
+        gas: data.tx.gas,
+        input: data.tx.input,
+        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
+        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+        logs: data.logs,
+        val: data.tx.value,
+        transactionCost: data.tx.transactionCost,
+        executionCost: data.tx.executionCost
+      })
+      tx.appendChild(table)
+    }
+  }
   return tx
 }
 
@@ -273,14 +298,15 @@ function context (self, opts) {
   var logs = data.logs && data.logs.decoded ? data.logs.decoded.length : 0
   var block = data.tx.blockNumber || ''
   var i = data.tx.transactionIndex
+  var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
-    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${typeConversion.toInt(val)} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${typeConversion.toInt(val)} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${typeConversion.toInt(val)} wei</span>`
+    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei</span>`
   }
 }
 
@@ -331,7 +357,7 @@ function createTable (opts) {
   var to = yo`
     <tr class="${css.tr}">
     <td class="${css.td}"> to </td>
-    <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.toHash) }} title='Copy to clipboard'></i>${toHash}</td>
+    <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(data.to ? data.to : toHash) }} title='Copy to clipboard'></i>${toHash}</td>
     </tr class="${css.tr}">
   `
   if (opts.to) table.appendChild(to)
@@ -344,11 +370,15 @@ function createTable (opts) {
   `
   if (opts.gas) table.appendChild(gas)
 
+  var callWarning = ''
+  if (opts.isCall) {
+    callWarning = '(Cost only applies when called by a contract)'
+  }
   if (opts.transactionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> transaction cost </td>
-      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.transactionCost) }} title='Copy to clipboard'></i>${opts.transactionCost} gas</td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.transactionCost) }} title='Copy to clipboard'></i>${opts.transactionCost} gas ${callWarning}</td>
     </tr class="${css.tr}">`)
   }
 
@@ -356,7 +386,7 @@ function createTable (opts) {
     table.appendChild(yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> execution cost </td>
-      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.executionCost) }} title='Copy to clipboard'></i>${opts.executionCost} gas</td>
+      <td class="${css.td}"><i class="fa fa-clipboard ${css.clipboardCopy}" aria-hidden="true" onclick=${function () { copy(opts.executionCost) }} title='Copy to clipboard'></i>${opts.executionCost} gas ${callWarning}</td>
     </tr class="${css.tr}">`)
   }
 
@@ -408,7 +438,7 @@ function createTable (opts) {
   `
   if (opts.logs) table.appendChild(logs)
 
-  var val = typeConversion.toInt(opts.val)
+  var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   val = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> value </td>
