@@ -4,14 +4,15 @@ var Module = { // eslint-disable-line
   cwrap: function () { return arguments[0] === 'version' ? version : compile },
   writeStringToMemory: function () {},
   setValue: function () {},
-  Pointer_stringify: function () {},
+  Pointer_stringify: function (value) { return value },
   Runtime: {
-    addFunction: function () {},
+    addFunction: function () { return arguments[0] },
     removeFunction: function () {}
   },
   _compileJSONMulti: {},
   _compileJSONCallback: {},
-  _compileJSON: {}
+  _compileJSON: {},
+  _malloc: function () {}
 }
 
 function compile (source, optimization, missingInputs) {
@@ -31,7 +32,7 @@ function compile (source, optimization, missingInputs) {
   } else {
     data.missingInputs.map(function (item, i) {
       if (missingInputs) {
-        missingInputs(item)
+        missingInputs(item, '', '')
       }
     })
   }

@@ -18,6 +18,7 @@
     "component-type": "^1.2.1",
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
+    "deep-equal": "^1.0.1",
     "ethereum-remix": "https://github.com/ethereum/remix",
     "ethereumjs-abi": "https://github.com/ethereumjs/ethereumjs-abi",
     "ethereumjs-block": "^1.6.0",

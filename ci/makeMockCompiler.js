@@ -24,11 +24,15 @@ function gatherCompilationResults (callback) {
       filenames.map(function (item, i) {
         var testDef = require('../test-browser/tests/' + item)
         if ('@sources' in testDef) {
-          var source = testDef['@sources']()
-          var result = compile(source, 1)
-          compilationResult[result.key] = result
-          result = compile(source, 0)
-          compilationResult[result.key] = result
+          var sources = testDef['@sources']()
+          for (var files in sources) {
+            compile({sources: sources[files]}, 1, function (result) {
+              compilationResult[result.key] = result
+            })
+            compile({sources: sources[files]}, 0, function (result) {
+              compilationResult[result.key] = result
+            })
+          }
         }
       })
 
@@ -37,23 +41,29 @@ function gatherCompilationResults (callback) {
   })
 }
 
-function compile (source, optimization) {
+function compile (source, optimization, addCompilationResult) {
   var missingInputs = []
-  var result = compiler.compile(source, optimization, function (path) {
-    missingInputs.push(path)
-  })
+  try {
+    var result = compiler.compile(source, optimization, function (path) {
+      missingInputs.push(path)
+      return { error: 'Deferred import' }
+    })
+  } catch (e) {
+    console.log(e)
+  }
   var key = optimization.toString()
   for (var k in source.sources) {
     key += k + source.sources[k]
   }
   key = key.replace(/(\t)|(\n)|( )/g, '')
-  return {
+  var ret = {
     key: key,
     source: source,
     optimization: optimization,
     missingInputs: missingInputs,
     result: result
   }
+  addCompilationResult(ret)
 }
 
 function replaceSolCompiler (results) {
@@ -63,6 +73,7 @@ function replaceSolCompiler (results) {
       process.exit(1)
       return
     }
+    console.log(compiler.version())
     data = data + '\n\nvar mockCompilerVersion = \'' + compiler.version() + '\''
     data = data + '\n\nvar mockData = ' + JSON.stringify(results) + ';\n'
     fs.writeFile('./soljson.js', data, 'utf8', function (error) {
