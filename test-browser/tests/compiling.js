@@ -113,6 +113,7 @@ function testInputValues (browser, callback) {
  "1": "bytes8[4]: _b8ret 0x1234000000000000, 0x1234000000000000, 0x1234000000000000, 0x1234000000000000"
 }`, `[
  {
+  "topic": "d30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
   "event": "event1",
   "args": [
    "-123",
