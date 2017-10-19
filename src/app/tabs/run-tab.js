@@ -285,7 +285,7 @@ function makeRecorder (appAPI, appEvents) {
   }
   runButton.onclick = () => {
     var opts = { title: `Enter Transactions`, text: `Paste the array of transaction you want to replay here`, inputValue: '', multiline: true }
-    modalDialogCustom.prompt(opts, function confirm (json = '[]') {
+    modalDialogCustom.promptMulti(opts, function confirm (json = '[]') {
       try {
         var txArray = JSON.parse(json)
       } catch (e) {
