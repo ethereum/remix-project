@@ -115,10 +115,11 @@ staticAnalysisView.prototype.run = function () {
               length: parseInt(split[1])
             }
             location = self.appAPI.offsetToLineColumn(location, file)
-            location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
+            location = self.lastCompilationResult.sourceList[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ': '
           }
           warningCount++
-          self.appAPI.renderWarning(location + ' ' + item.warning + ((item.more) ? '<br><a href="' + item.more + '" target="blank">more</a>' : ''), warningContainer, {type: 'warning', useSpan: true, isHTML: true})
+          var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
+          self.appAPI.renderWarning(msg, warningContainer, {type: 'warning', useSpan: true})
         })
       })
       if (warningContainer.html() === '') {

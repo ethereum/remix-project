@@ -4,6 +4,7 @@ var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var AbstractAst = require('./abstractAstView')
 var levenshtein = require('fast-levenshtein')
+var yo = require('yo-yo')
 
 function similarVariableNames () {
   this.abstractAst = new AbstractAst()
@@ -26,13 +27,20 @@ function report (contracts, multipleContractsWithSameName) {
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
       var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
-      var comments = (hasModifiers) ? '<br/><i>Note:</i> Modifiers are currently not considered by this static analysis.' : ''
-      comments += (multipleContractsWithSameName) ? '<br/><i>Note:</i> Import aliases are currently not supported by this static analysis.' : ''
+      var hasModifiersComments = ''
+      if (hasModifiers) {
+        hasModifiersComments = yo`<span><br/><i>Note:</i> Modifiers are currently not considered by this static analysis.</span>`
+      }
+      var multipleContractsWithSameNameComments = ''
+      if (multipleContractsWithSameName) {
+        multipleContractsWithSameNameComments = yo`<span><br/><i>Note:</i> Import aliases are currently not supported by this static analysis.</span>`
+      }
+
       var vars = getFunctionVariables(contract, func).map(common.getDeclaredVariableName)
 
       findSimilarVarNames(vars).map((sim) => {
         warnings.push({
-          warning: `<i>${funcName}</i>: Variables have very similar names <i>${sim.var1}</i> and <i>${sim.var2}<i>. ${comments}`,
+          warning: yo`<span><i>${funcName}</i>: Variables have very similar names <i>${sim.var1}</i> and <i>${sim.var2}</i>. ${hasModifiersComments} ${multipleContractsWithSameNameComments}</span>`,
           location: func.src
         })
       })

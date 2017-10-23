@@ -2,6 +2,7 @@ var name = 'Inline assembly: '
 var desc = 'Use of Inline Assembly'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var yo = require('yo-yo')
 
 function inlineAssembly () {
   this.inlineAssNodes = []
@@ -14,8 +15,8 @@ inlineAssembly.prototype.visit = function (node) {
 inlineAssembly.prototype.report = function (compilationResults) {
   return this.inlineAssNodes.map((node) => {
     return {
-      warning: `CAUTION: The Contract uses inline assembly, this is only advised in rare cases. 
-                Additionally static analysis modules do not parse inline Assembly, this can lead to wrong analysis results.`,
+      warning: yo`<span>CAUTION: The Contract uses inline assembly, this is only advised in rare cases. 
+                Additionally static analysis modules do not parse inline Assembly, this can lead to wrong analysis results.</span>`,
       location: node.src,
       more: 'http://solidity.readthedocs.io/en/develop/assembly.html#solidity-assembly'
     }
