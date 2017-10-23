@@ -5,16 +5,20 @@ module.exports = {
 }
 
 function listSelectorContains (textsToFind, selector, browser, callback) {
-  browser
-    .elements('css selector', selector, function (warnings) {
-      warnings.value.map(function (warning, index) {
-        browser.elementIdText(warning.ELEMENT, function (text) {
-          browser.assert.equal(text.value.indexOf(textsToFind[index]) !== -1, true)
-          if (index === warnings.value.length - 1) {
-            callback()
-          }
-        })
-      })
-    })
+  browser.execute(function (selector) {
+    var items = document.querySelectorAll(selector)
+    var ret = []
+    for (var k = 0; k < items.length; k++) {
+      ret.push(items[k].innerText)
+    }
+    return ret
+  }, [selector], function (result) {
+    console.log(result.value)
+    for (var k in textsToFind) {
+      console.log('testing ' + result.value[k] + ' against ' + textsToFind[k])
+      browser.assert.equal(result.value[k].indexOf(textsToFind[k]) !== -1, true)
+    }
+    callback()
+  })
 }
 
