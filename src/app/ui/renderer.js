@@ -116,7 +116,7 @@ Renderer.prototype.error = function (message, container, opt) {
     })
   }
 
-  var $pre = $(opt.useSpan ? '<span />' : '<pre />').html(message)
+  var $pre = $(opt.useSpan ? yo`<span />` : yo`<pre />`).html(message)
 
   var $error = $(yo`<div class="sol ${opt.type}"><div class="close"><i class="fa fa-close"></i></div></div>`).prepend($pre)
   container.append($error)
