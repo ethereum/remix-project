@@ -4,6 +4,7 @@ var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
+var yo = require('yo-yo')
 
 function constantFunctions () {
   this.abstractAst = new AbstractAst()
@@ -38,13 +39,13 @@ function report (contracts, multipleContractsWithSameName) {
         comments += (multipleContractsWithSameName) ? '<br/><i>Note:</i> Import aliases are currently not supported by this static analysis.' : ''
         if (func.potentiallyshouldBeConst) {
           warnings.push({
-            warning: `<i>${funcName}</i>: Potentially should be constant but is not. ${comments}`,
+            warning: yo`<span><i>${funcName}</i>: Potentially should be constant but is not. ${comments}</span>`,
             location: func.src,
             more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
           })
         } else {
           warnings.push({
-            warning: `<i>${funcName}</i>: Is constant but potentially should not be. ${comments}`,
+            warning: yo`<span><i>${funcName}</i>: Is constant but potentially should not be. ${comments}</span>`,
             location: func.src,
             more: 'http://solidity.readthedocs.io/en/develop/contracts.html#constant-functions'
           })

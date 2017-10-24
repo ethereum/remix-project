@@ -2,6 +2,7 @@
 
 var $ = require('jquery')
 var remix = require('ethereum-remix')
+var yo = require('yo-yo')
 var EventManager = remix.lib.EventManager
 
 /*
@@ -98,7 +99,7 @@ class FileManager {
     $filesEl.find('.file').remove()
 
     for (var file in this.tabbedFiles) {
-      $filesEl.append($('<li class="file"><span class="name">' + file + '</span><span class="remove"><i class="fa fa-close"></i></span></li>'))
+      $filesEl.append(yo`<li class="file"><span class="name">${file}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
     }
     var currentFileOpen = !!this.opt.config.get('currentFile')
 
