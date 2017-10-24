@@ -29,11 +29,11 @@ function report (contracts, multipleContractsWithSameName) {
       var funcName = common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
       var hasModifiersComments = ''
       if (hasModifiers) {
-        hasModifiersComments = yo`<span><br/><i>Note:</i> Modifiers are currently not considered by this static analysis.</span>`
+        hasModifiersComments = yo`<span><br><i>Note:</i> Modifiers are currently not considered by this static analysis.</span>`
       }
       var multipleContractsWithSameNameComments = ''
       if (multipleContractsWithSameName) {
-        multipleContractsWithSameNameComments = yo`<span><br/><i>Note:</i> Import aliases are currently not supported by this static analysis.</span>`
+        multipleContractsWithSameNameComments = yo`<span><br><i>Note:</i> Import aliases are currently not supported by this static analysis.</span>`
       }
 
       var vars = getFunctionVariables(contract, func).map(common.getDeclaredVariableName)
