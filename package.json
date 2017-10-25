@@ -5,7 +5,7 @@
   "main": "./src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/main.js --dev-path /home/yann/Ethereum/testchains/test2 --mist --geth --frontend /home/yann/Ethereum/DevCon3/frontend --frontend-port 8084 --auto-mine"
+    "start": "node ./src/main.js"
   },
   "repository": {
     "type": "git",
