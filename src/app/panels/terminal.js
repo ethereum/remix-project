@@ -76,14 +76,14 @@ var css = csjs`
   }
   .terminal::after {
     content           : "";
-    background-image  : url(assets/img/remix_logo_512x512.svg);
-    opacity           : 0.1;
+    background-image  : url(assets/img/remix-redesign-white-512w_v0.1.gif);
+    opacity           : .1;
     top               : 15%;
     left              : 33%;
     bottom            : 0;
     right             : 0;
     position          : absolute;
-    z-index           : -1;
+    z-index           : 1;
     background-repeat : no-repeat;
     background-size   : 45%;
   }
@@ -101,13 +101,17 @@ var css = csjs`
   .cli                {
     line-height       : 1.7em;
     font-family       : monospace;
+    background-color  : ${styles.terminal.backgroundColor_TerminalCLI};
+    padding           : .4em;
+    color             : ${styles.appProperties.mainText_Color};
+    border-top        : solid 2px ${styles.terminal.bar_Ghost};
   }
   .prompt             {
     margin-right      : 0.5em;
     font-family       : monospace;
     font-weight       : bold;
     font-size         : large;
-    color             : ${styles.colors.black};
+    color             : ${styles.appProperties.supportText_OppositeColor};
   }
   .input              {
     word-break        : break-all;

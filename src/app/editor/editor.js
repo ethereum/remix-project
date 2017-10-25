@@ -4,6 +4,16 @@ var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
+
+// var aceCss = editor.setTheme("bace/theme/twilight");
+// require('brace/theme/solarized_dark')
+// require('brace/theme/clouds_midnight')
+// require('brace/theme/pastel_on_dark')
+// require('brace/theme/tomorrow_night')
+require('brace/theme/tomorrow_night_blue')
+// require('brace/theme/tomorrow_night_eighties')
+// require('brace/theme/twilight')
+
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
@@ -54,6 +64,13 @@ function Editor (opts = {}) {
   var self = this
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
+  // editor.setTheme('ace/theme/solarized_dark')
+  // editor.setTheme('ace/theme/clouds_midnight')
+  // editor.setTheme('ace/theme/pastel_on_dark')
+  // editor.setTheme('ace/theme/tomorrow_night')
+  editor.setTheme('ace/theme/tomorrow_night_blue')
+  // editor.setTheme('ace/theme/tomorrow_night_eighties')
+  // editor.setTheme('ace/theme/twilight')
   ace.acequire('ace/ext/language_tools')
   editor.setOptions({
     enableBasicAutocompletion: true,

@@ -66,7 +66,7 @@ var css = csjs`
     color: ${styles.rightPanel.text_Primary};
   }
   .opts_li:hover {
-    color: ${styles.rightPanel.text_Secondary};
+    color: ${styles.rightPanel.icon_HoverColor_TogglePanel};
   }
   .dragbar             {
     position           : absolute;
