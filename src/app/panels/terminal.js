@@ -89,6 +89,7 @@ var css = csjs`
     bottom            : 0;
     right             : 0;
     position          : absolute;
+    z-index           : 1;
     background-repeat : no-repeat;
     background-size   : 45%;
   }
