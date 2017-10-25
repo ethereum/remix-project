@@ -139,6 +139,17 @@ var css = csjs`
     outline: none;
     width: inherit;
   }
+  .call {
+    background-color: ${styles.colors.blueFairyDust};
+    border-color: ${styles.colors.blueFairyDust};
+  }
+  .constant .call {
+    background-color: ${styles.colors.blueMascara};
+    border-color: ${styles.colors.lightBlue};
+    width: 25%;
+    outline: none;
+    width: inherit;
+  }
   .contractProperty input {
     display: none;
   }
@@ -146,7 +157,7 @@ var css = csjs`
     box-sizing: border-box;
     float: left;
     align-self: center;
-    color: ${styles.colors.white};
+    color: ${styles.appProperties.mainText_Color};
   }
   .hasArgs input {
     display: block;
