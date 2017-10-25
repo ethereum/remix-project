@@ -66,7 +66,6 @@ function connectWeb3 (ipcpath, cb) {
     web3.eth.getBlockNumber(function (error) {
       if (error) {
         console.log('still trying to connect to node... ' + error)
-        
       } else {
         cb(web3)
       }
