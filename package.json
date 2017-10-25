@@ -5,7 +5,7 @@
   "main": "./src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/main.js"
+    "start": "node ./src/main.js --dev-path /home/yann/Ethereum/testchains/test2 --mist --geth --frontend /home/yann/Ethereum/DevCon3/frontend --frontend-port 8084 --auto-mine"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,10 @@
   },
   "bin": {
     "remixd": "./src/main.js"
+  },
+  "devDependencies": {
+    "serve": "^6.3.1",
+    "stdout": "0.0.3",
+    "web3": "^1.0.0-beta.24"
   }
 }
