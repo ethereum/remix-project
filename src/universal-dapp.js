@@ -32,11 +32,13 @@ var css = csjs`
   }
   .title {
     ${styles.rightPanel.runTab.dropdown_RunTab}
+    margin-top: 5px;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     font-size: 11px;
-    min-width: 350px;
+    height: 50px;
+    min-width: 100%;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
@@ -87,14 +89,12 @@ var css = csjs`
   }
   .instanceButton {}
   .closeIcon {
-    font-size: 10px;
-    position: relative;
-    top: -5px;
-    right: -2px;
+    font-size: 12px;
+    cursor: pointer;
   }
   .udappClose {
-    margin-left: 3%;
-    align-self: center;
+    display: flex;
+    justify-content: flex-end;
   }
   .contractProperty {
     overflow: auto;
@@ -292,8 +292,9 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
   var self = this
 
-  function remove () { $instance.remove() }
-  var $instance = $(`<div class="instance ${css.instance}"/>`)
+  function remove () { instance.remove() }
+
+  var instance = yo`<div class="instance ${css.instance}"></div>`
   var context = executionContext.isVM() ? 'memory' : 'blockchain'
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
@@ -312,7 +313,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
   }
 
   function toggleClass () {
-    $instance.toggleClass(`${css.hidesub}`)
+    instance.classList.toggle(`${css.hidesub}`)
   }
 
   function copyToClipboard (event) {
@@ -322,12 +323,12 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
 
   var abi = txHelper.sortAbiFunction(contract)
 
-  $instance.get(0).appendChild(title)
+  instance.appendChild(title)
 
   // Add the fallback function
   var fallback = txHelper.getFallbackInterface(abi)
   if (fallback) {
-    $instance.append(this.getCallButton({
+    instance.appendChild(this.getCallButton({
       funABI: fallback,
       address: address,
       contractAbi: abi,
@@ -340,7 +341,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
       return
     }
     // @todo getData cannot be used with overloaded functions
-    $instance.append(this.getCallButton({
+    instance.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
       contractAbi: abi,
@@ -348,7 +349,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     }))
   })
 
-  return $instance.get(0)
+  return instance
 }
 
 // TODO this is used by renderInstance when a new instance is displayed.
