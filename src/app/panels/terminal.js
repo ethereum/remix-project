@@ -43,26 +43,26 @@ var css = csjs`
     width             : 100%;
     padding           : 5px;
   }
-  .toggleTerminal           {
-    margin-left       : auto;
+  .clear           {
+    margin-left       : 10px;
+    margin-right      : 10px; 
     width             : 10px;
     cursor            : pointer;
     color             : ${styles.terminal.icon_Color_TogglePanel};
-    font-size         : 14px;
-    font-weight       : bold;
-  }
-  .toggleTerminal:hover              {
-    color             : ${styles.terminal.icon_HoverColor_TogglePanel};
-  }
-  .clear              {
-    margin-right      : 5px;
-    cursor            : pointer;
-    color             : ${styles.terminal.icon_Color_Menu};
   }
   .clear:hover              {
     color             : ${styles.terminal.icon_HoverColor_Menu};
   }
-
+  .toggleTerminal              {
+    margin-right      : 10px;
+    font-size         : 14px;
+    font-weight       : bold;
+    cursor            : pointer;
+    color             : ${styles.terminal.icon_Color_Menu};
+  }
+  .toggleTerminal:hover              {
+    color             : ${styles.terminal.icon_HoverColor_TogglePanel};
+  }
   .terminal           {
     background-color  : ${styles.terminal.backgroundColor_Terminal};
     display           : flex;
@@ -113,12 +113,36 @@ var css = csjs`
     word-break        : break-all;
     outline           : none;
     font-family       : monospace;
+    font-family: FontAwesome;
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
   }
   .filter             {
     ${styles.terminal.input_Search_MenuBar}
-    width             : 150px;
+    width                       : 150px;
+    padding-right               : 0px;
+    margin-right                : 0px;
+    border-top-left-radius      : 0px;
+    border-bottom-left-radius   : 0px;
   }
-
+  .searchIcon {
+    background-color            : ${styles.colors.veryLightGrey};
+    color                       : ${styles.terminal.icon_Color_Menu};
+    height                      : 25px;
+    width                       : 25px;
+    border-top-left-radius      : 3px;
+    border-bottom-left-radius   : 3px;
+    display                     : flex;
+    align-items                 : center;
+    justify-content             : center;
+  }
+  .listen {
+    min-width         : 120px;
+    display           : flex;
+  }
   .dragbarHorizontal  {
     position          : absolute;
     top               : 0;
@@ -226,13 +250,13 @@ class Terminal {
       <div class=${css.bar}>
         ${self._view.dragbar}
         <div class=${css.menu}>
+          ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
-            <i class="fa fa-ban" aria-hidden="true" onmouseenter=${hover} onmouseleave=${hover}></i>
+          <i class="fa fa-ban" aria-hidden="true" onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
           ${self._view.dropdown}
-          <input type="text" class=${css.filter} onkeyup=${filter}>
-          <input onchange=${listenOnNetwork} type="checkbox"><label title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created from the GUI">Listen on network</label>
-          ${self._view.icon}
+          <div class=${css.search}><i class="fa fa-search ${css.searchIcon}" aria-hidden="true"></i><input type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions"></div>
+          <div class=${css.listen}><input onchange=${listenOnNetwork} type="checkbox"><label title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created from the GUI">Listen on network</label></div>
         </div>
       </div>
     `
