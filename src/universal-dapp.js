@@ -467,7 +467,7 @@ function execute (pipeline, env, callback) {
   next(null, env)
 }
 
-UniversalDApp.prototype.replayTx = function (args, cb) {
+UniversalDApp.prototype.rerunTx = function (args, cb) {
   var self = this
   self.getAccounts(function (err, accounts = []) {
     if (err) console.error(err)
