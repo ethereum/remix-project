@@ -177,19 +177,42 @@ var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
 var pendingTxsContainer = yo`<div class="${css.pendingTxsContainer}">${pendingTxsText}</div>`
 
 function runTab (container, appAPI, appEvents, opts) {
+  var self = {
+    _view: {},
+    addInstance: addInstance
+  }
+  var udapp = appAPI.udapp()
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
-    ${settings(appAPI, appEvents)}
-    ${contractDropdown(appAPI, appEvents, instanceContainer)}
+    ${settings(self, appAPI, appEvents)}
+    ${contractDropdown(self, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
   </div>
   `
   container.appendChild(el)
 
+  function addInstance (result) {
+    // {
+    //   "result": {
+    //     "gasUsed": "5318",
+    //     "vm": { "exception": 1, "selfdestruct": {} },
+    //     "bloom": { "bitvector": { "type": "Buffer", "data": [0, /* ... */ 0, 0] } },
+    //     "amountSpent": "5318"
+    //   },
+    //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
+    // }
+    console.log(result)
+    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
+    var address = self._view.atAddressButtonInput.value
+    var instance = udapp.renderInstance(contract, address, self._view.selectContractNames.value)
+    instanceContainer.appendChild(instance)
+  }
+
   // PENDING transactions
   function updatePendingTxs (container, appAPI) {
-    var pendingCount = Object.keys(appAPI.udapp().pendingTransactions()).length
+    var pendingCount = Object.keys(udapp.pendingTransactions()).length
     pendingTxsText.innerText = pendingCount + ' pending transactions'
   }
 
@@ -244,7 +267,7 @@ function updateAccountBalances (container, appAPI) {
 /* ------------------------------------------------
     RECORDER
 ------------------------------------------------ */
-function makeRecorder (appAPI, appEvents) {
+function makeRecorder (self, appAPI, appEvents) {
   var udapp = appAPI.udapp()
   var recorder = new Recorder({
     events: {
@@ -292,29 +315,15 @@ function makeRecorder (appAPI, appEvents) {
         modalDialogCustom.alert('Invalid JSON, please try again')
       }
       if (txArray.length) {
-        txArray.forEach(tx => udapp.replayTx(tx.record, CALLBACK))
+        txArray.forEach(tx => udapp.rerunTx(tx.record, CALLBACK))
       }
     }, function cancel () { })
   }
   function CALLBACK (err, result) {
     if (err) console.error(err)
     else {
-      console.log(result)
-      // {
-      //   "result": {
-      //     "gasUsed": "5318",
-      //     "vm": { "exception": 1, "selfdestruct": {} },
-      //     "bloom": { "bitvector": { "type": "Buffer", "data": [0, /* ... */ 0, 0] } },
-      //     "amountSpent": "5318"
-      //   },
-      //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
-      // }
-      /*
-        at each callback call, if the transaction succeed and if this is a creation transaction, we should call
-
-        runtab.addInstance( ... ) // which basically does:
-        instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectContractNames.value))
-      */
+      // at each callback call, if the transaction succeed and if this is a creation transaction, we should call
+      self.addInstance(result)
     }
   }
   return el
@@ -323,7 +332,7 @@ function makeRecorder (appAPI, appEvents) {
     section CONTRACT DROPDOWN and BUTTONS
 ------------------------------------------------ */
 
-function contractDropdown (appAPI, appEvents, instanceContainer) {
+function contractDropdown (self, appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -338,6 +347,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
   var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
+  self._view.atAddressButtonInput = atAddressButtonInput
+  self._view.selectContractNames = selectContractNames
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
@@ -509,7 +520,7 @@ function settings (appAPI, appEvents) {
         </select>
       </div>
       <div class=${css.buttons}>
-        ${makeRecorder(appAPI, appEvents)}
+        ${makeRecorder(self, appAPI, appEvents)}
       </div>
     </div>
   `

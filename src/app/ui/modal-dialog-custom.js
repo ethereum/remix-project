@@ -25,7 +25,7 @@ module.exports = {
   },
   promptMulti: function ({ title, text, inputValue }, ok, cancel) {
     if (!inputValue) inputValue = ''
-    var input =yo`<textarea id="prompt_text" class=${css.prompt_text} rows="4" cols="50"></textarea>`
+    var input = yo`<textarea id="prompt_text" class=${css.prompt_text} rows="4" cols="50"></textarea>`
     modal(title, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
