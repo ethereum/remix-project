@@ -15,9 +15,7 @@ var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
 var executionContext = require('./execution-context')
-
-// copy to copyToClipboard
-const copy = require('clipboard-copy')
+var copyToClipboard = require('./app/ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -42,6 +40,7 @@ var css = csjs`
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
+    overflow: visible;
   }
   .titleLine {
     display: flex;
@@ -70,14 +69,6 @@ var css = csjs`
   }
   .instance.hidesub .titleLine {
       display: flex;
-  }
-  .copy  {
-    cursor: pointer;
-    margin-left: 3%;
-    color: ${styles.rightPanel.runTab.icon_Color_Instance_CopyToClipboard};
-  }
-  .copy:hover{
-    color: ${styles.rightPanel.runTab.icon_HoverColor_Instance_CopyToClipboard};
   }
   .buttonsContainer {
     margin-top: 2%;
@@ -299,26 +290,18 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var shortAddress = helper.shortenAddress(address)
-  var title = yo`
-    <div class=${css.titleLine}>
-      <div class="${css.title}" onclick=${toggleClass}>
-        <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
-      </div>
-      <i class="fa fa-clipboard ${css.copy}" aria-hidden="true" onclick=${copyToClipboard} title='Copy to clipboard'></i>
-    </div>
-  `
+  var title = yo`<div class="${css.title}" onclick=${toggleClass}>
+    <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
+    ${copyToClipboard(() => address)}
+  </div>`
+
   if (self.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    title.querySelector(`.${css.title}`).appendChild(close)
+    instance.append(close)
   }
 
   function toggleClass () {
     instance.classList.toggle(`${css.hidesub}`)
-  }
-
-  function copyToClipboard (event) {
-    event.stopPropagation()
-    copy(address)
   }
 
   var abi = txHelper.sortAbiFunction(contract)
