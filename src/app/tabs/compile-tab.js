@@ -2,13 +2,13 @@
 var $ = require('jquery')
 
 var yo = require('yo-yo')
-const copy = require('clipboard-copy')
 
 var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var TreeView = require('remix-debugger').ui.TreeView
+var copyToClipboard = require('../ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -96,6 +96,7 @@ var css = csjs`
     display: flex;
     flex-direction: column;
     margin-bottom: 5%;
+    overflow: visible;
   }
   .key {
     margin-right: 5px;
@@ -108,13 +109,11 @@ var css = csjs`
     width: 100%;
     margin-top: 1.5%;
   }
-  .copyDetails,
   .questionMark {
     margin-left: 2%;
     cursor: pointer;
     color: ${styles.rightPanel.icon_Color_TogglePanel};
   }
-  .copyDetails:hover,
   .questionMark:hover {
     color: ${styles.rightPanel.icon_HoverColor_TogglePanel};
   }
@@ -357,12 +356,15 @@ function compileTab (container, appAPI, appEvents, opts) {
 
     function details () {
       var select = el.querySelector('select')
+
       if (select.children.length > 0 && select.selectedIndex >= 0) {
         var contractName = select.children[select.selectedIndex].innerHTML
         var contractProperties = contractsDetails[contractName]
         var log = yo`<div class="${css.detailsJSON}"></div>`
         Object.keys(contractProperties).map(propertyName => {
-          var copyDetails = yo`<span class="${css.copyDetails}"><i title="Copy value to clipboard" class="fa fa-clipboard" onclick=${() => { copy(contractProperties[propertyName]) }} aria-hidden="true"></i></span>`
+          var copyDetails = yo`<span class="${css.copyDetails}">
+            ${copyToClipboard(() => contractProperties[propertyName])}
+          </span>`
           var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
           log.appendChild(yo`
             <div class=${css.log}>
