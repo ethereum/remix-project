@@ -42,7 +42,7 @@ if (program.sharedFolder) {
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolinc links are not forwarded to Remix IDE\n')
   var router = new Router()
-  router.start(program.sharedFolder)
+  killCallBack.push(router.start(program.sharedFolder))
 }
 
 // kill
