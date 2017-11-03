@@ -15,6 +15,8 @@ program
 .option('-f, --frontend <front-end>', 'Folder that should be served by remixd')
 .option('-p, --frontend-port <front-end-port>', 'Http port used by the frontend (default 8082)')
 .option('-a, --auto-mine', 'mine pending transactions')
+.option('-r, --rpc <cors-domains>', 'start rpc server. Values are CORS domain')
+.option('-rp, --rpc-port', 'rpc server port (default 8545)')
 .parse(process.argv)
 console.log('example: --dev-path /home/devchains/chain1 --mist --geth --frontend /home/frontend --frontend-port 8084 --auto-mine')
 program.outputHelp()
@@ -23,7 +25,7 @@ var killCallBack = []
 
 if (program.devPath) {
   if (fs.existsSync(program.devPath)) {
-    killCallBack.push(startmistGeth(program.devPath, program.mist, program.geth, program.autoMine))
+    killCallBack.push(startmistGeth(program.devPath, program.mist, program.geth, program.autoMine, program.rpc, program.rpcPort))
   } else {
     console.log('\x1b[31m%s\x1b[0m', '[ERR] can\'t start mist/geth. ' + program.devPath + ' does not exist')
   }

@@ -5,9 +5,7 @@ var Web3 = require('web3')
 var net = require('net')
 
 var connectTimeout
-module.exports = function (dataDir, mist, geth, mine) {
-  console.log(mist)
-  console.log(geth)
+module.exports = function (dataDir, mist, geth, mine, rpc, rpcPort) {
   console.log('opening dev env at ' + dataDir)
   // geth --vmdebug --dev --ipcpath /home/yann/Ethereum/testchains/test2/geth.ipc --datadir /home/yann/Ethereum/testchains/test2
   var gethprocess
@@ -19,7 +17,20 @@ module.exports = function (dataDir, mist, geth, mine) {
       '--ipcpath', ipcPath,
       '--datadir', dataDir
     ]
-    console.log('starting geth ... ' + ipcPath)
+    if (rpc) {
+      gethArgs.push('--rpc')
+      gethArgs.push('--rpccorsdomain')
+      gethArgs.push(rpc)
+      gethArgs.push('--rpcapi')
+      gethArgs.push('web3,eth,debug,net')
+      if (!rpcPort) {
+        rpcPort = 8545
+      }
+      gethArgs.push('--rpcport')
+      gethArgs.push(rpcPort)
+    }
+    console.log(gethArgs)
+    console.log('starting geth ... ')
     gethprocess = run('geth', gethArgs)
 
     connectTimeout = setInterval(() => {
