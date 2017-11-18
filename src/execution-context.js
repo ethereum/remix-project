@@ -80,7 +80,7 @@ web3VM.setVM(vm)
 function ExecutionContext () {
   var self = this
   this.event = new EventManager()
-  var executionContext = injectedProvider ? 'injected' : 'vm'
+  var executionContext = 'vm'
 
   this.getProvider = function () {
     return executionContext
