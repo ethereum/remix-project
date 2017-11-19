@@ -28,10 +28,10 @@ function gatherCompilationResults (callback) {
         if ('@sources' in testDef) {
           var sources = testDef['@sources']()
           for (var files in sources) {
-            compile({sources: sources[files]}, 1, function (result) {
+            compile(sources[files], true, function (result) {
               compilationResult[result.key] = result
             })
-            compile({sources: sources[files]}, 0, function (result) {
+            compile(sources[files], false, function (result) {
               compilationResult[result.key] = result
             })
           }

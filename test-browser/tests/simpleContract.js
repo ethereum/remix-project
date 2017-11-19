@@ -27,8 +27,8 @@ function runTests (browser) {
       async.waterfall([function (callback) { callback(null, browser) },
         testSimpleContract,
         testSuccessImport,
-        testFailedImport,
-        testGitHubImport],
+        testFailedImport /* testGitHubImport */
+      ],
       function () {
         browser.end()
       })
@@ -36,16 +36,18 @@ function runTests (browser) {
 }
 
 function testSimpleContract (browser, callback) {
+  console.log('testSimpleContract')
   contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['test1', 'test2'], function () {
-    browser.end()
+    callback(null, browser)
   })
 }
 
 function testSuccessImport (browser, callback) {
+  console.log('testSuccessImport')
   contractHelper.addFile(browser, 'Untitled1.sol', sources[1]['browser/Untitled1.sol'], () => {
     contractHelper.addFile(browser, 'Untitled2.sol', sources[1]['browser/Untitled2.sol'], () => {
       contractHelper.switchFile(browser, 'browser/Untitled1.sol', function () {
-        contractHelper.verifyContract(browser, ['browser/Untitled1.sol:test6', 'browser/Untitled2.sol:test4', 'browser/Untitled2.sol:test5'], function () {
+        contractHelper.verifyContract(browser, ['test6', 'test4', 'test5'], function () {
           callback(null, browser)
         })
       })
@@ -54,6 +56,7 @@ function testSuccessImport (browser, callback) {
 }
 
 function testFailedImport (browser, callback) {
+  console.log('testFailedImport')
   contractHelper.addFile(browser, 'Untitled3.sol', sources[2]['browser/Untitled3.sol'], () => {
     browser.assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
     .perform(function () {
@@ -62,9 +65,8 @@ function testFailedImport (browser, callback) {
   })
 }
 
+/*
 function testGitHubImport (browser, callback) {
-  // cant' import from github from Travis ... (got "Forbidden"")
-  /*
   contractHelper.addFile(browser, 'Untitled4.sol', sources[3]['browser/Untitled4.sol'], () => {
     browser.pause(10000)
     .perform(function () {
@@ -73,9 +75,8 @@ function testGitHubImport (browser, callback) {
       })
     })
   })
-  */
-  callback(null, browser)
 }
+*/
 
 var abstractENS = `pragma solidity ^0.4.0;
 
@@ -198,22 +199,22 @@ contract ENS is AbstractENS {
 
 var sources = [
   {
-    'browser/Untitled.sol': 'contract test1 {} contract test2 {}'
+    'browser/Untitled.sol': {content: 'contract test1 {} contract test2 {}'}
   },
   {
-    'browser/Untitled1.sol': 'import "./Untitled2.sol"; contract test6 {}',
-    'browser/Untitled2.sol': 'contract test4 {} contract test5 {}'
+    'browser/Untitled1.sol': {content: 'import "./Untitled2.sol"; contract test6 {}'},
+    'browser/Untitled2.sol': {content: 'contract test4 {} contract test5 {}'}
   },
   {
-    'browser/Untitled3.sol': 'import "./Untitled11.sol"; contract test6 {}'
+    'browser/Untitled3.sol': {content: 'import "./Untitled11.sol"; contract test6 {}'}
   },
   {
-    'browser/Untitled4.sol': 'import "github.com/ethereum/ens/contracts/ENS.sol"; contract test7 {}',
-    'github.com/ethereum/ens/contracts/ENS.sol': ENS
+    'browser/Untitled4.sol': {content: 'import "github.com/ethereum/ens/contracts/ENS.sol"; contract test7 {}'},
+    'github.com/ethereum/ens/contracts/ENS.sol': {content: ENS}
   },
   {
-    'browser/Untitled4.sol': 'import "github.com/ethereum/ens/contracts/ENS.sol"; contract test7 {}',
-    'github.com/ethereum/ens/contracts/ENS.sol': ENS,
-    'github.com/ethereum/ens/contracts/AbstractENS.sol': abstractENS
+    'browser/Untitled4.sol': {content: 'import "github.com/ethereum/ens/contracts/ENS.sol"; contract test7 {}'},
+    'github.com/ethereum/ens/contracts/ENS.sol': {content: ENS},
+    'github.com/ethereum/ens/contracts/AbstractENS.sol': {content: abstractENS}
   }
 ]

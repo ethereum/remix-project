@@ -92,8 +92,6 @@ Renderer.prototype.error = function (message, container, opt) {
     message = yo`<span>${message}</span>`
   } else if (message.innerText) {
     text = message.innerText
-  } else if (message.formattedMessage) {
-    text = message.formattedMessage
   }
 
   var errLocation = text.match(/^([^:]*):([0-9]*):(([0-9]*):)? /)

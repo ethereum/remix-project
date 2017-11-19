@@ -295,18 +295,18 @@ function compileTab (container, appAPI, appEvents, opts) {
       var error = false
       if (data['error']) {
         error = true
-        appAPI.compilationMessage(data['error'], $(errorContainer))
+        appAPI.compilationMessage(data['error'].formattedMessage, $(errorContainer), {type: data['error'].severity})
       }
       if (data['errors']) {
         if (data['errors'].length) error = true
         data['errors'].forEach(function (err) {
-          appAPI.compilationMessage(err, $(errorContainer))
+          appAPI.compilationMessage(err.formattedMessage, $(errorContainer), {type: err.severity})
         })
       }
       if (!error) {
         if (data.contracts) {
           appAPI.visitContracts((contract) => {
-            appAPI.compilationMessage({ formattedMessage: contract.name }, $(errorContainer), {type: 'success'})
+            appAPI.compilationMessage(contract.name, $(errorContainer), {type: 'success'})
           })
         }
       }
@@ -315,7 +315,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     appEvents.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
         var errorContainer = container.querySelector('.error')
-        appAPI.compilationMessage({ severity: 'warning', formattedMessage: `Static Analysis raised ${count} warning(s) that requires your attention.` }, $(errorContainer), {
+        appAPI.compilationMessage(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
           type: 'warning',
           click: () => appAPI.switchTab('staticanalysisView')
         })

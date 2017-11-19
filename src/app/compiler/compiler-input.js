@@ -1,7 +1,6 @@
 'use strict'
 
 module.exports = (sources, opts) => {
-  var target = opts.target ? opts.target : '*'
   return JSON.stringify({
     language: 'Solidity',
     sources: sources,
@@ -13,7 +12,7 @@ module.exports = (sources, opts) => {
     },
     libraries: opts.libraries,
     outputSelection: {
-      [target]: {
+      '*': {
         '*': [ 'metadata', 'evm.bytecode', 'evm.deployedBytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
       }
     }

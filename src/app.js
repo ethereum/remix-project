@@ -499,7 +499,7 @@ function run () {
 
   var staticAnalysisAPI = {
     renderWarning: (label, warningContainer, type) => {
-      return renderer.error({ severity: 'warning', formattedMessage: label }, warningContainer, type)
+      return renderer.error(label, warningContainer, type)
     },
     offsetToLineColumn: (location, file) => {
       return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
