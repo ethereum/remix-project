@@ -3,9 +3,11 @@ var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
-var sources = {
-  'localhost/folder1/contract2.sol': { content: 'contract test2 { function get () returns (uint) { return 11; }}' }
-}
+var sources = [
+  {
+    'localhost/folder1/contract2.sol': 'contract test2 { function get () returns (uint) { return 11; }}'
+  }
+]
 
 module.exports = {
   before: function (browser, done) {
