@@ -5,6 +5,8 @@ var solc = require('solc/wrapper')
 var soljson = require('../soljson')
 var compiler = solc(soljson)
 
+var compilerInput = require('../src/app/compiler/compiler-input')
+
 gatherCompilationResults(function (error, data) {
   if (error) {
     console.log(error)
@@ -26,10 +28,10 @@ function gatherCompilationResults (callback) {
         if ('@sources' in testDef) {
           var sources = testDef['@sources']()
           for (var files in sources) {
-            compile({sources: sources[files]}, 1, function (result) {
+            compile(sources[files], true, function (result) {
               compilationResult[result.key] = result
             })
-            compile({sources: sources[files]}, 0, function (result) {
+            compile(sources[files], false, function (result) {
               compilationResult[result.key] = result
             })
           }
@@ -44,20 +46,16 @@ function gatherCompilationResults (callback) {
 function compile (source, optimization, addCompilationResult) {
   var missingInputs = []
   try {
-    var result = compiler.compile(source, optimization, function (path) {
+    var input = compilerInput(source, {optimize: optimization})
+    var result = compiler.compileStandardWrapper(input, function (path) {
       missingInputs.push(path)
-      return { error: 'Deferred import' }
     })
+    input = input.replace(/(\t)|(\n)|(\\n)|( )/g, '')
   } catch (e) {
     console.log(e)
   }
-  var key = optimization.toString()
-  for (var k in source.sources) {
-    key += k + source.sources[k]
-  }
-  key = key.replace(/(\t)|(\n)|( )/g, '')
   var ret = {
-    key: key,
+    key: input,
     source: source,
     optimization: optimization,
     missingInputs: missingInputs,

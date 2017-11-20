@@ -19,7 +19,7 @@ staticAnalysisRunner.prototype.runWithModuleList = function (compilationResult, 
   // Also provide convenience analysis via the AST walker.
   var walker = new AstWalker()
   for (var k in compilationResult.sources) {
-    walker.walk(compilationResult.sources[k].AST, {'*': function (node) {
+    walker.walk(compilationResult.sources[k].legacyAST, {'*': function (node) {
       modules.map(function (item, i) {
         if (item.mod.visit !== undefined) {
           item.mod.visit(node)

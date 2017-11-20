@@ -7,6 +7,7 @@ var remix = require('ethereum-remix')
 var codeUtil = remix.util.code
 var executionContext = require('../../execution-context')
 var txFormat = require('./txFormat')
+var txHelper = require('./txHelper')
 
 /**
   * poll web3 each 2s if web3
@@ -222,7 +223,7 @@ class TxListener {
       // if web3: we have to call getTransactionReceipt to get the created address
       // if VM: created address already included
       var code = tx.input
-      contractName = this._tryResolveContract(code, contracts, 'bytecode')
+      contractName = this._tryResolveContract(code, contracts, true)
       if (contractName) {
         this._api.resolveReceipt(tx, (error, receipt) => {
           if (error) return cb(error)
@@ -244,7 +245,7 @@ class TxListener {
         executionContext.web3().eth.getCode(tx.to, (error, code) => {
           if (error) return cb(error)
           if (code) {
-            var contractName = this._tryResolveContract(code, contracts, 'runtimeBytecode')
+            var contractName = this._tryResolveContract(code, contracts, false)
             if (contractName) {
               this._resolvedContracts[tx.to] = contractName
               var fun = this._resolveFunction(contractName, contracts, tx, false)
@@ -264,11 +265,17 @@ class TxListener {
   }
 
   _resolveFunction (contractName, compiledContracts, tx, isCtor) {
-    var abi = JSON.parse(compiledContracts[contractName].interface)
+    var contract = txHelper.getContract(contractName, compiledContracts)
+    if (!contract) {
+      console.log('txListener: cannot resolve ' + contractName)
+      return
+    }
+    var abi = contract.object.abi
     var inputData = tx.input.replace('0x', '')
     if (!isCtor) {
-      for (var fn in compiledContracts[contractName].functionHashes) {
-        if (compiledContracts[contractName].functionHashes[fn] === inputData.substring(0, 8)) {
+      var methodIdentifiers = contract.object.evm.methodIdentifiers
+      for (var fn in methodIdentifiers) {
+        if (methodIdentifiers[fn] === inputData.substring(0, 8)) {
           var fnabi = getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
             contractName: contractName,
@@ -290,7 +297,7 @@ class TxListener {
         params: null
       }
     } else {
-      var bytecode = compiledContracts[contractName].bytecode
+      var bytecode = contract.object.evm.bytecode.object
       var params = null
       if (bytecode && bytecode.length) {
         params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
@@ -305,13 +312,16 @@ class TxListener {
     return this._resolvedTransactions[tx.hash]
   }
 
-  _tryResolveContract (codeToResolve, compiledContracts, type) {
-    for (var k in compiledContracts) {
-      if (codeUtil.compareByteCode(codeToResolve, '0x' + compiledContracts[k][type])) {
-        return k
+  _tryResolveContract (codeToResolve, compiledContracts, isCreation) {
+    var found = null
+    txHelper.visitContracts(compiledContracts, (contract) => {
+      var bytes = isCreation ? contract.object.evm.bytecode.object : contract.object.evm.deployedBytecode.object
+      if (codeUtil.compareByteCode(codeToResolve, '0x' + bytes)) {
+        found = contract.name
+        return true
       }
-    }
-    return null
+    })
+    return found
   }
 
   _decodeInputParams (data, abi) {

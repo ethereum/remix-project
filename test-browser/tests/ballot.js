@@ -5,7 +5,7 @@ var init = require('../helpers/init')
 var sauce = require('./sauce')
 
 var sources = [
-  {'browser/Untitled.sol': examples.ballot.content}
+  {'browser/Untitled.sol': {content: examples.ballot.content}}
 ]
 
 module.exports = {
@@ -26,13 +26,13 @@ function runTests (browser, testData) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')
-  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['browser/Untitled.sol:Ballot'], function () {
+  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'], function () {
     browser
       .click('.runView')
       .setValue('input[placeholder="uint8 _numProposals"]', '1', () => {})
       .click('#runTabView div[class^="create"]')
       .testFunction('delegate - transact (not payable)', '0xd3cd54e2f76f3993078ecf9e1b54a148def4520afc141a182293b3610bddf10f',
-        '[vm] from:0xca3...a733c, to:browser/Untitled.sol:Ballot.delegate(address) 0x692...77b3a, value:0 wei, data:0x5c1...4d2db, 0 logs, hash:0xd3c...df10f',
+        '[vm] from:0xca3...a733c, to:Ballot.delegate(address) 0x692...77b3a, value:0 wei, data:0x5c1...4d2db, 0 logs, hash:0xd3c...df10f',
         {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
       .click('span#tx0xd3cd54e2f76f3993078ecf9e1b54a148def4520afc141a182293b3610bddf10f button[class^="debug"]')
       .pause(1000)
@@ -45,7 +45,7 @@ function runTests (browser, testData) {
           done()
         })
       })
-      .pause(2000)
+      .pause(5000)
       .perform(function (client, done) {
         contractHelper.checkDebug(browser, 'soliditystate', stateCheck, () => {
           done()
