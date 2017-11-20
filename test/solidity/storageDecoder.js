@@ -3,6 +3,7 @@ var tape = require('tape')
 var compiler = require('solc')
 var stateDecoder = require('../../src/index').solidity.stateDecoder
 var MockStorageResolver = require('./mockStorageResolver')
+var helpers = require('../helpers.js')
 
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
@@ -18,7 +19,8 @@ tape('solidity', function (t) {
 
 function testIntStorage (st, cb) {
   var intStorage = require('./contracts/intStorage')
-  var output = compiler.compile(intStorage.contract, 0)
+  var output = compiler.compileStandardWrapper(helpers.compilerInput(intStorage.contract))
+  output = JSON.parse(output)
   var mockStorageResolver
   for (var storage of [intStorage.fullStorage, shrinkStorage(intStorage.fullStorage)]) {
     mockStorageResolver = new MockStorageResolver(storage)
@@ -64,7 +66,8 @@ function testIntStorage (st, cb) {
 
 function testByteStorage (st, cb) {
   var byteStorage = require('./contracts/byteStorage')
-  var output = compiler.compile(byteStorage.contract, 0)
+  var output = compiler.compileStandardWrapper(helpers.compilerInput(byteStorage.contract))
+  output = JSON.parse(output)
   var mockStorageResolver
   for (var storage of [byteStorage.storage, shrinkStorage(byteStorage.storage)]) {
     mockStorageResolver = new MockStorageResolver(storage)
@@ -176,7 +179,8 @@ function shrinkStorage (storage) {
 
 function testStructArrayStorage (st, cb) {
   var structArrayStorage = require('./contracts/structArrayStorage')
-  var output = compiler.compile(structArrayStorage.contract, 0)
+  var output = compiler.compileStandardWrapper(helpers.compilerInput(structArrayStorage.contract))
+  output = JSON.parse(output)
   var mockStorageResolver = new MockStorageResolver(structArrayStorage.storage)
   stateDecoder.solidityState(mockStorageResolver, output.sources, 'structArrayStorage').then((decoded) => {
     st.equal(decoded['intStructDec'].value['i8'].value, '32')

@@ -2,14 +2,16 @@
 var tape = require('tape')
 var SourceMappingDecoder = require('../src/util/sourceMappingDecoder')
 var compiler = require('solc')
+var helpers = require('./helpers.js')
 
 tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
-    var output = compiler.compile(contracts, 0)
+    var output = compiler.compileStandardWrapper(helpers.compilerInput(contracts))
+    output = JSON.parse(output)
     var sourceMappingDecoder = new SourceMappingDecoder()
-    var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts[':test'].srcmapRuntime, output.sources[''])
+    var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.equal(node, null)
-    node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts[':test'].srcmapRuntime, output.sources[''])
+    node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
     st.notEqual(node, null)
     if (node) {
       st.equal(node.attributes.name, 'f1')
