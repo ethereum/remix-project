@@ -161,7 +161,7 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
       return false
     }
   }
-  astWalker.walk(ast.AST, callback)
+  astWalker.walk(ast.legacyAST, callback)
   return found
 }
 
@@ -184,7 +184,7 @@ function nodesAtPosition (astNodeType, position, ast) {
       return false
     }
   }
-  astWalker.walk(ast.AST, callback)
+  astWalker.walk(ast.legacyAST, callback)
   return found
 }
 

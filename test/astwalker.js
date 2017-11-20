@@ -8,7 +8,7 @@ tape('ASTWalker', function (t) {
     st.plan(24)
     var astwalker = new AstWalker()
 
-    astwalker.walk(node.ast.AST, function (node) {
+    astwalker.walk(node.ast.legacyAST, function (node) {
       if (node.name === 'ContractDefinition') {
         checkContract(st, node)
       }
@@ -24,7 +24,7 @@ tape('ASTWalker', function (t) {
       st.equal(node.attributes.name === 'set' || node.attributes.name === 'get', true)
       return true
     }
-    astwalker.walk(node.ast.AST, callback)
+    astwalker.walk(node.ast.legacyAST, callback)
   })
 })
 

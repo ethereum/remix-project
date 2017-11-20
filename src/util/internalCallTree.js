@@ -40,6 +40,9 @@ class InternalCallTree {
             createReducedTrace(this, traceManager.trace.length - 1)
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
+        }, (reason) => {
+          console.log('analyzing trace falls ' + reason)
+          this.event.trigger('callTreeNotReady', [reason])
         })
       }
     })

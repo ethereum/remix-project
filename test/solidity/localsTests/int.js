@@ -29,6 +29,9 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           callTree.event.register('callTreeBuildFailed', (error) => {
             st.fail(error)
           })
+          callTree.event.register('callTreeNotReady', (reason) => {
+            st.fail(reason)
+          })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
             try {
               st.equals(scopeStarts[0], '')
