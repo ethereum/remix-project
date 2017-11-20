@@ -105,7 +105,7 @@ function addFile (browser, name, content, done) {
         done()
       })
     })
-    .setValue('#input textarea', content, function () {})
+    .setValue('#input textarea', content.content, function () {})
     .pause(1000)
     .perform(function () {
       done()
@@ -129,7 +129,14 @@ function checkDebug (browser, id, debugValue, done) {
     return document.querySelector('#' + id + ' .dropdownrawcontent').innerText
   }, [id], function (result) {
     console.log(id + ' ' + result.value)
-    var value = JSON.parse(result.value)
+    var value
+    try {
+      value = JSON.parse(result.value)
+    } catch (e) {
+      browser.assert.fail('cant parse solidity state', e.message, '')
+      done()
+      return
+    }
     var equal = deepequal(debugValue, value)
     if (!equal) {
       browser.assert.fail('checkDebug on ' + id, 'info about error', '')

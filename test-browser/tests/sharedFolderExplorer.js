@@ -5,7 +5,7 @@ var sauce = require('./sauce')
 
 var sources = [
   {
-    'localhost/folder1/contract2.sol': 'contract test2 { function get () returns (uint) { return 11; }}'
+    'localhost/folder1/contract2.sol': {content: 'contract test2 { function get () returns (uint) { return 11; }}'}
   }
 ]
 
@@ -43,7 +43,7 @@ function runTests (browser, testData) {
     .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol')
     .click('[data-path="localhost/folder1/contract2.sol"]')
     .waitForElementPresent('#compileTabView select option', 50000, true, function () {
-      contractHelper.verifyContract(browser, ['localhost/folder1/contract2.sol:test2'], function () {
+      contractHelper.verifyContract(browser, ['test2'], function () {
         browser.click('.websocketconn').end()
       })
     })

@@ -46,7 +46,7 @@ module.exports = {
       dataHex = data.slice(2)
     }
     if (isConstructor) {
-      var bytecodeToDeploy = contract.bytecode
+      var bytecodeToDeploy = contract.evm.bytecode.object
       if (bytecodeToDeploy.indexOf('_') >= 0) {
         this.linkBytecode(contract, contracts, udapp, (err, bytecode) => {
           if (err) {
@@ -69,47 +69,51 @@ module.exports = {
   atAddress: function () {},
 
   linkBytecode: function (contract, contracts, udapp, callback, callbackStep) {
-    var bytecode = contract.bytecode
-    if (bytecode.indexOf('_') < 0) {
-      return callback(null, bytecode)
+    if (contract.evm.bytecode.object.indexOf('_') < 0) {
+      return callback(null, contract.evm.bytecode.object)
     }
-    var libraryRefMatch = bytecode.match(/__([^_]{1,36})__/)
+    var libraryRefMatch = contract.evm.bytecode.object.match(/__([^_]{1,36})__/)
     if (!libraryRefMatch) {
       return callback('Invalid bytecode format.')
     }
     var libraryName = libraryRefMatch[1]
-    var libraryabi = helper.getContractByName(libraryName, contracts)
-    if (!libraryabi) {
+    // file_name:library_name
+    var libRef = libraryName.match(/(.*):(.*)/)
+    if (!libRef) {
+      return callback('Cannot extract library reference ' + libraryName)
+    }
+    if (!contracts[libRef[1]] || !contracts[libRef[1]][libRef[2]]) {
+      return callback('Cannot find library reference ' + libraryName)
+    }
+    var libraryShortName = libRef[2]
+    var library = contracts[libRef[1]][libraryShortName]
+    if (!library) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryName, libraryabi, udapp, (err, address) => {
+    this.deployLibrary(libraryName, library, contracts, udapp, (err, address) => {
       if (err) {
         return callback(err)
       }
-      var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_')
       var hexAddress = address.toString('hex')
       if (hexAddress.slice(0, 2) === '0x') {
         hexAddress = hexAddress.slice(2)
       }
-      hexAddress = Array(40 - hexAddress.length + 1).join('0') + hexAddress
-      while (bytecode.indexOf(libLabel) >= 0) {
-        bytecode = bytecode.replace(libLabel, hexAddress)
-      }
-      contract.bytecode = bytecode
+      contract.evm.bytecode.object = this.linkLibraryStandard(libraryShortName, hexAddress, contract)
+      contract.evm.bytecode.object = this.linkLibrary(libraryName, hexAddress, contract.evm.bytecode.object)
       this.linkBytecode(contract, contracts, udapp, callback, callbackStep)
     }, callbackStep)
   },
 
-  deployLibrary: function (libraryName, library, udapp, callback, callbackStep) {
+  deployLibrary: function (libraryName, library, contracts, udapp, callback, callbackStep) {
     var address = library.address
     if (address) {
       return callback(null, address)
     }
-    var bytecode = library.bytecode
+    var bytecode = library.evm.bytecode.object
     if (bytecode.indexOf('_') >= 0) {
-      this.linkBytecode(libraryName, library, udapp, (err, bytecode) => {
+      this.linkBytecode(libraryName, contracts, udapp, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, library, udapp, callback, callbackStep)
+        else this.deployLibrary(libraryName, library, contracts, udapp, callback, callbackStep)
       }, callbackStep)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
@@ -122,6 +126,41 @@ module.exports = {
         callback(err, address)
       })
     }
+  },
+
+  linkLibraryStandard: function (libraryName, address, contract) {
+    var bytecode = contract.evm.bytecode.object
+    for (var file in contract.evm.bytecode.linkReferences) {
+      for (var libName in contract.evm.bytecode.linkReferences[file]) {
+        if (libraryName === libName) {
+          bytecode = this.setLibraryAddress(address, bytecode, contract.evm.bytecode.linkReferences[file][libName])
+        }
+      }
+    }
+    return bytecode
+  },
+
+  setLibraryAddress: function (address, bytecodeToLink, positions) {
+    if (positions) {
+      for (var pos of positions) {
+        var regpos = bytecodeToLink.match(new RegExp(`(.{${2 * pos.start}})(.{${2 * pos.length}})(.*)`))
+        if (regpos) {
+          bytecodeToLink = regpos[1] + address + regpos[3]
+        }
+      }
+    }
+    return bytecodeToLink
+  },
+
+  linkLibrary: function (libraryName, address, bytecodeToLink) {
+    var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_')
+    if (bytecodeToLink.indexOf(libLabel) === -1) return bytecodeToLink
+
+    address = Array(40 - address.length + 1).join('0') + address
+    while (bytecodeToLink.indexOf(libLabel) >= 0) {
+      bytecodeToLink = bytecodeToLink.replace(libLabel, address)
+    }
+    return bytecodeToLink
   },
 
   decodeResponseToTreeView: function (response, fnabi) {

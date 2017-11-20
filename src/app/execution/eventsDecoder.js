@@ -1,5 +1,6 @@
 'use strict'
 var ethJSABI = require('ethereumjs-abi')
+var txHelper = require('../execution/txHelper')
 
 /**
   * Register to txListener and extract events
@@ -35,10 +36,9 @@ class EventsDecoder {
     this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
 
-  _eventABI (contractabi) {
-    contractabi = JSON.parse(contractabi.interface)
+  _eventABI (contract) {
     var eventABI = {}
-    contractabi.forEach(function (funABI, i) {
+    contract.abi.forEach(function (funABI, i) {
       if (funABI.type !== 'event') {
         return
       }
@@ -50,9 +50,9 @@ class EventsDecoder {
 
   _eventsABI (compiledContracts) {
     var eventsABI = {}
-    for (var contract in compiledContracts) {
-      eventsABI[contract] = this._eventABI(compiledContracts[contract])
-    }
+    txHelper.visitContracts(compiledContracts, (contract) => {
+      eventsABI[contract.name] = this._eventABI(contract.object)
+    })
     return eventsABI
   }
 

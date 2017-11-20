@@ -6,7 +6,7 @@ var dom = require('../helpers/dom')
 
 var sources = [
   {
-    'browser/Untitled.sol': `
+    'browser/Untitled.sol': {content: `
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
@@ -16,7 +16,7 @@ contract TooMuchGas {
     uint test;
     uint test1;
   }
-}`}
+}`}}
 ]
 
 module.exports = {
@@ -36,13 +36,13 @@ function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')
-  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['browser/Untitled.sol:TooMuchGas', 'browser/Untitled.sol:test1', 'browser/Untitled.sol:test2'], function () {
+  contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'], function () {
     browser
       .click('.staticanalysisView')
       .click('#staticanalysisView button')
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
-        dom.listSelectorContains(['browser/Untitled.sol:2:33: Use of tx.origin',
-          'Fallback function of contract browser/Untitled.sol:TooMuchGas requires too much gas',
+        dom.listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',
+          'Fallback function of contract TooMuchGas requires too much gas',
           'TooMuchGas.(): Variables have very similar names test and test1.'],
           '#staticanalysisresult .warning',
           browser, function () {
