@@ -64,7 +64,8 @@ abstractAstView.prototype.build_visit = function (relevantNodeFilter) {
         relevantNodes: [],
         modifierInvocations: [],
         localVariables: getLocalVariables(node),
-        parameters: getLocalParameters(node)
+        parameters: getLocalParameters(node),
+        returns: getReturnParameters(node)
       })
       // push back relevant nodes to their the current fn if any
       getCurrentContract(that).relevantNodes.map((item) => {
@@ -153,6 +154,15 @@ function getCurrentModifier (that) {
 
 function getLocalParameters (funcNode) {
   return getLocalVariables(common.getFunctionOrModifierDefinitionParameterPart(funcNode)).map(common.getType)
+}
+
+function getReturnParameters (funcNode) {
+  return getLocalVariables(common.getFunctionOrModifierDefinitionReturnParameterPart(funcNode)).map((n) => {
+    return {
+      type: common.getType(n),
+      name: common.getDeclaredVariableName(n)
+    }
+  })
 }
 
 function getLocalVariables (funcNode) {
