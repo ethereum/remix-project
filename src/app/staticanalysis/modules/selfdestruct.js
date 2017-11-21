@@ -17,10 +17,9 @@ selfdestruct.prototype.visit = function (node) {
 selfdestruct.prototype.report = function () {
   return this.relevantNodes.map(function (item, i) {
     return {
-      warning: yo`<span>Use of selfdestruct: can block calling contracts unexpectedly<br />
-                Please, be especially carefull if this contract is referenced by other contracts (i.e. library contracts, interactions). Selfdestruction of called contracts can render callers inoperable.</span>`,
+      warning: yo`<span>Use of selfdestruct: can block calling contracts unexpectedly. Be especially careful if this contract is planed to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.</span>`,
       location: item.src,
-      more: 'https://www.coindesk.com/ethereum-client-bug-freezes-user-funds-fallout-remains-uncertain/'
+      more: 'https://paritytech.io/blog/security-alert.html'
     }
   })
 }
