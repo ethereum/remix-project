@@ -406,6 +406,11 @@ function isBuiltinFunctionCall (node) {
   return isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true
 }
 
+/**
+ * True if node is a call to selfdestruct
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
 function isSelfdestructCall (node) {
   return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'selfdestruct'
 }
