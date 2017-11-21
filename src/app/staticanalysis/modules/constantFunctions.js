@@ -10,7 +10,14 @@ function constantFunctions () {
   this.abstractAst = new AbstractAst()
 
   this.visit = this.abstractAst.build_visit(
-    (node) => common.isLowLevelCall(node) || common.isTransfer(node) || common.isExternalDirectCall(node) || common.isEffect(node) || common.isLocalCallGraphRelevantNode(node) || common.isInlineAssembly(node) || common.isNewExpression(node)
+    (node) => common.isLowLevelCall(node) ||
+              common.isTransfer(node) ||
+              common.isExternalDirectCall(node) ||
+              common.isEffect(node) ||
+              common.isLocalCallGraphRelevantNode(node) ||
+              common.isInlineAssembly(node) ||
+              common.isNewExpression(node) ||
+              common.isSelfdestructCall(node)
   )
 
   this.report = this.abstractAst.build_report(report)
@@ -28,8 +35,12 @@ function report (contracts, multipleContractsWithSameName) {
 
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
-      func.potentiallyshouldBeConst = checkIfShouldBeConstant(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
+      if (common.isPayableFunction(func.node)) {
+        func.potentiallyshouldBeConst = false
+      } else {
+        func.potentiallyshouldBeConst = checkIfShouldBeConstant(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
                                                               getContext(callGraph, contract, func))
+      }
     })
 
     contract.functions.filter((func) => common.hasFunctionBody(func.node)).forEach((func) => {
@@ -76,7 +87,8 @@ function isConstBreaker (node, context) {
         isCallOnNonConstExternalInterfaceFunction(node, context) ||
         common.isCallToNonConstLocalFunction(node) ||
         common.isInlineAssembly(node) ||
-        common.isNewExpression(node)
+        common.isNewExpression(node) ||
+        common.isSelfdestructCall(node)
 }
 
 function isCallOnNonConstExternalInterfaceFunction (node, context) {

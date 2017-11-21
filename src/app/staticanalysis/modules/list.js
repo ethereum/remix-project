@@ -9,5 +9,6 @@ module.exports = [
   require('./blockTimestamp'),
   require('./lowLevelCalls'),
   require('./blockBlockhash'),
-  require('./noReturn')
+  require('./noReturn'),
+  require('./selfdestruct')
 ]
