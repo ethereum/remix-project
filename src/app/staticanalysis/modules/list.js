@@ -8,5 +8,6 @@ module.exports = [
   require('./inlineAssembly'),
   require('./blockTimestamp'),
   require('./lowLevelCalls'),
-  require('./blockBlockhash')
+  require('./blockBlockhash'),
+  require('./noReturn')
 ]
