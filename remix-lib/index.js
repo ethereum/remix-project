@@ -10,6 +10,7 @@ var Web3Providers = require('./src/web3Provider/web3Providers')
 var DummyProvider = require('./src/web3Provider/dummyProvider')
 var AstWalker = require('./src/astWalker')
 var global = require('./src/global')
+var styleGuide = require('./src/ui/style-guide')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -35,6 +36,9 @@ function modules () {
     init: init,
     util: util,
     AstWalker: AstWalker,
-    global: global
+    global: global,
+    ui: {
+      styleGuide: styleGuide
+    }
   }
 }
