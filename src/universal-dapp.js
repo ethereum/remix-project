@@ -66,7 +66,7 @@ var css = csjs`
   .instance.hidesub > * {
       display: none;
   }
-  .instance.hidesub .title {
+  .instance.hidesub .titleLine {
       display: flex;
   }
   .copy  {
