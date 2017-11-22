@@ -21,7 +21,7 @@ var css = csjs`
     justify-content: space-between;
   }
   .txLog {
-    width: 75;
+    width: 75%;
   }
   .tx {
     color: ${styles.terminal.text_Title_TransactionLog};
