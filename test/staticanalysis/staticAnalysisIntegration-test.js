@@ -28,7 +28,8 @@ var testFiles = [
   'library.sol',
   'transfer.sol',
   'ctor.sol',
-  'forgottenReturn.sol'
+  'forgottenReturn.sol',
+  'selfdestruct.sol'
 ]
 
 var testFileAsts = {}
@@ -60,7 +61,8 @@ test('Integration test thisLocal.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -90,7 +92,8 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'library.sol': 1,
     'transfer.sol': 1,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -120,7 +123,8 @@ test('Integration test constantFunctions.js', function (t) {
     'library.sol': 1,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -150,7 +154,8 @@ test('Integration test inlineAssembly.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -180,7 +185,8 @@ test('Integration test txOrigin.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -210,7 +216,8 @@ test('Integration test gasCosts.js', function (t) {
     'library.sol': 1,
     'transfer.sol': 1,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 3
+    'forgottenReturn.sol': 3,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -240,7 +247,8 @@ test('Integration test similarVariableNames.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 1,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -270,7 +278,8 @@ test('Integration test inlineAssembly.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -300,7 +309,8 @@ test('Integration test blockTimestamp.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -330,7 +340,8 @@ test('Integration test lowLevelCalls.js', function (t) {
     'library.sol': 1,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -360,7 +371,8 @@ test('Integration test blockBlockhash.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 0
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -390,11 +402,43 @@ test('Integration test noReturn.js', function (t) {
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
-    'forgottenReturn.sol': 1
+    'forgottenReturn.sol': 1,
+    'selfdestruct.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of noReturn warnings`)
+  })
+})
+
+test('Integration test selfdestruct.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/app/staticanalysis/modules/selfdestruct')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 2
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of selfdestruct warnings`)
   })
 })
 
