@@ -3,8 +3,8 @@
 var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
-var remix = require('ethereum-remix')
-var EventManager = remix.lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 
 var UniversalDApp = require('./universal-dapp.js')
 var Remixd = require('./lib/remixd')
@@ -37,7 +37,7 @@ var FileManager = require('./app/files/fileManager')
 var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 
-var styleGuide = remix.ui.styleGuide
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`

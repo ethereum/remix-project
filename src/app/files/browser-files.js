@@ -1,6 +1,6 @@
 'use strict'
 
-var EventManager = require('ethereum-remix').lib.EventManager
+var EventManager = require('remix-lib').EventManager
 
 function Files (storage) {
   var event = new EventManager()

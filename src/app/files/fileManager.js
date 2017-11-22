@@ -1,9 +1,9 @@
 'use strict'
 
 var $ = require('jquery')
-var remix = require('ethereum-remix')
+var remixLib = require('remix-lib')
 var yo = require('yo-yo')
-var EventManager = remix.lib.EventManager
+var EventManager = remixLib.EventManager
 
 /*
   attach to files event (removed renamed)
