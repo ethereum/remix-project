@@ -1,5 +1,5 @@
 'use strict'
-var SourceMappingDecoder = require('ethereum-remix').util.SourceMappingDecoder
+var SourceMappingDecoder = require('remix-lib').SourceMappingDecoder
 
 function offsetToColumnConverter (compilerEvent) {
   this.lineBreakPositionsByContent = {}

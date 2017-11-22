@@ -1,12 +1,12 @@
 'use strict'
 
 var Web3 = require('web3')
-var EventManager = require('ethereum-remix').lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var EthJSVM = require('ethereumjs-vm')
 var ethUtil = require('ethereumjs-util')
 var StateManager = require('ethereumjs-vm/lib/stateManager')
-var remix = require('ethereum-remix')
-var Web3VMProvider = remix.web3.web3VMProvider
+var Web3VMProvider = remixLib.vm.Web3VMProvider
 var rlp = ethUtil.rlp
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 

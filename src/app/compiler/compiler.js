@@ -7,7 +7,8 @@ var webworkify = require('webworkify')
 
 var compilerInput = require('./compiler-input')
 
-var EventManager = require('ethereum-remix').lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 
 var txHelper = require('../execution/txHelper')
 

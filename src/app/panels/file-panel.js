@@ -3,7 +3,8 @@ var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var minixhr = require('minixhr')  // simple and small cross-browser XMLHttpRequest (XHR)
-var EventManager = require('ethereum-remix').lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var FileExplorer = require('../files/file-explorer')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
@@ -11,8 +12,7 @@ var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 var helper = require('../../lib/helper')
 
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
 module.exports = filepanel

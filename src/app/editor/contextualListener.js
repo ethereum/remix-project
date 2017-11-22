@@ -1,8 +1,8 @@
 'use strict'
-var remix = require('ethereum-remix')
-var SourceMappingDecoder = remix.util.SourceMappingDecoder
-var AstWalker = remix.util.AstWalker
-var EventManager = remix.lib.EventManager
+var remixLib = require('remix-lib')
+var SourceMappingDecoder = remixLib.SourceMappingDecoder
+var AstWalker = remixLib.AstWalker
+var EventManager = remixLib.EventManager
 
 /*
   trigger contextChanged(nodes)
