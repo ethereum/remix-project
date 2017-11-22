@@ -471,8 +471,6 @@ UniversalDApp.prototype.rerunTx = function (args, cb) {
   var self = this
   self.getAccounts(function (err, accounts = []) {
     if (err) console.error(err)
-    if (args.to && args.to[0] === '<') args.to = accounts[args.to.split('>')[0].slice(11)]
-    if (args.from && args.from[0] === '<') args.from = accounts[args.from.split('>')[0].slice(11)]
     var pipeline = [queryGasLimit, runTransaction]
     var env = { self, args, tx: { to: args.to, from: args.from, data: args.data, useCall: args.useCall } }
     execute(pipeline, env, cb)

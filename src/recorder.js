@@ -44,6 +44,16 @@ class Recorder {
       })
     })
   }
+  resolveAddress (record, accounts) {
+    if (record.to && record.to[0] === '<') record.to = accounts[record.to.split('>')[0].slice(11)]
+    if (record.from && record.from[0] === '<') record.from = accounts[record.from.split('>')[0].slice(11)]
+    // @TODO: change copy/paste to write and read from history file
+
+    // @TODO: writing browser test
+
+    // @TODO: replace addresses with custom ones (maybe address mapping file?)
+    return record
+  }
   append (timestamp, record) {
     var self = this
     self.data.journal.push({ timestamp, record })
