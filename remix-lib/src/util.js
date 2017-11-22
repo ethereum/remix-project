@@ -182,7 +182,10 @@ module.exports = {
       return true
     }
     return false
-  }
+  },
+  groupBy: groupBy,
+  concatWithSeperator: concatWithSeperator,
+  escapeRegExp: escapeRegExp
 }
 
 function replaceLibReference (code, pos) {
@@ -212,4 +215,23 @@ function findCallInternal (index, rootCall, callsPath) {
     }
   }
   return ret
+}
+
+/* util extracted out from browser-solidity. @TODO split this file, cause it mix real util fn with solidity related stuff ... */
+function groupBy (arr, key) {
+  return arr.reduce((sum, item) => {
+    const groupByVal = item[key]
+    var groupedItems = sum[groupByVal] || []
+    groupedItems.push(item)
+    sum[groupByVal] = groupedItems
+    return sum
+  }, {})
+}
+
+function concatWithSeperator (list, seperator) {
+  return list.reduce((sum, item) => sum + item + seperator, '').slice(0, -seperator.length)
+}
+
+function escapeRegExp (str) {
+  return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
 }

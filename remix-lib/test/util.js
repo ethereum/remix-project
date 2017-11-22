@@ -29,3 +29,43 @@ tape('Util', function (t) {
     st.equal(lowerBound, -1)
   })
 })
+
+tape('util.groupBy on valid input', function (t) {
+  t.plan(1)
+
+  var result = util.groupBy([
+    {category: 'GAS', name: 'a'},
+    {category: 'SEC', name: 'b'},
+    {category: 'GAS', name: 'c'}
+
+  ], 'category')
+
+  var expectedResult = {
+    'GAS': [
+      {category: 'GAS', name: 'a'},
+      {category: 'GAS', name: 'c'}
+    ],
+    'SEC': [
+      {category: 'SEC', name: 'b'}
+    ]
+  }
+
+  t.deepEqual(result, expectedResult)
+})
+
+tape('util.concatWithSeperator valid output', function (t) {
+  t.plan(4)
+  t.notEqual(util.concatWithSeperator(['a', 'b', 'c'], ','), 'a, b, c', 'Concat with comma should not produce spaces')
+  t.equal(util.concatWithSeperator(['a', 'b', 'c'], ','), 'a,b,c', 'Concat with comma should not produce spaces')
+  t.equal(util.concatWithSeperator(['a', 'b', 'c'], ', '), 'a, b, c', 'Concat with comma space should not produce trailing comma')
+  t.equal(util.concatWithSeperator(['a', 'b', 'c'], '+'), 'a+b+c', 'Concat with plus')
+})
+
+tape('util.escapeRegExp', function (t) {
+  t.plan(3)
+  var original = 'function (uint256) returns (bool)'
+  t.equal(util.escapeRegExp('abcd'), 'abcd', 'String with no regex')
+  t.equal(util.escapeRegExp(original), 'function \\(uint256\\) returns \\(bool\\)', 'function string with regex')
+  t.ok(new RegExp(util.escapeRegExp(original)).test(original), 'should still test for original string')
+})
+

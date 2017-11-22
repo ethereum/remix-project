@@ -1,5 +1,5 @@
 'use strict'
-var localDecoder = require('../../src/localDecoder')
+var localDecoder = require('../../../src/decoder/localDecoder')
 
 /*
   Decode local variable

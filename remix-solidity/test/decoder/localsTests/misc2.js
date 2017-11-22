@@ -6,8 +6,8 @@ var vmSendTx = require('./vmCall')
 var remixLib = require('remix-lib')
 var traceHelper = remixLib.helpers.trace
 var global = remixLib.global
-var SolidityProxy = require('../../src/solidityProxy')
-var InternalCallTree = require('../../src/internalCallTree')
+var SolidityProxy = require('../../../src/decoder/solidityProxy')
+var InternalCallTree = require('../../../src/decoder/internalCallTree')
 var EventManager = remixLib.EventManager
 var helper = require('./helper')
 
@@ -32,25 +32,11 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
             st.fail(error)
           })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
-            helper.decodeLocals(st, 72, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 88, traceManager, callTree, function (locals) {
               try {
-                st.equals(locals['boolFalse'].value, false)
-                st.equals(locals['boolTrue'].value, true)
-                st.equals(locals['testEnum'].value, 'three')
-                st.equals(locals['sender'].value, '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB')
-                st.equals(locals['_bytes1'].value, '0x99')
-                st.equals(locals['__bytes1'].value, '0x99')
-                st.equals(locals['__bytes2'].value, '0x99AB')
-                st.equals(locals['__bytes4'].value, '0x99FA0000')
-                st.equals(locals['__bytes6'].value, '0x990000000000')
-                st.equals(locals['__bytes7'].value, '0x99356700000000')
-                st.equals(locals['__bytes8'].value, '0x99ABD41700000000')
-                st.equals(locals['__bytes9'].value, '0x99156744AF00000000')
-                st.equals(locals['__bytes13'].value, '0x99123423425300000000000000')
-                st.equals(locals['__bytes16'].value, '0x99AFAD23432400000000000000000000')
-                st.equals(locals['__bytes24'].value, '0x99AFAD234324000000000000000000000000000000000000')
-                st.equals(locals['__bytes32'].value, '0x9999ABD41799ABD4170000000000000000000000000000000000000000000000')
-                st.equals(Object.keys(locals).length, 16)
+                st.equals(locals['dynbytes'].value, '0x64796e616d69636279746573')
+                st.equals(locals['smallstring'].value, 'test_test_test')
+                st.equals(Object.keys(locals).length, 2)
               } catch (e) {
                 st.fail(e.message)
               }
