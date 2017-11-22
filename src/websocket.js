@@ -8,18 +8,18 @@ class WebSocket {
   }
 
   start (callback) {
-    var server = http.createServer(function (request, response) {
+    this.server = http.createServer(function (request, response) {
       console.log((new Date()) + ' Received request for ' + request.url)
       response.writeHead(404)
       response.end()
     })
     var loopback = '127.0.0.1'
-    server.listen(65520, loopback, function () {
+    this.server.listen(65520, loopback, function () {
       console.log((new Date()) + ' Remixd is listening on ' + loopback + ':65520')
     })
 
     this.wsServer = new WebSocketServer({
-      httpServer: server,
+      httpServer: this.server,
       autoAcceptConnections: false
     })
 
@@ -52,6 +52,17 @@ class WebSocket {
 
   send (data) {
     this.connection.sendUTF(data)
+  }
+
+  close () {
+    if (this.connection) {
+      this.connection.close()
+      this.connection = null
+    }
+    if (this.server) {
+      this.server.close()
+      this.server = null
+    }
   }
 }
 

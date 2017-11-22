@@ -32,5 +32,10 @@
   },
   "bin": {
     "remixd": "./src/main.js"
+  },
+  "devDependencies": {
+    "serve": "^6.3.1",
+    "stdout": "0.0.3",
+    "web3": "^1.0.0-beta.24"
   }
 }
