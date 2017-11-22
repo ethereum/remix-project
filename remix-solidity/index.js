@@ -1,11 +1,13 @@
-var InternalCallTree = require('./src/internalCallTree')
-var SolidityProxy = require('./src/solidityProxy')
-var localDecoder = require('./src/localDecoder')
-var stateDecoder = require('./src/stateDecoder')
+var InternalCallTree = require('./src/decoder/internalCallTree')
+var SolidityProxy = require('./src/decoder/solidityProxy')
+var localDecoder = require('./src/decoder/localDecoder')
+var stateDecoder = require('./src/decoder/stateDecoder')
+var CodeAnalysis = require('./src/analysis/staticAnalysisRunner')
 
 module.exports = {
   InternalCallTree: InternalCallTree,
   SolidityProxy: SolidityProxy,
   localDecoder: localDecoder,
-  stateDecoder: stateDecoder
+  stateDecoder: stateDecoder,
+  CodeAnalysis: CodeAnalysis
 }

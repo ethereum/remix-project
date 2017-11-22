@@ -1,6 +1,6 @@
 {
   "name": "remix-solidity",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -30,12 +30,13 @@
   },
   "scripts": {
     "postinstall": "npm-link-local ../remix-lib && npm-link-local ../remix-core",
-    "test": "standard && tape ./test/tests.js"
+    "test": "standard && npm run downloadsolc && tape ./test/tests.js",
+    "downloadsolc": "wget https://ethereum.github.io/solc-bin/soljson.js"
   },
   "standard": {
     "ignore": [
       "node_modules/*",
-      "build/*"
+      "soljson.js"
     ],
     "parser": "babel-eslint"
   },
