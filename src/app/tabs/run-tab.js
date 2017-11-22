@@ -280,7 +280,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
         </div>
         <div class="${css.button}">
           ${atAddressButtonInput}
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>Load</div>
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>atAddress</div>
         </div>
       </div>
     </div>
