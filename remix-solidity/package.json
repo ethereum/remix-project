@@ -22,8 +22,8 @@
     "ethereumjs-vm": "2.3.1",
     "fast-async": "^6.1.2",
     "npm-link-local": "^1.1.0",
-    "remix-core": "^0.0.1",
-    "remix-lib": "^0.0.1",
+    "remix-core": "latest",
+    "remix-lib": "latest",
     "solc": "^0.4.13",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
