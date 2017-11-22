@@ -8,8 +8,10 @@ var init = require('./src/init')
 var util = require('./src/util')
 var Web3Providers = require('./src/web3Provider/web3Providers')
 var DummyProvider = require('./src/web3Provider/dummyProvider')
+var Web3VMProvider = require('./src/web3Provider/web3VmProvider')
 var AstWalker = require('./src/astWalker')
 var global = require('./src/global')
+var styleGuide = require('./src/ui/style-guide')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -28,13 +30,17 @@ function modules () {
     },
     vm: {
       Web3Providers: Web3Providers,
-      DummyProvider: DummyProvider
+      DummyProvider: DummyProvider,
+      Web3VMProvider: Web3VMProvider
     },
     SourceMappingDecoder: SourceMappingDecoder,
     SourceLocationTracker: SourceLocationTracker,
     init: init,
     util: util,
     AstWalker: AstWalker,
-    global: global
+    global: global,
+    ui: {
+      styleGuide: styleGuide
+    }
   }
 }
