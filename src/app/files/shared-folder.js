@@ -1,6 +1,6 @@
 'use strict'
 var async = require('async')
-var EventManager = require('ethereum-remix').lib.EventManager
+var EventManager = require('remix-lib').EventManager
 
 class SharedFolder {
   constructor (remixd) {

@@ -8,12 +8,12 @@ var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
-var TreeView = require('ethereum-remix').ui.TreeView
+var TreeView = require('remix-debugger').ui.TreeView
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var remixLib = require('remix-lib')
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
