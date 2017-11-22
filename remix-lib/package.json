@@ -14,6 +14,11 @@
   ],
   "main": "./index.js",
   "dependencies": {
+    "babel-preset-es2015": "^6.24.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-eslint": "^7.1.1",
+    "babelify": "^7.3.0",
+    "fast-async": "^6.1.2",
     "ethereumjs-util": "^4.5.0",
     "web3": "^0.15.3",
     "solc": "^0.4.13",
@@ -38,6 +43,41 @@
       "node_modules/*",
       "build/*",
       "test/resources/*"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePatten": null,
+                "compiler": {
+                  "promises": true,
+                  "es7": true,
+                  "noRuntime": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            "transform-object-assign"
+          ]
+        }
+      ],
+      [
+        "yo-yoify"
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
     ]
   }
 }
