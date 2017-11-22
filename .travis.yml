@@ -14,5 +14,6 @@ deploy:
   skip_cleanup: true
   on:
         branch: master
+        condition: $TEST_DIR = remix-debugger
 cache: false
 
