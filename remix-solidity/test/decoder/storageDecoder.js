@@ -1,7 +1,7 @@
 'use strict'
 var tape = require('tape')
 var compiler = require('solc')
-var stateDecoder = require('../src/stateDecoder')
+var stateDecoder = require('../../src/decoder/stateDecoder')
 var MockStorageResolver = require('./mockStorageResolver')
 
 tape('solidity', function (t) {
