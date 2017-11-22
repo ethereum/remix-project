@@ -1,16 +1,15 @@
 /* global FileReader */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var Treeview = require('ethereum-remix').ui.TreeView
+var Treeview = require('remix-debugger').ui.TreeView
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
-
-var EventManager = require('ethereum-remix').lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 
 var helper = require('../../lib/helper')
 
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`

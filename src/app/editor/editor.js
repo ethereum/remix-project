@@ -1,6 +1,6 @@
 'use strict'
-
-var EventManager = require('ethereum-remix').lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
@@ -8,8 +8,7 @@ var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`

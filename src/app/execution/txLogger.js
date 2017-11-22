@@ -4,11 +4,11 @@ const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var remixLib = require('remix-lib')
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
-var EventManager = remix.lib.EventManager
+var EventManager = remixLib.EventManager
 var helper = require('../../lib/helper')
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modal-dialog-custom')

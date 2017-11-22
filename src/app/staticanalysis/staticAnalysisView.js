@@ -5,11 +5,11 @@ var $ = require('jquery')
 var utils = require('../../lib/utils')
 var csjs = require('csjs-inject')
 
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var remixLib = require('remix-lib')
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
-var EventManager = require('ethereum-remix').lib.EventManager
+var EventManager = remixLib.EventManager
 
 var css = csjs`
   .analysis {

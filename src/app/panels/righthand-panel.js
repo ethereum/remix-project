@@ -1,5 +1,6 @@
 var yo = require('yo-yo')
-var EventManager = require('ethereum-remix').lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var tabbedMenu = require('../tabs/tabbed-menu')
 var compileTab = require('../tabs/compile-tab')
 var runTab = require('../tabs/run-tab')
@@ -10,8 +11,7 @@ var supportTab = require('../tabs/support-tab')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remix = require('ethereum-remix')
-var styleGuide = remix.ui.styleGuide
+var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
 var css = csjs`
