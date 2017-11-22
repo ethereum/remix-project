@@ -407,6 +407,15 @@ function isBuiltinFunctionCall (node) {
 }
 
 /**
+ * True if node is a call to selfdestruct
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isSelfdestructCall (node) {
+  return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'selfdestruct'
+}
+
+/**
  * True if is storage variable declaration
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -463,6 +472,17 @@ function isConstantFunction (node) {
     node.attributes.constant === true ||
     node.attributes.stateMutability === 'view' ||
     node.attributes.stateMutability === 'pure'
+  )
+}
+
+/**
+ * True if is function defintion has payable modifier
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isPayableFunction (node) {
+  return isFunctionDefinition(node) && (
+    node.attributes.stateMutability === 'payable'
   )
 }
 
@@ -788,6 +808,7 @@ module.exports = {
   isPlusPlusUnaryOperation: isPlusPlusUnaryOperation,
   isMinusMinusUnaryOperation: isMinusMinusUnaryOperation,
   isBuiltinFunctionCall: isBuiltinFunctionCall,
+  isSelfdestructCall: isSelfdestructCall,
 
   // #################### Trivial Node Identification
   isFunctionDefinition: isFunctionDefinition,
@@ -799,6 +820,7 @@ module.exports = {
   isAssignment: isAssignment,
   isContractDefinition: isContractDefinition,
   isConstantFunction: isConstantFunction,
+  isPayableFunction: isPayableFunction,
   isInlineAssembly: isInlineAssembly,
   isNewExpression: isNewExpression,
   isReturn: isReturn,
