@@ -11,6 +11,14 @@ git rm --cached -r .
 echo "# Automatic build" > README.md
 echo "Built website from {$SHA}. See https://github.com/ethereum/remix/ for details." >> README.md
 # -f is needed because "build" is part of .gitignore
+
+# copying file to the root folder
+cp remix-debugger/index.html index.html
+mkdir build
+cp remix-debugger/build/app.js build/app.js
+mkdir assets
+cp -R remix-debugger/assets/. assets/
+
 git add -f README.md index.html build/app.js assets
 git commit -m "Built website from {$SHA}."
 
