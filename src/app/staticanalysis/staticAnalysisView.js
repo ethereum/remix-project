@@ -1,11 +1,11 @@
 'use strict'
-var StaticAnalysisRunner = require('./staticAnalysisRunner.js')
+var StaticAnalysisRunner = require('remix-solidity').CodeAnalysis
 var yo = require('yo-yo')
 var $ = require('jquery')
-var utils = require('../../lib/utils')
+var remixLib = require('remix-lib')
+var utils = remixLib.util
 var csjs = require('csjs-inject')
 
-var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
