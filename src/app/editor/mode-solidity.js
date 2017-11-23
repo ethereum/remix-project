@@ -68,7 +68,7 @@ var JavaScriptHighlightRules = function(options) {
             "contract|library|constant|event|modifier|" +
             "struct|mapping|enum|break|continue|delete|else|for|function|" +
             "if|new|return|returns|var|while|using|" +
-            "private|public|external|internal|storage|memory",
+            "private|public|external|internal|storage|memory|payable|view|pure|",
         "storage.type":
             "constant|var|function",
         "constant.language.boolean": "true|false"
