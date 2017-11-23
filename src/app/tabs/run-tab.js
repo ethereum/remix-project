@@ -205,11 +205,10 @@ function runTab (container, appAPI, appEvents, opts) {
     //   },
     //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
     // }
-    console.log(result)
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerHTML]
+    var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
     var address = self._view.atAddressButtonInput.value
-    var instance = udapp.renderInstance(contract, address, self._view.selectContractNames.value)
+    var instance = udapp.renderInstance(contract.object, address, self._view.selectContractNames.value)
     instanceContainer.appendChild(instance)
   }
 
