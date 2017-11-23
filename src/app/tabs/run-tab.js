@@ -417,7 +417,7 @@ function settings (appAPI, appEvents) {
         <div class="${css.col1_1}">Gas limit</div>
         <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
       </div>
-      <div class="${css.crow} hide">
+      <div class="${css.crow}" style="display: none">
       <div class="${css.col1_1}">Gas Price</div>
         <input type="number" class="${css.col2}" id="gasPrice" value="0">
       </div>
