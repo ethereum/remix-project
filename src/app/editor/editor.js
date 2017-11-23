@@ -241,7 +241,6 @@ function Editor (opts = {}) {
 
   // Unmap ctrl-t & ctrl-f
   editor.commands.bindKeys({ 'ctrl-t': null })
-  // editor.commands.bindKeys({ 'ctrl-f': null })
 
   editor.commands.addCommand({
     name: "myCommand",
