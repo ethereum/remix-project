@@ -331,18 +331,17 @@ function makeRecorder (self, appAPI, appEvents) {
           udapp.getAccounts((err, accounts = []) => {
             if (err) console.error(err)
             tx.record = recorder.resolveAddress(tx.record, accounts)
-            udapp.rerunTx(tx.record, CALLBACK)
+            udapp.rerunTx(tx.record, function (err, result) {
+              if (err) console.error(err)
+              else {
+                // at each callback call, if the transaction succeed and if this is a creation transaction, we should call
+                self.addInstance(result)
+              }
+            })
           })
         })
       }
     })
-  }
-  function CALLBACK (err, result) {
-    if (err) console.error(err)
-    else {
-      // at each callback call, if the transaction succeed and if this is a creation transaction, we should call
-      self.addInstance(result)
-    }
   }
   return el
 }
