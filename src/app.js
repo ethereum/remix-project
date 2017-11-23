@@ -297,7 +297,6 @@ function run () {
   txlistener.startListening()
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
-  window.EDITOR = this._components.editor
   var editor = self._components.editor // shortcut for the editor
 
   // ---------------- ContextualListener -----------------------
