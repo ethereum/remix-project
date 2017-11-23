@@ -1,5 +1,5 @@
-var remix = require('ethereum-remix')
-var EventManager = remix.lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 
 class Recorder {
   constructor (opts = {}) {
