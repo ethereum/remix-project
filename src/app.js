@@ -556,6 +556,9 @@ function run () {
     udapp: () => {
       return udapp
     },
+    switchFile: function (path) {
+      fileManager.switchFile(path)
+    },
     filesProviders: filesProviders,
     fileProviderOf: (path) => {
       return fileManager.fileProviderOf(path)

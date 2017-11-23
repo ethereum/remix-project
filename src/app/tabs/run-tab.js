@@ -90,18 +90,14 @@ var css = csjs`
     flex-direction: row;
     align-items: baseline;
   }
-  .buttons {
-    display: flex;
-    cursor: pointer;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    font-size: 12px;
-  }
+
   .button {
     display: flex;
     align-items: center;
     margin-top: 2%;
+  }
+  .transaction {
+    ${styles.rightPanel.runTab.button_transaction}
   }
   .atAddress {
     ${styles.rightPanel.runTab.button_atAddress}
@@ -170,11 +166,7 @@ var css = csjs`
 
 module.exports = runTab
 
-var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
-
-var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
-var pendingTxsContainer = yo`<div class="${css.pendingTxsContainer}">${pendingTxsText}</div>`
 
 function runTab (container, appAPI, appEvents, opts) {
   var self = {
@@ -182,6 +174,17 @@ function runTab (container, appAPI, appEvents, opts) {
     addInstance: addInstance
   }
   var udapp = appAPI.udapp()
+
+  var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
+
+  var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
+  var pendingTxsContainer = yo`
+    <div class="${css.pendingTxsContainer}">
+      <div class=${css.buttons}>${makeRecorder(self, appAPI, appEvents)}</div>
+      ${pendingTxsText}
+    </div>
+  `
+
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
     ${settings(self, appAPI, appEvents)}
@@ -278,10 +281,12 @@ function makeRecorder (self, appAPI, appEvents) {
       getAccounts (cb) { udapp.getAccounts(cb) }
     }
   })
-  var css = csjs`
+  var css2 = csjs`
     .container {
-      margin-top: 10px;
+      margin: 10px;
       display: flex;
+      justify-content: space-evenly;
+      width: 100%;
     }
     .recorder {
       ${styles.button}
@@ -293,19 +298,19 @@ function makeRecorder (self, appAPI, appEvents) {
       width: 135px;
     }
   `
-  var recordButton = yo`<button class=${css.recorder}>copy ran transactions</button>`
-  var runButton = yo`<button class=${css.runTxs}>re-run transactions</button>`
+  var recordButton = yo`<button class=${css.transaction}>save transactions</button>`
+  var runButton = yo`<button class=${css.transaction}>run transactions</button>`
   var el = yo`
-    <div class=${css.container}>
+    <div class=${css2.container}>
      ${recordButton}
      ${runButton}
     </div>
   `
   recordButton.onclick = () => {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
-    modalDialogCustom.prompt(null, 'journal file name', 'scenario.json', input => {
-      var newName = appAPI.filesProvider['browser'].type + '/' + helper.createNonClashingName(input, appAPI.filesProvider['browser'])
-      if (!appAPI.filesProvider['browser'].set(newName, txJSON)) {
+    modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`)', 'scenario.json', input => {
+      var newName = appAPI.filesProviders['browser'].type + '/' + helper.createNonClashingName(input, appAPI.filesProviders['browser'], '.json')
+      if (!appAPI.filesProviders['browser'].set(newName, txJSON)) {
         modalDialogCustom.alert('Failed to create file ' + newName)
       } else {
         appAPI.switchFile(newName)
@@ -313,8 +318,10 @@ function makeRecorder (self, appAPI, appEvents) {
     })
   }
   runButton.onclick = () => {
-    var opts = { title: `Enter Transactions`, text: `Paste the array of transaction you want to replay here`, inputValue: '', multiline: true }
-    modalDialogCustom.promptMulti(opts, function confirm (json = '[]') {
+    modalDialogCustom.prompt(null, 'load from file (e.g. `scenarios/transactions1.json`)', '', filepath => {
+      var filename = appAPI.filesProviders['browser'].type + '/' + filepath
+      var json = appAPI.filesProviders['browser'].get(filename)
+      if (!json) return modalDialogCustom.alert('Could not find file with transactions, please try again')
       try {
         var txArray = JSON.parse(json)
       } catch (e) {
@@ -329,7 +336,7 @@ function makeRecorder (self, appAPI, appEvents) {
           })
         })
       }
-    }, function cancel () { })
+    })
   }
   function CALLBACK (err, result) {
     if (err) console.error(err)
@@ -530,9 +537,6 @@ function settings (appAPI, appEvents) {
           <option data-unit="finney">finney</option>
           <option data-unit="ether">ether</option>
         </select>
-      </div>
-      <div class=${css.buttons}>
-        ${makeRecorder(self, appAPI, appEvents)}
       </div>
     </div>
   `
