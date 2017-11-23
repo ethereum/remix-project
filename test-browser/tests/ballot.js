@@ -34,7 +34,7 @@ function runTests (browser, testData) {
       .testFunction('delegate - transact (not payable)', '0xd3cd54e2f76f3993078ecf9e1b54a148def4520afc141a182293b3610bddf10f',
         '[vm] from:0xca3...a733c, to:Ballot.delegate(address) 0x692...77b3a, value:0 wei, data:0x5c1...4d2db, 0 logs, hash:0xd3c...df10f',
         {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
-      .click('span#tx0xd3cd54e2f76f3993078ecf9e1b54a148def4520afc141a182293b3610bddf10f div[class^="debug"]')
+      .click('span#tx0xd3cd54e2f76f3993078ecf9e1b54a148def4520afc141a182293b3610bddf10f button[class^="debug"]')
       .pause(1000)
       .click('#jumppreviousbreakpoint')
       .click('#stepdetail .title')

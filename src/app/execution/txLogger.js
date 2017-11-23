@@ -50,11 +50,6 @@ var css = csjs`
   }
   .debug, .details {
     color: ${styles.terminal.link_Debug};
-    text-decoration: underline;
-    font-weight: bold;
-    min-height: 18px;
-    max-height: 18px;
-    width: 55px;
     min-width: 55px;
     margin-left: 5px;
     cursor: pointer;
@@ -157,8 +152,8 @@ function renderKnownTransaction (self, data) {
       <div class="${css.log}">
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-        <div class=${css.details} onclick=${txDetails}>Details</div>
-        <div class=${css.debug} onclick=${debug}>Debug</div>
+        <button class=${css.details} onclick=${txDetails}>Details</button>
+        <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
     </span>
@@ -208,8 +203,8 @@ function renderCall (self, data) {
       <div class="${css.log}">
         <span class=${css.txLog}><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${debug}>Debug</div>
-          <div class=${css.details} onclick=${txDetails}>Details</div>
+          <button class=${css.details} onclick=${txDetails}>Details</button>
+          <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
       <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
@@ -253,8 +248,8 @@ function renderUnknownTransaction (self, data) {
       <div class="${css.log}">
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <div class=${css.details} onclick=${txDetails}>Details</div>
-          <div class=${css.debug} onclick=${debug}>Debug</div>
+          <button class=${css.details} onclick=${txDetails}>Details</button>
+          <button class=${css.debug} onclick=${debug}>Debug</button>
         </div>
       </div>
     </span>
