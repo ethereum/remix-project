@@ -33,14 +33,14 @@ lowLevelCalls.prototype.report = function (compilationResults) {
         break
       case common.lowLevelCallTypes.CALLCODE:
         text = `use of "callcode":  the use of low level "callcode" should be avoided whenever possible. 
-                External code that is called can change the state of the calling contract and send ether form the caller's balance. 
-                If this is wantend behaviour use the Solidity library feature if possible.`
+                External code that is called can change the state of the calling contract and send ether from the caller's balance. 
+                If this is wanted behaviour use the Solidity library feature if possible.`
         morehref = 'http://solidity.readthedocs.io/en/develop/contracts.html#libraries'
         break
       case common.lowLevelCallTypes.DELEGATECALL:
         text = `use of "delegatecall": the use of low level "delegatecall" should be avoided whenever possible. 
-                External code that is called can change the state of the calling contract and send ether form the caller's balance. 
-                If this is wantend behaviour use the Solidity library feature if possible.`
+                External code that is called can change the state of the calling contract and send ether from the caller's balance. 
+                If this is wanted behaviour use the Solidity library feature if possible.`
         morehref = 'http://solidity.readthedocs.io/en/develop/contracts.html#libraries'
         break
       case common.lowLevelCallTypes.SEND:
