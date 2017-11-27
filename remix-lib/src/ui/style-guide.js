@@ -113,6 +113,11 @@ function styleGuide () {
     warning_BackgroundColor: cssProperties.colors.lightOrange,
     warning_BorderColor: cssProperties.colors.orange,
 
+    // Tooltip
+    tooltip_Color: cssProperties.colors.white,
+    tooltip_BackgroundColor: cssProperties.colors.grey,
+    tooltip_BorderColor: cssProperties.colors.grey,
+
     /* ------------------------------------------------------
                           DROPDOWN
     ******************************************************** */
@@ -298,9 +303,12 @@ function styleGuide () {
       modalDialog_BoxDottedBorder_BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
       modalDialog_BoxDottedBorder_BorderColor: appProperties.solidBorderBox_BorderColor,
       modalDialog_BoxDottedBorder_Color: appProperties.solidBorderBox_TextColor,
-      modalDialog_CopyToClipboard_Icon_Color: appProperties.icon_Color,
-      modalDialog_CopyToClipboard_Icon_HoverColor: appProperties.icon_HoverColor
 
+      tooltip_CopyToClipboard_BackgroundColor: appProperties.tooltip_BackgroundColor,
+      tooltip_CopyToClipboard_Color: appProperties.tooltip_Color,
+
+      icon_Color_CopyToClipboard: appProperties.icon_Color,
+      icon_HoverColor_CopyToClipboard: appProperties.icon_HoverColor
     },
 
     /* ------------------------------------------------------
@@ -363,8 +371,6 @@ function styleGuide () {
       icon_HoverColor_TogglePanel: appProperties.icon_HoverColor,
       icon_Color_Menu: appProperties.icon_Color,
       icon_HoverColor_Menu: appProperties.icon_HoverColor,
-      icon_Color_CopyToClipboard: appProperties.icon_Color,
-      icon_HoverColor_CopyToClipboard: appProperties.icon_HoverColor,
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
@@ -518,10 +524,7 @@ function styleGuide () {
           BackgroundColor: appProperties.transactPayableButton_BackgroundColor,
           BorderColor: appProperties.transactPayableButton_BorderColor,
           Color: appProperties.transactPayableButton_TextColor
-        }),
-
-        icon_Color_Instance_CopyToClipboard: appProperties.icon_Color,
-        icon_HoverColor_Instance_CopyToClipboard: appProperties.icon_HoverColor
+        })
 
       },
 
