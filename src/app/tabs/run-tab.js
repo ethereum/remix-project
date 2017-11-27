@@ -62,7 +62,6 @@ var css = csjs`
     min-width: 150px;
   }
   .instanceContainer {
-    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
     margin-top: 2%;
