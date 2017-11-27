@@ -33,6 +33,9 @@ function styleGuide () {
       blueMascara: 'hsla(187, 100%, 51%, 1)',
       blueMorningGlory: 'hsla(213, 74%, 80%, 1)',
       blueFairyDust: 'hsla(181, 83%, 86%, 1)',
+      blueMonday: 'hsla(213, 100%, 16%, 1)',
+
+      greenZing: 'hsla(148, 79%, 47%, 1)',
       
       // GREY
       grey: 'hsla(0, 0%, 40%, 1)',
@@ -93,7 +96,7 @@ function styleGuide () {
     quaternary_BackgroundColor: cssProperties.colors.blueGreyEve,
     quinary_BackgroundColor: cssProperties.colors.greyBlueMed,
     senary_BackgroundColor: cssProperties.colors.blueBerrySmog,
-    seventh_BackgroundColor: cssProperties.colors.blueBlur,
+    seventh_BackgroundColor: cssProperties.colors.blueMonday,
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
@@ -136,9 +139,9 @@ function styleGuide () {
     danger_BorderColor: cssProperties.colors.red,
 
     // Warning
-    warning_TextColor: cssProperties.colors.desatGrey,
-    warning_BackgroundColor: cssProperties.colors.blue,
-    warning_BorderColor: cssProperties.colors.orange,
+    warning_TextColor: cssProperties.colors.black,
+    warning_BackgroundColor: cssProperties.colors.orange,
+    // warning_BorderColor: cssProperties.colors.orange,
 
     // Tooltip
     tooltip_Color: cssProperties.colors.white,
@@ -163,9 +166,15 @@ function styleGuide () {
     /* ------------------------------------------------------
                       SOLID BORDER BOX
     ******************************************************** */
-    solidBorderBox_TextColor: cssProperties.colors.black,
-    solidBorderBox_BackgroundColor: cssProperties.colors.blueGreyEve,
-    solidBorderBox_BorderColor: cssProperties.colors.backgroundBlue,
+    solidBorderBox_TextColor: cssProperties.colors.white,
+    solidBorderBox_BackgroundColor: cssProperties.colors.black,
+    solidBorderBox_BorderColor: cssProperties.colors.lightBlue,
+
+    /* ------------------------------------------------------
+                      SOLID BOX
+    ******************************************************** */
+    solidBox_TextColor: cssProperties.colors.white,
+    solidBox_BackgroundColor: cssProperties.colors.black,
 
     /* ------------------------------------------------------
                           BUTTONS
@@ -192,6 +201,15 @@ function styleGuide () {
     teriaryButton_BackgroundColor: cssProperties.colors.greyBlueMed,
     teriaryButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
+
+    /* .................
+          Quaternary
+    .................. */
+    quaternaryButton_TextColor: cssProperties.colors.black,
+    quaternaryButton_BackgroundColor: cssProperties.colors.blueMascara,
+    quaternaryButton_BorderColor: cssProperties.colors.veryLightGrey,
+    /* .................
+
           SUCCESS
     .................. */
     successButton_TextColor: cssProperties.colors.white,
@@ -230,7 +248,7 @@ function styleGuide () {
 
     // TRANSACTION
     transactButton_TextColor: cssProperties.colors.black,
-    transactButton_BackgroundColor: cssProperties.colors.orange,
+    transactButton_BackgroundColor: cssProperties.colors.blueFairyDust,
     transactButton_BorderColor: cssProperties.colors.lightRed,
 
     // PAYABLE TRANSACTION
@@ -248,6 +266,17 @@ function styleGuide () {
         border                : 1px solid ${opts.BorderColor};
         color                 : ${opts.Color};
         border-radius         : ${cssProperties.borders.primary_borderRadius};
+        font-size             : 12px;
+        padding               : 10px 15px;
+        line-height           : 20px;
+        overflow              : hidden;
+        word-break            : break-word;
+        width                 : 100%;
+      `,
+
+      solidBox: (opts = {}) => `
+        background-color      : ${opts.BackgroundColor};
+        color                 : ${opts.Color};
         font-size             : 12px;
         padding               : 10px 15px;
         line-height           : 20px;
@@ -378,7 +407,7 @@ function styleGuide () {
       backgroundColor_Editor_Context_Error_Highlights: appProperties.error_BackgroundColor,
       backgroundColor_DebuggerMode: appProperties.debuggingMode_BackgroundColor,
 
-      text_Primary: appProperties.supportText_OppositeColor,
+      text_Primary: appProperties.mainText_Color,
       text_Secondary: appProperties.supportText_Color,
       text_Teriary: appProperties.sub_supportText_Color,
       text_Editor: '',
@@ -393,7 +422,7 @@ function styleGuide () {
     /* ------------------------------------------------------ */
     terminal: {
       backgroundColor_Menu: appProperties.secondary_BackgroundColor,
-      backgroundColor_Terminal: appProperties.senary_BackgroundColor,
+      backgroundColor_Terminal: appProperties.seventh_BackgroundColor,
       backgroundColor_TerminalCLI: appProperties.seventh_BackgroundColor,
 
       text_Primary: appProperties.mainText_Color,
@@ -425,15 +454,15 @@ function styleGuide () {
       }),
 
       button_Log_Debug: appProperties.uiElements.button({
-        BackgroundColor: appProperties.infoButton_BackgroundColor,
+        BackgroundColor: appProperties.quaternaryButton_BackgroundColor,
         BorderColor: appProperties.infoButton_BorderColor,
         Color: appProperties.infoButton_TextColor
       }),
 
       button_Log_Details: appProperties.uiElements.button({
-        BackgroundColor: appProperties.secondaryButton_BackgroundColor,
-        BorderColor: appProperties.secondaryButton_BorderColor,
-        Color: appProperties.secondaryButton_TextColor
+        BackgroundColor: appProperties.quaternaryButton_BackgroundColor,
+        BorderColor: appProperties.quaternaryButton_BorderColor,
+        Color: appProperties.quaternaryButton_TextColor
       })
 
     },
@@ -442,9 +471,9 @@ function styleGuide () {
                               RIGHT PANEL
     /* ------------------------------------------------------ */
     rightPanel: {
-      backgroundColor_Panel: appProperties.primary_BackgroundColor,
-      backgroundColor_Tab: appProperties.quinary_BackgroundColor,
-      BackgroundColor_Pre: appProperties.light_BackgroundColor,
+      backgroundColor_Panel: appProperties.seventh_BackgroundColor,
+      backgroundColor_Tab: appProperties.seventh_BackgroundColor,
+      BackgroundColor_Pre: appProperties.dark_BackgroundColor,
 
       text_Primary: appProperties.mainText_Color,
       text_Secondary: appProperties.supportText_Color,
@@ -497,7 +526,7 @@ function styleGuide () {
 
         box_CompileContainer: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
-          BorderColor: appProperties.solidBorderBox_BorderColor,
+          BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
         }),
 
@@ -510,9 +539,8 @@ function styleGuide () {
       ::::::::::::::: */
       runTab: {
         box_RunTab: appProperties.uiElements.solidBorderBox({
-          BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
-          BorderColor: appProperties.solidBorderBox_BorderColor,
-          Color: appProperties.solidBorderBox_TextColor
+          BackgroundColor: appProperties.solidBox_BackgroundColor,
+          Color: appProperties.solidBox_TextColor
         }),
 
         dropdown_RunTab: appProperties.uiElements.dropdown({
@@ -532,10 +560,15 @@ function styleGuide () {
           Color: appProperties.input_TextColor
         }),
 
-        box_Instance: appProperties.uiElements.solidBorderBox({
-          BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
-          BorderColor: appProperties.solidBorderBox_BorderColor,
-          Color: appProperties.solidBorderBox_TextColor
+        box_Instance: appProperties.uiElements.solidBox({
+          BackgroundColor: appProperties.solidBox_BackgroundColor,
+          Color: appProperties.solidBox_TextColor
+        }),
+
+        borderBox_Instance: appProperties.uiElements.solidBorderBox({
+          BackgroundColor: appProperties.solidBox_BackgroundColor,
+          Color: appProperties.solidBox_TextColor,
+          BorderColor: appProperties.solidBorderBox_BorderColor
         }),
 
         button_atAddress: appProperties.uiElements.button({
