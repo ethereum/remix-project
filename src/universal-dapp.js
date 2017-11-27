@@ -35,7 +35,7 @@ var css = csjs`
     justify-content: end;
     align-items: center;
     font-size: 11px;
-    height: 50px;
+    height: 30px;
     min-width: 100%;
     overflow: hidden;
     word-break: break-word;
@@ -67,7 +67,10 @@ var css = csjs`
   .instance.hidesub > * {
       display: none;
   }
-  .instance.hidesub .titleLine {
+  .instance.hidesub .title {
+      display: flex;
+  }
+  .instance.hidesub .udappClose {
       display: flex;
   }
   .buttonsContainer {
@@ -301,7 +304,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
   }
 
   function toggleClass () {
-    instance.classList.toggle(`${css.hidesub}`)
+    $(instance).toggleClass(`${css.hidesub}`)
   }
 
   var abi = txHelper.sortAbiFunction(contract)
