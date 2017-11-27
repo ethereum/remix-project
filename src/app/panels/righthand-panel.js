@@ -44,6 +44,7 @@ var css = csjs`
   }
   .menu {
     display: flex;
+    background-color: ${styles.rightPanel.BackgroundColor_Pre};
   }
   .options {
     float: left;
@@ -131,7 +132,7 @@ function RighthandPanel (appAPI, events, opts) {
       ${self._view.dragbar}
       <div id="header" class=${css.header}>
         <div class=${css.menu}>
-          <img class=${css.solIcon} title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
+          <img class=${css.solIcon} title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_white_512x512.svg" alt="Solidity realtime compiler and runtime">
           ${options}
         </div>
         ${optionViews}

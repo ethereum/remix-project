@@ -113,8 +113,8 @@ var css = csjs`
     ${styles.rightPanel.runTab.box_Instance}
     font-style: italic;
   }
-  .pendingTxsText {
-    ${styles.rightPanel.runTab.box_Instance}
+  .pendingTxsText { iElements
+    ${styles.rightPanel.runTab.borderBox_Instance}
     font-style: italic;
   }
   .item {
