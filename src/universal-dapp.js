@@ -54,7 +54,7 @@ var css = csjs`
     color: ${styles.rightPanel.runTab.icon_AltColor_Instance_CopyToClipboard};
   }
   .instance {
-    ${styles.rightPanel.runTab.box_Instance}
+    ${styles.rightPanel.runTab.box_Instance};
     margin-bottom: 10px;
     padding: 10px 15px 6px 15px;
   }
@@ -121,8 +121,7 @@ var css = csjs`
     border-color: ${styles.colors.blueFairyDust};
   }
   .constant .call {
-    background-color: ${styles.colors.blueMascara};
-    border-color: ${styles.colors.lightBlue};
+    background-color: ${styles.colors.greenZing};
     width: 25%;
     outline: none;
   }
@@ -138,7 +137,7 @@ var css = csjs`
     box-sizing: border-box;
     float: left;
     align-self: center;
-    color: ${styles.colors.black};
+    color: ${styles.colors.white};
   }
   .hasArgs input {
     display: block;

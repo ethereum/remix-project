@@ -46,6 +46,7 @@ var cssTabs = yo`
     }
     #files .file.active .remove {
       display: inline-block;
+      color: ${styles.editor.text_Primary};
     }
   </style>
 `
