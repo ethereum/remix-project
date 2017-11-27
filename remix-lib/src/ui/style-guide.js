@@ -477,6 +477,7 @@ function styleGuide () {
 
       text_Primary: appProperties.mainText_Color,
       text_Secondary: appProperties.supportText_Color,
+      text_Teriary: appProperties.sub_supportText_Color,
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
@@ -525,7 +526,7 @@ function styleGuide () {
         }),
 
         box_CompileContainer: appProperties.uiElements.solidBorderBox({
-          BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
+          BackgroundColor: appProperties.quaternary_BackgroundColor,
           BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
         }),
