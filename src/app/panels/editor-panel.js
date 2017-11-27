@@ -269,6 +269,7 @@ class EditorPanel {
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
+        ${self._renderTabsbar()}
         <div class=${css.contextviewcontainer}>
           ${self._api.contextview.render()}
         </div>
@@ -278,7 +279,6 @@ class EditorPanel {
     `
     self._view.el = yo`
       <div class=${css.editorpanel}>
-        ${self._renderTabsbar()}
         ${self._view.content}
       </div>
     `
