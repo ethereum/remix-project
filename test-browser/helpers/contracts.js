@@ -67,10 +67,14 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
   // this => browser
   this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
     .perform(function (client, done) {
-      if (expectedInput) {
-        client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
-      }
-      done()
+      client.execute(function () {
+        document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+      }, [], function () {
+        if (expectedInput) {
+          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+        }
+        done()
+      })
     })
     .click('.instance button[title="' + fnFullName + '"]')
     .pause(500)

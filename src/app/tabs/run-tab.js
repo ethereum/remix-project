@@ -45,6 +45,16 @@ var css = csjs`
   .col2 {
     ${styles.rightPanel.runTab.input_RunTab}
   }
+  .col2_1 {
+    ${styles.rightPanel.runTab.input_RunTab}
+    width: 165px;
+    min-width: 165px;
+  }
+  .col2_2 {
+    ${styles.rightPanel.runTab.dropdown_RunTab}
+    width: 82px;
+    min-width: 82px;
+  }
   .select {
     ${styles.rightPanel.runTab.dropdown_RunTab}
     font-weight: normal;
@@ -81,6 +91,7 @@ var css = csjs`
   }
   .contractNames {
     ${styles.rightPanel.runTab.dropdown_RunTab}
+    width: 100%;
   }
   .subcontainer {
     display: flex;
@@ -151,15 +162,15 @@ var css = csjs`
     margin-left: 10%;
   }
   .errorIcon {
-    color: ${styles.colors.red};;
+    color: ${styles.colors.red};
     margin-left: 15px;
   }
   .errorIcon {
-    color: ${styles.colors.red};;
+    color: ${styles.colors.red};
     margin-left: 15px;
   }
   .failDesc {
-    color: ${styles.colors.red};;
+    color: ${styles.colors.red};
     padding-left: 10px;
     display: inline;
   }
@@ -254,8 +265,8 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     }
   })
 
-  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
-  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="create" />`
+  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
+  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
   var el = yo`
     <div class="${css.container}">
@@ -264,12 +275,12 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       </div>
       <div class="${css.buttons}">
         <div class="${css.button}">
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
-          ${atAddressButtonInput}
+          ${createButtonInput}
+          <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
         </div>
         <div class="${css.button}">
-          <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
-          ${createButtonInput}
+          ${atAddressButtonInput}
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
         </div>
       </div>
     </div>
@@ -406,13 +417,19 @@ function settings (appAPI, appEvents) {
         <div class="${css.col1_1}">Gas limit</div>
         <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
       </div>
-      <div class="${css.crow} hide">
+      <div class="${css.crow}" style="display: none">
       <div class="${css.col1_1}">Gas Price</div>
         <input type="number" class="${css.col2}" id="gasPrice" value="0">
       </div>
       <div class="${css.crow}">
       <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2}" id="value" value="0" title="(e.g. .7 ether ...)">
+        <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
+        <select name="unit" class="${css.col2_2}" id="unit">
+          <option data-unit="wei">wei</option>
+          <option data-unit="gwei">gwei</option>
+          <option data-unit="finney">finney</option>
+          <option data-unit="ether">ether</option>
+        </select>
       </div>
     </div>
   `
