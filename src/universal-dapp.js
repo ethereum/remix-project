@@ -144,8 +144,7 @@ var css = csjs`
     border-color: ${styles.colors.blueFairyDust};
   }
   .constant .call {
-    background-color: ${styles.colors.blueMascara};
-    border-color: ${styles.colors.lightBlue};
+    background-color: ${styles.colors.greenZing};
     width: 25%;
     outline: none;
     width: inherit;
