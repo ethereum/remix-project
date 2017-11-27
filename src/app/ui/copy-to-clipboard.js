@@ -24,6 +24,11 @@ module.exports = function copyToClipboard (getContent) {
     event.stopPropagation()
     var copiableContent = getContent()
     if (copiableContent) {   // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
+      try {
+        if (typeof copiableContent !== 'string') {
+          copiableContent = JSON.stringify(copiableContent, null, '\t')
+        }
+      } catch (e) {}
       copy(copiableContent)
       addTooltip(event)
     }
