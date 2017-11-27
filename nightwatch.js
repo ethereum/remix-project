@@ -32,8 +32,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER,
-        'elementScrollBehavior': 1
+        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }
     },
 
@@ -43,8 +42,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER,
-        'elementScrollBehavior': 1
+        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }
     },
 
@@ -56,8 +54,7 @@ module.exports = {
         'version': '10.0',
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER,
-        'elementScrollBehavior': 1
+        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }
     },
 
@@ -69,8 +66,7 @@ module.exports = {
         'acceptSslCerts': true,
         'version': '11.103',
         'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER,
-        'elementScrollBehavior': 1
+        'tunnel-identifier': 'browsersolidity_tests_' + TRAVIS_JOB_NUMBER
       }
     },
 
@@ -81,8 +77,7 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'firefox',
         'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'elementScrollBehavior': 1
+        'acceptSslCerts': true
       }
     }
   }
