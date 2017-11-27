@@ -53,7 +53,7 @@ var css = csjs`
   }
   .instance {
     ${styles.rightPanel.runTab.box_Instance}
-    margin-bottom: 2px;
+    margin-bottom: 10px;
     padding: 10px 15px 6px 15px;
   }
   .instance .title:before {
