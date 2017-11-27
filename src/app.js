@@ -214,8 +214,21 @@ function run () {
     },
     getValue: (cb) => {
       try {
-        var comp = $('#value').val().split(' ')
-        cb(null, executionContext.web3().toWei(comp[0], comp.slice(1).join(' ')))
+        var number = document.querySelector('#value').value
+        var select = document.getElementById('unit')
+        var index = select.selectedIndex
+        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        var unit = 'ether' // default
+        if (selectedUnit === 'ether') {
+          unit = 'ether'
+        } else if (selectedUnit === 'finney') {
+          unit = 'finney'
+        } else if (selectedUnit === 'gwei') {
+          unit = 'gwei'
+        } else if (selectedUnit === 'wei') {
+          unit = 'wei'
+        }
+        cb(null, executionContext.web3().toWei(number, unit))
       } catch (e) {
         cb(e)
       }

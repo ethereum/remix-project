@@ -20,6 +20,9 @@ var css = csjs`
     align-items: end;
     justify-content: space-between;
   }
+  .txLog {
+    width: 75%;
+  }
   .tx {
     color: ${styles.terminal.text_Title_TransactionLog};
     font-weight: bold;
@@ -45,19 +48,11 @@ var css = csjs`
   .buttons {
     display: flex;
   }
-  .debug {
-    ${styles.terminal.button_Log_Debug}
-  }
-  .details {
-    ${styles.terminal.button_Log_Details}
-  }
   .debug, .details {
-    min-height: 18px;
-    max-height: 18px;
-    width: 45px;
-    min-width: 45px;
-    font-size: 10px;
+    color: ${styles.terminal.link_Debug};
+    min-width: 55px;
     margin-left: 5px;
+    cursor: pointer;
   }
   .clipboardCopy {
     margin-right: 0.5em;
@@ -206,7 +201,7 @@ function renderCall (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}">
-        <span><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
+        <span class=${css.txLog}><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
         <div class=${css.buttons}>
           <button class=${css.details} onclick=${txDetails}>Details</button>
           <button class=${css.debug} onclick=${debug}>Debug</button>
@@ -284,7 +279,7 @@ function renderUnknownTransaction (self, data) {
 }
 
 function renderEmptyBlock (self, data) {
-  return yo`<span><span class='${css.tx}'>[block:${data.block.number} - 0 transactions]</span></span>`
+  return yo`<span class=${css.txLog}><span class='${css.tx}'>[block:${data.block.number} - 0 transactions]</span></span>`
 }
 
 function context (self, opts) {
@@ -300,13 +295,13 @@ function context (self, opts) {
   var i = data.tx.transactionIndex
   var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
-    return yo`<span><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+    return yo`<span class=${css.txLog}><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
+    return yo`<span class=${css.txLog}><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
-    return yo`<span><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei</span>`
+    return yo`<span class=${css.txLog}><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei</span>`
   }
 }
 
