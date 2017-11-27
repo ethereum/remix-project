@@ -349,6 +349,7 @@ function run () {
   // ---------------- ContextView -----------------------
   this._components.contextView = new ContextView({
     contextualListener: this._components.contextualListener,
+    editor: editor,
     jumpTo: (position) => {
       if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
         var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
@@ -357,7 +358,7 @@ function run () {
           fileManager.switchFile(filename)
         }
         if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-          editor.gotoLine(lineColumn.start.line, lineColumn.start.column + 1)
+          editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
         }
       }
     }
