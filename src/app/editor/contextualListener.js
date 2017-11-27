@@ -37,6 +37,10 @@ class ContextualListener {
     }, 1000)
   }
 
+  getActiveHighlights () {
+    return [...this._activeHighlights]
+  }
+
   declarationOf (node) {
     if (node.attributes && node.attributes.referencedDeclaration) {
       return this._index['FlatReferences'][node.attributes.referencedDeclaration]

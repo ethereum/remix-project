@@ -115,6 +115,7 @@ class ContextView {
   }
 
   _render (node) {
+    console.log('rendering')
     if (!node) return yo`<div></div>`
     var self = this
     var references = this._api.contextualListener.referencesOf(node)
@@ -135,7 +136,7 @@ class ContextView {
       if (currentName === this.refName) {
         this.ref = this.ref === undefined ? 0 : this.ref
       } else { this.ref = 0 }
-      var nodes = self._api.contextualListener._activeHighlights
+      var nodes = self._api.contextualListener.getActiveHighlights()
       self._api.jumpTo(nodes[this.ref].position)
       this.ref = (this.ref + 1) % nodes.length
       this.refName = currentName
@@ -146,7 +147,7 @@ class ContextView {
       if (currentName === this.refName) {
         this.ref = this.ref === undefined ? 0 : this.ref
       } else { this.ref = 0 }  // should be this.ref = ref of the selected node (loop through all nodes to find this one)
-      var nodes = self._api.contextualListener._activeHighlights
+      var nodes = self._api.contextualListener.getActiveHighlights()
       this.ref = this.ref === undefined ? 0 : this.ref
       self._api.jumpTo(nodes[nodes.length - 1 - this.ref].position)
       this.ref = (this.ref + 1) % nodes.length

@@ -349,7 +349,6 @@ function run () {
   // ---------------- ContextView -----------------------
   this._components.contextView = new ContextView({
     contextualListener: this._components.contextualListener,
-    editor: editor,
     jumpTo: (position) => {
       if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
         var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
