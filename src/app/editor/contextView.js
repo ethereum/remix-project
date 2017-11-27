@@ -30,13 +30,14 @@ var css = csjs`
   .name                   {
     font-weight       : bold;
     margin-right      : 15px;
-  }
-  .jumpto                 {
     cursor            : pointer;
-    margin-right      : 5px;
+  }
+  .jump                   {
+    cursor            : pointer;
+    margin            : 0 5px;
     color             : ${styles.editor.icon_Color_Editor};
   }
-  jumpto:hover            {
+  .jump:hover              {
     color             : ${styles.editor.icon_HoverColor_Editor};
   }
   .referencesnb           {
@@ -129,11 +130,36 @@ class ContextView {
       }
     }
 
+    function next () {
+      var currentName = node.attributes.name
+      if (currentName === this.refName) {
+        this.ref = this.ref === undefined ? 0 : this.ref
+      } else { this.ref = 0 }
+      var nodes = self._api.contextualListener._activeHighlights
+      self._api.jumpTo(nodes[this.ref].position)
+      this.ref = (this.ref + 1) % nodes.length
+      this.refName = currentName
+    }
+
+    function previous () {
+      var currentName = node.attributes.name
+      if (currentName === this.refName) {
+        this.ref = this.ref === undefined ? 0 : this.ref
+      } else { this.ref = 0 }  // should be this.ref = ref of the selected node (loop through all nodes to find this one)
+      var nodes = self._api.contextualListener._activeHighlights
+      this.ref = this.ref === undefined ? 0 : this.ref
+      self._api.jumpTo(nodes[nodes.length - 1 - this.ref].position)
+      this.ref = (this.ref + 1) % nodes.length
+      this.refName = currentName
+    }
+
     return yo`<div class=${css.line}>
-      <div title=${type} class=${css.type} >${type}</div>
-      <div title=${node.attributes.name} class=${css.name} >${node.attributes.name}</div>
-      <i title='Go to Definition' class="fa fa-share ${css.jumpto}" aria-hidden="true" onclick=${jumpTo}></i>
+      <i class="fa fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
+      <div title=${type} class=${css.type}>${type}</div>
+      <div title=${node.attributes.name} class=${css.name}>${node.attributes.name}</div>
       <span class=${css.referencesnb}>${references}</span>
+      <i class="fa fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${previous}></i>
+      <i class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${next}></i>
     </div>`
   }
 }

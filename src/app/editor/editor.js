@@ -226,9 +226,7 @@ function Editor (opts = {}) {
     editor.gotoLine(line + 1, col - 1, true)
   }
 
-  this.find = function (string) {
-    editor.find(string)
-  }
+  this.find = (string) => editor.find(string)
 
   // Do setup on initialisation here
   editor.on('changeSession', function () {
@@ -241,14 +239,6 @@ function Editor (opts = {}) {
 
   // Unmap ctrl-t & ctrl-f
   editor.commands.bindKeys({ 'ctrl-t': null })
-
-  editor.commands.addCommand({
-    name: "myCommand",
-    bindKey: { win: "Ctrl-L", mac: "Command-L" },
-    exec: function() {
-        editor.insert("Key binded!");
-    }
-  });
 
   editor.resize(true)
 }
