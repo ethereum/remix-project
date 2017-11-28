@@ -179,7 +179,8 @@ class Terminal {
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
-      activeFilters: { commands: {}, input: '' }
+      activeFilters: { commands: {}, input: '' },
+      filterFns: {}
     }
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
@@ -224,6 +225,13 @@ class Terminal {
         else scopedCommands.log(output)
       })
     }, { activate: true })
+    function basicFilter (value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
+
+    self.registerFilter('log', basicFilter)
+    self.registerFilter('info', basicFilter)
+    self.registerFilter('error', basicFilter)
+    self.registerFilter('script', basicFilter)
+
     self._jsSandboxContext = {}
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
@@ -399,9 +407,14 @@ class Terminal {
         self.event.trigger('resize', [])
       }
     }
+    var filtertimeout = null
     function filter (event) {
-      var input = event.currentTarget
-      self.updateJournal({ type: 'search', value: input.value })
+      if (filtertimeout) {
+        clearTimeout(filtertimeout)
+      }
+      filtertimeout = setTimeout(() => {
+        self.updateJournal({ type: 'search', value: document.querySelector('.' + event.target.className).value })
+      }, 500)
     }
     function clear (event) {
       refocus()
@@ -537,8 +550,8 @@ class Terminal {
         var items = self._JOURNAL
         for (var gidx = 0, len = items.length; gidx < len; gidx++) {
           var item = items[gidx]
-          if (item) {
-            var show = query.length ? match(item.args, query) : true
+          if (item && self.data.filterFns[item.cmd]) {
+            var show = query.length ? self.data.filterFns[item.cmd](item.args, query) : true
             item.hide = !show
           }
         }
@@ -600,6 +613,9 @@ class Terminal {
     })
     return scopedCommands
   }
+  registerFilter (commandName, filterFn) {
+    this.data.filterFns[commandName] = filterFn
+  }
   registerCommand (name, command, opts) {
     var self = this
     name = String(name)
@@ -640,6 +656,9 @@ class Terminal {
     self.commands[name].toString = _ => { return help }
     self.commands[name].help = help
     self.data.activeFilters.commands[name] = opts && opts.activate
+    if (opts.filterFn) {
+      self.registerFilter(name, opts.filterFn)
+    }
     return self.commands[name]
   }
   _shell (script, scopedCommands, done) { // default shell
