@@ -64,6 +64,9 @@ var css = csjs`
   .opts_li {
     display: block;
     font-weight: bold;
+    color: ${styles.rightPanel.text_Teriary};
+  }
+  .opts_li.active {
     color: ${styles.rightPanel.text_Primary};
   }
   .opts_li:hover {
@@ -132,7 +135,6 @@ function RighthandPanel (appAPI, events, opts) {
       ${self._view.dragbar}
       <div id="header" class=${css.header}>
         <div class=${css.menu}>
-          <img class=${css.solIcon} title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_white_512x512.svg" alt="Solidity realtime compiler and runtime">
           ${options}
         </div>
         ${optionViews}

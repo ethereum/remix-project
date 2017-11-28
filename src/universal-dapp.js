@@ -34,7 +34,7 @@ var css = csjs`
     align-items: center;
     font-size: 11px;
     height: 30px;
-    min-width: 100%;
+    width: 100%;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
