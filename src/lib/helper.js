@@ -23,7 +23,6 @@ module.exports = {
   find: find
 }
 
-
 function findDeep (object, fn, found = { break: false, value: undefined }) {
   if (typeof object !== 'object' || object === null) return
   for (var i in object) {
