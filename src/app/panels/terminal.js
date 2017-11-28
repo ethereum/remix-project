@@ -553,14 +553,6 @@ class Terminal {
       self._view.journal.appendChild(df)
     })
   }
-  _shouldAdd (item) {
-    var self = this
-    if (self.data.activeFilters.commands[item.root.cmd]) {
-      var query = self.data.activeFilters.input
-      var args = item.args
-      return query.length ? match(args, query) : true
-    }
-  }
   _appendItem (item) {
     var self = this
     var { el, gidx } = item
@@ -636,7 +628,7 @@ class Terminal {
         item.idx = self._INDEX.commands[cmd].push(item) - 1
         item.step = steps.push(item) - 1
         item.args = params
-        if (self._shouldAdd(item)) self._appendItem(item)
+        self._appendItem(item)
       }
       var scopedCommands = self._scopeCommands(append)
       command(args, scopedCommands, el => append(null, args, blockify(el)))
