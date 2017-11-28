@@ -121,9 +121,9 @@ function useFilter (browser, filter, test, done) {
   var filterClass = '#editor-container div[class^="search"] input[class^="filter"]'
   browser.setValue(filterClass, filter, function () {
     browser.execute(function () {
-      return document.querySelector('#modal-dialog #prompt_text').innerHTML === test
+      return document.querySelector('#editor-container div[class^="journal"]').innerHTML === test
     }, [], function (result) {
-      browser.setValue(filterClass, '', function () {
+      browser.clearValue(filterClass).setValue(filterClass, '', function () {
         if (!result.value) {
           browser.assert.fail('useFilter on ' + filter + ' ' + test, 'info about error', '')
         }
