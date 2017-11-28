@@ -122,7 +122,7 @@ var css = csjs`
   }
   .filter             {
     ${styles.terminal.input_Search_MenuBar}
-    width                       : 150px;
+    width                       : 200px;
     padding-right               : 0px;
     margin-right                : 0px;
     border-top-left-radius      : 0px;
