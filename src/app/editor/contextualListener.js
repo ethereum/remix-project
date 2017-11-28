@@ -39,6 +39,9 @@ class ContextualListener {
 
   getActiveHighlights () {
     return [...this._activeHighlights]
+    // return [...this._activeHighlights].sort((a,b) => {
+    //   return a.position.start - b.position.start
+    // })
   }
 
   declarationOf (node) {
