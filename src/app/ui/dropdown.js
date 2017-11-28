@@ -13,7 +13,7 @@ var css = csjs`
     position          : relative;
     display           : flex;
     flex-direction    : column;
-    margin-right      : 3px;
+    margin-right      : 10px;
   }
   .selectbox          {
     display           : flex;

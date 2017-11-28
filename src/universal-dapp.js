@@ -15,9 +15,7 @@ var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
 var executionContext = require('./execution-context')
-
-// copy to copyToClipboard
-const copy = require('clipboard-copy')
+var copyToClipboard = require('./app/ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -32,14 +30,17 @@ var css = csjs`
   }
   .title {
     ${styles.rightPanel.runTab.dropdown_RunTab}
+    margin-top: 5px;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     font-size: 11px;
-    min-width: 350px;
+    height: 30px;
+    min-width: 100%;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
+    overflow: visible;
   }
   .titleLine {
     display: flex;
@@ -52,7 +53,7 @@ var css = csjs`
   }
   .instance {
     ${styles.rightPanel.runTab.box_Instance}
-    margin-bottom: 2px;
+    margin-bottom: 10px;
     padding: 10px 15px 6px 15px;
   }
   .instance .title:before {
@@ -66,16 +67,11 @@ var css = csjs`
   .instance.hidesub > * {
       display: none;
   }
-  .instance.hidesub .titleLine {
+  .instance.hidesub .title {
       display: flex;
   }
-  .copy  {
-    cursor: pointer;
-    margin-left: 3%;
-    color: ${styles.rightPanel.runTab.icon_Color_Instance_CopyToClipboard};
-  }
-  .copy:hover{
-    color: ${styles.rightPanel.runTab.icon_HoverColor_Instance_CopyToClipboard};
+  .instance.hidesub .udappClose {
+      display: flex;
   }
   .buttonsContainer {
     margin-top: 2%;
@@ -87,14 +83,12 @@ var css = csjs`
   }
   .instanceButton {}
   .closeIcon {
-    font-size: 10px;
-    position: relative;
-    top: -5px;
-    right: -2px;
+    font-size: 12px;
+    cursor: pointer;
   }
   .udappClose {
-    margin-left: 3%;
-    align-self: center;
+    display: flex;
+    justify-content: flex-end;
   }
   .contractProperty {
     overflow: auto;
@@ -292,42 +286,35 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
   var self = this
 
-  function remove () { $instance.remove() }
-  var $instance = $(`<div class="instance ${css.instance}"/>`)
+  function remove () { instance.remove() }
+
+  var instance = yo`<div class="instance ${css.instance}"></div>`
   var context = executionContext.isVM() ? 'memory' : 'blockchain'
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var shortAddress = helper.shortenAddress(address)
-  var title = yo`
-    <div class=${css.titleLine}>
-      <div class="${css.title}" onclick=${toggleClass}>
-        <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
-      </div>
-      <i class="fa fa-clipboard ${css.copy}" aria-hidden="true" onclick=${copyToClipboard} title='Copy to clipboard'></i>
-    </div>
-  `
+  var title = yo`<div class="${css.title}" onclick=${toggleClass}>
+    <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
+    ${copyToClipboard(() => address)}
+  </div>`
+
   if (self.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    title.querySelector(`.${css.title}`).appendChild(close)
+    instance.append(close)
   }
 
   function toggleClass () {
-    $instance.toggleClass(`${css.hidesub}`)
-  }
-
-  function copyToClipboard (event) {
-    event.stopPropagation()
-    copy(address)
+    $(instance).toggleClass(`${css.hidesub}`)
   }
 
   var abi = txHelper.sortAbiFunction(contract)
 
-  $instance.get(0).appendChild(title)
+  instance.appendChild(title)
 
   // Add the fallback function
   var fallback = txHelper.getFallbackInterface(abi)
   if (fallback) {
-    $instance.append(this.getCallButton({
+    instance.appendChild(this.getCallButton({
       funABI: fallback,
       address: address,
       contractAbi: abi,
@@ -340,7 +327,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
       return
     }
     // @todo getData cannot be used with overloaded functions
-    $instance.append(this.getCallButton({
+    instance.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
       contractAbi: abi,
@@ -348,7 +335,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     }))
   })
 
-  return $instance.get(0)
+  return instance
 }
 
 // TODO this is used by renderInstance when a new instance is displayed.

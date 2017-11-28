@@ -35,6 +35,8 @@ function testSimpleContract (browser, callback) {
     browser.click('.runView')
       .click('#runTabView div[class^="create"]')
       .pause(500)
+      .click('#runTabView .instance div[class^="title"]')
+      .click('#runTabView .instance div[class^="title"]')
       .testFunction('f - transact (not payable)',
         '0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc',
         '[vm] from:0xca3...a733c, to:TestContract.f() 0x692...77b3a, value:0 wei, data:0x261...21ff0, 0 logs, hash:0xa17...523bc', null,
