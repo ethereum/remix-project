@@ -47,7 +47,6 @@ class TxListener {
         input: data,
         hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
-        output: txResult.result,
         returnValue: executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result),
         envMode: executionContext.getProvider()
       }
