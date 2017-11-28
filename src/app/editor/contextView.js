@@ -115,7 +115,6 @@ class ContextView {
   }
 
   _render (node) {
-    console.log('rendering')
     if (!node) return yo`<div></div>`
     var self = this
     var references = this._api.contextualListener.referencesOf(node)
@@ -132,26 +131,44 @@ class ContextView {
     }
 
     function next () {
-      var currentName = node.attributes.name
-      if (currentName === this.refName) {
-        this.ref = this.ref === undefined ? 0 : this.ref
-      } else { this.ref = 0 }
       var nodes = self._api.contextualListener.getActiveHighlights()
-      self._api.jumpTo(nodes[this.ref].position)
-      this.ref = (this.ref + 1) % nodes.length
-      this.refName = currentName
+      var currentName = node.attributes.name
+      var position = self.sourceMappingDecoder.decode(node.src)
+
+      if (currentName !== self.refName) self.ref = 0
+      var k = self.ref
+
+      /// LOGS ///
+      nodes.forEach(node => console.log(node.position.start))
+      console.log('----')
+      console.log(k)
+      console.log('----')
+
+      var pos = nodes[k].position
+      self._api.jumpTo(pos)
+
+      self.ref = (self.ref + 1) % nodes.length
+      self.refName = currentName
     }
 
     function previous () {
-      var currentName = node.attributes.name
-      if (currentName === this.refName) {
-        this.ref = this.ref === undefined ? 0 : this.ref
-      } else { this.ref = 0 }  // should be this.ref = ref of the selected node (loop through all nodes to find this one)
       var nodes = self._api.contextualListener.getActiveHighlights()
-      this.ref = this.ref === undefined ? 0 : this.ref
-      self._api.jumpTo(nodes[nodes.length - 1 - this.ref].position)
-      this.ref = (this.ref + 1) % nodes.length
-      this.refName = currentName
+      var currentName = node.attributes.name
+      if (currentName !== self.refName) self.ref = nodes.length - 1
+
+      var k = nodes.length - 1 - self.ref
+
+      /// LOGS ///
+      nodes.forEach(node => console.log(node.position.start))
+      console.log('----')
+      console.log(k)
+      console.log('----')
+
+      var pos = nodes[k].position
+      self._api.jumpTo(pos)
+
+      self.ref = (self.ref + 1) % nodes.length
+      self.refName = currentName
     }
 
     return yo`<div class=${css.line}>
