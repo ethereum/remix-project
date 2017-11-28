@@ -50,6 +50,7 @@ var css = csjs`
     height: 100%;
     transform: scale(0.9);
     padding: 0;
+    border: none;
   }
   .infoBox {
     ${styles.rightPanel.supportTab.box_SupportInfo}

@@ -7,7 +7,7 @@ var txFormat = require('../execution/txFormat')
 var txHelper = require('../execution/txHelper')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var executionContext = require('../../execution-context')
-const copy = require('clipboard-copy')
+var copyToClipboard = require('../ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -29,6 +29,7 @@ var css = csjs`
   .crow {
     margin-top: .5em;
     display: flex;
+    align-items: center;
   }
   .col1 {
     width: 30%;
@@ -60,17 +61,7 @@ var css = csjs`
     font-weight: normal;
     min-width: 150px;
   }
-  .copyaddress {
-    margin-left: 0.5em;
-    margin-top: 0.7em;
-    cursor: pointer;
-    color: ${styles.rightPanel.runTab.icon_Color_Instance_CopyToClipboard};
-  }
-  .copyaddress:hover {
-    color: ${styles.rightPanel.runTab.icon_HoverColor_Instance_CopyToClipboard};
-  }
   .instanceContainer {
-    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
     margin-top: 2%;
@@ -374,11 +365,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     section SETTINGS: Environment, Account, Gas, Value
 ------------------------------------------------ */
 function settings (appAPI, appEvents) {
-  // COPY ADDRESS
-  function copyAddress () {
-    copy(document.querySelector('#runTabView #txorigin').value)
-  }
-
   // SETTINGS HTML
   var el = yo`
     <div class="${css.settings}">
@@ -411,7 +397,7 @@ function settings (appAPI, appEvents) {
       <div class="${css.crow}">
         <div class="${css.col1_1}">Account</div>
         <select name="txorigin" class="${css.select}" id="txorigin"></select>
-        <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i>
+          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>
