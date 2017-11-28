@@ -195,18 +195,8 @@ function runTab (container, appAPI, appEvents, opts) {
   `
   container.appendChild(el)
 
-  function addInstance (result) {
-    // {
-    //   "result": {
-    //     "gasUsed": "5318",
-    //     "vm": { "exception": 1, "selfdestruct": {} },
-    //     "bloom": { "bitvector": { "type": "Buffer", "data": [0, /* ... */ 0, 0] } },
-    //     "amountSpent": "5318"
-    //   },
-    //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
-    // }
-    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
+  function addInstance (sourcename) {
+    var contract = appAPI.getContract(sourcename)
     var address = self._view.atAddressButtonInput.value
     var instance = udapp.renderInstance(contract.object, address, self._view.selectContractNames.value)
     instanceContainer.appendChild(instance)
@@ -322,22 +312,27 @@ function makeRecorder (self, appAPI, appEvents) {
       var json = appAPI.filesProviders['browser'].get(filename)
       if (!json) return modalDialogCustom.alert('Could not find file with transactions, please try again')
       try {
-        var txArray = JSON.parse(json)
+        var obj = JSON.parse(json)
+        var txArray = obj.transactions || []
+        var addresses = obj.addresses || {}
       } catch (e) {
         modalDialogCustom.alert('Invalid JSON, please try again')
       }
       if (txArray.length) {
         txArray.forEach(tx => {
-          udapp.getAccounts((err, accounts = []) => {
+          var record = recorder.resolveAddress(tx.record, addresses)
+          udapp.rerunTx(record, function (err, result) {
+            // {
+            //   "result": {
+            //     "gasUsed": "5318",
+            //     "vm": { "exception": 1, "selfdestruct": {} },
+            //     "bloom": { "bitvector": { "type": "Buffer", "data": [0, /* ... */ 0, 0] } },
+            //     "amountSpent": "5318"
+            //   },
+            //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
+            // }
             if (err) console.error(err)
-            tx.record = recorder.resolveAddress(tx.record, accounts)
-            udapp.rerunTx(tx.record, function (err, result) {
-              if (err) console.error(err)
-              else {
-                // at each callback call, if the transaction succeed and if this is a creation transaction, we should call
-                self.addInstance(result)
-              }
-            })
+            else if (record.src) self.addInstance(record.src)
           })
         })
       }

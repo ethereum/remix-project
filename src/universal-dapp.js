@@ -469,12 +469,10 @@ function execute (pipeline, env, callback) {
 
 UniversalDApp.prototype.rerunTx = function (args, cb) {
   var self = this
-  self.getAccounts(function (err, accounts = []) {
-    if (err) console.error(err)
-    var pipeline = [queryGasLimit, runTransaction]
-    var env = { self, args, tx: { to: args.to, from: args.from, data: args.data, useCall: args.useCall } }
-    execute(pipeline, env, cb)
-  })
+  var tx = { to: args.to, from: args.from, data: args.data, useCall: args.useCall }
+  var pipeline = [queryGasLimit, runTransaction]
+  var env = { self, args, tx }
+  execute(pipeline, env, cb)
 }
 
 UniversalDApp.prototype.runTx = function (args, cb) {
