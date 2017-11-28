@@ -675,30 +675,6 @@ function domTerminalFeatures (self, scopedCommands) {
   }
 }
 
-function findDeep (object, fn, found = { break: false, value: undefined }) {
-  if (typeof object !== 'object' || object === null) return
-  for (var i in object) {
-    if (found.break) break
-    var el = object[i]
-    if (el && el.innerText !== undefined && el.innerText !== null) el = el.innerText
-    if (!fn(el, i, object)) findDeep(el, fn, found)
-    else if (found.break = true) return found.value = el // eslint-disable-line
-  }
-  return found.value
-}
-
-function match (args, query) {
-  query = query.trim()
-  var isMatch = !!findDeep(args, function check (value, key) {
-    if (value === undefined || value === null) return false
-    if (typeof value === 'function') return false
-    if (typeof value === 'object') return false
-    var contains = String(value).indexOf(query.trim()) !== -1
-    return contains
-  })
-  return isMatch
-}
-
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
 
 module.exports = Terminal
