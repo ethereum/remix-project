@@ -44,6 +44,11 @@ function testSimpleContract (browser, callback) {
  "0": "uint256: 8"
 }`)
       .pause(500)
+      .perform((client, done) => {
+        contractHelper.useFilter(browser, '0x12332162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92782', '', () => {
+          done()
+        })
+      })
       .testFunction('g - transact (not payable)',
         '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
         '[vm] from:0xca3...a733c, to:TestContract.g() 0x692...77b3a, value:0 wei, data:0xe21...79b8e, 0 logs, hash:0xb15...92781', null, `{
