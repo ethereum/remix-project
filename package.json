@@ -19,6 +19,7 @@
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "deep-equal": "^1.0.1",
+    "npm-link-local": "^1.1.0",
     "remix-core": "latest",
     "remix-lib": "latest",
     "remix-solidity": "latest",
@@ -136,6 +137,8 @@
     ]
   },
   "scripts": {
+    "pullremix": "mkdir remix; git clone https://github.com/ethereum/remix; cd ..",
+    "linkremix": "npm-link-local ./remix/remix-lib && npm-link-local ./remix/remix-core && npm-link-local ./remix/remix-solidity && npm-link-local ./remix/remix-debugger",
     "build": "browserify src/index.js -o build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
