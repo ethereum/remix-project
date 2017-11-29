@@ -122,7 +122,7 @@ var css = csjs`
   }
   .filter             {
     ${styles.terminal.input_Search_MenuBar}
-    width                       : 150px;
+    width                       : 200px;
     padding-right               : 0px;
     margin-right                : 0px;
     border-top-left-radius      : 0px;
@@ -179,7 +179,8 @@ class Terminal {
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
-      activeFilters: { commands: {}, input: '' }
+      activeFilters: { commands: {}, input: '' },
+      filterFns: {}
     }
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
@@ -224,6 +225,13 @@ class Terminal {
         else scopedCommands.log(output)
       })
     }, { activate: true })
+    function basicFilter (value, query) { try { return value.indexOf(query) !== -1 } catch (e) { return false } }
+
+    self.registerFilter('log', basicFilter)
+    self.registerFilter('info', basicFilter)
+    self.registerFilter('error', basicFilter)
+    self.registerFilter('script', basicFilter)
+
     self._jsSandboxContext = {}
     self._jsSandbox = vm.createContext(self._jsSandboxContext)
     if (opts.shell) self._shell = opts.shell
@@ -399,9 +407,14 @@ class Terminal {
         self.event.trigger('resize', [])
       }
     }
+    var filtertimeout = null
     function filter (event) {
-      var input = event.currentTarget
-      self.updateJournal({ type: 'search', value: input.value })
+      if (filtertimeout) {
+        clearTimeout(filtertimeout)
+      }
+      filtertimeout = setTimeout(() => {
+        self.updateJournal({ type: 'search', value: document.querySelector('.' + event.target.className).value })
+      }, 500)
     }
     function clear (event) {
       refocus()
@@ -537,8 +550,8 @@ class Terminal {
         var items = self._JOURNAL
         for (var gidx = 0, len = items.length; gidx < len; gidx++) {
           var item = items[gidx]
-          if (item) {
-            var show = query.length ? match(item.args, query) : true
+          if (item && self.data.filterFns[item.cmd]) {
+            var show = query.length ? self.data.filterFns[item.cmd](item.args, query) : true
             item.hide = !show
           }
         }
@@ -552,14 +565,6 @@ class Terminal {
       self._view.journal.innerHTML = ''
       self._view.journal.appendChild(df)
     })
-  }
-  _shouldAdd (item) {
-    var self = this
-    if (self.data.activeFilters.commands[item.root.cmd]) {
-      var query = self.data.activeFilters.input
-      var args = item.args
-      return query.length ? match(args, query) : true
-    }
   }
   _appendItem (item) {
     var self = this
@@ -608,6 +613,9 @@ class Terminal {
     })
     return scopedCommands
   }
+  registerFilter (commandName, filterFn) {
+    this.data.filterFns[commandName] = filterFn
+  }
   registerCommand (name, command, opts) {
     var self = this
     name = String(name)
@@ -636,7 +644,7 @@ class Terminal {
         item.idx = self._INDEX.commands[cmd].push(item) - 1
         item.step = steps.push(item) - 1
         item.args = params
-        if (self._shouldAdd(item)) self._appendItem(item)
+        self._appendItem(item)
       }
       var scopedCommands = self._scopeCommands(append)
       command(args, scopedCommands, el => append(null, args, blockify(el)))
@@ -648,6 +656,9 @@ class Terminal {
     self.commands[name].toString = _ => { return help }
     self.commands[name].help = help
     self.data.activeFilters.commands[name] = opts && opts.activate
+    if (opts.filterFn) {
+      self.registerFilter(name, opts.filterFn)
+    }
     return self.commands[name]
   }
   _shell (script, scopedCommands, done) { // default shell
@@ -673,30 +684,6 @@ function domTerminalFeatures (self, scopedCommands) {
       error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
     }
   }
-}
-
-function findDeep (object, fn, found = { break: false, value: undefined }) {
-  if (typeof object !== 'object' || object === null) return
-  for (var i in object) {
-    if (found.break) break
-    var el = object[i]
-    if (el && el.innerText !== undefined && el.innerText !== null) el = el.innerText
-    if (!fn(el, i, object)) findDeep(el, fn, found)
-    else if (found.break = true) return found.value = el // eslint-disable-line
-  }
-  return found.value
-}
-
-function match (args, query) {
-  query = query.trim()
-  var isMatch = !!findDeep(args, function check (value, key) {
-    if (value === undefined || value === null) return false
-    if (typeof value === 'function') return false
-    if (typeof value === 'object') return false
-    var contains = String(value).indexOf(query.trim()) !== -1
-    return contains
-  })
-  return isMatch
 }
 
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }

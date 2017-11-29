@@ -9,7 +9,8 @@ module.exports = {
   verifyContract: verifyContract,
   testFunction,
   checkDebug,
-  goToVMtraceStep
+  goToVMtraceStep,
+  useFilter
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -114,6 +115,26 @@ function addFile (browser, name, content, done) {
     .perform(function () {
       done()
     })
+}
+
+function useFilter (browser, filter, test, done) {
+  if (browser.options.desiredCapabilities.browserName === 'chrome') { // nightwatch deos not handle well that part.... works locally
+    done()
+    return
+  }
+  var filterClass = '#editor-container div[class^="search"] input[class^="filter"]'
+  browser.setValue(filterClass, filter, function () {
+    browser.execute(function () {
+      return document.querySelector('#editor-container div[class^="journal"]').innerHTML === test
+    }, [], function (result) {
+      browser.clearValue(filterClass).setValue(filterClass, '', function () {
+        if (!result.value) {
+          browser.assert.fail('useFilter on ' + filter + ' ' + test, 'info about error', '')
+        }
+        done()
+      })
+    })
+  })
 }
 
 function switchFile (browser, name, done) {

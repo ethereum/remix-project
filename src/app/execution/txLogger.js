@@ -65,6 +65,14 @@ class TxLogger {
   constructor (opts = {}) {
     this.event = new EventManager()
     this.opts = opts
+    this.seen = {}
+    function filterTx (value, query) {
+      if (value.length) {
+        return helper.find(value, query)
+      }
+      return false
+    }
+
     this.logKnownTX = opts.api.editorpanel.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el
@@ -73,14 +81,15 @@ class TxLogger {
       } else {
         el = renderKnownTransaction(this, data)
       }
+      this.seen[data.tx.hash] = el
       append(el)
-    }, { activate: true })
+    }, { activate: true, filterFn: filterTx })
 
     this.logUnknownTX = opts.api.editorpanel.registerCommand('unknownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el = renderUnknownTransaction(this, data)
       append(el)
-    }, { activate: false })
+    }, { activate: false, filterFn: filterTx })
 
     this.logEmptyBlock = opts.api.editorpanel.registerCommand('emptyBlock', (args, cmds, append) => {
       var data = args[0]
