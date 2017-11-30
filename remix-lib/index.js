@@ -2,6 +2,7 @@
 var EventManager = require('./src/eventManager')
 var traceHelper = require('./src/helpers/traceHelper')
 var uiHelper = require('./src/helpers/uiHelper')
+var compilerHelper = require('./src/helpers/compilerHelper')
 var SourceMappingDecoder = require('./src/sourceMappingDecoder')
 var SourceLocationTracker = require('./src/sourceLocationTracker')
 var init = require('./src/init')
@@ -26,7 +27,8 @@ function modules () {
     EventManager: EventManager,
     helpers: {
       trace: traceHelper,
-      ui: uiHelper
+      ui: uiHelper,
+      compiler: compilerHelper
     },
     vm: {
       Web3Providers: Web3Providers,

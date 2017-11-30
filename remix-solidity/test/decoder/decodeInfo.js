@@ -6,6 +6,8 @@ var decodeInfo = require('../../src/decoder/decodeInfo')
 var stateDecoder = require('../../src/decoder/stateDecoder')
 var contracts = require('./contracts/miscContracts')
 var simplecontracts = require('./contracts/simpleContract')
+var remixLib = require('remix-lib')
+var compilerInput = remixLib.helpers.compiler.compilerInput
 
 tape('solidity', function (t) {
   t.test('astHelper, decodeInfo', function (st) {
@@ -91,26 +93,4 @@ function checkDecodeInfo (st, decodeInfo, storageSlots, storageBytes, typeName) 
   st.equal(decodeInfo.storageSlots, storageSlots)
   st.equal(decodeInfo.storageBytes, storageBytes)
   st.equal(decodeInfo.typeName, typeName)
-}
-
-function compilerInput (contracts) {
-  return JSON.stringify({
-    language: 'Solidity',
-    sources: {
-      'test.sol': {
-        content: contracts
-      }
-    },
-    settings: {
-      optimizer: {
-        enabled: false,
-        runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '*': [ 'metadata', 'evm.bytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
-      }
-    }
-  })
 }
