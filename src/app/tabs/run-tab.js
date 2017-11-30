@@ -1,5 +1,4 @@
 'use strict'
-var async = require('async')
 var $ = require('jquery')
 var yo = require('yo-yo')
 var helper = require('../../lib/helper.js')
@@ -246,7 +245,6 @@ function updateAccountBalances (container, appAPI) {
     RECORDER
 ------------------------------------------------ */
 function makeRecorder (appAPI, appEvents) {
-  var udapp = appAPI.udapp()
   var recorder = new Recorder({
     events: {
       udapp: appEvents.udapp,
@@ -291,10 +289,9 @@ function makeRecorder (appAPI, appEvents) {
     })
   }
   runButton.onclick = () => {
-    modalDialogCustom.prompt(null, 'load from file (e.g. `scenarios/transactions1.json`)', '', filepath => {
-      var filename = appAPI.filesProviders['browser'].type + '/' + filepath
-      var json = appAPI.filesProviders['browser'].get(filename)
-      if (!json) return modalDialogCustom.alert('Could not find file with transactions, please try again')
+    var currentFile = appAPI.config.get('currentFile')
+    var json = appAPI.filesProviders['browser'].get(currentFile)
+    if (currentFile.match('.json$')) {
       try {
         var obj = JSON.parse(json)
         var txArray = obj.transactions || []
@@ -302,28 +299,16 @@ function makeRecorder (appAPI, appEvents) {
         var options = obj.options
         var abis = obj.abis
       } catch (e) {
-        modalDialogCustom.alert('Invalid JSON, please try again')
+        return modalDialogCustom.alert('Invalid Scenario File, please try again')
       }
       if (txArray.length) {
-        recorder.setListen(false)
-        async.eachSeries(txArray, function (tx, cb) {
-          var record = recorder.resolveAddress(tx.record, accounts, options)
-          udapp.rerunTx(record, function (err, txResult) {
-            if (err) {
-              console.error(err)
-            } else {
-              var address = executionContext.isVM() ? txResult.result.createdAddress : tx.result.contractAddress
-              if (!address) return // not a contract creation
-              var abi = abis[tx.record.abi]
-              if (abi) {
-                instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, record.contractName))
-              }
-            }
-            cb()
-          })
-        }, () => { recorder.setListen(true) })
+        recorder.run(txArray, accounts, options, abis, (abi, address, contractName) => {
+          instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
+        })
       }
-    })
+    } else {
+      modalDialogCustom.alert('Scenario File require JSON type')
+    }
   }
   return el
 }
@@ -395,7 +380,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
-    var selectedContract = getSelectedContract()    
+    var selectedContract = getSelectedContract()
 
     if (selectedContract.contract.object.evm.bytecode.object.length === 0) {
       modalDialogCustom.alert('This contract does not implement all functions and thus cannot be created.')
