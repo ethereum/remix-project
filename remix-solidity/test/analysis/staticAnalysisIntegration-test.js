@@ -1,7 +1,8 @@
 var test = require('tape')
+var remixLib = require('remix-lib')
 
 var StatRunner = require('../../src/analysis/staticAnalysisRunner')
-// const util = require('util')
+var compilerInput = remixLib.helpers.compiler.compilerInput
 
 var solc = require('solc/wrapper')
 var compiler = solc(require('../../soljson'))
@@ -448,27 +449,5 @@ function runModuleOnFiles (module, t, cb) {
     statRunner.runWithModuleList(testFileAsts[fileName], [{ name: module.name, mod: new module.Module() }], (reports) => {
       cb(fileName, reports[0].report)
     })
-  })
-}
-
-function compilerInput (contracts) {
-  return JSON.stringify({
-    language: 'Solidity',
-    sources: {
-      'test.sol': {
-        content: contracts
-      }
-    },
-    settings: {
-      optimizer: {
-        enabled: false,
-        runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '*': [ 'metadata', 'evm.bytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
-      }
-    }
   })
 }
