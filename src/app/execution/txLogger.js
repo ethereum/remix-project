@@ -269,7 +269,7 @@ function renderUnknownTransaction (self, data) {
         input: data.tx.input,
         hash: data.tx.hash,
         gas: data.tx.gas,
-        logs: data.logs,
+        logs: data.tx.logs,
         transactionCost: data.tx.transactionCost,
         executionCost: data.tx.executionCost,
         status: data.tx.status
@@ -440,7 +440,7 @@ function createTable (opts) {
   }
 
   var stringified = ' - '
-  if (opts.logs.decoded) {
+  if (opts.logs && opts.logs.decoded) {
     stringified = typeConversion.stringify(opts.logs.decoded)
   }
   var logs = yo`
