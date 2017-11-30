@@ -3,6 +3,7 @@ var tape = require('tape')
 var sourceMapping = require('./resources/sourceMapping')
 var SourceMappingDecoder = require('../src/sourceMappingDecoder')
 var compiler = require('solc')
+var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 
 tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
@@ -116,25 +117,3 @@ var contracts = `contract test {
     }
 }
 `
-
-function compilerInput (contracts) {
-  return JSON.stringify({
-    language: 'Solidity',
-    sources: {
-      'test.sol': {
-        content: contracts
-      }
-    },
-    settings: {
-      optimizer: {
-        enabled: false,
-        runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '*': [ 'metadata', 'evm.bytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
-      }
-    }
-  })
-}

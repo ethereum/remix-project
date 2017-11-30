@@ -13,6 +13,7 @@ var intLocalTest = require('./localsTests/int')
 var miscLocalTest = require('./localsTests/misc')
 var misc2LocalTest = require('./localsTests/misc2')
 var structArrayLocalTest = require('./localsTests/structArray')
+var compilerInput = remixLib.helpers.compiler.compilerInput
 
 tape('solidity', function (t) {
   t.test('local decoder', function (st) {
@@ -62,27 +63,5 @@ function test (st, vm, privateKey) {
         structArrayLocalTest(st, vm, privateKey, output.contracts['test.sol']['structArrayLocal'].evm.bytecode.object, output, function () {})
       })
     })
-  })
-}
-
-function compilerInput (contracts) {
-  return JSON.stringify({
-    language: 'Solidity',
-    sources: {
-      'test.sol': {
-        content: contracts
-      }
-    },
-    settings: {
-      optimizer: {
-        enabled: false,
-        runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '*': [ 'metadata', 'evm.bytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
-      }
-    }
   })
 }
