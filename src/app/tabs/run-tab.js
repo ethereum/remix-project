@@ -1,4 +1,5 @@
 'use strict'
+var async = require('async')
 var $ = require('jquery')
 var yo = require('yo-yo')
 var helper = require('../../lib/helper.js')
@@ -166,45 +167,30 @@ var css = csjs`
 
 module.exports = runTab
 
+var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
 
+var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
+
 function runTab (container, appAPI, appEvents, opts) {
-  var self = {
-    _view: {},
-    addInstance: addInstance
-  }
-  var udapp = appAPI.udapp()
-
-  var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
-
-  var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
   var pendingTxsContainer = yo`
-    <div class="${css.pendingTxsContainer}">
-      <div class=${css.buttons}>${makeRecorder(self, appAPI, appEvents)}</div>
-      ${pendingTxsText}
-    </div>
-  `
+  <div class="${css.pendingTxsContainer}">
+    ${pendingTxsText}
+  </div>`
 
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
-    ${settings(self, appAPI, appEvents)}
-    ${contractDropdown(self, appAPI, appEvents, instanceContainer)}
+    ${settings(appAPI, appEvents)}
+    ${contractDropdown(appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
   </div>
   `
   container.appendChild(el)
 
-  function addInstance (sourcename) {
-    var contract = appAPI.getContract(sourcename)
-    var address = self._view.atAddressButtonInput.value
-    var instance = udapp.renderInstance(contract.object, address, self._view.selectContractNames.value)
-    instanceContainer.appendChild(instance)
-  }
-
   // PENDING transactions
   function updatePendingTxs (container, appAPI) {
-    var pendingCount = Object.keys(udapp.pendingTransactions()).length
+    var pendingCount = Object.keys(appAPI.udapp().pendingTransactions()).length
     pendingTxsText.innerText = pendingCount + ' pending transactions'
   }
 
@@ -259,16 +245,14 @@ function updateAccountBalances (container, appAPI) {
 /* ------------------------------------------------
     RECORDER
 ------------------------------------------------ */
-function makeRecorder (self, appAPI, appEvents) {
+function makeRecorder (appAPI, appEvents) {
   var udapp = appAPI.udapp()
   var recorder = new Recorder({
     events: {
       udapp: appEvents.udapp,
       executioncontext: executionContext.event
     },
-    api: {
-      getAccounts (cb) { udapp.getAccounts(cb) }
-    }
+    api: appAPI
   })
   var css2 = csjs`
     .container {
@@ -314,27 +298,30 @@ function makeRecorder (self, appAPI, appEvents) {
       try {
         var obj = JSON.parse(json)
         var txArray = obj.transactions || []
-        var addresses = obj.addresses || {}
+        var accounts = obj.accounts || []
+        var options = obj.options
+        var abis = obj.abis
       } catch (e) {
         modalDialogCustom.alert('Invalid JSON, please try again')
       }
       if (txArray.length) {
-        txArray.forEach(tx => {
-          var record = recorder.resolveAddress(tx.record, addresses)
-          udapp.rerunTx(record, function (err, result) {
-            // {
-            //   "result": {
-            //     "gasUsed": "5318",
-            //     "vm": { "exception": 1, "selfdestruct": {} },
-            //     "bloom": { "bitvector": { "type": "Buffer", "data": [0, /* ... */ 0, 0] } },
-            //     "amountSpent": "5318"
-            //   },
-            //   "transactionHash": "0x84f68f96944a47b27af4b4ed1986637aa1bc05fd7a6f5cb1d6a53f68058276d8"
-            // }
-            if (err) console.error(err)
-            else if (record.src) self.addInstance(record.src)
+        recorder.setListen(false)
+        async.eachSeries(txArray, function (tx, cb) {
+          var record = recorder.resolveAddress(tx.record, accounts, options)
+          udapp.rerunTx(record, function (err, txResult) {
+            if (err) {
+              console.error(err)
+            } else {
+              var address = executionContext.isVM() ? txResult.result.createdAddress : tx.result.contractAddress
+              if (!address) return // not a contract creation
+              var abi = abis[tx.record.abi]
+              if (abi) {
+                instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, record.contractName))
+              }
+            }
+            cb()
           })
-        })
+        }, () => { recorder.setListen(true) })
       }
     })
   }
@@ -344,7 +331,7 @@ function makeRecorder (self, appAPI, appEvents) {
     section CONTRACT DROPDOWN and BUTTONS
 ------------------------------------------------ */
 
-function contractDropdown (self, appAPI, appEvents, instanceContainer) {
+function contractDropdown (appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -359,8 +346,18 @@ function contractDropdown (self, appAPI, appEvents, instanceContainer) {
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
   var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
-  self._view.atAddressButtonInput = atAddressButtonInput
-  self._view.selectContractNames = selectContractNames
+
+  function getSelectedContract () {
+    var contractName = selectContractNames.children[selectContractNames.selectedIndex].innerHTML
+    if (contractName) {
+      return {
+        name: contractName,
+        contract: appAPI.getContract(contractName)
+      }
+    }
+    return null
+  }
+  appAPI.getSelectedContract = getSelectedContract
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
@@ -375,6 +372,7 @@ function contractDropdown (self, appAPI, appEvents, instanceContainer) {
           ${atAddressButtonInput}
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
         </div>
+        <div class=${css.buttons}>${makeRecorder(appAPI, appEvents)}</div>
       </div>
     </div>
   `
@@ -382,8 +380,7 @@ function contractDropdown (self, appAPI, appEvents, instanceContainer) {
   function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
     if (appAPI.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
-      var contract = appAPI.getContract(selectContractNames.children[selectContractNames.selectedIndex].innerHTML)
-      var ctrabi = txHelper.getConstructorInterface(contract.object.abi)
+      var ctrabi = txHelper.getConstructorInterface(getSelectedContract().contract.object.abi)
       if (ctrabi.inputs.length) {
         createButtonInput.setAttribute('placeholder', txHelper.inputParametersDeclarationToString(ctrabi.inputs))
         createButtonInput.removeAttribute('disabled')
@@ -398,20 +395,18 @@ function contractDropdown (self, appAPI, appEvents, instanceContainer) {
 
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
-    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contractName = contractNames.children[contractNames.selectedIndex].innerHTML
-    var contract = appAPI.getContract(contractName)
+    var selectedContract = getSelectedContract()    
 
-    if (contract.object.evm.bytecode.object.length === 0) {
+    if (selectedContract.contract.object.evm.bytecode.object.length === 0) {
       modalDialogCustom.alert('This contract does not implement all functions and thus cannot be created.')
       return
     }
 
-    var constructor = txHelper.getConstructorInterface(contract.object.abi)
+    var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
     var args = createButtonInput.value
-    txFormat.buildData(contract.object, appAPI.getContracts(), true, constructor, args, appAPI.udapp(), (error, data) => {
+    txFormat.buildData(selectedContract.contract.object, appAPI.getContracts(), true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
-        appAPI.logMessage(`creation of ${contractName} pending...`)
+        appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
@@ -424,13 +419,13 @@ function contractDropdown (self, appAPI, appEvents, instanceContainer) {
             }
             noInstancesText.style.display = 'none'
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
+            instanceContainer.appendChild(appAPI.udapp().renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           } else {
-            appAPI.logMessage(`creation of ${contractName} errored: ` + error)
+            appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           }
         })
       } else {
-        appAPI.logMessage(`creation of ${contractName} errored: ` + error)
+        appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
       }
     }, (msg) => {
       appAPI.logMessage(msg)
