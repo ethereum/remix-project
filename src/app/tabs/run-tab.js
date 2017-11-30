@@ -302,6 +302,7 @@ function makeRecorder (appAPI, appEvents) {
         return modalDialogCustom.alert('Invalid Scenario File, please try again')
       }
       if (txArray.length) {
+        noInstancesText.style.display = 'none'
         recorder.run(txArray, accounts, options, abis, (abi, address, contractName) => {
           instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
         })
