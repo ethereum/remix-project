@@ -535,6 +535,9 @@ function run () {
       document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
     },
+    getAccounts: (cb) => {
+      udapp.getAccounts(cb)
+    },
     getSource: (fileName) => {
       return compiler.getSource(fileName)
     },
