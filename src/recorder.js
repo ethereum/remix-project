@@ -33,6 +33,7 @@ class Recorder {
             var abi = selectedContract.contract.object.abi
             var sha3 = util.sha3_256(JSON.stringify(abi))
             record.abi = sha3
+            record.contractName = selectedContract.name
             self.data._abis[sha3] = abi
           }
         } else {
