@@ -277,7 +277,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 }
 
 UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
-  var abi = txHelper.sortAbiFunction(contract.abi)
+  var abi = txHelper.sortAbiFunction(contract)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
 
@@ -309,22 +309,20 @@ UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, 
     $(instance).toggleClass(`${css.hidesub}`)
   }
 
-  var abi = txHelper.sortAbiFunction(contractABI)
-
   instance.appendChild(title)
 
   // Add the fallback function
-  var fallback = txHelper.getFallbackInterface(abi)
+  var fallback = txHelper.getFallbackInterface(contractABI)
   if (fallback) {
     instance.appendChild(this.getCallButton({
       funABI: fallback,
       address: address,
-      contractAbi: abi,
+      contractAbi: contractABI,
       contractName: contractName
     }))
   }
 
-  $.each(abi, (i, funABI) => {
+  $.each(contractABI, (i, funABI) => {
     if (funABI.type !== 'function') {
       return
     }
@@ -332,7 +330,7 @@ UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, 
     instance.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
-      contractAbi: abi,
+      contractAbi: contractABI,
       contractName: contractName
     }))
   })
