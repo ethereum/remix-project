@@ -280,7 +280,7 @@ function makeRecorder (appAPI, appEvents) {
   recordButton.onclick = () => {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
     var path = appAPI.currentPath()
-    modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`). The file is goiing to be saved under ' + path, 'scenario.json', input => {
+    modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`). The file is going to be saved under ' + path, 'scenario.json', input => {
       var fileProvider = appAPI.fileProviderOf(path)
       if (fileProvider) {
         input = helper.createNonClashingName(input, fileProvider, '.json')
