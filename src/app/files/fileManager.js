@@ -79,6 +79,13 @@ class FileManager {
     this.refreshTabs()
   }
 
+  currentPath () {
+    var currentFile = this.opt.config.get('currentFile')
+    var reg = /(.*\/).*/
+    var path = reg.exec(currentFile)
+    return path ? path[1] : null
+  }
+
   fileRemovedEvent (path) {
     if (path === this.opt.config.get('currentFile')) {
       this.opt.config.set('currentFile', '')
