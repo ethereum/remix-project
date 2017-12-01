@@ -1,6 +1,6 @@
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var util = remixLib.util
+var ethutil = require('ethereumjs-util')
 var executionContext = require('./execution-context')
 var async = require('async')
 
@@ -32,7 +32,7 @@ class Recorder {
           var selectedContract = self._api.getSelectedContract()
           if (selectedContract) {
             var abi = selectedContract.contract.object.abi
-            var sha3 = util.sha3_256(JSON.stringify(abi))
+            var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
             record.abi = sha3
             record.contractName = selectedContract.name
             self.data._abis[sha3] = abi
