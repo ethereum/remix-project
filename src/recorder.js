@@ -20,8 +20,9 @@ class Recorder {
     })
 
     opts.events.udapp.register('initiatingTransaction', (timestamp, tx) => {
-      var { from, to, value, data, useCall } = tx
-      var record = { value, data, useCall }
+      if (tx.useCall) return
+      var { from, to, value, data } = tx
+      var record = { value, data }
 
       this.data._pendingTxs[timestamp] = tx
 
@@ -51,6 +52,7 @@ class Recorder {
 
     opts.events.udapp.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
       if (error) return console.log(error)
+      if (call) return
       var tx = this.data._pendingTxs[timestamp]
 
       var address = executionContext.isVM() ? txResult.result.createdAddress : tx.result.contractAddress
