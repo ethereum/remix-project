@@ -283,8 +283,8 @@ function makeRecorder (appAPI, appEvents) {
     modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`). The file is going to be saved under ' + path, 'scenario.json', input => {
       var fileProvider = appAPI.fileProviderOf(path)
       if (fileProvider) {
-        input = helper.createNonClashingName(input, fileProvider, '.json')
         var newFile = path + input
+        newFile = helper.createNonClashingName(newFile, fileProvider, '.json')
         if (!fileProvider.set(newFile, txJSON)) {
           modalDialogCustom.alert('Failed to create file ' + newFile)
         } else {
