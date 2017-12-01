@@ -341,11 +341,17 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var address = atAddressButtonInput.value
     if (/.(.abi)$/.exec(appAPI.currentFile())) {
-      if (confirm('Do you really want to interact with ' + address + ' using the current abi definition ?')) {
-        instanceContainer.appendChild(appAPI.udapp().renderInstance(appAPI.editorContent(), address, ' - '))
-      }
+      modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', () => {
+        var abi
+        try {
+          abi = JSON.parse(appAPI.editorContent())
+        } catch (e) {
+          return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
+        }
+        instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, address))
+      })
     } else {
-      var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+      var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
       instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
     }
   }
