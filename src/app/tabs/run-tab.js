@@ -279,12 +279,17 @@ function makeRecorder (appAPI, appEvents) {
   `
   recordButton.onclick = () => {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
-    modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`)', 'scenario.json', input => {
-      var newName = appAPI.filesProviders['browser'].type + '/' + helper.createNonClashingName(input, appAPI.filesProviders['browser'], '.json')
-      if (!appAPI.filesProviders['browser'].set(newName, txJSON)) {
-        modalDialogCustom.alert('Failed to create file ' + newName)
-      } else {
-        appAPI.switchFile(newName)
+    var path = appAPI.currentPath()
+    modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`). The file is goiing to be saved under ' + path, 'scenario.json', input => {
+      var fileProvider = appAPI.fileProviderOf(path)
+      if (fileProvider) {
+        input = helper.createNonClashingName(input, fileProvider, '.json')
+        var newFile = path + input
+        if (!fileProvider.set(newFile, txJSON)) {
+          modalDialogCustom.alert('Failed to create file ' + newFile)
+        } else {
+          appAPI.switchFile(newFile)
+        }
       }
     })
   }
