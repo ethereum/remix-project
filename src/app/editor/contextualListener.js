@@ -120,6 +120,7 @@ class ContextualListener {
       this._highlight(current, compilationResult)
     } else {
       highlights(node.id)
+      this._highlight(node, compilationResult)
     }
   }
 

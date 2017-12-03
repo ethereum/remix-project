@@ -29,8 +29,6 @@ var css = csjs`
   }
   .name                   {
     font-weight       : bold;
-    margin-right      : 15px;
-    cursor            : pointer;
   }
   .jump                   {
     cursor            : pointer;
@@ -42,6 +40,7 @@ var css = csjs`
   }
   .referencesnb           {
     float             : right;
+    margin-left       : 15px;
   }
 `
 
@@ -133,16 +132,9 @@ class ContextView {
     function next () {
       var nodes = self._api.contextualListener.getActiveHighlights()
       var currentName = node.attributes.name
-      var position = self.sourceMappingDecoder.decode(node.src)
 
       if (currentName !== self.refName) self.ref = 0
       var k = self.ref
-
-      /// LOGS ///
-      nodes.forEach(node => console.log(node.position.start))
-      console.log('----')
-      console.log(k)
-      console.log('----')
 
       var pos = nodes[k].position
       self._api.jumpTo(pos)
@@ -158,12 +150,6 @@ class ContextView {
 
       var k = nodes.length - 1 - self.ref
 
-      /// LOGS ///
-      nodes.forEach(node => console.log(node.position.start))
-      console.log('----')
-      console.log(k)
-      console.log('----')
-
       var pos = nodes[k].position
       self._api.jumpTo(pos)
 
@@ -172,9 +158,9 @@ class ContextView {
     }
 
     return yo`<div class=${css.line}>
-      <i class="fa fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
       <div title=${type} class=${css.type}>${type}</div>
       <div title=${node.attributes.name} class=${css.name}>${node.attributes.name}</div>
+      <i class="fa fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
       <span class=${css.referencesnb}>${references}</span>
       <i class="fa fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${previous}></i>
       <i class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${next}></i>
