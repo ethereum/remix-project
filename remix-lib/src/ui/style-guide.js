@@ -3,6 +3,8 @@
 module.exports = styleGuide
 
 function styleGuide () {
+
+
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES
@@ -17,14 +19,13 @@ function styleGuide () {
       transparent: 'transparent',
       white: 'hsla(198, 100%, 97%, 1)',
       black: 'hsla(240, 100%, 6%, 1)',
+      opacityBlack: 'hsla(240, 100%, 6%, .7)',
 
       // BLUE
       blue: 'hsla(233, 91%, 36%, 1)',
       lightBlue: 'hsla(202, 91%, 75%, 1)',
       blueLightTrans: 'hsla(202, 91%, 75%, .4)',
       backgroundBlue: 'hsla(240, 100%, 21%, 1)',
-      blueBlack: 'hsla(205, 13%, 18%, 1)',
-      // erase blueBlack ??
       brightBlue: 'hsla(233, 91%, 58%, 1)',
       blueGreyEve: 'hsla(213, 64%, 65%, 1)',
       bluePruneEve: 'hsla(232, 30%, 20%, 1)',
@@ -87,6 +88,9 @@ function styleGuide () {
   -------------------------------------------------------------------------- */
 
   var appProperties = {
+
+    aceTheme: 'tomorrow_night_blue',
+
     /* ------------------------------------------------------
                           BACKGROUND COLORS
     ------------------------------------------------------ */
@@ -94,8 +98,7 @@ function styleGuide () {
     secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
     tertiary_BackgroundColor: cssProperties.colors.greyBlueNight,
     quaternary_BackgroundColor: cssProperties.colors.blueGreyEve,
-    quinary_BackgroundColor: cssProperties.colors.greyBlueMed,
-    senary_BackgroundColor: cssProperties.colors.blueBerrySmog,
+    fifth_BackgroundColor: cssProperties.colors.bluePruneEve,
     seventh_BackgroundColor: cssProperties.colors.blueMonday,
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
@@ -111,10 +114,10 @@ function styleGuide () {
     ******************************************************** */
     mainText_Color: cssProperties.colors.white,
     supportText_Color: cssProperties.colors.lightBlue,
-    supportText_OppositeColor: cssProperties.colors.lightBlue,
-    // remove supportText_Opposite ???
     sub_supportText_Color: cssProperties.colors.greyBlueLight,
-
+    specialText_Color: cssProperties.colors.greenZing,
+    brightText_Color: cssProperties.colors.blueMascara,
+    additionalText_Color: cssProperties.colors.desatGrey,
     errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
     infoText_Color: cssProperties.colors.violet,
@@ -210,6 +213,23 @@ function styleGuide () {
     quaternaryButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
 
+    /* .................
+          Fifth
+    .................. */
+    fifthButton_TextColor: cssProperties.colors.black,
+    fifthButton_BackgroundColor: cssProperties.colors.blueFairyDust,
+    fifthButton_BorderColor: cssProperties.colors.veryLightGrey,
+    /* .................
+
+    /* .................
+          Sixth
+    .................. */
+    sixthButton_TextColor: cssProperties.colors.black,
+    sixthButton_BackgroundColor: cssProperties.colors.greenZing,
+    sixthButton_BorderColor: cssProperties.colors.veryLightGrey,
+    /* .................
+
+
           SUCCESS
     .................. */
     successButton_TextColor: cssProperties.colors.white,
@@ -250,6 +270,11 @@ function styleGuide () {
     transactButton_TextColor: cssProperties.colors.black,
     transactButton_BackgroundColor: cssProperties.colors.blueFairyDust,
     transactButton_BorderColor: cssProperties.colors.lightRed,
+
+    // CONSTANT
+    constantButton_TextColor: cssProperties.colors.black,
+    constantButton_BackgroundColor: cssProperties.colors.greenZing,
+    constantButton_BorderColor: cssProperties.colors.greenZing,
 
     // PAYABLE TRANSACTION
     transactPayableButton_TextColor: cssProperties.colors.black,
@@ -358,9 +383,11 @@ function styleGuide () {
                             REMIX GENERAL
     /* ------------------------------------------------------ */
     remix: {
-      modalDialog_BackgroundColor_Primary: appProperties.primary_BackgroundColor,
-      modalDialog_text_Primary: appProperties.mainText_Color,
+      modalDialog_BackgroundColor_Primary: appProperties.fifth_BackgroundColor,
+      modalDialog_text_Primary: appProperties.additionalText_Color,
       modalDialog_text_Secondary: appProperties.supportText_Color,
+      modalDialog_text_Link: appProperties.brightText_Color,
+      modalDialog_text_Em: appProperties.specialText_Color,
       modalDialog_Header_Footer_BackgroundColor: appProperties.secondary_BackgroundColor,
       modalDialog_Header_Footer_Color: appProperties.mainText_Color,
       modalDialog_BoxDottedBorder_BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
@@ -478,6 +505,7 @@ function styleGuide () {
       text_Primary: appProperties.mainText_Color,
       text_Secondary: appProperties.supportText_Color,
       text_Teriary: appProperties.sub_supportText_Color,
+      text_link: appProperties.brightText_Color,
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
@@ -577,19 +605,21 @@ function styleGuide () {
           BorderColor: appProperties.primaryButton_BorderColor,
           Color: appProperties.primaryButton_TextColor
         }),
-
         button_Create: appProperties.uiElements.button({
           BackgroundColor: appProperties.transactButton_BackgroundColor,
           BorderColor: appProperties.transactButton_BorderColor,
           Color: appProperties.transactButton_TextColor
         }),
-
+        button_Constant: appProperties.uiElements.button({
+          BackgroundColor: appProperties.constantButton_BackgroundColor,
+          BorderColor: appProperties.constantButton_BorderColor,
+          Color: appProperties.constantButton_TextColor
+        }),
         button_Instance_Call: appProperties.uiElements.button({
           BackgroundColor: appProperties.callButton_BackgroundColor,
           BorderColor: appProperties.callButton_BorderColor,
           Color: appProperties.callButton_TextColor
         }),
-
         button_Instance_Transact: appProperties.uiElements.button({
           BackgroundColor: appProperties.transactButton_BackgroundColor,
           BorderColor: appProperties.transactButton_BorderColor,
