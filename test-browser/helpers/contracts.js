@@ -10,7 +10,8 @@ module.exports = {
   testFunction,
   checkDebug,
   goToVMtraceStep,
-  useFilter
+  useFilter,
+  addInstance
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -95,6 +96,12 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
       done()
     })
   return this
+}
+
+function addInstance (browser, address, done) {
+  browser.setValue('#ataddressinput', address, function () {
+    browser.click('div[class^="atAddress"]').click('#modal-footer-ok').perform(() => { done() })
+  })
 }
 
 function addFile (browser, name, content, done) {
