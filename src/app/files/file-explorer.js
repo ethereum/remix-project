@@ -410,9 +410,6 @@ function expandPathTo (li) {
 
 fileExplorer.prototype.init = function () {
   var files = this.files.listAsTree()
-  if (!Object.keys(files).length) {
-    files[this.files.type] = {} // default
-  }
   var element = this.treeView.render(files)
   element.className = css.fileexplorer
   element.events = this.events
