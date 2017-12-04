@@ -128,6 +128,10 @@ function filepanel (appAPI, filesProvider) {
   var self = this
   var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
   var fileSystemExplorer = new FileExplorer(appAPI, filesProvider['localhost'])
+  var swarmExplorer = new FileExplorer(appAPI, filesProvider['swarm'])
+  var githubExplorer = new FileExplorer(appAPI, filesProvider['github'])
+  var gistExplorer = new FileExplorer(appAPI, filesProvider['gist'])
+
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 
   function remixdDialog () {
@@ -174,6 +178,9 @@ function filepanel (appAPI, filesProvider) {
           <div class=${css.treeviews}>
             <div class=${css.treeview}>${fileExplorer.init()}</div>
             <div class="filesystemexplorer ${css.treeview}"></div>
+            <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
+            <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
+            <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
           </div>
         </div>
         ${dragbar}
@@ -218,6 +225,18 @@ function filepanel (appAPI, filesProvider) {
   })
 
   fileSystemExplorer.events.register('focus', function (path) {
+    appAPI.switchFile(path)
+  })
+
+  swarmExplorer.events.register('focus', function (path) {
+    appAPI.switchFile(path)
+  })
+
+  githubExplorer.events.register('focus', function (path) {
+    appAPI.switchFile(path)
+  })
+
+  gistExplorer.events.register('focus', function (path) {
     appAPI.switchFile(path)
   })
 
