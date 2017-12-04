@@ -3,9 +3,13 @@
 var async = require('async')
 var swarmgw = require('swarmgw')
 
-module.exports = (contract, appAPI, cb) => {
+module.exports = (contract, appAPI, cb, swarmVerifiedPublishCallBack) => {
   // gather list of files to publish
   var sources = []
+
+  try {
+    contract.metadata = JSON.stringify(JSON.parse(contract.metadata), null, '\t')
+  } catch (e) {}
 
   sources.push({
     content: contract.metadata,
@@ -49,7 +53,10 @@ module.exports = (contract, appAPI, cb) => {
     } else {
       // publish the list of sources in order, fail if any failed
       async.eachSeries(sources, function (item, cb) {
-        swarmVerifiedPublish(item.content, item.hash, cb)
+        swarmVerifiedPublish(item.content, item.hash, (error) => {
+          if (!error && swarmVerifiedPublishCallBack) swarmVerifiedPublishCallBack(item)
+          cb(error)
+        })
       }, cb)
     }
   })
