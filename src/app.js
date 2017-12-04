@@ -200,10 +200,10 @@ function run () {
     if (provider && provider.exists(url)) {
       return provider.get(url, cb)
     }
-    handleImports.import(url, (error, content) => {
+    handleImports.import(url, (error, content, cleanUrl, type) => {
       if (!error) {
         // FIXME: at some point we should invalidate the browser cache
-        filesProviders['browser'].addReadOnly(url, content)
+        filesProviders[type].addReadOnly(cleanUrl, content)
         cb(null, content)
       } else {
         cb(error)
