@@ -76,7 +76,7 @@ var css = csjs`
   }
   .terminal::after {
     content           : "";
-    background-image  : url(assets/img/remix-redesign-white-512w_v0.1.gif);
+    background-image  : url(assets/img/remix_logo_white_512x512.svg);
     opacity           : .1;
     top               : 15%;
     left              : 33%;

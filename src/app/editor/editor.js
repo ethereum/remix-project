@@ -5,15 +5,6 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
 
-// var aceCss = editor.setTheme("bace/theme/twilight");
-// require('brace/theme/solarized_dark')
-// require('brace/theme/clouds_midnight')
-// require('brace/theme/pastel_on_dark')
-// require('brace/theme/tomorrow_night')
-require('brace/theme/tomorrow_night_blue')
-// require('brace/theme/tomorrow_night_eighties')
-// require('brace/theme/twilight')
-
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
@@ -21,6 +12,24 @@ var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
 var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
+
+function setTheme (cb) {
+  if (styles.appProperties.aceTheme) {
+    cb('brace/theme/', styles.appProperties.aceTheme)
+  }
+}
+
+setTheme((path, theme) => {
+  // require(path + theme)
+  require('brace/theme/tomorrow_night_blue')
+})
+
+  // editor.setTheme(styleguide.aceTheme) ==> where styleguide.aceTheme is 'ace/theme/tomorrow_night_blue'
+  // var themeIs = 'brace/theme/' + styles.appProperties.aceTheme
+  // var themeIs = 'brace/theme/' + 'tomorrow_night_blue'
+  // console.log(themeIs)
+  // require(`${themeIs}`)
+  // require('brace/theme/tomorrow_night_blue')
 
 var css = csjs`
   .ace-editor {
@@ -64,13 +73,10 @@ function Editor (opts = {}) {
   var self = this
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
-  // editor.setTheme('ace/theme/solarized_dark')
-  // editor.setTheme('ace/theme/clouds_midnight')
-  // editor.setTheme('ace/theme/pastel_on_dark')
-  // editor.setTheme('ace/theme/tomorrow_night')
-  editor.setTheme('ace/theme/tomorrow_night_blue')
-  // editor.setTheme('ace/theme/tomorrow_night_eighties')
-  // editor.setTheme('ace/theme/twilight')
+  if (styles.appProperties.aceTheme) {
+    editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
+  }
+
   ace.acequire('ace/ext/language_tools')
   editor.setOptions({
     enableBasicAutocompletion: true,
