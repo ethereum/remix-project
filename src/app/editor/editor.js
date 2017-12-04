@@ -70,6 +70,7 @@ function Editor (opts = {}) {
   if (styles.appProperties.aceTheme) {
     editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
   }
+
   ace.acequire('ace/ext/language_tools')
   editor.setOptions({
     enableBasicAutocompletion: true,
