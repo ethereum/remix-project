@@ -42,6 +42,9 @@ var css = csjs`
   #optionViews .hide {
     display: none;
   }
+  a {
+    color: ${styles.rightPanel.text_link};
+  }
   .menu {
     display: flex;
     background-color: ${styles.rightPanel.BackgroundColor_Pre};

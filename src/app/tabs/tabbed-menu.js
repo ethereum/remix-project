@@ -9,8 +9,9 @@ var styles = styleGuide()
 module.exports = tabbedMenu
 
 var css = csjs`
-  .active {
+  li.active {
     background-color: ${styles.rightPanel.backgroundColor_Tab};
+    color: ${styles.appProperties.mainText_Color};
   }
 `
 
