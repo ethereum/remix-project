@@ -117,6 +117,7 @@ function styleGuide () {
     sub_supportText_Color: cssProperties.colors.greyBlueLight,
     specialText_Color: cssProperties.colors.greenZing,
     brightText_Color: cssProperties.colors.blueMascara,
+    oppositeText_Color: cssProperties.colors.black,
     additionalText_Color: cssProperties.colors.desatGrey,
     errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
@@ -459,6 +460,7 @@ function styleGuide () {
       text_ErrorLog: appProperties.errorText_Color,
       text_Title_TransactionLog: appProperties.infoText_Color,
       text_Regular_TransactionLog: appProperties.supportText_Color,
+      text_Button: appProperties.oppositeText_Color,
 
       icon_Color_TogglePanel: appProperties.icon_Color,
       icon_HoverColor_TogglePanel: appProperties.icon_HoverColor,
