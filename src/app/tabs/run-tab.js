@@ -1,6 +1,7 @@
 'use strict'
 var $ = require('jquery')
 var yo = require('yo-yo')
+var detectNetwork = require('../../lib/detect-network')
 var helper = require('../../lib/helper.js')
 var txExecution = require('../execution/txExecution')
 var txFormat = require('../execution/txFormat')
@@ -164,6 +165,20 @@ var css = csjs`
     color: ${styles.colors.red};
     padding-left: 10px;
     display: inline;
+  }
+  .network {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    color: grey;
+    width: 100%;
+    height: 100%;
+    padding-right: 20px;
+    pointer-events: none;
+  }
+  .networkItem {
+    margin-right: 5px;
   }
 `
 
@@ -366,33 +381,47 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 ------------------------------------------------ */
 function settings (appAPI, appEvents) {
   // SETTINGS HTML
+  var net = yo`<span class=${css.network}></span>`
+  const updateNetwork = () => {
+    detectNetwork((err, { id, name } = {}) => {
+      if (err) console.error(err)
+      console.log(`update network[${id}] name: ${name}`)
+      net.innerHTML = `
+        <i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name}(${id || '-'})
+      `
+    })
+  }
+  updateNetwork()
   var el = yo`
     <div class="${css.settings}">
       <div class="${css.crow}">
         <div id="selectExEnv" class="${css.col1_1}">
           Environment
         </div>
-        <select id="selectExEnvOptions" class="${css.select}">
-          <option id="vm-mode"
-            title="Execution environment does not connect to any node, everything is local and in memory only."
-            value="vm"
-            checked name="executionContext">
-            JavaScript VM
-          </option>
-          <option id="injected-mode"
-            title="Execution environment has been provided by Mist or similar provider."
-            value="injected"
-            checked name="executionContext">
-            Injected Web3
-          </option>
-          <option id="web3-mode"
-            title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
-            If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-            value="web3"
-            name="executionContext">
-            Web3 Provider
-          </option>
-        </select>
+        <div style="position: relative;">
+          ${net}
+          <select id="selectExEnvOptions" onchange=${updateNetwork} class="${css.select}">
+            <option id="vm-mode"
+              title="Execution environment does not connect to any node, everything is local and in memory only."
+              value="vm"
+              checked name="executionContext">
+              JavaScript VM
+            </option>
+            <option id="injected-mode"
+              title="Execution environment has been provided by Mist or similar provider."
+              value="injected"
+              checked name="executionContext">
+              Injected Web3
+            </option>
+            <option id="web3-mode"
+              title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+              If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
+              value="web3"
+              name="executionContext">
+              Web3 Provider
+            </option>
+          </select>
+        </div>
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Account</div>
