@@ -173,7 +173,7 @@ var css = csjs`
     color: grey;
     width: 100%;
     height: 100%;
-    padding-right: 20px;
+    padding-right: 28px;
     pointer-events: none;
   }
   .networkItem {
@@ -387,7 +387,7 @@ function settings (appAPI, appEvents) {
       net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name}(${id || '-'})`
     })
   }
-  updateNetwork()
+  setInterval(updateNetwork, 5000)
   var el = yo`
     <div class="${css.settings}">
       <div class="${css.crow}">
@@ -417,6 +417,7 @@ function settings (appAPI, appEvents) {
               Web3 Provider
             </option>
           </select>
+          <a style="margin-left: 8px;" href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="fa fa-info"></i></a>
         </div>
       </div>
       <div class="${css.crow}">

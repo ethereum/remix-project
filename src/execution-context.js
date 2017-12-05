@@ -98,6 +98,7 @@ function ExecutionContext () {
     this.web3().version.getNetwork((err, id) => {
       var name = null
       if (err) name = 'Unknown'
+      // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
       else if (id === '1') name = 'Main'
       else if (id === '2') name = 'Morden (deprecated)'
       else if (id === '3') name = 'Ropsten'
