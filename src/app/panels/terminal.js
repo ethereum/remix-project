@@ -73,7 +73,11 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
+<<<<<<< dcf934f38c8de88cf4796c2b5828d623b9ab9ae7
   .terminal_bg     {
+=======
+  .inner_terminal     {
+>>>>>>> bg image working BUT cannot create an instance of a contract
     display           : flex;
     flex-direction    : column;
     height            : 100%;
@@ -82,24 +86,48 @@ var css = csjs`
     padding-bottom    : 3px;
     overflow-y        : auto;
     font-family       : monospace;
+<<<<<<< dcf934f38c8de88cf4796c2b5828d623b9ab9ae7
     background-image  : ${styles.terminal.backgroundImage_Terminal};
+=======
+    background-image  : url(assets/img/remix_logo_white_512x512.svg);
+>>>>>>> bg image working BUT cannot create an instance of a contract
     opacity           : 0.1;
     top               : 15%;
     left              : 33%;
     bottom            : 0;
     right             : 0;
     position          : absolute;
-    z-index           : 1;
+    // z-index           : -1;
     background-repeat : no-repeat;
     background-size   : 45%;
   }
+<<<<<<< dcf934f38c8de88cf4796c2b5828d623b9ab9ae7
   .terminal    {
+=======
+  .terminal_content    {
+>>>>>>> bg image working BUT cannot create an instance of a contract
     position: relative;
     position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
   }
+<<<<<<< dcf934f38c8de88cf4796c2b5828d623b9ab9ae7
+=======
+  .inner_terminal::after {
+    // content           : "";
+    // background-image  : url(assets/img/remix_logo_white_512x512.svg);
+    // opacity           : 0.1;
+    // top               : 15%;
+    // left              : 33%;
+    // bottom            : 0;
+    // right             : 0;
+    // position          : absolute;
+    // // z-index           : -1;
+    // background-repeat : no-repeat;
+    // background-size   : 45%;
+  }
+>>>>>>> bg image working BUT cannot create an instance of a contract
   .journal            {
     margin-top        : auto;
     font-family       : monospace;
@@ -290,10 +318,17 @@ class Terminal {
     }
 
     self._view.term = yo`
+<<<<<<< dcf934f38c8de88cf4796c2b5828d623b9ab9ae7
       <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         <div class=${css.terminal_bg}>
         </div>
         <div class=${css.terminal}>
+=======
+      <div class=${css.terminal} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+        <div class=${css.inner_terminal}>
+        </div>
+        <div class=${css.terminal_content}>
+>>>>>>> bg image working BUT cannot create an instance of a contract
             ${self._view.journal}
             ${self._view.cli}
         </div>
