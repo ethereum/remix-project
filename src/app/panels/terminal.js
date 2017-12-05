@@ -74,18 +74,45 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
-  .terminal::after {
-    content           : "";
+  .inner_terminal     {
+    display           : flex;
+    flex-direction    : column;
+    height            : 100%;
+    padding-left      : 5px;
+    padding-right     : 5px;
+    padding-bottom    : 3px;
+    overflow-y        : auto;
+    font-family       : monospace;
     background-image  : url(assets/img/remix_logo_white_512x512.svg);
-    opacity           : .1;
+    opacity           : 0.1;
     top               : 15%;
     left              : 33%;
     bottom            : 0;
     right             : 0;
     position          : absolute;
-    z-index           : 1;
+    // z-index           : -1;
     background-repeat : no-repeat;
     background-size   : 45%;
+  }
+  .terminal_content    {
+    position: relative;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .inner_terminal::after {
+    // content           : "";
+    // background-image  : url(assets/img/remix_logo_white_512x512.svg);
+    // opacity           : 0.1;
+    // top               : 15%;
+    // left              : 33%;
+    // bottom            : 0;
+    // right             : 0;
+    // position          : absolute;
+    // // z-index           : -1;
+    // background-repeat : no-repeat;
+    // background-size   : 45%;
   }
   .journal            {
     margin-top        : auto;
@@ -278,8 +305,12 @@ class Terminal {
 
     self._view.term = yo`
       <div class=${css.terminal} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
-        ${self._view.journal}
-        ${self._view.cli}
+        <div class=${css.inner_terminal}>
+        </div>
+        <div class=${css.terminal_content}>
+            ${self._view.journal}
+            ${self._view.cli}
+        </div>
       </div>
     `
     self._view.el = yo`
