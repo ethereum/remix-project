@@ -667,7 +667,7 @@ function styleGuide () {
 
         box_Debugger: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
-          BorderColor: appProperties.solidBorderBox_BorderColor,
+          BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
         }),
 
@@ -708,7 +708,7 @@ function styleGuide () {
 
         box_AnalysisContainer: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
-          BorderColor: appProperties.solidBorderBox_BorderColor,
+          BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
         })
       },
@@ -719,7 +719,7 @@ function styleGuide () {
       supportTab: {
         box_IframeContainer: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
-          BorderColor: appProperties.solidBorderBox_BorderColor,
+          BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
         }),
 
