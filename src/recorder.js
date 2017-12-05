@@ -53,11 +53,10 @@ class Recorder {
     opts.events.udapp.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
       if (error) return console.log(error)
       if (call) return
-      var tx = this.data._pendingTxs[timestamp]
 
-      var address = executionContext.isVM() ? txResult.result.createdAddress : tx.result.contractAddress
+      var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       if (!address) return // not a contract creation
-      address = '0x' + address.toString('hex')
+      address = addressToString(address)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
@@ -154,9 +153,9 @@ class Recorder {
         if (err) {
           console.error(err)
         } else {
-          var address = executionContext.isVM() ? txResult.result.createdAddress : tx.result.contractAddress
+          var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (!address) return // not a contract creation
-          address = '0x' + address.toString('hex')
+          address = addressToString(address)
           // save back created addresses for the convertion from tokens to real adresses
           self.data._createdContracts[address] = tx.timestamp
           self.data._createdContractsReverse[tx.timestamp] = address
@@ -169,6 +168,17 @@ class Recorder {
       })
     }, () => { self.setListen(true) })
   }
+}
+
+function addressToString (address) {
+  if (!address) return null
+  if (typeof address !== 'string') {
+    address = address.toString('hex')
+  }
+  if (address.indexOf('0x') === -1) {
+    address = '0x' + address
+  }
+  return address
 }
 
 module.exports = Recorder
