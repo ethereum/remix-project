@@ -166,7 +166,6 @@ function renderKnownTransaction (self, data) {
 
   var table
   function txDetails () {
-    console.log('txDetails hit')
     if (table && table.parentNode) {
       tx.removeChild(table)
     } else {
@@ -219,7 +218,6 @@ function renderCall (self, data) {
 
   var table
   function txDetails () {
-    console.log('txDetails hit')
     if (table && table.parentNode) {
       tx.removeChild(table)
     } else {
