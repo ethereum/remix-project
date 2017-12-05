@@ -8,13 +8,13 @@ module.exports = (sources, opts) => {
       optimizer: {
         enabled: opts.optimize === true,
         runs: 500
-      }
-    },
-    libraries: opts.libraries,
-    outputSelection: {
-      '*': {
-        '': [ 'legacyAST' ],
-        '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+      },
+      libraries: opts.libraries,
+      outputSelection: {
+        '*': {
+          '': [ 'legacyAST' ],
+          '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+        }
       }
     }
   })
