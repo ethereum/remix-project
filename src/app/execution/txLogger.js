@@ -50,7 +50,7 @@ var css = csjs`
     display: flex;
   }
   .debug, .details {
-    color: ${styles.terminal.link_Debug};
+    color: ${styles.terminal.text_Button};
     min-width: 55px;
     margin-left: 5px;
     cursor: pointer;
@@ -163,6 +163,7 @@ function renderKnownTransaction (self, data) {
 
   var table
   function txDetails () {
+    console.log('txDetails hit')
     if (table && table.parentNode) {
       tx.removeChild(table)
     } else {
@@ -215,6 +216,7 @@ function renderCall (self, data) {
 
   var table
   function txDetails () {
+    console.log('txDetails hit')
     if (table && table.parentNode) {
       tx.removeChild(table)
     } else {
@@ -258,6 +260,7 @@ function renderUnknownTransaction (self, data) {
   `
   var table
   function txDetails () {
+    console.log('hit 262')
     if (table && table.parentNode) {
       tx.removeChild(table)
     } else {
