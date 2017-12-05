@@ -129,41 +129,49 @@ class ContextView {
       }
     }
 
-    function next () {
+    // JUMP BETWEEN REFERENCES
+    function jump (e) {
       var nodes = self._api.contextualListener.getActiveHighlights()
-      var currentName = node.attributes.name
+      var searchTerm = node.attributes.name
+      var currentAction = e.target.dataset.action
 
-      if (currentName !== self.refName) self.ref = 0
-      var k = self.ref
+      if (currentAction === 'next') {
+        next(searchTerm, nodes, currentAction)
+      } else if (currentAction === 'previous') {
+        previous(searchTerm, nodes, currentAction)
+      }
 
-      var pos = nodes[k].position
-      self._api.jumpTo(pos)
-
-      self.ref = (self.ref + 1) % nodes.length
-      self.refName = currentName
+      self.refName = searchTerm
+      self.action = currentAction
     }
 
-    function previous () {
-      var nodes = self._api.contextualListener.getActiveHighlights()
-      var currentName = node.attributes.name
-      if (currentName !== self.refName) self.ref = nodes.length - 1
-
-      var k = nodes.length - 1 - self.ref
-
-      var pos = nodes[k].position
-      self._api.jumpTo(pos)
-
+    function next (searchTerm, nodes, currentAction) {
+      if (searchTerm !== self.refName) self.ref = 0
+      if (currentAction !== self.action) self.ref = (nodes.length - 1) - self.ref // adapting self.ref to switching between previous() and next()
       self.ref = (self.ref + 1) % nodes.length
-      self.refName = currentName
+      self._api.jumpTo(getPos(nodes, self.ref))
     }
+
+    function previous (searchTerm, nodes, currentAction) {
+      if (searchTerm !== self.refName) self.ref = nodes.length - 1
+      if (currentAction !== self.action) self.ref = (nodes.length - 1) - self.ref // adapting self.ref to switching between previous() and next()
+      self.ref = (self.ref + 1) % nodes.length
+      self._api.jumpTo(getPos(nodes, nodes.length - 1 - self.ref))
+    }
+
+    function getPos (nodes, k) {
+      var i = (k + (nodes.length - 1)) % nodes.length // to get to nodes[0] position, jumpTo function needs nodes[node.length-1], for nodes[1], jumpTo(nodes[0].position) etc.
+      return nodes[i].position
+    }
+
 
     return yo`<div class=${css.line}>
       <div title=${type} class=${css.type}>${type}</div>
       <div title=${node.attributes.name} class=${css.name}>${node.attributes.name}</div>
       <i class="fa fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
       <span class=${css.referencesnb}>${references}</span>
-      <i class="fa fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${previous}></i>
-      <i class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${next}></i>
+      <i data-action='previous' class="fa fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${jump}></i>
+      <i data-action='next' class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${jump}></i>
     </div>`
   }
 }

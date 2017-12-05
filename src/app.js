@@ -319,7 +319,7 @@ function run () {
         var css = 'highlightreference'
         if (node.children && node.children.length) {
           // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
-          css = 'highlightreferenceline'
+          css = 'highlightreference'
           lineColumn = {
             start: {
               line: lineColumn.start.line,
