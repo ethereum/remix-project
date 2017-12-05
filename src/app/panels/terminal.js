@@ -27,7 +27,6 @@ var css = csjs`
     min-height        : 1.7em;
     overflow          : hidden;
   }
-
   .bar                {
     display           : flex;
     min-height        : 3em;
@@ -101,19 +100,6 @@ var css = csjs`
     flex-direction: column;
     height: 100%;
   }
-  // .inner_terminal::after {
-    // content           : "";
-    // background-image  : url(assets/img/remix_logo_white_512x512.svg);
-    // opacity           : 0.1;
-    // top               : 15%;
-    // left              : 33%;
-    // bottom            : 0;
-    // right             : 0;
-    // position          : absolute;
-    // // z-index           : -1;
-    // background-repeat : no-repeat;
-    // background-size   : 45%;
-  // }
   .journal            {
     margin-top        : auto;
     font-family       : monospace;

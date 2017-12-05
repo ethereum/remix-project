@@ -31,7 +31,7 @@ var css = csjs`
   .txTable, .tr, .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: ${styles.terminal.text_Secondary};
+    color: ${styles.terminal.text_Primary};
     border: 1px solid ${styles.terminal.text_Secondary};
   }
   #txTable {
