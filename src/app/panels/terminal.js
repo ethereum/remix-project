@@ -63,7 +63,7 @@ var css = csjs`
   .toggleTerminal:hover              {
     color             : ${styles.terminal.icon_HoverColor_TogglePanel};
   }
-  .terminal           {
+  .terminal_container {
     background-color  : ${styles.terminal.backgroundColor_Terminal};
     display           : flex;
     flex-direction    : column;
@@ -74,7 +74,7 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
-  .inner_terminal     {
+  .terminal_bg     {
     display           : flex;
     flex-direction    : column;
     height            : 100%;
@@ -94,14 +94,14 @@ var css = csjs`
     background-repeat : no-repeat;
     background-size   : 45%;
   }
-  .terminal_content    {
+  .terminal    {
     position: relative;
     position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
   }
-  .inner_terminal::after {
+  // .inner_terminal::after {
     // content           : "";
     // background-image  : url(assets/img/remix_logo_white_512x512.svg);
     // opacity           : 0.1;
@@ -113,7 +113,7 @@ var css = csjs`
     // // z-index           : -1;
     // background-repeat : no-repeat;
     // background-size   : 45%;
-  }
+  // }
   .journal            {
     margin-top        : auto;
     font-family       : monospace;
@@ -304,10 +304,10 @@ class Terminal {
     }
 
     self._view.term = yo`
-      <div class=${css.terminal} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
-        <div class=${css.inner_terminal}>
+      <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+        <div class=${css.terminal_bg}>
         </div>
-        <div class=${css.terminal_content}>
+        <div class=${css.terminal}>
             ${self._view.journal}
             ${self._view.cli}
         </div>
