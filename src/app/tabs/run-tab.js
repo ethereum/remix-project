@@ -1,7 +1,6 @@
 'use strict'
 var $ = require('jquery')
 var yo = require('yo-yo')
-var detectNetwork = require('../../lib/detect-network')
 var helper = require('../../lib/helper.js')
 var txExecution = require('../execution/txExecution')
 var txFormat = require('../execution/txFormat')
@@ -383,12 +382,9 @@ function settings (appAPI, appEvents) {
   // SETTINGS HTML
   var net = yo`<span class=${css.network}></span>`
   const updateNetwork = () => {
-    detectNetwork((err, { id, name } = {}) => {
+    executionContext.detectNetwork((err, { id, name } = {}) => {
       if (err) console.error(err)
-      console.log(`update network[${id}] name: ${name}`)
-      net.innerHTML = `
-        <i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name}(${id || '-'})
-      `
+      net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name}(${id || '-'})`
     })
   }
   updateNetwork()
