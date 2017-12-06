@@ -32,15 +32,18 @@ class BasicReadOnlyExplorer {
   }
 
   set (path, content, cb) {
+    this.addReadOnly(path, content)
+    if (cb) cb()
     return true
   }
 
   addReadOnly (path, content) {
+    var unprefixedPath = this.removePrefix(path)
     try { // lazy try to format JSON
       content = JSON.stringify(JSON.parse(content), null, '\t')
     } catch (e) {}
-    this.files[this.type + '/' + path] = content
-    this.event.trigger('fileAdded', [this.type + '/' + path, true])
+    this.files[this.type + '/' + unprefixedPath] = content
+    this.event.trigger('fileAdded', [this.type + '/' + unprefixedPath, true])
     return true
   }
 
@@ -100,6 +103,10 @@ class BasicReadOnlyExplorer {
       })
     })
     return tree
+  }
+
+  removePrefix (path) {
+    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
   }
 }
 
