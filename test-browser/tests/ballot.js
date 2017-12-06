@@ -56,12 +56,13 @@ function runTests (browser, testData) {
           done()
         })
       })
+      .click('.runView')
       .click('div[class^="udappClose"]')
       .perform(function (client, done) {
-        contractHelper.addFile(client, 'ballot.abi', ballotABI, () => {
+        contractHelper.addFile(client, 'ballot.abi', { content: ballotABI }, () => {
           contractHelper.addInstance(client, '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a', () => {
-            browser.testFunction('delegate - transact (not payable)', '0x8a0de532559a9c20b98d451b4873bb78ec723c585cb1c170bdcd30ccda0afa76',
-              '[vm] from:0xca3...a733c, to:Ballot.delegate(address) 0x692...77b3a, value:0 wei, data:0x5c1...4d2db, 0 logs, hash:0x8a0...afa76',
+            browser.testFunction('delegate - transact (not payable)', '0x7a9ebc90614274b7eb6b072f9bba7825e588cf88ae00598cfdbc4c215b88433e',
+              '[vm] from:0xca3...a733c, to:Ballot.delegate(address) 0x692...77b3a, value:0 wei, data:0x5c1...4d2db, 0 logs, hash:0x7a9...8433e',
               {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null).perform(() => {
                 done()
                 browser.end()
