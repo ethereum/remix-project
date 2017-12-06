@@ -72,6 +72,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
     optimize.setAttribute('checked', true)
     appAPI.setOptimize(true, false)
   } else {
+    queryParams.update({ optimize: false })
     appAPI.setOptimize(false, false)
   }
 
