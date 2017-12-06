@@ -6,6 +6,7 @@ class BasicReadOnlyExplorer {
     this.event = new EventManager()
     this.files = {}
     this.type = type
+    this.readonly = true
   }
 
   close (cb) {

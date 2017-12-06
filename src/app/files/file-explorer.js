@@ -216,6 +216,7 @@ function fileExplorer (appAPI, files) {
   }
 
   function editModeOn (event) {
+    if (self.files.readonly) return
     var label = this
     var li = getLiFrom(label)
     var classes = li.className
