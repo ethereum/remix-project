@@ -3,6 +3,7 @@ var EventManager = remixLib.EventManager
 var ethutil = require('ethereumjs-util')
 var executionContext = require('./execution-context')
 var format = require('./app/execution/txFormat')
+var txHelper = require('./app/execution/txHelper')
 var async = require('async')
 var modal = require('./app/ui/modal-dialog-custom')
 
@@ -16,7 +17,7 @@ class Recorder {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
-    self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {} }
+    self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {} }
     opts.events.executioncontext.register('contextChanged', () => {
       self.clearAll()
     })
@@ -27,7 +28,7 @@ class Recorder {
 
       // convert to and from to tokens
       if (this.data._listen) {
-        var record = { value, parameters: { definitions: payLoad.funAbi, values: payLoad.funArgs } }
+        var record = { value, parameters: payLoad.funArgs }
         if (!to) {
           var selectedContract = self._api.getSelectedContract()
           if (selectedContract) {
@@ -37,10 +38,17 @@ class Recorder {
             record.contractName = selectedContract.name
             record.bytecode = payLoad.contractBytecode
             self.data._abis[sha3] = abi
+
+            this.data._contractABIReferences[timestamp] = sha3
           }
         } else {
-          record.to = `created-contract{${this.data._createdContracts[to]}}`
+          var creationTimestamp = this.data._createdContracts[to]
+          record.to = `created-contract{${creationTimestamp}}`
+          record.abi = this.data._contractABIReferences[creationTimestamp]
         }
+
+        record.name = payLoad.funAbi.name
+        record.type = payLoad.funAbi.type
 
         self._api.getAccounts((error, accounts) => {
           if (error) return console.log(error)
@@ -93,6 +101,20 @@ class Recorder {
   }
 
   /**
+    * resolve ABI reference from the timestamp
+    *
+    * @param {Object} record
+    *
+    */
+  resolveABIReference (record) {
+    if (record.to) {
+      var timestamp = /created-contract{(.*)}/g.exec(record.to)
+      return this.data._contractABIReferences[timestamp[1]]
+    }
+    return null
+  }
+
+  /**
     * save the given @arg record
     *
     * @param {Number/String} timestamp
@@ -133,6 +155,7 @@ class Recorder {
     self.data._createdContractsReverse = {}
     self.data._usedAccounts = {}
     self.data._abis = {}
+    self.data._contractABIReferences = {}
   }
 
   /**
@@ -149,9 +172,27 @@ class Recorder {
     self.setListen(false)
     async.eachSeries(records, function (tx, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
-      var data = format.encodeData(tx.record.parameters.definitions, tx.record.parameters.values, tx.record.bytecode)
+      var abi = abis[tx.record.abi]
+      if (!abi) {
+        modal.alert('cannot find ABI for ' + tx.record.abi + '.  Execution stopped)')
+        return
+      }
+      var fnABI
+      if (tx.record.type === 'constructor') {
+        fnABI = txHelper.getConstructorInterface(abi)
+      } else {
+        fnABI = txHelper.getFunction(abi, record.name)
+      }
+      if (!fnABI) {
+        modal.alert('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped')
+        cb('cannot resolve abi')
+        return
+      }
+      var data = format.encodeData(fnABI, tx.record.parameters, tx.record.bytecode)
       if (data.error) {
-        modal.alert(data.error)
+        modal.alert(data.error + '. Record:' + JSON.stringify(record, null, '\t'))
+        cb(data.error)
+        return
       } else {
         record.data = data.data
       }
@@ -160,13 +201,11 @@ class Recorder {
           console.error(err)
         } else {
           var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-          if (!address) return // not a contract creation
-          address = addressToString(address)
-          // save back created addresses for the convertion from tokens to real adresses
-          self.data._createdContracts[address] = tx.timestamp
-          self.data._createdContractsReverse[tx.timestamp] = address
-          var abi = abis[tx.record.abi]
-          if (abi) {
+          if (address) {
+            address = addressToString(address)
+            // save back created addresses for the convertion from tokens to real adresses
+            self.data._createdContracts[address] = tx.timestamp
+            self.data._createdContractsReverse[tx.timestamp] = address
             newContractFn(abi, address, record.contractName)
           }
         }
