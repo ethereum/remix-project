@@ -36,7 +36,7 @@ function styleGuide () {
       // PINK
       pink: 'hsla(300, 69%, 76%, 1)',
       lightPink: 'hsla(300, 69%, 76%, .5)',
-      // YELLOW
+      // ORANGE
       orange: 'hsla(44, 100%, 50%, 1)',
       lightOrange: 'hsla(44, 100%, 50%, .5)',
       // VIOLET
@@ -67,11 +67,25 @@ function styleGuide () {
   -------------------------------------------------------------------------- */
 
   var appProperties = {
+
+    /* ------------------------------------------------------
+                          ACE THEME
+    ------------------------------------------------------ */   
+
+    aceTheme: '',
+
     /* ------------------------------------------------------
                           BACKGROUND COLORS
     ------------------------------------------------------ */
     primary_BackgroundColor: cssProperties.colors.white,
     secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
+    
+    tertiary_BackgroundColor: cssProperties.colors.greyBlueNight,
+    quaternary_BackgroundColor: cssProperties.colors.blueGreyEve,
+    fifth_BackgroundColor: cssProperties.colors.bluePruneEve,
+    seventh_BackgroundColor: cssProperties.colors.blueMonday,
+
+
     dark_BackgroundColor: cssProperties.colors.veryLightGrey,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
@@ -86,6 +100,13 @@ function styleGuide () {
     ******************************************************** */
     mainText_Color: cssProperties.colors.black,
     supportText_Color: cssProperties.colors.grey,
+    
+    sub_supportText_Color: cssProperties.colors.greyBlueLight,
+    specialText_Color: cssProperties.colors.greenZing,
+    brightText_Color: cssProperties.colors.blueMascara,
+    oppositeText_Color: cssProperties.colors.black,
+    additionalText_Color: cssProperties.colors.desatGrey,
+
     errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
     infoText_Color: cssProperties.colors.violet,
@@ -93,6 +114,9 @@ function styleGuide () {
                               ICONS
     ******************************************************** */
     icon_Color: cssProperties.colors.black,
+    
+    icon_AltColor: cssProperties.colors.white,
+
     icon_HoverColor: cssProperties.colors.orange,
 
     /* ------------------------------------------------------
