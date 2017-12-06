@@ -1,7 +1,7 @@
 'use strict'
 var EventManager = require('remix-lib').EventManager
 
-class SwarmExplorer {
+class BasicReadOnlyExplorer {
   constructor (type) {
     this.event = new EventManager()
     this.files = {}
@@ -99,4 +99,4 @@ class SwarmExplorer {
   }
 }
 
-module.exports = SwarmExplorer
+module.exports = BasicReadOnlyExplorer
