@@ -99,8 +99,15 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
 }
 
 function addInstance (browser, address, done) {
-  browser.setValue('#ataddressinput', address, function () {
-    browser.click('div[class^="atAddress"]').click('#modal-footer-ok').perform(() => { done() })
+  browser.setValue('.ataddressinput', address, function () {
+    browser.click('div[class^="atAddress"]')
+    .perform((client) => {
+      browser.execute(function () {
+        document.querySelector('#modal-footer-ok').click()
+      }, [], function (result) {
+        done()
+      })
+    })
   })
 }
 
