@@ -36,6 +36,9 @@ class BasicReadOnlyExplorer {
   }
 
   addReadOnly (path, content) {
+    try { // lazy try to format JSON
+      content = JSON.stringify(JSON.parse(content), null, '\t')
+    } catch (e) {}
     this.files[this.type + '/' + path] = content
     this.event.trigger('fileAdded', [this.type + '/' + path, true])
     return true
