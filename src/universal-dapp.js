@@ -277,7 +277,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 }
 
 UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
-  var abi = txHelper.sortAbiFunction(contract)
+  var abi = txHelper.sortAbiFunction(contract.abi)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
 
