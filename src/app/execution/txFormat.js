@@ -8,6 +8,30 @@ var TreeView = require('remix-debugger').ui.TreeView
 var executionContext = require('../../execution-context')
 
 module.exports = {
+
+  /**
+    * build the transaction data
+    *
+    * @param {Object} function abi
+    * @param {Object} values to encode
+    * @param {String} contractbyteCode
+    */
+  encodeData: function (funABI, values, contractbyteCode) {
+    var encoded
+    var encodedHex
+    try {
+      encoded = helper.encodeParams(funABI, values)
+      encodedHex = encoded.toString('hex')
+    } catch (e) {
+      return { error: 'cannot encode arguments' }
+    }
+    if (contractbyteCode) {
+      return { data: contractbyteCode + encodedHex }
+    } else {
+      return { data: Buffer.concat([helper.encodeFunctionId(funABI), encoded]).toString('hex') }
+    }
+  },
+
   /**
     * build the transaction data
     *
@@ -45,7 +69,9 @@ module.exports = {
     if (data.slice(0, 2) === '0x') {
       dataHex = data.slice(2)
     }
+    var contractBytecode
     if (isConstructor) {
+      contractBytecode = contract.evm.bytecode.object
       var bytecodeToDeploy = contract.evm.bytecode.object
       if (bytecodeToDeploy.indexOf('_') >= 0) {
         this.linkBytecode(contract, contracts, udapp, (err, bytecode) => {
@@ -63,7 +89,7 @@ module.exports = {
     } else {
       dataHex = Buffer.concat([helper.encodeFunctionId(funAbi), data]).toString('hex')
     }
-    callback(null, { dataHex, funAbi, funArgs })
+    callback(null, { dataHex, funAbi, funArgs, contractBytecode })
   },
 
   atAddress: function () {},
