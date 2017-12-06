@@ -2,7 +2,9 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var ethutil = require('ethereumjs-util')
 var executionContext = require('./execution-context')
+var format = require('./app/execution/txFormat')
 var async = require('async')
+var modal = require('./app/ui/modal-dialog-custom')
 
 /**
   * Record transaction as long as the user create them.
@@ -22,10 +24,10 @@ class Recorder {
     opts.events.udapp.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
       var { from, to, value } = tx
-      var record = { value, parameters: { definition: payLoad.funAbi, values: payLoad.funArgs } }
 
       // convert to and from to tokens
       if (this.data._listen) {
+        var record = { value, parameters: { definitions: payLoad.funAbi, values: payLoad.funArgs } }
         if (!to) {
           var selectedContract = self._api.getSelectedContract()
           if (selectedContract) {
@@ -33,6 +35,7 @@ class Recorder {
             var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
             record.abi = sha3
             record.contractName = selectedContract.name
+            record.bytecode = payLoad.contractBytecode
             self.data._abis[sha3] = abi
           }
         } else {
@@ -146,7 +149,12 @@ class Recorder {
     self.setListen(false)
     async.eachSeries(records, function (tx, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
-      
+      var data = format.encodeData(tx.record.parameters.definitions, tx.record.parameters.values, tx.record.bytecode)
+      if (data.error) {
+        modal.alert(data.error)
+      } else {
+        record.data = data.data
+      }
       self._api.udapp().rerunTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
