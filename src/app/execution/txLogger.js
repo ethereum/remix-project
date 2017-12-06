@@ -50,10 +50,13 @@ var css = csjs`
     display: flex;
   }
   .debug, .details {
-    color: ${styles.terminal.text_Button};
-    min-width: 55px;
+    ${styles.terminal.button_Log_Debug}
     margin-left: 5px;
-    cursor: pointer;
+    width: 55px;
+    min-width: 55px;
+    min-height: 20px;
+    max-height: 20px;
+    font-size: 11px;
   }
   `
 /**
