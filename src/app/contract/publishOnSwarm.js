@@ -7,10 +7,6 @@ module.exports = (contract, appAPI, cb, swarmVerifiedPublishCallBack) => {
   // gather list of files to publish
   var sources = []
 
-  try {
-    contract.metadata = JSON.stringify(JSON.parse(contract.metadata), null, '\t')
-  } catch (e) {}
-
   sources.push({
     content: contract.metadata,
     hash: contract.metadataHash
