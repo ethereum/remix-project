@@ -156,8 +156,8 @@ function run (self, tx, stamp, callback) {
     self.execute(tx, (error, result) => {
       delete self.pendingTxs[stamp]
       callback(error, result)
-      if (Object.keys(self.pendingTxs).length) {
-        var next = self.pendingTxs.pop()
+      if (self.queusTxs.length) {
+        var next = self.queusTxs.pop()
         run(self, next.tx, next.stamp, next.callback)
       }
     })
