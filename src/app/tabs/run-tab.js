@@ -1,4 +1,3 @@
-/* global confirm */
 'use strict'
 var $ = require('jquery')
 var yo = require('yo-yo')
