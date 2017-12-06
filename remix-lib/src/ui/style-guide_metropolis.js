@@ -24,8 +24,9 @@ function styleGuide () {
       // BLUE
       blue: 'hsla(233, 91%, 36%, 1)',
       lightBlue: 'hsla(202, 91%, 75%, 1)',
-      blueLightTrans: 'hsla(202, 91%, 75%, .4)',
       backgroundBlue: 'hsla(240, 100%, 21%, 1)',
+
+      blueLightTrans: 'hsla(202, 91%, 75%, .4)',
       brightBlue: 'hsla(233, 91%, 58%, 1)',
       blueGreyEve: 'hsla(213, 64%, 65%, 1)',
       bluePruneEve: 'hsla(232, 30%, 20%, 1)',
@@ -35,17 +36,16 @@ function styleGuide () {
       blueMorningGlory: 'hsla(213, 74%, 80%, 1)',
       blueFairyDust: 'hsla(181, 83%, 86%, 1)',
       blueMonday: 'hsla(213, 100%, 16%, 1)',
-
-      greenZing: 'hsla(148, 79%, 47%, 1)',
       
       // GREY
       grey: 'hsla(0, 0%, 40%, 1)',
+      lightGrey: 'hsla(0, 0%, 40%, .5)',
+      veryLightGrey: 'hsla(0, 0%, 40%, .2)',
+
       blueGrey: 'hsla(206, 24%, 58%, .8)',
       greyBlueNight: 'hsla(215, 55%, 18%, 1)',
       greyBlueLight: 'hsla(213, 15%, 58%, 1)',
       greyBlueMed: 'hsla(215, 55%, 28%, 1)',
-      lightGrey: 'hsla(0, 0%, 40%, .5)',
-      veryLightGrey: 'hsla(0, 0%, 40%, .2)',
       desatGrey: 'hsla(173, 17%, 79%, 1)',
       // RED
       strongRed: 'hsla(0, 100%, 71%, 1)',
@@ -54,6 +54,7 @@ function styleGuide () {
       // GREEN
       green: 'hsla(141, 75%, 84%, 1)',
       lightGreen: 'hsla(141, 75%, 84%, .5)',
+      greenZing: 'hsla(148, 79%, 47%, 1)',
       // PINK
       pink: 'hsla(300, 69%, 76%, 1)',
       lightPink: 'hsla(286, 71%, 88%, 1)',
@@ -88,6 +89,9 @@ function styleGuide () {
   -------------------------------------------------------------------------- */
 
   var appProperties = {
+    /* ------------------------------------------------------
+                          ACE THEME
+    ------------------------------------------------------ */   
 
     aceTheme: 'tomorrow_night_blue',
 
@@ -145,7 +149,7 @@ function styleGuide () {
     // Warning
     warning_TextColor: cssProperties.colors.black,
     warning_BackgroundColor: cssProperties.colors.orange,
-    // warning_BorderColor: cssProperties.colors.orange,
+    warning_BorderColor: cssProperties.colors.orange,
 
     // Tooltip
     tooltip_Color: cssProperties.colors.white,

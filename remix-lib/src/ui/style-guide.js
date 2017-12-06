@@ -17,16 +17,18 @@ function styleGuide () {
     colors: {
       // BASIC COLORS (B&W and transparent)
       transparent: 'transparent',
-      white: 'hsla(198, 100%, 97%, 1)',
-      black: 'hsla(240, 100%, 6%, 1)',
-      opacityBlack: 'hsla(240, 100%, 6%, .7)',
+      white: 'hsl(0, 0%, 100%)',
+      black: 'hsl(0, 0%, 0%)',
+      opacityBlack: 'hsla(0, 0%, 0%, .4)',
 
       // BLUE
-      blue: 'hsla(233, 91%, 36%, 1)',
-      lightBlue: 'hsla(202, 91%, 75%, 1)',
+      blue: 'hsla(229, 75%, 87%, 1)',
+      lightBlue: 'hsla(229, 75%, 87%, .5)',
+      backgroundBlue: 'hsla(229, 100%, 97%, 1)',
+
       blueLightTrans: 'hsla(202, 91%, 75%, .4)',
-      backgroundBlue: 'hsla(240, 100%, 21%, 1)',
       brightBlue: 'hsla(233, 91%, 58%, 1)',
+
       blueGreyEve: 'hsla(213, 64%, 65%, 1)',
       bluePruneEve: 'hsla(232, 30%, 20%, 1)',
       blueBerrySmog: 'hsla(286, 15%, 22%, 1)',
@@ -35,31 +37,31 @@ function styleGuide () {
       blueMorningGlory: 'hsla(213, 74%, 80%, 1)',
       blueFairyDust: 'hsla(181, 83%, 86%, 1)',
       blueMonday: 'hsla(213, 100%, 16%, 1)',
-
-      greenZing: 'hsla(148, 79%, 47%, 1)',
       
       // GREY
       grey: 'hsla(0, 0%, 40%, 1)',
+      lightGrey: 'hsla(0, 0%, 40%, .5)',
+      veryLightGrey: 'hsla(0, 0%, 40%, .2)',
+
       blueGrey: 'hsla(206, 24%, 58%, .8)',
       greyBlueNight: 'hsla(215, 55%, 18%, 1)',
       greyBlueLight: 'hsla(213, 15%, 58%, 1)',
       greyBlueMed: 'hsla(215, 55%, 28%, 1)',
-      lightGrey: 'hsla(0, 0%, 40%, .5)',
-      veryLightGrey: 'hsla(0, 0%, 40%, .2)',
       desatGrey: 'hsla(173, 17%, 79%, 1)',
       // RED
       strongRed: 'hsla(0, 100%, 71%, 1)',
       red: 'hsla(0, 82%, 82%, 1)',
-      lightRed: 'hsla(0, 82%, 82%, .8)',
+      lightRed: 'hsla(0, 82%, 82%, .5)',
       // GREEN
       green: 'hsla(141, 75%, 84%, 1)',
       lightGreen: 'hsla(141, 75%, 84%, .5)',
+      greenZing: 'hsla(148, 79%, 47%, 1)',
       // PINK
       pink: 'hsla(300, 69%, 76%, 1)',
       lightPink: 'hsla(286, 71%, 88%, 1)',
-      // YELLOW
-      orange: 'hsla(39, 87%, 50%, 1)',
-      lightOrange: 'hsla(39, 87%, 50%, .5)',
+      // ORANGE
+      orange: 'hsla(44, 100%, 50%, 1)',
+      lightOrange: 'hsla(44, 100%, 50%, .5)',
       // VIOLET
       violet: 'hsla(240, 64%, 68%, 1)',
       lightViolet: 'hsla(240, 64%, 68%, .5)'
@@ -89,17 +91,23 @@ function styleGuide () {
 
   var appProperties = {
 
-    aceTheme: 'tomorrow_night_blue',
+    /* ------------------------------------------------------
+                          ACE THEME
+    ------------------------------------------------------ */   
+
+    aceTheme: '',
 
     /* ------------------------------------------------------
                           BACKGROUND COLORS
     ------------------------------------------------------ */
-    primary_BackgroundColor: cssProperties.colors.black,
+    primary_BackgroundColor: cssProperties.colors.white,
     secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
-    tertiary_BackgroundColor: cssProperties.colors.greyBlueNight,
-    quaternary_BackgroundColor: cssProperties.colors.blueGreyEve,
-    fifth_BackgroundColor: cssProperties.colors.bluePruneEve,
-    seventh_BackgroundColor: cssProperties.colors.blueMonday,
+    
+    tertiary_BackgroundColor: cssProperties.colors.backgroundBlue,
+    quaternary_BackgroundColor: cssProperties.colors.backgroundBlue,
+    fifth_BackgroundColor: cssProperties.colors.backgroundBlue,
+    seventh_BackgroundColor: cssProperties.colors.veryLightGrey,
+    
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
@@ -112,21 +120,24 @@ function styleGuide () {
     /* ------------------------------------------------------
                             TEXT COLORS
     ******************************************************** */
-    mainText_Color: cssProperties.colors.white,
-    supportText_Color: cssProperties.colors.lightBlue,
-    sub_supportText_Color: cssProperties.colors.greyBlueLight,
+    mainText_Color: cssProperties.colors.black,
+    supportText_Color: cssProperties.colors.grey,
+
+    sub_supportText_Color: cssProperties.colors.black,
+    
     specialText_Color: cssProperties.colors.greenZing,
-    brightText_Color: cssProperties.colors.blueMascara,
+    brightText_Color: cssProperties.colors.brightBlue,
     oppositeText_Color: cssProperties.colors.black,
     additionalText_Color: cssProperties.colors.desatGrey,
+
     errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
     infoText_Color: cssProperties.colors.violet,
     /* ------------------------------------------------------
                               ICONS
     ******************************************************** */
-    icon_Color: cssProperties.colors.white,
-    icon_AltColor: cssProperties.colors.black,
+    icon_Color: cssProperties.colors.black,
+    icon_AltColor: cssProperties.colors.white,
     icon_HoverColor: cssProperties.colors.orange,
 
     /* ------------------------------------------------------
@@ -144,8 +155,8 @@ function styleGuide () {
 
     // Warning
     warning_TextColor: cssProperties.colors.black,
-    warning_BackgroundColor: cssProperties.colors.orange,
-    // warning_BorderColor: cssProperties.colors.orange,
+    warning_BackgroundColor: cssProperties.colors.lightOrange,
+    warning_BorderColor: cssProperties.colors.orange,
 
     // Tooltip
     tooltip_Color: cssProperties.colors.white,
@@ -157,7 +168,7 @@ function styleGuide () {
     ******************************************************** */
     dropdown_TextColor: cssProperties.colors.black,
     dropdown_BackgroundColor: cssProperties.colors.white,
-    dropdown_SecondaryBackgroundColor: cssProperties.colors.blueMorningGlory,
+    dropdown_SecondaryBackgroundColor: cssProperties.colors.white,
     dropdown_BorderColor: cssProperties.colors.veryLightGrey,
 
     /* ------------------------------------------------------
@@ -170,15 +181,15 @@ function styleGuide () {
     /* ------------------------------------------------------
                       SOLID BORDER BOX
     ******************************************************** */
-    solidBorderBox_TextColor: cssProperties.colors.white,
-    solidBorderBox_BackgroundColor: cssProperties.colors.black,
+    solidBorderBox_TextColor: cssProperties.colors.black,
+    solidBorderBox_BackgroundColor: cssProperties.colors.white,
     solidBorderBox_BorderColor: cssProperties.colors.lightBlue,
 
     /* ------------------------------------------------------
                       SOLID BOX
     ******************************************************** */
-    solidBox_TextColor: cssProperties.colors.white,
-    solidBox_BackgroundColor: cssProperties.colors.black,
+    solidBox_TextColor: cssProperties.colors.black,
+    solidBox_BackgroundColor: cssProperties.colors.white,
 
     /* ------------------------------------------------------
                           BUTTONS
@@ -195,7 +206,7 @@ function styleGuide () {
           SECONDARY
     .................. */
     secondaryButton_TextColor: cssProperties.colors.black,
-    secondaryButton_BackgroundColor: cssProperties.colors.lightBlue,
+    secondaryButton_BackgroundColor: cssProperties.colors.veryLightGrey,
     secondaryButton_BorderColor: cssProperties.colors.veryLightGrey,
 
     /* .................
@@ -210,7 +221,7 @@ function styleGuide () {
           Quaternary
     .................. */
     quaternaryButton_TextColor: cssProperties.colors.black,
-    quaternaryButton_BackgroundColor: cssProperties.colors.blueMascara,
+    quaternaryButton_BackgroundColor: cssProperties.colors.white,
     quaternaryButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
 
@@ -269,13 +280,13 @@ function styleGuide () {
 
     // TRANSACTION
     transactButton_TextColor: cssProperties.colors.black,
-    transactButton_BackgroundColor: cssProperties.colors.blueFairyDust,
+    transactButton_BackgroundColor: cssProperties.colors.lightRed,
     transactButton_BorderColor: cssProperties.colors.lightRed,
 
     // CONSTANT
     constantButton_TextColor: cssProperties.colors.black,
-    constantButton_BackgroundColor: cssProperties.colors.greenZing,
-    constantButton_BorderColor: cssProperties.colors.greenZing,
+    constantButton_BackgroundColor: cssProperties.colors.lightBlue,
+    constantButton_BorderColor: cssProperties.colors.lightBlue,
 
     // PAYABLE TRANSACTION
     transactPayableButton_TextColor: cssProperties.colors.black,
@@ -384,8 +395,8 @@ function styleGuide () {
                             REMIX GENERAL
     /* ------------------------------------------------------ */
     remix: {
-      modalDialog_BackgroundColor_Primary: appProperties.fifth_BackgroundColor,
-      modalDialog_text_Primary: appProperties.additionalText_Color,
+      modalDialog_BackgroundColor_Primary: appProperties.primary_BackgroundColor,
+      modalDialog_text_Primary: appProperties.mainText_Color,
       modalDialog_text_Secondary: appProperties.supportText_Color,
       modalDialog_text_Link: appProperties.brightText_Color,
       modalDialog_text_Em: appProperties.specialText_Color,
@@ -500,9 +511,9 @@ function styleGuide () {
                               RIGHT PANEL
     /* ------------------------------------------------------ */
     rightPanel: {
-      backgroundColor_Panel: appProperties.seventh_BackgroundColor,
-      backgroundColor_Tab: appProperties.seventh_BackgroundColor,
-      BackgroundColor_Pre: appProperties.dark_BackgroundColor,
+      backgroundColor_Panel: appProperties.fifth_BackgroundColor,
+      backgroundColor_Tab: appProperties.fifth_BackgroundColor,
+      BackgroundColor_Pre: appProperties.primary_BackgroundColor,
 
       text_Primary: appProperties.mainText_Color,
       text_Secondary: appProperties.supportText_Color,
@@ -672,7 +683,7 @@ function styleGuide () {
         }),
 
         button_Debugger: appProperties.uiElements.button({
-          BackgroundColor: appProperties.teriaryButton_BackgroundColor,
+          BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
           Color: appProperties.secondaryButton_TextColor
         }),
