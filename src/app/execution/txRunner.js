@@ -6,14 +6,16 @@ var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 
 function TxRunner (vmaccounts, opts) {
-  this.queueTxs = opts.queueTxs
   this.personalMode = opts.personalMode
   this.blockNumber = 0
+  this.runAsync = true
   if (executionContext.isVM()) {
     this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
+    this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
   }
   this.pendingTxs = {}
   this.vmaccounts = vmaccounts
+  this.queusTxs = []
 }
 
 TxRunner.prototype.rawRun = function (args, cb) {
@@ -147,11 +149,19 @@ function tryTillResponse (txhash, done) {
 }
 
 function run (self, tx, stamp, callback) {
-  self.pendingTxs[stamp] = tx
-  self.execute(tx, (error, result) => {
-    delete self.pendingTxs[stamp]
-    callback(error, result)
-  })
+  if (!self.runAsync && Object.keys(self.pendingTxs).length) {
+    self.queusTxs.push({ tx, stamp, callback })
+  } else {
+    self.pendingTxs[stamp] = tx
+    self.execute(tx, (error, result) => {
+      delete self.pendingTxs[stamp]
+      callback(error, result)
+      if (Object.keys(self.pendingTxs).length) {
+        var next = self.pendingTxs.pop()
+        run(self, next.tx, next.stamp, next.callback)
+      }
+    })
+  }
 }
 
 module.exports = TxRunner
