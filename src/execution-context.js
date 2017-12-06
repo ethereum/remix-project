@@ -74,6 +74,8 @@ vm.stateManager.checkpoint()
 var web3VM = new Web3VMProvider()
 web3VM.setVM(vm)
 
+var mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -108,6 +110,14 @@ function ExecutionContext () {
         else if (id === '4') name = 'Rinkeby'
         else if (id === '42') name = 'Kovan'
         else name = 'Custom'
+
+        if (id === '1') {
+          this.web3().eth.getBlock(0, (error, block) => {
+            if (error) console.log('cant query first block')
+            if (block && block.hash !== mainNetGenesisHash) name = 'Custom'
+            callback(err, { id, name })
+          })
+        }
         callback(err, { id, name })
       })
     }
