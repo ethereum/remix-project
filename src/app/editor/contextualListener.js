@@ -37,6 +37,13 @@ class ContextualListener {
     }, 1000)
   }
 
+  getActiveHighlights () {
+    return [...this._activeHighlights]
+    // return [...this._activeHighlights].sort((a,b) => {
+    //   return a.position.start - b.position.start
+    // })
+  }
+
   declarationOf (node) {
     if (node.attributes && node.attributes.referencedDeclaration) {
       return this._index['FlatReferences'][node.attributes.referencedDeclaration]
@@ -60,10 +67,10 @@ class ContextualListener {
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
-      this.event.trigger('contextChanged', [nodes])
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
+      this.event.trigger('contextChanged', [nodes])
     }
   }
 
@@ -92,7 +99,7 @@ class ContextualListener {
     var position = this.sourceMappingDecoder.decode(node.src)
     var eventId = this._api.highlight(position, node)
     if (eventId) {
-      this._activeHighlights.push({ eventId, position, fileTarget: this._api.getSourceName(position.file) })
+      this._activeHighlights.push({ eventId, position, fileTarget: this._api.getSourceName(position.file), nodeId: node.id })
     }
   }
 
@@ -113,6 +120,7 @@ class ContextualListener {
       this._highlight(current, compilationResult)
     } else {
       highlights(node.id)
+      this._highlight(node, compilationResult)
     }
   }
 

@@ -6,6 +6,7 @@ var csjs = require('csjs-inject')
 var ace = require('brace')
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
+require('brace/ext/searchbox')
 var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
 var styleGuide = remixLib.ui.styleGuide
@@ -225,6 +226,8 @@ function Editor (opts = {}) {
     editor.gotoLine(line + 1, col - 1, true)
   }
 
+  this.find = (string) => editor.find(string)
+
   // Do setup on initialisation here
   editor.on('changeSession', function () {
     event.trigger('sessionSwitched', [])
@@ -236,7 +239,6 @@ function Editor (opts = {}) {
 
   // Unmap ctrl-t & ctrl-f
   editor.commands.bindKeys({ 'ctrl-t': null })
-  editor.commands.bindKeys({ 'ctrl-f': null })
 
   editor.resize(true)
 }
