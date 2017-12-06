@@ -383,8 +383,12 @@ function settings (appAPI, appEvents) {
   var net = yo`<span class=${css.network}></span>`
   const updateNetwork = () => {
     executionContext.detectNetwork((err, { id, name } = {}) => {
-      if (err) console.error(err)
-      net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+      if (err) {
+        console.error(err)
+        net.innerHTML = 'can\'t detect network '
+      } else {
+        net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+      }
     })
   }
   setInterval(updateNetwork, 5000)
