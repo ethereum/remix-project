@@ -59,6 +59,7 @@ class ContextView {
     this._nodes
     this._current
     this.sourceMappingDecoder = new SourceMappingDecoder()
+    this.previousElement = null
     event.contextualListener.register('contextChanged', nodes => {
       this._nodes = nodes
       this.update()
@@ -98,7 +99,7 @@ class ContextView {
   }
 
   _renderTarget () {
-    this._current = null
+    var previous = this._current
     if (this._nodes && this._nodes.length) {
       var last = this._nodes[this._nodes.length - 1]
       if (isDefinition(last)) {
@@ -107,18 +108,40 @@ class ContextView {
         var target = this._api.contextualListener.declarationOf(last)
         if (target) {
           this._current = target
+        } else {
+          this._current = last
         }
       }
     }
-    return this._render(this._current)
+    if (!this._current || !previous || previous.id !== this._current.id) {
+      this.previousElement = this._render(this._current, last)
+    }
+    return this.previousElement
   }
 
-  _render (node) {
+  _render (node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
     var self = this
     var references = this._api.contextualListener.referencesOf(node)
     var type = node.attributes.type ? node.attributes.type : node.name
     references = `${references ? references.length : '0'} reference(s)`
+
+    var ref = 0
+    var nodes = self._api.contextualListener.getActiveHighlights()
+    for (var k in nodes) {
+      if (nodeAtCursorPosition.id === nodes[k].nodeId) {
+        ref = k
+        break
+      }
+    }
+
+    // JUMP BETWEEN REFERENCES
+    function jump (e) {
+      e.target.dataset.action === 'next' ? ref++ : ref--
+      if (ref < 0) ref = nodes.length - 1
+      if (ref >= nodes.length) ref = 0
+      self._api.jumpTo(nodes[ref].position)
+    }
 
     function jumpTo () {
       if (node && node.src) {
@@ -128,42 +151,6 @@ class ContextView {
         }
       }
     }
-
-    // JUMP BETWEEN REFERENCES
-    function jump (e) {
-      var nodes = self._api.contextualListener.getActiveHighlights()
-      var searchTerm = node.attributes.name
-      var currentAction = e.target.dataset.action
-
-      if (currentAction === 'next') {
-        next(searchTerm, nodes, currentAction)
-      } else if (currentAction === 'previous') {
-        previous(searchTerm, nodes, currentAction)
-      }
-
-      self.refName = searchTerm
-      self.action = currentAction
-    }
-
-    function next (searchTerm, nodes, currentAction) {
-      if (searchTerm !== self.refName) self.ref = 0
-      if (currentAction !== self.action) self.ref = (nodes.length - 1) - self.ref // adapting self.ref to switching between previous() and next()
-      self.ref = (self.ref + 1) % nodes.length
-      self._api.jumpTo(getPos(nodes, self.ref))
-    }
-
-    function previous (searchTerm, nodes, currentAction) {
-      if (searchTerm !== self.refName) self.ref = nodes.length - 1
-      if (currentAction !== self.action) self.ref = (nodes.length - 1) - self.ref // adapting self.ref to switching between previous() and next()
-      self.ref = (self.ref + 1) % nodes.length
-      self._api.jumpTo(getPos(nodes, nodes.length - 1 - self.ref))
-    }
-
-    function getPos (nodes, k) {
-      var i = (k + (nodes.length - 1)) % nodes.length // to get to nodes[0] position, jumpTo function needs nodes[node.length-1], for nodes[1], jumpTo(nodes[0].position) etc.
-      return nodes[i].position
-    }
-
 
     return yo`<div class=${css.line}>
       <div title=${type} class=${css.type}>${type}</div>
