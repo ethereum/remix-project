@@ -54,7 +54,20 @@ function runTests (browser, testData) {
       .perform(function (client, done) {
         contractHelper.checkDebug(browser, 'soliditylocals', localsCheck, () => {
           done()
-          browser.end()
+        })
+      })
+      .click('.runView')
+      .click('div[class^="udappClose"]')
+      .perform(function (client, done) {
+        contractHelper.addFile(client, 'ballot.abi', { content: ballotABI }, () => {
+          contractHelper.addInstance(client, '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a', () => {
+            browser.testFunction('delegate - transact (not payable)', '0x7a9ebc90614274b7eb6b072f9bba7825e588cf88ae00598cfdbc4c215b88433e',
+              '[vm] from:0xca3...a733c, to:Ballot.delegate(address) 0x692...77b3a, value:0 wei, data:0x5c1...4d2db, 0 logs, hash:0x7a9...8433e',
+              {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null).perform(() => {
+                done()
+                browser.end()
+              })
+          })
         })
       })
   })
@@ -117,3 +130,5 @@ var stateCheck = {
     'constant': false
   }
 }
+
+var ballotABI = '[{"constant":false,"inputs":[{"name":"to","type":"address"}],"name":"delegate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"winningProposal","outputs":[{"name":"_winningProposal","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"toVoter","type":"address"}],"name":"giveRightToVote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"toProposal","type":"uint8"}],"name":"vote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_numProposals","type":"uint8"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]'

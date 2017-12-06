@@ -277,11 +277,16 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
   }
 }
 
+UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
+  var abi = txHelper.sortAbiFunction(contract.abi)
+  return this.renderInstanceFromABI(abi, address, contractName)
+}
+
 // TODO this function was named before "appendChild".
 // this will render an instance: contract name, contract address, and all the public functions
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
-UniversalDApp.prototype.renderInstance = function (contract, address, contractName) {
+UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
   var self = this
 
   function remove () { instance.remove() }
@@ -305,7 +310,7 @@ UniversalDApp.prototype.renderInstance = function (contract, address, contractNa
     $(instance).toggleClass(`${css.hidesub}`)
   }
 
-  var abi = txHelper.sortAbiFunction(contract)
+  var abi = txHelper.sortAbiFunction(contractABI)
 
   instance.appendChild(title)
 

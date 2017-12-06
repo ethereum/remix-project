@@ -538,6 +538,12 @@ function run () {
     getSource: (fileName) => {
       return compiler.getSource(fileName)
     },
+    editorContent: () => {
+      return editor.get(editor.current())
+    },
+    currentFile: () => {
+      return config.get('currentFile')
+    },
     getContracts: () => {
       return compiler.getContracts()
     },
@@ -687,22 +693,26 @@ function run () {
     if (transactionDebugger.isActive) return
 
     fileManager.saveCurrentFile()
+    editor.clearAnnotations()
     var currentFile = config.get('currentFile')
     if (currentFile) {
-      var target = currentFile
-      var sources = {}
-      var provider = fileManager.fileProviderOf(currentFile)
-      if (provider) {
-        provider.get(target, (error, content) => {
-          if (error) {
-            console.log(error)
-          } else {
-            sources[target] = { content }
-            compiler.compile(sources, target)
-          }
-        })
-      } else {
-        console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
+      if (/.(.sol)$/.exec(currentFile)) {
+        // only compile *.sol file.
+        var target = currentFile
+        var sources = {}
+        var provider = fileManager.fileProviderOf(currentFile)
+        if (provider) {
+          provider.get(target, (error, content) => {
+            if (error) {
+              console.log(error)
+            } else {
+              sources[target] = { content }
+              compiler.compile(sources, target)
+            }
+          })
+        } else {
+          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
+        }
       }
     }
   }
@@ -756,10 +766,6 @@ function run () {
     if (queryParams.get().debugtx) {
       startdebugging(queryParams.get().debugtx)
     }
-  })
-
-  compiler.event.register('compilationStarted', this, function () {
-    editor.clearAnnotations()
   })
 
   function startdebugging (txHash) {
