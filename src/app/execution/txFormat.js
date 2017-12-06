@@ -63,7 +63,7 @@ module.exports = {
     } else {
       dataHex = Buffer.concat([helper.encodeFunctionId(funAbi), data]).toString('hex')
     }
-    callback(null, dataHex)
+    callback(null, { dataHex, funAbi, funArgs })
   },
 
   atAddress: function () {},

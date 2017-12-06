@@ -475,9 +475,10 @@ UniversalDApp.prototype.rerunTx = function (args, cb) {
 
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
-  var tx = { to: args.to, data: args.data, useCall: args.useCall }
+  var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall }
+  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs } // contains decoded parameters
   var pipeline = [queryGasLimit, queryValue, queryAddress, runTransaction]
-  var env = { self, args, tx }
+  var env = { self, args, tx, payLoad }
   execute(pipeline, env, cb)
 }
 
@@ -528,14 +529,14 @@ function queryAddress (env, next) {
 }
 
 function runTransaction (env, next) {
-  var { self, args, tx } = env
+  var { self, args, tx, payLoad } = env
   var timestamp = Date.now()
-  self.event.trigger('initiatingTransaction', [timestamp, tx])
+  self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
   self.txRunner.rawRun(tx, function (error, result) {
     if (!args.useCall) {
-      self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result, timestamp])
+      self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result, timestamp, payLoad])
     } else {
-      self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result, timestamp])
+      self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result, timestamp, payLoad])
     }
     if (error) {
       if (typeof (error) !== 'string') {
