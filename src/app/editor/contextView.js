@@ -109,7 +109,7 @@ class ContextView {
         if (target) {
           this._current = target
         } else {
-          this._current = last
+          this._current = null
         }
       }
     }
@@ -123,7 +123,7 @@ class ContextView {
     if (!node) return yo`<div></div>`
     var self = this
     var references = this._api.contextualListener.referencesOf(node)
-    var type = node.attributes.type ? node.attributes.type : node.name
+    var type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
     references = `${references ? references.length : '0'} reference(s)`
 
     var ref = 0
