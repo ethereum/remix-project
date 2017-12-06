@@ -99,7 +99,7 @@ class ContextualListener {
     var position = this.sourceMappingDecoder.decode(node.src)
     var eventId = this._api.highlight(position, node)
     if (eventId) {
-      this._activeHighlights.push({ eventId, position, fileTarget: this._api.getSourceName(position.file) })
+      this._activeHighlights.push({ eventId, position, fileTarget: this._api.getSourceName(position.file), nodeId: node.id })
     }
   }
 
