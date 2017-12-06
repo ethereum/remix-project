@@ -384,7 +384,7 @@ function settings (appAPI, appEvents) {
   const updateNetwork = () => {
     executionContext.detectNetwork((err, { id, name } = {}) => {
       if (err) console.error(err)
-      net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name}(${id || '-'})`
+      net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
     })
   }
   setInterval(updateNetwork, 5000)
