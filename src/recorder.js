@@ -14,17 +14,15 @@ class Recorder {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
-    self.data = { _listen: true, _replay: false, journal: [], _pendingTxs: {}, _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {} }
+    self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {} }
     opts.events.executioncontext.register('contextChanged', () => {
       self.clearAll()
     })
 
-    opts.events.udapp.register('initiatingTransaction', (timestamp, tx) => {
+    opts.events.udapp.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
-      var { from, to, value, data } = tx
-      var record = { value, data }
-
-      this.data._pendingTxs[timestamp] = tx
+      var { from, to, value } = tx
+      var record = { value, parameters: { definition: payLoad.funAbi, values: payLoad.funArgs } }
 
       // convert to and from to tokens
       if (this.data._listen) {
@@ -128,7 +126,6 @@ class Recorder {
   clearAll () {
     var self = this
     self.data.journal = []
-    self.data._pendingTxs = {}
     self.data._createdContracts = {}
     self.data._createdContractsReverse = {}
     self.data._usedAccounts = {}
@@ -149,6 +146,7 @@ class Recorder {
     self.setListen(false)
     async.eachSeries(records, function (tx, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
+      
       self._api.udapp().rerunTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
