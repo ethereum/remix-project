@@ -67,10 +67,10 @@ class ContextualListener {
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
-      this.event.trigger('contextChanged', [nodes])
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
+      this.event.trigger('contextChanged', [nodes])
     }
   }
 
