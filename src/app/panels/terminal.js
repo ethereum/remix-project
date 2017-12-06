@@ -328,6 +328,11 @@ class Terminal {
     var placeholder = yo`<div class=${css2.anchor}>${background}${text}</div>`
     var inserted = false
 
+    window.addEventListener('resize', function (event) {
+      self.event.trigger('resize', [])
+      self.event.trigger('resize', [])
+    })
+
     function focusinput (event) {
       if (self._view.journal.offsetHeight - (self._view.term.scrollTop + self._view.term.offsetHeight) < 50) {
         refocus()
