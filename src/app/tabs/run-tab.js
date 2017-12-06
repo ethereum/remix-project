@@ -570,6 +570,15 @@ function settings (container, appAPI, appEvents) {
     </div>
   `
 
+  setTimeout(function () {
+    var select = document.querySelector('#selectExEnvOptions')
+    var optionVMindex = 0
+    if (appAPI.config.get('settings/always-use-vm')) {
+      // select.options[optionVMindex].selected = true
+      select.selectedIndex = optionVMindex
+    }
+  }, 0)
+
   // EVENTS
   appEvents.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
     if (error) return

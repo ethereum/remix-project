@@ -43,6 +43,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
 
   var queryParams = new QueryParams()
 
+  var optionVM = yo`<input class="${css.col1}" id="alwaysUseVM" type="checkbox">`
   var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
       <div class="${css.info}">
@@ -57,6 +58,10 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <span class="${css.checkboxText}">Text Wrap</span>
       </div>
       <div class="${css.crow}">
+        <div>${optionVM}</div>
+        <span class="${css.checkboxText}">Always use VM</span>
+      </div>
+      <div class="${css.crow}">
         <div><input class="${css.col1}" id="optimize" type="checkbox"></div>
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
@@ -65,6 +70,11 @@ function SettingsTab (container, appAPI, appEvents, opts) {
 
   appEvents.compiler.register('compilerLoaded', (version) => {
     setVersionText(version, el)
+  })
+
+  optionVM.checked = appAPI.config.get('settings/always-use-vm') || false
+  optionVM.addEventListener('change', event => {
+    appAPI.config.set('settings/always-use-vm', !appAPI.config.get('settings/always-use-vm'))
   })
 
   var optimize = el.querySelector('#optimize')
