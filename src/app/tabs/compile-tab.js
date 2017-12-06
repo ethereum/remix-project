@@ -436,6 +436,9 @@ function compileTab (container, appAPI, appEvents, opts) {
             } else {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br />The Swarm address of the metadata file is available in the contract details.</span>`)
             }
+          }, function (item) {
+            // triggered each time there's a new verified publish (means hash correspond)
+            appAPI.fileProvider('swarm').addReadOnly(item.hash, item.content)
           })
         }
       }

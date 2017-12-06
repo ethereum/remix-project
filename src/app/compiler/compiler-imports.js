@@ -8,7 +8,7 @@ module.exports = {
     return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
       .done(function (data) {
         if ('content' in data) {
-          cb(null, base64.decode(data.content))
+          cb(null, base64.decode(data.content), root + '/' + path)
         } else {
           cb('Content not received')
         }
@@ -21,7 +21,7 @@ module.exports = {
 
   handleSwarmImport: function (url, cb) {
     swarmgw.get(url, function (err, content) {
-      cb(err, content)
+      cb(err, content, url)
     })
   },
 
@@ -31,7 +31,7 @@ module.exports = {
 
     return $.ajax({ type: 'GET', url: 'https://gateway.ipfs.io/' + url })
       .done(function (data) {
-        cb(null, data)
+        cb(null, data, url)
       })
       .fail(function (xhr, text, err) {
         // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
@@ -41,9 +41,9 @@ module.exports = {
 
   import: function (url, cb) {
     var handlers = [
-      { match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
-      { match: /^(bzz[ri]?:\/\/?.*)$/, handler: (match, cb) => { this.handleSwarmImport(match[1], cb) } },
-      { match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
+      { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
+      { type: 'swarm', match: /^(bzz[ri]?:\/\/?.*)$/, handler: (match, cb) => { this.handleSwarmImport(match[1], cb) } },
+      { type: 'ipfs', match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
     ]
 
     var found = false
@@ -57,13 +57,13 @@ module.exports = {
         found = true
 
         $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
-        handler.handler(match, function (err, content) {
+        handler.handler(match, function (err, content, cleanUrl) {
           if (err) {
-            cb('Unable to import "' + url + '": ' + err)
+            cb('Unable to import "' + cleanUrl + '": ' + err)
             return
           }
 
-          cb(null, content)
+          cb(null, content, cleanUrl, handler.type)
         })
       }
     })
