@@ -117,8 +117,9 @@ function ExecutionContext () {
             if (block && block.hash !== mainNetGenesisHash) name = 'Custom'
             callback(err, { id, name })
           })
+        } else {
+          callback(err, { id, name })
         }
-        callback(err, { id, name })
       })
     }
   }
