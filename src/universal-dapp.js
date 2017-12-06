@@ -476,7 +476,7 @@ UniversalDApp.prototype.rerunTx = function (args, cb) {
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall }
-  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs } // contains decoded parameters
+  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode } // contains decoded parameters
   var pipeline = [queryGasLimit, queryValue, queryAddress, runTransaction]
   var env = { self, args, tx, payLoad }
   execute(pipeline, env, cb)
