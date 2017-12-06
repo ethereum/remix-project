@@ -95,18 +95,22 @@ function ExecutionContext () {
   }
 
   this.detectNetwork = function (callback) {
-    this.web3().version.getNetwork((err, id) => {
-      var name = null
-      if (err) name = 'Unknown'
-      // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
-      else if (id === '1') name = 'Main'
-      else if (id === '2') name = 'Morden (deprecated)'
-      else if (id === '3') name = 'Ropsten'
-      else if (id === '4') name = 'Rinkeby'
-      else if (id === '42') name = 'Kovan'
-      else name = 'Unknown'
-      callback(err, { id, name })
-    })
+    if (this.isVM()) {
+      callback(null, { id: '-', name: 'VM' })
+    } else {
+      this.web3().version.getNetwork((err, id) => {
+        var name = null
+        if (err) name = 'Unknown'
+        // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+        else if (id === '1') name = 'Main'
+        else if (id === '2') name = 'Morden (deprecated)'
+        else if (id === '3') name = 'Ropsten'
+        else if (id === '4') name = 'Rinkeby'
+        else if (id === '42') name = 'Kovan'
+        else name = 'Custom'
+        callback(err, { id, name })
+      })
+    }
   }
 
   this.internalWeb3 = function () {
