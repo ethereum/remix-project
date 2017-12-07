@@ -1,11 +1,12 @@
 'use strict'
 var EventManager = require('remix-lib').EventManager
 
-class SwarmExplorer {
+class BasicReadOnlyExplorer {
   constructor (type) {
     this.event = new EventManager()
     this.files = {}
     this.type = type
+    this.readonly = true
   }
 
   close (cb) {
@@ -31,12 +32,18 @@ class SwarmExplorer {
   }
 
   set (path, content, cb) {
+    this.addReadOnly(path, content)
+    if (cb) cb()
     return true
   }
 
   addReadOnly (path, content) {
-    this.files[this.type + '/' + path] = content
-    this.event.trigger('fileAdded', [this.type + '/' + path, true])
+    var unprefixedPath = this.removePrefix(path)
+    try { // lazy try to format JSON
+      content = JSON.stringify(JSON.parse(content), null, '\t')
+    } catch (e) {}
+    this.files[this.type + '/' + unprefixedPath] = content
+    this.event.trigger('fileAdded', [this.type + '/' + unprefixedPath, true])
     return true
   }
 
@@ -97,6 +104,10 @@ class SwarmExplorer {
     })
     return tree
   }
+
+  removePrefix (path) {
+    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
+  }
 }
 
-module.exports = SwarmExplorer
+module.exports = BasicReadOnlyExplorer

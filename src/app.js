@@ -409,14 +409,16 @@ function run () {
   })
 
   // Add files received from remote instance (i.e. another browser-solidity)
-  function loadFiles (filesSet) {
+  function loadFiles (filesSet, fileProvider) {
+    if (!fileProvider) fileProvider = 'browser'
+
     for (var f in filesSet) {
-      var name = helper.createNonClashingName(f, filesProviders['browser'])
+      var name = helper.createNonClashingName(f, filesProviders[fileProvider])
       if (helper.checkSpecialChars(name)) {
         modalDialogCustom.alert('Special characters are not allowed')
         return
       }
-      filesProviders['browser'].set(name, filesSet[f].content)
+      filesProviders[fileProvider].set(name, filesSet[f].content)
     }
     fileManager.switchFile()
   }
@@ -444,7 +446,7 @@ function run () {
             modalDialogCustom.alert('Gist load error: ' + response.data.message)
             return
           }
-          loadFiles(response.data.files)
+          loadFiles(response.data.files, 'gist')
         }
       }
     })
