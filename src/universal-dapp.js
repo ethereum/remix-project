@@ -381,7 +381,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
         logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
       }
     }
-    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.value, self, (error, data) => {
+    txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, inputField.value, self, (error, data) => {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
@@ -467,7 +467,7 @@ function execute (pipeline, env, callback) {
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
-  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode } // contains decoded parameters
+  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName } // contains decoded parameters
   var pipeline = [queryGasLimit]
   if (!args.value) {
     pipeline.push(queryValue)

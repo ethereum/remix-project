@@ -35,6 +35,7 @@ module.exports = {
   /**
     * build the transaction data
     *
+    * @param {String} contractName
     * @param {Object} contract    - abi definition of the current contract.
     * @param {Object} contracts    - map of all compiled contracts.
     * @param {Bool} isConstructor    - isConstructor.
@@ -44,7 +45,7 @@ module.exports = {
     * @param {Function} callback    - callback
     * @param {Function} callbackStep  - callbackStep
     */
-  buildData: function (contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
+  buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
     var funArgs = ''
     try {
       funArgs = $.parseJSON('[' + params + ']')
@@ -79,7 +80,7 @@ module.exports = {
             callback('Error deploying required libraries: ' + err)
           } else {
             bytecodeToDeploy = bytecode + dataHex
-            return callback(null, { dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode })
+            return callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode, contractName: contractName})
           }
         }, callbackStep)
         return
@@ -89,7 +90,7 @@ module.exports = {
     } else {
       dataHex = Buffer.concat([helper.encodeFunctionId(funAbi), data]).toString('hex')
     }
-    callback(null, { dataHex, funAbi, funArgs, contractBytecode })
+    callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractName: contractName })
   },
 
   atAddress: function () {},
@@ -116,7 +117,7 @@ module.exports = {
     if (!library) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryName, library, contracts, udapp, (err, address) => {
+    this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, (err, address) => {
       if (err) {
         return callback(err)
       }
@@ -130,7 +131,7 @@ module.exports = {
     }, callbackStep)
   },
 
-  deployLibrary: function (libraryName, library, contracts, udapp, callback, callbackStep) {
+  deployLibrary: function (libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep) {
     var address = library.address
     if (address) {
       return callback(null, address)
@@ -139,11 +140,11 @@ module.exports = {
     if (bytecode.indexOf('_') >= 0) {
       this.linkBytecode(libraryName, contracts, udapp, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, library, contracts, udapp, callback, callbackStep)
+        else this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep)
       }, callbackStep)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
-      var data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode}
+      var data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName}
       udapp.runTx({ data: data, useCall: false }, (err, txResult) => {
         if (err) {
           return callback(err)
