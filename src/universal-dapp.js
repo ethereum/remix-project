@@ -432,7 +432,6 @@ UniversalDApp.prototype.getCallButton = function (args) {
   if (lookupOnly) {
     contractProperty.classList.add(css.constant)
     button.setAttribute('title', (title + ' - call'))
-    call(false)
   }
 
   if (args.funABI.inputs && args.funABI.inputs.length > 0) {
