@@ -156,16 +156,19 @@ module.exports = {
     }
   },
 
-  linkLibraryStandard: function (libraryName, address, contract) {
-    var bytecode = contract.evm.bytecode.object
-    for (var file in contract.evm.bytecode.linkReferences) {
-      for (var libName in contract.evm.bytecode.linkReferences[file]) {
+  linkLibraryStandardFromlinkReferences: function (libraryName, address, bytecode, linkReferences) {
+    for (var file in linkReferences) {
+      for (var libName in linkReferences[file]) {
         if (libraryName === libName) {
-          bytecode = this.setLibraryAddress(address, bytecode, contract.evm.bytecode.linkReferences[file][libName])
+          bytecode = this.setLibraryAddress(address, bytecode, linkReferences[file][libName])
         }
       }
     }
     return bytecode
+  },
+
+  linkLibraryStandard: function (libraryName, address, contract) {
+    return this.linkLibraryStandardFromlinkReferences(libraryName, address, contract.evm.bytecode.object, contract.evm.bytecode.linkReferences)
   },
 
   setLibraryAddress: function (address, bytecodeToLink, positions) {
