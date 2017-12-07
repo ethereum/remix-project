@@ -143,7 +143,8 @@ module.exports = {
       }, callbackStep)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
-      udapp.runTx({ data: bytecode, useCall: false }, (err, txResult) => {
+      var data = {dataHex: bytecode}
+      udapp.runTx({ data: data, useCall: false }, (err, txResult) => {
         if (err) {
           return callback(err)
         }

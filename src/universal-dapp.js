@@ -527,14 +527,14 @@ function queryAddress (env, next) {
 }
 
 function runTransaction (env, next) {
-  var { self, args, tx, payLoad } = env
+  var { self, tx, payLoad } = env
   var timestamp = Date.now()
   self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
   self.txRunner.rawRun(tx, function (error, result) {
-    if (!args.useCall) {
-      self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result, timestamp, payLoad])
+    if (!tx.useCall) {
+      self.event.trigger('transactionExecuted', [error, tx.from, tx.to, tx.data, false, result, timestamp, payLoad])
     } else {
-      self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result, timestamp, payLoad])
+      self.event.trigger('callExecuted', [error, tx.from, tx.to, tx.data, true, result, timestamp, payLoad])
     }
     if (error) {
       if (typeof (error) !== 'string') {
