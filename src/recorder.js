@@ -17,7 +17,7 @@ class Recorder {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
-    self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {} }
+    self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
     opts.events.executioncontext.register('contextChanged', () => {
       self.clearAll()
     })
@@ -37,6 +37,14 @@ class Recorder {
             record.abi = sha3
             record.contractName = payLoad.contractName
             record.bytecode = payLoad.contractBytecode
+            record.linkReferences = selectedContract.object.evm.bytecode.linkReferences
+            if (Object.keys(record.linkReferences).length) {
+              for (var file in record.linkReferences) {
+                for (var lib in record.linkReferences[file]) {
+                  self.data._linkReferences[lib] = '<address>'
+                }
+              }
+            }
             self.data._abis[sha3] = abi
 
             this.data._contractABIReferences[timestamp] = sha3
@@ -140,6 +148,7 @@ class Recorder {
         var stampB = B.timestamp
         return stampA - stampB
       }),
+      linkReferences: self.data._linkReferences,
       abis: self.data._abis
     }
   }
@@ -150,12 +159,15 @@ class Recorder {
     */
   clearAll () {
     var self = this
+    self.data._listen = true
+    self.data._replay = false
     self.data.journal = []
     self.data._createdContracts = {}
     self.data._createdContractsReverse = {}
     self.data._usedAccounts = {}
     self.data._abis = {}
     self.data._contractABIReferences = {}
+    self.data._linkReferences = {}
   }
 
   /**
@@ -167,7 +179,7 @@ class Recorder {
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, newContractFn) {
+  run (records, accounts, options, abis, linkReferences, newContractFn) {
     var self = this
     self.setListen(false)
     self._api.logMessage('Running transactions ...')
@@ -178,6 +190,14 @@ class Recorder {
         modal.alert('cannot find ABI for ' + tx.record.abi + '.  Execution stopped)')
         return
       }
+      /* Resolve Library */
+      if (record.linkReferences) {
+        for (var k in linkReferences) {
+          var link = linkReferences[k]
+          tx.record.bytecode = format.linkLibraryStandardFromlinkReferences(k, link.replace('0x', ''), tx.record.bytecode, tx.record.linkReferences)
+        }
+      }
+      /* Encode params */
       var fnABI
       if (tx.record.type === 'constructor') {
         fnABI = txHelper.getConstructorInterface(abi)

@@ -303,12 +303,13 @@ function makeRecorder (appAPI, appEvents) {
         var accounts = obj.accounts || []
         var options = obj.options
         var abis = obj.abis
+        var linkReferences = obj.linkReferences || {}
       } catch (e) {
         return modalDialogCustom.alert('Invalid Scenario File, please try again')
       }
       if (txArray.length) {
         noInstancesText.style.display = 'none'
-        recorder.run(txArray, accounts, options, abis, (abi, address, contractName) => {
+        recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
           instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
         })
       }
