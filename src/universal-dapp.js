@@ -464,20 +464,19 @@ function execute (pipeline, env, callback) {
   next(null, env)
 }
 
-UniversalDApp.prototype.rerunTx = function (args, cb) {
-  var self = this
-  var tx = { to: args.to, from: args.from, data: args.data, useCall: args.useCall }
-  var pipeline = [queryGasLimit, runTransaction]
-  var env = { self, args, tx }
-  execute(pipeline, env, cb)
-}
-
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
-  var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall }
+  var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
   var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode } // contains decoded parameters
-  var pipeline = [queryGasLimit, queryValue, queryAddress, runTransaction]
-  var env = { self, args, tx, payLoad }
+  var pipeline = [queryGasLimit]
+  if (!args.value) {
+    pipeline.push(queryValue)
+  }
+  if (!args.from) {
+    pipeline.push(queryAddress)
+  }
+  pipeline.push(runTransaction)
+  var env = { self, tx, payLoad }
   execute(pipeline, env, cb)
 }
 
