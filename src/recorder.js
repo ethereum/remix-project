@@ -30,12 +30,12 @@ class Recorder {
       if (this.data._listen) {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
-          var selectedContract = self._api.getSelectedContract()
+          var selectedContract = self._api.getContract(payLoad.contractName)
           if (selectedContract) {
-            var abi = selectedContract.contract.object.abi
+            var abi = selectedContract.object.abi
             var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
             record.abi = sha3
-            record.contractName = selectedContract.name
+            record.contractName = payLoad.contractName
             record.bytecode = payLoad.contractBytecode
             self.data._abis[sha3] = abi
 
@@ -195,7 +195,7 @@ class Recorder {
         cb(data.error)
         return
       } else {
-        record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode }
+        record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
       self._api.udapp().runTx(record, function (err, txResult) {
         if (err) {
