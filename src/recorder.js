@@ -197,7 +197,7 @@ class Recorder {
       } else {
         record.data = data.data
       }
-      self._api.udapp().rerunTx(record, function (err, txResult) {
+      self._api.udapp().runTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
           self._api.logMessage(err + '. Execution stopped')
