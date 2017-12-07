@@ -82,7 +82,7 @@ var css = csjs`
     padding-bottom    : 3px;
     overflow-y        : auto;
     font-family       : monospace;
-    background-image  : url(assets/img/remix_logo_white_512x512.svg);
+    background-image  : ${styles.terminal.backgroundImage_Terminal};
     opacity           : 0.1;
     top               : 15%;
     left              : 33%;
