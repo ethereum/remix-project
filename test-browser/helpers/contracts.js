@@ -11,7 +11,9 @@ module.exports = {
   checkDebug,
   goToVMtraceStep,
   useFilter,
-  addInstance
+  addInstance,
+  clickFunction,
+  verifyCallReturnValue
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -65,6 +67,46 @@ function testContracts (browser, fileName, contractCode, compiledContractNames, 
     })
 }
 
+function clickFunction (fnFullName, expectedInput) {
+  this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
+    .perform(function (client, done) {
+      client.execute(function () {
+        document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+      }, [], function () {
+        if (expectedInput) {
+          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+        }
+        done()
+      })
+    })
+    .click('.instance button[title="' + fnFullName + '"]')
+    .pause(500)
+  return this
+}
+
+function verifyCallReturnValue (browser, address, checks, done) {
+  browser.execute(function (address, checks) {
+    var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractProperty"] div[class^="value"]')
+    var ret = {sucess: true}
+    for (var k in checks) {
+      var text = nodes[k].innerText ? nodes[k].innerText : nodes[k].textContent
+      text = text.replace('\n', '')
+      if (checks[k] !== text) {
+        ret.sucess = false
+        ret.expected = checks[k]
+        ret.got = text
+        return ret
+      }
+    }
+    return ret
+  }, [address, checks], function (result) {
+    if (!result.value.sucess) {
+      browser.assert.fail('verifyCallReturnValue failed', JSON.stringify(result.value), '')
+    }
+    done()
+  })
+}
+
 function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent) {
   // this => browser
   this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
@@ -101,13 +143,13 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
 function addInstance (browser, address, done) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
-    .perform((client) => {
-      browser.execute(function () {
-        document.querySelector('#modal-footer-ok').click()
-      }, [], function (result) {
-        done()
+      .perform((client) => {
+        browser.execute(function () {
+          document.querySelector('#modal-footer-ok').click()
+        }, [], function (result) {
+          done()
+        })
       })
-    })
   })
 }
 

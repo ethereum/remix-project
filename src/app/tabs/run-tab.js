@@ -269,8 +269,8 @@ function makeRecorder (appAPI, appEvents) {
       width: 135px;
     }
   `
-  var recordButton = yo`<button class=${css.transaction}>save transactions</button>`
-  var runButton = yo`<button class=${css.transaction}>run transactions</button>`
+  var recordButton = yo`<button class="${css.transaction} savetransaction">save transactions</button>`
+  var runButton = yo`<button class="${css.transaction} runtransaction">run transactions</button>`
   var el = yo`
     <div class=${css2.container}>
      ${recordButton}
