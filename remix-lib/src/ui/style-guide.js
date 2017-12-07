@@ -162,7 +162,7 @@ function styleGuide () {
     ******************************************************** */
     solidBorderBox_TextColor: cssProperties.colors.black,
     solidBorderBox_BackgroundColor: cssProperties.colors.white,
-    solidBorderBox_BorderColor: cssProperties.colors.veryLightGrey,,
+    solidBorderBox_BorderColor: cssProperties.colors.veryLightGrey,
 
     /* ------------------------------------------------------
                       SOLID BOX
