@@ -290,10 +290,10 @@ UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, 
 
   function remove () { instance.remove() }
 
-  var instance = yo`<div class="instance ${css.instance}"></div>`
+  address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
+  var instance = yo`<div class="instance ${css.instance}" id="instance${address}"></div>`
   var context = executionContext.isVM() ? 'memory' : 'blockchain'
 
-  address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var shortAddress = helper.shortenAddress(address)
   var title = yo`<div class="${css.title}" onclick=${toggleClass}>
     <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
