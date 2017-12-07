@@ -345,7 +345,7 @@ function filepanel (appAPI, filesProvider) {
     }
 
     function toGist () {
-      packageFiles(filesProvider['gist'], (error, packaged) => {
+      packageFiles(filesProvider['browser'], (error, packaged) => {
         if (error) {
           console.log(error)
         } else {
