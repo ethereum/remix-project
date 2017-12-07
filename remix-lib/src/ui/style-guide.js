@@ -3,8 +3,6 @@
 module.exports = styleGuide
 
 function styleGuide () {
-
-
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES
@@ -25,29 +23,12 @@ function styleGuide () {
       blue: 'hsla(229, 75%, 87%, 1)',
       lightBlue: 'hsla(229, 75%, 87%, .5)',
       backgroundBlue: 'hsla(229, 100%, 97%, 1)',
-
       blueLightTrans: 'hsla(202, 91%, 75%, .4)',
       brightBlue: 'hsla(233, 91%, 58%, 1)',
-
-      blueGreyEve: 'hsla(213, 64%, 65%, 1)',
-      bluePruneEve: 'hsla(232, 30%, 20%, 1)',
-      blueBerrySmog: 'hsla(286, 15%, 22%, 1)',
-      blueBlur: 'hsla(232, 30%, 20%, 0.7)',
-      blueMascara: 'hsla(187, 100%, 51%, 1)',
-      blueMorningGlory: 'hsla(213, 74%, 80%, 1)',
-      blueFairyDust: 'hsla(181, 83%, 86%, 1)',
-      blueMonday: 'hsla(213, 100%, 16%, 1)',
-      
       // GREY
       grey: 'hsla(0, 0%, 40%, 1)',
       lightGrey: 'hsla(0, 0%, 40%, .5)',
       veryLightGrey: 'hsla(0, 0%, 40%, .2)',
-
-      blueGrey: 'hsla(206, 24%, 58%, .8)',
-      greyBlueNight: 'hsla(215, 55%, 18%, 1)',
-      greyBlueLight: 'hsla(213, 15%, 58%, 1)',
-      greyBlueMed: 'hsla(215, 55%, 28%, 1)',
-      desatGrey: 'hsla(173, 17%, 79%, 1)',
       // RED
       strongRed: 'hsla(0, 100%, 71%, 1)',
       red: 'hsla(0, 82%, 82%, 1)',
@@ -58,7 +39,7 @@ function styleGuide () {
       greenZing: 'hsla(148, 79%, 47%, 1)',
       // PINK
       pink: 'hsla(300, 69%, 76%, 1)',
-      lightPink: 'hsla(286, 71%, 88%, 1)',
+      lightPink: 'hsla(300, 69%, 76%, .5)',
       // ORANGE
       orange: 'hsla(44, 100%, 50%, 1)',
       lightOrange: 'hsla(44, 100%, 50%, .5)',
@@ -102,12 +83,10 @@ function styleGuide () {
     ------------------------------------------------------ */
     primary_BackgroundColor: cssProperties.colors.white,
     secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
-    
     tertiary_BackgroundColor: cssProperties.colors.backgroundBlue,
     quaternary_BackgroundColor: cssProperties.colors.backgroundBlue,
     fifth_BackgroundColor: cssProperties.colors.backgroundBlue,
-    seventh_BackgroundColor: cssProperties.colors.veryLightGrey,
-    
+    seventh_BackgroundColor: cssProperties.colors.veryLightGrey,  
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
@@ -183,7 +162,7 @@ function styleGuide () {
     ******************************************************** */
     solidBorderBox_TextColor: cssProperties.colors.black,
     solidBorderBox_BackgroundColor: cssProperties.colors.white,
-    solidBorderBox_BorderColor: cssProperties.colors.lightBlue,
+    solidBorderBox_BorderColor: cssProperties.colors.veryLightGrey,,
 
     /* ------------------------------------------------------
                       SOLID BOX
