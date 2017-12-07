@@ -170,6 +170,7 @@ class Recorder {
   run (records, accounts, options, abis, newContractFn) {
     var self = this
     self.setListen(false)
+    self._api.logMessage('Running transactions ...')
     async.eachSeries(records, function (tx, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
@@ -199,6 +200,7 @@ class Recorder {
       self._api.udapp().rerunTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
+          self._api.logMessage(err + '. Execution stopped')
         } else {
           var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (address) {
