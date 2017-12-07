@@ -195,7 +195,7 @@ class Recorder {
         cb(data.error)
         return
       } else {
-        record.data = data.data
+        record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode }
       }
       self._api.udapp().runTx(record, function (err, txResult) {
         if (err) {
@@ -211,7 +211,7 @@ class Recorder {
             newContractFn(abi, address, record.contractName)
           }
         }
-        cb()
+        cb(err)
       })
     }, () => { self.setListen(true) })
   }
