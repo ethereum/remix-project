@@ -79,7 +79,7 @@ module.exports = {
             callback('Error deploying required libraries: ' + err)
           } else {
             bytecodeToDeploy = bytecode + dataHex
-            return callback(null, bytecodeToDeploy)
+            return callback(null, { dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode })
           }
         }, callbackStep)
         return
@@ -143,7 +143,7 @@ module.exports = {
       }, callbackStep)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
-      var data = {dataHex: bytecode}
+      var data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode}
       udapp.runTx({ data: data, useCall: false }, (err, txResult) => {
         if (err) {
           return callback(err)
