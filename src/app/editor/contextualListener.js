@@ -39,9 +39,6 @@ class ContextualListener {
 
   getActiveHighlights () {
     return [...this._activeHighlights]
-    // return [...this._activeHighlights].sort((a,b) => {
-    //   return a.position.start - b.position.start
-    // })
   }
 
   declarationOf (node) {
@@ -94,6 +91,27 @@ class ContextualListener {
     }
   }
 
+  _getGasEstimation (results) {
+    this.contractName = Object.keys(results.data.contracts[results.source.target])[0]
+    this.target = results.data.contracts[results.source.target]
+    this.functions = Object.keys(this.target[this.contractName].evm.gasEstimates.external)
+  }
+
+  gasEstimation (node) {
+    if (node.name === 'FunctionDefinition') {
+      var functionName = node.attributes.name
+      var fn
+      for (var x in this.functions) {
+        if (!!~this.functions[x].indexOf(functionName)) {
+          fn = this.functions[x]
+          break
+        }
+      }
+      var estimation = this.target[this.contractName].evm.gasEstimates.external[fn]
+      return estimation
+    }
+  }
+
   _highlight (node, compilationResult) {
     if (!node) return
     var position = this.sourceMappingDecoder.decode(node.src)
@@ -122,6 +140,7 @@ class ContextualListener {
       highlights(node.id)
       this._highlight(node, compilationResult)
     }
+    this._getGasEstimation(compilationResult)
   }
 
   _stopHighlighting () {
