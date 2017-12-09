@@ -114,7 +114,7 @@ class Recorder {
       var stamp = this.extractTimestamp(record.to)
       if (stamp) {
         record.to = this.data._createdContractsReverse[stamp]
-    }
+      }
     }
     record.from = accounts[record.from]
     // @TODO: writing browser test
