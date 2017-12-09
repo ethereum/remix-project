@@ -85,23 +85,17 @@ function clickFunction (fnFullName, expectedInput) {
 }
 
 function verifyCallReturnValue (browser, address, checks, done) {
-  browser.execute(function (address, checks) {
+  browser.execute(function (address) {
     var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractProperty"] div[class^="value"]')
-    var ret = {sucess: true}
+    var ret = []
     for (var k in checks) {
       var text = nodes[k].innerText ? nodes[k].innerText : nodes[k].textContent
-      text = text.replace('\n', '')
-      if (checks[k] !== text) {
-        ret.sucess = false
-        ret.expected = checks[k]
-        ret.got = text
-        return ret
-      }
+      ret.push(text)
     }
     return ret
-  }, [address, checks], function (result) {
-    if (!result.value.sucess) {
-      browser.assert.fail('verifyCallReturnValue failed', JSON.stringify(result.value), '')
+  }, [address], function (result) {
+    for (var k in checks) {
+      browser.assert.equal(checks[k], result.value[k])
     }
     done()
   })
