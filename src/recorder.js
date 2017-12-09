@@ -190,9 +190,13 @@ class Recorder {
         return
       }
       /* Resolve Library */
-      if (record.linkReferences) {
+      if (record.linkReferences && Object.keys(record.linkReferences).length) {
         for (var k in linkReferences) {
           var link = linkReferences[k]
+          var timestamp = self.extractTimestamp(link)
+          if (timestamp && self.data._createdContractsReverse[timestamp]) {
+            link = self.data._createdContractsReverse[timestamp]
+          }
           tx.record.bytecode = format.linkLibraryStandardFromlinkReferences(k, link.replace('0x', ''), tx.record.bytecode, tx.record.linkReferences)
         }
       }
