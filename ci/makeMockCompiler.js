@@ -6,41 +6,30 @@ var soljson = require('../soljson')
 var compiler = solc(soljson)
 
 var compilerInput = require('../src/app/compiler/compiler-input')
+var compilationResult = {}
+gatherCompilationResults('./test-browser/tests/', compilationResult)
+gatherCompilationResults('./test-browser/tests/units/', compilationResult)
+replaceSolCompiler(compilationResult)
 
-gatherCompilationResults(function (error, data) {
-  if (error) {
-    console.log(error)
-    process.exit(1)
-  } else {
-    replaceSolCompiler(data)
-  }
-})
-
-function gatherCompilationResults (callback) {
-  var compilationResult = {}
-  fs.readdir('./test-browser/tests', 'utf8', function (error, filenames) {
-    if (error) {
-      console.log(error)
-      process.exit(1)
-    } else {
-      filenames.map(function (item, i) {
-        var testDef = require('../test-browser/tests/' + item)
-        if ('@sources' in testDef) {
-          var sources = testDef['@sources']()
-          for (var files in sources) {
-            compile(sources[files], true, function (result) {
-              compilationResult[result.key] = result
-            })
-            compile(sources[files], false, function (result) {
-              compilationResult[result.key] = result
-            })
-          }
+function gatherCompilationResults (dir, compilationResult, callback) {
+  var filenames = fs.readdirSync(dir, 'utf8')
+  filenames.map(function (item, i) {
+    if (item.endsWith('.js')) {
+      var testDef = require('.' + dir + item)
+      if ('@sources' in testDef) {
+        var sources = testDef['@sources']()
+        for (var files in sources) {
+          compile(sources[files], true, function (result) {
+            compilationResult[result.key] = result
+          })
+          compile(sources[files], false, function (result) {
+            compilationResult[result.key] = result
+          })
         }
-      })
-
-      callback(null, compilationResult)
+      } 
     }
   })
+  return compilationResult
 }
 
 function compile (source, optimization, addCompilationResult) {
