@@ -238,7 +238,7 @@ class Recorder {
         }
         cb(err)
       })
-    }, () => { self.setListen(true) })
+    }, () => { self.setListen(true); self.clearAll() })
   }
 }
 
