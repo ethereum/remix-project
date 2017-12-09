@@ -54,7 +54,7 @@ class Recorder {
           }
         } else {
           var creationTimestamp = this.data._createdContracts[to]
-          record.to = `created-contract{${creationTimestamp}}`
+          record.to = `created{${creationTimestamp}}`
           record.abi = this.data._contractABIReferences[creationTimestamp]
         }
 
@@ -93,6 +93,14 @@ class Recorder {
     this.data._replay = !listen
   }
 
+  extractTimestamp (value) {
+    var stamp = /created{(.*)}/g.exec(value)
+    if (stamp) {
+      return stamp[1]
+    }
+    return null
+  }
+
   /**
     * convert back from/to from tokens to real addresses
     *
@@ -103,26 +111,14 @@ class Recorder {
     */
   resolveAddress (record, accounts, options) {
     if (record.to) {
-      var timestamp = /created-contract{(.*)}/g.exec(record.to)
-      record.to = this.data._createdContractsReverse[timestamp[1]]
+      var stamp = this.extractTimestamp(record.to)
+      if (stamp) {
+        record.to = this.data._createdContractsReverse[stamp]
+    }
     }
     record.from = accounts[record.from]
     // @TODO: writing browser test
     return record
-  }
-
-  /**
-    * resolve ABI reference from the timestamp
-    *
-    * @param {Object} record
-    *
-    */
-  resolveABIReference (record) {
-    if (record.to) {
-      var timestamp = /created-contract{(.*)}/g.exec(record.to)
-      return this.data._contractABIReferences[timestamp[1]]
-    }
-    return null
   }
 
   /**
