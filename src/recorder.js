@@ -21,6 +21,9 @@ class Recorder {
     opts.events.executioncontext.register('contextChanged', () => {
       self.clearAll()
     })
+    opts.events.runtab.register('clearInstances', () => {
+      self.clearAll()
+    })
 
     opts.events.udapp.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
