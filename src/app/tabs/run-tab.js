@@ -9,6 +9,7 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 var executionContext = require('../../execution-context')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var Recorder = require('../../recorder')
+var EventManager = require('remix-lib').EventManager
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -172,6 +173,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instance
 var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
 
 function runTab (container, appAPI, appEvents, opts) {
+  var events = new EventManager()
   var pendingTxsContainer = yo`
   <div class="${css.pendingTxsContainer}">
     ${pendingTxsText}
@@ -180,7 +182,7 @@ function runTab (container, appAPI, appEvents, opts) {
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
     ${settings(appAPI, appEvents)}
-    ${contractDropdown(appAPI, appEvents, instanceContainer)}
+    ${contractDropdown(events, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
   </div>
@@ -200,11 +202,8 @@ function runTab (container, appAPI, appEvents, opts) {
       // set the final context. Cause it is possible that this is not the one we've originaly selected
       selectExEnv.value = executionContext.getProvider()
       fillAccountsList(appAPI, el)
+      clearInstance()
     })
-
-    instanceContainer.innerHTML = '' // clear the instances list
-    noInstancesText.style.display = 'block'
-    instanceContainer.appendChild(noInstancesText)
   })
   selectExEnv.value = executionContext.getProvider()
   fillAccountsList(appAPI, el)
@@ -212,6 +211,13 @@ function runTab (container, appAPI, appEvents, opts) {
     updateAccountBalances(container, appAPI)
     updatePendingTxs(container, appAPI)
   }, 500)
+
+  var clearInstance = function () {
+    instanceContainer.innerHTML = '' // clear the instances list
+    noInstancesText.style.display = 'block'
+    instanceContainer.appendChild(noInstancesText)
+    events.trigger('clearInstance', [])
+  }
 }
 
 function fillAccountsList (appAPI, container) {
@@ -244,11 +250,12 @@ function updateAccountBalances (container, appAPI) {
 /* ------------------------------------------------
     RECORDER
 ------------------------------------------------ */
-function makeRecorder (appAPI, appEvents) {
+function makeRecorder (events, appAPI, appEvents) {
   var recorder = new Recorder({
     events: {
       udapp: appEvents.udapp,
-      executioncontext: executionContext.event
+      executioncontext: executionContext.event,
+      runtab: events
     },
     api: appAPI
   })
@@ -323,7 +330,7 @@ function makeRecorder (appAPI, appEvents) {
     section CONTRACT DROPDOWN and BUTTONS
 ------------------------------------------------ */
 
-function contractDropdown (appAPI, appEvents, instanceContainer) {
+function contractDropdown (events, appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -364,7 +371,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
           ${atAddressButtonInput}
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
         </div>
-        <div class=${css.buttons}>${makeRecorder(appAPI, appEvents)}</div>
+        <div class=${css.buttons}>${makeRecorder(events, appAPI, appEvents)}</div>
       </div>
     </div>
   `
