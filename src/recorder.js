@@ -142,12 +142,12 @@ class Recorder {
     var records = [].concat(self.data.journal)
     return {
       accounts: self.data._usedAccounts,
+      linkReferences: self.data._linkReferences,
       transactions: records.sort((A, B) => {
         var stampA = A.timestamp
         var stampB = B.timestamp
         return stampA - stampB
       }),
-      linkReferences: self.data._linkReferences,
       abis: self.data._abis
     }
   }
