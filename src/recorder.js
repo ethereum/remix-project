@@ -181,12 +181,12 @@ class Recorder {
   run (records, accounts, options, abis, linkReferences, newContractFn) {
     var self = this
     self.setListen(false)
-    self._api.logMessage('Running transactions ...')
-    async.eachSeries(records, function (tx, cb) {
+    self._api.logMessage(`Running ${records.length} transaction(s) ...`)
+    async.eachOfSeries(records, function (tx, index, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
-        modal.alert('cannot find ABI for ' + tx.record.abi + '.  Execution stopped)')
+        modal.alert('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
         return
       }
       /* Resolve Library */
@@ -204,22 +204,24 @@ class Recorder {
         fnABI = txHelper.getFunction(abi, record.name)
       }
       if (!fnABI) {
-        modal.alert('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped')
+        modal.alert('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
         cb('cannot resolve abi')
         return
       }
       var data = format.encodeData(fnABI, tx.record.parameters, tx.record.bytecode)
       if (data.error) {
-        modal.alert(data.error + '. Record:' + JSON.stringify(record, null, '\t'))
+        modal.alert(data.error + '. Record:' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
         cb(data.error)
         return
       } else {
+        self._api.logMessage(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+        self._api.logMessage(`(${index}) data: ${data.data}`)
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
       self._api.udapp().runTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
-          self._api.logMessage(err + '. Execution stopped')
+          self._api.logMessage(err + '. Execution failed at ' + index)
         } else {
           var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (address) {
