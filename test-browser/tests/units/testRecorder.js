@@ -15,7 +15,6 @@ module.exports = function (browser, callback) {
   })
 }
 
-
 var records = `{
   "accounts": {
     "account{0}": "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
