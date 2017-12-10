@@ -1,20 +1,58 @@
 'use strict'
 var contractHelper = require('../../helpers/contracts')
 
-module.exports = function (browser, callback) {
-  contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
-    browser
-    .click('.runView')
-    .click('#runTabView .runtransaction')
-    .clickFunction('getInt - call')
-    .clickFunction('getAddress - call')
-    .clickFunction('getFromLib - call')
-    .waitForElementPresent('div[class^="contractProperty"] div[class^="value"]')
-    .perform(() => {
-      contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xca35b7d915458ef540ade6068dfe2f44e8fa733c'], () => { callback() })
+module.exports = {
+  '@sources': function () {
+    return sources
+  },
+  test: function (browser, callback) {
+    contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
+      browser
+        .click('.runView')
+        .click('#runTabView .runtransaction')
+        .clickFunction('getInt - call')
+        .clickFunction('getAddress - call')
+        .clickFunction('getFromLib - call')
+        .waitForElementPresent('div[class^="contractProperty"] div[class^="value"]')
+        .perform((client, done) => {
+          contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xca35b7d915458ef540ade6068dfe2f44e8fa733c'], () => {
+            done()
+          })
+        })
+        .click('i[class^="clearinstance"]')
+        .perform((client, done) => {
+          contractHelper.testContracts(browser, 'testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'], function () {
+            contractHelper.createContract(browser, '12', function () {
+              browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
+              .click('i.savetransaction').modalFooterOKClick().getEditorValue(function (result) {
+                var parsed = JSON.parse(result)
+                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
+                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.name), JSON.stringify(scenario.transactions[0].record.name))
+                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.type), JSON.stringify(scenario.transactions[0].record.type))
+                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.from), JSON.stringify(scenario.transactions[0].record.from))
+                browser.assert.equal(JSON.stringify(parsed.transactions[0].record.contractName), JSON.stringify(scenario.transactions[0].record.contractName))
+
+                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.parameters), JSON.stringify(scenario.transactions[1].record.parameters))
+                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
+                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
+                browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
+                callback()
+              })
+            })
+          })
+        })
     })
-  })
+  }
 }
+
+var sources = [{'browser/testRecorder.sol': {content: `pragma solidity ^0.4.0;contract testRecorder {
+    function testRecorder(uint p) {
+        
+    }
+    function set (uint _p) {
+            
+    }
+}`}}]
 
 var records = `{
   "accounts": {
@@ -170,3 +208,71 @@ var records = `{
     ]
   }
 }`
+
+var scenario = {
+  'accounts': {
+    'account{0}': '0xca35b7d915458ef540ade6068dfe2f44e8fa733c'
+  },
+  'linkReferences': {},
+  'transactions': [
+    {
+      'timestamp': 1512912691086,
+      'record': {
+        'value': '0',
+        'parameters': [
+          12
+        ],
+        'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
+        'contractName': 'testRecorder',
+        'bytecode': '6060604052341561000f57600080fd5b6040516020806100cd833981016040528080519060200190919050505060938061003a6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b1146044575b600080fd5b3415604e57600080fd5b606260048080359060200190919050506064565b005b505600a165627a7a723058204839660366b94f5f3c8c6da233a2c5fe95ad5635b5c8a2bb630a8b845d68ecdd0029',
+        'linkReferences': {},
+        'name': '',
+        'type': 'constructor',
+        'from': 'account{0}'
+      }
+    },
+    {
+      'timestamp': 1512912696128,
+      'record': {
+        'value': '0',
+        'parameters': [
+          34
+        ],
+        'to': 'created{1512912691086}',
+        'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
+        'name': 'set',
+        'type': 'function',
+        'from': 'account{0}'
+      }
+    }
+  ],
+  'abis': {
+    '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798': [
+      {
+        'constant': false,
+        'inputs': [
+          {
+            'name': '_p',
+            'type': 'uint256'
+          }
+        ],
+        'name': 'set',
+        'outputs': [],
+        'payable': false,
+        'stateMutability': 'nonpayable',
+        'type': 'function'
+      },
+      {
+        'inputs': [
+          {
+            'name': 'p',
+            'type': 'uint256'
+          }
+        ],
+        'payable': false,
+        'stateMutability': 'nonpayable',
+        'type': 'constructor'
+      }
+    ]
+  }
+}

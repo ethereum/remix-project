@@ -23,6 +23,8 @@ module.exports = {
 
 function runTests (browser, testData) {
   browser.testFunction = contractHelper.testFunction
+  browser.clickFunction = contractHelper.clickFunction
+  browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.setEditorValue = contractHelper.setEditorValue
   browser
     .waitForElementVisible('.newFile', 10000)

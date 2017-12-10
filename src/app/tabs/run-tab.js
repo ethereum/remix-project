@@ -196,7 +196,7 @@ var pendingTxsText = yo`<span></span>`
 function runTab (container, appAPI, appEvents, opts) {
   var events = new EventManager()
 
-  var clearInstanceElement = yo`<i class="fa fa-minus-square-o ${css.clearinstance}" title="Clear Instances List" aria-hidden="true"></i>`
+  var clearInstanceElement = yo`<i class="${css.clearinstance} fa fa-minus-square-o" title="Clear Instances List" aria-hidden="true"></i>`
   clearInstanceElement.addEventListener('click', () => {
     events.trigger('clearInstance', [])
   })
@@ -368,7 +368,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
   })
 
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
-  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
+  var createButtonInput = yo`<input class="${css.input} create" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
 
   function getSelectedContract () {
