@@ -92,31 +92,39 @@ class ContextualListener {
   }
 
   _getGasEstimation (results) {
-    this.results = results
     this.contractName = Object.keys(results.data.contracts[results.source.target])[0]
     this.target = results.data.contracts[results.source.target]
-    this.functions = Object.keys(this.target[this.contractName].evm.gasEstimates.external)
-    this.creationCost = this.target[this.contractName].evm.gasEstimates.creation.totalCost
+    this.contract = this.target[this.contractName]
+    this.estimationObj = this.contract.evm.gasEstimates
+    if (this.estimationObj.external) this.externalFunctions = Object.keys(this.estimationObj.external)
+    if (this.estimationObj.internal) this.internalFunctions = Object.keys(this.estimationObj.internal)
+    this.creationCost = this.estimationObj.creation.totalCost
   }
 
   gasEstimation (node) {
     if (node.name === 'FunctionDefinition') {
-      var estimation
       if (!node.attributes.isConstructor) {
         var functionName = node.attributes.name
-        var fn
-        for (var x in this.functions) {
-          if (!!~this.functions[x].indexOf(functionName)) {
-            fn = this.functions[x]
-            break
-          }
+        if (this.externalFunctions) {
+          return this.estimationObj.external[this._getFn(this.externalFunctions, functionName)]
         }
-        estimation = this.target[this.contractName].evm.gasEstimates.external[fn]
+        if (this.internalFunctions) {
+          return this.estimationObj.internal[this._getFn(this.internalFunctions, functionName)]
+        }
       } else {
-        estimation = this.creationCost
+        return this.creationCost
       }
     }
-    return estimation
+  }
+
+  _getFn (functions, name) {
+    for (var x in functions) {
+      if (!!~functions[x].indexOf(name)) {
+        var fn = functions[x]
+        break
+      }
+    }
+    return fn
   }
 
   _highlight (node, compilationResult) {
