@@ -26,7 +26,7 @@ function gatherCompilationResults (dir, compilationResult, callback) {
             compilationResult[result.key] = result
           })
         }
-      } 
+      }
     }
   })
   return compilationResult
