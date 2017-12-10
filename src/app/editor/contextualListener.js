@@ -92,24 +92,31 @@ class ContextualListener {
   }
 
   _getGasEstimation (results) {
+    this.results = results
     this.contractName = Object.keys(results.data.contracts[results.source.target])[0]
     this.target = results.data.contracts[results.source.target]
     this.functions = Object.keys(this.target[this.contractName].evm.gasEstimates.external)
+    this.creationCost = this.target[this.contractName].evm.gasEstimates.creation.totalCost
   }
 
   gasEstimation (node) {
     if (node.name === 'FunctionDefinition') {
-      var functionName = node.attributes.name
-      var fn
-      for (var x in this.functions) {
-        if (!!~this.functions[x].indexOf(functionName)) {
-          fn = this.functions[x]
-          break
+      var estimation
+      if (!node.attributes.isConstructor) {
+        var functionName = node.attributes.name
+        var fn
+        for (var x in this.functions) {
+          if (!!~this.functions[x].indexOf(functionName)) {
+            fn = this.functions[x]
+            break
+          }
         }
+        estimation = this.target[this.contractName].evm.gasEstimates.external[fn]
+      } else {
+        estimation = this.creationCost
       }
-      var estimation = this.target[this.contractName].evm.gasEstimates.external[fn]
-      return estimation
     }
+    return estimation
   }
 
   _highlight (node, compilationResult) {
