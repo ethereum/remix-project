@@ -21,7 +21,7 @@ class Recorder {
     opts.events.executioncontext.register('contextChanged', () => {
       self.clearAll()
     })
-    opts.events.runtab.register('clearInstances', () => {
+    opts.events.runtab.register('clearInstance', () => {
       self.clearAll()
     })
 
