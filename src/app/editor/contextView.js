@@ -172,10 +172,16 @@ class ContextView {
     </div>`
 
     function showGasEstimation () {
-      var estimatedGas = self._api.contextualListener.gasEstimation(node) + ' gas'
-      if (node.name === 'FunctionDefinition') var el = yo`<div class=${css.gasEstimation}> <img class=${css.gasStationIcon} title='Estimated gas price' src='https://png.icons8.com/gas-station/win8/50/000000'> ${estimatedGas}</div>`
-      return el
+      var result = self._api.contextualListener.gasEstimation(node)
+      var executionCost = 'Execution cost: ' + result.executionCost + ' gas'
+      var codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
+      var estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
+      return yo`<div class=${css.gasEstimation}>
+        <img class=${css.gasStationIcon} title='Gas estimation' src='assets/img/gasStation_50.png'>
+        ${estimatedGas}
+      </div>`
     }
+
   }
 }
 
