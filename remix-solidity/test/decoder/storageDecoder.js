@@ -3,6 +3,8 @@ var tape = require('tape')
 var compiler = require('solc')
 var stateDecoder = require('../../src/decoder/stateDecoder')
 var MockStorageResolver = require('./mockStorageResolver')
+var remixLib = require('remix-lib')
+var compilerInput = remixLib.helpers.compiler.compilerInput
 
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
@@ -267,27 +269,5 @@ function testStructArrayStorage (st, cb) {
     st.equal(decoded['arrayStruct'].value[2].value[2].value.i8.value, '-34')
     st.equal(decoded['arrayStruct'].value[2].value[2].value.str.value, 'test_str_short')
     cb()
-  })
-}
-
-function compilerInput (contracts) {
-  return JSON.stringify({
-    language: 'Solidity',
-    sources: {
-      'test.sol': {
-        content: contracts
-      }
-    },
-    settings: {
-      optimizer: {
-        enabled: false,
-        runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '*': [ 'metadata', 'evm.bytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
-      }
-    }
   })
 }
