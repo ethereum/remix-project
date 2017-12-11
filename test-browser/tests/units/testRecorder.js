@@ -11,7 +11,7 @@ module.exports = function (browser, callback) {
     .clickFunction('getFromLib - call')
     .waitForElementPresent('div[class^="contractProperty"] div[class^="value"]')
     .perform(() => {
-      contractHelper.verifyCallReturnValue(browser, '0xec5bee2dbb67da8757091ad3d9526ba3ed2e2137', ['0: uint256: 1', '1: uint256: 3456', '2: address: 0xca35b7d915458ef540ade6068dfe2f44e8fa733c'], () => { callback() })
+      contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xca35b7d915458ef540ade6068dfe2f44e8fa733c'], () => { callback() })
     })
   })
 }
