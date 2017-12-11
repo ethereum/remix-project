@@ -20,7 +20,7 @@ var cssTabs = yo`
       display: table-cell;
       text-align: center;
       vertical-align: middle;
-      color: ${styles.editor.text_Secondary};
+      color: ${styles.editor.text_Teriary};
     }
     #files .file.active {
       color: ${styles.editor.text_Primary};
@@ -46,6 +46,7 @@ var cssTabs = yo`
     }
     #files .file.active .remove {
       display: inline-block;
+      color: ${styles.editor.text_Primary};
     }
   </style>
 `

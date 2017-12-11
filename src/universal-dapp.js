@@ -28,14 +28,13 @@ var css = csjs`
     align-items: center;
   }
   .title {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
-    margin-top: 5px;
+    ${styles.rightPanel.runTab.titlebox_RunTab}
     display: flex;
     justify-content: end;
     align-items: center;
     font-size: 11px;
     height: 30px;
-    min-width: 100%;
+    width: 97%;
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
@@ -50,10 +49,14 @@ var css = csjs`
     word-break: break-word;
     min-width: 230px;
   }
+
+  .title .copy {
+    color: ${styles.rightPanel.runTab.icon_AltColor_Instance_CopyToClipboard};
+  }
   .instance {
-    ${styles.rightPanel.runTab.box_Instance}
+    ${styles.rightPanel.runTab.box_Instance};
     margin-bottom: 10px;
-    padding: 10px 15px 6px 15px;
+    padding: 10px 15px 15px 15px;
   }
   .instance .title:before {
     content: "\\25BE";
@@ -97,36 +100,44 @@ var css = csjs`
     width: 75%;
     padding: .36em;
   }
+
+  // .call {
+  //   background-color: ${styles.colors.lightRed};
+  //   border-color: ${styles.colors.lightRed};
+  // }
+  // .constant .call {
+  //   background-color: ${styles.colors.lightBlue};
+  //   border-color: ${styles.colors.lightBlue};
+  //   width: 25%;
+  //   outline: none;
+  // }
+  // .payable .call {
+  //   background-color: ${styles.colors.red};
+  //   border-color: ${styles.colors.red};
+  //   width: 25%;
+  // }
   .contractProperty button {
-    border-radius           : 3px;
-    border                  : .3px solid #dddddd;
-    cursor                  : pointer;
-    min-height              : 25px;
-    max-height              : 25px;
-    padding                 : 3px;
-    min-width               : 100px;
-    width                   : 25%;
-    font-size               : 10px;
+    ${styles.rightPanel.runTab.button_Create}
+    min-width: 100px;
+    width: 100px;
+    font-size: 10px;
+    margin:0;
+    word-break: inherit;
   }
   .contractProperty button:disabled {
     cursor: not-allowed;
     background-color: white;
     border-color: lightgray;
   }
-  .call {
-    background-color: ${styles.colors.lightRed};
-    border-color: ${styles.colors.lightRed};
-  }
-  .constant .call {
-    background-color: ${styles.colors.lightBlue};
-    border-color: ${styles.colors.lightBlue};
-    width: 25%;
+  .contractProperty.constant button {
+    ${styles.rightPanel.runTab.button_Constant}
+    min-width: 100px;
+    width: 100px;
+    font-size: 10px;
+    margin:0;
+    word-break: inherit;
     outline: none;
-  }
-  .payable .call {
-    background-color: ${styles.colors.red};
-    border-color: ${styles.colors.red};
-    width: 25%;
+    width: inherit;
   }
   .contractProperty input {
     display: none;
@@ -135,7 +146,7 @@ var css = csjs`
     box-sizing: border-box;
     float: left;
     align-self: center;
-    color: ${styles.colors.grey};
+    color: ${styles.colors.white};
   }
   .hasArgs input {
     display: block;

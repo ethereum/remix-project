@@ -26,8 +26,15 @@ var css = csjs`
   }
   .modalBody {
     background-color: ${styles.remix.modalDialog_BackgroundColor_Primary};
+    color: ${styles.remix.modalDialog_text_Primary};
     padding: 1.5em;
     line-height: 1.5em;
+  }
+  .modalBody em{
+    color: ${styles.remix.modalDialog_text_Em};
+  }
+  .modalBody a{
+    color: ${styles.remix.modalDialog_text_Link};
   }
   .modalFooter {
     display: flex;

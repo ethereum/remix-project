@@ -114,7 +114,7 @@ var css = csjs`
     font-style: italic;
   }
   .pendingTxsText {
-    ${styles.rightPanel.runTab.box_Instance}
+    ${styles.rightPanel.runTab.borderBox_Instance}
     font-style: italic;
   }
   .item {
