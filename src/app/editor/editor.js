@@ -4,6 +4,7 @@ var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
+
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
@@ -11,6 +12,16 @@ var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
 var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
+
+function setTheme (cb) {
+  if (styles.appProperties.aceTheme) {
+    cb('brace/theme/', styles.appProperties.aceTheme)
+  }
+}
+
+setTheme((path, theme) => {
+  require('brace/theme/tomorrow_night_blue')
+})
 
 var css = csjs`
   .ace-editor {
@@ -54,6 +65,10 @@ function Editor (opts = {}) {
   var self = this
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
+  if (styles.appProperties.aceTheme) {
+    editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
+  }
+
   ace.acequire('ace/ext/language_tools')
   editor.setOptions({
     enableBasicAutocompletion: true,

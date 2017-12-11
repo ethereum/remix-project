@@ -27,7 +27,6 @@ var css = csjs`
     min-height        : 1.7em;
     overflow          : hidden;
   }
-
   .bar                {
     display           : flex;
     min-height        : 3em;
@@ -63,7 +62,7 @@ var css = csjs`
   .toggleTerminal:hover              {
     color             : ${styles.terminal.icon_HoverColor_TogglePanel};
   }
-  .terminal           {
+  .terminal_container {
     background-color  : ${styles.terminal.backgroundColor_Terminal};
     display           : flex;
     flex-direction    : column;
@@ -74,18 +73,31 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
-  .terminal::after {
-    content           : "";
-    background-image  : url(assets/img/remix_logo_512x512.svg);
+  .terminal_bg     {
+    display           : flex;
+    flex-direction    : column;
+    height            : 100%;
+    padding-left      : 5px;
+    padding-right     : 5px;
+    padding-bottom    : 3px;
+    overflow-y        : auto;
+    font-family       : monospace;
+    background-image  : ${styles.terminal.backgroundImage_Terminal};
     opacity           : 0.1;
     top               : 15%;
     left              : 33%;
     bottom            : 0;
     right             : 0;
     position          : absolute;
-    z-index           : -1;
     background-repeat : no-repeat;
     background-size   : 45%;
+  }
+  .terminal    {
+    position: relative;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   .journal            {
     margin-top        : auto;
@@ -101,13 +113,17 @@ var css = csjs`
   .cli                {
     line-height       : 1.7em;
     font-family       : monospace;
+    background-color  : ${styles.terminal.backgroundColor_TerminalCLI};
+    padding           : .4em;
+    color             : ${styles.appProperties.mainText_Color};
+    border-top        : solid 2px ${styles.terminal.bar_Ghost};
   }
   .prompt             {
     margin-right      : 0.5em;
     font-family       : monospace;
     font-weight       : bold;
     font-size         : large;
-    color             : ${styles.colors.black};
+    color             : ${styles.appProperties.supportText_OppositeColor};
   }
   .input              {
     word-break        : break-all;
@@ -273,9 +289,13 @@ class Terminal {
     }
 
     self._view.term = yo`
-      <div class=${css.terminal} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
-        ${self._view.journal}
-        ${self._view.cli}
+      <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+        <div class=${css.terminal_bg}>
+        </div>
+        <div class=${css.terminal}>
+            ${self._view.journal}
+            ${self._view.cli}
+        </div>
       </div>
     `
     self._view.el = yo`

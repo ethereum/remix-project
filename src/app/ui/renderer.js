@@ -53,7 +53,6 @@ var css = yo`<style>
 
 .sol.warning {
   background-color: ${styles.rightPanel.message_Warning_BackgroundColor};
-  border: .2em dotted ${styles.rightPanel.message_Warning_BorderColor};
   color: ${styles.rightPanel.message_Warning_Color};
 }
 
