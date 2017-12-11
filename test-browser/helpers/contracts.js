@@ -89,9 +89,9 @@ function verifyCallReturnValue (browser, address, checks, done) {
   browser.execute(function (address) {
     var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractProperty"] div[class^="value"]')
     var ret = []
-    for (var k in checks) {
+    for (var k = 0; k < nodes.length; k++) {
       var text = nodes[k].innerText ? nodes[k].innerText : nodes[k].textContent
-      ret.push(text)
+      ret.push(text.replace('\n', ''))
     }
     return ret
   }, [address], function (result) {
