@@ -46,6 +46,8 @@ module.exports = {
     * @param {Function} callbackStep  - callbackStep
     */
   buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
+    params = params.replace(/[^"](0[xX][0-9a-fA-F]+)/g, '"$1"')
+    params = params.replace((/^[^0x]([0-9]+)/g, '"$1"'))
     var funArgs = ''
     try {
       funArgs = $.parseJSON('[' + params + ']')
