@@ -99,6 +99,7 @@ class ContextualListener {
     if (this.estimationObj.external) this.externalFunctions = Object.keys(this.estimationObj.external)
     if (this.estimationObj.internal) this.internalFunctions = Object.keys(this.estimationObj.internal)
     this.creationCost = this.estimationObj.creation.totalCost
+    this.codeDepositCost = this.estimationObj.creation.codeDepositCost
   }
 
   gasEstimation (node) {
@@ -106,13 +107,13 @@ class ContextualListener {
       if (!node.attributes.isConstructor) {
         var functionName = node.attributes.name
         if (this.externalFunctions) {
-          return this.estimationObj.external[this._getFn(this.externalFunctions, functionName)]
+          return {executionCost: this.estimationObj.external[this._getFn(this.externalFunctions, functionName)]}
         }
         if (this.internalFunctions) {
-          return this.estimationObj.internal[this._getFn(this.internalFunctions, functionName)]
+          return {executionCost: this.estimationObj.internal[this._getFn(this.internalFunctions, functionName)]}
         }
       } else {
-        return this.creationCost
+        return {executionCost: this.creationCost, codeDepositCost: this.codeDepositCost}
       }
     }
   }
