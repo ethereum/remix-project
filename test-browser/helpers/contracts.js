@@ -102,7 +102,7 @@ function verifyCallReturnValue (browser, address, checks, done) {
   })
 }
 
-function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent) {
+function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent, callback) {
   // this => browser
   this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
     .perform(function (client, done) {
@@ -131,6 +131,7 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
         client.assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', expectedEvent)
       }
       done()
+      if (callback) callback()
     })
   return this
 }
