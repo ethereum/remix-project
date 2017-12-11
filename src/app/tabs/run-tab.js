@@ -177,6 +177,13 @@ var css = csjs`
   .networkItem {
     margin-right: 5px;
   }
+  .clearinstance {
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .transactionActions {
+    float: right;
 `
 
 module.exports = runTab
@@ -184,13 +191,26 @@ module.exports = runTab
 var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
 
-var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
+var pendingTxsText = yo`<span></span>`
 
 function runTab (container, appAPI, appEvents, opts) {
   var events = new EventManager()
+
+  var clearInstanceElement = yo`<i class="${css.clearinstance} fa fa-minus-square-o" title="Clear Instances List" aria-hidden="true"></i>`
+  clearInstanceElement.addEventListener('click', () => {
+    events.trigger('clearInstance', [])
+  })
+  var recorderInterface = makeRecorder(events, appAPI, appEvents)
   var pendingTxsContainer = yo`
   <div class="${css.pendingTxsContainer}">
-    ${pendingTxsText}
+    <div class="${css.pendingTxsText}"> 
+      ${pendingTxsText}
+      <span class="${css.transactionActions}">
+        ${clearInstanceElement}
+        ${recorderInterface.recordButton}
+        ${recorderInterface.runButton}
+      </span>
+    </div>
   </div>`
 
   var el = yo`
@@ -216,7 +236,7 @@ function runTab (container, appAPI, appEvents, opts) {
       // set the final context. Cause it is possible that this is not the one we've originaly selected
       selectExEnv.value = executionContext.getProvider()
       fillAccountsList(appAPI, el)
-      clearInstance()
+      events.trigger('clearInstance', [])
     })
   })
   selectExEnv.value = executionContext.getProvider()
@@ -226,12 +246,11 @@ function runTab (container, appAPI, appEvents, opts) {
     updatePendingTxs(container, appAPI)
   }, 500)
 
-  var clearInstance = function () {
+  events.register('clearInstance', () => {
     instanceContainer.innerHTML = '' // clear the instances list
     noInstancesText.style.display = 'block'
     instanceContainer.appendChild(noInstancesText)
-    events.trigger('clearInstance', [])
-  }
+  })
 }
 
 function fillAccountsList (appAPI, container) {
@@ -275,29 +294,21 @@ function makeRecorder (events, appAPI, appEvents) {
   })
   var css2 = csjs`
     .container {
-      margin: 10px;
-      display: flex;
-      justify-content: space-evenly;
-      width: 100%;
     }
     .recorder {
-      ${styles.button}
-      width: 135px;
+      font-size: 20px;
+      cursor: pointer;
     }
     .runTxs {
-      ${styles.button}
       margin-left: 10px;
-      width: 135px;
+      font-size: 20px;
+      cursor: pointer;
     }
   `
-  var recordButton = yo`<button class="${css.transaction} savetransaction">save transactions</button>`
-  var runButton = yo`<button class="${css.transaction} runtransaction">run transactions</button>`
-  var el = yo`
-    <div class=${css2.container}>
-     ${recordButton}
-     ${runButton}
-    </div>
-  `
+
+  var recordButton = yo`<i class="fa fa-floppy-o savetransaction ${css2.recorder}" title="Save Transactions" aria-hidden="true"></i>`
+  var runButton = yo`<i class="fa fa-play runtransaction ${css2.runTxs}"  title="Run Transactions" aria-hidden="true"></i>`
+
   recordButton.onclick = () => {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
     var path = appAPI.currentPath()
@@ -335,10 +346,10 @@ function makeRecorder (events, appAPI, appEvents) {
         })
       }
     } else {
-      modalDialogCustom.alert('Scenario File require JSON type')
+      modalDialogCustom.alert('A Scenario File is required. The file must be of type JSON. Use the "Save Transactions" Button to generate a  new Scenario File.')
     }
   }
-  return el
+  return { recordButton, runButton }
 }
 /* ------------------------------------------------
     section CONTRACT DROPDOWN and BUTTONS
@@ -357,7 +368,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
   })
 
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
-  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
+  var createButtonInput = yo`<input class="${css.input} create" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
 
   function getSelectedContract () {
@@ -371,6 +382,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
     return null
   }
   appAPI.getSelectedContract = getSelectedContract
+
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
@@ -385,7 +397,6 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
           ${atAddressButtonInput}
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
         </div>
-        <div class=${css.buttons}>${makeRecorder(events, appAPI, appEvents)}</div>
       </div>
     </div>
   `
