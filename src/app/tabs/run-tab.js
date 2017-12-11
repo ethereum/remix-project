@@ -8,6 +8,8 @@ var txHelper = require('../execution/txHelper')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var executionContext = require('../../execution-context')
 var copyToClipboard = require('../ui/copy-to-clipboard')
+var Recorder = require('../../recorder')
+var EventManager = require('remix-lib').EventManager
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -89,18 +91,14 @@ var css = csjs`
     flex-direction: row;
     align-items: baseline;
   }
-  .buttons {
-    display: flex;
-    cursor: pointer;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    font-size: 12px;
-  }
+
   .button {
     display: flex;
     align-items: center;
     margin-top: 2%;
+  }
+  .transaction {
+    ${styles.rightPanel.runTab.button_transaction}
   }
   .atAddress {
     ${styles.rightPanel.runTab.button_atAddress}
@@ -187,13 +185,18 @@ var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
 
 var pendingTxsText = yo`<div class="${css.pendingTxsText}"></div>`
-var pendingTxsContainer = yo`<div class="${css.pendingTxsContainer}">${pendingTxsText}</div>`
 
 function runTab (container, appAPI, appEvents, opts) {
+  var events = new EventManager()
+  var pendingTxsContainer = yo`
+  <div class="${css.pendingTxsContainer}">
+    ${pendingTxsText}
+  </div>`
+
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
     ${settings(appAPI, appEvents)}
-    ${contractDropdown(appAPI, appEvents, instanceContainer)}
+    ${contractDropdown(events, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
   </div>
@@ -213,11 +216,8 @@ function runTab (container, appAPI, appEvents, opts) {
       // set the final context. Cause it is possible that this is not the one we've originaly selected
       selectExEnv.value = executionContext.getProvider()
       fillAccountsList(appAPI, el)
+      clearInstance()
     })
-
-    instanceContainer.innerHTML = '' // clear the instances list
-    noInstancesText.style.display = 'block'
-    instanceContainer.appendChild(noInstancesText)
   })
   selectExEnv.value = executionContext.getProvider()
   fillAccountsList(appAPI, el)
@@ -225,6 +225,13 @@ function runTab (container, appAPI, appEvents, opts) {
     updateAccountBalances(container, appAPI)
     updatePendingTxs(container, appAPI)
   }, 500)
+
+  var clearInstance = function () {
+    instanceContainer.innerHTML = '' // clear the instances list
+    noInstancesText.style.display = 'block'
+    instanceContainer.appendChild(noInstancesText)
+    events.trigger('clearInstance', [])
+  }
 }
 
 function fillAccountsList (appAPI, container) {
@@ -255,10 +262,89 @@ function updateAccountBalances (container, appAPI) {
 }
 
 /* ------------------------------------------------
+    RECORDER
+------------------------------------------------ */
+function makeRecorder (events, appAPI, appEvents) {
+  var recorder = new Recorder({
+    events: {
+      udapp: appEvents.udapp,
+      executioncontext: executionContext.event,
+      runtab: events
+    },
+    api: appAPI
+  })
+  var css2 = csjs`
+    .container {
+      margin: 10px;
+      display: flex;
+      justify-content: space-evenly;
+      width: 100%;
+    }
+    .recorder {
+      ${styles.button}
+      width: 135px;
+    }
+    .runTxs {
+      ${styles.button}
+      margin-left: 10px;
+      width: 135px;
+    }
+  `
+  var recordButton = yo`<button class="${css.transaction} savetransaction">save transactions</button>`
+  var runButton = yo`<button class="${css.transaction} runtransaction">run transactions</button>`
+  var el = yo`
+    <div class=${css2.container}>
+     ${recordButton}
+     ${runButton}
+    </div>
+  `
+  recordButton.onclick = () => {
+    var txJSON = JSON.stringify(recorder.getAll(), null, 2)
+    var path = appAPI.currentPath()
+    modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`). The file is going to be saved under ' + path, 'scenario.json', input => {
+      var fileProvider = appAPI.fileProviderOf(path)
+      if (fileProvider) {
+        var newFile = path + input
+        newFile = helper.createNonClashingName(newFile, fileProvider, '.json')
+        if (!fileProvider.set(newFile, txJSON)) {
+          modalDialogCustom.alert('Failed to create file ' + newFile)
+        } else {
+          appAPI.switchFile(newFile)
+        }
+      }
+    })
+  }
+  runButton.onclick = () => {
+    var currentFile = appAPI.config.get('currentFile')
+    var json = appAPI.filesProviders['browser'].get(currentFile)
+    if (currentFile.match('.json$')) {
+      try {
+        var obj = JSON.parse(json)
+        var txArray = obj.transactions || []
+        var accounts = obj.accounts || []
+        var options = obj.options
+        var abis = obj.abis
+        var linkReferences = obj.linkReferences || {}
+      } catch (e) {
+        return modalDialogCustom.alert('Invalid Scenario File, please try again')
+      }
+      if (txArray.length) {
+        noInstancesText.style.display = 'none'
+        recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
+          instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
+        })
+      }
+    } else {
+      modalDialogCustom.alert('Scenario File require JSON type')
+    }
+  }
+  return el
+}
+/* ------------------------------------------------
     section CONTRACT DROPDOWN and BUTTONS
 ------------------------------------------------ */
 
-function contractDropdown (appAPI, appEvents, instanceContainer) {
+function contractDropdown (events, appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -273,6 +359,18 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
   var createButtonInput = yo`<input class="${css.input}" placeholder="" title="Create" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
+
+  function getSelectedContract () {
+    var contractName = selectContractNames.children[selectContractNames.selectedIndex].innerHTML
+    if (contractName) {
+      return {
+        name: contractName,
+        contract: appAPI.getContract(contractName)
+      }
+    }
+    return null
+  }
+  appAPI.getSelectedContract = getSelectedContract
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
@@ -287,6 +385,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
           ${atAddressButtonInput}
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
         </div>
+        <div class=${css.buttons}>${makeRecorder(events, appAPI, appEvents)}</div>
       </div>
     </div>
   `
@@ -294,8 +393,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
     if (appAPI.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
-      var contract = appAPI.getContract(selectContractNames.children[selectContractNames.selectedIndex].innerHTML)
-      var ctrabi = txHelper.getConstructorInterface(contract.object.abi)
+      var ctrabi = txHelper.getConstructorInterface(getSelectedContract().contract.object.abi)
       if (ctrabi.inputs.length) {
         createButtonInput.setAttribute('placeholder', txHelper.inputParametersDeclarationToString(ctrabi.inputs))
         createButtonInput.removeAttribute('disabled')
@@ -310,20 +408,18 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
 
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
-    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    var contractName = contractNames.children[contractNames.selectedIndex].innerHTML
-    var contract = appAPI.getContract(contractName)
+    var selectedContract = getSelectedContract()
 
-    if (contract.object.evm.bytecode.object.length === 0) {
+    if (selectedContract.contract.object.evm.bytecode.object.length === 0) {
       modalDialogCustom.alert('This contract does not implement all functions and thus cannot be created.')
       return
     }
 
-    var constructor = txHelper.getConstructorInterface(contract.object.abi)
+    var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
     var args = createButtonInput.value
-    txFormat.buildData(contract.object, appAPI.getContracts(), true, constructor, args, appAPI.udapp(), (error, data) => {
+    txFormat.buildData(selectedContract.name, selectedContract.contract.object, appAPI.getContracts(), true, constructor, args, appAPI.udapp(), (error, data) => {
       if (!error) {
-        appAPI.logMessage(`creation of ${contractName} pending...`)
+        appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
@@ -336,13 +432,13 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
             }
             noInstancesText.style.display = 'none'
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
+            instanceContainer.appendChild(appAPI.udapp().renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           } else {
-            appAPI.logMessage(`creation of ${contractName} errored: ` + error)
+            appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           }
         })
       } else {
-        appAPI.logMessage(`creation of ${contractName} errored: ` + error)
+        appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
       }
     }, (msg) => {
       appAPI.logMessage(msg)

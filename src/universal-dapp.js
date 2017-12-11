@@ -7,7 +7,6 @@ var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var crypto = require('crypto')
-var async = require('async')
 var TxRunner = require('./app/execution/txRunner')
 var yo = require('yo-yo')
 var txFormat = require('./app/execution/txFormat')
@@ -291,10 +290,10 @@ UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, 
 
   function remove () { instance.remove() }
 
-  var instance = yo`<div class="instance ${css.instance}"></div>`
+  address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
+  var instance = yo`<div class="instance ${css.instance}" id="instance${address}"></div>`
   var context = executionContext.isVM() ? 'memory' : 'blockchain'
 
-  address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var shortAddress = helper.shortenAddress(address)
   var title = yo`<div class="${css.title}" onclick=${toggleClass}>
     <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
@@ -310,22 +309,20 @@ UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, 
     $(instance).toggleClass(`${css.hidesub}`)
   }
 
-  var abi = txHelper.sortAbiFunction(contractABI)
-
   instance.appendChild(title)
 
   // Add the fallback function
-  var fallback = txHelper.getFallbackInterface(abi)
+  var fallback = txHelper.getFallbackInterface(contractABI)
   if (fallback) {
     instance.appendChild(this.getCallButton({
       funABI: fallback,
       address: address,
-      contractAbi: abi,
+      contractAbi: contractABI,
       contractName: contractName
     }))
   }
 
-  $.each(abi, (i, funABI) => {
+  $.each(contractABI, (i, funABI) => {
     if (funABI.type !== 'function') {
       return
     }
@@ -333,7 +330,7 @@ UniversalDApp.prototype.renderInstanceFromABI = function (contractABI, address, 
     instance.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
-      contractAbi: abi,
+      contractAbi: contractABI,
       contractName: contractName
     }))
   })
@@ -384,7 +381,7 @@ UniversalDApp.prototype.getCallButton = function (args) {
         logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
       }
     }
-    txFormat.buildData(args.contractAbi, self.contracts, false, args.funABI, inputField.value, self, (error, data) => {
+    txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, inputField.value, self, (error, data) => {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
@@ -435,7 +432,6 @@ UniversalDApp.prototype.getCallButton = function (args) {
   if (lookupOnly) {
     contractProperty.classList.add(css.constant)
     button.setAttribute('title', (title + ' - call'))
-    call(false)
   }
 
   if (args.funABI.inputs && args.funABI.inputs.length > 0) {
@@ -458,103 +454,99 @@ UniversalDApp.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }
 
+function execute (pipeline, env, callback) {
+  function next (err, env) {
+    if (err) return callback(err)
+    var step = pipeline.shift()
+    if (step) step(env, next)
+    else callback(null, env.result)
+  }
+  next(null, env)
+}
+
 UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
-  var tx = {
-    to: args.to,
-    data: args.data,
-    useCall: args.useCall
+  var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
+  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName } // contains decoded parameters
+  var pipeline = [queryGasLimit]
+  if (!args.value) {
+    pipeline.push(queryValue)
   }
-  async.waterfall([
-    // query gas limit
-    function (callback) {
-      tx.gasLimit = 3000000
+  if (!args.from) {
+    pipeline.push(queryAddress)
+  }
+  pipeline.push(runTransaction)
+  var env = { self, tx, payLoad }
+  execute(pipeline, env, cb)
+}
 
-      if (self.transactionContextAPI.getGasLimit) {
-        self.transactionContextAPI.getGasLimit(function (err, ret) {
-          if (err) {
-            return callback(err)
-          }
+function queryGasLimit (env, next) {
+  var { self, tx } = env
+  tx.gasLimit = 3000000
+  if (self.transactionContextAPI.getGasLimit) {
+    self.transactionContextAPI.getGasLimit(function (err, ret) {
+      if (err) return next(err)
+      tx.gasLimit = ret
+      next(null, env)
+    })
+  } else next(null, env)
+}
 
-          tx.gasLimit = ret
-          callback()
-        })
-      } else {
-        callback()
+function queryValue (env, next) {
+  var { self, tx } = env
+  tx.value = 0
+  if (tx.useCall) return next(null, env)
+  if (self.transactionContextAPI.getValue) {
+    self.transactionContextAPI.getValue(function (err, ret) {
+      if (err) return next(err)
+      tx.value = ret
+      next(null, env)
+    })
+  } else next(null, env)
+}
+
+function queryAddress (env, next) {
+  var { self, tx } = env
+  if (self.transactionContextAPI.getAddress) {
+    self.transactionContextAPI.getAddress(function (err, ret) {
+      if (err) return next(err)
+      tx.from = ret
+      next(null, env)
+    })
+  } else {
+    self.getAccounts(function (err, ret) {
+      if (err) return next(err)
+      if (ret.length === 0) return next('No accounts available')
+      if (executionContext.isVM() && !self.accounts[ret[0]]) {
+        return next('Invalid account selected')
       }
-    },
-    // query value
-    function (callback) {
-      tx.value = 0
-      if (tx.useCall) return callback()
-      if (self.transactionContextAPI.getValue) {
-        self.transactionContextAPI.getValue(function (err, ret) {
-          if (err) {
-            return callback(err)
-          }
+      tx.from = ret[0]
+      next(null, env)
+    })
+  }
+}
 
-          tx.value = ret
-          callback()
-        })
-      } else {
-        callback()
-      }
-    },
-    // query address
-    function (callback) {
-      if (self.transactionContextAPI.getAddress) {
-        self.transactionContextAPI.getAddress(function (err, ret) {
-          if (err) {
-            return callback(err)
-          }
-
-          tx.from = ret
-
-          callback()
-        })
-      } else {
-        self.getAccounts(function (err, ret) {
-          if (err) {
-            return callback(err)
-          }
-
-          if (ret.length === 0) {
-            return callback('No accounts available')
-          }
-
-          if (executionContext.isVM() && !self.accounts[ret[0]]) {
-            return callback('Invalid account selected')
-          }
-
-          tx.from = ret[0]
-
-          callback()
-        })
-      }
-    },
-    // run transaction
-    function (callback) {
-      self.txRunner.rawRun(tx, function (error, result) {
-        if (!args.useCall) {
-          self.event.trigger('transactionExecuted', [error, args.from, args.to, args.data, false, result])
-        } else {
-          self.event.trigger('callExecuted', [error, args.from, args.to, args.data, true, result])
-        }
-        if (error) {
-          if (typeof (error) !== 'string') {
-            if (error.message) {
-              error = error.message
-            } else {
-              try {
-                error = 'error: ' + JSON.stringify(error)
-              } catch (e) {}
-            }
-          }
-        }
-        callback(error, result)
-      })
+function runTransaction (env, next) {
+  var { self, tx, payLoad } = env
+  var timestamp = Date.now()
+  self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+  self.txRunner.rawRun(tx, function (error, result) {
+    if (!tx.useCall) {
+      self.event.trigger('transactionExecuted', [error, tx.from, tx.to, tx.data, false, result, timestamp, payLoad])
+    } else {
+      self.event.trigger('callExecuted', [error, tx.from, tx.to, tx.data, true, result, timestamp, payLoad])
     }
-  ], cb)
+    if (error) {
+      if (typeof (error) !== 'string') {
+        if (error.message) error = error.message
+        else {
+          try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
+        }
+      }
+    }
+    env.result = result
+    next(error, env)
+  })
 }
 
 module.exports = UniversalDApp
