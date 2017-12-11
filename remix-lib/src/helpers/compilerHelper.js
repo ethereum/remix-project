@@ -14,12 +14,12 @@ function compilerInput (contracts) {
       optimizer: {
         enabled: false,
         runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '': [ 'legacyAST' ],
-        '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+      },
+      outputSelection: {
+        '*': {
+          '': [ 'legacyAST' ],
+          '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+        }
       }
     }
   })
