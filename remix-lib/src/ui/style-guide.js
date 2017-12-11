@@ -74,7 +74,7 @@ function styleGuide () {
 
     /* ------------------------------------------------------
                           ACE THEME
-    ------------------------------------------------------ */   
+    ------------------------------------------------------ */
 
     aceTheme: '',
 
@@ -86,7 +86,7 @@ function styleGuide () {
     tertiary_BackgroundColor: cssProperties.colors.backgroundBlue,
     quaternary_BackgroundColor: cssProperties.colors.backgroundBlue,
     fifth_BackgroundColor: cssProperties.colors.backgroundBlue,
-    seventh_BackgroundColor: cssProperties.colors.veryLightGrey,  
+    seventh_BackgroundColor: cssProperties.colors.veryLightGrey,
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
@@ -103,7 +103,6 @@ function styleGuide () {
     supportText_Color: cssProperties.colors.grey,
 
     sub_supportText_Color: cssProperties.colors.black,
-    
     specialText_Color: cssProperties.colors.greenZing,
     brightText_Color: cssProperties.colors.brightBlue,
     oppositeText_Color: cssProperties.colors.black,
@@ -219,7 +218,6 @@ function styleGuide () {
     sixthButton_BackgroundColor: cssProperties.colors.greenZing,
     sixthButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
-
 
           SUCCESS
     .................. */

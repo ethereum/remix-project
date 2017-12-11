@@ -3,8 +3,6 @@
 module.exports = styleGuide
 
 function styleGuide () {
-
-
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES
@@ -36,7 +34,7 @@ function styleGuide () {
       blueMorningGlory: 'hsla(213, 74%, 80%, 1)',
       blueFairyDust: 'hsla(181, 83%, 86%, 1)',
       blueMonday: 'hsla(213, 100%, 16%, 1)',
-      
+
       // GREY
       grey: 'hsla(0, 0%, 40%, 1)',
       lightGrey: 'hsla(0, 0%, 40%, .5)',
@@ -91,7 +89,7 @@ function styleGuide () {
   var appProperties = {
     /* ------------------------------------------------------
                           ACE THEME
-    ------------------------------------------------------ */   
+    ------------------------------------------------------ */
 
     aceTheme: 'tomorrow_night_blue',
 
@@ -233,7 +231,6 @@ function styleGuide () {
     sixthButton_BackgroundColor: cssProperties.colors.greenZing,
     sixthButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
-
 
           SUCCESS
     .................. */
