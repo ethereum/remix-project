@@ -147,15 +147,17 @@ function setEditorValue (value) {
   return this
 }
 
-function addInstance (browser, address, done) {
+function addInstance (browser, address, callback) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
-      .perform((client) => {
+      .perform((client, done) => {
         browser.execute(function () {
           document.querySelector('#modal-footer-ok').click()
         }, [], function (result) {
           done()
         })
+      }).perform(() => {
+        callback()
       })
   })
 }
