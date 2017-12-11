@@ -120,7 +120,7 @@ class ContextualListener {
 
   _getFn (functions, name) {
     for (var x in functions) {
-      if (!!~functions[x].indexOf(name)) {
+      if (~functions[x].indexOf(name)) {
         var fn = functions[x]
         break
       }
