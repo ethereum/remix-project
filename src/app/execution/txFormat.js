@@ -8,9 +8,34 @@ var TreeView = require('remix-debugger').ui.TreeView
 var executionContext = require('../../execution-context')
 
 module.exports = {
+
   /**
     * build the transaction data
     *
+    * @param {Object} function abi
+    * @param {Object} values to encode
+    * @param {String} contractbyteCode
+    */
+  encodeData: function (funABI, values, contractbyteCode) {
+    var encoded
+    var encodedHex
+    try {
+      encoded = helper.encodeParams(funABI, values)
+      encodedHex = encoded.toString('hex')
+    } catch (e) {
+      return { error: 'cannot encode arguments' }
+    }
+    if (contractbyteCode) {
+      return { data: contractbyteCode + encodedHex }
+    } else {
+      return { data: Buffer.concat([helper.encodeFunctionId(funABI), encoded]).toString('hex') }
+    }
+  },
+
+  /**
+    * build the transaction data
+    *
+    * @param {String} contractName
     * @param {Object} contract    - abi definition of the current contract.
     * @param {Object} contracts    - map of all compiled contracts.
     * @param {Bool} isConstructor    - isConstructor.
@@ -20,7 +45,7 @@ module.exports = {
     * @param {Function} callback    - callback
     * @param {Function} callbackStep  - callbackStep
     */
-  buildData: function (contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
+  buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
     var funArgs = ''
     try {
       funArgs = $.parseJSON('[' + params + ']')
@@ -45,7 +70,9 @@ module.exports = {
     if (data.slice(0, 2) === '0x') {
       dataHex = data.slice(2)
     }
+    var contractBytecode
     if (isConstructor) {
+      contractBytecode = contract.evm.bytecode.object
       var bytecodeToDeploy = contract.evm.bytecode.object
       if (bytecodeToDeploy.indexOf('_') >= 0) {
         this.linkBytecode(contract, contracts, udapp, (err, bytecode) => {
@@ -53,7 +80,7 @@ module.exports = {
             callback('Error deploying required libraries: ' + err)
           } else {
             bytecodeToDeploy = bytecode + dataHex
-            return callback(null, bytecodeToDeploy)
+            return callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode, contractName: contractName})
           }
         }, callbackStep)
         return
@@ -63,7 +90,7 @@ module.exports = {
     } else {
       dataHex = Buffer.concat([helper.encodeFunctionId(funAbi), data]).toString('hex')
     }
-    callback(null, dataHex)
+    callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractName: contractName })
   },
 
   atAddress: function () {},
@@ -90,7 +117,7 @@ module.exports = {
     if (!library) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryName, library, contracts, udapp, (err, address) => {
+    this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, (err, address) => {
       if (err) {
         return callback(err)
       }
@@ -104,7 +131,7 @@ module.exports = {
     }, callbackStep)
   },
 
-  deployLibrary: function (libraryName, library, contracts, udapp, callback, callbackStep) {
+  deployLibrary: function (libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep) {
     var address = library.address
     if (address) {
       return callback(null, address)
@@ -113,11 +140,12 @@ module.exports = {
     if (bytecode.indexOf('_') >= 0) {
       this.linkBytecode(libraryName, contracts, udapp, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, library, contracts, udapp, callback, callbackStep)
+        else this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep)
       }, callbackStep)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
-      udapp.runTx({ data: bytecode, useCall: false }, (err, txResult) => {
+      var data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName}
+      udapp.runTx({ data: data, useCall: false }, (err, txResult) => {
         if (err) {
           return callback(err)
         }
@@ -128,16 +156,19 @@ module.exports = {
     }
   },
 
-  linkLibraryStandard: function (libraryName, address, contract) {
-    var bytecode = contract.evm.bytecode.object
-    for (var file in contract.evm.bytecode.linkReferences) {
-      for (var libName in contract.evm.bytecode.linkReferences[file]) {
+  linkLibraryStandardFromlinkReferences: function (libraryName, address, bytecode, linkReferences) {
+    for (var file in linkReferences) {
+      for (var libName in linkReferences[file]) {
         if (libraryName === libName) {
-          bytecode = this.setLibraryAddress(address, bytecode, contract.evm.bytecode.linkReferences[file][libName])
+          bytecode = this.setLibraryAddress(address, bytecode, linkReferences[file][libName])
         }
       }
     }
     return bytecode
+  },
+
+  linkLibraryStandard: function (libraryName, address, contract) {
+    return this.linkLibraryStandardFromlinkReferences(libraryName, address, contract.evm.bytecode.object, contract.evm.bytecode.linkReferences)
   },
 
   setLibraryAddress: function (address, bytecodeToLink, positions) {

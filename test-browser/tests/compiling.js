@@ -3,6 +3,7 @@ var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 var async = require('async')
+var testRecorder = require('./units/testRecorder')
 
 module.exports = {
   before: function (browser, done) {
@@ -19,12 +20,14 @@ module.exports = {
 
 function runTests (browser) {
   browser.testFunction = contractHelper.testFunction
+  browser.clickFunction = contractHelper.clickFunction
+  browser.setEditorValue = contractHelper.setEditorValue
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.
-      async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues], function () {
+      async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues, testRecorder], function () {
         browser.end()
       })
     })

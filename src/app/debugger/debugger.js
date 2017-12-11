@@ -75,7 +75,10 @@ Debugger.prototype.debug = function (txHash) {
   var self = this
   this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
-      self.debugger.setCompilationResult(self.appAPI.lastCompilationResult().data)
+      var compilationResult = self.appAPI.lastCompilationResult()
+      if (compilationResult) {
+        self.debugger.setCompilationResult(compilationResult.data)
+      }
       self.debugger.debug(tx)
     }
   })

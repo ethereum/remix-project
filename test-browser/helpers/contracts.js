@@ -11,7 +11,10 @@ module.exports = {
   checkDebug,
   goToVMtraceStep,
   useFilter,
-  addInstance
+  addInstance,
+  clickFunction,
+  verifyCallReturnValue,
+  setEditorValue
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -65,7 +68,41 @@ function testContracts (browser, fileName, contractCode, compiledContractNames, 
     })
 }
 
-function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent) {
+function clickFunction (fnFullName, expectedInput) {
+  this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
+    .perform(function (client, done) {
+      client.execute(function () {
+        document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+      }, [], function () {
+        if (expectedInput) {
+          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+        }
+        done()
+      })
+    })
+    .click('.instance button[title="' + fnFullName + '"]')
+    .pause(500)
+  return this
+}
+
+function verifyCallReturnValue (browser, address, checks, done) {
+  browser.execute(function (address) {
+    var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractProperty"] div[class^="value"]')
+    var ret = []
+    for (var k = 0; k < nodes.length; k++) {
+      var text = nodes[k].innerText ? nodes[k].innerText : nodes[k].textContent
+      ret.push(text.replace('\n', ''))
+    }
+    return ret
+  }, [address], function (result) {
+    for (var k in checks) {
+      browser.assert.equal(checks[k], result.value[k])
+    }
+    done()
+  })
+}
+
+function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent, callback) {
   // this => browser
   this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
     .perform(function (client, done) {
@@ -94,20 +131,34 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
         client.assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', expectedEvent)
       }
       done()
+      if (callback) callback()
     })
   return this
 }
 
-function addInstance (browser, address, done) {
+function setEditorValue (value) {
+  this.perform((client, done) => {
+    this.execute(function (value) {
+      document.getElementById('input').editor.session.setValue(value)
+    }, [value], function (result) {
+      done()
+    })
+  })
+  return this
+}
+
+function addInstance (browser, address, callback) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
-    .perform((client) => {
-      browser.execute(function () {
-        document.querySelector('#modal-footer-ok').click()
-      }, [], function (result) {
-        done()
+      .perform((client, done) => {
+        browser.execute(function () {
+          document.querySelector('#modal-footer-ok').click()
+        }, [], function (result) {
+          done()
+        })
+      }).perform(() => {
+        callback()
       })
-    })
   })
 }
 
@@ -124,7 +175,7 @@ function addFile (browser, name, content, done) {
         done()
       })
     })
-    .setValue('#input textarea', content.content, function () {})
+    .setEditorValue(content.content)
     .pause(1000)
     .perform(function () {
       done()

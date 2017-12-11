@@ -13,8 +13,20 @@ module.exports = {
   },
   prompt: function (title, text, inputValue, ok, cancel) {
     if (!inputValue) inputValue = ''
-    modal(title,
-  yo`<div>${text}<div><input type='text' name='prompt_text' id='prompt_text' class="${css['prompt_text']}" value='${inputValue}' ></div></div>`,
+    var input = yo`<input type='text' name='prompt_text' id='prompt_text' class="${css['prompt_text']}" value='${inputValue}' >`
+    modal(title, yo`<div>${text}<div>${input}</div></div>`,
+      {
+        fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
+      },
+      {
+        fn: () => { if (typeof cancel === 'function') cancel() }
+      }
+    )
+  },
+  promptMulti: function ({ title, text, inputValue }, ok, cancel) {
+    if (!inputValue) inputValue = ''
+    var input = yo`<textarea id="prompt_text" class=${css.prompt_text} rows="4" cols="50"></textarea>`
+    modal(title, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
       },

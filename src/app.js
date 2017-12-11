@@ -537,6 +537,9 @@ function run () {
       document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
     },
+    getAccounts: (cb) => {
+      udapp.getAccounts(cb)
+    },
     getSource: (fileName) => {
       return compiler.getSource(fileName)
     },
@@ -558,11 +561,18 @@ function run () {
     udapp: () => {
       return udapp
     },
+    switchFile: function (path) {
+      fileManager.switchFile(path)
+    },
+    filesProviders: filesProviders,
     fileProviderOf: (path) => {
       return fileManager.fileProviderOf(path)
     },
     fileProvider: (name) => {
       return self._api.filesProviders[name]
+    },
+    currentPath: function () {
+      return fileManager.currentPath()
     },
     getBalance: (address, callback) => {
       udapp.getBalance(address, (error, balance) => {

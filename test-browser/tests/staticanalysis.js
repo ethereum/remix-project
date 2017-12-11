@@ -33,6 +33,7 @@ module.exports = {
 }
 
 function runTests (browser) {
+  browser.setEditorValue = contractHelper.setEditorValue
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')
