@@ -21,6 +21,7 @@ module.exports = {
 function runTests (browser) {
   browser.testFunction = contractHelper.testFunction
   browser.clickFunction = contractHelper.clickFunction
+  browser.setEditorValue = contractHelper.setEditorValue
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')

@@ -13,7 +13,8 @@ module.exports = {
   useFilter,
   addInstance,
   clickFunction,
-  verifyCallReturnValue
+  verifyCallReturnValue,
+  setEditorValue
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -134,6 +135,17 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
   return this
 }
 
+function setEditorValue (value) {
+  this.perform((client, done) => {
+    this.execute(function (value) {
+      document.getElementById('input').editor.session.setValue(value)
+    }, [value], function (result) {
+      done()
+    })
+  })
+  return this
+}
+
 function addInstance (browser, address, done) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
@@ -160,7 +172,7 @@ function addFile (browser, name, content, done) {
         done()
       })
     })
-    .setValue('#input textarea', content.content, function () {})
+    .setEditorValue(content.content)
     .pause(1000)
     .perform(function () {
       done()
