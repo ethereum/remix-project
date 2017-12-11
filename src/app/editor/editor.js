@@ -20,16 +20,8 @@ function setTheme (cb) {
 }
 
 setTheme((path, theme) => {
-  // require(path + theme)
   require('brace/theme/tomorrow_night_blue')
 })
-
-  // editor.setTheme(styleguide.aceTheme) ==> where styleguide.aceTheme is 'ace/theme/tomorrow_night_blue'
-  // var themeIs = 'brace/theme/' + styles.appProperties.aceTheme
-  // var themeIs = 'brace/theme/' + 'tomorrow_night_blue'
-  // console.log(themeIs)
-  // require(`${themeIs}`)
-  // require('brace/theme/tomorrow_night_blue')
 
 var css = csjs`
   .ace-editor {
