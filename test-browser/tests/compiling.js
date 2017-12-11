@@ -22,12 +22,14 @@ function runTests (browser) {
   browser.testFunction = contractHelper.testFunction
   browser.clickFunction = contractHelper.clickFunction
   browser.setEditorValue = contractHelper.setEditorValue
+  browser.modalFooterOKClick = contractHelper.modalFooterOKClick
+  browser.getEditorValue = contractHelper.getEditorValue
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.compileView')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.
-      async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues, testRecorder], function () {
+      async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues, testRecorder.test], function () {
         browser.end()
       })
     })

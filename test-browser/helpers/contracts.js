@@ -14,7 +14,10 @@ module.exports = {
   addInstance,
   clickFunction,
   verifyCallReturnValue,
-  setEditorValue
+  createContract,
+  modalFooterOKClick,
+  setEditorValue,
+  getEditorValue
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -31,6 +34,13 @@ function getCompiledContracts (browser, compiled, callback) {
     }
   }, [], function (result) {
     callback(result)
+  })
+}
+
+function createContract (browser, inputParams, callback) {
+  browser.click('.runView')
+  .setValue('input.create', inputParams, function () {
+    browser.click('#runTabView div[class^="create"]').perform(function () { callback() })
   })
 }
 
@@ -96,7 +106,7 @@ function verifyCallReturnValue (browser, address, checks, done) {
     return ret
   }, [address], function (result) {
     for (var k in checks) {
-      browser.assert.equal(checks[k], result.value[k])
+      browser.assert.equal(result.value[k], checks[k])
     }
     done()
   })
@@ -160,6 +170,29 @@ function addInstance (browser, address, callback) {
         callback()
       })
   })
+}
+
+function getEditorValue (callback) {
+  this.perform((client, done) => {
+    this.execute(function (value) {
+      return document.getElementById('input').editor.getValue()
+    }, [], function (result) {
+      done(result.value)
+      callback(result.value)
+    })
+  })
+  return this
+}
+
+function modalFooterOKClick () {
+  this.perform((client, done) => {
+    this.execute(function () {
+      document.querySelector('#modal-footer-ok').click()
+    }, [], function (result) {
+      done()
+    })
+  })
+  return this
 }
 
 function addFile (browser, name, content, done) {
