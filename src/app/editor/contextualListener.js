@@ -64,6 +64,7 @@ class ContextualListener {
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
+      this.nodes = nodes
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
@@ -91,10 +92,8 @@ class ContextualListener {
     }
   }
 
-  _getGasEstimation (results) {
-    this.contractName = Object.keys(results.data.contracts[results.source.target])[0]
-    this.target = results.data.contracts[results.source.target]
-    this.contract = this.target[this.contractName]
+  _getGasEstimation (contract) {
+    this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
     this.estimationObj = this.contract.evm.gasEstimates
     if (this.estimationObj.external) this.externalFunctions = Object.keys(this.estimationObj.external)
     if (this.estimationObj.internal) this.internalFunctions = Object.keys(this.estimationObj.internal)
@@ -102,25 +101,41 @@ class ContextualListener {
     this.codeDepositCost = this.estimationObj.creation.codeDepositCost
   }
 
+  _getContract (node) {
+    for (var i in this.nodes) {
+      if (this.nodes[i].id === node.attributes.scope) {
+        var contract = this._getGasEstimation(this.nodes[i])
+        break
+      }
+    }
+    return contract
+  }
+
   gasEstimation (node) {
+    this._getContract(node)
+    var executionCost
+    var codeDepositCost
     if (node.name === 'FunctionDefinition') {
       if (!node.attributes.isConstructor) {
         var functionName = node.attributes.name
-        if (this.externalFunctions) {
-          return {executionCost: this.estimationObj.external[this._getFn(this.externalFunctions, functionName)]}
-        }
-        if (this.internalFunctions) {
-          return {executionCost: this.estimationObj.internal[this._getFn(this.internalFunctions, functionName)]}
+        if (node.attributes.visibility === 'public') {
+          executionCost = this.estimationObj.external[this._getFn(this.externalFunctions, functionName)]
+        } else if (node.attributes.visibility === 'internal') {
+          executionCost = this.estimationObj.internal[this._getFn(this.internalFunctions, functionName)]
         }
       } else {
-        return {executionCost: this.creationCost, codeDepositCost: this.codeDepositCost}
+        executionCost = this.creationCost
+        codeDepositCost = this.codeDepositCost
       }
+    } else {
+      executionCost = '-'
     }
+    return {executionCost, codeDepositCost}
   }
 
   _getFn (functions, name) {
     for (var x in functions) {
-      if (!!~functions[x].indexOf(name)) {
+      if (~functions[x].indexOf(name)) {
         var fn = functions[x]
         break
       }
@@ -156,7 +171,7 @@ class ContextualListener {
       highlights(node.id)
       this._highlight(node, compilationResult)
     }
-    this._getGasEstimation(compilationResult)
+    this.results = compilationResult
   }
 
   _stopHighlighting () {
