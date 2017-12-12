@@ -85,13 +85,13 @@ var css = csjs`
   .contractNames {
     ${styles.rightPanel.runTab.dropdown_RunTab}
     width: 100%;
+    border: 0px solid ${styles.appProperties.errorText_Color}
   }
   .subcontainer {
     display: flex;
     flex-direction: row;
     align-items: baseline;
   }
-
   .button {
     display: flex;
     align-items: center;
@@ -151,15 +151,11 @@ var css = csjs`
     margin-left: 10%;
   }
   .errorIcon {
-    color: ${styles.colors.red};
-    margin-left: 15px;
-  }
-  .errorIcon {
-    color: ${styles.colors.red};
+    color: ${styles.appProperties.errorText_Color};
     margin-left: 15px;
   }
   .failDesc {
-    color: ${styles.colors.red};
+    color: ${styles.appProperties.errorText_Color};
     padding-left: 10px;
     display: inline;
   }
@@ -357,13 +353,15 @@ function makeRecorder (events, appAPI, appEvents) {
 
 function contractDropdown (events, appAPI, appEvents, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
-  var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-thumbs-down ${css.errorIcon}" ></i>`
+  var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle fa-2x ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
     getContractNames(success, data)
     if (success) {
       compFails.style.display = 'none'
+      document.querySelector(`.${css.contractNames}`).style.borderWidth = `0px`
     } else {
       compFails.style.display = 'block'
+      document.querySelector(`.${css.contractNames}`).style.borderWidth = `2px`
     }
   })
 
