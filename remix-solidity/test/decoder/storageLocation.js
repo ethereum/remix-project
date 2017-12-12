@@ -3,6 +3,8 @@ var tape = require('tape')
 var compiler = require('solc')
 var stateDecoder = require('../../src/decoder/stateDecoder')
 var contracts = require('./contracts/miscContracts')
+var remixLib = require('remix-lib')
+var compilerInput = remixLib.helpers.compiler.compilerInput
 
 tape('solidity', function (t) {
   t.test('storage location', function (st) {
@@ -54,26 +56,4 @@ tape('solidity', function (t) {
 function checkLocation (st, location, slot, offset) {
   st.equal(location.offset, offset)
   st.equal(location.slot, slot)
-}
-
-function compilerInput (contracts) {
-  return JSON.stringify({
-    language: 'Solidity',
-    sources: {
-      'test.sol': {
-        content: contracts
-      }
-    },
-    settings: {
-      optimizer: {
-        enabled: false,
-        runs: 500
-      }
-    },
-    outputSelection: {
-      '*': {
-        '*': [ 'metadata', 'evm.bytecode', 'abi', 'legacyAST', 'metadata', 'evm.assembly', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
-      }
-    }
-  })
 }
