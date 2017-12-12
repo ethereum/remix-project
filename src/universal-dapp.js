@@ -157,6 +157,7 @@ var css = csjs`
     float: left;
     align-self: center;
     color: ${styles.appProperties.mainText_Color};
+    margin-left: 4px;
   }
   .hasArgs input {
     display: block;
