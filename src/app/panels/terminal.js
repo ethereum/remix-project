@@ -73,7 +73,6 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
   }
-
   .terminal_bg     {
     display           : flex;
     flex-direction    : column;
@@ -93,9 +92,7 @@ var css = csjs`
     background-repeat : no-repeat;
     background-size   : 45%;
   }
-
   .terminal    {
-    position: relative;
     position: relative;
     display: flex;
     flex-direction: column;
