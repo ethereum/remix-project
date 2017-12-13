@@ -99,13 +99,13 @@ function fileExplorer (appAPI, files) {
         })) : undefined
       }
     },
-    formatSelf: function (key, data) {
+    formatSelf: function (key, data, li) {
       var isRoot = data.path.indexOf('/') === -1
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
-        onload=${function (el) { adaptEnvironment(el, focus, hover) }}
-        onunload=${function (el) { unadaptEnvironment(el, focus, hover) }}
+        onload=${function (el) { adaptEnvironment(el, focus, hover, li) }}
+        onunload=${function (el) { unadaptEnvironment(el, focus, hover, li) }}
         onclick=${editModeOn}
         onkeydown=${editModeOff}
         onblur=${editModeOff}
@@ -356,8 +356,7 @@ function fileExplorer (appAPI, files) {
 /*
   HELPER FUNCTIONS
 */
-function adaptEnvironment (label, focus, hover) {
-  var li = getLiFrom(label)
+function adaptEnvironment (label, focus, hover, li) {
   li.style.position = 'relative'
   var span = li.firstChild
   // add focus
@@ -368,8 +367,7 @@ function adaptEnvironment (label, focus, hover) {
   span.addEventListener('mouseout', hover)
 }
 
-function unadaptEnvironment (label, focus, hover) {
-  var li = getLiFrom(label)
+function unadaptEnvironment (label, focus, hover, li) {
   var span = li.firstChild
   li.style.position = undefined
   // remove focus
