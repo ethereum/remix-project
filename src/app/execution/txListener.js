@@ -217,7 +217,7 @@ class TxListener {
     var contracts = this._api.contracts()
     if (!contracts) return cb()
     var contractName
-    if (!tx.to) {
+    if (!tx.to || tx.to === '0x0') { // testrpc returns 0x0 in that case
       // contract creation / resolve using the creation bytes code
       // if web3: we have to call getTransactionReceipt to get the created address
       // if VM: created address already included

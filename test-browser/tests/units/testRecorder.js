@@ -2,6 +2,7 @@
 var contractHelper = require('../../helpers/contracts')
 
 module.exports = {
+  '@disabled': true, // run by compiling.j
   '@sources': function () {
     return sources
   },
@@ -22,8 +23,16 @@ module.exports = {
         .click('i[class^="clearinstance"]')
         .perform((client, done) => {
           contractHelper.testContracts(browser, 'testRecorder.sol', sources[0]['browser/testRecorder.sol'], ['testRecorder'], function () {
-            contractHelper.createContract(browser, '12', function () {
-              browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
+            done()
+          })
+        })
+        .perform((client, done) => {
+          contractHelper.createContract(browser, '12', function () {
+            done()
+          })
+        })
+        .perform((client, done) => {
+          browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
               .click('i.savetransaction').modalFooterOKClick().getEditorValue(function (result) {
                 var parsed = JSON.parse(result)
                 browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
@@ -36,10 +45,10 @@ module.exports = {
                 browser.assert.equal(JSON.stringify(parsed.transactions[1].record.name), JSON.stringify(scenario.transactions[1].record.name))
                 browser.assert.equal(JSON.stringify(parsed.transactions[1].record.type), JSON.stringify(scenario.transactions[1].record.type))
                 browser.assert.equal(JSON.stringify(parsed.transactions[1].record.from), JSON.stringify(scenario.transactions[1].record.from))
-                callback()
+                done()
               })
-            })
-          })
+        }).perform(() => {
+          callback()
         })
     })
   }

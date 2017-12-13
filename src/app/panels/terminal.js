@@ -67,9 +67,6 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     height            : 100%;
-    padding-left      : 5px;
-    padding-right     : 5px;
-    padding-bottom    : 3px;
     overflow-y        : auto;
     font-family       : monospace;
   }
@@ -129,7 +126,6 @@ var css = csjs`
     word-break        : break-all;
     outline           : none;
     font-family       : monospace;
-    font-family: FontAwesome;
   }
   .search {
     display: flex;
