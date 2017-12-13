@@ -138,7 +138,7 @@ module.exports = {
     }
     var bytecode = library.evm.bytecode.object
     if (bytecode.indexOf('_') >= 0) {
-      this.linkBytecode(libraryName, contracts, udapp, (err, bytecode) => {
+      this.linkBytecode(library, contracts, udapp, (err, bytecode) => {
         if (err) callback(err)
         else this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep)
       }, callbackStep)

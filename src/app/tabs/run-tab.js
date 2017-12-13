@@ -214,7 +214,7 @@ function runTab (container, appAPI, appEvents, opts) {
 
   var el = yo`
   <div class="${css.runTabView}" id="runTabView">
-    ${settings(appAPI, appEvents)}
+    ${settings(container, appAPI, appEvents)}
     ${contractDropdown(events, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
@@ -243,7 +243,7 @@ function runTab (container, appAPI, appEvents, opts) {
   setInterval(() => {
     updateAccountBalances(container, appAPI)
     updatePendingTxs(container, appAPI)
-  }, 500)
+  }, 10000)
 
   events.register('clearInstance', () => {
     instanceContainer.innerHTML = '' // clear the instances list
@@ -498,7 +498,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
 /* ------------------------------------------------
     section SETTINGS: Environment, Account, Gas, Value
 ------------------------------------------------ */
-function settings (appAPI, appEvents) {
+function settings (container, appAPI, appEvents) {
   // SETTINGS HTML
   var net = yo`<span class=${css.network}></span>`
   const updateNetwork = () => {
@@ -574,6 +574,7 @@ function settings (appAPI, appEvents) {
   appEvents.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
     if (error) return
     if (!lookupOnly) el.querySelector('#value').value = '0'
+    updateAccountBalances(container, appAPI)
   })
 
   return el
