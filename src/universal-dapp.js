@@ -100,22 +100,6 @@ var css = csjs`
     width: 75%;
     padding: .36em;
   }
-
-  // .call {
-  //   background-color: ${styles.colors.lightRed};
-  //   border-color: ${styles.colors.lightRed};
-  // }
-  // .constant .call {
-  //   background-color: ${styles.colors.lightBlue};
-  //   border-color: ${styles.colors.lightBlue};
-  //   width: 25%;
-  //   outline: none;
-  // }
-  // .payable .call {
-  //   background-color: ${styles.colors.red};
-  //   border-color: ${styles.colors.red};
-  //   width: 25%;
-  // }
   .contractProperty button {
     ${styles.rightPanel.runTab.button_Create}
     min-width: 100px;
@@ -146,7 +130,8 @@ var css = csjs`
     box-sizing: border-box;
     float: left;
     align-self: center;
-    color: ${styles.colors.white};
+    color: ${styles.appProperties.mainText_Color};
+    margin-left: 4px;
   }
   .hasArgs input {
     display: block;
