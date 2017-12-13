@@ -10,5 +10,6 @@ module.exports = [
   require('./lowLevelCalls'),
   require('./blockBlockhash'),
   require('./noReturn'),
-  require('./selfdestruct')
+  require('./selfdestruct'),
+  require('./guardConditions')
 ]

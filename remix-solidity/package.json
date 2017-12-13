@@ -31,7 +31,7 @@
   "scripts": {
     "postinstall": "npm-link-local ../remix-lib && npm-link-local ../remix-core",
     "test": "standard && npm run downloadsolc && tape ./test/tests.js",
-    "downloadsolc": "wget https://ethereum.github.io/solc-bin/soljson.js"
+    "downloadsolc": "test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js"
   },
   "standard": {
     "ignore": [

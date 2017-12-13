@@ -417,6 +417,24 @@ function isSelfdestructCall (node) {
 }
 
 /**
+ * True if node is a call to builtin assert(bool)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isAssertCall (node) {
+  return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'assert'
+}
+
+/**
+ * True if node is a call to builtin require(bool)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isRequireCall (node) {
+  return isBuiltinFunctionCall(node) && getLocalCallName(node) === 'require'
+}
+
+/**
  * True if is storage variable declaration
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -810,6 +828,8 @@ module.exports = {
   isMinusMinusUnaryOperation: isMinusMinusUnaryOperation,
   isBuiltinFunctionCall: isBuiltinFunctionCall,
   isSelfdestructCall: isSelfdestructCall,
+  isAssertCall: isAssertCall,
+  isRequireCall: isRequireCall,
 
   // #################### Trivial Node Identification
   isFunctionDefinition: isFunctionDefinition,
