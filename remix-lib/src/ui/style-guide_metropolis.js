@@ -3,7 +3,6 @@
 module.exports = styleGuide
 
 function styleGuide () {
-
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES
