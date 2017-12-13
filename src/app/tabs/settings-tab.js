@@ -59,7 +59,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
       </div>
       <div class="${css.crow}">
         <div>${optionVM}</div>
-        <span class="${css.checkboxText}">Always use VM</span>
+        <span class="${css.checkboxText}">Always use VM at Load</span>
       </div>
       <div class="${css.crow}">
         <div><input class="${css.col1}" id="optimize" type="checkbox"></div>
