@@ -92,57 +92,6 @@ class ContextualListener {
     }
   }
 
-  _getGasEstimation (contract) {
-    this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
-    this.estimationObj = this.contract.evm.gasEstimates
-    if (this.estimationObj.external) this.externalFunctions = Object.keys(this.estimationObj.external)
-    if (this.estimationObj.internal) this.internalFunctions = Object.keys(this.estimationObj.internal)
-    this.creationCost = this.estimationObj.creation.totalCost
-    this.codeDepositCost = this.estimationObj.creation.codeDepositCost
-  }
-
-  _getContract (node) {
-    for (var i in this.nodes) {
-      if (this.nodes[i].id === node.attributes.scope) {
-        var contract = this._getGasEstimation(this.nodes[i])
-        break
-      }
-    }
-    return contract
-  }
-
-  gasEstimation (node) {
-    this._getContract(node)
-    var executionCost
-    var codeDepositCost
-    if (node.name === 'FunctionDefinition') {
-      if (!node.attributes.isConstructor) {
-        var functionName = node.attributes.name
-        if (node.attributes.visibility === 'public') {
-          executionCost = this.estimationObj.external[this._getFn(this.externalFunctions, functionName)]
-        } else if (node.attributes.visibility === 'internal') {
-          executionCost = this.estimationObj.internal[this._getFn(this.internalFunctions, functionName)]
-        }
-      } else {
-        executionCost = this.creationCost
-        codeDepositCost = this.codeDepositCost
-      }
-    } else {
-      executionCost = '-'
-    }
-    return {executionCost, codeDepositCost}
-  }
-
-  _getFn (functions, name) {
-    for (var x in functions) {
-      if (~functions[x].indexOf(name)) {
-        var fn = functions[x]
-        break
-      }
-    }
-    return fn
-  }
-
   _highlight (node, compilationResult) {
     if (!node) return
     var position = this.sourceMappingDecoder.decode(node.src)
@@ -179,6 +128,59 @@ class ContextualListener {
       this._api.stopHighlighting(this._activeHighlights[event])
     }
     this._activeHighlights = []
+  }
+
+  // GET GAS ESTIMATION
+  _getGasEstimation (contract) {
+    this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
+    this.estimationObj = this.contract.evm.gasEstimates
+    this.creationCost = this.estimationObj.creation.totalCost
+    this.codeDepositCost = this.estimationObj.creation.codeDepositCost
+  }
+
+  gasEstimation (node) {
+    this._getContract(node)
+    var executionCost
+    var codeDepositCost
+    if (node.name === 'FunctionDefinition') {
+      if (!node.attributes.isConstructor) {
+        var fnName = node.attributes.name
+        var fn = fnName + this._getInputParams(fnName)
+        if (node.attributes.visibility === 'public') {
+          executionCost = this.estimationObj.external[fn]
+        } else if (node.attributes.visibility === 'internal') {
+          executionCost = this.estimationObj.internal[fn]
+        }
+      } else {
+        executionCost = this.creationCost
+        codeDepositCost = this.codeDepositCost
+      }
+    } else {
+      executionCost = '-'
+    }
+    return {executionCost, codeDepositCost}
+  }
+
+  _getContract (node) {
+    for (var i in this.nodes) {
+      if (this.nodes[i].id === node.attributes.scope) {
+        var contract = this._getGasEstimation(this.nodes[i])
+        break
+      }
+    }
+    return contract
+  }
+
+  _getInputParams (fnName) {
+    var abi = this.contract.abi
+    for (var i in abi) {
+      if (abi[i].name === fnName) {
+        var inputs = abi[i].inputs
+        var inputParams = inputs.length ? '(' + inputs[0].type + ')' : '()'
+        break
+      }
+    }
+    return inputParams
   }
 }
 
