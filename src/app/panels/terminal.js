@@ -91,7 +91,6 @@ var css = csjs`
   }
   .terminal    {
     position: relative;
-    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;

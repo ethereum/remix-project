@@ -5,6 +5,8 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
 
+require('brace/theme/tomorrow_night_blue')
+
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
