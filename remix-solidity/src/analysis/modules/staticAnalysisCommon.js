@@ -20,9 +20,7 @@ var nodeTypes = {
   INLINEASSEMBLY: 'InlineAssembly',
   BLOCK: 'Block',
   NEWEXPRESSION: 'NewExpression',
-  RETURN: 'Return',
-  ASSERT: 'assert',
-  REQUIRE: 'require'
+  RETURN: 'Return'
 }
 
 var basicTypes = {
@@ -419,7 +417,7 @@ function isSelfdestructCall (node) {
 }
 
 /**
- * True if node is a call to assert
+ * True if node is a call to builtin assert(bool)
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
@@ -428,7 +426,7 @@ function isAssertCall (node) {
 }
 
 /**
- * True if node is a call to assert
+ * True if node is a call to builtin require(bool)
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
