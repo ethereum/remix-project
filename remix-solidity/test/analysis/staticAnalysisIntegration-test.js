@@ -441,6 +441,37 @@ test('Integration test selfdestruct.js', function (t) {
   })
 })
 
+test('Integration test guardConditions.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/analysis/modules/guardConditions')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 1,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 1,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of guardCondition warnings`)
+  })
+})
+
 // #################### Helpers
 function runModuleOnFiles (module, t, cb) {
   var statRunner = new StatRunner()

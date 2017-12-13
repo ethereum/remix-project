@@ -4,6 +4,7 @@
      address owner;
      
     function at(address _addr) returns (bytes o_code) {
+        assert(_addr != 0x0);
         assembly {
             // retrieve the size of the code, this needs assembly
             let size := extcodesize(_addr)
@@ -20,8 +21,8 @@
     }
      
     function bla() {
-        if(tx.origin == owner)
-            msg.sender.send(19);
+        require(tx.origin == owner);
+        msg.sender.send(19);
         assembly {
              
         }
