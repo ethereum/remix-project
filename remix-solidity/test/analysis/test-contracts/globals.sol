@@ -32,8 +32,8 @@ contract a is bla {
         now;
         tx.gasprice;
         tx.origin;
-        //assert(now == block.timestamp);
-        //require(now == block.timestamp);
+        // assert(1 == 2);
+        // require(1 == 1);
         keccak256(a);
         sha3(a);
         sha256(a);
@@ -52,6 +52,7 @@ contract a is bla {
         //a.transfer(a.balance);
         selfdestruct(a);
         //revert();
+        assert(a.balance == 0);
     }
     
 }
