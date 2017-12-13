@@ -109,6 +109,7 @@ class App {
     self._api = {}
     var fileStorage = new Storage('sol:')
     self._api.config = new Config(fileStorage)
+    executionContext.init(self._api.config)
     self._api.filesProviders = {}
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
     self._api.filesProviders['localhost'] = new SharedFolder(new Remixd())
