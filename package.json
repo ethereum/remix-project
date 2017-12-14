@@ -160,7 +160,7 @@
     "selenium-install": "selenium-standalone install",
     "serve": "execr --silent http-server .",
     "sourcemap": "exorcist --root ../ build/app.js.map > build/app.js",
-    "start": "npm-run-all -lpr serve watch onchange",
+    "start": "npm-run-all -lpr serve watch onchange remixd",
     "test": "npm run csslint; standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js"
