@@ -82,7 +82,16 @@ var mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec
 function ExecutionContext () {
   var self = this
   this.event = new EventManager()
-  var executionContext = 'vm'
+
+  var executionContext = null
+
+  this.init = function (config) {
+    if (config.get('settings/always-use-vm')) {
+      executionContext = 'vm'
+    } else {
+      executionContext = injectedProvider ? 'injected' : 'vm'
+    }
+  }
 
   this.getProvider = function () {
     return executionContext
