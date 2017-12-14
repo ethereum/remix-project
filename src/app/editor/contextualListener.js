@@ -172,29 +172,22 @@ class ContextualListener {
   }
 
   _getInputParams (node) {
-    var params
-    var list = []
+    var params = []
     for (var i in node.children) {
       if (node.children[i].name === 'ParameterList') {
-        list.push(node.children[i])
+        var target = node.children[i]
         break
       }
     }
-    debugger
-    for (var j in list) {
-      if (list[j].children.length) {
-        var children = list[j].children
-        for (var k in children) {
-          if (children[k].name === 'VariableDeclaration') {
-            params = children[k].attributes.type
-            break
-          }
+    if (target) {
+      var children = target.children
+      for (var j in children) {
+        if (children[j].name === 'VariableDeclaration') {
+          params.push(children[j].attributes.type.split(' ')[0])
         }
-      } else {
-        params = ''
       }
     }
-    return '(' + params + ')'
+    return '(' + params.toString() + ')'
   }
 }
 
