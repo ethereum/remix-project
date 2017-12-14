@@ -16,13 +16,20 @@ staticAnalysisRunner.prototype.run = function (compilationResult, toRun, callbac
 }
 
 staticAnalysisRunner.prototype.runWithModuleList = function (compilationResult, modules, callback) {
+  var reports = []
   // Also provide convenience analysis via the AST walker.
   var walker = new AstWalker()
   for (var k in compilationResult.sources) {
     walker.walk(compilationResult.sources[k].legacyAST, {'*': function (node) {
       modules.map(function (item, i) {
         if (item.mod.visit !== undefined) {
-          item.mod.visit(node)
+          try {
+            item.mod.visit(node)
+          } catch (e) {
+            reports.push({
+              name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message }]
+            })
+          }
         }
       })
       return true
@@ -31,9 +38,15 @@ staticAnalysisRunner.prototype.runWithModuleList = function (compilationResult, 
 
   // Here, modules can just collect the results from the AST walk,
   // but also perform new analysis.
-  var reports = modules.map(function (item, i) {
-    return { name: item.name, report: item.mod.report(compilationResult) }
-  })
+  reports = reports.concat(modules.map(function (item, i) {
+    var report = null
+    try {
+      report = item.mod.report(compilationResult)
+    } catch (e) {
+      report = [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message }]
+    }
+    return { name: item.name, report: report }
+  }))
   callback(reports)
 }
 
