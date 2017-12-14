@@ -6,7 +6,8 @@ var pathModule = require('path')
 module.exports = {
   absolutePath: absolutePath,
   relativePath: relativePath,
-  walkSync: walkSync
+  walkSync: walkSync,
+  resolveDirectory: resolveDirectory
 }
 
 /**
@@ -58,4 +59,17 @@ function walkSync (dir, filelist, sharedFolder) {
     }
   })
   return filelist
+}
+
+function resolveDirectory (dir, sharedFolder) {
+  var ret = {}
+  var files = fs.readdirSync(dir)
+  files.forEach(function (file) {
+    var subElement = path.join(dir, file)
+    if (!fs.lstatSync(subElement).isSymbolicLink()) {
+      var relative = relativePath(subElement, sharedFolder)
+      ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
+    }
+  })
+  return ret
 }
