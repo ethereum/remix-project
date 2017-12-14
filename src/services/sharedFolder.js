@@ -34,7 +34,7 @@ module.exports = {
       } else {
         fs.readFile(path, 'utf8', (error, data) => {
           if (error) console.log(error)
-          cb(error, data)
+          cb(error, {content: data, readonly: false})
         })
       }
     })
