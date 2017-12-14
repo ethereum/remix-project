@@ -172,6 +172,7 @@ class ContextualListener {
   }
 
   _getInputParams (node) {
+    var params
     var list = []
     for (var i in node.children) {
       if (node.children[i].name === 'ParameterList') {
@@ -179,9 +180,19 @@ class ContextualListener {
         break
       }
     }
+    debugger
     for (var j in list) {
-      var params = list[j].children.length ? list[j].children[0].attributes.type : ''
-      break
+      if (list[j].children.length) {
+        var children = list[j].children
+        for (var k in children) {
+          if (children[k].name === 'VariableDeclaration') {
+            params = children[k].attributes.type
+            break
+          }
+        }
+      } else {
+        params = ''
+      }
     }
     return '(' + params + ')'
   }
