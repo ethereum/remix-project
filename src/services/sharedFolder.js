@@ -15,6 +15,15 @@ module.exports = {
     cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))
   },
 
+  resolveDirectory: function (args, cb) {
+    try {
+      var path = utils.absolutePath(args.path, this.sharedFolder)
+      cb(null, utils.resolveDirectory(path, this.sharedFolder))
+    } catch (e) {
+      cb(e)
+    }
+  },
+
   get: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (!isRealPath(path, cb)) return
@@ -25,7 +34,7 @@ module.exports = {
       } else {
         fs.readFile(path, 'utf8', (error, data) => {
           if (error) console.log(error)
-          cb(error, data)
+          cb(error, {content: data, readonly: false})
         })
       }
     })
