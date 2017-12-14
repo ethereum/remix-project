@@ -6,7 +6,7 @@ module.exports = (sources, opts) => {
     sources: sources,
     settings: {
       optimizer: {
-        enabled: opts.optimize === true,
+        enabled: opts.optimize === true || opts.optimize === 1,
         runs: 500
       },
       libraries: opts.libraries,
