@@ -145,7 +145,7 @@ class ContextualListener {
     if (node.name === 'FunctionDefinition') {
       if (!node.attributes.isConstructor) {
         var fnName = node.attributes.name
-        var fn = fnName + this._getInputParams(fnName)
+        var fn = fnName + this._getInputParams(node)
         if (node.attributes.visibility === 'public') {
           executionCost = this.estimationObj.external[fn]
         } else if (node.attributes.visibility === 'internal') {
@@ -171,16 +171,19 @@ class ContextualListener {
     return contract
   }
 
-  _getInputParams (fnName) {
-    var abi = this.contract.abi
-    for (var i in abi) {
-      if (abi[i].name === fnName) {
-        var inputs = abi[i].inputs
-        var inputParams = inputs.length ? '(' + inputs[0].type + ')' : '()'
+  _getInputParams (node) {
+    var list = []
+    for (var i in node.children) {
+      if (node.children[i].name === 'ParameterList') {
+        list.push(node.children[i])
         break
       }
     }
-    return inputParams
+    for (var j in list) {
+      var params = list[j].children.length ? list[j].children[0].attributes.type : ''
+      break
+    }
+    return '(' + params + ')'
   }
 }
 
