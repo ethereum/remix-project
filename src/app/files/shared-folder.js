@@ -138,8 +138,23 @@ class SharedFolder {
     return this.files
   }
 
-  listAsTree () {
-    return this.filesTree
+  listAsTree (path, level) {
+    var nodes = path ? path.split('/') : []
+    var tree = this.filesTree
+    try {
+      while (nodes.length) {
+        var key = nodes.shift()
+        if (key) tree = tree[key]
+      }
+    } catch (e) {
+      tree = {}
+    }
+    if (level) {
+      var leveltree = {}
+      build(tree, level, leveltree)
+      tree = leveltree
+    }
+    return tree
   }
 
   removePrefix (path) {
@@ -159,6 +174,18 @@ class SharedFolder {
 //   }
 // }
 //
+function build (tree, level, leveltree) {
+  if (!level) return
+  Object.keys(tree).forEach(key => {
+    var value = tree[key]
+    var more = value === Object(value)
+    if (more) {
+      leveltree[key] = {}
+      build(value, level - 1, leveltree[key])
+    } else leveltree[key] = value
+  })
+}
+
 function listAsTree (self, filesList, callback) {
   function hashmapize (obj, path, val) {
     var nodes = path.split('/')

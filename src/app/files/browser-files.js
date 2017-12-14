@@ -7,6 +7,7 @@ function Files (storage) {
   this.event = event
   var readonly = {}
   this.type = 'browser'
+  this.filesTree = null
 
   this.exists = function (path) {
     var unprefixedpath = this.removePrefix(path)
@@ -19,7 +20,10 @@ function Files (storage) {
   }
 
   this.init = function (cb) {
-    cb()
+    listAsTree(this, this.list(), (error, tree) => {
+      this.filesTree = tree
+      if (cb) cb(error)
+    })
   }
 
   this.get = function (path, cb) {
@@ -49,6 +53,7 @@ function Files (storage) {
         return false
       }
       if (!exists) {
+        this.init()
         event.trigger('fileAdded', [this.type + '/' + unprefixedpath, false])
       } else {
         event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
@@ -63,6 +68,7 @@ function Files (storage) {
     var unprefixedpath = this.removePrefix(path)
     if (!storage.exists(unprefixedpath)) {
       readonly[unprefixedpath] = content
+      this.init()
       event.trigger('fileAdded', [this.type + '/' + unprefixedpath, true])
       return true
     }
@@ -88,6 +94,7 @@ function Files (storage) {
         return false
       }
     }
+    this.init()
     event.trigger('fileRemoved', [this.type + '/' + unprefixedpath])
     return true
   }
@@ -99,6 +106,7 @@ function Files (storage) {
       if (!storage.rename(unprefixedoldPath, unprefixednewPath)) {
         return false
       }
+      this.init()
       event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
       return true
     }
@@ -140,33 +148,22 @@ function Files (storage) {
   //   }
   // }
   //
-  this.listAsTree = function () {
-    function hashmapize (obj, path, val) {
-      var nodes = path.split('/')
-      var i = 0
-
-      for (; i < nodes.length - 1; i++) {
-        var node = nodes[i]
-        if (obj[node] === undefined) {
-          obj[node] = {}
-        }
-        obj = obj[node]
+  this.listAsTree = function (path, level) {
+    var nodes = path ? path.split('/') : []
+    var tree = this.filesTree
+    try {
+      while (nodes.length) {
+        var key = nodes.shift()
+        if (key) tree = tree[key]
       }
-
-      obj[nodes[i]] = val
+    } catch (e) {
+      tree = {}
     }
-
-    var tree = {}
-
-    var self = this
-    // This does not include '.remix.config', because it is filtered
-    // inside list().
-    Object.keys(this.list()).forEach(function (path) {
-      hashmapize(tree, path, {
-        '/readonly': self.isReadOnly(path),
-        '/content': self.get(path)
-      })
-    })
+    if (level) {
+      var leveltree = {}
+      build(tree, level, leveltree)
+      tree = leveltree
+    }
     return tree
   }
 
@@ -174,6 +171,50 @@ function Files (storage) {
   if (this.exists('.browser-solidity.json')) {
     this.rename('.browser-solidity.json', '.remix.config')
   }
+
+  this.init()
 }
 
 module.exports = Files
+
+
+function build (tree, level, leveltree) {
+  if (!level) return
+  Object.keys(tree).forEach(key => {
+    var value = tree[key]
+    var more = value === Object(value)
+    if (more) {
+      leveltree[key] = {}
+      build(value, level - 1, leveltree[key])
+    } else leveltree[key] = value
+  })
+}
+
+function listAsTree (self, filesList, callback) {
+  function hashmapize (obj, path, val) {
+    var nodes = path.split('/')
+    var i = 0
+
+    for (; i < nodes.length - 1; i++) {
+      var node = nodes[i]
+      if (obj[node] === undefined) {
+        obj[node] = {}
+      }
+      obj = obj[node]
+    }
+
+    obj[nodes[i]] = val
+  }
+
+  var tree = {}
+
+  // This does not include '.remix.config', because it is filtered
+  // inside list().
+  Object.keys(filesList).forEach(function (path) {
+    hashmapize(tree, path, {
+      '/readonly': self.isReadOnly(path),
+      '/content': self.get(path)
+    })
+  })
+  callback(null, tree)
+}
