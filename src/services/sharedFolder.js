@@ -15,6 +15,15 @@ module.exports = {
     cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))
   },
 
+  resolveDirectory: function (args, cb) {
+    try {
+      var path = utils.absolutePath(args.path, this.sharedFolder)
+      cb(null, utils.resolveDirectory(path, this.sharedFolder))
+    } catch (e) {
+      cb(e)
+    }
+  },
+
   get: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (!isRealPath(path, cb)) return
