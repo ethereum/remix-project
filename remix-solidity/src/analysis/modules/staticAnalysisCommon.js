@@ -278,7 +278,22 @@ function getFunctionOrModifierDefinitionReturnParameterPart (funcNode) {
  * @return {string} parameter signature
  */
 function getFunctionCallTypeParameterType (func) {
-  return new RegExp(basicRegex.FUNCTIONSIGNATURE).exec(getFunctionCallType(func))[1]
+  var type = getFunctionCallType(func)
+  if (type.startsWith('function (')) {
+    var paramTypes = ''
+    var openPar = 1
+    for (var x = 10; x < type.length; x++) {
+      var c = type.charAt(x)
+      if (c === '(') openPar++
+      else if (c === ')') openPar--
+
+      if (openPar === 0) return paramTypes
+
+      paramTypes += c
+    }
+  } else {
+    throw new Error('staticAnalysisCommon.js: cannot extract parameter types from function call')
+  }
 }
 
 /**
