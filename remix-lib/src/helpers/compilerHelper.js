@@ -13,7 +13,7 @@ function compilerInput (contracts) {
     settings: {
       optimizer: {
         enabled: false,
-        runs: 500
+        runs: 200
       },
       outputSelection: {
         '*': {
