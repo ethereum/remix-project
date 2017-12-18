@@ -12,8 +12,11 @@ var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+
+var styles = require('../theme/theme-chooser')
+
+// var styleGuide = remixLib.ui.styleGuide
+// var styles = styleGuide('fred')
 
 var css = csjs`
   .panel              {
