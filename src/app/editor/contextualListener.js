@@ -148,7 +148,7 @@ class ContextualListener {
         var fn = fnName + this._getInputParams(node)
         if (node.attributes.visibility === 'public') {
           executionCost = this.estimationObj.external[fn]
-        } else if (node.attributes.visibility === 'internal') {
+        } else if (node.attributes.visibility === 'private') {
           executionCost = this.estimationObj.internal[fn]
         }
       } else {
@@ -164,11 +164,9 @@ class ContextualListener {
   _getContract (node) {
     for (var i in this.nodes) {
       if (this.nodes[i].id === node.attributes.scope) {
-        var contract = this._getGasEstimation(this.nodes[i])
-        break
+        return this._getGasEstimation(this.nodes[i])
       }
     }
-    return contract
   }
 
   _getInputParams (node) {
