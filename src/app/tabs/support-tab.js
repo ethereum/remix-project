@@ -78,7 +78,6 @@ function supportTab (container, appAPI, events, opts) {
       </div>
       <div class="${css.chat}">
         <div class="${css.chatTitle}" onclick=${openLink} title='Click to open chat in Gitter'>
-          <img class="${css.icon}" title="Solidity" src="assets/img/remix_logo_512x512.svg">
           <div class="${css.chatTitleText}">ethereum/remix community chat</div>
         </div>
         <iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>
