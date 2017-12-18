@@ -319,3 +319,22 @@ Remix uses npm coding style: https://docs.npmjs.com/misc/coding-style
 Please be sure your code is compliant with this coding standard before sending PR.
 There's on the above page a bunch of links that propose integration with developer tools (Emacs, Atom, ...).
 You can also run 'npm run test' to check your local repository against the coding style.
+
+## CONTRIBUTING
+
+Everyone is very welcome to contribute on the codebase of Remix. Please reach us in gitter:
+https://gitter.im/ethereum/remix
+The easiest way to work on `remix-debugger` or `remix-solidity` is to pull the `browser-solidity` (Remix IDE) repository      ( https://github.com/ethereum/browser-solidity ) which has a strong Remix integration.
+then in `browser-solidity`, execute `npm install`, `npm pull remix`, `npm link remix`. 
+then `npm run build && npm run serve` to start a new Remix IDE instance (you can browse 127.0.0.1:8080)
+
+To interact with the Remix code:
+
+1) For static analysis: compile a new contact, click on the `Analysis`, the content of this tab is provided by the `remix-solidity/analysis` library
+
+2) For Debugging: compile a new contact, deploy it (`Create` button in the `run` tab), in the remix IDE terminal a transaction should appear, click on `Debug`. The Debugger tab get the focus, the content if this tab is provided by the `remix-debugger` library.
+
+3) For Decoding local and state variable: follow 2), then expand (is not already) the `Solidity State` and `Solidity Locals` panels, the content of thoses panel are provided by the `remix-solidity/decoder` library.
+
+Remainder: the Remix repository contains a bunch of tool used to debug transaction, one of this tool is a debugger.
+The Browser-solidity repository contains the Remix IDE (online version remix.ethereum.org), which make use of the Remix repository for the debugging features.
