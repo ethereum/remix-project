@@ -143,12 +143,13 @@ class ContextualListener {
     var executionCost
     var codeDepositCost
     if (node.name === 'FunctionDefinition') {
+      var visibility = node.attributes.visibility
       if (!node.attributes.isConstructor) {
         var fnName = node.attributes.name
         var fn = fnName + this._getInputParams(node)
-        if (node.attributes.visibility === 'public') {
+        if (visibility === 'public' || visibility === 'external') {
           executionCost = this.estimationObj.external[fn]
-        } else if (node.attributes.visibility === 'private') {
+        } else if (visibility === 'private' || visibility === 'internal') {
           executionCost = this.estimationObj.internal[fn]
         }
       } else {
