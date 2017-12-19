@@ -137,6 +137,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
   })
 
   container.appendChild(el)
+  return el
 }
 
 function setVersionText (text, el) {

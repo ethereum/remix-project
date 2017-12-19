@@ -445,6 +445,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     }
     return el
   }
+  return el
 }
 
 function detailsHelpSection () {

@@ -1,7 +1,7 @@
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var tabbedMenu = require('../tabs/tabbed-menu')
+var TabbedMenu = require('../tabs/tabbed-menu')
 var compileTab = require('../tabs/compile-tab')
 var runTab = require('../tabs/run-tab')
 var settingsTab = require('../tabs/settings-tab')
@@ -121,15 +121,9 @@ function RighthandPanel (appAPI, events, opts) {
   self.event = new EventManager()
   self._view = {}
 
-  var optionViews = yo`<div id="optionViews" class="settingsView">${cssTabs}</div>`
+  var optionViews = yo`<div id="optionViews"></div>`
   var options = yo`
     <ul class=${css.opts}>
-      <li class="${css.opts_li} compileView" title="Compile">Compile</li>
-      <li class="${css.opts_li} runView" title="Run">Run</li>
-      <li class="${css.opts_li} settingsView" title="Settings">Settings</li>
-      <li class="${css.opts_li} debugView" title="Debugger">Debugger</li>
-      <li class="${css.opts_li} staticanalysisView" title="Static Analysis">Analysis</li>
-      <li class="${css.opts_li} supportView" title="Help and support">Support</li>
     </ul>
   `
   self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
@@ -147,23 +141,25 @@ function RighthandPanel (appAPI, events, opts) {
   appAPI.switchTab = (tabClass) => {
     this.event.trigger('switchTab', [tabClass])
   }
-  compileTab(optionViews, appAPI, events, opts)
-  runTab(optionViews, appAPI, events, opts)
-  settingsTab(optionViews, appAPI, events, opts)
-  analysisTab(optionViews, appAPI, events, opts)
-  debuggerTab(optionViews, appAPI, events, opts)
-  supportTab(optionViews, appAPI, events, opts)
+
+  // load tabbed menu component
+  var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
+  self._view.tabbedMenu = new TabbedMenu(options, {}, tabEvents, {})
+
+  events.rhp = self.event
+
+  this._view.tabbedMenu.addTab('Compile', 'compileView', compileTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.addTab('Run', 'runView', runTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.addTab('Settings', 'settingsView', settingsTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.addTab('Support', 'supportView', supportTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.selectTabByTitle('Compile')
 
   self.render = function () { return self._view.element }
 
   self.init = function () {
     ;[...options.children].forEach((el) => { el.classList.add(css.options) })
-
-    // ----------------- tabbed menu -----------------
-    var tabbedMenuAPI = {}
-    // load tabbed menu component
-    var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
-    tabbedMenu(options, tabbedMenuAPI, tabEvents, {})
 
     // ----------------- resizeable ui ---------------
     var limit = 60
@@ -206,27 +202,3 @@ function RighthandPanel (appAPI, events, opts) {
     }
   }
 }
-
-var cssTabs = yo`<style>#optionViews.settingsView #settingsView {
-    display: block;
-}
-
-#optionViews.compileView #compileTabView {
-    display: block;
-}
-
-#optionViews.runView #runTabView {
-    display: block;
-}
-
-#optionViews.debugView #debugView {
-    display: block;
-}
-
-#optionViews.staticanalysisView #staticanalysisView {
-    display: block;
-}
-
-#optionViews.supportView #supportView {
-    display: block;
-}</style>`
