@@ -1,16 +1,18 @@
 var remixLib = require('remix-lib')
-// var Storage = require('./storage')
-// var styleGuide = remixLib.ui.styleGuide
+var styleGuide = remixLib.ui.styleGuide
 var styleGuideDark = remixLib.ui.styleGuideDark
+module.exports = function () {
+   // if (storage.get('theme') === 'light' ) {
+   //    return styleGuide
+   // } else {
+   //    return styleGuideDark
+   // }
+  return styleGuideDark()
+  //errors cannot find styleGuideDark
 
-// if (storage.get("theme") == 'dark') {
-//   return styleGuideDark
-// } else {
-//   return styleGuide
-// }
+  //return styleGuide()
+  //works
 
-function chooser (theme) {
-  return theme
+  //return styleGuide
+  // does not work - it needs the prenthesies - to make it return the function
 }
-
-chooser(styleGuideDark)
