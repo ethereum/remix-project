@@ -608,6 +608,9 @@ function run () {
     },
     logMessage: (msg) => {
       self._components.editorpanel.log({type: 'log', value: msg})
+    },
+    getCompilationResult: () => {
+      return compiler.lastCompilationResult
     }
   }
   var rhpEvents = {
