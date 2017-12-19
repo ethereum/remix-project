@@ -98,7 +98,7 @@ web3VmProvider.prototype.txWillProcess = function (self, data) {
 web3VmProvider.prototype.txProcessed = function (self, data) {
   var lastOp = self.vmTraces[self.processingHash].structLogs[self.processingIndex - 1]
   if (lastOp) {
-    lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP'
+    lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'SELFDESTRUCT'
   }
   self.vmTraces[self.processingHash].gas = '0x' + data.gasUsed.toString(16)
 
