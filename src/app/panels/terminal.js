@@ -13,10 +13,14 @@ var Dropdown = require('../ui/dropdown')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
 
-var styles = require('../theme/theme-chooser')
+// var styleGuide = remixLib.ui.styleGuide
+// var styles = styleGuide()
 
+var styleGuide = require('../theme/theme-chooser')
+console.log(styleGuide)
 // var styleGuide = remixLib.ui.styleGuide
 // var styles = styleGuide('fred')
+var styles = styleGuide()
 
 var css = csjs`
   .panel              {
