@@ -24,4 +24,5 @@ function debuggerTab (container, appAPI, events, opts) {
       <div id="debugger" class="${css.debugger}"></div>
     </div>`
   container.appendChild(el)
+  return el
 }

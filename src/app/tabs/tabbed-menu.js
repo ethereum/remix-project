@@ -1,4 +1,4 @@
-var $ = require('jquery')
+var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -6,46 +6,84 @@ var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 
-module.exports = tabbedMenu
+var helper = require('../../lib/helper')
 
 var css = csjs`
   li.active {
     background-color: ${styles.rightPanel.backgroundColor_Tab};
-    color: ${styles.appProperties.mainText_Color};
+    color: ${styles.appProperties.mainText_Color}
+  }
+  .options {
+    float: left;
+    padding-top: 0.7em;
+    min-width: 60px;
+    font-size: 0.9em;
+    cursor: pointer;
+    font-size: 1em;
+    text-align: center;
+  }
+  .opts {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .opts_li {
+    display: block;
+    font-weight: bold;
+    color: ${styles.rightPanel.text_Teriary}
+  }
+  .opts_li.active {
+    color: ${styles.rightPanel.text_Primary}
+  }
+  .opts_li:hover {
+    color: ${styles.rightPanel.icon_HoverColor_TogglePanel}
   }
 `
 
-function tabbedMenu (container, appAPI, events, opts) {
-  var lis = container.querySelectorAll('li')
-  for (var li = 0; li < lis.length; ++li) {
-    lis[li].onclick = function (ev) { selectTab(this) }
+class TabbedMenu {
+  constructor (tabView, api, events, opts) {
+    var self = this
+    this.tabView = tabView
+    this.events = events
+    this.tabs = {}
+    this.contents = {}
+
+    events.app.register('debuggingRequested', () => {
+      self.selectTab(tabView.querySelector('li.debugView'))
+    })
+
+    events.rhp.register('switchTab', tabName => {
+      self.selectTab(tabView.querySelector(`li.${tabName}`))
+    })
   }
 
-  events.app.register('debuggingRequested', () => {
-    selectTab(container.querySelector('li.debugView'))
-  })
+  selectTabByTitle (title) {
+    this.selectTab(this.tabs[title])
+  }
 
-  events.rhp.register('switchTab', tabName => {
-    selectTab(container.querySelector(`li.${tabName}`))
-  })
-
-  // initialize tabbed menu
-  selectTab(container.querySelector('.compileView'))
-
-  // select tab
-
-  function selectTab (el) {
-    var match = /[a-z]+View/.exec(el.className)
-    if (!match) return
-    var cls = match[0]
+  selectTab (el) {
     if (!el.classList.contains(css.active)) {
       var nodes = el.parentNode.querySelectorAll('li')
       for (var i = 0; i < nodes.length; ++i) {
         nodes[i].classList.remove(css.active)
+        this.contents[nodes[i].getAttribute('title')].style.display = 'none'
       }
-      $('#optionViews').attr('class', '').addClass(cls)
-      el.classList.add(css.active)
     }
-    events.app.trigger('tabChanged', [cls])
+    var title = el.getAttribute('title')
+    this.contents[el.getAttribute('title')].style.display = 'block'
+    el.classList.add(css.active)
+    this.events.app.trigger('tabChanged', [title])
+  }
+
+  addTab (title, cssClass, content) {
+    var self = this
+    if (!helper.checkSpecialChars(title)) {
+      this.contents[title] = content
+      this.tabs[title] = yo`<li class="${css.opts_li} ${css.options} ${cssClass}" onclick=${function (ev) { self.selectTab(this) }} title=${title}>${title}</li>`
+      this.tabView.appendChild(this.tabs[title])
+    }
   }
 }
+
+module.exports = TabbedMenu
