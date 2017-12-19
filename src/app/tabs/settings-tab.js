@@ -9,6 +9,7 @@ var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
 var helper = require('../../lib/helper')
+var modal = require('../ui/modal-dialog-custom')
 
 var css = csjs`
   .settingsTabView {
@@ -27,11 +28,23 @@ var css = csjs`
     padding: .5em;
     font-weight: bold;
   }
+  .crowNoFlex {
+    overflow: auto;
+    clear: both;
+    padding: .5em;
+    font-weight: bold;
+  }
   .select {
     ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
   }
   input {
     margin-right: 3px;
+  }
+  .pluginTextArea {
+    font-family: unset;
+  }
+  .pluginLoad {
+    vertical-align: top;
   }
 }
 `
@@ -43,7 +56,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
 
   var queryParams = new QueryParams()
 
-  var optionVM = yo`<input class="${css.col1}" id="alwaysUseVM" type="checkbox">`
+  var optionVM = yo`<input id="alwaysUseVM" type="checkbox">`
   var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
       <div class="${css.info}">
@@ -54,7 +67,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <select class="${css.select}" id="versionSelector"></select>
       </div>
       <div class="${css.crow}">
-        <div><input class="${css.col1}" id="editorWrap" type="checkbox"></div>
+        <div><input id="editorWrap" type="checkbox"></div>
         <span class="${css.checkboxText}">Text Wrap</span>
       </div>
       <div class="${css.crow}">
@@ -62,11 +75,30 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <span class="${css.checkboxText}">Always use VM at Load</span>
       </div>
       <div class="${css.crow}">
-        <div><input class="${css.col1}" id="optimize" type="checkbox"></div>
+        <div><input id="optimize" type="checkbox"></div>
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
+      <hr>
+      <div class="${css.crowNoFlex}">
+        <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)</div>
+         <div>
+          <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
+          <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
+         </div>
+        </div>
     </div>
   `
+
+  function loadPlugin () {
+    var json = el.querySelector('#plugininput').value
+    try {
+      json = JSON.parse(json)
+    } catch (e) {
+      modal.alert('cannot parse the plugin definition to JSON')
+      return
+    }
+    appEvents.rhp.trigger('plugin-loadRequest', [json])
+  }
 
   appEvents.compiler.register('compilerLoaded', (version) => {
     setVersionText(version, el)

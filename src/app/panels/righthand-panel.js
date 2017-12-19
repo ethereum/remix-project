@@ -8,6 +8,8 @@ var settingsTab = require('../tabs/settings-tab')
 var analysisTab = require('../tabs/analysis-tab')
 var debuggerTab = require('../tabs/debugger-tab')
 var supportTab = require('../tabs/support-tab')
+var pluginTab = require('../tabs/plugin-tab')
+var PluginManager = require('../../pluginManager')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -155,6 +157,13 @@ function RighthandPanel (appAPI, events, opts) {
   this._view.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab(optionViews, appAPI, events, opts))
   this._view.tabbedMenu.addTab('Support', 'supportView', supportTab(optionViews, appAPI, events, opts))
   this._view.tabbedMenu.selectTabByTitle('Compile')
+
+  self.pluginManager = new PluginManager(appAPI, events)
+  events.rhp.register('plugin-loadRequest', (json) => {
+    var content = pluginTab(optionViews, {}, {}, {}, json.url)
+    this._view.tabbedMenu.addTab(json.title, 'plugin', content)
+    self.pluginManager.register(json, content)
+  })
 
   self.render = function () { return self._view.element }
 
