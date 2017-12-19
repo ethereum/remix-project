@@ -250,6 +250,7 @@ function runTab (container, appAPI, appEvents, opts) {
     noInstancesText.style.display = 'block'
     instanceContainer.appendChild(noInstancesText)
   })
+  return el
 }
 
 function fillAccountsList (appAPI, container) {
