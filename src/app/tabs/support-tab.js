@@ -86,6 +86,7 @@ function supportTab (container, appAPI, events, opts) {
     </div>
   `
   container.appendChild(el)
+  return el
 }
 
 function openLink () {

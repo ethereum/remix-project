@@ -34,4 +34,5 @@ function analysisTab (container, appAPI, events, opts) {
     </div>
   `
   container.appendChild(el)
+  return el
 }
