@@ -177,7 +177,6 @@ function Files (storage) {
 
 module.exports = Files
 
-
 function build (tree, level, leveltree) {
   if (!level) return
   Object.keys(tree).forEach(key => {
