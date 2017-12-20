@@ -40,6 +40,11 @@ module.exports = {
     })
   },
 
+  exists: function (args, cb) {
+    var path = utils.absolutePath(args.path, this.sharedFolder)
+    cb(null, fs.existsSync(path))
+  },
+
   set: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (!isRealPath(path, cb)) return
