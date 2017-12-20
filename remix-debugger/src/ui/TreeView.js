@@ -29,6 +29,11 @@ var css = csjs`
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
+/**
+ * TreeView
+ *  - extendable by specifying custom `extractData` and `formatSelf` function
+ *  - trigger `nodeClick` and `leafClick`
+ */
 class TreeView {
 
   constructor (opts) {
@@ -69,24 +74,20 @@ class TreeView {
   }
 
   formatData (key, data, children, expand, keyPath) {
-    var label = yo`<div class=${css.label_tv}><div class="fa fa-caret-right" class=${css.caret_tv}></div><span>${this.formatSelf(key, data)}</span></div>`
+    var li = yo`<li class=${css.li_tv}></li>`
+    var label = yo`<div class=${css.label_tv}><div class="fa fa-caret-right" class=${css.caret_tv}></div><span>${this.formatSelf(key, data, li)}</span></div>`
     var renderedChildren = null
     if (data.isNode || children.length) {
-      renderedChildren = yo`<ul class=${this.ul_tv}>${children}</ul>`
+      renderedChildren = yo`<ul class=${css.ul_tv}>${children}</ul>`
       renderedChildren.style.display = this.nodeIsExpanded[keyPath] !== undefined ? (this.nodeIsExpanded[keyPath] ? 'block' : 'none') : (expand ? 'block' : 'none')
       label.firstElementChild.className = renderedChildren.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
-      if (children.length) {
-        var self = this
-        label.onclick = function () {
-          this.firstElementChild.className = this.firstElementChild.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
-          var list = this.parentElement.querySelector('ul')
-          list.style.display = list.style.display === 'none' ? 'block' : 'none'
-          self.nodeIsExpanded[keyPath] = list.style.display === 'block'
-        }
-      } else {
-        label.onclick = () => {
-          this.event.trigger('nodeClick', [keyPath, renderedChildren])
-        }
+      var self = this
+      label.onclick = function () {
+        this.firstElementChild.className = this.firstElementChild.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
+        var list = this.parentElement.querySelector('ul')
+        list.style.display = list.style.display === 'none' ? 'block' : 'none'
+        self.nodeIsExpanded[keyPath] = list.style.display === 'block'
+        self.event.trigger('nodeClick', [keyPath, renderedChildren])
       }
     } else {
       label.firstElementChild.style.visibility = 'hidden'
@@ -94,7 +95,11 @@ class TreeView {
         this.event.trigger('leafClick', [keyPath, renderedChildren])
       }
     }
-    return yo`<li class=${css.li_tv}>${label}${renderedChildren}</li>`
+    li.appendChild(label)
+    if (renderedChildren) {
+      li.appendChild(renderedChildren)
+    }
+    return li
   }
 
   formatSelfDefault (key, data) {
