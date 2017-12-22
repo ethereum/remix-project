@@ -80,7 +80,8 @@ class BasicReadOnlyExplorer {
   //   }
   // }
   //
-  listAsTree () {
+  resolveDirectory (path, callback /* (error, filesList) => { } */) {
+    // path = '' + (path || '')
     function hashmapize (obj, path, val) {
       var nodes = path.split('/')
       var i = 0
@@ -107,7 +108,7 @@ class BasicReadOnlyExplorer {
         '/content': self.get(path)
       })
     })
-    return tree
+    setTimeout(_ => callback(null, tree), 0)
   }
 
   removePrefix (path) {
