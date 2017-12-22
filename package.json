@@ -44,7 +44,7 @@
     "remix-debugger": "latest",
     "remix-lib": "latest",
     "remix-solidity": "latest",
-    "remixd": "^0.1.2",
+    "remixd": "git+https://github.com/ethereum/remixd.git",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
     "solc": "https://github.com/ethereum/solc-js",

@@ -7,23 +7,17 @@ function Files (storage) {
   this.event = event
   var readonly = {}
   this.type = 'browser'
-  this.filesTree = null
 
   this.exists = function (path) {
     var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
-    if (path === '.remix.config') {
-      return false
-    }
+    if (path === '.remix.config') return false
 
     return this.isReadOnly(unprefixedpath) || storage.exists(unprefixedpath)
   }
 
   this.init = function (cb) {
-    listAsTree(this, this.list(), (error, tree) => {
-      this.filesTree = tree
-      if (cb) cb(error)
-    })
+    this.resolveDirectory('', (error, filesTree) => cb && cb(error))
   }
 
   this.get = function (path, cb) {
@@ -113,29 +107,6 @@ function Files (storage) {
     return false
   }
 
-  this.list = function () {
-    var files = {}
-
-    // add r/w files to the list
-    storage.keys().forEach((path) => {
-      // NOTE: as a temporary measure do not show the config file
-      if (path !== '.remix.config') {
-        files[this.type + '/' + path] = false
-      }
-    })
-
-    // add r/o files to the list
-    Object.keys(readonly).forEach((path) => {
-      files[this.type + '/' + path] = true
-    })
-
-    return files
-  }
-
-  this.removePrefix = function (path) {
-    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
-  }
-
   //
   // Tree model for files
   // {
@@ -148,23 +119,49 @@ function Files (storage) {
   //   }
   // }
   //
-  this.listAsTree = function (path, level) {
-    var nodes = path ? path.split('/') : []
-    var tree = this.filesTree
-    try {
-      while (nodes.length) {
-        var key = nodes.shift()
-        if (key) tree = tree[key]
+  this.resolveDirectory = function (path, callback) {
+    var self = this
+    // path = '' + (path || '')
+    setTimeout(function () {
+      function hashmapize (obj, path, val) {
+        var nodes = path.split('/')
+        var i = 0
+        for (; i < nodes.length - 1; i++) {
+          var node = nodes[i]
+          if (obj[node] === undefined) {
+            obj[node] = {}
+          }
+          obj = obj[node]
+        }
+        obj[nodes[i]] = val
       }
-    } catch (e) {
-      tree = {}
-    }
-    if (level) {
-      var leveltree = {}
-      build(tree, level, leveltree)
-      tree = leveltree
-    }
-    return tree
+      var filesList = {}
+      // add r/w filesList to the list
+      storage.keys().forEach((path) => {
+        // NOTE: as a temporary measure do not show the config file
+        if (path !== '.remix.config') {
+          filesList[self.type + '/' + path] = false
+        }
+      })
+      // add r/o files to the list
+      Object.keys(readonly).forEach((path) => {
+        filesList[self.type + '/' + path] = true
+      })
+      var tree = {}
+      // This does not include '.remix.config', because it is filtered
+      // inside list().
+      Object.keys(filesList).forEach(function (path) {
+        hashmapize(tree, path, {
+          '/readonly': self.isReadOnly(path),
+          '/content': self.get(path)
+        })
+      })
+      callback(null, tree)
+    }, 0)
+  }
+
+  this.removePrefix = function (path) {
+    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
   }
 
   // rename .browser-solidity.json to .remix.config
@@ -176,44 +173,3 @@ function Files (storage) {
 }
 
 module.exports = Files
-
-function build (tree, level, leveltree) {
-  if (!level) return
-  Object.keys(tree).forEach(key => {
-    var value = tree[key]
-    var more = value === Object(value)
-    if (more) {
-      leveltree[key] = {}
-      build(value, level - 1, leveltree[key])
-    } else leveltree[key] = value
-  })
-}
-
-function listAsTree (self, filesList, callback) {
-  function hashmapize (obj, path, val) {
-    var nodes = path.split('/')
-    var i = 0
-
-    for (; i < nodes.length - 1; i++) {
-      var node = nodes[i]
-      if (obj[node] === undefined) {
-        obj[node] = {}
-      }
-      obj = obj[node]
-    }
-
-    obj[nodes[i]] = val
-  }
-
-  var tree = {}
-
-  // This does not include '.remix.config', because it is filtered
-  // inside list().
-  Object.keys(filesList).forEach(function (path) {
-    hashmapize(tree, path, {
-      '/readonly': self.isReadOnly(path),
-      '/content': self.get(path)
-    })
-  })
-  callback(null, tree)
-}

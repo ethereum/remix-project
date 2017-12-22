@@ -346,17 +346,21 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileAdded (filepath) {
-    var el = treeView.render(files.listAsTree())
-    el.className = css.fileexplorer
-    self.element.parentElement.replaceChild(el, self.element)
-    self.element = el
+    self.files.resolveDirectory('./', (error, files) => {
+      if (error) console.error(error)
+      var element = self.treeView.render(files)
+      element.className = css.fileexplorer
+      self.element.parentElement.replaceChild(element, self.element)
+      self.element = element
+    })
   }
 }
 
 /*
   HELPER FUNCTIONS
 */
-function adaptEnvironment (label, focus, hover, li) {
+function adaptEnvironment (label, focus, hover) {
+  var li = getLiFrom(label) // @TODO: maybe this gets refactored?
   li.style.position = 'relative'
   var span = li.firstChild
   // add focus
@@ -367,7 +371,8 @@ function adaptEnvironment (label, focus, hover, li) {
   span.addEventListener('mouseout', hover)
 }
 
-function unadaptEnvironment (label, focus, hover, li) {
+function unadaptEnvironment (label, focus, hover) {
+  var li = getLiFrom(label) // @TODO: maybe this gets refactored?
   var span = li.firstChild
   li.style.position = undefined
   // remove focus
@@ -411,11 +416,18 @@ function expandPathTo (li) {
 }
 
 fileExplorer.prototype.init = function () {
-  var files = this.files.listAsTree()
-  var element = this.treeView.render(files)
-  element.className = css.fileexplorer
-  element.events = this.events
-  element.api = this.api
-  this.element = element
-  return element
+  var self = this
+  self.files.resolveDirectory('/', (error, files) => {
+    if (error) console.error(error)
+    var element = self.treeView.render(files)
+    element.className = css.fileexplorer
+    element.events = self.events
+    element.api = self.api
+    setTimeout(function () {
+      self.element.parentElement.replaceChild(element, self.element)
+      self.element = element
+    }, 0)
+  })
+  self.element = yo`<div></div>`
+  return self.element
 }

@@ -49,7 +49,9 @@ function Compiler (handleImportCall) {
         self.lastCompilationResult = null
         self.event.trigger('compilationFinished', [false, {'error': { formattedMessage: error, severity: 'error' }}, files])
       } else {
-        compileJSON(input, optimize ? 1 : 0)
+        setTimeout(function () {
+          compileJSON(input, optimize ? 1 : 0)
+        }, 0)
       }
     })
   }
@@ -233,7 +235,7 @@ function Compiler (handleImportCall) {
 
     // Set a safe fallback until the new one is loaded
     setCompileJSON(function (source, optimize) {
-      compilationFinished({error: 'Compiler not yet loaded.'})
+      compilationFinished({ error: { formattedMessage: 'Compiler not yet loaded.' } })
     })
 
     var newScript = document.createElement('script')

@@ -453,10 +453,15 @@ function run () {
   })
 
   // insert ballot contract if there are no files available
-  if (!loadingFromGist && Object.keys(filesProviders['browser'].list()).length === 0) {
-    if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
-      modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
-    }
+  if (!loadingFromGist) {
+    filesProviders['browser'].resolveDirectory('', (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
+          modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
+        }
+      }
+    })
   }
 
   window.syncStorage = chromeCloudStorageSync

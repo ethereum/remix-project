@@ -1,19 +1,62 @@
 'use strict'
-var async = require('async')
 var EventManager = require('remix-lib').EventManager
+var pathtool = require('path')
 
-class SharedFolder {
+function buildList (self, path = '', callback) {
+  path = '' + (path || '')
+  self.remixd.dir(path, (error, filesList) => {
+    if (error) console.error(error)
+    var list = Object.keys(filesList)
+    var counter = list.length
+    var fileTree = {}
+    if (!counter) callback(null, fileTree)
+    for (var i = 0, name, len = counter; i < len; i++) {
+      name = list[i]
+      if (filesList[name].isDirectory) {
+        setFolder(self, path, name, fileTree, finish)
+      } else {
+        setFileContent(self, path, name, fileTree, finish)
+      }
+    }
+    function finish (error) {
+      if (error) console.error(error)
+      counter--
+      if (!counter) callback(null, fileTree)
+    }
+  })
+}
+function setFolder (self, path, name, fileTree, done) {
+  buildList(self, name, (error, subFileTree) => {
+    if (error) console.error(error)
+    name = name.replace(path, '')
+    if (name[0] === '/') name = name.substring(1)
+    fileTree[name] = subFileTree
+    done(null)
+  })
+}
+function setFileContent (self, path, name, fileTree, done) {
+  self.remixd.read(name, (error, result) => {
+    if (error) console.error(error)
+    name = name.replace(path, '')
+    if (name[0] === '/') name = name.substring(1)
+    fileTree[name] = {
+      '/content': result.content,
+      '/readonly': result.readonly
+    }
+    done(null)
+  })
+}
+
+module.exports = class SharedFolder {
   constructor (remixd) {
     this.event = new EventManager()
-    this.remixd = remixd
-    this.files = null
-    this.filesContent = {}
-    this.filesTree = null
+    this._remixd = remixd
+    this.remixd = remixapi(remixd, this)
     this.type = 'localhost'
-    this.error = {
-      'EEXIST': 'File already exists'
-    }
-    this.remixd.event.register('notified', (data) => {
+    this.error = { 'EEXIST': 'File already exists' }
+    this._isReady = true
+
+    remixd.event.register('notified', (data) => {
       if (data.scope === 'sharedfolder') {
         if (data.name === 'created') {
           this.init(() => {
@@ -24,7 +67,7 @@ class SharedFolder {
             this.event.trigger('fileRemoved', [this.type + '/' + data.value.path])
           })
         } else if (data.name === 'changed') {
-          this.remixd.call('sharedfolder', 'get', {path: data.value}, (error, content) => {
+          this._remixd.call('sharedfolder', 'get', {path: data.value}, (error, content) => {
             if (error) {
               console.log(error)
             } else {
@@ -38,38 +81,43 @@ class SharedFolder {
     })
   }
 
+  isConnected () {
+    return this._isReady
+  }
+
   close (cb) {
-    this.remixd.close()
-    this.files = null
-    this.filesTree = null
+    this.remixd.exit()
+    this._isReady = false
     cb()
   }
 
   init (cb) {
-    this.remixd.call('sharedfolder', 'list', {}, (error, filesList) => {
-      if (error) {
-        cb(error)
-      } else {
-        this.files = {}
-        for (var k in filesList) {
-          this.files[this.type + '/' + k] = filesList[k]
-        }
-        listAsTree(this, this.files, (error, tree) => {
-          this.filesTree = tree
-          cb(error)
-        })
-      }
-    })
+    this._isReady = true
+    cb()
   }
 
+  // @TODO: refactor all `this._remixd.call(....)` uses into `this.remixd[api](...)`
+  // where `api = ...`:
+  // this.remixd.read(path, (error, content) => {})
+  // this.remixd.write(path, content, (error, result) => {})
+  // this.remixd.rename(path1, path2, (error, result) => {})
+  // this.remixd.remove(path, (error, result) => {})
+  // this.remixd.dir(path, (error, filesList) => {})
+  //
+  // this.remixd.exists(path, (error, isValid) => {})
+
   exists (path) {
+    // @TODO: add new remixd.exists() method
+    // we remove the this.files = null at the beggining
+    // modify the exists() (cause it is using the this.files) to use remixd
+    // yes for the exists I think you might need another remixd function
     if (!this.files) return false
     return this.files[path] !== undefined
   }
 
   get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
-    this.remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, content) => {
+    this._remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, content) => {
       if (!error) {
         this.filesContent[path] = content
         cb(error, content)
@@ -83,7 +131,7 @@ class SharedFolder {
 
   set (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
-    this.remixd.call('sharedfolder', 'set', {path: unprefixedpath, content: content}, (error, result) => {
+    this._remixd.call('sharedfolder', 'set', {path: unprefixedpath, content: content}, (error, result) => {
       if (cb) cb(error, result)
       var path = this.type + '/' + unprefixedpath
       this.filesContent[path]
@@ -103,7 +151,7 @@ class SharedFolder {
 
   remove (path) {
     var unprefixedpath = this.removePrefix(path)
-    this.remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
+    this._remixd.call('sharedfolder', 'remove', {path: unprefixedpath}, (error, result) => {
       if (error) console.log(error)
       var path = this.type + '/' + unprefixedpath
       delete this.filesContent[path]
@@ -116,7 +164,7 @@ class SharedFolder {
   rename (oldPath, newPath, isFolder) {
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
-    this.remixd.call('sharedfolder', 'rename', {oldPath: unprefixedoldPath, newPath: unprefixednewPath}, (error, result) => {
+    this._remixd.call('sharedfolder', 'rename', {oldPath: unprefixedoldPath, newPath: unprefixednewPath}, (error, result) => {
       if (error) {
         console.log(error)
         if (this.error[error.code]) error = this.error[error.code]
@@ -134,27 +182,26 @@ class SharedFolder {
     return true
   }
 
-  list () {
-    return this.files
-  }
-
-  listAsTree (path, level) {
-    var nodes = path ? path.split('/') : []
-    var tree = this.filesTree
-    try {
-      while (nodes.length) {
-        var key = nodes.shift()
-        if (key) tree = tree[key]
-      }
-    } catch (e) {
-      tree = {}
-    }
-    if (level) {
-      var leveltree = {}
-      build(tree, level, leveltree)
-      tree = leveltree
-    }
-    return tree
+  //
+  // Tree model for files
+  // {
+  //   'a': { }, // empty directory 'a'
+  //   'b': {
+  //     'c': {}, // empty directory 'b/c'
+  //     'd': { '/readonly': true, '/content': 'Hello World' } // files 'b/c/d'
+  //     'e': { '/readonly': false, '/path': 'b/c/d' } // symlink to 'b/c/d'
+  //     'f': { '/readonly': false, '/content': '<executable>', '/mode': 0755 }
+  //   }
+  // }
+  //
+  resolveDirectory (path, callback) {
+    var self = this
+    path = '' + (path || '')
+    path = pathtool.join('./', path)
+    buildList(self, path, (error, fileTree) => {
+      if (error) return callback(error)
+      callback(null, { [self.type]: fileTree })
+    })
   }
 
   removePrefix (path) {
@@ -162,67 +209,33 @@ class SharedFolder {
   }
 }
 
-//
-// Tree model for files
-// {
-//   'a': { }, // empty directory 'a'
-//   'b': {
-//     'c': {}, // empty directory 'b/c'
-//     'd': { '/readonly': true, '/content': 'Hello World' } // files 'b/c/d'
-//     'e': { '/readonly': false, '/path': 'b/c/d' } // symlink to 'b/c/d'
-//     'f': { '/readonly': false, '/content': '<executable>', '/mode': 0755 }
-//   }
-// }
-//
-function build (tree, level, leveltree) {
-  if (!level) return
-  Object.keys(tree).forEach(key => {
-    var value = tree[key]
-    var more = value === Object(value)
-    if (more) {
-      leveltree[key] = {}
-      build(value, level - 1, leveltree[key])
-    } else leveltree[key] = value
-  })
-}
-
-function listAsTree (self, filesList, callback) {
-  function hashmapize (obj, path, val) {
-    var nodes = path.split('/')
-    var i = 0
-
-    for (; i < nodes.length - 1; i++) {
-      var node = nodes[i]
-      if (obj[node] === undefined) {
-        obj[node] = {}
-      }
-      obj = obj[node]
-    }
-
-    obj[nodes[i]] = val
+function remixapi (remixd, self) {
+  const read = (path, callback) => {
+    path = '' + (path || '')
+    path = pathtool.join('./', path)
+    remixd.call('sharedfolder', 'get', { path }, (error, content) => callback(error, content))
   }
-
-  var tree = {}
-
-  // This does not include '.remix.config', because it is filtered
-  // inside list().
-  async.eachSeries(Object.keys(filesList), function (path, cb) {
-    self.get(path, (error, content) => {
-      if (error) {
-        console.log(error)
-        cb(error)
-      } else {
-        self.filesContent[path] = content
-        hashmapize(tree, path, {
-          '/readonly': filesList[path],
-          '/content': content
-        })
-        cb()
-      }
-    })
-  }, (error) => {
-    callback(error, tree)
-  })
+  const write = (path, content, callback) => {
+    path = '' + (path || '')
+    path = pathtool.join('./', path)
+    remixd.call('sharedfolder', 'set', { path, content }, (error, result) => callback(error, result))
+  }
+  const rename = (path, newpath, callback) => {
+    path = '' + (path || '')
+    path = pathtool.join('./', path)
+    remixd.call('sharedfolder', 'rename', { oldPath: path, newPath: newpath }, (error, result) => callback(error, result))
+  }
+  const remove = (path, callback) => {
+    path = '' + (path || '')
+    path = pathtool.join('./', path)
+    remixd.call('sharedfolder', 'remove', { path }, (error, result) => callback(error, result))
+  }
+  const dir = (path, callback) => {
+    path = '' + (path || '')
+    path = pathtool.join('./', path)
+    remixd.call('sharedfolder', 'resolveDirectory', { path }, (error, filesList) => callback(error, filesList))
+  }
+  const exit = () => { remixd.close() }
+  const api = { read, write, rename, remove, dir, exit, event: remixd.event }
+  return api
 }
-
-module.exports = SharedFolder
