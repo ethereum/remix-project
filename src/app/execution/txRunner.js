@@ -4,6 +4,8 @@ var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
+var yo = require('yo-yo')
+var modalDialog = require('../ui/modaldialog')
 
 function TxRunner (vmaccounts, opts) {
   this.personalMode = opts.personalMode
@@ -50,6 +52,7 @@ TxRunner.prototype.execute = function (args, callback) {
           transactionHash: result.transactionHash
         })
       })
+      askToConfirmTx(tx)
     } else {
       executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
@@ -82,6 +85,7 @@ TxRunner.prototype.execute = function (args, callback) {
         }
       })
     }
+    askToConfirmTx(tx)
   } else {
     try {
       var account = self.vmaccounts[from]
@@ -162,6 +166,29 @@ function run (self, tx, stamp, callback) {
       }
     })
   }
+}
+
+function askToConfirmTx (tx) {
+var title = `Executing transaction on the main network`
+  var el = yo`
+    <div>
+      <div>
+        You are connected to the main network, which means your transaction will
+        be performed using real currency. Check out the details of the transaction you want
+        to run and click confirm if you are sure you want to continue with its
+        exectution on the main network.
+      </div>
+      <div>
+      <div>from: ${tx.from}</div>
+      <div>to: ${tx.from}</div>
+      <div>tx value: ${tx.value}</div>
+      <div>gas limit: ${tx.gasLimit}</div>
+      <div>gas price: ${tx.gasEstimation}</div>
+      <div>data: ${tx.data}</div>
+      </div>
+    </div>
+  `
+  modalDialog(title, el, {label: ''}, {label: 'Confirm'})   // PROMPT!
 }
 
 module.exports = TxRunner
