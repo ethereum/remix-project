@@ -38,7 +38,6 @@ SolidityState.prototype.init = function () {
   var self = this
   var decodeTimeout = null
   this.parent.event.register('indexChanged', this, function (index) {
-    self.basicPanel.setMessage('')
     if (index < 0) {
       self.basicPanel.setMessage('invalid step index')
       return
@@ -56,7 +55,7 @@ SolidityState.prototype.init = function () {
     if (decodeTimeout) {
       window.clearTimeout(decodeTimeout)
     }
-    self.basicPanel.setLoading()
+    self.basicPanel.setUpdating()
     decodeTimeout = setTimeout(() => {
       decode(self, index)
     }, 500)
