@@ -1,340 +1,51 @@
-# REMIX
+# Remix
 
 [![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-Ethereum IDE and tools for the web
 
-## REMIX MODULES:
+Ethereum tools for the web.
 
+*Are you looking for the Remix IDE? Follow [this link](https://github.com/ethereum/browser-solidity)!*
 
-This repository contains 4 different modules:
++ [What is Remix?](#what-is-remix)
++ [How to use Remix](#how-to-use)
++ [Modules](#modules)
++ [Contributing](#contributing)
 
-### remix-core
-Provides:
+## <a name="what-is-remix"></a>What is Remix?
 
-    code: {
-        CodeManager: CodeManager,
-        BreakpointManager: BreakpointManager
-      },
-      storage: {
-        StorageViewer: StorageViewer,
-        StorageResolver: StorageResolver
-      },
-      trace: {
-        TraceManager: TraceManager
-      }
-      
+**Remix** is a suite of tools to interact with the Ethereum blockchain in order to debug transactions, stored in this Git repository. A Remix transaction Web debugger is available [here](http://ethereum.github.io/remix), and its source code is part of this repository.
 
-TraceManager is a convenient way to access a VM Trace and resolve some value from it.
+The **Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository **is available [here](https://github.com/ethereum/browser-solidity)**, and an online version is available at https://remix.ethereum.org.
 
-`TraceManager()` :
+## <a name="how-to-use"></a>How to use Remix
 
-`function resolveTrace(stepIndex, tx)`
+### Prerequisites
 
-`function init(stepIndex, tx)`
+To use Remix tools, you'll need to connect to an Ethereum node. You can do that using [the Mist browser](https://github.com/ethereum/mist), or by connecting to your local Ethereum node (`geth`, or `eth`). *Note: connecting to `geth` does not work through https.*
 
-`function inRange(stepIndex, tx)`
++ Using `geth`: `geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'`.
 
-`function isLoaded(stepIndex, tx)`
++ Using `eth`: `eth -j --rpccorsdomain '*'`
 
-`function getLength(stepIndex, tx)`
+**DO NOT DO EXECUTE THESE COMMANDS IF `geth`/`eth` STORES YOUR PRIVATE KEYS**, as any external system might be able to access your node's RPC server!
 
-`function accumulateStorageChanges(stepIndex, tx)`
+Those commands will run the RPC server on `localhost:8545`, which is the default URL that Remix will connect to. This instance should **only** be used for debugging purposes. Never use features that could have an impact on your keys: do not unlock any keys, do not use this instance together with the wallet, do not activate the admin `web3` API.
 
-`function getAddresses(stepIndex, tx)`
+### Run the debugger
 
-`function getCallDataAt(stepIndex, tx)`
+See [here](remix-debugger/README.md) how to install, run and use the debugger locally.
 
-`function getCallStackAt(stepIndex, tx)`
+## <a name="modules"></a>Remix Modules
 
-`function getStackAt(stepIndex, tx)`
+Remix is built out of 4 different modules:
 
-`function getLastCallChangeSince(stepIndex, tx)`
++ [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
++ [`remix-lib`](remix-lib/README.md)
++ [`remix-core`](remix-core/README.md) is a utility package, providing high-level abstractions to work with the Ethereum VM.
++ [`remix-debugger`](remix-debugger/README.md) contains the **debugging webapp**.
 
-`function getCurrentCalledAddressAt(stepIndex, tx)`
+## Contributing
 
-`function getContractCreationCode(stepIndex, tx)`
+Everyone is very welcome to contribute on the codebase of Remix. Please reach us in [Gitter](https://gitter.im/ethereum/remix).
 
-`function getMemoryAt(stepIndex, tx)`
-
-`function getCurrentPC(stepIndex, tx)`
-
-`function getReturnValue(stepIndex, tx)`
-
-`function getCurrentStep(stepIndex, tx)`
-
-`function getMemExpand(stepIndex, tx)`
-
-`function getStepCost(stepIndex, tx)`
-
-`function getRemainingGas(stepIndex, tx)`
-
-`function getStepCost(stepIndex, tx)`
-
-`function isCreationStep(stepIndex, tx)`
-
-`function findStepOverBack(stepIndex, tx)`
-
-`function findStepOverForward(stepIndex, tx)`
-
-`function findStepOverBack(stepIndex, tx)`
-
-`function findNextCall(stepIndex, tx)`
-
-`function findStepOut(stepIndex, tx)`
-
-`function checkRequestedStep(stepIndex, tx)`
-
-`function waterfall(stepIndex, tx)`
-
-
-- - - -
-
-`CodeManager(_traceManager)` :
-
-`function getCode(stepIndex, tx)` :
-Resolve the code of the given @arg stepIndex and trigger appropriate event
-
-`function resolveStep(address, cb)` :
-Retrieve the code located at the given @arg address
-
-`function getFunctionFromStep(stepIndex, sourceMap, ast)` :
-Retrieve the called function for the current vm step
-
-`function getInstructionIndex(address, step, callback)` :
-Retrieve the instruction index of the given @arg step
-
-`function getFunctionFromPC(address, pc, sourceMap, ast)` :
-Retrieve the called function for the given @arg pc and @arg address
-
-- - - -
-
-`BreakpointManager(_ethdebugger, _locationToRowConverter)` :
-
-`function jumpNextBreakpoint(defaultToLimit)` :
-start looking for the next breakpoint
-
-`function jumpPreviousBreakpoint(defaultToLimit)` :
-start looking for the previous breakpoint
-
-`function jump(direction, defaultToLimit)` :
-start looking for the previous or next breakpoint
-
-`function hasBreakpointAtLine((fileIndex, line)` :
-check the given pair fileIndex/line against registered breakpoints
-
-`function hasBreakpoint()` :
-return true if current manager has breakpoint
-
-`function add(sourceLocation)` :
-add a new breakpoint to the manager
-
-`function remove(sourceLocation)` :
-remove a breakpoint from the manager
-
-- - - -
-
-`StorageViewer(_context, _storageResolver, _traceManager)` :
-
-`function storageRange(defaultToLimit)` :
-return the storage for the current context (address and vm trace index)
-
-`function storageSlot(defaultToLimit)` :
-return a slot value for the current context (address and vm trace index)
-
-`function isComplete(direction, defaultToLimit)` :
-return True if the storage at @arg address is complete
-
-`function initialMappingsLocation((fileIndex, line)` :
-return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
-
-`function mappingsLocation()` :
-return all the possible mappings locations for the current context (cached) and current mapping slot. returns state changes during the current transaction
-
-`function extractMappingsLocationChanges(sourceLocation)` :
-retrieve mapping location changes from the storage changes.
-
-- - - -
-
-`StorageResolver()` :
-
-`function storageRange(tx, stepIndex, address, callback)` :
-return the storage for the current context (address and vm trace index)
-
-`function initialPreimagesMappings(tx, stepIndex, address, callback)` :
-return a slot value for the current context (address and vm trace index)
-
-`function storageSlot(slot, tx, stepIndex, address, callback)` :
-return True if the storage at @arg address is complete
-
-`function isComplete(address)` :
-return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
-
-### remix-lib
-Provides:
-
-    {
-        EventManager: EventManager,
-        helpers: {
-            trace: traceHelper,
-            ui: uiHelper
-        },
-        vm: {
-            Web3Providers: Web3Providers,
-            DummyProvider: DummyProvider,
-            Web3VMProvider: Web3VMProvider
-        },
-        SourceMappingDecoder: SourceMappingDecoder,
-        SourceLocationTracker: SourceLocationTracker,
-        init: init,
-        util: util,
-        AstWalker: AstWalker,
-        global: global,
-        ui: {
-            styleGuide: styleGuide
-        }
-        }
-    }
-
-### remix-solidity
-Provides:
-
-    {
-        InternalCallTree: InternalCallTree,
-        SolidityProxy: SolidityProxy,
-        localDecoder: localDecoder,
-        stateDecoder: stateDecoder,
-        CodeAnalysis: CodeAnalysis
-    }
-    
-### remix-debugger
-Provides:
-
-    {
-        ui: {
-          Debugger: Debugger,
-          VMdebugger: VMDebugger,
-          BasicPanel: BasicPanel,
-          TreeView: TreeView
-        }
-      }
-    }
-
-## REMIX WEBSITE:
-
-Remix is avalaible at http://ethereum.github.io/remix. 
-
-Note that this repository hosts a debugger module.
-The Remix IDE repository is at https://github.com/ethereum/browser-solidity and an online version is at http://remix.ethereum.org.
-
-You can use it either inside Mist or by connecting to geth or eth.
-Note that connecting to Geth does not work through https.
-
-You'll have to run your own node using the following parameters:
-
-*DO NOT DO THIS IF geth/eth STORES PRIVATE KEYS* External system might be able to access your node through the RPC server.
-
-Using Geth:
-
-    geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
-
-Using Eth:
-
-    eth -j --rpccorsdomain '*'
-
-geth will run the rpc server on http://localhost:8545, remix uses by default this url.
-
-Remix will use this instance of Geth to retrieve the transaction and the associated trace.
-This instance should **only** be used for debugging purposes. Never use features that could have an impact on your keys (do not unlock any keys, do not use this instance together with the wallet, do not activate the admin web3 API).
-
-## INSTALLATION:
-
-Brief instructions to build for linux(Todo add other platforms) we will add detailed instructions later
-
-Install eth or geth, npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
-
-* `git clone https://github.com/ethereum/remix`
-* `cd remix/remix-debugger`
-* `npm install`
-* `npm start`
-
-open `remix/index.html` in your browser.
-
-## TEST:
-
-* For unit tests run `npm test`
-
-* For local headless browser tests
-  * run once to install selenium: `npm run selenium-install`
-  * every time you want to run local browser tests, run: `npm run test-browser`
-
-## DEVELOPING:
-
-Run `npm run start_dev` and open `http://127.0.0.1:8080` in your browser.
-
-Start developing and see your browser live reload when you save files
-
-## REMIX First Step:
-
-Once remix is connected to a node, you will be able to debug transactions.
-There's two way of doing that:
- - using a block number and a transaction index.
- - using a transaction hash.
-
-When loading the transaction succeed, the hash, from and to field will show up.
-Then the vm trace is loaded.
-
-The debugger itself contains several controls that allow stepping over the trace and seing the current state of a selected step.
-
-#### Slider and Stepping action:
-
-The slider allows to move quickly from a state to another.
-Stepping actions are:
-- Step Into Back
-- Step Over Back
-- Step Over Forward
-- Step Into Forward
-- Jump Next Call (this will select the next state that refers to a context changes - CALL, CALLCODE, DELEGATECALL, CREATE)
-
-#### State Viewer:
-
-The upper right panel contains basic informations about the current step:
-- VMTraceStep: the index in the trace of the current step.
-- Step
-- Add memory
-- Gas: gas used by this step
-- Remaining gas: gas left
-- Loaded address: the current code loaded, refers to the executing code.
-
-The other 6 panels describe the current selected state:
- - Instructions list: list of all the instruction that defines the current executing code.
- - Stack
- - Storage Changes
- - Memory
- - Call Data$
- - Call Stack
-
-## CODING STYLE:
-
-Remix uses npm coding style: https://docs.npmjs.com/misc/coding-style
-Please be sure your code is compliant with this coding standard before sending PR.
-There's on the above page a bunch of links that propose integration with developer tools (Emacs, Atom, ...).
-You can also run 'npm run test' to check your local repository against the coding style.
-
-## CONTRIBUTING
-
-Everyone is very welcome to contribute on the codebase of Remix. Please reach us in gitter:
-https://gitter.im/ethereum/remix
-The easiest way to work on `remix-debugger` or `remix-solidity` is to pull the `browser-solidity` (Remix IDE) repository      ( https://github.com/ethereum/browser-solidity ) which has a strong Remix integration.
-then in `browser-solidity`, execute `npm install`, `npm pull remix`, `npm link remix`. 
-then `npm run build && npm run serve` to start a new Remix IDE instance (you can browse 127.0.0.1:8080)
-
-To interact with the Remix code:
-
-1) For static analysis: compile a new contact, click on the `Analysis`, the content of this tab is provided by the `remix-solidity/analysis` library
-
-2) For Debugging: compile a new contact, deploy it (`Create` button in the `run` tab), in the remix IDE terminal a transaction should appear, click on `Debug`. The Debugger tab get the focus, the content if this tab is provided by the `remix-debugger` library.
-
-3) For Decoding local and state variable: follow 2), then expand (is not already) the `Solidity State` and `Solidity Locals` panels, the content of thoses panel are provided by the `remix-solidity/decoder` library.
-
-Remainder: the Remix repository contains a bunch of tool used to debug transaction, one of this tool is a debugger.
-The Browser-solidity repository contains the Remix IDE (online version remix.ethereum.org), which make use of the Remix repository for the debugging features.
+For more information on the contributing procedure, see [CONTRIBUTING.md](CONTRIBUTING.md). For more information on running and developing the Remix debugger, see [the debugger README.md](remix-debugging/README.md).
