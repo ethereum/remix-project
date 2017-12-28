@@ -46,46 +46,52 @@ TxRunner.prototype.execute = function (args, callback) {
     }
     if (args.useCall) {
       tx.gas = gasLimit
-      executionContext.web3().eth.call(tx, function (error, result) {
-        callback(error, {
-          result: result,
-          transactionHash: result.transactionHash
-        })
-      })
-      askToConfirmTx(tx)
+      modalDialog('Confirm transaction', remixdDialog(tx),
+        { label: 'Confirm',
+          fn: () => {
+            executionContext.web3().eth.call(tx, function (error, result) {
+              callback(error, {
+                result: result,
+                transactionHash: result.transactionHash
+              })
+            })
+          }})
     } else {
-      executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
-        if (err) {
-          return callback(err, gasEstimation)
-        }
-        var blockGasLimit = executionContext.currentblockGasLimit()
-        // NOTE: estimateGas very likely will return a large limit if execution of the code failed
-        //       we want to be able to run the code in order to debug and find the cause for the failure
+      modalDialog('Confirm transaction', remixdDialog(tx),
+        { label: 'Confirm',
+          fn: () => {
+            executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
+              if (err) {
+                return callback(err, gasEstimation)
+              }
+              var blockGasLimit = executionContext.currentblockGasLimit()
+              // NOTE: estimateGas very likely will return a large limit if execution of the code failed
+              //       we want to be able to run the code in order to debug and find the cause for the failure
 
-        var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation).'
-        if (gasEstimation > gasLimit) {
-          return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
-        }
-        if (gasEstimation > blockGasLimit) {
-          return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
-        }
+              var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation).'
+              if (gasEstimation > gasLimit) {
+                return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
+              }
+              if (gasEstimation > blockGasLimit) {
+                return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
+              }
 
-        tx.gas = gasEstimation
-        var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
-        try {
-          sendTransaction(tx, function (err, resp) {
-            if (err) {
-              return callback(err, resp)
-            }
+              tx.gas = gasEstimation
+              var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
+              try {
+                sendTransaction(tx, function (err, resp) {
+                  if (err) {
+                    return callback(err, resp)
+                  }
 
-            tryTillResponse(resp, callback)
-          })
-        } catch (e) {
-          return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-        }
-      })
+                  tryTillResponse(resp, callback)
+                })
+              } catch (e) {
+                return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+              }
+            })
+          }})
     }
-    askToConfirmTx(tx)
   } else {
     try {
       var account = self.vmaccounts[from]
@@ -168,27 +174,24 @@ function run (self, tx, stamp, callback) {
   }
 }
 
-function askToConfirmTx (tx) {
-var title = `Executing transaction on the main network`
-  var el = yo`
+
+function remixdDialog (tx) {
+  return yo`
+  <div>
+    <div>You are trying to execute transaction on the main network. Please, click confirm to continue!</div>
     <div>
-      <div>
-        You are connected to the main network, which means your transaction will
-        be performed using real currency. Check out the details of the transaction you want
-        to run and click confirm if you are sure you want to continue with its
-        exectution on the main network.
-      </div>
-      <div>
       <div>from: ${tx.from}</div>
       <div>to: ${tx.from}</div>
       <div>tx value: ${tx.value}</div>
       <div>gas limit: ${tx.gasLimit}</div>
       <div>gas price: ${tx.gasEstimation}</div>
       <div>data: ${tx.data}</div>
-      </div>
     </div>
+  </div>
   `
-  modalDialog(title, el, {label: ''}, {label: 'Confirm'})   // PROMPT!
+
 }
+
+
 
 module.exports = TxRunner
