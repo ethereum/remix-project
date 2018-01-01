@@ -28,6 +28,9 @@ var css = csjs`
     padding: .5em;
     font-weight: bold;
   }
+  .crow label {
+    cursor:pointer;
+  }
   .crowNoFlex {
     overflow: auto;
     clear: both;
@@ -81,6 +84,15 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <div><input id="optimize" type="checkbox"></div>
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
+      <h4 class="${css.heading}">Themes</h4>
+      <div class="${css.crow}">
+        <div><input class="${css.col1}" name="theme" id="themeLight" type="radio"></div>
+        <label for="themeLight">Light Theme</label>
+      </div>
+      <div class="${css.crow}">
+        <div><input class="${css.col1}" name="theme" id="themeDark" type="radio"></div>
+        <label for="themeDark">Dark Theme</label>
+      </div>
       <hr>
       <div class="${css.crowNoFlex}">
         <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)</div>
@@ -88,15 +100,6 @@ function SettingsTab (container, appAPI, appEvents, opts) {
           <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
           <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
         </div>
-      </div>
-      <h4 class="${css.heading}">Themes</h4>
-      <div class="${css.crow}">
-        <div><input class="${css.col1}" name="theme" id="themeLight" type="radio"></div>
-        <span class="${css.radioText}">Light Theme</span>
-      </div>
-      <div class="${css.crow}">
-        <div><input class="${css.col1}" name="theme" id="themeDark" type="radio"></div>
-        <span class="${css.radioText}">Dark Theme</span>
       </div>
     </div>
   `
