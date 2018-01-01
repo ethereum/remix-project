@@ -2,12 +2,12 @@
 var $ = require('jquery')
 var yo = require('yo-yo')
 var QueryParams = require('../../lib/query-params')
+var Storage = require('../../storage')
+var styleGuide = require('../theme/theme-chooser')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styles = styleGuide.chooser()
 var helper = require('../../lib/helper')
 var modal = require('../ui/modal-dialog-custom')
 
@@ -36,6 +36,9 @@ var css = csjs`
   }
   .select {
     ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
+  }
+  .heading {
+    margin-bottom: 0;
   }
   input {
     margin-right: 3px;
@@ -81,11 +84,20 @@ function SettingsTab (container, appAPI, appEvents, opts) {
       <hr>
       <div class="${css.crowNoFlex}">
         <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)</div>
-         <div>
+        <div>
           <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
           <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
-         </div>
         </div>
+      </div>
+      <h4 class="${css.heading}">Themes</h4>
+      <div class="${css.crow}">
+        <div><input class="${css.col1}" name="theme" id="themeLight" type="radio"></div>
+        <span class="${css.radioText}">Light Theme</span>
+      </div>
+      <div class="${css.crow}">
+        <div><input class="${css.col1}" name="theme" id="themeDark" type="radio"></div>
+        <span class="${css.radioText}">Dark Theme</span>
+      </div>
     </div>
   `
 
@@ -122,6 +134,29 @@ function SettingsTab (container, appAPI, appEvents, opts) {
     var optimize = this.checked
     queryParams.update({ optimize: optimize })
     appAPI.setOptimize(optimize, true)
+  })
+
+  var themeStorage = new Storage('style:')
+  var currTheme = themeStorage.get('theme')
+  var themeDark = el.querySelector('#themeDark')
+  var themeLight = el.querySelector('#themeLight')
+
+  if (currTheme === 'dark') {
+    themeDark.setAttribute('checked', 'checked')
+  } else {
+    themeLight.setAttribute('checked', 'checked')
+  }
+
+  themeDark.addEventListener('change', function () {
+    console.log('change dark theme')
+    styleGuide.switchTheme('dark')
+    window.location.reload()
+  })
+
+  themeLight.addEventListener('change', function () {
+    console.log('change to light theme')
+    styleGuide.switchTheme('light')
+    window.location.reload()
   })
 
   // ----------------- version selector-------------
