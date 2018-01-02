@@ -67,10 +67,17 @@ DropdownPanel.prototype.setLoading = function () {
   }
 }
 
+DropdownPanel.prototype.setUpdating = function () {
+  if (this.view) {
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = 'gray'
+  }
+}
+
 DropdownPanel.prototype.update = function (_data, _header) {
   if (this.view) {
     this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
     this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = 'black'
     this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
     this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
     this.view.querySelector('.title span').innerText = _header || ' '
