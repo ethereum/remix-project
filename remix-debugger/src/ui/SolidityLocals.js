@@ -33,7 +33,6 @@ class SolidityLocals {
   init () {
     var decodeTimeout = null
     this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
-      this.basicPanel.setMessage('')
       if (!this.storageResolver) {
         this.basicPanel.setMessage('storage not ready')
         return
@@ -41,7 +40,7 @@ class SolidityLocals {
       if (decodeTimeout) {
         window.clearTimeout(decodeTimeout)
       }
-      this.basicPanel.setLoading()
+      this.basicPanel.setUpdating()
       decodeTimeout = setTimeout(() => {
         decode(this, sourceLocation)
       }, 500)
