@@ -4,8 +4,19 @@ var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
-var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
+var helper = require('../../lib/helper')
+var yo = require('yo-yo')
+var csjs = require('csjs-inject')
+var remixLib = require('remix-lib')
+var styleGuide = remixLib.ui.styleGuide
+var styles = styleGuide()
+
+var css = csjs`
+  .txInfoBox {
+    ${styles.rightPanel.compileTab.box_CompileContainer};  // add askToConfirmTXContainer to Remix and then replace this styling
+  }
+`
 
 function TxRunner (vmaccounts, opts) {
   this.personalMode = opts.personalMode
@@ -174,24 +185,20 @@ function run (self, tx, stamp, callback) {
   }
 }
 
-
 function remixdDialog (tx) {
   return yo`
   <div>
     <div>You are trying to execute transaction on the main network. Please, click confirm to continue!</div>
-    <div>
+    <div class=${css.txInfoBox}>
       <div>from: ${tx.from}</div>
       <div>to: ${tx.from}</div>
       <div>tx value: ${tx.value}</div>
       <div>gas limit: ${tx.gasLimit}</div>
       <div>gas price: ${tx.gasEstimation}</div>
-      <div>data: ${tx.data}</div>
+      <div>data: ${helper.shortenHexData(tx.data)}</div>
     </div>
   </div>
   `
-
 }
-
-
 
 module.exports = TxRunner
