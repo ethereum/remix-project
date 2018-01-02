@@ -270,7 +270,7 @@ function getSha3Input (stack, memory) {
   memoryLength = parseInt(memLengthDec) * 2
 
   var i = Math.floor(memoryStart / 32)
-  var maxIndex = Math.floor(memoryLength / 32)
+  var maxIndex = Math.floor(memoryLength / 32) + i
   if (!memory[i]) {
     return emptyFill(memoryLength)
   }
