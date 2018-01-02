@@ -44,7 +44,11 @@ var css = csjs`
     margin-bottom: 0;
   }
   input {
-    margin-right: 3px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  input[type=radio] {
+    margin-top: 2px;
   }
   .pluginTextArea {
     font-family: unset;
@@ -86,16 +90,17 @@ function SettingsTab (container, appAPI, appEvents, opts) {
       </div>
       <h4 class="${css.heading}">Themes</h4>
       <div class="${css.crow}">
-        <div><input class="${css.col1}" name="theme" id="themeLight" type="radio"></div>
+        <input class="${css.col1}" name="theme" id="themeLight" type="radio">
         <label for="themeLight">Light Theme</label>
       </div>
       <div class="${css.crow}">
-        <div><input class="${css.col1}" name="theme" id="themeDark" type="radio"></div>
+        <input class="${css.col1}" name="theme" id="themeDark" type="radio">
         <label for="themeDark">Dark Theme</label>
       </div>
       <hr>
       <div class="${css.crowNoFlex}">
-        <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)</div>
+        <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)
+        </div>
         <div>
           <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
           <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
