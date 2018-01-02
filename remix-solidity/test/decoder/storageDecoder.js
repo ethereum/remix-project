@@ -286,25 +286,12 @@ function testMappingStorage (st, cb) {
       console.log(error)
       st.end(error)
     } else {
-      vmSendTx(vm, {nonce: 1, privateKey: privateKey}, null, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
-      function (error, txHash) {
+      remixLib.global.web3.eth.getTransaction(txHash, (error, tx) => {
         if (error) {
-          console.log(error)
           st.end(error)
         } else {
-          console.log(txHash)
-          var TraceManager = require('remix-core').trace.TraceManager
-          var traceManager = new TraceManager()
-          var StorageResolver = require('remix-core').storage.StorageResolver
-          var StorageViewer = require('remix-core').storage.StorageViewer
-          var storageViewer = new StorageViewer({
-            stepIndex: 180,
-            tx: null,
-            address: null
-          }, new StorageResolver(), traceManager)
-          var stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
-          stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
-            console.log(result)
+          testMapping(st, vm, privateKey, tx.contractAddress, output, (error) => {
+            st.end(error)
           })
         }
       })
@@ -334,9 +321,55 @@ function initVM (st, privateKey) {
       console.log(mes)
       st.fail(mes)
     } else {
-      global.web3 = obj
+      remixLib.global.web3 = obj
       st.end()
     }
   })
   return vm
+}
+
+function testMapping (st, vm, privateKey, contractAddress, output, cb) {
+  var vmSendTx = require('./vmCall')
+  vmSendTx(vm, {nonce: 1, privateKey: privateKey}, contractAddress, 0, '2fd0a83a00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001074686973206973206120737472696e6700000000000000000000000000000000',
+        function (error, txHash) {
+          if (error) {
+            console.log(error)
+            st.end(error)
+          } else {
+            console.log(txHash)
+            remixLib.global.web3.eth.getTransaction(txHash, (error, tx) => {
+              if (error) {
+                st.end(error)
+              } else {
+                var TraceManager = require('remix-core').trace.TraceManager
+                var traceManager = new TraceManager()
+                traceManager.resolveTrace(tx, () => {
+                  var StorageResolver = require('remix-core').storage.StorageResolver
+                  var StorageViewer = require('remix-core').storage.StorageViewer
+                  var storageViewer = new StorageViewer({
+                    stepIndex: 199,
+                    tx: tx,
+                    address: contractAddress
+                  }, new StorageResolver(), traceManager)
+                  var stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
+                  stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
+                    console.log('ok', JSON.stringify(result))
+                    st.equal(result['_num'].value, '1')
+                    st.equal(result['_num'].type, 'uint256')
+                    st.equal(result['_iBreakSolidityState'].type, 'mapping(string => uint256)')
+                    st.equal(result['_iBreakSolidityState'].value['74686973206973206120737472696e67'].value, '1')
+                    st.equal(result['_iBreakSolidityState'].value['74686973206973206120737472696e67'].type, 'uint256')
+                    st.equal(result['_iBreakSolidityStateInt'].type, 'mapping(uint256 => uint256)')
+                    st.equal(result['_iBreakSolidityStateInt'].value['0000000000000000000000000000000000000000000000000000000000000001'].value, '1')
+                    st.equal(result['_iBreakSolidityStateInt'].value['0000000000000000000000000000000000000000000000000000000000000001'].type, 'uint256')
+                    // st.end()
+                  }, (reason) => {
+                    console.log('fail')
+                    st.end(reason)
+                  })
+                })
+              }
+            })
+          }
+        })
 }
