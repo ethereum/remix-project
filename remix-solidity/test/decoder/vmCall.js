@@ -29,4 +29,36 @@ function sendTx (vm, from, to, value, data, cb) {
   })
 }
 
-module.exports = sendTx
+/*
+  Init VM / Send Transaction
+*/
+function initVM (st, privateKey) {
+  var remixLib = require('remix-lib')
+  var utileth = require('ethereumjs-util')
+  var VM = require('ethereumjs-vm')
+  var Web3Providers = remixLib.vm.Web3Providers
+  var address = utileth.privateToAddress(privateKey)
+  var vm = new VM({
+    enableHomestead: true,
+    activatePrecompiles: true
+  })
+  vm.stateManager.putAccountBalance(address, 'f00000000000000001', function cb () {})
+  var web3Providers = new Web3Providers()
+  web3Providers.addVM('VM', vm)
+  web3Providers.get('VM', function (error, obj) {
+    if (error) {
+      var mes = 'provider TEST not defined'
+      console.log(mes)
+      st.fail(mes)
+    } else {
+      remixLib.global.web3 = obj
+      st.end()
+    }
+  })
+  return vm
+}
+
+module.exports = {
+  sendTx: sendTx,
+  initVM: initVM
+}
