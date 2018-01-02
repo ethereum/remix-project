@@ -23,7 +23,9 @@ function sendTx (vm, from, to, value, data, cb) {
     uncleHeaders: []
   })
   vm.runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (error, result) {
-    cb(error, utileth.bufferToHex(tx.hash()))
+    setTimeout(() => {
+      cb(error, utileth.bufferToHex(tx.hash()))
+    }, 500)
   })
 }
 
