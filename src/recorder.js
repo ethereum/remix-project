@@ -41,7 +41,7 @@ class Recorder {
             record.contractName = payLoad.contractName
             record.bytecode = payLoad.contractBytecode
             record.linkReferences = selectedContract.object.evm.bytecode.linkReferences
-            if (Object.keys(record.linkReferences).length) {
+            if (record.linkReferences && Object.keys(record.linkReferences).length) {
               for (var file in record.linkReferences) {
                 for (var lib in record.linkReferences[file]) {
                   self.data._linkReferences[lib] = '<address>'
