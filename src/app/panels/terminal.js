@@ -687,7 +687,7 @@ class Terminal {
     try {
       var cmds = vm.createContext(Object.assign(self._jsSandboxContext, context))
       var result = vm.runInContext(script, cmds)
-      self._jsSandboxContext = Object.assign({}, context)
+      self._jsSandboxContext = Object.assign(cmds, context)
       done(null, result)
     } catch (error) {
       done(error.message)
@@ -702,7 +702,15 @@ function domTerminalFeatures (self, scopedCommands) {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
       error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
-    }
+    },
+    setTimeout: (fn, time) => {
+      return setTimeout(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
+    },
+    setInterval: (fn, time) => {
+      return setInterval(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
+    },
+    clearTimeout: clearTimeout,
+    clearInterval: clearInterval
   }
 }
 
