@@ -38,8 +38,8 @@ var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = require('./app/theme/theme-chooser')
+var styles = styleGuide.chooser()
 
 var css = csjs`
   html { box-sizing: border-box; }

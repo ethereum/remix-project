@@ -12,8 +12,8 @@ var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 var helper = require('../../lib/helper')
 
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = require('../theme/theme-chooser')
+var styles = styleGuide.chooser()
 
 module.exports = filepanel
 
