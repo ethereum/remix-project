@@ -38,7 +38,7 @@ var getDetails = function (contractName, contract, source) {
     detail['Runtime Bytecode'] = contract.evm.deployedBytecode
   }
 
-  if (contract.assembly !== null) {
+  if (source && contract.assembly !== null) {
     detail['Assembly'] = formatAssemblyText(contract.evm.legacyAssembly, '', source.content)
   }
 
