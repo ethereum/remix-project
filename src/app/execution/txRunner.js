@@ -68,26 +68,26 @@ TxRunner.prototype.execute = function (args, callback) {
             })
           }})
     } else {
-      modalDialog('Confirm transaction', remixdDialog(tx),
-        { label: 'Confirm',
-          fn: () => {
-            executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
-              if (err) {
-                return callback(err, gasEstimation)
-              }
-              var blockGasLimit = executionContext.currentblockGasLimit()
-              // NOTE: estimateGas very likely will return a large limit if execution of the code failed
-              //       we want to be able to run the code in order to debug and find the cause for the failure
+      executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
+        if (err) {
+          return callback(err, gasEstimation)
+        }
+        var blockGasLimit = executionContext.currentblockGasLimit()
+        // NOTE: estimateGas very likely will return a large limit if execution of the code failed
+        //       we want to be able to run the code in order to debug and find the cause for the failure
 
-              var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation).'
-              if (gasEstimation > gasLimit) {
-                return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
-              }
-              if (gasEstimation > blockGasLimit) {
-                return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
-              }
+        var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation).'
+        if (gasEstimation > gasLimit) {
+          return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
+        }
+        if (gasEstimation > blockGasLimit) {
+          return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
+        }
 
-              tx.gas = gasEstimation
+        tx.gas = gasEstimation
+        modalDialog('Confirm transaction', remixdDialog(tx),
+          { label: 'Confirm',
+            fn: () => {
               var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
               try {
                 sendTransaction(tx, function (err, resp) {
@@ -100,8 +100,8 @@ TxRunner.prototype.execute = function (args, callback) {
               } catch (e) {
                 return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
               }
-            })
           }})
+      })
     }
   } else {
     try {
@@ -188,13 +188,12 @@ function run (self, tx, stamp, callback) {
 function remixdDialog (tx) {
   return yo`
   <div>
-    <div>You are trying to execute transaction on the main network. Please, click confirm to continue!</div>
+    <div>You are trying to execute transaction on the main network. Click confirm if you want to continue!</div>
     <div class=${css.txInfoBox}>
       <div>from: ${tx.from}</div>
       <div>to: ${tx.from}</div>
       <div>tx value: ${tx.value}</div>
-      <div>gas limit: ${tx.gasLimit}</div>
-      <div>gas price: ${tx.gasEstimation}</div>
+      <div>gas limit: ${tx.gas}</div>
       <div>data: ${helper.shortenHexData(tx.data)}</div>
     </div>
   </div>
