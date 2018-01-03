@@ -17,12 +17,10 @@ module.exports = function testMappingStorage (st, cb) {
     } else {
       remixLib.global.web3.eth.getTransaction(txHash, (error, tx) => {
         if (error) {
+          console.log(error)
           st.end(error)
         } else {
-          testMapping(st, vm, privateKey, tx.contractAddress, output, (error) => {
-            st.end(error)
-            cb()
-          })
+          testMapping(st, vm, privateKey, tx.contractAddress, output, cb)
         }
       })
     }
@@ -39,6 +37,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
             console.log(txHash)
             remixLib.global.web3.eth.getTransaction(txHash, (error, tx) => {
               if (error) {
+                console.log(error)
                 st.end(error)
               } else {
                 var TraceManager = require('remix-core').trace.TraceManager
@@ -62,7 +61,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                     st.equal(result['_iBreakSolidityStateInt'].type, 'mapping(uint256 => uint256)')
                     st.equal(result['_iBreakSolidityStateInt'].value['0000000000000000000000000000000000000000000000000000000000000001'].value, '1')
                     st.equal(result['_iBreakSolidityStateInt'].value['0000000000000000000000000000000000000000000000000000000000000001'].type, 'uint256')
-                    // st.end()
+                    cb()
                   }, (reason) => {
                     console.log('fail')
                     st.end(reason)
