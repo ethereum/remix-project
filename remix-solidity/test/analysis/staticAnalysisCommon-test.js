@@ -1912,3 +1912,185 @@ test('staticAnalysisCommon.isLowLevelCall', function (t) {
   t.notOk(common.isLowLevelCallcodeInst(callAst), 'call is not callcode')
   t.ok(common.isLowLevelDelegatecallInst(delegatecallAst) && common.isLowLevelCall(delegatecallAst), 'delegatecall is llc should work')
 })
+
+test('staticAnalysisCommon: Call of parameter function', function (t) {
+  t.plan(7)
+  var node1 = {
+    'attributes': {
+      'argumentTypes': null,
+      'isConstant': false,
+      'isLValue': false,
+      'isPure': false,
+      'isStructConstructorCall': false,
+      'lValueRequested': false,
+      'names': [
+        null
+      ],
+      'type': 'uint256',
+      'type_conversion': false
+    },
+    'children': [
+      {
+        'attributes': {
+          'argumentTypes': [
+            {
+              'typeIdentifier': 't_uint256',
+              'typeString': 'uint256'
+            },
+            {
+              'typeIdentifier': 't_uint256',
+              'typeString': 'uint256'
+            }
+          ],
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 25,
+          'type': 'function (uint256,uint256) pure returns (uint256)',
+          'value': 'f'
+        },
+        'id': 34,
+        'name': 'Identifier',
+        'src': '267:1:0'
+      },
+      {
+        'attributes': {
+          'argumentTypes': null,
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 27,
+          'type': 'uint256',
+          'value': 'x'
+        },
+        'id': 35,
+        'name': 'Identifier',
+        'src': '269:1:0'
+      },
+      {
+        'attributes': {
+          'argumentTypes': null,
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 29,
+          'type': 'uint256',
+          'value': 'y'
+        },
+        'id': 36,
+        'name': 'Identifier',
+        'src': '272:1:0'
+      }
+    ],
+    'id': 37,
+    'name': 'FunctionCall',
+    'src': '267:7:0'
+  }
+
+  t.ok(common.isLocalCall(node1), 'is not LocalCall')
+  t.notOk(common.isThisLocalCall(node1), 'is not this local call')
+  t.notOk(common.isSuperLocalCall(node1), 'is not super local call')
+  t.notOk(common.isExternalDirectCall(node1), 'is not ExternalDirectCall')
+  t.notOk(common.isLibraryCall(node1), 'is not LibraryCall')
+
+  t.equals(common.getFunctionCallType(node1), 'function (uint256,uint256) pure returns (uint256)', 'Extracts right type')
+
+  t.equals(common.getFunctionCallTypeParameterType(node1), 'uint256,uint256', 'Extracts param right type')
+})
+
+test('staticAnalysisCommon: function call with of function with function parameter', function (t) {
+  t.plan(2)
+  var node1 = {
+    'attributes': {
+      'argumentTypes': null,
+      'isConstant': false,
+      'isLValue': false,
+      'isPure': false,
+      'isStructConstructorCall': false,
+      'lValueRequested': false,
+      'names': [
+        null
+      ],
+      'type': 'uint256',
+      'type_conversion': false
+    },
+    'children': [
+      {
+        'attributes': {
+          'argumentTypes': [
+            {
+              'typeIdentifier': 't_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$',
+              'typeString': 'function (uint256,uint256) pure returns (uint256)'
+            },
+            {
+              'typeIdentifier': 't_uint256',
+              'typeString': 'uint256'
+            },
+            {
+              'typeIdentifier': 't_uint256',
+              'typeString': 'uint256'
+            }
+          ],
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 40,
+          'type': 'function (function (uint256,uint256) pure returns (uint256),uint256,uint256) pure returns (uint256)',
+          'value': 'eval'
+        },
+        'id': 49,
+        'name': 'Identifier',
+        'src': '361:4:0'
+      },
+      {
+        'attributes': {
+          'argumentTypes': null,
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 15,
+          'type': 'function (uint256,uint256) pure returns (uint256)',
+          'value': 'plus'
+        },
+        'id': 50,
+        'name': 'Identifier',
+        'src': '366:4:0'
+      },
+      {
+        'attributes': {
+          'argumentTypes': null,
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 42,
+          'type': 'uint256',
+          'value': 'x'
+        },
+        'id': 51,
+        'name': 'Identifier',
+        'src': '372:1:0'
+      },
+      {
+        'attributes': {
+          'argumentTypes': null,
+          'overloadedDeclarations': [
+            null
+          ],
+          'referencedDeclaration': 44,
+          'type': 'uint256',
+          'value': 'y'
+        },
+        'id': 52,
+        'name': 'Identifier',
+        'src': '375:1:0'
+      }
+    ],
+    'id': 53,
+    'name': 'FunctionCall',
+    'src': '361:16:0'
+  }
+
+  t.equals(common.getFunctionCallType(node1), 'function (function (uint256,uint256) pure returns (uint256),uint256,uint256) pure returns (uint256)', 'Extracts right type')
+
+  t.equals(common.getFunctionCallTypeParameterType(node1), 'function (uint256,uint256) pure returns (uint256),uint256,uint256', 'Extracts param right type')
+})
