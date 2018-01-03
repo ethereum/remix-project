@@ -7,3 +7,4 @@ npm-debug.log*
 babelify-src
 package-lock.json
 remix
+.DS_Store

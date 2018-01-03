@@ -39,9 +39,6 @@ class ContextualListener {
 
   getActiveHighlights () {
     return [...this._activeHighlights]
-    // return [...this._activeHighlights].sort((a,b) => {
-    //   return a.position.start - b.position.start
-    // })
   }
 
   declarationOf (node) {
@@ -67,6 +64,7 @@ class ContextualListener {
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
       var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
+      this.nodes = nodes
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
@@ -122,6 +120,7 @@ class ContextualListener {
       highlights(node.id)
       this._highlight(node, compilationResult)
     }
+    this.results = compilationResult
   }
 
   _stopHighlighting () {
@@ -129,6 +128,61 @@ class ContextualListener {
       this._api.stopHighlighting(this._activeHighlights[event])
     }
     this._activeHighlights = []
+  }
+
+  gasEstimation (node) {
+    this._loadContractInfos(node)
+    var executionCost
+    var codeDepositCost
+    if (node.name === 'FunctionDefinition') {
+      var visibility = node.attributes.visibility
+      if (!node.attributes.isConstructor) {
+        var fnName = node.attributes.name
+        var fn = fnName + this._getInputParams(node)
+        if (visibility === 'public' || visibility === 'external') {
+          executionCost = this.estimationObj.external[fn]
+        } else if (visibility === 'private' || visibility === 'internal') {
+          executionCost = this.estimationObj.internal[fn]
+        }
+      } else {
+        executionCost = this.creationCost
+        codeDepositCost = this.codeDepositCost
+      }
+    } else {
+      executionCost = '-'
+    }
+    return {executionCost, codeDepositCost}
+  }
+
+  _loadContractInfos (node) {
+    for (var i in this.nodes) {
+      if (this.nodes[i].id === node.attributes.scope) {
+        var contract = this.nodes[i]
+        this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
+        this.estimationObj = this.contract.evm.gasEstimates
+        this.creationCost = this.estimationObj.creation.totalCost
+        this.codeDepositCost = this.estimationObj.creation.codeDepositCost
+      }
+    }
+  }
+
+  _getInputParams (node) {
+    var params = []
+    for (var i in node.children) {
+      if (node.children[i].name === 'ParameterList') {
+        var target = node.children[i]
+        break
+      }
+    }
+    if (target) {
+      var children = target.children
+      for (var j in children) {
+        if (children[j].name === 'VariableDeclaration') {
+          params.push(children[j].attributes.type)
+        }
+      }
+    }
+    return '(' + params.toString() + ')'
   }
 }
 

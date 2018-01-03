@@ -42,6 +42,15 @@ var css = csjs`
     float             : right;
     margin-left       : 15px;
   }
+  .gasEstimation {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+  }
+  .gasStationIcon {
+    height: 13px;
+    margin-right: 5px;
+  }
 `
 
 /*
@@ -159,7 +168,21 @@ class ContextView {
       <span class=${css.referencesnb}>${references}</span>
       <i data-action='previous' class="fa fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${jump}></i>
       <i data-action='next' class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${jump}></i>
+        ${showGasEstimation()}
     </div>`
+
+    function showGasEstimation () {
+      if (node.name === 'FunctionDefinition') {
+        var result = self._api.contextualListener.gasEstimation(node)
+        var executionCost = 'Execution cost: ' + result.executionCost + ' gas'
+        var codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
+        var estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
+        return yo`<div class=${css.gasEstimation}>
+        <img class=${css.gasStationIcon} title='Gas estimation' src='assets/img/gasStation_50.png'>
+        ${estimatedGas}
+        </div>`
+      }
+    }
   }
 }
 
