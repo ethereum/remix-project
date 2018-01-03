@@ -39,12 +39,16 @@ module.exports = {
       })
   },
 
-  import: function (url, cb) {
-    var handlers = [
+  handlers: function () {
+    return [
       { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
       { type: 'swarm', match: /^(bzz[ri]?:\/\/?.*)$/, handler: (match, cb) => { this.handleSwarmImport(match[1], cb) } },
       { type: 'ipfs', match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
     ]
+  },
+
+  import: function (url, cb) {
+    var handlers = this.handlers()
 
     var found = false
     handlers.forEach(function (handler) {
@@ -63,7 +67,7 @@ module.exports = {
             return
           }
 
-          cb(null, content, cleanUrl, handler.type)
+          cb(null, content, cleanUrl, handler.type, url)
         })
       }
     })
