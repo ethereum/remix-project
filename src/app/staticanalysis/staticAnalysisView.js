@@ -6,8 +6,8 @@ var remixLib = require('remix-lib')
 var utils = remixLib.util
 var csjs = require('csjs-inject')
 
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = require('../theme/theme-chooser')
+var styles = styleGuide.chooser()
 
 var EventManager = remixLib.EventManager
 
