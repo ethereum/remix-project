@@ -3,6 +3,7 @@ var utileth = require('ethereumjs-util')
 var Tx = require('ethereumjs-tx')
 var Block = require('ethereumjs-block')
 var BN = require('ethereumjs-util').BN
+var remixLib = require('remix-lib')
 
 function sendTx (vm, from, to, value, data, cb) {
   var tx = new Tx({
@@ -33,7 +34,6 @@ function sendTx (vm, from, to, value, data, cb) {
   Init VM / Send Transaction
 */
 function initVM (st, privateKey) {
-  var remixLib = require('remix-lib')
   var utileth = require('ethereumjs-util')
   var VM = require('ethereumjs-vm')
   var Web3Providers = remixLib.vm.Web3Providers
@@ -52,7 +52,6 @@ function initVM (st, privateKey) {
       st.fail(mes)
     } else {
       remixLib.global.web3 = obj
-      st.end()
     }
   })
   return vm
