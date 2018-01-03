@@ -130,16 +130,8 @@ class ContextualListener {
     this._activeHighlights = []
   }
 
-  // GET GAS ESTIMATION
-  _getGasEstimation (contract) {
-    this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
-    this.estimationObj = this.contract.evm.gasEstimates
-    this.creationCost = this.estimationObj.creation.totalCost
-    this.codeDepositCost = this.estimationObj.creation.codeDepositCost
-  }
-
   gasEstimation (node) {
-    this._getContract(node)
+    this._loadContractInfos(node)
     var executionCost
     var codeDepositCost
     if (node.name === 'FunctionDefinition') {
@@ -162,10 +154,14 @@ class ContextualListener {
     return {executionCost, codeDepositCost}
   }
 
-  _getContract (node) {
+  _loadContractInfos (node) {
     for (var i in this.nodes) {
       if (this.nodes[i].id === node.attributes.scope) {
-        return this._getGasEstimation(this.nodes[i])
+        var contract = this.nodes[i]
+        this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
+        this.estimationObj = this.contract.evm.gasEstimates
+        this.creationCost = this.estimationObj.creation.totalCost
+        this.codeDepositCost = this.estimationObj.creation.codeDepositCost
       }
     }
   }
@@ -182,7 +178,7 @@ class ContextualListener {
       var children = target.children
       for (var j in children) {
         if (children[j].name === 'VariableDeclaration') {
-          params.push(children[j].attributes.type.split(' ')[0])
+          params.push(children[j].attributes.type)
         }
       }
     }
