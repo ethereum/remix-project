@@ -86,7 +86,9 @@ class EventsDecoder {
               var encodedData = log.topics[indexed].replace('0x', '')
               try {
                 decoded[index] = ethJSABI.rawDecode([item.type], new Buffer(encodedData, 'hex'))[0]
-                decoded[index] = ethJSABI.stringify([item.type], decoded[index])
+                if (typeof decoded[index] !== 'string') {
+                  decoded[index] = ethJSABI.stringify([item.type], decoded[index])
+                }
               } catch (e) {
                 decoded[index] = encodedData
               }
