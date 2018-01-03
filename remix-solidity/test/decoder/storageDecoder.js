@@ -5,13 +5,16 @@ var stateDecoder = require('../../src/decoder/stateDecoder')
 var MockStorageResolver = require('./mockStorageResolver')
 var remixLib = require('remix-lib')
 var compilerInput = remixLib.helpers.compiler.compilerInput
+var testMappingStorage = require('./stateTests/mapping')
 
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
     testIntStorage(st, function () {
       testByteStorage(st, function () {
         testStructArrayStorage(st, function () {
-          st.end()
+          testMappingStorage(st, function () {
+            st.end()
+          })
         })
       })
     })

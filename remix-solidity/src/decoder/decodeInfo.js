@@ -20,9 +20,9 @@ var util = require('./types/util')
   * @return {Object} returns decoded info about the current type: { storageBytes, typeName}
   */
 function mapping (type, stateDefinitions, contractName) {
-  var match = type.match(/mapping\((.*?)( =>)? (.*)\)$/)
-  var keyTypeName = match[1]
-  var valueTypeName = match[3]
+  var match = type.match(/mapping\((.*?)=>(.*)\)$/)
+  var keyTypeName = match[1].trim()
+  var valueTypeName = match[2].trim()
 
   var keyType = parseType(keyTypeName, stateDefinitions, contractName, 'storage')
   var valueType = parseType(valueTypeName, stateDefinitions, contractName, 'storage')
@@ -308,7 +308,7 @@ function parseType (type, stateDefinitions, contractName, location) {
     return null
   }
   if (decodeInfos[currentType]) {
-    return decodeInfos[currentType](type, stateDefinitions, contractName)
+    return decodeInfos[currentType](type, stateDefinitions, contractName, location)
   } else {
     return null
   }

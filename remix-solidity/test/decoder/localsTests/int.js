@@ -2,7 +2,7 @@
 var remixCore = require('remix-core')
 var TraceManager = remixCore.trace.TraceManager
 var CodeManager = remixCore.code.CodeManager
-var vmSendTx = require('./vmCall')
+var vmCall = require('../vmCall')
 var remixLib = require('remix-lib')
 
 var traceHelper = remixLib.helpers.trace
@@ -13,7 +13,7 @@ var EventManager = remixLib.EventManager
 var helper = require('./helper')
 
 module.exports = function (st, vm, privateKey, contractBytecode, compilationResult, cb) {
-  vmSendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, contractBytecode, function (error, txHash) {
+  vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, contractBytecode, function (error, txHash) {
     if (error) {
       st.fail(error)
     } else {

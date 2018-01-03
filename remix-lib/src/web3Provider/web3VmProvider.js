@@ -139,9 +139,13 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     console.log('no tx processing')
     return
   }
-  if (this.previousDepth > depth) {
+  var previousopcode
+  if (self.vmTraces[self.processingHash] && self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]) {
+    previousopcode = self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]
+  }
+
+  if (this.previousDepth > depth && previousopcode) {
     // returning from context, set error it is not STOP, RETURN
-    var previousopcode = self.vmTraces[self.processingHash].structLogs[this.processingIndex - 1]
     previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
   }
   var step = {
@@ -169,14 +173,14 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
       }
     }
   }
-  if (traceHelper.isSHA3Instruction(step)) {
-    var sha3Input = getSha3Input(step.stack, step.memory)
-    var preimage = sha3Input
-    var imageHash = ethutil.sha3('0x' + sha3Input).toString('hex')
+  if (previousopcode && traceHelper.isSHA3Instruction(previousopcode)) {
+    var preimage = getSha3Input(previousopcode.stack, previousopcode.memory)
+    var imageHash = step.stack[step.stack.length - 1].replace('0x', '')
     self.sha3Preimages[imageHash] = {
       'preimage': preimage
     }
   }
+
   this.processingIndex++
   this.previousDepth = depth
 }
@@ -266,7 +270,7 @@ function getSha3Input (stack, memory) {
   memoryLength = parseInt(memLengthDec) * 2
 
   var i = Math.floor(memoryStart / 32)
-  var maxIndex = Math.floor(memoryLength / 32)
+  var maxIndex = Math.floor(memoryLength / 32) + i
   if (!memory[i]) {
     return emptyFill(memoryLength)
   }
