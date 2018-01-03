@@ -702,7 +702,15 @@ function domTerminalFeatures (self, scopedCommands) {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
       error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
-    }
+    },
+    setTimeout: (fn, time) => {
+      return setTimeout(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
+    },
+    setInterval: (fn, time) => {
+      return setInterval(() => { self._shell('(' + fn.toString() + ')()', scopedCommands, () => {}) }, time)
+    },
+    clearTimeout: clearTimeout,
+    clearInterval: clearInterval
   }
 }
 
