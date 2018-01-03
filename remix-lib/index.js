@@ -42,7 +42,8 @@ function modules () {
     AstWalker: AstWalker,
     global: global,
     ui: {
-      styleGuide: styleGuide
+      styleGuide: styleGuide,
+      styleGuideDark: styleGuideDark
     }
   }
 }
