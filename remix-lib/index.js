@@ -13,6 +13,7 @@ var Web3VMProvider = require('./src/web3Provider/web3VmProvider')
 var AstWalker = require('./src/astWalker')
 var global = require('./src/global')
 var styleGuide = require('./src/ui/style-guide')
+var styleGuideDark = require('./src/ui/styleGuideDark')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
