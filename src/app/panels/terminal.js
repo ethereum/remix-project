@@ -687,7 +687,7 @@ class Terminal {
     try {
       var cmds = vm.createContext(Object.assign(self._jsSandboxContext, context))
       var result = vm.runInContext(script, cmds)
-      self._jsSandboxContext = Object.assign({}, context)
+      self._jsSandboxContext = Object.assign(cmds, context)
       done(null, result)
     } catch (error) {
       done(error.message)
