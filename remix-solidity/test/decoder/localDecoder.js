@@ -32,7 +32,9 @@ function test (st, vm, privateKey) {
       misc2LocalTest(st, vm, privateKey, output.contracts['test.sol']['miscLocal2'].evm.bytecode.object, output, function () {
         output = compiler.compileStandardWrapper(compilerInput(structArrayLocal.contract))
         output = JSON.parse(output)
-        structArrayLocalTest(st, vm, privateKey, output.contracts['test.sol']['structArrayLocal'].evm.bytecode.object, output, function () {})
+        structArrayLocalTest(st, vm, privateKey, output.contracts['test.sol']['structArrayLocal'].evm.bytecode.object, output, function () {
+          st.end()
+        })
       })
     })
   })
