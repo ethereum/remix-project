@@ -43,6 +43,10 @@ var css = csjs`
   .heading {
     margin-bottom: 0;
   }
+  .explaination {
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
   input {
     margin-right: 5px;
     cursor: pointer;
@@ -55,6 +59,9 @@ var css = csjs`
   }
   .pluginLoad {
     vertical-align: top;
+  }
+  i.warnIt {
+    color: ${styles.appProperties.warningText_Color};
   }
 }
 `
@@ -89,6 +96,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
       <h4 class="${css.heading}">Themes</h4>
+      <p class="${css.explaination}">If you select a new theme, the page will reload</p>
       <div class="${css.crow}">
         <input class="${css.col1}" name="theme" id="themeLight" type="radio">
         <label for="themeLight">Light Theme</label>
@@ -99,7 +107,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
       </div>
       <hr>
       <div class="${css.crowNoFlex}">
-        <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)
+        <div>Plugin ( <i title="Do not use this feature yet" class="${css.warnIt} fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span> )
         </div>
         <div>
           <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
