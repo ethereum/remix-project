@@ -68,7 +68,6 @@ function getMappingLocation (key, position) {
 
   // key should be a hex string, and position an int
   var mappingK = ethutil.toBuffer('0x' + key)
-  mappingK = ethutil.setLengthLeft(mappingK, 32)
   var mappingP = ethutil.intToBuffer(position)
   mappingP = ethutil.setLengthLeft(mappingP, 32)
   var mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
