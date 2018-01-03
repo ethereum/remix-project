@@ -201,10 +201,9 @@ function run () {
     if (provider && provider.exists(url)) {
       return provider.get(url, cb)
     }
-    handleImports.import(url, (error, content, cleanUrl, type) => {
+    handleImports.import(url, (error, content, cleanUrl, type, url) => {
       if (!error) {
-        // FIXME: at some point we should invalidate the browser cache
-        filesProviders[type].addReadOnly(cleanUrl, content)
+        filesProviders[type].addReadOnly(cleanUrl, content, url)
         cb(null, content)
       } else {
         cb(error)

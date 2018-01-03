@@ -5,6 +5,7 @@ class BasicReadOnlyExplorer {
   constructor (type) {
     this.event = new EventManager()
     this.files = {}
+    this.normalizedNames = {} // contains the raw url associated with the displayed path
     this.type = type
     this.readonly = true
   }
@@ -25,6 +26,9 @@ class BasicReadOnlyExplorer {
 
   get (path, cb) {
     var content = this.files[path]
+    if (!content) {
+      content = this.files[this.type + '/' + this.normalizedNames[path]]
+    }
     if (cb) {
       cb(null, content)
     }
@@ -37,12 +41,13 @@ class BasicReadOnlyExplorer {
     return true
   }
 
-  addReadOnly (path, content) {
+  addReadOnly (path, content, rawPath) {
     var unprefixedPath = this.removePrefix(path)
     try { // lazy try to format JSON
       content = JSON.stringify(JSON.parse(content), null, '\t')
     } catch (e) {}
     this.files[this.type + '/' + unprefixedPath] = content
+    this.normalizedNames[rawPath] = path
     this.event.trigger('fileAdded', [this.type + '/' + unprefixedPath, true])
     return true
   }
