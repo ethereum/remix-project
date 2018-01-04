@@ -348,6 +348,7 @@ function filepanel (appAPI, filesProvider) {
       packageFiles(filesProvider['browser'], (error, packaged) => {
         if (error) {
           console.log(error)
+          modalDialogCustom.alert('Failed to create gist: ' + error)
         } else {
           var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
           console.log(packaged)
