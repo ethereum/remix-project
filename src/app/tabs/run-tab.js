@@ -327,27 +327,32 @@ function makeRecorder (events, appAPI, appEvents) {
   }
   runButton.onclick = () => {
     var currentFile = appAPI.config.get('currentFile')
-    var json = appAPI.filesProviders['browser'].get(currentFile)
-    if (currentFile.match('.json$')) {
-      try {
-        var obj = JSON.parse(json)
-        var txArray = obj.transactions || []
-        var accounts = obj.accounts || []
-        var options = obj.options
-        var abis = obj.abis
-        var linkReferences = obj.linkReferences || {}
-      } catch (e) {
-        return modalDialogCustom.alert('Invalid Scenario File, please try again')
+    appAPI.fileProviderOf(currentFile).get(currentFile, (error, json) => {
+      if (error) {
+        modalDialogCustom.alert('Invalid Scenario File ' + error)
+      } else {
+        if (currentFile.match('.json$')) {
+          try {
+            var obj = JSON.parse(json)
+            var txArray = obj.transactions || []
+            var accounts = obj.accounts || []
+            var options = obj.options
+            var abis = obj.abis
+            var linkReferences = obj.linkReferences || {}
+          } catch (e) {
+            return modalDialogCustom.alert('Invalid Scenario File, please try again')
+          }
+          if (txArray.length) {
+            noInstancesText.style.display = 'none'
+            recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
+              instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
+            })
+          }
+        } else {
+          modalDialogCustom.alert('A Scenario File is required. The file must be of type JSON. Use the "Save Transactions" Button to generate a  new Scenario File.')
+        }
       }
-      if (txArray.length) {
-        noInstancesText.style.display = 'none'
-        recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
-          instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
-        })
-      }
-    } else {
-      modalDialogCustom.alert('A Scenario File is required. The file must be of type JSON. Use the "Save Transactions" Button to generate a  new Scenario File.')
-    }
+    })
   }
   return { recordButton, runButton }
 }
