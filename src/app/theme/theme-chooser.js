@@ -6,9 +6,16 @@ module.exports = {
 
   chooser: function () {
     var themeStorage = new Storage('style:')
-    if (themeStorage.get('theme') === 'dark') {
-      return styleGuideDark()
+    if (themeStorage.exists('theme')) {
+      console.log('10! ' + themeStorage.exists('theme'))
+      // console.log('lll ' + )
+      if (themeStorage.get('theme') === 'dark') {
+        return styleGuideDark()
+      } else {
+        return styleGuideLight()
+      }
     } else {
+      console.log('17! ' + themeStorage.exists('style:'))
       return styleGuideLight()
     }
   },

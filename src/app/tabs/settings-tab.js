@@ -96,7 +96,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
       <h4 class="${css.heading}">Themes</h4>
-      <p class="${css.explaination}">If you select a new theme, the page will reload</p>
+      <p class="${css.explaination}">If you change themes, the page will reload</p>
       <div class="${css.crow}">
         <input class="${css.col1}" name="theme" id="themeLight" type="radio">
         <label for="themeLight">Light Theme</label>
