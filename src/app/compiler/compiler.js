@@ -49,9 +49,7 @@ function Compiler (handleImportCall) {
         self.lastCompilationResult = null
         self.event.trigger('compilationFinished', [false, {'error': { formattedMessage: error, severity: 'error' }}, files])
       } else {
-        setTimeout(function () {
-          compileJSON(input, optimize ? 1 : 0)
-        }, 0)
+        compileJSON(input, optimize ? 1 : 0)
       }
     })
   }

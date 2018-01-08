@@ -108,7 +108,7 @@ class BasicReadOnlyExplorer {
         '/content': self.get(path)
       })
     })
-    setTimeout(_ => callback(null, tree), 0)
+    callback(null, tree)
   }
 
   removePrefix (path) {
