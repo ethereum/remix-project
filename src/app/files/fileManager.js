@@ -122,9 +122,9 @@ class FileManager {
   switchFile (file) {
     var self = this
     if (!file) {
-      self.opt.filesProviders['browser'].resolveDirectory('', (error, filesList) => {
+      self.opt.filesProviders['browser'].resolveDirectory('', (error, filesTree) => {
         if (error) console.error(error)
-        var fileList = Object.keys(flatten(filesList))
+        var fileList = Object.keys(flatten(filesTree))
         if (fileList.length) {
           file = fileList[0]
           if (file) _switchFile(file)
