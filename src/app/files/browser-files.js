@@ -17,7 +17,7 @@ function Files (storage) {
   }
 
   this.init = function (cb) {
-    this.resolveDirectory('', (error, filesTree) => cb && cb(error))
+    cb()
   }
 
   this.get = function (path, cb) {
@@ -47,7 +47,6 @@ function Files (storage) {
         return false
       }
       if (!exists) {
-        this.init()
         event.trigger('fileAdded', [this.type + '/' + unprefixedpath, false])
       } else {
         event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
@@ -62,7 +61,6 @@ function Files (storage) {
     var unprefixedpath = this.removePrefix(path)
     if (!storage.exists(unprefixedpath)) {
       readonly[unprefixedpath] = content
-      this.init()
       event.trigger('fileAdded', [this.type + '/' + unprefixedpath, true])
       return true
     }
@@ -88,7 +86,6 @@ function Files (storage) {
         return false
       }
     }
-    this.init()
     event.trigger('fileRemoved', [this.type + '/' + unprefixedpath])
     return true
   }
@@ -100,7 +97,6 @@ function Files (storage) {
       if (!storage.rename(unprefixedoldPath, unprefixednewPath)) {
         return false
       }
-      this.init()
       event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
       return true
     }
@@ -168,8 +164,6 @@ function Files (storage) {
   if (this.exists('.browser-solidity.json')) {
     this.rename('.browser-solidity.json', '.remix.config')
   }
-
-  this.init()
 }
 
 module.exports = Files
