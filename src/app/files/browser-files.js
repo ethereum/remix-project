@@ -118,42 +118,40 @@ function Files (storage) {
   this.resolveDirectory = function (path, callback) {
     var self = this
     // path = '' + (path || '')
-    setTimeout(function () {
-      function hashmapize (obj, path, val) {
-        var nodes = path.split('/')
-        var i = 0
-        for (; i < nodes.length - 1; i++) {
-          var node = nodes[i]
-          if (obj[node] === undefined) {
-            obj[node] = {}
-          }
-          obj = obj[node]
+    function hashmapize (obj, path, val) {
+      var nodes = path.split('/')
+      var i = 0
+      for (; i < nodes.length - 1; i++) {
+        var node = nodes[i]
+        if (obj[node] === undefined) {
+          obj[node] = {}
         }
-        obj[nodes[i]] = val
+        obj = obj[node]
       }
-      var filesList = {}
-      // add r/w filesList to the list
-      storage.keys().forEach((path) => {
-        // NOTE: as a temporary measure do not show the config file
-        if (path !== '.remix.config') {
-          filesList[self.type + '/' + path] = false
-        }
+      obj[nodes[i]] = val
+    }
+    var filesList = {}
+    // add r/w filesList to the list
+    storage.keys().forEach((path) => {
+      // NOTE: as a temporary measure do not show the config file
+      if (path !== '.remix.config') {
+        filesList[self.type + '/' + path] = false
+      }
+    })
+    // add r/o files to the list
+    Object.keys(readonly).forEach((path) => {
+      filesList[self.type + '/' + path] = true
+    })
+    var tree = {}
+    // This does not include '.remix.config', because it is filtered
+    // inside list().
+    Object.keys(filesList).forEach(function (path) {
+      hashmapize(tree, path, {
+        '/readonly': self.isReadOnly(path),
+        '/content': self.get(path)
       })
-      // add r/o files to the list
-      Object.keys(readonly).forEach((path) => {
-        filesList[self.type + '/' + path] = true
-      })
-      var tree = {}
-      // This does not include '.remix.config', because it is filtered
-      // inside list().
-      Object.keys(filesList).forEach(function (path) {
-        hashmapize(tree, path, {
-          '/readonly': self.isReadOnly(path),
-          '/content': self.get(path)
-        })
-      })
-      callback(null, tree)
-    }, 0)
+    })
+    callback(null, tree)
   }
 
   this.removePrefix = function (path) {
