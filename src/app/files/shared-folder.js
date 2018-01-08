@@ -55,6 +55,7 @@ module.exports = class SharedFolder {
     this.type = 'localhost'
     this.error = { 'EEXIST': 'File already exists' }
     this._isReady = true
+    this.filesContent = {}
 
     remixd.event.register('notified', (data) => {
       if (data.scope === 'sharedfolder') {
@@ -117,10 +118,10 @@ module.exports = class SharedFolder {
 
   get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
-    this._remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, content) => {
+    this._remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, file) => {
       if (!error) {
-        this.filesContent[path] = content
-        cb(error, content)
+        this.filesContent[path] = file.content
+        cb(error, file.content)
       } else {
         // display the last known content.
         // TODO should perhaps better warn the user that the file is not synced.
@@ -134,7 +135,6 @@ module.exports = class SharedFolder {
     this._remixd.call('sharedfolder', 'set', {path: unprefixedpath, content: content}, (error, result) => {
       if (cb) cb(error, result)
       var path = this.type + '/' + unprefixedpath
-      this.filesContent[path]
       this.event.trigger('fileChanged', [path])
     })
     return true
