@@ -8,8 +8,10 @@ var init = remixLib.init
 var DropdownPanel = require('./DropdownPanel')
 var style = require('./styles/basicStyles')
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = remixLib.ui.themeChooser
+var styles = styleGuide.chooser()
+// var styleGuide = remixLib.ui.styleGuide
+// var styles = styleGuide()
 
 var css = csjs`
   .container {
