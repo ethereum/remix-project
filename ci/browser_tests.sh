@@ -3,7 +3,6 @@
 set -e
 
 setupRemixd () {
-  npm install remixd
   mkdir remixdSharedfolder
   cd remixdSharedfolder
   echo "contract test1 { function get () returns (uint) { return 8; }}" > contract1.sol
@@ -15,7 +14,7 @@ setupRemixd () {
   cd ..
   echo 'sharing folder: '
   echo $PWD
-  ./../node_modules/.bin/remixd -S $PWD &
+  node ../node_modules/remixd/src/main.js -s $PWD &
   cd ..
 }
 
