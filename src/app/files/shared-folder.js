@@ -54,7 +54,7 @@ module.exports = class SharedFolder {
     this.remixd = remixapi(remixd, this)
     this.type = 'localhost'
     this.error = { 'EEXIST': 'File already exists' }
-    this._isReady = true
+    this._isReady = false
     this.filesContent = {}
 
     remixd.event.register('notified', (data) => {
