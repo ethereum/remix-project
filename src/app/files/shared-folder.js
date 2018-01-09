@@ -145,8 +145,7 @@ module.exports = class SharedFolder {
   }
 
   isReadOnly (path) {
-    if (this.files) return this.files[path]
-    return true
+    return false // TODO: add a callback here to allow calling remixd
   }
 
   remove (path) {
