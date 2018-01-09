@@ -233,7 +233,7 @@ function Compiler (handleImportCall) {
 
     // Set a safe fallback until the new one is loaded
     setCompileJSON(function (source, optimize) {
-      compilationFinished({error: 'Compiler not yet loaded.'})
+      compilationFinished({ error: { formattedMessage: 'Compiler not yet loaded.' } })
     })
 
     var newScript = document.createElement('script')
