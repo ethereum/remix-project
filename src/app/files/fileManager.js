@@ -120,28 +120,34 @@ class FileManager {
   }
 
   switchFile (file) {
+    var self = this
     if (!file) {
-      var fileList = Object.keys(this.opt.filesProviders['browser'].list())
-      if (fileList.length) {
-        file = fileList[0]
-      }
-    }
-    if (!file) return
-    this.saveCurrentFile()
-    this.opt.config.set('currentFile', file)
-    this.refreshTabs(file)
-    this.fileProviderOf(file).get(file, (error, content) => {
-      if (error) {
-        console.log(error)
-      } else {
-        if (this.fileProviderOf(file).isReadOnly(file)) {
-          this.opt.editor.openReadOnly(file, content)
-        } else {
-          this.opt.editor.open(file, content)
+      self.opt.filesProviders['browser'].resolveDirectory('', (error, filesTree) => {
+        if (error) console.error(error)
+        var fileList = Object.keys(flatten(filesTree))
+        if (fileList.length) {
+          file = fileList[0]
+          if (file) _switchFile(file)
         }
-        this.event.trigger('currentFileChanged', [file, this.fileProviderOf(file)])
-      }
-    })
+      })
+    } else _switchFile(file)
+    function _switchFile () {
+      self.saveCurrentFile()
+      self.opt.config.set('currentFile', file)
+      self.refreshTabs(file)
+      self.fileProviderOf(file).get(file, (error, content) => {
+        if (error) {
+          console.log(error)
+        } else {
+          if (self.fileProviderOf(file).isReadOnly(file)) {
+            self.opt.editor.openReadOnly(file, content)
+          } else {
+            self.opt.editor.open(file, content)
+          }
+          self.event.trigger('currentFileChanged', [file, self.fileProviderOf(file)])
+        }
+      })
+    }
   }
 
   fileProviderOf (file) {
@@ -173,3 +179,23 @@ class FileManager {
 }
 
 module.exports = FileManager
+
+function flatten (tree) {
+  var flat = {}
+  var names = Object.keys(tree || {})
+  if (!names.length) return
+  else {
+    names.forEach(name => {
+      if ('/content' in tree[name]) flat[name] = false
+      else {
+        var subflat = flatten(tree[name])
+        if (!subflat) {
+          // empty folder
+        } else {
+          Object.keys(subflat).forEach(path => { flat[name + '/' + path] = false })
+        }
+      }
+    })
+    return flat
+  }
+}

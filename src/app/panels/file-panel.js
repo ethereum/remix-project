@@ -305,7 +305,7 @@ function filepanel (appAPI, filesProvider) {
     */
   function connectToLocalhost () {
     var container = document.querySelector('.filesystemexplorer')
-    if (filesProvider['localhost'].files !== null) {
+    if (filesProvider['localhost'].isConnected()) {
       filesProvider['localhost'].close((error) => {
         if (error) console.log(error)
       })
