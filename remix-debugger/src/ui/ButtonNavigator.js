@@ -4,8 +4,8 @@ var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = remixLib.ui.themeChooser
+var styles = styleGuide.chooser()
 
 var css = csjs`
   .buttons {
