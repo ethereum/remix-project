@@ -28,14 +28,14 @@
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
     "watch": "^1.0.2",
-    "websocket": "^1.0.24"
+    "websocket": "^1.0.24",
+    "stdout": "0.0.3"
   },
   "bin": {
     "remixd": "./src/main.js"
   },
   "devDependencies": {
     "serve": "^6.3.1",
-    "stdout": "0.0.3",
     "web3": "^1.0.0-beta.24"
   }
 }
