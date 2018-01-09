@@ -2,8 +2,9 @@
 var $ = require('jquery')
 var yo = require('yo-yo')
 var QueryParams = require('../../lib/query-params')
-var Storage = require('../../storage')
-var styleGuide = require('../theme/theme-chooser')
+var remixLib = require('remix-lib')
+var Storage = remixLib.Storage
+var styleGuide = remixLib.ui.themeChooser
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')

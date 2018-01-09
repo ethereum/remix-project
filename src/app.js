@@ -13,7 +13,7 @@ var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
-var Storage = require('./storage')
+var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
 var SharedFolder = require('./app/files/shared-folder')
@@ -38,7 +38,7 @@ var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 
-var styleGuide = require('./app/theme/theme-chooser')
+var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
 var css = csjs`

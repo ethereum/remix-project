@@ -2,7 +2,7 @@ var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var styleGuide = require('../theme/theme-chooser')
+var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
 var Terminal = require('./terminal')

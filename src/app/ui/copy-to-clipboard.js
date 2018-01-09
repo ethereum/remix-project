@@ -4,7 +4,7 @@ const copy = require('clipboard-copy')
 var addTooltip = require('./tooltip')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../theme/theme-chooser')
+var styleGuide = require('remix-lib').ui.themeChooser
 var styles = styleGuide.chooser()
 
 var css = csjs`
