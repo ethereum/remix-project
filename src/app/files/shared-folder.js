@@ -12,6 +12,7 @@ function buildList (self, path = '', callback) {
     if (!counter) callback(null, fileTree)
     for (var i = 0, name, len = counter; i < len; i++) {
       name = list[i]
+      self.files[path] = path
       if (filesList[name].isDirectory) {
         setFolder(self, path, name, fileTree, finish)
       } else {
@@ -56,6 +57,7 @@ module.exports = class SharedFolder {
     this.error = { 'EEXIST': 'File already exists' }
     this._isReady = false
     this.filesContent = {}
+    this.files = {}
 
     remixd.event.register('notified', (data) => {
       if (data.scope === 'sharedfolder') {
@@ -145,8 +147,7 @@ module.exports = class SharedFolder {
   }
 
   isReadOnly (path) {
-    if (this.files) return this.files[path]
-    return true
+    return false // TODO: add a callback here to allow calling remixd
   }
 
   remove (path) {
