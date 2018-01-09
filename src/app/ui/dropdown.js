@@ -3,7 +3,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('../theme/theme-chooser')
+var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
 var css = csjs`

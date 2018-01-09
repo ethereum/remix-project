@@ -18,8 +18,7 @@ var copyToClipboard = require('./app/ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-
-var styleGuide = require('./app/theme/theme-chooser')
+var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
 var css = csjs`

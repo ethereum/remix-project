@@ -9,7 +9,7 @@ var EventManager = remixLib.EventManager
 
 var helper = require('../../lib/helper')
 
-var styleGuide = require('../theme/theme-chooser')
+var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
 var css = csjs`

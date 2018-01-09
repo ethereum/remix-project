@@ -2,7 +2,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
-var styleGuide = require('../theme/theme-chooser')
+var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 var SourceMappingDecoder = remixLib.SourceMappingDecoder
 
