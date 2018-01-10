@@ -28,6 +28,8 @@ function Storage (prefix) {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(prefix + name)
       return true
+    } else {
+      return true
     }
   }
 
