@@ -1,8 +1,6 @@
-// var csjs = require('csjs-inject')
+module.exports = styleGuideDark
 
-module.exports = styleGuide
-
-function styleGuide () {
+function styleGuideDark () {
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES
