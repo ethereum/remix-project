@@ -1,10 +1,10 @@
 var yo = require('yo-yo')
+var remixLib = require('remix-lib')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = remixLib.ui.themeChooser
+var styles = styleGuide.chooser()
 
 var css = csjs`
   .analysisTabView {

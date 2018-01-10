@@ -10,10 +10,12 @@ var Web3 = require('web3')
 
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
+
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+
+var styleGuide = remixLib.ui.themeChooser
+var styles = styleGuide.chooser()
 
 var css = csjs`
   .panel              {

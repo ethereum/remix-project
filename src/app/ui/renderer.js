@@ -5,9 +5,8 @@ var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 // var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = require('remix-lib').ui.themeChooser
+var styles = styleGuide.chooser()
 
 var css = yo`<style>
 .sol.success,

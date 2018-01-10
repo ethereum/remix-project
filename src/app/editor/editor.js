@@ -12,8 +12,8 @@ require('brace/ext/language_tools')
 require('brace/ext/searchbox')
 var langTools = ace.acequire('ace/ext/language_tools')
 require('./mode-solidity.js')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = remixLib.ui.themeChooser
+var styles = styleGuide.chooser()
 
 function setTheme (cb) {
   if (styles.appProperties.aceTheme) {
