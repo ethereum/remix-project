@@ -44,6 +44,8 @@ function Storage (prefix) {
     // NOTE: this is a workaround for some browsers
     if (typeof window !== 'undefined') {
       return Object.keys(window.localStorage).filter(function (item) { return item !== null && item !== undefined })
+    } else {
+      return []
     }
   }
 
