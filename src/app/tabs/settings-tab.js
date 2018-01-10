@@ -19,15 +19,22 @@ var css = csjs`
   }
   .info {
     ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
-    margin-bottom: 2em;
+    margin-bottom: 1em;
     word-break: break-word;
+  }
+  .title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 1em;
   }
   .crow {
     display: flex;
     overflow: auto;
     clear: both;
     padding: .5em;
-    font-weight: bold;
+  }
+  .checkboxText {
+    font-weight: normal;
   }
   .crow label {
     cursor:pointer;
@@ -39,6 +46,8 @@ var css = csjs`
     font-weight: bold;
   }
   .select {
+    font-weight: bold;
+    margin-top: 1em;
     ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
   }
   .heading {
@@ -79,23 +88,39 @@ function SettingsTab (container, appAPI, appEvents, opts) {
   var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
       <div class="${css.info}">
-        <div>Your current Solidity version is</div>
-        <div id="version"></div>
+        <div class=${css.title}>Solidity version</div>
+        <span>Current version:</span> <span id="version"></span>
+        <div class="${css.crow}">
+          <select class="${css.select}" id="versionSelector"></select>
+        </div>
       </div>
-      <div class="${css.crow}">
-        <select class="${css.select}" id="versionSelector"></select>
+      <div class="${css.info}">
+      <div class=${css.title}>General settings</div>
+        <div class="${css.crow}">
+          <div><input id="editorWrap" type="checkbox"></div>
+          <span class="${css.checkboxText}">Text Wrap</span>
+        </div>
+        <div class="${css.crow}">
+          <div>${optionVM}</div>
+          <span class="${css.checkboxText}">Always use VM at Load</span>
+        </div>
+        <div class="${css.crow}">
+          <div><input id="optimize" type="checkbox"></div>
+          <span class="${css.checkboxText}">Enable Optimization</span>
+        </div>
       </div>
-      <div class="${css.crow}">
-        <div><input id="editorWrap" type="checkbox"></div>
-        <span class="${css.checkboxText}">Text Wrap</span>
-      </div>
-      <div class="${css.crow}">
-        <div>${optionVM}</div>
-        <span class="${css.checkboxText}">Always use VM at Load</span>
-      </div>
-      <div class="${css.crow}">
-        <div><input id="optimize" type="checkbox"></div>
-        <span class="${css.checkboxText}">Enable Optimization</span>
+      <div class="${css.info}">
+        <div class=${css.title}>Plugin</div>
+        <div class="${css.crowNoFlex}">
+          <div>
+            <i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            <span> Do not use this alpha feature if you are not sure what you are doing!</span>
+          </div>
+          <div>
+            <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
+            <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
+            </div>
+        </div>
       </div>
       <hr>
       <h4 class="${css.heading}">Themes ( Selecting a theme will trigger a page reload )</h4>
@@ -118,6 +143,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         </div>
       </div>
     </div>
+
   `
 
   function loadPlugin () {
