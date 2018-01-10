@@ -2,12 +2,13 @@
 var $ = require('jquery')
 var yo = require('yo-yo')
 var QueryParams = require('../../lib/query-params')
+var remixLib = require('remix-lib')
+var Storage = remixLib.Storage
+var styleGuide = remixLib.ui.themeChooser
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styles = styleGuide.chooser()
 var helper = require('../../lib/helper')
 var modal = require('../ui/modal-dialog-custom')
 
@@ -28,6 +29,9 @@ var css = csjs`
     padding: .5em;
     font-weight: bold;
   }
+  .crow label {
+    cursor:pointer;
+  }
   .crowNoFlex {
     overflow: auto;
     clear: both;
@@ -37,14 +41,29 @@ var css = csjs`
   .select {
     ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
   }
+  .heading {
+    margin-bottom: 0;
+  }
+  .explaination {
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
   input {
-    margin-right: 3px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  input[type=radio] {
+    margin-top: 2px;
   }
   .pluginTextArea {
     font-family: unset;
+    margin-top: 5px;
   }
   .pluginLoad {
     vertical-align: top;
+  }
+  i.warnIt {
+    color: ${styles.appProperties.warningText_Color};
   }
 }
 `
@@ -79,13 +98,25 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
       <hr>
+      <h4 class="${css.heading}">Themes ( Selecting a theme will trigger a page reload )</h4>
+      <div class="${css.crow}">
+        <input class="${css.col1}" name="theme" id="themeLight" type="radio">
+        <label for="themeLight">Light Theme</label>
+      </div>
+      <div class="${css.crow}">
+        <input class="${css.col1}" name="theme" id="themeDark" type="radio">
+        <label for="themeDark">Dark Theme</label>
+      </div>
+      <hr>
       <div class="${css.crowNoFlex}">
-        <div>Plugin (<i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span>)</div>
-         <div>
-          <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
-          <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
-         </div>
+        <div>Plugin ( <i title="Do not use this feature yet" class="${css.warnIt} fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span> )
         </div>
+        <div>
+          <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
+          <br />
+          <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
+        </div>
+      </div>
     </div>
   `
 
@@ -122,6 +153,29 @@ function SettingsTab (container, appAPI, appEvents, opts) {
     var optimize = this.checked
     queryParams.update({ optimize: optimize })
     appAPI.setOptimize(optimize, true)
+  })
+
+  var themeStorage = new Storage('style:')
+  var currTheme = themeStorage.get('theme')
+  var themeDark = el.querySelector('#themeDark')
+  var themeLight = el.querySelector('#themeLight')
+
+  if (currTheme === 'dark') {
+    themeDark.setAttribute('checked', 'checked')
+  } else {
+    themeLight.setAttribute('checked', 'checked')
+  }
+
+  themeDark.addEventListener('change', function () {
+    console.log('change dark theme')
+    styleGuide.switchTheme('dark')
+    window.location.reload()
+  })
+
+  themeLight.addEventListener('change', function () {
+    console.log('change to light theme')
+    styleGuide.switchTheme('light')
+    window.location.reload()
   })
 
   // ----------------- version selector-------------

@@ -2,9 +2,8 @@ var yo = require('yo-yo')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = require('remix-lib').ui.themeChooser
+var styles = styleGuide.chooser()
 
 var css = csjs`
   .supportTabView {
@@ -78,7 +77,6 @@ function supportTab (container, appAPI, events, opts) {
       </div>
       <div class="${css.chat}">
         <div class="${css.chatTitle}" onclick=${openLink} title='Click to open chat in Gitter'>
-          <img class="${css.icon}" title="Solidity" src="assets/img/remix_logo_512x512.svg">
           <div class="${css.chatTitleText}">ethereum/remix community chat</div>
         </div>
         <iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>
