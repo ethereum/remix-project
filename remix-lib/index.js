@@ -17,7 +17,6 @@ var styleGuideDark = require('./src/ui/styleGuideDark')
 var themeChooser = require('./src/ui/theme-chooser')
 var Storage = require('./src/storage')
 
-
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
 }
