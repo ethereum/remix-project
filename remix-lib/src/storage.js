@@ -69,7 +69,7 @@ function Storage (prefix) {
       }
     })
   }
-  
+
   // remove obsolete key
   if (typeof window !== 'undefined') {
     window.localStorage.removeItem('editor-size-cache')
