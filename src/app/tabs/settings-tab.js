@@ -57,6 +57,7 @@ var css = csjs`
   }
   .pluginTextArea {
     font-family: unset;
+    margin-top: 5px;
   }
   .pluginLoad {
     vertical-align: top;
@@ -96,8 +97,9 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         <div><input id="optimize" type="checkbox"></div>
         <span class="${css.checkboxText}">Enable Optimization</span>
       </div>
+      <hr>
       <h4 class="${css.heading}">Themes</h4>
-      <p class="${css.explaination}">If you change themes, the page will reload</p>
+      <p class="${css.explaination}">-- If you change themes, the page will reload --</p>
       <div class="${css.crow}">
         <input class="${css.col1}" name="theme" id="themeLight" type="radio">
         <label for="themeLight">Light Theme</label>
@@ -112,6 +114,7 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         </div>
         <div>
           <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
+          <br />
           <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
         </div>
       </div>
