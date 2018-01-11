@@ -31,7 +31,7 @@ var css = csjs`
     display: flex;
     overflow: auto;
     clear: both;
-    padding: .5em;
+    padding: .2em;
   }
   .checkboxText {
     font-weight: normal;
@@ -42,6 +42,9 @@ var css = csjs`
   .crowNoFlex {
     overflow: auto;
     clear: both;
+  }
+  .attention {
+    margin-bottom: 1em;
     padding: .5em;
     font-weight: bold;
   }
@@ -74,6 +77,9 @@ var css = csjs`
   i.warnIt {
     color: ${styles.appProperties.warningText_Color};
   }
+  .icon {
+    margin-right: .5em;
+  }
 }
 `
 module.exports = SettingsTab
@@ -97,12 +103,16 @@ function SettingsTab (container, appAPI, appEvents, opts) {
       <div class="${css.info}">
       <div class=${css.title}>General settings</div>
         <div class="${css.crow}">
-          <div><input id="editorWrap" type="checkbox"></div>
-          <span class="${css.checkboxText}">Text Wrap</span>
+          <div>${optionVM}</div>
+          <span class="${css.checkboxText}">Always use Ethereum VM at Load</span>
         </div>
         <div class="${css.crow}">
-          <div>${optionVM}</div>
-          <span class="${css.checkboxText}">Always use VM at Load</span>
+          <div><input id="mainNetCheckbox" onchange=${popupWhenMainNetSelected} type="checkbox"></div>
+          <span class="${css.checkboxText}">Don't show confirmation popup when MainNet is selected</span>
+        </div>
+        <div class="${css.crow}">
+          <div><input id="editorWrap" type="checkbox"></div>
+          <span class="${css.checkboxText}">Text Wrap</span>
         </div>
         <div class="${css.crow}">
           <div><input id="optimize" type="checkbox"></div>
@@ -110,10 +120,25 @@ function SettingsTab (container, appAPI, appEvents, opts) {
         </div>
       </div>
       <div class="${css.info}">
+        <div class=${css.title}>Themes</div>
+        <div class=${css.attention}>
+          <i title="Select the theme" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
+          <span>Selecting a theme will trigger a page reload</span>
+        </div>
+        <div class="${css.crow}">
+          <input class="${css.col1}" name="theme" id="themeLight" type="checkbox">
+          <label for="themeLight">Light Theme</label>
+        </div>
+        <div class="${css.crow}">
+          <input class="${css.col1}" name="theme" id="themeDark" type="checkbox">
+          <label for="themeDark">Dark Theme</label>
+        </div>
+      </div>
+      <div class="${css.info}">
         <div class=${css.title}>Plugin</div>
         <div class="${css.crowNoFlex}">
-          <div>
-            <i title="Do not use this feature yet" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          <div class=${css.attention}>
+            <i title="Do not use this feature yet" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
             <span> Do not use this alpha feature if you are not sure what you are doing!</span>
           </div>
           <div>
@@ -122,29 +147,12 @@ function SettingsTab (container, appAPI, appEvents, opts) {
             </div>
         </div>
       </div>
-      <hr>
-      <h4 class="${css.heading}">Themes ( Selecting a theme will trigger a page reload )</h4>
-      <div class="${css.crow}">
-        <input class="${css.col1}" name="theme" id="themeLight" type="radio">
-        <label for="themeLight">Light Theme</label>
-      </div>
-      <div class="${css.crow}">
-        <input class="${css.col1}" name="theme" id="themeDark" type="radio">
-        <label for="themeDark">Dark Theme</label>
-      </div>
-      <hr>
-      <div class="${css.crowNoFlex}">
-        <div>Plugin ( <i title="Do not use this feature yet" class="${css.warnIt} fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span> )
-        </div>
-        <div>
-          <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
-          <br />
-          <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
-        </div>
-      </div>
     </div>
 
   `
+  function popupWhenMainNetSelected () {
+    appAPI.config.set('doNotShowAgain', !appAPI.config.get('doNotShowAgain'))
+  }
 
   function loadPlugin () {
     var json = el.querySelector('#plugininput').value
