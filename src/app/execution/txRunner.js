@@ -16,12 +16,17 @@ var css = csjs`
   .txInfoBox {
     ${styles.rightPanel.compileTab.box_CompileContainer};  // add askToConfirmTXContainer to Remix and then replace this styling
   }
+  .checkbox {
+    display: flex;
+    margin: 1em 0;
+  }
 `
 
 function TxRunner (vmaccounts, opts) {
   this.personalMode = opts.personalMode
   this.blockNumber = 0
   this.runAsync = true
+  this.config = opts.config
   if (executionContext.isVM()) {
     this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
     this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
@@ -57,16 +62,19 @@ TxRunner.prototype.execute = function (args, callback) {
     }
     if (args.useCall) {
       tx.gas = gasLimit
-      modalDialog('Confirm transaction', remixdDialog(tx),
+      modalDialog('Confirm transaction', remixdDialog(tx, self),
         { label: 'Confirm',
           fn: () => {
-            executionContext.web3().eth.call(tx, function (error, result) {
-              callback(error, {
-                result: result,
-                transactionHash: result.transactionHash
-              })
-            })
+            execute()
           }})
+      function execute () {
+        executionContext.web3().eth.call(tx, function (error, result) {
+          callback(error, {
+            result: result,
+            transactionHash: result.transactionHash
+          })
+        })
+      }
     } else {
       executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
@@ -85,23 +93,26 @@ TxRunner.prototype.execute = function (args, callback) {
         }
 
         tx.gas = gasEstimation
-        modalDialog('Confirm transaction', remixdDialog(tx),
+        modalDialog('Confirm transaction', remixdDialog(tx, self),
           { label: 'Confirm',
             fn: () => {
-              var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
-              try {
-                sendTransaction(tx, function (err, resp) {
-                  if (err) {
-                    return callback(err, resp)
-                  }
-
-                  tryTillResponse(resp, callback)
-                })
-              } catch (e) {
-                return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-              }
-          }})
+              execute()
+            }})
       })
+      function execute () {
+        var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
+        try {
+          sendTransaction(tx, function (err, resp) {
+            if (err) {
+              return callback(err, resp)
+            }
+
+            tryTillResponse(resp, callback)
+          })
+        } catch (e) {
+          return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+        }
+      }
     }
   } else {
     try {
@@ -185,7 +196,7 @@ function run (self, tx, stamp, callback) {
   }
 }
 
-function remixdDialog (tx) {
+function remixdDialog (tx, self) {
   return yo`
   <div>
     <div>You are trying to execute transaction on the main network. Click confirm if you want to continue!</div>
@@ -196,8 +207,16 @@ function remixdDialog (tx) {
       <div>gas limit: ${tx.gas}</div>
       <div>data: ${helper.shortenHexData(tx.data)}</div>
     </div>
+    <div class=${css.checkbox}>
+      <div><input type="checkbox" onchange=${() => updateConfig(self)}></div>
+      <span class="${css.checkboxText}">Never ask me to confirm again (this will be not be persisted)</span>
+    </div>
   </div>
   `
+}
+
+function updateConfig (self) {
+  self.config.set('doNotShowAgain', !self.get('doNotShowAgain'))
 }
 
 module.exports = TxRunner
