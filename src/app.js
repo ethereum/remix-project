@@ -248,7 +248,10 @@ function run () {
       logMessage: (msg) => {
         self._components.editorpanel.log({ type: 'log', value: msg })
       },
-      config: self._api.config
+      config: self._api.config,
+      detectNetwork: (cb) => {
+        executionContext.detectNetwork(cb)
+      }
     },
     opt: { removable: false, removable_instances: true }
   })
