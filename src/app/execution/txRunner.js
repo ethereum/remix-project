@@ -63,7 +63,7 @@ TxRunner.prototype.execute = function (args, callback) {
     if (args.useCall) {
       tx.gas = gasLimit
 
-      if (true) {
+      if (!self.config.get('doNotShowAgain')) {
         self.detectNetwork((err,network) => {
           if (err) {
             console.log(err)
@@ -111,7 +111,7 @@ TxRunner.prototype.execute = function (args, callback) {
 
         tx.gas = gasEstimation
 
-        if (true) {
+        if (!self.config.get('doNotShowAgain')) {
 
           self.detectNetwork((err,network) => {
             if (err) {
@@ -245,14 +245,14 @@ function remixdDialog (tx, self) {
     </div>
     <div class=${css.checkbox}>
       <div><input type="checkbox" onchange=${() => updateConfig(self)}></div>
-      <span class="${css.checkboxText}">Never ask me to confirm again (this will be not be persisted)</span>
+      <span class="${css.checkboxText}">Don't ask me to confirm again</span>
     </div>
   </div>
   `
 }
 
 function updateConfig (self) {
-  self.config.set('doNotShowAgain', !self.get('doNotShowAgain'))
+  self.config.set('doNotShowAgain', !self.config.get('doNotShowAgain'))
 }
 
 module.exports = TxRunner
