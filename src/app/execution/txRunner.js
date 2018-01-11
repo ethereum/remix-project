@@ -27,6 +27,7 @@ function TxRunner (vmaccounts, opts) {
   this.blockNumber = 0
   this.runAsync = true
   this.config = opts.config
+  this.detectNetwork = opts.detectNetwork
   if (executionContext.isVM()) {
     this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
     this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
@@ -42,7 +43,6 @@ TxRunner.prototype.rawRun = function (args, cb) {
 
 TxRunner.prototype.execute = function (args, callback) {
   var self = this
-
   var from = args.from
   var to = args.to
   var data = args.data
@@ -62,11 +62,28 @@ TxRunner.prototype.execute = function (args, callback) {
     }
     if (args.useCall) {
       tx.gas = gasLimit
-      modalDialog('Confirm transaction', remixdDialog(tx, self),
-        { label: 'Confirm',
-          fn: () => {
-            execute()
-          }})
+
+      if (true) {
+        self.detectNetwork((err,network) => {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log(network.name)
+            if (network.name === 'Ropsten') {
+              modalDialog('Confirm transaction', remixdDialog(tx, self),
+              { label: 'Confirm',
+              fn: () => {
+                execute()
+              }})
+            } else {
+              execute()
+            }
+          }
+        })
+      } else {
+        execute()
+      }
+
       function execute () {
         executionContext.web3().eth.call(tx, function (error, result) {
           callback(error, {
@@ -93,11 +110,29 @@ TxRunner.prototype.execute = function (args, callback) {
         }
 
         tx.gas = gasEstimation
-        modalDialog('Confirm transaction', remixdDialog(tx, self),
-          { label: 'Confirm',
-            fn: () => {
-              execute()
-            }})
+
+        if (true) {
+
+          self.detectNetwork((err,network) => {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(network.name)
+              if (network.name === 'Ropsten') {
+                modalDialog('Confirm transaction', remixdDialog(tx, self),
+                { label: 'Confirm',
+                fn: () => {
+                  execute()
+                }})
+              } else {
+                execute()
+              }
+            }
+          })
+        } else {
+          execute()
+        }
+
       })
       function execute () {
         var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
@@ -114,6 +149,7 @@ TxRunner.prototype.execute = function (args, callback) {
         }
       }
     }
+
   } else {
     try {
       var account = self.vmaccounts[from]

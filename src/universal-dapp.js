@@ -168,7 +168,8 @@ function UniversalDApp (opts = {}) {
   })
   self.txRunner = new TxRunner({}, {
     personalMode: this.personalMode,
-    config: self._api.config
+    config: self._api.config,
+    detectNetwork: self._api.detectNetwork
   })
 }
 
@@ -189,7 +190,8 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   }
   this.txRunner = new TxRunner(this.accounts, {
     personalMode: this.personalMode,
-    config: this._api.config
+    config: this._api.config,
+    detectNetwork: this._api.detectNetwork
   })
 }
 
