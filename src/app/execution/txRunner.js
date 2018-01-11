@@ -60,30 +60,8 @@ TxRunner.prototype.execute = function (args, callback) {
       data: data,
       value: value
     }
+
     if (args.useCall) {
-      tx.gas = gasLimit
-
-      if (!self.config.get('doNotShowAgain')) {
-        self.detectNetwork((err,network) => {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log(network.name)
-            if (network.name === 'Ropsten') {
-              modalDialog('Confirm transaction', remixdDialog(tx, self),
-              { label: 'Confirm',
-              fn: () => {
-                execute()
-              }})
-            } else {
-              execute()
-            }
-          }
-        })
-      } else {
-        execute()
-      }
-
       function execute () {
         executionContext.web3().eth.call(tx, function (error, result) {
           callback(error, {
@@ -92,7 +70,41 @@ TxRunner.prototype.execute = function (args, callback) {
           })
         })
       }
+      tx.gas = gasLimit
+      if (!self.config.get('doNotShowAgain')) {
+        self.detectNetwork((err, network) => {
+          if (err) {
+            console.log(err)
+          } else {
+            if (network.name === 'Ropsten') {
+              modalDialog('Confirm transaction', remixdDialog(tx, self),
+                { label: 'Confirm',
+                  fn: () => {
+                    execute()
+                  }})
+            } else {
+              execute()
+            }
+          }
+        })
+      } else {
+        execute()
+      }
     } else {
+      function execute () {
+        var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
+        try {
+          sendTransaction(tx, function (err, resp) {
+            if (err) {
+              return callback(err, resp)
+            }
+
+            tryTillResponse(resp, callback)
+          })
+        } catch (e) {
+          return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+        }
+      }
       executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
           return callback(err, gasEstimation)
@@ -112,18 +124,16 @@ TxRunner.prototype.execute = function (args, callback) {
         tx.gas = gasEstimation
 
         if (!self.config.get('doNotShowAgain')) {
-
-          self.detectNetwork((err,network) => {
+          self.detectNetwork((err, network) => {
             if (err) {
               console.log(err)
             } else {
-              console.log(network.name)
               if (network.name === 'Ropsten') {
                 modalDialog('Confirm transaction', remixdDialog(tx, self),
-                { label: 'Confirm',
-                fn: () => {
-                  execute()
-                }})
+                  { label: 'Confirm',
+                    fn: () => {
+                      execute()
+                    }})
               } else {
                 execute()
               }
@@ -132,24 +142,8 @@ TxRunner.prototype.execute = function (args, callback) {
         } else {
           execute()
         }
-
       })
-      function execute () {
-        var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
-        try {
-          sendTransaction(tx, function (err, resp) {
-            if (err) {
-              return callback(err, resp)
-            }
-
-            tryTillResponse(resp, callback)
-          })
-        } catch (e) {
-          return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-        }
-      }
     }
-
   } else {
     try {
       var account = self.vmaccounts[from]
@@ -253,7 +247,7 @@ function remixdDialog (tx, self) {
 
 function updateConfig (self) {
   self.config.set('doNotShowAgain', !self.config.get('doNotShowAgain'))
-  document.querySelector("#mainNetCheckbox").setAttribute('checked', true)
+  document.querySelector('#askToConfirm').setAttribute('checked', true)
 }
 
 module.exports = TxRunner
