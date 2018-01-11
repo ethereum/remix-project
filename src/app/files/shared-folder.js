@@ -2,52 +2,6 @@
 var EventManager = require('remix-lib').EventManager
 var pathtool = require('path')
 
-function buildList (self, path = '', callback) {
-  path = '' + (path || '')
-  self.remixd.dir(path, (error, filesList) => {
-    if (error) console.error(error)
-    var list = Object.keys(filesList)
-    var counter = list.length
-    var fileTree = {}
-    if (!counter) callback(null, fileTree)
-    for (var i = 0, name, len = counter; i < len; i++) {
-      name = list[i]
-      self.files[path] = path
-      if (filesList[name].isDirectory) {
-        setFolder(self, path, name, fileTree, finish)
-      } else {
-        setFileContent(self, path, name, fileTree, finish)
-      }
-    }
-    function finish (error) {
-      if (error) console.error(error)
-      counter--
-      if (!counter) callback(null, fileTree)
-    }
-  })
-}
-function setFolder (self, path, name, fileTree, done) {
-  buildList(self, name, (error, subFileTree) => {
-    if (error) console.error(error)
-    name = name.replace(path, '')
-    if (name[0] === '/') name = name.substring(1)
-    fileTree[name] = subFileTree
-    done(null)
-  })
-}
-function setFileContent (self, path, name, fileTree, done) {
-  self.remixd.read(name, (error, result) => {
-    if (error) console.error(error)
-    name = name.replace(path, '')
-    if (name[0] === '/') name = name.substring(1)
-    fileTree[name] = {
-      '/content': result.content,
-      '/readonly': result.readonly
-    }
-    done(null)
-  })
-}
-
 module.exports = class SharedFolder {
   constructor (remixd) {
     this.event = new EventManager()
@@ -195,18 +149,19 @@ module.exports = class SharedFolder {
   //   }
   // }
   //
-  resolveDirectory (path, callback) {
-    var self = this
-    path = '' + (path || '')
-    path = pathtool.join('./', path)
-    buildList(self, path, (error, fileTree) => {
-      if (error) return callback(error)
-      callback(null, { [self.type]: fileTree })
-    })
-  }
 
   removePrefix (path) {
-    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
+    path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
+    if (path[0] === '/') return path.substring(1)
+    return path
+  }
+
+  resolveDirectory (path, callback) {
+    var self = this
+    if (path[0] === '/') path = path.substring(1)
+    if (!path) return callback(null, { [self.type]: { } })
+    path = self.removePrefix('' + (path || ''))
+    self.remixd.dir(path, callback)
   }
 }
 
