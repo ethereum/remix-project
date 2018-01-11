@@ -253,6 +253,7 @@ function remixdDialog (tx, self) {
 
 function updateConfig (self) {
   self.config.set('doNotShowAgain', !self.config.get('doNotShowAgain'))
+  document.querySelector("#mainNetCheckbox").setAttribute('checked', true)
 }
 
 module.exports = TxRunner
