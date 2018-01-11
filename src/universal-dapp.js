@@ -156,6 +156,7 @@ function UniversalDApp (opts = {}) {
   var self = this
 
   self._api = opts.api
+  console.log(self._api.config)
   self.removable = opts.opt.removable
   self.removable_instances = opts.opt.removable_instances
   self.el = yo`<div class=${css.udapp}></div>`
@@ -166,7 +167,8 @@ function UniversalDApp (opts = {}) {
     self.reset(self.contracts)
   })
   self.txRunner = new TxRunner({}, {
-    personalMode: this.personalMode
+    personalMode: this.personalMode,
+    config: self._api.config
   })
 }
 
@@ -186,7 +188,8 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
     executionContext.vm().stateManager.cache.flush(function () {})
   }
   this.txRunner = new TxRunner(this.accounts, {
-    personalMode: this.personalMode
+    personalMode: this.personalMode,
+    config: this._api.config
   })
 }
 

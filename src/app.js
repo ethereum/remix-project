@@ -247,7 +247,8 @@ function run () {
     api: {
       logMessage: (msg) => {
         self._components.editorpanel.log({ type: 'log', value: msg })
-      }
+      },
+      config: self._api.config
     },
     opt: { removable: false, removable_instances: true }
   })
