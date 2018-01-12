@@ -76,7 +76,7 @@ TxRunner.prototype.execute = function (args, callback) {
           if (err) {
             console.log(err)
           } else {
-            if (network.name === 'Ropsten') {
+            if (network.name === 'Main') {
               modalDialog('Confirm transaction', remixdDialog(tx, self),
                 { label: 'Confirm',
                   fn: () => {
@@ -128,7 +128,7 @@ TxRunner.prototype.execute = function (args, callback) {
             if (err) {
               console.log(err)
             } else {
-              if (network.name === 'Ropsten') {
+              if (network.name === 'Main') {
                 modalDialog('Confirm transaction', remixdDialog(tx, self),
                   { label: 'Confirm',
                     fn: () => {
