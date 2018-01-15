@@ -1,9 +1,7 @@
 'use strict'
-var style = require('./styles/sliderStyles')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
-var ui = remixLib.helpers.ui
 
 class Slider {
   constructor (_traceManager, _stepOverride) {
@@ -23,7 +21,7 @@ class Slider {
     var view = yo`<div>
         <input
           id='slider'
-          style=${ui.formatCss(style.rule)}
+          style='width: 100%'
           type='range'
           min=0
           max=${this.max}

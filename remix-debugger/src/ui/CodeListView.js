@@ -2,7 +2,6 @@
 var style = require('./styles/basicStyles')
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
-var ui = remixLib.helpers.ui
 var DropdownPanel = require('./DropdownPanel')
 var EventManager = remixLib.EventManager
 var csjs = require('csjs-inject')
@@ -57,10 +56,10 @@ CodeListView.prototype.indexChanged = function (index) {
       }
     }
     this.itemSelected = this.codeView.children[index]
-    this.itemSelected.setAttribute('style', ui.formatCss({'background-color': '#eeeeee'}))
+    this.itemSelected.setAttribute('style', 'background-color: ' + styles.rightPanel.debuggerTab.text_BgHighlight)
     this.itemSelected.setAttribute('selected', 'selected')
     if (this.itemSelected.firstChild) {
-      this.itemSelected.firstChild.setAttribute('style', ui.formatCss({'margin-left': '2px'}))
+      this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
     }
     this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetTop)
   }
