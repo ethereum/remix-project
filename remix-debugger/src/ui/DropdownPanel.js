@@ -44,6 +44,7 @@ var css = csjs`
     'word-break': 'break-all'
   }
   .refresh {
+    display: 'none';
     margin-left: 4px;
     margin-top: 4px; 
     animation: spin 2s linear infinite;
@@ -84,7 +85,7 @@ DropdownPanel.prototype.setLoading = function () {
 
 DropdownPanel.prototype.setUpdating = function () {
   if (this.view) {
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.additionalText_Color
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.greyedText_color
   }
 }
 
