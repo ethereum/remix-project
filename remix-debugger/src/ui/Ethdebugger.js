@@ -4,12 +4,11 @@ var StepManager = require('./StepManager')
 var remixCore = require('remix-core')
 var TraceManager = remixCore.trace.TraceManager
 var VmDebugger = require('./VmDebugger')
-var style = require('./styles/basicStyles')
 var remixLib = require('remix-lib')
 var global = remixLib.global
 var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
-var ui = remixLib.helpers.ui
+var csjs = require('csjs-inject')
 var Web3Providers = remixLib.vm.Web3Providers
 var DummyProvider = remixLib.vm.DummyProvider
 var CodeManager = remixCore.code.CodeManager
@@ -17,6 +16,15 @@ var remixSolidity = require('remix-solidity')
 var SolidityProxy = remixSolidity.SolidityProxy
 var InternalCallTree = remixSolidity.InternalCallTree
 
+var css = csjs`
+  .statusMessage {
+    margin-left: 15px;
+  }
+  .innerShift {
+    padding: 2px;
+    margin-left: 10px;
+  }
+`
 function Ethdebugger () {
   var self = this
   this.event = new EventManager()
@@ -107,12 +115,12 @@ Ethdebugger.prototype.debug = function (tx) {
 }
 
 Ethdebugger.prototype.render = function () {
-  var view = yo`<div style=${ui.formatCss(style.font)}>
-        <div style=${ui.formatCss(style.innerShift)}>
+  var view = yo`<div>
+        <div class="${css.innerShift}">
           ${this.txBrowser.render()}
           ${this.stepManager.render()}
         </div>
-        <div style=${ui.formatCss(style.statusMessage)} >${this.statusMessage}</div>
+        <div class="${css.statusMessage}" >${this.statusMessage}</div>
         ${this.vmDebugger.render()}
      </div>`
   if (!this.view) {
