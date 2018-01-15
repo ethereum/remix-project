@@ -16,7 +16,7 @@ selfdestruct.prototype.visit = function (node) {
 selfdestruct.prototype.report = function () {
   return this.relevantNodes.map(function (item, i) {
     return {
-      warning: 'Use of selfdestruct: can block calling contracts unexpectedly. Be especially careful if this contract is planed to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.',
+      warning: 'Use of selfdestruct: can block calling contracts unexpectedly. Be especially careful if this contract is planned to be used by other contracts (i.e. library contracts, interactions). Selfdestruction of the callee contract can leave callers in an inoperable state.',
       location: item.src,
       more: 'https://paritytech.io/blog/security-alert.html'
     }
