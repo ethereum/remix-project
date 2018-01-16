@@ -62,34 +62,13 @@ TxRunner.prototype.execute = function (args, callback) {
     }
 
     if (args.useCall) {
-      function execute () {
+      tx.gas = gasLimit
         executionContext.web3().eth.call(tx, function (error, result) {
           callback(error, {
             result: result,
             transactionHash: result.transactionHash
           })
         })
-      }
-      tx.gas = gasLimit
-      if (!self.config.get('doNotShowAgain')) {
-        self.detectNetwork((err, network) => {
-          if (err) {
-            console.log(err)
-          } else {
-            if (network.name === 'Main') {
-              modalDialog('Confirm transaction', remixdDialog(tx, self),
-                { label: 'Confirm',
-                  fn: () => {
-                    execute()
-                  }})
-            } else {
-              execute()
-            }
-          }
-        })
-      } else {
-        execute()
-      }
     } else {
       function execute () {
         var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
