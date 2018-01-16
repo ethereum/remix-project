@@ -44,6 +44,20 @@ TxRunner.prototype.rawRun = function (args, cb) {
 }
 
 TxRunner.prototype.execute = function (args, callback) {
+  function execute () {
+    var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
+    try {
+      sendTransaction(tx, function (err, resp) {
+        if (err) {
+          return callback(err, resp)
+        }
+
+        tryTillResponse(resp, callback)
+      })
+    } catch (e) {
+      return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+    }
+  }
   var self = this
   var from = args.from
   var to = args.to
@@ -72,20 +86,6 @@ TxRunner.prototype.execute = function (args, callback) {
         })
       })
     } else {
-      function execute () {
-        var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
-        try {
-          sendTransaction(tx, function (err, resp) {
-            if (err) {
-              return callback(err, resp)
-            }
-
-            tryTillResponse(resp, callback)
-          })
-        } catch (e) {
-          return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-        }
-      }
       executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
         if (err) {
           return callback(err, gasEstimation)
