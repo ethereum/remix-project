@@ -218,7 +218,7 @@ function run (self, tx, stamp, callback) {
 function confirmDialog (tx, gasEstimation, self) {
   var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
   var input = yo`<input id='confirmsetting' type="checkbox">`
-  return yo`
+  var el = yo`
   <div>
     <div>You are creating a transaction on the main network. Click confirm if you are sure to continue.</div>
     <div class=${css.txInfoBox}>
@@ -227,6 +227,7 @@ function confirmDialog (tx, gasEstimation, self) {
       <div>Amount: ${amount} Ether</div>
       <div>Gas estimation: ${gasEstimation}</div>
       <div>Gas limit: ${tx.gas}</div>
+      <div>Gas price:<span id='gasprice'></span></div>
       <div>Data:</div>
       <pre class=${css.wrapword}>${tx.data}</pre>
     </div>
@@ -236,6 +237,16 @@ function confirmDialog (tx, gasEstimation, self) {
     </div>
   </div>
   `
+
+  executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+    if (error) {
+      el.querySelector('#gasprice').innerHTML = 'Unable to retrieve the current network gas price. Please fix this issue before sending any transaction. <br/>' + error
+    } else {
+      var gasPricegwei = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+      el.querySelector('#gasprice').innerHTML = ' ' + gasPricegwei + ' Gwei'
+    }
+  })
+  return el
 }
 
 module.exports = TxRunner
