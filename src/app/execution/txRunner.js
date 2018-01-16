@@ -5,7 +5,6 @@ var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modaldialog')
-var helper = require('../../lib/helper')
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
@@ -16,9 +15,12 @@ var css = csjs`
   .txInfoBox {
     ${styles.rightPanel.compileTab.box_CompileContainer};  // add askToConfirmTXContainer to Remix and then replace this styling
   }
-  .checkbox {
-    display: flex;
-    margin: 1em 0;
+  .wrapword {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
   }
 `
 
@@ -63,12 +65,12 @@ TxRunner.prototype.execute = function (args, callback) {
 
     if (args.useCall) {
       tx.gas = gasLimit
-        executionContext.web3().eth.call(tx, function (error, result) {
-          callback(error, {
-            result: result,
-            transactionHash: result.transactionHash
-          })
+      executionContext.web3().eth.call(tx, function (error, result) {
+        callback(error, {
+          result: result,
+          transactionHash: result.transactionHash
         })
+      })
     } else {
       function execute () {
         var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
@@ -102,13 +104,13 @@ TxRunner.prototype.execute = function (args, callback) {
 
         tx.gas = gasEstimation
 
-        if (!self.config.get('doNotShowAgain')) {
+        if (!self.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
           self.detectNetwork((err, network) => {
             if (err) {
               console.log(err)
             } else {
               if (network.name === 'Main') {
-                modalDialog('Confirm transaction', remixdDialog(tx, self),
+                modalDialog('Confirm transaction', remixdDialog(tx, gasEstimation, self),
                   { label: 'Confirm',
                     fn: () => {
                       execute()
@@ -210,28 +212,26 @@ function run (self, tx, stamp, callback) {
   }
 }
 
-function remixdDialog (tx, self) {
+function remixdDialog (tx, gasEstimation, self) {
+  var input = yo`<input type="checkbox" onchange=${() => { self.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', this.checked) }}>`
   return yo`
   <div>
-    <div>You are trying to execute transaction on the main network. Click confirm if you want to continue!</div>
+    <div>You are creating a transaction on the main network. Click confirm if you are sure to continue.</div>
     <div class=${css.txInfoBox}>
-      <div>from: ${tx.from}</div>
-      <div>to: ${tx.from}</div>
-      <div>tx value: ${tx.value}</div>
-      <div>gas limit: ${tx.gas}</div>
-      <div>data: ${helper.shortenHexData(tx.data)}</div>
+      <div>From: ${tx.from}</div>
+      <div>To: ${tx.to ? tx.to : '(Contract Creation)'}</div>
+      <div>Amount: ${tx.value}</div>
+      <div>Gas estimation: ${gasEstimation}</div>
+      <div>Gas limit: ${tx.gas}</div>
+      <div>Data:</div>
+      <pre class=${css.wrapword}>${tx.data}</pre>
     </div>
     <div class=${css.checkbox}>
-      <div><input type="checkbox" onchange=${() => updateConfig(self)}></div>
-      <span class="${css.checkboxText}">Don't ask me to confirm again</span>
+      ${input}
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
     </div>
   </div>
   `
-}
-
-function updateConfig (self) {
-  self.config.set('doNotShowAgain', !self.config.get('doNotShowAgain'))
-  document.querySelector('#askToConfirm').setAttribute('checked', true)
 }
 
 module.exports = TxRunner
