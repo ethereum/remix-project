@@ -107,10 +107,6 @@ function SettingsTab (container, appAPI, appEvents, opts) {
           <span class="${css.checkboxText}">Always use Ethereum VM at Load</span>
         </div>
         <div class="${css.crow}">
-          <div><input id="askToConfirm" onchange=${askToConfirmTx} type="checkbox"></div>
-          <span class="${css.checkboxText}">Don't show confirmation popup when MainNet is selected</span>
-        </div>
-        <div class="${css.crow}">
           <div><input id="editorWrap" type="checkbox"></div>
           <span class="${css.checkboxText}">Text Wrap</span>
         </div>
@@ -150,9 +146,6 @@ function SettingsTab (container, appAPI, appEvents, opts) {
     </div>
 
   `
-  function askToConfirmTx () {
-    appAPI.config.set('doNotShowAgain', !appAPI.config.get('doNotShowAgain'))
-  }
 
   function loadPlugin () {
     var json = el.querySelector('#plugininput').value
