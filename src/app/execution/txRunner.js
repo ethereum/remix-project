@@ -133,7 +133,12 @@ TxRunner.prototype.execute = function (args, callback) {
                   { label: 'Confirm',
                     fn: () => {
                       execute()
-                    }})
+                    }}, {
+                      label: 'Cancel',
+                      fn: () => {
+                        return callback('Transaction canceled by user.')
+                      }
+                    })
               } else {
                 execute()
               }
