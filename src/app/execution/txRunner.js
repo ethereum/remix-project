@@ -110,9 +110,11 @@ TxRunner.prototype.execute = function (args, callback) {
               console.log(err)
             } else {
               if (network.name === 'Main') {
-                modalDialog('Confirm transaction', remixdDialog(tx, gasEstimation, self),
+                var content = confirmDialog(tx, gasEstimation, self)
+                modalDialog('Confirm transaction', content,
                   { label: 'Confirm',
                     fn: () => {
+                      self.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
                       execute()
                     }}, {
                       label: 'Cancel',
@@ -212,8 +214,8 @@ function run (self, tx, stamp, callback) {
   }
 }
 
-function remixdDialog (tx, gasEstimation, self) {
-  var input = yo`<input type="checkbox" onchange=${() => { self.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', this.checked) }}>`
+function confirmDialog (tx, gasEstimation, self) {
+  var input = yo`<input id='confirmsetting' type="checkbox">`
   return yo`
   <div>
     <div>You are creating a transaction on the main network. Click confirm if you are sure to continue.</div>
