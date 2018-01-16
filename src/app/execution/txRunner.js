@@ -6,6 +6,7 @@ var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modaldialog')
 var yo = require('yo-yo')
+var typeConversion = require('../../lib/typeConversion')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.styleGuide
@@ -215,6 +216,7 @@ function run (self, tx, stamp, callback) {
 }
 
 function confirmDialog (tx, gasEstimation, self) {
+  var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
   var input = yo`<input id='confirmsetting' type="checkbox">`
   return yo`
   <div>
@@ -222,7 +224,7 @@ function confirmDialog (tx, gasEstimation, self) {
     <div class=${css.txInfoBox}>
       <div>From: ${tx.from}</div>
       <div>To: ${tx.to ? tx.to : '(Contract Creation)'}</div>
-      <div>Amount: ${tx.value}</div>
+      <div>Amount: ${amount} Ether</div>
       <div>Gas estimation: ${gasEstimation}</div>
       <div>Gas limit: ${tx.gas}</div>
       <div>Data:</div>
