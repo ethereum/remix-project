@@ -1,8 +1,6 @@
 'use strict'
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
-var ui = remixLib.helpers.ui
-var styleDropdown = require('./styles/dropdownPanel')
 var TreeView = require('./TreeView')
 var EventManager = remixLib.EventManager
 
@@ -26,12 +24,29 @@ var css = csjs`
   }
   .eyeButton {
     ${styles.rightPanel.debuggerTab.button_Debugger}
-    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
     margin: 3px;
     float: right;
   }
   .eyeButton:hover {
     color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
+  }
+  .dropdownpanel {
+    ${styles.rightPanel.debuggerTab.dropdown_Debugger}
+    width: 100%;
+  }
+  .dropdownrawcontent {
+    padding: 2px;
+    word-break: break-all;
+  }
+  .message {
+    padding: 2px;
+    word-break: break-all;
+  }
+  .refresh {
+    display: none;
+    margin-left: 4px;
+    margin-top: 4px; 
+    animation: spin 2s linear infinite;
   }
 `
 
@@ -69,7 +84,7 @@ DropdownPanel.prototype.setLoading = function () {
 
 DropdownPanel.prototype.setUpdating = function () {
   if (this.view) {
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = 'gray'
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.greyedText_color
   }
 }
 
@@ -77,7 +92,7 @@ DropdownPanel.prototype.update = function (_data, _header) {
   if (this.view) {
     this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
     this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = 'black'
+    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.mainText_Color
     this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
     this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
     this.view.querySelector('.title span').innerText = _header || ' '
@@ -115,17 +130,17 @@ DropdownPanel.prototype.render = function (overridestyle) {
         to {transform:rotate(359deg);}
       }
     </style>
-    <div class='${css.title} title' onclick=${function () { self.toggle() }}>
-      <div class='${css.icon} fa fa-caret-right'></div>
-      <div class=${css.name}>${this.name}</div><span></span>
+    <div class="${css.title} title" onclick=${function () { self.toggle() }}>
+      <div class="${css.icon} fa fa-caret-right"></div>
+      <div class="${css.name}">${this.name}</div><span></span>
     </div>
-    <div class='dropdownpanel' style=${ui.formatCss(styleDropdown.content)} style='display:none'>
+    <div class='dropdownpanel' style='display:none'>
       <button onclick=${function () { self.toggleRaw() }} title='raw' class="${css.eyeButton} btn fa fa-eye" type="button">
       </button>
-      <i class="fa fa-refresh" style=${ui.formatCss(styleDropdown.inner, overridestyle, {display: 'none', 'margin-left': '4px', 'margin-top': '4px', 'animation': 'spin 2s linear infinite'})} aria-hidden="true"></i>
-      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdowncontent'>${content}</div>
-      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='dropdownrawcontent' style='display:none'></div>
-      <div style=${ui.formatCss(styleDropdown.inner, overridestyle)} class='message' style='display:none'></div>
+      <i class="${css.refresh} fa fa-refresh" aria-hidden="true"></i>
+      <div class='dropdowncontent'>${content}</div>
+      <div class='dropdownrawcontent' style='display:none'></div>
+      <div class='message' style='display:none'></div>
     </div>
     </div>`
   if (!this.view) {

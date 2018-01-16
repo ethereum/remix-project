@@ -90,6 +90,7 @@ function styleGuide () {
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
+    highlight_BackgroundColor: cssProperties.colors.veryLightGrey,
     /* ------------------------------------------------------
                               RESIZING
     ******************************************************** */
@@ -106,17 +107,19 @@ function styleGuide () {
     specialText_Color: cssProperties.colors.greenZing,
     brightText_Color: cssProperties.colors.brightBlue,
     oppositeText_Color: cssProperties.colors.black,
-    additionalText_Color: cssProperties.colors.desatGrey,
+    additionalText_Color: cssProperties.colors.veryLightGrey,
 
     errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
     infoText_Color: cssProperties.colors.violet,
+    greyedText_color: cssProperties.colors.veryLightGrey,
     /* ------------------------------------------------------
                               ICONS
     ******************************************************** */
     icon_Color: cssProperties.colors.black,
     icon_AltColor: cssProperties.colors.white,
     icon_HoverColor: cssProperties.colors.orange,
+    icon_ConstantColor: cssProperties.colors.black,
 
     /* ------------------------------------------------------
                             MESSAGES
@@ -191,7 +194,7 @@ function styleGuide () {
           Teriary
     .................. */
     teriaryButton_TextColor: cssProperties.colors.black,
-    teriaryButton_BackgroundColor: cssProperties.colors.greyBlueMed,
+    teriaryButton_BackgroundColor: cssProperties.colors.lightGrey,
     teriaryButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
 
@@ -653,6 +656,7 @@ function styleGuide () {
       debuggerTab: {
         text_Primary: appProperties.mainText_Color,
         text_Secondary: appProperties.supportText_Color,
+        text_BgHighlight: appProperties.highlight_BackgroundColor,
 
         box_Debugger: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
@@ -666,7 +670,7 @@ function styleGuide () {
           Color: appProperties.secondaryButton_TextColor
         }),
 
-        button_Debugger_icon_Color: appProperties.icon_Color,
+        button_Debugger_icon_Color: appProperties.icon_ConstantColor,
         button_Debugger_icon_HoverColor: appProperties.icon_HoverColor,
 
         dropdown_Debugger: appProperties.uiElements.dropdown({
