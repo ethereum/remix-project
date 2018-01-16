@@ -656,7 +656,7 @@ function styleGuide () {
       debuggerTab: {
         text_Primary: appProperties.mainText_Color,
         text_Secondary: appProperties.supportText_Color,
-        text_BgHighlight: appProperties.highlight_BackgroundColor, 
+        text_BgHighlight: appProperties.highlight_BackgroundColor,
 
         box_Debugger: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
