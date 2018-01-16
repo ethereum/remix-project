@@ -1,7 +1,6 @@
 'use strict'
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
-var styleDropdown = require('./styles/dropdownPanel')
 var TreeView = require('./TreeView')
 var EventManager = remixLib.EventManager
 
@@ -36,15 +35,15 @@ var css = csjs`
     width: 100%;
   }
   .dropdownrawcontent {
-    'padding': '2px',
-    'word-break': 'break-all'
+    padding: 2px;
+    word-break: break-all;
   }
   .message {
-    'padding': '2px',
-    'word-break': 'break-all'
+    padding: 2px;
+    word-break: break-all;
   }
   .refresh {
-    display: 'none';
+    display: none;
     margin-left: 4px;
     margin-top: 4px; 
     animation: spin 2s linear infinite;

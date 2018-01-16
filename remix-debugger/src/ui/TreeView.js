@@ -1,8 +1,6 @@
 'use strict'
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var style = require('./styles/treeView')
-var remixLib = require('remix-lib')
 var css = csjs`
   .li_tv {
     list-style-type: none;
