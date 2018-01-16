@@ -156,7 +156,6 @@ function UniversalDApp (opts = {}) {
   var self = this
 
   self._api = opts.api
-  console.log(self._api.config)
   self.removable = opts.opt.removable
   self.removable_instances = opts.opt.removable_instances
   self.el = yo`<div class=${css.udapp}></div>`
