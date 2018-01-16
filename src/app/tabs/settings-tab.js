@@ -69,7 +69,6 @@ var css = csjs`
   }
   .pluginTextArea {
     font-family: unset;
-    margin-top: 5px;
   }
   .pluginLoad {
     vertical-align: top;
