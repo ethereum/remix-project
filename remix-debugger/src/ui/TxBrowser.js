@@ -3,10 +3,8 @@ var global = remixLib.global
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 var yo = require('yo-yo')
-var ui = remixLib.helpers.ui
 var init = remixLib.init
 var DropdownPanel = require('./DropdownPanel')
-var style = require('./styles/basicStyles')
 var csjs = require('csjs-inject')
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
@@ -37,13 +35,16 @@ var css = csjs`
   }
   .txbutton {
     ${styles.rightPanel.debuggerTab.button_Debugger}
-    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
   }
   .txbutton:hover {
     color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
   .txinfo {
     margin-top: 5px;
+  }
+  .vmargin {
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 `
 function TxBrowser (_parent) {
@@ -175,7 +176,7 @@ TxBrowser.prototype.init = function (ev) {
 TxBrowser.prototype.connectionSetting = function () {
   if (this.displayConnectionSetting) {
     var self = this
-    return yo`<div style=${ui.formatCss(style.vmargin)}><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${global.web3.currentProvider ? global.web3.currentProvider.host : ' - none - '} type='text' />
+    return yo`<div class="${css.vmargin}"><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${global.web3.currentProvider ? global.web3.currentProvider.host : ' - none - '} type='text' />
               <span>${this.connectInfo}</span></div>`
   } else {
     return ''
