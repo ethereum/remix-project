@@ -104,6 +104,7 @@ function styleGuideDark () {
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
     debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
+    highlight_BackgroundColor: cssProperties.colors.greyBlueMed,
     /* ------------------------------------------------------
                               RESIZING
     ******************************************************** */
@@ -123,12 +124,14 @@ function styleGuideDark () {
     errorText_Color: cssProperties.colors.strongRed,
     warningText_Color: cssProperties.colors.orange,
     infoText_Color: cssProperties.colors.violet,
+    greyedText_color: cssProperties.colors.desatGrey,
     /* ------------------------------------------------------
                               ICONS
     ******************************************************** */
     icon_Color: cssProperties.colors.white,
     icon_AltColor: cssProperties.colors.black,
     icon_HoverColor: cssProperties.colors.orange,
+    icon_ConstantColor: cssProperties.colors.black,
 
     /* ------------------------------------------------------
                             MESSAGES
@@ -202,7 +205,7 @@ function styleGuideDark () {
     /* .................
           Teriary
     .................. */
-    teriaryButton_TextColor: cssProperties.colors.black,
+    teriaryButton_TextColor: cssProperties.colors.white,
     teriaryButton_BackgroundColor: cssProperties.colors.greyBlueMed,
     teriaryButton_BorderColor: cssProperties.colors.veryLightGrey,
     /* .................
@@ -665,6 +668,7 @@ function styleGuideDark () {
       debuggerTab: {
         text_Primary: appProperties.mainText_Color,
         text_Secondary: appProperties.supportText_Color,
+        text_BgHighlight: appProperties.highlight_BackgroundColor,
 
         box_Debugger: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
@@ -675,10 +679,10 @@ function styleGuideDark () {
         button_Debugger: appProperties.uiElements.button({
           BackgroundColor: appProperties.teriaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.teriaryButton_TextColor
         }),
 
-        button_Debugger_icon_Color: appProperties.icon_Color,
+        button_Debugger_icon_Color: appProperties.icon_ConstantColor,
         button_Debugger_icon_HoverColor: appProperties.icon_HoverColor,
 
         dropdown_Debugger: appProperties.uiElements.dropdown({

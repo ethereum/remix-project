@@ -1,18 +1,36 @@
 'use strict'
 var yo = require('yo-yo')
-var style = require('./styles/treeView')
-var remixLib = require('remix-lib')
-var ui = remixLib.helpers.ui
-
+var csjs = require('csjs-inject')
+var css = csjs`
+  .li_tv {
+    list-style-type: none;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+    margin-left: 10px;
+  }
+  .ul_tv {
+    list-style-type: none;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+    margin-left: 10px;
+  }
+  .caret_tv {
+    margin-top: 3px;
+    width: 10px;
+  }
+`
 class TreeView {
 
   constructor (opts) {
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
-    this.cssLabel = ui.formatCss(opts.css || {}, style.label)
-    this.cssUl = ui.formatCss(opts.css || {}, style.cssUl)
-    this.cssLi = ui.formatCss(opts.css || {}, style.cssLi)
     this.nodeIsExpanded = {}
   }
 
@@ -42,14 +60,14 @@ class TreeView {
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul style=${this.cssUl}>${children}</ul>`
+    return yo`<ul class="${css.ul_tv}">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
-    var label = yo`<div style=${this.cssLabel}><div class="fa fa-caret-right" style=${ui.formatCss(style.caret)}></div><span style=${ui.formatCss(style.data)}>${this.formatSelf(key, data)}</span></div>`
+    var label = yo`<div class="${css.label_tv}"><div class="fa fa-caret-right" class="${css.caret_tv}"></div><span>${this.formatSelf(key, data)}</span></div>`
     var renderedChildren = ''
     if (children.length) {
-      renderedChildren = yo`<ul style=${this.cssUl}>${children}</ul>`
+      renderedChildren = yo`<ul class="${css.ul_tv}">${children}</ul>`
       renderedChildren.style.display = this.nodeIsExpanded[keyPath] !== undefined ? (this.nodeIsExpanded[keyPath] ? 'block' : 'none') : (expand ? 'block' : 'none')
       label.firstElementChild.className = renderedChildren.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
       var self = this
@@ -62,7 +80,7 @@ class TreeView {
     } else {
       label.firstElementChild.style.visibility = 'hidden'
     }
-    return yo`<li style=${this.cssLi}>${label}${renderedChildren}</li>`
+    return yo`<li class="${css.li_tv}">${label}${renderedChildren}</li>`
   }
 
   formatSelfDefault (key, data) {

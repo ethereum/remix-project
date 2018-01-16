@@ -29,7 +29,7 @@ var css = csjs`
     ${styles.rightPanel.debuggerTab.button_Debugger}
   }
   .navigator {
-    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
+    color: ${styles.rightPanel.debuggerTab.text_Primary};
   }
   .navigator:hover {
     color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
