@@ -16,7 +16,7 @@ module.exports = {
         .clickFunction('getFromLib - call')
         .waitForElementPresent('div[class^="contractProperty"] div[class^="value"]')
         .perform((client, done) => {
-          contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0xca35b7d915458ef540ade6068dfe2f44e8fa733c'], () => {
+          contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0x35ef07393b57464e93deb59175ff72e6499450cf'], () => {
             done()
           })
         })
@@ -115,7 +115,7 @@ var records = `{
         "value": "1000000000000000000",
         "parameters": [
           1,
-          "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
+          "created{1512830015080}"
         ],
         "to": "created{1512830015080}",
         "abi": "0xc41589e7559804ea4a2080dad19d876a024ccb05117835447d72ce08c1d020ec",
