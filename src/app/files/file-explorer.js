@@ -101,8 +101,7 @@ function fileExplorer (appAPI, files) {
       }
     },
     formatSelf: function formatSelf (key, data, li) {
-      var isRoot = !data.path.indexOf('browser') && data.path.length === 'browser'.length
-      isRoot = isRoot || !data.path.indexOf('localhost') && data.path.length === 'localhost'.length
+      var isRoot = data.path.indexOf('/') === -1
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"

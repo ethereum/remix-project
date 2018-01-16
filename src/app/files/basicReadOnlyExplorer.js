@@ -83,6 +83,7 @@ class BasicReadOnlyExplorer {
   resolveDirectory (path, callback /* (error, filesList) => { } */) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
+    if (!path) return callback(null, { [self.type]: { } })
     var tree = {}
     // This does not include '.remix.config', because it is filtered
     // inside list().
