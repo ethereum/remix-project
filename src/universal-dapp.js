@@ -159,17 +159,12 @@ function UniversalDApp (opts = {}) {
   self.removable = opts.opt.removable
   self.removable_instances = opts.opt.removable_instances
   self.el = yo`<div class=${css.udapp}></div>`
-  self.personalMode = opts.opt.personalMode || false
   self.contracts
   self.transactionContextAPI
   executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
-  self.txRunner = new TxRunner({}, {
-    personalMode: this.personalMode,
-    config: self._api.config,
-    detectNetwork: self._api.detectNetwork
-  })
+  self.txRunner = new TxRunner({}, opts.api)
 }
 
 UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
@@ -187,16 +182,12 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
     executionContext.vm().stateManager.cache.flush(function () {})
   }
-  this.txRunner = new TxRunner(this.accounts, {
-    personalMode: this.personalMode,
-    config: this._api.config,
-    detectNetwork: this._api.detectNetwork
-  })
+  this.txRunner = new TxRunner(this.accounts, this._api)
 }
 
 UniversalDApp.prototype.newAccount = function (password, cb) {
   if (!executionContext.isVM()) {
-    if (!this.personalMode) {
+    if (!this._api.personalMode()) {
       return cb('Not running in personal mode')
     }
     executionContext.web3().personal.newAccount(password, cb)
@@ -233,7 +224,7 @@ UniversalDApp.prototype.getAccounts = function (cb) {
   if (!executionContext.isVM()) {
     // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
     // See: https://github.com/ethereum/web3.js/issues/442
-    if (self.personalMode) {
+    if (this._api.personalMode()) {
       executionContext.web3().personal.getListAccounts(cb)
     } else {
       executionContext.web3().eth.getAccounts(cb)
