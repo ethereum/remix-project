@@ -12,16 +12,10 @@ module.exports = {
     modal('', yo`<div>${text}</div>`, null, { label: null })
   },
   prompt: function (title, text, inputValue, ok, cancel) {
-    if (!inputValue) inputValue = ''
-    var input = yo`<input type='text' name='prompt_text' id='prompt_text' class="${css['prompt_text']}" value='${inputValue}' >`
-    modal(title, yo`<div>${text}<div>${input}</div></div>`,
-      {
-        fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
-      },
-      {
-        fn: () => { if (typeof cancel === 'function') cancel() }
-      }
-    )
+    prompt(title, text, false, inputValue, ok, cancel)
+  },
+  promptPassphrase: function (title, text, inputValue, ok, cancel) {
+    prompt(title, text, true, inputValue, ok, cancel)
   },
   promptMulti: function ({ title, text, inputValue }, ok, cancel) {
     if (!inputValue) inputValue = ''
@@ -45,4 +39,18 @@ module.exports = {
       }
     )
   }
+}
+
+function prompt (title, text, hidden, inputValue, ok, cancel) {
+  if (!inputValue) inputValue = ''
+  var type = hidden ? 'password' : 'text'
+  var input = yo`<input type=${type} name='prompt_text' id='prompt_text' class="${css['prompt_text']}" value='${inputValue}' >`
+  modal(title, yo`<div>${text}<div>${input}</div></div>`,
+    {
+      fn: () => { if (typeof ok === 'function') ok(document.getElementById('prompt_text').value) }
+    },
+    {
+      fn: () => { if (typeof cancel === 'function') cancel() }
+    }
+  )
 }
