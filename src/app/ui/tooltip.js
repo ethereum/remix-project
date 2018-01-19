@@ -7,11 +7,11 @@ var styles = styleGuide.chooser()
 var css = csjs`
   .tooltip {
     visibility: hidden;
-    width: 100px;
+    width: 175px;
     background-color: ${styles.remix.tooltip_CopyToClipboard_BackgroundColor};
     color: ${styles.remix.tooltip_CopyToClipboard_Color};
     font-weight: bold;
-    font-size: 12px;
+    font-size: 10px;
     text-transform: initial;
     text-align: center;
     border-radius: 3px;
@@ -20,7 +20,7 @@ var css = csjs`
     z-index: 1;
     bottom: 160%;
     left: 100%;
-    margin-left: -60px;
+    margin-left: -150px;
     opacity: 0;
     transition: opacity 1s;
   }
@@ -28,7 +28,7 @@ var css = csjs`
       content: "";
       position: absolute;
       top: 100%;
-      left: 50%;
+      right: 10%;
       margin-left: -5px;
       border-width: 5px;
       border-style: solid;
@@ -36,10 +36,10 @@ var css = csjs`
   }
 `
 
-module.exports = function addTooltip (event) {
+module.exports = function addTooltip (event, tooltipText) {
   var icon = event.target
   icon.style.position = 'relative'
-  var tooltip = yo`<div class=${css.tooltip}>Copied!</div>`
+  var tooltip = yo`<div class=${css.tooltip}>${tooltipText}</div>`
   icon.appendChild(tooltip)
   var copiedToolbox = event.target.children[0]
   copiedToolbox.style.visibility = 'visible'
