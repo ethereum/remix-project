@@ -21,7 +21,6 @@
     "ethereumjs-util": "^4.5.0",
     "ethereumjs-vm": "2.3.1",
     "fast-async": "^6.1.2",
-    "npm-link-local": "^1.1.0",
     "remix-core": "latest",
     "remix-lib": "latest",
     "solc": "^0.4.13",
@@ -29,7 +28,6 @@
     "tape": "^4.6.0"
   },
   "scripts": {
-    "postinstall": "npm-link-local ../remix-lib && npm-link-local ../remix-core",
     "test": "standard && npm run downloadsolc && tape ./test/tests.js",
     "downloadsolc": "test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js"
   },
