@@ -19,13 +19,11 @@
     "babel-eslint": "^7.1.1",
     "babelify": "^7.3.0",
     "fast-async": "^6.1.2",
-    "npm-link-local": "^1.1.0",
     "remix-lib": "latest",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
   },
   "scripts": {
-    "postinstall": "npm-link-local ../remix-lib",
     "test": "standard && tape ./test/tests.js"
   },
   "standard": {
