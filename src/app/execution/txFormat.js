@@ -47,28 +47,34 @@ module.exports = {
     */
   buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
     var funArgs = ''
-    try {
-      funArgs = $.parseJSON('[' + params + ']')
-    } catch (e) {
-      callback('Error encoding arguments: ' + e)
-      return
-    }
     var data = ''
     var dataHex = ''
-    if (!isConstructor || funArgs.length > 0) {
+
+    if (params.startsWith('"0x')) {
+      dataHex = params.match(/"(.*?)"/)[1].replace('0x', '')
+      data = Buffer.from(dataHex, 'hex')
+    } else {
       try {
-        data = helper.encodeParams(funAbi, funArgs)
-        dataHex = data.toString('hex')
+        funArgs = $.parseJSON('[' + params + ']')
       } catch (e) {
         callback('Error encoding arguments: ' + e)
         return
       }
-    }
-    if (data.slice(0, 9) === 'undefined') {
-      dataHex = data.slice(9)
-    }
-    if (data.slice(0, 2) === '0x') {
-      dataHex = data.slice(2)
+      if (!isConstructor || funArgs.length > 0) {
+        try {
+          data = helper.encodeParams(funAbi, funArgs)
+          dataHex = data.toString('hex')
+        } catch (e) {
+          callback('Error encoding arguments: ' + e)
+          return
+        }
+      }
+      if (data.slice(0, 9) === 'undefined') {
+        dataHex = data.slice(9)
+      }
+      if (data.slice(0, 2) === '0x') {
+        dataHex = data.slice(2)
+      }
     }
     var contractBytecode
     if (isConstructor) {
