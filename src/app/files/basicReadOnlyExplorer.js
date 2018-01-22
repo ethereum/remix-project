@@ -81,7 +81,19 @@ class BasicReadOnlyExplorer {
   // }
   //
   resolveDirectory (path, callback /* (error, filesList) => { } */) {
-    // path = '' + (path || '')
+    var self = this
+    if (path[0] === '/') path = path.substring(1)
+    if (!path) return callback(null, { [self.type]: { } })
+    var tree = {}
+    // This does not include '.remix.config', because it is filtered
+    // inside list().
+    Object.keys(this.list()).forEach(function (path) {
+      hashmapize(tree, path, {
+        '/readonly': self.isReadOnly(path),
+        '/content': self.get(path)
+      })
+    })
+    return callback(null, tree[path] || {})
     function hashmapize (obj, path, val) {
       var nodes = path.split('/')
       var i = 0
@@ -96,19 +108,6 @@ class BasicReadOnlyExplorer {
 
       obj[nodes[i]] = val
     }
-
-    var tree = {}
-
-    var self = this
-    // This does not include '.remix.config', because it is filtered
-    // inside list().
-    Object.keys(this.list()).forEach(function (path) {
-      hashmapize(tree, path, {
-        '/readonly': self.isReadOnly(path),
-        '/content': self.get(path)
-      })
-    })
-    callback(null, tree)
   }
 
   removePrefix (path) {
