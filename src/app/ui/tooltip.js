@@ -6,46 +6,41 @@ var styles = styleGuide.chooser()
 
 var css = csjs`
   .tooltip {
-    visibility: hidden;
-    width: 175px;
+    z-index: 1001;
+    display: inline-block;
+    position: fixed;
     background-color: ${styles.remix.tooltip_CopyToClipboard_BackgroundColor};
     color: ${styles.remix.tooltip_CopyToClipboard_Color};
-    font-weight: bold;
-    font-size: 10px;
-    text-transform: initial;
-    text-align: center;
+    min-height: 50px;
+    min-width: 290px;
+    padding: 16px 24px 12px;
     border-radius: 3px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 160%;
-    left: 100%;
-    margin-left: -150px;
-    opacity: 0;
-    transition: opacity 1s;
+    bottom: -300;
+    left: 40%;
+    font-size: 12px;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 6s;
+    animation-name: animatebottom;
+    animation-duration: 6s
   }
-  .tooltip::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      right: 10%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: ${styles.remix.tooltip_CopyToClipboard_BackgroundColor} transparent transparent transparent;
+  @-webkit-keyframes animatebottom {
+    0% {bottom: -300px; opacity: 0}
+    20% {bottom: 0; opacity: 0.8}
+    50% {bottom: 0; opacity: 1}
+    100% {bottom: -300px; opacity: 0}
+  }
+  @keyframes animatebottom {
+    0% {bottom: -300px; opacity: 0}
+    20% {bottom: 0; opacity: 0.8}
+    50% {bottom: 0; opacity: 1}
+    100% {bottom: -300px; opacity: 0} 1}
   }
 `
 
 module.exports = function addTooltip (event, tooltipText) {
-  var icon = event.target
-  icon.style.position = 'relative'
   var tooltip = yo`<div class=${css.tooltip}>${tooltipText}</div>`
-  icon.appendChild(tooltip)
-  var copiedToolbox = event.target.children[0]
-  copiedToolbox.style.visibility = 'visible'
-  copiedToolbox.style.opacity = 1
+  document.body.appendChild(tooltip)
   setTimeout(function () {
-    copiedToolbox.style.visibility = 'hidden'
-    copiedToolbox.style.opacity = 0
-  }, 1000)
+    document.body.removeChild(tooltip)
+  }, 7000)
 }
