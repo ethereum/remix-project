@@ -18,22 +18,23 @@ var css = csjs`
     bottom: -300;
     left: 40%;
     font-size: 12px;
+    text-align: center;
     -webkit-animation-name: animatebottom;
     -webkit-animation-duration: 6s;
     animation-name: animatebottom;
     animation-duration: 6s
   }
-  @-webkit-keyframes animatebottom {
-    0% {bottom: -300px; opacity: 0}
-    20% {bottom: 0; opacity: 0.8}
-    50% {bottom: 0; opacity: 1}
-    100% {bottom: -300px; opacity: 0}
+  @-webkit-keyframes animatebottom  {
+    0% {bottom: -300px}
+    20% {bottom: 0}
+    50% {bottom: 0}
+    100% {bottom: -300px}
   }
-  @keyframes animatebottom {
-    0% {bottom: -300px; opacity: 0}
-    20% {bottom: 0; opacity: 0.8}
-    50% {bottom: 0; opacity: 1}
-    100% {bottom: -300px; opacity: 0} 1}
+  @keyframes animatebottom  {
+    0% {bottom: -300px}
+    20% {bottom: 0}
+    50% {bottom: 0}
+    100% {bottom: -300px}
   }
 `
 
