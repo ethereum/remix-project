@@ -16,7 +16,7 @@ function compile (fileName) {
 }
 
 test('staticAnalysisIssues.functionParameterPassingError', function (t) {
-  // https://github.com/ethereum/browser-solidity/issues/889#issuecomment-351746474
+  // https://github.com/ethereum/remix-ide/issues/889#issuecomment-351746474
   t.plan(2)
   var res = compile('functionParameters.sol')
 
