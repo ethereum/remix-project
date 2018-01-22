@@ -26,7 +26,6 @@ var css = csjs`
   }
 `
 
-
 function TxRunner (vmaccounts, api) {
   this._api = api
   this.blockNumber = 0
@@ -105,8 +104,8 @@ TxRunner.prototype.execute = function (args, callback) {
 
         tx.gas = gasEstimation
 
-        if (!self.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-          self.detectNetwork((err, network) => {
+        if (!self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+          self._api.detectNetwork((err, network) => {
             if (err) {
               console.log(err)
             } else {
@@ -115,7 +114,7 @@ TxRunner.prototype.execute = function (args, callback) {
                 modalDialog('Confirm transaction', content,
                   { label: 'Confirm',
                     fn: () => {
-                      self.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+                      self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
                       if (!content.gasPriceStatus) {
                         callback('Given gas grice is not correct')
                       } else {

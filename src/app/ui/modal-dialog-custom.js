@@ -17,6 +17,33 @@ module.exports = {
   promptPassphrase: function (title, text, inputValue, ok, cancel) {
     prompt(title, text, true, inputValue, ok, cancel)
   },
+  promptPassphraseCreation: function (ok, cancel) {
+    var text = 'Please provide a Passphrase for the account creation'
+    var input = yo`<div>
+      <input id="prompt1" type="password" name='prompt_text' class="${css['prompt_text']}" >
+      <br>
+      <br>
+      <input id="prompt2" type="password" name='prompt_text' class="${css['prompt_text']}" >
+    </div>`
+    modal(null, yo`<div>${text}<div>${input}</div></div>`,
+      {
+        fn: () => {
+          if (typeof ok === 'function') {
+            if (input.querySelector('#prompt1').value === input.querySelector('#prompt2').value) {
+              ok(null, input.querySelector('#prompt1').value)
+            } else {
+              ok('Passphase does not match')
+            }
+          }
+        }
+      },
+      {
+        fn: () => {
+          if (typeof cancel === 'function') cancel()
+        }
+      }
+    )
+  },
   promptMulti: function ({ title, text, inputValue }, ok, cancel) {
     if (!inputValue) inputValue = ''
     var input = yo`<textarea id="prompt_text" class=${css.prompt_text} rows="4" cols="50"></textarea>`
