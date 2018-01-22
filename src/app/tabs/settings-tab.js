@@ -100,37 +100,6 @@ function SettingsTab (container, appAPI, appEvents, opts) {
           <select class="${css.select}" id="versionSelector"></select>
         </div>
       </div>
-      <div class="${css.crow}">
-        <select class="${css.select}" id="versionSelector"></select>
-      </div>
-      <div class="${css.crow}">
-        <div><input id="editorWrap" type="checkbox"></div>
-        <span class="${css.checkboxText}">Text Wrap</span>
-      </div>
-      <div class="${css.crow}">
-        <div>${optionVM}</div>
-        <span class="${css.checkboxText}">Always use VM at Load</span>
-      </div>
-      <div class="${css.crow}">
-        <div><input id="optimize" type="checkbox"></div>
-        <span class="${css.checkboxText}">Enable Optimization</span>
-      </div>
-      <div class="${css.crow}">
-        <div>${personal}></div>
-        <span class="${css.checkboxText}">Enable Personal Mode (transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it -).</span>
-        <div>
-        This mode allows to provide the passphrase in the Remix interface without having to unlock the account. <br> 
-        Although this is very convenient, you should <b>completely trust</b> the backend you are connected to (Geth, Parity, ...). <br> 
-        It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM <br>
-        Remix never persist any passphrase.
-        </div>
-      </div>
-      <hr>
-      <h4 class="${css.heading}">Themes ( Selecting a theme will trigger a page reload )</h4>
-      <div class="${css.crow}">
-        <input class="${css.col1}" name="theme" id="themeLight" type="radio">
-        <label for="themeLight">Light Theme</label>
-      </div>
       <div class="${css.info}">
       <div class=${css.title}>General settings</div>
         <div class="${css.crow}">
@@ -145,6 +114,16 @@ function SettingsTab (container, appAPI, appEvents, opts) {
           <div><input id="optimize" type="checkbox"></div>
           <span class="${css.checkboxText}">Enable Optimization</span>
         </div>
+        <div class="${css.crow}">
+        <div>${personal}></div>
+        <span class="${css.checkboxText}">Enable Personal Mode (transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it -).</span>
+        <div>
+        This mode allows to provide the passphrase in the Remix interface without having to unlock the account. <br> 
+        Although this is very convenient, you should <b>completely trust</b> the backend you are connected to (Geth, Parity, ...). <br> 
+        It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM <br>
+        Remix never persist any passphrase.
+        </div>
+      </div>
       </div>
       <div class="${css.info}">
         <div class=${css.title}>Themes</div>

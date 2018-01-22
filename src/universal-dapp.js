@@ -15,6 +15,7 @@ var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
 var executionContext = require('./execution-context')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
+var modalCustom = require('./app/ui/modal-dialog-custom')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -190,14 +191,20 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
     if (!this._api.personalMode()) {
       return cb('Not running in personal mode')
     }
-    executionContext.web3().personal.newAccount(password, cb)
+    modalCustom.promptPassphraseCreation((error, passphrase) => {
+      if (error) {
+        modalCustom.alert(error)
+      } else {
+        executionContext.web3().personal.newAccount(passphrase, cb)
+      }
+    }, () => {})
   } else {
     var privateKey
     do {
       privateKey = crypto.randomBytes(32)
     } while (!ethJSUtil.isValidPrivate(privateKey))
-    this._addAccount(privateKey)
-    cb(null, '0x' + ethJSUtil.privateToAddress(privateKey))
+    this._addAccount(privateKey, '0x56BC75E2D63100000')
+    cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
   }
 }
 
