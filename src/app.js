@@ -454,7 +454,7 @@ function run () {
 
   // insert ballot contract if there are no files available
   if (!loadingFromGist) {
-    filesProviders['browser'].resolveDirectory('', (error, filesList) => {
+    filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
         if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {

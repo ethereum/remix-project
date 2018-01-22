@@ -79,8 +79,9 @@ function fileExplorer (appAPI, files) {
   })
 
   var fileEvents = files.event
-  var treeView = new Treeview({
-    extractData: function (value, tree, key) {
+
+  self.treeView = new Treeview({
+    extractData: function extractData (value, tree, key) {
       var newValue = {}
       // var isReadOnly = false
       var isFile = false
@@ -99,7 +100,7 @@ function fileExplorer (appAPI, files) {
         })) : undefined
       }
     },
-    formatSelf: function (key, data, li) {
+    formatSelf: function formatSelf (key, data, li) {
       var isRoot = data.path.indexOf('/') === -1
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
@@ -109,11 +110,33 @@ function fileExplorer (appAPI, files) {
         onclick=${editModeOn}
         onkeydown=${editModeOff}
         onblur=${editModeOff}
-      >${key}</label>`
+      >${key.split('/').pop()}</label>`
     }
   })
 
-  this.treeView = treeView
+  self.treeView.event.register('nodeClick', function (path, childrenContainer) {
+    if (!childrenContainer) return
+    if (childrenContainer.style.display === 'none') {
+      childrenContainer.innerHTML = ''
+      return
+    }
+    files.resolveDirectory(path, (error, fileTree) => {
+      if (error) console.error(error)
+      if (!fileTree) return
+      var newTree = normalize(path, fileTree)
+      var tree = self.treeView.renderProperties(newTree, false)
+      childrenContainer.appendChild(tree)
+    })
+  })
+
+  function normalize (path, filesList) {
+    var prefix = path.split('/')[0]
+    var newList = {}
+    Object.keys(filesList).forEach(key => {
+      newList[prefix + '/' + key] = filesList[key].isDirectory ? {} : { '/content': true }
+    })
+    return newList
+  }
 
   var deleteButton = yo`
     <span class=${css.remove} onclick=${deletePath}>
@@ -138,10 +161,9 @@ function fileExplorer (appAPI, files) {
   var textUnderEdit = null
   var textInRename = false
 
-  var events = new EventManager()
-  this.events = events
-  var api = {}
-  api.addFile = function addFile (file) {
+  self.events = new EventManager()
+  self.api = {}
+  self.api.addFile = function addFile (file) {
     function loadFile () {
       var fileReader = new FileReader()
       fileReader.onload = function (event) {
@@ -151,7 +173,7 @@ function fileExplorer (appAPI, files) {
         }
         var success = files.set(name, event.target.result)
         if (!success) modalDialogCustom.alert('Failed to create file ' + name)
-        else events.trigger('focus', [name])
+        else self.events.trigger('focus', [name])
       }
       fileReader.readAsText(file)
     }
@@ -163,7 +185,6 @@ function fileExplorer (appAPI, files) {
       modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
     }
   }
-  this.api = api
 
   function focus (event) {
     event.cancelBubble = true
@@ -175,7 +196,7 @@ function fileExplorer (appAPI, files) {
     var label = getLabelFrom(li)
     var filepath = label.dataset.path
     var isFile = label.className.indexOf('file') === 0
-    if (isFile) events.trigger('focus', [filepath])
+    if (isFile) self.events.trigger('focus', [filepath])
   }
 
   function unfocus (el) {
@@ -320,11 +341,13 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileRemoved (filepath) {
+    // @TODO: only important if currently visible in TreeView
     var li = getElement(filepath)
     if (li) li.parentElement.removeChild(li)
   }
 
   function fileRenamed (oldName, newName, isFolder) {
+    // @TODO: only important if currently visible in TreeView
     var li = getElement(oldName)
     if (li) {
       oldName = oldName.split('/')
@@ -346,6 +369,7 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileAdded (filepath) {
+    // @TODO: only important if currently visible in TreeView
     self.files.resolveDirectory('./', (error, files) => {
       if (error) console.error(error)
       var element = self.treeView.render(files)
