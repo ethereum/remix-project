@@ -140,7 +140,10 @@
   },
   "scripts": {
     "pullremix": "mkdir remix; git clone https://github.com/ethereum/remix; cd ..",
-    "linkremix": "npm-link-local ./remix/remix-lib && npm-link-local ./remix/remix-core && npm-link-local ./remix/remix-solidity && npm-link-local ./remix/remix-debugger",
+    "linkremixcore": "rm -rf remix-core && ln -s ../remix/remi-core remix-core",
+    "linkremixlib": "rm -rf remix-lib && ln -s ../remix/remi-lib remix-lib",
+    "linkremixsolidity": "rm -rf remix-solidity && ln -s ../remix/remi-solidity remix-solidity",
+    "linkremixdebugger": "rm -rf remix-debugger && ln -s ../remix/remi-debugger remix-debugger",
     "build": "browserify src/index.js -o build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
