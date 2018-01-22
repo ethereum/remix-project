@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "browser-solidity",
+  "name": "remix-ide",
   "version": "0.0.0",
   "description": "Minimalistic browser-based Solidity IDE",
   "devDependencies": {
@@ -60,7 +60,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/browser-solidity.git"
+    "url": "git+https://github.com/ethereum/remix-ide.git"
   },
   "keywords": [
     "ethereum",
@@ -70,9 +70,9 @@
   "author": "chriseth",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ethereum/browser-solidity/issues"
+    "url": "https://github.com/ethereum/remix-ide/issues"
   },
-  "homepage": "https://github.com/ethereum/browser-solidity#readme",
+  "homepage": "https://github.com/ethereum/remix-ide#readme",
   "standard": {
     "ignore": [
       "build/",

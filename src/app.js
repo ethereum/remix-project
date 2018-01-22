@@ -469,7 +469,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filesProviders: filesProviders
   })
 
-  // Add files received from remote instance (i.e. another browser-solidity)
+  // Add files received from remote instance (i.e. another remix-ide)
   function loadFiles (filesSet, fileProvider) {
     if (!fileProvider) fileProvider = 'browser'
 
