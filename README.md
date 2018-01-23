@@ -31,13 +31,19 @@ The browser will automatically refresh when files are saved
 
 It is also possible to run `npm run build && npm run serve` but the web application will not automatically refresh.
 
-Most of the the time, working with the remix repository is not necessary. But in case changes have to be made in remix too,
-the following command links remix to you local dev repository:
+Most of the the time, working with the remix repository is not necessary. 
+But in case changes have to be made in remix too, the following command links remix to you local dev repository:
+
 after `npm install`
+
 `npm run pullremix`
+
 `npm run linkremixcore`
+
 `npm run linkremixlib`
+
 `npm run linkremixsolidity`
+
 `npm run linkremixdebugger`
 
 ### Troubleshooting building
