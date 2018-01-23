@@ -29,6 +29,17 @@ Run `npm start` and open `http://127.0.0.1:8080` in your browser.
 Then open your `text editor` and start developing.
 The browser will automatically refresh when files are saved
 
+It is also possible to run `npm run build && npm run serve` but the web application will not automatically refresh.
+
+Most of the the time, working with the remix repository is not necessary. But in case changes have to be made in remix too,
+the following command links remix to you local dev repository:
+after `npm install`
+`npm run pullremix`
+`npm run linkremixcore`
+`npm run linkremixlib`
+`npm run linkremixsolidity`
+`npm run linkremixdebugger`
+
 ### Troubleshooting building
 
 Here are some things to consider if you have trouble building the package.
