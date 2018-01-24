@@ -53,6 +53,8 @@ var css = csjs`
 `
 module.exports = fileExplorer
 
+var focusElement = null
+
 function fileExplorer (appAPI, files) {
   var self = this
   this.files = files
@@ -101,7 +103,7 @@ function fileExplorer (appAPI, files) {
       }
     },
     formatSelf: function formatSelf (key, data, li) {
-      var isRoot = data.path.indexOf('/') === -1
+      var isRoot = data.path === self.files.type
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
@@ -125,7 +127,7 @@ function fileExplorer (appAPI, files) {
       if (!fileTree) return
       var newTree = normalize(path, fileTree)
       var tree = self.treeView.renderProperties(newTree, false)
-      childrenContainer.appendChild(tree)
+      ;[...tree.children].forEach(child => childrenContainer.appendChild(child))
     })
   })
 
@@ -143,7 +145,6 @@ function fileExplorer (appAPI, files) {
       <i class="fa fa-trash" aria-hidden="true"></i>
     </span>
   `
-
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
     if (explorer === files) {
       fileFocus(newFile)
@@ -157,7 +158,6 @@ function fileExplorer (appAPI, files) {
   fileEvents.register('fileAdded', fileAdded)
 
   var filepath = null
-  var focusElement = null
   var textUnderEdit = null
   var textInRename = false
 
@@ -335,19 +335,20 @@ function fileExplorer (appAPI, files) {
   function fileFocus (path) {
     if (filepath === path) return
     filepath = path
-    var el = getElement(filepath)
-    expandPathTo(el)
-    setTimeout(function focusNode () { el.click() }, 0)
+    setTimeout(function focusNode () {
+      // @TODO: fix file tree expand logic to account for async remixd loading logic 
+      var el = getElement(filepath)
+      expandPathTo(el)
+      setTimeout(function focusNode () { el.click() }, 0)
+    }, 0)
   }
 
   function fileRemoved (filepath) {
-    // @TODO: only important if currently visible in TreeView
     var li = getElement(filepath)
     if (li) li.parentElement.removeChild(li)
   }
 
   function fileRenamed (oldName, newName, isFolder) {
-    // @TODO: only important if currently visible in TreeView
     var li = getElement(oldName)
     if (li) {
       oldName = oldName.split('/')
@@ -369,13 +370,15 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileAdded (filepath) {
-    // @TODO: only important if currently visible in TreeView
-    self.files.resolveDirectory('./', (error, files) => {
+    var folderpath = filepath.split('/').slice(0, -1).join('/')
+    self.files.resolveDirectory(folderpath, (error, fileTree) => {
       if (error) console.error(error)
-      var element = self.treeView.render(files)
-      element.className = css.fileexplorer
-      self.element.parentElement.replaceChild(element, self.element)
-      self.element = element
+      if (!fileTree) return
+      fileTree = normalize(folderpath, fileTree)
+      var newTree = self.treeView.renderProperties(fileTree, false)
+      var currentTree = self.treeView.nodeAt(folderpath)
+      currentTree.innerHTML = ''
+      ;[...newTree.children].forEach(child => currentTree.appendChild(child))
     })
   }
 }

@@ -118,19 +118,21 @@ function Files (storage) {
   this.resolveDirectory = function (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
+    if (path[0] === '.' && path[1] === '/') path = path.substring(2)
     if (!path) return callback(null, { [self.type]: { } })
+    path = self.removePrefix('' + (path || ''))
     var filesList = {}
     var tree = {}
     // add r/w filesList to the list
     storage.keys().forEach((path) => {
       // NOTE: as a temporary measure do not show the config file
       if (path !== '.remix.config') {
-        filesList[self.type + '/' + path] = false
+        filesList[path] = false
       }
     })
     // add r/o files to the list
     Object.keys(readonly).forEach((path) => {
-      filesList[self.type + '/' + path] = true
+      filesList[path] = true
     })
 
     Object.keys(filesList).forEach(function (path) {
@@ -139,7 +141,7 @@ function Files (storage) {
         '/content': self.get(path)
       })
     })
-    return callback(null, tree[path] || {})
+    return callback(null, tree)
     function hashmapize (obj, path, val) {
       var nodes = path.split('/')
       var i = 0
@@ -155,7 +157,9 @@ function Files (storage) {
   }
 
   this.removePrefix = function (path) {
-    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
+    path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
+    if (path[0] === '/') return path.substring(1)
+    return path
   }
 
   // rename .browser-solidity.json to .remix.config

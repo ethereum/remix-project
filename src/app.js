@@ -497,7 +497,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     switchFile: function (path) {
       fileManager.switchFile(path)
     },
-    event: this.event,
+    event: fileManager.event,
     currentFile: function () {
       return config.get('currentFile')
     },
