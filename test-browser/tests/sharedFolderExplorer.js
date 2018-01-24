@@ -36,6 +36,7 @@ function runTests (browser, testData) {
     .click('#modal-footer-ok')
     .waitForElementVisible('[data-path="localhost"]', 100000)
     .click('[data-path="localhost"]')
+    .waitForElementVisible('[data-path="localhost/folder1"]')
     .click('[data-path="localhost/folder1"]')
     .assert.containsText('[data-path="localhost/contract1.sol"]', 'contract1.sol')
     .assert.containsText('[data-path="localhost/contract2.sol"]', 'contract2.sol')
