@@ -44,6 +44,11 @@ var css = csjs`
     float: left;
     align-self: center;
   }
+  .environment {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
   .col2 {
     ${styles.rightPanel.runTab.input_RunTab}
   }
@@ -149,8 +154,12 @@ var css = csjs`
   }
   .icon {
     font-size: 12px;
-    color: ${styles.colors.orange};
-    margin-left: 10%;
+    color: ${styles.rightPanel.runTab.icon_Color};
+    margin-left: 5px;
+  }
+  .icon:hover {
+    font-size: 12px;
+    color: ${styles.rightPanel.runTab.icon_HoverColor};
   }
   .errorIcon {
     color: ${styles.appProperties.errorText_Color};
@@ -201,7 +210,7 @@ function runTab (container, appAPI, appEvents, opts) {
   var recorderInterface = makeRecorder(events, appAPI, appEvents)
   var pendingTxsContainer = yo`
   <div class="${css.pendingTxsContainer}">
-    <div class="${css.pendingTxsText}"> 
+    <div class="${css.pendingTxsText}">
       ${pendingTxsText}
       <span class="${css.transactionActions}">
         ${clearInstanceElement}
@@ -523,7 +532,7 @@ function settings (container, appAPI, appEvents) {
         <div id="selectExEnv" class="${css.col1_1}">
           Environment
         </div>
-        <div style="position: relative;">
+        <div class=${css.environment}>
           ${net}
           <select id="selectExEnvOptions" onchange=${updateNetwork} class="${css.select}">
             <option id="vm-mode"
@@ -546,7 +555,7 @@ function settings (container, appAPI, appEvents) {
               Web3 Provider
             </option>
           </select>
-          <a style="margin-left: 8px;" href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="fa fa-info"></i></a>
+          <a style="margin-left: 8px;" href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.info} fa fa-info"></i></a>
         </div>
       </div>
       <div class="${css.crow}">
