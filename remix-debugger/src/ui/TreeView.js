@@ -24,6 +24,10 @@ var css = csjs`
     margin-top: 3px;
     width: 10px;
   }
+  .label_tv {
+    display: flex;
+    align-items: center;
+  }
 `
 
 var remixLib = require('remix-lib')
