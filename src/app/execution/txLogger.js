@@ -23,6 +23,14 @@ var css = csjs`
   .txLog {
     width: 75%;
   }
+  .txItem {
+    color: ${styles.terminal.text_Primary};
+    margin-right: 5px;
+    float: left;
+  }
+  .txItemTitle {
+    font-weight: bold;
+  }
   .tx {
     color: ${styles.terminal.text_Title_TransactionLog};
     font-weight: bold;
@@ -206,7 +214,14 @@ function renderCall (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}">
-        <span class=${css.txLog}><span class=${css.tx}>[call]</span> from:${from}, to:${to}, data:${input}, return: </span>
+        <span class=${css.txLog}>
+          <span class=${css.tx}>[call]</span>
+          <br>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>return:</span>
+        </span>
         <div class=${css.buttons}>
           <button class=${css.details} onclick=${txDetails}>Details</button>
           <button class=${css.debug} onclick=${debug}>Debug</button>
@@ -284,7 +299,10 @@ function renderUnknownTransaction (self, data) {
 }
 
 function renderEmptyBlock (self, data) {
-  return yo`<span class=${css.txLog}><span class='${css.tx}'>[block:${data.block.number} - 0 transactions]</span></span>`
+  return yo`
+    <span class=${css.txLog}>
+      <span class='${css.tx}'><div class=${css.txItem}>[<span class=${css.txItemTitle}>block:${data.block.number} - </span> 0 transactions]</span></span>
+    </span>`
 }
 
 function context (self, opts) {
@@ -300,13 +318,40 @@ function context (self, opts) {
   var i = data.tx.transactionIndex
   var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
-    return yo`<span class=${css.txLog}><span class=${css.tx}>[vm]</span> from:${from}, to:${to}, value:${value} wei, data:${input}, ${logs} logs, hash:${hash}</span>`
+    return yo`
+      <span class=${css.txLog}>
+        <span class=${css.tx}>[vm]</span>
+        <br>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</span>
+      </span>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
-    return yo`<span class=${css.txLog}><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei, ${logs} logs, data:${input}, hash:${hash}</span>`
+    return yo`
+      <span class=${css.txLog}>
+        <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+        <br>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</span>
+      </span>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
-    return yo`<span class=${css.txLog}><span class='${css.tx}'>[block:${block} txIndex:${i}]</span> from:${from}, to:${to}, value:${value} wei</span>`
+    return yo`
+      <span class=${css.txLog}>
+        <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+        <br>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
+        <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</span>
+      </span>`
   }
 }
 
