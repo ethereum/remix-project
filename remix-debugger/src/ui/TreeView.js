@@ -18,7 +18,6 @@ var css = csjs`
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     -webkit-padding-start: 0px;
-    margin-left: 10px;
   }
   .caret_tv {
     margin-top: 3px;
