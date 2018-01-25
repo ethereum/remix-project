@@ -628,7 +628,10 @@ function styleGuide () {
 
         icon_Color_Instance_CopyToClipboard: appProperties.icon_Color,
         icon_AltColor_Instance_CopyToClipboard: appProperties.icon_AltColor,
-        icon_HoverColor_Instance_CopyToClipboard: appProperties.icon_HoverColor
+        icon_HoverColor_Instance_CopyToClipboard: appProperties.icon_HoverColor,
+
+        icon_Color: appProperties.icon_Color,
+        icon_HoverColor: appProperties.icon_HoverColor
 
       },
 
