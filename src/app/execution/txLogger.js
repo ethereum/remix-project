@@ -20,6 +20,16 @@ var css = csjs`
     align-items: end;
     justify-content: space-between;
   }
+  .caret {
+    color: ${styles.terminal.icon_Color};
+    font-weight: bold;
+    font-size: small;
+    cursor: pointer;
+    float: left;
+  }
+  .caret:hover {
+    color: ${styles.terminal.icon_HoverColor};
+  }
   .txLog {
     width: 75%;
   }
@@ -34,7 +44,8 @@ var css = csjs`
   .tx {
     color: ${styles.terminal.text_Title_TransactionLog};
     font-weight: bold;
-    width: 45%;
+    float: left;
+    margin: 0 5px;
   }
   .txTable, .tr, .td {
     border-collapse: collapse;
@@ -213,13 +224,13 @@ function renderCall (self, data) {
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var tx = yo`
     <span id="tx${data.tx.hash}">
+      <i class="${css.caret} fa fa-caret-right"></i>
       <div class="${css.log}">
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
-          <br>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>return:</span>
         </span>
         <div class=${css.buttons}>
@@ -265,6 +276,7 @@ function renderUnknownTransaction (self, data) {
   }
   var tx = yo`
     <span id="tx${data.tx.hash}">
+      <i class="${css.caret} fa fa-caret-right"></i>
       <div class="${css.log}">
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
@@ -319,39 +331,45 @@ function context (self, opts) {
   var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
     return yo`
-      <span class=${css.txLog}>
-        <span class=${css.tx}>[vm]</span>
-        <br>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</span>
-      </span>`
+      <div>
+        <i class="${css.caret} fa fa-caret-right"></i>
+        <span class=${css.txLog}>
+          <span class=${css.tx}>[vm]</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
+        </span>
+      </div>`
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
     return yo`
-      <span class=${css.txLog}>
-        <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
-        <br>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</span>
-      </span>`
+      <div>
+        <i class="${css.caret} fa fa-caret-right"></i>
+        <span class=${css.txLog}>
+          <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
+        </span>
+      </div>`
   } else {
     to = helper.shortenHexData(to)
     hash = helper.shortenHexData(data.tx.blockHash)
     return yo`
-      <span class=${css.txLog}>
-        <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
-        <br>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</span>
-        <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</span>
-      </span>`
+      <div>
+        <i class="${css.caret} fa fa-caret-right"></i>
+        <span class=${css.txLog}>
+          <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+        </span>
+      </div>`
   }
 }
 
