@@ -33,6 +33,16 @@ var css = csjs`
   .caret:hover {
     color: ${styles.terminal.icon_HoverColor};
   }
+  .caret {
+    color: ${styles.terminal.icon_Color};
+    font-weight: bold;
+    font-size: small;
+    cursor: pointer;
+    float: left;
+  }
+  .caret:hover {
+    color: ${styles.terminal.icon_HoverColor};
+  }
   .txLog {
     width: 75%;
   }
