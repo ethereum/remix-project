@@ -19,15 +19,22 @@ var css = csjs`
   }
   .info {
     ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
-    margin-bottom: 2em;
+    margin-bottom: 1em;
     word-break: break-word;
+  }
+  .title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 1em;
   }
   .crow {
     display: flex;
     overflow: auto;
     clear: both;
-    padding: .5em;
-    font-weight: bold;
+    padding: .2em;
+  }
+  .checkboxText {
+    font-weight: normal;
   }
   .crow label {
     cursor:pointer;
@@ -35,10 +42,15 @@ var css = csjs`
   .crowNoFlex {
     overflow: auto;
     clear: both;
+  }
+  .attention {
+    margin-bottom: 1em;
     padding: .5em;
     font-weight: bold;
   }
   .select {
+    font-weight: bold;
+    margin-top: 1em;
     ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
   }
   .heading {
@@ -57,13 +69,15 @@ var css = csjs`
   }
   .pluginTextArea {
     font-family: unset;
-    margin-top: 5px;
   }
   .pluginLoad {
     vertical-align: top;
   }
   i.warnIt {
     color: ${styles.appProperties.warningText_Color};
+  }
+  .icon {
+    margin-right: .5em;
   }
 }
 `
@@ -79,45 +93,57 @@ function SettingsTab (container, appAPI, appEvents, opts) {
   var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
       <div class="${css.info}">
-        <div>Your current Solidity version is</div>
-        <div id="version"></div>
-      </div>
-      <div class="${css.crow}">
-        <select class="${css.select}" id="versionSelector"></select>
-      </div>
-      <div class="${css.crow}">
-        <div><input id="editorWrap" type="checkbox"></div>
-        <span class="${css.checkboxText}">Text Wrap</span>
-      </div>
-      <div class="${css.crow}">
-        <div>${optionVM}</div>
-        <span class="${css.checkboxText}">Always use VM at Load</span>
-      </div>
-      <div class="${css.crow}">
-        <div><input id="optimize" type="checkbox"></div>
-        <span class="${css.checkboxText}">Enable Optimization</span>
-      </div>
-      <hr>
-      <h4 class="${css.heading}">Themes ( Selecting a theme will trigger a page reload )</h4>
-      <div class="${css.crow}">
-        <input class="${css.col1}" name="theme" id="themeLight" type="radio">
-        <label for="themeLight">Light Theme</label>
-      </div>
-      <div class="${css.crow}">
-        <input class="${css.col1}" name="theme" id="themeDark" type="radio">
-        <label for="themeDark">Dark Theme</label>
-      </div>
-      <hr>
-      <div class="${css.crowNoFlex}">
-        <div>Plugin ( <i title="Do not use this feature yet" class="${css.warnIt} fa fa-exclamation-triangle" aria-hidden="true"></i><span> Do not use this alpha feature if you are not sure what you are doing!</span> )
+        <div class=${css.title}>Solidity version</div>
+        <span>Current version:</span> <span id="version"></span>
+        <div class="${css.crow}">
+          <select class="${css.select}" id="versionSelector"></select>
         </div>
-        <div>
-          <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
-          <br />
-          <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
+      </div>
+      <div class="${css.info}">
+      <div class=${css.title}>General settings</div>
+        <div class="${css.crow}">
+          <div>${optionVM}</div>
+          <span class="${css.checkboxText}">Always use Ethereum VM at Load</span>
+        </div>
+        <div class="${css.crow}">
+          <div><input id="editorWrap" type="checkbox"></div>
+          <span class="${css.checkboxText}">Text Wrap</span>
+        </div>
+        <div class="${css.crow}">
+          <div><input id="optimize" type="checkbox"></div>
+          <span class="${css.checkboxText}">Enable Optimization</span>
+        </div>
+      </div>
+      <div class="${css.info}">
+        <div class=${css.title}>Themes</div>
+        <div class=${css.attention}>
+          <i title="Select the theme" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
+          <span>Selecting a theme will trigger a page reload</span>
+        </div>
+        <div class="${css.crow}">
+          <input class="${css.col1}" name="theme" id="themeLight" type="checkbox">
+          <label for="themeLight">Light Theme</label>
+        </div>
+        <div class="${css.crow}">
+          <input class="${css.col1}" name="theme" id="themeDark" type="checkbox">
+          <label for="themeDark">Dark Theme</label>
+        </div>
+      </div>
+      <div class="${css.info}">
+        <div class=${css.title}>Plugin</div>
+        <div class="${css.crowNoFlex}">
+          <div class=${css.attention}>
+            <i title="Do not use this feature yet" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
+            <span> Do not use this alpha feature if you are not sure what you are doing!</span>
+          </div>
+          <div>
+            <textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>
+            <input onclick=${loadPlugin} type="button" value="Load" class="${css.pluginLoad}">
+            </div>
         </div>
       </div>
     </div>
+
   `
 
   function loadPlugin () {
