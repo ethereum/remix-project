@@ -166,7 +166,9 @@ function UniversalDApp (opts = {}) {
     self.reset(self.contracts)
   })
   self.txRunner = new TxRunner({}, {
-    personalMode: this.personalMode
+    personalMode: this.personalMode,
+    config: self._api.config,
+    detectNetwork: self._api.detectNetwork
   })
 }
 
@@ -186,7 +188,9 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
     executionContext.vm().stateManager.cache.flush(function () {})
   }
   this.txRunner = new TxRunner(this.accounts, {
-    personalMode: this.personalMode
+    personalMode: this.personalMode,
+    config: this._api.config,
+    detectNetwork: this._api.detectNetwork
   })
 }
 
