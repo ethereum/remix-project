@@ -34,6 +34,9 @@ var getDetails = function (contractName, contract, source) {
 
   detail.gasEstimates = formatGasEstimates(contract.evm.gasEstimates)
 
+  detail.devdoc = contract.devdoc
+  detail.userdoc = contract.userdoc
+
   if (contract.evm.deployedBytecode && contract.evm.deployedBytecode.object.length > 0) {
     detail['Runtime Bytecode'] = contract.evm.deployedBytecode
   }
