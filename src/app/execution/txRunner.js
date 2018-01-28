@@ -246,7 +246,7 @@ function confirmDialog (tx, gasEstimation, self) {
       <div>Amount: ${amount} Ether</div>
       <div>Gas estimation: ${gasEstimation}</div>
       <div>Gas limit: ${tx.gas}</div>
-      <div>Gas price: <input id='gasprice' oninput=${gasPriceChanged} /> Gwei</div>
+      <div>Gas price: <input id='gasprice' oninput=${gasPriceChanged} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
       <div>Max transaction fee:<span id='txfee'></span></div>
       <div>Data:</div>
       <pre class=${css.wrapword}>${tx.data}</pre>
