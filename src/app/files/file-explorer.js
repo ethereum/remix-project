@@ -149,6 +149,8 @@ function fileExplorer (appAPI, files) {
     if (explorer === files) {
       fileFocus(newFile)
     } else {
+      var currentFile = appAPI.config.get('currentFile')
+      if (currentFile === newFile) return
       unfocus(focusElement)
     }
   })
@@ -157,7 +159,6 @@ function fileExplorer (appAPI, files) {
   fileEvents.register('fileRenamedError', fileRenamedError)
   fileEvents.register('fileAdded', fileAdded)
 
-  var filepath = null
   var textUnderEdit = null
   var textInRename = false
 
@@ -332,15 +333,41 @@ function fileExplorer (appAPI, files) {
     })
   }
 
+  function expandPathTo (filePath, cb) {
+    var label = self.element.querySelector(`label[data-path="${filePath}"]`)
+    if (label) cb()
+    var arr = filePath.split('/')
+    var filename = arr.pop()
+    var path = arr.shift()
+    var fullpath = path
+    expand(fullpath, path, function next () {
+      path = arr.shift()
+      if (path) {
+        fullpath += '/' + path
+        expand(fullpath, path, next)
+      } else {
+        var label = self.element.querySelector(`label[data-path$="${filename}"]`)
+        focus.call(getLiFrom(label), {})
+        cb()
+      }
+    })
+    function expand (path, step, next) {
+      label = self.element.querySelector(`label[data-path="${step}"]`) ||
+        self.element.querySelector(`label[data-path="${path}"]`)
+      if (label) var li = label.parentElement.parentElement.parentElement
+      if (!label || path === step && !li.children[1].children.length) {
+        var currentTree = self.treeView.nodeAt(path)
+        var caret = currentTree.parentElement.firstElementChild.firstElementChild
+        caret.click()
+        next()
+      } else next()
+    }
+  }
+
   function fileFocus (path) {
+    var filepath = appAPI.config.get('currentFile')
     if (filepath === path) return
-    filepath = path
-    setTimeout(function focusNode () {
-      // @TODO: fix file tree expand logic to account for async remixd loading logic 
-      var el = getElement(filepath)
-      expandPathTo(el)
-      setTimeout(function focusNode () { el.click() }, 0)
-    }, 0)
+    expandPathTo(path, function () { appAPI.config.set('currentFile', path) })
   }
 
   function fileRemoved (filepath) {
@@ -433,13 +460,6 @@ function removeSubtree (files, path, isFolder) {
     files.remove(path)
   })
   if (isFolder) files.remove(path)
-}
-
-function expandPathTo (li) {
-  while ((li = li.parentElement.parentElement) && li.tagName === 'LI') {
-    var caret = li.firstChild.firstChild
-    if (caret.classList.contains('fa-caret-right')) caret.click() // expand
-  }
 }
 
 fileExplorer.prototype.init = function () {
