@@ -10,6 +10,7 @@ var executionContext = require('../../execution-context')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var Recorder = require('../../recorder')
 var EventManager = require('remix-lib').EventManager
+var addTooltip = require('../ui/tooltip')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -270,7 +271,7 @@ function fillAccountsList (appAPI, container) {
   var $txOrigin = $(container.querySelector('#txorigin'))
   $txOrigin.empty()
   appAPI.udapp().getAccounts((err, accounts) => {
-    if (err) { console.log(err) }
+    if (err) { addTooltip(`Cannot get account list: ${err}`) }
     if (accounts && accounts[0]) {
       for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])) }
       $txOrigin.val(accounts[0])
@@ -535,8 +536,9 @@ function settings (container, appAPI, appEvents) {
     appAPI.newAccount('', (error, address) => {
       if (!error) {
         container.querySelector('#txorigin').appendChild(yo`<option value=${address}>${address}</option>`)
+        addTooltip(`account ${address} created`)
       } else {
-        modalDialogCustom.alert('Cannot create an account: ' + error)
+        addTooltip('Cannot create an account: ' + error)
       }
     })
   }
