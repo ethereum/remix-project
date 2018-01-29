@@ -197,6 +197,9 @@ var css = csjs`
     margin-left: 5px;
     cursor: pointer;
   }
+  .createAccount:hover   {
+    color: ${styles.colors.orange};
+  }
 `
 
 module.exports = runTab
