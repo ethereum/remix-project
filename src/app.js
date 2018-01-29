@@ -498,9 +498,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       fileManager.switchFile(path)
     },
     event: fileManager.event,
-    currentFile: function () {
-      return config.get('currentFile')
-    },
+    config: config,
     currentContent: function () {
       return editor.get(config.get('currentFile'))
     },
@@ -516,18 +514,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
-  var previouslyOpenedFile = config.get('currentFile')
-  if (previouslyOpenedFile) {
+  setTimeout(function initOpenFile () {
+    var previouslyOpenedFile = config.get('currentFile') || 'browser/ballot.sol'
+    config.set('currentFile', null)
     filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) {
-        fileManager.switchFile(previouslyOpenedFile)
-      } else {
-        fileManager.switchFile()
-      }
+      if (!error && content) fileManager.switchFile(previouslyOpenedFile)
+      else fileManager.switchFile('browser/ballot.sol')
     })
-  } else {
-    fileManager.switchFile()
-  }
+  }, 0)
 
   // ----------------- Renderer -----------------
   var rendererAPI = {

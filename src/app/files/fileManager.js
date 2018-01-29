@@ -47,6 +47,7 @@ class FileManager {
         self.switchFile(Object.keys(self.tabbedFiles)[0])
       } else {
         opt.editor.displayEmptyReadOnlySession()
+        self.opt.config.set('currentFile', '')
       }
       return false
     })
@@ -98,7 +99,6 @@ class FileManager {
 
   // Display files that have already been selected
   refreshTabs (newfile) {
-    var self = this
     if (newfile) {
       this.tabbedFiles[newfile] = newfile
     }
@@ -109,14 +109,14 @@ class FileManager {
     for (var file in this.tabbedFiles) {
       $filesEl.append(yo`<li class="file"><span class="name">${file}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
     }
-    var currentFileOpen = !!this.opt.config.get('currentFile')
 
-    if (currentFileOpen) {
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === self.opt.config.get('currentFile') })
-      active.addClass('active')
-    }
-    $('#input').toggle(currentFileOpen)
-    $('#output').toggle(currentFileOpen)
+    var active = $('#files .file').filter(function () {
+      return $(this).find('.name').text() === newfile
+    })
+    if (active.length) active.addClass('active')
+    else this.switchFile()
+    // $('#input').toggle(active)
+    $('#output').toggle(active)
   }
 
   switchFile (file) {
@@ -128,12 +128,15 @@ class FileManager {
         if (fileList.length) {
           file = fileList[0]
           if (file) _switchFile(file)
+        } else {
+          self.event.trigger('currentFileChanged', [])
         }
       })
     } else _switchFile(file)
-    function _switchFile () {
+    function _switchFile (file) {
       self.saveCurrentFile()
-      self.opt.config.set('currentFile', file)
+      var currentFile = self.opt.config.get('currentFile')
+      if (file === currentFile) return
       self.refreshTabs(file)
       self.fileProviderOf(file).get(file, (error, content) => {
         if (error) {
