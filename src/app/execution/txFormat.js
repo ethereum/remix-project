@@ -51,7 +51,7 @@ module.exports = {
     var dataHex = ''
 
     if (params.indexOf('0x') === 0) {
-      dataHex = params.match(/"(.*?)"/)[1].replace('0x', '')
+      dataHex = params.replace('0x', '')
       data = Buffer.from(dataHex, 'hex')
     } else {
       try {
