@@ -324,14 +324,16 @@ function Compiler (handleImportCall) {
         continue
       }
 
-      handleImportCall(m, function (err, content) {
-        if (err) {
-          cb(err)
-        } else {
-          files[m] = { content }
-          gatherImports(files, target, importHints, cb)
-        }
-      })
+      if (handleImportCall) {
+        handleImportCall(m, function (err, content) {
+          if (err) {
+            cb(err)
+          } else {
+            files[m] = { content }
+            gatherImports(files, target, importHints, cb)
+          }
+        })
+      }
 
       return
     }
