@@ -23,6 +23,9 @@
     "fast-async": "^6.1.2",
     "remix-core": "latest",
     "remix-lib": "latest",
+    "js-base64": "^2.1.9",
+    "swarmgw": "^0.2.0",
+    "webworkify": "^1.2.1",
     "solc": "^0.4.13",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
