@@ -5,7 +5,7 @@ var solc = require('solc/wrapper')
 var soljson = require('../soljson')
 var compiler = solc(soljson)
 
-var compilerInput = require('../src/app/compiler/compiler-input')
+var compilerInput = require('remix-solidty').CompilerInput
 var compilationResult = {}
 gatherCompilationResults('./test-browser/tests/', compilationResult)
 gatherCompilationResults('./test-browser/tests/units/', compilationResult)
