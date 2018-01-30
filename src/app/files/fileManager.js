@@ -135,8 +135,6 @@ class FileManager {
     } else _switchFile(file)
     function _switchFile (file) {
       self.saveCurrentFile()
-      var currentFile = self.opt.config.get('currentFile')
-      if (file === currentFile) return
       self.refreshTabs(file)
       self.fileProviderOf(file).get(file, (error, content) => {
         if (error) {
