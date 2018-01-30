@@ -4,6 +4,7 @@ var localDecoder = require('./src/decoder/localDecoder')
 var stateDecoder = require('./src/decoder/stateDecoder')
 var CodeAnalysis = require('./src/analysis/staticAnalysisRunner')
 var Compiler = require('./src/compiler/compiler')
+var CompilerInput = require('./src/compiler/compiler-input')
 
 module.exports = {
   InternalCallTree: InternalCallTree,
@@ -11,5 +12,6 @@ module.exports = {
   localDecoder: localDecoder,
   stateDecoder: stateDecoder,
   CodeAnalysis: CodeAnalysis,
-  Compiler: Compiler
+  Compiler: Compiler,
+  CompilerInput: CompilerInput
 }
