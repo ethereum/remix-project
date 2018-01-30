@@ -15,5 +15,14 @@
   "bugs": {
     "url": "https://github.com/ethereum/remix-tests/issues"
   },
-  "homepage": "https://github.com/ethereum/remix-tests#readme"
+  "homepage": "https://github.com/ethereum/remix-tests#readme",
+  "dependencies": {
+    "change-case": "^3.0.1",
+    "colors": "^1.1.2",
+    "commander": "^2.13.0",
+    "ethereumjs-vm": "^2.3.2",
+    "remix-lib": "^0.1.2",
+    "solc": "^0.4.17",
+    "web3": "^1.0.0-beta.27"
+  }
 }
