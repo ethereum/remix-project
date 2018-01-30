@@ -59,7 +59,6 @@ module.exports = {
     var oldpath = utils.absolutePath(args.oldPath, this.sharedFolder)
     var newpath = utils.absolutePath(args.newPath, this.sharedFolder)
     if (!isRealPath(oldpath, cb)) return
-    if (!isRealPath(newpath, cb)) return
     fs.move(oldpath, newpath, (error, data) => {
       if (error) console.log(error)
       cb(error, data)
