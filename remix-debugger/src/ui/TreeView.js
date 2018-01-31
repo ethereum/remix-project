@@ -46,6 +46,8 @@ class TreeView {
     this.view = null
     this.nodeIsExpanded = {}
     this.nodes = {}
+    this.labels = {}
+    this.carets = {}
   }
 
   render (json) {
@@ -91,19 +93,25 @@ class TreeView {
       var isExpanded = self.nodeIsExpanded[keyPath]
       var list = yo`<ul class=${css.ul_tv}>${children}</ul>`
       this.nodes[keyPath] = list
-      list.style.display = isExpanded !== undefined ? (isExpanded ? 'block' : 'none') : (expand ? 'block' : 'none')
+      this.labels[keyPath] = label
+      this.carets[keyPath] = caret
       caret.className = list.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
       label.onclick = function () {
-        caret.className = caret.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
-        list.style.display = list.style.display === 'none' ? 'block' : 'none'
-        self.nodeIsExpanded[keyPath] = list.style.display === 'block'
-        self.event.trigger('nodeClick', [keyPath, list])
+        self.expand(keyPath)
       }
       li.appendChild(list)
     } else {
       caret.style.visibility = 'hidden'
     }
     return li
+  }
+
+  expand (path) {
+    if (this.labels[path]) {
+      this.carets[path].className = this.carets[path].className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
+      this.nodes[path].style.display = this.nodes[path].style.display === 'none' ? 'block' : 'none'
+      this.event.trigger('nodeClick', [path, this.nodes[path]])
+    }
   }
 
   nodeAt (path) {
