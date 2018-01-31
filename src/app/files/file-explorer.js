@@ -383,18 +383,22 @@ function removeSubtree (files, path, isFolder) {
 }
 
 fileExplorer.prototype.init = function () {
+  this.container = yo`<div></div>`
+  return this.container
+}
+
+fileExplorer.prototype.ensureRoot = function (cb) {
   var self = this
+  if (self.element && cb) return cb()
+
   self.files.resolveDirectory('/', (error, files) => {
     if (error) console.error(error)
-    var element = self.treeView.render(files)
+    var element = self.treeView.render(files, false)
     element.className = css.fileexplorer
     element.events = self.events
     element.api = self.api
-    setTimeout(function () {
-      self.element.parentElement.replaceChild(element, self.element)
+    self.container.appendChild(element)
       self.element = element
-    }, 0)
+    if (cb) cb()
   })
-  self.element = yo`<div></div>`
-  return self.element
 }
