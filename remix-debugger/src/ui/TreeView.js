@@ -50,8 +50,8 @@ class TreeView {
     this.carets = {}
   }
 
-  render (json) {
-    var view = this.renderProperties(json, false)
+  render (json, expand) {
+    var view = this.renderProperties(json, expand)
     if (!this.view) {
       this.view = view
     }
