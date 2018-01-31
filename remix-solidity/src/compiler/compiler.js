@@ -72,7 +72,12 @@ function Compiler (handleImportCall) {
 
   function onInternalCompilerLoaded () {
     if (worker === null) {
-      var compiler = solc(window.Module)
+      var compiler;
+      if (typeof(window) == 'undefined') {
+        compiler = require('solc');
+      } else {
+        compiler = solc(window.Module)
+      }
 
       compileJSON = function (source, optimize, cb) {
         var missingInputs = []
@@ -95,6 +100,7 @@ function Compiler (handleImportCall) {
       onCompilerLoaded(compiler.version())
     }
   }
+  this.onInternalCompilerLoaded = onInternalCompilerLoaded; // exposed for use in node
 
   this.lastCompilationResult = {
     data: null,
@@ -215,6 +221,7 @@ function Compiler (handleImportCall) {
     }
   }
 
+  // TODO: needs to be changed to be more node friendly
   this.loadVersion = function (usingWorker, url) {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
     self.event.trigger('loadingCompiler', [url, usingWorker])
