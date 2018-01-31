@@ -73,7 +73,7 @@ function filepanel (appAPI, filesProvider) {
           </div>
           <div class=${css.treeviews}>
             <div class=${css.treeview}>${fileExplorer.init()}</div>
-            <div class="filesystemexplorer ${css.treeview}"></div>
+            <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
             <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
             <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
             <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
@@ -87,7 +87,7 @@ function filepanel (appAPI, filesProvider) {
   var event = new EventManager()
   self.event = event
   var element = template()
-
+  fileExplorer.ensureRoot()
   var containerFileSystem = element.querySelector('.filesystemexplorer')
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
@@ -200,7 +200,6 @@ function filepanel (appAPI, filesProvider) {
     * @param {String} txHash    - hash of the transaction
     */
   function connectToLocalhost () {
-    var container = document.querySelector('.filesystemexplorer')
     if (filesProvider['localhost'].isConnected()) {
       filesProvider['localhost'].close((error) => {
         if (error) console.log(error)
@@ -213,10 +212,7 @@ function filepanel (appAPI, filesProvider) {
               if (error) {
                 console.log(error)
               } else {
-                if (fileSystemExplorer.element && container.children.length > 0) {
-                  container.removeChild(fileSystemExplorer.element)
-                }
-                container.appendChild(fileSystemExplorer.init())
+                fileSystemExplorer.ensureRoot()
               }
             })
           }})
