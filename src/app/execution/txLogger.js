@@ -17,13 +17,10 @@ var typeConversion = remixLib.execution.typeConversion
 var css = csjs`
   .log {
     display: flex;
-    align-items: end;
-    justify-content: space-between;
   }
   .caret {
     color: ${styles.terminal.icon_Color};
-    font-weight: bold;
-    font-size: small;
+    font-size: 15px;
     cursor: pointer;
     float: left;
   }
@@ -50,8 +47,17 @@ var css = csjs`
   .txTable, .tr, .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: ${styles.terminal.text_Primary};
-    border: 1px solid ${styles.terminal.text_Secondary};
+  }
+  .tr {
+    width: 70%;
+    border-bottom: 1px solid white;
+    display: flex;
+    justify-content: space-between;
+  }
+  .td:first-child {
+    min-width: 130px;
+    display: flex;
+    align-items: baseline;
   }
   #txTable {
     margin-top: 1%;
@@ -68,14 +74,19 @@ var css = csjs`
   .buttons {
     display: flex;
   }
-  .debug, .details {
-    ${styles.terminal.button_Log_Debug}
+  .debug {
+    color: ${styles.terminal.text_Title_TransactionLog};
+    font-weight: bold;
+    cursor: pointer;
+    text-weight: bold;
     margin-left: 5px;
     width: 55px;
     min-width: 55px;
     min-height: 20px;
     max-height: 20px;
-    font-size: 11px;
+  }
+  .debug:hover {
+    text-decoration: underline;
   }
   `
 /**
@@ -174,10 +185,10 @@ function renderKnownTransaction (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}">
+        <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-        <button class=${css.details} onclick=${txDetails}>Details</button>
-        <button class=${css.debug} onclick=${debug}>Debug</button>
+        <div class=${css.debug} onclick=${debug}>[debug]</div>
         </div>
       </div>
     </span>
@@ -224,8 +235,8 @@ function renderCall (self, data) {
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <i class="${css.caret} fa fa-caret-right"></i>
       <div class="${css.log}">
+        <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
@@ -234,8 +245,7 @@ function renderCall (self, data) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>return:</span>
         </span>
         <div class=${css.buttons}>
-          <button class=${css.details} onclick=${txDetails}>Details</button>
-          <button class=${css.debug} onclick=${debug}>Debug</button>
+          <div class=${css.debug} onclick=${debug}>[debug]</div>
         </div>
       </div>
       <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
@@ -276,12 +286,11 @@ function renderUnknownTransaction (self, data) {
   }
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <i class="${css.caret} fa fa-caret-right"></i>
+      <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
       <div class="${css.log}">
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <button class=${css.details} onclick=${txDetails}>Details</button>
-          <button class=${css.debug} onclick=${debug}>Debug</button>
+          <div class=${css.debug} onclick=${debug}>[debug]</div>
         </div>
       </div>
     </span>
@@ -332,7 +341,6 @@ function context (self, opts) {
   if (executionContext.getProvider() === 'vm') {
     return yo`
       <div>
-        <i class="${css.caret} fa fa-caret-right"></i>
         <span class=${css.txLog}>
           <span class=${css.tx}>[vm]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
@@ -346,7 +354,6 @@ function context (self, opts) {
   } else if (executionContext.getProvider() !== 'vm' && data.resolvedData) {
     return yo`
       <div>
-        <i class="${css.caret} fa fa-caret-right"></i>
         <span class=${css.txLog}>
           <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
@@ -396,9 +403,10 @@ function createTable (opts) {
 
   var contractAddress = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> contractAddress </td>
-      <td class="${css.td}">${opts.contractAddress}
+      <td class="${css.td}"> contractAddress
         ${copyToClipboard(() => opts.contractAddress)}
+      </td>
+      <td class="${css.td}">${opts.contractAddress}
       </td>
     </tr>
   `
@@ -406,9 +414,10 @@ function createTable (opts) {
 
   var from = yo`
     <tr class="${css.tr}">
-      <td class="${css.td} ${css.tableTitle}"> from </td>
-      <td class="${css.td}">${opts.from}
+      <td class="${css.td} ${css.tableTitle}"> from
         ${copyToClipboard(() => opts.from)}
+      </td>
+      <td class="${css.td}">${opts.from}
       </td>
     </tr>
   `
@@ -423,9 +432,10 @@ function createTable (opts) {
   }
   var to = yo`
     <tr class="${css.tr}">
-    <td class="${css.td}"> to </td>
-    <td class="${css.td}">${toHash}
+    <td class="${css.td}"> to
       ${copyToClipboard(() => data.to ? data.to : toHash)}
+    </td>
+    <td class="${css.td}">${toHash}
     </td>
     </tr>
   `
@@ -433,9 +443,10 @@ function createTable (opts) {
 
   var gas = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> gas </td>
-      <td class="${css.td}">${opts.gas} gas
+      <td class="${css.td}"> gas
         ${copyToClipboard(() => opts.gas)}
+      </td>
+      <td class="${css.td}">${opts.gas} gas
       </td>
     </tr>
   `
@@ -448,9 +459,10 @@ function createTable (opts) {
   if (opts.transactionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction cost </td>
-      <td class="${css.td}">${opts.transactionCost} gas ${callWarning}
+      <td class="${css.td}"> transaction cost
         ${copyToClipboard(() => opts.transactionCost)}
+      </td>
+      <td class="${css.td}">${opts.transactionCost} gas ${callWarning}
       </td>
     </tr>`)
   }
@@ -458,18 +470,20 @@ function createTable (opts) {
   if (opts.executionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> execution cost </td>
-      <td class="${css.td}">${opts.executionCost} gas ${callWarning}
+      <td class="${css.td}"> execution cost
         ${copyToClipboard(() => opts.executionCost)}
+      </td>
+      <td class="${css.td}">${opts.executionCost} gas ${callWarning}
       </td>
     </tr>`)
   }
 
   var hash = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> hash </td>
-      <td class="${css.td}">${opts.hash}
+      <td class="${css.td}"> hash
         ${copyToClipboard(() => opts.hash)}
+      </td>
+      <td class="${css.td}">${opts.hash}
       </td>
     </tr>
   `
@@ -477,9 +491,10 @@ function createTable (opts) {
 
   var input = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> input </td>
-      <td class="${css.td}">${opts.input}
+      <td class="${css.td}"> input
         ${copyToClipboard(() => opts.input)}
+      </td>
+      <td class="${css.td}">${opts.input}
       </td>
     </tr>
   `
@@ -488,9 +503,10 @@ function createTable (opts) {
   if (opts['decoded input']) {
     var inputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> decoded input </td>
-      <td class="${css.td}">${opts['decoded input']}
+      <td class="${css.td}"> decoded input
         ${copyToClipboard(opts['decoded input'])}
+      </td>
+      <td class="${css.td}">${opts['decoded input']}
       </td>
     </tr>`
     table.appendChild(inputDecoded)
@@ -511,11 +527,12 @@ function createTable (opts) {
   }
   var logs = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> logs </td>
-      <td class="${css.td}" id="logs">
-        ${JSON.stringify(stringified, null, '\t')}
+      <td class="${css.td}"> logs
         ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
         ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
+      </td>
+      <td class="${css.td}" id="logs">
+        ${JSON.stringify(stringified, null, '\t')}
       </td>
     </tr>
   `
@@ -524,9 +541,10 @@ function createTable (opts) {
   var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   val = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> value </td>
-      <td class="${css.td}">${val} wei
+      <td class="${css.td}"> value
         ${copyToClipboard(() => `${val} wei`)}
+      </td>
+      <td class="${css.td}">${val} wei
       </td>
     </tr>
   `
