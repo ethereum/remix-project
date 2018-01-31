@@ -317,15 +317,20 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileAdded (filepath) {
-    var folderpath = filepath.split('/').slice(0, -1).join('/')
-    self.files.resolveDirectory(folderpath, (error, fileTree) => {
-      if (error) console.error(error)
-      if (!fileTree) return
-      fileTree = normalize(folderpath, fileTree)
-      var newTree = self.treeView.renderProperties(fileTree, false)
+    self.ensureRoot(() => {
+      var folderpath = filepath.split('/').slice(0, -1).join('/')
+
       var currentTree = self.treeView.nodeAt(folderpath)
-      currentTree.innerHTML = ''
-      ;[...newTree.children].forEach(child => currentTree.appendChild(child))
+      if (currentTree) {
+        self.files.resolveDirectory(folderpath, (error, fileTree) => {
+          if (error) console.error(error)
+          if (!fileTree) return
+          fileTree = normalize(folderpath, fileTree)
+          var newTree = self.treeView.renderProperties(fileTree, false)
+          currentTree.innerHTML = ''
+          ;[...newTree.children].forEach(child => currentTree.appendChild(child))
+        })
+      }
     })
   }
 }
@@ -398,7 +403,7 @@ fileExplorer.prototype.ensureRoot = function (cb) {
     element.events = self.events
     element.api = self.api
     self.container.appendChild(element)
-      self.element = element
+    self.element = element
     if (cb) cb()
   })
 }
