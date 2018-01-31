@@ -57,6 +57,7 @@ var focusElement = null
 
 function fileExplorer (appAPI, files) {
   var self = this
+  this.events = new EventManager()
   this.files = files
 
   function remixdDialog () {
@@ -95,11 +96,11 @@ function fileExplorer (appAPI, files) {
       return {
         path: (tree || {}).path ? tree.path + '/' + key : key,
         children: isFile ? undefined
-        : value instanceof Array ? value.map((item, index) => ({
-          key: index, value: item
-        })) : value instanceof Object ? Object.keys(value).map(subkey => ({
-          key: subkey, value: value[subkey]
-        })) : undefined
+          : value instanceof Array ? value.map((item, index) => ({
+            key: index, value: item
+          })) : value instanceof Object ? Object.keys(value).map(subkey => ({
+            key: subkey, value: value[subkey]
+          })) : undefined
       }
     },
     formatSelf: function formatSelf (key, data, li) {
@@ -162,7 +163,6 @@ function fileExplorer (appAPI, files) {
   var textUnderEdit = null
   var textInRename = false
 
-  self.events = new EventManager()
   self.api = {}
   self.api.addFile = function addFile (file) {
     function loadFile () {
@@ -292,82 +292,16 @@ function fileExplorer (appAPI, files) {
     }
   }
 
-  function renameSubtree (label, dontcheck) {
-    var oldPath = label.dataset.path
-    var newPath = oldPath
-    newPath = newPath.split('/')
-    newPath[newPath.length - 1] = label.innerText
-    newPath = newPath.join('/')
-    if (!dontcheck) {
-      var allPaths = Object.keys(files.list())
-      for (var i = 0, len = allPaths.length, path, err; i < len; i++) {
-        path = allPaths[i]
-        if (files.isReadOnly(path)) {
-          err = 'path contains readonly elements'
-          break
-        } else if (path.indexOf(newPath) === 0) {
-          err = 'new path is conflicting with another existing path'
-          break
-        }
-      }
-    }
-    if (err) {
-      modalDialogCustom.alert(`could not rename - ${err}`)
-      label.innerText = textUnderEdit
-    } else {
-      textUnderEdit = label.innerText
-      updateAllLabels([getElement(oldPath)], oldPath, newPath)
-    }
-  }
 
-  function updateAllLabels (lis, oldPath, newPath) {
-    lis.forEach(function (li) {
-      var label = getLabelFrom(li)
-      var path = label.dataset.path
-      var newName = path.replace(oldPath, newPath)
-      label.dataset.path = newName
-      var ul = li.lastChild
-      if (ul.tagName === 'UL') {
-        updateAllLabels([...ul.children], oldPath, newPath)
-      }
-    })
-  }
-
-  function expandPathTo (filePath, cb) {
-    var label = self.element.querySelector(`label[data-path="${filePath}"]`)
-    if (label) cb()
-    var arr = filePath.split('/')
-    var filename = arr.pop()
-    var path = arr.shift()
-    var fullpath = path
-    expand(fullpath, path, function next () {
-      path = arr.shift()
-      if (path) {
-        fullpath += '/' + path
-        expand(fullpath, path, next)
-      } else {
-        var label = self.element.querySelector(`label[data-path$="${filename}"]`)
-        focus.call(getLiFrom(label), {})
-        cb()
-      }
-    })
-    function expand (path, step, next) {
-      label = self.element.querySelector(`label[data-path="${step}"]`) ||
-        self.element.querySelector(`label[data-path="${path}"]`)
-      if (label) var li = label.parentElement.parentElement.parentElement
-      if (!label || path === step && !li.children[1].children.length) {
-        var currentTree = self.treeView.nodeAt(path)
-        var caret = currentTree.parentElement.firstElementChild.firstElementChild
-        caret.click()
-        next()
-      } else next()
-    }
-  }
+  
 
   function fileFocus (path) {
     var filepath = appAPI.config.get('currentFile')
     if (filepath === path) return
-    expandPathTo(path, function () { appAPI.config.set('currentFile', path) })
+    var label = document.querySelector(`label[data-path="${path}"]`)
+    if (label) {
+      appAPI.config.set('currentFile', path)
+    }
   }
 
   function fileRemoved (filepath) {
@@ -377,19 +311,8 @@ function fileExplorer (appAPI, files) {
 
   function fileRenamed (oldName, newName, isFolder) {
     var li = getElement(oldName)
-    if (li) {
-      oldName = oldName.split('/')
-      newName = newName.split('/')
-      var index = oldName.reduce(function (idx, key, i) {
-        return oldName[i] !== newName[i] ? i : idx
-      }, undefined)
-      var newKey = newName[index]
-      var oldPath = oldName.slice(0, index + 1).join('/')
-      li = getElement(oldPath)
-      var label = getLabelFrom(li)
-      label.innerText = newKey
-      renameSubtree(label, true)
-    }
+    if (li) li.parentElement.removeChild(li)
+    fileFocus(newName)
   }
 
   function fileRenamedError (error) {

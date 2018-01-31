@@ -118,9 +118,8 @@ function Files (storage) {
   this.resolveDirectory = function (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
-    if (path[0] === '.' && path[1] === '/') path = path.substring(2)
     if (!path) return callback(null, { [self.type]: { } })
-    path = self.removePrefix('' + (path || ''))
+    path = self.removePrefix(path)
     var filesList = {}
     var tree = {}
     // add r/w filesList to the list
@@ -157,9 +156,7 @@ function Files (storage) {
   }
 
   this.removePrefix = function (path) {
-    path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
-    if (path[0] === '/') return path.substring(1)
-    return path
+    return path.indexOf(this.type + '/') === 0 ? path.replace(this.type + '/', '') : path
   }
 
   // rename .browser-solidity.json to .remix.config
