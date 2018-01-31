@@ -44,7 +44,6 @@ class TreeView {
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
-    this.nodeIsExpanded = {}
     this.nodes = {}
     this.labels = {}
     this.carets = {}
@@ -90,11 +89,11 @@ class TreeView {
       </div>`
     li.appendChild(label)
     if (data.children) {
-      var isExpanded = self.nodeIsExpanded[keyPath]
       var list = yo`<ul class=${css.ul_tv}>${children}</ul>`
       this.nodes[keyPath] = list
       this.labels[keyPath] = label
       this.carets[keyPath] = caret
+      list.style.display = 'none'
       caret.className = list.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
       label.onclick = function () {
         self.expand(keyPath)
