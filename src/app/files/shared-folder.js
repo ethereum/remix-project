@@ -159,9 +159,8 @@ module.exports = class SharedFolder {
   resolveDirectory (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
-    if (path[0] === '.' && path[1] === '/') path = path.substring(2)
     if (!path) return callback(null, { [self.type]: { } })
-    path = self.removePrefix('' + (path || ''))
+    path = self.removePrefix(path)
     self.remixd.dir(path, callback)
   }
 }
