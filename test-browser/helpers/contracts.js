@@ -1,5 +1,6 @@
 'use strict'
 var deepequal = require('deep-equal')
+var ethJSUtil = require('ethereumjs-util')
 
 module.exports = {
   getCompiledContracts: getCompiledContracts,
@@ -161,11 +162,16 @@ function setEditorValue (value, callback) {
   return this
 }
 
-function addInstance (browser, address, callback) {
+function addInstance(browser, address, isValidFormat, isValidChecksum, callback) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
       .perform((client, done) => {
         browser.execute(function () {
+          if (!isValidFormat) {
+            browser.assert.fail(document.querySelector('div[class^="modalBody"] div').innerHTML, 'Invalid address.', '')
+          } else if (!isValidChecksum) {
+            browser.assert.fail(document.querySelector('div[class^="modalBody"] div').innerHTML, 'Invalid checksum address.', '')
+          }
           document.querySelector('#modal-footer-ok').click()
         }, [], function (result) {
           done()

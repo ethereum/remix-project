@@ -72,8 +72,14 @@ function runTests (browser, testData) {
         })
       })
       .perform((client, done) => {
-        console.log('addInstance 0x692a70d2e424a56d2c6c27aa97d1a86395877b3a')
-        contractHelper.addInstance(browser, '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a', () => {
+        console.log('addInstance invalid checksum address 0x692a70d2e424a56d2c6c27aa97d1a86395877b3a')
+        contractHelper.addInstance(browser, '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a', true, false, () => {
+          done()
+        })
+      })
+      .perform((client, done) => {
+        console.log('addInstance 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A')
+        contractHelper.addInstance(browser, '0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true, () => {
           done()
         })
       })
