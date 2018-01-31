@@ -5,7 +5,9 @@ class BasicReadOnlyExplorer {
   constructor (type) {
     this.event = new EventManager()
     this.files = {}
+    this.paths = {}
     this.normalizedNames = {} // contains the raw url associated with the displayed path
+    this.paths[type] = {}
     this.type = type
     this.readonly = true
   }
@@ -46,6 +48,18 @@ class BasicReadOnlyExplorer {
     try { // lazy try to format JSON
       content = JSON.stringify(JSON.parse(content), null, '\t')
     } catch (e) {}
+    var split = path
+    var folder = false
+    while (split.lastIndexOf('/') !== -1) {
+      var subitem = split.substring(split.lastIndexOf('/'))
+      split = split.substring(0, split.lastIndexOf('/'))
+      if (!this.paths[this.type + '/' + split]) {
+        this.paths[this.type + '/' + split] = {}
+      }
+      this.paths[this.type + '/' + split][split + subitem] = { isDirectory: folder }
+      folder = true
+    }
+    this.paths[this.type][split] = { isDirectory: folder }
     this.files[this.type + '/' + unprefixedPath] = content
     this.normalizedNames[rawPath] = path
     this.event.trigger('fileAdded', [this.type + '/' + unprefixedPath, true])
@@ -68,46 +82,11 @@ class BasicReadOnlyExplorer {
     return this.files
   }
 
-  //
-  // Tree model for files
-  // {
-  //   'a': { }, // empty directory 'a'
-  //   'b': {
-  //     'c': {}, // empty directory 'b/c'
-  //     'd': { '/readonly': true, '/content': 'Hello World' } // files 'b/c/d'
-  //     'e': { '/readonly': false, '/path': 'b/c/d' } // symlink to 'b/c/d'
-  //     'f': { '/readonly': false, '/content': '<executable>', '/mode': 0755 }
-  //   }
-  // }
-  //
-  resolveDirectory (path, callback /* (error, filesList) => { } */) {
+  resolveDirectory (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
-    var tree = {}
-    // This does not include '.remix.config', because it is filtered
-    // inside list().
-    Object.keys(this.list()).forEach(function (path) {
-      hashmapize(tree, path, {
-        '/readonly': self.isReadOnly(path),
-        '/content': self.get(path)
-      })
-    })
-    return callback(null, tree[path] || {})
-    function hashmapize (obj, path, val) {
-      var nodes = path.split('/')
-      var i = 0
-
-      for (; i < nodes.length - 1; i++) {
-        var node = nodes[i]
-        if (obj[node] === undefined) {
-          obj[node] = {}
-        }
-        obj = obj[node]
-      }
-
-      obj[nodes[i]] = val
-    }
+    callback(null, this.paths[path])
   }
 
   removePrefix (path) {
