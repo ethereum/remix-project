@@ -35,8 +35,7 @@ var css = csjs`
   }
   .caret {
     color: ${styles.terminal.icon_Color};
-    font-weight: bold;
-    font-size: small;
+    font-size: 15px;
     cursor: pointer;
     float: left;
   }
@@ -63,8 +62,17 @@ var css = csjs`
   .txTable, .tr, .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: ${styles.terminal.text_Primary};
-    border: 1px solid ${styles.terminal.text_Secondary};
+  }
+  .tr {
+    width: 70%;
+    border-bottom: 1px solid white;
+    display: flex;
+    justify-content: space-between;
+  }
+  .td:first-child {
+    min-width: 130px;
+    display: flex;
+    align-items: baseline;
   }
   #txTable {
     margin-top: 1%;
@@ -383,9 +391,10 @@ function createTable (opts) {
 
   var contractAddress = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> contractAddress </td>
-      <td class="${css.td}">${opts.contractAddress}
+      <td class="${css.td}"> contractAddress
         ${copyToClipboard(() => opts.contractAddress)}
+      </td>
+      <td class="${css.td}">${opts.contractAddress}
       </td>
     </tr>
   `
@@ -393,9 +402,10 @@ function createTable (opts) {
 
   var from = yo`
     <tr class="${css.tr}">
-      <td class="${css.td} ${css.tableTitle}"> from </td>
-      <td class="${css.td}">${opts.from}
+      <td class="${css.td} ${css.tableTitle}"> from
         ${copyToClipboard(() => opts.from)}
+      </td>
+      <td class="${css.td}">${opts.from}
       </td>
     </tr>
   `
@@ -410,9 +420,10 @@ function createTable (opts) {
   }
   var to = yo`
     <tr class="${css.tr}">
-    <td class="${css.td}"> to </td>
-    <td class="${css.td}">${toHash}
+    <td class="${css.td}"> to
       ${copyToClipboard(() => data.to ? data.to : toHash)}
+    </td>
+    <td class="${css.td}">${toHash}
     </td>
     </tr>
   `
@@ -420,9 +431,10 @@ function createTable (opts) {
 
   var gas = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> gas </td>
-      <td class="${css.td}">${opts.gas} gas
+      <td class="${css.td}"> gas
         ${copyToClipboard(() => opts.gas)}
+      </td>
+      <td class="${css.td}">${opts.gas} gas
       </td>
     </tr>
   `
@@ -435,9 +447,10 @@ function createTable (opts) {
   if (opts.transactionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction cost </td>
-      <td class="${css.td}">${opts.transactionCost} gas ${callWarning}
+      <td class="${css.td}"> transaction cost
         ${copyToClipboard(() => opts.transactionCost)}
+      </td>
+      <td class="${css.td}">${opts.transactionCost} gas ${callWarning}
       </td>
     </tr>`)
   }
@@ -445,18 +458,20 @@ function createTable (opts) {
   if (opts.executionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> execution cost </td>
-      <td class="${css.td}">${opts.executionCost} gas ${callWarning}
+      <td class="${css.td}"> execution cost
         ${copyToClipboard(() => opts.executionCost)}
+      </td>
+      <td class="${css.td}">${opts.executionCost} gas ${callWarning}
       </td>
     </tr>`)
   }
 
   var hash = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> hash </td>
-      <td class="${css.td}">${opts.hash}
+      <td class="${css.td}"> hash
         ${copyToClipboard(() => opts.hash)}
+      </td>
+      <td class="${css.td}">${opts.hash}
       </td>
     </tr>
   `
@@ -464,9 +479,10 @@ function createTable (opts) {
 
   var input = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> input </td>
-      <td class="${css.td}">${opts.input}
+      <td class="${css.td}"> input
         ${copyToClipboard(() => opts.input)}
+      </td>
+      <td class="${css.td}">${opts.input}
       </td>
     </tr>
   `
@@ -475,9 +491,10 @@ function createTable (opts) {
   if (opts['decoded input']) {
     var inputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> decoded input </td>
-      <td class="${css.td}">${opts['decoded input']}
+      <td class="${css.td}"> decoded input
         ${copyToClipboard(opts['decoded input'])}
+      </td>
+      <td class="${css.td}">${opts['decoded input']}
       </td>
     </tr>`
     table.appendChild(inputDecoded)
@@ -498,11 +515,12 @@ function createTable (opts) {
   }
   var logs = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> logs </td>
-      <td class="${css.td}" id="logs">
-        ${JSON.stringify(stringified, null, '\t')}
+      <td class="${css.td}"> logs
         ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
         ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
+      </td>
+      <td class="${css.td}" id="logs">
+        ${JSON.stringify(stringified, null, '\t')}
       </td>
     </tr>
   `
@@ -511,9 +529,10 @@ function createTable (opts) {
   var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   val = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> value </td>
-      <td class="${css.td}">${val} wei
+      <td class="${css.td}"> value
         ${copyToClipboard(() => `${val} wei`)}
+      </td>
+      <td class="${css.td}">${val} wei
       </td>
     </tr>
   `
