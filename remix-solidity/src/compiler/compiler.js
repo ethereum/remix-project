@@ -72,9 +72,9 @@ function Compiler (handleImportCall) {
 
   function onInternalCompilerLoaded () {
     if (worker === null) {
-      var compiler;
-      if (typeof(window) == 'undefined') {
-        compiler = require('solc');
+      var compiler
+      if (typeof (window) === 'undefined') {
+        compiler = require('solc')
       } else {
         compiler = solc(window.Module)
       }
@@ -100,7 +100,8 @@ function Compiler (handleImportCall) {
       onCompilerLoaded(compiler.version())
     }
   }
-  this.onInternalCompilerLoaded = onInternalCompilerLoaded; // exposed for use in node
+  // exposed for use in node
+  this.onInternalCompilerLoaded = onInternalCompilerLoaded
 
   this.lastCompilationResult = {
     data: null,
