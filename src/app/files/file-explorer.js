@@ -64,8 +64,8 @@ function fileExplorer (appAPI, files) {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
   }
 
-  this.files.event.register('fileExternallyChanged', (path, content) => {
-    if (appAPI.currentFile() === path && appAPI.currentContent() !== content) {
+  this.files.event.register('fileExternallyChanged', (path, file) => {
+    if (appAPI.config.get('currentFile') === path && appAPI.currentContent() !== file.content) {
       modalDialog(path + ' changed', remixdDialog(),
         {
           label: 'Keep the content displayed in Remix',
@@ -74,7 +74,7 @@ function fileExplorer (appAPI, files) {
         {
           label: 'Replace by the new content',
           fn: () => {
-            appAPI.setText(content)
+            appAPI.setText(file.content)
           }
         }
       )
@@ -291,9 +291,6 @@ function fileExplorer (appAPI, files) {
       textInRename = false
     }
   }
-
-
-  
 
   function fileFocus (path) {
     var filepath = appAPI.config.get('currentFile')
