@@ -3,11 +3,10 @@ let remixLib = require('remix-lib');
 
 let Compiler = require('./src/compiler.js');
 let Deployer = require('./src/deployer.js');
-let web3Instance = require('./src/web3Instance.js');
 let TestRunner = require('./src/testRunner.js');
 
-var runTest = function(filename) {
-  let result, web3, accounts, contracts;
+var runTest = function(filename, web3) {
+  let result, accounts, contracts;
 
   async.waterfall([
     function compile(next) {
@@ -15,10 +14,6 @@ var runTest = function(filename) {
         result = compilationResult;
         next();
       });
-    },
-    function initWeb3(next) {
-      web3 = web3Instance();
-      next();
     },
     function getAccountList(next) {
       web3.eth.getAccounts((err, _accounts) => {
