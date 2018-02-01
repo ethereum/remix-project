@@ -4,8 +4,7 @@ var remixLib = require('remix-lib')
 var StatRunner = require('../../src/analysis/staticAnalysisRunner')
 var compilerInput = remixLib.helpers.compiler.compilerInput
 
-var solc = require('solc/wrapper')
-var compiler = solc(require('../../soljson'))
+var compiler = require('solc')
 
 var fs = require('fs')
 var path = require('path')
