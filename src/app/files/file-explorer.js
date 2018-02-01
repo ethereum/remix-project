@@ -308,8 +308,10 @@ function fileExplorer (appAPI, files) {
 
   function fileRenamed (oldName, newName, isFolder) {
     var li = getElement(oldName)
-    if (li) li.parentElement.removeChild(li)
-    fileFocus(newName)
+    if (li) {
+      li.parentElement.removeChild(li)
+      fileAdded(newName)
+    }
   }
 
   function fileRenamedError (error) {
