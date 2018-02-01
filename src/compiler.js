@@ -12,7 +12,7 @@ function compileAll(cb) {
   let compiler;
   const sources = {
     "simple_storage.sol": {content: fs.readFileSync("examples/simple_storage.sol").toString()},
-    "tests.sol": {content: fs.readFileSync("examples/tests.sol").toString()},
+    "tests.sol": {content: fs.readFileSync("sol/tests.sol").toString()},
     "simple_storage_test.sol": {content: fs.readFileSync("examples/simple_storage_test.sol").toString()}
   };
 
