@@ -23,13 +23,16 @@
     "fast-async": "^6.1.2",
     "remix-core": "latest",
     "remix-lib": "latest",
-    "solc": "^0.4.13",
+    "webworkify": "^1.2.1",
+    "solc": "https://github.com/ethereum/solc-js",
+    "npm-run-all": "^4.0.2",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
   },
   "scripts": {
     "test": "standard && npm run downloadsolc && tape ./test/tests.js",
-    "downloadsolc": "test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js"
+    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js) && cd ..",
+    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc"
   },
   "standard": {
     "ignore": [
