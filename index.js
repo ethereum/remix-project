@@ -11,8 +11,10 @@ var runTest = function(filename) {
 
   async.waterfall([
     function compile(next) {
-      result = Compiler.compileAll();
-      next();
+      Compiler.compileAll(function(err, compilationResult) {
+        result = compilationResult;
+        next();
+      });
     },
     function initWeb3(next) {
       web3 = web3Instance();

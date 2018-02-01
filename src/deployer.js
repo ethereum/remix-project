@@ -4,21 +4,24 @@ var async = require('async');
 
 function deployAll(compileResult, web3, accounts, callback) {
   let compiledObject = {}, contracts = {};
-  for (let contractName in compileResult) {
-    let contract = compileResult[contractName];
 
-    const regex = /(.*):(.*)/;
-    const className = contractName.match(regex)[2];
-    const filename = contractName.match(regex)[1];
+  for (let contractFile in compileResult) {
+    for (let contractName in compileResult[contractFile]) {
+      let contract = compileResult[contractFile][contractName];
 
-    let abi = JSON.parse(contract.interface);
-    let code = contract.bytecode;
+      const className = contractName;
+      const filename = contractFile;
 
-    compiledObject[className] = {};
-    compiledObject[className].abi = abi;
-    compiledObject[className].code = code;
-    compiledObject[className].filename = filename;
-    compiledObject[className].className = className;
+
+      let abi = contract.abi;
+      let code = contract.evm.bytecode.object;
+
+      compiledObject[className] = {};
+      compiledObject[className].abi = abi;
+      compiledObject[className].code = code;
+      compiledObject[className].filename = filename;
+      compiledObject[className].className = className;
+    }
   }
 
   async.eachOfLimit(compiledObject, 1, function(contract, contractName, next) {
