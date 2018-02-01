@@ -80,7 +80,7 @@ class TreeView {
   formatData (key, data, children, expand, keyPath) {
     var self = this
     var li = yo`<li class=${css.li_tv}></li>`
-    var caret = yo`<div class="fa fa-caret-right" class=${css.caret_tv}></div>`
+    var caret = yo`<div class="fa fa-caret-right ${css.caret_tv}"></div>`
     var label = yo`
       <div class=${css.label_tv}>
         ${caret}
