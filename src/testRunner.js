@@ -8,11 +8,14 @@ function runTest(testName, testObject, testCallback, resultsCallback) {
   let availableFunctions = testObject._jsonInterface.filter((x) => x.type === 'function').map((x) => x.name);
   let testFunctions = testObject._jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function');
 
-  if (availableFunctions.indexOf("beforeAll")) {
+  if (availableFunctions.indexOf("beforeAll") >= 0) {
     runList.push({name: 'beforeAll', type: 'internal', constant: false});
   }
 
   for (let func of testFunctions) {
+    if (availableFunctions.indexOf("beforeEach") >= 0) {
+      runList.push({name: 'beforeEach', type: 'internal', constant: false});
+    }
     runList.push({name: func.name, type: 'test', constant: func.constant});
   }
 
