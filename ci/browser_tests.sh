@@ -4,14 +4,7 @@ set -e
 
 setupRemixd () {
   mkdir remixdSharedfolder
-  cd remixdSharedfolder
-  echo "contract test1 { function get () returns (uint) { return 8; }}" > contract1.sol
-  echo "contract test2 { function get () returns (uint) { return 9; }}" > contract2.sol
-  mkdir folder1
-  cd folder1
-  echo "contract test1 { function get () returns (uint) { return 10; }}" > contract1.sol
-  echo "contract test2 { function get () returns (uint) { return 11; }}" > contract2.sol
-  cd ..
+  cd contracts
   echo 'sharing folder: '
   echo $PWD
   node ../node_modules/remixd/src/main.js -s $PWD &
