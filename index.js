@@ -15,14 +15,8 @@ var runTest = function(filename, web3) {
         next();
       });
     },
-    function getAccountList(next) {
-      web3.eth.getAccounts((err, _accounts) => {
-        accounts = _accounts;
-        next();
-      });
-    },
     function deployAllContracts(next) {
-      Deployer.deployAll(result, web3, accounts, next);
+      Deployer.deployAll(result, web3, next);
     },
     function runTests(contracts, next) {
       let test = contracts.MyTest;

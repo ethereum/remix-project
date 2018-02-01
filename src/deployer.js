@@ -2,10 +2,16 @@ var async = require('async');
 
 // TODO: replace this with remix's own deployer code
 
-function deployAll(compileResult, web3, accounts, callback) {
-  let compiledObject = {}, contracts = {};
+function deployAll(compileResult, web3, callback) {
+  let compiledObject = {}, contracts = {}, accounts;
 
   async.waterfall([
+    function getAccountList(next) {
+      web3.eth.getAccounts((err, _accounts) => {
+        accounts = _accounts;
+        next();
+      });
+    },
     function getContractData(next) {
       for (let contractFile in compileResult) {
         for (let contractName in compileResult[contractFile]) {
