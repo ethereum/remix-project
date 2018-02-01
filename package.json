@@ -147,7 +147,7 @@
     "build": "browserify src/index.js -o build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
-    "downloadsolc": "rimraf soljson.js && cd node_modules/remix-solidity/node_modules/solc && wget https://ethereum.github.io/solc-bin/soljson.js && cd ../../../../",
+    "downloadsolc": "rimraf soljson.js && cd node_modules/solc && wget https://ethereum.github.io/solc-bin/soljson.js && cd ../../",
     "lint": "standard | notify-error",
     "make-mock-compiler": "node ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
