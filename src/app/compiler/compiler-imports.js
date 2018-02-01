@@ -1,4 +1,5 @@
 'use strict'
+// TODO: can just use request or fetch instead
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
@@ -60,6 +61,7 @@ module.exports = {
       if (match) {
         found = true
 
+        // TODO: this needs to be moved to the caller
         $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
         handler.handler(match, function (err, content, cleanUrl) {
           if (err) {
