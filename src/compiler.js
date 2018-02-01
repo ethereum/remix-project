@@ -6,13 +6,13 @@ let compilerInput = remixLib.helpers.compiler;
 let RemixCompiler = require('remix-solidity').Compiler;
 
 // TODO: replace this with remix's own compiler code
-function compileAll(cb) {
+function compileFile(filename, cb) {
   console.log("compile all");
 
   let compiler;
   const sources = {
-    "simple_storage.sol": {content: fs.readFileSync("examples/simple_storage.sol").toString()},
     "tests.sol": {content: fs.readFileSync("sol/tests.sol").toString()},
+    "simple_storage.sol": {content: fs.readFileSync("examples/simple_storage.sol").toString()},
     "simple_storage_test.sol": {content: fs.readFileSync("examples/simple_storage_test.sol").toString()}
   };
 
@@ -39,6 +39,6 @@ function compileAll(cb) {
 }
 
 module.exports = {
-  compileAll: compileAll
+  compileFile: compileFile
 }
 

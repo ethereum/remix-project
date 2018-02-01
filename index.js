@@ -1,5 +1,4 @@
 var async = require('async');
-let remixLib = require('remix-lib');
 
 let Compiler = require('./src/compiler.js');
 let Deployer = require('./src/deployer.js');
@@ -10,17 +9,12 @@ var runTest = function(contractName, contractObj, cb) {
 }
 
 var runTestFile = function(filename, web3) {
-  let result, accounts, contracts;
-
   async.waterfall([
     function compile(next) {
-      Compiler.compileAll(function(err, compilationResult) {
-        result = compilationResult;
-        next();
-      });
+      Compiler.compileFile(filename, next);
     },
-    function deployAllContracts(next) {
-      Deployer.deployAll(result, web3, next);
+    function deployAllContracts(compilationResult, next) {
+      Deployer.deployAll(compilationResult, web3, next);
     },
     function runTests(contracts, next) {
       runTest("SimpleStorage", contracts.MyTest, next);
@@ -29,7 +23,7 @@ var runTestFile = function(filename, web3) {
   });
 }
 
-
 module.exports = {
-  runTestFile: runTestFile
+  runTestFile: runTestFile,
+  runTest: runTest
 };
