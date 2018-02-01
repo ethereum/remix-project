@@ -1,6 +1,5 @@
 var async = require('async');
 var changeCase = require('change-case');
-require('colors');
 
 function runTest(testName, testObject, testCallback, resultsCallback) {
   let runList = [];
