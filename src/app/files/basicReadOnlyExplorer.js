@@ -38,7 +38,8 @@ class BasicReadOnlyExplorer {
   }
 
   set (path, content, cb) {
-    this.addReadOnly(path, content)
+    var unprefixedPath = this.removePrefix(path)
+    this.addReadOnly(unprefixedPath, content)
     if (cb) cb()
     return true
   }
