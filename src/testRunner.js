@@ -2,7 +2,7 @@ var async = require('async');
 var changeCase = require('change-case');
 require('colors');
 
-function runTest(testName, testObject, accounts, callback) {
+function runTest(testName, testObject, callback) {
   let runList = [];
   let specialFunctions = ['beforeAll'];
   let availableFunctions = testObject._jsonInterface.filter((x) => x.type === 'function').map((x) => x.name);

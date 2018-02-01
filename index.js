@@ -26,7 +26,7 @@ var runTest = function(filename, web3) {
     },
     function runTests(contracts, next) {
       let test = contracts.MyTest;
-      TestRunner.runTest("SimpleStorage", test, accounts, next);
+      TestRunner.runTest("SimpleStorage", test, next);
     }
   ], function() {
   });
