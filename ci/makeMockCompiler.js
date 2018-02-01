@@ -1,9 +1,7 @@
 'use strict'
 
 var fs = require('fs')
-var solc = require('solc/wrapper')
-var soljson = require('../soljson')
-var compiler = solc(soljson)
+var compiler = require('solc')
 
 var compilerInput = require('remix-solidty').CompilerInput
 var compilationResult = {}
