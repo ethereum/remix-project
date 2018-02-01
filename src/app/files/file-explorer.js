@@ -54,6 +54,7 @@ var css = csjs`
 module.exports = fileExplorer
 
 var focusElement = null
+var focusPath = null
 
 function fileExplorer (appAPI, files) {
   var self = this
@@ -108,13 +109,15 @@ function fileExplorer (appAPI, files) {
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
-        onload=${function (el) { adaptEnvironment(el, focus, hover, li) }}
-        onunload=${function (el) { unadaptEnvironment(el, focus, hover, li) }}
         onclick=${editModeOn}
         onkeydown=${editModeOff}
         onblur=${editModeOff}
       >${key.split('/').pop()}</label>`
     }
+  })
+
+  self.treeView.event.register('leafClick', function (key, data, label) {
+    self.events.trigger('focus', [key])
   })
 
   self.treeView.event.register('nodeClick', function (path, childrenContainer) {
@@ -141,18 +144,17 @@ function fileExplorer (appAPI, files) {
     return newList
   }
 
-  var deleteButton = yo`
-    <span class=${css.remove} onclick=${deletePath}>
-      <i class="fa fa-trash" aria-hidden="true"></i>
-    </span>
-  `
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
+    if (focusElement && newFile !== focusPath) {
+      focusElement.classList.remove(css.hasFocus)
+    }
     if (explorer === files) {
-      fileFocus(newFile)
-    } else {
-      var currentFile = appAPI.config.get('currentFile')
-      if (currentFile === newFile) return
-      unfocus(focusElement)
+      focusElement = self.treeView.labelAt(newFile)
+      if (focusElement) {
+        focusPath = newFile
+        focusElement.classList.add(css.hasFocus)
+        appAPI.config.set('currentFile', newFile)
+      }
     }
   })
   fileEvents.register('fileRemoved', fileRemoved)
@@ -187,57 +189,9 @@ function fileExplorer (appAPI, files) {
     }
   }
 
-  function focus (event) {
-    event.cancelBubble = true
-    var li = this
-    if (focusElement === li) return
-    unfocus(focusElement)
-    focusElement = li
-    focusElement.classList.toggle(css.hasFocus)
-    var label = getLabelFrom(li)
-    var filepath = label.dataset.path
-    var isFile = label.className.indexOf('file') === 0
-    if (isFile) self.events.trigger('focus', [filepath])
-  }
-
-  function unfocus (el) {
-    if (focusElement) focusElement.classList.toggle(css.hasFocus)
-    focusElement = null
-  }
-
-  function hover (event) {
-    var path = this.querySelector('label').dataset.path
-    if (path === self.files.type) return // can't delete the root node
-
-    if (event.type === 'mouseout') {
-      var exitedTo = event.toElement || event.relatedTarget
-      if (this.contains(exitedTo)) return
-      this.style.backgroundColor = ''
-      this.style.paddingRight = '19px'
-      return this.removeChild(deleteButton)
-    }
-    this.style.backgroundColor = styles.leftPanel.backgroundColor_FileExplorer
-    this.style.paddingRight = '0px'
-    this.appendChild(deleteButton)
-  }
-
   function getElement (path) {
     var label = self.element.querySelector(`label[data-path="${path}"]`)
     if (label) return getLiFrom(label)
-  }
-
-  function deletePath (event) {
-    event.cancelBubble = true
-    var span = this
-    var li = span.parentElement.parentElement
-    var label = getLabelFrom(li)
-    var path = label.dataset.path
-    var isFolder = !!~label.className.indexOf('folder')
-    if (isFolder) path += '/'
-    modalDialogCustom.confirm(null, `Do you really want to delete "${path}" ?`, () => {
-      li.parentElement.removeChild(li)
-      removeSubtree(files, path, isFolder)
-    })
   }
 
   function editModeOn (event) {
@@ -292,15 +246,6 @@ function fileExplorer (appAPI, files) {
     }
   }
 
-  function fileFocus (path) {
-    var filepath = appAPI.config.get('currentFile')
-    if (filepath === path) return
-    var label = document.querySelector(`label[data-path="${path}"]`)
-    if (label) {
-      appAPI.config.set('currentFile', path)
-    }
-  }
-
   function fileRemoved (filepath) {
     var li = getElement(filepath)
     if (li) li.parentElement.removeChild(li)
@@ -336,56 +281,8 @@ function fileExplorer (appAPI, files) {
   }
 }
 
-/*
-  HELPER FUNCTIONS
-*/
-function adaptEnvironment (label, focus, hover) {
-  var li = getLiFrom(label) // @TODO: maybe this gets refactored?
-  li.style.position = 'relative'
-  var span = li.firstChild
-  // add focus
-  li.addEventListener('click', focus)
-  // add hover
-  span.classList.add(css.activeMode)
-  span.addEventListener('mouseover', hover)
-  span.addEventListener('mouseout', hover)
-}
-
-function unadaptEnvironment (label, focus, hover) {
-  var li = getLiFrom(label) // @TODO: maybe this gets refactored?
-  var span = li.firstChild
-  li.style.position = undefined
-  // remove focus
-  li.removeEventListener('click', focus)
-  // remove hover
-  span.classList.remove(css.activeMode)
-  span.removeEventListener('mouseover', hover)
-  span.removeEventListener('mouseout', hover)
-}
-
 function getLiFrom (label) {
   return label.parentElement.parentElement.parentElement
-}
-
-function getLabelFrom (li) {
-  return li.children[0].children[1].children[0]
-}
-
-function removeSubtree (files, path, isFolder) {
-  var parts = path.split('/')
-  var isFile = parts[parts.length - 1].length
-  var removePaths = isFile ? [path] : Object.keys(files.list()).filter(keep)
-  function keep (p) { return ~p.indexOf(path) }
-  removePaths.forEach(function (path) {
-    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
-      if (span.innerText === path) {
-        var li = span.parentElement
-        li.parentElement.removeChild(li) // delete tab
-      }
-    })
-    files.remove(path)
-  })
-  if (isFolder) files.remove(path)
 }
 
 fileExplorer.prototype.init = function () {
