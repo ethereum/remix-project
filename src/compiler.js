@@ -1,5 +1,6 @@
 let fs = require('fs');
 var async = require('async');
+var path = require('path');
 
 let remixLib = require('remix-lib');
 let compilerInput = remixLib.helpers.compiler;
@@ -12,9 +13,14 @@ function compileFile(filename, cb) {
   let compiler;
   const sources = {
     "tests.sol": {content: fs.readFileSync("sol/tests.sol").toString()},
-    "simple_storage.sol": {content: fs.readFileSync("examples/simple_storage.sol").toString()},
-    "simple_storage_test.sol": {content: fs.readFileSync("examples/simple_storage_test.sol").toString()}
-  };
+  }
+
+  // TODO: for now assumes filepath dir contains all tests, later all this
+  // should be replaced with remix's & browser solidity compiler code
+  let filepath = path.dirname(filename);
+  fs.readdirSync(filepath).forEach(file => {
+    sources[file] = {content: fs.readFileSync(path.join(filepath, file)).toString()}
+  });
 
   async.waterfall([
     function loadCompiler(next) {
@@ -33,7 +39,7 @@ function compileFile(filename, cb) {
       compiler.compile(sources, "examples/");
     }
   ], function(err, result) {
-    cb(null, result.contracts);
+    cb(err, result.contracts);
   });
 
 }
