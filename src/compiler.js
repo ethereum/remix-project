@@ -8,8 +8,6 @@ let RemixCompiler = require('remix-solidity').Compiler;
 
 // TODO: replace this with remix's own compiler code
 function compileFile(filename, cb) {
-  console.log("compile all");
-
   let compiler;
   const sources = {
     "tests.sol": {content: fs.readFileSync("sol/tests.sol").toString()},
@@ -24,7 +22,6 @@ function compileFile(filename, cb) {
 
   async.waterfall([
     function loadCompiler(next) {
-      console.log("loadCompiler");
       compiler = new RemixCompiler();
       compiler.onInternalCompilerLoaded();
       //compiler.event.register('compilerLoaded', this, function (version) {
@@ -35,7 +32,6 @@ function compileFile(filename, cb) {
       compiler.event.register('compilationFinished', this, function (success, data, source) {
         next(null, data);
       });
-      console.log("doCompilation");
       compiler.compile(sources, "examples/");
     }
   ], function(err, result) {

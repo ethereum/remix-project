@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js) && cd ..",
+    "prepublish": "npm-run-all -ls downloadsolc"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,10 @@
     "colors": "^1.1.2",
     "commander": "^2.13.0",
     "ethereumjs-vm": "^2.3.2",
+    "npm-run-all": "^4.1.2",
     "remix-lib": "^0.1.2",
     "remix-solidity": "../remix/remix-solidity",
+    "solc": "https://github.com/ethereum/solc-js",
     "web3": "^1.0.0-beta.27"
   }
 }
