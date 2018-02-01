@@ -1,5 +1,4 @@
 let fs = require('fs');
-//let compiler = require('solc');
 var async = require('async');
 
 let remixLib = require('remix-lib');
@@ -8,15 +7,6 @@ let RemixCompiler = require('remix-solidity').Compiler;
 
 // TODO: replace this with remix's own compiler code
 function compileAll(cb) {
-  //const input = {
-  //  "simple_storage.sol": fs.readFileSync("examples/simple_storage.sol").toString(),
-  //  "tests.sol": fs.readFileSync("examples/tests.sol").toString(),
-  //  "simple_storage_test.sol": fs.readFileSync("examples/simple_storage_test.sol").toString()
-  //};
-  //const optimize = 1;
-  //result = compiler.compileStandardWrapper({sources: input}, optimize);
-  //cb(null, result.contracts);
-
   console.log("compile all");
 
   let compiler;
@@ -43,8 +33,6 @@ function compileAll(cb) {
       compiler.compile(sources, "examples/");
     }
   ], function(err, result) {
-    console.dir("==== result ====");
-    console.dir(result);
     cb(null, result.contracts);
   });
 
