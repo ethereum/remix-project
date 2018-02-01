@@ -139,6 +139,7 @@
     ]
   },
   "scripts": {
+    "setupremix": "npm run pullremix; npm run linkremixcore; npm run linkremixlib; npm run linkremixsolidity; npm run linkremixdebugger;",
     "pullremix": "mkdir remix; git clone https://github.com/ethereum/remix; cd ..",
     "linkremixcore": "cd node_modules && rm -rf remix-core && ln -s ../remix/remix-core remix-core && cd ..",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../remix/remix-lib remix-lib && cd ..",
