@@ -3,7 +3,7 @@
 var fs = require('fs')
 var compiler = require('solc')
 
-var compilerInput = require('remix-solidty').CompilerInput
+var compilerInput = require('remix-solidity').CompilerInput
 var compilationResult = {}
 gatherCompilationResults('./test-browser/tests/', compilationResult)
 gatherCompilationResults('./test-browser/tests/units/', compilationResult)
