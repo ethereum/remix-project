@@ -2,7 +2,7 @@ var async = require('async');
 var changeCase = require('change-case');
 require('colors');
 
-function runTest(testName, testObject, callback) {
+function runTest(testName, testObject, testCallback, resultsCallback) {
   let runList = [];
   let specialFunctions = ['beforeAll'];
   let availableFunctions = testObject._jsonInterface.filter((x) => x.type === 'function').map((x) => x.name);
@@ -18,19 +18,16 @@ function runTest(testName, testObject, callback) {
 
   let passingNum = 0, failureNum = 0;
 
-  console.log(("#" + testName).green);
+  testCallback({type: "contract", value: testName});
   async.eachOfLimit(runList, 1, function(func, index, next) {
     let method = testObject.methods[func.name].apply(testObject.methods[func.name], []);
     if (func.constant) {
       method.call().then((result) => {
         if (result) {
-          // TODO: should instead be returned in a callback, the caller can
-          // decide how to handle the output (so works both in console and
-          // browser)
-          console.log("\t✓ ".green.bold + changeCase.sentenceCase(func.name).grey);
+          testCallback({type: "testPass", value: changeCase.sentenceCase(func.name)});
           passingNum += 1;
         } else {
-          console.log("\t✘ ".bold.red + changeCase.sentenceCase(func.name).red);
+          testCallback({type: "testFailure", value: changeCase.sentenceCase(func.name)});
           failureNum += 1;
         }
         next();
@@ -41,12 +38,10 @@ function runTest(testName, testObject, callback) {
       });
     }
   }, function() {
-    if (passingNum > 0) {
-      console.log((passingNum + " passing").green);
-    }
-    if (failureNum > 0) {
-      console.log((failureNum + " failing").red);
-    }
+    resultsCallback(null, {
+      passingNum: passingNum,
+      failureNum: failureNum
+    });
   });
 }
 
