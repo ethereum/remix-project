@@ -16,7 +16,9 @@ function runTest(testName, testObject, callback) {
     runList.push({name: func.name, type: 'test', constant: func.constant});
   }
 
-  console.log("#" + testName);
+  let passingNum = 0, failureNum = 0;
+
+  console.log(("#" + testName).green);
   async.eachOfLimit(runList, 1, function(func, index, next) {
     let method = testObject.methods[func.name].apply(testObject.methods[func.name], []);
     if (func.constant) {
@@ -26,8 +28,10 @@ function runTest(testName, testObject, callback) {
           // decide how to handle the output (so works both in console and
           // browser)
           console.log("\t✓ ".green.bold + changeCase.sentenceCase(func.name).grey);
+          passingNum += 1;
         } else {
           console.log("\t✘ ".bold.red + changeCase.sentenceCase(func.name).red);
+          failureNum += 1;
         }
         next();
       });
@@ -37,8 +41,12 @@ function runTest(testName, testObject, callback) {
       });
     }
   }, function() {
-    console.log("1 passing".green);
-    console.log("1 failing".red);
+    if (passingNum > 0) {
+      console.log((passingNum + " passing").green);
+    }
+    if (failureNum > 0) {
+      console.log((failureNum + " failing").red);
+    }
   });
 }
 
