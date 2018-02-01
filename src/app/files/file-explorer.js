@@ -127,8 +127,8 @@ function fileExplorer (appAPI, files) {
       if (error) console.error(error)
       if (!fileTree) return
       var newTree = normalize(path, fileTree)
-      var tree = self.treeView.renderProperties(newTree, false)
-      ;[...tree.children].forEach(child => childrenContainer.appendChild(child))
+      newTree = self.treeView.renderProperties(newTree, false)
+      self.treeView.updateNode(path, newTree)
     })
   })
 
@@ -323,14 +323,13 @@ function fileExplorer (appAPI, files) {
       var folderpath = filepath.split('/').slice(0, -1).join('/')
 
       var currentTree = self.treeView.nodeAt(folderpath)
-      if (currentTree) {
+      if (currentTree && self.treeView.isExpanded(folderpath)) {
         self.files.resolveDirectory(folderpath, (error, fileTree) => {
           if (error) console.error(error)
           if (!fileTree) return
           fileTree = normalize(folderpath, fileTree)
           var newTree = self.treeView.renderProperties(fileTree, false)
-          currentTree.innerHTML = ''
-          ;[...newTree.children].forEach(child => currentTree.appendChild(child))
+          self.treeView.updateNode(folderpath, newTree)
         })
       }
     })
