@@ -105,6 +105,14 @@ class TreeView {
     return li
   }
 
+  isExpanded (path) {
+    var current = this.nodeAt(path)
+    if (current) {
+      return current.style.display !== 'none'
+    }
+    return false
+  }
+
   expand (path) {
     if (this.labels[path]) {
       this.carets[path].className = this.carets[path].className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
@@ -115,6 +123,17 @@ class TreeView {
 
   nodeAt (path) {
     return this.nodes[path]
+  }
+
+  updateNode (path, newNode) {
+    var current = this.nodeAt(path)
+    if (current) {
+      var parent = current.parentNode
+      if (parent) {
+        parent.replaceChild(newNode, current)
+        this.nodes[path] = newNode
+      }
+    }
   }
 
   formatSelfDefault (key, data) {
