@@ -103,18 +103,6 @@ function Files (storage) {
     return false
   }
 
-  //
-  // Tree model for files
-  // {
-  //   'a': { }, // empty directory 'a'
-  //   'b': {
-  //     'c': {}, // empty directory 'b/c'
-  //     'd': { '/readonly': true, '/content': 'Hello World' } // files 'b/c/d'
-  //     'e': { '/readonly': false, '/path': 'b/c/d' } // symlink to 'b/c/d'
-  //     'f': { '/readonly': false, '/content': '<executable>', '/mode': 0755 }
-  //   }
-  // }
-  //
   this.resolveDirectory = function (path, callback) {
     var self = this
     if (path[0] === '/') path = path.substring(1)
@@ -135,24 +123,9 @@ function Files (storage) {
     })
 
     Object.keys(filesList).forEach(function (path) {
-      hashmapize(tree, path, {
-        '/readonly': self.isReadOnly(path),
-        '/content': self.get(path)
-      })
+      tree[path] = { isDirectory: false }
     })
     return callback(null, tree)
-    function hashmapize (obj, path, val) {
-      var nodes = path.split('/')
-      var i = 0
-      for (; i < nodes.length - 1; i++) {
-        var node = nodes[i]
-        if (obj[node] === undefined) {
-          obj[node] = {}
-        }
-        obj = obj[node]
-      }
-      obj[nodes[i]] = val
-    }
   }
 
   this.removePrefix = function (path) {
