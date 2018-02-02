@@ -37,7 +37,9 @@ var css = csjs`
     color: ${styles.terminal.icon_Color};
     font-size: 15px;
     cursor: pointer;
-    float: left;
+    display: flex;
+    position: absolute;
+    left: 7px;
   }
   .caret:hover {
     color: ${styles.terminal.icon_HoverColor};
@@ -67,12 +69,14 @@ var css = csjs`
     width: 70%;
     border-bottom: 1px solid white;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
   }
   .td:first-child {
-    min-width: 130px;
+    min-width: 30%;
+    width: 30%;
     display: flex;
     align-items: baseline;
+    font-weight: bold;
   }
   #txTable {
     margin-top: 1%;
@@ -81,7 +85,6 @@ var css = csjs`
     width: 85%;
   }
   .tr, .td {
-    padding: 4px;
     vertical-align: baseline;
   }
   .td:first-child {
