@@ -15,17 +15,11 @@ function compileFileOrFiles (filename, isDirectory, cb) {
 
   // TODO: for now assumes filepath dir contains all tests, later all this
   // should be replaced with remix's & browser solidity compiler code
-  if (isDirectory) {
-    filepath = filename
-    fs.readdirSync(filename).forEach(file => {
-      sources[file] = {content: fs.readFileSync(path.join(filename, file)).toString()}
-    })
-  } else {
-    filepath = path.dirname(filename)
-    fs.readdirSync(filepath).forEach(file => {
-      sources[file] = {content: fs.readFileSync(path.join(filepath, file)).toString()}
-    })
-  }
+  filepath = (isDirectory ? filename : path.dirname(filename))
+
+  fs.readdirSync(filepath).forEach(file => {
+    sources[file] = {content: fs.readFileSync(path.join(filepath, file)).toString()}
+  })
 
   async.waterfall([
     function loadCompiler (next) {
