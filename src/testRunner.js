@@ -32,7 +32,7 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
         if (result) {
           testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time})
           passingNum += 1
-          timePassed += time;
+          timePassed += time
         } else {
           testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time})
           failureNum += 1

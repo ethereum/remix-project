@@ -66,21 +66,21 @@ var runTestFiles = function (filepath, isDirectory, web3) {
           }
           resultsCallback(null, result, cb)
         })
-      }, function(err, _results) {
+      }, function (err, _results) {
         if (err) {
           return next(err)
         }
 
-        console.log("\n")
+        console.log('\n')
         if (totalPassing > 0) {
-          console.log(("  " + totalPassing + ' passing ').green + ('(' + totalTime + 's)').grey)
+          console.log(('  ' + totalPassing + ' passing ').green + ('(' + totalTime + 's)').grey)
         }
         if (totalFailing > 0) {
-          console.log(("  " + totalFailing + ' failing').red)
+          console.log(('  ' + totalFailing + ' failing').red)
         }
-        console.log("")
+        console.log('')
 
-        next();
+        next()
       })
     }
   ], function () {
