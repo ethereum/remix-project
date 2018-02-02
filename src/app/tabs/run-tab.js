@@ -247,16 +247,11 @@ function runTab (container, appAPI, appEvents, opts) {
   }
 
   selectExEnv.addEventListener('change', function (event) {
-    executionContext.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value, null, () => {
+    let context = selectExEnv.options[selectExEnv.selectedIndex].value;
+    executionContext.executionContextChange(context, null, () => {
 
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-          let endPointUrl = null;
-          let context = selectExEnv.options[selectExEnv.selectedIndex].value;
-
-          if (!endPointUrl) {
-            endPointUrl = 'http://localhost:8545'
-          }
-          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
+          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
             executionContext.setProviderFromEndpoint(target, context, setFinalContext)
           }, setFinalContext)
         }, setFinalContext)
