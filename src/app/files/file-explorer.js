@@ -1,4 +1,3 @@
-/* global FileReader */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('remix-debugger').ui.TreeView
@@ -56,9 +55,14 @@ module.exports = fileExplorer
 function fileExplorer (appAPI, files) {
   var self = this
   this.events = new EventManager()
+  // file provider backend
   this.files = files
+  // element currently focused on
   this.focusElement = null
+  // path currently focused on
   this.focusPath = null
+
+  // warn if file changed outside of Remix
   function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
   }
@@ -80,8 +84,51 @@ function fileExplorer (appAPI, files) {
     }
   })
 
-  var fileEvents = files.event
+  // register to event of the file provider
+  files.event.register('fileRemoved', fileRemoved)
+  files.event.register('fileRenamed', fileRenamed)
+  files.event.register('fileRenamedError', fileRenamedError)
+  files.event.register('fileAdded', fileAdded)
 
+  function fileRenamedError (error) {
+    modalDialogCustom.alert(error)
+  }
+
+  function fileAdded (filepath) {
+    self.ensureRoot(() => {
+      var folderpath = filepath.split('/').slice(0, -1).join('/')
+
+      var currentTree = self.treeView.nodeAt(folderpath)
+      if (currentTree && self.treeView.isExpanded(folderpath)) {
+        self.files.resolveDirectory(folderpath, (error, fileTree) => {
+          if (error) console.error(error)
+          if (!fileTree) return
+          fileTree = normalize(folderpath, fileTree)
+          self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+          self.focusElement = self.treeView.labelAt(self.focusPath)
+          // TODO: here we update the selected file (it applicable)
+          // cause we are refreshing the interface of the whole directory when there's a new file.
+          if (self.focusElement && !self.focusElement.classList.contains(css.hasFocus)) {
+            self.focusElement.classList.add(css.hasFocus)
+          }
+        })
+      }
+    })
+  }
+
+  function fileRemoved (filepath) {
+    var label = this.treeView.labelAt(filepath)
+    if (label && label.parentElement) {
+      label.parentElement.removeChild(label)
+    }
+  }
+
+  function fileRenamed (oldName, newName, isFolder) {
+    fileRemoved(oldName)
+    fileAdded(newName)
+  }
+
+  // make interface and register to nodeClick, leafClick
   self.treeView = new Treeview({
     extractData: function extractData (value, tree, key) {
       var newValue = {}
@@ -150,6 +197,7 @@ function fileExplorer (appAPI, files) {
     return newList
   }
 
+  // register to main app, trigger when the current file in the editor changed
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
     if (self.focusElement && explorer.type !== files.type && self.focusPath !== newFile) {
       self.focusElement.classList.remove(css.hasFocus)
@@ -157,23 +205,14 @@ function fileExplorer (appAPI, files) {
       self.focusPath = null
     }
   })
-  fileEvents.register('fileRemoved', fileRemoved)
-  fileEvents.register('fileRenamed', fileRenamed)
-  fileEvents.register('fileRenamedError', fileRenamedError)
-  fileEvents.register('fileAdded', fileAdded)
 
   var textUnderEdit = null
   var textInRename = false
 
-  function getElement (path) {
-    var label = self.element.querySelector(`label[data-path="${path}"]`)
-    if (label) return getLiFrom(label)
-  }
-
   function editModeOn (event) {
     if (self.files.readonly) return
     var label = this
-    var li = getLiFrom(label)
+    var li = label.parentElement.parentElement.parentElement
     var classes = li.className
     if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable') && label.getAttribute('data-path') !== self.files.type) {
       textUnderEdit = label.innerText
@@ -204,66 +243,19 @@ function fileExplorer (appAPI, files) {
       }
     }
 
-    function cancelRename () {
-      label.innerText = textUnderEdit
-    }
-
     if (event.which === 13) event.preventDefault()
     if (!textInRename && (event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
       textInRename = true
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { cancelRename() })
+        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { label.innerText = textUnderEdit })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)
       textInRename = false
     }
   }
-
-  function fileRemoved (filepath) {
-    var li = getElement(filepath)
-    if (li) li.parentElement.removeChild(li)
-  }
-
-  function fileRenamed (oldName, newName, isFolder) {
-    var li = getElement(oldName)
-    if (li) {
-      li.parentElement.removeChild(li)
-      fileAdded(newName)
-    }
-  }
-
-  function fileRenamedError (error) {
-    modalDialogCustom.alert(error)
-  }
-
-  function fileAdded (filepath) {
-    self.ensureRoot(() => {
-      var folderpath = filepath.split('/').slice(0, -1).join('/')
-
-      var currentTree = self.treeView.nodeAt(folderpath)
-      if (currentTree && self.treeView.isExpanded(folderpath)) {
-        self.files.resolveDirectory(folderpath, (error, fileTree) => {
-          if (error) console.error(error)
-          if (!fileTree) return
-          fileTree = normalize(folderpath, fileTree)
-          self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
-          self.focusElement = self.treeView.labelAt(self.focusPath)
-          // TODO: here we update the selected file (it applicable)
-          // cause we are refreshing the interface of the whole directory when there's a new file.
-          if (self.focusElement && !self.focusElement.classList.contains(css.hasFocus)) {
-            self.focusElement.classList.add(css.hasFocus)
-          }
-        })
-      }
-    })
-  }
-}
-
-function getLiFrom (label) {
-  return label.parentElement.parentElement.parentElement
 }
 
 fileExplorer.prototype.init = function () {
