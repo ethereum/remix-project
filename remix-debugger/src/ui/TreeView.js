@@ -77,7 +77,7 @@ class TreeView {
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
-    var li = yo`<li class=${css.li_tv}></li>`
+    var li = yo`<li key=${key} class=${css.li_tv}></li>`
     var caret = yo`<div class="fa fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
       <div key=${key} class=${css.label_tv}>
@@ -125,6 +125,10 @@ class TreeView {
     if (label) {
       return label.querySelector('.caret')
     }
+  }
+
+  itemAt (path) {
+    return this.view.querySelector(`li[key="${path}"]`)
   }
 
   labelAt (path) {
