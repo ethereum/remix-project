@@ -36,20 +36,23 @@ var runTestFile = function (filename, web3) {
           console.log('\t✘ '.bold.red + result.value.red)
         }
       }
-      var resultsCallback = function (err, result) {
-        if (err) {
-          return cb(err)
-        }
+      var resultsCallback = function (_err, result, cb) {
         if (result.passingNum > 0) {
           console.log((result.passingNum + ' passing').green)
         }
         if (result.failureNum > 0) {
           console.log((result.failureNum + ' failing').red)
         }
+        cb()
       }
 
       async.eachLimit(contractsToTest, 1, (contractName, cb) => {
-        runTest(contractName, contracts[contractName], testCallback, resultsCallback)
+        runTest(contractName, contracts[contractName], testCallback, (err, result) => {
+          if (err) {
+            return cb(err)
+          }
+          resultsCallback(null, result, cb)
+        })
       }, next)
     }
   ], function () {
