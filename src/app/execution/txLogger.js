@@ -53,27 +53,24 @@ var css = csjs`
   .txTable, .tr, .td {
     border-collapse: collapse;
     font-size: 10px;
-  }
-  .tr {
-    width: 70%;
-    border-bottom: 1px solid white;
-    display: flex;
-    align-items: center;
-  }
-  .td:first-child {
-    min-width: 30%;
-    width: 30%;
-    display: flex;
-    align-items: baseline;
-    font-weight: bold;
+    color: ${styles.terminal.text_Primary};
+    border: 1px solid ${styles.terminal.text_Secondary};
   }
   #txTable {
     margin-top: 1%;
     margin-bottom: 5%;
     align-self: center;
+    width: 85%;
   }
   .tr, .td {
+    padding: 4px;
     vertical-align: baseline;
+  }
+  .td:first-child {
+    min-width: 30%;
+    width: 30%;
+    align-items: baseline;
+    font-weight: bold;
   }
   .tableTitle {
     width: 25%;
@@ -192,7 +189,7 @@ function renderKnownTransaction (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${txDetails}>
-        <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
+        <i class="${css.caret} fa fa-caret-right"></i>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
         <div class=${css.debug} onclick=${debug}>[debug]</div>
@@ -205,8 +202,8 @@ function renderKnownTransaction (self, data) {
   function txDetails () {
     var log = document.querySelector("[class^='log']")
     var caret = document.querySelector("[class^='caret']")
-    var caretDown = yo`<i class="${css.caret} fa fa-caret-down" onclick=${txDetails}></i>`
-    var caretRight = yo`<i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>`
+    var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
+    var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
     if (table && table.parentNode) {
       tx.removeChild(table)
       log.removeChild(caret)
@@ -251,7 +248,7 @@ function renderCall (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${txDetails}>
-        <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
+        <i class="${css.caret} fa fa-caret-right"></i>
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
@@ -271,8 +268,8 @@ function renderCall (self, data) {
   function txDetails () {
     var log = document.querySelector("[class^='log']")
     var caret = document.querySelector("[class^='caret']")
-    var caretDown = yo`<i class="${css.caret} fa fa-caret-down" onclick=${txDetails}></i>`
-    var caretRight = yo`<i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>`
+    var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
+    var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
     if (table && table.parentNode) {
       tx.removeChild(table)
       log.removeChild(caret)
@@ -309,7 +306,7 @@ function renderUnknownTransaction (self, data) {
   }
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
+      <i class="${css.caret} fa fa-caret-right"></i>
       <div class="${css.log}" onclick=${txDetails}>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
@@ -322,8 +319,8 @@ function renderUnknownTransaction (self, data) {
   function txDetails () {
     var log = document.querySelector("[class^='log']")
     var caret = document.querySelector("[class^='caret']")
-    var caretDown = yo`<i class="${css.caret} fa fa-caret-down" onclick=${txDetails}></i>`
-    var caretRight = yo`<i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>`
+    var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
+    var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
     if (table && table.parentNode) {
       tx.removeChild(table)
       log.removeChild(caret)
@@ -434,10 +431,9 @@ function createTable (opts) {
 
   var contractAddress = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> contractAddress
-        ${copyToClipboard(() => opts.contractAddress)}
-      </td>
+      <td class="${css.td}"> contractAddress </td>
       <td class="${css.td}">${opts.contractAddress}
+        ${copyToClipboard(() => opts.contractAddress)}
       </td>
     </tr>
   `
@@ -445,10 +441,9 @@ function createTable (opts) {
 
   var from = yo`
     <tr class="${css.tr}">
-      <td class="${css.td} ${css.tableTitle}"> from
-        ${copyToClipboard(() => opts.from)}
-      </td>
+      <td class="${css.td} ${css.tableTitle}"> from </td>
       <td class="${css.td}">${opts.from}
+        ${copyToClipboard(() => opts.from)}
       </td>
     </tr>
   `
@@ -463,10 +458,9 @@ function createTable (opts) {
   }
   var to = yo`
     <tr class="${css.tr}">
-    <td class="${css.td}"> to
-      ${copyToClipboard(() => data.to ? data.to : toHash)}
-    </td>
+    <td class="${css.td}"> to </td>
     <td class="${css.td}">${toHash}
+      ${copyToClipboard(() => data.to ? data.to : toHash)}
     </td>
     </tr>
   `
@@ -474,10 +468,9 @@ function createTable (opts) {
 
   var gas = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> gas
-        ${copyToClipboard(() => opts.gas)}
-      </td>
+      <td class="${css.td}"> gas </td>
       <td class="${css.td}">${opts.gas} gas
+        ${copyToClipboard(() => opts.gas)}
       </td>
     </tr>
   `
@@ -490,10 +483,9 @@ function createTable (opts) {
   if (opts.transactionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> transaction cost
-        ${copyToClipboard(() => opts.transactionCost)}
-      </td>
+      <td class="${css.td}"> transaction cost </td>
       <td class="${css.td}">${opts.transactionCost} gas ${callWarning}
+        ${copyToClipboard(() => opts.transactionCost)}
       </td>
     </tr>`)
   }
@@ -501,20 +493,18 @@ function createTable (opts) {
   if (opts.executionCost) {
     table.appendChild(yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> execution cost
-        ${copyToClipboard(() => opts.executionCost)}
-      </td>
+      <td class="${css.td}"> execution cost </td>
       <td class="${css.td}">${opts.executionCost} gas ${callWarning}
+        ${copyToClipboard(() => opts.executionCost)}
       </td>
     </tr>`)
   }
 
   var hash = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> hash
-        ${copyToClipboard(() => opts.hash)}
-      </td>
+      <td class="${css.td}"> hash </td>
       <td class="${css.td}">${opts.hash}
+        ${copyToClipboard(() => opts.hash)}
       </td>
     </tr>
   `
@@ -522,10 +512,9 @@ function createTable (opts) {
 
   var input = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> input
-        ${copyToClipboard(() => opts.input)}
-      </td>
+      <td class="${css.td}"> input </td>
       <td class="${css.td}">${opts.input}
+        ${copyToClipboard(() => opts.input)}
       </td>
     </tr>
   `
@@ -534,10 +523,9 @@ function createTable (opts) {
   if (opts['decoded input']) {
     var inputDecoded = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> decoded input
-        ${copyToClipboard(opts['decoded input'])}
-      </td>
+      <td class="${css.td}"> decoded input </td>
       <td class="${css.td}">${opts['decoded input']}
+        ${copyToClipboard(opts['decoded input'])}
       </td>
     </tr>`
     table.appendChild(inputDecoded)
@@ -558,12 +546,11 @@ function createTable (opts) {
   }
   var logs = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> logs
-        ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
-        ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
-      </td>
+      <td class="${css.td}"> logs </td>
       <td class="${css.td}" id="logs">
         ${JSON.stringify(stringified, null, '\t')}
+        ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
+        ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
       </td>
     </tr>
   `
@@ -572,10 +559,9 @@ function createTable (opts) {
   var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   val = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> value
-        ${copyToClipboard(() => `${val} wei`)}
-      </td>
+      <td class="${css.td}"> value </td>
       <td class="${css.td}">${val} wei
+        ${copyToClipboard(() => `${val} wei`)}
       </td>
     </tr>
   `
