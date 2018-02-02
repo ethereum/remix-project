@@ -784,7 +784,22 @@ function run () {
     runCompiler()
 
     if (queryParams.get().context) {
-      executionContext.setContext(queryParams.get().context, queryParams.get().endpointurl)
+      let context = queryParams.get().context
+      let endPointUrl = queryParams.get().endPointUrl
+      executionContext.setContext(context, endPointUrl,
+      () => {
+        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
+          if (!endPointUrl) {
+            endPointUrl = 'http://localhost:8545'
+          }
+          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
+            executionContext.setProviderFromEndpoint(target, context)
+          }, () => {})
+        }, () => {})
+      },
+      (alertMsg) => {
+        modalDialogCustom.alert(alertMsg)
+      })
     }
 
     if (queryParams.get().debugtx) {
