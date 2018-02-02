@@ -2,8 +2,6 @@ let fs = require('fs')
 var async = require('async')
 var path = require('path')
 
-let remixLib = require('remix-lib')
-let compilerInput = remixLib.helpers.compiler
 let RemixCompiler = require('remix-solidity').Compiler
 
 // TODO: replace this with remix's own compiler code
