@@ -1,11 +1,19 @@
 var async = require('async')
 var changeCase = require('change-case')
 
-function runTest (testName, testObject, testCallback, resultsCallback) {
-  let runList = []
+function getAvailableFunctions (jsonInterface) {
+  return jsonInterface.reverse().filter((x) => x.type === 'function').map((x) => x.name)
+}
+
+function getTestFunctions (jsonInterface) {
   let specialFunctions = ['beforeAll', 'beforeEach']
-  let availableFunctions = testObject._jsonInterface.reverse().filter((x) => x.type === 'function').map((x) => x.name)
-  let testFunctions = testObject._jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
+  return jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
+}
+
+function createRunList (jsonInterface) {
+  let availableFunctions = getAvailableFunctions(jsonInterface)
+  let testFunctions = getTestFunctions(jsonInterface)
+  let runList = []
 
   if (availableFunctions.indexOf('beforeAll') >= 0) {
     runList.push({name: 'beforeAll', type: 'internal', constant: false})
@@ -17,6 +25,12 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
     }
     runList.push({name: func.name, type: 'test', constant: func.constant})
   }
+
+  return runList
+}
+
+function runTest (testName, testObject, testCallback, resultsCallback) {
+  let runList = createRunList(testObject._jsonInterface)
 
   let passingNum = 0
   let failureNum = 0
