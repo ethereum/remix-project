@@ -48,7 +48,6 @@
     "remixd": "git+https://github.com/ethereum/remixd.git",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
-    "solc": "https://github.com/ethereum/solc-js",
     "standard": "^8.5.0",
     "swarmgw": "^0.2.0",
     "tape": "^4.5.1",
