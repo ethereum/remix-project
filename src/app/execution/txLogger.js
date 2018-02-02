@@ -17,12 +17,18 @@ var typeConversion = remixLib.execution.typeConversion
 var css = csjs`
   .log {
     display: flex;
+    cursor: pointer;
+  }
+  .log:hover {
+    opacity: 0.8;
   }
   .caret {
     color: ${styles.terminal.icon_Color};
     font-size: 15px;
     cursor: pointer;
-    float: left;
+    display: flex;
+    position: absolute;
+    left: 7px;
   }
   .caret:hover {
     color: ${styles.terminal.icon_HoverColor};
@@ -42,7 +48,7 @@ var css = csjs`
     color: ${styles.terminal.text_Title_TransactionLog};
     font-weight: bold;
     float: left;
-    margin: 0 5px;
+    margin: 0 10px;
   }
   .txTable, .tr, .td {
     border-collapse: collapse;
@@ -52,12 +58,14 @@ var css = csjs`
     width: 70%;
     border-bottom: 1px solid white;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
   }
   .td:first-child {
-    min-width: 130px;
+    min-width: 30%;
+    width: 30%;
     display: flex;
     align-items: baseline;
+    font-weight: bold;
   }
   #txTable {
     margin-top: 1%;
@@ -65,7 +73,6 @@ var css = csjs`
     align-self: center;
   }
   .tr, .td {
-    padding: 4px;
     vertical-align: baseline;
   }
   .tableTitle {
@@ -184,7 +191,7 @@ function renderKnownTransaction (self, data) {
   }
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <div class="${css.log}">
+      <div class="${css.log}" onclick=${txDetails}>
         <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
@@ -196,9 +203,17 @@ function renderKnownTransaction (self, data) {
 
   var table
   function txDetails () {
+    var log = document.querySelector("[class^='log']")
+    var caret = document.querySelector("[class^='caret']")
+    var caretDown = yo`<i class="${css.caret} fa fa-caret-down" onclick=${txDetails}></i>`
+    var caretRight = yo`<i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>`
     if (table && table.parentNode) {
       tx.removeChild(table)
+      log.removeChild(caret)
+      log.appendChild(caretRight)
     } else {
+      log.removeChild(caret)
+      log.appendChild(caretDown)
       table = createTable({
         contractAddress: data.tx.contractAddress,
         data: data.tx,
@@ -235,7 +250,7 @@ function renderCall (self, data) {
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <div class="${css.log}">
+      <div class="${css.log}" onclick=${txDetails}>
         <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
@@ -254,9 +269,17 @@ function renderCall (self, data) {
 
   var table
   function txDetails () {
+    var log = document.querySelector("[class^='log']")
+    var caret = document.querySelector("[class^='caret']")
+    var caretDown = yo`<i class="${css.caret} fa fa-caret-down" onclick=${txDetails}></i>`
+    var caretRight = yo`<i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>`
     if (table && table.parentNode) {
       tx.removeChild(table)
+      log.removeChild(caret)
+      log.appendChild(caretRight)
     } else {
+      log.removeChild(caret)
+      log.appendChild(caretDown)
       table = createTable({
         isCall: data.tx.isCall,
         contractAddress: data.tx.contractAddress,
@@ -287,7 +310,7 @@ function renderUnknownTransaction (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>
-      <div class="${css.log}">
+      <div class="${css.log}" onclick=${txDetails}>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${debug}>[debug]</div>
@@ -297,9 +320,17 @@ function renderUnknownTransaction (self, data) {
   `
   var table
   function txDetails () {
+    var log = document.querySelector("[class^='log']")
+    var caret = document.querySelector("[class^='caret']")
+    var caretDown = yo`<i class="${css.caret} fa fa-caret-down" onclick=${txDetails}></i>`
+    var caretRight = yo`<i class="${css.caret} fa fa-caret-right" onclick=${txDetails}></i>`
     if (table && table.parentNode) {
       tx.removeChild(table)
+      log.removeChild(caret)
+      log.appendChild(caretRight)
     } else {
+      log.removeChild(caret)
+      log.appendChild(caretDown)
       table = createTable({
         data: data.tx,
         from,
