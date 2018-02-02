@@ -20,7 +20,6 @@ var css = csjs`
     -webkit-padding-start: 0px;
   }
   .caret_tv {
-    margin-top: 3px;
     width: 10px;
   }
   .label_tv {
@@ -44,12 +43,10 @@ class TreeView {
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
-    this.nodeIsExpanded = {}
-    this.nodes = {}
   }
 
-  render (json) {
-    var view = this.renderProperties(json, false)
+  render (json, expand) {
+    var view = this.renderProperties(json, expand)
     if (!this.view) {
       this.view = view
     }
@@ -70,44 +67,84 @@ class TreeView {
     return this.formatData(key, data, children, expand, keyPath)
   }
 
-  renderProperties (json, expand) {
+  renderProperties (json, expand, key) {
+    key = key || ''
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul class="${css.ul_tv}">${children}</ul>`
+    return yo`<ul key=${key} class="${css.ul_tv}">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
-    var li = yo`<li class=${css.li_tv}></li>`
-    var caret = yo`<div class="fa fa-caret-right ${css.caret_tv}"></div>`
+    var li = yo`<li key=${key} class=${css.li_tv}></li>`
+    var caret = yo`<div class="fa fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
-      <div class=${css.label_tv}>
+      <div key=${key} class=${css.label_tv}>
         ${caret}
         <span>${self.formatSelf(key, data, li)}</span>
       </div>`
     li.appendChild(label)
     if (data.children) {
-      var isExpanded = self.nodeIsExpanded[keyPath]
-      var list = yo`<ul class=${css.ul_tv}>${children}</ul>`
-      this.nodes[keyPath] = list
-      list.style.display = isExpanded !== undefined ? (isExpanded ? 'block' : 'none') : (expand ? 'block' : 'none')
-      caret.className = list.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
+      var list = yo`<ul key=${key} class=${css.ul_tv}>${children}</ul>`
+      list.style.display = 'none'
+      caret.className = list.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
       label.onclick = function () {
-        caret.className = caret.className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
-        list.style.display = list.style.display === 'none' ? 'block' : 'none'
-        self.nodeIsExpanded[keyPath] = list.style.display === 'block'
-        self.event.trigger('nodeClick', [keyPath, list])
+        self.expand(keyPath)
       }
       li.appendChild(list)
     } else {
       caret.style.visibility = 'hidden'
+      label.onclick = function () {
+        self.event.trigger('leafClick', [key, data, label])
+      }
     }
     return li
   }
 
+  isExpanded (path) {
+    var current = this.nodeAt(path)
+    if (current) {
+      return current.style.display !== 'none'
+    }
+    return false
+  }
+
+  expand (path) {
+    var caret = this.caretAt(path)
+    var node = this.nodeAt(path)
+    if (node) {
+      node.style.display = node.style.display === 'none' ? 'block' : 'none'
+      caret.className = node.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
+      this.event.trigger('nodeClick', [path, node])
+    }
+  }
+
+  caretAt (path) {
+    var label = this.labelAt(path)
+    if (label) {
+      return label.querySelector('.caret')
+    }
+  }
+
+  itemAt (path) {
+    return this.view.querySelector(`li[key="${path}"]`)
+  }
+
+  labelAt (path) {
+    return this.view.querySelector(`div[key="${path}"]`)
+  }
+
   nodeAt (path) {
-    return this.nodes[path]
+    return this.view.querySelector(`ul[key="${path}"]`)
+  }
+
+  updateNodeFromJSON (path, jsonTree, expand) {
+    var newTree = this.renderProperties(jsonTree, expand, path)
+    var current = this.nodeAt(path)
+    if (current && current.parentElement) {
+      current.parentElement.replaceChild(newTree, current)
+    }
   }
 
   formatSelfDefault (key, data) {
