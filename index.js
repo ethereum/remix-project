@@ -39,6 +39,9 @@ var runTestFiles = function (filepath, isDirectory, web3) {
       next(null, contractsToTest, contracts)
     },
     function runTests (contractsToTest, contracts, next) {
+      let totalPassing = 0
+      let totalFailing = 0
+
       var testCallback = function (result) {
         if (result.type === 'contract') {
           console.log('\n  ' + result.value)
@@ -49,12 +52,8 @@ var runTestFiles = function (filepath, isDirectory, web3) {
         }
       }
       var resultsCallback = function (_err, result, cb) {
-        if (result.passingNum > 0) {
-          console.log((result.passingNum + ' passing').green)
-        }
-        if (result.failureNum > 0) {
-          console.log((result.failureNum + ' failing').red)
-        }
+        totalPassing += result.passingNum
+        totalFailing += result.failureNum
         cb()
       }
 
@@ -65,7 +64,22 @@ var runTestFiles = function (filepath, isDirectory, web3) {
           }
           resultsCallback(null, result, cb)
         })
-      }, next)
+      }, function(err, _results) {
+        if (err) {
+          return next(err)
+        }
+
+        console.log("\n")
+        if (totalPassing > 0) {
+          console.log(("  " + totalPassing + ' passing').green)
+        }
+        if (totalFailing > 0) {
+          console.log(("  " + totalFailing + ' failing').red)
+        }
+        console.log("")
+
+        next();
+      })
     }
   ], function () {
   })
