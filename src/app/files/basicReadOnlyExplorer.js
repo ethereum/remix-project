@@ -45,10 +45,10 @@ class BasicReadOnlyExplorer {
   }
 
   addReadOnly (path, content, rawPath) {
-    var unprefixedPath = this.removePrefix(path)
     try { // lazy try to format JSON
       content = JSON.stringify(JSON.parse(content), null, '\t')
     } catch (e) {}
+    // splitting off the path in a tree structure, the json tree is used in `resolveDirectory`
     var split = path
     var folder = false
     while (split.lastIndexOf('/') !== -1) {
@@ -61,9 +61,9 @@ class BasicReadOnlyExplorer {
       folder = true
     }
     this.paths[this.type][split] = { isDirectory: folder }
-    this.files[this.type + '/' + unprefixedPath] = content
+    this.files[path] = content
     this.normalizedNames[rawPath] = path
-    this.event.trigger('fileAdded', [this.type + '/' + unprefixedPath, true])
+    this.event.trigger('fileAdded', [path, true])
     return true
   }
 
@@ -87,6 +87,7 @@ class BasicReadOnlyExplorer {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
+    // we just return the json tree populated by `addReadOnly`
     callback(null, this.paths[path])
   }
 
