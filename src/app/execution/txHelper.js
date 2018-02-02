@@ -114,15 +114,8 @@ module.exports = {
   },
 
   inputParametersDeclarationToString: function (abiinputs) {
-    var inputs = ''
-    if (abiinputs) {
-      abiinputs.forEach(function (i, inp) {
-        if (inputs !== '') {
-          inputs += ', '
-        }
-        inputs += inp.type + ' ' + inp.name
-      })
-    }
-    return inputs
+    var inputs = (abiinputs || []).map((inp) => inp.type + ' ' + inp.name)
+    return inputs.join(', ')
   }
+
 }
