@@ -3,8 +3,8 @@ var changeCase = require('change-case');
 
 function runTest(testName, testObject, testCallback, resultsCallback) {
   let runList = [];
-  let specialFunctions = ['beforeAll'];
-  let availableFunctions = testObject._jsonInterface.filter((x) => x.type === 'function').map((x) => x.name);
+  let specialFunctions = ['beforeAll', 'beforeEach'];
+  let availableFunctions = testObject._jsonInterface.reverse().filter((x) => x.type === 'function').map((x) => x.name);
   let testFunctions = testObject._jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function');
 
   if (availableFunctions.indexOf("beforeAll") >= 0) {

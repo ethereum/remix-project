@@ -23,20 +23,16 @@ function compileAndDeploy(filename, callback) {
 }
 
 describe('testRunner', function() {
-  describe("simple test", function() {
-    let filename = 'examples/simple_storage_test.sol'
+  describe("test with beforeAll", function() {
+    let filename = 'tests/examples_1/simple_storage_test.sol'
     let tests = [], results = {};
 
     before(function(done) {
       compileAndDeploy(filename, function(_err, contracts) {
-        var testCallback = function() {
-          console.log("testCallback");
-          console.dir(arguments);
-          tests.push(arguments);
+        var testCallback = function(test) {
+          tests.push(test);
         }
         var resultsCallback = function(_err, _results) {
-          console.log("resultsCallback");
-          console.dir(_results);
           results = _results;
           done();
         }
@@ -48,9 +44,53 @@ describe('testRunner', function() {
       assert.equal(results.passingNum, 1)
     });
 
-    it('should 1 passing test', function() {
+    it('should 1 failing test', function() {
       assert.equal(results.failureNum, 1)
     });
 
+    it('should returns 3 messages', function() {
+      assert.deepEqual(tests, [
+        { type: 'contract', value: 'tests/examples_1/simple_storage_test.sol' },
+        { type: 'testPass', value: 'Initial value should be100' },
+        { type: 'testFailure', value: 'Initial value should be200' }
+      ]);
+    });
+
   });
+
+  describe("test with beforeEach", function() {
+    let filename = 'tests/examples_2/simple_storage_test.sol'
+    let tests = [], results = {};
+
+    before(function(done) {
+      compileAndDeploy(filename, function(_err, contracts) {
+        var testCallback = function(test) {
+          tests.push(test);
+        }
+        var resultsCallback = function(_err, _results) {
+          results = _results;
+          done();
+        }
+        TestRunner.runTest(filename, contracts.MyTest, testCallback, resultsCallback);
+      });
+    });
+
+    it('should 2 passing tests', function() {
+      assert.equal(results.passingNum, 2)
+    });
+
+    it('should 0 failing tests', function() {
+      assert.equal(results.failureNum, 0)
+    });
+
+    it('should returns 3 messages', function() {
+      assert.deepEqual(tests, [
+        { type: 'contract', value: 'tests/examples_2/simple_storage_test.sol' },
+        { type: 'testPass', value: 'Initial value should be100' },
+        { type: 'testPass', value: 'Initial value should be200' }
+      ]);
+    });
+
+  });
+
 });
