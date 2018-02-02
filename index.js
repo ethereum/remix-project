@@ -41,6 +41,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
     function runTests (contractsToTest, contracts, next) {
       let totalPassing = 0
       let totalFailing = 0
+      let totalTime = 0
 
       var testCallback = function (result) {
         if (result.type === 'contract') {
@@ -54,6 +55,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
       var resultsCallback = function (_err, result, cb) {
         totalPassing += result.passingNum
         totalFailing += result.failureNum
+        totalTime += result.timePassed
         cb()
       }
 
@@ -71,7 +73,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
 
         console.log("\n")
         if (totalPassing > 0) {
-          console.log(("  " + totalPassing + ' passing').green)
+          console.log(("  " + totalPassing + ' passing ').green + ('(' + totalTime + 's)').grey)
         }
         if (totalFailing > 0) {
           console.log(("  " + totalFailing + ' failing').red)

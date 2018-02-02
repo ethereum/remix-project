@@ -20,17 +20,21 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
 
   let passingNum = 0
   let failureNum = 0
+  let timePassed = 0
 
   testCallback({type: 'contract', value: testName})
   async.eachOfLimit(runList, 1, function (func, index, next) {
     let method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
+    let startTime = Date.now()
     if (func.constant) {
       method.call().then((result) => {
+        let time = Math.ceil((Date.now() - startTime) / 1000.0)
         if (result) {
-          testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name)})
+          testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time})
           passingNum += 1
+          timePassed += time;
         } else {
-          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name)})
+          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time})
           failureNum += 1
         }
         next()
@@ -43,7 +47,8 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
   }, function () {
     resultsCallback(null, {
       passingNum: passingNum,
-      failureNum: failureNum
+      failureNum: failureNum,
+      timePassed: timePassed
     })
   })
 }
