@@ -7,11 +7,8 @@ commander.action(function (filename) {
   let web3 = new Web3()
   web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'))
 
-  if (fs.lstatSync(filename).isDirectory()) {
-    RemixTests.runTestFiles(filename, web3)
-  } else {
-    RemixTests.runTestFile(filename, web3)
-  }
+  let isDirectory = fs.lstatSync(filename).isDirectory()
+  RemixTests.runTestFiles(filename, isDirectory, web3)
 })
 
 if (!process.argv.slice(2).length) {

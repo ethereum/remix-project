@@ -7,62 +7,14 @@ let Compiler = require('./src/compiler.js')
 let Deployer = require('./src/deployer.js')
 let TestRunner = require('./src/testRunner.js')
 
-var runTest = function (contractName, contractObj, testCallback, resultsCallback) {
-  TestRunner.runTest(contractName, contractObj, testCallback, resultsCallback)
-}
-
-var runTestFile = function (filename, web3) {
+var runTestFiles = function(filepath, is_directory, web3) {
   async.waterfall([
     function compile (next) {
-      Compiler.compileFile(filename, next)
-    },
-    function deployAllContracts (compilationResult, next) {
-      Deployer.deployAll(compilationResult, web3, function (err, contracts) {
-        if (err) {
-          next(err)
-        }
-
-        let contractsToTest = Object.keys(compilationResult[path.basename(filename)])
-        next(null, contractsToTest, contracts)
-      })
-    },
-    function runTests (contractsToTest, contracts, next) {
-      var testCallback = function (result) {
-        if (result.type === 'contract') {
-          console.log(('\t  ' + result.value).green)
-        } else if (result.type === 'testPass') {
-          console.log('\t✓ '.green.bold + result.value.grey)
-        } else if (result.type === 'testFailure') {
-          console.log('\t✘ '.bold.red + result.value.red)
-        }
+      if (is_directory) {
+        Compiler.compileFiles(filepath, next)
+      } else {
+        Compiler.compileFile(filepath, next)
       }
-      var resultsCallback = function (_err, result, cb) {
-        if (result.passingNum > 0) {
-          console.log((result.passingNum + ' passing').green)
-        }
-        if (result.failureNum > 0) {
-          console.log((result.failureNum + ' failing').red)
-        }
-        cb()
-      }
-
-      async.eachLimit(contractsToTest, 1, (contractName, cb) => {
-        runTest(contractName, contracts[contractName], testCallback, (err, result) => {
-          if (err) {
-            return cb(err)
-          }
-          resultsCallback(null, result, cb)
-        })
-      }, next)
-    }
-  ], function () {
-  })
-}
-
-var runTestFiles = function (directory, web3) {
-  async.waterfall([
-    function compile (next) {
-      Compiler.compileFiles(directory, next)
     },
     function deployAllContracts (compilationResult, next) {
       Deployer.deployAll(compilationResult, web3, function (err, contracts) {
@@ -71,14 +23,18 @@ var runTestFiles = function (directory, web3) {
         }
 
         let contractsToTest = []
-        fs.readdirSync(directory).forEach(filename => {
-          if (filename.indexOf('_test.sol') < 0) {
-            return
-          }
-          Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
-            contractsToTest.push(contractName)
+        if (is_directory) {
+          fs.readdirSync(filepath).forEach(filename => {
+            if (filename.indexOf('_test.sol') < 0) {
+              return
+            }
+            Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
+              contractsToTest.push(contractName)
+            })
           })
-        })
+        } else {
+          contractsToTest = Object.keys(compilationResult[path.basename(filepath)])
+        }
 
         next(null, contractsToTest, contracts)
       })
@@ -104,7 +60,7 @@ var runTestFiles = function (directory, web3) {
       }
 
       async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-        runTest(contractName, contracts[contractName], testCallback, (err, result) => {
+        TestRunner.runTest(contractName, contracts[contractName], testCallback, (err, result) => {
           if (err) {
             return cb(err)
           }
@@ -117,7 +73,6 @@ var runTestFiles = function (directory, web3) {
 }
 
 module.exports = {
-  runTestFile: runTestFile,
   runTestFiles: runTestFiles,
-  runTest: runTest
+  runTest: TestRunner.runTest
 }
