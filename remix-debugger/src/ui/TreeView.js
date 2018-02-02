@@ -20,7 +20,6 @@ var css = csjs`
     -webkit-padding-start: 0px;
   }
   .caret_tv {
-    margin-top: 3px;
     width: 10px;
   }
   .label_tv {
