@@ -8,7 +8,6 @@ var ethUtil = require('ethereumjs-util')
 var StateManager = require('ethereumjs-vm/lib/stateManager')
 var Web3VMProvider = remixLib.vm.Web3VMProvider
 var rlp = ethUtil.rlp
-var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 
 var injectedProvider
 
@@ -203,7 +202,6 @@ function ExecutionContext () {
 
   // TODO: not used here anymore and needs to be moved
   function setProviderFromEndpoint (endpoint, context, cb) {
-    if (!cb) cb = () => {}
     var oldProvider = web3.currentProvider
 
     if (endpoint === 'ipc') {
@@ -220,8 +218,7 @@ function ExecutionContext () {
       web3.setProvider(oldProvider)
       var alertMsg = 'Not possible to connect to the Web3 provider. '
       alertMsg += 'Make sure the provider is running and a connection is open (via IPC or RPC).'
-      modalDialogCustom.alert(alertMsg)
-      cb()
+      cb(alertMsg)
     }
   }
   this.setProviderFromEndpoint = setProviderFromEndpoint;
