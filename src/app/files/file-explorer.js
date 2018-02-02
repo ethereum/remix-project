@@ -165,30 +165,6 @@ function fileExplorer (appAPI, files) {
   var textUnderEdit = null
   var textInRename = false
 
-  self.api = {}
-  self.api.addFile = function addFile (file) {
-    function loadFile () {
-      var fileReader = new FileReader()
-      fileReader.onload = function (event) {
-        if (helper.checkSpecialChars(file.name)) {
-          modalDialogCustom.alert('Special characters are not allowed')
-          return
-        }
-        var success = files.set(name, event.target.result)
-        if (!success) modalDialogCustom.alert('Failed to create file ' + name)
-        else self.events.trigger('focus', [name])
-      }
-      fileReader.readAsText(file)
-    }
-
-    var name = files.type + '/' + file.name
-    if (!files.exists(name)) {
-      loadFile()
-    } else {
-      modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
-    }
-  }
-
   function getElement (path) {
     var label = self.element.querySelector(`label[data-path="${path}"]`)
     if (label) return getLiFrom(label)
