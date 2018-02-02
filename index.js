@@ -1,4 +1,5 @@
-var async = require('async');
+const async = require('async');
+const path = require('path');
 require('colors');
 
 let Compiler = require('./src/compiler.js');
@@ -15,9 +16,16 @@ var runTestFile = function(filename, web3) {
       Compiler.compileFile(filename, next);
     },
     function deployAllContracts(compilationResult, next) {
-      Deployer.deployAll(compilationResult, web3, next);
+      Deployer.deployAll(compilationResult, web3, function(err, contracts) {
+        if (err) {
+          next(err);
+        }
+
+        let contractsToTest = Object.keys(compilationResult[path.basename(filename)]);
+        next(null, contractsToTest, contracts);
+      });
     },
-    function runTests(contracts, next) {
+    function runTests(contractsToTest, contracts, next) {
       var testCallback = function(result) {
         if (result.type === 'contract') {
           console.log(("#" + result.value).green);
@@ -37,11 +45,11 @@ var runTestFile = function(filename, web3) {
         if (result.failureNum > 0) {
           console.log((result.failureNum + " failing").red);
         }
-        next();
       }
 
-      // TODO: MyTest should be determined from filename
-      runTest(filename, contracts.MyTest, testCallback, resultsCallback);
+      async.eachLimit(contractsToTest, 1, (contractName, cb) => {
+        runTest(contractName, contracts[contractName], testCallback, resultsCallback);
+      }, next);
     }
   ], function() {
   });
