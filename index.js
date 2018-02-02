@@ -7,7 +7,7 @@ let Compiler = require('./src/compiler.js')
 let Deployer = require('./src/deployer.js')
 let TestRunner = require('./src/testRunner.js')
 
-var runTestFiles = function(filepath, isDirectory, web3) {
+var runTestFiles = function (filepath, isDirectory, web3) {
   async.waterfall([
     function compile (next) {
       Compiler.compileFileOrFiles(filepath, isDirectory, next)
@@ -21,7 +21,7 @@ var runTestFiles = function(filepath, isDirectory, web3) {
         next(null, compilationResult, contracts)
       })
     },
-    function determineTestContractsToRun(compilationResult, contracts, next) {
+    function determineTestContractsToRun (compilationResult, contracts, next) {
       let contractsToTest = []
       if (isDirectory) {
         fs.readdirSync(filepath).forEach(filename => {
