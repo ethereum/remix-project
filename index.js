@@ -40,6 +40,7 @@ var runTestFile = function(filename, web3) {
         next();
       }
 
+      // TODO: MyTest should be determined from filename
       runTest(filename, contracts.MyTest, testCallback, resultsCallback);
     }
   ], function() {
