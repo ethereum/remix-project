@@ -36,7 +36,7 @@ describe('testRunner', function() {
           results = _results;
           done();
         }
-        TestRunner.runTest(filename, contracts.MyTest, testCallback, resultsCallback);
+        TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback);
       });
     });
 
@@ -50,7 +50,7 @@ describe('testRunner', function() {
 
     it('should returns 3 messages', function() {
       assert.deepEqual(tests, [
-        { type: 'contract', value: 'tests/examples_1/simple_storage_test.sol' },
+        { type: 'contract', value: 'MyTest' },
         { type: 'testPass', value: 'Initial value should be100' },
         { type: 'testFailure', value: 'Initial value should be200' }
       ]);
@@ -71,7 +71,7 @@ describe('testRunner', function() {
           results = _results;
           done();
         }
-        TestRunner.runTest(filename, contracts.MyTest, testCallback, resultsCallback);
+        TestRunner.runTest("MyTest", contracts.MyTest, testCallback, resultsCallback);
       });
     });
 
@@ -85,7 +85,7 @@ describe('testRunner', function() {
 
     it('should returns 3 messages', function() {
       assert.deepEqual(tests, [
-        { type: 'contract', value: 'tests/examples_2/simple_storage_test.sol' },
+        { type: 'contract', value: 'MyTest' },
         { type: 'testPass', value: 'Initial value should be100' },
         { type: 'testPass', value: 'Initial value should be200' }
       ]);
