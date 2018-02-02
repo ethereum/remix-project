@@ -18,22 +18,25 @@ var runTestFiles = function(filepath, isDirectory, web3) {
           next(err)
         }
 
-        let contractsToTest = []
-        if (isDirectory) {
-          fs.readdirSync(filepath).forEach(filename => {
-            if (filename.indexOf('_test.sol') < 0) {
-              return
-            }
-            Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
-              contractsToTest.push(contractName)
-            })
-          })
-        } else {
-          contractsToTest = Object.keys(compilationResult[path.basename(filepath)])
-        }
-
-        next(null, contractsToTest, contracts)
+        next(null, compilationResult, contracts)
       })
+    },
+    function determineTestContractsToRun(compilationResult, contracts, next) {
+      let contractsToTest = []
+      if (isDirectory) {
+        fs.readdirSync(filepath).forEach(filename => {
+          if (filename.indexOf('_test.sol') < 0) {
+            return
+          }
+          Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
+            contractsToTest.push(contractName)
+          })
+        })
+      } else {
+        contractsToTest = Object.keys(compilationResult[path.basename(filepath)])
+      }
+
+      next(null, contractsToTest, contracts)
     },
     function runTests (contractsToTest, contracts, next) {
       var testCallback = function (result) {
