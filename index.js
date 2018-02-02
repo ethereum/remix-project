@@ -1,5 +1,6 @@
 const async = require('async');
 const path = require('path');
+const fs = require('fs');
 require('colors');
 
 let Compiler = require('./src/compiler.js');
@@ -28,7 +29,7 @@ var runTestFile = function(filename, web3) {
     function runTests(contractsToTest, contracts, next) {
       var testCallback = function(result) {
         if (result.type === 'contract') {
-          console.log(("#" + result.value).green);
+          console.log(("\t  " + result.value).green);
         } else if (result.type === 'testPass') {
           console.log("\t✓ ".green.bold + result.value.grey);
         } else if (result.type === 'testFailure') {
@@ -55,7 +56,65 @@ var runTestFile = function(filename, web3) {
   });
 }
 
+var runTestFiles = function(directory, web3) {
+  async.waterfall([
+    function compile(next) {
+      Compiler.compileFiles(directory, next);
+    },
+    function deployAllContracts(compilationResult, next) {
+      Deployer.deployAll(compilationResult, web3, function(err, contracts) {
+        if (err) {
+          next(err);
+        }
+
+        let contractsToTest = [];
+        fs.readdirSync(directory).forEach(filename => {
+          if (filename.indexOf('_test.sol') < 0) {
+            return;
+          }
+          Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
+            contractsToTest.push(contractName)
+          })
+        })
+
+        next(null, contractsToTest, contracts);
+      });
+    },
+    function runTests(contractsToTest, contracts, next) {
+      var testCallback = function(result) {
+        if (result.type === 'contract') {
+          console.log("\n  " + result.value);
+        } else if (result.type === 'testPass') {
+          console.log("\t✓ ".green.bold + result.value.grey);
+        } else if (result.type === 'testFailure') {
+          console.log("\t✘ ".bold.red + result.value.red);
+        }
+      }
+      var resultsCallback = function(_err, result, cb) {
+        if (result.passingNum > 0) {
+          console.log((result.passingNum + " passing").green);
+        }
+        if (result.failureNum > 0) {
+          console.log((result.failureNum + " failing").red);
+        }
+        cb();
+      }
+
+      async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
+        runTest(contractName, contracts[contractName], testCallback, (err, result) => {
+          if (err) {
+            return cb(err);
+          }
+          resultsCallback(null, result, cb);
+        });
+      }, next);
+    }
+  ], function() {
+  });
+}
+
 module.exports = {
   runTestFile: runTestFile,
+  runTestFiles: runTestFiles,
   runTest: runTest
 };

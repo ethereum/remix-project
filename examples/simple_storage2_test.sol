@@ -2,11 +2,16 @@ pragma solidity ^0.4.7;
 import "./tests.sol";
 import "./simple_storage.sol";
 
-contract MyTest {
+contract MyTest2 {
   SimpleStorage foo;
+  uint i = 0;
 
-  function beforeAll() {
+  function beforeEach() {
     foo = new SimpleStorage();
+    if (i == 1) {
+      foo.set(200);
+    }
+    i += 1;
   }
 
   function initialValueShouldBe100() public constant returns (bool) {
@@ -20,4 +25,5 @@ contract MyTest {
   }
 
 }
+
 
