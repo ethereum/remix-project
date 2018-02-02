@@ -53,14 +53,12 @@ var css = csjs`
 `
 module.exports = fileExplorer
 
-var focusElement = null
-var focusPath = null
-
 function fileExplorer (appAPI, files) {
   var self = this
   this.events = new EventManager()
   this.files = files
-
+  this.focusElement = null
+  this.focusPath = null
   function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
   }
@@ -117,7 +115,18 @@ function fileExplorer (appAPI, files) {
   })
 
   self.treeView.event.register('leafClick', function (key, data, label) {
-    self.events.trigger('focus', [key])
+    if (self.focusElement) {
+      self.focusElement.classList.remove(css.hasFocus)
+      self.focusElement = null
+      self.focusPath = null
+    }
+    self.focusElement = self.treeView.labelAt(key)
+    if (self.focusElement) {
+      self.focusElement.classList.add(css.hasFocus)
+      self.focusPath = key
+      self.events.trigger('focus', [key])
+      appAPI.config.set('currentFile', key)
+    }
   })
 
   self.treeView.event.register('nodeClick', function (path, childrenContainer) {
@@ -130,8 +139,7 @@ function fileExplorer (appAPI, files) {
       if (error) console.error(error)
       if (!fileTree) return
       var newTree = normalize(path, fileTree)
-      newTree = self.treeView.renderProperties(newTree, false)
-      self.treeView.updateNode(path, newTree)
+      self.treeView.updateNodeFromJSON(path, newTree, false)
     })
   })
 
@@ -145,16 +153,10 @@ function fileExplorer (appAPI, files) {
   }
 
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
-    if (focusElement && newFile !== focusPath) {
-      focusElement.classList.remove(css.hasFocus)
-    }
-    if (explorer === files) {
-      focusElement = self.treeView.labelAt(newFile)
-      if (focusElement) {
-        focusPath = newFile
-        focusElement.classList.add(css.hasFocus)
-        appAPI.config.set('currentFile', newFile)
-      }
+    if (self.focusElement && explorer.type !== files.type && self.focusPath !== newFile) {
+      self.focusElement.classList.remove(css.hasFocus)
+      self.focusElement = null
+      self.focusPath = null
     }
   })
   fileEvents.register('fileRemoved', fileRemoved)
@@ -273,8 +275,13 @@ function fileExplorer (appAPI, files) {
           if (error) console.error(error)
           if (!fileTree) return
           fileTree = normalize(folderpath, fileTree)
-          var newTree = self.treeView.renderProperties(fileTree, false)
-          self.treeView.updateNode(folderpath, newTree)
+          self.treeView.updateNodeFromJSON(folderpath, fileTree, false)
+          self.focusElement = self.treeView.labelAt(self.focusPath)
+          // TODO: here we update the selected file (it applicable)
+          // cause we are refreshing the interface of the whole directory when there's a new file.
+          if (self.focusElement && !self.focusElement.classList.contains(css.hasFocus)) {
+            self.focusElement.classList.add(css.hasFocus)
+          }
         })
       }
     })
