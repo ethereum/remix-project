@@ -43,9 +43,6 @@ class TreeView {
     this.extractData = opts.extractData || this.extractDataDefault
     this.formatSelf = opts.formatSelf || this.formatSelfDefault
     this.view = null
-    this.nodes = {}
-    this.labels = {}
-    this.carets = {}
   }
 
   render (json, expand) {
@@ -70,36 +67,37 @@ class TreeView {
     return this.formatData(key, data, children, expand, keyPath)
   }
 
-  renderProperties (json, expand) {
+  renderProperties (json, expand, key) {
+    key = key || ''
     var children = Object.keys(json).map((innerkey) => {
       return this.renderObject(json[innerkey], json, innerkey, expand, innerkey)
     })
-    return yo`<ul class="${css.ul_tv}">${children}</ul>`
+    return yo`<ul key=${key} class="${css.ul_tv}">${children}</ul>`
   }
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
     var li = yo`<li class=${css.li_tv}></li>`
-    var caret = yo`<div class="fa fa-caret-right ${css.caret_tv}"></div>`
+    var caret = yo`<div class="fa fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
-      <div class=${css.label_tv}>
+      <div key=${key} class=${css.label_tv}>
         ${caret}
         <span>${self.formatSelf(key, data, li)}</span>
       </div>`
     li.appendChild(label)
     if (data.children) {
-      var list = yo`<ul class=${css.ul_tv}>${children}</ul>`
-      this.nodes[keyPath] = list
-      this.labels[keyPath] = label
-      this.carets[keyPath] = caret
+      var list = yo`<ul key=${key} class=${css.ul_tv}>${children}</ul>`
       list.style.display = 'none'
-      caret.className = list.style.display === 'none' ? 'fa fa-caret-right' : 'fa fa-caret-down'
+      caret.className = list.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
       label.onclick = function () {
         self.expand(keyPath)
       }
       li.appendChild(list)
     } else {
       caret.style.visibility = 'hidden'
+      label.onclick = function () {
+        self.event.trigger('leafClick', [key, data, label])
+      }
     }
     return li
   }
@@ -113,25 +111,35 @@ class TreeView {
   }
 
   expand (path) {
-    if (this.labels[path]) {
-      this.carets[path].className = this.carets[path].className === 'fa fa-caret-right' ? 'fa fa-caret-down' : 'fa fa-caret-right'
-      this.nodes[path].style.display = this.nodes[path].style.display === 'none' ? 'block' : 'none'
-      this.event.trigger('nodeClick', [path, this.nodes[path]])
+    var caret = this.caretAt(path)
+    var node = this.nodeAt(path)
+    if (node) {
+      node.style.display = node.style.display === 'none' ? 'block' : 'none'
+      caret.className = node.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
+      this.event.trigger('nodeClick', [path, node])
     }
   }
 
-  nodeAt (path) {
-    return this.nodes[path]
+  caretAt (path) {
+    var label = this.labelAt(path)
+    if (label) {
+      return label.querySelector('.caret')
+    }
   }
 
-  updateNode (path, newNode) {
+  labelAt (path) {
+    return this.view.querySelector(`div[key="${path}"]`)
+  }
+
+  nodeAt (path) {
+    return this.view.querySelector(`ul[key="${path}"]`)
+  }
+
+  updateNodeFromJSON (path, jsonTree, expand) {
+    var newTree = this.renderProperties(jsonTree, expand, path)
     var current = this.nodeAt(path)
-    if (current) {
-      var parent = current.parentNode
-      if (parent) {
-        parent.replaceChild(newNode, current)
-        this.nodes[path] = newNode
-      }
+    if (current && current.parentElement) {
+      current.parentElement.replaceChild(newTree, current)
     }
   }
 
