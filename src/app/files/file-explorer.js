@@ -131,15 +131,13 @@ function fileExplorer (appAPI, files) {
 
   self.treeView.event.register('nodeClick', function (path, childrenContainer) {
     if (!childrenContainer) return
-    if (childrenContainer.style.display === 'none') {
-      childrenContainer.innerHTML = ''
-      return
-    }
+    if (childrenContainer.style.display === 'none') return
+
     files.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
       if (!fileTree) return
       var newTree = normalize(path, fileTree)
-      self.treeView.updateNodeFromJSON(path, newTree, false)
+      self.treeView.updateNodeFromJSON(path, newTree, true)
     })
   })
 
@@ -275,7 +273,7 @@ function fileExplorer (appAPI, files) {
           if (error) console.error(error)
           if (!fileTree) return
           fileTree = normalize(folderpath, fileTree)
-          self.treeView.updateNodeFromJSON(folderpath, fileTree, false)
+          self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
           self.focusElement = self.treeView.labelAt(self.focusPath)
           // TODO: here we update the selected file (it applicable)
           // cause we are refreshing the interface of the whole directory when there's a new file.
