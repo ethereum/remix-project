@@ -784,13 +784,11 @@ function run () {
     runCompiler()
 
     if (queryParams.get().context) {
-      executionContext.setContext(queryParams.get().context, queryParams.get().endpointurl,
+      let context = queryParams.get().context;
+      let endPointUrl = queryParams.get().endPointUrl;
+      executionContext.setContext(context, endpointurl,
       () => {
-
         modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-            let context = queryParams.get().context;
-            let endPointUrl = queryParams.get().endPointUrl;
-
             if (!endPointUrl) {
               endPointUrl = 'http://localhost:8545'
             }
