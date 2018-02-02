@@ -12,7 +12,7 @@ function compileAndDeploy (filename, callback) {
 
   async.waterfall([
     function compile (next) {
-      Compiler.compileFile(filename, next)
+      Compiler.compileFileOrFiles(filename, false, next)
     },
     function deployAllContracts (compilationResult, next) {
       Deployer.deployAll(compilationResult, web3, next)

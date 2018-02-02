@@ -7,14 +7,10 @@ let Compiler = require('./src/compiler.js')
 let Deployer = require('./src/deployer.js')
 let TestRunner = require('./src/testRunner.js')
 
-var runTestFiles = function(filepath, is_directory, web3) {
+var runTestFiles = function(filepath, isDirectory, web3) {
   async.waterfall([
     function compile (next) {
-      if (is_directory) {
-        Compiler.compileFiles(filepath, next)
-      } else {
-        Compiler.compileFile(filepath, next)
-      }
+      Compiler.compileFileOrFiles(filepath, isDirectory, next)
     },
     function deployAllContracts (compilationResult, next) {
       Deployer.deployAll(compilationResult, web3, function (err, contracts) {
@@ -23,7 +19,7 @@ var runTestFiles = function(filepath, is_directory, web3) {
         }
 
         let contractsToTest = []
-        if (is_directory) {
+        if (isDirectory) {
           fs.readdirSync(filepath).forEach(filename => {
             if (filename.indexOf('_test.sol') < 0) {
               return
