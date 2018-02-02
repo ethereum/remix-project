@@ -238,13 +238,32 @@ function runTab (container, appAPI, appEvents, opts) {
 
   // DROPDOWN
   var selectExEnv = el.querySelector('#selectExEnvOptions')
+
+  function setFinalContext() {
+    // set the final context. Cause it is possible that this is not the one we've originaly selected
+    selectExEnv.value = executionContext.getProvider()
+    fillAccountsList(appAPI, el)
+    events.trigger('clearInstance', [])
+  }
+
   selectExEnv.addEventListener('change', function (event) {
     executionContext.executionContextChange(selectExEnv.options[selectExEnv.selectedIndex].value, null, () => {
-      // set the final context. Cause it is possible that this is not the one we've originaly selected
-      selectExEnv.value = executionContext.getProvider()
-      fillAccountsList(appAPI, el)
-      events.trigger('clearInstance', [])
-    })
+
+      modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
+          let endPointUrl = null;
+          let context = selectExEnv.options[selectExEnv.selectedIndex].value;
+
+          if (!endPointUrl) {
+            endPointUrl = 'http://localhost:8545'
+          }
+          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
+            executionContext.setProviderFromEndpoint(target, context, setFinalContext)
+          }, setFinalContext)
+        }, setFinalContext)
+
+    }, (alertMsg) => {
+      modalDialogCustom.alert(alertMsg)
+    }, setFinalContext)
   })
   selectExEnv.value = executionContext.getProvider()
   fillAccountsList(appAPI, el)

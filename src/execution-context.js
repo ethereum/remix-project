@@ -145,23 +145,13 @@ function ExecutionContext () {
     return vm
   }
 
-  this.setContext = function (context, endPointUrl) {
+  this.setContext = function (context, endPointUrl, confirmCb, infoCb) {
     executionContext = context
-    this.executionContextChange(context, endPointUrl)
+    this.executionContextChange(context, endPointUrl, confirmCb, infoCb)
   }
 
-  this.executionContextChange = function (context, endPointUrl, cb) {
+  this.executionContextChange = function (context, endPointUrl, confirmCb, infoCb, cb) {
     if (!cb) cb = () => {}
-    function runPrompt () {
-      if (!endPointUrl) {
-        endPointUrl = 'http://localhost:8545'
-      }
-      modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
-        setProviderFromEndpoint(target, context, cb)
-      }, () => {
-        cb()
-      })
-    }
 
     if (context === 'vm') {
       executionContext = context
@@ -169,7 +159,7 @@ function ExecutionContext () {
         vm.stateManager.checkpoint()
       })
       self.event.trigger('contextChanged', ['vm'])
-      cb()
+      return cb()
     }
 
     if (context === 'injected') {
@@ -177,20 +167,18 @@ function ExecutionContext () {
         var alertMsg = 'No injected Web3 provider found. '
         alertMsg += 'Make sure your provider (e.g. MetaMask) is active and running '
         alertMsg += '(when recently activated you may have to reload the page).'
-        modalDialogCustom.alert(alertMsg)
-        cb()
+        infoCb(alertMsg);
+        return cb()
       } else {
         executionContext = context
         web3.setProvider(injectedProvider)
         self.event.trigger('contextChanged', ['injected'])
-        cb()
+        return cb()
       }
     }
 
     if (context === 'web3') {
-      modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?',
-        () => { runPrompt(endPointUrl) }, () => { cb() }
-      )
+      confirmCb(cb);
     }
   }
 
@@ -213,7 +201,9 @@ function ExecutionContext () {
     }
   }, 15000)
 
+  // TODO: not used here anymore and needs to be moved
   function setProviderFromEndpoint (endpoint, context, cb) {
+    if (!cb) cb = () => {}
     var oldProvider = web3.currentProvider
 
     if (endpoint === 'ipc') {
@@ -234,6 +224,7 @@ function ExecutionContext () {
       cb()
     }
   }
+  this.setProviderFromEndpoint = setProviderFromEndpoint;
 }
 
 module.exports = new ExecutionContext()
