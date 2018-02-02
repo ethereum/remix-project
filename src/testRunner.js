@@ -18,7 +18,8 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
     runList.push({name: func.name, type: 'test', constant: func.constant})
   }
 
-  let passingNum = 0, failureNum = 0
+  let passingNum = 0
+  let failureNum = 0
 
   testCallback({type: 'contract', value: testName})
   async.eachOfLimit(runList, 1, function (func, index, next) {

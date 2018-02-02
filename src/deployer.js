@@ -3,11 +3,13 @@ var async = require('async')
 // TODO: replace this with remix's own deployer code
 
 function deployAll (compileResult, web3, callback) {
-  let compiledObject = {}, contracts = {}, accounts
+  let compiledObject = {}
+  let contracts = {}
+  let accounts = []
 
   async.waterfall([
     function getAccountList (next) {
-      web3.eth.getAccounts((err, _accounts) => {
+      web3.eth.getAccounts((_err, _accounts) => {
         accounts = _accounts
         next()
       })

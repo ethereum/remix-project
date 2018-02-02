@@ -28,6 +28,11 @@
   "bugs": {
     "url": "https://github.com/ethereum/remix-tests/issues"
   },
+  "standard": {
+    "ignore": [
+      "tests/"
+    ]
+  },
   "homepage": "https://github.com/ethereum/remix-tests#readme",
   "dependencies": {
     "change-case": "^3.0.1",
