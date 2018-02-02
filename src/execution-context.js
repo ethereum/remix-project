@@ -166,7 +166,7 @@ function ExecutionContext () {
         var alertMsg = 'No injected Web3 provider found. '
         alertMsg += 'Make sure your provider (e.g. MetaMask) is active and running '
         alertMsg += '(when recently activated you may have to reload the page).'
-        infoCb(alertMsg);
+        infoCb(alertMsg)
         return cb()
       } else {
         executionContext = context
@@ -177,7 +177,7 @@ function ExecutionContext () {
     }
 
     if (context === 'web3') {
-      confirmCb(cb);
+      confirmCb(cb)
     }
   }
 
@@ -221,7 +221,7 @@ function ExecutionContext () {
       cb(alertMsg)
     }
   }
-  this.setProviderFromEndpoint = setProviderFromEndpoint;
+  this.setProviderFromEndpoint = setProviderFromEndpoint
 }
 
 module.exports = new ExecutionContext()
