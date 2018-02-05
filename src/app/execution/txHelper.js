@@ -1,6 +1,5 @@
 'use strict'
 var ethJSABI = require('ethereumjs-abi')
-var $ = require('jquery')
 
 module.exports = {
   encodeParams: function (funABI, args) {
@@ -115,15 +114,8 @@ module.exports = {
   },
 
   inputParametersDeclarationToString: function (abiinputs) {
-    var inputs = ''
-    if (abiinputs) {
-      $.each(abiinputs, function (i, inp) {
-        if (inputs !== '') {
-          inputs += ', '
-        }
-        inputs += inp.type + ' ' + inp.name
-      })
-    }
-    return inputs
+    var inputs = (abiinputs || []).map((inp) => inp.type + ' ' + inp.name)
+    return inputs.join(', ')
   }
+
 }

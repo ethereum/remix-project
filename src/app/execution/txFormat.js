@@ -1,5 +1,4 @@
 'use strict'
-var $ = require('jquery')
 var ethJSABI = require('ethereumjs-abi')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
@@ -55,7 +54,7 @@ module.exports = {
       data = Buffer.from(dataHex, 'hex')
     } else {
       try {
-        funArgs = $.parseJSON('[' + params + ']')
+        funArgs = JSON.parse('[' + params + ']')
       } catch (e) {
         callback('Error encoding arguments: ' + e)
         return
