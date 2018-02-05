@@ -31,7 +31,7 @@ function deployAll (compileResult, web3, callback) {
           compiledObject[className].filename = filename
           compiledObject[className].className = className
 
-          if (contractFile.indexOf("_test.sol") >=0 ) {
+          if (contractFile.indexOf('_test.sol') >= 0) {
             compiledObject[className].isTest = true
           }
         }
@@ -39,22 +39,22 @@ function deployAll (compileResult, web3, callback) {
       next()
     },
     function determineContractsToDeploy (next) {
-      let contractsToDeploy = ['Assert'];
-      let allContracts = Object.keys(compiledObject);
+      let contractsToDeploy = ['Assert']
+      let allContracts = Object.keys(compiledObject)
 
       for (let contractName of allContracts) {
         if (contractName === 'Assert') {
-          continue;
+          continue
         }
         if (compiledObject[contractName].isTest) {
           contractsToDeploy.push(contractName)
         }
       }
-      next(null, contractsToDeploy);
+      next(null, contractsToDeploy)
     },
     function deployContracts (contractsToDeploy, next) {
       async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
-        let contract = compiledObject[contractName];
+        let contract = compiledObject[contractName]
         let contractObject = new web3.eth.Contract(contract.abi)
 
         let contractCode = '0x' + contract.code
@@ -76,7 +76,7 @@ function deployAll (compileResult, web3, callback) {
           contractCode = contractCode.replace(new RegExp(toReplace, 'g'), contractObj.deployedAddress.slice(2))
         }
 
-        let deployObject = contractObject.deploy({arguments: [], data: contractCode});
+        let deployObject = contractObject.deploy({arguments: [], data: contractCode})
 
         deployObject.estimateGas().then((gasValue) => {
           deployObject.send({
@@ -93,7 +93,6 @@ function deployAll (compileResult, web3, callback) {
             nextEach()
           })
         })
-
       }, function () {
         next(null, contracts)
       })
