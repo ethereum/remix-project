@@ -30,12 +30,32 @@ function deployAll (compileResult, web3, callback) {
           compiledObject[className].code = code
           compiledObject[className].filename = filename
           compiledObject[className].className = className
+
+          if (contractFile.indexOf("_test.sol") >=0 ) {
+            compiledObject[className].isTest = true
+          }
         }
       }
       next()
     },
-    function deployContracts (next) {
-      async.eachOfLimit(compiledObject, 1, function (contract, contractName, nextEach) {
+    function determineContractsToDeploy (next) {
+      let contractsToDeploy = ['Assert'];
+      let allContracts = Object.keys(compiledObject);
+
+      for (let contractName of allContracts) {
+        if (contractName === 'Assert') {
+          continue;
+        }
+        if (compiledObject[contractName].isTest) {
+          contractsToDeploy.push(contractName)
+        }
+      }
+      next(null, contractsToDeploy);
+    },
+    function deployContracts (contractsToDeploy, next) {
+      async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
+        let contract = compiledObject[contractName];
+        console.dir('deploying... ' + contractName);
         let contractObject = new web3.eth.Contract(contract.abi)
 
         let contractCode = '0x' + contract.code
@@ -54,22 +74,32 @@ function deployAll (compileResult, web3, callback) {
             throw new Error('linking not found for ' + name + ' when deploying ' + contractName)
           }
 
-          contractCode = contractCode.replace(new RegExp(toReplace, 'g'), contractObj.deployedAddress)
+          console.dir("replacing " + toReplace + " with " + contractObj.deployedAddress);
+          contractCode = contractCode.replace(new RegExp(toReplace, 'g'), contractObj.deployedAddress.slice(2))
         }
 
-        contractObject.deploy({arguments: [], data: contractCode}).send({
-          from: accounts[0],
-          gas: 4000 * 1000
-        }).on('receipt', function (receipt) {
-          contractObject.options.address = receipt.contractAddress
-          contractObject.options.from = accounts[0]
-          contractObject.options.gas = 4000 * 1000
-          compiledObject[contractName].deployedAddress = receipt.contractAddress
+        console.dir(contractCode);
 
-          contracts[contractName] = contractObject
+        let deployObject = contractObject.deploy({arguments: [], data: contractCode});
 
-          nextEach()
+        console.dir("estimating gas...");
+        deployObject.estimateGas().then((gasValue) => {
+          console.dir("gas value is " + gasValue);
+          deployObject.send({
+            from: accounts[0],
+            gas: 5000 * 1000
+          }).on('receipt', function (receipt) {
+            contractObject.options.address = receipt.contractAddress
+            contractObject.options.from = accounts[0]
+            contractObject.options.gas = 5000 * 1000
+            compiledObject[contractName].deployedAddress = receipt.contractAddress
+
+            contracts[contractName] = contractObject
+
+            nextEach()
+          })
         })
+
       }, function () {
         next(null, contracts)
       })

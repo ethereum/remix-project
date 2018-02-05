@@ -10,13 +10,13 @@ contract MyTest {
   }
 
   function initialValueShouldBe100() public constant returns (bool) {
-    //return Assert.equal(foo.get(), 100, "initial value is not correct");
-    return foo.get() == 100;
+    return Assert.equal(foo.get(), 100, "initial value is not correct");
+    //return foo.get() == 100;
   }
 
   function initialValueShouldBe200() public constant returns (bool) {
-    //return Assert.equal(foo.get(), 200, "initial value is not correct");
-    return foo.get() == 200;
+    return Assert.equal(foo.get(), 200, "initial value is not correct");
+    //return foo.get() == 200;
   }
 
 }

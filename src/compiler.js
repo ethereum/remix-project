@@ -36,6 +36,11 @@ function compileFileOrFiles (filename, isDirectory, cb) {
       compiler.compile(sources, filepath)
     }
   ], function (err, result) {
+    let errors = result.errors.filter((e) => e.type === 'Error');
+    if (errors.length > 0) {
+      console.dir(errors);
+      return cb("errors compiling");
+    }
     cb(err, result.contracts)
   })
 }
