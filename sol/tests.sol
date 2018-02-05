@@ -27,11 +27,13 @@ library Assert {
     AssertionEvent(result, message);
   }
 
+  // TODO: only for certain versions of solc
   //function equal(fixed a, fixed b, string message) public returns (bool result) {
   //  result = (a == b);
   //  AssertionEvent(result, message);
   //}
 
+  // TODO: only for certain versions of solc
   //function equal(ufixed a, ufixed b, string message) public returns (bool result) {
   //  result = (a == b);
   //  AssertionEvent(result, message);
@@ -47,7 +49,7 @@ library Assert {
     AssertionEvent(result, message);
   }
 
-  // probably need to convert to bytes first
+  // TODO: needs to be convert to bytes first to be comparable
   //function equal(string a, string b, string message) public returns (bool result) {
   //  result = (a == b);
   //  AssertionEvent(result, message);
@@ -68,11 +70,13 @@ library Assert {
     AssertionEvent(result, message);
   }
 
+  // TODO: only for certain versions of solc
   //function notEqual(fixed a, fixed b, string message) public returns (bool result) {
   //  result = (a != b);
   //  AssertionEvent(result, message);
   //}
 
+  // TODO: only for certain versions of solc
   //function notEqual(ufixed a, ufixed b, string message) public returns (bool result) {
   //  result = (a != b);
   //  AssertionEvent(result, message);
@@ -88,7 +92,7 @@ library Assert {
     AssertionEvent(result, message);
   }
 
-  // probably need to convert to bytes first
+  // TODO: needs to be convert to bytes first to be comparable
   //function notEqual(string a, string b, string message) public returns (bool result) {
   //  result = (a != b);
   //  AssertionEvent(result, message);
