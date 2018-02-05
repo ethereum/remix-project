@@ -48,7 +48,7 @@ module.exports = {
     ]
   },
 
-  import: function (url, cb) {
+  import: function (url, loadingCb, cb) {
     var handlers = this.handlers()
 
     var found = false
@@ -61,8 +61,7 @@ module.exports = {
       if (match) {
         found = true
 
-        // TODO: this needs to be moved to the caller
-        $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
+        loadingCb('Loading ' + url + ' ...')
         handler.handler(match, function (err, content, cleanUrl) {
           if (err) {
             cb('Unable to import "' + cleanUrl + '": ' + err)
