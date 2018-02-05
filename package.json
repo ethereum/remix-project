@@ -39,9 +39,8 @@
     "colors": "^1.1.2",
     "commander": "^2.13.0",
     "ethereumjs-vm": "^2.3.2",
-    "remix-lib": "^0.1.2",
-    "remix-solidity": "../remix/remix-solidity",
-    "solc": "https://github.com/ethereum/solc-js",
+    "remix-lib": "latest",
+    "remix-solidity": "latest",
     "standard": "^10.0.3",
     "web3": "^1.0.0-beta.27"
   }

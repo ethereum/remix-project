@@ -55,7 +55,6 @@ function deployAll (compileResult, web3, callback) {
     function deployContracts (contractsToDeploy, next) {
       async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
         let contract = compiledObject[contractName];
-        console.dir('deploying... ' + contractName);
         let contractObject = new web3.eth.Contract(contract.abi)
 
         let contractCode = '0x' + contract.code
@@ -74,20 +73,15 @@ function deployAll (compileResult, web3, callback) {
             throw new Error('linking not found for ' + name + ' when deploying ' + contractName)
           }
 
-          console.dir("replacing " + toReplace + " with " + contractObj.deployedAddress);
           contractCode = contractCode.replace(new RegExp(toReplace, 'g'), contractObj.deployedAddress.slice(2))
         }
 
-        console.dir(contractCode);
-
         let deployObject = contractObject.deploy({arguments: [], data: contractCode});
 
-        console.dir("estimating gas...");
         deployObject.estimateGas().then((gasValue) => {
-          console.dir("gas value is " + gasValue);
           deployObject.send({
             from: accounts[0],
-            gas: 5000 * 1000
+            gas: Math.ceil(gasValue * 1.1)
           }).on('receipt', function (receipt) {
             contractObject.options.address = receipt.contractAddress
             contractObject.options.from = accounts[0]
