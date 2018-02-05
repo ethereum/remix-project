@@ -201,10 +201,10 @@ function run () {
     if (provider && provider.exists(url)) {
       return provider.get(url, cb)
     }
-    handleImports.import(url, 
+    handleImports.import(url,
       (loadingMsg) => {
         $('#output').append($('<div/>').append($('<pre/>').text(loadingMsg)))
-      }
+      },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
           filesProviders[type].addReadOnly(cleanUrl, content, url)
