@@ -36,14 +36,18 @@ module.exports = {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
-    return $.ajax({ type: 'GET', url: 'https://gateway.ipfs.io/' + url })
-      .done(function (data) {
-        cb(null, data, url)
-      })
-      .fail(function (xhr, text, err) {
-        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
-        cb(err || 'Unknown transport error')
-      })
+    return request.get(
+    {
+      url: 'https://gateway.ipfs.io/' + url,
+      headers: {
+        'User-Agent': 'Remix'
+      }
+    }, (err, r, data) => {
+      if (err) {
+        return cb(err || 'Unknown transport error')
+      }
+      cb(null, data, url)
+    })
   },
 
   handlers: function () {
