@@ -3,21 +3,27 @@
 var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
+var request = require('
 
 module.exports = {
   handleGithubCall: function (root, path, cb) {
-    return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
-      .done(function (data) {
-        if ('content' in data) {
-          cb(null, base64.decode(data.content), root + '/' + path)
-        } else {
-          cb('Content not received')
-        }
-      })
-      .fail(function (xhr, text, err) {
-        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
-        cb(err || 'Unknown transport error')
-      })
+    return request.get(
+    {
+      url: 'https://api.github.com/repos/' + root + '/contents/' + path,
+      json: true,
+      headers: {
+        'User-Agent': 'Remix'
+      }
+    }, (err, r, data) => {
+      if (err) {
+        return cb(err || 'Unknown transport error')
+      }
+      if ('content' in data) {
+        cb(null, base64.decode(data.content), root + '/' + path)
+      } else {
+        cb('Content not received')
+      }
+    });
   },
 
   handleSwarmImport: function (url, cb) {
