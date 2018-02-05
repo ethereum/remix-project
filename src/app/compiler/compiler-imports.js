@@ -1,9 +1,7 @@
 'use strict'
-// TODO: can just use request or fetch instead
-var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
-var request = require('
+var request = require('request')
 
 module.exports = {
   handleGithubCall: function (root, path, cb) {
