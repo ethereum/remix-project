@@ -160,7 +160,7 @@ function RighthandPanel (appAPI, events, opts) {
 
   self.pluginManager = new PluginManager(appAPI, events)
   events.rhp.register('plugin-loadRequest', (json) => {
-    var content = pluginTab(optionViews, {}, {}, {}, json.url)
+    var content = pluginTab(optionViews, json.url)
     this._view.tabbedMenu.addTab(json.title, 'plugin', content)
     self.pluginManager.register(json, content)
   })
