@@ -38,7 +38,7 @@ var css = csjs`
   }
 `
 
-module.exports = function addTooltip (event, tooltipText) {
+module.exports = function addTooltip (tooltipText) {
   var tooltip = yo`<div class=${css.tooltip}>${tooltipText}</div>`
   document.body.appendChild(tooltip)
   setTimeout(function () {

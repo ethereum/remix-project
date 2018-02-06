@@ -29,7 +29,7 @@ module.exports = function copyToClipboard (getContent) {
         }
       } catch (e) {}
       copy(copiableContent)
-      addTooltip(event, 'Successfully copied!')
+      addTooltip('Successfully copied!')
     }
   }
   return copyIcon

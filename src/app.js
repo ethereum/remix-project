@@ -255,6 +255,9 @@ function run () {
       config: self._api.config,
       detectNetwork: (cb) => {
         executionContext.detectNetwork(cb)
+      },
+      personalMode: () => {
+        return self._api.config.get('settings/personal-mode')
       }
     },
     opt: { removable: false, removable_instances: true }
@@ -623,6 +626,9 @@ function run () {
     },
     getCompilationResult: () => {
       return compiler.lastCompilationResult
+    },
+    newAccount: (pass, cb) => {
+      udapp.newAccount(pass, cb)
     }
   }
   var rhpEvents = {

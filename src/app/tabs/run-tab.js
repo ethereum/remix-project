@@ -10,6 +10,7 @@ var executionContext = require('../../execution-context')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var Recorder = require('../../recorder')
 var EventManager = require('remix-lib').EventManager
+var addTooltip = require('../ui/tooltip')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
@@ -191,6 +192,14 @@ var css = csjs`
   }
   .transactionActions {
     float: right;
+  }
+  .createAccount {
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  .createAccount:hover   {
+    color: ${styles.colors.orange};
+  }
 `
 
 module.exports = runTab
@@ -282,7 +291,7 @@ function fillAccountsList (appAPI, container) {
   var $txOrigin = $(container.querySelector('#txorigin'))
   $txOrigin.empty()
   appAPI.udapp().getAccounts((err, accounts) => {
-    if (err) { console.log(err) }
+    if (err) { addTooltip(`Cannot get account list: ${err}`) }
     if (accounts && accounts[0]) {
       for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])) }
       $txOrigin.val(accounts[0])
@@ -543,6 +552,16 @@ function settings (container, appAPI, appEvents) {
     })
   }
   setInterval(updateNetwork, 5000)
+  function newAccount () {
+    appAPI.newAccount('', (error, address) => {
+      if (!error) {
+        container.querySelector('#txorigin').appendChild(yo`<option value=${address}>${address}</option>`)
+        addTooltip(`account ${address} created`)
+      } else {
+        addTooltip('Cannot create an account: ' + error)
+      }
+    })
+  }
   var el = yo`
     <div class="${css.settings}">
       <div class="${css.crow}">
@@ -579,6 +598,7 @@ function settings (container, appAPI, appEvents) {
         <div class="${css.col1_1}">Account</div>
         <select name="txorigin" class="${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+          <i class="fa fa-plus-square-o ${css.createAccount}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>

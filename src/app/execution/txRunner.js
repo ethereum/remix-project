@@ -11,6 +11,7 @@ var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.styleGuide
 var styles = styleGuide()
+var modal = require('../ui/modal-dialog-custom')
 
 var css = csjs`
   .txInfoBox {
@@ -25,12 +26,10 @@ var css = csjs`
   }
 `
 
-function TxRunner (vmaccounts, opts) {
-  this.personalMode = opts.personalMode
+function TxRunner (vmaccounts, api) {
+  this._api = api
   this.blockNumber = 0
   this.runAsync = true
-  this.config = opts.config
-  this.detectNetwork = opts.detectNetwork
   if (executionContext.isVM()) {
     this.blockNumber = 1150000 // The VM is running in Homestead mode, which started at this block.
     this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
@@ -45,23 +44,21 @@ TxRunner.prototype.rawRun = function (args, cb) {
 }
 
 TxRunner.prototype.execute = function (args, callback) {
+  var self = this
   function execute (gasPrice) {
     if (gasPrice) tx.gasPrice = executionContext.web3().toHex(gasPrice)
 
-    var sendTransaction = self.personalMode ? executionContext.web3().personal.sendTransaction : executionContext.web3().eth.sendTransaction
-    try {
-      sendTransaction(tx, function (err, resp) {
-        if (err) {
-          return callback(err, resp)
-        }
-
-        tryTillResponse(resp, callback)
+    if (self._api.personalMode()) {
+      modal.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account ' + tx.from, '', (value) => {
+        sendTransaction(executionContext.web3().personal.sendTransaction, tx, value, callback)
+      }, () => {
+        return callback('Canceled by user.')
       })
-    } catch (e) {
-      return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+    } else {
+      sendTransaction(executionContext.web3().eth.sendTransaction, tx, null, callback)
     }
   }
-  var self = this
+
   var from = args.from
   var to = args.to
   var data = args.data
@@ -107,8 +104,8 @@ TxRunner.prototype.execute = function (args, callback) {
 
         tx.gas = gasEstimation
 
-        if (!self.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-          self.detectNetwork((err, network) => {
+        if (!self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+          self._api.detectNetwork((err, network) => {
             if (err) {
               console.log(err)
             } else {
@@ -117,7 +114,7 @@ TxRunner.prototype.execute = function (args, callback) {
                 modalDialog('Confirm transaction', content,
                   { label: 'Confirm',
                     fn: () => {
-                      self.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+                      self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
                       if (!content.gasPriceStatus) {
                         callback('Given gas grice is not correct')
                       } else {
@@ -206,6 +203,21 @@ function tryTillResponse (txhash, done) {
   })
 }
 
+function sendTransaction (sendTx, tx, pass, callback) {
+  var cb = function (err, resp) {
+    if (err) {
+      return callback(err, resp)
+    }
+    tryTillResponse(resp, callback)
+  }
+  var args = pass !== null ? [tx, pass, cb] : [tx, cb]
+  try {
+    sendTx.apply({}, args)
+  } catch (e) {
+    return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+  }
+}
+
 function run (self, tx, stamp, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     self.queusTxs.push({ tx, stamp, callback })
@@ -234,7 +246,7 @@ function confirmDialog (tx, gasEstimation, self) {
       <div>Amount: ${amount} Ether</div>
       <div>Gas estimation: ${gasEstimation}</div>
       <div>Gas limit: ${tx.gas}</div>
-      <div>Gas price: <input id='gasprice' oninput=${gasPriceChanged} /> Gwei</div>
+      <div>Gas price: <input id='gasprice' oninput=${gasPriceChanged} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
       <div>Max transaction fee:<span id='txfee'></span></div>
       <div>Data:</div>
       <pre class=${css.wrapword}>${tx.data}</pre>
