@@ -16,7 +16,7 @@ var modalCustom = require('./app/ui/modal-dialog-custom')
 /*
   trigger debugRequested
 */
-function UniversalDApp (opts = {}) {
+function UniversalDAppModel (opts = {}) {
   this.event = new EventManager()
   var self = this
 
@@ -29,7 +29,7 @@ function UniversalDApp (opts = {}) {
   self.txRunner = new TxRunner({}, opts.api)
 }
 
-UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
+UniversalDAppModel.prototype.reset = function (contracts, transactionContextAPI) {
   this.contracts = contracts
   if (transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
@@ -46,7 +46,7 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.txRunner = new TxRunner(this.accounts, this._api)
 }
 
-UniversalDApp.prototype.newAccount = function (password, cb) {
+UniversalDAppModel.prototype.newAccount = function (password, cb) {
   if (!executionContext.isVM()) {
     if (!this._api.personalMode()) {
       return cb('Not running in personal mode')
@@ -68,7 +68,7 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
   }
 }
 
-UniversalDApp.prototype._addAccount = function (privateKey, balance) {
+UniversalDAppModel.prototype._addAccount = function (privateKey, balance) {
   var self = this
 
   if (!executionContext.isVM()) {
@@ -85,7 +85,7 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
   }
 }
 
-UniversalDApp.prototype.getAccounts = function (cb) {
+UniversalDAppModel.prototype.getAccounts = function (cb) {
   var self = this
 
   if (!executionContext.isVM()) {
@@ -105,7 +105,7 @@ UniversalDApp.prototype.getAccounts = function (cb) {
   }
 }
 
-UniversalDApp.prototype.getBalance = function (address, cb) {
+UniversalDAppModel.prototype.getBalance = function (address, cb) {
   var self = this
 
   address = ethJSUtil.stripHexPrefix(address)
@@ -211,7 +211,7 @@ function execute (pipeline, env, callback) {
   next(null, env)
 }
 
-UniversalDApp.prototype.runTx = function (args, cb) {
+UniversalDAppModel.prototype.runTx = function (args, cb) {
   var self = this
   var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
   var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName } // contains decoded parameters
@@ -296,4 +296,4 @@ function runTransaction (env, next) {
   })
 }
 
-module.exports = UniversalDApp
+module.exports = UniversalDAppModel
