@@ -1,4 +1,5 @@
 var yo = require('yo-yo')
+var css = require('./styles/analysis-tab-styles')
 
 function analysisTab (container, appAPI, events, opts) {
   var el = yo`
