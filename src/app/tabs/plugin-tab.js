@@ -1,22 +1,5 @@
 var yo = require('yo-yo')
-
-// -------------- styling ----------------------
-var csjs = require('csjs-inject')
-
-var css = csjs`
-  .pluginTabView {
-    height: 100%;
-    width: 100%;
-  }
-  
-  .iframe {
-    height: 100%;
-    width: 100%;
-    border: 0;
-  }
-`
-
-module.exports = plugintab
+var css = require('./styles/plugin-tab-styles')
 
 function plugintab (container, appAPI, events, opts, url) {
   var el = yo`
@@ -26,3 +9,5 @@ function plugintab (container, appAPI, events, opts, url) {
   container.appendChild(el)
   return el
 }
+
+module.exports = plugintab
