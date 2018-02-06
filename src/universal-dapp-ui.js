@@ -263,7 +263,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
         logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
       }
     }
-    txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, inputField.value, self, (error, data) => {
+    txFormat.buildData(args.contractName, args.contractAbi, self.udapp.contracts, false, args.funABI, inputField.value, self, (error, data) => {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
