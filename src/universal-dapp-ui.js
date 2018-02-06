@@ -2,14 +2,13 @@
 'use strict'
 
 var $ = require('jquery')
-var remixLib = require('remix-lib')
 var yo = require('yo-yo')
-var txHelper = require('./app/execution/txHelper')
 var helper = require('./lib/helper')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
+var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
@@ -155,7 +154,7 @@ UniversalDAppUI.prototype.reset = function (contracts, transactionContextAPI) {
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
-  var abi = txHelper.sortAbiFunction(contract.abi)
+  var abi = this.udapp.getABI(contract)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
 
@@ -190,7 +189,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   instance.appendChild(title)
 
   // Add the fallback function
-  var fallback = txHelper.getFallbackInterface(contractABI)
+  var fallback = self.udapp.getFallbackInterface(contractABI)
   if (fallback) {
     instance.appendChild(this.getCallButton({
       funABI: fallback,
@@ -224,10 +223,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   // args.contractName [constr only]
   var lookupOnly = args.funABI.constant
 
-  var inputs = ''
-  if (args.funABI.inputs) {
-    inputs = txHelper.inputParametersDeclarationToString(args.funABI.inputs)
-  }
+  var inputs = self.udapp.getInputs(args.funABI)
   var inputField = yo`<input></input>`
   inputField.setAttribute('placeholder', inputs)
   inputField.setAttribute('title', inputs)
