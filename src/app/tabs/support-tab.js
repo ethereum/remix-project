@@ -11,7 +11,7 @@ var infoText = yo`
   </div>
 `
 
-function supportTab (container, appAPI, events, opts) {
+function supportTab (container) {
   var el = yo`
     <div class="${css.supportTabView} "id="supportView">
       <div>

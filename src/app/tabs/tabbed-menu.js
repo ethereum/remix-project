@@ -1,6 +1,5 @@
 var yo = require('yo-yo')
 
-// -------------- styling ----------------------
 var csjs = require('csjs-inject')
 var styleGuide = require('remix-lib').ui.themeChooser
 var styles = styleGuide.chooser()
