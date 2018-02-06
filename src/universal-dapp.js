@@ -8,7 +8,7 @@ var EventManager = remixLib.EventManager
 var crypto = require('crypto')
 var TxRunner = require('./app/execution/txRunner')
 var txFormat = require('./app/execution/txFormat')
-// var txHelper = require('./app/execution/txHelper')
+var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
 var executionContext = require('./execution-context')
 var modalCustom = require('./app/ui/modal-dialog-custom')
@@ -185,6 +185,21 @@ UniversalDAppModel.prototype.call = function (isUserAction, args, value, lookupO
 
 UniversalDAppModel.prototype.context = function () {
   return (executionContext.isVM() ? 'memory' : 'blockchain')
+}
+
+UniversalDAppModel.prototype.getABI = function (contract) {
+  return txHelper.sortAbiFunction(contract.abi)
+}
+
+UniversalDAppModel.prototype.getFallbackInterface = function (contractABI) {
+  return txHelper.getFallbackInterface(contractABI)
+}
+
+UniversalDAppModel.prototype.getInputs = function (funABI) {
+  if (!funABI.inputs) {
+    return ''
+  }
+  return txHelper.inputParametersDeclarationToString(funABI.inputs)
 }
 
 function execute (pipeline, env, callback) {
