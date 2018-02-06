@@ -46,6 +46,7 @@
     "remix-lib": "latest",
     "remix-solidity": "latest",
     "remixd": "git+https://github.com/ethereum/remixd.git",
+    "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
     "standard": "^8.5.0",

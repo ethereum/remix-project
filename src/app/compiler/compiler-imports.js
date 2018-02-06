@@ -1,22 +1,29 @@
 'use strict'
-// TODO: can just use request or fetch instead
-var $ = require('jquery')
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
+var request = require('request')
 
 module.exports = {
   handleGithubCall: function (root, path, cb) {
-    return $.getJSON('https://api.github.com/repos/' + root + '/contents/' + path)
-      .done(function (data) {
+    return request.get(
+      {
+        url: 'https://api.github.com/repos/' + root + '/contents/' + path,
+        json: true,
+        headers: {
+          'User-Agent': 'Remix'
+        }
+      },
+      (err, r, data) => {
+        if (err) {
+          return cb(err || 'Unknown transport error')
+        }
         if ('content' in data) {
           cb(null, base64.decode(data.content), root + '/' + path)
+        } else if ('message' in data) {
+          cb(data.message)
         } else {
           cb('Content not received')
         }
-      })
-      .fail(function (xhr, text, err) {
-        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
-        cb(err || 'Unknown transport error')
       })
   },
 
@@ -30,13 +37,18 @@ module.exports = {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
-    return $.ajax({ type: 'GET', url: 'https://gateway.ipfs.io/' + url })
-      .done(function (data) {
+    return request.get(
+      {
+        url: 'https://gateway.ipfs.io/' + url,
+        headers: {
+          'User-Agent': 'Remix'
+        }
+      },
+      (err, r, data) => {
+        if (err) {
+          return cb(err || 'Unknown transport error')
+        }
         cb(null, data, url)
-      })
-      .fail(function (xhr, text, err) {
-        // NOTE: on some browsers, err equals to '' for certain errors (such as offline browser)
-        cb(err || 'Unknown transport error')
       })
   },
 
@@ -48,7 +60,7 @@ module.exports = {
     ]
   },
 
-  import: function (url, cb) {
+  import: function (url, loadingCb, cb) {
     var handlers = this.handlers()
 
     var found = false
@@ -61,8 +73,7 @@ module.exports = {
       if (match) {
         found = true
 
-        // TODO: this needs to be moved to the caller
-        $('#output').append($('<div/>').append($('<pre/>').text('Loading ' + url + ' ...')))
+        loadingCb('Loading ' + url + ' ...')
         handler.handler(match, function (err, content, cleanUrl) {
           if (err) {
             cb('Unable to import "' + cleanUrl + '": ' + err)
