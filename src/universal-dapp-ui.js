@@ -158,7 +158,6 @@ UniversalDAppUI.prototype.reset = function (contracts, transactionContextAPI) {
   this.el.innerHTML = ''
 }
 
-// TODO: has both UI and Model
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
   var abi = txHelper.sortAbiFunction(contract.abi)
   return this.renderInstanceFromABI(abi, address, contractName)
