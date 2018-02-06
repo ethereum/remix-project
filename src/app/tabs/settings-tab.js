@@ -10,7 +10,7 @@ var modal = require('../ui/modal-dialog-custom')
 
 var css = require('./styles/settings-tab-styles')
 
-function SettingsTab (container, appAPI, appEvents, opts) {
+function SettingsTab (container, appAPI, appEvents) {
   if (typeof container === 'string') container = document.querySelector(container)
   if (!container) throw new Error('no container given')
 
