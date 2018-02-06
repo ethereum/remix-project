@@ -78,10 +78,12 @@ var formatAssemblyText = function (asm, prefix, source) {
   })
   text += prefix + '.data\n'
   let asmData = (asm['.data'] || [])
-  asmData.forEach(function (item, i) {
+  for (let i in asmData) {
+    let item = asmData[i]
+
     text += '  ' + prefix + '' + i + ':\n'
     text += formatAssemblyText(item, prefix + '    ', source)
-  })
+  }
   return text
 }
 
