@@ -186,15 +186,15 @@ UniversalDApp.prototype.context = function () {
   return (executionContext.isVM() ? 'memory' : 'blockchain')
 }
 
-UniversalDApp.prototype.getABI = function (contract) {
+UniversalDAppModel.prototype.getABI = function (contract) {
   return txHelper.sortAbiFunction(contract.abi)
 }
 
-UniversalDApp.prototype.getFallbackInterface = function (contractABI) {
+UniversalDAppModel.prototype.getFallbackInterface = function (contractABI) {
   return txHelper.getFallbackInterface(contractABI)
 }
 
-UniversalDApp.prototype.getInputs = function (funABI) {
+UniversalDAppModel.prototype.getInputs = function (funABI) {
   if (!funABI.inputs) {
     return ''
   }
