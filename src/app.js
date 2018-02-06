@@ -195,6 +195,10 @@ module.exports = App
 function run () {
   var self = this
 
+  modalDialogCustom.alert(`The Remix IDE has moved to https://remix.ethereum.org/.\n
+This instance of Remix you are visiting WILL NOT BE UPDATED.\n
+Please make a backup of your contracts and start using https://remix.ethereum.org/`)
+
   // ----------------- Compiler -----------------
   var compiler = new Compiler((url, cb) => {
     var provider = fileManager.fileProviderOf(url)
