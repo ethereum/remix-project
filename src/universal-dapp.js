@@ -16,7 +16,7 @@ var modalCustom = require('./app/ui/modal-dialog-custom')
 /*
   trigger debugRequested
 */
-function UniversalDAppModel (opts = {}) {
+function UniversalDApp (opts = {}) {
   this.event = new EventManager()
   var self = this
 
@@ -30,7 +30,7 @@ function UniversalDAppModel (opts = {}) {
   self.txRunner = new TxRunner({}, opts.api)
 }
 
-UniversalDAppModel.prototype.reset = function (contracts, transactionContextAPI) {
+UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
   this.contracts = contracts
   if (transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
@@ -47,7 +47,7 @@ UniversalDAppModel.prototype.reset = function (contracts, transactionContextAPI)
   this.txRunner = new TxRunner(this.accounts, this._api)
 }
 
-UniversalDAppModel.prototype.newAccount = function (password, cb) {
+UniversalDApp.prototype.newAccount = function (password, cb) {
   if (!executionContext.isVM()) {
     if (!this._api.personalMode()) {
       return cb('Not running in personal mode')
@@ -69,7 +69,7 @@ UniversalDAppModel.prototype.newAccount = function (password, cb) {
   }
 }
 
-UniversalDAppModel.prototype._addAccount = function (privateKey, balance) {
+UniversalDApp.prototype._addAccount = function (privateKey, balance) {
   var self = this
 
   if (!executionContext.isVM()) {
@@ -86,7 +86,7 @@ UniversalDAppModel.prototype._addAccount = function (privateKey, balance) {
   }
 }
 
-UniversalDAppModel.prototype.getAccounts = function (cb) {
+UniversalDApp.prototype.getAccounts = function (cb) {
   var self = this
 
   if (!executionContext.isVM()) {
@@ -106,7 +106,7 @@ UniversalDAppModel.prototype.getAccounts = function (cb) {
   }
 }
 
-UniversalDAppModel.prototype.getBalance = function (address, cb) {
+UniversalDApp.prototype.getBalance = function (address, cb) {
   var self = this
 
   address = ethJSUtil.stripHexPrefix(address)
@@ -134,11 +134,11 @@ UniversalDAppModel.prototype.getBalance = function (address, cb) {
   }
 }
 
-UniversalDAppModel.prototype.pendingTransactions = function () {
+UniversalDApp.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }
 
-UniversalDAppModel.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
+UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
   const self = this
   var logMsg
   if (isUserAction) {
@@ -183,19 +183,19 @@ UniversalDAppModel.prototype.call = function (isUserAction, args, value, lookupO
   })
 }
 
-UniversalDAppModel.prototype.context = function () {
+UniversalDApp.prototype.context = function () {
   return (executionContext.isVM() ? 'memory' : 'blockchain')
 }
 
-UniversalDAppModel.prototype.getABI = function (contract) {
+UniversalDApp.prototype.getABI = function (contract) {
   return txHelper.sortAbiFunction(contract.abi)
 }
 
-UniversalDAppModel.prototype.getFallbackInterface = function (contractABI) {
+UniversalDApp.prototype.getFallbackInterface = function (contractABI) {
   return txHelper.getFallbackInterface(contractABI)
 }
 
-UniversalDAppModel.prototype.getInputs = function (funABI) {
+UniversalDApp.prototype.getInputs = function (funABI) {
   if (!funABI.inputs) {
     return ''
   }
@@ -212,7 +212,7 @@ function execute (pipeline, env, callback) {
   next(null, env)
 }
 
-UniversalDAppModel.prototype.runTx = function (args, cb) {
+UniversalDApp.prototype.runTx = function (args, cb) {
   var self = this
   var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
   var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName } // contains decoded parameters
@@ -297,4 +297,4 @@ function runTransaction (env, next) {
   })
 }
 
-module.exports = UniversalDAppModel
+module.exports = UniversalDApp
