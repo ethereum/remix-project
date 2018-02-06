@@ -2,12 +2,9 @@
 'use strict'
 
 var $ = require('jquery')
-var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var yo = require('yo-yo')
-var txFormat = require('./app/execution/txFormat')
 var txHelper = require('./app/execution/txHelper')
-var txExecution = require('./app/execution/txExecution')
 var helper = require('./lib/helper')
 var executionContext = require('./execution-context')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
@@ -251,51 +248,9 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   button.innerHTML = title
 
   function clickButton () {
-    call(true)
-  }
-
-  function call (isUserAction) {
-    var logMsg
-    if (isUserAction) {
-      if (!args.funABI.constant) {
-        logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-      } else {
-        logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-      }
-    }
-    txFormat.buildData(args.contractName, args.contractAbi, self.udapp.contracts, false, args.funABI, inputField.value, self, (error, data) => {
-      if (!error) {
-        if (isUserAction) {
-          if (!args.funABI.constant) {
-            self.udapp._api.logMessage(`${logMsg} pending ... `)
-          } else {
-            self.udapp._api.logMessage(`${logMsg}`)
-          }
-        }
-        txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
-          if (!error) {
-            var isVM = executionContext.isVM()
-            if (isVM) {
-              var vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                self.udapp._api.logMessage(`${logMsg} errored: ${vmError.message} `)
-                return
-              }
-            }
-            if (lookupOnly) {
-              var decoded = txFormat.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
-              outputOverride.innerHTML = ''
-              outputOverride.appendChild(decoded)
-            }
-          } else {
-            self.udapp._api.logMessage(`${logMsg} errored: ${error} `)
-          }
-        })
-      } else {
-        self.udapp._api.logMessage(`${logMsg} errored: ${error} `)
-      }
-    }, (msg) => {
-      self.udapp._api.logMessage(msg)
+    self.udapp.call(true, args, inputField.value, (decoded) => {
+      outputOverride.innerHTML = ''
+      outputOverride.appendChild(decoded)
     })
   }
 
