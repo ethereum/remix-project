@@ -267,6 +267,7 @@ function run () {
   var udappUI = new UniversalDAppUI(udapp)
 
   udapp.reset({}, transactionContextAPI)
+  udappUI.reset()
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
   })
@@ -617,6 +618,7 @@ function run () {
     },
     resetDapp: (contracts) => {
       udapp.reset(contracts, transactionContextAPI)
+      udappUI.reset()
     },
     setOptimize: (optimize, runCompilation) => {
       compiler.setOptimize(optimize)
