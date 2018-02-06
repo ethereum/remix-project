@@ -146,7 +146,7 @@ function RighthandPanel (appAPI, events, opts) {
 
   // load tabbed menu component
   var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
-  self._view.tabbedMenu = new TabbedMenu(options, {}, tabEvents, {})
+  self._view.tabbedMenu = new TabbedMenu(options, tabEvents)
 
   events.rhp = self.event
 
