@@ -7,6 +7,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
 var UniversalDApp = require('./universal-dapp.js')
+var UniversalDAppUI = require('./universal-dapp-ui.js')
 var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
@@ -262,6 +263,10 @@ function run () {
     },
     opt: { removable: false, removable_instances: true }
   })
+
+  var udappUI = new UniversalDAppUI(udapp)
+  console.dir(udappUI)
+
   udapp.reset({}, transactionContextAPI)
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
