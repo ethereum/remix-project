@@ -1,6 +1,5 @@
 'use strict'
 
-var $ = require('jquery')
 var txHelper = require('../execution/txHelper')
 
 module.exports = (contractName, contract, compiledSource) => {
@@ -63,7 +62,7 @@ var formatAssemblyText = function (asm, prefix, source) {
     return prefix + asm + '\n'
   }
   var text = prefix + '.code\n'
-  $.each(asm['.code'], function (i, item) {
+  asm['.code'].forEach(function (item, _i) {
     var v = item.value === undefined ? '' : item.value
     var src = ''
     if (item.begin !== undefined && item.end !== undefined) {
@@ -78,12 +77,11 @@ var formatAssemblyText = function (asm, prefix, source) {
     text += prefix + item.name + ' ' + v + '\t\t\t' + src + '\n'
   })
   text += prefix + '.data\n'
-  if (asm['.data']) {
-    $.each(asm['.data'], function (i, item) {
-      text += '  ' + prefix + '' + i + ':\n'
-      text += formatAssemblyText(item, prefix + '    ', source)
-    })
-  }
+  let asmData = (asm['.data'] || [])
+  asmData.forEach(function (item, i) {
+    text += '  ' + prefix + '' + i + ':\n'
+    text += formatAssemblyText(item, prefix + '    ', source)
+  })
   return text
 }
 
