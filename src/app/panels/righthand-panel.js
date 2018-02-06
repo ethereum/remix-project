@@ -153,7 +153,7 @@ function RighthandPanel (appAPI, events, opts) {
   this._view.tabbedMenu.addTab('Compile', 'compileView', compileTab(optionViews, appAPI, events, opts))
   this._view.tabbedMenu.addTab('Run', 'runView', runTab(optionViews, appAPI, events, opts))
   this._view.tabbedMenu.addTab('Settings', 'settingsView', settingsTab(optionViews, appAPI, events, opts))
-  this._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab(optionViews, appAPI, events, opts))
+  this._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab(optionViews))
   this._view.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab(optionViews, appAPI, events, opts))
   this._view.tabbedMenu.addTab('Support', 'supportView', supportTab(optionViews, appAPI, events, opts))
   this._view.tabbedMenu.selectTabByTitle('Compile')
