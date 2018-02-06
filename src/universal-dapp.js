@@ -139,7 +139,7 @@ UniversalDAppModel.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }
 
-UniversalDAppModel.prototype.call = function (isUserAction, args, value, outputCb) {
+UniversalDAppModel.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
   const self = this
   var logMsg
   if (isUserAction) {

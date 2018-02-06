@@ -248,7 +248,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   button.innerHTML = title
 
   function clickButton () {
-    self.udapp.call(true, args, inputField.value, (decoded) => {
+    self.udapp.call(true, args, inputField.value, lookupOnly, (decoded) => {
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
     })
