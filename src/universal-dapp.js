@@ -10,7 +10,6 @@ var TxRunner = require('./app/execution/txRunner')
 var txFormat = require('./app/execution/txFormat')
 // var txHelper = require('./app/execution/txHelper')
 var txExecution = require('./app/execution/txExecution')
-// var helper = require('./lib/helper')
 var executionContext = require('./execution-context')
 var modalCustom = require('./app/ui/modal-dialog-custom')
 
