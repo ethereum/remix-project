@@ -183,7 +183,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     ${copyToClipboard(() => address)}
   </div>`
 
-  if (self.removable_instances) {
+  if (self.udapp.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
     instance.append(close)
   }
@@ -268,9 +268,9 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       if (!error) {
         if (isUserAction) {
           if (!args.funABI.constant) {
-            self._api.logMessage(`${logMsg} pending ... `)
+            self.udapp._api.logMessage(`${logMsg} pending ... `)
           } else {
-            self._api.logMessage(`${logMsg}`)
+            self.udapp._api.logMessage(`${logMsg}`)
           }
         }
         txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
@@ -279,7 +279,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                self._api.logMessage(`${logMsg} errored: ${vmError.message} `)
+                self.udapp._api.logMessage(`${logMsg} errored: ${vmError.message} `)
                 return
               }
             }
@@ -289,14 +289,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               outputOverride.appendChild(decoded)
             }
           } else {
-            self._api.logMessage(`${logMsg} errored: ${error} `)
+            self.udapp._api.logMessage(`${logMsg} errored: ${error} `)
           }
         })
       } else {
-        self._api.logMessage(`${logMsg} errored: ${error} `)
+        self.udapp._api.logMessage(`${logMsg} errored: ${error} `)
       }
     }, (msg) => {
-      self._api.logMessage(msg)
+      self.udapp._api.logMessage(msg)
     })
   }
 

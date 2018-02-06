@@ -25,8 +25,8 @@ function UniversalDAppModel (opts = {}) {
   self.removable = opts.opt.removable
   self.removable_instances = opts.opt.removable_instances
   self.personalMode = opts.opt.personalMode || false
-  self.contracts
-  self.transactionContextAPI
+  // self.contracts
+  // self.transactionContextAPI
   executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
