@@ -6,7 +6,6 @@ var remixLib = require('remix-lib')
 var yo = require('yo-yo')
 var txHelper = require('./app/execution/txHelper')
 var helper = require('./lib/helper')
-var executionContext = require('./execution-context')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
 
 // -------------- styling ----------------------
@@ -171,7 +170,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance}" id="instance${address}"></div>`
-  var context = executionContext.isVM() ? 'memory' : 'blockchain'
+  var context = self.udapp.context()
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`<div class="${css.title}" onclick=${toggleClass}>
