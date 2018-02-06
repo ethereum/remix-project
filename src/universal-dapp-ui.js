@@ -17,7 +17,7 @@ function UniversalDAppUI (udapp, opts = {}) {
   self.el = yo`<div class=${css.udapp}></div>`
 }
 
-UniversalDAppUI.prototype.reset = function (contracts, transactionContextAPI) {
+UniversalDAppUI.prototype.reset = function () {
   this.el.innerHTML = ''
 }
 
