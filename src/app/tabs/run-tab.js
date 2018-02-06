@@ -20,7 +20,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instance
 
 var pendingTxsText = yo`<span></span>`
 
-function runTab (container, appAPI, appEvents, opts) {
+function runTab (container, appAPI, appEvents) {
   var events = new EventManager()
 
   var clearInstanceElement = yo`<i class="${css.clearinstance} fa fa-minus-square-o" title="Clear Instances List" aria-hidden="true"></i>`
