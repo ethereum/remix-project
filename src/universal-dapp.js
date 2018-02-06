@@ -7,9 +7,9 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var crypto = require('crypto')
 var TxRunner = require('./app/execution/txRunner')
-// var txFormat = require('./app/execution/txFormat')
+var txFormat = require('./app/execution/txFormat')
 // var txHelper = require('./app/execution/txHelper')
-// var txExecution = require('./app/execution/txExecution')
+var txExecution = require('./app/execution/txExecution')
 // var helper = require('./lib/helper')
 var executionContext = require('./execution-context')
 var modalCustom = require('./app/ui/modal-dialog-custom')
@@ -25,8 +25,6 @@ function UniversalDAppModel (opts = {}) {
   self.removable = opts.opt.removable
   self.removable_instances = opts.opt.removable_instances
   self.personalMode = opts.opt.personalMode || false
-  // self.contracts
-  // self.transactionContextAPI
   executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
@@ -139,6 +137,51 @@ UniversalDAppModel.prototype.getBalance = function (address, cb) {
 
 UniversalDAppModel.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
+}
+
+UniversalDAppModel.prototype.call = function (isUserAction, args, value, outputCb) {
+  const self = this
+  var logMsg
+  if (isUserAction) {
+    if (!args.funABI.constant) {
+      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    } else {
+      logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    }
+  }
+  txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, value, self, (error, data) => {
+    if (!error) {
+      if (isUserAction) {
+        if (!args.funABI.constant) {
+          self._api.logMessage(`${logMsg} pending ... `)
+        } else {
+          self._api.logMessage(`${logMsg}`)
+        }
+      }
+      txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
+        if (!error) {
+          var isVM = executionContext.isVM()
+          if (isVM) {
+            var vmError = txExecution.checkVMError(txResult)
+            if (vmError.error) {
+              self._api.logMessage(`${logMsg} errored: ${vmError.message} `)
+              return
+            }
+          }
+          if (lookupOnly) {
+            var decoded = txFormat.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+            outputCb(decoded)
+          }
+        } else {
+          self._api.logMessage(`${logMsg} errored: ${error} `)
+        }
+      })
+    } else {
+      self._api.logMessage(`${logMsg} errored: ${error} `)
+    }
+  }, (msg) => {
+    self._api.logMessage(msg)
+  })
 }
 
 function execute (pipeline, env, callback) {
