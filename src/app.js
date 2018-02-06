@@ -265,7 +265,6 @@ function run () {
   })
 
   var udappUI = new UniversalDAppUI(udapp)
-  console.dir(udappUI)
 
   udapp.reset({}, transactionContextAPI)
   udapp.event.register('debugRequested', this, function (txResult) {
@@ -581,6 +580,9 @@ function run () {
     },
     udapp: () => {
       return udapp
+    },
+    udappUI: () => {
+      return udappUI
     },
     switchFile: function (path) {
       fileManager.switchFile(path)
