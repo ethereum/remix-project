@@ -1,6 +1,5 @@
 var async = require('async')
 var $ = require('jquery')
-var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var minixhr = require('minixhr')  // simple and small cross-browser XMLHttpRequest (XHR)
 var remixLib = require('remix-lib')
@@ -15,110 +14,7 @@ var helper = require('../../lib/helper')
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
-module.exports = filepanel
-
-var css = csjs`
-  .container {
-    display           : flex;
-    flex-direction    : row;
-    width             : 100%;
-    height            : 100%;
-    box-sizing        : border-box;
-  }
-  .fileexplorer       {
-    display           : flex;
-    flex-direction    : column;
-    position          : relative;
-    width             : 100%;
-  }
-  .menu               {
-    margin-top        : -0.2em;
-    flex-shrink       : 0;
-    display           : flex;
-    flex-direction    : row;
-    min-width         : 160px;
-  }
-  .newFile            {
-    padding           : 10px;
-  }
-  .newFile i          {
-    cursor            : pointer;
-  }
-  .newFile i:hover    {
-    color             : ${styles.colors.orange};
-  }
-  .gist            {
-    padding           : 10px;
-  }
-  .gist i          {
-    cursor            : pointer;
-  }
-  .gist i:hover    {
-    color             : orange;
-  }
-  .copyFiles            {
-    padding           : 10px;
-  }
-  .copyFiles i          {
-    cursor            : pointer;
-  }
-  .copyFiles i:hover    {
-    color             : orange;
-  }
-  .connectToLocalhost {
-    padding           : 10px;
-  }
-  .connectToLocalhost i {
-    cursor            : pointer;
-  }
-  .connectToLocalhost i:hover   {
-    color             : ${styles.colors.orange};
-  }
-  .uploadFile         {
-    padding           : 10px;
-  }
-  .uploadFile label:hover   {
-    color             : ${styles.colors.orange};
-  }
-  .uploadFile label   {
-    cursor            : pointer;
-  }
-  .treeview {
-    background-color  : ${styles.colors.general_BackgroundColor};
-  }
-  .treeviews {
-    overflow-y        : auto;
-  }
-  .dragbar            {
-    position          : absolute;
-    top               : 37px;
-    width             : 0.5em;
-    right             : 0;
-    bottom            : 0;
-    cursor            : col-resize;
-    z-index           : 999;
-    border-right      : 2px solid hsla(215, 81%, 79%, .3);
-  }
-  .ghostbar           {
-    width             : 3px;
-    background-color  : ${styles.colors.lightBlue};
-    opacity           : 0.5;
-    position          : absolute;
-    cursor            : col-resize;
-    z-index           : 9999;
-    top               : 0;
-    bottom            : 0;
-  }
-  .dialog {
-    display: flex;
-    flex-direction: column;
-  }
-  .dialogParagraph {
-    ${styles.infoTextBox}
-    margin-bottom: 2em;
-    word-break: break-word;
-  }
-`
+var css = require('./styles/file-panel-styles')
 
 var limit = 60
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -403,3 +299,5 @@ function packageFiles (files, callback) {
     callback(null, ret)
   })
 }
+
+module.exports = filepanel
