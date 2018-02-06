@@ -184,6 +184,10 @@ UniversalDAppModel.prototype.call = function (isUserAction, args, value, lookupO
   })
 }
 
+UniversalDAppModel.prototype.context = function () {
+  return (executionContext.isVM() ? 'memory' : 'blockchain')
+}
+
 function execute (pipeline, env, callback) {
   function next (err, env) {
     if (err) return callback(err)
