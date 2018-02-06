@@ -19,6 +19,8 @@ module.exports = {
         }
         if ('content' in data) {
           cb(null, base64.decode(data.content), root + '/' + path)
+        } else if ('message' in data) {
+          cb(data.message)
         } else {
           cb('Content not received')
         }
