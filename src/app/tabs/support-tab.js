@@ -34,7 +34,7 @@ function supportTabView (gitterIframe) {
 }
 
 function supportTab (container, events) {
-  let el = supportTabView('hello')
+  let el = supportTabView('')
   let gitterIsLoaded = false
 
   events.app.register('tabChanged', (tabName) => {
