@@ -23,7 +23,6 @@ function UniversalDApp (opts = {}) {
   self._api = opts.api
   self.removable = opts.opt.removable
   self.removable_instances = opts.opt.removable_instances
-  self.personalMode = opts.opt.personalMode || false
   executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
   })
