@@ -18,18 +18,20 @@ function compileAndDeploy (filename, callback) {
       Deployer.deployAll(compilationResult, web3, next)
     }
   ], function (_err, contracts) {
-    callback(null, contracts)
+    callback(null, contracts, web3)
   })
 }
 
 describe('testRunner', function () {
+  let web3;
   describe('#runTest', function() {
     describe('test with beforeAll', function () {
       let filename = 'tests/examples_1/simple_storage_test.sol'
       let tests = [], results = {}
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, contracts) {
+        compileAndDeploy(filename, function (_err, contracts, _web3) {
+          web3 = _web3;
           var testCallback = function (test) {
             tests.push(test)
           }
@@ -37,7 +39,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest(web3, 'MyTest', contracts.MyTest, testCallback, resultsCallback)
         })
       })
 
@@ -52,8 +54,8 @@ describe('testRunner', function () {
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
           { type: 'contract',    value: 'MyTest' },
-          { type: 'testPass',    value: 'Initial value should be100', time: 1 },
-          { type: 'testFailure', value: 'Initial value should be200', time: 1 }
+          { type: 'testPass',    value: 'Initial value should be100', time: 1, context: 'MyTest' },
+          { type: 'testFailure', value: 'Initial value should be200', time: 1, context: 'MyTest', errMsg: 'function returned false' }
         ])
       })
     })
@@ -71,7 +73,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest(web3, 'MyTest', contracts.MyTest, testCallback, resultsCallback)
         })
       })
 
@@ -86,8 +88,8 @@ describe('testRunner', function () {
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
           { type: 'contract', value: 'MyTest' },
-          { type: 'testPass', value: 'Initial value should be100', time: 1 },
-          { type: 'testPass', value: 'Initial value should be200', time: 1 }
+          { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
+          { type: 'testPass', value: 'Initial value should be200', time: 1, context: 'MyTest' }
         ])
       })
     })
