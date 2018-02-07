@@ -54,7 +54,7 @@ function runTest (web3, testName, testObject, testCallback, resultsCallback) {
         next()
       })
     } else {
-      method.send().on('receipt', function(receipt) {
+      method.send().on('receipt', function (receipt) {
         let time = Math.ceil((Date.now() - startTime) / 1000.0)
         if (func.type === 'test') {
           let topic = web3.utils.sha3('AssertionEvent(bool,string)')
@@ -68,10 +68,10 @@ function runTest (web3, testName, testObject, testCallback, resultsCallback) {
           }
 
           if (matchingEvents.length === 0) {
-            return next();
+            return next()
           }
 
-          let result = matchingEvents[0];
+          let result = matchingEvents[0]
 
           if (result[0]) {
             testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})

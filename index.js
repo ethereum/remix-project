@@ -83,10 +83,10 @@ var runTestFiles = function (filepath, isDirectory, web3) {
         console.log('')
 
         errors.forEach((error, index) => {
-          console.log("  " + (index+1) + ") " + error.context + " " + error.value)
+          console.log('  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
           console.log('')
-          console.log(("\t error: " + error.errMsg).red);
-        });
+          console.log(('\t error: ' + error.errMsg).red)
+        })
         console.log('')
 
         next()
