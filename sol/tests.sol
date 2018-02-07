@@ -3,7 +3,7 @@ pragma solidity ^0.4.7;
 library Assert {
 
   event AssertionEvent(
-    bool indexed passed,
+    bool passed,
     string message
   );
 

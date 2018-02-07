@@ -9,12 +9,12 @@ contract MyTest {
     foo = new SimpleStorage();
   }
 
-  function initialValueShouldBe100() public constant returns (bool) {
-    return Assert.equal(foo.get(), 100, "initial value is not correct");
+  function initialValueShouldBe100() public {
+    Assert.equal(foo.get(), 100, "initial value is not correct");
   }
 
-  function initialValueShouldBe200() public constant returns (bool) {
-    return Assert.equal(foo.get(), 200, "initial value is not correct");
+  function initialValueShouldBe200() public {
+    Assert.equal(foo.get(), 200, "initial value is not correct");
   }
 
 }

@@ -29,7 +29,7 @@ function createRunList (jsonInterface) {
   return runList
 }
 
-function runTest (testName, testObject, testCallback, resultsCallback) {
+function runTest (web3, testName, testObject, testCallback, resultsCallback) {
   let runList = createRunList(testObject._jsonInterface)
 
   let passingNum = 0
@@ -48,13 +48,39 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
           passingNum += 1
           timePassed += time
         } else {
-          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time})
+          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: 'function returned false'})
           failureNum += 1
         }
         next()
       })
     } else {
-      method.send().then(() => {
+      method.send().on('receipt', function(receipt) {
+        let time = Math.ceil((Date.now() - startTime) / 1000.0)
+        if (func.type === 'test') {
+          let topic = web3.utils.sha3('AssertionEvent(bool,string)')
+
+          let matchingEvents = []
+          for (let i in receipt.events) {
+            let event = receipt.events[i]
+            if (event.raw.topics.indexOf(topic) >= 0) {
+              matchingEvents.push(web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data))
+            }
+          }
+
+          if (matchingEvents.length === 0) {
+            return next();
+          }
+
+          let result = matchingEvents[0];
+
+          if (result[0]) {
+            testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time})
+            passingNum += 1
+          } else {
+            testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: result[1]})
+            failureNum += 1
+          }
+        }
         next()
       })
     }

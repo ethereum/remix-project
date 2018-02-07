@@ -60,7 +60,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
       }
 
       async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-        TestRunner.runTest(contractName, contracts[contractName], testCallback, (err, result) => {
+        TestRunner.runTest(web3, contractName, contracts[contractName], testCallback, (err, result) => {
           if (err) {
             return cb(err)
           }
