@@ -204,41 +204,36 @@ UniversalDApp.prototype.getInputs = function (funABI) {
 
 UniversalDApp.prototype.runTx = function (args, cb) {
   const self = this
-
-  var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
-  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName } // contains decoded parameters
-
   async.waterfall([
     function queryGasLimit (next) {
-      tx.gasLimit = 3000000
       if (self.transactionContextAPI.getGasLimit) {
-        self.transactionContextAPI.getGasLimit(function (err, ret) {
-          if (err) return next(err)
-          tx.gasLimit = ret
-          next()
-        })
-      } else next()
+        return self.transactionContextAPI.getGasLimit(next)
+      }
+      next(null, 3000000)
     },
-    function queryValue (next) {
+    function queryValue (gasLimit, next) {
       if (self.transactionContextAPI.getAddress) {
-        self.transactionContextAPI.getAddress(function (err, ret) {
-          if (err) return next(err)
-          tx.from = ret
-          next()
-        })
-      } else {
-        self.getAccounts(function (err, ret) {
-          if (err) return next(err)
-          if (ret.length === 0) return next('No accounts available')
-          if (executionContext.isVM() && !self.accounts[ret[0]]) {
-            return next('Invalid account selected')
-          }
-          tx.from = ret[0]
-          next()
+        return self.transactionContextAPI.getAddress(function (err, address) {
+          next(err, address, gasLimit)
         })
       }
+      self.getAccounts(function (err, accounts) {
+        let address = accounts[0]
+
+        if (err) return next(err)
+        if (!address) return next('No accounts available')
+        if (executionContext.isVM() && !self.accounts[address]) {
+          return next('Invalid account selected')
+        }
+        next(null, address, gasLimit)
+      })
     },
-    function runTransaction (next) {
+    function runTransaction (fromAddress, gasLimit, next) {
+      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
+      var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName }
+
+      tx.gasLimit = gasLimit
+      tx.from = fromAddress
       var timestamp = Date.now()
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
       self.txRunner.rawRun(tx, function (error, result) {
