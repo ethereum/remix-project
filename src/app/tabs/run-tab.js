@@ -379,7 +379,7 @@ function makeRecorder (events, appAPI, appEvents) {
           if (txArray.length) {
             noInstancesText.style.display = 'none'
             recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
-              instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, contractName))
+              instanceContainer.appendChild(appAPI.udappUI().renderInstanceFromABI(abi, address, contractName))
             })
           }
         } else {
@@ -484,7 +484,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
             }
             noInstancesText.style.display = 'none'
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(appAPI.udapp().renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+            instanceContainer.appendChild(appAPI.udappUI().renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           } else {
             appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           }
@@ -509,11 +509,11 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
-        instanceContainer.appendChild(appAPI.udapp().renderInstanceFromABI(abi, address, address))
+        instanceContainer.appendChild(appAPI.udappUI().renderInstanceFromABI(abi, address, address))
       })
     } else {
       var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
-      instanceContainer.appendChild(appAPI.udapp().renderInstance(contract.object, address, selectContractNames.value))
+      instanceContainer.appendChild(appAPI.udappUI().renderInstance(contract.object, address, selectContractNames.value))
     }
   }
 
