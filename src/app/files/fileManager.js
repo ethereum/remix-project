@@ -121,17 +121,19 @@ class FileManager {
 
   switchFile (file) {
     var self = this
-    if (!file) {
-      self.opt.filesProviders['browser'].resolveDirectory('browser', (error, filesTree) => {
+    if (file) return _switchFile(file)
+    else {
+      var browserProvider = self.opt.filesProviders['browser']
+      browserProvider.resolveDirectory('browser', (error, filesTree) => {
         if (error) console.error(error)
         var fileList = Object.keys(filesTree)
         if (fileList.length) {
-          _switchFile(fileList[0])
+          _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
           self.event.trigger('currentFileChanged', [])
         }
       })
-    } else _switchFile(file)
+    }
     function _switchFile (file) {
       self.saveCurrentFile()
       self.opt.config.set('currentFile', file)
