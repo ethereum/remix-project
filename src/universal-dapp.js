@@ -1,6 +1,7 @@
 /* global */
 'use strict'
 
+var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
@@ -201,14 +202,63 @@ UniversalDApp.prototype.getInputs = function (funABI) {
   return txHelper.inputParametersDeclarationToString(funABI.inputs)
 }
 
-function execute (pipeline, env, callback) {
-  function next (err, env) {
-    if (err) return callback(err)
-    var step = pipeline.shift()
-    if (step) step(env, next)
-    else callback(null, env.result)
-  }
-  next(null, env)
+UniversalDApp.prototype.runTx = function (args, cb) {
+  const self = this
+
+  var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
+  var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName } // contains decoded parameters
+
+  async.waterfall([
+    function queryGasLimit (next) {
+      tx.gasLimit = 3000000
+      if (self.transactionContextAPI.getGasLimit) {
+        self.transactionContextAPI.getGasLimit(function (err, ret) {
+          if (err) return next(err)
+          tx.gasLimit = ret
+          next()
+        })
+      } else next()
+    },
+    function queryValue (next) {
+      if (self.transactionContextAPI.getAddress) {
+        self.transactionContextAPI.getAddress(function (err, ret) {
+          if (err) return next(err)
+          tx.from = ret
+          next()
+        })
+      } else {
+        self.getAccounts(function (err, ret) {
+          if (err) return next(err)
+          if (ret.length === 0) return next('No accounts available')
+          if (executionContext.isVM() && !self.accounts[ret[0]]) {
+            return next('Invalid account selected')
+          }
+          tx.from = ret[0]
+          next()
+        })
+      }
+    },
+    function runTransaction (next) {
+      var timestamp = Date.now()
+      self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+      self.txRunner.rawRun(tx, function (error, result) {
+        if (!tx.useCall) {
+          self.event.trigger('transactionExecuted', [error, tx.from, tx.to, tx.data, false, result, timestamp, payLoad])
+        } else {
+          self.event.trigger('callExecuted', [error, tx.from, tx.to, tx.data, true, result, timestamp, payLoad])
+        }
+        if (error) {
+          if (typeof (error) !== 'string') {
+            if (error.message) error = error.message
+            else {
+              try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
+            }
+          }
+        }
+        next(error, result)
+      })
+    }
+  ], cb)
 }
 
 UniversalDApp.prototype.runTx = function (args, cb) {
@@ -225,6 +275,16 @@ UniversalDApp.prototype.runTx = function (args, cb) {
   pipeline.push(runTransaction)
   var env = { self, tx, payLoad }
   execute(pipeline, env, cb)
+}
+
+function execute (pipeline, env, callback) {
+  function next (err, env) {
+    if (err) return callback(err)
+    var step = pipeline.shift()
+    if (step) step(env, next)
+    else callback(null, env.result)
+  }
+  next(null, env)
 }
 
 function queryGasLimit (env, next) {
