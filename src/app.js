@@ -519,6 +519,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
       if (!error && content) fileManager.switchFile(previouslyOpenedFile)
     })
+  } else {
+    fileManager.switchFile()
   }
 
   // ----------------- Renderer -----------------
