@@ -7,6 +7,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
 var UniversalDApp = require('./universal-dapp.js')
+var UniversalDAppUI = require('./universal-dapp-ui.js')
 var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
 
@@ -271,7 +272,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     opt: { removable: false, removable_instances: true }
   })
+
+  var udappUI = new UniversalDAppUI(udapp)
+
   udapp.reset({}, transactionContextAPI)
+  udappUI.reset()
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
   })
@@ -586,6 +591,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     udapp: () => {
       return udapp
     },
+    udappUI: () => {
+      return udappUI
+    },
     switchFile: function (path) {
       fileManager.switchFile(path)
     },
@@ -619,6 +627,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     resetDapp: (contracts) => {
       udapp.reset(contracts, transactionContextAPI)
+      udappUI.reset()
     },
     setOptimize: (optimize, runCompilation) => {
       compiler.setOptimize(optimize)
