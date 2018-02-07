@@ -517,7 +517,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var previouslyOpenedFile = config.get('currentFile')
   if (previouslyOpenedFile) {
     filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) fileManager.switchFile(previouslyOpenedFile)
+      if (!error && content) {
+        fileManager.switchFile(previouslyOpenedFile)
+      } else {
+        fileManager.switchFile()
+      }
     })
   } else {
     fileManager.switchFile()
