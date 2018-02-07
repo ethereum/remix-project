@@ -515,9 +515,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
   var previouslyOpenedFile = config.get('currentFile')
-  filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-    if (!error && content) fileManager.switchFile(previouslyOpenedFile)
-  })
+  if (previouslyOpenedFile) {
+    filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
+      if (!error && content) fileManager.switchFile(previouslyOpenedFile)
+    })
+  }
 
   // ----------------- Renderer -----------------
   var rendererAPI = {
