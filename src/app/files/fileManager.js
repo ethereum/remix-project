@@ -122,12 +122,11 @@ class FileManager {
   switchFile (file) {
     var self = this
     if (!file) {
-      self.opt.filesProviders['browser'].resolveDirectory('/', (error, filesTree) => {
+      self.opt.filesProviders['browser'].resolveDirectory('browser', (error, filesTree) => {
         if (error) console.error(error)
-        var fileList = Object.keys(flatten(filesTree))
+        var fileList = Object.keys(filesTree)
         if (fileList.length) {
-          file = fileList[0]
-          if (file) _switchFile(file)
+          _switchFile(fileList[0])
         } else {
           self.event.trigger('currentFileChanged', [])
         }
@@ -135,6 +134,7 @@ class FileManager {
     } else _switchFile(file)
     function _switchFile (file) {
       self.saveCurrentFile()
+      self.opt.config.set('currentFile', file)
       self.refreshTabs(file)
       self.fileProviderOf(file).get(file, (error, content) => {
         if (error) {
@@ -180,23 +180,3 @@ class FileManager {
 }
 
 module.exports = FileManager
-
-function flatten (tree) {
-  var flat = {}
-  var names = Object.keys(tree || {})
-  if (!names.length) return
-  else {
-    names.forEach(name => {
-      if ('/content' in tree[name]) flat[name] = false
-      else {
-        var subflat = flatten(tree[name])
-        if (!subflat) {
-          // empty folder
-        } else {
-          Object.keys(subflat).forEach(path => { flat[name + '/' + path] = false })
-        }
-      }
-    })
-    return flat
-  }
-}
