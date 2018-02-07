@@ -11,8 +11,12 @@ var infoText = yo`
   </div>
 `
 
-function supportTab (container) {
-  var el = yo`
+let gitterIframe = yo`
+  <iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>
+`
+
+function supportTabView (gitterIframe) {
+  return yo`
     <div class="${css.supportTabView} "id="supportView">
       <div>
         <div class="${css.infoBox}">
@@ -23,10 +27,26 @@ function supportTab (container) {
         <div class="${css.chatTitle}" onclick=${openLink} title='Click to open chat in Gitter'>
           <div class="${css.chatTitleText}">ethereum/remix community chat</div>
         </div>
-        <iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>
+        ${gitterIframe}
       </div>
     </div>
   `
+}
+
+function supportTab (container, events) {
+  let el = supportTabView('hello')
+  let gitterIsLoaded = false
+
+  events.app.register('tabChanged', (tabName) => {
+    if (tabName !== 'Support' || gitterIsLoaded) {
+      return
+    }
+
+    yo.update(el, supportTabView(gitterIframe))
+    el.style.display = 'block'
+    gitterIsLoaded = true
+  })
+
   container.appendChild(el)
   return el
 }

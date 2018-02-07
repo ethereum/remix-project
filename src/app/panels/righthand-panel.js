@@ -51,7 +51,7 @@ function RighthandPanel (appAPI, events, opts) {
   this._view.tabbedMenu.addTab('Settings', 'settingsView', settingsTab(optionViews, appAPI, events))
   this._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab(optionViews))
   this._view.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab(optionViews))
-  this._view.tabbedMenu.addTab('Support', 'supportView', supportTab(optionViews))
+  this._view.tabbedMenu.addTab('Support', 'supportView', supportTab(optionViews, events))
   this._view.tabbedMenu.selectTabByTitle('Compile')
 
   self.pluginManager = new PluginManager(appAPI, events)
