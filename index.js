@@ -42,6 +42,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
       let totalPassing = 0
       let totalFailing = 0
       let totalTime = 0
+      let errors = []
 
       var testCallback = function (result) {
         if (result.type === 'contract') {
@@ -50,6 +51,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
           console.log('\t✓ '.green.bold + result.value.grey)
         } else if (result.type === 'testFailure') {
           console.log('\t✘ '.bold.red + result.value.red)
+          errors.push(result)
         }
       }
       var resultsCallback = function (_err, result, cb) {
@@ -78,6 +80,13 @@ var runTestFiles = function (filepath, isDirectory, web3) {
         if (totalFailing > 0) {
           console.log(('  ' + totalFailing + ' failing').red)
         }
+        console.log('')
+
+        errors.forEach((error, index) => {
+          console.log("  " + (index+1) + ") " + error.context + " " + error.value)
+          console.log('')
+          console.log(("\t error: " + error.errMsg).red);
+        });
         console.log('')
 
         next()

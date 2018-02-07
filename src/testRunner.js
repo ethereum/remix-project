@@ -44,11 +44,11 @@ function runTest (web3, testName, testObject, testCallback, resultsCallback) {
       method.call().then((result) => {
         let time = Math.ceil((Date.now() - startTime) / 1000.0)
         if (result) {
-          testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time})
+          testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})
           passingNum += 1
           timePassed += time
         } else {
-          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: 'function returned false'})
+          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: 'function returned false', context: testName})
           failureNum += 1
         }
         next()
@@ -74,10 +74,10 @@ function runTest (web3, testName, testObject, testCallback, resultsCallback) {
           let result = matchingEvents[0];
 
           if (result[0]) {
-            testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time})
+            testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})
             passingNum += 1
           } else {
-            testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: result[1]})
+            testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: result[1], context: testName})
             failureNum += 1
           }
         }
