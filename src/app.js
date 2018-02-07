@@ -195,9 +195,14 @@ module.exports = App
 function run () {
   var self = this
 
-  modalDialogCustom.alert(`The Remix IDE has moved to https://remix.ethereum.org/.\n
+  if (window.location.protocol.indexOf('http') === 0 &&
+  window.location.hostname !== 'remix.ethereum.org' &&
+  window.location.hostname !== 'localhost' &&
+  window.location.hostname !== '127.0.0.1') {
+    modalDialogCustom.alert(`The Remix IDE has moved to http://remix.ethereum.org.\n
 This instance of Remix you are visiting WILL NOT BE UPDATED.\n
-Please make a backup of your contracts and start using https://remix.ethereum.org/`)
+Please make a backup of your contracts and start using http://remix.ethereum.org`)
+  }
 
   // ----------------- Compiler -----------------
   var compiler = new Compiler((url, cb) => {
