@@ -18,6 +18,7 @@ var themeChooser = require('./src/ui/theme-chooser')
 var Storage = require('./src/storage')
 
 var EventsDecoder = require('./src/execution/eventsDecoder')
+var txExecution = require('./src/execution/txExecution')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -53,7 +54,8 @@ function modules () {
       themeChooser: themeChooser
     },
     execution: {
-      EventsDecoder: EventsDecoder
+      EventsDecoder: EventsDecoder,
+      txExecution: txExecution
     }
   }
 }
