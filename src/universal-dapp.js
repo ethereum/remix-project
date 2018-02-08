@@ -211,10 +211,25 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       }
       next(null, 3000000)
     },
-    function getAccount (gasLimit, next) {
+    function queryValue (gasLimit, next) {
+      if (args.value) {
+        return next(null, args.value, gasLimit)
+      }
+      if (args.useCall) return next(null, 0, gasLimit)
+      if (self.transactionContextAPI.getValue) {
+        self.transactionContextAPI.getValue(function (err, value) {
+          next(err, value, gasLimit)
+        })
+      }
+      next(null, 0, gasLimit)
+    },
+    function getAccount (value, gasLimit, next) {
+      if (args.from) {
+        return next(null, args.from, value, gasLimit)
+      }
       if (self.transactionContextAPI.getAddress) {
         return self.transactionContextAPI.getAddress(function (err, address) {
-          next(err, address, gasLimit)
+          next(err, address, value, gasLimit)
         })
       }
       self.getAccounts(function (err, accounts) {
@@ -225,11 +240,11 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         if (executionContext.isVM() && !self.accounts[address]) {
           return next('Invalid account selected')
         }
-        next(null, address, gasLimit)
+        next(null, address, value, gasLimit)
       })
     },
-    function runTransaction (fromAddress, gasLimit, next) {
-      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: args.value, gasLimit: gasLimit }
+    function runTransaction (fromAddress, value, gasLimit, next) {
+      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit }
       var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName }
       var timestamp = Date.now()
 
