@@ -1,6 +1,6 @@
 'use strict'
 var ethJSABI = require('ethereumjs-abi')
-var txHelper = require('../execution/txHelper')
+var txHelper = require('./txHelper')
 
 /**
   * Register to txListener and extract events
