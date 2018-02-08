@@ -5,7 +5,7 @@ var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-
+var contextMenu = require('../ui/contextMenu')
 var helper = require('../../lib/helper')
 
 var styleGuide = remixLib.ui.themeChooser
@@ -154,11 +154,22 @@ function fileExplorer (appAPI, files) {
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
-        onclick=${editModeOn}
         onkeydown=${editModeOff}
         onblur=${editModeOff}
       >${key.split('/').pop()}</label>`
     }
+  })
+
+  self.treeView.event.register('leafRightClick', function (key, data, label, event) {
+    contextMenu(event, {
+      'Rename': () => {
+        if (self.files.readonly) return
+        editModeOn(label)
+      },
+      'Delete': () => {
+        files.remove(key)
+      }
+    })
   })
 
   self.treeView.event.register('leafClick', function (key, data, label) {
@@ -209,17 +220,11 @@ function fileExplorer (appAPI, files) {
   var textUnderEdit = null
   var textInRename = false
 
-  function editModeOn (event) {
-    if (self.files.readonly) return
-    var label = this
-    var li = label.parentElement.parentElement.parentElement
-    var classes = li.className
-    if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable') && label.getAttribute('data-path') !== self.files.type) {
-      textUnderEdit = label.innerText
-      label.setAttribute('contenteditable', true)
-      label.classList.add(css.rename)
-      label.focus()
-    }
+  function editModeOn (label) {
+    textUnderEdit = label.innerText
+    label.setAttribute('contenteditable', true)
+    label.classList.add(css.rename)
+    label.focus()
   }
 
   function editModeOff (event) {
