@@ -3,7 +3,6 @@ var ethJSABI = require('ethereumjs-abi')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var helper = require('./txHelper')
-var TreeView = require('remix-debugger').ui.TreeView
 var executionContext = require('./execution-context')
 
 module.exports = {
@@ -197,22 +196,6 @@ module.exports = {
       bytecodeToLink = bytecodeToLink.replace(libLabel, address)
     }
     return bytecodeToLink
-  },
-
-  decodeResponseToTreeView: function (response, fnabi) {
-    var treeView = new TreeView({
-      extractData: (item, parent, key) => {
-        var ret = {}
-        if (BN.isBN(item)) {
-          ret.self = item.toString(10)
-          ret.children = []
-        } else {
-          ret = treeView.extractDataDefault(item, parent, key)
-        }
-        return ret
-      }
-    })
-    return treeView.render(this.decodeResponse(response, fnabi))
   },
 
   decodeResponse: function (response, fnabi) {
