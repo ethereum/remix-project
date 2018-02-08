@@ -164,10 +164,11 @@ function fileExplorer (appAPI, files) {
     contextMenu(event, {
       'Rename': () => {
         if (self.files.readonly) return
-        editModeOn(label)
+        var name = label.querySelector('label[data-path="' + key + '"]')
+        if (name) editModeOn(name)
       },
       'Delete': () => {
-        files.remove(key)
+        modalDialogCustom.confirm(null, 'Do you want to delete this file?', () => { files.remove(key) }, () => {})
       }
     })
   })
