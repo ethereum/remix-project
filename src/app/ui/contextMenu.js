@@ -13,6 +13,7 @@ var css = csjs`
         width:150px; 
         background: ${styles.appProperties.solidBorderBox_BackgroundColor};
         border-radius: 2px;
+        z-index: 1000;
     }
     
     .liitem
