@@ -17,6 +17,8 @@ var styleGuideDark = require('./src/ui/styleGuideDark')
 var themeChooser = require('./src/ui/theme-chooser')
 var Storage = require('./src/storage')
 
+var EventsDecoder = require('./src/execution/eventsDecoder')
+
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
 }
@@ -49,6 +51,9 @@ function modules () {
       styleGuide: styleGuide,
       styleGuideDark: styleGuideDark,
       themeChooser: themeChooser
+    },
+    execution: {
+      EventsDecoder: EventsDecoder
     }
   }
 }
