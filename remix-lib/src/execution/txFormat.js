@@ -4,7 +4,7 @@ var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var helper = require('./txHelper')
 var TreeView = require('remix-debugger').ui.TreeView
-var executionContext = require('./executionContext')
+var executionContext = require('./execution-context')
 
 module.exports = {
 
