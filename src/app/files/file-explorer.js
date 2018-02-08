@@ -211,7 +211,7 @@ function fileExplorer (appAPI, files) {
 
   // register to main app, trigger when the current file in the editor changed
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
-    if (self.focusElement && explorer.type !== files.type && self.focusPath !== newFile) {
+    if (self.focusElement && (!explorer || explorer.type !== files.type) && self.focusPath !== newFile) {
       self.focusElement.classList.remove(css.hasFocus)
       self.focusElement = null
       self.focusPath = null
