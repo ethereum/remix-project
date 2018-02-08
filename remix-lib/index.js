@@ -20,6 +20,7 @@ var Storage = require('./src/storage')
 var EventsDecoder = require('./src/execution/eventsDecoder')
 var txExecution = require('./src/execution/txExecution')
 var txHelper = require('./src/execution/txHelper')
+var txFormat = require('./src/execution/txFormat')
 var executionContext = require('./src/execution/execution-context')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
@@ -59,7 +60,8 @@ function modules () {
       EventsDecoder: EventsDecoder,
       txExecution: txExecution,
       txHelper: txHelper,
-      executionContext: executionContext
+      executionContext: executionContext,
+      txFormat: txFormat
     }
   }
 }
