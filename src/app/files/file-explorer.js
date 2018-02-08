@@ -184,7 +184,6 @@ function fileExplorer (appAPI, files) {
       self.focusElement.classList.add(css.hasFocus)
       self.focusPath = key
       self.events.trigger('focus', [key])
-      appAPI.config.set('currentFile', key)
     }
   })
 
