@@ -205,13 +205,13 @@ UniversalDApp.prototype.getInputs = function (funABI) {
 UniversalDApp.prototype.runTx = function (args, cb) {
   const self = this
   async.waterfall([
-    function queryGasLimit (next) {
+    function getGasLimit (next) {
       if (self.transactionContextAPI.getGasLimit) {
         return self.transactionContextAPI.getGasLimit(next)
       }
       next(null, 3000000)
     },
-    function queryValue (gasLimit, next) {
+    function getAccount (gasLimit, next) {
       if (self.transactionContextAPI.getAddress) {
         return self.transactionContextAPI.getAddress(function (err, address) {
           next(err, address, gasLimit)
@@ -229,25 +229,19 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       })
     },
     function runTransaction (fromAddress, gasLimit, next) {
-      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: args.from, value: args.value }
+      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: args.value, gasLimit: gasLimit }
       var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName }
-
-      tx.gasLimit = gasLimit
-      tx.from = fromAddress
       var timestamp = Date.now()
+
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
       self.txRunner.rawRun(tx, function (error, result) {
-        if (!tx.useCall) {
-          self.event.trigger('transactionExecuted', [error, tx.from, tx.to, tx.data, false, result, timestamp, payLoad])
-        } else {
-          self.event.trigger('callExecuted', [error, tx.from, tx.to, tx.data, true, result, timestamp, payLoad])
-        }
-        if (error) {
-          if (typeof (error) !== 'string') {
-            if (error.message) error = error.message
-            else {
-              try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
-            }
+        let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+        self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+
+        if (error && (typeof (error) !== 'string')) {
+          if (error.message) error = error.message
+          else {
+            try { error = 'error: ' + JSON.stringify(error) } catch (e) {}
           }
         }
         next(error, result)
