@@ -215,13 +215,12 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       if (args.value) {
         return next(null, args.value, gasLimit)
       }
-      if (args.useCall) return next(null, 0, gasLimit)
-      if (self.transactionContextAPI.getValue) {
-        self.transactionContextAPI.getValue(function (err, value) {
-          next(err, value, gasLimit)
-        })
+      if (args.useCall || !self.transactionContextAPI.getValue) {
+        return next(null, 0, gasLimit)
       }
-      next(null, 0, gasLimit)
+      self.transactionContextAPI.getValue(function (err, value) {
+        next(err, value, gasLimit)
+      })
     },
     function getAccount (value, gasLimit, next) {
       if (args.from) {
