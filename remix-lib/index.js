@@ -19,6 +19,7 @@ var Storage = require('./src/storage')
 
 var EventsDecoder = require('./src/execution/eventsDecoder')
 var txExecution = require('./src/execution/txExecution')
+var txHelper = require('./src/execution/txHelper')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
@@ -55,7 +56,8 @@ function modules () {
     },
     execution: {
       EventsDecoder: EventsDecoder,
-      txExecution: txExecution
+      txExecution: txExecution,
+      txHelper: txHelper
     }
   }
 }
