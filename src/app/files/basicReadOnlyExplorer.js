@@ -23,7 +23,8 @@ class BasicReadOnlyExplorer {
 
   exists (path) {
     if (!this.files) return false
-    return this.files[path] !== undefined
+    var unprefixedPath = this.removePrefix(path)
+    return this.files[unprefixedPath] !== undefined
   }
 
   get (path, cb) {
