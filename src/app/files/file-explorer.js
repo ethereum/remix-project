@@ -117,7 +117,7 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileRemoved (filepath) {
-    var label = this.treeView.labelAt(filepath)
+    var label = self.treeView.labelAt(filepath)
     if (label && label.parentElement) {
       label.parentElement.removeChild(label)
     }
