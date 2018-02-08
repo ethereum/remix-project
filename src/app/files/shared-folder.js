@@ -49,8 +49,10 @@ module.exports = class SharedFolder {
   }
 
   init (cb) {
-    this._isReady = true
-    cb()
+    this._remixd.ensureSocket((error) => {
+      this._isReady = !error
+      cb(error)
+    })
   }
 
   // @TODO: refactor all `this._remixd.call(....)` uses into `this.remixd[api](...)`
