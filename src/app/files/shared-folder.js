@@ -137,19 +137,6 @@ module.exports = class SharedFolder {
     return true
   }
 
-  //
-  // Tree model for files
-  // {
-  //   'a': { }, // empty directory 'a'
-  //   'b': {
-  //     'c': {}, // empty directory 'b/c'
-  //     'd': { '/readonly': true, '/content': 'Hello World' } // files 'b/c/d'
-  //     'e': { '/readonly': false, '/path': 'b/c/d' } // symlink to 'b/c/d'
-  //     'f': { '/readonly': false, '/content': '<executable>', '/mode': 0755 }
-  //   }
-  // }
-  //
-
   removePrefix (path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
     if (path[0] === '/') return path.substring(1)
@@ -160,7 +147,7 @@ module.exports = class SharedFolder {
     var self = this
     if (path[0] === '/') path = path.substring(1)
     if (!path) return callback(null, { [self.type]: { } })
-    path = self.removePrefix('' + (path || ''))
+    path = self.removePrefix(path)
     self.remixd.dir(path, callback)
   }
 }

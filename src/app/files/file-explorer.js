@@ -1,4 +1,3 @@
-/* global FileReader */
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Treeview = require('remix-debugger').ui.TreeView
@@ -55,14 +54,21 @@ module.exports = fileExplorer
 
 function fileExplorer (appAPI, files) {
   var self = this
+  this.events = new EventManager()
+  // file provider backend
   this.files = files
+  // element currently focused on
+  this.focusElement = null
+  // path currently focused on
+  this.focusPath = null
 
+  // warn if file changed outside of Remix
   function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
   }
 
-  this.files.event.register('fileExternallyChanged', (path, content) => {
-    if (appAPI.currentFile() === path && appAPI.currentContent() !== content) {
+  this.files.event.register('fileExternallyChanged', (path, file) => {
+    if (appAPI.config.get('currentFile') === path && appAPI.currentContent() !== file.content) {
       modalDialog(path + ' changed', remixdDialog(),
         {
           label: 'Keep the content displayed in Remix',
@@ -71,15 +77,58 @@ function fileExplorer (appAPI, files) {
         {
           label: 'Replace by the new content',
           fn: () => {
-            appAPI.setText(content)
+            appAPI.setText(file.content)
           }
         }
       )
     }
   })
 
-  var fileEvents = files.event
+  // register to event of the file provider
+  files.event.register('fileRemoved', fileRemoved)
+  files.event.register('fileRenamed', fileRenamed)
+  files.event.register('fileRenamedError', fileRenamedError)
+  files.event.register('fileAdded', fileAdded)
 
+  function fileRenamedError (error) {
+    modalDialogCustom.alert(error)
+  }
+
+  function fileAdded (filepath) {
+    self.ensureRoot(() => {
+      var folderpath = filepath.split('/').slice(0, -1).join('/')
+
+      var currentTree = self.treeView.nodeAt(folderpath)
+      if (currentTree && self.treeView.isExpanded(folderpath)) {
+        self.files.resolveDirectory(folderpath, (error, fileTree) => {
+          if (error) console.error(error)
+          if (!fileTree) return
+          fileTree = normalize(folderpath, fileTree)
+          self.treeView.updateNodeFromJSON(folderpath, fileTree, true)
+          self.focusElement = self.treeView.labelAt(self.focusPath)
+          // TODO: here we update the selected file (it applicable)
+          // cause we are refreshing the interface of the whole directory when there's a new file.
+          if (self.focusElement && !self.focusElement.classList.contains(css.hasFocus)) {
+            self.focusElement.classList.add(css.hasFocus)
+          }
+        })
+      }
+    })
+  }
+
+  function fileRemoved (filepath) {
+    var label = this.treeView.labelAt(filepath)
+    if (label && label.parentElement) {
+      label.parentElement.removeChild(label)
+    }
+  }
+
+  function fileRenamed (oldName, newName, isFolder) {
+    fileRemoved(oldName)
+    fileAdded(newName)
+  }
+
+  // make interface and register to nodeClick, leafClick
   self.treeView = new Treeview({
     extractData: function extractData (value, tree, key) {
       var newValue = {}
@@ -93,20 +142,18 @@ function fileExplorer (appAPI, files) {
       return {
         path: (tree || {}).path ? tree.path + '/' + key : key,
         children: isFile ? undefined
-        : value instanceof Array ? value.map((item, index) => ({
-          key: index, value: item
-        })) : value instanceof Object ? Object.keys(value).map(subkey => ({
-          key: subkey, value: value[subkey]
-        })) : undefined
+          : value instanceof Array ? value.map((item, index) => ({
+            key: index, value: item
+          })) : value instanceof Object ? Object.keys(value).map(subkey => ({
+            key: subkey, value: value[subkey]
+          })) : undefined
       }
     },
     formatSelf: function formatSelf (key, data, li) {
-      var isRoot = data.path.indexOf('/') === -1
+      var isRoot = data.path === self.files.type
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
-        onload=${function (el) { adaptEnvironment(el, focus, hover, li) }}
-        onunload=${function (el) { unadaptEnvironment(el, focus, hover, li) }}
         onclick=${editModeOn}
         onkeydown=${editModeOff}
         onblur=${editModeOff}
@@ -114,18 +161,30 @@ function fileExplorer (appAPI, files) {
     }
   })
 
+  self.treeView.event.register('leafClick', function (key, data, label) {
+    if (self.focusElement) {
+      self.focusElement.classList.remove(css.hasFocus)
+      self.focusElement = null
+      self.focusPath = null
+    }
+    self.focusElement = self.treeView.labelAt(key)
+    if (self.focusElement) {
+      self.focusElement.classList.add(css.hasFocus)
+      self.focusPath = key
+      self.events.trigger('focus', [key])
+      appAPI.config.set('currentFile', key)
+    }
+  })
+
   self.treeView.event.register('nodeClick', function (path, childrenContainer) {
     if (!childrenContainer) return
-    if (childrenContainer.style.display === 'none') {
-      childrenContainer.innerHTML = ''
-      return
-    }
+    if (childrenContainer.style.display === 'none') return
+
     files.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
       if (!fileTree) return
       var newTree = normalize(path, fileTree)
-      var tree = self.treeView.renderProperties(newTree, false)
-      childrenContainer.appendChild(tree)
+      self.treeView.updateNodeFromJSON(path, newTree, true)
     })
   })
 
@@ -138,111 +197,22 @@ function fileExplorer (appAPI, files) {
     return newList
   }
 
-  var deleteButton = yo`
-    <span class=${css.remove} onclick=${deletePath}>
-      <i class="fa fa-trash" aria-hidden="true"></i>
-    </span>
-  `
-
+  // register to main app, trigger when the current file in the editor changed
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
-    if (explorer === files) {
-      fileFocus(newFile)
-    } else {
-      unfocus(focusElement)
+    if (self.focusElement && explorer.type !== files.type && self.focusPath !== newFile) {
+      self.focusElement.classList.remove(css.hasFocus)
+      self.focusElement = null
+      self.focusPath = null
     }
   })
-  fileEvents.register('fileRemoved', fileRemoved)
-  fileEvents.register('fileRenamed', fileRenamed)
-  fileEvents.register('fileRenamedError', fileRenamedError)
-  fileEvents.register('fileAdded', fileAdded)
 
-  var filepath = null
-  var focusElement = null
   var textUnderEdit = null
   var textInRename = false
-
-  self.events = new EventManager()
-  self.api = {}
-  self.api.addFile = function addFile (file) {
-    function loadFile () {
-      var fileReader = new FileReader()
-      fileReader.onload = function (event) {
-        if (helper.checkSpecialChars(file.name)) {
-          modalDialogCustom.alert('Special characters are not allowed')
-          return
-        }
-        var success = files.set(name, event.target.result)
-        if (!success) modalDialogCustom.alert('Failed to create file ' + name)
-        else self.events.trigger('focus', [name])
-      }
-      fileReader.readAsText(file)
-    }
-
-    var name = files.type + '/' + file.name
-    if (!files.exists(name)) {
-      loadFile()
-    } else {
-      modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
-    }
-  }
-
-  function focus (event) {
-    event.cancelBubble = true
-    var li = this
-    if (focusElement === li) return
-    unfocus(focusElement)
-    focusElement = li
-    focusElement.classList.toggle(css.hasFocus)
-    var label = getLabelFrom(li)
-    var filepath = label.dataset.path
-    var isFile = label.className.indexOf('file') === 0
-    if (isFile) self.events.trigger('focus', [filepath])
-  }
-
-  function unfocus (el) {
-    if (focusElement) focusElement.classList.toggle(css.hasFocus)
-    focusElement = null
-  }
-
-  function hover (event) {
-    var path = this.querySelector('label').dataset.path
-    if (path === self.files.type) return // can't delete the root node
-
-    if (event.type === 'mouseout') {
-      var exitedTo = event.toElement || event.relatedTarget
-      if (this.contains(exitedTo)) return
-      this.style.backgroundColor = ''
-      this.style.paddingRight = '19px'
-      return this.removeChild(deleteButton)
-    }
-    this.style.backgroundColor = styles.leftPanel.backgroundColor_FileExplorer
-    this.style.paddingRight = '0px'
-    this.appendChild(deleteButton)
-  }
-
-  function getElement (path) {
-    var label = self.element.querySelector(`label[data-path="${path}"]`)
-    if (label) return getLiFrom(label)
-  }
-
-  function deletePath (event) {
-    event.cancelBubble = true
-    var span = this
-    var li = span.parentElement.parentElement
-    var label = getLabelFrom(li)
-    var path = label.dataset.path
-    var isFolder = !!~label.className.indexOf('folder')
-    if (isFolder) path += '/'
-    modalDialogCustom.confirm(null, `Do you really want to delete "${path}" ?`, () => {
-      li.parentElement.removeChild(li)
-      removeSubtree(files, path, isFolder)
-    })
-  }
 
   function editModeOn (event) {
     if (self.files.readonly) return
     var label = this
-    var li = getLiFrom(label)
+    var li = label.parentElement.parentElement.parentElement
     var classes = li.className
     if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable') && label.getAttribute('data-path') !== self.files.type) {
       textUnderEdit = label.innerText
@@ -273,185 +243,38 @@ function fileExplorer (appAPI, files) {
       }
     }
 
-    function cancelRename () {
-      label.innerText = textUnderEdit
-    }
-
     if (event.which === 13) event.preventDefault()
     if (!textInRename && (event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
       textInRename = true
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { cancelRename() })
+        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { label.innerText = textUnderEdit })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)
       textInRename = false
     }
   }
-
-  function renameSubtree (label, dontcheck) {
-    var oldPath = label.dataset.path
-    var newPath = oldPath
-    newPath = newPath.split('/')
-    newPath[newPath.length - 1] = label.innerText
-    newPath = newPath.join('/')
-    if (!dontcheck) {
-      var allPaths = Object.keys(files.list())
-      for (var i = 0, len = allPaths.length, path, err; i < len; i++) {
-        path = allPaths[i]
-        if (files.isReadOnly(path)) {
-          err = 'path contains readonly elements'
-          break
-        } else if (path.indexOf(newPath) === 0) {
-          err = 'new path is conflicting with another existing path'
-          break
-        }
-      }
-    }
-    if (err) {
-      modalDialogCustom.alert(`could not rename - ${err}`)
-      label.innerText = textUnderEdit
-    } else {
-      textUnderEdit = label.innerText
-      updateAllLabels([getElement(oldPath)], oldPath, newPath)
-    }
-  }
-
-  function updateAllLabels (lis, oldPath, newPath) {
-    lis.forEach(function (li) {
-      var label = getLabelFrom(li)
-      var path = label.dataset.path
-      var newName = path.replace(oldPath, newPath)
-      label.dataset.path = newName
-      var ul = li.lastChild
-      if (ul.tagName === 'UL') {
-        updateAllLabels([...ul.children], oldPath, newPath)
-      }
-    })
-  }
-
-  function fileFocus (path) {
-    if (filepath === path) return
-    filepath = path
-    var el = getElement(filepath)
-    expandPathTo(el)
-    setTimeout(function focusNode () { el.click() }, 0)
-  }
-
-  function fileRemoved (filepath) {
-    // @TODO: only important if currently visible in TreeView
-    var li = getElement(filepath)
-    if (li) li.parentElement.removeChild(li)
-  }
-
-  function fileRenamed (oldName, newName, isFolder) {
-    // @TODO: only important if currently visible in TreeView
-    var li = getElement(oldName)
-    if (li) {
-      oldName = oldName.split('/')
-      newName = newName.split('/')
-      var index = oldName.reduce(function (idx, key, i) {
-        return oldName[i] !== newName[i] ? i : idx
-      }, undefined)
-      var newKey = newName[index]
-      var oldPath = oldName.slice(0, index + 1).join('/')
-      li = getElement(oldPath)
-      var label = getLabelFrom(li)
-      label.innerText = newKey
-      renameSubtree(label, true)
-    }
-  }
-
-  function fileRenamedError (error) {
-    modalDialogCustom.alert(error)
-  }
-
-  function fileAdded (filepath) {
-    // @TODO: only important if currently visible in TreeView
-    self.files.resolveDirectory('./', (error, files) => {
-      if (error) console.error(error)
-      var element = self.treeView.render(files)
-      element.className = css.fileexplorer
-      self.element.parentElement.replaceChild(element, self.element)
-      self.element = element
-    })
-  }
-}
-
-/*
-  HELPER FUNCTIONS
-*/
-function adaptEnvironment (label, focus, hover) {
-  var li = getLiFrom(label) // @TODO: maybe this gets refactored?
-  li.style.position = 'relative'
-  var span = li.firstChild
-  // add focus
-  li.addEventListener('click', focus)
-  // add hover
-  span.classList.add(css.activeMode)
-  span.addEventListener('mouseover', hover)
-  span.addEventListener('mouseout', hover)
-}
-
-function unadaptEnvironment (label, focus, hover) {
-  var li = getLiFrom(label) // @TODO: maybe this gets refactored?
-  var span = li.firstChild
-  li.style.position = undefined
-  // remove focus
-  li.removeEventListener('click', focus)
-  // remove hover
-  span.classList.remove(css.activeMode)
-  span.removeEventListener('mouseover', hover)
-  span.removeEventListener('mouseout', hover)
-}
-
-function getLiFrom (label) {
-  return label.parentElement.parentElement.parentElement
-}
-
-function getLabelFrom (li) {
-  return li.children[0].children[1].children[0]
-}
-
-function removeSubtree (files, path, isFolder) {
-  var parts = path.split('/')
-  var isFile = parts[parts.length - 1].length
-  var removePaths = isFile ? [path] : Object.keys(files.list()).filter(keep)
-  function keep (p) { return ~p.indexOf(path) }
-  removePaths.forEach(function (path) {
-    [...window.files.querySelectorAll('.file .name')].forEach(function (span) {
-      if (span.innerText === path) {
-        var li = span.parentElement
-        li.parentElement.removeChild(li) // delete tab
-      }
-    })
-    files.remove(path)
-  })
-  if (isFolder) files.remove(path)
-}
-
-function expandPathTo (li) {
-  while ((li = li.parentElement.parentElement) && li.tagName === 'LI') {
-    var caret = li.firstChild.firstChild
-    if (caret.classList.contains('fa-caret-right')) caret.click() // expand
-  }
 }
 
 fileExplorer.prototype.init = function () {
+  this.container = yo`<div></div>`
+  return this.container
+}
+
+fileExplorer.prototype.ensureRoot = function (cb) {
   var self = this
+  if (self.element && cb) return cb()
+
   self.files.resolveDirectory('/', (error, files) => {
     if (error) console.error(error)
-    var element = self.treeView.render(files)
+    var element = self.treeView.render(files, false)
     element.className = css.fileexplorer
     element.events = self.events
     element.api = self.api
-    setTimeout(function () {
-      self.element.parentElement.replaceChild(element, self.element)
-      self.element = element
-    }, 0)
+    self.container.appendChild(element)
+    self.element = element
+    if (cb) cb()
   })
-  self.element = yo`<div></div>`
-  return self.element
 }

@@ -1,3 +1,4 @@
+/* global FileReader */
 var async = require('async')
 var $ = require('jquery')
 var yo = require('yo-yo')
@@ -73,7 +74,7 @@ function filepanel (appAPI, filesProvider) {
           </div>
           <div class=${css.treeviews}>
             <div class=${css.treeview}>${fileExplorer.init()}</div>
-            <div class="filesystemexplorer ${css.treeview}"></div>
+            <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
             <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
             <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
             <div class="gistexplorer ${css.treeview}">${gistExplorer.init()}</div>
@@ -87,7 +88,7 @@ function filepanel (appAPI, filesProvider) {
   var event = new EventManager()
   self.event = event
   var element = template()
-
+  fileExplorer.ensureRoot()
   var containerFileSystem = element.querySelector('.filesystemexplorer')
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
@@ -143,7 +144,30 @@ function filepanel (appAPI, filesProvider) {
     // the files module. Please ask the user here if they want to overwrite
     // a file and then just use `files.add`. The file explorer will
     // pick that up via the 'fileAdded' event from the files module.
-    ;[...this.files].forEach(fileExplorer.api.addFile)
+
+    ;[...this.files].forEach((file) => {
+      var files = fileExplorer.files
+      function loadFile () {
+        var fileReader = new FileReader()
+        fileReader.onload = function (event) {
+          if (helper.checkSpecialChars(file.name)) {
+            modalDialogCustom.alert('Special characters are not allowed')
+            return
+          }
+          var success = files.set(name, event.target.result)
+          if (!success) modalDialogCustom.alert('Failed to create file ' + name)
+          else self.events.trigger('focus', [name])
+        }
+        fileReader.readAsText(file)
+      }
+
+      var name = files.type + '/' + file.name
+      if (!files.exists(name)) {
+        loadFile()
+      } else {
+        modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
+      }
+    })
   }
 
   // ----------------- resizeable ui ---------------
@@ -200,7 +224,6 @@ function filepanel (appAPI, filesProvider) {
     * @param {String} txHash    - hash of the transaction
     */
   function connectToLocalhost () {
-    var container = document.querySelector('.filesystemexplorer')
     if (filesProvider['localhost'].isConnected()) {
       filesProvider['localhost'].close((error) => {
         if (error) console.log(error)
@@ -213,10 +236,7 @@ function filepanel (appAPI, filesProvider) {
               if (error) {
                 console.log(error)
               } else {
-                if (fileSystemExplorer.element && container.children.length > 0) {
-                  container.removeChild(fileSystemExplorer.element)
-                }
-                container.appendChild(fileSystemExplorer.init())
+                fileSystemExplorer.ensureRoot()
               }
             })
           }})

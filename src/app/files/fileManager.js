@@ -47,6 +47,7 @@ class FileManager {
         self.switchFile(Object.keys(self.tabbedFiles)[0])
       } else {
         opt.editor.displayEmptyReadOnlySession()
+        self.opt.config.set('currentFile', '')
       }
       return false
     })
@@ -98,7 +99,6 @@ class FileManager {
 
   // Display files that have already been selected
   refreshTabs (newfile) {
-    var self = this
     if (newfile) {
       this.tabbedFiles[newfile] = newfile
     }
@@ -109,29 +109,32 @@ class FileManager {
     for (var file in this.tabbedFiles) {
       $filesEl.append(yo`<li class="file"><span class="name">${file}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
     }
-    var currentFileOpen = !!this.opt.config.get('currentFile')
 
-    if (currentFileOpen) {
-      var active = $('#files .file').filter(function () { return $(this).find('.name').text() === self.opt.config.get('currentFile') })
-      active.addClass('active')
-    }
-    $('#input').toggle(currentFileOpen)
-    $('#output').toggle(currentFileOpen)
+    var active = $('#files .file').filter(function () {
+      return $(this).find('.name').text() === newfile
+    })
+    if (active.length) active.addClass('active')
+    else this.switchFile()
+    // $('#input').toggle(active)
+    $('#output').toggle(active)
   }
 
   switchFile (file) {
     var self = this
-    if (!file) {
-      self.opt.filesProviders['browser'].resolveDirectory('/', (error, filesTree) => {
+    if (file) return _switchFile(file)
+    else {
+      var browserProvider = self.opt.filesProviders['browser']
+      browserProvider.resolveDirectory('browser', (error, filesTree) => {
         if (error) console.error(error)
-        var fileList = Object.keys(flatten(filesTree))
+        var fileList = Object.keys(filesTree)
         if (fileList.length) {
-          file = fileList[0]
-          if (file) _switchFile(file)
+          _switchFile(browserProvider.type + '/' + fileList[0])
+        } else {
+          self.event.trigger('currentFileChanged', [])
         }
       })
-    } else _switchFile(file)
-    function _switchFile () {
+    }
+    function _switchFile (file) {
       self.saveCurrentFile()
       self.opt.config.set('currentFile', file)
       self.refreshTabs(file)
@@ -179,23 +182,3 @@ class FileManager {
 }
 
 module.exports = FileManager
-
-function flatten (tree) {
-  var flat = {}
-  var names = Object.keys(tree || {})
-  if (!names.length) return
-  else {
-    names.forEach(name => {
-      if ('/content' in tree[name]) flat[name] = false
-      else {
-        var subflat = flatten(tree[name])
-        if (!subflat) {
-          // empty folder
-        } else {
-          Object.keys(subflat).forEach(path => { flat[name + '/' + path] = false })
-        }
-      }
-    })
-    return flat
-  }
-}
