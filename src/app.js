@@ -196,7 +196,9 @@ module.exports = App
 function run () {
   var self = this
 
-  if (window.location.hostname === 'ethereum.github.io' &&
+  if (window.location.hostname === 'yann300.github.io') {
+    modalDialogCustom.alert(`This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-ide-alpha.`)
+  } else if (window.location.hostname === 'ethereum.github.io' &&
   window.location.pathname.indexOf('remix-ide-alpha') === 0) {
     modalDialogCustom.alert(`This instance of the Remix IDE is an UNSTABLE ALPHA branch.\n
 Please only use it if you know what you are doing, otherwise visit the stable version at http://remix.ethereum.org.`)
