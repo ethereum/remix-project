@@ -4,42 +4,13 @@ var yo = require('yo-yo')
 var $ = require('jquery')
 var remixLib = require('remix-lib')
 var utils = remixLib.util
-var csjs = require('csjs-inject')
 
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
-var EventManager = remixLib.EventManager
+var css = require('./styles/staticAnalysisView-styles')
 
-var css = csjs`
-  .analysis {
-    display: flex;
-    flex-direction: column;
-  }
-  .result {
-    margin-top: 1%;
-  }
-  .buttons  {
-    ${styles.rightPanel.analysisTab.box_AnalysisContainer}
-    display: flex;
-    align-items: center;
-  }
-  .buttonRun  {
-    ${styles.rightPanel.analysisTab.button_Run_AnalysisTab}
-    margin-right: 1%;
-  }
-  .analysisModulesContainer {
-    ${styles.rightPanel.analysisTab.box_AnalysisContainer}
-    margin-bottom: 1%;
-    line-height: 2em;
-    display: flex;
-    flex-direction: column;
-  }
-  .label {
-    display: flex;
-    align-items: center;
-  }
-`
+var EventManager = remixLib.EventManager
 
 function staticAnalysisView (appAPI, compilerEvent) {
   this.event = new EventManager()
