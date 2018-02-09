@@ -220,13 +220,21 @@ function fileExplorer (appAPI, files) {
   })
 
   var textUnderEdit = null
-  var textInRename = false
+
+  function selectElementContents (el) {
+    var range = document.createRange()
+    range.selectNodeContents(el)
+    var sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  }
 
   function editModeOn (label) {
     textUnderEdit = label.innerText
     label.setAttribute('contenteditable', true)
     label.classList.add(css.rename)
     label.focus()
+    selectElementContents(label)
   }
 
   function editModeOff (event) {
@@ -251,8 +259,7 @@ function fileExplorer (appAPI, files) {
     }
 
     if (event.which === 13) event.preventDefault()
-    if (!textInRename && (event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
-      textInRename = true
+    if (event.type === 'blur' || event.which === 13 && label.getAttribute('contenteditable')) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
@@ -260,7 +267,6 @@ function fileExplorer (appAPI, files) {
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)
-      textInRename = false
     }
   }
 }
