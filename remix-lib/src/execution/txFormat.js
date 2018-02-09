@@ -1,7 +1,5 @@
 'use strict'
 var ethJSABI = require('ethereumjs-abi')
-var ethJSUtil = require('ethereumjs-util')
-var BN = ethJSUtil.BN
 var helper = require('./txHelper')
 var executionContext = require('./execution-context')
 
