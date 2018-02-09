@@ -17,7 +17,10 @@ module.exports = {
   createContract,
   modalFooterOKClick,
   setEditorValue,
-  getEditorValue
+  getEditorValue,
+  testEditorValue,
+  renameFile,
+  removeFile
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -184,6 +187,13 @@ function getEditorValue (callback) {
   return this
 }
 
+function testEditorValue (testvalue, callback) {
+  this.getEditorValue((value) => {
+    this.assert.equal(testvalue, value)
+    callback()
+  })
+}
+
 function modalFooterOKClick () {
   this.perform((client, done) => {
     this.execute(function () {
@@ -213,6 +223,73 @@ function addFile (browser, name, content, done) {
     .perform(function () {
       done()
     })
+}
+
+function renameFile (browser, path, newFileName, renamedPath, done) {
+  browser.execute(function (path) {
+    function contextMenuClick (element) {
+      var evt = element.ownerDocument.createEvent('MouseEvents')
+      var RIGHT_CLICK_BUTTON_CODE = 2 // the same for FF and IE
+      evt.initMouseEvent('contextmenu', true, true,
+          element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+          false, false, false, RIGHT_CLICK_BUTTON_CODE, null)
+      if (document.createEventObject) {
+        // dispatch for IE
+        return element.fireEvent('onclick', evt)
+      } else {
+        // dispatch for firefox + others
+        return !element.dispatchEvent(evt)
+      }
+    }
+    contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
+  }, [path], function (result) {
+    browser
+    .click('#menuitemrename')
+    .perform((client, doneSetValue) => {
+      browser.execute(function (path, addvalue) {
+        document.querySelector('[data-path="' + path + '"]').innerHTML = addvalue
+      }, [path, newFileName], () => {
+        doneSetValue()
+      })
+    })
+    .click('body') // blur
+    .pause(500)
+    .click('#modal-footer-ok')
+    .waitForElementNotPresent('[data-path="' + path + '"]')
+    .waitForElementPresent('[data-path="' + renamedPath + '"]')
+    .perform(() => {
+      done()
+    })
+  })
+}
+
+function removeFile (browser, path, done) {
+  browser.execute(function (path, value) {
+    function contextMenuClick (element) {
+      var evt = element.ownerDocument.createEvent('MouseEvents')
+      var RIGHT_CLICK_BUTTON_CODE = 2 // the same for FF and IE
+      evt.initMouseEvent('contextmenu', true, true,
+          element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+          false, false, false, RIGHT_CLICK_BUTTON_CODE, null)
+      if (document.createEventObject) {
+        // dispatch for IE
+        return element.fireEvent('onclick', evt)
+      } else {
+        // dispatch for firefox + others
+        return !element.dispatchEvent(evt)
+      }
+    }
+    contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
+  }, [path], function (result) {
+    browser
+    .click('#menuitemdelete')
+    .pause(500)
+    .click('#modal-footer-ok')
+    .waitForElementNotPresent('[data-path="' + path + '"]')
+    .perform((client) => {
+      done()
+    })
+  })
 }
 
 function useFilter (browser, filter, test, done) {
