@@ -11,7 +11,7 @@ var rlp = ethUtil.rlp
 var injectedProvider
 
 var web3
-if (typeof window.web3 !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
   injectedProvider = window.web3.currentProvider
   web3 = new Web3(injectedProvider)
 } else {
