@@ -43,9 +43,17 @@ var css = csjs`
 
 module.exports = (event, items) => {
   event.preventDefault()
+
+  function hide (event, force) {
+    if (force || (event.target !== container)) {
+      container.parentElement.removeChild(container)
+    }
+    window.removeEventListener('click', hide)
+  }
+
   var menu = Object.keys(items).map((item, index) => {
-    var current = yo`<li class=${css.liitem}>${item}</li>`
-    current.onclick = () => items[item]()
+    var current = yo`<li id="menuitem${item.toLowerCase()}" class=${css.liitem}>${item}</li>`
+    current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
   var container = yo`<div class=${css.container}><ul id='menuitems'>${menu}</ul></div>`
@@ -53,12 +61,8 @@ module.exports = (event, items) => {
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
 
-  function hide (event) {
-    if (event.target !== container) {
-      container.parentElement.removeChild(container)
-    }
-    window.removeEventListener('click', hide)
-  }
-  window.addEventListener('click', hide)
   document.querySelector('body').appendChild(container)
+  setTimeout(() => {
+    window.addEventListener('click', hide)
+  }, 500)
 }
