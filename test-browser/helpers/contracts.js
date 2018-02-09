@@ -149,12 +149,13 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
   return this
 }
 
-function setEditorValue (value) {
+function setEditorValue (value, callback) {
   this.perform((client, done) => {
     this.execute(function (value) {
       document.getElementById('input').editor.session.setValue(value)
     }, [value], function (result) {
       done()
+      if (callback) callback()
     })
   })
   return this
@@ -286,7 +287,7 @@ function removeFile (browser, path, done) {
     .pause(500)
     .click('#modal-footer-ok')
     .waitForElementNotPresent('[data-path="' + path + '"]')
-    .perform((client) => {
+    .perform(() => {
       done()
     })
   })
