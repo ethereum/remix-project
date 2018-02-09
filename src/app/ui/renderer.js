@@ -4,7 +4,6 @@ var $ = require('jquery')
 var yo = require('yo-yo')
 var css = require('./styles/renderer-styles')
 
-
 /**
  * After refactor, the renderer is only used to render error/warning
  * TODO: This don't need to be an object anymore. Simplify and just export the renderError function.
