@@ -37,6 +37,7 @@
     "onchange": "^3.2.1",
     "remix-core": "latest",
     "remix-lib": "latest",
+    "remix-solidity": "latest",
     "remixd": "git+https://github.com/ethereum/remixd.git",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",

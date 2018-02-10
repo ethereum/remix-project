@@ -419,7 +419,7 @@ function settings (container, appAPI, appEvents, opts) {
         <div class="${css.col1_1}">Account</div>
         <select name="txorigin" class="${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
-          <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
+          <i class="fa fa-plus-square-o ${css.createAccount} ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>
