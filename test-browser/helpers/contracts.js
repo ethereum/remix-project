@@ -132,7 +132,7 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
     .pause(500)
     .waitForElementPresent('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"]')
     .assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] span', log)
-    .click('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] button[class^="details"]')
+    .click('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] i[class^="caret"]')
     .perform(function (client, done) {
       if (expectedReturn) {
         client.assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', expectedReturn)
