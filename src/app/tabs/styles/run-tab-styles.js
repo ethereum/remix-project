@@ -177,8 +177,11 @@ var css = csjs`
   }
   .transactionActions {
     display: flex;
-    width: 50px;
+    width: 70px;
     justify-content: space-between;
+    border: 1px solid ${styles.rightPanel.runTab.additionalText_Color};
+    padding: 5px;
+    border-radius: 3px;
 }
 
 

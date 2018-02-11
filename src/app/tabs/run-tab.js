@@ -24,7 +24,7 @@ var pendingTxsText = yo`<span></span>`
 function runTab (container, appAPI, appEvents) {
   var events = new EventManager()
 
-  var clearInstanceElement = yo`<i class="${css.clearinstance} ${css.icon} fa fa-minus-square-o" title="Clear Instances List" aria-hidden="true"></i>`
+  var clearInstanceElement = yo`<i class="${css.clearinstance} ${css.icon} fa fa-trash" title="Clear Instances List" aria-hidden="true"></i>`
   clearInstanceElement.addEventListener('click', () => {
     events.trigger('clearInstance', [])
   })
@@ -34,9 +34,9 @@ function runTab (container, appAPI, appEvents) {
     <div class="${css.pendingTxsText}">
       ${pendingTxsText}
       <span class="${css.transactionActions}">
-        ${clearInstanceElement}
         ${recorderInterface.recordButton}
         ${recorderInterface.runButton}
+        ${clearInstanceElement}
       </span>
     </div>
   </div>`
