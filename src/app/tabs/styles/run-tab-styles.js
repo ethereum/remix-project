@@ -176,6 +176,7 @@ var css = csjs`
   .networkItem {
     margin-right: 5px;
   }
+  .clearinstance {}
   .transactionActions {
     display: flex;
     width: 70px;
