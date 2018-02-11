@@ -112,6 +112,7 @@ var css = csjs`
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    flex-wrap: wrap;
   }
   .item {
     margin-right: 1em;
