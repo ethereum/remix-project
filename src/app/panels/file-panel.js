@@ -21,6 +21,23 @@ var limit = 60
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
+/*
+  Overview of APIs:
+   * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
+      - listen on browser & localhost file provider (`fileRenamed` & `fileRemoved`)
+      - update the tabs, switchFile
+      - trigger `currentFileChanged`
+      - set the current file in the config
+   * fileProvider: currently browser, swarm, localhost, github, gist
+      - link to backend
+      - provide properties `type`, `readonly`
+      - provide API `resolveDirectory`, `remove`, `exists`, `rename`, `get`, `set`
+      - trigger `fileExternallyChanged`, `fileRemoved`, `fileRenamed`, `fileRenamedError`, `fileAdded`
+   * file-explorer: treeview @args fileProvider
+      - listen on events triggered by fileProvider
+      - call fileProvider API
+*/
+
 function filepanel (appAPI, filesProvider) {
   var self = this
   var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
@@ -89,7 +106,6 @@ function filepanel (appAPI, filesProvider) {
   self.event = event
   var element = template()
   fileExplorer.ensureRoot()
-  var containerFileSystem = element.querySelector('.filesystemexplorer')
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
     websocketconn.style.color = styles.colors.yellow
@@ -99,22 +115,19 @@ function filepanel (appAPI, filesProvider) {
   filesProvider['localhost'].remixd.event.register('connected', (event) => {
     websocketconn.style.color = styles.colors.green
     websocketconn.setAttribute('title', 'Connected to localhost. ' + JSON.stringify(event))
+    fileSystemExplorer.show()
   })
 
   filesProvider['localhost'].remixd.event.register('errored', (event) => {
     websocketconn.style.color = styles.colors.red
     websocketconn.setAttribute('title', 'localhost connection errored. ' + JSON.stringify(event))
-    if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
-      containerFileSystem.removeChild(fileSystemExplorer.element)
-    }
+    fileSystemExplorer.hide()
   })
 
   filesProvider['localhost'].remixd.event.register('closed', (event) => {
     websocketconn.style.color = styles.colors.black
     websocketconn.setAttribute('title', 'localhost connection closed. ' + JSON.stringify(event))
-    if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
-      containerFileSystem.removeChild(fileSystemExplorer.element)
-    }
+    fileSystemExplorer.hide()
   })
 
   fileExplorer.events.register('focus', function (path) {
@@ -256,6 +269,8 @@ function filepanel (appAPI, filesProvider) {
           modalDialogCustom.confirm(null, `Created a gist at ${data.html_url}. Would you like to open it in a new window?`, () => {
             window.open(data.html_url, '_blank')
           })
+        } else {
+          modalDialogCustom.alert(data.message + ' ' + data.documentation_url)
         }
       }
     }
@@ -309,33 +324,24 @@ function filepanel (appAPI, filesProvider) {
 }
 
 // return all the files, except the temporary/readonly ones..
-function packageFiles (files, callback) {
+function packageFiles (filesProvider, callback) {
   var ret = {}
-  // @TODO remove use of `list()`
-  var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
-  async.eachSeries(filtered, function (path, cb) {
-    ret[path.replace(files.type + '/', '')] = { content: files.get(path) }
-    cb()
-  }, () => {
-    callback(null, ret)
+  filesProvider.resolveDirectory('browser', (error, files) => {
+    if (error) callback(error)
+    else {
+      async.eachSeries(Object.keys(files), (path, cb) => {
+        filesProvider.get(path, (error, content) => {
+          if (error) cb(error)
+          else {
+            ret[path] = { content }
+            cb()
+          }
+        })
+      }, (error) => {
+        callback(error, ret)
+      })
+    }
   })
 }
-
-/*
-  Overview of APIs:
-   * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
-      - listen on browser & localhost file provider (`fileRenamed` & `fileRemoved`)
-      - update the tabs, switchFile
-      - trigger `currentFileChanged`
-      - set the current file in the config
-   * fileProvider: currently browser, swarm, localhost, github, gist
-      - link to backend
-      - provide properties `type`, `readonly`
-      - provide API `resolveDirectory`, `remove`, `exists`, `rename`, `get`, `set`
-      - trigger `fileExternallyChanged`, `fileRemoved`, `fileRenamed`, `fileRenamedError`, `fileAdded`
-   * file-explorer: treeview @args fileProvider
-      - listen on events triggered by fileProvider
-      - call fileProvider API
-*/
 
 module.exports = filepanel
