@@ -40,6 +40,7 @@ module.exports = (title, content, ok, cancel) => {
   }
 
   function modalKeyEvent (e) {
+    e.preventDefault()
     if (e.keyCode === 27) {
       cancelListener()
     } else if (e.keyCode === 13) {
