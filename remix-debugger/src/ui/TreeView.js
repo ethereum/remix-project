@@ -92,6 +92,9 @@ class TreeView {
       label.onclick = function () {
         self.expand(keyPath)
       }
+      label.oncontextmenu = function (event) {
+        self.event.trigger('nodeRightClick', [key, data, label, event])
+      }
       li.appendChild(list)
     } else {
       caret.style.visibility = 'hidden'
