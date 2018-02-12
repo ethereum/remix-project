@@ -139,6 +139,7 @@ var css = csjs`
     margin-left: 5px;
   }
   .icon {
+    cursor: pointer;
     font-size: 12px;
     color: ${styles.rightPanel.runTab.icon_Color};
     margin-left: 5px;
