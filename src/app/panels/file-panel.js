@@ -269,6 +269,8 @@ function filepanel (appAPI, filesProvider) {
           modalDialogCustom.confirm(null, `Created a gist at ${data.html_url}. Would you like to open it in a new window?`, () => {
             window.open(data.html_url, '_blank')
           })
+        } else {
+          modalDialogCustom.alert(data.message + ' ' + data.documentation_url)
         }
       }
     }
@@ -322,15 +324,23 @@ function filepanel (appAPI, filesProvider) {
 }
 
 // return all the files, except the temporary/readonly ones..
-function packageFiles (files, callback) {
+function packageFiles (filesProvider, callback) {
   var ret = {}
-  // @TODO remove use of `list()`
-  var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
-  async.eachSeries(filtered, function (path, cb) {
-    ret[path.replace(files.type + '/', '')] = { content: files.get(path) }
-    cb()
-  }, () => {
-    callback(null, ret)
+  filesProvider.resolveDirectory('browser', (error, files) => {
+    if (error) callback(error)
+    else {
+      async.eachSeries(Object.keys(files), (path, cb) => {
+        filesProvider.get(path, (error, content) => {
+          if (error) cb(error)
+          else {
+            ret[path] = { content }
+            cb()
+          }
+        })
+      }, (error) => {
+        callback(error, ret)
+      })
+    }
   })
 }
 
