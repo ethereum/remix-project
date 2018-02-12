@@ -73,6 +73,12 @@ var css = csjs`
     color: ${styles.remix.modalDialog_Header_Footer_Color};
     cursor: pointer;
   }
+  .modalBackground {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top:0;
+  }
   @-webkit-keyframes animatetop {
     from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
