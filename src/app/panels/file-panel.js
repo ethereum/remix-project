@@ -89,7 +89,6 @@ function filepanel (appAPI, filesProvider) {
   self.event = event
   var element = template()
   fileExplorer.ensureRoot()
-  var containerFileSystem = element.querySelector('.filesystemexplorer')
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
     websocketconn.style.color = styles.colors.yellow
@@ -99,22 +98,19 @@ function filepanel (appAPI, filesProvider) {
   filesProvider['localhost'].remixd.event.register('connected', (event) => {
     websocketconn.style.color = styles.colors.green
     websocketconn.setAttribute('title', 'Connected to localhost. ' + JSON.stringify(event))
+    fileSystemExplorer.show()
   })
 
   filesProvider['localhost'].remixd.event.register('errored', (event) => {
     websocketconn.style.color = styles.colors.red
     websocketconn.setAttribute('title', 'localhost connection errored. ' + JSON.stringify(event))
-    if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
-      containerFileSystem.removeChild(fileSystemExplorer.element)
-    }
+    fileSystemExplorer.hide()
   })
 
   filesProvider['localhost'].remixd.event.register('closed', (event) => {
     websocketconn.style.color = styles.colors.black
     websocketconn.setAttribute('title', 'localhost connection closed. ' + JSON.stringify(event))
-    if (fileSystemExplorer.element && containerFileSystem.children.length > 0) {
-      containerFileSystem.removeChild(fileSystemExplorer.element)
-    }
+    fileSystemExplorer.hide()
   })
 
   fileExplorer.events.register('focus', function (path) {
