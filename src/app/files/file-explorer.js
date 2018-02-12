@@ -118,15 +118,29 @@ function fileExplorer (appAPI, files) {
     }
   })
 
-  self.treeView.event.register('leafRightClick', function (key, data, label, event) {
+  self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
     contextMenu(event, {
       'Rename': () => {
-        if (self.files.readonly) { return addTooltip('cannot rename. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.readonly) { return addTooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
         if (name) editModeOn(name)
       },
       'Delete': () => {
-        if (self.files.readonly) { return addTooltip('cannot delete. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.readonly) { return addTooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
+        modalDialogCustom.confirm(null, 'Do you want to delete this folder?', () => { files.remove(key) }, () => {})
+      }
+    })
+  })
+
+  self.treeView.event.register('leafRightClick', function (key, data, label, event) {
+    contextMenu(event, {
+      'Rename': () => {
+        if (self.files.readonly) { return addTooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
+        var name = label.querySelector('label[data-path="' + key + '"]')
+        if (name) editModeOn(name)
+      },
+      'Delete': () => {
+        if (self.files.readonly) { return addTooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(null, 'Do you want to delete this file?', () => { files.remove(key) }, () => {})
       }
     })
