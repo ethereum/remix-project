@@ -21,6 +21,23 @@ var limit = 60
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
 var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
+/*
+  Overview of APIs:
+   * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
+      - listen on browser & localhost file provider (`fileRenamed` & `fileRemoved`)
+      - update the tabs, switchFile
+      - trigger `currentFileChanged`
+      - set the current file in the config
+   * fileProvider: currently browser, swarm, localhost, github, gist
+      - link to backend
+      - provide properties `type`, `readonly`
+      - provide API `resolveDirectory`, `remove`, `exists`, `rename`, `get`, `set`
+      - trigger `fileExternallyChanged`, `fileRemoved`, `fileRenamed`, `fileRenamedError`, `fileAdded`
+   * file-explorer: treeview @args fileProvider
+      - listen on events triggered by fileProvider
+      - call fileProvider API
+*/
+
 function filepanel (appAPI, filesProvider) {
   var self = this
   var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
@@ -316,22 +333,5 @@ function packageFiles (files, callback) {
     callback(null, ret)
   })
 }
-
-/*
-  Overview of APIs:
-   * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
-      - listen on browser & localhost file provider (`fileRenamed` & `fileRemoved`)
-      - update the tabs, switchFile
-      - trigger `currentFileChanged`
-      - set the current file in the config
-   * fileProvider: currently browser, swarm, localhost, github, gist
-      - link to backend
-      - provide properties `type`, `readonly`
-      - provide API `resolveDirectory`, `remove`, `exists`, `rename`, `get`, `set`
-      - trigger `fileExternallyChanged`, `fileRemoved`, `fileRenamed`, `fileRenamedError`, `fileAdded`
-   * file-explorer: treeview @args fileProvider
-      - listen on events triggered by fileProvider
-      - call fileProvider API
-*/
 
 module.exports = filepanel
