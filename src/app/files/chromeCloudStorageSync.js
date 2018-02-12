@@ -46,16 +46,19 @@ module.exports = function (filesProviders) {
     })
   }
 
-  for (var y in filesProviders['browser'].list()) {
-    console.log('checking', y)
-    filesProviders['browser'].get(y, (error, content) => {
-      if (error) {
-        console.log(error)
-      } else {
-        obj[y] = content
-        count++
-        check(y)
-      }
-    })
-  }
+  filesProviders['browser'].resolve('browser', (error, files) => {
+    if (!error) {
+      Object.keys(files).forEach((path) => {
+        filesProviders['browser'].get(path, (error, content) => {
+          if (error) {
+            console.log(error)
+          } else {
+            obj[path] = content
+            count++
+            check(path)
+          }
+        })
+      })
+    }
+  })
 }
