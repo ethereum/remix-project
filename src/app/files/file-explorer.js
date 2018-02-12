@@ -5,7 +5,7 @@ var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-
+var contextMenu = require('../ui/contextMenu')
 var helper = require('../../lib/helper')
 
 var styleGuide = remixLib.ui.themeChooser
@@ -117,7 +117,7 @@ function fileExplorer (appAPI, files) {
   }
 
   function fileRemoved (filepath) {
-    var label = this.treeView.labelAt(filepath)
+    var label = self.treeView.labelAt(filepath)
     if (label && label.parentElement) {
       label.parentElement.removeChild(label)
     }
@@ -154,11 +154,23 @@ function fileExplorer (appAPI, files) {
       return yo`<label class="${data.children ? css.folder : css.file}"
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
-        onclick=${editModeOn}
         onkeydown=${editModeOff}
         onblur=${editModeOff}
       >${key.split('/').pop()}</label>`
     }
+  })
+
+  self.treeView.event.register('leafRightClick', function (key, data, label, event) {
+    contextMenu(event, {
+      'Rename': () => {
+        if (self.files.readonly) return
+        var name = label.querySelector('label[data-path="' + key + '"]')
+        if (name) editModeOn(name)
+      },
+      'Delete': () => {
+        modalDialogCustom.confirm(null, 'Do you want to delete this file?', () => { files.remove(key) }, () => {})
+      }
+    })
   })
 
   self.treeView.event.register('leafClick', function (key, data, label) {
@@ -172,7 +184,6 @@ function fileExplorer (appAPI, files) {
       self.focusElement.classList.add(css.hasFocus)
       self.focusPath = key
       self.events.trigger('focus', [key])
-      appAPI.config.set('currentFile', key)
     }
   })
 
@@ -199,7 +210,7 @@ function fileExplorer (appAPI, files) {
 
   // register to main app, trigger when the current file in the editor changed
   appAPI.event.register('currentFileChanged', (newFile, explorer) => {
-    if (self.focusElement && explorer.type !== files.type && self.focusPath !== newFile) {
+    if (self.focusElement && (!explorer || explorer.type !== files.type) && self.focusPath !== newFile) {
       self.focusElement.classList.remove(css.hasFocus)
       self.focusElement = null
       self.focusPath = null
@@ -209,17 +220,11 @@ function fileExplorer (appAPI, files) {
   var textUnderEdit = null
   var textInRename = false
 
-  function editModeOn (event) {
-    if (self.files.readonly) return
-    var label = this
-    var li = label.parentElement.parentElement.parentElement
-    var classes = li.className
-    if (~classes.indexOf('hasFocus') && !label.getAttribute('contenteditable') && label.getAttribute('data-path') !== self.files.type) {
-      textUnderEdit = label.innerText
-      label.setAttribute('contenteditable', true)
-      label.classList.add(css.rename)
-      label.focus()
-    }
+  function editModeOn (label) {
+    textUnderEdit = label.innerText
+    label.setAttribute('contenteditable', true)
+    label.classList.add(css.rename)
+    label.focus()
   }
 
   function editModeOff (event) {

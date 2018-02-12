@@ -311,6 +311,7 @@ function filepanel (appAPI, filesProvider) {
 // return all the files, except the temporary/readonly ones..
 function packageFiles (files, callback) {
   var ret = {}
+  // @TODO remove use of `list()`
   var filtered = Object.keys(files.list()).filter(function (path) { if (!files.isReadOnly(path)) { return path } })
   async.eachSeries(filtered, function (path, cb) {
     ret[path.replace(files.type + '/', '')] = { content: files.get(path) }
@@ -319,5 +320,22 @@ function packageFiles (files, callback) {
     callback(null, ret)
   })
 }
+
+/*
+  Overview of APIs:
+   * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
+      - listen on browser & localhost file provider (`fileRenamed` & `fileRemoved`)
+      - update the tabs, switchFile
+      - trigger `currentFileChanged`
+      - set the current file in the config
+   * fileProvider: currently browser, swarm, localhost, github, gist
+      - link to backend
+      - provide properties `type`, `readonly`
+      - provide API `resolveDirectory`, `remove`, `exists`, `rename`, `get`, `set`
+      - trigger `fileExternallyChanged`, `fileRemoved`, `fileRenamed`, `fileRenamedError`, `fileAdded`
+   * file-explorer: treeview @args fileProvider
+      - listen on events triggered by fileProvider
+      - call fileProvider API
+*/
 
 module.exports = filepanel
