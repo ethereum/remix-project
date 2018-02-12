@@ -40,13 +40,11 @@ module.exports = (title, content, ok, cancel) => {
   }
 
   function modalKeyEvent (e) {
-    e.preventDefault()
     if (e.keyCode === 27) {
       cancelListener()
     } else if (e.keyCode === 13) {
+      e.preventDefault()
       okListener()
-    } else {
-      // Do nothing
     }
   }
 
@@ -74,6 +72,7 @@ module.exports = (title, content, ok, cancel) => {
 
 function html () {
   return yo`<div id="modal-dialog" class="${css.modal}">
+  <div id="modal-background" class="${css['modalBackground']}"> </div>
   <div class="${css['modalContent']}">
     <div class="${css['modalHeader']}">
     <h2></h2>
@@ -85,6 +84,5 @@ function html () {
     <span id="modal-footer-ok" class=${css['modalFooterOk']}>OK</span><span id="modal-footer-cancel"  class=${css['modalFooterCancel']}>Cancel</span>
         </div>
   </div>
-  <div id="modal-background" class="${css['modalBackground']}"> </div>
   </div>`
 }
