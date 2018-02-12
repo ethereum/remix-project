@@ -114,8 +114,6 @@ class FileManager {
       return $(this).find('.name').text() === newfile
     })
     if (active.length) active.addClass('active')
-    else this.switchFile()
-    // $('#input').toggle(active)
     $('#output').toggle(active)
   }
 

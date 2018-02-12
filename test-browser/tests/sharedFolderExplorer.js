@@ -23,6 +23,12 @@ module.exports = {
 }
 
 function runTests (browser, testData) {
+  browser.testFunction = contractHelper.testFunction
+  browser.clickFunction = contractHelper.clickFunction
+  browser.setEditorValue = contractHelper.setEditorValue
+  browser.modalFooterOKClick = contractHelper.modalFooterOKClick
+  browser.getEditorValue = contractHelper.getEditorValue
+  browser.testEditorValue = contractHelper.testEditorValue
   var browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
     console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
@@ -38,14 +44,66 @@ function runTests (browser, testData) {
     .click('[data-path="localhost"]')
     .waitForElementVisible('[data-path="localhost/folder1"]')
     .click('[data-path="localhost/folder1"]')
+    .waitForElementVisible('[data-path="localhost/contract1.sol"]')
     .assert.containsText('[data-path="localhost/contract1.sol"]', 'contract1.sol')
     .assert.containsText('[data-path="localhost/contract2.sol"]', 'contract2.sol')
     .assert.containsText('[data-path="localhost/folder1/contract1.sol"]', 'contract1.sol')
-    .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol')
+    .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol') // load and test sub folder
     .click('[data-path="localhost/folder1/contract2.sol"]')
-    .waitForElementPresent('#compileTabView select option', 50000, true, function () {
-      contractHelper.verifyContract(browser, ['test2'], function () {
-        browser.click('.websocketconn').end()
+    .click('[data-path="localhost/folder1/contract1.sol"]') // open localhost/folder1/contract1.sol
+    .pause(1000)
+    .perform(function (done) { // check the content and replace by another
+      browser.testEditorValue('contract test1 { function get () returns (uint) { return 10; }}', () => {
+        console.log('testEditorValue')
+        done()
       })
+    })
+    .perform(function (done) {
+      browser.setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}', () => {
+        console.log('setEditorValue')
+        done()
+      })
+    })
+    .perform(function (done) {
+      browser.testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}', () => {
+        console.log('testEditorValue')
+        done()
+      })
+    })
+    .perform(function (done) {
+      browser.setEditorValue('contract test1 { function get () returns (uint) { return 10; }}', () => {
+        console.log('setEditorValue')
+        done()
+      })
+    })
+    .click('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // rename a file and check
+    .pause(1000)
+    .perform(function (done) {
+      contractHelper.renameFile(browser, 'localhost/folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol',
+      'localhost/folder1/renamed_contract_' + browserName + '.sol', () => {
+        console.log('tested file renaming')
+        done()
+      })
+    })
+    .pause(1000)
+    .perform(function (done) { // remove a file and check
+      contractHelper.removeFile(browser, 'localhost/folder1/contract_' + browserName + '_toremove.sol', () => {
+        console.log('tested file removing')
+        done()
+      })
+    })
+    .perform(function () {
+      browser.click('[data-path="localhost"]') // collapse and expand
+        .waitForElementNotVisible('[data-path="localhost/folder1"]')
+        .click('[data-path="localhost"]')
+        .waitForElementVisible('[data-path="localhost/folder1"]')
+        .click('[data-path="localhost/folder1"]')
+        .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
+        .waitForElementVisible('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]') // check if renamed file is preset
+        .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '.sol"]') // check if renamed (old) file is not present
+        .waitForElementNotPresent('[data-path="localhost/folder1/contract_' + browserName + '_toremove.sol"]') // check if removed (old) file is not present
+        .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
+        .click('.websocketconn')
+        .end()
     })
 }
