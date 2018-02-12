@@ -92,7 +92,7 @@ class FileManager {
     if (path === this.opt.config.get('currentFile')) {
       this.opt.config.set('currentFile', '')
     }
-    this.opt.editor.discard(path)
+    this.opt.editor.discardCurrentSession()
     delete this.tabbedFiles[path]
     this.refreshTabs()
   }
@@ -131,6 +131,7 @@ class FileManager {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
           self.event.trigger('currentFileChanged', [])
+          self.opt.editor.displayEmptyReadOnlySession()
         }
       })
     }

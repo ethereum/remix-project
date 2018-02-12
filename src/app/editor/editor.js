@@ -186,6 +186,13 @@ function Editor (opts = {}) {
     return editor.session.doc.positionToIndex(editor.getCursorPosition(), 0)
   }
 
+  this.discardCurrentSession = function () {
+    if (sessions[currentSession]) {
+      delete sessions[currentSession]
+      currentSession = null
+    }
+  }
+
   this.discard = function (path) {
     if (currentSession !== path) {
       delete sessions[path]
