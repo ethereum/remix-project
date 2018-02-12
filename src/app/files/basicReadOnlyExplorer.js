@@ -23,11 +23,13 @@ class BasicReadOnlyExplorer {
 
   exists (path) {
     if (!this.files) return false
-    return this.files[path] !== undefined
+    var unprefixedPath = this.removePrefix(path)
+    return this.files[unprefixedPath] !== undefined
   }
 
   get (path, cb) {
-    var content = this.files[path]
+    var unprefixedPath = this.removePrefix(path)
+    var content = this.files[unprefixedPath]
     if (!content) {
       content = this.files[this.type + '/' + this.normalizedNames[path]]
     }
@@ -48,6 +50,7 @@ class BasicReadOnlyExplorer {
     try { // lazy try to format JSON
       content = JSON.stringify(JSON.parse(content), null, '\t')
     } catch (e) {}
+    if (!rawPath) rawPath = path
     // splitting off the path in a tree structure, the json tree is used in `resolveDirectory`
     var split = path
     var folder = false

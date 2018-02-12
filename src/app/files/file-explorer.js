@@ -6,6 +6,7 @@ var modalDialogCustom = require('../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var contextMenu = require('../ui/contextMenu')
+var addTooltip = require('../ui/tooltip')
 var helper = require('../../lib/helper')
 
 var styleGuide = remixLib.ui.themeChooser
@@ -163,11 +164,12 @@ function fileExplorer (appAPI, files) {
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
     contextMenu(event, {
       'Rename': () => {
-        if (self.files.readonly) return
+        if (self.files.readonly) { return addTooltip('cannot rename. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
         if (name) editModeOn(name)
       },
       'Delete': () => {
+        if (self.files.readonly) { return addTooltip('cannot delete. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(null, 'Do you want to delete this file?', () => { files.remove(key) }, () => {})
       }
     })
@@ -218,13 +220,21 @@ function fileExplorer (appAPI, files) {
   })
 
   var textUnderEdit = null
-  var textInRename = false
+
+  function selectElementContents (el) {
+    var range = document.createRange()
+    range.selectNodeContents(el)
+    var sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  }
 
   function editModeOn (label) {
     textUnderEdit = label.innerText
     label.setAttribute('contenteditable', true)
     label.classList.add(css.rename)
     label.focus()
+    selectElementContents(label)
   }
 
   function editModeOff (event) {
@@ -249,8 +259,7 @@ function fileExplorer (appAPI, files) {
     }
 
     if (event.which === 13) event.preventDefault()
-    if (!textInRename && (event.type === 'blur' || event.which === 27 || event.which === 13) && label.getAttribute('contenteditable')) {
-      textInRename = true
+    if (event.type === 'blur' || event.which === 13 && label.getAttribute('contenteditable')) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
@@ -258,7 +267,6 @@ function fileExplorer (appAPI, files) {
       }
       label.removeAttribute('contenteditable')
       label.classList.remove(css.rename)
-      textInRename = false
     }
   }
 }
