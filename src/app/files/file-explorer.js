@@ -228,14 +228,23 @@ function fileExplorer (appAPI, files) {
   }
 }
 
+fileExplorer.prototype.hide = function () {
+  if (this.container) this.container.style.display = 'none'
+}
+
+fileExplorer.prototype.show = function () {
+  if (this.container) this.container.style.display = 'block'
+}
+
 fileExplorer.prototype.init = function () {
   this.container = yo`<div></div>`
   return this.container
 }
 
 fileExplorer.prototype.ensureRoot = function (cb) {
+  cb = cb || (() => {})
   var self = this
-  if (self.element && cb) return cb()
+  if (self.element) return cb()
 
   self.files.resolveDirectory('/', (error, files) => {
     if (error) console.error(error)
