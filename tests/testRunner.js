@@ -18,20 +18,18 @@ function compileAndDeploy (filename, callback) {
       Deployer.deployAll(compilationResult, web3, next)
     }
   ], function (_err, contracts) {
-    callback(null, contracts, web3)
+    callback(null, contracts)
   })
 }
 
 describe('testRunner', function () {
-  let web3;
   describe('#runTest', function() {
     describe('test with beforeAll', function () {
       let filename = 'tests/examples_1/simple_storage_test.sol'
       let tests = [], results = {}
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, contracts, _web3) {
-          web3 = _web3;
+        compileAndDeploy(filename, function (_err, contracts) {
           var testCallback = function (test) {
             tests.push(test)
           }
@@ -39,7 +37,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest(web3, 'MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
         })
       })
 
@@ -73,7 +71,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest(web3, 'MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
         })
       })
 
