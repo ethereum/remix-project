@@ -65,13 +65,11 @@ module.exports = class SharedFolder {
   //
   // this.remixd.exists(path, (error, isValid) => {})
 
-  exists (path) {
-    // @TODO: add new remixd.exists() method
-    // we remove the this.files = null at the beggining
-    // modify the exists() (cause it is using the this.files) to use remixd
-    // yes for the exists I think you might need another remixd function
-    if (!this.files) return false
-    return this.files[path] !== undefined
+  exists (path, cb) {
+    var unprefixedpath = this.removePrefix(path)
+    this._remixd.call('sharedfolder', 'exists', {path: unprefixedpath}, (error, result) => {
+      cb(error, result)
+    })
   }
 
   get (path, cb) {
