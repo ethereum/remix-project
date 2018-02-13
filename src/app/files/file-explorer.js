@@ -235,7 +235,7 @@ function fileExplorer (appAPI, files) {
     }
 
     if (event.which === 13) event.preventDefault()
-    if (event.type === 'blur' || event.which === 13 && label.getAttribute('contenteditable')) {
+    if ((event.type === 'blur' || event.which === 13) && label.getAttribute('contenteditable')) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
