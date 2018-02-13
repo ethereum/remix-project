@@ -70,6 +70,11 @@ var css = csjs`
   .icon {
     margin-right: .5em;
   }
+  .remixdinstallation {
+    padding: 3px;
+    border-radius: 2px;
+    margin-left: 5px;
+  }
 }
 `
 
