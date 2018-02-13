@@ -9,7 +9,7 @@ The code of Remixd can be checked out `here <https://github.com/ethereum/remixd>
 
 Remixd can be globally installed using the following command: ``npm install -g remixd``.
 
-Then ``remixd -S <absolute-path-to-the-shared-folder>`` will start Remixd and share the given folder.
+Then ``remixd -s <absolute-path-to-the-shared-folder>`` will start Remixd and share the given folder.
 
 The folder is shared using a websocket connection between ``Remix IDE`` and ``Remixd``.
 
