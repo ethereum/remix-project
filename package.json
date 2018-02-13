@@ -20,6 +20,7 @@
     "csslint": "^1.0.2",
     "deep-equal": "^1.0.1",
     "ethereumjs-util": "^5.1.2",
+    "ethereumjs-vm": "^2.3.3",
     "execr": "^1.0.1",
     "exorcist": "^0.4.0",
     "fast-async": "^6.1.2",
