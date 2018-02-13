@@ -78,7 +78,7 @@ Usage:
    
   `remixd --dev-path /home/devchains/chain1 --rpc --rpc-port 8545 --geth --frontend /home/frontend --frontend-port 8084 --auto-mine`
   
-  - do the same as the first example but do not start `Mist`. 
+ - do the same as the first example but do not start `Mist`. 
   It is still possible to browse a front end app using a normal browser and Metamask. The connection between Metamask and `geth` has to be dome via rpc connection and thus the rpc server has to be enabled (`rpc` and `rpc-port` options).
   
   Note that in that case Remix IDE (remix.ethereum.org) does not need Metamask. It is possible to use the `Web3 Provider` of Remix.
