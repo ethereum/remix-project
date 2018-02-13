@@ -214,10 +214,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- Compiler -----------------
   var compiler = new Compiler((url, cb) => {
     var provider = fileManager.fileProviderOf(url)
-    if (provider && provider.exists(url)) {
-      return provider.get(url, cb)
-    }
-    handleImports.import(url,
+    if (provider) {
+      provider.exists(url, (error, exist) => {
+        if (error) return cb(error)
+        if (exist) {
+          return provider.get(url, cb)
+        } else {
+          return cb('file not found')
+        }
+      })
+    } else {
+      handleImports.import(url,
       (loadingMsg) => {
         $('#output').append($('<div/>').append($('<pre/>').text(loadingMsg)))
       },
@@ -229,6 +236,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
           cb(error)
         }
       })
+    }
   })
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
@@ -386,14 +394,26 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   this._components.contextView = new ContextView({
     contextualListener: this._components.contextualListener,
     jumpTo: (position) => {
+      function jumpToLine (lineColumn) {
+        if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
+          editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
+        }
+      }
       if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
         var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
         var filename = compiler.getSourceName(position.file)
-        if (filename !== config.get('currentFile') && (filesProviders['browser'].exists(filename) || filesProviders['localhost'].exists(filename))) {
-          fileManager.switchFile(filename)
-        }
-        if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-          editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
+        // TODO: refactor with rendererAPI.errorClick
+        if (filename !== config.get('currentFile')) {
+          var provider = fileManager.fileProviderOf(filename)
+          if (provider) {
+            provider.exists(filename, (error, exist) => {
+              if (error) return console.log(error)
+              fileManager.switchFile(filename)
+              jumpToLine(lineColumn)
+            })
+          }
+        } else {
+          jumpToLine(lineColumn)
         }
       }
     }
@@ -541,10 +561,19 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       }
     },
     errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== config.get('currentFile') && (filesProviders['browser'].exists(errFile) || filesProviders['localhost'].exists(errFile))) {
-        fileManager.switchFile(errFile)
+      if (errFile !== config.get('currentFile')) {
+        // TODO: refactor with this._components.contextView.jumpTo
+        var provider = fileManager.fileProviderOf(errFile)
+        if (provider) {
+          provider.exists(errFile, (error, exist) => {
+            if (error) return console.log(error)
+            fileManager.switchFile(errFile)
+            editor.gotoLine(errLine, errCol)
+          })
+        }
+      } else {
+        editor.gotoLine(errLine, errCol)
       }
-      editor.gotoLine(errLine, errCol)
     }
   }
   var renderer = new Renderer(rendererAPI)

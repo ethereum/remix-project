@@ -221,11 +221,16 @@ function fileExplorer (appAPI, files) {
       } else if (helper.checkSpecialChars(label.innerText)) {
         modalDialogCustom.alert('Special characters are not allowed')
         label.innerText = textUnderEdit
-      } else if (!files.exists(newPath)) {
-        files.rename(label.dataset.path, newPath, isFolder)
       } else {
-        modalDialogCustom.alert('File already exists.')
-        label.innerText = textUnderEdit
+        files.exists(newPath, (error, exist) => {
+          if (error) return modalDialogCustom.alert('Unexpected error while renaming: ' + error)
+          if (!exist) {
+            files.rename(label.dataset.path, newPath, isFolder)
+          } else {
+            modalDialogCustom.alert('File already exists.')
+            label.innerText = textUnderEdit
+          }
+        })
       }
     }
 

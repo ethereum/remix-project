@@ -175,11 +175,14 @@ function filepanel (appAPI, filesProvider) {
       }
 
       var name = files.type + '/' + file.name
-      if (!files.exists(name)) {
-        loadFile()
-      } else {
-        modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
-      }
+      files.exists(name, (error, exist) => {
+        if (error) console.log(error)
+        if (!exist) {
+          loadFile()
+        } else {
+          modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
+        }
+      })
     })
   }
 
