@@ -1,3 +1,5 @@
+var async = require('async')
+
 module.exports = {
   shortenAddress: function (address, etherBalance) {
     var len = address.length
@@ -9,7 +11,7 @@ module.exports = {
     var len = data.length
     return data.slice(0, 5) + '...' + data.slice(len - 5, len)
   },
-  createNonClashingName (name, fileProvider) {
+  createNonClashingName (name, fileProvider, cb) {
     var counter = ''
     var ext = 'sol'
     var reg = /(.*)\.([^.]+)/g
@@ -18,10 +20,22 @@ module.exports = {
       name = split[1]
       ext = split[2]
     }
-    while (fileProvider.exists(name + counter + '.' + ext)) {
-      counter = (counter | 0) + 1
-    }
-    return name + counter + '.' + ext
+    var exist = true
+    async.whilst(
+      () => { return exist },
+      (callback) => {
+        fileProvider.exists(name + counter + '.' + ext, (error, currentExist) => {
+          if (error) {
+            callback(error)
+          } else {
+            exist = currentExist
+            if (exist) counter = (counter | 0) + 1
+            callback()
+          }
+        })
+      },
+      (error) => { cb(error, name + counter + '.' + ext) }
+    )
   },
   checkSpecialChars (name) {
     return name.match(/[/:*?"<>\\'|]/) != null
