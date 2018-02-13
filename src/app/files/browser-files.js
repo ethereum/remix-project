@@ -8,12 +8,12 @@ function Files (storage) {
   var readonly = {}
   this.type = 'browser'
 
-  this.exists = function (path) {
+  this.exists = function (path, cb) {
     var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
-    if (path === '.remix.config') return false
+    if (path === '.remix.config') return cb(null, false)
 
-    return this.isReadOnly(unprefixedpath) || storage.exists(unprefixedpath)
+    return cb(null, this.isReadOnly(unprefixedpath) || storage.exists(unprefixedpath))
   }
 
   this.init = function (cb) {
