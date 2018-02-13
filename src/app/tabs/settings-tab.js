@@ -54,6 +54,17 @@ function SettingsTab (container, appAPI, appEvents) {
         </div>
       </div>
       <div class="${css.info}">
+        <div class=${css.title}>Remixd</div>
+        <div class="${css.crow}">
+          Remixd is a tool which allow Remix IDE to access files located in your local computer.
+          it can also be used to setup a development environment.
+        </div>
+        <div class="${css.crow}">More infos:</div>
+        <div class="${css.crow}"><a target="_blank" href="https://github.com/ethereum/remixd"> https://github.com/ethereum/remixd</a></div>
+        <div class="${css.crow}"><a target="_blank" href="http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a></div>
+        <div class="${css.crow}">Installation: <pre class=${css.remixdinstallation}>npm install remixd -g</pre></div>
+      </div>
+      <div class="${css.info}">
         <div class=${css.title}>Themes</div>
         <div class=${css.attention}>
           <i title="Select the theme" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
@@ -67,7 +78,7 @@ function SettingsTab (container, appAPI, appEvents) {
           <input class="${css.col1}" name="theme" id="themeDark" type="checkbox">
           <label for="themeDark">Dark Theme</label>
         </div>
-      </div>
+      </div>      
       <div class="${css.info}">
         <div class=${css.title}>Plugin</div>
         <div class="${css.crowNoFlex}">
