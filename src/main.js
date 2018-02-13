@@ -6,7 +6,7 @@ var startFrontend = require('./services/startFrontend')
 var fs = require('fs-extra')
 
 program
-.usage('-S <shared folder>')
+.usage('-s <shared folder>')
 .description('Provide a two ways connection between the local computer and Remix IDE')
 .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
 .option('-m, --mist', 'start mist')
