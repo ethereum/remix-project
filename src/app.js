@@ -3,6 +3,7 @@
 var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
+var async = require('async')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
@@ -463,15 +464,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   function loadFiles (filesSet, fileProvider) {
     if (!fileProvider) fileProvider = 'browser'
 
-    for (var f in filesSet) {
-      var name = helper.createNonClashingName(f, filesProviders[fileProvider])
-      if (helper.checkSpecialChars(name)) {
-        modalDialogCustom.alert('Special characters are not allowed')
-        return
-      }
-      filesProviders[fileProvider].set(name, filesSet[f].content)
-    }
-    fileManager.switchFile()
+    async.each(Object.keys(filesSet), (file, callback) => {
+      helper.createNonClashingName(file, filesProviders[fileProvider],
+      (error, name) => {
+        if (error) {
+          modalDialogCustom.alert('Unexpected error loading the file ' + error)
+        } else if (helper.checkSpecialChars(name)) {
+          modalDialogCustom.alert('Special characters are not allowed')
+        } else {
+          filesProviders[fileProvider].set(name, filesSet[file].content)
+        }
+        callback()
+      })
+    }, (error) => {
+      if (!error) fileManager.switchFile()
+    })
   }
 
   // Replace early callback with instant response
