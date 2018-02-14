@@ -38,6 +38,7 @@ var FileManager = require('./app/files/fileManager')
 var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
+var toolTip = require('./app/ui/tooltip')
 
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
@@ -113,7 +114,11 @@ class App {
     executionContext.init(self._api.config)
     self._api.filesProviders = {}
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
-    self._api.filesProviders['localhost'] = new SharedFolder(new Remixd())
+    var remixd = new Remixd()
+    remixd.event.register('system', (message) => {
+      if (message.error) toolTip(message.error)
+    })
+    self._api.filesProviders['localhost'] = new SharedFolder(remixd)
     self._api.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
     self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
     self._api.filesProviders['gist'] = new BasicReadOnlyExplorer('gist')
