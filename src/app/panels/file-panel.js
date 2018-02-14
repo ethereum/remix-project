@@ -224,12 +224,12 @@ function filepanel (appAPI, filesProvider) {
 
   function createNewFile () {
     modalDialogCustom.prompt(null, 'File Name', 'Untitled.sol', (input) => {
-      filesProvider['browser'].type + '/' + helper.createNonClashingName(input, filesProvider['browser'], (error, newName) => {
+      helper.createNonClashingName(input, filesProvider['browser'], (error, newName) => {
         if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
         if (!filesProvider['browser'].set(newName, '')) {
           modalDialogCustom.alert('Failed to create file ' + newName)
         } else {
-          appAPI.switchFile(newName)
+          appAPI.switchFile(filesProvider['browser'].type + '/' + newName)
         }
       })
     })
