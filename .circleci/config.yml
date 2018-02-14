@@ -37,5 +37,9 @@ jobs:
                 ./ci/deploy_from_travis_remix-live.sh
             fi
 
-    
+workflows:
+  version: 2
+  build_all:
+    jobs:
+      - build
      
