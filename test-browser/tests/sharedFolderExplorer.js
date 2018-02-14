@@ -3,7 +3,6 @@ var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
-
 var assetsTestContract = `import "./contract.sol";
 contract Assets {
     uint[] proposals;
