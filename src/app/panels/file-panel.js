@@ -169,7 +169,7 @@ function filepanel (appAPI, filesProvider) {
           }
           var success = files.set(name, event.target.result)
           if (!success) modalDialogCustom.alert('Failed to create file ' + name)
-          else self.events.trigger('focus', [name])
+          else self.event.trigger('focus', [name])
         }
         fileReader.readAsText(file)
       }
