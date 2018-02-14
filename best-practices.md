@@ -2,6 +2,16 @@
 
 - `ES6 class` rather than ES5 to create class.
 - CSS declaration using `csjs-inject`.
+- CSS files: 
+
+  **if** the CSS section of an UI component is too important, CSS declarations should be put in a different file and in a different folder.
+  
+  The folder should be named `styles` and the file should be named with the extension `-styles.css`.
+  
+  e.g: `file-explorer.js` being an UI component `file-explorer-styles.css` is created in the `styles` folder right under `file-explorer.js`
+
+  **if** the CSS section of an UI component is rather limited it is preferable to put it in the corresponding JS file.
+  
 - HTML declaration using `yo-yo`.
 - `opt` is an input parameter, it contains the `api` and `event` object.
 - `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
