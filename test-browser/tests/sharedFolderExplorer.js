@@ -143,7 +143,7 @@ function testImportFromRemixd (browser, callback) {
     .click('[data-path="localhost/src/gmbh"]')
     .waitForElementVisible('[data-path="localhost/src/gmbh/company.sol"]', 100000)
     .click('[data-path="localhost/src/gmbh/company.sol"]')
-    .pause(500)
+    .pause(1000)
     .perform(() => {
       contractHelper.verifyContract(browser, ['Assets', 'gmbh'], function () {
         callback()
