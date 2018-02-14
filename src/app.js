@@ -221,7 +221,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         if (exist) {
           return provider.get(url, cb)
         } else {
-          return cb('file not found')
+          return cb('Unable to import "' + url + '": File not found')
         }
       })
     } else {
