@@ -3,9 +3,34 @@ var contractHelper = require('../helpers/contracts')
 var init = require('../helpers/init')
 var sauce = require('./sauce')
 
+
+var assetsTestContract = `import "./contract.sol";
+contract Assets {
+    uint[] proposals;
+    function add(uint8 _numProposals) {
+        proposals.length = _numProposals;
+    }
+}
+`
+
+var gmbhTestContract = `
+contract gmbh {
+    uint[] proposals;
+    function register(uint8 _numProposals) {
+        proposals.length = _numProposals;
+    }
+}
+`
 var sources = [
   {
     'localhost/folder1/contract2.sol': {content: 'contract test2 { function get () returns (uint) { return 11; }}'}
+  },
+  {
+    'localhost/src/gmbh/company.sol': {content: assetsTestContract}
+  },
+  {
+    'localhost/src/gmbh/company.sol': {content: assetsTestContract},
+    'localhost/src/gmbh/contract.sol': {content: gmbhTestContract}
   }
 ]
 
@@ -92,6 +117,9 @@ function runTests (browser, testData) {
         done()
       })
     })
+    .perform(function (done) {
+      testImportFromRemixd(browser, () => { done() })
+    })
     .perform(function () {
       browser.click('[data-path="localhost"]') // collapse and expand
         .waitForElementNotVisible('[data-path="localhost/folder1"]')
@@ -105,5 +133,21 @@ function runTests (browser, testData) {
         .click('[data-path="localhost/folder1/renamed_contract_' + browserName + '.sol"]')
         .click('.websocketconn')
         .end()
+    })
+}
+
+function testImportFromRemixd (browser, callback) {
+  browser
+    .waitForElementVisible('[data-path="localhost/src"]', 100000)
+    .click('[data-path="localhost/src"]')
+    .waitForElementVisible('[data-path="localhost/src/gmbh"]', 100000)
+    .click('[data-path="localhost/src/gmbh"]')
+    .waitForElementVisible('[data-path="localhost/src/gmbh/company.sol"]', 100000)
+    .click('[data-path="localhost/src/gmbh/company.sol"]')
+    .pause(500)
+    .perform(() => {
+      contractHelper.verifyContract(browser, ['Assets', 'gmbh'], function () {
+        callback()
+      })
     })
 }
