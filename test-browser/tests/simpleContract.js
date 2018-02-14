@@ -28,10 +28,31 @@ function runTests (browser) {
       async.waterfall([function (callback) { callback(null, browser) },
         testSimpleContract,
         testSuccessImport,
-        testFailedImport /* testGitHubImport */
+        testFailedImport, /* testGitHubImport */
+        testImportFromRemixd
       ],
       function () {
         browser.end()
+      })
+    })
+}
+
+function testImportFromRemixd (browser, callback) {
+  browser.click('.websocketconn')
+    .waitForElementVisible('#modal-footer-ok', 10000)
+    .click('#modal-footer-ok')
+    .waitForElementVisible('[data-path="localhost"]', 100000)
+    .click('[data-path="localhost"]')
+    .waitForElementVisible('[data-path="localhost/src"]', 100000)
+    .click('[data-path="localhost/src"]')
+    .waitForElementVisible('[data-path="localhost/src/gmbh"]', 100000)
+    .click('[data-path="localhost/src/gmbh"]')
+    .waitForElementVisible('[data-path="localhost/src/gmbh/company.sol"]', 100000)
+    .click('[data-path="localhost/src/gmbh/company.sol"]')
+    .perform(() => {
+      contractHelper.verifyContract(browser, ['Assets', 'gmbh'], function () {
+        browser.click('.websocketconn')
+        callback(null, browser)
       })
     })
 }
@@ -198,6 +219,24 @@ contract ENS is AbstractENS {
     }
 }`
 
+var assetsTestContract = `import "./contract.sol";
+contract Assets {
+
+    function add(uint8 _numProposals) {
+        proposals.length = _numProposals;
+    }
+}
+`
+
+var gmbhTestContract = `
+contract gmbh {
+
+    function register(uint8 _numProposals) {
+        proposals.length = _numProposals;
+    }
+}
+`
+
 var sources = [
   {
     'browser/Untitled.sol': {content: 'contract test1 {} contract test2 {}'}
@@ -217,5 +256,12 @@ var sources = [
     'browser/Untitled4.sol': {content: 'import "github.com/ethereum/ens/contracts/ENS.sol"; contract test7 {}'},
     'github.com/ethereum/ens/contracts/ENS.sol': {content: ENS},
     'github.com/ethereum/ens/contracts/AbstractENS.sol': {content: abstractENS}
+  },
+  {
+    'localhost/src/gmbh/company.sol': {content: assetsTestContract}
+  },
+  {
+    'localhost/src/gmbh/company.sol': {content: assetsTestContract},
+    'localhost/src/gmbh/contract.sol': {content: gmbhTestContract}
   }
 ]
