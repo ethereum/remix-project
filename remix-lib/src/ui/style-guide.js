@@ -561,6 +561,9 @@ function styleGuide () {
           RUN TAB
       ::::::::::::::: */
       runTab: {
+
+        additionalText_Color: appProperties.additionalText_Color,
+
         box_RunTab: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBox_BackgroundColor,
           Color: appProperties.solidBox_TextColor
