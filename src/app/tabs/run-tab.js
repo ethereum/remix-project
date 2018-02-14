@@ -19,7 +19,7 @@ var css = require('./styles/run-tab-styles')
 var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
 
-var pendingTxsText = yo`<span></span>`
+var pendingTxsText = yo`<span>0 pending transactions</span>`
 
 function runTab (container, appAPI, appEvents) {
   var events = new EventManager()
