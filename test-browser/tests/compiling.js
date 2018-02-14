@@ -44,7 +44,7 @@ function testSimpleContract (browser, callback) {
       .click('#runTabView .instance div[class^="title"]')
       .testFunction('f - transact (not payable)',
         '0xa178c603400a184ce5fedbcfab392d9b77822f6ffa7facdec693aded214523bc',
-        `[vm]\nfrom:0xca3...a733c\nto:TestContract.f() 0x692...77b3a\nvalue:0 wei\ndata:0x261...21ff0\nlogs:0\nhash:0xa17...523bc`, null,
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`, null,
         `{
  "0": "uint256: 8"
 }`)
@@ -56,7 +56,7 @@ function testSimpleContract (browser, callback) {
       })
       .testFunction('g - transact (not payable)',
         '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
-        `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xb15...92781`, null, `{
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`, null, `{
  "0": "uint256: 345",
  "1": "string: comment_comment_",
  "2": "bool: true",
@@ -72,7 +72,7 @@ function testReturnValues (browser, callback) {
       .pause(500)
       .testFunction('retunValues1 - transact (not payable)',
         '0x79dc928d149d2ade02ab610a8ae290636222d034d4adce0bb08a68401e3d1f7f',
-        `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0x79d...d1f7f`,
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`,
         null,
         `{
  "0": "bool: _b true",
@@ -83,7 +83,7 @@ function testReturnValues (browser, callback) {
       .pause(500)
       .testFunction('retunValues2 - transact (not payable)',
         '0x09175dcb30227b3af422d75786dbba3b0549985e5c7f59f86d12c7e1043ccb8c',
-        `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues2() 0x5e7...26e9f\nvalue:0 wei\ndata:0xf57...4036c\nlogs:0\nhash:0x091...ccb8c`, null, `{
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`, null, `{
  "0": "bytes1: _b 0x12",
  "1": "bytes2: _b2 0x1223",
  "2": "bytes3: _b3 0x000000",
@@ -96,7 +96,7 @@ function testReturnValues (browser, callback) {
  "9": "bytes32: _b32 0x0000000000000000000000000000000000032523532532523532523532523532"
 }`).pause(500).testFunction('retunValues3 - transact (not payable)',
         '0x7faab07aeaafc8afe6bf283bb83be70c000dff381dec04e779354e354da14aff',
-        '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0x7fa...14aff', null, `{
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`, null, `{
  "0": "uint8: _en 2",
  "1": "int256[5][]: _a1 1,-45,-78,56,60, -1,42,334,-45455,-446, 1,10,-5435,45,-7"
 }`).perform(() => { callback(null, browser) })
@@ -110,7 +110,7 @@ function testInputValues (browser, callback) {
         .pause(500)
       .testFunction('inputValue1 - transact (not payable)',
         '0x917a873d27d105213eaf5461e14780387ccceb66fed574f8432d1963917832ae',
-        `[vm]\nfrom:0xca3...a733c\nto:test.inputValue1(uint256,int256,string) 0x8c1...401f5\nvalue:0 wei\ndata:0xd69...00000\nlogs:0\nhash:0x917...832ae`,
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`,
         {types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"'},
         `{
  "0": "uint256: _uret 2343242",
@@ -118,7 +118,7 @@ function testInputValues (browser, callback) {
  "2": "string: _strret string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"
 }`).pause(500).testFunction('inputValue2 - transact (not payable)',
         '0x487d09e244853bcb108b3a22cd6ee57b6431e50869619c9b918e9764fc16ef7f',
-        `[vm]\nfrom:0xca3...a733c\nto:test.inputValue2(uint256[3],bytes8[4]) 0x8c1...401f5\nvalue:0 wei\ndata:0x1b7...00000\nlogs:1\nhash:0x487...6ef7f`,
+        `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`,
         {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234", "0x1234","0x1234","0x1234"]'},
         `{
  "0": "uint256[3]: _nret 1, 2, 3",
