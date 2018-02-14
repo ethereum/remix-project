@@ -14,12 +14,12 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
     environment:
-      - ENCRYPTION_LABEL1="b5c2730599da"
-      - ENCRYPTION_LABEL2="85f76a180658"
-      - ENCRYPTION_LABEL3="1b1c118ea62d"
-      - COMMIT_AUTHOR_EMAIL="chris@ethereum.org"
-      - COMMIT_AUTHOR="Circle CI"
-      - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md soljson.js"
+      - ENCRYPTION_LABEL1: "b5c2730599da"
+      - ENCRYPTION_LABEL2: "85f76a180658"
+      - ENCRYPTION_LABEL3: "1b1c118ea62d"
+      - COMMIT_AUTHOR_EMAIL: "chris@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+      - FILES_TO_PACKAGE: "assets background.js build icon.png index.html manifest.json README.md soljson.js"
     working_directory: ~/repo
 
     steps:
