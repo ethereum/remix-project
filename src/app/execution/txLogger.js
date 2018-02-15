@@ -10,7 +10,7 @@ var styles = styleGuide.chooser()
 
 var EventManager = remixLib.EventManager
 var helper = require('../../lib/helper')
-var executionContext = require('../../execution-context')
+var executionContext = remixLib.execution.executionContext
 var modalDialog = require('../ui/modal-dialog-custom')
 var typeConversion = require('../../lib/typeConversion')
 
