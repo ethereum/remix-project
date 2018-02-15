@@ -197,7 +197,7 @@ function run () {
   var self = this
 
   if (window.location.hostname === 'yann300.github.io') {
-    modalDialogCustom.alert(`This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-ide-alpha.`)
+    modalDialogCustom.alert(`This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.`)
   } else if (window.location.hostname === 'ethereum.github.io' &&
   window.location.pathname.indexOf('remix-ide-alpha') === 0) {
     modalDialogCustom.alert(`This instance of the Remix IDE is an UNSTABLE ALPHA branch.\n
