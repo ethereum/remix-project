@@ -7,6 +7,8 @@ Practically Remix IDE make available a folder shared by Remixd.
 
 More details are explained in this [tutorial](http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html).
 
+Alternatively Remixd can be used to setup a developement environment that can be used with other popular frameworks like Embark, Truffle, Ganache, etc..
+
 Remixd needs `npm` and `node`
 
 ## INSTALLATION
@@ -52,10 +54,14 @@ Furthermore :
  
 ## START GETH, MIST and setup a developement environment
 
-Remix also allow to start a dev environment.
-First note that `Mist` and `Geth` are not shipped with Remixd.
+Remix allows to start a dev environment. `Geth` is used to spawn a dev blockchain and `Mist` to provide an user interface to interact with dapps in developement and Remix IDE (It is also possible to use `Metamask` and a normal browser)
+
+`Mist` and `Geth` are not shipped with Remixd.
+
 Download `Mist` at https://github.com/ethereum/mist/releases
+
 Downloaf `Geth` at https://ethereum.github.io/go-ethereum/downloads
+
 
 Usage:
 
@@ -79,7 +85,7 @@ Usage:
   `remixd --dev-path /home/devchains/chain1 --rpc --rpc-port 8545 --geth --frontend /home/frontend --frontend-port 8084 --auto-mine`
   
  - do the same as the first example but do not start `Mist`. 
-  It is still possible to browse a front end app using a normal browser and Metamask. The connection between Metamask and `geth` has to be dome via rpc connection and thus the rpc server has to be enabled (`rpc` and `rpc-port` options).
+  It is still possible to browse a front end app using a normal browser and `Metamask`. The connection between Metamask and `geth` has to be dome via rpc connection and thus the rpc server has to be enabled (`rpc` and `rpc-port` options).
   
-  Note that in that case Remix IDE (remix.ethereum.org) does not need Metamask. It is possible to use the `Web3 Provider` of Remix.
+  Note that in that case Remix IDE (remix.ethereum.org) does not need Metamask. It is possible to use the `Web3 Provider` option of Remix to connect to the `Geth` RPC endpoints.
   
