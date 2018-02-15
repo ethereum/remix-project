@@ -161,12 +161,14 @@ function makeRecorder (events, appAPI, appEvents) {
       var fileProvider = appAPI.fileProviderOf(path)
       if (fileProvider) {
         var newFile = path + input
-        newFile = helper.createNonClashingName(newFile, fileProvider, '.json')
-        if (!fileProvider.set(newFile, txJSON)) {
-          modalDialogCustom.alert('Failed to create file ' + newFile)
-        } else {
-          appAPI.switchFile(newFile)
-        }
+        helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
+          if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+          if (!fileProvider.set(newFile, txJSON)) {
+            modalDialogCustom.alert('Failed to create file ' + newFile)
+          } else {
+            appAPI.switchFile(newFile)
+          }
+        })
       }
     })
   }

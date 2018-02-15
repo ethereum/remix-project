@@ -169,17 +169,20 @@ function filepanel (appAPI, filesProvider) {
           }
           var success = files.set(name, event.target.result)
           if (!success) modalDialogCustom.alert('Failed to create file ' + name)
-          else self.events.trigger('focus', [name])
+          else self.event.trigger('focus', [name])
         }
         fileReader.readAsText(file)
       }
 
       var name = files.type + '/' + file.name
-      if (!files.exists(name)) {
-        loadFile()
-      } else {
-        modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
-      }
+      files.exists(name, (error, exist) => {
+        if (error) console.log(error)
+        if (!exist) {
+          loadFile()
+        } else {
+          modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
+        }
+      })
     })
   }
 
@@ -221,12 +224,14 @@ function filepanel (appAPI, filesProvider) {
 
   function createNewFile () {
     modalDialogCustom.prompt(null, 'File Name', 'Untitled.sol', (input) => {
-      var newName = filesProvider['browser'].type + '/' + helper.createNonClashingName(input, filesProvider['browser'])
-      if (!filesProvider['browser'].set(newName, '')) {
-        modalDialogCustom.alert('Failed to create file ' + newName)
-      } else {
-        appAPI.switchFile(newName)
-      }
+      helper.createNonClashingName(input, filesProvider['browser'], (error, newName) => {
+        if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
+        if (!filesProvider['browser'].set(newName, '')) {
+          modalDialogCustom.alert('Failed to create file ' + newName)
+        } else {
+          appAPI.switchFile(filesProvider['browser'].type + '/' + newName)
+        }
+      })
     })
   }
 
