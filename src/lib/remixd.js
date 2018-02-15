@@ -48,6 +48,12 @@ class Remixd {
         this.event.trigger('replied', [data])
       } else if (data.type === 'notification') {
         this.event.trigger('notified', [data])
+      } else if (data.type === 'system') {
+        if (data.error) {
+          this.event.trigger('system', [{
+            error: data.error
+          }])
+        }
       }
     })
 

@@ -89,7 +89,7 @@ module.exports = class SharedFolder {
   set (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
     this._remixd.call('sharedfolder', 'set', {path: unprefixedpath, content: content}, (error, result) => {
-      if (cb) cb(error, result)
+      if (cb) return cb(error, result)
       var path = this.type + '/' + unprefixedpath
       this.event.trigger('fileChanged', [path])
     })
