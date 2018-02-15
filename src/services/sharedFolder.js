@@ -12,7 +12,11 @@ module.exports = {
   },
 
   list: function (args, cb) {
-    cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))
+    try {
+      cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))  
+    } catch (e) {
+      cb(e.message)
+    }
   },
 
   resolveDirectory: function (args, cb) {
@@ -20,12 +24,15 @@ module.exports = {
       var path = utils.absolutePath(args.path, this.sharedFolder)
       cb(null, utils.resolveDirectory(path, this.sharedFolder))
     } catch (e) {
-      cb(e)
+      cb(e.message)
     }
   },
 
   get: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
+    if (!fs.existsSync(path)) {
+      return cb('File not found ' + path)
+    }
     if (!isRealPath(path, cb)) return
     isbinaryfile(path, (error, isBinary) => {
       if (error) console.log(error)
@@ -57,6 +64,9 @@ module.exports = {
 
   rename: function (args, cb) {
     var oldpath = utils.absolutePath(args.oldPath, this.sharedFolder)
+    if (!fs.existsSync(oldpath)) {
+      return cb('File not found ' + oldpath)
+    }
     var newpath = utils.absolutePath(args.newPath, this.sharedFolder)
     if (!isRealPath(oldpath, cb)) return
     fs.move(oldpath, newpath, (error, data) => {
@@ -67,6 +77,9 @@ module.exports = {
 
   remove: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
+    if (!fs.existsSync(path)) {
+      return cb('File not found ' + path)
+    }
     if (!isRealPath(path, cb)) return
     fs.remove(path, (error, data) => {
       if (error) console.log(error)
