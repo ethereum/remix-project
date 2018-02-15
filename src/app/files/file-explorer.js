@@ -221,16 +221,21 @@ function fileExplorer (appAPI, files) {
       } else if (helper.checkSpecialChars(label.innerText)) {
         modalDialogCustom.alert('Special characters are not allowed')
         label.innerText = textUnderEdit
-      } else if (!files.exists(newPath)) {
-        files.rename(label.dataset.path, newPath, isFolder)
       } else {
-        modalDialogCustom.alert('File already exists.')
-        label.innerText = textUnderEdit
+        files.exists(newPath, (error, exist) => {
+          if (error) return modalDialogCustom.alert('Unexpected error while renaming: ' + error)
+          if (!exist) {
+            files.rename(label.dataset.path, newPath, isFolder)
+          } else {
+            modalDialogCustom.alert('File already exists.')
+            label.innerText = textUnderEdit
+          }
+        })
       }
     }
 
     if (event.which === 13) event.preventDefault()
-    if (event.type === 'blur' || event.which === 13 && label.getAttribute('contenteditable')) {
+    if ((event.type === 'blur' || event.which === 13) && label.getAttribute('contenteditable')) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {

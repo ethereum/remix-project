@@ -45,7 +45,7 @@ module.exports = (event, items) => {
   event.preventDefault()
 
   function hide (event, force) {
-    if (force || (event.target !== container)) {
+    if (container && container.parentElement && (force || (event.target !== container))) {
       container.parentElement.removeChild(container)
     }
     window.removeEventListener('click', hide)

@@ -8,7 +8,11 @@ function Files (storage) {
   var readonly = {}
   this.type = 'browser'
 
-  this.exists = function (path) {
+  this.exists = function (path, cb) {
+    cb(null, this._exists(path))
+  }
+
+  this._exists = function (path) {
     var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
     if (path === '.remix.config') return false
@@ -75,7 +79,7 @@ function Files (storage) {
 
   this.remove = function (path) {
     var unprefixedpath = this.removePrefix(path)
-    if (!this.exists(unprefixedpath)) {
+    if (!this._exists(unprefixedpath)) {
       return false
     }
 
@@ -133,7 +137,7 @@ function Files (storage) {
   }
 
   // rename .browser-solidity.json to .remix.config
-  if (this.exists('.browser-solidity.json')) {
+  if (this._exists('.browser-solidity.json')) {
     this.rename('.browser-solidity.json', '.remix.config')
   }
 }
