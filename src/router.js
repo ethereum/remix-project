@@ -19,16 +19,29 @@ class Router {
   }
 
   call (callid, name, fn, args) {
-    servicesList[name][fn](args, (error, data) => {
-      var response = {
-        id: callid,
-        type: 'reply',
-        scope: name,
-        result: data,
-        error: error
+    try {
+      servicesList[name][fn](args, (error, data) => {
+        var response = {
+          id: callid,
+          type: 'reply',
+          scope: name,
+          result: data,
+          error: error
+        }
+        this.websocket.send(JSON.stringify(response))
+      })
+    } catch (e) {
+      var msg = 'Unexpected Error ' + e.message
+      console.log('\x1b[31m%s\x1b[0m', '[ERR] ' + msg)
+      if (this.websocket) {
+        this.websocket.send(JSON.stringify({
+          id: callid,
+          type: 'reply',
+          scope: name,
+          error: msg
+        }))
       }
-      this.websocket.send(JSON.stringify(response))
-    })
+    }
   }
 }
 
