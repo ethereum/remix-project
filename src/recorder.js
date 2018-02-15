@@ -2,8 +2,8 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var ethutil = require('ethereumjs-util')
 var executionContext = require('./execution-context')
-var format = require('./app/execution/txFormat')
-var txHelper = require('./app/execution/txHelper')
+var format = remixLib.execution.txFormat
+var txHelper = remixLib.execution.txHelper
 var async = require('async')
 var modal = require('./app/ui/modal-dialog-custom')
 
