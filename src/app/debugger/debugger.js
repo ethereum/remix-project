@@ -3,7 +3,7 @@
 var remixDebugger = require('remix-debugger')
 var remixLib = require('remix-lib')
 var remixCore = require('remix-core')
-var executionContext = require('../execution/execution-context')
+var executionContext = require('../../execution-context')
 
 /**
  * Manage remix and source highlighting
