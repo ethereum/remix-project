@@ -19,14 +19,12 @@
   Events can then be triggered:
   `self.event.trigger('eventName', [param1, param2])`
 - `self._view` is the HTML view renderered by `yo-yo` in the `render` function.
-- `render()` this function should be called:
+- constructor arguments: There is no fixed rule whether it is preferrable to use multiples arguments or a single option *{}* argument (or both).
+  We recommend: 
+    - use a specific slot for **obligatory** arguments and/or for complex arguments (meaning not boolean, not string, etc...).
+    - put arguments in an option *{}* for non critical and for optionnal arguments.
+    - if a component has more than 4/5 parameters, it is recommended to find a way to group some in one or more *opt* arguments.
 
-  * At the first rendering (make sure that the returned node element is put on the DOM).
-   
-  * When some property has changed in order to update the view.
-- `self.state` contains state properties of the module. These properties are either given from the parent through `òpts` or     computed during the life of the object.
-- `update(state)` allow the parent to easily update some of the state properties.
-- for all functions / properties, prefixing by underscore (`_`) means the scope is private.
 - look them up, discuss them, update them.
     
 ## Module Definition (example)
