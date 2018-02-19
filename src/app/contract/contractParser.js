@@ -1,6 +1,7 @@
 'use strict'
 
-var txHelper = require('../execution/txHelper')
+var remixLib = require('remix-lib')
+var txHelper = remixLib.execution.txHelper
 
 module.exports = (contractName, contract, compiledSource) => {
   return getDetails(contractName, contract, compiledSource)

@@ -8,9 +8,9 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var crypto = require('crypto')
 var TxRunner = require('./app/execution/txRunner')
+var txExecution = remixLib.execution.txExecution
 var txFormat = require('./app/execution/txFormat')
-var txHelper = require('./app/execution/txHelper')
-var txExecution = require('./app/execution/txExecution')
+var txHelper = remixLib.execution.txHelper
 var executionContext = require('./execution-context')
 var modalCustom = require('./app/ui/modal-dialog-custom')
 
