@@ -181,14 +181,15 @@ function log (self, tx, api) {
 }
 
 function renderKnownTransaction (self, data) {
-  var from = data.tx.from
-  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
+  var from = data.tx.from
+  var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
+  var obj = {from, to}
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <div class="${css.log}" onclick=${txDetails}>
+      <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         <i class="${css.caret} fa fa-caret-right"></i>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
@@ -197,40 +198,6 @@ function renderKnownTransaction (self, data) {
       </div>
     </span>
   `
-
-  var table
-  function txDetails () {
-    var log = document.querySelector("[class^='log']")
-    var caret = document.querySelector("[class^='caret']")
-    var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
-    var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
-    if (table && table.parentNode) {
-      tx.removeChild(table)
-      log.removeChild(caret)
-      log.appendChild(caretRight)
-    } else {
-      log.removeChild(caret)
-      log.appendChild(caretDown)
-      table = createTable({
-        contractAddress: data.tx.contractAddress,
-        data: data.tx,
-        from,
-        to,
-        gas: data.tx.gas,
-        hash: data.tx.hash,
-        input: data.tx.input,
-        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
-        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-        logs: data.logs,
-        val: data.tx.value,
-        transactionCost: data.tx.transactionCost,
-        executionCost: data.tx.executionCost,
-        status: data.tx.status
-      })
-      tx.appendChild(table)
-    }
-  }
-
   return tx
 }
 
@@ -245,9 +212,10 @@ function renderCall (self, data) {
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
+  var obj = {from, to}
   var tx = yo`
     <span id="tx${data.tx.hash}">
-      <div class="${css.log}" onclick=${txDetails}>
+      <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         <i class="${css.caret} fa fa-caret-right"></i>
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
@@ -263,51 +231,20 @@ function renderCall (self, data) {
       <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
     </span>
   `
-
-  var table
-  function txDetails () {
-    var log = document.querySelector("[class^='log']")
-    var caret = document.querySelector("[class^='caret']")
-    var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
-    var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
-    if (table && table.parentNode) {
-      tx.removeChild(table)
-      log.removeChild(caret)
-      log.appendChild(caretRight)
-    } else {
-      log.removeChild(caret)
-      log.appendChild(caretDown)
-      table = createTable({
-        isCall: data.tx.isCall,
-        contractAddress: data.tx.contractAddress,
-        data: data.tx,
-        from,
-        to,
-        gas: data.tx.gas,
-        input: data.tx.input,
-        'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
-        'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-        logs: data.logs,
-        val: data.tx.value,
-        transactionCost: data.tx.transactionCost,
-        executionCost: data.tx.executionCost
-      })
-      tx.appendChild(table)
-    }
-  }
   return tx
 }
 
 function renderUnknownTransaction (self, data) {
-  var from = data.tx.from
-  var to = data.tx.to
   function debug () {
     self.event.trigger('debugRequested', [data.tx.hash])
   }
+  var from = data.tx.from
+  var to = data.tx.to
+  var obj = {from, to}
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <i class="${css.caret} fa fa-caret-right"></i>
-      <div class="${css.log}" onclick=${txDetails}>
+      <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${debug}>[debug]</div>
@@ -315,35 +252,6 @@ function renderUnknownTransaction (self, data) {
       </div>
     </span>
   `
-  var table
-  function txDetails () {
-    var log = document.querySelector("[class^='log']")
-    var caret = document.querySelector("[class^='caret']")
-    var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
-    var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
-    if (table && table.parentNode) {
-      tx.removeChild(table)
-      log.removeChild(caret)
-      log.appendChild(caretRight)
-    } else {
-      log.removeChild(caret)
-      log.appendChild(caretDown)
-      table = createTable({
-        data: data.tx,
-        from,
-        to,
-        val: data.tx.value,
-        input: data.tx.input,
-        hash: data.tx.hash,
-        gas: data.tx.gas,
-        logs: data.tx.logs,
-        transactionCost: data.tx.transactionCost,
-        executionCost: data.tx.executionCost,
-        status: data.tx.status
-      })
-      tx.appendChild(table)
-    }
-  }
   return tx
 }
 
@@ -411,6 +319,40 @@ function context (self, opts) {
 module.exports = TxLogger
 
 // helpers
+
+function txDetails (e, tx, data, obj) {
+  var table = document.querySelector(`#${tx.id} [class^="txTable"`)
+  var from = obj.from
+  var to = obj.to
+  var log = document.querySelector(`#${tx.id} [class^='log']`)
+  var caret = document.querySelector(`#${tx.id} [class^='caret']`)
+  var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
+  var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
+  if (table && table.parentNode) {
+    tx.removeChild(table)
+    log.removeChild(caret)
+    log.appendChild(caretRight)
+  } else {
+    log.removeChild(caret)
+    log.appendChild(caretDown)
+    table = createTable({
+      isCall: data.tx.isCall,
+      contractAddress: data.tx.contractAddress,
+      data: data.tx,
+      from,
+      to,
+      gas: data.tx.gas,
+      input: data.tx.input,
+      'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
+      'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
+      logs: data.logs,
+      val: data.tx.value,
+      transactionCost: data.tx.transactionCost,
+      executionCost: data.tx.executionCost
+    })
+    tx.appendChild(table)
+  }
+}
 
 function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
