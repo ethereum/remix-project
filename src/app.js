@@ -113,6 +113,7 @@ class App {
     var fileStorage = new Storage('sol:')
     self._api.config = new Config(fileStorage)
     executionContext.init(self._api.config)
+    executionContext.listenOnLastBlock()
     self._api.filesProviders = {}
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
     var remixd = new Remixd()
