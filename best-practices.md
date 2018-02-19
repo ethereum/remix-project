@@ -19,6 +19,9 @@
   Events can then be triggered:
   `self.event.trigger('eventName', [param1, param2])`
 - `self._view` is the HTML view renderered by `yo-yo` in the `render` function.
+- `render()` this function should be called at the first rendering (make sure that the returned node element is put on the DOM), and should *not* by called again from outside the component.
+- `update()` call this function to update the DOM when the state of the component has changed (this function must be called after the initial call to `render()`).
+- for all functions / properties, prefixing by underscore (`_`) means the scope is private, and they should **not** be accessed not changed from outside the component.
 - constructor arguments: There is no fixed rule whether it is preferrable to use multiples arguments or a single option *{}* argument (or both).
   We recommend: 
     - use a specific slot for **obligatory** arguments and/or for complex arguments (meaning not boolean, not string, etc...).
