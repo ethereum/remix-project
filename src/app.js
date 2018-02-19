@@ -217,20 +217,8 @@ This instance of Remix you are visiting WILL NOT BE UPDATED.\n
 Please make a backup of your contracts and start using http://remix.ethereum.org`)
   }
 
-  // ----------------- Compiler -----------------
-  var compiler = new Compiler((url, cb) => {
-    var provider = fileManager.fileProviderOf(url)
-    if (provider) {
-      provider.exists(url, (error, exist) => {
-        if (error) return cb(error)
-        if (exist) {
-          return provider.get(url, cb)
-        } else {
-          return cb('Unable to import "' + url + '": File not found')
-        }
-      })
-    } else {
-      handleImports.import(url,
+  function importExternal (url, cb) {
+    handleImports.import(url,
       (loadingMsg) => {
         $('#output').append($('<div/>').append($('<pre/>').text(loadingMsg)))
       },
@@ -242,6 +230,22 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
           cb(error)
         }
       })
+  }
+
+  // ----------------- Compiler -----------------
+  var compiler = new Compiler((url, cb) => {
+    var provider = fileManager.fileProviderOf(url)
+    if (provider) {
+      provider.exists(url, (error, exist) => {
+        if (error) return cb(error)
+        if (exist) {
+          return provider.get(url, cb)
+        } else {
+          importExternal(url, cb)
+        }
+      })
+    } else {
+      importExternal(url, cb)
     }
   })
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
