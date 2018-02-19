@@ -13,9 +13,7 @@
   **if** the CSS section of an UI component is rather limited it is preferable to put it in the corresponding JS file.
   
 - HTML declaration using `yo-yo`.
-- `opt` is an input parameter, it contains the `api` and `event` object.
-- `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
-- `opts.events` contains events manager the module will listen on.
+
 - A module trigger events using `event` property:
   `self.event = new EventManager()`. 
   Events can then be triggered:
