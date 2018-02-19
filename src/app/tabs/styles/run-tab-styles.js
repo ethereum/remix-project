@@ -185,12 +185,6 @@ var css = csjs`
     padding: 5px;
     border-radius: 3px;
 }
-
-
-
-
-
-
 `
 
 module.exports = css
