@@ -193,7 +193,7 @@ function renderKnownTransaction (self, data) {
         <i class="${css.caret} fa fa-caret-right"></i>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-        <div class=${css.debug} onclick=${debug}>[debug]</div>
+          <div class=${css.debug} onclick=${debug}>[debug]</div>
         </div>
       </div>
     </span>
