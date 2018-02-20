@@ -83,6 +83,9 @@ function ExecutionContext () {
 
   var executionContext = null
 
+  this.blockGasLimitDefault = 4300000
+  this.blockGasLimit = this.blockGasLimitDefault
+
   this.init = function (config) {
     if (config.get('settings/always-use-vm')) {
       executionContext = 'vm'
@@ -184,17 +187,22 @@ function ExecutionContext () {
     return this.blockGasLimit
   }
 
-  this.blockGasLimitDefault = 4300000
-  this.blockGasLimit = this.blockGasLimitDefault
-  // removing the setinterval cause it cause tape test to hang and we don't need this.
-  // there's a copy of this file in remix-ide repo @TODO to refactor
-  if (this.getProvider() !== 'vm') {
-    web3.eth.getBlock('latest', (err, block) => {
-      if (!err) {
-        // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
-      } else {
-        this.blockGasLimit = this.blockGasLimitDefault
+  this.stopListenOnLastBlock = function () {
+    if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
+    this.listenOnLastBlockId = null
+  }
+
+  this.listenOnLastBlock = function () {
+    this.listenOnLastBlockId = setInterval(() => {
+      if (this.getProvider() !== 'vm') {
+        web3.eth.getBlock('latest', (err, block) => {
+          if (!err) {
+            // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+            this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+          } else {
+            this.blockGasLimit = this.blockGasLimitDefault
+          }
+        }, 15000)
       }
     })
   }
@@ -224,4 +232,3 @@ function ExecutionContext () {
 }
 
 module.exports = new ExecutionContext()
-
