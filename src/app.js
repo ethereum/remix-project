@@ -220,7 +220,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   function importExternal (url, cb) {
     handleImports.import(url,
       (loadingMsg) => {
-        $('#output').append($('<div/>').append($('<pre/>').text(loadingMsg)))
+        toolTip(loadingMsg)
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
