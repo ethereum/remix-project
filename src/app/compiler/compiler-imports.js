@@ -4,6 +4,7 @@ var swarmgw = require('swarmgw')
 var request = require('request')
 
 module.exports = {
+  previouslyHandled: {}, // cache import so we don't make the request at each compilation.
   handleGithubCall: function (root, path, cb) {
     return request.get(
       {
@@ -61,6 +62,11 @@ module.exports = {
   },
 
   import: function (url, loadingCb, cb) {
+    var self = this
+    var imported = this.previouslyHandled[url]
+    if (imported) {
+      return cb(null, imported.content, imported.cleanUrl, imported.type, url)
+    }
     var handlers = this.handlers()
 
     var found = false
@@ -79,7 +85,11 @@ module.exports = {
             cb('Unable to import "' + cleanUrl + '": ' + err)
             return
           }
-
+          self.previouslyHandled[url] = {
+            content: content,
+            cleanUrl: cleanUrl,
+            type: handler.type
+          }
           cb(null, content, cleanUrl, handler.type, url)
         })
       }
