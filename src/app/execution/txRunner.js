@@ -172,11 +172,10 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
           fn: () => {
             self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             if (!content.gasPriceStatus) {
-              callback('Given gas grice is not correct')
-            } else {
-              var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-              executeTx(tx, gasPrice, self._api, callback)
+              return callback('Given gas grice is not correct')
             }
+            var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+            executeTx(tx, gasPrice, self._api, callback)
           }}, {
             label: 'Cancel',
             fn: () => {
