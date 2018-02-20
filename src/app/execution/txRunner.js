@@ -161,28 +161,28 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
     self._api.detectNetwork((err, network) => {
       if (err) {
         console.log(err)
-      } else {
-        if (network.name === 'Main') {
-          var content = confirmDialog(tx, gasEstimation, self)
-          modalDialog('Confirm transaction', content,
-            { label: 'Confirm',
+        return
+      }
+      if (network.name === 'Main') {
+        var content = confirmDialog(tx, gasEstimation, self)
+        modalDialog('Confirm transaction', content,
+          { label: 'Confirm',
+            fn: () => {
+              self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+              if (!content.gasPriceStatus) {
+                callback('Given gas grice is not correct')
+              } else {
+                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                executeTx(tx, gasPrice, self._api, callback)
+              }
+            }}, {
+              label: 'Cancel',
               fn: () => {
-                self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-                if (!content.gasPriceStatus) {
-                  callback('Given gas grice is not correct')
-                } else {
-                  var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-                  executeTx(tx, gasPrice, self._api, callback)
-                }
-              }}, {
-                label: 'Cancel',
-                fn: () => {
-                  return callback('Transaction canceled by user.')
-                }
-              })
-        } else {
-          executeTx(tx, null, self._api, callback)
-        }
+                return callback('Transaction canceled by user.')
+              }
+            })
+      } else {
+        executeTx(tx, null, self._api, callback)
       }
     })
   })
