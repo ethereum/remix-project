@@ -68,60 +68,60 @@ TxRunner.prototype.execute = function (args, callback) {
   if (!executionContext.isVM()) {
     self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
   } else {
-    self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
+    try {
+      self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
+    } catch (e) {
+      callback(e, null)
+    }
   }
 }
 
 TxRunner.prototype.runInVm = function (from, to, data, value, gasLimit, useCall, callback) {
   const self = this
-  try {
-    var account = self.vmaccounts[from]
-    if (!account) {
-      return callback('Invalid account selected')
-    }
-    var tx = new EthJSTX({
-      nonce: new BN(account.nonce++),
-      gasPrice: new BN(1),
-      gasLimit: new BN(gasLimit, 10),
-      to: to,
-      value: new BN(value, 10),
-      data: new Buffer(data.slice(2), 'hex')
-    })
-    tx.sign(account.privateKey)
-
-    const coinbases = [ '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e' ]
-    const difficulties = [ new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10) ]
-    var block = new EthJSBlock({
-      header: {
-        timestamp: new Date().getTime() / 1000 | 0,
-        number: self.blockNumber,
-        coinbase: coinbases[self.blockNumber % coinbases.length],
-        difficulty: difficulties[self.blockNumber % difficulties.length],
-        gasLimit: new BN(gasLimit, 10).imuln(2)
-      },
-      transactions: [],
-      uncleHeaders: []
-    })
-    if (!useCall) {
-      ++self.blockNumber
-    } else {
-      executionContext.vm().stateManager.checkpoint()
-    }
-
-    executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-      if (useCall) {
-        executionContext.vm().stateManager.revert(function () {})
-      }
-      err = err ? err.message : err
-      result.status = '0x' + result.vm.exception.toString(16)
-      callback(err, {
-        result: result,
-        transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
-      })
-    })
-  } catch (e) {
-    callback(e, null)
+  var account = self.vmaccounts[from]
+  if (!account) {
+    return callback('Invalid account selected')
   }
+  var tx = new EthJSTX({
+    nonce: new BN(account.nonce++),
+    gasPrice: new BN(1),
+    gasLimit: new BN(gasLimit, 10),
+    to: to,
+    value: new BN(value, 10),
+    data: new Buffer(data.slice(2), 'hex')
+  })
+  tx.sign(account.privateKey)
+
+  const coinbases = [ '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e' ]
+  const difficulties = [ new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10) ]
+  var block = new EthJSBlock({
+    header: {
+      timestamp: new Date().getTime() / 1000 | 0,
+      number: self.blockNumber,
+      coinbase: coinbases[self.blockNumber % coinbases.length],
+      difficulty: difficulties[self.blockNumber % difficulties.length],
+      gasLimit: new BN(gasLimit, 10).imuln(2)
+    },
+    transactions: [],
+    uncleHeaders: []
+  })
+  if (!useCall) {
+    ++self.blockNumber
+  } else {
+    executionContext.vm().stateManager.checkpoint()
+  }
+
+  executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
+    if (useCall) {
+      executionContext.vm().stateManager.revert(function () {})
+    }
+    err = err ? err.message : err
+    result.status = '0x' + result.vm.exception.toString(16)
+    callback(err, {
+      result: result,
+      transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
+    })
+  })
 }
 
 TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, callback) {
