@@ -1,5 +1,3 @@
-var executionContext = require('../../execution-context')
-var typeConversion = require('../../lib/typeConversion')
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
@@ -19,9 +17,15 @@ var css = csjs`
   }
 `
 
-function confirmDialog (tx, gasEstimation, self) {
-  var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-  var input = yo`<input id='confirmsetting' type="checkbox">`
+function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialParamsCb) {
+  var onGasPriceChange = function () {
+    var gasPrice = el.querySelector('#gasprice').value
+    newGasPriceCb(gasPrice, (priceStatus, txFeeText) => {
+      el.querySelector('#txfee').innerHTML = txFeeText
+      el.gasPriceStatus = priceStatus
+    })
+  }
+
   var el = yo`
   <div>
     <div>You are creating a transaction on the main network. Click confirm if you are sure to continue.</div>
@@ -31,44 +35,31 @@ function confirmDialog (tx, gasEstimation, self) {
       <div>Amount: ${amount} Ether</div>
       <div>Gas estimation: ${gasEstimation}</div>
       <div>Gas limit: ${tx.gas}</div>
-      <div>Gas price: <input id='gasprice' oninput=${gasPriceChanged} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
+      <div>Gas price: <input id='gasprice' oninput=${onGasPriceChange} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
       <div>Max transaction fee:<span id='txfee'></span></div>
       <div>Data:</div>
       <pre class=${css.wrapword}>${tx.data}</pre>
     </div>
     <div class=${css.checkbox}>
-      ${input}
+      <input id='confirmsetting' type="checkbox">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
     </div>
   </div>
   `
 
-  var warnMessage = ' Please fix this issue before sending any transaction. '
-  function gasPriceChanged () {
-    try {
-      var gasPrice = el.querySelector('#gasprice').value
-      var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-      el.querySelector('#txfee').innerHTML = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
-      el.gasPriceStatus = true
-    } catch (e) {
-      el.querySelector('#txfee').innerHTML = warnMessage + e.message
-      el.gasPriceStatus = false
+  initialParamsCb((txFeeText, gasPriceValue, gasPriceStatus) => {
+    if (txFeeText) {
+      el.querySelector('#txfee').innerHTML = txFeeText
     }
-  }
-
-  executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-    if (error) {
-      el.querySelector('#txfee').innerHTML = 'Unable to retrieve the current network gas price.' + warnMessage + error
-    } else {
-      try {
-        el.querySelector('#gasprice').value = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
-        gasPriceChanged()
-      } catch (e) {
-        el.querySelector('#txfee').innerHTML = warnMessage + e.message
-        el.gasPriceStatus = false
-      }
+    if (gasPriceValue) {
+      el.querySelector('#gasprice').value = gasPriceValue
+      onGasPriceChange()
+    }
+    if (gasPriceStatus !== undefined) {
+      el.gasPriceStatus = gasPriceStatus
     }
   })
+
   return el
 }
 

@@ -6,6 +6,7 @@ var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modaldialog')
 var modal = require('../ui/modal-dialog-custom')
+var typeConversion = require('../../lib/typeConversion')
 
 var confirmDialog = require('./confirmDialog')
 
@@ -149,7 +150,39 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
       if (network.name !== 'Main') {
         return executeTx(tx, null, self._api, callback)
       }
-      var content = confirmDialog(tx, gasEstimation, self)
+
+      var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+      var content = confirmDialog(tx, amount, gasEstimation, self,
+        (gasPrice, cb) => {
+          let txFeeText, priceStatus
+          // TODO: this try catch feels like an anti pattern, can/should be
+          // removed, but for now keeping the original logic
+          try {
+            var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+            txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+            priceStatus = true
+          } catch (e) {
+            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+            priceStatus = false
+          }
+          cb(txFeeText, priceStatus)
+        },
+        (cb) => {
+          executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+            var warnMessage = ' Please fix this issue before sending any transaction. '
+            if (error) {
+              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+            }
+            try {
+              var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+              cb(null, gasPriceValue)
+            } catch (e) {
+              cb(warnMessage + e.message, null, false)
+            }
+          })
+        }
+      )
+
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
           fn: () => {
