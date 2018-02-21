@@ -191,8 +191,8 @@ TxRunner.prototype.execute = function (args, callback) {
 
 function tryTillResponse (txhash, done) {
   executionContext.web3().eth.getTransactionReceipt(txhash, function (err, result) {
-    if (!err && !result) {
-      // Try again with a bit of delay
+    if (err || !result) {
+      // Try again with a bit of delay if error or if result still null
       setTimeout(function () { tryTillResponse(txhash, done) }, 500)
     } else {
       done(err, {
