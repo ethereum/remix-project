@@ -165,7 +165,7 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
             txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
             priceStatus = false
           }
-          cb(txFeeText, priceStatus)
+          cb(priceStatus, txFeeText)
         },
         (cb) => {
           executionContext.web3().eth.getGasPrice((error, gasPrice) => {
