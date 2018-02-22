@@ -286,7 +286,7 @@ function filepanel (appAPI, filesProvider) {
           console.log(error)
           modalDialogCustom.alert('Failed to create gist: ' + error)
         } else {
-          var description = 'Created using browser-solidity: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/browser-solidity/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+          var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://ethereum.github.io/remix-ide/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
           console.log(packaged)
           minixhr({
             url: 'https://api.github.com/gists',
@@ -308,7 +308,7 @@ function filepanel (appAPI, filesProvider) {
   // ------------------ copy files --------------
 
   function copyFiles () {
-    modalDialogCustom.prompt(null, 'To which other browser-solidity instance do you want to copy over all files?', 'https://ethereum.github.io/browser-solidity/', (target) => {
+    modalDialogCustom.prompt(null, 'To which other remix-ide instance do you want to copy over all files?', 'https://ethereum.github.io/remix-ide/', (target) => {
       doCopy(target)
     })
     function doCopy (target) {

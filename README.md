@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ethereum/browser-solidity.svg?branch=master)](https://travis-ci.org/ethereum/browser-solidity)
+[![Build Status](https://travis-ci.org/ethereum/remix-ide.svg?branch=master)](https://travis-ci.org/ethereum/remix-ide)
 
 # Remix
 
@@ -22,7 +22,7 @@ Note: it contains the latest release of Solidity available at the time of the pa
 Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
 ```bash
-git clone https://github.com/ethereum/browser-solidity.git
+git clone https://github.com/ethereum/remix-ide.git
 cd browser-solidity
 npm install
 ```
@@ -55,7 +55,7 @@ npm run linkremixdebugger
 
 Some things to consider if you have trouble building the package:
 
-- Make sure that you have the correct version of `node`, `npm` and `nvm`. You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/browser-solidity).
+- Make sure that you have the correct version of `node`, `npm` and `nvm`. You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).
 
 Run:
 
@@ -102,8 +102,12 @@ After that, follow these steps:
 - Browse to `chrome://extensions/`
 - Make sure 'Developer mode' has been checked
 - Click 'Load unpacked extension...' to pop up a file-selection dialog
+<<<<<<< HEAD
 - Select your `browser-solidity` folder
 
 ## Documentation
 
 To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [our documentation page](https://remix.readthedocs.io)
+=======
+- Select your `remix-ide` folder
+>>>>>>> rename browser-solidity => remix.ide
