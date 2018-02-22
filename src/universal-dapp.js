@@ -254,7 +254,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
       self.txRunner.rawRun(tx,
 
-        (network, tx, continueTxExecution, gasEstimation, cancelCb) => {
+        (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
           if (network.name !== 'Main') {
             return continueTxExecution(null)
           }
