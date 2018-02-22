@@ -12,7 +12,7 @@ var EventManager = remixLib.EventManager
 var helper = require('../../lib/helper')
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modal-dialog-custom')
-var typeConversion = require('../../lib/typeConversion')
+var typeConversion = require('./typeConversion')
 
 var css = csjs`
   .log {
