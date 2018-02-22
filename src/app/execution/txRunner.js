@@ -6,7 +6,7 @@ var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modaldialog')
 var modal = require('../ui/modal-dialog-custom')
-var typeConversion = require('../../lib/typeConversion')
+var typeConversion = require('./typeConversion')
 
 var confirmDialog = require('./confirmDialog')
 
