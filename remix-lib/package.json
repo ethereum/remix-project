@@ -24,7 +24,7 @@
     "ethereumjs-util": "^5.1.2",
     "ethereumjs-abi": "https://github.com/ethereumjs/ethereumjs-abi",
     "ethereumjs-vm": "2.3.1",
-    "web3": "^0.15.3",
+    "web3": "^0.18.0",
     "solc": "^0.4.13",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
