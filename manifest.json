@@ -1,7 +1,7 @@
 {
   "name": "Solidity",
   "description": "Realtime compiler and runtime",
-  "update_url": "https://ethereum.github.io/browser-solidity/",
+  "update_url": "https://ethereum.github.io/remix-ide/",
   "version": "1.1",
   "manifest_version": 2,
   "background": {
