@@ -51,6 +51,8 @@ module.exports = {
       data = Buffer.from(dataHex, 'hex')
     } else {
       try {
+        params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+        params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
         funArgs = JSON.parse('[' + params + ']')
       } catch (e) {
         callback('Error encoding arguments: ' + e)
