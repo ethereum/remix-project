@@ -23,7 +23,7 @@ Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/inst
 
 ```bash
 git clone https://github.com/ethereum/remix-ide.git
-cd browser-solidity
+cd remix-ide
 npm install
 ```
 
