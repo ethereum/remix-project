@@ -28,6 +28,7 @@ class BasicReadOnlyExplorer {
   }
 
   get (path, cb) {
+    if (this.normalizedNames[path]) path = this.normalizedNames[path] // ensure we actually use the normalized path from here
     var unprefixedPath = this.removePrefix(path)
     var content = this.files[unprefixedPath]
     if (!content) {
