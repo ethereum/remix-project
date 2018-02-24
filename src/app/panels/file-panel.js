@@ -82,7 +82,7 @@ function filepanel (appAPI, filesProvider) {
             <span class="${css.gist}" title="Publish all open files to an anonymous github gist" onclick=${() => publishToGist(appAPI)}>
               <i class="fa fa-github"></i>
             </span>
-            <span class="${css.copyFiles}" title="Copy all files to another instance of Browser-solidity" onclick=${copyFiles}>
+            <span class="${css.copyFiles}" title="Copy all files to another instance of Remix IDE" onclick=${copyFiles}>
               <i class="fa fa-files-o" aria-hidden="true"></i>
             </span>
             <span onclick=${connectToLocalhost} class="${css.connectToLocalhost}">
