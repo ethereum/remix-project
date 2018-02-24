@@ -40,7 +40,7 @@ Remixd needs `npm` and `node`
 
 ## SHARE A FOLDER
 
-`remixd -S <absolute-path>`
+`remixd -s <absolute-path>`
 
 The current user should have `read/write` access to the folder (at least `read` access).
 
