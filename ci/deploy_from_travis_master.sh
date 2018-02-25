@@ -24,7 +24,6 @@ ENCRYPTED_IV3=${!ENCRYPTED_IV_VAR3}
 
 touch deploy_key_remix-live-alpha
 chmod 600 deploy_key_remix-live-alpha
-
 openssl aes-256-cbc -K $ENCRYPTED_KEY3 -iv $ENCRYPTED_IV3 -in ci/deploy_key_remix-live-alpha.enc -out deploy_key_remix-live-alpha -d
 eval `ssh-agent -s`
 

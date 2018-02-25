@@ -23,7 +23,7 @@ ENCRYPTED_KEY2=${!ENCRYPTED_KEY_VAR2}
 ENCRYPTED_IV2=${!ENCRYPTED_IV_VAR2}
 
 touch deploy_key_remix-live
-chmod 600 deploy_key deploy_key_remix-live
+chmod 600 deploy_key_remix-live
 openssl aes-256-cbc -K $ENCRYPTED_KEY2 -iv $ENCRYPTED_IV2 -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
 eval `ssh-agent -s`
 
