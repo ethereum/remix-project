@@ -14,10 +14,7 @@ var remixLib = require('remix-lib')
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
 
-function compileTab (container, appAPI, appEvents, opts) {
-  if (typeof container === 'string') container = document.querySelector(container)
-  if (!container) throw new Error('no container given')
-
+function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
   // Containers
   var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
   var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
@@ -115,24 +112,23 @@ function compileTab (container, appAPI, appEvents, opts) {
     compileIcon.setAttribute('title', '')
   })
 
+  var errorContainer = yo`<div class='error'></div>`
   var el = yo`
     <div class="${css.compileTabView}" id="compileTabView">
       ${compileContainer}
-      ${contractNames(container, appAPI, appEvents, opts)}
-      <div class='error'></div>
+      ${contractNames(appAPI, appEvents)}
+      ${errorContainer}
     </div>
   `
-  container.appendChild(el)
 
   /* ------------------------------------------------
     section CONTRACT DROPDOWN, DETAILS AND PUBLISH
   ------------------------------------------------ */
 
-  function contractNames (container, appAPI, appEvents, opts) {
+  function contractNames (appAPI, appEvents) {
     var contractsDetails = {}
 
     appEvents.compiler.register('compilationStarted', () => {
-      var errorContainer = container.querySelector('.error')
       errorContainer.innerHTML = ''
     })
 
@@ -148,7 +144,6 @@ function compileTab (container, appAPI, appEvents, opts) {
         document.querySelector('.compileView').style.color = styles.colors.red
       }
       // display warning error if any
-      var errorContainer = container.querySelector('.error')
       var error = false
       if (data['error']) {
         error = true
@@ -171,7 +166,6 @@ function compileTab (container, appAPI, appEvents, opts) {
 
     appEvents.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        var errorContainer = container.querySelector('.error')
         appAPI.compilationMessage(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
           type: 'warning',
           click: () => appAPI.switchTab('staticanalysisView')
@@ -303,7 +297,7 @@ function compileTab (container, appAPI, appEvents, opts) {
     }
     return el
   }
-  return el
+  return { render () { return el } }
 }
 
 function detailsHelpSection () {

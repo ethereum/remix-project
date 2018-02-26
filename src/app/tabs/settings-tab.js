@@ -10,10 +10,7 @@ var modal = require('../ui/modal-dialog-custom')
 
 var css = require('./styles/settings-tab-styles')
 
-function SettingsTab (container, appAPI, appEvents) {
-  if (typeof container === 'string') container = document.querySelector(container)
-  if (!container) throw new Error('no container given')
-
+function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
   var queryParams = new QueryParams()
 
   var optionVM = yo`<input id="alwaysUseVM" type="checkbox">`
@@ -78,7 +75,7 @@ function SettingsTab (container, appAPI, appEvents) {
           <input class="${css.col1}" name="theme" id="themeDark" type="checkbox">
           <label for="themeDark">Dark Theme</label>
         </div>
-      </div>      
+      </div>
       <div class="${css.info}">
         <div class=${css.title}>Plugin</div>
         <div class="${css.crowNoFlex}">
@@ -203,8 +200,7 @@ function SettingsTab (container, appAPI, appEvents) {
     loadVersion('builtin', queryParams, appAPI, el)
   })
 
-  container.appendChild(el)
-  return el
+  return { render () { return el } }
 }
 
 function setVersionText (text, el) {
