@@ -10,7 +10,7 @@ function gasCosts () {
   * stop visiting when cb return true
   * @param {Function} cb    - callback
   */
-  // @TODO has been copied from browser-solidity repo ! should fix that soon !
+  // @TODO has been copied from remix-ide repo ! should fix that soon !
 function visitContracts (contracts, cb) {
   for (var file in contracts) {
     for (var name in contracts[file]) {

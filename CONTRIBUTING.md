@@ -2,7 +2,7 @@
 
 Everyone is very welcome to contribute on the codebase of Remix. Please reach us in [Gitter](https://gitter.im/ethereum/remix)!
 
-The easiest way to work on `remix-debugger` or `remix-solidity` is to pull the `browser-solidity` (Remix IDE) repository (https://github.com/ethereum/browser-solidity) which has a strong Remix integration. Then, in `browser-solidity`, execute `npm install`, `npm pull remix`, `npm link remix`. 
+The easiest way to work on `remix-debugger` or `remix-solidity` is to pull the `remix-ide` (Remix IDE) repository (https://github.com/ethereum/remix-ide) which has a strong Remix integration. Then, in `remix-ide`, execute `npm install`, `npm pull remix`, `npm link remix`. 
 then `npm run build && npm run serve` to start a new Remix IDE instance (you can browse `127.0.0.1:8080`).
 
 To interact with the Remix code:
@@ -13,7 +13,7 @@ To interact with the Remix code:
 
 3. For Decoding local and state variables: follow 2), then expand (is not already) the `Solidity State` and `Solidity Locals` panels, the content of thoses panel are provided by the `remix-solidity/decoder` library.
 
-**Reminder**: the Remix repository contains tools used to debug transactions, one of these tools being a debugger. The [`browser-solidity` repository](https://github.com/ethereum/browser-solidity) contains the Remix IDE (online version remix.ethereum.org), which make use of the Remix repository for the debugging features.
+**Reminder**: the Remix repository contains tools used to debug transactions, one of these tools being a debugger. The [`remix-ide` repository](https://github.com/ethereum/remix-ide) contains the Remix IDE (online version remix.ethereum.org), which make use of the Remix repository for the debugging features.
 
 ## Coding style
 
