@@ -19,12 +19,12 @@ var css = require('./styles/run-tab-styles')
 var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
 var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
 
-var pendingTxsText = yo`<span></span>`
+var pendingTxsText = yo`<span>0 pending transactions</span>`
 
 function runTab (container, appAPI, appEvents) {
   var events = new EventManager()
 
-  var clearInstanceElement = yo`<i class="${css.clearinstance} fa fa-minus-square-o" title="Clear Instances List" aria-hidden="true"></i>`
+  var clearInstanceElement = yo`<i class="${css.clearinstance} ${css.icon} fa fa-trash" title="Clear Instances List" aria-hidden="true"></i>`
   clearInstanceElement.addEventListener('click', () => {
     events.trigger('clearInstance', [])
   })
@@ -34,9 +34,9 @@ function runTab (container, appAPI, appEvents) {
     <div class="${css.pendingTxsText}">
       ${pendingTxsText}
       <span class="${css.transactionActions}">
-        ${clearInstanceElement}
         ${recorderInterface.recordButton}
         ${recorderInterface.runButton}
+        ${clearInstanceElement}
       </span>
     </div>
   </div>`
@@ -139,21 +139,14 @@ function makeRecorder (events, appAPI, appEvents) {
     api: appAPI
   })
   var css2 = csjs`
-    .container {
-    }
+    .container,
+    .runTxs,
     .recorder {
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .runTxs {
-      margin-left: 10px;
-      font-size: 20px;
-      cursor: pointer;
     }
   `
 
-  var recordButton = yo`<i class="fa fa-floppy-o savetransaction ${css2.recorder}" title="Save Transactions" aria-hidden="true"></i>`
-  var runButton = yo`<i class="fa fa-play runtransaction ${css2.runTxs}"  title="Run Transactions" aria-hidden="true"></i>`
+  var recordButton = yo`<i class="fa fa-floppy-o savetransaction ${css2.recorder} ${css.icon}" title="Save Transactions" aria-hidden="true"></i>`
+  var runButton = yo`<i class="fa fa-play runtransaction ${css2.runTxs} ${css.icon}"  title="Run Transactions" aria-hidden="true"></i>`
 
   recordButton.onclick = () => {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
