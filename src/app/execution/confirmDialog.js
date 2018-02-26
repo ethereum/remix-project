@@ -20,7 +20,7 @@ var css = csjs`
 function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialParamsCb) {
   var onGasPriceChange = function () {
     var gasPrice = el.querySelector('#gasprice').value
-    newGasPriceCb(gasPrice, (priceStatus, txFeeText) => {
+    newGasPriceCb(gasPrice, (txFeeText, priceStatus) => {
       el.querySelector('#txfee').innerHTML = txFeeText
       el.gasPriceStatus = priceStatus
     })
