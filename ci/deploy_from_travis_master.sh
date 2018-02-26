@@ -30,5 +30,5 @@ eval `ssh-agent -s`
 
 
 
-ssh-add deploy_key_yann300_remix
+ssh-add deploy_key_remix-live-alpha
 git push -f git@github.com:ethereum/remix-live-alpha.git gh-pages
