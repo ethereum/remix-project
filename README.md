@@ -23,7 +23,7 @@ Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/inst
 
 ```bash
 git clone https://github.com/ethereum/remix-ide.git
-cd browser-solidity
+cd remix-ide
 npm install
 ```
 
@@ -102,12 +102,8 @@ After that, follow these steps:
 - Browse to `chrome://extensions/`
 - Make sure 'Developer mode' has been checked
 - Click 'Load unpacked extension...' to pop up a file-selection dialog
-<<<<<<< HEAD
-- Select your `browser-solidity` folder
+- Select your `remix-ide` folder
 
 ## Documentation
 
 To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [our documentation page](https://remix.readthedocs.io)
-=======
-- Select your `remix-ide` folder
->>>>>>> rename browser-solidity => remix.ide
