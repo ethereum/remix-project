@@ -13,22 +13,21 @@
   **if** the CSS section of an UI component is rather limited it is preferable to put it in the corresponding JS file.
   
 - HTML declaration using `yo-yo`.
-- `opt` is an input parameter, it contains the `api` and `event` object.
-- `self._api = opts.api` `opts.api` is an object which contains functions/features that the module needs.
-- `opts.events` contains events manager the module will listen on.
+
 - A module trigger events using `event` property:
   `self.event = new EventManager()`. 
   Events can then be triggered:
   `self.event.trigger('eventName', [param1, param2])`
 - `self._view` is the HTML view renderered by `yo-yo` in the `render` function.
-- `render()` this function should be called:
-
-  * At the first rendering (make sure that the returned node element is put on the DOM).
-   
-  * When some property has changed in order to update the view.
-- `self.state` contains state properties of the module. These properties are either given from the parent through `òpts` or     computed during the life of the object.
-- `update(state)` allow the parent to easily update some of the state properties.
-- for all functions / properties, prefixing by underscore (`_`) means the scope is private.
+- `render()` this function should be called at the first rendering (make sure that the returned node element is put on the DOM), and should *not* by called again from outside the component.
+- `update()` call this function to update the DOM when the state of the component has changed (this function must be called after the initial call to `render()`).
+- for all functions / properties, prefixing by underscore (`_`) means the scope is private, and they should **not** be accessed not changed from outside the component.
+- constructor arguments: There is no fixed rule whether it is preferrable to use multiples arguments or a single option *{}* argument (or both).
+  We recommend: 
+    - use a specific slot for **obligatory** arguments and/or for complex arguments (meaning not boolean, not string, etc...).
+    - put arguments in an option *{}* for non critical and for optionnal arguments.
+    - if a component has more than 4/5 parameters, it is recommended to find a way to group some in one or more *opt* arguments.
+  
 - look them up, discuss them, update them.
     
 ## Module Definition (example)
@@ -53,22 +52,15 @@ var css = csjs`
 `
 
 class UserCard {
-  constructor (opts = {}) {
+  constructor (api, events, opts = {}) {
     var self = this
 
     self.event = new EventManager()
-    self._api = opts.api
+    self.opts = opts
+    self._api = api
+    self._consumedEvents = events
     self._view = undefined
-    self.state = {
-      title: opts.title,
-      name: opts.name,
-      surname: opts.surname,
-      totalSpend: 0,
-      _nickname: opts.nickname,
-      _funds: self._api.getUserFunds()
-    }
-    var events = opts.events
-
+    
     events.funds.register('fundsChanged', function (amount) {
       if (amount < self.state._funds) self.state.totalSpend += self.state._funds - amount
       self.state._funds = amount
@@ -78,7 +70,7 @@ class UserCard {
   }
   render () {
     var self = this
-    var el = yo`
+    var view = yo`
       <div class=${css.userCard}>
         <h1> @${self.state._nickname} </h1>
         <h2> Welcome, ${self.state.title || ''} ${self.state.name || 'anonymous'} ${self.state.surname} </h2>
@@ -87,17 +79,16 @@ class UserCard {
         <button class=${css.clearFunds} onclick=${e=>self._spendAll.call(self, e)}> spend all funds </button>
       </div>
     `
-    if (self._view) yo.update(self._view, el)
-    else self._view = el
+    if (!self._view) {
+      self._view = view
+    }
     return self._view
   }
-  update (state = {}) {
-    var self = this
-    if (!self._view) self._constraint('first initialize view by calling `.render()`')
-    if (state.hasOwnProperty('title')) self.state.title = state.title
-    if (state.hasOwnProperty('name')) self.state.name = state.name
-    if (state.hasOwnProperty('surname')) self.state.surname = state.surname
-    self.render()
+  update () {
+    yo.update(this._view, this.render())
+  }
+  setNickname (name) {
+    this._nickname = name
   }
   getNickname () {
     var self = this
@@ -140,16 +131,20 @@ setInterval(function () {
 // 2. EXAMPLE USAGE
 var UserCard = require('./user-card')
 
-var usercard = new UserCard({
-  api: { getUserFunds, clearUserFunds },
-  events: { funds: funds.event },
-  title: 'Dr.',
-  name: 'John',
-  surname: 'Doe',
-  nickname: 'johndoe99'
-})
+var usercard = new UserCard(
+  { getUserFunds, clearUserFunds }, 
+  { funds: funds.event },
+  {
+    title: 'Dr.',
+    name: 'John',
+    surname: 'Doe',
+    nickname: 'johndoe99'
+  })
 
 var el = usercard.render()
 document.body.appendChild(el)
-setTimeout(function () { usercard.update({ title: 'Prof.' }) }, 5000)
+setTimeout(function () {
+  userCard.setNickname('new name') 
+  usercard.update()
+}, 5000)
 ```
