@@ -145,8 +145,10 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
         return
       }
 
-      confirmCb(network, tx, gasEstimation, callback, (gasPrice) => {
+      confirmCb(network, tx, gasEstimation, (gasPrice) => {
         return executeTx(tx, gasPrice, self._api, callback)
+      }, (error) => {
+        callback(error)
       })
     })
   })
