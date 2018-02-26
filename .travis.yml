@@ -21,9 +21,8 @@ deploy:
       branch: remix_live
 env:
   global:
-    - ENCRYPTION_LABEL1="b5c2730599da"
     - ENCRYPTION_LABEL2="85f76a180658"
-    - ENCRYPTION_LABEL3="1b1c118ea62d"
+    - ENCRYPTION_LABEL3="3737d4fd78e9"
     - COMMIT_AUTHOR_EMAIL="chris@ethereum.org"
     - COMMIT_AUTHOR="Travis CI"
     - FILES_TO_PACKAGE="assets background.js build icon.png index.html manifest.json README.md soljson.js"
