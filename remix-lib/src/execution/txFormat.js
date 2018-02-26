@@ -2,6 +2,7 @@
 var ethJSABI = require('ethereumjs-abi')
 var helper = require('./txHelper')
 var executionContext = require('./execution-context')
+var asyncJS = require('async')
 
 module.exports = {
 
@@ -99,10 +100,37 @@ module.exports = {
 
   atAddress: function () {},
 
-  linkBytecode: function (contract, contracts, udapp, callback, callbackStep) {
-    if (contract.evm.bytecode.object.indexOf('_') < 0) {
-      return callback(null, contract.evm.bytecode.object)
-    }
+  linkBytecodeStandard: function (contract, contracts, udapp, callback, callbackStep) {
+    asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences, (libs, file, cbFile) => {
+      asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
+        var library = contracts[file][libName]
+        if (library) {
+          this.deployLibrary(file + ':' + libName, libName, library, contracts, udapp, (error, address) => {
+            if (error) {
+              return cbLibDeployed(error)
+            }
+            var hexAddress = address.toString('hex')
+            if (hexAddress.slice(0, 2) === '0x') {
+              hexAddress = hexAddress.slice(2)
+            }
+            contract.evm.bytecode.object = this.linkLibraryStandard(libName, hexAddress, contract)
+            cbLibDeployed()
+          }, callbackStep)
+        } else {
+          cbLibDeployed('Cannot find compilation data of library ' + libName)
+        }
+      }, (error) => {
+        cbFile(error)
+      })
+    }, (error) => {
+      if (error) {
+        callbackStep(error)
+      }
+      callback(error, contract.evm.bytecode.object)
+    })
+  },
+
+  linkBytecodeLegacy: function (contract, contracts, udapp, callback, callbackStep) {
     var libraryRefMatch = contract.evm.bytecode.object.match(/__([^_]{1,36})__/)
     if (!libraryRefMatch) {
       return callback('Invalid bytecode format.')
@@ -129,10 +157,20 @@ module.exports = {
       if (hexAddress.slice(0, 2) === '0x') {
         hexAddress = hexAddress.slice(2)
       }
-      contract.evm.bytecode.object = this.linkLibraryStandard(libraryShortName, hexAddress, contract)
       contract.evm.bytecode.object = this.linkLibrary(libraryName, hexAddress, contract.evm.bytecode.object)
       this.linkBytecode(contract, contracts, udapp, callback, callbackStep)
     }, callbackStep)
+  },
+
+  linkBytecode: function (contract, contracts, udapp, callback, callbackStep) {
+    if (contract.evm.bytecode.object.indexOf('_') < 0) {
+      return callback(null, contract.evm.bytecode.object)
+    }
+    if (contract.evm.bytecode.linkReferences && Object.keys(contract.evm.bytecode.linkReferences).length) {
+      this.linkBytecodeStandard(contract, contracts, udapp, callback, callbackStep)
+    } else {
+      this.linkBytecodeLegacy(contract, contracts, udapp, callback, callbackStep)
+    }
   },
 
   deployLibrary: function (libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep) {
