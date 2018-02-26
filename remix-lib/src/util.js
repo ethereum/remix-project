@@ -217,7 +217,7 @@ function findCallInternal (index, rootCall, callsPath) {
   return ret
 }
 
-/* util extracted out from browser-solidity. @TODO split this file, cause it mix real util fn with solidity related stuff ... */
+/* util extracted out from remix-ide. @TODO split this file, cause it mix real util fn with solidity related stuff ... */
 function groupBy (arr, key) {
   return arr.reduce((sum, item) => {
     const groupByVal = item[key]
