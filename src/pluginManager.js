@@ -7,12 +7,35 @@
  * - compilationData (that is triggered just after a focus - and send the current compilation data or null)
  * - compilationFinished (that is only sent to the plugin that has focus)
  *
- * @param {String} txHash    - hash of the transaction
+ * Plugin can emit messages and receive response.
+ *
+ * CONFIG:
+ * - getConfig(filename). The data to send should be formatted like:
+ *    {
+ *     type: 'getConfig',
+ *     arguments: ['filename.ext'],
+ *     id: <requestid>
+ *    }
+ *  the plugin will reveice a response like:
+ *    {
+ *      type: 'getConfig',
+ *      id: <requestid>
+ *      error,
+ *      result
+ *    }
+ * same apply for the other call
+ * - setConfig(filename, content)
+ * - removeConfig
+ *
+ * See index.html and remix.js in test-browser folder for sample
+ *
  */
 class PluginManager {
   constructor (api, events) {
+    var self = this
     this.plugins = {}
     this.inFocus
+    var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
     events.compiler.register('compilationFinished', (success, data, source) => {
       if (this.inFocus) {
         // trigger to the current focus
