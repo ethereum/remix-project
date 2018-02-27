@@ -173,10 +173,9 @@ function fileExplorer (appAPI, files) {
   })
 
   function normalize (path, filesList) {
-    var prefix = path.split('/')[0]
     var newList = {}
     Object.keys(filesList).forEach(key => {
-      newList[prefix + '/' + key] = filesList[key].isDirectory ? {} : { '/content': true }
+      newList[path + '/' + key] = filesList[key].isDirectory ? {} : { '/content': true }
     })
     return newList
   }
