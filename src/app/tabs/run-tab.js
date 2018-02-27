@@ -23,7 +23,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instance
 var pendingTxsText = yo`<span>0 pending transactions</span>`
 
 function runTab (appAPI = {}, appEvents = {}, opts = {}) {
-  var container = document.createElement('div')
+  var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
   var event = new EventManager()
 
   var clearInstanceElement = yo`<i class="${css.clearinstance} ${css.icon} fa fa-trash" title="Clear Instances List" aria-hidden="true"></i>`
@@ -44,7 +44,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   </div>`
 
   var el = yo`
-  <div class="${css.runTabView}" id="runTabView">
+  <div>
     ${settings(container, appAPI, appEvents)}
     ${contractDropdown(event, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
