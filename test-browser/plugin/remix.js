@@ -1,5 +1,4 @@
 
-
 function receiveMessage (event) {
   console.log('receiveMessage', event.data, event.source, event.origin)
   document.getElementById('compilationdata').innerHTML += event.data + '<br>'
@@ -31,5 +30,3 @@ window.onload = function () {
     }), 'http://127.0.0.1:8080')
   })
 }
-
-
