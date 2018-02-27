@@ -28,9 +28,9 @@ module.exports = {
       })
   },
 
-  handleSwarmImport: function (url, cb) {
+  handleSwarmImport: function (url, cleanUrl, cb) {
     swarmgw.get(url, function (err, content) {
-      cb(err, content, url)
+      cb(err, content, cleanUrl)
     })
   },
 
@@ -56,7 +56,7 @@ module.exports = {
   handlers: function () {
     return [
       { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
-      { type: 'swarm', match: /^(bzz[ri]?:\/\/?.*)$/, handler: (match, cb) => { this.handleSwarmImport(match[1], cb) } },
+      { type: 'swarm', match: /^(bzz[ri]?:\/\/?(.*))$/, handler: (match, cb) => { this.handleSwarmImport(match[1], match[2], cb) } },
       { type: 'ipfs', match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
     ]
   },
