@@ -48,7 +48,23 @@ class PluginManager {
     })
 
     window.addEventListener('message', (event) => {
-      if (event.type === 'message' && this.inFocus === event.origin) {
+      function response (type, callid, error, result) {
+        self.post(self.inFocus, JSON.stringify({
+          id: callid,
+          type: type,
+          error: error,
+          result: result
+        }))
+      }
+      if (event.type === 'message' && this.inFocus && this.plugins[this.inFocus] && this.plugins[this.inFocus].origin === event.origin) {
+        var data = JSON.parse(event.data)
+        data.arguments.unshift(this.inFocus)
+        if (allowedapi[data.type]) {
+          data.arguments.push((error, result) => {
+            response(data.type, data.id, error, result)
+          })
+          api[data.type].apply({}, data.arguments)
+        }
       }
     }, false)
   }
