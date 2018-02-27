@@ -46,6 +46,11 @@ class PluginManager {
         }))
       }
     })
+
+    window.addEventListener('message', (event) => {
+      if (event.type === 'message' && this.inFocus === event.origin) {
+      }
+    }, false)
   }
   register (desc, content) {
     this.plugins[desc.title] = {content, origin: desc.url}
