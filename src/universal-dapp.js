@@ -9,10 +9,11 @@ var EventManager = remixLib.EventManager
 var crypto = require('crypto')
 var TxRunner = require('./app/execution/txRunner')
 var txExecution = remixLib.execution.txExecution
-var txFormat = require('./app/execution/txFormat')
+var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var executionContext = require('./execution-context')
 var modalCustom = require('./app/ui/modal-dialog-custom')
+var uiUtil = require('./app/ui/util')
 
 /*
   trigger debugRequested
@@ -168,7 +169,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
             }
           }
           if (lookupOnly) {
-            var decoded = txFormat.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+            var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
             outputCb(decoded)
           }
         } else {
