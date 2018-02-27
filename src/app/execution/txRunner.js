@@ -4,11 +4,7 @@ var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
-var modalDialog = require('../ui/modaldialog')
 var modal = require('../ui/modal-dialog-custom')
-var typeConversion = require('../../lib/typeConversion')
-
-var confirmDialog = require('./confirmDialog')
 
 function TxRunner (vmaccounts, api) {
   this._api = api
@@ -23,8 +19,8 @@ function TxRunner (vmaccounts, api) {
   this.queusTxs = []
 }
 
-TxRunner.prototype.rawRun = function (args, cb) {
-  run(this, args, Date.now(), cb)
+TxRunner.prototype.rawRun = function (args, confirmationCb, cb) {
+  run(this, args, Date.now(), confirmationCb, cb)
 }
 
 function executeTx (tx, gasPrice, api, callback) {
@@ -41,7 +37,7 @@ function executeTx (tx, gasPrice, api, callback) {
   }
 }
 
-TxRunner.prototype.execute = function (args, callback) {
+TxRunner.prototype.execute = function (args, confirmationCb, callback) {
   var self = this
 
   var data = args.data
@@ -50,7 +46,7 @@ TxRunner.prototype.execute = function (args, callback) {
   }
 
   if (!executionContext.isVM()) {
-    self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
+    self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, callback)
   } else {
     try {
       self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
@@ -108,7 +104,7 @@ TxRunner.prototype.runInVm = function (from, to, data, value, gasLimit, useCall,
   })
 }
 
-TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, callback) {
+TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, confirmCb, callback) {
   const self = this
   var tx = { from: from, to: to, data: data, value: value }
 
@@ -142,62 +138,18 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
     if (self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
       return executeTx(tx, null, self._api, callback)
     }
+
     self._api.detectNetwork((err, network) => {
       if (err) {
         console.log(err)
         return
       }
-      if (network.name !== 'Main') {
-        return executeTx(tx, null, self._api, callback)
-      }
 
-      var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-      var content = confirmDialog(tx, amount, gasEstimation, self,
-        (gasPrice, cb) => {
-          let txFeeText, priceStatus
-          // TODO: this try catch feels like an anti pattern, can/should be
-          // removed, but for now keeping the original logic
-          try {
-            var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-            txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
-            priceStatus = true
-          } catch (e) {
-            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-            priceStatus = false
-          }
-          cb(priceStatus, txFeeText)
-        },
-        (cb) => {
-          executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-            var warnMessage = ' Please fix this issue before sending any transaction. '
-            if (error) {
-              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-            }
-            try {
-              var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
-              cb(null, gasPriceValue)
-            } catch (e) {
-              cb(warnMessage + e.message, null, false)
-            }
-          })
-        }
-      )
-
-      modalDialog('Confirm transaction', content,
-        { label: 'Confirm',
-          fn: () => {
-            self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-            if (!content.gasPriceStatus) {
-              return callback('Given gas grice is not correct')
-            }
-            var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-            executeTx(tx, gasPrice, self._api, callback)
-          }}, {
-            label: 'Cancel',
-            fn: () => {
-              return callback('Transaction canceled by user.')
-            }
-          })
+      confirmCb(network, tx, gasEstimation, (gasPrice) => {
+        return executeTx(tx, gasPrice, self._api, callback)
+      }, (error) => {
+        callback(error)
+      })
     })
   })
 }
@@ -231,12 +183,12 @@ function sendTransaction (sendTx, tx, pass, callback) {
   }
 }
 
-function run (self, tx, stamp, callback) {
+function run (self, tx, stamp, confirmationCb, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     self.queusTxs.push({ tx, stamp, callback })
   } else {
     self.pendingTxs[stamp] = tx
-    self.execute(tx, (error, result) => {
+    self.execute(tx, confirmationCb, (error, result) => {
       delete self.pendingTxs[stamp]
       callback(error, result)
       if (self.queusTxs.length) {
