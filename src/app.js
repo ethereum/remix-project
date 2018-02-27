@@ -17,6 +17,7 @@ var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
+var BrowserfilesTree = require('./app/files/browser-files-tree')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
@@ -111,11 +112,14 @@ class App {
     var self = this
     self._api = {}
     var fileStorage = new Storage('sol:')
+    var configStorage = new Storage('config:')
     self._api.config = new Config(fileStorage)
     executionContext.init(self._api.config)
     executionContext.listenOnLastBlock()
     self._api.filesProviders = {}
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
+    self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
+    self._api.filesProviders['config'].init()
     var remixd = new Remixd()
     remixd.event.register('system', (message) => {
       if (message.error) toolTip(message.error)
