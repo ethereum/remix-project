@@ -701,6 +701,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     newAccount: (pass, cb) => {
       udapp.newAccount(pass, cb)
+    },
+    setConfig: (mod, path, content, cb) => {
+      self._api.filesProviders['config'].set(mod + '/' + path, content)
+      cb()
+    },
+    getConfig: (mod, path, cb) => {
+      cb(null, self._api.filesProviders['config'].get(mod + '/' + path))
+    },
+    removeConfig: (mod, path, cb) => {
+      cb(null, self._api.filesProviders['config'].remove(mod + '/' + path))
+      if (cb) cb()
     }
   }
   var rhpEvents = {
