@@ -229,7 +229,7 @@ var scenario = {
       'record': {
         'value': '0',
         'parameters': [
-          12
+          "12" // eslint-disable-line
         ],
         'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
         'contractName': 'testRecorder',
@@ -245,7 +245,7 @@ var scenario = {
       'record': {
         'value': '0',
         'parameters': [
-          34
+          "34" // eslint-disable-line
         ],
         'to': 'created{1512912691086}',
         'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
