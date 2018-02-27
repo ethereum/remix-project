@@ -17,14 +17,17 @@ function FilesTree (name, storage) {
   function updateRefs (path, type) {
     var split = path.split('/') // this should be unprefixed path
     var crawlpath = self.tree
+    var intermediatePath = ''
     split.forEach((pathPart, index) => {
-      if (!crawlpath[pathPart]) crawlpath[pathPart] = {}
+      intermediatePath += pathPart
+      if (!crawlpath[pathPart]) crawlpath[intermediatePath] = {}
       if (index < split.length - 1) {
-        crawlpath = crawlpath[pathPart]
+        crawlpath = crawlpath[intermediatePath]
+        intermediatePath += '/'
       } else if (type === 'add') {
-        crawlpath[pathPart] = path
-      } else if (type === 'remove' && crawlpath[pathPart]) {
-        delete crawlpath[pathPart]
+        crawlpath[intermediatePath] = path
+      } else if (type === 'remove' && crawlpath[intermediatePath]) {
+        delete crawlpath[intermediatePath]
       }
     })
     storage.set(self.structFile, JSON.stringify(self.tree))
