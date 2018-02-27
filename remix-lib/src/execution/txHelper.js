@@ -31,20 +31,23 @@ module.exports = {
   },
 
   sortAbiFunction: function (contractabi) {
-    var abi = contractabi.sort(function (a, b) {
-      if (a.name > b.name) {
-        return -1
-      } else {
+    // Sorts the list of ABI entries. Constant functions will appear first,
+    // followed by non-constant functions. Within those t wo groupings, functions
+    // will be sorted by their names.
+    return contractabi.sort(function (a, b) {
+      if (a.constant === true && b.constant !== true) {
         return 1
-      }
-    }).sort(function (a, b) {
-      if (a.constant === true) {
+      } else if (b.constant === true && a.constant !== true) {
         return -1
-      } else {
+      }
+      // If we reach here, either a and b are both constant or both not; sort by name then
+      // special case for fallback and constructor
+      if (a.type === 'function' && typeof a.name !== 'undefined') {
+        return a.name.localeCompare(b.name)
+      } else if (a.type === 'constructor' || a.type === 'fallback') {
         return 1
       }
     })
-    return abi
   },
 
   getConstructorInterface: function (abi) {
