@@ -161,23 +161,19 @@ function setEditorValue (value, callback) {
   return this
 }
 
-function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
+function addInstance(browser, address, isValidFormat, isValidChecksum, callback) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
-      .perform((client, done) => {
-        browser.execute(function () {
-          var ret = document.querySelector('div[class^="modalBody"] div').innerHTML
-          document.querySelector('#modal-footer-ok').click()
-          return ret
-        }, [], function (result) {
-          if (!isValidFormat) {
-            browser.assert.fail(result.value, 'Invalid address.', '')
-          } else if (!isValidChecksum) {
-            browser.assert.fail(result.value, 'Invalid checksum address.', '')
-          }
-          done()
-        })
-      }).perform(() => {
+      .execute(function () {
+        var ret = document.querySelector('div[class^="modalBody"] div').innerHTML
+        document.querySelector('#modal-footer-ok').click()
+        return ret
+      }, [], function (result) {
+        if (!isValidFormat) {
+          browser.assert.equal(result.value, 'Invalid address.')
+        } else if (!isValidChecksum) {
+          browser.assert.equal(result.value, 'Invalid checksum address.')
+        }
         callback()
       })
   })
