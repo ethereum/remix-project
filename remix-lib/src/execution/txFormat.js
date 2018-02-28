@@ -3,6 +3,8 @@ var ethJSABI = require('ethereumjs-abi')
 var helper = require('./txHelper')
 var executionContext = require('./execution-context')
 var asyncJS = require('async')
+var solcLinker = require('solc/linker')
+var ethJSUtil = require('ethereumjs-util')
 
 module.exports = {
 
@@ -226,14 +228,7 @@ module.exports = {
   },
 
   linkLibrary: function (libraryName, address, bytecodeToLink) {
-    var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_')
-    if (bytecodeToLink.indexOf(libLabel) === -1) return bytecodeToLink
-
-    address = Array(40 - address.length + 1).join('0') + address
-    while (bytecodeToLink.indexOf(libLabel) >= 0) {
-      bytecodeToLink = bytecodeToLink.replace(libLabel, address)
-    }
-    return bytecodeToLink
+    return solcLinker.linkBytecode(bytecodeToLink, { [libraryName]: ethJSUtil.addHexPrefix(address) })
   },
 
   decodeResponse: function (response, fnabi) {
