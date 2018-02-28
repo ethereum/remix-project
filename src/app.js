@@ -358,48 +358,61 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     and interpret them as commands
   */
   var cmdInterpreter = new CommandInterpreter()
-  cmdInterpreter.event.register('debug', (hash) => {
+  cmdInterpreter.event.register('debug', (hash, cb) => {
     startdebugging(hash)
+    if (cb) cb()
   })
-  cmdInterpreter.event.register('loadgist', (id) => {
+  cmdInterpreter.event.register('loadgist', (id, cb) => {
     loadFromGist({gist: id})
+    if (cb) cb()
   })
-  cmdInterpreter.event.register('loadurl', (url) => {
+  cmdInterpreter.event.register('loadurl', (url, cb) => {
     importExternal(url, (err, content) => {
       if (err) {
         toolTip(`Unable to load ${url} from swarm: ${err}`)
+        if (cb) cb(err)
       } else {
         try {
           content = JSON.parse(content)
-          for (var k in content.sources) {
-            var url = content.sources[k].urls[0] // @TODO retrieve all other contents ?
+          async.eachOfSeries(content.sources, (value, file, callbackSource) => {
+            var url = value.urls[0] // @TODO retrieve all other contents ?
             importExternal(url, (error, content) => {
               if (error) {
                 toolTip(`Cannot retrieve the content of ${url}: ${error}`)
               }
+              callbackSource()
             })
-          }
-        } catch (e) {
-          filesProviders['swarm'].addReadOnly(url, content)
-        }
+          }, (error) => {
+            if (cb) cb(error)
+          })
+        } catch (e) {}
+        if (cb) cb()
       }
     })
   })
-  cmdInterpreter.event.register('setproviderurl', (url) => {
+  cmdInterpreter.event.register('setproviderurl', (url, cb) => {
     executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
       if (error) toolTip(error)
+      if (cb) cb()
     })
   })
-  cmdInterpreter.event.register('batch', (url) => {
+  cmdInterpreter.event.register('batch', (url, cb) => {
     var content = editor.get(editor.current())
     if (!content) {
       toolTip('no content to execute')
+      if (cb) cb()
+      return
     }
     var split = content.split('\n')
     async.eachSeries(split, (value, cb) => {
-      cmdInterpreter.interpret(value) ? cb() : cb(`Cannot run ${value}. stopping`)
+      if (!cmdInterpreter.interpret(value, (error) => {
+        error ? cb(`Cannot run ${value}. stopping`) : cb()
+      })) {
+        cb(`Cannot interpret ${value}. stopping`)
+      }
     }, (error) => {
       if (error) toolTip(error)
+      if (cb) cb()
     })
   })
 
