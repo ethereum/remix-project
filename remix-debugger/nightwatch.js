@@ -62,8 +62,8 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'safari',
         'javascriptEnabled': true,
-        'platform': 'OS X 10.10',
-        'version': '8.0',
+        'platform': 'OS X 10.11',
+        'version': '10.0',
         'acceptSslCerts': true,
         'build': 'build-' + TRAVIS_JOB_NUMBER,
         'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER

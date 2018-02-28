@@ -56,7 +56,7 @@
     "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
     "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
     "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
-    "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env ie,safari,chrome,default",
+    "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env safari,chrome,default",
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
     "onchange": "onchange build/app.js -- npm run lint",
     "selenium": "selenium-standalone start",
