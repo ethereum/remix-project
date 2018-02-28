@@ -13,6 +13,9 @@
       "email": "yann@ethdev.com"
     }
   ],
+  "bin": {
+    "remix-tests": "./bin/remix-tests"
+  },
   "scripts": {
     "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js) && cd ..",
     "prepublish": "npm-run-all -ls downloadsolc",
