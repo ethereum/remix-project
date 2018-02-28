@@ -1,5 +1,6 @@
 var async = require('async')
 var changeCase = require('change-case')
+var Web3 = require('web3')
 
 function getAvailableFunctions (jsonInterface) {
   return jsonInterface.reverse().filter((x) => x.type === 'function').map((x) => x.name)
@@ -29,7 +30,7 @@ function createRunList (jsonInterface) {
   return runList
 }
 
-function runTest (web3, testName, testObject, testCallback, resultsCallback) {
+function runTest (testName, testObject, testCallback, resultsCallback) {
   let runList = createRunList(testObject._jsonInterface)
 
   let passingNum = 0
@@ -57,13 +58,13 @@ function runTest (web3, testName, testObject, testCallback, resultsCallback) {
       method.send().on('receipt', function (receipt) {
         let time = Math.ceil((Date.now() - startTime) / 1000.0)
         if (func.type === 'test') {
-          let topic = web3.utils.sha3('AssertionEvent(bool,string)')
+          let topic = Web3.utils.sha3('AssertionEvent(bool,string)')
 
           let matchingEvents = []
           for (let i in receipt.events) {
             let event = receipt.events[i]
             if (event.raw.topics.indexOf(topic) >= 0) {
-              matchingEvents.push(web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data))
+              matchingEvents.push(Web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data))
             }
           }
 
