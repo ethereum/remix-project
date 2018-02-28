@@ -41,6 +41,7 @@ var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var toolTip = require('./app/ui/tooltip')
+var CommandInterpreter = require('./lib/cmdInterpreter')
 
 var styleGuide = remixLib.ui.themeChooser
 var styles = styleGuide.chooser()
@@ -354,6 +355,71 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   txlistener.startListening()
+
+  // ----------------- Command Interpreter -----------------
+  /*
+    this module basically listen on user input (from terminal && editor)
+    and interpret them as commands
+  */
+  var cmdInterpreter = new CommandInterpreter()
+  cmdInterpreter.event.register('debug', (hash, cb) => {
+    startdebugging(hash)
+    if (cb) cb()
+  })
+  cmdInterpreter.event.register('loadgist', (id, cb) => {
+    loadFromGist({gist: id})
+    if (cb) cb()
+  })
+  cmdInterpreter.event.register('loadurl', (url, cb) => {
+    importExternal(url, (err, content) => {
+      if (err) {
+        toolTip(`Unable to load ${url} from swarm: ${err}`)
+        if (cb) cb(err)
+      } else {
+        try {
+          content = JSON.parse(content)
+          async.eachOfSeries(content.sources, (value, file, callbackSource) => {
+            var url = value.urls[0] // @TODO retrieve all other contents ?
+            importExternal(url, (error, content) => {
+              if (error) {
+                toolTip(`Cannot retrieve the content of ${url}: ${error}`)
+              }
+              callbackSource()
+            })
+          }, (error) => {
+            if (cb) cb(error)
+          })
+        } catch (e) {}
+        if (cb) cb()
+      }
+    })
+  })
+  cmdInterpreter.event.register('setproviderurl', (url, cb) => {
+    executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
+      if (error) toolTip(error)
+      if (cb) cb()
+    })
+  })
+  cmdInterpreter.event.register('batch', (url, cb) => {
+    var content = editor.get(editor.current())
+    if (!content) {
+      toolTip('no content to execute')
+      if (cb) cb()
+      return
+    }
+    var split = content.split('\n')
+    async.eachSeries(split, (value, cb) => {
+      if (!cmdInterpreter.interpret(value, (error) => {
+        error ? cb(`Cannot run ${value}. stopping`) : cb()
+      })) {
+        cb(`Cannot interpret ${value}. stopping`)
+      }
+    }, (error) => {
+      if (error) toolTip(error)
+      if (cb) cb()
+    })
+  })
+
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   var editor = self._components.editor // shortcut for the editor
@@ -439,6 +505,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- editor panel ----------------------
   this._components.editorpanel = new EditorPanel({
     api: {
+      cmdInterpreter: cmdInterpreter,
       editor: self._components.editor,
       config: self._api.config,
       txListener: txlistener,
@@ -506,23 +573,26 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ------------------ gist load ----------------
-
-  var loadingFromGist = gistHandler.handleLoad(queryParams.get(), function (gistId) {
-    $.ajax({
-      url: 'https://api.github.com/gists/' + gistId,
-      jsonp: 'callback',
-      dataType: 'jsonp',
-      success: function (response) {
-        if (response.data) {
-          if (!response.data.files) {
-            modalDialogCustom.alert('Gist load error: ' + response.data.message)
-            return
+  function loadFromGist (gistId) {
+    return gistHandler.handleLoad(gistId, function (gistId) {
+      $.ajax({
+        url: 'https://api.github.com/gists/' + gistId,
+        jsonp: 'callback',
+        dataType: 'jsonp',
+        success: function (response) {
+          if (response.data) {
+            if (!response.data.files) {
+              modalDialogCustom.alert('Gist load error: ' + response.data.message)
+              return
+            }
+            loadFiles(response.data.files, 'gist')
           }
-          loadFiles(response.data.files, 'gist')
         }
-      }
+      })
     })
-  })
+  }
+
+  var loadingFromGist = loadFromGist(queryParams.get())
 
   // insert ballot contract if there are no files available
   if (!loadingFromGist) {

@@ -85,6 +85,9 @@ function runTab (container, appAPI, appEvents) {
     }, setFinalContext)
   })
   selectExEnv.value = executionContext.getProvider()
+  executionContext.event.register('contextChanged', (context, silent) => {
+    setFinalContext()
+  })
   fillAccountsList(appAPI, el)
   setInterval(() => {
     updateAccountBalances(container, appAPI)
