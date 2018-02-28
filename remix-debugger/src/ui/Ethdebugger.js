@@ -25,7 +25,11 @@ var css = csjs`
     margin-left: 10px;
   }
 `
-function Ethdebugger () {
+
+function Ethdebugger (opts) {
+  this.opts = opts || {}
+  if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
+
   var self = this
   this.event = new EventManager()
 
@@ -107,6 +111,7 @@ Ethdebugger.prototype.setCompilationResult = function (compilationResult) {
 }
 
 Ethdebugger.prototype.debug = function (tx) {
+  this.setCompilationResult(this.opts.compilationResult())
   if (tx instanceof Object) {
     this.txBrowser.load(tx.hash)
   } else if (tx instanceof String) {
@@ -145,6 +150,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   if (this.traceManager.isLoading) {
     return
   }
+  this.setCompilationResult(this.opts.compilationResult())
   this.statusMessage = 'Loading trace...'
   yo.update(this.view, this.render())
   console.log('loading trace...')
