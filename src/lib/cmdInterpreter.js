@@ -1,6 +1,6 @@
 'use strict'
-var remix = require('ethereum-remix')
-var EventManager = remix.lib.EventManager
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 
 class CmdInterpreter {
   constructor () {
@@ -10,13 +10,15 @@ class CmdInterpreter {
     if (!cmd) return false
     var accept = commandsRegEx.exec(cmd)
     if (accept) {
-      this.event.trigger(accept[1], [cmd.replace(commandsRegEx, '')])
+      var param = accept[2]
+      if (param) param = param.trim()
+      this.event.trigger(accept[1], [param])
       return accept[1]
     }
     return null
   }
 }
 
-var commandsRegEx = /^remix:(debug|loadgist|setproviderurl|loadswarm)\s/
+var commandsRegEx = /^remix:(debug|loadgist|setproviderurl|loadurl|batch)(.*)/
 
 module.exports = CmdInterpreter
