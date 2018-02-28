@@ -71,6 +71,7 @@ function runTests (browser, testData) {
     .waitForElementVisible('[data-path="localhost/contract1.sol"]')
     .assert.containsText('[data-path="localhost/contract1.sol"]', 'contract1.sol')
     .assert.containsText('[data-path="localhost/contract2.sol"]', 'contract2.sol')
+    .waitForElementVisible('[data-path="localhost/folder1/contract1.sol"]')
     .assert.containsText('[data-path="localhost/folder1/contract1.sol"]', 'contract1.sol')
     .assert.containsText('[data-path="localhost/folder1/contract2.sol"]', 'contract2.sol') // load and test sub folder
     .click('[data-path="localhost/folder1/contract2.sol"]')

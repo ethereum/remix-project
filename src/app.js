@@ -17,6 +17,7 @@ var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
+var BrowserfilesTree = require('./app/files/browser-files-tree')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
@@ -111,11 +112,14 @@ class App {
     var self = this
     self._api = {}
     var fileStorage = new Storage('sol:')
+    var configStorage = new Storage('config:')
     self._api.config = new Config(fileStorage)
     executionContext.init(self._api.config)
     executionContext.listenOnLastBlock()
     self._api.filesProviders = {}
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
+    self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
+    self._api.filesProviders['config'].init()
     var remixd = new Remixd()
     remixd.event.register('system', (message) => {
       if (message.error) toolTip(message.error)
@@ -204,7 +208,7 @@ function run () {
   var self = this
 
   if (window.location.hostname === 'yann300.github.io') {
-    modalDialogCustom.alert(`This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.`)
+    modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
   } else if (window.location.hostname === 'ethereum.github.io' &&
   window.location.pathname.indexOf('/remix-live-alpha') === 0) {
     modalDialogCustom.alert(`This instance of the Remix IDE is an UNSTABLE ALPHA branch.\n
@@ -697,6 +701,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     newAccount: (pass, cb) => {
       udapp.newAccount(pass, cb)
+    },
+    setConfig: (mod, path, content, cb) => {
+      self._api.filesProviders['config'].set(mod + '/' + path, content)
+      cb()
+    },
+    getConfig: (mod, path, cb) => {
+      cb(null, self._api.filesProviders['config'].get(mod + '/' + path))
+    },
+    removeConfig: (mod, path, cb) => {
+      cb(null, self._api.filesProviders['config'].remove(mod + '/' + path))
+      if (cb) cb()
     }
   }
   var rhpEvents = {

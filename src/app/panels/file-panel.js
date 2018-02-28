@@ -45,6 +45,7 @@ function filepanel (appAPI, filesProvider) {
   var swarmExplorer = new FileExplorer(appAPI, filesProvider['swarm'])
   var githubExplorer = new FileExplorer(appAPI, filesProvider['github'])
   var gistExplorer = new FileExplorer(appAPI, filesProvider['gist'])
+  var configExplorer = new FileExplorer(appAPI, filesProvider['config'])
 
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 
@@ -91,6 +92,7 @@ function filepanel (appAPI, filesProvider) {
           </div>
           <div class=${css.treeviews}>
             <div class=${css.treeview}>${fileExplorer.init()}</div>
+            <div class="configexplorer ${css.treeview}">${configExplorer.init()}</div>
             <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
             <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
             <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
@@ -106,6 +108,7 @@ function filepanel (appAPI, filesProvider) {
   self.event = event
   var element = template()
   fileExplorer.ensureRoot()
+  configExplorer.ensureRoot()
   var websocketconn = element.querySelector('.websocketconn')
   filesProvider['localhost'].remixd.event.register('connecting', (event) => {
     websocketconn.style.color = styles.colors.yellow
@@ -131,6 +134,10 @@ function filepanel (appAPI, filesProvider) {
   })
 
   fileExplorer.events.register('focus', function (path) {
+    appAPI.switchFile(path)
+  })
+
+  configExplorer.events.register('focus', function (path) {
     appAPI.switchFile(path)
   })
 

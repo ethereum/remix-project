@@ -35,6 +35,7 @@ function Config (storage) {
   this.ensureStorageUpdated = function (key) {
     if (key === 'currentFile') {
       if (this.items[key] && this.items[key] !== '' &&
+        this.items[key].indexOf('config/') !== 0 &&
         this.items[key].indexOf('browser/') !== 0 &&
         this.items[key].indexOf('localhost/') !== 0 &&
         this.items[key].indexOf('swarm/') !== 0 &&

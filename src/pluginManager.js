@@ -7,12 +7,35 @@
  * - compilationData (that is triggered just after a focus - and send the current compilation data or null)
  * - compilationFinished (that is only sent to the plugin that has focus)
  *
- * @param {String} txHash    - hash of the transaction
+ * Plugin can emit messages and receive response.
+ *
+ * CONFIG:
+ * - getConfig(filename). The data to send should be formatted like:
+ *    {
+ *     type: 'getConfig',
+ *     arguments: ['filename.ext'],
+ *     id: <requestid>
+ *    }
+ *  the plugin will reveice a response like:
+ *    {
+ *      type: 'getConfig',
+ *      id: <requestid>
+ *      error,
+ *      result
+ *    }
+ * same apply for the other call
+ * - setConfig(filename, content)
+ * - removeConfig
+ *
+ * See index.html and remix.js in test-browser folder for sample
+ *
  */
 class PluginManager {
   constructor (api, events) {
+    var self = this
     this.plugins = {}
     this.inFocus
+    var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
     events.compiler.register('compilationFinished', (success, data, source) => {
       if (this.inFocus) {
         // trigger to the current focus
@@ -46,6 +69,27 @@ class PluginManager {
         }))
       }
     })
+
+    window.addEventListener('message', (event) => {
+      function response (type, callid, error, result) {
+        self.post(self.inFocus, JSON.stringify({
+          id: callid,
+          type: type,
+          error: error,
+          result: result
+        }))
+      }
+      if (event.type === 'message' && this.inFocus && this.plugins[this.inFocus] && this.plugins[this.inFocus].origin === event.origin) {
+        var data = JSON.parse(event.data)
+        data.arguments.unshift(this.inFocus)
+        if (allowedapi[data.type]) {
+          data.arguments.push((error, result) => {
+            response(data.type, data.id, error, result)
+          })
+          api[data.type].apply({}, data.arguments)
+        }
+      }
+    }, false)
   }
   register (desc, content) {
     this.plugins[desc.title] = {content, origin: desc.url}
