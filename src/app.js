@@ -6,7 +6,6 @@ var yo = require('yo-yo')
 var async = require('async')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var swarmgw = require('swarmgw')
 
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -365,30 +364,43 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   cmdInterpreter.event.register('loadgist', (id) => {
     loadFromGist({gist: id})
   })
-  cmdInterpreter.event.register('loadswarm', (url) => {
-    swarmgw.get(url, function (err, content) {
+  cmdInterpreter.event.register('loadurl', (url) => {
+    importExternal(url, (err, content) => {
       if (err) {
-        modalDialogCustom.log(`Unable to load ${url} from swarm: ${err}`)
+        toolTip(`Unable to load ${url} from swarm: ${err}`)
       } else {
-        content = JSON.parse(content)
-        for (var k in content.sources) {
-          var url = content.sources[k].urls[0] // @TODO retrieve all other contents ?
-          swarmgw.get(url, (error, content) => {
-            if (!error) {
-              filesProviders['browser'].addReadOnly(k, content)
-            } else {
-              filesProviders['browser'].addReadOnly(k, `Cannot retrieve the content of ${url}: ${error}`)
-              if (content.settings && Object.keys(content.settings.compilationTarget)[0] === k) {
-                fileManager.switchFile(Object.keys(content.settings.compilationTarget)[0])
+        try {
+          content = JSON.parse(content)
+          for (var k in content.sources) {
+            var url = content.sources[k].urls[0] // @TODO retrieve all other contents ?
+            importExternal(url, (error, content) => {
+              if (error) {
+                toolTip(`Cannot retrieve the content of ${url}: ${error}`)
               }
-            }
-          })
+            })
+          }
+        } catch (e) {
+          filesProviders['swarm'].addReadOnly(url, content)
         }
       }
     })
   })
   cmdInterpreter.event.register('setproviderurl', (url) => {
-    executionContext.setContext('web3', url, true)
+    executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
+      if (error) toolTip(error)
+    })
+  })
+  cmdInterpreter.event.register('batch', (url) => {
+    var content = editor.get(editor.current())
+    if (!content) {
+      toolTip('no content to execute')
+    }
+    var split = content.split('\n')
+    async.eachSeries(split, (value, cb) => {
+      cmdInterpreter.interpret(value) ? cb() : cb(`Cannot run ${value}. stopping`)
+    }, (error) => {
+      if (error) toolTip(error)
+    })
   })
 
   // ----------------- editor ----------------------------
