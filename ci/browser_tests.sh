@@ -11,8 +11,16 @@ setupRemixd () {
   cd ..
 }
 
-SC_VERSION="4.4.0"
-SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-$SC_VERSION-linux.tar.gz"
+if test $(uname -s) = "Darwin"
+then
+  OS="osx"
+  FILEFORMAT="zip"
+else
+  OS="linux"
+  FILEFORMAT="tar.gz"
+fi
+SC_VERSION="4.4.11"
+SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-$SC_VERSION-$OS.$FILEFORMAT"
 SAUCECONNECT_USERNAME="chriseth"
 SAUCECONNECT_ACCESSKEY="b781828a-9e9c-43d8-89d4-2fbb879595ca"
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
@@ -26,8 +34,8 @@ npm run serve &
 setupRemixd
 
 wget "$SAUCECONNECT_URL"
-tar -zxvf sc-"$SC_VERSION"-linux.tar.gz
-./sc-"$SC_VERSION"-linux/bin/sc -u "$SAUCECONNECT_USERNAME" -k "$SAUCECONNECT_ACCESSKEY" -i "$SAUCECONNECT_JOBIDENTIFIER" --no-ssl-bump-domains all --readyfile "$SAUCECONNECT_READYFILE" &
+tar -zxvf sc-"$SC_VERSION"-"$OS"."$FILEFORMAT"
+./sc-"$SC_VERSION"-"$OS"/bin/sc -u "$SAUCECONNECT_USERNAME" -k "$SAUCECONNECT_ACCESSKEY" -i "$SAUCECONNECT_JOBIDENTIFIER" --no-ssl-bump-domains all --readyfile "$SAUCECONNECT_READYFILE" &
 while [ ! -f "$SAUCECONNECT_READYFILE" ]; do
   sleep .5
 done
