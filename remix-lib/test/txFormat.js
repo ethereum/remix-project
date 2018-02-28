@@ -3,9 +3,10 @@ var tape = require('tape')
 var txFormat = require('../src/execution/txFormat')
 var compiler = require('solc')
 var compilerInput = require('../src/helpers/compilerHelper').compilerInput
+var executionContext = require('../src/execution/execution-context')
 
 var context
-tape('ContractParameters - (TxFormat.buildData)', function (t) {
+tape('ContractParameters - (TxFormat.buildData) - format input parameters', function (t) {
   var output = compiler.compileStandardWrapper(compilerInput(uintContract))
   output = JSON.parse(output)
   var contract = output.contracts['test.sol']['uintContractTest']
@@ -30,6 +31,51 @@ function testWithInput (st, params, expected) {
     }, () => {})
 }
 
+tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
+  executionContext.setContext('vm')
+  var output = compiler.compileStandardWrapper(compilerInput(deploySimpleLib))
+  output = JSON.parse(output)
+  var contract = output.contracts['test.sol']['testContractLinkLibrary']
+  var fakeDeployedContracts = {
+    lib1: '0xf7a10e525d4b168f45f74db1b61f63d3e7619e11',
+    lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2: '0xf7a10e525d4b168f45f74db1b61f63d3e7619e33',
+    testContractLinkLibrary: '0xf7a10e525d4b168f45f74db1b61f63d3e7619e22'
+  }
+  var udapp = { runTx: (param, callback) => {
+    callback(null, {
+      result: {
+        createdAddress: fakeDeployedContracts[param.data.contractName]
+      }
+    })
+  } } // fake
+  context = { output, contract, udapp }
+  t.test('(TxFormat.buildData and link library (standard way))', function (st) {
+    st.plan(6)
+    testLinkLibrary(st, fakeDeployedContracts)
+  })
+})
+
+function testLinkLibrary (st, fakeDeployedContracts) {
+  var deployMsg = ['creation of library test.sol:lib1 pending...',
+  'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
+  txFormat.buildData('testContractLinkLibrary', context.contract, context.output.contracts, true, context.contract.abi[0], '', context.udapp
+    , (error, data) => {
+      if (error) { return st.fails(error) }
+      console.log(data)
+      var linkedbyteCode = data.dataHex
+      var libReference = context.contract.evm.bytecode.linkReferences['test.sol']['lib1']
+      st.equal(linkedbyteCode.substr(2 * libReference[0].start, 40), fakeDeployedContracts['lib1'].replace('0x', ''))
+      st.equal(linkedbyteCode.substr(2 * libReference[1].start, 40), fakeDeployedContracts['lib1'].replace('0x', ''))
+
+      libReference = context.contract.evm.bytecode.linkReferences['test.sol']['lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2']
+      st.equal(linkedbyteCode.substr(2 * libReference[0].start, 40), fakeDeployedContracts['lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2'].replace('0x', ''))
+      st.equal(linkedbyteCode.substr(2 * libReference[1].start, 40), fakeDeployedContracts['lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2'].replace('0x', ''))
+    }, (msg) => {
+      st.equal(msg, deployMsg[0])
+      deployMsg.shift()
+    })
+}
+
 var uintContract = `contract uintContractTest {
     uint _tp;
     address _ap;
@@ -38,3 +84,25 @@ var uintContract = `contract uintContractTest {
         _ap = _a;
     }
 }`
+
+var deploySimpleLib = `pragma solidity ^0.4.4;
+
+library lib1 {
+    function getEmpty () {
+    }
+}
+
+library lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 {
+    function getEmpty () {
+    }
+}
+
+contract testContractLinkLibrary { 
+    function get () {
+        lib1.getEmpty();
+        lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2.getEmpty();
+        lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2.getEmpty();
+        lib1.getEmpty();
+ }
+ }`
+
