@@ -10,7 +10,16 @@ var executionContext = require('../../execution-context')
  */
 function Debugger (id, appAPI, editorEvent) {
   this.el = document.querySelector(id)
-  this.debugger = new remixDebugger.ui.Debugger()
+  this.debugger = new remixDebugger.ui.Debugger(
+    {
+      compilationResult: () => {
+        var compilationResult = self.appAPI.lastCompilationResult()
+        if (compilationResult) {
+          return compilationResult.data
+        }
+        return null
+      }
+    })
   this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
   this.el.appendChild(this.debugger.render())
   this.appAPI = appAPI
@@ -75,10 +84,6 @@ Debugger.prototype.debug = function (txHash) {
   var self = this
   this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
-      var compilationResult = self.appAPI.lastCompilationResult()
-      if (compilationResult) {
-        self.debugger.setCompilationResult(compilationResult.data)
-      }
       self.debugger.debug(tx)
     }
   })
