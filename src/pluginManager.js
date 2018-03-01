@@ -1,6 +1,13 @@
 'use strict'
 /**
  * Register and Manage plugin:
+ * Plugin registration is done in the settings tab,
+ * using the following format:
+ * {
+ *  "title": "<plugin name>",
+ *  "url": "<plugin url>"
+ * }
+ *  
  * Plugin receive 4 types of message:
  * - focus (when he get focus)
  * - unfocus (when he loose focus - is hidden)
