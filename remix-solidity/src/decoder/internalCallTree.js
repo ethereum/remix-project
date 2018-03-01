@@ -271,11 +271,14 @@ function extractFunctionDefinitions (ast, astWalker) {
 function addParams (parameterList, tree, scopeId, states, contractName, sourceLocation, stackLength, stackPosition, dir) {
   for (var inputParam in parameterList.children) {
     var param = parameterList.children[inputParam]
-    tree.scopes[scopeId].locals[param.attributes.name] = {
-      name: param.attributes.name,
-      type: decodeInfo.parseType(param.attributes.type, states, contractName),
-      stackDepth: stackLength + (dir * stackPosition),
-      sourceLocation: sourceLocation
+    var stackDepth = stackLength + (dir * stackPosition)
+    if (stackDepth >= 0) {
+      tree.scopes[scopeId].locals[param.attributes.name] = {
+        name: param.attributes.name,
+        type: decodeInfo.parseType(param.attributes.type, states, contractName),
+        stackDepth: stackDepth,
+        sourceLocation: sourceLocation
+      }
     }
     stackPosition += dir
   }
