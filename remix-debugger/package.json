@@ -24,6 +24,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
     "browserify-livereload": "^1.0.10",
+    "clipboard-copy": "^1.2.0",
     "csjs-inject": "^1.0.1",
     "ethereum-common": "0.0.18",
     "ethereumjs-block": "^1.2.2",
