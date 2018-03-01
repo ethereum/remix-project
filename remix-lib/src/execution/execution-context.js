@@ -173,6 +173,7 @@ function ExecutionContext () {
       } else {
         executionContext = context
         web3.setProvider(injectedProvider)
+        self._updateBlockGasLimit()
         self.event.trigger('contextChanged', ['injected'])
         return cb()
       }
@@ -191,20 +192,24 @@ function ExecutionContext () {
     if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
     this.listenOnLastBlockId = null
   }
+  
+  this._updateBlockGasLimit = function () {
+    if (this.getProvider() !== 'vm') {
+      web3.eth.getBlock('latest', (err, block) => {
+        if (!err) {
+          // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
+          this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        } else {
+          this.blockGasLimit = this.blockGasLimitDefault
+        }
+      })
+    }
+  }
 
   this.listenOnLastBlock = function () {
     this.listenOnLastBlockId = setInterval(() => {
-      if (this.getProvider() !== 'vm') {
-        web3.eth.getBlock('latest', (err, block) => {
-          if (!err) {
-            // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-            this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
-          } else {
-            this.blockGasLimit = this.blockGasLimitDefault
-          }
-        }, 15000)
-      }
-    })
+      this._updateBlockGasLimit()
+    }, 15000)
   }
 
   // TODO: not used here anymore and needs to be moved
@@ -218,6 +223,7 @@ function ExecutionContext () {
     }
     if (web3.isConnected()) {
       executionContext = context
+      self._updateBlockGasLimit()
       self.event.trigger('contextChanged', ['web3'])
       self.event.trigger('web3EndpointChanged')
       cb()
