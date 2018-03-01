@@ -192,7 +192,7 @@ function ExecutionContext () {
     if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
     this.listenOnLastBlockId = null
   }
-  
+
   this._updateBlockGasLimit = function () {
     if (this.getProvider() !== 'vm') {
       web3.eth.getBlock('latest', (err, block) => {
