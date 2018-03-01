@@ -6,13 +6,13 @@ class CmdInterpreter {
   constructor () {
     this.event = new EventManager()
   }
-  interpret (cmd) {
+  interpret (cmd, cb) {
     if (!cmd) return false
     var accept = commandsRegEx.exec(cmd)
     if (accept) {
       var param = accept[2]
       if (param) param = param.trim()
-      this.event.trigger(accept[1], [param])
+      this.event.trigger(accept[1], [param, cb])
       return accept[1]
     }
     return null
