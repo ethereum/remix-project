@@ -7,7 +7,7 @@
  *  "title": "<plugin name>",
  *  "url": "<plugin url>"
  * }
- *  
+ *
  * Plugin receive 4 types of message:
  * - focus (when he get focus)
  * - unfocus (when he loose focus - is hidden)
