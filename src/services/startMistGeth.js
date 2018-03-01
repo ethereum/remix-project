@@ -78,6 +78,7 @@ function connectWeb3 (ipcpath, cb) {
       if (error) {
         console.log('still trying to connect to node... ' + error)
       } else {
+        console.log('web3', web3.version)
         cb(web3)
       }
     })
