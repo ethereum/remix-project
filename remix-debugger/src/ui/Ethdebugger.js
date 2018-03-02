@@ -6,6 +6,8 @@ var TraceManager = remixCore.trace.TraceManager
 var VmDebugger = require('./VmDebugger')
 var remixLib = require('remix-lib')
 var global = remixLib.global
+var init = remixLib.init
+var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
@@ -97,6 +99,14 @@ Ethdebugger.prototype.switchProvider = function (type) {
       console.log('provider ' + type + ' not defined')
     } else {
       global.web3 = obj
+      executionContext.detectNetwork((error, network) => {
+        if (error || !network) {
+          global.web3Debug = obj
+        } else {
+          var webDebugNode = init.web3DebugNode(network.name)
+          global.web3Debug = !webDebugNode ? obj : webDebugNode
+        }
+      })
       self.event.trigger('providerChanged', [type])
     }
   })

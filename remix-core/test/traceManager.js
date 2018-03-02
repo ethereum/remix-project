@@ -19,6 +19,7 @@ tape('TraceManager', function (t) {
         st.fail(mes)
       } else {
         global.web3 = obj
+        global.web3Debug = obj
         traceManager = new TraceManager()
         st.end()
       }
