@@ -44,7 +44,7 @@ async function decodeMappingsKeys (storage, callback) {
   */
 function getPreimage (key) {
   return new Promise((resolve, reject) => {
-    global.web3.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, function (error, preimage) {
+    global.web3Debug.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, function (error, preimage) {
       if (error) {
         resolve(null)
       } else {
