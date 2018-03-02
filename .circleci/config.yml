@@ -11,7 +11,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - cd remix-lib
+      - run: cd remix-lib
       - restore_cache:
           keys:
             - dep-bundle-{{ checksum "package.json" }}
@@ -29,7 +29,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - cd remix-core
+      - run: cd remix-core
       - restore_cache:
           keys:
             - dep-bundle-{{ checksum "package.json" }}
@@ -47,7 +47,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - cd remix-solidity
+      - run: cd remix-solidity
       - restore_cache:
           keys:
             - dep-bundle-{{ checksum "package.json" }}
@@ -65,7 +65,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - cd remix-debugger
+      - run: cd remix-debugger
       - restore_cache:
           keys:
             - dep-bundle-{{ checksum "package.json" }}
