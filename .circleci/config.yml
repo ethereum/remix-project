@@ -11,7 +11,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: ls && cd remix-lib
+      - run: ls && cd remix-lib && ls
       - restore_cache:
           keys:
             - dep-bundle-{{ checksum "package.json" }}
