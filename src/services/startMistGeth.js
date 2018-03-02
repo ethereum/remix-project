@@ -22,7 +22,7 @@ module.exports = function (dataDir, mist, geth, mine, rpc, rpcPort) {
       gethArgs.push('--rpccorsdomain')
       gethArgs.push(rpc)
       gethArgs.push('--rpcapi')
-      gethArgs.push('web3,eth,debug,net')
+      gethArgs.push('web3,eth,debug,net,personal')
       if (!rpcPort) {
         rpcPort = 8545
       }
