@@ -20,17 +20,8 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: cd remix-core
-      - restore_cache:
-          keys:
-            - dep-bundle-{{ checksum "package.json" }}
-      - run: npm install
-      - save_cache:
-          key: dep-bundle-{{ checksum "package.json" }}
-          paths:
-            - /repo/node_modules
-      - run: npm test
-      
+      - run: cd remix-core && npm install && npm test
+            
   remix-solidity:
     docker:
         - image: circleci/node:7.10
@@ -38,16 +29,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: cd remix-solidity
-      - restore_cache:
-          keys:
-            - dep-bundle-{{ checksum "package.json" }}
-      - run: npm install
-      - save_cache:
-          key: dep-bundle-{{ checksum "package.json" }}
-          paths:
-            - /repo/node_modules
-      - run: npm test
+      - run: cd remix-solidity && npm install && npm test
       
   remix-debugger:
     docker:
@@ -56,15 +38,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: cd remix-debugger
-      - restore_cache:
-          keys:
-            - dep-bundle-{{ checksum "package.json" }}
-      - run: npm install
-      - save_cache:
-          key: dep-bundle-{{ checksum "package.json" }}
-          paths:
-            - /repo/node_modules
+      - run: cd remix-debugger && npm install && npm test
             
 workflows:
   version: 2
