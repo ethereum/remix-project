@@ -146,7 +146,7 @@ function storageRangeWeb3Call (tx, address, start, maxSize, callback) {
   if (traceHelper.isContractCreation(address)) {
     callback(null, {}, null)
   } else {
-    global.web3.debug.storageRangeAt(
+    global.web3Debug.debug.storageRangeAt(
       tx.blockHash, tx.transactionIndex === undefined ? tx.hash : tx.transactionIndex,
       address,
       start,
