@@ -337,7 +337,7 @@ function styleGuide () {
         cursor                  : pointer;
         border-radius           : 3px;
         height                  : 25px;
-        width                   : 250px;
+        width                   : 100%;
         text-align              : center;
         overflow                : hidden;
         word-break              : normal;
@@ -680,7 +680,7 @@ function styleGuide () {
         button_Debugger_icon_HoverColor: appProperties.icon_HoverColor,
 
         dropdown_Debugger: appProperties.uiElements.dropdown({
-          BackgroundColor: appProperties.dropdown_BackgroundColor,
+          BackgroundColor: cssProperties.colors.veryLightGrey,
           BorderColor: appProperties.dropdown_BorderColor,
           Color: appProperties.dropdown_TextColor
         }),

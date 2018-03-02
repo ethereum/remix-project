@@ -1,5 +1,6 @@
 'use strict'
 var yo = require('yo-yo')
+const copy = require('clipboard-copy')
 var remixLib = require('remix-lib')
 var TreeView = require('./TreeView')
 var EventManager = remixLib.EventManager
@@ -11,7 +12,7 @@ var styles = styleGuide.chooser()
 var css = csjs`
   .title {
     margin-top: 10px;
-    ${styles.rightPanel.debuggerTab.dropdown_Debugger}
+    ${styles.rightPanel.debuggerTab.dropdown_Debugger};
     display: flex;
     align-items: center;
   }
@@ -23,15 +24,13 @@ var css = csjs`
     margin-right: 5%;
   }
   .eyeButton {
-    ${styles.rightPanel.debuggerTab.button_Debugger}
     margin: 3px;
-    float: right;
   }
   .eyeButton:hover {
     color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
   .dropdownpanel {
-    ${styles.rightPanel.debuggerTab.dropdown_Debugger}
+    ${styles.rightPanel.debuggerTab.dropdown_Debugger};
     width: 100%;
   }
   .dropdownrawcontent {
@@ -94,7 +93,7 @@ DropdownPanel.prototype.update = function (_data, _header) {
     this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
     this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.mainText_Color
     this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
-    this.view.querySelector('.dropdownpanel button.btn').style.display = 'block'
+    this.view.querySelector('.title div.btn').style.display = 'block'
     this.view.querySelector('.title span').innerText = _header || ' '
     this.message('')
     if (this.json) {
@@ -130,13 +129,12 @@ DropdownPanel.prototype.render = function (overridestyle) {
         to {transform:rotate(359deg);}
       }
     </style>
-    <div class="${css.title} title" onclick=${function () { self.toggle() }}>
-      <div class="${css.icon} fa fa-caret-right"></div>
-      <div class="${css.name}">${this.name}</div><span></span>
+    <div class="${css.title} title">
+      <div class="${css.icon} fa fa-caret-right" onclick=${function () { self.toggle() }} ></div>
+      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span onclick=${function () { self.toggle() }} ></span>
+      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fa fa-clipboard"></div>
     </div>
     <div class='dropdownpanel' style='display:none'>
-      <button onclick=${function () { self.toggleRaw() }} title='raw' class="${css.eyeButton} btn fa fa-eye" type="button">
-      </button>
       <i class="${css.refresh} fa fa-refresh" aria-hidden="true"></i>
       <div class='dropdowncontent'>${content}</div>
       <div class='dropdownrawcontent' style='display:none'></div>
@@ -149,11 +147,9 @@ DropdownPanel.prototype.render = function (overridestyle) {
   return view
 }
 
-DropdownPanel.prototype.toggleRaw = function () {
-  var raw = this.view.querySelector('.dropdownpanel .dropdownrawcontent')
-  var formatted = this.view.querySelector('.dropdownpanel .dropdowncontent')
-  raw.style.display = raw.style.display === 'none' ? 'block' : 'none'
-  formatted.style.display = formatted.style.display === 'none' ? 'block' : 'none'
+DropdownPanel.prototype.copyClipboard = function () {
+  var content = this.view.querySelector('.dropdownpanel .dropdownrawcontent')
+  if (content) copy(content.innerText ? content.innerText : content.textContent)
 }
 
 DropdownPanel.prototype.toggle = function () {

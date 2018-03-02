@@ -175,7 +175,7 @@ class TreeView {
       ret.isLeaf = false
     } else {
       ret.self = item
-      ret.children = []
+      ret.children = null
       ret.isNode = false
       ret.isLeaf = true
     }
