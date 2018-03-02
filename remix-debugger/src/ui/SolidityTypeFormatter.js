@@ -48,7 +48,7 @@ function extractData (item, parent, key) {
     ret.isMapping = true
     ret.self = item.type
   } else {
-    ret.children = []
+    ret.children = null
     ret.self = item.value
     ret.type = item.type
   }
