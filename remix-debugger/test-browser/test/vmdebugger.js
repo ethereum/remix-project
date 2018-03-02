@@ -59,7 +59,6 @@ function loadTrace (browser) {
     .execute(function () {
       return document.querySelector('#txinfo .dropdownpanel .dropdownrawcontent').innerHTML
     }, [], function (result) {
-      console.log(result.value)
       if (result.value.indexOf('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51') === -1) {
         browser.assert.fail(' txinput panel does not contain 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51 ', 'info about error', '')
       }

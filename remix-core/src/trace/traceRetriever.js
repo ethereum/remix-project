@@ -12,7 +12,7 @@ TraceRetriever.prototype.getTrace = function (txHash, callback) {
     disableStack: false,
     fullStorage: false
   }
-  global.web3.debug.traceTransaction(txHash, options, function (error, result) {
+  global.web3Debug.debug.traceTransaction(txHash, options, function (error, result) {
     callback(error, result)
   })
 }
