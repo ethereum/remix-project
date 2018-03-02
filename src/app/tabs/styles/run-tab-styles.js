@@ -51,7 +51,7 @@ var css = csjs`
   .select {
     ${styles.rightPanel.runTab.dropdown_RunTab}
     font-weight: normal;
-    min-width: 150px;
+    width: 250px;
   }
   .instanceContainer {
     display: flex;
