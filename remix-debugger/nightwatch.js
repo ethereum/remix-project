@@ -1,5 +1,5 @@
 'use strict'
-var TRAVIS_JOB_NUMBER = process.env.TRAVIS_JOB_NUMBER
+var buildId = process.env.CIRCLE_BUILD_NUM || process.env.TRAVIS_JOB_NUMBER
 
 module.exports = {
   'src_folders': ['./test-browser/test'],
@@ -43,8 +43,8 @@ module.exports = {
         'browserName': 'firefox',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
-        'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+        'build': 'build-' + buildId,
+        'tunnel-identifier': 'remix_tests_' + buildId
       }
     },
 
@@ -53,8 +53,8 @@ module.exports = {
         'browserName': 'chrome',
         'javascriptEnabled': true,
         'acceptSslCerts': true,
-        'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+        'build': 'build-' + buildId,
+        'tunnel-identifier': 'remix_tests_' + buildId
       }
     },
 
@@ -65,8 +65,8 @@ module.exports = {
         'platform': 'OS X 10.11',
         'version': '10.0',
         'acceptSslCerts': true,
-        'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+        'build': 'build-' + buildId,
+        'tunnel-identifier': 'remix_tests_' + buildId
       }
     },
 
@@ -77,8 +77,8 @@ module.exports = {
         'acceptSslCerts': true,
         'platform': 'WIN8.1',
         'version': '11',
-        'build': 'build-' + TRAVIS_JOB_NUMBER,
-        'tunnel-identifier': 'remix_tests_' + TRAVIS_JOB_NUMBER
+        'build': 'build-' + buildId,
+        'tunnel-identifier': 'remix_tests_' + buildId
       }
     },
 
