@@ -1,0 +1,85 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  remix-lib:
+    docker:
+        - image: circleci/node:7.10
+    environment:
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - cd remix-lib
+      - restore_cache:
+          keys:
+            - dep-bundle-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dep-bundle-{{ checksum "package.json" }}
+          paths:
+            - /repo/node_modules
+      - run: npm test
+      
+  remix-core:
+    docker:
+        - image: circleci/node:7.10
+    environment:
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - cd remix-core
+      - restore_cache:
+          keys:
+            - dep-bundle-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dep-bundle-{{ checksum "package.json" }}
+          paths:
+            - /repo/node_modules
+      - run: npm test
+      
+  remix-solidity:
+    docker:
+        - image: circleci/node:7.10
+    environment:
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - cd remix-solidity
+      - restore_cache:
+          keys:
+            - dep-bundle-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dep-bundle-{{ checksum "package.json" }}
+          paths:
+            - /repo/node_modules
+      - run: npm test
+      
+  remix-debugger:
+    docker:
+        - image: circleci/node:7.10
+    environment:
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - cd remix-debugger
+      - restore_cache:
+          keys:
+            - dep-bundle-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dep-bundle-{{ checksum "package.json" }}
+          paths:
+            - /repo/node_modules
+            
+workflows:
+  version: 2
+  build_all:
+    jobs:
+      - remix-lib
+      - remix-core
+      - remix-solidity
+      - remix-debugger
