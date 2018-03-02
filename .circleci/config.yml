@@ -11,17 +11,8 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: ls && cd remix-lib && ls
-      - restore_cache:
-          keys:
-            - dep-bundle-{{ checksum "package.json" }}
-      - run: npm install
-      - save_cache:
-          key: dep-bundle-{{ checksum "package.json" }}
-          paths:
-            - /repo/node_modules
-      - run: npm test
-      
+      - run: cd remix-lib && npm install && npm test
+            
   remix-core:
     docker:
         - image: circleci/node:7.10
