@@ -129,9 +129,9 @@ DropdownPanel.prototype.render = function (overridestyle) {
         to {transform:rotate(359deg);}
       }
     </style>
-    <div class="${css.title} title" onclick=${function () { self.toggle() }}>
-      <div class="${css.icon} fa fa-caret-right"></div>
-      <div class="${css.name}">${this.name}</div><span></span>
+    <div class="${css.title} title">
+      <div class="${css.icon} fa fa-caret-right" onclick=${function () { self.toggle() }} ></div>
+      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span onclick=${function () { self.toggle() }} ></span>
       <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fa fa-clipboard"></div>
     </div>
     <div class='dropdownpanel' style='display:none'>
@@ -149,7 +149,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
 
 DropdownPanel.prototype.copyClipboard = function () {
   var content = this.view.querySelector('.dropdownpanel .dropdownrawcontent')
-  if (content) copy(content.innerHTML)
+  if (content) copy(content.innerText ? content.innerText : content.textContent)
 }
 
 DropdownPanel.prototype.toggle = function () {
