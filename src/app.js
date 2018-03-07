@@ -40,6 +40,7 @@ var FileManager = require('./app/files/fileManager')
 var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
+var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
 
@@ -128,7 +129,7 @@ class App {
     self._api.filesProviders['localhost'] = new SharedFolder(remixd)
     self._api.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
     self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
-    self._api.filesProviders['gist'] = new BasicReadOnlyExplorer('gist')
+    self._api.filesProviders['gist'] = new NotPersistedExplorer('gist')
     self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
     self._view = {}
     self._components = {}

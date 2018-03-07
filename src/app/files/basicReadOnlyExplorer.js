@@ -76,7 +76,6 @@ class BasicReadOnlyExplorer {
   }
 
   remove (path) {
-    delete this.files[path]
   }
 
   rename (oldPath, newPath, isFolder) {
