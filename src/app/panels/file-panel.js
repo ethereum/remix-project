@@ -80,7 +80,10 @@ function filepanel (appAPI, filesProvider) {
                 </label>
               </span>
             ` : ''}
-            <span class="${css.gist}" title="Publish all open files to an anonymous github gist" onclick=${() => publishToGist(appAPI)}>
+            <span class="${css.gist}" title="Publish all [browser] explorer open files to an anonymous github gist" onclick=${() => publishToGist('browser')}>
+              <i class="fa fa-github"></i>
+            </span>
+            <span class="${css.gist}" title="Publish all [gist] explorer open files to an anonymous github gist" onclick=${() => publishToGist('gist')}>
               <i class="fa fa-github"></i>
             </span>
             <span class="${css.copyFiles}" title="Copy all files to another instance of Remix IDE" onclick=${copyFiles}>
@@ -270,7 +273,7 @@ function filepanel (appAPI, filesProvider) {
 
   // ------------------ gist publish --------------
 
-  function publishToGist () {
+  function publishToGist (fileProviderName) {
     function cb (data) {
       if (data instanceof Error) {
         console.log('fail', data.message)
@@ -288,7 +291,7 @@ function filepanel (appAPI, filesProvider) {
     }
 
     function toGist () {
-      packageFiles(filesProvider['browser'], (error, packaged) => {
+      packageFiles(filesProvider[fileProviderName], (error, packaged) => {
         if (error) {
           console.log(error)
           modalDialogCustom.alert('Failed to create gist: ' + error)
@@ -338,7 +341,7 @@ function filepanel (appAPI, filesProvider) {
 // return all the files, except the temporary/readonly ones..
 function packageFiles (filesProvider, callback) {
   var ret = {}
-  filesProvider.resolveDirectory('browser', (error, files) => {
+  filesProvider.resolveDirectory(filesProvider.type, (error, files) => {
     if (error) callback(error)
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
