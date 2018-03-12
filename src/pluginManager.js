@@ -38,7 +38,7 @@
  *
  */
 class PluginManager {
-  constructor (api, events) {
+  constructor (api = {}, events = {}, opts = {}) {
     var self = this
     this.plugins = {}
     this.inFocus
