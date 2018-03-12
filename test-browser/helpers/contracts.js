@@ -162,7 +162,7 @@ function setEditorValue (value, callback) {
 }
 
 function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
-  browser.setValue('.ataddressinput', address, function () {
+  browser.clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
       .execute(function () {
         var ret = document.querySelector('div[class^="modalBody"] div').innerHTML
