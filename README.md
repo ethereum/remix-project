@@ -35,7 +35,7 @@ Then open your `text editor` and start developing.
 The browser will automatically refresh when files are saved.
 
 Most of the the time working with other modules (like debugger etc.) hosted in the [Remix repository](https://github.com/ethereum/remix) is not needed.
-But in case changes have to be made in that repository too, the following command will help you link Remix with your local Browser-solidity repository:
+But in case changes have to be made in that repository too, the following command will help you link Remix with your local remix-ide repository:
 
 After `npm install` run also:
 
