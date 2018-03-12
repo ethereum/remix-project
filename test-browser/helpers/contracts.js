@@ -161,7 +161,7 @@ function setEditorValue (value, callback) {
   return this
 }
 
-function addInstance(browser, address, isValidFormat, isValidChecksum, callback) {
+function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
   browser.setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
       .execute(function () {
