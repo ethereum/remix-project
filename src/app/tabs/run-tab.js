@@ -22,14 +22,15 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instance
 
 var pendingTxsText = yo`<span>0 pending transactions</span>`
 
-function runTab (container, appAPI, appEvents) {
-  var events = new EventManager()
+function runTab (appAPI = {}, appEvents = {}, opts = {}) {
+  var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
+  var event = new EventManager()
 
   var clearInstanceElement = yo`<i class="${css.clearinstance} ${css.icon} fa fa-trash" title="Clear Instances List" aria-hidden="true"></i>`
   clearInstanceElement.addEventListener('click', () => {
-    events.trigger('clearInstance', [])
+    event.trigger('clearInstance', [])
   })
-  var recorderInterface = makeRecorder(events, appAPI, appEvents)
+  var recorderInterface = makeRecorder(event, appAPI, appEvents)
   var pendingTxsContainer = yo`
   <div class="${css.pendingTxsContainer}">
     <div class="${css.pendingTxsText}">
@@ -43,9 +44,9 @@ function runTab (container, appAPI, appEvents) {
   </div>`
 
   var el = yo`
-  <div class="${css.runTabView}" id="runTabView">
+  <div>
     ${settings(container, appAPI, appEvents)}
-    ${contractDropdown(events, appAPI, appEvents, instanceContainer)}
+    ${contractDropdown(event, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
   </div>
@@ -65,7 +66,7 @@ function runTab (container, appAPI, appEvents) {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
     selectExEnv.value = executionContext.getProvider()
     fillAccountsList(appAPI, el)
-    events.trigger('clearInstance', [])
+    event.trigger('clearInstance', [])
   }
 
   selectExEnv.addEventListener('change', function (event) {
@@ -95,12 +96,12 @@ function runTab (container, appAPI, appEvents) {
     updatePendingTxs(container, appAPI)
   }, 10000)
 
-  events.register('clearInstance', () => {
+  event.register('clearInstance', () => {
     instanceContainer.innerHTML = '' // clear the instances list
     noInstancesText.style.display = 'block'
     instanceContainer.appendChild(noInstancesText)
   })
-  return el
+  return { render () { return container } }
 }
 
 function fillAccountsList (appAPI, container) {

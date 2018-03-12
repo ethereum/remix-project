@@ -110,7 +110,7 @@ var css = csjs`
 `
 
 class App {
-  constructor (opts = {}) {
+  constructor (api = {}, events = {}, opts = {}) {
     var self = this
     self._api = {}
     var fileStorage = new Storage('sol:')
@@ -792,7 +792,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     editor: editor.event,
     staticAnalysis: staticanalysis.event
   }
-  self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, {})
+  self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents)
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
