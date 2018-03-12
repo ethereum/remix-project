@@ -25,9 +25,11 @@ class FileManager {
     this.opt.filesProviders['browser'].event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this.opt.filesProviders['localhost'].event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this.opt.filesProviders['config'].event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this.opt.filesProviders['gist'].event.register('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this.opt.filesProviders['browser'].event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this.opt.filesProviders['localhost'].event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this.opt.filesProviders['config'].event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this.opt.filesProviders['gist'].event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
 
     // tabs
     var $filesEl = $('#files')
