@@ -7,6 +7,7 @@ var Storage = remixLib.Storage
 var styleGuide = remixLib.ui.themeChooser
 var helper = require('../../lib/helper')
 var modal = require('../ui/modal-dialog-custom')
+var tooltip = require('../ui/tooltip')
 
 var css = require('./styles/settings-tab-styles')
 
@@ -194,6 +195,7 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
 
     loadVersion(selectedVersion, queryParams, appAPI, el)
   }).fail(function (xhr, text, err) {
+    tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
     // loading failed for some reason, fall back to local compiler
     versionSelector.append(new Option('latest local version', 'builtin'))
 
