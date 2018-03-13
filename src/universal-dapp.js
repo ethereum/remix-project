@@ -330,6 +330,9 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             continueTxExecution()
           }
         },
+        function (okCb, cancelCb) {
+          modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account ' + tx.from, '', okCb, cancelCb)
+        },
         function (error, result) {
           let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
           self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])

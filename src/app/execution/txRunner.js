@@ -4,7 +4,6 @@ var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('../../execution-context')
-var modal = require('../ui/modal-dialog-custom')
 
 function TxRunner (vmaccounts, api) {
   this._api = api
@@ -19,25 +18,27 @@ function TxRunner (vmaccounts, api) {
   this.queusTxs = []
 }
 
-TxRunner.prototype.rawRun = function (args, confirmationCb, gasEstimationForceSend, cb) {
-  run(this, args, Date.now(), confirmationCb, gasEstimationForceSend, cb)
+TxRunner.prototype.rawRun = function (args, confirmationCb, gasEstimationForceSend, promptCb, cb) {
+  run(this, args, Date.now(), confirmationCb, gasEstimationForceSend, promptCb, cb)
 }
 
-function executeTx (tx, gasPrice, api, callback) {
+function executeTx (tx, gasPrice, api, promptCb, callback) {
   if (gasPrice) tx.gasPrice = executionContext.web3().toHex(gasPrice)
-
   if (api.personalMode()) {
-    modal.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account ' + tx.from, '', (value) => {
-      sendTransaction(executionContext.web3().personal.sendTransaction, tx, value, callback)
-    }, () => {
-      return callback('Canceled by user.')
-    })
+    promptCb(
+      (value) => {
+        sendTransaction(executionContext.web3().personal.sendTransaction, tx, value, callback)
+      },
+      () => {
+        return callback('Canceled by user.')
+      }
+    )
   } else {
     sendTransaction(executionContext.web3().eth.sendTransaction, tx, null, callback)
   }
 }
 
-TxRunner.prototype.execute = function (args, confirmationCb, gasEstimationForceSend, callback) {
+TxRunner.prototype.execute = function (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
   var self = this
 
   var data = args.data
@@ -46,7 +47,7 @@ TxRunner.prototype.execute = function (args, confirmationCb, gasEstimationForceS
   }
 
   if (!executionContext.isVM()) {
-    self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, callback)
+    self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
   } else {
     try {
       self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
@@ -104,7 +105,7 @@ TxRunner.prototype.runInVm = function (from, to, data, value, gasLimit, useCall,
   })
 }
 
-TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, confirmCb, gasEstimationForceSend, callback) {
+TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, confirmCb, gasEstimationForceSend, promptCb, callback) {
   const self = this
   var tx = { from: from, to: to, data: data, value: value }
 
@@ -186,12 +187,12 @@ function sendTransaction (sendTx, tx, pass, callback) {
   }
 }
 
-function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, callback) {
+function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     self.queusTxs.push({ tx, stamp, callback })
   } else {
     self.pendingTxs[stamp] = tx
-    self.execute(tx, confirmationCb, gasEstimationForceSend, (error, result) => {
+    self.execute(tx, confirmationCb, gasEstimationForceSend, promptCb, (error, result) => {
       delete self.pendingTxs[stamp]
       callback(error, result)
       if (self.queusTxs.length) {
