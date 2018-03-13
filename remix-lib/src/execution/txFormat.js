@@ -49,8 +49,9 @@ module.exports = {
     var data = ''
     var dataHex = ''
 
-    if (params.indexOf('0x') === 0) {
-      dataHex = params.replace('0x', '')
+    if (params.indexOf('raw:0x') === 0) {
+      // in that case we consider that the input is already encoded and *does not* contain the method signature
+      dataHex = params.replace('raw:0x', '')
       data = Buffer.from(dataHex, 'hex')
     } else {
       try {
