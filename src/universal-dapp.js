@@ -316,15 +316,16 @@ UniversalDApp.prototype.runTx = function (args, cb) {
             The transaction execution will likely fail. Do you want to force sending? <br>
             ${msg}
             </div>`,
-            { label: 'Send Transaction',
-              fn: () => {
-                continueTxExecution()
-              }}, {
-                label: 'Cancel Transaction',
+              {
+                label: 'Send Transaction',
                 fn: () => {
-                  cancelCb()
-                }
-              })
+                  continueTxExecution()
+                }}, {
+                  label: 'Cancel Transaction',
+                  fn: () => {
+                    cancelCb()
+                  }
+                })
           } else {
             continueTxExecution()
           }

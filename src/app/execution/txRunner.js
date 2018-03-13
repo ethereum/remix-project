@@ -188,7 +188,7 @@ function sendTransaction (sendTx, tx, pass, callback) {
 
 function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
-    self.queusTxs.push({ tx, stamp, callback})
+    self.queusTxs.push({ tx, stamp, callback })
   } else {
     self.pendingTxs[stamp] = tx
     self.execute(tx, confirmationCb, gasEstimationForceSend, (error, result) => {
