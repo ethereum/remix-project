@@ -1,6 +1,7 @@
 /* global */
 'use strict'
 
+var yo = require('yo-yo')
 var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
@@ -308,7 +309,26 @@ UniversalDApp.prototype.runTx = function (args, cb) {
                 }
               })
         },
-
+        (error, continueTxExecution, cancelCb) => {
+          if (error) {
+            var msg = typeof error !== 'string' ? error.message : error
+            modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+            The transaction execution will likely fail. Do you want to force sending? <br>
+            ${msg}
+            </div>`,
+            { label: 'Send Transaction',
+              fn: () => {
+                continueTxExecution()
+              }}, {
+                label: 'Cancel Transaction',
+                fn: () => {
+                  cancelCb()
+                }
+              })
+          } else {
+            continueTxExecution()
+          }
+        },
         function (error, result) {
           let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
           self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
