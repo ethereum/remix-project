@@ -19,8 +19,8 @@ function TxRunner (vmaccounts, api) {
   this.queusTxs = []
 }
 
-TxRunner.prototype.rawRun = function (args, confirmationCb, cb) {
-  run(this, args, Date.now(), confirmationCb, cb)
+TxRunner.prototype.rawRun = function (args, confirmationCb, gasEstimationForceSend, cb) {
+  run(this, args, Date.now(), confirmationCb, gasEstimationForceSend, cb)
 }
 
 function executeTx (tx, gasPrice, api, callback) {
@@ -37,7 +37,7 @@ function executeTx (tx, gasPrice, api, callback) {
   }
 }
 
-TxRunner.prototype.execute = function (args, confirmationCb, callback) {
+TxRunner.prototype.execute = function (args, confirmationCb, gasEstimationForceSend, callback) {
   var self = this
 
   var data = args.data
@@ -46,7 +46,7 @@ TxRunner.prototype.execute = function (args, confirmationCb, callback) {
   }
 
   if (!executionContext.isVM()) {
-    self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, callback)
+    self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, callback)
   } else {
     try {
       self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
@@ -104,7 +104,7 @@ TxRunner.prototype.runInVm = function (from, to, data, value, gasLimit, useCall,
   })
 }
 
-TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, confirmCb, callback) {
+TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCall, confirmCb, gasEstimationForceSend, callback) {
   const self = this
   var tx = { from: from, to: to, data: data, value: value }
 
@@ -118,38 +118,41 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
     })
   }
   executionContext.web3().eth.estimateGas(tx, function (err, gasEstimation) {
-    if (err) {
-      return callback(err, gasEstimation)
-    }
-    var blockGasLimit = executionContext.currentblockGasLimit()
-    // NOTE: estimateGas very likely will return a large limit if execution of the code failed
-    //       we want to be able to run the code in order to debug and find the cause for the failure
+    gasEstimationForceSend(err, () => {
+      // callback is called whenever no error
+      tx.gas = !gasEstimation ? gasLimit : gasEstimation
 
-    var warnEstimation = " An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that's also the reason of strong gas estimation)."
-    if (gasEstimation > gasLimit) {
-      return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
-    }
-    if (gasEstimation > blockGasLimit) {
-      return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
-    }
-
-    tx.gas = gasEstimation
-
-    if (self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-      return executeTx(tx, null, self._api, callback)
-    }
-
-    self._api.detectNetwork((err, network) => {
-      if (err) {
-        console.log(err)
-        return
+      if (self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+        return executeTx(tx, null, self._api, callback)
       }
 
-      confirmCb(network, tx, gasEstimation, (gasPrice) => {
-        return executeTx(tx, gasPrice, self._api, callback)
-      }, (error) => {
-        callback(error)
+      self._api.detectNetwork((err, network) => {
+        if (err) {
+          console.log(err)
+          return
+        }
+
+        confirmCb(network, tx, tx.gas, (gasPrice) => {
+          return executeTx(tx, gasPrice, self._api, callback)
+        }, (error) => {
+          callback(error)
+        })
       })
+    }, () => {
+      var blockGasLimit = executionContext.currentblockGasLimit()
+      // NOTE: estimateGas very likely will return a large limit if execution of the code failed
+      //       we want to be able to run the code in order to debug and find the cause for the failure
+      if (err) return callback(err)
+
+      var warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation). '
+      warnEstimation += ' ' + err
+
+      if (gasEstimation > gasLimit) {
+        return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
+      }
+      if (gasEstimation > blockGasLimit) {
+        return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
+      }
     })
   })
 }
@@ -183,12 +186,12 @@ function sendTransaction (sendTx, tx, pass, callback) {
   }
 }
 
-function run (self, tx, stamp, confirmationCb, callback) {
+function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
-    self.queusTxs.push({ tx, stamp, callback })
+    self.queusTxs.push({ tx, stamp, callback})
   } else {
     self.pendingTxs[stamp] = tx
-    self.execute(tx, confirmationCb, (error, result) => {
+    self.execute(tx, confirmationCb, gasEstimationForceSend, (error, result) => {
       delete self.pendingTxs[stamp]
       callback(error, result)
       if (self.queusTxs.length) {
