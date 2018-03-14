@@ -52,6 +52,7 @@ function initVM (st, privateKey) {
       st.fail(mes)
     } else {
       remixLib.global.web3 = obj
+      remixLib.global.web3Debug = obj
     }
   })
   return vm
