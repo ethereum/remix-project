@@ -23,7 +23,7 @@ var css = csjs`
     opacity: 0.8;
   }
   .caret {
-    color: ${styles.terminal.icon_Color};
+    color: ${styles.terminal.icon_Color_Menu};
     font-size: 15px;
     cursor: pointer;
     display: flex;
@@ -31,21 +31,10 @@ var css = csjs`
     left: 7px;
   }
   .caret:hover {
-    color: ${styles.terminal.icon_HoverColor};
-  }
-  .caret {
-    color: ${styles.terminal.icon_Color};
-    font-size: 15px;
-    cursor: pointer;
-    display: flex;
-    position: absolute;
-    left: 7px;
-  }
-  .caret:hover {
-    color: ${styles.terminal.icon_HoverColor};
+    color: ${styles.terminal.icon_HoverColor_Menu};
   }
   .txLog {
-    width: 75%;
+    width: 95%;
   }
   .txItem {
     color: ${styles.terminal.text_Primary};
@@ -90,18 +79,16 @@ var css = csjs`
     display: flex;
   }
   .debug {
-    color: ${styles.terminal.text_Title_TransactionLog};
-    font-weight: bold;
-    cursor: pointer;
-    text-weight: bold;
+    ${styles.terminal.button_Log_Debug}
     margin-left: 5px;
     width: 55px;
     min-width: 55px;
     min-height: 20px;
     max-height: 20px;
+    font-size: 11px;
   }
   .debug:hover {
-    text-decoration: underline;
+    opacity: 0.8;
   }
   `
 /**
@@ -177,6 +164,15 @@ class TxLogger {
   }
 }
 
+function debug (e, data, self) {
+  e.stopPropagation()
+  if (data.tx.envMode === 'vm') {
+    self.event.trigger('debugRequested', [data.tx.hash])
+  } else {
+    modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
+  }
+}
+
 function log (self, tx, api) {
   var resolvedTransaction = api.resolvedTransaction(tx.hash)
   if (resolvedTransaction) {
@@ -192,9 +188,6 @@ function log (self, tx, api) {
 }
 
 function renderKnownTransaction (self, data) {
-  function debug () {
-    self.event.trigger('debugRequested', [data.tx.hash])
-  }
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
@@ -204,7 +197,7 @@ function renderKnownTransaction (self, data) {
         <i class="${css.caret} fa fa-caret-right"></i>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${debug}>[debug]</div>
+          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
       </div>
     </span>
@@ -213,13 +206,6 @@ function renderKnownTransaction (self, data) {
 }
 
 function renderCall (self, data) {
-  function debug () {
-    if (data.tx.envMode === 'vm') {
-      self.event.trigger('debugRequested', [data.tx.hash])
-    } else {
-      modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
-    }
-  }
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
@@ -233,22 +219,17 @@ function renderCall (self, data) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>return:</span>
         </span>
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${debug}>[debug]</div>
+          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
       </div>
-      <div> ${JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t')}</div>
     </span>
   `
   return tx
 }
 
 function renderUnknownTransaction (self, data) {
-  function debug () {
-    self.event.trigger('debugRequested', [data.tx.hash])
-  }
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
@@ -258,7 +239,7 @@ function renderUnknownTransaction (self, data) {
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${debug}>[debug]</div>
+          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
       </div>
     </span>
