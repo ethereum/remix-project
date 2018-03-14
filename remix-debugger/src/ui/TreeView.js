@@ -77,32 +77,32 @@ class TreeView {
 
   formatData (key, data, children, expand, keyPath) {
     var self = this
-    var li = yo`<li key=${key} class=${css.li_tv}></li>`
+    var li = yo`<li key=${keyPath} class=${css.li_tv}></li>`
     var caret = yo`<div class="fa fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
-      <div key=${key} class=${css.label_tv}>
+      <div key=${keyPath} class=${css.label_tv}>
         ${caret}
         <span>${self.formatSelf(key, data, li)}</span>
       </div>`
     li.appendChild(label)
     if (data.children) {
-      var list = yo`<ul key=${key} class=${css.ul_tv}>${children}</ul>`
+      var list = yo`<ul key=${keyPath} class=${css.ul_tv}>${children}</ul>`
       list.style.display = 'none'
       caret.className = list.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
       label.onclick = function () {
         self.expand(keyPath)
       }
       label.oncontextmenu = function (event) {
-        self.event.trigger('nodeRightClick', [key, data, label, event])
+        self.event.trigger('nodeRightClick', [keyPath, data, label, event])
       }
       li.appendChild(list)
     } else {
       caret.style.visibility = 'hidden'
       label.oncontextmenu = function (event) {
-        self.event.trigger('leafRightClick', [key, data, label, event])
+        self.event.trigger('leafRightClick', [keyPath, data, label, event])
       }
       label.onclick = function (event) {
-        self.event.trigger('leafClick', [key, data, label, event])
+        self.event.trigger('leafClick', [keyPath, data, label, event])
       }
     }
     return li
