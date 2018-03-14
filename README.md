@@ -21,10 +21,19 @@ Note: it contains the latest release of Solidity available at the time of the pa
 
 Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
+Remix-ide has been published as an npm module:
+
+```bash
+npm install remix-ide -g
+remix-ide
+```
+Or if you want to clone the github repository:
+
 ```bash
 git clone https://github.com/ethereum/remix-ide.git
 cd remix-ide
 npm install
+npm run build && npm run serve
 ```
 
 ## DEVELOPING:
