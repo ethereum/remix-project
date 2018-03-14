@@ -137,6 +137,7 @@
       ]
     ]
   },
+  "bin" : { "remix-ide" : "./bin/remix-ide" },
   "scripts": {
     "setupremix": "npm run pullremix && npm run linkremixcore && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixdebugger;",
     "pullremix": "git clone https://github.com/ethereum/remix",
