@@ -22,6 +22,7 @@ var txExecution = require('./src/execution/txExecution')
 var txHelper = require('./src/execution/txHelper')
 var txFormat = require('./src/execution/txFormat')
 var txListener = require('./src/execution/txListener')
+var txRunner = require('./src/execution/txRunner')
 var executionContext = require('./src/execution/execution-context')
 var typeConversion = require('./src/execution/typeConversion')
 
@@ -65,6 +66,7 @@ function modules () {
       executionContext: executionContext,
       txFormat: txFormat,
       txListener: txListener,
+      txRunner: txRunner,
       typeConversion: typeConversion
     }
   }
