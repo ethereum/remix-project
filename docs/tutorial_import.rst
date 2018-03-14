@@ -8,7 +8,7 @@ This tutorial will show you how to import local and external files.
 The compilation result will also contain contracts implemented in the imported files.
 
 For a detailed explanation of the ``import`` keyword see the ``Solidity``
-`documentation <http://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files>`_
+`documentation <https://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files>`_
 
 Importing a local file
 ----------------------
@@ -22,7 +22,7 @@ Importing from Github
 ----------------------
 
 It is possible to import files directly from github with URLs like
-``http://github.com/<owner>/<repo>/<path to the file>``.
+``https://github.com/<owner>/<repo>/<path to the file>``.
 
 .. image:: tuto_importgit.png
 
