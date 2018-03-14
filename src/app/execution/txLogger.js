@@ -17,6 +17,7 @@ var typeConversion = remixLib.execution.typeConversion
 var css = csjs`
   .log {
     display: flex;
+    justify-content: space-between;
     cursor: pointer;
   }
   .log:hover {
@@ -34,7 +35,7 @@ var css = csjs`
     color: ${styles.terminal.icon_HoverColor_Menu};
   }
   .txLog {
-    width: 95%;
+    width: 75%;
   }
   .txItem {
     color: ${styles.terminal.text_Primary};
@@ -50,7 +51,9 @@ var css = csjs`
     float: left;
     margin: 0 10px;
   }
-  .txTable, .tr, .td {
+  .txTable,
+  .tr,
+  .td {
     border-collapse: collapse;
     font-size: 10px;
     color: ${styles.terminal.text_Primary};
@@ -89,8 +92,7 @@ var css = csjs`
   }
   .debug:hover {
     opacity: 0.8;
-  }
-  `
+  }`
 /**
   * This just export a function that register to `newTransaction` and forward them to the logger.
   * Emit debugRequested
