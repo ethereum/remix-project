@@ -17,7 +17,7 @@ var modalCustom = require('./app/ui/modal-dialog-custom')
 var uiUtil = require('./app/ui/util')
 
 var modalDialog = require('./app/ui/modaldialog')
-var typeConversion = require('./app/execution/typeConversion')
+var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('./app/execution/confirmDialog')
 
 /*
