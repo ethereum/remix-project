@@ -3,7 +3,7 @@ var EthJSTX = require('ethereumjs-tx')
 var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
-var executionContext = require('../../execution-context')
+var executionContext = require('./execution-context')
 
 function TxRunner (vmaccounts, api) {
   this._api = api
