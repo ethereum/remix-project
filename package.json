@@ -1,7 +1,6 @@
 {
-  "private": true,
   "name": "remix-ide",
-  "version": "0.0.0",
+  "version": "0.5.0",
   "description": "Minimalistic browser-based Solidity IDE",
   "devDependencies": {
     "async": "^2.1.2",
@@ -137,6 +136,7 @@
       ]
     ]
   },
+  "bin" : { "remix-ide" : "./bin/remix-ide" },
   "scripts": {
     "setupremix": "npm run pullremix && npm run linkremixcore && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixdebugger;",
     "pullremix": "git clone https://github.com/ethereum/remix",
