@@ -28,6 +28,7 @@ module.exports = {
         'path': ''
       },
       'desiredCapabilities': {
+        'screenResolution': '2560x1600',
         'browserName': 'firefox',
         'javascriptEnabled': true,
         'acceptSslCerts': true,

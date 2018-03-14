@@ -61,7 +61,7 @@ function testSimpleContract (browser, callback) {
  "1": "string: comment_comment_",
  "2": "bool: true",
  "3": "uint256: 4"
-}`).perform(() => { callback(null, browser) })
+}`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
 
@@ -99,7 +99,7 @@ function testReturnValues (browser, callback) {
         '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0x7fa...14aff', null, `{
  "0": "uint8: _en 2",
  "1": "int256[5][]: _a1 1,-45,-78,56,60, -1,42,334,-45455,-446, 1,10,-5435,45,-7"
-}`).perform(() => { callback(null, browser) })
+}`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
 
@@ -136,7 +136,7 @@ function testInputValues (browser, callback) {
   ]
  }
 ]`)
-      .perform(() => { callback(null, browser) })
+      .click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
 
