@@ -27,6 +27,7 @@
     "commander": "^2.9.0",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
+    "lerna": "^2.9.0",
     "watch": "^1.0.2",
     "websocket": "^1.0.24",
     "stdout": "0.0.3",
