@@ -124,7 +124,7 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
       tx.gas = !gasEstimation ? gasLimit : gasEstimation
 
       if (self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-        return executeTx(tx, null, self._api, callback)
+        return executeTx(tx, null, self._api, promptCb, callback)
       }
 
       self._api.detectNetwork((err, network) => {
@@ -134,7 +134,7 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
         }
 
         confirmCb(network, tx, tx.gas, (gasPrice) => {
-          return executeTx(tx, gasPrice, self._api, callback)
+          return executeTx(tx, gasPrice, self._api, promptCb, callback)
         }, (error) => {
           callback(error)
         })
