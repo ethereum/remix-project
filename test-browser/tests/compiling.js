@@ -57,10 +57,10 @@ function testSimpleContract (browser, callback) {
       .testFunction('g - transact (not payable)',
         '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
         `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xb15...92781`, null, `{
- "0": "uint256: 345",
- "1": "string: comment_comment_",
- "2": "bool: true",
- "3": "uint256: 4"
+  "0": "uint256: 345",
+  "1": "string: comment_comment_",
+  "2": "bool: true",
+  "3": "uint256: 4"
 }`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
