@@ -1,6 +1,6 @@
 {
   "name": "remix-ide",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "description": "Minimalistic browser-based Solidity IDE",
   "devDependencies": {
     "async": "^2.1.2",
@@ -148,6 +148,7 @@
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
     "downloadsolc": "rimraf soljson.js && cd node_modules/solc && wget https://ethereum.github.io/solc-bin/soljson.js && cd ../../",
+    "downloadsolc_root": "wget https://ethereum.github.io/solc-bin/soljson.js",
     "lint": "standard | notify-error",
     "make-mock-compiler": "node ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
@@ -158,7 +159,7 @@
     "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env safari,chrome,default",
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
     "onchange": "onchange build/app.js -- npm-run-all lint",
-    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc build",
+    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
     "remixd": "node ./node_modules/remixd/src/main.js -s ./contracts",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
