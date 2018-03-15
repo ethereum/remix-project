@@ -57,10 +57,10 @@ function testSimpleContract (browser, callback) {
       .testFunction('g - transact (not payable)',
         '0xb1532162e2e31397dc1e07ed0a1cf08f728e9b4487c6f9ed79d2f39410c92781',
         `[vm]\nfrom:0xca3...a733c\nto:TestContract.g() 0x692...77b3a\nvalue:0 wei\ndata:0xe21...79b8e\nlogs:0\nhash:0xb15...92781`, null, `{
-  "0": "uint256: 345",
-  "1": "string: comment_comment_",
-  "2": "bool: true",
-  "3": "uint256: 4"
+   "0": "uint256: 345",
+   "1": "string: comment_comment_",
+   "2": "bool: true",
+   "3": "uint256: 4"
 }`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
@@ -74,10 +74,10 @@ function testReturnValues (browser, callback) {
         '0x79dc928d149d2ade02ab610a8ae290636222d034d4adce0bb08a68401e3d1f7f',
         `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0x79d...d1f7f`,
         null, `{
-  "0": "bool: _b true",
-  "1": "uint256: _u 345",
-  "2": "int256: _i -345",
-  "3": "address: _a 0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
+"0": "bool: _b true",
+"1": "uint256: _u 345",
+"2": "int256: _i -345",
+"3": "address: _a 0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
 }`)
       .pause(500)
       .testFunction('retunValues2 - transact (not payable)',
