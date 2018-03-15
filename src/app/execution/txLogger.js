@@ -80,10 +80,10 @@ var css = csjs`
   }
   .buttons {
     display: flex;
+    margin-right: 10px;
   }
   .debug {
     ${styles.terminal.button_Log_Debug}
-    margin-left: 5px;
     width: 55px;
     min-width: 55px;
     min-height: 20px;
