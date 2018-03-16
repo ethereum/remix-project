@@ -200,7 +200,7 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
     })
   }
   var functionDefinition = resolveFunctionDefinition(tree, step, previousSourceLocation)
-  if (functionDefinition && newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1])) {
+  if (functionDefinition && (newLocation && traceHelper.isJumpDestInstruction(tree.traceManager.trace[step - 1]) || functionDefinition.attributes.isConstructor)) {
     tree.functionCallStack.push(step)
     // means: the previous location was a function definition && JUMPDEST
     // => we are at the beginning of the function and input/output are setup
