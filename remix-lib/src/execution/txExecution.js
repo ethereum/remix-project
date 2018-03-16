@@ -5,7 +5,7 @@ module.exports = {
     * deploy the given contract
     *
     * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Object} udap    - udapp.
+    * @param {Object} udapp    - udapp.
     * @param {Function} callback    - callback.
     */
   createContract: function (data, udapp, callback) {
@@ -21,7 +21,7 @@ module.exports = {
     * @param {String} to    - address of the contract to call.
     * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
     * @param {Object} funAbi    - abi definition of the function to call.
-    * @param {Object} udap    - udapp.
+    * @param {Object} udapp    - udapp.
     * @param {Function} callback    - callback.
     */
   callFunction: function (to, data, funAbi, udapp, callback) {
