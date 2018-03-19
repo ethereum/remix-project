@@ -11,8 +11,7 @@ function SourceLocationTracker (_codeManager) {
   this.codeManager = _codeManager
   this.event = new EventManager()
   this.sourceMappingDecoder = new SourceMappingDecoder()
-  this.sourceMapCacheOfInstructionIndex = {}
-  this.sourceMapCacheOfVMTraceIndex = {}
+  this.sourceMapByAddress = {}
 }
 
 /**
@@ -25,14 +24,10 @@ function SourceLocationTracker (_codeManager) {
  */
 SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function (address, index, contracts, cb) {
   var self = this
-  if (self.sourceMapCacheOfInstructionIndex[address]) {
-    return cb(null, self.sourceMappingDecoder.atIndex(index, self.sourceMapCacheOfInstructionIndex[address]))
-  }
-  extractSourceMap(this.codeManager, address, contracts, function (error, sourceMap) {
+  extractSourceMap(this, this.codeManager, address, contracts, function (error, sourceMap) {
     if (error) {
       cb(error)
     } else {
-      if (!helper.isContractCreation(address)) self.sourceMapCacheOfInstructionIndex[address] = sourceMap
       cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
     }
   })
@@ -48,16 +43,12 @@ SourceLocationTracker.prototype.getSourceLocationFromInstructionIndex = function
  */
 SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (address, vmtraceStepIndex, contracts, cb) {
   var self = this
-  if (self.sourceMapCacheOfVMTraceIndex[address]) {
-    return cb(null, self.sourceMappingDecoder.atIndex(vmtraceStepIndex, self.sourceMapCacheOfVMTraceIndex[address]))
-  }
-  extractSourceMap(this.codeManager, address, contracts, function (error, sourceMap) {
+  extractSourceMap(this, this.codeManager, address, contracts, function (error, sourceMap) {
     if (!error) {
       self.codeManager.getInstructionIndex(address, vmtraceStepIndex, function (error, index) {
         if (error) {
           cb(error)
         } else {
-          if (!helper.isContractCreation(address)) self.sourceMapCacheOfVMTraceIndex[address] = sourceMap
           cb(null, self.sourceMappingDecoder.atIndex(index, sourceMap))
         }
       })
@@ -65,6 +56,10 @@ SourceLocationTracker.prototype.getSourceLocationFromVMTraceIndex = function (ad
       cb(error)
     }
   })
+}
+
+SourceLocationTracker.prototype.clearCache = function () {
+  this.sourceMapByAddress = {}
 }
 
 function getSourceMap (address, code, contracts) {
@@ -81,11 +76,14 @@ function getSourceMap (address, code, contracts) {
   return null
 }
 
-function extractSourceMap (codeManager, address, contracts, cb) {
+function extractSourceMap (self, codeManager, address, contracts, cb) {
+  if (self.sourceMapByAddress[address]) return cb(null, self.sourceMapByAddress[address])
+
   codeManager.getCode(address, function (error, result) {
     if (!error) {
       var sourceMap = getSourceMap(address, result.bytecode, contracts)
       if (sourceMap) {
+        if (!helper.isContractCreation(address)) self.sourceMapByAddress[address] = sourceMap
         cb(null, sourceMap)
       } else {
         cb('no sourcemap associated with the code ' + address)
