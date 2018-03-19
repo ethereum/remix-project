@@ -1,6 +1,6 @@
 {
   "name": "remixd",
-  "version": "0.1.8-alpha.1",
+  "version": "0.1.8-alpha.2",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
   "main": "./src/index.js",
   "bin" : { "remixd" : "./bin/remixd" },
@@ -25,14 +25,15 @@
   },
   "homepage": "https://github.com/ethereum/remixd#readme",
   "dependencies": {
+    "chokidar": "^2.0.2",
     "commander": "^2.9.0",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
     "lerna": "^2.9.0",
-    "watch": "^1.0.2",
-    "websocket": "^1.0.24",
-    "stdout": "0.0.3",
     "serve": "^6.3.1",
-    "web3": "ethereum/web3.js#1.0"
+    "stdout": "0.0.3",
+    "watch": "^1.0.2",
+    "web3": "ethereum/web3.js#1.0",
+    "websocket": "^1.0.24"
   }
 }
