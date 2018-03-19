@@ -6,6 +6,6 @@ module.exports = {
     startMistGeth: require('./services/startMistGeth'),
     startFrontend: require('./services/startFrontend'),
     autoMine: require('./services/autoMine'),
-    sharedFolder: require('./services/sharedFodler')
+    sharedFolder: require('./services/sharedFolder')
   }
 }
