@@ -4,6 +4,7 @@ var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var async = require('async')
+var request = require('request')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
@@ -584,19 +585,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ------------------ gist load ----------------
   function loadFromGist (gistId) {
     return gistHandler.handleLoad(gistId, function (gistId) {
-      $.ajax({
-        url: 'https://api.github.com/gists/' + gistId,
-        jsonp: 'callback',
-        dataType: 'jsonp',
-        success: function (response) {
-          if (response.data) {
-            if (!response.data.files) {
-              modalDialogCustom.alert('Gist load error: ' + response.data.message)
-              return
-            }
-            loadFiles(response.data.files, 'gist')
-          }
+      request.get({
+        url: `https://api.github.com/gists/${gistId}`,
+        json: true
+      }, (error, response, data = {}) => {
+        if (error || !data.files) {
+          modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
+          return
         }
+        loadFiles(data.files, 'gist')
       })
     })
   }

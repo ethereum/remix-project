@@ -1,6 +1,7 @@
 /* global Option, Worker */
 var $ = require('jquery')
 var yo = require('yo-yo')
+var request = require('request')
 var QueryParams = require('../../lib/query-params')
 var remixLib = require('remix-lib')
 var Storage = remixLib.Storage
@@ -185,7 +186,17 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
   header.selected = true
   versionSelector.appendChild(header)
 
-  $.getJSON('https://solc-bin.ethereum.org/bin/list.json').done(function (data) {
+  request.get({
+    url: 'https://solc-bin.ethereum.org/bin/list.json',
+    json: true
+  }, (error, response, data) => {
+    if (error || !data) {
+      tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
+      versionSelector.append(new Option('latest local version', 'builtin'))
+      loadVersion('builtin', queryParams, appAPI, el)
+      return
+    }
+
     // populate version dropdown with all available compiler versions (descending order)
     $.each(data.builds.slice().reverse(), function (i, build) {
       versionSelector.appendChild(new Option(build.longVersion, build.path))
@@ -205,12 +216,6 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
     }
 
     loadVersion(selectedVersion, queryParams, appAPI, el)
-  }).fail(function (xhr, text, err) {
-    tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
-    // loading failed for some reason, fall back to local compiler
-    versionSelector.append(new Option('latest local version', 'builtin'))
-
-    loadVersion('builtin', queryParams, appAPI, el)
   })
 
   return { render () { return el } }
