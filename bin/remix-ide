@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 var httpServer = require('http-server')
+var remixd = require('remixd')
 
 var server = httpServer.createServer({
     root: __dirname + '/../'
-});
+})
 
 console.log('\x1b[33m%s\x1b[0m', 'Starting Remix IDE at http://localhost:8080')
 
-server.listen(8080, '127.0.0.1', function () {});
+server.listen(8080, '127.0.0.1', function () {})
+var router = new remixd.Router()
+router.start(__dirname)
+
