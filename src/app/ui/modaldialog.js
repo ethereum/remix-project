@@ -1,7 +1,7 @@
 var yo = require('yo-yo')
 var css = require('./styles/modaldialog-styles')
 
-module.exports = (title, content, ok, cancel) => {
+module.exports = (title, content, ok, cancel, focusSelector) => {
   var container = document.querySelector(`.${css.modal}`)
   if (!container) {
     document.querySelector('body').appendChild(html())
@@ -54,6 +54,15 @@ module.exports = (title, content, ok, cancel) => {
 
   function show () {
     container.style.display = 'block'
+    if (focusSelector) {
+      const focusTarget = document.querySelector(`.${css.modal} ${focusSelector}`)
+      if (focusTarget) {
+        focusTarget.focus()
+        if (typeof focusTarget.setSelectionRange === 'function') {
+          focusTarget.setSelectionRange(0, focusTarget.value.length)
+        }
+      }
+    }
   }
 
   function removeEventListener () {
