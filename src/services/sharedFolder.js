@@ -1,11 +1,16 @@
 var utils = require('../utils')
 var isbinaryfile = require('isbinaryfile')
 var fs = require('fs-extra')
-var watch = require('watch')
+var chokidar = require('chokidar')
 
 module.exports = {
-  monitors: [],
   trackDownStreamUpdate: {},
+  websocket: null,
+  alreadyNotified: {},
+
+  setWebSocket: function (websocket) {
+    this.websocket = websocket
+  },
 
   sharedFolder: function (sharedFolder) {
     this.sharedFolder = sharedFolder
@@ -22,6 +27,10 @@ module.exports = {
   resolveDirectory: function (args, cb) {
     try {
       var path = utils.absolutePath(args.path, this.sharedFolder)
+      if (this.websocket && !this.alreadyNotified[path]) {
+        this.alreadyNotified[path] = 1
+        this.setupNotifications(path)
+      }
       cb(null, utils.resolveDirectory(path, this.sharedFolder))
     } catch (e) {
       cb(e.message)
@@ -87,29 +96,31 @@ module.exports = {
     })
   },
 
-  setupNotifications: function (websocket, path) {
+  setupNotifications: function (path) {
     if (!isRealPath(path)) return
-    watch.createMonitor(path, (monitor) => {
-      this.monitors.push(monitor)
-      monitor.on('created', (f, stat) => {
-        isbinaryfile(f, (error, isBinary) => {
-          if (error) console.log(error)
-          if (stat.isDirectory()) {
-            this.setupNotifications(websocket, f)
-          }
-          if (websocket.connection) websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: isBinary, isFolder: stat.isDirectory() }))
-        })
+    var watcher = chokidar.watch(path, {depth: 0, ignorePermissionErrors: true})
+    console.log('setup ntifications for ' + path)
+    watcher.on('add', (f, stat) => {
+      isbinaryfile(f, (error, isBinary) => {
+        if (error) console.log(error)
+        if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: isBinary, isFolder: false }))
       })
-      monitor.on('changed', (f, curr, prev) => {
-        if (this.trackDownStreamUpdate[f]) {
-          delete this.trackDownStreamUpdate[f]
-          return
-        }
-        if (websocket.connection) websocket.send(message('changed', utils.relativePath(f, this.sharedFolder)))
-      })
-      monitor.on('removed', (f, stat) => {
-        if (websocket.connection) websocket.send(message('removed', { path: utils.relativePath(f, this.sharedFolder), isFolder: stat.isDirectory() }))
-      })
+    })
+    watcher.on('addDir', (f, stat) => {
+      if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: false, isFolder: true }))
+    })
+    watcher.on('change', (f, curr, prev) => {
+      if (this.trackDownStreamUpdate[f]) {
+        delete this.trackDownStreamUpdate[f]
+        return
+      }
+      if (this.websocket.connection) this.websocket.send(message('changed', utils.relativePath(f, this.sharedFolder)))
+    })
+    watcher.on('unlink', (f) => {
+      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.sharedFolder), isFolder: false }))
+    })
+    watcher.on('unlinkDir', (f) => {
+      if (this.websocket.connection) this.websocket.send(message('removed', { path: utils.relativePath(f, this.sharedFolder), isFolder: true }))
     })
   }
 }
