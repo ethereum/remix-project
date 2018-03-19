@@ -8,7 +8,7 @@ var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var crypto = require('crypto')
-var TxRunner = require('./app/execution/txRunner')
+var TxRunner = remixLib.execution.txRunner
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
@@ -17,7 +17,7 @@ var modalCustom = require('./app/ui/modal-dialog-custom')
 var uiUtil = require('./app/ui/util')
 
 var modalDialog = require('./app/ui/modaldialog')
-var typeConversion = require('./app/execution/typeConversion')
+var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('./app/execution/confirmDialog')
 
 /*
