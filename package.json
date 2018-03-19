@@ -1,6 +1,6 @@
 {
   "name": "remixd",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
   "main": "./src/index.js",
   "bin" : { "remixd" : "./bin/remixd" },
@@ -34,8 +34,5 @@
     "stdout": "0.0.3",
     "serve": "^6.3.1",
     "web3": "ethereum/web3.js#1.0"
-  },
-  "bin": {
-    "remixd": "./src/main.js"
   }
 }
