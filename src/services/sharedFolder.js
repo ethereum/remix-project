@@ -13,7 +13,7 @@ module.exports = {
 
   list: function (args, cb) {
     try {
-      cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))  
+      cb(null, utils.walkSync(this.sharedFolder, {}, this.sharedFolder))
     } catch (e) {
       cb(e.message)
     }
