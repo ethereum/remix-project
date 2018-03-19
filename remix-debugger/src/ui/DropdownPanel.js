@@ -19,6 +19,10 @@ var css = csjs`
   .name {
     font-weight: bold;
   }
+  .nameDetail {
+    font-weight: bold;
+    margin-left: 3px;
+  }
   .icon {
     color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
     margin-right: 5%;
@@ -131,7 +135,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
     </style>
     <div class="${css.title} title">
       <div class="${css.icon} fa fa-caret-right" onclick=${function () { self.toggle() }} ></div>
-      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span onclick=${function () { self.toggle() }} ></span>
+      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
       <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fa fa-clipboard"></div>
     </div>
     <div class='dropdownpanel' style='display:none'>
