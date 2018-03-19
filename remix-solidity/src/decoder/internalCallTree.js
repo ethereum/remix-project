@@ -61,6 +61,7 @@ class InternalCallTree {
     /*
       scopeStart: represent start of a new scope. Keys are index in the vmtrace, values are scopeId
     */
+    this.sourceLocationTracker.clearCache()
     this.functionCallStack = []
     this.scopeStarts = {}
     this.variableDeclarationByFile = {}
