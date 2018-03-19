@@ -34,8 +34,5 @@
     "stdout": "0.0.3",
     "serve": "^6.3.1",
     "web3": "ethereum/web3.js#1.0"
-  },
-  "bin": {
-    "remixd": "./src/main.js"
   }
 }
