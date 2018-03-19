@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-var Router = require('./router')
+var Router = require('../src/router')
 var program = require('commander')
-var startmistGeth = require('./services/startMistGeth')
-var startFrontend = require('./services/startFrontend')
+var startmistGeth = require('../src/services/startMistGeth')
+var startFrontend = require('../src/services/startFrontend')
 var fs = require('fs-extra')
 
 program
