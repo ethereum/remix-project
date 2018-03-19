@@ -7,7 +7,7 @@ setupRemixd () {
   cd contracts
   echo 'sharing folder: '
   echo $PWD
-  node ../node_modules/remixd/src/main.js -s $PWD &
+  ./node_modules/remixd/bin/remixd -s $PWD &
   cd ..
 }
 
