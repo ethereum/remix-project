@@ -31,7 +31,7 @@
   },
   "scripts": {
     "test": "standard && npm run downloadsolc && tape ./test/tests.js",
-    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js) && cd ..",
+    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget https://solc-bin.ethereum.org/soljson.js) && cd ..",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc",
     "postinstall": "npm-run-all -ls downloadsolc"
   },
