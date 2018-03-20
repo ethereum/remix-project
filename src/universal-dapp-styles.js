@@ -19,6 +19,7 @@ var css = csjs`
     word-break: break-word;
     line-height: initial;
     overflow: visible;
+    margin-bottom: 10px;
   }
   .titleLine {
     display: flex;
@@ -37,6 +38,8 @@ var css = csjs`
     ${styles.rightPanel.runTab.box_Instance};
     margin-bottom: 10px;
     padding: 10px 15px 15px 15px;
+    position: relative;
+    overflow: visible;
   }
   .instance .title:before {
     content: "\\25BE";
@@ -55,13 +58,24 @@ var css = csjs`
   .instance.hidesub .udappClose {
       display: flex;
   }
+  .methCaret {
+    margin-right: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    padding-top: 5px;
+    vertical-align: top;
+  }
+  .group:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
   .buttonsContainer {
     margin-top: 2%;
     display: flex;
     overflow: hidden;
   }
   .contractActions {
-    display: flex;
   }
   .instanceButton {}
   .closeIcon {
@@ -75,10 +89,13 @@ var css = csjs`
   .contractProperty {
     overflow: auto;
     margin-bottom: 0.4em;
+    width:100%;
   }
   .contractProperty.hasArgs input {
-    width: 75%;
+    min-width: 200px;
     padding: .36em;
+    border-radius: 5px;
+    width: 70%;
   }
   .contractProperty button {
     ${styles.rightPanel.runTab.button_Create}
@@ -101,10 +118,9 @@ var css = csjs`
     margin:0;
     word-break: inherit;
     outline: none;
-    width: inherit;
   }
   .contractProperty input {
-    display: none;
+    width: 75%
   }
   .contractProperty > .value {
     box-sizing: border-box;
@@ -112,6 +128,83 @@ var css = csjs`
     align-self: center;
     color: ${styles.appProperties.mainText_Color};
     margin-left: 4px;
+  }
+  .contractActionsContainer {
+    display: flex;
+    width: 98%;
+  }
+  .contractActionsContainerSingle {
+    display: flex;
+    width: 100%;
+  }
+  .contractActionsContainerMulti {
+    display:none;
+    width: 100%;
+  }
+  .contractActionsContainerMultiInner {
+    margin-bottom: 10px;
+    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    padding: 0px 5px 5px 0px;
+    background-color: ${styles.appProperties.primary_BackgroundColor};
+    width: 100%;
+  }
+  .multiHeader {
+    text-align: left;
+    font-size: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .multiTitle {
+    ${styles.rightPanel.runTab.button_Create}
+    border-radius: 3px;
+    display: inline-block;
+    width: 95%;
+    font-size: 10px;
+    height: 25px;
+    padding-left: 20px;
+    font-weight: normal;
+    line-height: 25px;
+    cursor: default;
+  }
+  .contractProperty.constant .multiTitle {
+    ${styles.rightPanel.runTab.button_Constant}
+    border-radius: 3px;
+    display: inline-block;
+    width: 95%;
+    font-size: 10px;
+    height: 25px;
+    padding-left: 20px;
+    font-weight: normal;
+    line-height: 25px;
+    cursor: default;
+  }
+  .multiArg {
+    margin-bottom: 8px;
+  }
+  .multiArg input{
+    padding: 5px;
+  }
+
+  .multiArg label {
+      float: left;
+      margin-right: 6px;
+      font-size: 10px;
+      width: 20%;
+  }
+  .multiArg button {
+    border-radius: 3px;
+    float: right;
+    margin-right: 5%;
+    font-size: 10px;
+    border-width: 1px;
+    width: inherit; 
+  }
+  .multiHeader button {
+    display: inline-block;
+    width: 94%;
+  }
+  .hasArgs .multiArg input {
+    border-left: 1px solid #dddddd;
   }
   .hasArgs input {
     display: block;
