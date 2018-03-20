@@ -52,17 +52,6 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
         </div>
       </div>
       <div class="${css.info}">
-        <div class=${css.title}>Remixd</div>
-        <div class="${css.crow}">
-          Remixd is a tool which allow Remix IDE to access files located in your local computer.
-          it can also be used to setup a development environment.
-        </div>
-        <div class="${css.crow}">More infos:</div>
-        <div class="${css.crow}"><a target="_blank" href="https://github.com/ethereum/remixd"> https://github.com/ethereum/remixd</a></div>
-        <div class="${css.crow}"><a target="_blank" href="http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a></div>
-        <div class="${css.crow}">Installation: <pre class=${css.remixdinstallation}>npm install remixd -g</pre></div>
-      </div>
-      <div class="${css.info}">
         <div class=${css.title}>Themes</div>
         <div class=${css.attention}>
           <i title="Select the theme" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
@@ -90,8 +79,30 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
             </div>
         </div>
       </div>
-    </div>
-
+      <div class="${css.info}">
+        <div class=${css.title}>Remixd</div>
+        <div class="${css.crow}">
+          Remixd is a tool which allow Remix IDE to access files located in your local computer.
+          it can also be used to setup a development environment.
+        </div>
+        <div class="${css.crow}">More infos:</div>
+        <div class="${css.crow}"><a target="_blank" href="https://github.com/ethereum/remixd"> https://github.com/ethereum/remixd</a></div>
+        <div class="${css.crow}"><a target="_blank" href="http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a></div>
+        <div class="${css.crow}">Installation: <pre class=${css.remixdinstallation}>npm install remixd -g</pre></div>
+      </div>
+      <div class="${css.info}">
+        <div class=${css.title}>Running Remix locally</div>
+        <div class="${css.crow}">
+          as a NPM module:
+        </div>
+        <a target="_blank" href="https://www.npmjs.com/package/remix-ide">https://www.npmjs.com/package/remix-ide</a>
+        <pre class=${css.remixdinstallation}>npm install remix-ide -g</pre>
+        <div class="${css.crow}">
+          as an electron app: 
+        </div>
+        <a target="_blank" href="https://github.com/horizon-games/remix-app">https://github.com/horizon-games/remix-app</a>
+      </div>
+     </div>
   `
 
   function loadPlugin () {
