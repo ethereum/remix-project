@@ -173,6 +173,5 @@
     "test": "npm run csslint; standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js"
-  },
-  "dependencies": {}
+  }
 }

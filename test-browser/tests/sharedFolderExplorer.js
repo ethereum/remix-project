@@ -20,7 +20,6 @@ contract gmbh {
     }
 }
 `
-
 var sources = [
   {
     'localhost/folder1/contract2.sol': {content: 'contract test2 { function get () returns (uint) { return 11; }}'}
@@ -79,25 +78,25 @@ function runTests (browser, testData) {
     .click('[data-path="localhost/folder1/contract1.sol"]') // open localhost/folder1/contract1.sol
     .pause(1000)
     .perform(function (done) { // check the content and replace by another
-      browser.testEditorValue('contract test1 { function get () returns (uint) { return 10; }}\n', () => {
+      browser.testEditorValue('contract test1 { function get () returns (uint) { return 10; }}', () => {
         console.log('testEditorValue')
         done()
       })
     })
     .perform(function (done) {
-      browser.setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}\n', () => {
+      browser.setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}', () => {
         console.log('setEditorValue')
         done()
       })
     })
     .perform(function (done) {
-      browser.testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}\n', () => {
+      browser.testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}', () => {
         console.log('testEditorValue')
         done()
       })
     })
     .perform(function (done) {
-      browser.setEditorValue('contract test1 { function get () returns (uint) { return 10; }}\n', () => {
+      browser.setEditorValue('contract test1 { function get () returns (uint) { return 10; }}', () => {
         console.log('setEditorValue')
         done()
       })

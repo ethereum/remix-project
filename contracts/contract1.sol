@@ -1,1 +1,1 @@
-contract test1 { function get () returns (uint) { return 10; }}
+contract test1 { function get () returns (uint) { return 8; }}
