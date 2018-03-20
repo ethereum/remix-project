@@ -318,7 +318,7 @@ function filepanel (appAPI, filesProvider) {
   // ------------------ copy files --------------
 
   function copyFiles () {
-    modalDialogCustom.prompt(null, 'To which other remix-ide instance do you want to copy over all files?', 'https://ethereum.github.io/remix-ide/', (target) => {
+    modalDialogCustom.prompt(null, 'To which other remix-ide instance do you want to copy over all files?', 'https://remix.ethereum.org', (target) => {
       doCopy(target)
     })
     function doCopy (target) {
