@@ -73,11 +73,12 @@ function testReturnValues (browser, callback) {
       .testFunction('retunValues1 - transact (not payable)',
         '0x79dc928d149d2ade02ab610a8ae290636222d034d4adce0bb08a68401e3d1f7f',
         `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0x79d...d1f7f`,
-        null, `{
-"0": "bool: _b true",
-"1": "uint256: _u 345",
-"2": "int256: _i -345",
-"3": "address: _a 0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
+        null,
+        `{
+ "0": "bool: _b true",
+ "1": "uint256: _u 345",
+ "2": "int256: _i -345",
+ "3": "address: _a 0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
 }`)
       .pause(500)
       .testFunction('retunValues2 - transact (not payable)',
@@ -143,8 +144,8 @@ function testInputValues (browser, callback) {
 
 var sources = [
   {'browser/Untitled.sol': {content: `pragma solidity ^0.4.0;
-      contract TestContract { function f() returns (uint) { return 8; }
-      function g() returns (uint, string, bool, uint) {
+      contract TestContract { function f() returns (uint) { return 8; } 
+      function g() returns (uint, string, bool, uint) {  
         uint payment = 345;
         bool payed = true;
         string memory comment = "comment_comment_";
@@ -159,7 +160,7 @@ var sources = [
         _i = -345;
         _a = msg.sender;
     }
-
+    
     function retunValues2 () returns (byte _b, bytes2 _b2, bytes3 _b3, bytes _blit, bytes5 _b5, bytes6 _b6, string _str, bytes7 _b7, bytes22 _b22, bytes32 _b32)  {
         _b = 0x12;
         _b2 = 0x1223;
@@ -171,7 +172,7 @@ var sources = [
         _blit = hex"123498";
         _str = "this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string";
     }
-
+    
     function retunValues3 () returns (ActionChoices _en, int[5][] _a1)  {
        _en = ActionChoices.GoStraight;
        int[5][] memory a = new int[5][](3);
