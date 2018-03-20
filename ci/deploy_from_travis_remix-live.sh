@@ -27,8 +27,6 @@ chmod 600 deploy_key_remix-live
 openssl aes-256-cbc -K $ENCRYPTED_KEY2 -iv $ENCRYPTED_IV2 -in ci/deploy_key_remix-live.enc -out deploy_key_remix-live -d
 eval `ssh-agent -s`
 
-echo -n "remix.ethereum.org" > CNAME
-git add CNAME
 git commit --amend -m "Built website from {$SHA}."
 ssh-add deploy_key_remix-live
 git push -f git@github.com:ethereum/remix-live.git gh-pages
