@@ -13,7 +13,7 @@ Ethereum tools for the web.
 
 ## <a name="what-is-remix"></a>What is Remix?
 
-**Remix** is a suite of tools to interact with the Ethereum blockchain in order to debug transactions, stored in this Git repository. A Remix transaction Web debugger is available [here](http://ethereum.github.io/remix), and its source code is part of this repository.
+**Remix** is a suite of tools to interact with the Ethereum blockchain in order to debug transactions, stored in this Git repository. A Remix transaction Web debugger is available [here](http://remix.ethereum.org), and its source code is part of this repository.
 
 The **Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository **is available [here](https://github.com/ethereum/remix-ide)**, and an online version is available at https://remix.ethereum.org.
 
