@@ -12,9 +12,6 @@ var DummyProvider = require('./src/web3Provider/dummyProvider')
 var Web3VMProvider = require('./src/web3Provider/web3VmProvider')
 var AstWalker = require('./src/astWalker')
 var global = require('./src/global')
-var styleGuide = require('./src/ui/style-guide')
-var styleGuideDark = require('./src/ui/styleGuideDark')
-var themeChooser = require('./src/ui/theme-chooser')
 var Storage = require('./src/storage')
 
 var EventsDecoder = require('./src/execution/eventsDecoder')
@@ -54,11 +51,6 @@ function modules () {
     util: util,
     AstWalker: AstWalker,
     global: global,
-    ui: {
-      styleGuide: styleGuide,
-      styleGuideDark: styleGuideDark,
-      themeChooser: themeChooser
-    },
     execution: {
       EventsDecoder: EventsDecoder,
       txExecution: txExecution,
