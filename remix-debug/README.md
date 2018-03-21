@@ -1,6 +1,6 @@
 # `remix-debug`
 
-remix-debug is a libraries which wrap other remix-* libraries to make debugging thereum transactions easier.
+remix-debug wrap other remix-* libraries and can be used to debug Ethereum transactions.
 
 + [Installation](#installation)
 + [Development](#development)
