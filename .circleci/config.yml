@@ -46,13 +46,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dep-bundle-3-{{ checksum "package.json" }}
+            - dep-bundle-4-{{ checksum "package.json" }}
       - run: npm install
       - save_cache:
-          key: dep-bundle-3-{{ checksum "package.json" }}
+          key: dep-bundle-4-{{ checksum "package.json" }}
           paths:
             - ~/repo/node_modules
-      - run: cd src/app/debugger/remix-debugger && ./ci/browser_tests.sh
+      - run: npm run build_debugger
+      - run: ./ci/browser_tests_debugger.sh
 
 workflows:
   version: 2
