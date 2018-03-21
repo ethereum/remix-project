@@ -157,7 +157,7 @@
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
-    "remixd": "node ./node_modules/remixd/src/main.js -s ./contracts",
+    "remixd": "./node_modules/remixd/bin/remixd -s ./contracts",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "serve": "execr --silent http-server .",
