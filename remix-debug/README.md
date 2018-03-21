@@ -4,8 +4,6 @@ remix-debug is a libraries which wrap other remix-* libraries to make debugging 
 
 + [Installation](#installation)
 + [Development](#development)
-+ [First steps](#firststeps)
-+ [Tests](#tests)
 
 ## Installation
 
