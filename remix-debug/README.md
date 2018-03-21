@@ -14,7 +14,7 @@ npm install remix-debug
 
 ## Development
 
-```bash
+```javascript
 var Debugger = require('remix-debug').EthDebugger
 var BreakpointManager = require('remix-debug').EthDebugger
 
@@ -59,7 +59,7 @@ debugger.callTree.register('callTreeReady', () => {
     debugger.decodeLocalsAt(23, location, (error, decodedlocals) => {})
   })
   
-  debugger.extractLocalsAt(23, (null, locals) => {}
+  debugger.extractLocalsAt(23, (null, locals) => {})
   
 })
 ```
