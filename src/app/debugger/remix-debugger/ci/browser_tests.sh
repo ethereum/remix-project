@@ -19,7 +19,7 @@ SAUCECONNECT_JOBIDENTIFIER="remix_tests_${BUILD_ID}"
 SAUCECONNECT_READYFILE="sc.ready"
 TEST_EXITCODE=0
 
-npm run build
+npm install && npm run build
 npm run serve &
 
 wget $SAUCECONNECT_URL
