@@ -51,7 +51,8 @@
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2"
+    "yo-yo": "^1.2.2",
+    "yo-yoify": "^3.1.0"
   },
   "repository": {
     "type": "git",
