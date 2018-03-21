@@ -192,6 +192,8 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
   }, (error, response, data) => {
     if (error || !data) {
       tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
+
+      // loading failed for some reason, fall back to local compiler
       versionSelector.append(new Option('latest local version', 'builtin'))
       loadVersion('builtin', queryParams, appAPI, el)
       return
