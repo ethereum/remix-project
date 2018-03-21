@@ -2,7 +2,7 @@
 var yo = require('yo-yo')
 const copy = require('clipboard-copy')
 var remixLib = require('remix-lib')
-var TreeView = require('./TreeView')
+var TreeView = require('../../../../ui/TreeView') // TODO setup a direct reference to the UI components
 var EventManager = remixLib.EventManager
 
 var csjs = require('csjs-inject')

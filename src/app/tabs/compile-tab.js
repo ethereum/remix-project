@@ -6,7 +6,7 @@ var parseContracts = require('../contract/contractParser')
 var publishOnSwarm = require('../contract/publishOnSwarm')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
-var TreeView = require('remix-debugger').ui.TreeView
+var TreeView = require('../ui/TreeView')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 
 var css = require('./styles/compile-tab-styles')

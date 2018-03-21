@@ -1,4 +1,4 @@
-var TreeView = require('remix-debugger').ui.TreeView
+var TreeView = require('./TreeView')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
