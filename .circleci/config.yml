@@ -34,6 +34,7 @@ jobs:
             - /repo/node_modules
       - run: npm run lint && npm run test && npm run downloadsolc && npm run make-mock-compiler && npm run build
       - run: ./ci/browser_tests.sh
+      - run: cd src/app/debugger/remix-debugger && ./ci/browser_tests.sh
       # - run: if [ $CIRCLE_BRANCH = 'master' ]; then ./ci/deploy_from_travis_master.sh; fi
       # - run: if [ $CIRCLE_BRANCH = 'remix_live' ]; then ./ci/deploy_from_travis_master.sh; fi
 
