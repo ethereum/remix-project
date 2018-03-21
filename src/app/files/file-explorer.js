@@ -1,5 +1,5 @@
 var yo = require('yo-yo')
-var Treeview = require('remix-debugger').ui.TreeView
+var Treeview = require('../ui/TreeView')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')

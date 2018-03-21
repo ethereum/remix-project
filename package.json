@@ -37,7 +37,6 @@
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
     "remix-core": "latest",
-    "remix-debugger": "latest",
     "remix-lib": "latest",
     "remix-solidity": "latest",
     "remixd": "git+https://github.com/ethereum/remixd.git",
@@ -52,7 +51,8 @@
     "watchify": "^3.9.0",
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
-    "yo-yo": "^1.2.2"
+    "yo-yo": "^1.2.2",
+    "yo-yoify": "^3.1.0"
   },
   "repository": {
     "type": "git",
