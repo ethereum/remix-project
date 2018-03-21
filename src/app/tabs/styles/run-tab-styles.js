@@ -1,5 +1,5 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('remix-lib').ui.themeChooser
+var styleGuide = require('../../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = csjs`
