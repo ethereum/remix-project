@@ -1,6 +1,6 @@
 'use strict'
 
-var remixDebugger = require('remix-debugger')
+var Ethdebugger = require('./remix-debugger/src/ui/Ethdebugger')
 var remixLib = require('remix-lib')
 var remixCore = require('remix-core')
 var executionContext = require('../../execution-context')
@@ -10,7 +10,7 @@ var executionContext = require('../../execution-context')
  */
 function Debugger (id, appAPI, editorEvent) {
   this.el = document.querySelector(id)
-  this.debugger = new remixDebugger.ui.Debugger(
+  this.debugger = new Ethdebugger(
     {
       compilationResult: () => {
         var compilationResult = self.appAPI.lastCompilationResult()
