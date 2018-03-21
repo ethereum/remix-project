@@ -1,5 +1,6 @@
 # `remix-debugger`
-
+# (Remix debugger has been deprecated and is not maintained anymore - the `remix-debug` module can be used to build your own debugger)
+ 
 The Remix Debugger is a webapp to debug the Ethereum VM and transactions.
 
 + [Installation](#installation)
