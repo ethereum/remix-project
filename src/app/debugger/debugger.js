@@ -1,6 +1,6 @@
 'use strict'
 
-var remixDebugger = require('remix-debugger')
+var remixDebugger = require('./remix-debugger/src/ui/Ethdebugger')
 var remixLib = require('remix-lib')
 var remixCore = require('remix-core')
 var executionContext = require('../../execution-context')

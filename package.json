@@ -37,7 +37,6 @@
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
     "remix-core": "latest",
-    "remix-debugger": "latest",
     "remix-lib": "latest",
     "remix-solidity": "latest",
     "remixd": "git+https://github.com/ethereum/remixd.git",
