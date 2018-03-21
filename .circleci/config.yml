@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  remix-ide:
     docker:
       # specify the version you desire here
       - image: circleci/node:7.10
@@ -26,20 +26,37 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dep-bundle-2-{{ checksum "package.json" }}
+            - dep-bundle-4-{{ checksum "package.json" }}
       - run: npm install
       - save_cache:
-          key: dep-bundle-2-{{ checksum "package.json" }}
+          key: dep-bundle-4-{{ checksum "package.json" }}
           paths:
-            - /repo/node_modules
+            - ~/repo/node_modules
       - run: npm run lint && npm run test && npm run downloadsolc && npm run make-mock-compiler && npm run build
       - run: ./ci/browser_tests.sh
+  
+  remix-debugger:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:7.10
+    
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dep-bundle-3-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dep-bundle-3-{{ checksum "package.json" }}
+          paths:
+            - ~/repo/node_modules
       - run: cd src/app/debugger/remix-debugger && ./ci/browser_tests.sh
-      # - run: if [ $CIRCLE_BRANCH = 'master' ]; then ./ci/deploy_from_travis_master.sh; fi
-      # - run: if [ $CIRCLE_BRANCH = 'remix_live' ]; then ./ci/deploy_from_travis_master.sh; fi
 
 workflows:
   version: 2
   build_all:
     jobs:
-      - build
+      - remix-ide
+      - remix-debugger
