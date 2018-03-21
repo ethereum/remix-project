@@ -7,7 +7,6 @@ remix-debug is a libraries which wrap other remix-* libraries to make debugging 
 
 ## Installation
 
-Make sure Node is [installed on your setup](https://docs.npmjs.com/getting-started/installing-node), and that a [local `geth`/`eth` node is running](../README.md#how-to-use).
 
 ```bash
 npm install remix-debug
@@ -61,4 +60,6 @@ debugger.callTree.register('callTreeReady', () => {
   })
   
   debugger.extractLocalsAt(23, (null, locals) => {}
+  
+})
 ```
