@@ -31,7 +31,7 @@
     "js-beautify": "1.6.14",
     "minixhr": "^3.2.2",
     "mkdirp": "^0.5.1",
-    "nightwatch": "^0.9.3",
+    "nightwatch": "^0.9.20",
     "notify-error": "^1.2.0",
     "npm-link-local": "^1.1.0",
     "npm-run-all": "^4.0.2",
@@ -133,7 +133,9 @@
       ]
     ]
   },
-  "bin" : { "remix-ide" : "./bin/remix-ide" },
+  "bin": {
+    "remix-ide": "./bin/remix-ide"
+  },
   "scripts": {
     "setupremix": "npm run pullremix && npm run linkremixcore && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixdebugger;",
     "pullremix": "git clone https://github.com/ethereum/remix",
@@ -155,7 +157,7 @@
     "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
     "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
     "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env safari,chrome,default",
-    "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",    
+    "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
     "nightwatch_remote_debugger_parallel": "nightwatch --config nightwatch_debugger.js --env local",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
