@@ -6,7 +6,7 @@ var TreeView = require('../../../../ui/TreeView') // TODO setup a direct referen
 var EventManager = remixLib.EventManager
 
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../../../../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = csjs`

@@ -5,7 +5,7 @@ var copyToClipboard = require('../ui/copy-to-clipboard')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var EventManager = remixLib.EventManager

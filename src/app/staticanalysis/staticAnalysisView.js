@@ -5,7 +5,7 @@ var $ = require('jquery')
 var remixLib = require('remix-lib')
 var utils = remixLib.util
 
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = require('./styles/staticAnalysisView-styles')

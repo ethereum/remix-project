@@ -1,8 +1,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.styleGuide
-var styles = styleGuide()
+var styleGuide = require('../ui/styles-guide/theme-chooser')
+var styles = styleGuide.chooser()
 
 var css = csjs`
   .txInfoBox {

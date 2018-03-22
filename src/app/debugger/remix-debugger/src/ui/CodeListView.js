@@ -5,7 +5,7 @@ var remixLib = require('remix-lib')
 var DropdownPanel = require('./DropdownPanel')
 var EventManager = remixLib.EventManager
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../../../../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = csjs`
