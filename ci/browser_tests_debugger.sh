@@ -19,7 +19,7 @@ SAUCECONNECT_JOBIDENTIFIER="remix_tests_${BUILD_ID}"
 SAUCECONNECT_READYFILE="sc.ready"
 TEST_EXITCODE=0
 
-npm run serve &
+npm run serve_debugger &
 
 wget $SAUCECONNECT_URL
 tar -zxvf sc-"$SC_VERSION"-"$OS"."$FILEFORMAT"
