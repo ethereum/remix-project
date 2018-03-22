@@ -1,6 +1,6 @@
 var yo = require('yo-yo')
 
-var styleGuide = require('remix-lib').ui.themeChooser
+var styleGuide = require('../styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = yo`<style>

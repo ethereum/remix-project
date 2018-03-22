@@ -70,7 +70,8 @@ function waitForRemix (data) {
   }, 500)
 }
 
-loadJSON('/test-browser/resources/testWeb3.json', function (result) {
+console.log('injecting test web3...')
+loadJSON('/test-browser-debugger/resources/testWeb3.json', function (result) {
   var data = JSON.parse(result)
   waitForRemix(data)
 })
