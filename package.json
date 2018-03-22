@@ -158,7 +158,7 @@
     "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
     "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env safari,chrome,default",
     "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
-    "nightwatch_remote_debugger_parallel": "nightwatch --config nightwatch_debugger.js --env local",
+    "nightwatch_remote_debugger_parallel": "nightwatch --config nightwatch_debugger.js --env safari,chrome,default",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
     "remixd": "node ./node_modules/remixd/src/main.js -s ./contracts",
