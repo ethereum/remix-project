@@ -27,7 +27,7 @@ Remix-ide has been published as an npm module:
 npm install remix-ide -g
 remix-ide
 ```
-Or if you want to clone the github repository:
+Or if you want to clone the github repository (`wget` need to be installed first) :
 
 ```bash
 git clone https://github.com/ethereum/remix-ide.git
