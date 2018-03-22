@@ -10,8 +10,7 @@ var TreeView = require('../ui/TreeView')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 
 var css = require('./styles/compile-tab-styles')
-var remixLib = require('remix-lib')
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 function compileTab (appAPI = {}, appEvents = {}, opts = {}) {

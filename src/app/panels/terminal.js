@@ -12,7 +12,7 @@ var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
 
 var csjs = require('csjs-inject')
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = require('./styles/terminal-styles')
