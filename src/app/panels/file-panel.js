@@ -12,7 +12,7 @@ var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 var helper = require('../../lib/helper')
 
-var styleGuide = remixLib.ui.themeChooser
+var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = require('./styles/file-panel-styles')
