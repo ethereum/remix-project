@@ -8,6 +8,7 @@ var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
 
 tape('debug contract', function (t) {
+  t.plan(12)
   var privateKey = new Buffer('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
   var vm = vmCall.initVM(t, privateKey)
   var output = compiler.compileStandardWrapper(compilerInput(ballot))
@@ -95,16 +96,22 @@ function testDebugging (t, debugManager) {
 
   var sourceMappingDecoder = new remixLib.SourceMappingDecoder()
   var breakPointManager = new remixCore.code.BreakpointManager(debugManager, (rawLocation) => {
-    return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, ballot)
+    return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
   })
 
-  breakPointManager.add({fileName: 'test.sol', row: 24})
+  breakPointManager.add({fileName: 'test.sol', row: 23})
 
   breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
-    t.equal(sourceLocation, '')
-    t.equal(step, 67)
+    console.log('breakpointHit')
+    t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 591, length: 1, file: 0, jump: '-' }))
+    t.equal(step, 73)
   })
-  breakPointManager.jumpNextBreakpoint(true)
+
+  breakPointManager.event.register('noBreakpointHit', function () {
+    t.end('noBreakpointHit')
+    console.log('noBreakpointHit')
+  })
+  breakPointManager.jumpNextBreakpoint(0, true)
 }
 
 var ballot = `pragma solidity ^0.4.0;
