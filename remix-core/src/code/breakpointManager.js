@@ -28,8 +28,8 @@ class BreakpointManager {
     * @param {Bool} defaultToLimit - if true jump to the end of the trace if no more breakpoint found
     *
     */
-  async jumpNextBreakpoint (defaultToLimit) {
-    this.jump(1, defaultToLimit)
+  async jumpNextBreakpoint (fromStep, defaultToLimit) {
+    this.jump(fromStep || 0, 1, defaultToLimit)
   }
 
   /**
@@ -37,8 +37,8 @@ class BreakpointManager {
     * @param {Bool} defaultToLimit - if true jump to the start of the trace if no more breakpoint found
     *
     */
-  async jumpPreviousBreakpoint (defaultToLimit) {
-    this.jump(-1, defaultToLimit)
+  async jumpPreviousBreakpoint (fromStep, defaultToLimit) {
+    this.jump(fromStep || 0, -1, defaultToLimit)
   }
 
    /**
@@ -47,7 +47,7 @@ class BreakpointManager {
     * @param {Bool} defaultToLimit - if true jump to the limit (end if direction is 1, beginning if direction is -1) of the trace if no more breakpoint found
     *
     */
-  async jump (direction, defaultToLimit) {
+  async jump (fromStep, direction, defaultToLimit) {
     if (!this.locationToRowConverter) {
       console.log('row converter not provided')
       return
@@ -67,15 +67,15 @@ class BreakpointManager {
         sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
         return false
       } else {
-        self.debugger.stepManager.jumpTo(currentStep)
-        self.event.trigger('breakpointHit', [sourceLocation])
+        if (self.debugger.stepManager) self.debugger.stepManager.jumpTo(currentStep)
+        self.event.trigger('breakpointHit', [sourceLocation, currentStep])
         return true
       }
     }
 
     var sourceLocation
     var previousSourceLocation
-    var currentStep = this.debugger.currentStepIndex + direction
+    var currentStep = fromStep + direction
     var lineHadBreakpoint = false
     while (currentStep > 0 && currentStep < this.debugger.traceManager.trace.length) {
       try {
@@ -105,7 +105,8 @@ class BreakpointManager {
       }
       currentStep += direction
     }
-    if (defaultToLimit) {
+    this.event.trigger('NoBreakpointHit', [])
+    if (this.debugger.stepManager && defaultToLimit) {
       if (direction === -1) {
         this.debugger.stepManager.jumpTo(0)
       } else if (direction === 1) {
