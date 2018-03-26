@@ -22,6 +22,8 @@
     "babel-preset-es2015": "^6.24.0",
     "babel-preset-stage-0": "^6.24.1",
     "babelify": "^7.3.0",
+    "ethereumjs-util": "^4.5.0",
+    "ethereumjs-vm": "2.3.1",
     "notify-error": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "remix-core": "latest",
@@ -32,7 +34,9 @@
   },
   "scripts": {
     "build": "mkdirp build; browserify index.js > build/app.js",
-    "lint": "standard | notify-error"
+    "lint": "standard | notify-error",
+    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget --no-check-certificate https://solc-bin.ethereum.org/soljson.js) && cd ..",
+    "test": "standard && npm run downloadsolc && tape ./test/tests.js"
   },
   "repository": {
     "type": "git",
