@@ -30,6 +30,15 @@ jobs:
     steps:
       - checkout
       - run: cd remix-solidity && npm install && npm test
+   
+  remix-debug:
+     docker:
+        - image: circleci/node:7.10
+     environment:
+     working_directory: ~/repo
+     steps:
+      - checkout
+      - run: cd remix-debug && npm install && npm test
              
 workflows:
   version: 2
@@ -38,4 +47,5 @@ workflows:
       - remix-lib
       - remix-core
       - remix-solidity
+      - remix-debug
       
