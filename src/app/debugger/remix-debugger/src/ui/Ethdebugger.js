@@ -173,7 +173,7 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
       yo.update(self.view, self.render())
       self.event.trigger('newTraceLoaded', [self.traceManager.trace])
       if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
-        self.breakpointManager.jumpNextBreakpoint(false)
+        self.breakpointManager.jumpNextBreakpoint(0, false)
       }
     } else {
       self.statusMessage = error ? error.message : 'Trace not loaded'
