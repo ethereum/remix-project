@@ -242,7 +242,7 @@ function filepanel (appAPI, filesProvider) {
           appAPI.switchFile(filesProvider['browser'].type + '/' + newName)
         }
       })
-    })
+    }, null, true)
   }
 
   /**
