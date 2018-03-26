@@ -6,8 +6,8 @@ module.exports = {
   alert: function (text) {
     modal('', yo`<div>${text}</div>`, null, { label: null })
   },
-  prompt: function (title, text, inputValue, ok, cancel) {
-    prompt(title, text, false, inputValue, ok, cancel)
+  prompt: function (title, text, inputValue, ok, cancel, focus) {
+    prompt(title, text, false, inputValue, ok, cancel, focus)
   },
   promptPassphrase: function (title, text, inputValue, ok, cancel) {
     prompt(title, text, true, inputValue, ok, cancel)
@@ -63,7 +63,7 @@ module.exports = {
   }
 }
 
-function prompt (title, text, hidden, inputValue, ok, cancel) {
+function prompt (title, text, hidden, inputValue, ok, cancel, focus) {
   if (!inputValue) inputValue = ''
   var type = hidden ? 'password' : 'text'
   var input = yo`<input type=${type} name='prompt_text' id='prompt_text' class="${css['prompt_text']}" value='${inputValue}' >`
@@ -73,6 +73,7 @@ function prompt (title, text, hidden, inputValue, ok, cancel) {
     },
     {
       fn: () => { if (typeof cancel === 'function') cancel() }
-    }
+    },
+    focus ? '#prompt_text' : undefined
   )
 }
