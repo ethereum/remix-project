@@ -10,6 +10,8 @@ var helper = require('../../lib/helper')
 
 var css = require('./styles/file-explorer-styles')
 
+let MENU_HANDLE
+
 function fileExplorer (appAPI, files) {
   var self = this
   this.events = new EventManager()
@@ -119,7 +121,8 @@ function fileExplorer (appAPI, files) {
   })
 
   self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
-    contextMenu(event, {
+    MENU_HANDLE && MENU_HANDLE.hide(null, true)
+    MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
         if (self.files.readonly) { return addTooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
@@ -133,7 +136,8 @@ function fileExplorer (appAPI, files) {
   })
 
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
-    contextMenu(event, {
+    MENU_HANDLE && MENU_HANDLE.hide(null, true)
+    MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
         if (self.files.readonly) { return addTooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
