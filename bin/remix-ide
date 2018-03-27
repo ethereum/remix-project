@@ -6,7 +6,7 @@ var server = httpServer.createServer({
     root: __dirname + '/../'
 })
 
-var folder = process.argv.length > 2 ? process.argv[2] : __dirname
+var folder = process.argv.length > 2 ? process.argv[2] : process.cwd()
 
 server.listen(8080, '127.0.0.1', function () {})
 var router = new remixd.Router()
