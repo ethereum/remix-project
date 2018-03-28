@@ -284,7 +284,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
     txFormat.buildData(selectedContract.name, selectedContract.contract.object, appAPI.getContracts(), true, constructor, args, (error, data) => {
       if (!error) {
         appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
-        txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
+        appAPI.udapp().createContract(data, (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
             if (isVM) {
