@@ -10,8 +10,7 @@ tape('ContractParameters - (TxFormat.buildData) - format input parameters', func
   var output = compiler.compileStandardWrapper(compilerInput(uintContract))
   output = JSON.parse(output)
   var contract = output.contracts['test.sol']['uintContractTest']
-  var udapp = { runTx: () => {} } // fake
-  context = { output, contract, udapp }
+  context = { output, contract }
   var bytecode = '6060604052341561000f57600080fd5b6101058061001e6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680634b521953146044575b600080fd5b3415604e57600080fd5b608a600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091908035906020019091905050608c565b005b8260008190555081600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050505600a165627a7a72305820d05e3789952dfb3ba575bcb79da62b6e259adbf498ea909031a42b647f7bceb30029'
   t.test('(TxFormat.buildData)', function (st) {
     st.plan(3)
@@ -23,12 +22,11 @@ tape('ContractParameters - (TxFormat.buildData) - format input parameters', func
 })
 
 function testWithInput (st, params, expected) {
-  txFormat.buildData('uintContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, context.udapp
-    , (error, data) => {
-      if (error) { return st.fails(error) }
-      console.log(data)
-      st.equal(data.dataHex, expected)
-    }, () => {})
+  txFormat.buildData('uintContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, (error, data) => {
+    if (error) { return st.fails(error) }
+    console.log(data)
+    st.equal(data.dataHex, expected)
+  }, () => {}, () => {})
 }
 
 tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
@@ -73,7 +71,7 @@ function testLinkLibrary (st, fakeDeployedContracts) {
     }, (msg) => {
       st.equal(msg, deployMsg[0])
       deployMsg.shift()
-    })
+    }, () => {})
 }
 
 var uintContract = `contract uintContractTest {
