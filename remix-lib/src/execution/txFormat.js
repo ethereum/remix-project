@@ -90,7 +90,7 @@ module.exports = {
             bytecodeToDeploy = bytecode + dataHex
             return callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs, contractBytecode, contractName: contractName})
           }
-        }, callbackStep)
+        }, callbackStep, callbackDeployLibrary)
         return
       } else {
         dataHex = bytecodeToDeploy + dataHex
@@ -170,9 +170,9 @@ module.exports = {
       return callback(null, contract.evm.bytecode.object)
     }
     if (contract.evm.bytecode.linkReferences && Object.keys(contract.evm.bytecode.linkReferences).length) {
-      this.linkBytecodeStandard(contract, contracts, callback, callbackStep)
+      this.linkBytecodeStandard(contract, contracts, callback, callbackStep, callbackDeployLibrary)
     } else {
-      this.linkBytecodeLegacy(contract, contracts, callback, callbackStep)
+      this.linkBytecodeLegacy(contract, contracts, callback, callbackStep, callbackDeployLibrary)
     }
   },
 
