@@ -46,7 +46,7 @@ module.exports = {
     isbinaryfile(path, (error, isBinary) => {
       if (error) console.log(error)
       if (isBinary) {
-        cb(null, '<binary content not displayed>')
+        cb(null, {content: '<binary content not displayed>', readonly: true})
       } else {
         fs.readFile(path, 'utf8', (error, data) => {
           if (error) console.log(error)
@@ -64,6 +64,10 @@ module.exports = {
   set: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (fs.existsSync(path) && !isRealPath(path, cb)) return
+    if (args.content === 'undefined') { // no !!!!!
+      console.log('trying to write "undefined" ! stopping.')
+      return
+    }
     this.trackDownStreamUpdate[path] = path
     fs.writeFile(path, args.content, 'utf8', (error, data) => {
       if (error) console.log(error)
@@ -99,16 +103,19 @@ module.exports = {
   setupNotifications: function (path) {
     if (!isRealPath(path)) return
     var watcher = chokidar.watch(path, {depth: 0, ignorePermissionErrors: true})
-    console.log('setup ntifications for ' + path)
+    console.log('setup notifications for ' + path)
+    /* we can't listen on created file / folder
     watcher.on('add', (f, stat) => {
       isbinaryfile(f, (error, isBinary) => {
         if (error) console.log(error)
+        console.log('add', f)
         if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: isBinary, isFolder: false }))
       })
     })
     watcher.on('addDir', (f, stat) => {
       if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: false, isFolder: true }))
     })
+    */
     watcher.on('change', (f, curr, prev) => {
       if (this.trackDownStreamUpdate[f]) {
         delete this.trackDownStreamUpdate[f]
