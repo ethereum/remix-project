@@ -40,11 +40,11 @@ module.exports = {
     * @param {Bool} isConstructor    - isConstructor.
     * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
     * @param {Object} params    - input paramater of the function to call
-    * @param {Object} udapp    - udapp
     * @param {Function} callback    - callback
     * @param {Function} callbackStep  - callbackStep
+    * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
     */
-  buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, udapp, callback, callbackStep) {
+  buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
     var funArgs = ''
     var data = ''
     var dataHex = ''
@@ -83,7 +83,7 @@ module.exports = {
       contractBytecode = contract.evm.bytecode.object
       var bytecodeToDeploy = contract.evm.bytecode.object
       if (bytecodeToDeploy.indexOf('_') >= 0) {
-        this.linkBytecode(contract, contracts, udapp, (err, bytecode) => {
+        this.linkBytecode(contract, contracts, (err, bytecode) => {
           if (err) {
             callback('Error deploying required libraries: ' + err)
           } else {
@@ -103,12 +103,12 @@ module.exports = {
 
   atAddress: function () {},
 
-  linkBytecodeStandard: function (contract, contracts, udapp, callback, callbackStep) {
+  linkBytecodeStandard: function (contract, contracts, callback, callbackStep, callbackDeployLibrary) {
     asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences, (libs, file, cbFile) => {
       asyncJS.eachOfSeries(contract.evm.bytecode.linkReferences[file], (libRef, libName, cbLibDeployed) => {
         var library = contracts[file][libName]
         if (library) {
-          this.deployLibrary(file + ':' + libName, libName, library, contracts, udapp, (error, address) => {
+          this.deployLibrary(file + ':' + libName, libName, library, contracts, (error, address) => {
             if (error) {
               return cbLibDeployed(error)
             }
@@ -118,7 +118,7 @@ module.exports = {
             }
             contract.evm.bytecode.object = this.linkLibraryStandard(libName, hexAddress, contract)
             cbLibDeployed()
-          }, callbackStep)
+          }, callbackStep, callbackDeployLibrary)
         } else {
           cbLibDeployed('Cannot find compilation data of library ' + libName)
         }
@@ -133,7 +133,7 @@ module.exports = {
     })
   },
 
-  linkBytecodeLegacy: function (contract, contracts, udapp, callback, callbackStep) {
+  linkBytecodeLegacy: function (contract, contracts, callback, callbackStep, callbackDeployLibrary) {
     var libraryRefMatch = contract.evm.bytecode.object.match(/__([^_]{1,36})__/)
     if (!libraryRefMatch) {
       return callback('Invalid bytecode format.')
@@ -152,7 +152,7 @@ module.exports = {
     if (!library) {
       return callback('Library ' + libraryName + ' not found.')
     }
-    this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, (err, address) => {
+    this.deployLibrary(libraryName, libraryShortName, library, contracts, (err, address) => {
       if (err) {
         return callback(err)
       }
@@ -161,36 +161,36 @@ module.exports = {
         hexAddress = hexAddress.slice(2)
       }
       contract.evm.bytecode.object = this.linkLibrary(libraryName, hexAddress, contract.evm.bytecode.object)
-      this.linkBytecode(contract, contracts, udapp, callback, callbackStep)
-    }, callbackStep)
+      this.linkBytecode(contract, contracts, callback, callbackStep, callbackDeployLibrary)
+    }, callbackStep, callbackDeployLibrary)
   },
 
-  linkBytecode: function (contract, contracts, udapp, callback, callbackStep) {
+  linkBytecode: function (contract, contracts, callback, callbackStep, callbackDeployLibrary) {
     if (contract.evm.bytecode.object.indexOf('_') < 0) {
       return callback(null, contract.evm.bytecode.object)
     }
     if (contract.evm.bytecode.linkReferences && Object.keys(contract.evm.bytecode.linkReferences).length) {
-      this.linkBytecodeStandard(contract, contracts, udapp, callback, callbackStep)
+      this.linkBytecodeStandard(contract, contracts, callback, callbackStep)
     } else {
-      this.linkBytecodeLegacy(contract, contracts, udapp, callback, callbackStep)
+      this.linkBytecodeLegacy(contract, contracts, callback, callbackStep)
     }
   },
 
-  deployLibrary: function (libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep) {
+  deployLibrary: function (libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary) {
     var address = library.address
     if (address) {
       return callback(null, address)
     }
     var bytecode = library.evm.bytecode.object
     if (bytecode.indexOf('_') >= 0) {
-      this.linkBytecode(library, contracts, udapp, (err, bytecode) => {
+      this.linkBytecode(library, contracts, (err, bytecode) => {
         if (err) callback(err)
-        else this.deployLibrary(libraryName, libraryShortName, library, contracts, udapp, callback, callbackStep)
-      }, callbackStep)
+        else this.deployLibrary(libraryName, libraryShortName, library, contracts, callback, callbackStep, callbackDeployLibrary)
+      }, callbackStep, callbackDeployLibrary)
     } else {
       callbackStep(`creation of library ${libraryName} pending...`)
       var data = {dataHex: bytecode, funAbi: {type: 'constructor'}, funArgs: [], contractBytecode: bytecode, contractName: libraryShortName}
-      udapp.runTx({ data: data, useCall: false }, (err, txResult) => {
+      callbackDeployLibrary({ data: data, useCall: false }, (err, txResult) => {
         if (err) {
           return callback(err)
         }
