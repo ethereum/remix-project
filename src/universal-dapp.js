@@ -162,7 +162,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
       logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     }
   }
-  txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, value, self, (error, data) => {
+  txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, value, (error, data) => {
     if (!error) {
       if (isUserAction) {
         if (!args.funABI.constant) {
@@ -194,6 +194,12 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     }
   }, (msg) => {
     self._api.logMessage(msg)
+  }, (data, runTxCallback) => {
+    // called for libraries deployment
+    self.runTx(data, runTxCallback)
+  })
+}
+
   })
 }
 
