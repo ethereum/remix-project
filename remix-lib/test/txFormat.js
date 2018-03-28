@@ -39,21 +39,21 @@ tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) 
     lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2: '0xf7a10e525d4b168f45f74db1b61f63d3e7619e33',
     testContractLinkLibrary: '0xf7a10e525d4b168f45f74db1b61f63d3e7619e22'
   }
-  var udapp = { runTx: (param, callback) => {
+  var callbackDeployLibraries = (param, callback) => {
     callback(null, {
       result: {
         createdAddress: fakeDeployedContracts[param.data.contractName]
       }
     })
-  } } // fake
-  context = { output, contract, udapp }
+  } // fake
+  context = { output, contract }
   t.test('(TxFormat.buildData and link library (standard way))', function (st) {
     st.plan(6)
-    testLinkLibrary(st, fakeDeployedContracts)
+    testLinkLibrary(st, fakeDeployedContracts, callbackDeployLibraries)
   })
 })
 
-function testLinkLibrary (st, fakeDeployedContracts) {
+function testLinkLibrary (st, fakeDeployedContracts, callbackDeployLibraries) {
   var deployMsg = ['creation of library test.sol:lib1 pending...',
   'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
   txFormat.buildData('testContractLinkLibrary', context.contract, context.output.contracts, true, context.contract.abi[0], '', (error, data) => {
@@ -70,7 +70,7 @@ function testLinkLibrary (st, fakeDeployedContracts) {
   }, (msg) => {
     st.equal(msg, deployMsg[0])
     deployMsg.shift()
-  }, () => {})
+  }, callbackDeployLibraries)
 }
 
 var uintContract = `contract uintContractTest {
