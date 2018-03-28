@@ -10,6 +10,7 @@ module.exports = class SharedFolder {
     this.type = 'localhost'
     this.error = { 'EEXIST': 'File already exists' }
     this._isReady = false
+    this._readOnlyFiles = {}
     this.filesContent = {}
     this.files = {}
 
@@ -77,6 +78,7 @@ module.exports = class SharedFolder {
     this._remixd.call('sharedfolder', 'get', {path: unprefixedpath}, (error, file) => {
       if (!error) {
         this.filesContent[path] = file.content
+        if (file.readonly) { this._readOnlyFiles[path] = 1 }
         cb(error, file.content)
       } else {
         // display the last known content.
@@ -101,7 +103,7 @@ module.exports = class SharedFolder {
   }
 
   isReadOnly (path) {
-    return false // TODO: add a callback here to allow calling remixd
+    return this._readOnlyFiles[path] === 1
   }
 
   remove (path) {
