@@ -51,6 +51,14 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
     executionContext.vm().stateManager.cache.flush(function () {})
   }
   this.txRunner = new TxRunner(this.accounts, this._api)
+  this.txRunner.event.register('transactionBroadcasted', (txhash) => {
+    this._api.detectNetwork((error, network) => {
+      if (!error && network) {
+        var txLink = executionContext.txDetailsLink(network.name, txhash)
+        if (txLink) this._api.logHtmlMessage(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
+      }
+    })
+  })
 }
 
 UniversalDApp.prototype.newAccount = function (password, cb) {
