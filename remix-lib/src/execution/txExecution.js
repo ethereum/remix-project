@@ -4,30 +4,48 @@ module.exports = {
   /**
     * deploy the given contract
     *
+    * @param {String} from    - sender address
     * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Object} udapp    - udapp.
-    * @param {Function} callback    - callback.
+    * @param {String} value    - decimal representation of value.
+    * @param {String} gasLimit    - decimal representation of gas limit.
+    * @param {Object} txRunner    - TxRunner.js instance
+    * @param {Object} callbacks    - { confirmationCb, gasEstimationForceSend, promptCb }
+    *     [validate transaction] confirmationCb (network, tx, gasEstimation, continueTxExecution, cancelCb)
+    *     [transaction failed, force send] gasEstimationForceSend (error, continueTxExecution, cancelCb)
+    *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
+    * @param {Function} finalCallback    - last callback.
     */
-  createContract: function (data, udapp, callback) {
-    udapp.runTx({data: data, useCall: false}, (error, txResult) => {
+  createContract: function (from, data, value, gasLimit, txRunner, callbacks, finalCallback) {
+    if (!callbacks.confirmationCb || !callbacks.gasEstimationForceSend || !callbacks.promptCb) {
+      return finalCallback('all the callbacks must have been defined')
+    }
+    var tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit }
+    txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
+      finalCallback(error, txResult)
     })
   },
 
   /**
-    * call the current given contract
+    * call the current given contract ! that will create a transaction !
     *
-    * @param {String} to    - address of the contract to call.
+    * @param {String} from    - sender address
+    * @param {String} to    - recipient address
     * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
-    * @param {Object} funAbi    - abi definition of the function to call.
-    * @param {Object} udapp    - udapp.
-    * @param {Function} callback    - callback.
+    * @param {String} value    - decimal representation of value.
+    * @param {String} gasLimit    - decimal representation of gas limit.
+    * @param {Object} txRunner    - TxRunner.js instance
+    * @param {Object} callbacks    - { confirmationCb, gasEstimationForceSend, promptCb }
+    *     [validate transaction] confirmationCb (network, tx, gasEstimation, continueTxExecution, cancelCb)
+    *     [transaction failed, force send] gasEstimationForceSend (error, continueTxExecution, cancelCb)
+    *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
+    * @param {Function} finalCallback    - last callback.
     */
-  callFunction: function (to, data, funAbi, udapp, callback) {
-    udapp.runTx({to: to, data: data, useCall: funAbi.constant}, (error, txResult) => {
+  callFunction: function (from, to, data, value, gasLimit, funAbi, txRunner, callbacks, finalCallback) {
+    var tx = { from: from, to: to, data: data, useCall: false, value: value, gasLimit: gasLimit }
+    txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
       // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
-      callback(error, txResult)
+      finalCallback(error, txResult)
     })
   },
 
