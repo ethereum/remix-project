@@ -4,8 +4,10 @@ var EthJSBlock = require('ethereumjs-block')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var executionContext = require('./execution-context')
+var EventManager = require('../eventManager')
 
 function TxRunner (vmaccounts, api) {
+  this.event = new EventManager()
   this._api = api
   this.blockNumber = 0
   this.runAsync = true
@@ -22,19 +24,36 @@ TxRunner.prototype.rawRun = function (args, confirmationCb, gasEstimationForceSe
   run(this, args, Date.now(), confirmationCb, gasEstimationForceSend, promptCb, cb)
 }
 
-function executeTx (tx, gasPrice, api, promptCb, callback) {
+TxRunner.prototype._executeTx = function (tx, gasPrice, api, promptCb, callback) {
   if (gasPrice) tx.gasPrice = executionContext.web3().toHex(gasPrice)
   if (api.personalMode()) {
     promptCb(
       (value) => {
-        sendTransaction(executionContext.web3().personal.sendTransaction, tx, value, callback)
+        this._sendTransaction(executionContext.web3().personal.sendTransaction, tx, value, callback)
       },
       () => {
         return callback('Canceled by user.')
       }
     )
   } else {
-    sendTransaction(executionContext.web3().eth.sendTransaction, tx, null, callback)
+    this._sendTransaction(executionContext.web3().eth.sendTransaction, tx, null, callback)
+  }
+}
+
+TxRunner.prototype._sendTransaction = function (sendTx, tx, pass, callback) {
+  var self = this
+  var cb = function (err, resp) {
+    if (err) {
+      return callback(err, resp)
+    }
+    self.event.trigger('transactionBroadcasted', [resp])
+    tryTillResponse(resp, callback)
+  }
+  var args = pass !== null ? [tx, pass, cb] : [tx, cb]
+  try {
+    sendTx.apply({}, args)
+  } catch (e) {
+    return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
   }
 }
 
@@ -124,7 +143,7 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
       tx.gas = !gasEstimation ? gasLimit : gasEstimation
 
       if (self._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-        return executeTx(tx, null, self._api, promptCb, callback)
+        return self._executeTx(tx, null, self._api, promptCb, callback)
       }
 
       self._api.detectNetwork((err, network) => {
@@ -134,7 +153,7 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
         }
 
         confirmCb(network, tx, tx.gas, (gasPrice) => {
-          return executeTx(tx, gasPrice, self._api, promptCb, callback)
+          return self._executeTx(tx, gasPrice, self._api, promptCb, callback)
         }, (error) => {
           callback(error)
         })
@@ -172,20 +191,6 @@ function tryTillResponse (txhash, done) {
   })
 }
 
-function sendTransaction (sendTx, tx, pass, callback) {
-  var cb = function (err, resp) {
-    if (err) {
-      return callback(err, resp)
-    }
-    tryTillResponse(resp, callback)
-  }
-  var args = pass !== null ? [tx, pass, cb] : [tx, cb]
-  try {
-    sendTx.apply({}, args)
-  } catch (e) {
-    return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-  }
-}
 
 function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
