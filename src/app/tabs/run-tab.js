@@ -281,7 +281,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
 
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
     var args = createButtonInput.value
-    txFormat.buildData(selectedContract.name, selectedContract.contract.object, appAPI.getContracts(), true, constructor, args, appAPI.udapp(), (error, data) => {
+    txFormat.buildData(selectedContract.name, selectedContract.contract.object, appAPI.getContracts(), true, constructor, args, (error, data) => {
       if (!error) {
         appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
@@ -306,6 +306,9 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
       }
     }, (msg) => {
       appAPI.logMessage(msg)
+    }, (data, runTxCallback) => {
+      // called for libraries deployment
+      appAPI.udapp().runTx(data, runTxCallback)
     })
   }
 
