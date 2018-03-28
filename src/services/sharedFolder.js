@@ -46,7 +46,7 @@ module.exports = {
     isbinaryfile(path, (error, isBinary) => {
       if (error) console.log(error)
       if (isBinary) {
-        cb(null, '<binary content not displayed>')
+        cb(null, {content: '<binary content not displayed>', readonly: true})
       } else {
         fs.readFile(path, 'utf8', (error, data) => {
           if (error) console.log(error)
