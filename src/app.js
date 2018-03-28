@@ -302,6 +302,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       logMessage: (msg) => {
         self._components.editorpanel.log({ type: 'log', value: msg })
       },
+      logHtmlMessage: (msg) => {
+        self._components.editorpanel.log({ type: 'html', value: msg })
+      },
       config: self._api.config,
       detectNetwork: (cb) => {
         executionContext.detectNetwork(cb)

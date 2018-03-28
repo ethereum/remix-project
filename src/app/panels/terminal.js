@@ -66,6 +66,7 @@ class Terminal {
     self._INDEX.allMain = []
     self._INDEX.commands = {}
     self._INDEX.commandsMain = {}
+    self.registerCommand('html', self._blocksRenderer('html'), { activate: true })
     self.registerCommand('log', self._blocksRenderer('log'), { activate: true })
     self.registerCommand('info', self._blocksRenderer('info'), { activate: true })
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
@@ -448,6 +449,11 @@ class Terminal {
     }, 0)
   }
   _blocksRenderer (mode) {
+    if (mode === 'html') {
+      return function logger (args, scopedCommands, append) {
+        if (args.length) append(args[0])
+      }
+    }
     mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
     if (mode) {
       return function logger (args, scopedCommands, append) {
