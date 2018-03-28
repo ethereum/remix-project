@@ -235,6 +235,21 @@ function ExecutionContext () {
     }
   }
   this.setProviderFromEndpoint = setProviderFromEndpoint
+
+  this.txDetailsLink = function (network, hash) {
+    if (transactionDetailsLinks[network]) {
+      return transactionDetailsLinks[network] + hash
+    }
+  }
+}
+
+
+
+var transactionDetailsLinks = {
+  'Main': 'https://www.etherscan.io/tx/',
+  'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
+  'Ropsten': 'https://ropsten.etherscan.io//tx/',
+  'Kovan': 'https://kovan.etherscan.io/tx/'
 }
 
 module.exports = new ExecutionContext()
