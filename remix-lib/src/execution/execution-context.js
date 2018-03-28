@@ -243,8 +243,6 @@ function ExecutionContext () {
   }
 }
 
-
-
 var transactionDetailsLinks = {
   'Main': 'https://www.etherscan.io/tx/',
   'Rinkeby': 'https://rinkeby.etherscan.io/tx/',
