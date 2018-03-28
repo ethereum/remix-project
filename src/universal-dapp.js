@@ -162,7 +162,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
       logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     }
   }
-  txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, value, self, (error, data) => {
+  txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, value, (error, data) => {
     if (!error) {
       if (isUserAction) {
         if (!args.funABI.constant) {
@@ -171,7 +171,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           self._api.logMessage(`${logMsg}`)
         }
       }
-      txExecution.callFunction(args.address, data, args.funABI, self, (error, txResult) => {
+      self.callFunction(args.address, data, args.funABI, (error, txResult) => {
         if (!error) {
           var isVM = executionContext.isVM()
           if (isVM) {
@@ -194,6 +194,37 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     }
   }, (msg) => {
     self._api.logMessage(msg)
+  }, (data, runTxCallback) => {
+    // called for libraries deployment
+    self.runTx(data, runTxCallback)
+  })
+}
+
+/**
+  * deploy the given contract
+  *
+  * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
+  * @param {Function} callback    - callback.
+  */
+UniversalDApp.prototype.createContract = function (data, callback) {
+  this.runTx({data: data, useCall: false}, (error, txResult) => {
+    // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
+    callback(error, txResult)
+  })
+}
+
+/**
+  * call the current given contract
+  *
+  * @param {String} to    - address of the contract to call.
+  * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
+  * @param {Object} funAbi    - abi definition of the function to call.
+  * @param {Function} callback    - callback.
+  */
+UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
+  this.runTx({to: to, data: data, useCall: funAbi.constant}, (error, txResult) => {
+    // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
+    callback(error, txResult)
   })
 }
 
