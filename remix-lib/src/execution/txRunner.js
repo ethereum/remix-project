@@ -191,7 +191,6 @@ function tryTillResponse (txhash, done) {
   })
 }
 
-
 function run (self, tx, stamp, confirmationCb, gasEstimationForceSend, promptCb, callback) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     self.queusTxs.push({ tx, stamp, callback })
