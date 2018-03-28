@@ -6,7 +6,7 @@
   "bin" : { "remixd" : "./bin/remixd" },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/main.js"
+    "start": "./bin/remixd"
   },
   "repository": {
     "type": "git",
