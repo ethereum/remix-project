@@ -99,16 +99,19 @@ module.exports = {
   setupNotifications: function (path) {
     if (!isRealPath(path)) return
     var watcher = chokidar.watch(path, {depth: 0, ignorePermissionErrors: true})
-    console.log('setup ntifications for ' + path)
+    console.log('setup notifications for ' + path)
+    /* we can't listen on created file / folder
     watcher.on('add', (f, stat) => {
       isbinaryfile(f, (error, isBinary) => {
         if (error) console.log(error)
+        console.log('add', f)
         if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: isBinary, isFolder: false }))
       })
     })
     watcher.on('addDir', (f, stat) => {
       if (this.websocket.connection) this.websocket.send(message('created', { path: utils.relativePath(f, this.sharedFolder), isReadOnly: false, isFolder: true }))
     })
+    */
     watcher.on('change', (f, curr, prev) => {
       if (this.trackDownStreamUpdate[f]) {
         delete this.trackDownStreamUpdate[f]
