@@ -64,6 +64,10 @@ module.exports = {
   set: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (fs.existsSync(path) && !isRealPath(path, cb)) return
+    if (args.content === 'undefined') { // no !!!!!
+      console.log('trying to write "undefined" ! stopping.')
+      return
+    }
     this.trackDownStreamUpdate[path] = path
     fs.writeFile(path, args.content, 'utf8', (error, data) => {
       if (error) console.log(error)
