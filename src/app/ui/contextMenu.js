@@ -65,4 +65,6 @@ module.exports = (event, items) => {
   setTimeout(() => {
     window.addEventListener('click', hide)
   }, 500)
+
+  return { hide }
 }
