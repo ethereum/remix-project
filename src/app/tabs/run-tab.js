@@ -30,7 +30,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   clearInstanceElement.addEventListener('click', () => {
     event.trigger('clearInstance', [])
   })
-  var recorderInterface = makeRecorder(event, appAPI, appEvents)
+  var recorderInterface = makeRecorder(event, appAPI, appEvents, opts)
   var pendingTxsContainer = yo`
   <div class="${css.pendingTxsContainer}">
     <div class="${css.pendingTxsText}">
@@ -46,7 +46,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   var el = yo`
   <div>
     ${settings(container, appAPI, appEvents, opts)}
-    ${contractDropdown(event, appAPI, appEvents, instanceContainer)}
+    ${contractDropdown(event, appAPI, appEvents, opts, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
   </div>
@@ -134,8 +134,8 @@ function updateAccountBalances (container, appAPI) {
 /* ------------------------------------------------
     RECORDER
 ------------------------------------------------ */
-function makeRecorder (events, appAPI, appEvents) {
-  var recorder = new Recorder({
+function makeRecorder (events, appAPI, appEvents, opts) {
+  var recorder = new Recorder(opts.compiler, {
     events: {
       udapp: appEvents.udapp,
       executioncontext: executionContext.event,
@@ -206,7 +206,7 @@ function makeRecorder (events, appAPI, appEvents) {
     section CONTRACT DROPDOWN and BUTTONS
 ------------------------------------------------ */
 
-function contractDropdown (events, appAPI, appEvents, instanceContainer) {
+function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
   instanceContainer.appendChild(noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -229,7 +229,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
     if (contractName) {
       return {
         name: contractName,
-        contract: appAPI.getContract(contractName)
+        contract: opts.compiler.getContract(contractName)
       }
     }
     return null
@@ -256,7 +256,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
 
   function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
-    if (appAPI.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
+    if (opts.compiler.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
       var ctrabi = txHelper.getConstructorInterface(getSelectedContract().contract.object.abi)
       if (ctrabi.inputs.length) {
         createButtonInput.setAttribute('placeholder', txHelper.inputParametersDeclarationToString(ctrabi.inputs))
@@ -281,7 +281,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
 
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
     var args = createButtonInput.value
-    txFormat.buildData(selectedContract.name, selectedContract.contract.object, appAPI.getContracts(), true, constructor, args, (error, data) => {
+    txFormat.buildData(selectedContract.name, selectedContract.contract.object, opts.compiler.getContracts(), true, constructor, args, (error, data) => {
       if (!error) {
         appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
         appAPI.udapp().createContract(data, (error, txResult) => {
@@ -333,7 +333,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
         instanceContainer.appendChild(appAPI.udappUI().renderInstanceFromABI(abi, address, address))
       })
     } else {
-      var contract = appAPI.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
+      var contract = opts.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
       instanceContainer.appendChild(appAPI.udappUI().renderInstance(contract.object, address, selectContractNames.value))
     }
   }
