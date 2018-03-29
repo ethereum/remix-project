@@ -9,7 +9,7 @@ var AnalysisTab = require('../tabs/analysis-tab')
 var DebuggerTab = require('../tabs/debugger-tab')
 var SupportTab = require('../tabs/support-tab')
 var PluginTab = require('../tabs/plugin-tab')
-var PluginManager = require('../../pluginManager')
+var PluginManager = require('../plugin/pluginManager')
 
 var css = require('./styles/righthand-panel-styles')
 
