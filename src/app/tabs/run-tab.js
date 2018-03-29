@@ -45,7 +45,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   var el = yo`
   <div>
-    ${settings(container, appAPI, appEvents)}
+    ${settings(container, appAPI, appEvents, opts)}
     ${contractDropdown(event, appAPI, appEvents, instanceContainer)}
     ${pendingTxsContainer}
     ${instanceContainer}
@@ -359,7 +359,7 @@ function contractDropdown (events, appAPI, appEvents, instanceContainer) {
 /* ------------------------------------------------
     section SETTINGS: Environment, Account, Gas, Value
 ------------------------------------------------ */
-function settings (container, appAPI, appEvents) {
+function settings (container, appAPI, appEvents, opts) {
   // SETTINGS HTML
   var net = yo`<span class=${css.network}></span>`
   const updateNetwork = () => {
@@ -374,7 +374,7 @@ function settings (container, appAPI, appEvents) {
   }
   setInterval(updateNetwork, 5000)
   function newAccount () {
-    appAPI.newAccount('', (error, address) => {
+    opts.udapp.newAccount('', (error, address) => {
       if (!error) {
         container.querySelector('#txorigin').appendChild(yo`<option value=${address}>${address}</option>`)
         addTooltip(`account ${address} created`)
