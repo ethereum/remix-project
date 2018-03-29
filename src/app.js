@@ -778,9 +778,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     getCompilationResult: () => {
       return compiler.lastCompilationResult
-    },
-    newAccount: (pass, cb) => {
-      udapp.newAccount(pass, cb)
     }
   }
   var rhpEvents = {
@@ -791,7 +788,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     staticAnalysis: staticanalysis.event
   }
   var rhpOpts = {
-    pluginAPI: new PluginAPI(self, compiler)
+    pluginAPI: new PluginAPI(self, compiler),
+    udapp: udapp
   }
 
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)
