@@ -13,7 +13,7 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (opts = {}) {
+  constructor (compiler, opts = {}) {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
@@ -33,7 +33,7 @@ class Recorder {
       if (this.data._listen) {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
-          var selectedContract = self._api.getContract(payLoad.contractName)
+          var selectedContract = compiler.getContract(payLoad.contractName)
           if (selectedContract) {
             var abi = selectedContract.object.abi
             var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))

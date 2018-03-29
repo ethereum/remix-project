@@ -713,12 +713,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     currentFile: () => {
       return config.get('currentFile')
     },
-    getContracts: () => {
-      return compiler.getContracts()
-    },
-    getContract: (name) => {
-      return compiler.getContract(name)
-    },
     visitContracts: (cb) => {
       compiler.visitContracts(cb)
     },
