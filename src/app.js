@@ -767,17 +767,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       compiler.setOptimize(optimize)
       if (runCompilation) runCompiler()
     },
-    loadCompiler: (usingWorker, url) => {
-      compiler.loadVersion(usingWorker, url)
-    },
     runCompiler: () => {
       runCompiler()
     },
     logMessage: (msg) => {
       self._components.editorpanel.log({type: 'log', value: msg})
-    },
-    getCompilationResult: () => {
-      return compiler.lastCompilationResult
     }
   }
   var rhpEvents = {
@@ -789,7 +783,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
   var rhpOpts = {
     pluginAPI: new PluginAPI(self, compiler),
-    udapp: udapp
+    udapp: udapp,
+    compiler: compiler
   }
 
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)

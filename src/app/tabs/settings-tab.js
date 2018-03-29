@@ -178,7 +178,7 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   // load the new version upon change
   versionSelector.addEventListener('change', function () {
-    loadVersion(versionSelector.value, queryParams, appAPI, el)
+    loadVersion(versionSelector.value, queryParams, opts.compiler, el)
   })
 
   var header = new Option('Select new compiler version')
@@ -195,7 +195,7 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
 
       // loading failed for some reason, fall back to local compiler
       versionSelector.append(new Option('latest local version', 'builtin'))
-      loadVersion('builtin', queryParams, appAPI, el)
+      loadVersion('builtin', queryParams, opts.compiler, el)
       return
     }
 
@@ -217,7 +217,7 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
       selectedVersion = queryParams.get().version
     }
 
-    loadVersion(selectedVersion, queryParams, appAPI, el)
+    loadVersion(selectedVersion, queryParams, opts.compiler, el)
   })
 
   return { render () { return el } }
@@ -227,7 +227,7 @@ function setVersionText (text, el) {
   el.querySelector('#version').innerText = text
 }
 
-function loadVersion (version, queryParams, appAPI, el) {
+function loadVersion (version, queryParams, compiler, el) {
   queryParams.update({ version: version })
   var url
   if (version === 'builtin') {
@@ -253,10 +253,10 @@ function loadVersion (version, queryParams, appAPI, el) {
     // Workers cannot load js on "file:"-URLs and we get a
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
-    appAPI.loadCompiler(true, url)
+    compiler.loadVersion(true, url)
     setVersionText('(loading using worker)', el)
   } else {
-    appAPI.loadCompiler(false, url)
+    compiler.loadVersion(false, url)
     setVersionText('(loading)', el)
   }
 }
