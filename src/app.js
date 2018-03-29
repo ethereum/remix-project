@@ -44,6 +44,7 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
+var PluginAPI = require('./app/plugin/pluginAPI')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -780,17 +781,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     newAccount: (pass, cb) => {
       udapp.newAccount(pass, cb)
-    },
-    setConfig: (mod, path, content, cb) => {
-      self._api.filesProviders['config'].set(mod + '/' + path, content)
-      cb()
-    },
-    getConfig: (mod, path, cb) => {
-      cb(null, self._api.filesProviders['config'].get(mod + '/' + path))
-    },
-    removeConfig: (mod, path, cb) => {
-      cb(null, self._api.filesProviders['config'].remove(mod + '/' + path))
-      if (cb) cb()
     }
   }
   var rhpEvents = {
@@ -800,7 +790,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     editor: editor.event,
     staticAnalysis: staticanalysis.event
   }
-  self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents)
+  var rhpOpts = {
+    pluginAPI: new PluginAPI(self, compiler)
+  }
+
+  self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))

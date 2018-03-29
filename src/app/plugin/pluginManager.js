@@ -72,7 +72,7 @@ class PluginManager {
         this.inFocus = tabName
         this.post(tabName, JSON.stringify({
           type: 'compilationData',
-          value: api.getCompilationResult()
+          value: api.compiler.getCompilationResult()
         }))
       }
     })
@@ -93,7 +93,7 @@ class PluginManager {
           data.arguments.push((error, result) => {
             response(data.type, data.id, error, result)
           })
-          api[data.type].apply({}, data.arguments)
+          api[data.key][data.type].apply({}, data.arguments)
         }
       }
     }, false)
