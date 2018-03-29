@@ -55,7 +55,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   // PENDING transactions
   function updatePendingTxs (container, appAPI) {
-    var pendingCount = Object.keys(appAPI.udapp().pendingTransactions()).length
+    var pendingCount = Object.keys(opts.udapp.pendingTransactions()).length
     pendingTxsText.innerText = pendingCount + ' pending transactions'
   }
 
@@ -90,7 +90,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   executionContext.event.register('contextChanged', (context, silent) => {
     setFinalContext()
   })
-  fillAccountsList(appAPI, el)
+  fillAccountsList(appAPI, opts, el)
   setInterval(() => {
     updateAccountBalances(container, appAPI)
     updatePendingTxs(container, appAPI)
@@ -104,10 +104,10 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   return { render () { return container } }
 }
 
-function fillAccountsList (appAPI, container) {
+function fillAccountsList (appAPI, opts, container) {
   var $txOrigin = $(container.querySelector('#txorigin'))
   $txOrigin.empty()
-  appAPI.udapp().getAccounts((err, accounts) => {
+  opts.udapp.getAccounts((err, accounts) => {
     if (err) { addTooltip(`Cannot get account list: ${err}`) }
     if (accounts && accounts[0]) {
       for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])) }
@@ -190,8 +190,8 @@ function makeRecorder (events, appAPI, appEvents, opts) {
           }
           if (txArray.length) {
             noInstancesText.style.display = 'none'
-            recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
-              instanceContainer.appendChild(appAPI.udappUI().renderInstanceFromABI(abi, address, contractName))
+            recorder.run(txArray, accounts, options, abis, linkReferences, opts.udapp, (abi, address, contractName) => {
+              instanceContainer.appendChild(opts.udappUI.renderInstanceFromABI(abi, address, contractName))
             })
           }
         } else {
@@ -284,7 +284,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
     txFormat.buildData(selectedContract.name, selectedContract.contract.object, opts.compiler.getContracts(), true, constructor, args, (error, data) => {
       if (!error) {
         appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
-        appAPI.udapp().createContract(data, (error, txResult) => {
+        opts.udapp.createContract(data, (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
             if (isVM) {
@@ -296,7 +296,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
             }
             noInstancesText.style.display = 'none'
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(appAPI.udappUI().renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+            instanceContainer.appendChild(opts.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           } else {
             appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           }
@@ -308,7 +308,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
       appAPI.logMessage(msg)
     }, (data, runTxCallback) => {
       // called for libraries deployment
-      appAPI.udapp().runTx(data, runTxCallback)
+      opts.udapp.runTx(data, runTxCallback)
     })
   }
 
@@ -330,11 +330,11 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
-        instanceContainer.appendChild(appAPI.udappUI().renderInstanceFromABI(abi, address, address))
+        instanceContainer.appendChild(opts.udappUI.renderInstanceFromABI(abi, address, address))
       })
     } else {
       var contract = opts.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
-      instanceContainer.appendChild(appAPI.udappUI().renderInstance(contract.object, address, selectContractNames.value))
+      instanceContainer.appendChild(opts.udappUI.renderInstance(contract.object, address, selectContractNames.value))
     }
   }
 
