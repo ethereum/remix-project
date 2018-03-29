@@ -750,9 +750,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         }
       })
     },
-    compilationMessage: (message, container, options) => {
-      renderer.error(message, container, options)
-    },
     currentCompiledSourceCode: () => {
       if (compiler.lastCompilationResult.source) {
         return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
@@ -784,7 +781,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var rhpOpts = {
     pluginAPI: new PluginAPI(self, compiler),
     udapp: udapp,
-    compiler: compiler
+    compiler: compiler,
+    renderer: renderer
   }
 
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)
