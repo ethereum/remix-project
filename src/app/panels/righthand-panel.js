@@ -63,7 +63,7 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
   this._view.tabbedMenu.addTab('Support', 'supportView', optionViews.querySelector('#supportView'))
   this._view.tabbedMenu.selectTabByTitle('Compile')
 
-  self.pluginManager = new PluginManager(appAPI, events)
+  self.pluginManager = new PluginManager(opts.pluginAPI, events)
   events.rhp.register('plugin-loadRequest', (json) => {
     var tab = new PluginTab(appAPI, events, json)
     var content = tab.render()
