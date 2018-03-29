@@ -43,17 +43,17 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
 
   events.rhp = self.event
 
-  var compileTab = new CompileTab(appAPI, events)
+  var compileTab = new CompileTab(appAPI, events, opts)
   optionViews.appendChild(compileTab.render())
-  var runTab = new RunTab(appAPI, events)
+  var runTab = new RunTab(appAPI, events, opts)
   optionViews.appendChild(runTab.render())
-  var settingsTab = new SettingsTab(appAPI, events)
+  var settingsTab = new SettingsTab(appAPI, events, opts)
   optionViews.appendChild(settingsTab.render())
-  var analysisTab = new AnalysisTab(appAPI, events)
+  var analysisTab = new AnalysisTab(appAPI, events, opts)
   optionViews.appendChild(analysisTab.render())
-  var debuggerTab = new DebuggerTab(appAPI, events)
+  var debuggerTab = new DebuggerTab(appAPI, events, opts)
   optionViews.appendChild(debuggerTab.render())
-  var supportTab = new SupportTab(appAPI, events)
+  var supportTab = new SupportTab(appAPI, events, opts)
   optionViews.appendChild(supportTab.render())
   this._view.tabbedMenu.addTab('Compile', 'compileView', optionViews.querySelector('#compileTabView'))
   this._view.tabbedMenu.addTab('Run', 'runView', optionViews.querySelector('#runTabView'))
