@@ -716,12 +716,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     visitContracts: (cb) => {
       compiler.visitContracts(cb)
     },
-    udapp: () => {
-      return udapp
-    },
-    udappUI: () => {
-      return udappUI
-    },
     switchFile: function (path) {
       fileManager.switchFile(path)
     },
@@ -775,6 +769,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var rhpOpts = {
     pluginAPI: new PluginAPI(self, compiler),
     udapp: udapp,
+    udappUI: udappUI,
     compiler: compiler,
     renderer: renderer
   }
