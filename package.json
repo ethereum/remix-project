@@ -1,6 +1,6 @@
 {
   "name": "remix-ide",
-  "version": "v0.6.1-alpha.3",
+  "version": "v0.6.1-alpha.4",
   "description": "Minimalistic browser-based Solidity IDE",
   "devDependencies": {
     "async": "^2.1.2",
