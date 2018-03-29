@@ -23,7 +23,7 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
   self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
   // load tabbed menu component
   var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
-  self._view.tabbedMenu = new TabbedMenu(self._api, tabEvents)
+  self._view.tabbedMenu = new TabbedMenu(appAPI, tabEvents)
   var options = self._view.tabbedMenu.render()
   options.classList.add(css.opts)
   self._view.element = yo`
@@ -65,7 +65,7 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
 
   self.pluginManager = new PluginManager(opts.pluginAPI, events)
   events.rhp.register('plugin-loadRequest', (json) => {
-    var tab = new PluginTab(appAPI, events, json)
+    var tab = new PluginTab({}, events, json)
     var content = tab.render()
     optionViews.appendChild(content)
     this._view.tabbedMenu.addTab(json.title, 'plugin', content)
