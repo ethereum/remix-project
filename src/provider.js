@@ -16,7 +16,7 @@ function jsonRPCResponse(id, result) {
 var deployedContracts = {
 }
 
-function processTx(accounts, payload, callback) {
+function processTx(accounts, payload, isCall, callback) {
   let api = {
     logMessage: (msg) => {
       //self._components.editorpanel.log({ type: 'log', value: msg })
@@ -81,9 +81,20 @@ function processTx(accounts, payload, callback) {
     let finalCallback = function(err, result) {
       console.dir(arguments)
       console.log("called final callback")
-      console.dir(result)
 
-      callback(null, jsonRPCResponse(payload.id, result.transactionHash))
+      let toReturn;
+      if (isCall) {
+        console.dir(result.result.vm.return);
+        toReturn = "0x" + result.result.vm.return.toString('hex')
+        if (toReturn === '0x') {
+          toReturn = '0x0'
+        }
+      } else {
+        toReturn = result.transactionHash
+      }
+      console.dir("isCall is " + isCall);
+
+      callback(null, jsonRPCResponse(payload.id, toReturn))
     }
 
     TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback)
@@ -158,7 +169,7 @@ Provider.prototype.sendAsync = function(payload, callback) {
     callback(null, jsonRPCResponse(payload.id, 1))
   }
   if (payload.method === 'eth_sendTransaction') {
-    processTx(this.accounts, payload, callback)
+    processTx(this.accounts, payload, false, callback)
   }
   if (payload.method === 'eth_getTransactionReceipt') {
     executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
@@ -185,6 +196,9 @@ Provider.prototype.sendAsync = function(payload, callback) {
     let block   = payload.params[1];
 
     callback(null, jsonRPCResponse(payload.id, deployedContracts[address]));
+  }
+  if (payload.method === 'eth_call') {
+    processTx(this.accounts, payload, true, callback)
   }
   //return this.manager.request(payload, callback);
 }
