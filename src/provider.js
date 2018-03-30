@@ -54,8 +54,40 @@ function processTx(accounts, payload, callback) {
   let txRunner = new TxRunner(accounts, api);
 
   if (payload.params[0].to) {
-    throw new Error("not implemented");
+    console.log("== processing transaction");
     // tx
+
+    let from = payload.params[0].from;
+    let to = payload.params[0].to;
+    let data = payload.params[0].data;
+    let value = payload.params[0].value;
+    let gasLimit = payload.params[0].gasLimit || 800000;
+
+    let callbacks = {
+      confirmationCb: (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+        console.dir("confirmationCb");
+        continueTxExecution(null);
+      },
+      gasEstimationForceSend: (error, continueTxExecution, cancelCb) => {
+        console.dir("gasEstimationForceSend");
+        continueTxExecution();
+      },
+      promptCb: (okCb, cancelCb) => {
+        console.dir("promptCb");
+        okCb();
+      }
+    }
+
+    let finalCallback = function(err, result) {
+      console.dir(arguments)
+      console.log("called final callback")
+      console.dir(result)
+
+      //callback(null, jsonRPCResponse(payload.id, result.transactionHash))
+    }
+
+    //TxExecution.createContract(from, data, value, gasLimit, txRunner, callbacks, finalCallback);
+    TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback)
   } else {
     console.dir("== contract creation");
     // contract creation
