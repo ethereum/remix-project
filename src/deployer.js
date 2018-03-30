@@ -79,10 +79,16 @@ function deployAll (compileResult, web3, callback) {
         let deployObject = contractObject.deploy({arguments: [], data: contractCode})
 
         deployObject.estimateGas().then((gasValue) => {
+          console.dir("got gas estimation " + gasValue);
+          console.dir(accounts);
           deployObject.send({
             from: accounts[0],
             gas: Math.ceil(gasValue * 1.1)
           }).on('receipt', function (receipt) {
+
+            console.dir("==== got the receipt");
+            console.dir(receipt);
+
             contractObject.options.address = receipt.contractAddress
             contractObject.options.from = accounts[0]
             contractObject.options.gas = 5000 * 1000
@@ -91,6 +97,10 @@ function deployAll (compileResult, web3, callback) {
             contracts[contractName] = contractObject
 
             nextEach()
+          }).on('error', function(err) {
+            console.dir("===============");
+            console.dir("error");
+            console.dir(err);
           })
         })
       }, function () {

@@ -41,10 +41,11 @@
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
+    "ethereumjs-util": "^5.1.5",
     "ethereumjs-vm": "^2.3.2",
     "remix-lib": "latest",
     "remix-solidity": "latest",
     "standard": "^10.0.3",
-    "web3": "^1.0.0-beta.27"
+    "web3": "1.0.0-beta.27"
   }
 }
