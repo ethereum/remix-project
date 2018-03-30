@@ -83,10 +83,9 @@ function processTx(accounts, payload, callback) {
       console.log("called final callback")
       console.dir(result)
 
-      //callback(null, jsonRPCResponse(payload.id, result.transactionHash))
+      callback(null, jsonRPCResponse(payload.id, result.transactionHash))
     }
 
-    //TxExecution.createContract(from, data, value, gasLimit, txRunner, callbacks, finalCallback);
     TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback)
   } else {
     console.dir("== contract creation");
