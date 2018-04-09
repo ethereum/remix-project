@@ -20,7 +20,7 @@ This document includes:
 
 # remix.ethereum.org update
 
-This is not strictly speaking a release. Updating the remix-alpha site is done through the Travis build:
+This is not strictly speaking a release. Updating the remix site is done through the Travis build:
 
  - In remix-ide repository
  - Switch to the branch `remix_live`
