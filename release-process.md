@@ -9,6 +9,7 @@ This document includes:
  - In a new branch, bump the version in package.json, push it and create PR.
  - Wait for tests completion.
  - merge PR
+ - build the branch ( `npm run build` for remix-ide ).
  - execute `npm publish`.
  - create new `tag` ( e.g `git tag v0.6.1-alpha.2` ).
  - push the tag ( `git push --tag` ).
