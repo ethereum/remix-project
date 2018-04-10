@@ -37,9 +37,8 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
       </div>
     </div>
   `
-  appAPI.switchTab = (tabClass) => {
-    this.event.trigger('switchTab', [tabClass])
-  }
+  // selectTabByClassName
+  appAPI.switchTab = tabClass => self._view.tabbedMenu.selectTabByClassName(tabClass)
 
   events.rhp = self.event
 
