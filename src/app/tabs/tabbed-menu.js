@@ -2,6 +2,7 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
+var helper = require('../../lib/helper')
 var styles = require('../ui/styles-guide/theme-chooser').chooser()
 
 var EventManager = remixLib.EventManager
@@ -10,11 +11,10 @@ module.exports = class TabbedMenu {
   constructor (api = {}, events = {}, opts = {}) {
     const self = this
     self.event = new EventManager()
+    self._opts = opts
     self._api = api
     self._events = events
     self._view = { el: null, viewport: null, tabs: {}, contents: {} }
-    self.data = {}
-    self._components = {}
   }
   render () {
     const self = this
@@ -33,6 +33,7 @@ module.exports = class TabbedMenu {
   }
   addTab (title, cssClass, content) {
     const self = this
+    if (helper.checkSpecialChars(title)) return
     if (self._view.contents[title] || self._view.tabs[title]) throw new Error('tab already exists')
     self._view.contents[title] = content
     self._view.tabs[title] = yo`<li class="${css.options} ${cssClass}" onclick=${function (ev) { self.selectTab(this) }} title=${title}>${title}</li>`
@@ -43,7 +44,7 @@ module.exports = class TabbedMenu {
     const self = this
     self.selectTab(self._view.tabs[title])
   }
-  switchTab (tabClass) {
+  selectTabByClassName (tabClass) {
     const self = this
     self.selectTab(self._view.el.querySelector(`li.${tabClass}`))
   }
