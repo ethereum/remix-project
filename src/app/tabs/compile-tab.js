@@ -115,7 +115,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
   var el = yo`
     <div class="${css.compileTabView}" id="compileTabView">
       ${compileContainer}
-      ${contractNames(appAPI, appEvents)}
+      ${contractNames(appAPI, appEvents, opts)}
       ${errorContainer}
     </div>
   `
@@ -124,7 +124,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
     section CONTRACT DROPDOWN, DETAILS AND PUBLISH
   ------------------------------------------------ */
 
-  function contractNames (appAPI, appEvents) {
+  function contractNames (appAPI, appEvents, opts) {
     var contractsDetails = {}
 
     appEvents.compiler.register('compilationStarted', () => {
@@ -146,18 +146,18 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
       var error = false
       if (data['error']) {
         error = true
-        appAPI.compilationMessage(data['error'].formattedMessage, $(errorContainer), {type: data['error'].severity})
+        opts.renderer.error(data['error'].formattedMessage, $(errorContainer), {type: data['error'].severity})
       }
       if (data['errors']) {
         if (data['errors'].length) error = true
         data['errors'].forEach(function (err) {
-          appAPI.compilationMessage(err.formattedMessage, $(errorContainer), {type: err.severity})
+          opts.renderer.error(err.formattedMessage, $(errorContainer), {type: err.severity})
         })
       }
       if (!error) {
         if (data.contracts) {
           appAPI.visitContracts((contract) => {
-            appAPI.compilationMessage(contract.name, $(errorContainer), {type: 'success'})
+            opts.renderer.error(contract.name, $(errorContainer), {type: 'success'})
           })
         }
       }
@@ -165,7 +165,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
 
     appEvents.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        appAPI.compilationMessage(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
+        opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
           type: 'warning',
           click: () => appAPI.switchTab('staticanalysisView')
         })

@@ -13,7 +13,7 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (opts = {}) {
+  constructor (compiler, opts = {}) {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
@@ -33,7 +33,7 @@ class Recorder {
       if (this.data._listen) {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
-          var selectedContract = self._api.getContract(payLoad.contractName)
+          var selectedContract = compiler.getContract(payLoad.contractName)
           if (selectedContract) {
             var abi = selectedContract.object.abi
             var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
@@ -175,10 +175,11 @@ class Recorder {
     * @param {Object} accounts
     * @param {Object} options
     * @param {Object} abis
+    * @param {Object} udapp
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, linkReferences, newContractFn) {
+  run (records, accounts, options, abis, linkReferences, udapp, newContractFn) {
     var self = this
     self.setListen(false)
     self._api.logMessage(`Running ${records.length} transaction(s) ...`)
@@ -242,7 +243,7 @@ class Recorder {
         self._api.logMessage(`(${index}) data: ${data.data}`)
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
-      self._api.udapp().runTx(record, function (err, txResult) {
+      udapp.runTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
           self._api.logMessage(err + '. Execution failed at ' + index)

@@ -9,7 +9,7 @@ var AnalysisTab = require('../tabs/analysis-tab')
 var DebuggerTab = require('../tabs/debugger-tab')
 var SupportTab = require('../tabs/support-tab')
 var PluginTab = require('../tabs/plugin-tab')
-var PluginManager = require('../../pluginManager')
+var PluginManager = require('../plugin/pluginManager')
 
 var css = require('./styles/righthand-panel-styles')
 
@@ -23,7 +23,7 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
   self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
   // load tabbed menu component
   var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
-  self._view.tabbedMenu = new TabbedMenu(self._api, tabEvents)
+  self._view.tabbedMenu = new TabbedMenu(appAPI, tabEvents)
   var options = self._view.tabbedMenu.render()
   options.classList.add(css.opts)
   self._view.element = yo`
@@ -43,17 +43,17 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
 
   events.rhp = self.event
 
-  var compileTab = new CompileTab(appAPI, events)
+  var compileTab = new CompileTab(appAPI, events, opts)
   optionViews.appendChild(compileTab.render())
-  var runTab = new RunTab(appAPI, events)
+  var runTab = new RunTab(appAPI, events, opts)
   optionViews.appendChild(runTab.render())
-  var settingsTab = new SettingsTab(appAPI, events)
+  var settingsTab = new SettingsTab(appAPI, events, opts)
   optionViews.appendChild(settingsTab.render())
-  var analysisTab = new AnalysisTab(appAPI, events)
+  var analysisTab = new AnalysisTab(appAPI, events, opts)
   optionViews.appendChild(analysisTab.render())
-  var debuggerTab = new DebuggerTab(appAPI, events)
+  var debuggerTab = new DebuggerTab(appAPI, events, opts)
   optionViews.appendChild(debuggerTab.render())
-  var supportTab = new SupportTab(appAPI, events)
+  var supportTab = new SupportTab(appAPI, events, opts)
   optionViews.appendChild(supportTab.render())
   this._view.tabbedMenu.addTab('Compile', 'compileView', optionViews.querySelector('#compileTabView'))
   this._view.tabbedMenu.addTab('Run', 'runView', optionViews.querySelector('#runTabView'))
@@ -63,9 +63,9 @@ function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
   this._view.tabbedMenu.addTab('Support', 'supportView', optionViews.querySelector('#supportView'))
   this._view.tabbedMenu.selectTabByTitle('Compile')
 
-  self.pluginManager = new PluginManager(appAPI, events)
+  self.pluginManager = new PluginManager(opts.pluginAPI, events)
   events.rhp.register('plugin-loadRequest', (json) => {
-    var tab = new PluginTab(appAPI, events, json)
+    var tab = new PluginTab({}, events, json)
     var content = tab.render()
     optionViews.appendChild(content)
     this._view.tabbedMenu.addTab(json.title, 'plugin', content)
