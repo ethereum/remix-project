@@ -37,42 +37,39 @@
  * See index.html and remix.js in test-browser folder for sample
  *
  */
-class PluginManager {
-  constructor (api = {}, events = {}, opts = {}) {
-    var self = this
-    this.plugins = {}
-    this.inFocus
+module.exports = class PluginManager {
+  constructor  (api = {}, events = {}, opts = {}) {
+    const self = this
+    self._api = api
+    self._events = events
+    self.plugins = {}
+    self.inFocus
     var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
-    events.compiler.register('compilationFinished', (success, data, source) => {
-      if (this.inFocus) {
+    self._events.compiler.register('compilationFinished', (success, data, source) => {
+      if (self.inFocus) {
         // trigger to the current focus
-        this.post(this.inFocus, JSON.stringify({
+        self.post(self.inFocus, JSON.stringify({
           type: 'compilationFinished',
-          value: {
-            success: success,
-            data: data,
-            source: source
-          }
+          value: { success, data, source }
         }))
       }
     })
-
-    events.app.register('tabChanged', (tabName) => {
-      if (this.inFocus && this.inFocus !== tabName) {
+    self._events.app.register('tabChanged', (tabName) => {
+      if (self.inFocus && self.inFocus !== tabName) {
         // trigger unfocus
-        this.post(this.inFocus, JSON.stringify({
+        self.post(self.inFocus, JSON.stringify({
           type: 'unfocus'
         }))
       }
-      if (this.plugins[tabName]) {
+      if (self.plugins[tabName]) {
         // trigger focus
-        this.post(tabName, JSON.stringify({
+        self.post(tabName, JSON.stringify({
           type: 'focus'
         }))
-        this.inFocus = tabName
-        this.post(tabName, JSON.stringify({
+        self.inFocus = tabName
+        self.post(tabName, JSON.stringify({
           type: 'compilationData',
-          value: api.compiler.getCompilationResult()
+          value: self._api.getCompilationResult()
         }))
       }
     })
@@ -107,5 +104,3 @@ class PluginManager {
     }
   }
 }
-
-module.exports = PluginManager
