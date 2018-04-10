@@ -2,12 +2,25 @@
 # Team best practices
 
 This document aims to address contibutors best practices of the following repositories:
- - remix-ide
- - remix
- - remix-tests
+ - remix-ide https://github.com/ethereum/remix-ide
+ - remix https://github.com/ethereum/remix
+ - remix-tests https://github.com/ethereum/remix-tests
 
 This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
 This document link to other specialised best practices (like coding best practices).
+
+Related links:
+ - Remix live: remix.ethereum.org
+ - Remix alpha live: remix-alpha.ethereum.org
+ - Remix-ide NPM module: https://www.npmjs.com/package/remix-ide
+ - Remix-core NPM module: https://www.npmjs.com/package/remix-core
+ - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
+ - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
+ - Remix-debug NPM module: https://www.npmjs.com/package/remix-debug
+ - Remix documentation: http://remix.readthedocs.io/en/latest/
+ - General gitter channel: https://gitter.im/ethereum/remix
+ - Dev gitter channel: https://gitter.im/ethereum/remix-dev
+ - Huboard (task management tool): https://huboard.com/ethereum/remix-ide
 
 ---
 
