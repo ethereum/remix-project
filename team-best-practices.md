@@ -155,8 +155,10 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 
 ### 1) Bugs:
-- A Critical bug should get the label `Blocker`, and every effort should be put to fix it.
-- It is nice to push a bug fix whenever time allows it :)
+- A critical bug should get the label `Blocker`, and every effort should be put to fix it.
+- Addressing a non critical and non planned bug can be done:
+  - After having notified in the `remix-dev` channel if the bug does not involves UX or public API changes.
+  - After a dev meeting (e.g the regular standup) if the bug involves any UX or public API changes.
 
 ### 2) Support:
 
@@ -173,7 +175,6 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 # Coding best practices
 
  - https://github.com/ethereum/remix-ide/blob/master/best-practices.md
-
 
 ---
 
