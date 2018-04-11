@@ -112,6 +112,9 @@ TxRunner.prototype.runInVm = function (from, to, data, value, gasLimit, useCall,
   }
 
   executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
+    if (err) {
+      return callback(err);
+    }
     if (useCall) {
       executionContext.vm().stateManager.revert(function () {})
     }
