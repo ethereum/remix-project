@@ -56,16 +56,16 @@ module.exports = class SettingsTab {
 
     // Gist settings
     var gistAccessToken = yo`<input id="gistaccesstoken" type="password">`
-    var token = self._api.config.get('settings/gist-access-token')
+    var token = self._opts.config.get('settings/gist-access-token')
     if (token) gistAccessToken.value = token
-    var gistAddToken = yo`<input class="${css.savegisttoken}" id="savegisttoken" onclick=${() => { self._api.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
-    var gistRemoveToken = yo`<input id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; self._api.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
-    self._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => self._api.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
+    var gistAddToken = yo`<input class="${css.savegisttoken}" id="savegisttoken" onclick=${() => { self._opts.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
+    var gistRemoveToken = yo`<input id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; self._opts.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
+    self._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => self._opts.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
     //
     self._view.optionVM = yo`<input onchange=${onchangeOption} id="alwaysUseVM" type="checkbox">`
-    if (self._api.config.get('settings/always-use-vm')) self._view.optionVM.setAttribute('checked', '')
+    if (self._opts.config.get('settings/always-use-vm')) self._view.optionVM.setAttribute('checked', '')
     self._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox">`
-    if (self._api.config.get('settings/personal-mode')) self._view.personal.setAttribute('checked', '')
+    if (self._opts.config.get('settings/personal-mode')) self._view.personal.setAttribute('checked', '')
     self._view.optimize = yo`<input onchange=${onchangeOptimize} id="optimize" type="checkbox">`
     if (self.data.optimize) self._view.optimize.setAttribute('checked', '')
     var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
@@ -187,7 +187,7 @@ module.exports = class SettingsTab {
         ${self._view.config.localremixd}
       </div>`
     function onchangeOption (event) {
-      self._api.config.set('settings/always-use-vm', !self._api.config.get('settings/always-use-vm'))
+      self._opts.config.set('settings/always-use-vm', !self._opts.config.get('settings/always-use-vm'))
     }
     function onloadPlugin (event) {
       try {
@@ -216,7 +216,7 @@ module.exports = class SettingsTab {
       self._updateVersionSelector()
     }
     function onchangePersonal (event) {
-      self._api.config.set('settings/personal-mode', !self._api.config.get('settings/personal-mode'))
+      self._opts.config.set('settings/personal-mode', !self._opts.config.get('settings/personal-mode'))
     }
     return self._view.el
   }
