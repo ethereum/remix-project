@@ -15,6 +15,8 @@ library Assert {
   function equal(uint a, uint b, string message) public returns (bool result) {
     result = (a == b);
     AssertionEvent(result, message);
+    //result = true;
+    //return true;
   }
 
   function equal(int a, int b, string message) public returns (bool result) {
@@ -60,43 +62,43 @@ library Assert {
     AssertionEvent(result, message);
   }
 
-  function notEqual(int a, int b, string message) public returns (bool result) {
-    result = (a != b);
-    AssertionEvent(result, message);
-  }
+//  function notEqual(int a, int b, string message) public returns (bool result) {
+//    result = (a != b);
+//    AssertionEvent(result, message);
+//  }
 
-  function notEqual(bool a, bool b, string message) public returns (bool result) {
-    result = (a != b);
-    AssertionEvent(result, message);
-  }
-
-  // TODO: only for certain versions of solc
-  //function notEqual(fixed a, fixed b, string message) public returns (bool result) {
-  //  result = (a != b);
-  //  AssertionEvent(result, message);
-  //}
-
-  // TODO: only for certain versions of solc
-  //function notEqual(ufixed a, ufixed b, string message) public returns (bool result) {
-  //  result = (a != b);
-  //  AssertionEvent(result, message);
-  //}
-
-  function notEqual(address a, address b, string message) public returns (bool result) {
-    result = (a != b);
-    AssertionEvent(result, message);
-  }
-
-  function notEqual(bytes32 a, bytes32 b, string message) public returns (bool result) {
-    result = (a != b);
-    AssertionEvent(result, message);
-  }
-
-  // TODO: needs to be convert to bytes first to be comparable
-  //function notEqual(string a, string b, string message) public returns (bool result) {
-  //  result = (a != b);
-  //  AssertionEvent(result, message);
-  //}
+//  function notEqual(bool a, bool b, string message) public returns (bool result) {
+//    result = (a != b);
+//    AssertionEvent(result, message);
+//  }
+//
+//  // TODO: only for certain versions of solc
+//  //function notEqual(fixed a, fixed b, string message) public returns (bool result) {
+//  //  result = (a != b);
+//  //  AssertionEvent(result, message);
+//  //}
+//
+//  // TODO: only for certain versions of solc
+//  //function notEqual(ufixed a, ufixed b, string message) public returns (bool result) {
+//  //  result = (a != b);
+//  //  AssertionEvent(result, message);
+//  //}
+//
+//  function notEqual(address a, address b, string message) public returns (bool result) {
+//    result = (a != b);
+//    AssertionEvent(result, message);
+//  }
+//
+//  function notEqual(bytes32 a, bytes32 b, string message) public returns (bool result) {
+//    result = (a != b);
+//    AssertionEvent(result, message);
+//  }
+//
+//  // TODO: needs to be convert to bytes first to be comparable
+//  //function notEqual(string a, string b, string message) public returns (bool result) {
+//  //  result = (a != b);
+//  //  AssertionEvent(result, message);
+//  //}
 
 
 }
