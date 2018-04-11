@@ -112,14 +112,13 @@ TxRunner.prototype.runInVm = function (from, to, data, value, gasLimit, useCall,
   }
 
   executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-    if (err) {
-      return callback(err)
-    }
     if (useCall) {
       executionContext.vm().stateManager.revert(function () {})
     }
     err = err ? err.message : err
-    result.status = '0x' + result.vm.exception.toString(16)
+    if (result) {
+      result.status = '0x' + result.vm.exception.toString(16)
+    }
     callback(err, {
       result: result,
       transactionHash: ethJSUtil.bufferToHex(new Buffer(tx.hash()))
