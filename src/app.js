@@ -704,9 +704,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
     },
-    getSource: (fileName) => {
-      return compiler.getSource(fileName)
-    },
     visitContracts: (cb) => {
       compiler.visitContracts(cb)
     },
