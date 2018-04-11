@@ -187,7 +187,7 @@ function updateAccountBalances (container, appAPI) {
            RECORDER
 ------------------------------------------------ */
 function makeRecorder (appAPI, appEvents, opts, self) {
-  var recorder = new Recorder(opts.compiler, {
+  var recorder = new Recorder(opts.compiler, opts.udapp, {
     events: {
       udapp: appEvents.udapp,
       executioncontext: executionContext.event,
