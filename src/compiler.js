@@ -17,6 +17,8 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   // should be replaced with remix's & browser solidity compiler code
   filepath = (isDirectory ? filename : path.dirname(filename))
 
+  //sources[filename] = {content: fs.readFileSync(path.join(filepath, filename)).toString()}
+  //console.dir(sources);
   fs.readdirSync(filepath).forEach(file => {
     sources[file] = {content: fs.readFileSync(path.join(filepath, file)).toString()}
   })
@@ -36,7 +38,9 @@ function compileFileOrFiles (filename, isDirectory, cb) {
       compiler.compile(sources, filepath)
     }
   ], function (err, result) {
-    let errors = result.errors.filter((e) => e.type === 'Error')
+    console.dir(err);
+    console.dir(result);
+    let errors = (result.errors || []).filter((e) => e.type === 'Error')
     if (errors.length > 0) {
       console.dir(errors)
       return cb(new Error('errors compiling'))

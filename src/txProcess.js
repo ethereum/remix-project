@@ -12,6 +12,7 @@ function runTx(payload, from, to, data, value, gasLimit, txRunner, callbacks, is
   let finalCallback = function(err, result) {
     let toReturn;
     if (isCall) {
+      console.dir('---- result is ');
       console.dir(result.result.vm.return);
       console.dir(result.result.vm);
       toReturn = "0x" + result.result.vm.return.toString('hex')
@@ -25,7 +26,7 @@ function runTx(payload, from, to, data, value, gasLimit, txRunner, callbacks, is
     callback(null, jsonRPCResponse(payload.id, toReturn))
   }
 
-  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback)
+  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, isCall)
 }
 
 function createContract(payload, from, data, value, gasLimit, txRunner, callbacks, callback) {
