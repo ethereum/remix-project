@@ -191,7 +191,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
       if (success) {
         contractNames.removeAttribute('disabled')
         appAPI.visitContracts((contract) => {
-          contractsDetails[contract.name] = parseContracts(contract.name, contract.object, appAPI.getSource(contract.file))
+          contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
           var contractName = yo`
             <option>
               ${contract.name}
