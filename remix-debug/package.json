@@ -23,7 +23,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babelify": "^7.3.0",
     "ethereumjs-util": "^4.5.0",
-    "ethereumjs-vm": "2.3.1",
+    "ethereumjs-vm": "^2.3.3",
     "notify-error": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "remix-core": "latest",

@@ -19,7 +19,7 @@
     "babel-eslint": "^7.1.1",
     "babelify": "^7.3.0",
     "ethereumjs-util": "^4.5.0",
-    "ethereumjs-vm": "2.3.1",
+    "ethereumjs-vm": "^2.3.3",
     "fast-async": "^6.1.2",
     "remix-core": "latest",
     "remix-lib": "latest",
