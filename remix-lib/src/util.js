@@ -42,6 +42,17 @@ module.exports = {
   },
 
   /*
+    ints: list of BNs
+  */
+  hexListFromBNs: function (bnList) {
+    var ret = []
+    for (var k in bnList) {
+      ret.push('0x' + bnList[k].toString('hex', 64))
+    }
+    return ret
+  },
+
+  /*
     ints: list of IntArrays
   */
   hexListConvert: function (intsList) {

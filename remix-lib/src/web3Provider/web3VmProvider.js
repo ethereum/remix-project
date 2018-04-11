@@ -149,7 +149,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
     previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
   }
   var step = {
-    stack: util.hexListConvert(data.stack),
+    stack: util.hexListFromBNs(data.stack),
     memory: util.formatMemory(data.memory),
     storage: data.storage,
     op: data.opcode.name,
