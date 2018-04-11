@@ -13,7 +13,7 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (compiler, opts = {}) {
+  constructor (compiler, udapp, opts = {}) {
     var self = this
     self._api = opts.api
     self.event = new EventManager()
@@ -61,7 +61,7 @@ class Recorder {
         record.name = payLoad.funAbi.name
         record.type = payLoad.funAbi.type
 
-        self._api.getAccounts((error, accounts) => {
+        udapp.getAccounts((error, accounts) => {
           if (error) return console.log(error)
           record.from = `account{${accounts.indexOf(from)}}`
           self.data._usedAccounts[record.from] = from
