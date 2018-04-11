@@ -156,7 +156,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
       }
       if (!error) {
         if (data.contracts) {
-          appAPI.visitContracts((contract) => {
+          opts.compiler.visitContracts((contract) => {
             opts.renderer.error(contract.name, $(errorContainer), {type: 'success'})
           })
         }
@@ -190,7 +190,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
       contractNames.innerHTML = ''
       if (success) {
         contractNames.removeAttribute('disabled')
-        appAPI.visitContracts((contract) => {
+        opts.compiler.visitContracts((contract) => {
           contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
           var contractName = yo`
             <option>
