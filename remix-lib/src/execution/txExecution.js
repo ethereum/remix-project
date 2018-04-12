@@ -1,4 +1,5 @@
 'use strict'
+var ethJSABI = require('ethereumjs-abi')
 
 module.exports = {
   /**
@@ -82,7 +83,14 @@ module.exports = {
       msg = `\tThe transaction ran out of gas. Please increase the Gas Limit.\n`
       ret.error = true
     } else if (exceptionError === errorCode.REVERT) {
-      msg = `\tThe transaction has been reverted to the initial state.\nNote: The constructor should be payable if you send value.`
+      var returnData = txResult.result.vm.return
+      // It is the hash of Error(string)
+      if (returnData && (returnData.slice(0, 4).toString('hex') === '08c379a0')) {
+        var reason = ethJSABI.rawDecode(['string'], returnData.slice(4))[0]
+        msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
+      } else {
+        msg = `\tThe transaction has been reverted to the initial state.\nNote: The constructor should be payable if you send value.`
+      }
       ret.error = true
     } else if (exceptionError === errorCode.STATIC_STATE_CHANGE) {
       msg = `\tState changes is not allowed in Static Call context\n`
