@@ -38,8 +38,6 @@ function compileFileOrFiles (filename, isDirectory, cb) {
       compiler.compile(sources, filepath)
     }
   ], function (err, result) {
-    console.dir(err);
-    console.dir(result);
     let errors = (result.errors || []).filter((e) => e.type === 'Error')
     if (errors.length > 0) {
       console.dir(errors)
