@@ -72,22 +72,23 @@ module.exports = {
     if (!txResult.result.vm.exceptionError) {
       return ret
     }
-    var error = `VM error: ${txResult.result.vm.exceptionError}.\n`
+    var exceptionError = txResult.result.vm.exceptionError.error || ''
+    var error = `VM error: ${exceptionError}.\n`
     var msg
-    if (txResult.result.vm.exceptionError === errorCode.INVALID_OPCODE) {
+    if (exceptionError === errorCode.INVALID_OPCODE) {
       msg = `\t\n\tThe execution might have thrown.\n`
       ret.error = true
-    } else if (txResult.result.vm.exceptionError === errorCode.OUT_OF_GAS) {
+    } else if (exceptionError === errorCode.OUT_OF_GAS) {
       msg = `\tThe transaction ran out of gas. Please increase the Gas Limit.\n`
       ret.error = true
-    } else if (txResult.result.vm.exceptionError === errorCode.REVERT) {
+    } else if (exceptionError === errorCode.REVERT) {
       msg = `\tThe transaction has been reverted to the initial state.\nNote: The constructor should be payable if you send value.`
       ret.error = true
-    } else if (txResult.result.vm.exceptionError === errorCode.STATIC_STATE_CHANGE) {
+    } else if (exceptionError === errorCode.STATIC_STATE_CHANGE) {
       msg = `\tState changes is not allowed in Static Call context\n`
       ret.error = true
     }
-    ret.message = `${error}${txResult.result.vm.exceptionError}${msg}\tDebug the transaction to get more information.`
+    ret.message = `${error}${exceptionError}${msg}\tDebug the transaction to get more information.`
     return ret
   }
 }
