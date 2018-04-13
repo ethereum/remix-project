@@ -8,13 +8,9 @@ function jsonRPCResponse(id, result) {
 }
 
 function runTx(payload, from, to, data, value, gasLimit, txRunner, callbacks, isCall, callback) {
-  console.log('-- runTx');
   let finalCallback = function(err, result) {
     let toReturn;
     if (isCall) {
-      console.dir('---- result is ');
-      console.dir(result.result.vm.return);
-      console.dir(result.result.vm);
       toReturn = "0x" + result.result.vm.return.toString('hex')
       if (toReturn === '0x') {
         toReturn = '0x0'
@@ -30,8 +26,6 @@ function runTx(payload, from, to, data, value, gasLimit, txRunner, callbacks, is
 }
 
 function createContract(payload, from, data, value, gasLimit, txRunner, callbacks, callback) {
-  console.log('-- createContract');
-  console.dir(arguments);
   let finalCallback = function(err, result) {
     if (err) {
       return callback(err);
@@ -44,7 +38,6 @@ function createContract(payload, from, data, value, gasLimit, txRunner, callback
 }
 
 function processTx(accounts, payload, isCall, callback) {
-  console.log('-- processTx');
   let api = {
     logMessage: (msg) => {
     },
@@ -75,7 +68,7 @@ function processTx(accounts, payload, isCall, callback) {
 
   let txRunner = new TxRunner(accounts, api);
   let { from: from, to: to, data: data, value: value, gas: gas } = payload.params[0];
-  gas = gas || 1200000;
+  gas = gas || 3000000;
 
   let callbacks = {
     confirmationCb: (network, tx, gasEstimation, continueTxExecution, cancelCb) => {

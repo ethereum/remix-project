@@ -23,14 +23,12 @@ Provider = function() {
 
 Provider.prototype.sendAsync = function(payload, callback) {
   const self = this;
-  //console.log("=========== sendAsync");
-  //console.dir(payload);
 
   if (payload.method === 'eth_accounts') {
     return callback(null, jsonRPCResponse(payload.id, this.accounts.map((x) => x.address)))
   }
   if (payload.method === 'eth_estimateGas') {
-    callback(null, jsonRPCResponse(payload.id, 1200000))
+    callback(null, jsonRPCResponse(payload.id, 3000000))
   }
   if (payload.method === 'eth_gasPrice') {
     callback(null, jsonRPCResponse(payload.id, 1))
