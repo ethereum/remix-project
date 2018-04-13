@@ -83,7 +83,8 @@ function deployAll (compileResult, web3, callback) {
           console.dir(accounts);
           deployObject.send({
             from: accounts[0],
-            gas: Math.ceil(gasValue * 1.1)
+            //gas: Math.ceil(gasValue * 1.2)
+            gas: 1200000
           }).on('receipt', function (receipt) {
 
             console.dir("==== got the receipt");

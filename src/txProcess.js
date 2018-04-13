@@ -33,6 +33,9 @@ function createContract(payload, from, data, value, gasLimit, txRunner, callback
   console.log('-- createContract');
   console.dir(arguments);
   let finalCallback = function(err, result) {
+    if (err) {
+      return callback(err);
+    }
     let contractAddress = ('0x' + result.result.createdAddress.toString('hex'))
     callback(null, jsonRPCResponse(payload.id, result.transactionHash))
   }
@@ -71,8 +74,8 @@ function processTx(accounts, payload, isCall, callback) {
   executionContext.init(api.config);
 
   let txRunner = new TxRunner(accounts, api);
-  let { from: from, to: to, data: data, value: value, gasLimit: gasLimit } = payload.params[0];
-  gasLimit = gasLimit || 800000;
+  let { from: from, to: to, data: data, value: value, gas: gas } = payload.params[0];
+  gas = gas || 1200000;
 
   let callbacks = {
     confirmationCb: (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
@@ -87,9 +90,9 @@ function processTx(accounts, payload, isCall, callback) {
   }
 
   if (to) {
-    runTx(payload, from, to, data, value, gasLimit, txRunner, callbacks, isCall, callback);
+    runTx(payload, from, to, data, value, gas, txRunner, callbacks, isCall, callback);
   } else {
-    createContract(payload, from, data, value, gasLimit, txRunner, callbacks, callback);
+    createContract(payload, from, data, value, gas, txRunner, callbacks, callback);
   }
 }
 

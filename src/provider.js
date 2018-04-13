@@ -30,7 +30,7 @@ Provider.prototype.sendAsync = function(payload, callback) {
     return callback(null, jsonRPCResponse(payload.id, this.accounts.map((x) => x.address)))
   }
   if (payload.method === 'eth_estimateGas') {
-    callback(null, jsonRPCResponse(payload.id, 800000))
+    callback(null, jsonRPCResponse(payload.id, 1200000))
   }
   if (payload.method === 'eth_gasPrice') {
     callback(null, jsonRPCResponse(payload.id, 1))
