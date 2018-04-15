@@ -38,13 +38,14 @@
  *
  */
 module.exports = class PluginManager {
-  constructor  (api = {}, events = {}, opts = {}) {
+  constructor (api = {}, events = {}, opts = {}) {
     const self = this
+    self._opts = opts
     self._api = api
     self._events = events
     self.plugins = {}
     self.inFocus
-    var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
+    self.allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
     self._events.compiler.register('compilationFinished', (success, data, source) => {
       if (self.inFocus) {
         // trigger to the current focus
@@ -54,6 +55,7 @@ module.exports = class PluginManager {
         }))
       }
     })
+
     self._events.app.register('tabChanged', (tabName) => {
       if (self.inFocus && self.inFocus !== tabName) {
         // trigger unfocus
@@ -69,7 +71,7 @@ module.exports = class PluginManager {
         self.inFocus = tabName
         self.post(tabName, JSON.stringify({
           type: 'compilationData',
-          value: self._api.getCompilationResult()
+          value: api.compiler.getCompilationResult()
         }))
       }
     })
@@ -83,10 +85,10 @@ module.exports = class PluginManager {
           result: result
         }))
       }
-      if (event.type === 'message' && this.inFocus && this.plugins[this.inFocus] && this.plugins[this.inFocus].origin === event.origin) {
+      if (event.type === 'message' && self.inFocus && self.plugins[self.inFocus] && self.plugins[self.inFocus].origin === event.origin) {
         var data = JSON.parse(event.data)
-        data.arguments.unshift(this.inFocus)
-        if (allowedapi[data.type]) {
+        data.arguments.unshift(self.inFocus)
+        if (self.allowedapi[data.type]) {
           data.arguments.push((error, result) => {
             response(data.type, data.id, error, result)
           })
@@ -96,11 +98,13 @@ module.exports = class PluginManager {
     }, false)
   }
   register (desc, content) {
-    this.plugins[desc.title] = {content, origin: desc.url}
+    const self = this
+    self.plugins[desc.title] = {content, origin: desc.url}
   }
   post (name, value) {
-    if (this.plugins[name]) {
-      this.plugins[name].content.querySelector('iframe').contentWindow.postMessage(value, this.plugins[name].origin)
+    const self = this
+    if (self.plugins[name]) {
+      self.plugins[name].content.querySelector('iframe').contentWindow.postMessage(value, self.plugins[name].origin)
     }
   }
 }
