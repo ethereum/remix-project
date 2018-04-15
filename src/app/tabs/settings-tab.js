@@ -31,7 +31,11 @@ module.exports = class SettingsTab {
         plugin: null, remixd: null, localremixd: null
       }
     } /* eslint-enable */
-    self.data = { allversions: null, selectedVersion: null }
+    self.data = {
+      allversions: null,
+      selectedVersion: null,
+      baseurl: 'https://solc-bin.ethereum.org/bin'
+    }
     self.event = new EventManager()
     self._components.queryParams = new QueryParams()
     self._components.themeStorage = new Storage('style:')
@@ -238,7 +242,7 @@ module.exports = class SettingsTab {
       if (self.data.selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(self.data.selectedVersion)) {
         return console.log('loading ' + self.data.selectedVersion + ' not allowed')
       }
-      url = 'https://ethereum.github.io/solc-bin/bin/' + self.data.selectedVersion
+      url = `${self.data.baseurl}/${self.data.selectedVersion}`
     }
     var isFirefox = typeof InstallTrigger !== 'undefined'
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
@@ -254,7 +258,7 @@ module.exports = class SettingsTab {
   }
   fetchAllVersion (callback) {
     var self = this
-    minixhr('https://ethereum.github.io/solc-bin/bin/list.json', function (json, event) {
+    minixhr(`${self.data.baseurl}/list.json`, function (json, event) {
       // @TODO: optimise and cache results to improve app loading times
       var allversions, selectedVersion
       if (event.type !== 'error') {
