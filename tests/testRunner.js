@@ -5,10 +5,11 @@ const assert = require('assert')
 let Compiler = require('../src/compiler.js')
 let Deployer = require('../src/deployer.js')
 let TestRunner = require('../src/testRunner.js')
+let Provider = require('../src/provider.js')
 
 function compileAndDeploy (filename, callback) {
   let web3 = new Web3()
-  web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'))
+  web3.setProvider(new Provider())
 
   async.waterfall([
     function compile (next) {
