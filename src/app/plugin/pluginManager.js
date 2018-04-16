@@ -143,7 +143,7 @@ class PluginManager {
           data.value.push((error, result) => {
             response(data.key, data.type, data.id, error, result)
           })
-          api[data.key][data.type].apply({}, data.arguments)
+          api[data.key][data.type].apply({}, data.value)
         }
       }
     }, false)
