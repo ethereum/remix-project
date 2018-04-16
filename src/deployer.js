@@ -91,7 +91,7 @@ function deployAll (compileResult, web3, callback) {
             contracts[contractName] = contractObject
 
             nextEach()
-          }).on('error', function(err) {
+          }).on('error', function (err) {
             console.dir(err)
             nextEach(err)
           })
