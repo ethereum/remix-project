@@ -17,8 +17,6 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   // should be replaced with remix's & browser solidity compiler code
   filepath = (isDirectory ? filename : path.dirname(filename))
 
-  //sources[filename] = {content: fs.readFileSync(path.join(filepath, filename)).toString()}
-  //console.dir(sources);
   fs.readdirSync(filepath).forEach(file => {
     sources[file] = {content: fs.readFileSync(path.join(filepath, file)).toString()}
   })

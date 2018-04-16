@@ -6,8 +6,11 @@ contract MyTest2 {
   SimpleStorage foo;
   uint i = 0;
 
-  function beforeEach() {
+  function beforeAll() {
     foo = new SimpleStorage();
+  }
+
+  function beforeEach() {
     if (i == 1) {
       foo.set(200);
     }
@@ -22,6 +25,10 @@ contract MyTest2 {
     return Assert.equal(foo.get(), 200, "initial value is not correct");
   }
 
-}
+  // TODO: the tests don't necessarily run in order
+  //function initialValueShouldBe400() public constant returns (bool) {
+  //  return Assert.equal(foo.get(), 400, "initial value is not correct");
+  //}
 
+}
 
