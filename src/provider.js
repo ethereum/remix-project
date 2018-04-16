@@ -40,7 +40,7 @@ Provider.prototype.sendAsync = function(payload, callback) {
     executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
       self.deployedContracts[receipt.contractAddress] = receipt.data
 
-      var r = { 
+      var r = {
         "transactionHash": receipt.hash,
         "transactionIndex": "0x00",
         "blockHash": "0x766d18646a06cf74faeabf38597314f84a82c3851859d9da9d94fc8d037269e5",
