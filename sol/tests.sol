@@ -15,8 +15,6 @@ library Assert {
   function equal(uint a, uint b, string message) public returns (bool result) {
     result = (a == b);
     AssertionEvent(result, message);
-    //result = true;
-    //return true;
   }
 
   function equal(int a, int b, string message) public returns (bool result) {
@@ -94,12 +92,11 @@ library Assert {
     AssertionEvent(result, message);
   }
 
-//  // TODO: needs to be convert to bytes first to be comparable
-//  //function notEqual(string a, string b, string message) public returns (bool result) {
-//  //  result = (a != b);
-//  //  AssertionEvent(result, message);
-//  //}
-
+  // TODO: needs to be convert to bytes first to be comparable
+  //function notEqual(string a, string b, string message) public returns (bool result) {
+  //  result = (a != b);
+  //  AssertionEvent(result, message);
+  //}
 
 }
 

@@ -84,8 +84,6 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
         }
         next()
       }).on('error', function(err) {
-        console.dir("======== error ========");
-        console.dir(err);
         next(err);
       })
     }

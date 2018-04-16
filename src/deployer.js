@@ -82,7 +82,6 @@ function deployAll (compileResult, web3, callback) {
           deployObject.send({
             from: accounts[0],
             gas: Math.ceil(gasValue * 1.2)
-            //gas: 1200000
           }).on('receipt', function (receipt) {
             contractObject.options.address = receipt.contractAddress
             contractObject.options.from = accounts[0]
@@ -93,7 +92,8 @@ function deployAll (compileResult, web3, callback) {
 
             nextEach()
           }).on('error', function(err) {
-            console.dir(err);
+            console.dir(err)
+            nextEach(err)
           })
         })
       }, function () {
