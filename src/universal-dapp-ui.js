@@ -47,7 +47,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   if (self.udapp.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    instance.append(close)
+    instance.appendChild(close)
   }
 
   function toggleClass () {
