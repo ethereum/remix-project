@@ -83,8 +83,8 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
           }
         }
         next()
-      }).on('error', function(err) {
-        next(err);
+      }).on('error', function (err) {
+        next(err)
       })
     }
   }, function () {
