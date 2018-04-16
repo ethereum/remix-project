@@ -65,7 +65,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   function setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
     selectExEnv.value = executionContext.getProvider()
-    fillAccountsList(appAPI, el)
+    fillAccountsList(appAPI, opts, el)
     event.trigger('clearInstance', [])
   }
 

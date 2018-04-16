@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/ethereum/remix-ide.svg?branch=master)](https://travis-ci.org/ethereum/remix-ide)
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=MTc5WVBoNnhOTGhaUng3ZFI3MDZvNWkraHIrd1FNanZIZk80SG9uMkFIND0tLUoyUjd1YVhWRnRrcUJMMnFlbmN3Y0E9PQ==--4085377897aef217e507c8fc46d463eb699838b8)](https://www.browserstack.com/automate/public-build/MTc5WVBoNnhOTGhaUng3ZFI3MDZvNWkraHIrd1FNanZIZk80SG9uMkFIND0tLUoyUjd1YVhWRnRrcUJMMnFlbmN3Y0E9PQ==--4085377897aef217e507c8fc46d463eb699838b8)
+
+
 
 # Remix
 
@@ -32,8 +35,9 @@ Or if you want to clone the github repository (`wget` need to be installed first
 ```bash
 git clone https://github.com/ethereum/remix-ide.git
 cd remix-ide
+npm run setupremix  # this will clone https://github.com/ethereum/remix for you and link it to remix-ide
 npm install
-npm run build && npm run serve
+npm start
 ```
 
 ## DEVELOPING:
@@ -44,21 +48,6 @@ Then open your `text editor` and start developing.
 The browser will automatically refresh when files are saved.
 
 Most of the the time working with other modules (like debugger etc.) hosted in the [Remix repository](https://github.com/ethereum/remix) is not needed.
-But in case changes have to be made in that repository too, the following command will help you link Remix with your local remix-ide repository:
-
-After `npm install` run also:
-
-```bash
-npm run pullremix
-
-npm run linkremixcore
-
-npm run linkremixlib
-
-npm run linkremixsolidity
-
-npm run linkremixdebugger
-```
 
 ### Troubleshooting building
 

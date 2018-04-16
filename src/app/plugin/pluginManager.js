@@ -75,48 +75,47 @@
  * See index.html and remix.js in test-browser folder for sample
  *
  */
-class PluginManager {
+module.exports = class PluginManager {
   constructor (api = {}, events = {}, opts = {}) {
-    var self = this
-    this.plugins = {}
-    this.inFocus
-    var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
-    events.compiler.register('compilationFinished', (success, data, source) => {
-      if (this.inFocus) {
+    const self = this
+    self._opts = opts
+    self._api = api
+    self._events = events
+    self.plugins = {}
+    self.inFocus
+    self.allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
+    self._events.compiler.register('compilationFinished', (success, data, source) => {
+      if (self.inFocus) {
         // trigger to the current focus
-        this.post(this.inFocus, JSON.stringify({
+        self.post(self.inFocus, JSON.stringify({
           action: 'notification',
           key: 'compiler',
           type: 'compilationFinished',
-          value: [
-            success,
-            data,
-            source
-          ]
+          value: [ success, data, source ]
         }))
       }
     })
 
-    events.app.register('tabChanged', (tabName) => {
-      if (this.inFocus && this.inFocus !== tabName) {
+    self._events.app.register('tabChanged', (tabName) => {
+      if (self.inFocus && self.inFocus !== tabName) {
         // trigger unfocus
-        this.post(this.inFocus, JSON.stringify({
+        self.post(self.inFocus, JSON.stringify({
           action: 'notification',
           key: 'app',
           type: 'unfocus',
           value: []
         }))
       }
-      if (this.plugins[tabName]) {
+      if (self.plugins[tabName]) {
         // trigger focus
-        this.post(tabName, JSON.stringify({
+        self.post(tabName, JSON.stringify({
           action: 'notification',
           key: 'app',
           type: 'focus',
           value: []
         }))
-        this.inFocus = tabName
-        this.post(tabName, JSON.stringify({
+        self.inFocus = tabName
+        self.post(tabName, JSON.stringify({
           action: 'notification',
           key: 'compiler',
           type: 'compilationData',
@@ -136,10 +135,10 @@ class PluginManager {
           value: [ result ]
         }))
       }
-      if (event.type === 'message' && this.inFocus && this.plugins[this.inFocus] && this.plugins[this.inFocus].origin === event.origin) {
+      if (event.type === 'message' && self.inFocus && self.plugins[self.inFocus] && self.plugins[self.inFocus].origin === event.origin) {
         var data = JSON.parse(event.data)
-        data.value.unshift(this.inFocus)
-        if (allowedapi[data.type]) {
+        data.value.unshift(self.inFocus)
+        if (self.allowedapi[data.type]) {
           data.value.push((error, result) => {
             response(data.key, data.type, data.id, error, result)
           })
@@ -149,13 +148,13 @@ class PluginManager {
     }, false)
   }
   register (desc, content) {
-    this.plugins[desc.title] = {content, origin: desc.url}
+    const self = this
+    self.plugins[desc.title] = {content, origin: desc.url}
   }
   post (name, value) {
-    if (this.plugins[name]) {
-      this.plugins[name].content.querySelector('iframe').contentWindow.postMessage(value, this.plugins[name].origin)
+    const self = this
+    if (self.plugins[name]) {
+      self.plugins[name].content.querySelector('iframe').contentWindow.postMessage(value, self.plugins[name].origin)
     }
   }
 }
-
-module.exports = PluginManager
