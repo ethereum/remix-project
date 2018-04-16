@@ -315,7 +315,7 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
-  var table = document.querySelector(`#${tx.id} [class^="txTable"`)
+  var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var to = obj.to
   var log = document.querySelector(`#${tx.id} [class^='log']`)
