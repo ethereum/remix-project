@@ -521,6 +521,17 @@ function isPayableFunction (node) {
 }
 
 /**
+ * True if is constructor
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isConstructor (node) {
+  return isFunctionDefinition(node) && (
+    node.attributes.isConstructor === true
+  )
+}
+
+/**
  * True if unary increment operation
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -857,6 +868,7 @@ module.exports = {
   isContractDefinition: isContractDefinition,
   isConstantFunction: isConstantFunction,
   isPayableFunction: isPayableFunction,
+  isConstructor: isConstructor,
   isInlineAssembly: isInlineAssembly,
   isNewExpression: isNewExpression,
   isReturn: isReturn,

@@ -34,7 +34,7 @@ function report (contracts, multipleContractsWithSameName) {
 
   contracts.forEach((contract) => {
     contract.functions.forEach((func) => {
-      if (common.isPayableFunction(func.node)) {
+      if (common.isPayableFunction(func.node) || common.isConstructor(func.node)) {
         func.potentiallyshouldBeConst = false
       } else {
         func.potentiallyshouldBeConst = checkIfShouldBeConstant(common.getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters),
