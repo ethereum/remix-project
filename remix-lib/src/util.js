@@ -47,7 +47,12 @@ module.exports = {
   hexListFromBNs: function (bnList) {
     var ret = []
     for (var k in bnList) {
-      ret.push('0x' + bnList[k].toString('hex', 64))
+      var v = bnList[k]
+      if (ethutil.BN.isBN(v)) {
+        ret.push('0x' + v.toString('hex', 64))
+      } else {
+        ret.push('0x' + (new ethutil.BN(v)).toString('hex', 64)) // TEMP FIX TO REMOVE ONCE https://github.com/ethereumjs/ethereumjs-vm/pull/293 is released
+      }
     }
     return ret
   },
