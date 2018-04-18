@@ -190,7 +190,7 @@ function struct (type, stateDefinitions, contractName, location) {
     if (!location) {
       location = match[2].trim()
     }
-    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName) // type is used to extract the ast struct definition
+    var memberDetails = getStructMembers(match[1], stateDefinitions, contractName, location) // type is used to extract the ast struct definition
     if (!memberDetails) return null
     return new StructType(memberDetails, location, match[1])
   } else {
@@ -230,9 +230,10 @@ function getEnum (type, stateDefinitions, contractName) {
   * @param {String} typeName - name of the struct type (e.g struct <name>)
   * @param {Object} stateDefinitions  - all state definition given by the AST (including struct and enum type declaration) for all contracts
   * @param {String} contractName - contract the @args typeName belongs to
+  * @param {String} location - location of the data (storage ref| storage pointer| memory| calldata)
   * @return {Array} containing all members of the current struct type
   */
-function getStructMembers (type, stateDefinitions, contractName) {
+function getStructMembers (type, stateDefinitions, contractName, location) {
   var split = type.split('.')
   if (!split.length) {
     type = contractName + '.' + type
@@ -243,7 +244,7 @@ function getStructMembers (type, stateDefinitions, contractName) {
   if (state) {
     for (var dec of state.stateDefinitions) {
       if (dec.name === 'StructDefinition' && type === contractName + '.' + dec.attributes.name) {
-        var offsets = computeOffsets(dec.children, stateDefinitions, contractName)
+        var offsets = computeOffsets(dec.children, stateDefinitions, contractName, location)
         if (!offsets) {
           return null
         }
