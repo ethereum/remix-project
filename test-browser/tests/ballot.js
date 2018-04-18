@@ -35,7 +35,7 @@ function runTests (browser, testData) {
     })
   }).click('.runView')
       .setValue('input[placeholder="uint8 _numProposals"]', '1')
-      .click('#runTabView div[class^="create"]')
+      .click('#runTabView button[class^="instanceButton"]')
       .testFunction('delegate - transact (not payable)', '0x0571a2439ea58bd349dd130afb8aff62a33af14c06de0dbc3928519bdf13ce2e',
         `[vm]\nfrom:0xca3...a733c\nto:Ballot.delegate(address) 0x692...77b3a\nvalue:0 wei\ndata:0x5c1...4d2db\nlogs:0\nhash:0x057...3ce2e`,
         {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
