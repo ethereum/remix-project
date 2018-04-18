@@ -38,12 +38,12 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
             try {
               st.equals(scopeStarts[0], '')
-              st.equals(scopeStarts[11], '1')
+              st.equals(scopeStarts[13], '1')
               st.equals(scopeStarts[103], '2')
-              st.equals(scopeStarts[118], '2.1')
-              st.equals(scopeStarts[139], '3')
-              st.equals(scopeStarts[157], '4')
-              st.equals(scopeStarts[172], '4.1')
+              st.equals(scopeStarts[116], '2.1')
+              st.equals(scopeStarts[135], '3')
+              st.equals(scopeStarts[151], '4')
+              st.equals(scopeStarts[164], '4.1')
               st.equals(scopes[''].locals['ui8'].type.typeName, 'uint8')
               st.equals(scopes[''].locals['ui16'].type.typeName, 'uint16')
               st.equals(scopes[''].locals['ui32'].type.typeName, 'uint32')
