@@ -11,7 +11,8 @@ module.exports = {
   add: add,
   extractLocation: extractLocation,
   removeLocation: removeLocation,
-  normalizeHex: normalizeHex
+  normalizeHex: normalizeHex,
+  extractLocationFromAstVariable: extractLocationFromAstVariable
 }
 
 function decodeIntFromHex (value, byteLength, signed) {
@@ -97,6 +98,16 @@ function extractLocation (type) {
     return match[1].trim()
   } else {
     return null
+  }
+}
+
+function extractLocationFromAstVariable (node) {
+  if (node.attributes.storageLocation !== 'default') {
+    return node.attributes.storageLocation
+  } else if (node.attributes.stateVariable) {
+    return 'storage'
+  } else {
+    return 'default' // local variables => storage, function parameters & return values => memory, state => storage
   }
 }
 
