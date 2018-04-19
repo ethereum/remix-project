@@ -46,7 +46,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                   var StorageResolver = require('remix-core').storage.StorageResolver
                   var StorageViewer = require('remix-core').storage.StorageViewer
                   var storageViewer = new StorageViewer({
-                    stepIndex: 199,
+                    stepIndex: 213,
                     tx: tx,
                     address: contractAddress
                   }, new StorageResolver(), traceManager)
