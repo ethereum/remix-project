@@ -1,5 +1,6 @@
 'use strict'
-var ethJSABI = require('ethereumjs-abi')
+var ethJSUtil = require('ethereumjs-util')
+var ethers = require('ethers')
 var txHelper = require('./txHelper')
 
 /**
@@ -38,13 +39,11 @@ class EventsDecoder {
 
   _eventABI (contract) {
     var eventABI = {}
-    contract.abi.forEach(function (funABI, i) {
-      if (funABI.type !== 'event') {
-        return
-      }
-      var hash = ethJSABI.eventID(funABI.name, funABI.inputs.map(function (item) { return item.type }))
-      eventABI[hash.toString('hex')] = { event: funABI.name, inputs: funABI.inputs }
-    })
+    var abi = new ethers.Interface(contract.abi)
+    for (var e in abi.events) {
+      var event = abi.events[e]
+      eventABI[ethJSUtil.sha3(new Buffer(event.signature)).toString('hex')] = { event: event.name, inputs: event.inputs, object: event }
+    }
     return eventABI
   }
 
@@ -67,54 +66,16 @@ class EventsDecoder {
 
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventsABI = this._eventsABI(compiledContracts)
-    var events = []
+    var events = {}
     for (var i in logs) {
       // [address, topics, mem]
       var log = logs[i]
       var topicId = log.topics[0]
       var abi = this._event(topicId.replace('0x', ''), eventsABI)
-      if (abi) {
-        var event
-        try {
-          var decoded = new Array(abi.inputs.length)
-          event = abi.event
-          var indexed = 1
-          var nonindexed = []
-          // decode indexed param
-          abi.inputs.map(function (item, index) {
-            if (item.indexed) {
-              var encodedData = log.topics[indexed].replace('0x', '')
-              try {
-                decoded[index] = ethJSABI.rawDecode([item.type], new Buffer(encodedData, 'hex'))[0]
-                if (typeof decoded[index] !== 'string') {
-                  decoded[index] = ethJSABI.stringify([item.type], decoded[index])
-                }
-              } catch (e) {
-                decoded[index] = encodedData
-              }
-              indexed++
-            } else {
-              nonindexed.push(item.type)
-            }
-          })
-          // decode non indexed param
-          var nonindexededResult = ethJSABI.rawDecode(nonindexed, new Buffer(log.data.replace('0x', ''), 'hex'))
-          nonindexed = ethJSABI.stringify(nonindexed, nonindexededResult)
-          // ordering
-          var j = 0
-          abi.inputs.map(function (item, index) {
-            if (!item.indexed) {
-              decoded[index] = nonindexed[j]
-              j++
-            }
-          })
-        } catch (e) {
-          decoded = log.data
-        }
-        events.push({ topic: topicId, event: event, args: decoded })
-      } else {
-        events.push({ data: log.data, topics: log.topics })
-      }
+      var topics = log.topics.map((value) => {
+        return value.indexOf('0x') === 0 ? value : '0x' + value
+      })
+      events = abi.object.parse(topics, '0x' + log.data)
     }
     cb(null, { decoded: events, raw: logs })
   }

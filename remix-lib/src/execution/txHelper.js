@@ -1,5 +1,5 @@
 'use strict'
-var ethJSABI = require('ethereumjs-abi')
+var ethers = require('ethers')
 
 module.exports = {
   encodeParams: function (funABI, args) {
@@ -16,18 +16,14 @@ module.exports = {
 
     // NOTE: the caller will concatenate the bytecode and this
     //       it could be done here too for consistency
-    return ethJSABI.rawEncode(types, args)
+    var abiCoder = new ethers.utils.AbiCoder()
+    return abiCoder.encode(types, args)
   },
 
   encodeFunctionId: function (funABI) {
-    var types = []
-    if (funABI.inputs && funABI.inputs.length) {
-      for (var i = 0; i < funABI.inputs.length; i++) {
-        types.push(funABI.inputs[i].type)
-      }
-    }
-
-    return ethJSABI.methodID(funABI.name, types)
+    var abi = new ethers.Interface([funABI])
+    abi = abi.functions[funABI.name]
+    return abi.sighash
   },
 
   sortAbiFunction: function (contractabi) {
