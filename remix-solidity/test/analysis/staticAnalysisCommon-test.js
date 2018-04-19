@@ -2094,3 +2094,19 @@ test('staticAnalysisCommon: function call with of function with function paramet
 
   t.equals(common.getFunctionCallTypeParameterType(node1), 'function (uint256,uint256) pure returns (uint256),uint256,uint256', 'Extracts param right type')
 })
+
+test('staticAnalysisCommon: require call', function (t) {
+  t.plan(3)
+  var node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'tuple()', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_bool', 'typeString': 'bool'}, {'typeIdentifier': 't_stringliteral_80efd193f332877914d93edb0b3ef5c6a7eecd00c6251c3fd7f146b60b40e6cd', 'typeString': 'literal_string \'fuu\''}], 'overloadedDeclarations': [90, 91], 'referencedDeclaration': 91, 'type': 'function (bool,string memory) pure', 'value': 'require'}, 'id': 50, 'name': 'Identifier', 'src': '462:7:0'}, {'attributes': {'argumentTypes': null, 'commonType': {'typeIdentifier': 't_address', 'typeString': 'address'}, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': '==', 'type': 'bool'}, 'children': [{'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'sender', 'referencedDeclaration': null, 'type': 'address'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 87, 'type': 'msg', 'value': 'msg'}, 'id': 51, 'name': 'Identifier', 'src': '470:3:0'}], 'id': 52, 'name': 'MemberAccess', 'src': '470:10:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 10, 'type': 'address', 'value': 'owner'}, 'id': 53, 'name': 'Identifier', 'src': '484:5:0'}], 'id': 54, 'name': 'BinaryOperation', 'src': '470:19:0'}, {'attributes': {'argumentTypes': null, 'hexvalue': '667575', 'isConstant': false, 'isLValue': false, 'isPure': true, 'lValueRequested': false, 'subdenomination': null, 'token': 'string', 'type': 'literal_string \'fuu\'', 'value': 'fuu'}, 'id': 55, 'name': 'Literal', 'src': '491:5:0'}], 'id': 56, 'name': 'FunctionCall', 'src': '462:35:0'}
+
+  t.equals(common.isRequireCall(node), true)
+  t.equals(common.getFunctionCallType(node), 'function (bool,string memory) pure', 'Extracts right type')
+  t.equals(common.getFunctionCallTypeParameterType(node), 'bool,string memory', 'Extracts param right type')
+})
+
+test('staticAnalysisCommon: isDeleteOfDynamicArray', function (t) {
+  t.plan(2)
+  var node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': 'delete', 'prefix': true, 'type': 'tuple()'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 4, 'type': 'uint256[] storage ref', 'value': 'users'}, 'id': 58, 'name': 'Identifier', 'src': '514:5:0'}], 'id': 59, 'name': 'UnaryOperation', 'src': '507:12:0'}
+  t.equals(common.isDeleteOfDynamicArray(node), true)
+  t.equals(common.isDynamicArrayAccess(node.children[0]), true, 'Extracts right type')
+})
