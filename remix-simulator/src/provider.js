@@ -73,4 +73,3 @@ Provider.prototype.isConnected = function () {
 }
 
 module.exports = Provider
-
