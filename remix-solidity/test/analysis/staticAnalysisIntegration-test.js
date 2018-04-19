@@ -27,7 +27,8 @@ var testFiles = [
   'transfer.sol',
   'ctor.sol',
   'forgottenReturn.sol',
-  'selfdestruct.sol'
+  'selfdestruct.sol',
+  'deleteDynamicArray.sol'
 ]
 
 var testFileAsts = {}
@@ -60,7 +61,8 @@ test('Integration test thisLocal.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -91,7 +93,8 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'transfer.sol': 1,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -122,7 +125,8 @@ test('Integration test constantFunctions.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 1
+    'selfdestruct.sol': 1,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -153,7 +157,8 @@ test('Integration test inlineAssembly.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -184,7 +189,8 @@ test('Integration test txOrigin.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -215,7 +221,8 @@ test('Integration test gasCosts.js', function (t) {
     'transfer.sol': 1,
     'ctor.sol': 0,
     'forgottenReturn.sol': 3,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 2
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -246,7 +253,8 @@ test('Integration test similarVariableNames.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 1,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -277,7 +285,8 @@ test('Integration test inlineAssembly.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -308,7 +317,8 @@ test('Integration test blockTimestamp.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -339,7 +349,8 @@ test('Integration test lowLevelCalls.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -370,7 +381,8 @@ test('Integration test blockBlockhash.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -401,7 +413,8 @@ test('Integration test noReturn.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 1,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -432,7 +445,8 @@ test('Integration test selfdestruct.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 2
+    'selfdestruct.sol': 2,
+    'deleteDynamicArray.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -463,11 +477,44 @@ test('Integration test guardConditions.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 0
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of guardCondition warnings`)
+  })
+})
+
+test('Integration test deleteDynamicArrays.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/analysis/modules/deleteDynamicArrays')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 2
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteDynamicArrays warnings`)
   })
 })
 

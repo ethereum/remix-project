@@ -58,7 +58,11 @@ var builtinFunctions = {
   'selfdestruct(address)': true,
   'revert()': true,
   'assert(bool)': true,
-  'require(bool)': true
+  'require(bool)': true,
+  'require(bool,string memory)': true,
+  'revert(string memory)': true,
+  'gasleft()': true,
+  'blockhash(uint)': true
 }
 
 var lowLevelCallTypes = {
@@ -405,6 +409,24 @@ function hasFunctionBody (funcNode) {
 }
 
 /**
+ * True if node is a delete instruction of a dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDeleteOfDynamicArray (node) {
+  return isDeleteUnaryOperation(node) && isDynamicArrayAccess(node.children[0])
+}
+
+/**
+ * True if node is node is a ref to a dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDynamicArrayAccess (node) {
+  return node && nodeType(node, exactMatch(nodeTypes.IDENTIFIER)) && (node.attributes.type.endsWith('[] storage ref') || node.attributes.type === 'bytes storage ref' || node.attributes.type === 'string storage ref')
+}
+
+/**
  * True if call to code within the current contracts context including (delegate) library call
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -538,6 +560,15 @@ function isConstructor (node) {
  */
 function isPlusPlusUnaryOperation (node) {
   return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('++')))
+}
+
+/**
+ * True if unary delete operation
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isDeleteUnaryOperation (node) {
+  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('delete')))
 }
 
 /**
@@ -827,6 +858,8 @@ module.exports = {
   getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
 
   // #################### Complex Node Identification
+  isDeleteOfDynamicArray: isDeleteOfDynamicArray,
+  isDynamicArrayAccess: isDynamicArrayAccess,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
   isEffect: isEffect,
@@ -858,6 +891,7 @@ module.exports = {
   isRequireCall: isRequireCall,
 
   // #################### Trivial Node Identification
+  isDeleteUnaryOperation: isDeleteUnaryOperation,
   isFunctionDefinition: isFunctionDefinition,
   isModifierDefinition: isModifierDefinition,
   isInheritanceSpecifier: isInheritanceSpecifier,
