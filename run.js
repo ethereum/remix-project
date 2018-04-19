@@ -3,7 +3,7 @@ const Web3 = require('web3')
 const RemixTests = require('./index.js')
 const fs = require('fs')
 
-const Provider = require('./src/provider.js')
+const Provider = require('remix-simulator').Provider;
 
 commander.action(function (filename) {
   let web3 = new Web3()

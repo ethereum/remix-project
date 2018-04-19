@@ -6,7 +6,7 @@
   "contributors": [
     {
       "name": "Iuri Matias",
-      "email": "iuri.matias@gmail.com"
+      "email": "iuri@ethereum.org"
     },
     {
       "name": "Yann Levreau",
@@ -45,6 +45,7 @@
     "ethereumjs-vm": "^2.3.2",
     "remix-lib": "latest",
     "remix-solidity": "latest",
+    "remix-simulator": "latest",
     "standard": "^10.0.3",
     "web3": "1.0.0-beta.27"
   },
