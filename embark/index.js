@@ -3,7 +3,7 @@ var remixd = require('remixd')
 
 module.exports = (embark) => {
   var server = httpServer.createServer({
-    root: __dirname + '/node_modules/remix-ide'
+    root: path.join(__dirname, '/node_modules/remix-ide')
   })
 
   embark.registerServiceCheck('Remix IDE', (cb) => {
@@ -12,5 +12,5 @@ module.exports = (embark) => {
 
   server.listen(8080, '127.0.0.1', function () {})
   var router = new remixd.Router()
-  router.start(__dirname + '/../../')
+  router.start(path.join(__dirname, '/../../'))
 }
