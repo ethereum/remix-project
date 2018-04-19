@@ -48,7 +48,7 @@ function runTests (browser, testData) {
       .pause(500)
       .perform(function (client, done) {
         console.log('goToVMtraceStep')
-        contractHelper.goToVMtraceStep(browser, 39, () => {
+        contractHelper.goToVMtraceStep(browser, 47, () => {
           done()
         })
       })
