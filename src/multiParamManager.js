@@ -54,11 +54,14 @@ class MultiParamManager {
 
     var basicInputField = yo`<input></input>`
     basicInputField.setAttribute('placeholder', this.inputs)
-    basicInputField.setAttribute('title', '')
+    basicInputField.setAttribute('title', this.inputs)
 
-    var onClick = () => {
+    // var outputOverride = 'yellow'
+    var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, basicInputField.value)
     }
+
+    // this.outputOverride = yo`<div class=${css.value}></div>` // show return value
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
       <i class="fa fa-caret-right ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
@@ -110,10 +113,12 @@ class MultiParamManager {
     if (this.funABI.payable === true) {
       contractProperty.classList.add(css.payable)
       button.setAttribute('title', (title + ' - transact (payable)'))
+      this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (payable)'))
     }
 
     if (!this.lookupOnly && this.funABI.payable === false) {
       button.setAttribute('title', (title + ' - transact (not payable)'))
+      this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (not payable)'))
     }
 
     return contractProperty

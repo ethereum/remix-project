@@ -101,11 +101,12 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     })
   }
 
-  var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues) => {
-    clickButton(valArray, inputsValues)
+  var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
+    clickButton(valArray, inputsValues, domEl)
   }, self.udapp.getInputs(args.funABI))
 
   var contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
+  contractActionsContainer.appendChild(outputOverride)
 
   return contractActionsContainer
 }
