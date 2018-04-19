@@ -8,25 +8,31 @@ window.addEventListener('message', receiveMessage, false)
 window.onload = function () {
   document.querySelector('input#testmessageadd').addEventListener('click', function () {
     window.parent.postMessage(JSON.stringify({
+      action: 'request',
+      key: 'config',
       type: 'setConfig',
-      arguments: [document.getElementById('filename').value, document.getElementById('valuetosend').value],
+      value: [document.getElementById('filename').value, document.getElementById('valuetosend').value],
       id: 34
-    }), 'http://127.0.0.1:8080')
+    }), '*')
   })
 
   document.querySelector('input#testmessageremove').addEventListener('click', function () {
     window.parent.postMessage(JSON.stringify({
+      action: 'request',
+      key: 'config',
       type: 'removeConfig',
-      arguments: [document.getElementById('filename').value],
+      value: [document.getElementById('filename').value],
       id: 35
-    }), 'http://127.0.0.1:8080')
+    }), '*')
   })
 
   document.querySelector('input#testmessagerget').addEventListener('click', function () {
     window.parent.postMessage(JSON.stringify({
+      action: 'request',
+      key: 'config',
       type: 'getConfig',
-      arguments: [document.getElementById('filename').value],
+      value: [document.getElementById('filename').value],
       id: 36
-    }), 'http://127.0.0.1:8080')
+    }), '*')
   })
 }
