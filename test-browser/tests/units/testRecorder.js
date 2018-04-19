@@ -14,7 +14,7 @@ module.exports = {
         .clickFunction('getInt - call')
         .clickFunction('getAddress - call')
         .clickFunction('getFromLib - call')
-        .waitForElementPresent('div[class^="contractProperty"] div[class^="value"]')
+        .waitForElementPresent('div[class^="contractActionsContainer"] div[class^="value"]')
         .perform((client, done) => {
           contractHelper.verifyCallReturnValue(browser, '0x35ef07393b57464e93deb59175ff72e6499450cf', ['0: uint256: 1', '0: uint256: 3456', '0: address: 0x35ef07393b57464e93deb59175ff72e6499450cf'], () => {
             done()
