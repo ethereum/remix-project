@@ -125,8 +125,10 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
     var address = util.hexConvert(data.createdAddress)
     self.vmTraces[self.processingHash].return = address
     self.txsReceipt[self.processingHash].contractAddress = address
-  } else {
+  } else if (data.vm.return) {
     self.vmTraces[self.processingHash].return = util.hexConvert(data.vm.return)
+  } else {
+    self.vmTraces[self.processingHash].return = '0x'
   }
   this.processingIndex = null
   this.processingAddress = null
