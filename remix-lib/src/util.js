@@ -42,6 +42,22 @@ module.exports = {
   },
 
   /*
+    ints: list of BNs
+  */
+  hexListFromBNs: function (bnList) {
+    var ret = []
+    for (var k in bnList) {
+      var v = bnList[k]
+      if (ethutil.BN.isBN(v)) {
+        ret.push('0x' + v.toString('hex', 64))
+      } else {
+        ret.push('0x' + (new ethutil.BN(v)).toString('hex', 64)) // TEMP FIX TO REMOVE ONCE https://github.com/ethereumjs/ethereumjs-vm/pull/293 is released
+      }
+    }
+    return ret
+  },
+
+  /*
     ints: list of IntArrays
   */
   hexListConvert: function (intsList) {

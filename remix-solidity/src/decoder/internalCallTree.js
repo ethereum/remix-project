@@ -6,6 +6,7 @@ var EventManager = remixLib.EventManager
 var decodeInfo = require('./decodeInfo')
 var util = remixLib.util
 var traceHelper = remixLib.helpers.trace
+var typesUtil = require('./types/util.js')
 
 /**
  * Tree representing internal jump into function.
@@ -189,9 +190,11 @@ function includeVariableDeclaration (tree, step, sourceLocation, scopeId, newLoc
         tree.solidityProxy.contractNameAt(step, (error, contractName) => { // cached
           if (!error) {
             var states = tree.solidityProxy.extractStatesDefinitions()
+            var location = typesUtil.extractLocationFromAstVariable(variableDeclaration)
+            location = location === 'default' ? 'storage' : location
             tree.scopes[scopeId].locals[variableDeclaration.attributes.name] = {
               name: variableDeclaration.attributes.name,
-              type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName),
+              type: decodeInfo.parseType(variableDeclaration.attributes.type, states, contractName, location),
               stackDepth: stack.length,
               sourceLocation: sourceLocation
             }
@@ -274,9 +277,11 @@ function addParams (parameterList, tree, scopeId, states, contractName, sourceLo
     var param = parameterList.children[inputParam]
     var stackDepth = stackLength + (dir * stackPosition)
     if (stackDepth >= 0) {
+      var location = typesUtil.extractLocationFromAstVariable(param)
+      location = location === 'default' ? 'memory' : location
       tree.scopes[scopeId].locals[param.attributes.name] = {
         name: param.attributes.name,
-        type: decodeInfo.parseType(param.attributes.type, states, contractName),
+        type: decodeInfo.parseType(param.attributes.type, states, contractName, location),
         stackDepth: stackDepth,
         sourceLocation: sourceLocation
       }

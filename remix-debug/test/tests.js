@@ -69,9 +69,9 @@ function testDebugging (t, debugManager) {
     })
   })
 
-  debugManager.extractStateAt(138, (error, state) => {
+  debugManager.extractStateAt(116, (error, state) => {
     if (error) return t.end(error)
-    debugManager.decodeStateAt(138, state, (error, decodedState) => {
+    debugManager.decodeStateAt(116, state, (error, decodedState) => {
       if (error) return t.end(error)
       t.equal(decodedState['chairperson'].value, '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB')
       t.equal(decodedState['chairperson'].type, 'address')
@@ -83,11 +83,11 @@ function testDebugging (t, debugManager) {
     })
   })
 
-  debugManager.traceManager.getCurrentCalledAddressAt(138, (error, address) => {
+  debugManager.traceManager.getCurrentCalledAddressAt(104, (error, address) => {
     if (error) return t.end(error)
-    debugManager.sourceLocationFromVMTraceIndex(address, 138, (error, location) => {
+    debugManager.sourceLocationFromVMTraceIndex(address, 104, (error, location) => {
       if (error) return t.end(error)
-      debugManager.decodeLocalsAt(138, location, (error, decodedlocals) => {
+      debugManager.decodeLocalsAt(104, location, (error, decodedlocals) => {
         if (error) return t.end(error)
         t.equal(JSON.stringify(decodedlocals), JSON.stringify({'p': {'value': '45', 'type': 'uint256'}, 'addressLocal': {'value': '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB', 'type': 'address'}, 'proposalsLocals': {'value': [{'value': {'voteCount': {'value': '0', 'type': 'uint256'}}, 'type': 'struct Ballot.Proposal'}], 'length': '0x1', 'type': 'struct Ballot.Proposal[]'}}))
       })
@@ -104,7 +104,7 @@ function testDebugging (t, debugManager) {
   breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
     console.log('breakpointHit')
     t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 591, length: 1, file: 0, jump: '-' }))
-    t.equal(step, 73)
+    t.equal(step, 75)
   })
 
   breakPointManager.event.register('noBreakpointHit', function () {
