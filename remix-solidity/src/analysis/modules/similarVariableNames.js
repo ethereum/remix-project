@@ -69,7 +69,7 @@ function isCommonPrefixedVersion (varName1, varName2) {
 }
 
 function isCommonNrSuffixVersion (varName1, varName2) {
-  var ref = '^' + util.escapeRegExp(varName1.slice(0, -1)) + '[0-9]$'
+  var ref = '^' + util.escapeRegExp(varName1.slice(0, -1)) + '[0-9]*$'
 
   return varName2.match(ref) != null
 }
