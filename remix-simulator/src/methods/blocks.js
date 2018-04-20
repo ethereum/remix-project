@@ -1,5 +1,5 @@
 
-var Blocks = function() {
+var Blocks = function () {
 }
 
 Blocks.prototype.methods = function () {
@@ -39,4 +39,4 @@ Blocks.prototype.eth_gasPrice = function (payload, cb) {
   cb(null, 1)
 }
 
-module.exports = Blocks;
+module.exports = Blocks

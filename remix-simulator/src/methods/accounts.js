@@ -1,6 +1,6 @@
 var Web3 = require('web3')
 
-var Accounts = function(web3) {
+var Accounts = function () {
   this.web3 = new Web3()
   // TODO: make it random and/or use remix-libs
   this.accounts = [this.web3.eth.accounts.create(['abcd'])]
@@ -15,8 +15,8 @@ Accounts.prototype.methods = function () {
   }
 }
 
-Accounts.prototype.eth_accounts = function(payload, cb) {
+Accounts.prototype.eth_accounts = function (payload, cb) {
   return cb(null, this.accounts.map((x) => x.address))
 }
 
-module.exports = Accounts;
+module.exports = Accounts
