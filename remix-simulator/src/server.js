@@ -27,4 +27,3 @@ app.use(function (req, res) {
 })
 
 app.listen(8545, () => log('Remix Simulator listening on port 8545!'))
-

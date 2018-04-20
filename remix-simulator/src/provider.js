@@ -37,7 +37,9 @@ Provider.prototype.sendAsync = function (payload, callback) {
     callback(null, jsonRPCResponse(payload.id, 1))
   }
   if (payload.method === 'eth_sendTransaction') {
-    processTx(this.accounts, payload, false, callback)
+    processTx(this.accounts, payload, false, (_err, result) => {
+      callback(null, jsonRPCResponse(payload.id, result))
+    })
   }
   if (payload.method === 'eth_getTransactionReceipt') {
     executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
