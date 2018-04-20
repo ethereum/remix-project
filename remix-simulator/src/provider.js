@@ -17,8 +17,6 @@ var Provider = function () {
   this.accounts[this.accounts[0].address.toLowerCase()] = this.accounts[0]
   this.accounts[this.accounts[0].address.toLowerCase()].privateKey = Buffer.from(this.accounts[this.accounts[0].address.toLowerCase()].privateKey.slice(2), 'hex')
 
-  this.Transactions = ;
-
   this.methods = {}
   this.methods = merge(this.methods, (new Transactions(this.accounts)).methods())
   this.methods = merge(this.methods, (new Whisper()).methods())
