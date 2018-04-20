@@ -12,17 +12,16 @@ function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, i
     if (err) {
       return callback(err)
     }
-    let toReturn
+
     if (isCall) {
-      toReturn = '0x' + result.result.vm.return.toString('hex')
+      let toReturn = '0x' + result.result.vm.return.toString('hex')
       if (toReturn === '0x') {
         toReturn = '0x0'
       }
-    } else {
-      toReturn = result.transactionHash
+      return callback(null, jsonRPCResponse(payload.id, toReturn))
     }
 
-    callback(null, jsonRPCResponse(payload.id, toReturn))
+    callback(null, jsonRPCResponse(payload.id, result.transactionHash))
   }
 
   TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, isCall)
@@ -33,7 +32,6 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
     if (err) {
       return callback(err)
     }
-    // let contractAddress = ('0x' + result.result.createdAddress.toString('hex'))
     callback(null, jsonRPCResponse(payload.id, result.transactionHash))
   }
 
@@ -46,12 +44,8 @@ function processTx (accounts, payload, isCall, callback) {
     },
     logHtmlMessage: (msg) => {
     },
-    // config: self._api.config,
     config: {
       getUnpersistedProperty: (key) => {
-        // if (key === 'settings/always-use-vm') {
-        //   return true
-        // }
         return true
       },
       get: () => {
@@ -62,7 +56,6 @@ function processTx (accounts, payload, isCall, callback) {
       cb()
     },
     personalMode: () => {
-      // return self._api.config.get('settings/personal-mode')
       return false
     }
   }
