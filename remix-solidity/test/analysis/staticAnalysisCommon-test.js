@@ -7,11 +7,19 @@ function escapeRegExp (str) {
 }
 
 test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
-  t.plan(7)
+  t.plan(9)
 
   t.equal(common.helpers.buildFunctionSignature([common.basicTypes.UINT, common.basicTypes.ADDRESS], [common.basicTypes.BOOL], false),
     'function (uint256,address) returns (bool)',
     'two params and return value without payable')
+
+  t.equal(common.helpers.buildFunctionSignature([common.basicTypes.UINT, common.basicTypes.ADDRESS], [common.basicTypes.BOOL], false, 'pure'),
+    'function (uint256,address) pure returns (bool)',
+    'two params and return value without payable but pure')
+
+  t.equal(common.helpers.buildFunctionSignature([common.basicTypes.UINT, common.basicTypes.ADDRESS], [common.basicTypes.BOOL], true, 'pure'),
+    'function (uint256,address) payable pure returns (bool)',
+    'two params and return value without payable but pure')
 
   t.equal(common.helpers.buildFunctionSignature([common.basicTypes.UINT, common.basicTypes.BYTES32, common.basicTypes.BYTES32], [], true),
     'function (uint256,bytes32,bytes32) payable',
@@ -2109,4 +2117,22 @@ test('staticAnalysisCommon: isDeleteOfDynamicArray', function (t) {
   var node = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'operator': 'delete', 'prefix': true, 'type': 'tuple()'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 4, 'type': 'uint256[] storage ref', 'value': 'users'}, 'id': 58, 'name': 'Identifier', 'src': '514:5:0'}], 'id': 59, 'name': 'UnaryOperation', 'src': '507:12:0'}
   t.equals(common.isDeleteOfDynamicArray(node), true)
   t.equals(common.isDynamicArrayAccess(node.children[0]), true, 'Extracts right type')
+})
+
+test('staticAnalysisCommon: isAbiNamespaceCall', function (t) {
+  t.plan(8)
+  var node1 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encode', 'referencedDeclaration': null, 'type': 'function () pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 26, 'name': 'Identifier', 'src': '245: 3:0'}], 'id': 28, 'name': 'MemberAccess', 'src': '245:10:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 29, 'name': 'Identifier', 'src': '256:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 30, 'name': 'Identifier', 'src': '258:1:0'}], 'id': 31, 'name': 'FunctionCall', 'src': '245:15:0'}
+  var node2 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodePacked', 'referencedDeclaration': null, 'type': 'function () pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 33, 'name': 'Identifier', 'src': '279:3:0'}], 'id': 35, 'name': 'MemberAccess', 'src': '279:16:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 36, 'name': 'Identifier', 'src': '296:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 37, 'name': 'Identifier', 'src': '298:1:0'}], 'id': 38, 'name': 'FunctionCall', 'src': '279:21:0'}
+  var node3 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_bytes4', 'typeString': 'bytes4'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodeWithSelector', 'referencedDeclaration': null, 'type': 'function (bytes4) pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 40, 'name': 'Identifier', 'src': '319:3:0'}], 'id': 42, 'name': 'MemberAccess', 'src': '319:22:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 19, 'type': 'bytes4', 'value': 'selector'}, 'id': 43, 'name': 'Identifier', 'src': '342:8:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 44, 'name': 'Identifier', 'src': '352:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 45, 'name': 'Identifier', 'src': '355:1:0'}], 'id': 46, 'name': 'FunctionCall', 'src': '319:38:0'}
+  var node4 = {'attributes': {'argumentTypes': null, 'isConstant': false, 'isLValue': false, 'isPure': false, 'isStructConstructorCall': false, 'lValueRequested': false, 'names': [null], 'type': 'bytes memory', 'type_conversion': false}, 'children': [{'attributes': {'argumentTypes': [{'typeIdentifier': 't_string_memory_ptr', 'typeString': 'string memory'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}, {'typeIdentifier': 't_uint256', 'typeString': 'uint256'}], 'isConstant': false, 'isLValue': false, 'isPure': false, 'lValueRequested': false, 'member_name': 'encodeWithSignature', 'referencedDeclaration': null, 'type': 'function (string memory) pure returns (bytes memory)'}, 'children': [{'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 64, 'type': 'abi', 'value': 'abi'}, 'id': 48, 'name': 'Identifier', 'src': '367:3:0'}], 'id': 50, 'name': 'MemberAccess', 'src': '367:23:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 11, 'type': 'string memory', 'value': 'sig'}, 'id': 51, 'name': 'Identifier', 'src': '391:3:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 7, 'type': 'uint256', 'value': 'a'}, 'id': 52, 'name': 'Identifier', 'src': '396:1:0'}, {'attributes': {'argumentTypes': null, 'overloadedDeclarations': [null], 'referencedDeclaration': 15, 'type': 'uint256', 'value': 'b'}, 'id': 53, 'name': 'Identifier', 'src': '399:1:0'}], 'id': 54, 'name': 'FunctionCall', 'src': '367:34:0'}
+
+  t.equals(common.isAbiNamespaceCall(node1), true, 'encode abi')
+  t.equals(common.isAbiNamespaceCall(node2), true, 'encodePacked abi')
+  t.equals(common.isAbiNamespaceCall(node3), true, 'encodeWithSelector abi')
+  t.equals(common.isAbiNamespaceCall(node4), true, 'encodeWithSignature abi')
+
+  t.equals(common.isBuiltinFunctionCall(node1), true, 'encode Builtin')
+  t.equals(common.isBuiltinFunctionCall(node2), true, 'encodePacked Builtin')
+  t.equals(common.isBuiltinFunctionCall(node3), true, 'encodeWithSelector Builtin')
+  t.equals(common.isBuiltinFunctionCall(node4), true, 'encodeWithSignature Builtin')
 })
