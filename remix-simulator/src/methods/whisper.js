@@ -12,5 +12,5 @@ Whisper.prototype.shh_version = function(payload, cb) {
   cb(null, 5)
 }
 
-module.exports = Whisper;
+module.exports = Whisper
 
