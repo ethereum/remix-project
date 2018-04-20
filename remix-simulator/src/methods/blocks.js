@@ -4,7 +4,8 @@ var Blocks = function() {
 
 Blocks.prototype.methods = function () {
   return {
-    eth_getBlockByNumber: this.eth_getBlockByNumber.bind(this)
+    eth_getBlockByNumber: this.eth_getBlockByNumber.bind(this),
+    eth_gasPrice: this.eth_gasPrice.bind(this)
   }
 }
 
