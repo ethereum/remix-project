@@ -2,6 +2,7 @@ var Web3 = require('web3')
 var RemixLib = require('remix-lib')
 const log = require('fancy-log')
 const Transactions = require('./methods/transactions.js')
+const Whisper = require('./methods/whisper.js')
 const merge = require('merge')
 
 function jsonRPCResponse (id, result) {
@@ -16,10 +17,11 @@ var Provider = function () {
   this.accounts[this.accounts[0].address.toLowerCase()] = this.accounts[0]
   this.accounts[this.accounts[0].address.toLowerCase()].privateKey = Buffer.from(this.accounts[this.accounts[0].address.toLowerCase()].privateKey.slice(2), 'hex')
 
-  this.Transactions = new Transactions(this.accounts);
+  this.Transactions = ;
 
   this.methods = {}
-  this.methods = merge(this.methods, this.Transactions.methods())
+  this.methods = merge(this.methods, (new Transactions(this.accounts)).methods())
+  this.methods = merge(this.methods, (new Whisper()).methods())
   log.dir(this.methods)
 }
 
@@ -40,9 +42,6 @@ Provider.prototype.sendAsync = function (payload, callback) {
   }
   if (payload.method === 'web3_clientVersion') {
     callback(null, jsonRPCResponse(payload.id, 'Remix Simulator/0.0.1'))
-  }
-  if (payload.method === 'shh_version') {
-    callback(null, jsonRPCResponse(payload.id, 5))
   }
   if (payload.method === 'eth_getBlockByNumber') {
     let b = {
