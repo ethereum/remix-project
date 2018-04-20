@@ -3,10 +3,6 @@ var TxExecution = RemixLib.execution.txExecution
 var TxRunner = RemixLib.execution.txRunner
 var executionContext = RemixLib.execution.executionContext
 
-function jsonRPCResponse (id, result) {
-  return {'id': id, 'jsonrpc': '2.0', 'result': result}
-}
-
 function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, isCall, callback) {
   let finalCallback = function (err, result) {
     if (err) {
@@ -18,10 +14,10 @@ function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, i
       if (toReturn === '0x') {
         toReturn = '0x0'
       }
-      return callback(null, jsonRPCResponse(payload.id, toReturn))
+      return callback(null, toReturn)
     }
 
-    callback(null, jsonRPCResponse(payload.id, result.transactionHash))
+    callback(null, result.transactionHash)
   }
 
   TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, isCall)
@@ -32,7 +28,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
     if (err) {
       return callback(err)
     }
-    callback(null, jsonRPCResponse(payload.id, result.transactionHash))
+    callback(null, result.transactionHash)
   }
 
   TxExecution.createContract(from, data, value, gasLimit, txRunner, callbacks, finalCallback)
