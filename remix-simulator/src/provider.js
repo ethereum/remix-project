@@ -1,18 +1,14 @@
-var RemixLib = require('remix-lib')
 const log = require('fancy-log')
+const merge = require('merge')
+
 const Accounts = require('./methods/accounts.js')
 const Blocks = require('./methods/blocks.js')
 const Misc = require('./methods/misc.js')
 const Transactions = require('./methods/transactions.js')
 const Whisper = require('./methods/whisper.js')
-const merge = require('merge')
-
-function jsonRPCResponse (id, result) {
-  return {'id': id, 'jsonrpc': '2.0', 'result': result}
-}
 
 var Provider = function () {
-  this.Accounts = new Accounts();
+  this.Accounts = new Accounts()
 
   this.methods = {}
   this.methods = merge(this.methods, this.Accounts.methods())
@@ -24,19 +20,19 @@ var Provider = function () {
 }
 
 Provider.prototype.sendAsync = function (payload, callback) {
-  const self = this
   log.info('payload method is ', payload.method)
 
   let method = this.methods[payload.method]
   if (method) {
     return method.call(method, payload, (err, result) => {
       if (err) {
-        return callback({error: err})
+        return callback(err)
       }
-      callback(null, jsonRPCResponse(payload.id, result))
-    });
+      let response = {'id': payload.id, 'jsonrpc': '2.0', 'result': result}
+      callback(null, response)
+    })
   }
-  callback("unknown method " + payload.method);
+  callback(new Error('unknown method ' + payload.method))
 }
 
 Provider.prototype.isConnected = function () {

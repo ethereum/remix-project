@@ -2,8 +2,8 @@ var RemixLib = require('remix-lib')
 var executionContext = RemixLib.execution.executionContext
 var processTx = require('./txProcess.js')
 
-var Transactions = function(accounts) {
-  this.accounts = accounts;
+var Transactions = function (accounts) {
+  this.accounts = accounts
   // TODO: fix me; this is a temporary and very hackish thing just to get the getCode working for now
   this.deployedContracts = {}
 }
@@ -18,12 +18,12 @@ Transactions.prototype.methods = function () {
   }
 }
 
-Transactions.prototype.eth_sendTransaction = function(payload, cb) {
-  processTx(this.accounts, payload, false, cb);
+Transactions.prototype.eth_sendTransaction = function (payload, cb) {
+  processTx(this.accounts, payload, false, cb)
 }
 
-Transactions.prototype.eth_getTransactionReceipt = function(payload, cb) {
-  const self = this;
+Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
+  const self = this
   executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
     if (error) {
       return cb(error)
@@ -46,18 +46,18 @@ Transactions.prototype.eth_getTransactionReceipt = function(payload, cb) {
   })
 }
 
-Transactions.prototype.eth_estimateGas = function(payload, cb) {
+Transactions.prototype.eth_estimateGas = function (payload, cb) {
   cb(null, 3000000)
 }
 
-Transactions.prototype.eth_getCode = function(payload, cb) {
+Transactions.prototype.eth_getCode = function (payload, cb) {
   let address = payload.params[0]
 
   cb(null, this.deployedContracts[address] || '0x')
 }
 
-Transactions.prototype.eth_call = function(payload, cb) {
+Transactions.prototype.eth_call = function (payload, cb) {
   processTx(this.accounts, payload, true, cb)
 }
 
- module.exports = Transactions;
+module.exports = Transactions
