@@ -34,4 +34,8 @@ Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
   cb(null, b)
 }
 
+Blocks.prototype.eth_gasPrice = function (payload, cb) {
+  cb(null, 1)
+}
+
 module.exports = Blocks;

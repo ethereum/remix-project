@@ -13,7 +13,8 @@ Transactions.prototype.methods = function () {
     eth_sendTransaction: this.eth_sendTransaction.bind(this),
     eth_getTransactionReceipt: this.eth_getTransactionReceipt.bind(this),
     eth_getCode: this.eth_getCode.bind(this),
-    eth_call: this.eth_call.bind(this)
+    eth_call: this.eth_call.bind(this),
+    eth_estimateGas: this.eth_estimateGas.bind(this)
   }
 }
 
@@ -43,6 +44,10 @@ Transactions.prototype.eth_getTransactionReceipt = function(payload, cb) {
 
     cb(null, r)
   })
+}
+
+Transactions.prototype.eth_estimateGas = function(payload, cb) {
+  cb(null, 3000000)
 }
 
 Transactions.prototype.eth_getCode = function(payload, cb) {
