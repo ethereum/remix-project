@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const Provider = require('./provider')
+const log = require('fancy-log')
 
 var provider = new Provider()
 
@@ -14,15 +15,16 @@ app.get('/', (req, res) => {
 
 app.use(function (req, res) {
   // url, body, params, method
-  console.log('request ', req.method, req.body)
+  log('request ', req.method, req.body)
   provider.sendAsync(req.body, (err, jsonResponse) => {
     if (err) {
       res.send({error: err})
     }
-    console.dir('response is ')
-    console.dir(jsonResponse)
+    log.dir('response is ')
+    log.dir(jsonResponse)
     res.send(jsonResponse)
   })
 })
 
-app.listen(8545, () => console.log('Example app listening on port 8545!'))
+app.listen(8545, () => log('Remix Simulator listening on port 8545!'))
+

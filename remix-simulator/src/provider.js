@@ -1,6 +1,7 @@
 var Web3 = require('web3')
 var RemixLib = require('remix-lib')
 var executionContext = RemixLib.execution.executionContext
+const log = require('fancy-log')
 
 var processTx = require('./txProcess.js')
 
@@ -22,11 +23,11 @@ var Provider = function () {
 
 Provider.prototype.sendAsync = function (payload, callback) {
   const self = this
-  console.dir('payload method is ')
-  console.dir(payload.method)
+  log.dir('payload method is ')
+  log.dir(payload.method)
 
   if (payload.method === 'eth_accounts') {
-    console.dir('eth_accounts')
+    log.dir('eth_accounts')
     return callback(null, jsonRPCResponse(payload.id, this.accounts.map((x) => x.address)))
   }
   if (payload.method === 'eth_estimateGas') {
