@@ -1,3 +1,4 @@
+var version = require('../../package.json').version
 
 var Misc = function() {
 }
@@ -9,7 +10,7 @@ Misc.prototype.methods = function () {
 }
 
 Misc.prototype.web3_clientVersion = function (payload, cb) {
-  cb(null, 'Remix Simulator/0.0.1')
+  cb(null, 'Remix Simulator/' + version)
 }
 
 
