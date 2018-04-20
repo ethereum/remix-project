@@ -4,7 +4,7 @@ var Misc = function() {
 
 Misc.prototype.methods = function () {
   return {
-    web3_clientVersion: 'web3_clientVersion'
+    web3_clientVersion: this.web3_clientVersion.bind(this)
   }
 }
 

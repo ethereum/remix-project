@@ -25,8 +25,7 @@ var Provider = function () {
 
 Provider.prototype.sendAsync = function (payload, callback) {
   const self = this
-  log.dir('payload method is ')
-  log.dir(payload.method)
+  log.info('payload method is ', payload.method)
 
   let method = this.methods[payload.method]
   if (method) {
