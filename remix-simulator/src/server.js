@@ -10,17 +10,19 @@ app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
   res.send('Welcome to remix-simulator')
-});
+})
 
-app.use(function(req,res) { 
+app.use(function (req, res) {
   // url, body, params, method
-  console.log("request ", req.method, req.body)
+  console.log('request ', req.method, req.body)
   provider.sendAsync(req.body, (err, jsonResponse) => {
-    console.dir("response is ")
+    if (err) {
+      res.send({error: err})
+    }
+    console.dir('response is ')
     console.dir(jsonResponse)
     res.send(jsonResponse)
-  });
-});
+  })
+})
 
 app.listen(8545, () => console.log('Example app listening on port 8545!'))
-
