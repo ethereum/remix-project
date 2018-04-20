@@ -3,24 +3,31 @@ var TxExecution = RemixLib.execution.txExecution
 var TxRunner = RemixLib.execution.txRunner
 var executionContext = RemixLib.execution.executionContext
 
-function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, isCall, callback) {
+function runCall (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
   let finalCallback = function (err, result) {
     if (err) {
       return callback(err)
     }
 
-    if (isCall) {
-      let toReturn = '0x' + result.result.vm.return.toString('hex')
-      if (toReturn === '0x') {
-        toReturn = '0x0'
-      }
-      return callback(null, toReturn)
+    let toReturn = '0x' + result.result.vm.return.toString('hex')
+    if (toReturn === '0x') {
+      toReturn = '0x0'
     }
+    return callback(null, toReturn)
+  }
 
+  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, true)
+}
+
+function runTx (payload, from, to, data, value, gasLimit, txRunner, callbacks, callback) {
+  let finalCallback = function (err, result) {
+    if (err) {
+      return callback(err)
+    }
     callback(null, result.transactionHash)
   }
 
-  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, isCall)
+  TxExecution.callFunction(from, to, data, value, gasLimit, null, txRunner, callbacks, finalCallback, false)
 }
 
 function createContract (payload, from, data, value, gasLimit, txRunner, callbacks, callback) {
@@ -77,8 +84,10 @@ function processTx (accounts, payload, isCall, callback) {
     }
   }
 
-  if (to) {
-    runTx(payload, from, to, data, value, gas, txRunner, callbacks, isCall, callback)
+  if (isCall) {
+    runCall(payload, from, to, data, value, gas, txRunner, callbacks, callback)
+  } else if (to) {
+    runTx(payload, from, to, data, value, gas, txRunner, callbacks, callback)
   } else {
     createContract(payload, from, data, value, gas, txRunner, callbacks, callback)
   }
