@@ -1,9 +1,8 @@
 var Web3 = require('web3')
 var RemixLib = require('remix-lib')
-var executionContext = RemixLib.execution.executionContext
 const log = require('fancy-log')
-
-var processTx = require('./txProcess.js')
+const Transactions = require('./methods/transactions.js')
+const merge = require('merge')
 
 function jsonRPCResponse (id, result) {
   return {'id': id, 'jsonrpc': '2.0', 'result': result}
@@ -17,8 +16,11 @@ var Provider = function () {
   this.accounts[this.accounts[0].address.toLowerCase()] = this.accounts[0]
   this.accounts[this.accounts[0].address.toLowerCase()].privateKey = Buffer.from(this.accounts[this.accounts[0].address.toLowerCase()].privateKey.slice(2), 'hex')
 
-  // TODO: fix me; this is a temporary and very hackish thing just to get the getCode working for now
-  this.deployedContracts = {}
+  this.Transactions = new Transactions(this.accounts);
+
+  this.methods = {}
+  this.methods = merge(this.methods, this.Transactions.methods())
+  log.dir(this.methods)
 }
 
 Provider.prototype.sendAsync = function (payload, callback) {
@@ -35,42 +37,6 @@ Provider.prototype.sendAsync = function (payload, callback) {
   }
   if (payload.method === 'eth_gasPrice') {
     callback(null, jsonRPCResponse(payload.id, 1))
-  }
-  if (payload.method === 'eth_sendTransaction') {
-    processTx(this.accounts, payload, false, (_err, result) => {
-      callback(null, jsonRPCResponse(payload.id, result))
-    })
-  }
-  if (payload.method === 'eth_getTransactionReceipt') {
-    executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
-      if (error) {
-        return callback(error)
-      }
-      self.deployedContracts[receipt.contractAddress] = receipt.data
-
-      var r = {
-        'transactionHash': receipt.hash,
-        'transactionIndex': '0x00',
-        'blockHash': '0x766d18646a06cf74faeabf38597314f84a82c3851859d9da9d94fc8d037269e5',
-        'blockNumber': '0x06',
-        'gasUsed': '0x06345f',
-        'cumulativeGasUsed': '0x06345f',
-        'contractAddress': receipt.contractAddress,
-        'logs': [],
-        'status': 1
-      }
-
-      callback(null, jsonRPCResponse(payload.id, r))
-    })
-  }
-  if (payload.method === 'eth_getCode') {
-    let address = payload.params[0]
-    // let block = payload.params[1]
-
-    callback(null, jsonRPCResponse(payload.id, self.deployedContracts[address] || '0x'))
-  }
-  if (payload.method === 'eth_call') {
-    processTx(this.accounts, payload, true, callback)
   }
   if (payload.method === 'web3_clientVersion') {
     callback(null, jsonRPCResponse(payload.id, 'Remix Simulator/0.0.1'))
@@ -103,6 +69,16 @@ Provider.prototype.sendAsync = function (payload, callback) {
     }
     callback(null, jsonRPCResponse(payload.id, b))
   }
+  let method = this.methods[payload.method]
+  if (method) {
+    return method.call(method, payload, (err, result) => {
+      if (err) {
+        return callback({error: err})
+      }
+      callback(null, jsonRPCResponse(payload.id, result))
+    });
+  }
+  callback("unknown method " + payload.method);
 }
 
 Provider.prototype.isConnected = function () {
