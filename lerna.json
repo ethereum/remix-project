@@ -1,0 +1,11 @@
+{
+  "lerna": "2.10.2",
+  "packages": [
+    "remix-core",
+    "remix-debug",
+    "remix-debugger",
+    "remix-lib",
+    "remix-solidity"
+  ],
+  "version": "independent"
+}
