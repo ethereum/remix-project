@@ -3,9 +3,9 @@ const path = require('path')
 const fs = require('fs')
 require('colors')
 
-let Compiler = require('./src/compiler.js')
-let Deployer = require('./src/deployer.js')
-let TestRunner = require('./src/testRunner.js')
+let Compiler = require('./compiler.js')
+let Deployer = require('./deployer.js')
+let TestRunner = require('./testRunner.js')
 
 var runTestFiles = function (filepath, isDirectory, web3) {
   async.waterfall([
