@@ -19,7 +19,7 @@
     "babel-eslint": "^7.1.1",
     "babelify": "^7.3.0",
     "fast-async": "^6.1.2",
-    "remix-lib": "latest",
+    "remix-lib": "0.2.2",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
   },
