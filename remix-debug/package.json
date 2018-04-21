@@ -26,9 +26,9 @@
     "ethereumjs-vm": "^2.3.3",
     "notify-error": "^1.2.0",
     "npm-run-all": "^4.1.2",
-    "remix-core": "latest",
-    "remix-lib": "latest",
-    "remix-solidity": "latest",
+    "remix-core": "0.0.8",
+    "remix-lib": "0.2.2",
+    "remix-solidity": "0.1.4",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5"
   },
