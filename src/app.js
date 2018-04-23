@@ -896,7 +896,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       return
     }
     var input = editor.get(currentFile)
-
+    if (!input) {
+      return
+    }
     // if there's no change, don't do anything
     if (input === previousInput) {
       return
