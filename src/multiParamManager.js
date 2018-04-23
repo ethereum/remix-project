@@ -56,12 +56,9 @@ class MultiParamManager {
     basicInputField.setAttribute('placeholder', this.inputs)
     basicInputField.setAttribute('title', this.inputs)
 
-    // var outputOverride = 'yellow'
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, basicInputField.value)
     }
-
-    // this.outputOverride = yo`<div class=${css.value}></div>` // show return value
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
       <i class="fa fa-caret-right ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
