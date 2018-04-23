@@ -1,3 +1,4 @@
+/* global path */
 var httpServer = require('http-server')
 var remixd = require('remixd')
 
