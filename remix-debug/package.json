@@ -31,7 +31,8 @@
     "remix-solidity": "0.1.4",
     "solc": "https://github.com/ethereum/solc-js",
     "standard": "^7.0.1",
-    "standard-reporter": "^1.0.5"
+    "standard-reporter": "^1.0.5",
+    "tape": "^4.6.0"
   },
   "scripts": {
     "build": "mkdirp build; browserify index.js > build/app.js",
