@@ -174,11 +174,13 @@ class FileManager {
     var currentFile = this.opt.config.get('currentFile')
     if (currentFile && this.opt.editor.current()) {
       var input = this.opt.editor.get(currentFile)
-      var provider = this.fileProviderOf(currentFile)
-      if (provider) {
-        provider.set(currentFile, input)
-      } else {
-        console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
+      if (input) {
+        var provider = this.fileProviderOf(currentFile)
+        if (provider) {
+          provider.set(currentFile, input)
+        } else {
+          console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
+        }
       }
     }
   }

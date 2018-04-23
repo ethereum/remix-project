@@ -28,7 +28,7 @@ function fileExplorer (appAPI, files) {
   }
 
   this.files.event.register('fileExternallyChanged', (path, file) => {
-    if (appAPI.config.get('currentFile') === path && appAPI.currentContent() !== file.content) {
+    if (appAPI.config.get('currentFile') === path && appAPI.currentContent() && appAPI.currentContent() !== file.content) {
       modalDialog(path + ' changed', remixdDialog(),
         {
           label: 'Keep the content displayed in Remix',
