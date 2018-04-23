@@ -29,6 +29,7 @@
     "remix-core": "0.0.8",
     "remix-lib": "0.2.2",
     "remix-solidity": "0.1.4",
+    "solc": "https://github.com/ethereum/solc-js",
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5"
   },
