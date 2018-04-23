@@ -168,10 +168,10 @@ class TxLogger {
 
 function debug (e, data, self) {
   e.stopPropagation()
-  if (data.tx.envMode === 'vm') {
-    self.event.trigger('debugRequested', [data.tx.hash])
-  } else {
+  if (data.tx.isCall && data.tx.envMode !== 'vm') {
     modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
+  } else {
+    self.event.trigger('debugRequested', [data.tx.hash])
   }
 }
 
