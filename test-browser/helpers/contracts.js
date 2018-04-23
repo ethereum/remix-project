@@ -42,8 +42,8 @@ function getCompiledContracts (browser, compiled, callback) {
 
 function createContract (browser, inputParams, callback) {
   browser.click('.runView')
-  .setValue('input.create', inputParams, function () {
-    browser.click('#runTabView div[class^="create"]').perform(function () { callback() })
+  .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
+    browser.click('#runTabView button[class^="instanceButton"]').perform(function () { callback() })
   })
 }
 
@@ -100,7 +100,7 @@ function clickFunction (fnFullName, expectedInput) {
 
 function verifyCallReturnValue (browser, address, checks, done) {
   browser.execute(function (address) {
-    var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractProperty"] div[class^="value"]')
+    var nodes = document.querySelectorAll('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
     var ret = []
     for (var k = 0; k < nodes.length; k++) {
       var text = nodes[k].innerText ? nodes[k].innerText : nodes[k].textContent

@@ -6,6 +6,7 @@ var yo = require('yo-yo')
 var helper = require('./lib/helper')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
 var css = require('./universal-dapp-styles')
+var MultiParamManager = require('./multiParamManager')
 
 /*
   trigger debugRequested
@@ -91,63 +92,23 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   // args.contractName [constr only]
   var lookupOnly = args.funABI.constant
 
-  var inputs = self.udapp.getInputs(args.funABI)
-  var inputField = yo`<input></input>`
-  inputField.setAttribute('placeholder', inputs)
-  inputField.setAttribute('title', inputs)
+  var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
-  var outputOverride = yo`<div class=${css.value}></div>`
-
-  var title
-  if (args.funABI.name) {
-    title = args.funABI.name
-  } else {
-    title = '(fallback)'
-  }
-
-  var button = yo`<button onclick=${clickButton} class="${css.instanceButton}"></button>`
-  button.classList.add(css.call)
-  button.setAttribute('title', title)
-  button.innerHTML = title
-
-  function clickButton () {
-    self.udapp.call(true, args, inputField.value, lookupOnly, (decoded) => {
+  function clickButton (valArr, inputsValues) {
+    self.udapp.call(true, args, inputsValues, lookupOnly, (decoded) => {
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
     })
   }
 
-  var contractProperty = yo`<div class="${css.contractProperty} ${css.buttonsContainer}"></div>`
-  var contractActions = yo`<div class="${css.contractActions}" ></div>`
+  var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
+    clickButton(valArray, inputsValues, domEl)
+  }, self.udapp.getInputs(args.funABI))
 
-  contractProperty.appendChild(contractActions)
-  contractActions.appendChild(button)
-  if (inputs.length) {
-    contractActions.appendChild(inputField)
-  }
-  if (lookupOnly) {
-    contractProperty.appendChild(outputOverride)
-  }
+  var contractActionsContainer = yo`<div class="${css.contractActionsContainer}" >${multiParamManager.render()}</div>`
+  contractActionsContainer.appendChild(outputOverride)
 
-  if (lookupOnly) {
-    contractProperty.classList.add(css.constant)
-    button.setAttribute('title', (title + ' - call'))
-  }
-
-  if (args.funABI.inputs && args.funABI.inputs.length > 0) {
-    contractProperty.classList.add(css.hasArgs)
-  }
-
-  if (args.funABI.payable === true) {
-    contractProperty.classList.add(css.payable)
-    button.setAttribute('title', (title + ' - transact (payable)'))
-  }
-
-  if (!lookupOnly && args.funABI.payable === false) {
-    button.setAttribute('title', (title + ' - transact (not payable)'))
-  }
-
-  return contractProperty
+  return contractActionsContainer
 }
 
 module.exports = UniversalDAppUI
