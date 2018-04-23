@@ -180,7 +180,7 @@ class FileManager {
           provider.set(currentFile, input)
         } else {
           console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
-        }  
+        }
       }
     }
   }
