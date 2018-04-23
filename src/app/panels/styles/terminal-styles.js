@@ -31,7 +31,7 @@ var css = csjs`
   }
   .clear           {
     margin-left       : 10px;
-    margin-right      : 10px; 
+    margin-right      : 10px;
     width             : 10px;
     cursor            : pointer;
     color             : ${styles.terminal.icon_Color_TogglePanel};
@@ -105,7 +105,7 @@ var css = csjs`
     margin-right      : 0.5em;
     font-family       : monospace;
     font-weight       : bold;
-    font-size         : large;
+    font-size         : 14px;
     color             : ${styles.appProperties.supportText_OppositeColor};
   }
   .input              {
