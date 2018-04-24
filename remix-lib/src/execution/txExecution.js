@@ -1,5 +1,5 @@
 'use strict'
-var ethJSABI = require('ethereumjs-abi')
+var ethers = require('ethers')
 
 module.exports = {
   /**
@@ -86,7 +86,8 @@ module.exports = {
       var returnData = txResult.result.vm.return
       // It is the hash of Error(string)
       if (returnData && (returnData.slice(0, 4).toString('hex') === '08c379a0')) {
-        var reason = ethJSABI.rawDecode(['string'], returnData.slice(4))[0]
+        var abiCoder = new ethers.utils.AbiCoder()
+        var reason = abiCoder.decode(['string'], returnData.slice(4))[0]
         msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
       } else {
         msg = `\tThe transaction has been reverted to the initial state.\nNote: The constructor should be payable if you send value.`
