@@ -61,7 +61,7 @@ var css = csjs`
   .methCaret {
     margin-right: 5px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     padding-top: 5px;
     vertical-align: top;
   }
@@ -154,23 +154,29 @@ var css = csjs`
     margin-bottom: 5px;
     font-weight: bold;
   }
+  .contractActionsContainerMultiInner .multiTitle {
+    padding-left: 10px;
+  }
   .multiTitle {
-    ${styles.rightPanel.runTab.button_Create}
-    border-radius: 3px;
     display: inline-block;
-    width: 95%;
+    width: 90%;
     font-size: 10px;
     height: 25px;
     padding-left: 20px;
-    font-weight: normal;
+    font-weight: bold;
     line-height: 25px;
     cursor: default;
   }
+  .contractProperty .contractActionsContainerMultiInner .multiArg label{
+    text-align: center;
+  }
+  .multiHeader .methCaret {
+    float: right;
+    margin-right: 0;
+  }
   .contractProperty.constant .multiTitle {
-    ${styles.rightPanel.runTab.button_Constant}
-    border-radius: 3px;
     display: inline-block;
-    width: 95%;
+    width: 90%;
     font-size: 10px;
     height: 25px;
     padding-left: 20px;
