@@ -1,6 +1,6 @@
 'use strict'
 var async = require('async')
-var ethJSABI = require('ethereumjs-abi')
+var ethers = require('ethers')
 var ethJSUtil = require('ethereumjs-util')
 var EventManager = require('../eventManager')
 var codeUtil = require('../util')
@@ -329,8 +329,8 @@ class TxListener {
     for (var i = 0; i < abi.inputs.length; i++) {
       inputTypes.push(abi.inputs[i].type)
     }
-    var decoded = ethJSABI.rawDecode(inputTypes, data)
-    decoded = ethJSABI.stringify(inputTypes, decoded)
+    var abiCoder = new ethers.utils.AbiCoder()
+    var decoded = abiCoder.decode(inputTypes, data)
     var ret = {}
     for (var k in abi.inputs) {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]

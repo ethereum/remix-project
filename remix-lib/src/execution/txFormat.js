@@ -1,5 +1,5 @@
 'use strict'
-var ethJSABI = require('ethereumjs-abi')
+var ethers = require('ethers')
 var helper = require('./txHelper')
 var executionContext = require('./execution-context')
 var asyncJS = require('async')
@@ -96,7 +96,7 @@ module.exports = {
         dataHex = bytecodeToDeploy + dataHex
       }
     } else {
-      dataHex = Buffer.concat([helper.encodeFunctionId(funAbi), data]).toString('hex')
+      dataHex = helper.encodeFunctionId(funAbi) + dataHex
     }
     callback(null, { dataHex, funAbi, funArgs, contractBytecode, contractName: contractName })
   },
@@ -244,10 +244,9 @@ module.exports = {
         }
 
         // decode data
-        var decodedObj = ethJSABI.rawDecode(outputTypes, response)
+        var abiCoder = new ethers.utils.AbiCoder()
+        var decodedObj = abiCoder.decode(outputTypes, response)
 
-        // format decoded data
-        decodedObj = ethJSABI.stringify(outputTypes, decodedObj)
         var json = {}
         for (i = 0; i < outputTypes.length; i++) {
           var name = fnabi.outputs[i].name
