@@ -2,6 +2,7 @@
 var async = require('async')
 var $ = require('jquery')
 var yo = require('yo-yo')
+var CompilerMetadata = require('../files/compiler-metadata')
 var remixLib = require('remix-lib')
 var Gists = require('gists')
 var EventManager = remixLib.EventManager
@@ -48,7 +49,8 @@ function filepanel (localRegistry) {
   self._deps = {
     fileProviders: self._components.registry.get('fileproviders').api,
     fileManager: self._components.registry.get('filemanager').api,
-    config: self._components.registry.get('config').api
+    config: self._components.registry.get('config').api,
+    compiler: self._components.registry.get('compiler').api
   }
   var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'])
   var fileSystemExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['localhost'])
@@ -56,6 +58,18 @@ function filepanel (localRegistry) {
   var githubExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['github'])
   var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'])
   var configExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['config'])
+
+  // ----------------- editor panel ----------------------
+  self._compilerMetadata = new CompilerMetadata(
+    {
+      compiler: self._deps.compiler.event
+    },
+    {
+      fileManager: self._deps.fileManager,
+      compiler: self._deps.compiler
+    }
+  )
+  self._compilerMetadata.syncContractMetadata()
 
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 

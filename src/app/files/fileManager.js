@@ -71,6 +71,14 @@ class FileManager {
     this.refreshTabs()
   }
 
+  currentFileProvider () {
+    var path = this.currentPath()
+    if (path) {
+      return this.fileProviderOf(path)
+    }
+    return null
+  }
+
   currentPath () {
     var self = this
     var currentFile = self._deps.config.get('currentFile')
