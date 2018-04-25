@@ -325,12 +325,14 @@ class TxListener {
 
   _decodeInputParams (data, abi) {
     data = ethJSUtil.toBuffer('0x' + data)
+    if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+
     var inputTypes = []
     for (var i = 0; i < abi.inputs.length; i++) {
       inputTypes.push(abi.inputs[i].type)
     }
     var abiCoder = new ethers.utils.AbiCoder()
-    var decoded = abiCoder.decode(inputTypes, data)
+    var decoded = abiCoder.decode(inputTypes, data)    
     var ret = {}
     for (var k in abi.inputs) {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]
