@@ -97,6 +97,10 @@ var css = csjs`
     border-radius: 5px;
     width: 70%;
   }
+  .contractProperty .contractActionsContainerSingle input{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
   .contractProperty button {
     ${styles.rightPanel.runTab.button_Create}
     min-width: 100px;
@@ -157,7 +161,7 @@ var css = csjs`
   .contractActionsContainerMultiInner .multiTitle {
     padding-left: 10px;
   }
-  .multiTitle {
+  .contractProperty .multiTitle {
     display: inline-block;
     width: 90%;
     font-size: 10px;
@@ -180,7 +184,7 @@ var css = csjs`
     font-size: 10px;
     height: 25px;
     padding-left: 20px;
-    font-weight: normal;
+    font-weight: bold;
     line-height: 25px;
     cursor: default;
   }
