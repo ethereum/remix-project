@@ -332,7 +332,7 @@ class TxListener {
       inputTypes.push(abi.inputs[i].type)
     }
     var abiCoder = new ethers.utils.AbiCoder()
-    var decoded = abiCoder.decode(inputTypes, data)    
+    var decoded = abiCoder.decode(inputTypes, data)
     var ret = {}
     for (var k in abi.inputs) {
       ret[abi.inputs[k].type + ' ' + abi.inputs[k].name] = decoded[k]
