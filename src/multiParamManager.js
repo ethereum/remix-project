@@ -76,7 +76,7 @@ class MultiParamManager {
       this.clickCallBack(this.funABI.inputs, ret)
     }
 
-    var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}">Call</button>`
+    var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
       <div class="${css.contractActionsContainerMultiInner}" >
@@ -96,6 +96,7 @@ class MultiParamManager {
     if (this.lookupOnly) {
       contractProperty.classList.add(css.constant)
       button.setAttribute('title', (title + ' - call'))
+      button.innerHTML = 'call'
       this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).setAttribute('title', (title + ' - call'))
     }
 
@@ -109,11 +110,13 @@ class MultiParamManager {
     if (this.funABI.payable === true) {
       contractProperty.classList.add(css.payable)
       button.setAttribute('title', (title + ' - transact (payable)'))
+      button.innerHTML = 'transact'
       this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (payable)'))
     }
 
     if (!this.lookupOnly && this.funABI.payable === false) {
       button.setAttribute('title', (title + ' - transact (not payable)'))
+      button.innerHTML = 'transact'
       this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (not payable)'))
     }
 
