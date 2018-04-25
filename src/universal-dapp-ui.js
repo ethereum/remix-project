@@ -86,7 +86,6 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
 // TODO this is used by renderInstance when a new instance is displayed.
 // this returns a DOM element.
-// 
 UniversalDAppUI.prototype.getCallButton = function (args) {
   var self = this
   // args.funABI, args.address [fun only]
