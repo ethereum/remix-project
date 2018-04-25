@@ -44,6 +44,23 @@ class CompilerMetadata {
       }
     })
   }
+
+  metadataOf (contractName, callback) {
+    var self = this
+    var provider = self._opts.fileManager.currentFileProvider()
+    var path = self._opts.fileManager.currentPath()
+    if (provider && path) {
+      var fileName = path + contractName + '.json'
+      provider.get(fileName, (error, content) => {
+        if (error) return callback(error)
+        try {
+          callback(null, JSON.parse(content))
+        } catch (e) {
+          callback(e.message)
+        }
+      })
+    }
+  }
 }
 
 module.exports = CompilerMetadata

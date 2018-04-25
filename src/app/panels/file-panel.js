@@ -71,6 +71,7 @@ function filepanel (localRegistry) {
   )
   self._compilerMetadata.syncContractMetadata()
 
+  self.compilerMetadata = () => { return self._compilerMetadata }
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 
   function remixdDialog () {
