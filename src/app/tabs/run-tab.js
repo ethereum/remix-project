@@ -72,7 +72,8 @@ function runTab (opts, localRegistry) {
     config: self._components.registry.get('config').api,
     fileManager: self._components.registry.get('filemanager').api,
     editor: self._components.registry.get('editor').api,
-    logCallback: self._components.registry.get('logCallback').api
+    logCallback: self._components.registry.get('logCallback').api,
+    filePanel: self._components.registry.get('filepanel').api
   }
   self._deps.udapp.resetAPI(self._components.transactionContextAPI)
   self._view.recorderCount = yo`<span>0</span>`
@@ -396,13 +397,13 @@ function contractDropdown (events, self) {
     }
 
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-    txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
-      if (!error) {
+    self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, librariesAddresses) => {
+      if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+      txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, constructor, args, librariesAddresses.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
+        if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
         self._deps.udapp.createContract(data, (error, txResult) => {
-          if (error) {
-            self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-          } else {
+          if (!error) {
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
@@ -421,14 +422,7 @@ function contractDropdown (events, self) {
             instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           }
         })
-      } else {
-        self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-      }
-    }, (msg) => {
-      self._deps.logCallback(msg)
-    }, (data, runTxCallback) => {
-      // called for libraries deployment
-      self._deps.udapp.runTx(data, runTxCallback)
+      })
     })
   }
 
