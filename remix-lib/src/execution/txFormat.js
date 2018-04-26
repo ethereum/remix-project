@@ -25,9 +25,9 @@ module.exports = {
       return { error: 'cannot encode arguments' }
     }
     if (contractbyteCode) {
-      return { data: contractbyteCode + encodedHex }
+      return { data: '0x' + contractbyteCode + encodedHex.replace('0x', '') }
     } else {
-      return { data: Buffer.concat([helper.encodeFunctionId(funABI), encoded]).toString('hex') }
+      return { data: helper.encodeFunctionId(funABI) + encodedHex.replace('0x', '') }
     }
   },
 
