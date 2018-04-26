@@ -19,15 +19,23 @@ var csjs = require('csjs-inject')
 var css = require('./styles/run-tab-styles')
 
 var instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
-var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instances</div>`
+
+var instanceContainerTitle = yo`
+  <div class=${css.instanceContainerTitle}>UDapps of deployed contracts</div>`
+var noInstancesText = yo`
+  <div class="${css.noInstancesText}">Currently you have no contract instances.</div>`
 
 var pendingTxsText = yo`<span>0 pending transactions</span>`
 
 function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
   var event = new EventManager()
+  var clearInstanceElement = yo`
+    <i class="${css.clearinstance} ${css.icon} fa fa-trash"
+      onclick=${() => { event.trigger('clearInstance', []) }}
+      title="Clear Instances List" aria-hidden="true">
+    </i>`
 
-  var clearInstanceElement = yo`<i class="${css.clearinstance} ${css.icon} fa fa-trash" title="Clear Instances List" aria-hidden="true"></i>`
   clearInstanceElement.addEventListener('click', () => {
     event.trigger('clearInstance', [])
   })
@@ -99,7 +107,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   event.register('clearInstance', () => {
     instanceContainer.innerHTML = '' // clear the instances list
-    noInstancesText.style.display = 'block'
+    instanceContainer.appendChild(instanceContainerTitle)
     instanceContainer.appendChild(noInstancesText)
   })
   return { render () { return container } }
@@ -151,10 +159,13 @@ function makeRecorder (events, appAPI, appEvents, opts) {
     }
   `
 
-  var recordButton = yo`<i class="fa fa-floppy-o savetransaction ${css2.recorder} ${css.icon}" title="Save Transactions" aria-hidden="true"></i>`
+  var recordButton = yo`
+    <i class="fa fa-floppy-o savetransaction ${css2.recorder} ${css.icon}"
+      onclick=${triggerRecordButton} title="Save Transactions" aria-hidden="true">
+    </i>`
   var runButton = yo`<i class="fa fa-play runtransaction ${css2.runTxs} ${css.icon}"  title="Run Transactions" aria-hidden="true"></i>`
 
-  recordButton.onclick = () => {
+  function triggerRecordButton () {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
     var path = appAPI.currentPath()
     modalDialogCustom.prompt(null, 'save ran transactions to file (e.g. `scenario.json`). The file is going to be saved under ' + path, 'scenario.json', input => {
@@ -190,7 +201,7 @@ function makeRecorder (events, appAPI, appEvents, opts) {
             return modalDialogCustom.alert('Invalid Scenario File, please try again')
           }
           if (txArray.length) {
-            noInstancesText.style.display = 'none'
+            if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
             recorder.run(txArray, accounts, options, abis, linkReferences, opts.udapp, (abi, address, contractName) => {
               instanceContainer.appendChild(opts.udappUI.renderInstanceFromABI(abi, address, contractName))
             })
@@ -204,10 +215,11 @@ function makeRecorder (events, appAPI, appEvents, opts) {
   return { recordButton, runButton }
 }
 /* ------------------------------------------------
-    section CONTRACT DROPDOWN and BUTTONS
+    CONTRACT (deploy or access deployed)
 ------------------------------------------------ */
 
 function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
+  instanceContainer.appendChild(instanceContainerTitle)
   instanceContainer.appendChild(noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
   appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -247,7 +259,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
         ${createPanel}
         <div class="${css.button}">
           ${atAddressButtonInput}
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>Access</div>
         </div>
       </div>
     </div>
@@ -292,7 +304,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
                 return
               }
             }
-            noInstancesText.style.display = 'none'
+            if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
             instanceContainer.appendChild(opts.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           } else {
@@ -311,7 +323,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
   }
 
   function loadFromAddress (appAPI) {
-    noInstancesText.style.display = 'none'
+    if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var address = atAddressButtonInput.value
     if (!ethJSUtil.isValidAddress(address)) {
@@ -381,64 +393,68 @@ function settings (container, appAPI, appEvents, opts) {
       }
     })
   }
-  var el = yo`
-    <div class="${css.settings}">
-      <div class="${css.crow}">
-        <div id="selectExEnv" class="${css.col1_1}">
-          Environment
-        </div>
-        <div class=${css.environment}>
-          ${net}
-          <select id="selectExEnvOptions" onchange=${updateNetwork} class="${css.select}">
-            <option id="vm-mode"
-              title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm"
-              checked name="executionContext">
-              JavaScript VM
-            </option>
-            <option id="injected-mode"
-              title="Execution environment has been provided by Mist or similar provider."
-              value="injected"
-              checked name="executionContext">
-              Injected Web3
-            </option>
-            <option id="web3-mode"
-              title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
-              If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-              value="web3"
-              name="executionContext">
-              Web3 Provider
-            </option>
-          </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
-        </div>
-      </div>
-      <div class="${css.crow}">
-        <div class="${css.col1_1}">Account</div>
-        <select name="txorigin" class="${css.select}" id="txorigin"></select>
-          ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
-          <i class="fa fa-plus-square-o ${css.createAccount} ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
-      </div>
-      <div class="${css.crow}">
-        <div class="${css.col1_1}">Gas limit</div>
-        <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
-      </div>
-      <div class="${css.crow}" style="display: none">
-      <div class="${css.col1_1}">Gas Price</div>
-        <input type="number" class="${css.col2}" id="gasPrice" value="0">
-      </div>
-      <div class="${css.crow}">
-      <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
-        <select name="unit" class="${css.col2_2}" id="unit">
-          <option data-unit="wei">wei</option>
-          <option data-unit="gwei">gwei</option>
-          <option data-unit="finney">finney</option>
-          <option data-unit="ether">ether</option>
-        </select>
-      </div>
-    </div>
+
+  var environmentEl = yo`
+  <div class="${css.crow}">
+  <div id="selectExEnv" class="${css.col1_1}">
+  Environment
+  </div>
+  <div class=${css.environment}>
+  ${net}
+  <select id="selectExEnvOptions" onchange=${updateNetwork} class="${css.select}">
+  <option id="vm-mode"
+    title="Execution environment does not connect to any node, everything is local and in memory only."
+    value="vm" checked name="executionContext"> JavaScript VM
+    </option>
+    <option id="injected-mode"
+    title="Execution environment has been provided by Metamask or similar provider."
+    value="injected" checked name="executionContext"> Injected Web3
+    </option>
+    <option id="web3-mode"
+    title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+    If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
+    value="web3" name="executionContext"> Web3 Provider
+    </option>
+  </select>
+  <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
+  </div>
+  </div>
   `
+  var accountEl = yo`
+  <div class="${css.crow}">
+  <div class="${css.col1_1}">Account</div>
+  <select name="txorigin" class="${css.select}" id="txorigin"></select>
+  ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+  <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
+  </div>
+  `
+  var gasPriceEl = yo`
+  <div class="${css.crow}">
+  <div class="${css.col1_1}">Gas limit</div>
+  <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
+  </div>
+  `
+  var valueEl = yo`
+  <div class="${css.crow}">
+  <div class="${css.col1_1}">Value</div>
+  <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
+  <select name="unit" class="${css.col2_2}" id="unit">
+  <option data-unit="wei">wei</option>
+  <option data-unit="gwei">gwei</option>
+  <option data-unit="finney">finney</option>
+  <option data-unit="ether">ether</option>
+  </select>
+  </div>
+  `
+  var el = yo`
+  <div class="${css.settings}">
+    ${environmentEl}
+    ${accountEl}
+    ${gasPriceEl}
+    ${valueEl}
+  </div>
+`
+
   // EVENTS
   appEvents.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
     if (error) return

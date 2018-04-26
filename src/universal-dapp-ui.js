@@ -34,14 +34,14 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
   var self = this
 
-  function remove () { instance.remove() }
 
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance}" id="instance${address}"></div>`
   var context = self.udapp.context()
 
   var shortAddress = helper.shortenAddress(address)
-  var title = yo`<div class="${css.title}" onclick=${toggleClass}>
+  var title = yo`
+    <div class="${css.title}" onclick=${toggleClass}>
     <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
     ${copyToClipboard(() => address)}
   </div>`
@@ -51,6 +51,13 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     instance.appendChild(close)
   }
 
+  function remove () {
+    var instanceContainer = document.querySelector('[class^="instanceContainer"]')
+    var noInstancesText = yo`<div class="${css.noInstancesText}">Currently you have no contract instances.</div>`
+    instanceContainer.appendChild(noInstancesText)
+    instance.remove()
+  }
+  
   function toggleClass () {
     $(instance).toggleClass(`${css.hidesub}`)
   }
