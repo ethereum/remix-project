@@ -108,7 +108,6 @@ function verifyCallReturnValue (browser, address, checks, done) {
     }
     return ret
   }, [address], function (result) {
-    console.log(result)
     for (var k in checks) {
       browser.assert.equal(result.value[k], checks[k])
     }
