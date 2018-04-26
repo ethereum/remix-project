@@ -135,13 +135,25 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
     .click('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] div[class^="log"]')
     .perform(function (client, done) {
       if (expectedReturn) {
-        client.assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', expectedReturn)
+        client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', (result) => {
+          console.log(result)
+          var equal = deepequal(JSON.parse(result.value), JSON.parse(expectedReturn))
+          if (!equal) {
+            client.assert.fail('expected ' + expectedReturn + ' got ' + result.value, 'info about error', '')
+          }
+        })
       }
       done()
     })
     .perform(function (client, done) {
       if (expectedEvent) {
-        client.assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', expectedEvent)
+        client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', (result) => {
+          console.log(result)
+          var equal = deepequal(JSON.parse(result.value), JSON.parse(expectedEvent))
+          if (!equal) {
+            client.assert.fail('expected ' + expectedEvent + ' got ' + result.value, 'info about error', '')
+          }
+        })
       }
       done()
       if (callback) callback()

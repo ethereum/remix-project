@@ -78,7 +78,7 @@ function testReturnValues (browser, callback) {
  "0": "bool: _b true",
  "1": "uint256: _u 345",
  "2": "int256: _i -345",
- "3": "address: _a 0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
+ "3": "address: _a 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c"
 }`)
       .pause(500)
       .testFunction('retunValues2 - transact (not payable)',
@@ -98,7 +98,7 @@ function testReturnValues (browser, callback) {
         '0x7faab07aeaafc8afe6bf283bb83be70c000dff381dec04e779354e354da14aff',
         '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0x7fa...14aff', null, `{
  "0": "uint8: _en 2",
- "1": "int256[5][]: _a1 1,-45,-78,56,60, -1,42,334,-45455,-446, 1,10,-5435,45,-7"
+ "1": "int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7"
 }`).click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
@@ -121,19 +121,31 @@ function testInputValues (browser, callback) {
         `[vm]\nfrom:0xca3...a733c\nto:test.inputValue2(uint256[3],bytes8[4]) 0x8c1...401f5\nvalue:0 wei\ndata:0x1b7...00000\nlogs:1\nhash:0x487...6ef7f`,
         {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234", "0x1234","0x1234","0x1234"]'},
         `{
- "0": "uint256[3]: _nret 1, 2, 3",
- "1": "bytes8[4]: _b8ret 0x1234000000000000, 0x1234000000000000, 0x1234000000000000, 0x1234000000000000"
+ "0": "uint256[3]: _nret 1,2,3",
+ "1": "bytes8[4]: _b8ret 0x1234000000000000,0x1234000000000000,0x1234000000000000,0x1234000000000000"
 }`, `[
  {
   "topic": "d30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
   "event": "event1",
-  "args": [
-   "-123",
-   "000000000000000000000000000000000000000000000000000000000000007b",
-   "9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658",
-   "0x00001234",
-   "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test "
-  ]
+  "args": {
+   "0": "-123",
+   "1": "123",
+   "2": {
+    "indexed": true,
+    "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+   },
+   "3": "0x00001234",
+   "4": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
+   "_i": "-123",
+   "_u": "123",
+   "_str": {
+    "indexed": true,
+    "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
+   },
+   "_b": "0x00001234",
+   "_notIndexed": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
+   "length": 5
+  }
  }
 ]`)
       .click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
