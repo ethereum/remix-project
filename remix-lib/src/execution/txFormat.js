@@ -32,18 +32,143 @@ module.exports = {
   },
 
   /**
-    * build the transaction data
-    *
-    * @param {String} contractName
-    * @param {Object} contract    - abi definition of the current contract.
-    * @param {Object} contracts    - map of all compiled contracts.
-    * @param {Bool} isConstructor    - isConstructor.
-    * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
-    * @param {Object} params    - input paramater of the function to call
-    * @param {Function} callback    - callback
-    * @param {Function} callbackStep  - callbackStep
-    * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
-    */
+  * encode function / constructor parameters
+  *
+  * @param {Object} params    - input paramater of the function to call
+  * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
+  * @param {Function} callback    - callback
+  */
+  encodeParams: function (params, funAbi, callback) {
+    var data = ''
+    var dataHex = ''
+    var funArgs
+    if (params.indexOf('raw:0x') === 0) {
+      // in that case we consider that the input is already encoded and *does not* contain the method signature
+      dataHex = params.replace('raw:0x', '')
+      data = Buffer.from(dataHex, 'hex')
+    } else {
+      try {
+        params = params.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+        params = params.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+        funArgs = JSON.parse('[' + params + ']')
+      } catch (e) {
+        callback('Error encoding arguments: ' + e)
+        return
+      }
+      if (funArgs.length > 0) {
+        try {
+          data = helper.encodeParams(funAbi, funArgs)
+          dataHex = data.toString('hex')
+        } catch (e) {
+          callback('Error encoding arguments: ' + e)
+          return
+        }
+      }
+      if (data.slice(0, 9) === 'undefined') {
+        dataHex = data.slice(9)
+      }
+      if (data.slice(0, 2) === '0x') {
+        dataHex = data.slice(2)
+      }
+    }
+    callback(null, { data: data, dataHex: dataHex, funArgs: funArgs })
+  },
+
+  /**
+  * encode function call (function id + encoded parameters)
+  *
+  * @param {Object} params    - input paramater of the function to call
+  * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
+  * @param {Function} callback    - callback
+  */
+  encodeFunctionCall: function (params, funAbi, callback) {
+    this.encodeParams(params, funAbi, (error, encodedParam) => {
+      if (error) return callback(error)
+      callback(null, { dataHex: helper.encodeFunctionId(funAbi) + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs })
+    })
+  },
+
+  /**
+  * encode constructor creation and link with provided libraries if needed
+  *
+  * @param {Object} contract    - input paramater of the function to call
+  * @param {Object} params    - input paramater of the function to call
+  * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
+  * @param {Object} linkLibraries    - contains {linkReferences} object which list all the addresses to be linked
+  * @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
+  * @param {Function} callback    - callback
+  */
+  encodeConstructorCallAndLinkLibraries: function (contract, params, funAbi, linkLibraries, linkReferences, callback) {
+    this.encodeParams(params, funAbi, (error, encodedParam) => {
+      if (error) return callback(error)
+      var bytecodeToDeploy = contract.evm.bytecode.object
+      if (bytecodeToDeploy.indexOf('_') >= 0) {
+        if (linkLibraries && linkReferences) {
+          for (var libFile in linkLibraries) {
+            for (var lib in linkLibraries[libFile]) {
+              var address = linkLibraries[libFile][lib]
+              if (!ethJSUtil.isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
+              bytecodeToDeploy = this.linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
+            }
+          }
+        }
+      }
+      if (bytecodeToDeploy.indexOf('_') >= 0) {
+        return callback('Failed to link some libraries')
+      }
+      return callback(null, { dataHex: bytecodeToDeploy + encodedParam.dataHex, funAbi, funArgs: encodedParam.funArgs, contractBytecode: contract.evm.bytecode.object })
+    })
+  },
+
+  /**
+  * encode constructor creation and deploy librairies if needed
+  *
+  * @param {String} contractName    - current contract name
+  * @param {Object} contract    - input paramater of the function to call
+  * @param {Object} contracts    - map of all compiled contracts.
+  * @param {Object} params    - input paramater of the function to call
+  * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
+  * @param {Function} callback    - callback
+  * @param {Function} callbackStep  - callbackStep
+  * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
+  * @param {Function} callback    - callback
+  */
+  encodeConstructorCallAndDeployLibraries: function (contractName, contract, contracts, params, funAbi, callback, callbackStep, callbackDeployLibrary) {
+    this.encodeParams(params, funAbi, (error, encodedParam) => {
+      if (error) return callback(error)
+      var dataHex = ''
+      var contractBytecode = contract.evm.bytecode.object
+      var bytecodeToDeploy = contract.evm.bytecode.object
+      if (bytecodeToDeploy.indexOf('_') >= 0) {
+        this.linkBytecode(contract, contracts, (err, bytecode) => {
+          if (err) {
+            callback('Error deploying required libraries: ' + err)
+          } else {
+            bytecodeToDeploy = bytecode + dataHex
+            return callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs: encodedParam.funArgs, contractBytecode, contractName: contractName})
+          }
+        }, callbackStep, callbackDeployLibrary)
+        return
+      } else {
+        dataHex = bytecodeToDeploy + encodedParam.dataHex
+      }
+      callback(null, {dataHex: bytecodeToDeploy, funAbi, funArgs: encodedParam.funArgs, contractBytecode, contractName: contractName})
+    })
+  },
+
+  /**
+  * (DEPRECATED) build the transaction data
+  *
+  * @param {String} contractName
+  * @param {Object} contract    - abi definition of the current contract.
+  * @param {Object} contracts    - map of all compiled contracts.
+  * @param {Bool} isConstructor    - isConstructor.
+  * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
+  * @param {Object} params    - input paramater of the function to call
+  * @param {Function} callback    - callback
+  * @param {Function} callbackStep  - callbackStep
+  * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
+  */
   buildData: function (contractName, contract, contracts, isConstructor, funAbi, params, callback, callbackStep, callbackDeployLibrary) {
     var funArgs = ''
     var data = ''
