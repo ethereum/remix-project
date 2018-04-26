@@ -66,16 +66,20 @@ class EventsDecoder {
 
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventsABI = this._eventsABI(compiledContracts)
-    var events = {}
+    var events = []
     for (var i in logs) {
       // [address, topics, mem]
       var log = logs[i]
       var topicId = log.topics[0]
       var abi = this._event(topicId.replace('0x', ''), eventsABI)
-      var topics = log.topics.map((value) => {
-        return value.indexOf('0x') === 0 ? value : '0x' + value
-      })
-      events = abi.object.parse(topics, '0x' + log.data)
+      if (abi) {
+        var topics = log.topics.map((value) => {
+          return value.indexOf('0x') === 0 ? value : '0x' + value
+        })
+        events.push({ topic: topicId, event: abi.event, args: abi.object.parse(topics, '0x' + log.data) })
+      } else {
+        events.push({ data: log.data, topics: log.topics })
+      }
     }
     cb(null, { decoded: events, raw: logs })
   }
