@@ -8,6 +8,10 @@ var css = csjs`
     display: flex;
     flex-direction: column;
   }
+  .instanceContainerTitle {
+    font-size: 20px;
+    font-weight: bold;
+  }
   .settings {
     ${styles.rightPanel.runTab.box_RunTab}
     margin-bottom: 2%;
