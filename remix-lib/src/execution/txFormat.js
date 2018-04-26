@@ -243,6 +243,7 @@ module.exports = {
           outputTypes.push(fnabi.outputs[i].type)
         }
 
+        if (!response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
         // decode data
         var abiCoder = new ethers.utils.AbiCoder()
         var decodedObj = abiCoder.decode(outputTypes, response)

@@ -325,6 +325,8 @@ class TxListener {
 
   _decodeInputParams (data, abi) {
     data = ethJSUtil.toBuffer('0x' + data)
+    if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+
     var inputTypes = []
     for (var i = 0; i < abi.inputs.length; i++) {
       inputTypes.push(abi.inputs[i].type)
