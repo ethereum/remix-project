@@ -1,6 +1,6 @@
 {
   "name": "remix-debugger",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -37,9 +37,9 @@
     "notify-error": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "onchange": "^3.3.0",
-    "remix-core": "^0.0.9",
-    "remix-lib": "^0.2.3",
-    "remix-solidity": "^0.1.5",
+    "remix-core": "^0.0.10",
+    "remix-lib": "^0.2.4",
+    "remix-solidity": "^0.1.6",
     "selenium-standalone": "^6.0.1",
     "solc": "^0.4.13",
     "standard": "^7.0.1",
