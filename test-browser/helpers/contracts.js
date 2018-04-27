@@ -43,7 +43,7 @@ function getCompiledContracts (browser, compiled, callback) {
 function createContract (browser, inputParams, callback) {
   browser.click('.runView')
   .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
-    browser.click('#runTabView button[class^="instanceButton"]').perform(function () { callback() })
+    browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function () { callback() })
   })
 }
 
