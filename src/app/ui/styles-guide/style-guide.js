@@ -390,7 +390,12 @@ function styleGuide () {
       tooltip_CopyToClipboard_Color: appProperties.tooltip_Color,
 
       icon_Color_CopyToClipboard: appProperties.icon_Color,
-      icon_HoverColor_CopyToClipboard: appProperties.icon_HoverColor
+      icon_HoverColor_CopyToClipboard: appProperties.icon_HoverColor,
+
+      solidBox: appProperties.uiElements.solidBorderBox({
+        BackgroundColor: appProperties.solidBox_BackgroundColor,
+        Color: appProperties.solidBox_TextColor
+      })
     },
 
     /* ------------------------------------------------------
@@ -567,6 +572,12 @@ function styleGuide () {
         box_RunTab: appProperties.uiElements.solidBorderBox({
           BackgroundColor: appProperties.solidBox_BackgroundColor,
           Color: appProperties.solidBox_TextColor
+        }),
+
+        box_Info_RunTab: appProperties.uiElements.dottedBorderBox({
+          BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
+          BorderColor: appProperties.solidBorderBox_BorderColor,
+          Color: appProperties.solidBorderBox_TextColor
         }),
 
         dropdown_RunTab: appProperties.uiElements.dropdown({

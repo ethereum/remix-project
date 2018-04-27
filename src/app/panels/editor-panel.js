@@ -28,6 +28,7 @@ class EditorPanel {
       terminal: new Terminal({
         api: {
           cmdInterpreter: self._api.cmdInterpreter,
+          udapp: self._api.udapp,
           getPosition (event) {
             var limitUp = 36
             var limitDown = 20
