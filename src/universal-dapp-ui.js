@@ -14,7 +14,6 @@ var MultiParamManager = require('./multiParamManager')
 function UniversalDAppUI (udapp, opts = {}) {
   var self = this
   this.udapp = udapp
-
   self.el = yo`<div class=${css.udapp}></div>`
 }
 
@@ -23,6 +22,10 @@ UniversalDAppUI.prototype.reset = function () {
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
+  var noInstances = document.querySelector('[class^="noInstancesText"]')
+  if (noInstances) {
+    noInstances.parentNode.removeChild(noInstances)
+  }
   var abi = this.udapp.getABI(contract)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
@@ -33,7 +36,6 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
   var self = this
-
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
   var context = self.udapp.context()
@@ -51,10 +53,15 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   }
 
   function remove () {
-    var instanceContainer = document.querySelector('[class^="instanceContainer"]')
-    var noInstancesText = yo`<div class="${css.noInstancesText}">Currently you have no contract instances.</div>`
-    instanceContainer.appendChild(noInstancesText)
     instance.remove()
+    var instanceContainer = document.querySelector('[class^="instanceContainer"]')
+    if (instanceContainer.children.length === 1) {
+      var noInstancesText = yo`
+        <div class="${css.noInstancesText}">
+          Currently you have no contract instances to interact with.
+        </div>`
+      instanceContainer.appendChild(noInstancesText)
+    }
   }
 
   function toggleClass () {

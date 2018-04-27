@@ -355,7 +355,8 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
                 return
               }
             }
-            self._view.noInstancesText.style.display = 'none'
+            var noInstancesText = self._view.noInstancesText
+            if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
             instanceContainer.appendChild(opts.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           } else {
@@ -375,7 +376,8 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
 
   // ACCESS DEPLOYED INSTANCE
   function loadFromAddress (appAPI) {
-    self._view.noInstancesText.style.display = 'none'
+    var noInstancesText = self._view.noInstancesText
+    if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var address = atAddressButtonInput.value
     if (!ethJSUtil.isValidAddress(address)) {
