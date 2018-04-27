@@ -10,6 +10,7 @@ module.exports = {
     contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
       browser
         .click('.runView')
+        .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
         .clickFunction('getInt - call')
         .clickFunction('getAddress - call')
