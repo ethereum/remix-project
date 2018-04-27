@@ -2,7 +2,7 @@
 
 Everyone is very welcome to contribute on the codebase of Remix. Please reach us in [Gitter](https://gitter.im/ethereum/remix)!
 
-The easiest way to work on `remix-debugger` or `remix-solidity` is to pull the `remix-ide` (Remix IDE) repository (https://github.com/ethereum/remix-ide) which has a strong Remix integration. Then, in `remix-ide`, execute `npm install`, `npm pull remix`, `npm link remix`. 
+The easiest way to work on `remix-debugger` or `remix-solidity` is to pull the `remix-ide` (Remix IDE) repository (https://github.com/ethereum/remix-ide) which has a strong Remix integration. Then, in `remix-ide`, execute `npm install`, `npm run pullremix`, `npm run linkremixsolidity`. 
 then `npm run build && npm run serve` to start a new Remix IDE instance (you can browse `127.0.0.1:8080`).
 
 To interact with the Remix code:
