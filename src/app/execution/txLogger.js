@@ -330,6 +330,7 @@ function txDetails (e, tx, data, obj) {
     log.removeChild(caret)
     log.appendChild(caretDown)
     table = createTable({
+      status: data.tx.status,
       isCall: data.tx.isCall,
       contractAddress: data.tx.contractAddress,
       data: data.tx,
@@ -350,7 +351,6 @@ function txDetails (e, tx, data, obj) {
 
 function createTable (opts) {
   var table = yo`<table class="${css.txTable}" id="txTable"></table>`
-
   if (opts.status) {
     var msg = ''
     if (opts.status === '0x0') {
