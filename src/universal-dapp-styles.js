@@ -21,6 +21,9 @@ var css = csjs`
     overflow: visible;
     margin-bottom: 10px;
   }
+  .noInstancesText {
+    
+  }
   .titleLine {
     display: flex;
     align-items: baseline;

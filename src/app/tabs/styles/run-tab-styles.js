@@ -20,6 +20,17 @@ var css = csjs`
     margin-bottom: 2%;
     padding: 10px 15px 15px 15px;
   }
+  .recorderCount {
+    border: 1px solid ${styles.rightPanel.runTab.icon_HoverColor};
+    border-radius: 50%;
+    margin-right: 30px;
+    min-width: 13px;
+    height: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+  }
   .crow {
     margin-top: .5em;
     display: flex;
