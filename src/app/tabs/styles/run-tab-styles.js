@@ -9,8 +9,11 @@ var css = csjs`
     flex-direction: column;
   }
   .instanceContainerTitle {
-    font-size: 20px;
     font-weight: bold;
+    margin-bottom: 5%;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
   }
   .settings {
     ${styles.rightPanel.runTab.box_RunTab}
@@ -58,11 +61,13 @@ var css = csjs`
     width: 250px;
   }
   .instanceContainer {
+    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
-    margin-top: 2%;
+    margin-bottom: 2%;
     border: none;
     text-align: center;
+    padding: 10px 0px 15px 15px;
   }
   .pendingTxsContainer  {
     ${styles.rightPanel.runTab.box_Instance}
@@ -74,8 +79,16 @@ var css = csjs`
   }
   .container {
     ${styles.rightPanel.runTab.box_RunTab}
-    margin-top: 2%;
+    margin-bottom: 2%;
   }
+  .recorderCollapsedView,
+  .recorderExpandedView {
+    display: flex;
+    flex-direction: column;
+  }
+  .recorderDescription {
+    margin: 0 15px 15px 0;
+   }
   .contractNames {
     ${styles.rightPanel.runTab.dropdown_RunTab}
     width: 100%;
@@ -109,6 +122,7 @@ var css = csjs`
   .noInstancesText {
     ${styles.rightPanel.runTab.box_Instance}
     font-style: italic;
+    text-align: left;
   }
   .pendingTxsText {
     ${styles.rightPanel.runTab.borderBox_Instance}
@@ -180,14 +194,14 @@ var css = csjs`
   .networkItem {
     margin-right: 5px;
   }
-  .clearinstance {}
+  .clearinstance {
+    margin-right: 15px;
+  }
   .transactionActions {
     display: flex;
-    width: 70px;
-    justify-content: space-between;
-    border: 1px solid ${styles.rightPanel.runTab.additionalText_Color};
-    padding: 5px;
-    border-radius: 3px;
+    justify-content: space-evenly;
+    ${styles.rightPanel.runTab.box_Info_RunTab};
+    width: 145px;
 }
 `
 

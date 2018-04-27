@@ -131,6 +131,7 @@ class Recorder {
   append (timestamp, record) {
     var self = this
     self.data.journal.push({ timestamp, record })
+    self.event.trigger('newTxRecorded', [self.data.journal.length])
   }
 
   /**

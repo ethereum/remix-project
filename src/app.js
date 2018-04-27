@@ -523,7 +523,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       editor: self._components.editor,
       config: self._api.config,
       txListener: txlistener,
-      contextview: self._components.contextView
+      contextview: self._components.contextView,
+      udapp: () => { return udapp }
     }
   })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
