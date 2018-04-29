@@ -85,6 +85,7 @@ function runTests (browser, testData) {
           done()
         })
       })
+      .click('.instance:nth-of-type(2)')
       .perform((client, done) => {
         console.log('delegate - transact (not payable)')
         browser.testFunction('delegate - transact (not payable)', '0xd3cd54e2f76f3993078ecf9e1b54a148def4520afc141a182293b3610bddf10f',
