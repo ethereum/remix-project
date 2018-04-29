@@ -32,6 +32,7 @@ module.exports = {
             done()
           })
         })
+        .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2)')
         .perform((client, done) => {
           browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
