@@ -108,14 +108,14 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
     var topics = []
     if (log[1].length > 0) {
       for (var k in log[1]) {
-        topics.push(log[1][k].toString('hex'))
+        topics.push('0x' + log[1][k].toString('hex'))
       }
     } else {
       topics.push('0x')
     }
     logs.push({
-      address: log[0].toString('hex'),
-      data: log[2].toString('hex'),
+      address: '0x' + log[0].toString('hex'),
+      data: '0x' + log[2].toString('hex'),
       topics: topics,
       rawVMResponse: log
     })
