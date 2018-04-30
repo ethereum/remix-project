@@ -317,13 +317,8 @@ function txDetails (e, tx, data, obj) {
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var to = obj.to
-  var log = e.currentTarget
-  for (var i = 0; i < log.children.length; i++) {
-    if (~log.children[i].className.indexOf('caret')) {
-      var caret = log.children[i]
-      break
-    }
-  }
+  var log = document.querySelector(`#${tx.id} [class^='log']`)
+  var caret = document.querySelector(`#${tx.id} [class^='caret']`)
   var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
   var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
   if (table && table.parentNode) {
