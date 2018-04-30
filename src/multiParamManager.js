@@ -2,6 +2,7 @@
 
 var yo = require('yo-yo')
 var css = require('./universal-dapp-styles')
+// var helper = require('../remix/remix-lib/src/execution/txHelper')
 
 class MultiParamManager {
 
@@ -57,13 +58,13 @@ class MultiParamManager {
 
   makeMultiVal () {
     var inputString = this.basicInputField.value
-    console.log(inputString)
-    var inputStringArray = inputString.split(',')
-    // !! the split here will mess up a value with a comma in it !!
-    // do we not make a split if its a , inside a []?
+    var inputJSON = JSON.parse('[' + inputString + ']')
+    console.log('inputJSON is ' + inputJSON)
     var multiInputs = this.multiFields.querySelectorAll('input')
+    console.log('ml length ' + multiInputs.length)
     for (var k = 0; k < multiInputs.length; k++) {
-      multiInputs[k].value = inputStringArray[k]
+      multiInputs[k].value = inputJSON[k]
+      console.log('inputJSON number ' + k + ' is ' + inputJSON[k])
     }
   }
 
