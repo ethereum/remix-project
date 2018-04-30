@@ -12,6 +12,7 @@ var nodeTypes = {
   ASSIGNMENT: 'Assignment',
   CONTRACTDEFINITION: 'ContractDefinition',
   UNARYOPERATION: 'UnaryOperation',
+  BINARYOPERATION: 'BinaryOperation',
   EXPRESSIONSTATEMENT: 'ExpressionStatement',
   MODIFIERDEFINITION: 'ModifierDefinition',
   MODIFIERINVOCATION: 'ModifierInvocation',
@@ -20,7 +21,10 @@ var nodeTypes = {
   INLINEASSEMBLY: 'InlineAssembly',
   BLOCK: 'Block',
   NEWEXPRESSION: 'NewExpression',
-  RETURN: 'Return'
+  RETURN: 'Return',
+  IFSTATEMENT: 'IfStatement',
+  FORSTATEMENT: 'ForStatement',
+  WHILESTATEMENT: 'WhileStatement'
 }
 
 var basicTypes = {
@@ -145,7 +149,7 @@ function getEffectedVariableName (effectNode) {
  * @return {string} name of the function called
  */
 function getLocalCallName (localCallNode) {
-  if (!isLocalCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an local call Node')
+  if (!isLocalCall(localCallNode) && !isAbiNamespaceCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an local call Node')
   return localCallNode.children[0].attributes.value
 }
 
@@ -423,6 +427,24 @@ function isNewExpression (node) {
   return nodeType(node, exactMatch(nodeTypes.NEWEXPRESSION))
 }
 
+/**
+ * True if is Expression
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isExpressionStatement (node) {
+  return nodeType(node, exactMatch(nodeTypes.EXPRESSIONSTATEMENT))
+}
+
+/**
+ * True if is binaryop
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isBinaryOperation (node) {
+  return nodeType(node, exactMatch(nodeTypes.BINARYOPERATION))
+}
+
 // #################### Complex Node Identification
 
 /**
@@ -586,6 +608,30 @@ function isConstructor (node) {
   return isFunctionDefinition(node) && (
     node.attributes.isConstructor === true
   )
+}
+
+/**
+ * True if is block has top level binops (e.g. that are not assigned to anything, most of the time confused compare instead of assign)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isBlockWithTopLevelUnAssignedBinOp (node) {
+  return nodeType(node, exactMatch(nodeTypes.BLOCK)) && node.children && node.children.some(isBinaryOpInExpression) ||
+          isBlockLikeStatement(node) && node.children && node.children.some(isBinaryOpInExpression) // Second Case for if without braces
+}
+
+function isBlockLikeStatement (node) {
+  return (nodeType(node, exactMatch(nodeTypes.IFSTATEMENT)) || nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) || nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT))) &&
+          minNrOfChildren(node, 2) && !nodeType(node.children[1], exactMatch(nodeTypes.BLOCK))
+}
+
+/**
+ * True if binary operation inside of expression statement
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isBinaryOpInExpression (node) {
+  return isExpressionStatement(node) && nrOfChildren(node, 1) && isBinaryOperation(node.children[0])
 }
 
 /**
@@ -897,6 +943,7 @@ module.exports = {
   isAbiNamespaceCall: isAbiNamespaceCall,
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
+  isBlockWithTopLevelUnAssignedBinOp: isBlockWithTopLevelUnAssignedBinOp,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
   isEffect: isEffect,

@@ -27,7 +27,7 @@ staticAnalysisRunner.prototype.runWithModuleList = function (compilationResult, 
             item.mod.visit(node)
           } catch (e) {
             reports.push({
-              name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message }]
+              name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
             })
           }
         }
@@ -43,7 +43,7 @@ staticAnalysisRunner.prototype.runWithModuleList = function (compilationResult, 
     try {
       report = item.mod.report(compilationResult)
     } catch (e) {
-      report = [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message }]
+      report = [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
     }
     return { name: item.name, report: report }
   }))
