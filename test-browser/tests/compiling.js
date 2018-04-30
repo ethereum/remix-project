@@ -126,7 +126,7 @@ function testInputValues (browser, callback) {
 }`, `[
  {
   "from": "0x8c1ed7e19abaa9f23c476da86dc1577f1ef401f5", 
-  "topic": "d30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
+  "topic": "0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
   "event": "event1",
   "args": {
    "0": "-123",
