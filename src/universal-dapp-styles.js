@@ -134,7 +134,6 @@ var css = csjs`
     margin-left: 4px;
   }
   .contractActionsContainer {
-    display: flex;
     width: 98%;
   }
   .contractActionsContainerSingle {
