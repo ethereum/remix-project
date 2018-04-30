@@ -98,6 +98,8 @@ class MultiParamManager {
       button.setAttribute('title', (title + ' - call'))
       button.innerHTML = 'call'
       this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).setAttribute('title', (title + ' - call'))
+    } else {
+      button.innerHTML = 'transact'
     }
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {
@@ -110,13 +112,11 @@ class MultiParamManager {
     if (this.funABI.payable === true) {
       contractProperty.classList.add(css.payable)
       button.setAttribute('title', (title + ' - transact (payable)'))
-      button.innerHTML = 'transact'
       this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (payable)'))
     }
 
     if (!this.lookupOnly && this.funABI.payable === false) {
       button.setAttribute('title', (title + ' - transact (not payable)'))
-      button.innerHTML = 'transact'
       this.contractActionsContainerSingle.querySelector('button').setAttribute('title', (title + ' - transact (not payable)'))
     }
 
