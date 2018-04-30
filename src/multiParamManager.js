@@ -108,9 +108,12 @@ class MultiParamManager {
       for (var k = 0; k < valArray.length; k++) {
         var el = valArray[k]
         if (ret !== '') ret += ','
-        el.value = el.value.replace(/(^|,\s+|,)([a-zA-Z]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string - that starts with a letter
+        // start with the beginning of a line or with a comma or with a space and a comma
+        // then match on a a-zA-Z or a [] or a {} but not a ""
+        // el.value = el.value.replace(/(^|,\s+|,)(^[a-zA-Z^a-zA-Z]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string - that starts with a letter
         ret += el.value
       }
+      console.log('ret is ' + ret)
       this.clickCallBack(this.funABI.inputs, ret)
       this.emptyInputs()
     }
