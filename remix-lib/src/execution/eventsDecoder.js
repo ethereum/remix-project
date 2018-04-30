@@ -73,10 +73,7 @@ class EventsDecoder {
       var topicId = log.topics[0]
       var abi = this._event(topicId.replace('0x', ''), eventsABI)
       if (abi) {
-        var topics = log.topics.map((value) => {
-          return value.indexOf('0x') === 0 ? value : '0x' + value
-        })
-        events.push({ from: log.address, topic: topicId, event: abi.event, args: abi.object.parse(topics, '0x' + log.data) })
+        events.push({ from: log.address, topic: topicId, event: abi.event, args: abi.object.parse(log.topics, log.data) })
       } else {
         events.push({ from: log.address, data: log.data, topics: log.topics })
       }
