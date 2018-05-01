@@ -74,6 +74,9 @@ var css = csjs`
     border-radius: 2px;
     margin-left: 5px;
   }
+  .savegisttoken {
+    margin-left: 5px;
+  }
 }
 `
 

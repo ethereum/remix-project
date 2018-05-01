@@ -9,6 +9,7 @@ var styleGuide = require('../ui/styles-guide/theme-chooser')
 var helper = require('../../lib/helper')
 var modal = require('../ui/modal-dialog-custom')
 var tooltip = require('../ui/tooltip')
+var copyToClipboard = require('../ui/copy-to-clipboard')
 
 var css = require('./styles/settings-tab-styles')
 
@@ -23,6 +24,13 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
   It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM.
   Remix never persist any passphrase.`
   var warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>`
+
+   // Gist settings
+  var gistAccessToken = yo`<input id="gistaccesstoken" type="password">`
+  var token = appAPI.config.get('settings/gist-access-token')
+  if (token) gistAccessToken.value = token
+  var gistAddToken = yo`<input class="${css.savegisttoken}" id="savegisttoken" onclick=${() => { appAPI.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
+  var gistRemoveToken = yo`<input id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; appAPI.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
 
   var el = yo`
     <div class="${css.settingsTabView} "id="settingsView">
@@ -48,8 +56,17 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
           <span class="${css.checkboxText}">Enable Optimization</span>
         </div>
         <div class="${css.crow}">
-          <div>${personal}></div>
-          <span class="${css.checkboxText}">Enable Personal Mode ${warnPersonalMode}></span>
+          <div>${personal}</div>
+          <span class="${css.checkboxText}">Enable Personal Mode ${warnPersonalMode}</span>
+        </div>
+      </div>
+      <div class="${css.info}">
+        <div class=${css.title}>Gist Access Token</div>
+        <div class="${css.crowNoFlex}">Manage the access token used to publish to Gist.</div>
+        <div class="${css.crowNoFlex}">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</div>
+        <div class="${css.crowNoFlex}"><a target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></div>
+        <div class="${css.crowNoFlex}">
+          <div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => appAPI.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>
         </div>
       </div>
       <div class="${css.info}">
