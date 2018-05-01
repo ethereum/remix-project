@@ -133,8 +133,12 @@ var css = csjs`
     color: ${styles.appProperties.mainText_Color};
     margin-left: 4px;
   }
+  .value ul {
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+  }
   .contractActionsContainer {
-    display: flex;
     width: 98%;
   }
   .contractActionsContainerSingle {
