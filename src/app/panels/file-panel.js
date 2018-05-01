@@ -2,8 +2,8 @@
 var async = require('async')
 var $ = require('jquery')
 var yo = require('yo-yo')
-var minixhr = require('minixhr')  // simple and small cross-browser XMLHttpRequest (XHR)
 var remixLib = require('remix-lib')
+var Gists = require('gists')
 var EventManager = remixLib.EventManager
 var FileExplorer = require('../files/file-explorer')
 var modalDialog = require('../ui/modaldialog')
@@ -274,18 +274,16 @@ function filepanel (appAPI, filesProvider) {
   // ------------------ gist publish --------------
 
   function publishToGist (fileProviderName) {
-    function cb (data) {
-      if (data instanceof Error) {
-        console.log('fail', data.message)
-        modalDialogCustom.alert('Failed to create gist: ' + (data || 'Unknown transport error'))
+    function cb (error, data) {
+      if (error) {
+        modalDialogCustom.alert('Failed to create gist: ' + error)
       } else {
-        data = JSON.parse(data)
         if (data.html_url) {
           modalDialogCustom.confirm(null, `Created a gist at ${data.html_url}. Would you like to open it in a new window?`, () => {
             window.open(data.html_url, '_blank')
           })
         } else {
-          modalDialogCustom.alert(data.message + ' ' + data.documentation_url)
+          modalDialogCustom.alert(data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'))
         }
       }
     }
@@ -296,17 +294,22 @@ function filepanel (appAPI, filesProvider) {
           console.log(error)
           modalDialogCustom.alert('Failed to create gist: ' + error)
         } else {
-          var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
-          console.log(packaged)
-          minixhr({
-            url: 'https://api.github.com/gists',
-            method: 'POST',
-            data: JSON.stringify({
+          var tokenAccess = appAPI.config.get('settings/gist-access-token')
+          if (!tokenAccess) {
+            modalDialogCustom.alert('Remix requires an access token (which includes gists creation permission). Please go to the settings tab for more information.')
+          } else {
+            var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+            var gists = new Gists({
+              token: tokenAccess
+            })
+            gists.create({
               description: description,
               public: true,
               files: packaged
+            }, (error, result) => {
+              cb(error, result)
             })
-          }, cb)
+          }
         }
       })
     }
