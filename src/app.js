@@ -556,7 +556,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   // Add files received from remote instance (i.e. another remix-ide)
-  function loadFiles (filesSet, fileProvider) {
+  function loadFiles (filesSet, fileProvider, callback) {
     if (!fileProvider) fileProvider = 'browser'
 
     async.each(Object.keys(filesSet), (file, callback) => {
@@ -573,6 +573,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       })
     }, (error) => {
       if (!error) fileManager.switchFile()
+      if (callback) callback(error)
     })
   }
 
@@ -597,7 +598,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
           modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
           return
         }
-        loadFiles(data.files, 'gist')
+        loadFiles(data.files, 'gist', (errorLoadingFile) => {
+          if (!errorLoadingFile) filesProviders['gist'].id = gistId
+        })
       })
     })
   }
