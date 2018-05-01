@@ -24,6 +24,7 @@
     "exorcist": "^0.4.0",
     "fast-async": "6.3.1",
     "fast-levenshtein": "^2.0.6",
+    "gists": "^1.0.1",
     "javascript-serialize": "^1.6.1",
     "jquery": "^3.3.1",
     "js-base64": "^2.1.9",
