@@ -8,6 +8,7 @@ var EventManager = remixLib.EventManager
 var FileExplorer = require('../files/file-explorer')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
+var tooltip = require('../ui/tooltip')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 var helper = require('../../lib/helper')
@@ -80,10 +81,10 @@ function filepanel (appAPI, filesProvider) {
                 </label>
               </span>
             ` : ''}
-            <span class="${css.gist}" title="Publish all [browser] explorer open files to an anonymous github gist" onclick=${() => publishToGist('browser')}>
+            <span class="${css.gist}" title="Publish all [browser] explorer files to a github gist" onclick=${() => publishToGist('browser')}>
               <i class="fa fa-github"></i>
             </span>
-            <span class="${css.gist}" title="Publish all [gist] explorer open files to an anonymous github gist" onclick=${() => publishToGist('gist')}>
+            <span class="${css.gist}" title="Update the current [gist] explorer" onclick=${() => updateGist()}>
               <i class="fa fa-github"></i>
             </span>
             <span class="${css.copyFiles}" title="Copy all files to another instance of Remix IDE" onclick=${copyFiles}>
@@ -273,35 +274,47 @@ function filepanel (appAPI, filesProvider) {
 
   // ------------------ gist publish --------------
 
+  function updateGist () {
+    var gistId = filesProvider['gist'].id
+    if (!gistId) {
+      tooltip('no gist content is currently loaded.')
+    } else {
+      toGist('gist', gistId)
+    }
+  }
+
   function publishToGist (fileProviderName) {
-    function cb (error, data) {
+    modalDialogCustom.confirm(null, 'Are you very sure you want to publish all your files anonymously as a public gist on github.com?', () => {
+      toGist(fileProviderName)
+    })
+  }
+
+  function toGist (fileProviderName, id) {
+    packageFiles(filesProvider[fileProviderName], (error, packaged) => {
       if (error) {
+        console.log(error)
         modalDialogCustom.alert('Failed to create gist: ' + error)
       } else {
-        if (data.html_url) {
-          modalDialogCustom.confirm(null, `Created a gist at ${data.html_url}. Would you like to open it in a new window?`, () => {
-            window.open(data.html_url, '_blank')
+        var tokenAccess = appAPI.config.get('settings/gist-access-token')
+        if (!tokenAccess) {
+          modalDialogCustom.alert('Remix requires an access token (which includes gists creation permission). Please go to the settings tab for more information.')
+        } else {
+          var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+          var gists = new Gists({
+            token: tokenAccess
           })
-        } else {
-          modalDialogCustom.alert(data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'))
-        }
-      }
-    }
-
-    function toGist () {
-      packageFiles(filesProvider[fileProviderName], (error, packaged) => {
-        if (error) {
-          console.log(error)
-          modalDialogCustom.alert('Failed to create gist: ' + error)
-        } else {
-          var tokenAccess = appAPI.config.get('settings/gist-access-token')
-          if (!tokenAccess) {
-            modalDialogCustom.alert('Remix requires an access token (which includes gists creation permission). Please go to the settings tab for more information.')
-          } else {
-            var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
-            var gists = new Gists({
-              token: tokenAccess
+          if (id) {
+            tooltip('Saving gist (' + id + ') ...')
+            gists.edit({
+              description: description,
+              public: true,
+              files: packaged,
+              id: id
+            }, (error, result) => {
+              cb(error, result)
             })
+          } else {
+            tooltip('Creating a new gist ...')
             gists.create({
               description: description,
               public: true,
@@ -311,11 +324,22 @@ function filepanel (appAPI, filesProvider) {
             })
           }
         }
-      })
-    }
-    modalDialogCustom.confirm(null, 'Are you very sure you want to publish all your files anonymously as a public gist on github.com?', () => {
-      toGist()
+      }
     })
+  }
+
+  function cb (error, data) {
+    if (error) {
+      modalDialogCustom.alert('Failed to manage gist: ' + error)
+    } else {
+      if (data.html_url) {
+        modalDialogCustom.confirm(null, `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
+          window.open(data.html_url, '_blank')
+        })
+      } else {
+        modalDialogCustom.alert(data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'))
+      }
+    }
   }
 
   // ------------------ copy files --------------
