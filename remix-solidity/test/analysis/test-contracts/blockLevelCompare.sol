@@ -32,11 +32,13 @@ contract grr {
 
         while(false) {
             int c = 3;
+            uint(c) + a;
 
             c == 5;
 
         }
 
+        a + b;
         breaker = false;
     }
     

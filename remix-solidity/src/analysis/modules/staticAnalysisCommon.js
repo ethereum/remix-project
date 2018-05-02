@@ -24,7 +24,8 @@ var nodeTypes = {
   RETURN: 'Return',
   IFSTATEMENT: 'IfStatement',
   FORSTATEMENT: 'ForStatement',
-  WHILESTATEMENT: 'WhileStatement'
+  WHILESTATEMENT: 'WhileStatement',
+  DOWHILESTATEMENT: 'DoWhileStatement'
 }
 
 var basicTypes = {
@@ -385,6 +386,10 @@ function getFullQuallyfiedFuncDefinitionIdent (contract, func, paramTypes) {
   return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
+function getUnAssignedTopLevelBinOps (blocklike) {
+  return blocklike.children.filter(isBinaryOpInExpression)
+}
+
 // #################### Trivial Node Identification
 
 function isFunctionDefinition (node) {
@@ -621,7 +626,10 @@ function isBlockWithTopLevelUnAssignedBinOp (node) {
 }
 
 function isBlockLikeStatement (node) {
-  return (nodeType(node, exactMatch(nodeTypes.IFSTATEMENT)) || nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) || nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT))) &&
+  return (nodeType(node, exactMatch(nodeTypes.IFSTATEMENT)) ||
+            nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
+            nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
+            nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))) &&
           minNrOfChildren(node, 2) && !nodeType(node.children[1], exactMatch(nodeTypes.BLOCK))
 }
 
@@ -937,6 +945,7 @@ module.exports = {
   getStateVariableDeclarationsFormContractNode: getStateVariableDeclarationsFormContractNode,
   getFunctionOrModifierDefinitionParameterPart: getFunctionOrModifierDefinitionParameterPart,
   getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
+  getUnAssignedTopLevelBinOps: getUnAssignedTopLevelBinOps,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray: isDeleteOfDynamicArray,
