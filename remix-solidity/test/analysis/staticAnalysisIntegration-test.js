@@ -559,7 +559,7 @@ test('Integration test assignAndCompare.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
-    'blockLevelCompare.sol': 6
+    'blockLevelCompare.sol': 8
   }
 
   runModuleOnFiles(module, t, (file, report) => {
