@@ -8,7 +8,7 @@ function assignAndCompare () {
 }
 
 assignAndCompare.prototype.visit = function (node) {
-  if (common.isBlockWithTopLevelUnAssignedBinOp(node)) common.getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))
+  if (common.isSubScopeWithTopLevelUnAssignedBinOp(node)) common.getUnAssignedTopLevelBinOps(node).forEach((n) => this.warningNodes.push(n))
 }
 
 assignAndCompare.prototype.report = function (compilationResults) {

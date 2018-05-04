@@ -386,8 +386,8 @@ function getFullQuallyfiedFuncDefinitionIdent (contract, func, paramTypes) {
   return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
-function getUnAssignedTopLevelBinOps (blocklike) {
-  return blocklike.children.filter(isBinaryOpInExpression)
+function getUnAssignedTopLevelBinOps (subScope) {
+  return subScope.children.filter(isBinaryOpInExpression)
 }
 
 // #################### Trivial Node Identification
@@ -616,16 +616,16 @@ function isConstructor (node) {
 }
 
 /**
- * True if is block has top level binops (e.g. that are not assigned to anything, most of the time confused compare instead of assign)
+ * True if is block / SubScope has top level binops (e.g. that are not assigned to anything, most of the time confused compare instead of assign)
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
-function isBlockWithTopLevelUnAssignedBinOp (node) {
+function isSubScopeWithTopLevelUnAssignedBinOp (node) {
   return nodeType(node, exactMatch(nodeTypes.BLOCK)) && node.children && node.children.some(isBinaryOpInExpression) ||
-          isBlockLikeStatement(node) && node.children && node.children.some(isBinaryOpInExpression) // Second Case for if without braces
+          isSubScopeStatement(node) && node.children && node.children.some(isBinaryOpInExpression) // Second Case for if without braces
 }
 
-function isBlockLikeStatement (node) {
+function isSubScopeStatement (node) {
   return (nodeType(node, exactMatch(nodeTypes.IFSTATEMENT)) ||
             nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
             nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
@@ -952,7 +952,7 @@ module.exports = {
   isAbiNamespaceCall: isAbiNamespaceCall,
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
-  isBlockWithTopLevelUnAssignedBinOp: isBlockWithTopLevelUnAssignedBinOp,
+  isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
   isEffect: isEffect,
