@@ -21,6 +21,7 @@ module.exports = {
   },
 
   encodeFunctionId: function (funABI) {
+    if (funABI.type === 'fallback') return ''
     var abi = new ethers.Interface([funABI])
     abi = abi.functions[funABI.name]
     return abi.sighash
