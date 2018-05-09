@@ -21,7 +21,7 @@ function Renderer (appAPI) {
  *
  * @param {String or DOMElement} message
  * @param {DOMElement} container
- * @param {Object} options {useSpan, noAnnotations, click:(Function), type:(warning, error), errFile, errLine, errCol}
+ * @param {Object} options {useSpan, noAnnotations, click:(Function), type:(warning, error, staticAnalysisWarning), errFile, errLine, errCol}
  */
 Renderer.prototype.error = function (message, container, opt) {
   if (!message) return
