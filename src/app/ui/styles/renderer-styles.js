@@ -6,6 +6,7 @@ var styles = styleGuide.chooser()
 var css = yo`<style>
 .sol.success,
 .sol.error,
+.sol.staticAnalysisWarning,
 .sol.warning {
     word-wrap: break-word;
     cursor: pointer;
@@ -18,6 +19,7 @@ var css = yo`<style>
 
 .sol.success pre,
 .sol.error pre,
+.sol.staticAnalysisWarning pre,
 .sol.warning pre {
     overflow-y: hidden;
     background-color: transparent;
@@ -29,6 +31,7 @@ var css = yo`<style>
 }
 
 .sol.success .close,
+.sol.staticAnalysisWarning .close,
 .sol.error .close,
 .sol.warning .close {
     font-weight: bold;
@@ -48,6 +51,11 @@ var css = yo`<style>
 .sol.warning {
   background-color: ${styles.rightPanel.message_Warning_BackgroundColor};
   color: ${styles.rightPanel.message_Warning_Color};
+}
+
+.sol.staticAnalysisWarning {
+  background-color: ${styles.colors.lightViolet};
+  color: ${styles.colors.black};  
 }
 
 .sol.success {
