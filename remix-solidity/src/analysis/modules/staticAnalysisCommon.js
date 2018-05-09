@@ -616,6 +616,15 @@ function isConstructor (node) {
 }
 
 /**
+ * True if node is integer division that truncates (not only int literals since those yield a rational value)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isIntDivision (node) {
+  return isBinaryOperation(node) && operator(node, exactMatch(util.escapeRegExp('/'))) && expressionType(node, util.escapeRegExp('int'))
+}
+
+/**
  * True if is block / SubScope has top level binops (e.g. that are not assigned to anything, most of the time confused compare instead of assign)
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -982,6 +991,7 @@ module.exports = {
   isSelfdestructCall: isSelfdestructCall,
   isAssertCall: isAssertCall,
   isRequireCall: isRequireCall,
+  isIntDivision: isIntDivision,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation: isDeleteUnaryOperation,
