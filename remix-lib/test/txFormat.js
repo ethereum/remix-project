@@ -1,6 +1,7 @@
 'use strict'
 var tape = require('tape')
 var txFormat = require('../src/execution/txFormat')
+var txHelper = require('../src/execution/txHelper')
 var compiler = require('solc')
 var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 var executionContext = require('../src/execution/execution-context')
@@ -149,6 +150,17 @@ function encodeFunctionCallTest (st) {
 
 /* *********************************************************** */
 
+tape('test fallback function', function (t) {
+  t.test('(fallback)', function (st) {
+    st.plan(2)
+    var output = compiler.compileStandardWrapper(compilerInput(fallbackFunction))
+    output = JSON.parse(output)
+    var contract = output.contracts['test.sol']['fallbackFunctionContract']
+    st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x805da4ad')
+    st.equal(txHelper.encodeFunctionId(contract.abi[1]), '0x')
+  })
+})
+
 var uintContract = `contract uintContractTest {
     uint _tp;
     address _ap;
@@ -185,4 +197,14 @@ contract testContractLinkLibrary {
     function get (uint _p, string _o) {
         
  }
+ }`
+
+var fallbackFunction = `pragma solidity ^0.4.4;
+
+contract fallbackFunctionContract { 
+    function get (uint _p, string _o) {
+        
+    }
+    
+    function () {}
  }`
