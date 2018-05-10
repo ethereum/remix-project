@@ -225,6 +225,7 @@ function makeRecorder (appAPI, appEvents, opts, self) {
             modalDialogCustom.alert('Failed to create file ' + newFile)
           } else {
             appAPI.switchFile(newFile)
+            self._view.recorderCount.innerText = 0
           }
         })
       }
@@ -232,6 +233,11 @@ function makeRecorder (appAPI, appEvents, opts, self) {
   }
 
   runButton.onclick = () => {
+    /*
+    @TODO
+    update account address in scenario.json
+    popup if scenario.json not open - "Open a file with transactions you want to replay and click play again"
+    */
     var currentFile = appAPI.config.get('currentFile')
     appAPI.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
