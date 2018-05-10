@@ -22,7 +22,7 @@ var css = csjs`
     margin-bottom: 10px;
   }
   .noInstancesText {
-    
+
   }
   .titleLine {
     display: flex;
@@ -84,6 +84,7 @@ var css = csjs`
     cursor: pointer;
     margin-left: 5px;
   }
+  .udapp {}
   .udappClose {
     display: flex;
     justify-content: flex-end;
