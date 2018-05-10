@@ -24,13 +24,14 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   --------------------------- */
   var self = this
   var event = new EventManager()
+  appEvents.eventManager = event
   self._view = {}
   self.data = {
     count: 0,
     text: `All transactions (deployed contracts and function executions)
     in this environment can be saved and replayed in
     another environment. i.e. Transactions created in
-    Javascript VM can be replayed in the Ropsten network.`
+    Javascript VM can be replayed in the Injected Web3.`
   }
 
   self._view.recorderCount = yo`<span>0</span>`
@@ -51,7 +52,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
     </div>`
 
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
-  var recorderInterface = makeRecorder(event, appAPI, appEvents, opts, self)
+  var recorderInterface = makeRecorder(appAPI, appEvents, opts, self)
 
   self._view.collapsedView = yo`
     <div class=${css.recorderCollapsedView}>
@@ -186,12 +187,12 @@ function updateAccountBalances (container, appAPI) {
 /* ------------------------------------------------
            RECORDER
 ------------------------------------------------ */
-function makeRecorder (events, appAPI, appEvents, opts, self) {
+function makeRecorder (appAPI, appEvents, opts, self) {
   var recorder = new Recorder(opts.compiler, {
     events: {
       udapp: appEvents.udapp,
       executioncontext: executionContext.event,
-      runtab: events
+      runtab: appEvents.eventManager
     },
     api: appAPI
   })
@@ -241,8 +242,8 @@ function makeRecorder (events, appAPI, appEvents, opts, self) {
             var obj = JSON.parse(json)
             var txArray = obj.transactions || []
             var accounts = obj.accounts || []
-            var options = obj.options
-            var abis = obj.abis
+            var options = obj.options || {}
+            var abis = obj.abis || {}
             var linkReferences = obj.linkReferences || {}
           } catch (e) {
             return modalDialogCustom.alert('Invalid Scenario File, please try again')
@@ -250,7 +251,7 @@ function makeRecorder (events, appAPI, appEvents, opts, self) {
           if (txArray.length) {
             var noInstancesText = self._view.noInstancesText
             if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-            recorder.run(txArray, accounts, options, abis, linkReferences, (abi, address, contractName) => {
+            recorder.run(txArray, accounts, options, abis, linkReferences, opts.udapp, (abi, address, contractName) => {
               self._view.instanceContainer.appendChild(opts.udappUI.renderInstanceFromABI(abi, address, contractName))
             })
           }
