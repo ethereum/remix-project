@@ -53,8 +53,8 @@ module.exports = {
       'desiredCapabilities': {
         'browserName': 'safari',
         'javascriptEnabled': true,
-        'platform': 'OS X 10.11',
-        'version': '10.0',
+        'platform': 'macOS 10.13',
+        'version': '11.0',
         'acceptSslCerts': true,
         'build': 'build-' + buildId,
         'tunnel-identifier': 'browsersolidity_tests_' + buildId

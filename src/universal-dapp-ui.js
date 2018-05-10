@@ -54,14 +54,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   function remove () {
     instance.remove()
-    var instanceContainer = document.querySelector('[class^="instanceContainer"]')
-    if (instanceContainer.children.length === 1) {
-      var noInstancesText = yo`
-        <div class="${css.noInstancesText}">
-          Currently you have no contract instances to interact with.
-        </div>`
-      instanceContainer.appendChild(noInstancesText)
-    }
+    // @TODO perhaps add a callack here to warn the caller that the instance has been removed
   }
 
   function toggleClass () {
