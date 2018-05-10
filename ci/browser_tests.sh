@@ -42,7 +42,7 @@ done
 
 npm run nightwatch_remote_chrome || TEST_EXITCODE=1
 npm run nightwatch_remote_firefox || TEST_EXITCODE=1
-npm run nightwatch_remote_safari || TEST_EXITCODE=1
+# npm run nightwatch_remote_safari || TEST_EXITCODE=1
 # npm run nightwatch_remote_ie || TEST_EXITCODE=1
 # npm run nightwatch_remote_parallel || TEST_EXITCODE=1
 
