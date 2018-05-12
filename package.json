@@ -36,9 +36,10 @@
     "npm-link-local": "^1.1.0",
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
-    "remix-core": "latest",
-    "remix-lib": "latest",
-    "remix-solidity": "latest",
+    "remix-core": "/Users/iurimatias/Projects/EthereumFoundation/remix/remix-core",
+    "remix-lib": "/Users/iurimatias/Projects/EthereumFoundation/remix/remix-lib",
+    "remix-solidity": "/Users/iurimatias/Projects/EthereumFoundation/remix/remix-solidity",
+    "remix-tests": "/Users/iurimatias/Projects/EthereumFoundation/remix-tests",
     "remixd": "git+https://github.com/ethereum/remixd.git",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
@@ -52,7 +53,7 @@
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
     "yo-yo": "^1.2.2",
-    "yo-yoify": "^3.1.0"
+    "yo-yoify": "^3.7.3"
   },
   "dependencies": {
     "http-server": "0.9.0",
