@@ -63,8 +63,10 @@ class MultiParamManager {
     var multiInputs = this.multiFields.querySelectorAll('input')
     console.log('ml length ' + multiInputs.length)
     for (var k = 0; k < multiInputs.length; k++) {
-      multiInputs[k].value = inputJSON[k]
-      console.log('inputJSON number ' + k + ' is ' + inputJSON[k])
+      if (inputJSON[k]) {
+        multiInputs[k].value = inputJSON[k]
+        console.log('inputJSON number ' + k + ' is ' + inputJSON[k])
+      }
     }
   }
 
