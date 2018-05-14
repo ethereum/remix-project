@@ -59,13 +59,10 @@ class MultiParamManager {
   makeMultiVal () {
     var inputString = this.basicInputField.value
     var inputJSON = JSON.parse('[' + inputString + ']')
-    console.log('inputJSON is ' + inputJSON)
     var multiInputs = this.multiFields.querySelectorAll('input')
-    console.log('ml length ' + multiInputs.length)
     for (var k = 0; k < multiInputs.length; k++) {
       if (inputJSON[k]) {
-        multiInputs[k].value = inputJSON[k]
-        console.log('inputJSON number ' + k + ' is ' + inputJSON[k])
+        multiInputs[k].value = JSON.stringify(inputJSON[k])
       }
     }
   }
@@ -108,14 +105,11 @@ class MultiParamManager {
       var valArray = this.multiFields.querySelectorAll('input')
       var ret = ''
       for (var k = 0; k < valArray.length; k++) {
-        var el = valArray[k]
+        let el = valArray[k].value
         if (ret !== '') ret += ','
-        // start with the beginning of a line or with a comma or with a space and a comma
-        // then match on a a-zA-Z or a [] or a {} but not a ""
-        // el.value = el.value.replace(/(^|,\s+|,)(^[a-zA-Z^a-zA-Z]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string - that starts with a letter
-        ret += el.value
+        el = el.replace(/(^|,\s+|,)(\w+|)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string or number by quoted string
+        ret += el
       }
-      console.log('ret is ' + ret)
       this.clickCallBack(this.funABI.inputs, ret)
       this.emptyInputs()
     }
