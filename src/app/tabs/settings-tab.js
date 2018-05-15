@@ -94,7 +94,7 @@ module.exports = class SettingsTab {
       </div>`
     self._view.config.general = yo`
       <div class="${css.info}">
-        <div class=${css.title}>General settings</div>
+          <div class=${css.title}>General settings</div>
           <div class="${css.crow}">
             <div>${self._view.optionVM}</div>
             <span class="${css.checkboxText}">Always use Ethereum VM at Load</span>
@@ -111,15 +111,15 @@ module.exports = class SettingsTab {
             <div>${self._view.personal}></div>
             <span class="${css.checkboxText}">Enable Personal Mode ${self._view.warnPersonalMode}></span>
           </div>
-        </div>
+      </div>
+      `
+    self._view.gistToken = yo`
       <div class="${css.info}">
         <div class=${css.title}>Gist Access Token</div>
         <div class="${css.crowNoFlex}">Manage the access token used to publish to Gist.</div>
         <div class="${css.crowNoFlex}">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</div>
         <div class="${css.crowNoFlex}"><a target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></div>
-        <div class="${css.crowNoFlex}">
-          ${self._view.gistToken}
-        </div>
+        <div class="${css.crowNoFlex}">${self._view.gistToken}</div>
       </div>`
     self._view.config.themes = yo`
       <div class="${css.info}">
@@ -180,6 +180,7 @@ module.exports = class SettingsTab {
       <div class="${css.settingsTabView} "id="settingsView">
         ${self._view.config.solidity}
         ${self._view.config.general}
+        ${self._view.gistToken}
         ${self._view.config.themes}
         ${self._view.config.plugin}
         ${self._view.config.remixd}
@@ -349,6 +350,9 @@ const css = csjs`
   .remixdinstallation {
     padding: 3px;
     border-radius: 2px;
+    margin-left: 5px;
+  }
+  .savegisttoken {
     margin-left: 5px;
   }
 `
