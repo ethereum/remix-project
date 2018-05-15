@@ -187,7 +187,7 @@ function updateAccountBalances (container, appAPI) {
            RECORDER
 ------------------------------------------------ */
 function makeRecorder (appAPI, appEvents, opts, self) {
-  var recorder = new Recorder(opts.compiler, {
+  var recorder = new Recorder(opts.compiler, opts.udapp, {
     events: {
       udapp: appEvents.udapp,
       executioncontext: executionContext.event,
@@ -240,7 +240,7 @@ function makeRecorder (appAPI, appEvents, opts, self) {
     update account address in scenario.json
     popup if scenario.json not open - "Open a file with transactions you want to replay and click play again"
     */
-    var currentFile = appAPI.config.get('currentFile')
+    var currentFile = opts.config.get('currentFile')
     appAPI.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
         modalDialogCustom.alert('Invalid Scenario File ' + error)
@@ -319,7 +319,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
         ${createPanel}
         <div class="${css.button}">
           ${atAddressButtonInput}
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>Access</div>
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(opts.editor, opts.config) }}>At Address</div>
         </div>
       </div>
     </div>
@@ -384,7 +384,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
   }
 
   // ACCESS DEPLOYED INSTANCE
-  function loadFromAddress (appAPI) {
+  function loadFromAddress (editor, config) {
     var noInstancesText = self._view.noInstancesText
     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
@@ -395,11 +395,11 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
       return modalDialogCustom.alert('Invalid checksum address.')
     }
-    if (/.(.abi)$/.exec(appAPI.currentFile())) {
+    if (/.(.abi)$/.exec(config.get('currentFile'))) {
       modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', () => {
         var abi
         try {
-          abi = JSON.parse(appAPI.editorContent())
+          abi = JSON.parse(editor.currentContent())
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
@@ -417,7 +417,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     contractNames.innerHTML = ''
     if (success) {
       selectContractNames.removeAttribute('disabled')
-      appAPI.visitContracts((contract) => {
+      opts.compiler.visitContracts((contract) => {
         contractNames.appendChild(yo`<option>${contract.name}</option>`)
       })
     } else {

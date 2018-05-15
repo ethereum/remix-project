@@ -698,27 +698,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ---------------- Righthand-panel --------------------
 
   var rhpAPI = {
-    config: config,
     setEditorSize (delta) {
       $('#righthand-panel').css('width', delta)
       self._view.centerpanel.style.right = delta + 'px'
       document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
       onResize()
-    },
-    getAccounts: (cb) => {
-      udapp.getAccounts(cb)
-    },
-    getSource: (fileName) => {
-      return compiler.getSource(fileName)
-    },
-    editorContent: () => {
-      return editor.get(editor.current())
-    },
-    currentFile: () => {
-      return config.get('currentFile')
-    },
-    visitContracts: (cb) => {
-      compiler.visitContracts(cb)
     },
     switchFile: function (path) {
       fileManager.switchFile(path)
@@ -775,7 +759,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     udapp: udapp,
     udappUI: udappUI,
     compiler: compiler,
-    renderer: renderer
+    renderer: renderer,
+    editor: editor,
+    config: config
   }
 
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)
