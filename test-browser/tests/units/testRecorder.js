@@ -10,7 +10,12 @@ module.exports = {
     contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
       browser
         .click('.runView')
+        .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
+        .waitForElementPresent('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2)')
+        .waitForElementPresent('.instance:nth-of-type(3)')
+        .click('.instance:nth-of-type(3)')
         .clickFunction('getInt - call')
         .clickFunction('getAddress - call')
         .clickFunction('getFromLib - call')
@@ -31,6 +36,8 @@ module.exports = {
             done()
           })
         })
+        .waitForElementPresent('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2)')
         .perform((client, done) => {
           browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
               .click('i.savetransaction').modalFooterOKClick().getEditorValue(function (result) {

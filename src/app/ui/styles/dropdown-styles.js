@@ -10,6 +10,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     margin-right      : 10px;
+    width             : auto;
   }
   .selectbox          {
     display           : flex;

@@ -10,7 +10,7 @@ var css = csjs`
   .title {
     ${styles.rightPanel.runTab.titlebox_RunTab}
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     align-items: center;
     font-size: 11px;
     height: 30px;
@@ -20,6 +20,9 @@ var css = csjs`
     line-height: initial;
     overflow: visible;
     margin-bottom: 10px;
+  }
+  .noInstancesText {
+
   }
   .titleLine {
     display: flex;
@@ -35,11 +38,9 @@ var css = csjs`
     color: ${styles.rightPanel.runTab.icon_AltColor_Instance_CopyToClipboard};
   }
   .instance {
-    ${styles.rightPanel.runTab.box_Instance};
-    margin-bottom: 10px;
-    padding: 10px 15px 15px 15px;
-    position: relative;
-    overflow: visible;
+    min-width: 310px;
+    display: flex;
+    flex-direction: column;
   }
   .instance .title:before {
     content: "\\25BE";
@@ -81,7 +82,9 @@ var css = csjs`
   .closeIcon {
     font-size: 12px;
     cursor: pointer;
+    margin-left: 5px;
   }
+  .udapp {}
   .udappClose {
     display: flex;
     justify-content: flex-end;
@@ -211,7 +214,7 @@ var css = csjs`
     margin-right: 5%;
     font-size: 10px;
     border-width: 1px;
-    width: inherit; 
+    width: inherit;
   }
   .multiHeader button {
     display: inline-block;
