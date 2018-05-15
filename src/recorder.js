@@ -168,6 +168,7 @@ class Recorder {
     self.data._abis = {}
     self.data._contractABIReferences = {}
     self.data._linkReferences = {}
+    self.event.trigger('cleared', [])
   }
 
   /**
