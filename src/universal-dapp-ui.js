@@ -14,7 +14,6 @@ var MultiParamManager = require('./multiParamManager')
 function UniversalDAppUI (udapp, opts = {}) {
   var self = this
   this.udapp = udapp
-
   self.el = yo`<div class=${css.udapp}></div>`
 }
 
@@ -23,6 +22,10 @@ UniversalDAppUI.prototype.reset = function () {
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
+  var noInstances = document.querySelector('[class^="noInstancesText"]')
+  if (noInstances) {
+    noInstances.parentNode.removeChild(noInstances)
+  }
   var abi = this.udapp.getABI(contract)
   return this.renderInstanceFromABI(abi, address, contractName)
 }
@@ -33,22 +36,25 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 // this returns a DOM element
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
   var self = this
-
-  function remove () { instance.remove() }
-
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-  var instance = yo`<div class="instance ${css.instance}" id="instance${address}"></div>`
+  var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
   var context = self.udapp.context()
 
   var shortAddress = helper.shortenAddress(address)
-  var title = yo`<div class="${css.title}" onclick=${toggleClass}>
+  var title = yo`
+    <div class="${css.title}" onclick=${toggleClass}>
     <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
     ${copyToClipboard(() => address)}
   </div>`
 
   if (self.udapp.removable_instances) {
     var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    instance.appendChild(close)
+    title.appendChild(close)
+  }
+
+  function remove () {
+    instance.remove()
+    // @TODO perhaps add a callack here to warn the caller that the instance has been removed
   }
 
   function toggleClass () {

@@ -131,6 +131,7 @@ class Recorder {
   append (timestamp, record) {
     var self = this
     self.data.journal.push({ timestamp, record })
+    self.event.trigger('newTxRecorded', [self.data.journal.length])
   }
 
   /**
@@ -167,6 +168,7 @@ class Recorder {
     self.data._abis = {}
     self.data._contractABIReferences = {}
     self.data._linkReferences = {}
+    self.event.trigger('cleared', [])
   }
 
   /**
