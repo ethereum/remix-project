@@ -170,17 +170,25 @@ function Editor (opts = {}) {
   }
 
   /**
-    * returns the content of the specified session @arg path
-    * if @arg path is not provided, the content of the current editing session is returned
+    * returns the content of the current session
     *
-    * @param {String} path    - path of th file in edition
+    * @return {String} content of the file referenced by @arg path
+    */
+  this.currentContent = function () {
+    return this.get(this.current())
+  }
+
+  /**
+    * returns the content of the session targeted by @arg path
+    * if @arg path is null, the content of the current session is returned
+    *
     * @return {String} content of the file referenced by @arg path
     */
   this.get = function (path) {
     if (!path || currentSession === path) {
       return editor.getValue()
     } else if (sessions[path]) {
-      sessions[path].getValue()
+      return sessions[path].getValue()
     }
   }
 
@@ -188,8 +196,7 @@ function Editor (opts = {}) {
     * returns the path of the currently editing file
     * returns `undefined` if no session is being editer
     *
-    * @param {String} path    - path of th file in edition
-    * @return {String} content of the file referenced by @arg path
+    * @return {String} path of the current session
     */
   this.current = function () {
     if (editor.getSession() === emptySession) {

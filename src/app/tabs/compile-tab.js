@@ -36,7 +36,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   var compileTimeout = null
   function scheduleCompilation () {
-    if (!appAPI.config.get('autoCompile')) {
+    if (!opts.config.get('autoCompile')) {
       return
     }
 
@@ -59,16 +59,16 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
   // ----------------- autoCompile -----------------
   var autoCompileInput = compileContainer.querySelector('#autoCompile')
   var autoCompile = false
-  if (appAPI.config.exists('autoCompile')) {
-    autoCompile = appAPI.config.get('autoCompile')
+  if (opts.config.exists('autoCompile')) {
+    autoCompile = opts.config.get('autoCompile')
   }
-  appAPI.config.set('autoCompile', autoCompile)
+  opts.config.set('autoCompile', autoCompile)
   if (autoCompile) {
     autoCompileInput.setAttribute('checked', autoCompile)
   }
 
   autoCompileInput.addEventListener('change', function () {
-    appAPI.config.set('autoCompile', autoCompileInput.checked)
+    opts.config.set('autoCompile', autoCompileInput.checked)
   })
 
   // REGISTER EVENTS
@@ -156,7 +156,7 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
       }
       if (!error) {
         if (data.contracts) {
-          appAPI.visitContracts((contract) => {
+          opts.compiler.visitContracts((contract) => {
             opts.renderer.error(contract.name, $(errorContainer), {type: 'success'})
           })
         }
@@ -190,8 +190,8 @@ function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
       contractNames.innerHTML = ''
       if (success) {
         contractNames.removeAttribute('disabled')
-        appAPI.visitContracts((contract) => {
-          contractsDetails[contract.name] = parseContracts(contract.name, contract.object, appAPI.getSource(contract.file))
+        opts.compiler.visitContracts((contract) => {
+          contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
           var contractName = yo`
             <option>
               ${contract.name}
