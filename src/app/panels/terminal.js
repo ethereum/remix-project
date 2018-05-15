@@ -111,7 +111,7 @@ class Terminal {
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
-    self._view.pendingTxCount = yo`<div class=${css.pendingTx}>${self._view.pendingTxCount}</div>`
+    self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>${self._view.pendingTxCount}</div>`
     self._view.bar = yo`
       <div class=${css.bar}>
         ${self._view.dragbar}
