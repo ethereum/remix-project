@@ -3,7 +3,7 @@ var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
 var EventManager = remixLib.EventManager
-var styles = require('../../ui/styles-guide/theme-chooser').chooser()
+var styles = require('../ui/styles-guide/theme-chooser').chooser()
 
 module.exports = class DebuggerTab {
   constructor (opts = { api: {}, events: {} }) {
