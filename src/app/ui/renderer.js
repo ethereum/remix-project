@@ -24,6 +24,7 @@ function Renderer (appAPI) {
  * @param {Object} options {useSpan, noAnnotations, click:(Function), type:(warning, error), errFile, errLine, errCol}
  */
 Renderer.prototype.error = function (message, container, opt) {
+  if (!message) return
   if (container === undefined) return
   opt = opt || {}
 
