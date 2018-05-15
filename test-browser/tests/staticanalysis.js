@@ -41,7 +41,7 @@ function runTests (browser) {
     browser
       .click('.staticanalysisView')
       .click('#staticanalysisView button')
-      .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
+      .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
         dom.listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',
           'Fallback function of contract TooMuchGas requires too much gas',
           'TooMuchGas.() : Variables have very similar names test and test1.'],
