@@ -109,7 +109,6 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   function clearInstanceList (self) {
     event.trigger('clearInstance', [])
-    self._view.recorderCount.innerText = 0
   }
 
   function setFinalContext () {
@@ -200,6 +199,10 @@ function makeRecorder (appAPI, appEvents, opts, self) {
     self.data.count = count
     self._view.recorderCount.innerText = count
   })
+  recorder.event.register('cleared', () => {
+    self.data.count = 0
+    self._view.recorderCount.innerText = 0
+  })
   var css2 = csjs`
     .container {}
     .runTxs {}
@@ -225,7 +228,6 @@ function makeRecorder (appAPI, appEvents, opts, self) {
             modalDialogCustom.alert('Failed to create file ' + newFile)
           } else {
             appAPI.switchFile(newFile)
-            self._view.recorderCount.innerText = 0
           }
         })
       }
