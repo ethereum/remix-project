@@ -50,7 +50,8 @@ class MultiParamManager {
       for (var j = 0; j < valArray.length; j++) {
         if (ret !== '') ret += ','
         var elVal = valArray[j].value
-        elVal = elVal.replace(/(^|,\s+|,)(\w+|)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string or number by quoted string
+        elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+        elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
         ret += elVal
       }
     }
@@ -68,7 +69,8 @@ class MultiParamManager {
   makeMultiVal () {
     var inputString = this.basicInputField.value
     if (inputString) {
-      inputString = inputString.replace(/(^|,\s+|,)(\w+|)(\s+,|,|$)/g, '$1"$2"$3')
+      inputString = inputString.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+      inputString = inputString.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
       var inputJSON = JSON.parse('[' + inputString + ']')
       var multiInputs = this.multiFields.querySelectorAll('input')
       for (var k = 0; k < multiInputs.length; k++) {

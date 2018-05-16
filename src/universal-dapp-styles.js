@@ -154,7 +154,7 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner {
     margin-bottom: 10px;
-    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
     padding: 0px 5px 5px 0px;
     background-color: ${styles.appProperties.primary_BackgroundColor};
     width: 100%;
@@ -171,7 +171,7 @@ var css = csjs`
   .contractProperty .multiTitle {
     display: inline-block;
     width: 90%;
-    font-size: 10px;
+    font-size: 12px;
     height: 25px;
     padding-left: 20px;
     font-weight: bold;
