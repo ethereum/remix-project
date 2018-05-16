@@ -34,28 +34,34 @@ class MultiParamManager {
   switchMethodViewOff () {
     this.contractActionsContainerSingle.style.display = 'flex'
     this.contractActionsContainerMulti.style.display = 'none'
-    if (this.getMultiValsString()) this.basicInputField.value = this.getMultiValsString()
+    var multiValString = this.getMultiValsString()
+    if (multiValString) this.basicInputField.value = multiValString
+  }
+
+  getValue (item, index) {
+    var valStr = item.value.join('')
+    return valStr
   }
 
   getMultiValsString () {
     var valArray = this.multiFields.querySelectorAll('input')
-    var notEmpty = 0
     var ret = ''
+    var valArrayTest = []
 
-    for (var k = 0; k < valArray.length; k++) {
-      var elA = valArray[k].value
-      if (elA) notEmpty++
+    for (var j = 0; j < valArray.length; j++) {
+      if (ret !== '') ret += ','
+      var elVal = valArray[j].value
+      valArrayTest.push(elVal)
+      elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+      elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+      ret += elVal
     }
-    if (notEmpty) {
-      for (var j = 0; j < valArray.length; j++) {
-        if (ret !== '') ret += ','
-        var elVal = valArray[j].value
-        elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-        elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
-        ret += elVal
-      }
+    var valStringTest = valArrayTest.join('')
+    if (valStringTest) {
+      return ret
+    } else {
+      return ''
     }
-    return ret
   }
 
   emptyInputs () {
