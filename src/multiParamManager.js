@@ -28,22 +28,31 @@ class MultiParamManager {
   switchMethodViewOn () {
     this.contractActionsContainerSingle.style.display = 'none'
     this.contractActionsContainerMulti.style.display = 'flex'
-    // fill in the inputs
     this.makeMultiVal()
   }
 
   switchMethodViewOff () {
     this.contractActionsContainerSingle.style.display = 'flex'
     this.contractActionsContainerMulti.style.display = 'none'
-    this.basicInputField.value = this.getMultiValsString()
+    if (this.getMultiValsString()) this.basicInputField.value = this.getMultiValsString()
   }
+
   getMultiValsString () {
     var valArray = this.multiFields.querySelectorAll('input')
+    var notEmpty = 0
     var ret = ''
+
     for (var k = 0; k < valArray.length; k++) {
-      var el = valArray[k]
-      if (ret !== '') ret += ','
-      ret += el.value
+      var elA = valArray[k].value
+      if (elA) notEmpty++
+    }
+    if (notEmpty) {
+      for (var j = 0; j < valArray.length; j++) {
+        if (ret !== '') ret += ','
+        var elVal = valArray[j].value
+        elVal = elVal.replace(/(^|,\s+|,)(\w+|)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string or number by quoted string
+        ret += elVal
+      }
     }
     return ret
   }
@@ -58,11 +67,14 @@ class MultiParamManager {
 
   makeMultiVal () {
     var inputString = this.basicInputField.value
-    var inputJSON = JSON.parse('[' + inputString + ']')
-    var multiInputs = this.multiFields.querySelectorAll('input')
-    for (var k = 0; k < multiInputs.length; k++) {
-      if (inputJSON[k]) {
-        multiInputs[k].value = JSON.stringify(inputJSON[k])
+    if (inputString) {
+      inputString = inputString.replace(/(^|,\s+|,)(\w+|)(\s+,|,|$)/g, '$1"$2"$3')
+      var inputJSON = JSON.parse('[' + inputString + ']')
+      var multiInputs = this.multiFields.querySelectorAll('input')
+      for (var k = 0; k < multiInputs.length; k++) {
+        if (inputJSON[k]) {
+          multiInputs[k].value = JSON.stringify(inputJSON[k])
+        }
       }
     }
   }
@@ -101,16 +113,14 @@ class MultiParamManager {
       </div>`
 
     this.multiFields = this.createMultiFields()
+
     var multiOnClick = () => {
-      var valArray = this.multiFields.querySelectorAll('input')
-      var ret = ''
-      for (var k = 0; k < valArray.length; k++) {
-        let el = valArray[k].value
-        if (ret !== '') ret += ','
-        el = el.replace(/(^|,\s+|,)(\w+|)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted string or number by quoted string
-        ret += el
+      var valsString = this.getMultiValsString()
+      if (valsString) {
+        this.clickCallBack(this.funABI.inputs, valsString)
+      } else {
+        this.clickCallBack(this.funABI.inputs, '')
       }
-      this.clickCallBack(this.funABI.inputs, ret)
       this.emptyInputs()
     }
 
