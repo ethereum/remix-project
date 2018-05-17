@@ -54,6 +54,11 @@ class MultiParamManager {
       valArrayTest.push(elVal)
       elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
       elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+      try {
+        JSON.parse(elVal)
+      } catch (e) {
+        elVal = '"' + elVal + '"'
+      }
       ret += elVal
     }
     var valStringTest = valArrayTest.join('')
