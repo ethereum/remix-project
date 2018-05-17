@@ -20,16 +20,75 @@ class MultiParamManager {
     this.clickCallBack = clickCallBack
     this.inputs = inputs
     this.title = title
+    this.basicInputField
+    this.multiFields
   }
 
   switchMethodViewOn () {
     this.contractActionsContainerSingle.style.display = 'none'
     this.contractActionsContainerMulti.style.display = 'flex'
+    this.makeMultiVal()
   }
 
   switchMethodViewOff () {
     this.contractActionsContainerSingle.style.display = 'flex'
     this.contractActionsContainerMulti.style.display = 'none'
+    var multiValString = this.getMultiValsString()
+    if (multiValString) this.basicInputField.value = multiValString
+  }
+
+  getValue (item, index) {
+    var valStr = item.value.join('')
+    return valStr
+  }
+
+  getMultiValsString () {
+    var valArray = this.multiFields.querySelectorAll('input')
+    var ret = ''
+    var valArrayTest = []
+
+    for (var j = 0; j < valArray.length; j++) {
+      if (ret !== '') ret += ','
+      var elVal = valArray[j].value
+      valArrayTest.push(elVal)
+      elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+      elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+      try {
+        JSON.parse(elVal)
+      } catch (e) {
+        elVal = '"' + elVal + '"'
+      }
+      ret += elVal
+    }
+    var valStringTest = valArrayTest.join('')
+    if (valStringTest) {
+      return ret
+    } else {
+      return ''
+    }
+  }
+
+  emptyInputs () {
+    var valArray = this.multiFields.querySelectorAll('input')
+    for (var k = 0; k < valArray.length; k++) {
+      valArray[k].value = ''
+    }
+    this.basicInputField.value = ''
+  }
+
+  makeMultiVal () {
+    var inputString = this.basicInputField.value
+    if (inputString) {
+      inputString = inputString.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+      inputString = inputString.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+      var inputJSON = JSON.parse('[' + inputString + ']')
+      var multiInputs = this.multiFields.querySelectorAll('input')
+      for (var k = 0; k < multiInputs.length; k++) {
+        if (inputJSON[k]) {
+          multiInputs[k].value = JSON.stringify(inputJSON[k])
+        }
+      }
+    }
   }
 
   createMultiFields () {
@@ -52,28 +111,29 @@ class MultiParamManager {
       title = '(fallback)'
     }
 
-    var basicInputField = yo`<input></input>`
-    basicInputField.setAttribute('placeholder', this.inputs)
-    basicInputField.setAttribute('title', this.inputs)
+    this.basicInputField = yo`<input></input>`
+    this.basicInputField.setAttribute('placeholder', this.inputs)
+    this.basicInputField.setAttribute('title', this.inputs)
 
     var onClick = (domEl) => {
-      this.clickCallBack(this.funABI.inputs, basicInputField.value)
+      this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
+      this.emptyInputs()
     }
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
-      <button onclick=${() => { onClick() }} class="${css.instanceButton}">${title}</button>${basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
+      <button onclick=${() => { onClick() }} class="${css.instanceButton}">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
       </div>`
 
-    var multiFields = this.createMultiFields()
+    this.multiFields = this.createMultiFields()
+
     var multiOnClick = () => {
-      var valArray = multiFields.querySelectorAll('input')
-      var ret = ''
-      for (var k = 0; k < valArray.length; k++) {
-        var el = valArray[k]
-        if (ret !== '') ret += ','
-        ret += el.value
+      var valsString = this.getMultiValsString()
+      if (valsString) {
+        this.clickCallBack(this.funABI.inputs, valsString)
+      } else {
+        this.clickCallBack(this.funABI.inputs, '')
       }
-      this.clickCallBack(this.funABI.inputs, ret)
+      this.emptyInputs()
     }
 
     var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
@@ -84,7 +144,7 @@ class MultiParamManager {
           <div class="${css.multiTitle}">${title}</div>
           <i class='fa fa-angle-up ${css.methCaret}'></i>
         </div>
-        ${multiFields}
+        ${this.multiFields}
         <div class="${css.group} ${css.multiArg}" >
           ${button}
         </div>
@@ -106,7 +166,7 @@ class MultiParamManager {
       contractProperty.classList.add(css.hasArgs)
     } else {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
-      basicInputField.style.display = 'none'
+      this.basicInputField.style.display = 'none'
     }
 
     if (this.funABI.payable === true) {
