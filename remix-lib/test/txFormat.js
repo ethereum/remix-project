@@ -2,6 +2,7 @@
 var tape = require('tape')
 var txFormat = require('../src/execution/txFormat')
 var txHelper = require('../src/execution/txHelper')
+var util = require('../src/util')
 var compiler = require('solc')
 var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 var executionContext = require('../src/execution/execution-context')
@@ -161,6 +162,28 @@ tape('test fallback function', function (t) {
   })
 })
 
+tape('test abiEncoderV2', function (t) {
+  var functionId = '0x56d89238'
+  var encodedData = '0x000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000170000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000042ed123b0bd8203c2700000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000090746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f746573745f737472696e675f00000000000000000000000000000000'
+  var value1 = '1'
+  var value2 = '1234567890123456789543'
+  var value3 = 'test_string_test_string_test_string_test_string_test_string_test_string_test_string_test_string_test_string_test_string_test_string_test_string_'
+  var decodedData = `[${value1}, ${value2}, "${value3}"], 23`
+  t.test('(abiEncoderV2)', function (st) {
+    st.plan(2)
+    var output = compiler.compileStandardWrapper(compilerInput(abiEncoderV2))
+    output = JSON.parse(output)
+    var contract = output.contracts['test.sol']['test']
+    txFormat.encodeFunctionCall(decodedData, contract.abi[0], (error, encoded) => {
+      console.log(error)
+      st.equal(encoded.dataHex, functionId + encodedData.replace('0x', ''))
+    })
+    var decoded = txFormat.decodeResponse(util.hexToIntArray(encodedData), contract.abi[0])
+    console.log(decoded)
+    st.equal(decoded[0], `tuple(uint256,uint256,string): ${value1},${value2},${value3}`)
+  })
+})
+
 var uintContract = `contract uintContractTest {
     uint _tp;
     address _ap;
@@ -208,3 +231,23 @@ contract fallbackFunctionContract {
     
     function () {}
  }`
+
+var abiEncoderV2 = `pragma experimental ABIEncoderV2;
+
+contract test {
+    struct p {
+        uint a;
+        uint b;
+        string s;
+    }
+    function t (p _p, uint _i) returns (p) {
+        return _p;
+    }
+    
+     function t () returns (p) {
+        p mm;
+        mm.a = 123;
+        mm.b = 133;
+        return mm;
+    }
+}`
