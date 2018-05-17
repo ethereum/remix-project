@@ -3,9 +3,8 @@ var ethers = require('ethers')
 
 module.exports = {
   makeFullTupleTypeDefinition: function (typeDef) {
-    var innerTypes = []
     if (typeDef && typeDef.type === 'tuple' && typeDef.components) {
-      typeDef.components.map((innerType) => innerTypes.push(innerType.type))
+      var innerTypes = typeDef.components.map((innerType) => innerType.type)
       return 'tuple(' + innerTypes.join(',') + ')'
     }
     return typeDef.type
