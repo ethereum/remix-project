@@ -2,12 +2,20 @@
 var ethers = require('ethers')
 
 module.exports = {
+  makeFullTupleTypeDefinition: function (typeDef) {
+    if (typeDef && typeDef.type === 'tuple' && typeDef.components) {
+      var innerTypes = typeDef.components.map((innerType) => innerType.type)
+      return 'tuple(' + innerTypes.join(',') + ')'
+    }
+    return typeDef.type
+  },
+
   encodeParams: function (funABI, args) {
     var types = []
     if (funABI.inputs && funABI.inputs.length) {
       for (var i = 0; i < funABI.inputs.length; i++) {
         var type = funABI.inputs[i].type
-        types.push(type)
+        types.push(type === 'tuple' ? this.makeFullTupleTypeDefinition(funABI.inputs[i]) : type)
         if (args.length < types.length) {
           args.push('')
         }

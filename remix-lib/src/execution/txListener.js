@@ -329,7 +329,8 @@ class TxListener {
 
     var inputTypes = []
     for (var i = 0; i < abi.inputs.length; i++) {
-      inputTypes.push(abi.inputs[i].type)
+      var type = abi.inputs[i].type
+      inputTypes.push(type === 'tuple' ? txHelper.makeFullTupleTypeDefinition(abi.inputs[i]) : type)
     }
     var abiCoder = new ethers.utils.AbiCoder()
     var decoded = abiCoder.decode(inputTypes, data)
