@@ -2,7 +2,6 @@
 
 var yo = require('yo-yo')
 var css = require('./universal-dapp-styles')
-// var helper = require('../remix/remix-lib/src/execution/txHelper')
 
 class MultiParamManager {
 
