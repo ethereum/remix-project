@@ -698,6 +698,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ---------------- Righthand-panel --------------------
 
   var rhpAPI = {
+    newAccount: (pass, cb) => {
+      udapp.newAccount(pass, cb)
+    },
     setEditorSize (delta) {
       $('#righthand-panel').css('width', delta)
       self._view.centerpanel.style.right = delta + 'px'
