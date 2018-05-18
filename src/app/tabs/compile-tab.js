@@ -13,6 +13,10 @@ var publishOnSwarm = require('../contract/publishOnSwarm')
 
 var styles = styleGuide.chooser()
 
+var x = {
+  compileTab: compileTab
+}
+
 function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
   // Containers
   var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
@@ -316,7 +320,7 @@ function detailsHelpSection () {
   }
 }
 
-module.exports = compileTab
+module.exports = x.compileTab
 
 const css = csjs`
   .compileTabView {
