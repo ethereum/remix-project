@@ -1,14 +1,11 @@
 Remix - Solidity IDE
 ====================
 
-Remix is an IDE for the smart contract programming language Solidity and
+Remix is Ethereum IDE for the smart contract programming language Solidity and
 has an integrated debugger and testing environment.
 
 An up to date online version is available at
 [remix.ethereum.org](http://remix.ethereum.org)
-
-This page will host documentation and tutorial about features Remix
-provides.
 
 Please go to [solidity.readthedocs.io](http://solidity.readthedocs.io)
 for any information regarding `Solidity`
@@ -32,31 +29,29 @@ Remix is a good solution if you intend to:
 > -   Together with Mist (or any tool which inject web3), Remix can be
 >     used to test and debug a Dapp (see ../tutorial\_mist)
 
-Developing smart contract requires a deep understanding of the
+Developing smart contract requires deep understanding of the
 associated Blockchain technology.
 
-!! Don't use Remix against a production network unless you are
-completely sure what you are doing !!
+Contents
+========
 
-This documentation describes all the features remix provides. The GUI
-can be separated in 4 parts. Click on one the link to get more
-information.
+:ref:`Keyword Index <genindex>`, :ref:`Search Page <search>`
 
-> -   ../file\_explorer
-> -   ../solidity\_editor
-> -   ../terminal
-> -   ../tabs\_panel
->     :   -   ../compile\_tab
->         -   ../run\_tab
->         -   ../settings\_tab
->         -   ../debugger\_tab
->         -   ../analysis\_tab
->         -   ../support\_tab
->
-Quick Start
------------
+.. toctree::
+   :maxdepth: 2
 
-(see ../quickstart\_javascriptvm)
-
-Tutorial
---------
+   quickstart_javascript_vm.md
+   file_explorer.md
+   solidity_editor.md
+   compile_tab.md
+   run_tab.md
+   terminal.md
+   debugger_tab.md
+   analysis_tab.md
+   settings_tab.md
+   support_tab.md
+   workshop_Building_smart_contracts_with_Remix.md
+   tutorial_debug.md
+   tutorial_import.md
+   tutorial_connect_remix_with_your_filesystem.md
+   tutorial_mist.md
