@@ -125,13 +125,6 @@ class CompileTab {
     })
 
     var errorContainer = yo`<div class='error'></div>`
-    var el = yo`
-      <div class="${css.compileTabView}" id="compileTabView">
-        ${compileContainer}
-        ${contractNames(appAPI, appEvents, opts)}
-        ${errorContainer}
-      </div>
-    `
 
     /* ------------------------------------------------
       section CONTRACT DROPDOWN, DETAILS AND PUBLISH
@@ -307,6 +300,15 @@ class CompileTab {
     return contractEl
       /* eslint-enable */
     }
+
+    var el = yo`
+      <div class="${css.compileTabView}" id="compileTabView">
+        ${compileContainer}
+        ${contractNames(appAPI, appEvents, opts)}
+        ${errorContainer}
+      </div>
+    `
+
     return { render () { return el } }
   }
 }
