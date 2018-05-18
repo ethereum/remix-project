@@ -47,26 +47,6 @@ class CompileTab {
     })
 
     var compileTimeout = null
-    function scheduleCompilation () {
-      if (!opts.config.get('autoCompile')) {
-        return
-      }
-
-      if (compileTimeout) {
-        window.clearTimeout(compileTimeout)
-      }
-      compileTimeout = window.setTimeout(() => {
-        appAPI.runCompiler()
-      }, 300)
-    }
-
-    appEvents.editor.register('contentChanged', () => {
-      scheduleCompilation()
-    })
-
-    appEvents.editor.register('sessionSwitched', () => {
-      scheduleCompilation()
-    })
 
     // ----------------- autoCompile -----------------
     var autoCompileInput = compileContainer.querySelector('#autoCompile')
@@ -83,9 +63,24 @@ class CompileTab {
       opts.config.set('autoCompile', autoCompileInput.checked)
     })
 
-    // REGISTER EVENTS
+    appEvents.editor.register('contentChanged', () => {
+      scheduleCompilation()
+    })
+    appEvents.editor.register('sessionSwitched', () => {
+      scheduleCompilation()
+    })
+    function scheduleCompilation () {
+      if (!opts.config.get('autoCompile')) {
+        return
+      }
 
-    // compilationDuration
+      if (compileTimeout) {
+        window.clearTimeout(compileTimeout)
+      }
+      compileTimeout = window.setTimeout(() => {
+        appAPI.runCompiler()
+      }, 300)
+    }
     appEvents.compiler.register('compilationDuration', function tabHighlighting (speed) {
       if (speed > 1000) {
         warnCompilationSlow.setAttribute('title', `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
@@ -94,7 +89,6 @@ class CompileTab {
         warnCompilationSlow.style.display = 'none'
       }
     })
-    // loadingCompiler
     appEvents.editor.register('contentChanged', function changedFile () {
       var compileTab = document.querySelector('.compileView')
       compileTab.style.color = styles.colors.red
@@ -123,14 +117,6 @@ class CompileTab {
       compileIcon.classList.remove(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', '')
     })
-
-    var errorContainer = yo`<div class='error'></div>`
-
-    /* ------------------------------------------------
-      section CONTRACT DROPDOWN, DETAILS AND PUBLISH
-    ------------------------------------------------ */
-    var contractsDetails = {}
-
     appEvents.compiler.register('compilationFinished', function (success, data, source) {
       // reset the contractMetadata list (used by the publish action)
       contractsDetails = {}
@@ -162,7 +148,6 @@ class CompileTab {
         }
       }
     })
-
     appEvents.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
         opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
@@ -171,6 +156,13 @@ class CompileTab {
         })
       }
     })
+
+    var errorContainer = yo`<div class='error'></div>`
+
+    /* ------------------------------------------------
+      section CONTRACT DROPDOWN, DETAILS AND PUBLISH
+    ------------------------------------------------ */
+    var contractsDetails = {}
 
     var contractEl = yo`
       <div class="${css.container}">
