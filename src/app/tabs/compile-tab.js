@@ -129,9 +129,6 @@ class CompileTab {
     /* ------------------------------------------------
       section CONTRACT DROPDOWN, DETAILS AND PUBLISH
     ------------------------------------------------ */
-
-    function contractNames (appAPI, appEvents, opts) {
-      /* eslint-disable */
     var contractsDetails = {}
 
     appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -297,14 +294,11 @@ class CompileTab {
         }
       }
     }
-    return contractEl
-      /* eslint-enable */
-    }
 
     var el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
         ${compileContainer}
-        ${contractNames(appAPI, appEvents, opts)}
+        ${contractEl}
         ${errorContainer}
       </div>
     `
