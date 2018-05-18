@@ -1,4 +1,4 @@
-Accessing a shared folder in Remix IDE using Remixd
+Access your local filesystem by using Remixd
 ===================================================
 
 Remixd is an npm module. Its purpose is to give the remix web
