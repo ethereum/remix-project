@@ -22,48 +22,38 @@ class CompileTab {
     self.data = {
       autoCompile: self._opts.config.get('autoCompile') || false,
       compileTimeout: null,
-      contractsDetails: {}
+      contractsDetails: {},
+      speed: 100
     }
     var appAPI = self._api
-    var appEvents = self._events
 
-    appEvents.editor.register('contentChanged', () => {
-      scheduleCompilation()
-    })
-    appEvents.editor.register('sessionSwitched', () => {
-      scheduleCompilation()
-    })
+    self._events.editor.register('contentChanged', scheduleCompilation)
+    self._events.editor.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
-      if (!opts.config.get('autoCompile')) {
-        return
-      }
-
-      if (compileTimeout) {
-        window.clearTimeout(compileTimeout)
-      }
-      compileTimeout = window.setTimeout(() => {
-        appAPI.runCompiler()
-      }, 300)
+      if (!self._opts.config.get('autoCompile')) return
+      if (self.data.compileTimeout) window.clearTimeout(self.data.compileTimeout)
+      self.data.compileTimeout = window.setTimeout(() => appAPI.runCompiler(), 300)
     }
-    appEvents.compiler.register('compilationDuration', function tabHighlighting (speed) {
-      if (speed > 1000) {
-        warnCompilationSlow.setAttribute('title', `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`)
+    self._events.compiler.register('compilationDuration', function tabHighlighting (speed) {
+      if (self.data.speed > 1000) {
+        var msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
+        warnCompilationSlow.setAttribute('title', msg)
         warnCompilationSlow.style.display = 'inline-block'
       } else {
         warnCompilationSlow.style.display = 'none'
       }
     })
-    appEvents.editor.register('contentChanged', function changedFile () {
+    self._events.editor.register('contentChanged', function changedFile () {
       var compileTab = document.querySelector('.compileView')
       compileTab.style.color = styles.colors.red
       compileIcon.classList.add(`${css.bouncingIcon}`)
     })
-    appEvents.compiler.register('loadingCompiler', function start () {
+    self._events.compiler.register('loadingCompiler', function start () {
       compileIcon.classList.add(`${css.spinningIcon}`)
       warnCompilationSlow.style.display = 'none'
       compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
-    appEvents.compiler.register('compilationFinished', function finish () {
+    self._events.compiler.register('compilationFinished', function finish () {
       var compileTab = document.querySelector('.compileView')
       compileTab.style.color = styles.colors.black
       compileIcon.style.color = styles.colors.black
@@ -71,19 +61,19 @@ class CompileTab {
       compileIcon.classList.remove(`${css.bouncingIcon}`)
       compileIcon.setAttribute('title', 'idle')
     })
-    appEvents.compiler.register('compilationStarted', function start () {
+    self._events.compiler.register('compilationStarted', function start () {
       errorContainer.innerHTML = ''
       compileIcon.classList.remove(`${css.bouncingIcon}`)
       compileIcon.classList.add(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', 'compiling...')
     })
-    appEvents.compiler.register('compilerLoaded', function loaded () {
+    self._events.compiler.register('compilerLoaded', function loaded () {
       compileIcon.classList.remove(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', '')
     })
-    appEvents.compiler.register('compilationFinished', function (success, data, source) {
+    self._events.compiler.register('compilationFinished', function (success, data, source) {
       // reset the contractMetadata list (used by the publish action)
-      contractsDetails = {}
+      self.data.contractsDetails = {}
       // refill the dropdown list
       getContractNames(success, data)
       // hightlight the tab if error
@@ -96,27 +86,27 @@ class CompileTab {
       var error = false
       if (data['error']) {
         error = true
-        opts.renderer.error(data['error'].formattedMessage, $(errorContainer), {type: data['error'].severity})
+        self._opts.renderer.error(data['error'].formattedMessage, $(errorContainer), {type: data['error'].severity})
       }
       if (data['errors']) {
         if (data['errors'].length) error = true
         data['errors'].forEach(function (err) {
-          opts.renderer.error(err.formattedMessage, $(errorContainer), {type: err.severity})
+          self._opts.renderer.error(err.formattedMessage, $(errorContainer), {type: err.severity})
         })
       }
       if (!error) {
         if (data.contracts) {
-          opts.compiler.visitContracts((contract) => {
-            opts.renderer.error(contract.name, $(errorContainer), {type: 'success'})
+          self._opts.compiler.visitContracts((contract) => {
+            self._opts.renderer.error(contract.name, $(errorContainer), {type: 'success'})
           })
         }
       }
     })
-    appEvents.staticAnalysis.register('staticAnaysisWarning', (count) => {
+    self._events.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
+        self._opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
           type: 'warning',
-          click: () => appAPI.switchTab('staticanalysisView')
+          click: () => self._api.switchTab('staticanalysisView')
         })
       }
     })
@@ -140,8 +130,6 @@ class CompileTab {
     compileContainer.querySelector('#compile').addEventListener('click', () => {
       appAPI.runCompiler()
     })
-
-    var compileTimeout = null
 
     // ----------------- autoCompile -----------------
     var autoCompileInput = compileContainer.querySelector('#autoCompile')
