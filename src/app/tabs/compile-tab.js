@@ -26,42 +26,6 @@ class CompileTab {
     }
     var appAPI = self._api
     var appEvents = self._events
-    // Containers
-    var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
-    var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    var compileContainer = yo`
-        <div class="${css.compileContainer}">
-          <div class="${css.compileButtons}">
-            <div class="${css.compileButton} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>
-            <div class="${css.autocompileContainer}">
-              <input class="${css.autocompile}" id="autoCompile" type="checkbox" title="Auto compile">
-              <span class="${css.autocompileText}">Auto compile</span>
-            </div>
-            ${warnCompilationSlow}
-          </div>
-        </div>
-    `
-
-    compileContainer.querySelector('#compile').addEventListener('click', () => {
-      appAPI.runCompiler()
-    })
-
-    var compileTimeout = null
-
-    // ----------------- autoCompile -----------------
-    var autoCompileInput = compileContainer.querySelector('#autoCompile')
-    var autoCompile = false
-    if (opts.config.exists('autoCompile')) {
-      autoCompile = opts.config.get('autoCompile')
-    }
-    opts.config.set('autoCompile', autoCompile)
-    if (autoCompile) {
-      autoCompileInput.setAttribute('checked', autoCompile)
-    }
-
-    autoCompileInput.addEventListener('change', function () {
-      opts.config.set('autoCompile', autoCompileInput.checked)
-    })
 
     appEvents.editor.register('contentChanged', () => {
       scheduleCompilation()
@@ -155,6 +119,43 @@ class CompileTab {
           click: () => appAPI.switchTab('staticanalysisView')
         })
       }
+    })
+
+    // Containers
+    var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
+    var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
+    var compileContainer = yo`
+        <div class="${css.compileContainer}">
+          <div class="${css.compileButtons}">
+            <div class="${css.compileButton} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>
+            <div class="${css.autocompileContainer}">
+              <input class="${css.autocompile}" id="autoCompile" type="checkbox" title="Auto compile">
+              <span class="${css.autocompileText}">Auto compile</span>
+            </div>
+            ${warnCompilationSlow}
+          </div>
+        </div>
+    `
+
+    compileContainer.querySelector('#compile').addEventListener('click', () => {
+      appAPI.runCompiler()
+    })
+
+    var compileTimeout = null
+
+    // ----------------- autoCompile -----------------
+    var autoCompileInput = compileContainer.querySelector('#autoCompile')
+    var autoCompile = false
+    if (opts.config.exists('autoCompile')) {
+      autoCompile = opts.config.get('autoCompile')
+    }
+    opts.config.set('autoCompile', autoCompile)
+    if (autoCompile) {
+      autoCompileInput.setAttribute('checked', autoCompile)
+    }
+
+    autoCompileInput.addEventListener('change', function () {
+      opts.config.set('autoCompile', autoCompileInput.checked)
     })
 
     var errorContainer = yo`<div class='error'></div>`
