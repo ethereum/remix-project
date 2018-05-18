@@ -138,6 +138,7 @@ class CompileTab {
     ------------------------------------------------ */
 
     function contractNames (appAPI, appEvents, opts) {
+      /* eslint-disable */
       var contractsDetails = {}
 
       appEvents.compiler.register('compilationFinished', function (success, data, source) {
@@ -181,7 +182,7 @@ class CompileTab {
         }
       })
 
-      var el = yo`
+      var contractEl = yo`
         <div class="${css.container}">
           <select class="${css.contractNames}" disabled></select>
           <div class="${css.contractButtons}">
@@ -215,7 +216,7 @@ class CompileTab {
       }
 
       function details () {
-        var select = el.querySelector('select')
+        var select = contractEl.querySelector('select')
 
         if (select.children.length > 0 && select.selectedIndex >= 0) {
           var contractName = select.children[select.selectedIndex].innerHTML
@@ -303,7 +304,8 @@ class CompileTab {
           }
         }
       }
-      return el
+      return contractEl
+      /* eslint-enable */
     }
     return { render () { return el } }
   }
