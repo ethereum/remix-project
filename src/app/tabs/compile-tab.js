@@ -114,6 +114,7 @@ class CompileTab {
       compileIcon.setAttribute('title', 'idle')
     })
     appEvents.compiler.register('compilationStarted', function start () {
+      errorContainer.innerHTML = ''
       compileIcon.classList.remove(`${css.bouncingIcon}`)
       compileIcon.classList.add(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', 'compiling...')
@@ -138,10 +139,6 @@ class CompileTab {
 
     function contractNames (appAPI, appEvents, opts) {
       var contractsDetails = {}
-
-      appEvents.compiler.register('compilationStarted', () => {
-        errorContainer.innerHTML = ''
-      })
 
       appEvents.compiler.register('compilationFinished', function (success, data, source) {
         // reset the contractMetadata list (used by the publish action)
