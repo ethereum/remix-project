@@ -13,8 +13,19 @@ var publishOnSwarm = require('../contract/publishOnSwarm')
 
 var styles = styleGuide.chooser()
 
-var x = {
-  compileTab: function compileTab (appAPI = {}, appEvents = {}, opts = {}) {
+class CompileTab {
+  constructor (api = {}, events = {}, opts = {}) {
+    const self = this
+    self._opts = opts
+    self._api = api
+    self._events = events
+    self.data = {
+      autoCompile: self._opts.config.get('autoCompile') || false,
+      compileTimeout: null,
+      contractsDetails: {}
+    }
+    var appAPI = self._api
+    var appEvents = self._events
     // Containers
     var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
@@ -318,7 +329,7 @@ function detailsHelpSection () {
   }
 }
 
-module.exports = x.compileTab
+module.exports = CompileTab
 
 const css = csjs`
   .compileTabView {
