@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const Provider = require('./provider')
-const log = require('fancy-log')
+const log = require('./utils/logs.js')
 
 var provider = new Provider()
 
@@ -14,14 +14,10 @@ app.get('/', (req, res) => {
 })
 
 app.use(function (req, res) {
-  // url, body, params, method
-  log('request ', req.method, req.body)
   provider.sendAsync(req.body, (err, jsonResponse) => {
     if (err) {
       res.send({error: err})
     }
-    log.dir('response is ')
-    log.dir(jsonResponse)
     res.send(jsonResponse)
   })
 })
