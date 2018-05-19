@@ -19,23 +19,25 @@ class CompileTab {
     self._opts = opts
     self._api = api
     self._events = events
+    self._view = {}
     self.data = {
       autoCompile: self._opts.config.get('autoCompile') || false,
       compileTimeout: null,
       contractsDetails: {},
-      speed: 100
+      maxTime: 1000,
+      timeout: 300
     }
-    var appAPI = self._api
 
     self._events.editor.register('contentChanged', scheduleCompilation)
     self._events.editor.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
       if (!self._opts.config.get('autoCompile')) return
       if (self.data.compileTimeout) window.clearTimeout(self.data.compileTimeout)
-      self.data.compileTimeout = window.setTimeout(() => appAPI.runCompiler(), 300)
+      self.data.compileTimeout = window.setTimeout(() => self._api.runCompiler(), self.data.timeout)
     }
     self._events.compiler.register('compilationDuration', function tabHighlighting (speed) {
-      if (self.data.speed > 1000) {
+      if (!warnCompilationSlow) return
+      if (speed > self.data.maxTime) {
         var msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
         warnCompilationSlow.setAttribute('title', msg)
         warnCompilationSlow.style.display = 'inline-block'
@@ -44,16 +46,19 @@ class CompileTab {
       }
     })
     self._events.editor.register('contentChanged', function changedFile () {
-      var compileTab = document.querySelector('.compileView')
-      compileTab.style.color = styles.colors.red
-      compileIcon.classList.add(`${css.bouncingIcon}`)
+      if (!compileIcon) return
+      var compileTab = document.querySelector('.compileView') // @TODO: compileView tab
+      compileTab.style.color = styles.colors.red // @TODO: compileView tab
+      compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
     self._events.compiler.register('loadingCompiler', function start () {
+      if (!compileIcon) return
       compileIcon.classList.add(`${css.spinningIcon}`)
       warnCompilationSlow.style.display = 'none'
       compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
     self._events.compiler.register('compilationFinished', function finish () {
+      if (!compileIcon) return
       var compileTab = document.querySelector('.compileView')
       compileTab.style.color = styles.colors.black
       compileIcon.style.color = styles.colors.black
@@ -62,12 +67,14 @@ class CompileTab {
       compileIcon.setAttribute('title', 'idle')
     })
     self._events.compiler.register('compilationStarted', function start () {
+      if (!compileIcon) return
       errorContainer.innerHTML = ''
       compileIcon.classList.remove(`${css.bouncingIcon}`)
       compileIcon.classList.add(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', 'compiling...')
     })
     self._events.compiler.register('compilerLoaded', function loaded () {
+      if (!compileIcon) return
       compileIcon.classList.remove(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', '')
     })
@@ -128,7 +135,7 @@ class CompileTab {
     `
 
     compileContainer.querySelector('#compile').addEventListener('click', () => {
-      appAPI.runCompiler()
+      self._api.runCompiler()
     })
 
     // ----------------- autoCompile -----------------
@@ -158,7 +165,7 @@ class CompileTab {
         <select class="${css.contractNames}" disabled></select>
         <div class="${css.contractButtons}">
           <div title="Display Contract Details" class="${css.details}" onclick=${() => { details() }}>Details</div>
-          <div title="Publish on Swarm" class="${css.publish}" onclick=${() => { publish(appAPI) }}>Publish on Swarm</div>
+          <div title="Publish on Swarm" class="${css.publish}" onclick=${() => { publish() }}>Publish on Swarm</div>
         </div>
       </div>
     `
@@ -179,10 +186,10 @@ class CompileTab {
             </option>`
           contractNames.appendChild(contractName)
         })
-        appAPI.resetDapp(contractsDetails)
+        self._api.resetDapp(contractsDetails)
       } else {
         contractNames.setAttribute('disabled', true)
-        appAPI.resetDapp({})
+        self._api.resetDapp({})
       }
     }
 
@@ -251,14 +258,14 @@ class CompileTab {
       return value
     }
 
-    function publish (appAPI) {
+    function publish () {
       var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
         var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
         if (contract.metadata === undefined || contract.metadata.length === 0) {
           modalDialogCustom.alert('This contract does not implement all functions and thus cannot be published.')
         } else {
-          publishOnSwarm(contract, appAPI, function (err) {
+          publishOnSwarm(contract, self._api, function (err) {
             if (err) {
               try {
                 err = JSON.stringify(err)
@@ -270,7 +277,7 @@ class CompileTab {
             }
           }, function (item) {
             // triggered each time there's a new verified publish (means hash correspond)
-            appAPI.fileProvider('swarm').addReadOnly(item.hash, item.content)
+            self._api.fileProvider('swarm').addReadOnly(item.hash, item.content)
           })
         }
       }
