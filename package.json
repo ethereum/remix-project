@@ -1,6 +1,6 @@
 {
   "name": "remix-tests",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "./src/index.js",
   "contributors": [
@@ -38,11 +38,13 @@
   },
   "homepage": "https://github.com/ethereum/remix-tests#readme",
   "dependencies": {
+    "async": "^2.6.0",
+    "babel-preset-es2017": "^6.24.1",
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
-    "remix-solidity": "latest",
     "remix-simulator": "latest",
+    "remix-solidity": "latest",
     "standard": "^10.0.3",
     "web3": "1.0.0-beta.27"
   },
