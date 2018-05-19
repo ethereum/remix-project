@@ -1,15 +1,13 @@
 var yo = require('yo-yo')
-
 var css = require('./styles/test-tab-styles')
-
 var remixTests = require('remix-tests')
 
-function runTests () {
-  let contractSources = window.api.getAllSources()
-  remixTests.runTestSources(contractSources)
-}
+function testTabView (api) {
+  let runTests = function () {
+    let contractSources = api.getAllSources()
+    remixTests.runTestSources(contractSources)
+  }
 
-function testTabView () {
   return yo`
     <div class="${css.testTabView} "id="testView">
       <div>
@@ -24,20 +22,15 @@ function testTabView () {
 }
 
 function testTab (api = {}, events = {}, opts = {}) {
-  window.api = api
-  console.dir('------')
-  console.dir(api)
-  let el = testTabView('')
+  let el = testTabView(api)
   let gitterIsLoaded = false
-
-  // api.compilerContracts.getSources()
 
   events.app.register('tabChanged', (tabName) => {
     if (tabName !== 'test' || gitterIsLoaded) {
       return
     }
 
-    yo.update(el, testTabView())
+    yo.update(el, testTabView(api))
     el.style.display = 'block'
     gitterIsLoaded = true
   })
