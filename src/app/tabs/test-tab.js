@@ -5,8 +5,7 @@ var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
 function runTests () {
-  // remixTests.runTest(testName, testObject, testCallback, resultsCallback)
-  let contractSources = api.compilerContracts.getSources()
+  let contractSources = window.api.getAllSources()
   remixTests.runTestSources(contractSources)
 }
 
