@@ -1,4 +1,4 @@
-const log = require('fancy-log')
+const log = require('./utils/logs.js')
 const merge = require('merge')
 
 const Accounts = require('./methods/accounts.js')
@@ -16,7 +16,6 @@ var Provider = function () {
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
   this.methods = merge(this.methods, (new Whisper()).methods())
-  log.dir(this.methods)
 }
 
 Provider.prototype.sendAsync = function (payload, callback) {
