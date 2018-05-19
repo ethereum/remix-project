@@ -1,5 +1,3 @@
-/* global */
-var $ = require('jquery')
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
@@ -93,25 +91,25 @@ class CompileTab {
       var error = false
       if (data['error']) {
         error = true
-        self._opts.renderer.error(data['error'].formattedMessage, $(errorContainer), {type: data['error'].severity})
+        self._opts.renderer.error(data['error'].formattedMessage, errorContainer, {type: data['error'].severity})
       }
       if (data['errors']) {
         if (data['errors'].length) error = true
         data['errors'].forEach(function (err) {
-          self._opts.renderer.error(err.formattedMessage, $(errorContainer), {type: err.severity})
+          self._opts.renderer.error(err.formattedMessage, errorContainer, {type: err.severity})
         })
       }
       if (!error) {
         if (data.contracts) {
           self._opts.compiler.visitContracts((contract) => {
-            self._opts.renderer.error(contract.name, $(errorContainer), {type: 'success'})
+            self._opts.renderer.error(contract.name, errorContainer, {type: 'success'})
           })
         }
       }
     })
     self._events.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        self._opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, $(errorContainer), {
+        self._opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, errorContainer, {
           type: 'warning',
           click: () => self._api.switchTab('staticanalysisView')
         })
