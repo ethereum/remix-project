@@ -1,6 +1,6 @@
 {
   "name": "remix-tests",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "./src/index.js",
   "contributors": [
@@ -17,8 +17,6 @@
     "remix-tests": "./bin/remix-tests"
   },
   "scripts": {
-    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget https://ethereum.github.io/solc-bin/soljson.js) && cd ..",
-    "prepublish": "npm-run-all -ls downloadsolc",
     "lint": "standard",
     "test": "standard && mocha tests/ -t 300000"
   },
@@ -45,6 +43,7 @@
     "commander": "^2.13.0",
     "remix-simulator": "latest",
     "remix-solidity": "latest",
+    "solc": "^0.4.24",
     "standard": "^10.0.3",
     "web3": "1.0.0-beta.27"
   },
