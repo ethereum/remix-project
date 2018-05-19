@@ -45,6 +45,34 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   })
 }
 
+function compileContractSources (sources, cb) {
+  let compiler, filepath
+
+  async.waterfall([
+    function loadCompiler (next) {
+      compiler = new RemixCompiler()
+      compiler.onInternalCompilerLoaded()
+      // compiler.event.register('compilerLoaded', this, function (version) {
+      next()
+      // });
+    },
+    function doCompilation (next) {
+      compiler.event.register('compilationFinished', this, function (success, data, source) {
+        next(null, data)
+      })
+      compiler.compile(sources, filepath)
+    }
+  ], function (err, result) {
+    let errors = (result.errors || []).filter((e) => e.type === 'Error')
+    if (errors.length > 0) {
+      console.dir(errors)
+      return cb(new Error('errors compiling'))
+    }
+    cb(err, result.contracts)
+  })
+}
+
 module.exports = {
-  compileFileOrFiles: compileFileOrFiles
+  compileFileOrFiles: compileFileOrFiles,
+  compileContractSources: compileContractSources
 }
