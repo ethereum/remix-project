@@ -16,7 +16,7 @@ var createWeb3Provider = function() {
   return web3
 }
 
-var runTestSources = function (contractSources) {
+var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback) {
   async.waterfall([
     function compile (next) {
       Compiler.compileContractSources(contractSources, next)
@@ -52,17 +52,15 @@ var runTestSources = function (contractSources) {
       let totalTime = 0
       let errors = []
 
-      var testCallback = function (result) {
-        if (result.type === 'contract') {
-          console.log('\n  ' + result.value)
-        } else if (result.type === 'testPass') {
-          console.log('\t✓ '.green.bold + result.value.grey)
-        } else if (result.type === 'testFailure') {
-          console.log('\t✘ '.bold.red + result.value.red)
+      var _testCallback = function (result) {
+        if (result.type === 'testFailure') {
           errors.push(result)
         }
+        testCallback(result);
       }
-      var resultsCallback = function (_err, result, cb) {
+
+      var _resultsCallback = function (_err, result, cb) {
+        resultCallback(_err, result, () => {});
         totalPassing += result.passingNum
         totalFailing += result.failureNum
         totalTime += result.timePassed
@@ -70,38 +68,32 @@ var runTestSources = function (contractSources) {
       }
 
       async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-        TestRunner.runTest(contractName, contracts[contractName], testCallback, (err, result) => {
+        TestRunner.runTest(contractName, contracts[contractName], _testCallback, (err, result) => {
           if (err) {
             return cb(err)
           }
-          resultsCallback(null, result, cb)
+          _resultsCallback(null, result, cb)
         })
       }, function (err, _results) {
         if (err) {
           return next(err)
         }
 
-        console.log('\n')
-        if (totalPassing > 0) {
-          console.log(('  ' + totalPassing + ' passing ').green + ('(' + totalTime + 's)').grey)
-        }
-        if (totalFailing > 0) {
-          console.log(('  ' + totalFailing + ' failing').red)
-        }
-        console.log('')
+        let finalResults = {};
 
-        errors.forEach((error, index) => {
-          console.log('  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
-          console.log('')
-          console.log(('\t error: ' + error.errMsg).red)
+        finalResults.totalPassing = totalPassing || 0;
+        finalResults.totalFailing = totalFailing || 0;
+        finalResults.totalTime = totalTime || 0;
+        finalResults.errors = [];
+
+        errors.forEach((error, _index) => {
+          finalResults.errors.push({context: error.context, value: error.value, message: error.errMsg});
         })
-        console.log('')
 
-        next()
+        next(null, finalResults);
       })
     }
-  ], function () {
-  })
+  ], finalCallback);
 }
 
 var runTestFiles = function (filepath, isDirectory, web3) {
