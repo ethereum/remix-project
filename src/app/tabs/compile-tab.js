@@ -55,15 +55,6 @@ class CompileTab {
       warnCompilationSlow.style.display = 'none'
       compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
-    self._events.compiler.register('compilationFinished', function finish () {
-      if (!compileIcon) return
-      var compileTab = document.querySelector('.compileView')
-      compileTab.style.color = styles.colors.black
-      compileIcon.style.color = styles.colors.black
-      compileIcon.classList.remove(`${css.spinningIcon}`)
-      compileIcon.classList.remove(`${css.bouncingIcon}`)
-      compileIcon.setAttribute('title', 'idle')
-    })
     self._events.compiler.register('compilationStarted', function start () {
       if (!compileIcon) return
       errorContainer.innerHTML = ''
@@ -76,7 +67,15 @@ class CompileTab {
       compileIcon.classList.remove(`${css.spinningIcon}`)
       compileIcon.setAttribute('title', '')
     })
-    self._events.compiler.register('compilationFinished', function (success, data, source) {
+    self._events.compiler.register('compilationFinished', function finish (success, data, source) {
+      if (compileIcon) {
+        var compileTab = document.querySelector('.compileView')
+        compileTab.style.color = styles.colors.black
+        compileIcon.style.color = styles.colors.black
+        compileIcon.classList.remove(`${css.spinningIcon}`)
+        compileIcon.classList.remove(`${css.bouncingIcon}`)
+        compileIcon.setAttribute('title', 'idle')
+      }
       // reset the contractMetadata list (used by the publish action)
       self.data.contractsDetails = {}
       // refill the dropdown list
