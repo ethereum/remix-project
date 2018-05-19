@@ -2,40 +2,44 @@ var yo = require('yo-yo')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
+function append (container, txt) {
+  let child = yo`<div>${txt}</div>`
+  container.appendChild(child)
+}
+
 function testTabView (api) {
+  var container = yo`<div class="tests" id="tests"></div>`
+
   let testCallback = function (result) {
     if (result.type === 'contract') {
-      console.log('\n  ' + result.value)
+      append(container, '\n  ' + result.value)
     } else if (result.type === 'testPass') {
-      console.log('\t✓ ' + result.value)
+      append(container, '\t✓ ' + result.value)
     } else if (result.type === 'testFailure') {
-      console.log('\t✘ ' + result.value)
+      append(container, '\t✘ ' + result.value)
     }
   }
 
   let resultsCallback = function (_err, result, cb) {
-    console.dir(result)
-    console.dir('testName ' + result.context)
-    console.dir(result.passingNum)
-    console.dir(result.failureNum)
-    console.dir(result.timePassed)
+    // total stats for the test
+    // result.passingNum
+    // result.failureNum
+    // result.timePassed
     cb()
   }
 
   let finalCallback = function (_err, result) {
-    console.dir('finalCallback')
-
     if (result.totalPassing > 0) {
-      console.log(('  ' + result.totalPassing + ' passing ') + ('(' + result.totalTime + 's)'))
+      append(container, ('  ' + result.totalPassing + ' passing ') + ('(' + result.totalTime + 's)'))
     }
     if (result.totalFailing > 0) {
-      console.log(('  ' + result.totalFailing + ' failing'))
+      append(container, ('  ' + result.totalFailing + ' failing'))
     }
 
     result.errors.forEach((error, index) => {
-      console.log('  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
-      console.log('')
-      console.log(('\t error: ' + error.message))
+      append(container, '  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
+      append(container, '')
+      append(container, ('\t error: ' + error.message))
     })
   }
 
@@ -53,6 +57,7 @@ function testTabView (api) {
       </div>
       <div class="${css.testList}">
         <p><button onclick=${runTests}>Run Tests</button></p>
+        ${container}
       </div>
     </div>
   `
