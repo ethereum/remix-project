@@ -23,7 +23,8 @@ module.exports = class CompileTab {
       compileButton: null,
       warnCompilationSlow: null,
       compileIcon: null,
-      compileContainer: null
+      compileContainer: null,
+      errorContainer: null
     }
     self.data = {
       autoCompile: self._opts.config.get('autoCompile'),
@@ -64,7 +65,7 @@ module.exports = class CompileTab {
     })
     self._events.compiler.register('compilationStarted', function start () {
       if (!self._view.compileIcon) return
-      errorContainer.innerHTML = ''
+      self._view.errorContainer.innerHTML = ''
       self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
       self._view.compileIcon.setAttribute('title', 'compiling...')
@@ -97,25 +98,25 @@ module.exports = class CompileTab {
       var error = false
       if (data['error']) {
         error = true
-        self._opts.renderer.error(data['error'].formattedMessage, errorContainer, {type: data['error'].severity})
+        self._opts.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity})
       }
       if (data['errors']) {
         if (data['errors'].length) error = true
         data['errors'].forEach(function (err) {
-          self._opts.renderer.error(err.formattedMessage, errorContainer, {type: err.severity})
+          self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
         })
       }
       if (!error) {
         if (data.contracts) {
           self._opts.compiler.visitContracts((contract) => {
-            self._opts.renderer.error(contract.name, errorContainer, {type: 'success'})
+            self._opts.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
           })
         }
       }
     })
     self._events.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        self._opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, errorContainer, {
+        self._opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, self._view.errorContainer, {
           type: 'warning',
           click: () => self._api.switchTab('staticanalysisView')
         })
@@ -139,7 +140,7 @@ module.exports = class CompileTab {
           ${self._view.warnCompilationSlow}
         </div>
       </div>`
-    var errorContainer = yo`<div class='error'></div>`
+    self._view.errorContainer = yo`<div class='error'></div>`
     var contractNames = yo`<select class="${css.contractNames}" disabled></select>`
     var contractEl = yo`
       <div class="${css.container}">
@@ -153,7 +154,7 @@ module.exports = class CompileTab {
       <div class="${css.compileTabView}" id="compileTabView">
         ${self._view.compileContainer}
         ${contractEl}
-        ${errorContainer}
+        ${self._view.errorContainer}
       </div>`
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
