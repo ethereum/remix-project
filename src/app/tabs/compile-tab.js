@@ -153,6 +153,20 @@ module.exports = class CompileTab {
         ${self._view.contractEl}
         ${self._view.errorContainer}
       </div>`
+    const help = {
+      'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
+      'Opcodes': 'Assembly opcodes describing the contract',
+      'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
+      'bytecode': 'Bytecode being executed during contract creation',
+      'functionHashes': 'List of declared function and their corresponding hash',
+      'gasEstimates': 'Gas estimation for each function call',
+      'metadata': 'Contains all informations related to the compilation',
+      'metadataHash': 'Hash representing all metadata information',
+      'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
+      'name': 'Name of the compiled contract',
+      'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+    }
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
     function getContractNames (success, data) {
@@ -169,20 +183,6 @@ module.exports = class CompileTab {
         self._view.contractNames.setAttribute('disabled', true)
         self._api.resetDapp({})
       }
-    }
-    const help = {
-      'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
-      'Opcodes': 'Assembly opcodes describing the contract',
-      'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
-      'bytecode': 'Bytecode being executed during contract creation',
-      'functionHashes': 'List of declared function and their corresponding hash',
-      'gasEstimates': 'Gas estimation for each function call',
-      'metadata': 'Contains all informations related to the compilation',
-      'metadataHash': 'Hash representing all metadata information',
-      'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
-      'name': 'Name of the compiled contract',
-      'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
-      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     function details () {
       const select = self._view.contractNames
