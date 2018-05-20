@@ -25,7 +25,8 @@ module.exports = class CompileTab {
       compileIcon: null,
       compileContainer: null,
       errorContainer: null,
-      contractNames: null
+      contractNames: null,
+      contractEl: null
     }
     self.data = {
       autoCompile: self._opts.config.get('autoCompile'),
@@ -34,7 +35,6 @@ module.exports = class CompileTab {
       maxTime: 1000,
       timeout: 300
     }
-
     self._events.editor.register('contentChanged', scheduleCompilation)
     self._events.editor.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
@@ -143,7 +143,7 @@ module.exports = class CompileTab {
       </div>`
     self._view.errorContainer = yo`<div class='error'></div>`
     self._view.contractNames = yo`<select class="${css.contractNames}" disabled></select>`
-    var contractEl = yo`
+    self._view.contractEl = yo`
       <div class="${css.container}">
         ${self._view.contractNames}
         <div class="${css.contractButtons}">
@@ -154,7 +154,7 @@ module.exports = class CompileTab {
     var el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
         ${self._view.compileContainer}
-        ${contractEl}
+        ${self._view.contractEl}
         ${self._view.errorContainer}
       </div>`
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
