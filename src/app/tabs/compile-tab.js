@@ -151,7 +151,7 @@ module.exports = class CompileTab {
           <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>Publish on Swarm</div>
         </div>
       </div>`
-    var el = yo`
+    self._view.el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
         ${self._view.compileContainer}
         ${self._view.contractEl}
@@ -275,7 +275,7 @@ module.exports = class CompileTab {
         }
       }
     }
-    return { render () { return el } }
+    return { render () { return self._view.el } }
   }
 }
 
