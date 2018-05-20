@@ -80,10 +80,10 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   recorderCard.event.register('expandCollapseCard', (arrow, body, status) => {
     body.innerHTML = ''
     status.innerHTML = ''
-    if (arrow === 'up') {
+    if (arrow === 'down') {
       status.appendChild(self._view.collapsedView)
       body.appendChild(self._view.expandedView)
-    } else if (arrow === 'down') {
+    } else if (arrow === 'up') {
       status.appendChild(self._view.collapsedView)
     }
   })

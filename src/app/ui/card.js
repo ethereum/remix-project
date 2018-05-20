@@ -19,7 +19,7 @@ module.exports = class Card {
     if (self._view.el) return self._view.el
 
     self._view.cardBody = yo`<div class=${css.cardBody}></div>`
-    self._view.arrow = yo`<i class="${css.arrow} fa fa-angle-up"
+    self._view.arrow = yo`<i class="${css.arrow} fa fa-angle-down"
     onclick=${(ev) => trigger(ev.target)}></i>`
 
     self._view.expandCollapseButton = yo`
@@ -39,8 +39,8 @@ module.exports = class Card {
     function trigger (el) {
       var body = self._view.cardBody
       var status = self._view.statusBar
-      el.classList.toggle('fa-angle-down')
-      var arrow = el.classList.toggle('fa-angle-up') ? 'down' : 'up'
+      el.classList.toggle('fa-angle-up')
+      var arrow = el.classList.toggle('fa-angle-down') ? 'up' : 'down'
       self.event.trigger('expandCollapseCard', [arrow, body, status])
     }
 
