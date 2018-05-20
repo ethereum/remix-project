@@ -20,7 +20,9 @@ module.exports = class CompileTab {
     self._view = {
       el: null,
       autoCompile: null,
-      compileButton: null
+      compileButton: null,
+      warnCompilationSlow: null,
+      compileIcon: null
     }
     self.data = {
       autoCompile: self._opts.config.get('autoCompile'),
@@ -38,47 +40,47 @@ module.exports = class CompileTab {
       self.data.compileTimeout = window.setTimeout(() => self._api.runCompiler(), self.data.timeout)
     }
     self._events.compiler.register('compilationDuration', function tabHighlighting (speed) {
-      if (!warnCompilationSlow) return
+      if (!self._view.warnCompilationSlow) return
       if (speed > self.data.maxTime) {
         var msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
-        warnCompilationSlow.setAttribute('title', msg)
-        warnCompilationSlow.style.display = 'inline-block'
+        self._view.warnCompilationSlow.setAttribute('title', msg)
+        self._view.warnCompilationSlow.style.display = 'inline-block'
       } else {
-        warnCompilationSlow.style.display = 'none'
+        self._view.warnCompilationSlow.style.display = 'none'
       }
     })
     self._events.editor.register('contentChanged', function changedFile () {
-      if (!compileIcon) return
+      if (!self._view.compileIcon) return
       var compileTab = document.querySelector('.compileView') // @TODO: compileView tab
       compileTab.style.color = styles.colors.red // @TODO: compileView tab
-      compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
+      self._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
     self._events.compiler.register('loadingCompiler', function start () {
-      if (!compileIcon) return
-      compileIcon.classList.add(`${css.spinningIcon}`)
-      warnCompilationSlow.style.display = 'none'
-      compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
+      if (!self._view.compileIcon) return
+      self._view.compileIcon.classList.add(`${css.spinningIcon}`)
+      self._view.warnCompilationSlow.style.display = 'none'
+      self._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
     self._events.compiler.register('compilationStarted', function start () {
-      if (!compileIcon) return
+      if (!self._view.compileIcon) return
       errorContainer.innerHTML = ''
-      compileIcon.classList.remove(`${css.bouncingIcon}`)
-      compileIcon.classList.add(`${css.spinningIcon}`)
-      compileIcon.setAttribute('title', 'compiling...')
+      self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
+      self._view.compileIcon.classList.add(`${css.spinningIcon}`)
+      self._view.compileIcon.setAttribute('title', 'compiling...')
     })
     self._events.compiler.register('compilerLoaded', function loaded () {
-      if (!compileIcon) return
-      compileIcon.classList.remove(`${css.spinningIcon}`)
-      compileIcon.setAttribute('title', '')
+      if (!self._view.compileIcon) return
+      self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
+      self._view.compileIcon.setAttribute('title', '')
     })
     self._events.compiler.register('compilationFinished', function finish (success, data, source) {
-      if (compileIcon) {
+      if (self._view.compileIcon) {
         var compileTab = document.querySelector('.compileView')
         compileTab.style.color = styles.colors.black
-        compileIcon.style.color = styles.colors.black
-        compileIcon.classList.remove(`${css.spinningIcon}`)
-        compileIcon.classList.remove(`${css.bouncingIcon}`)
-        compileIcon.setAttribute('title', 'idle')
+        self._view.compileIcon.style.color = styles.colors.black
+        self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
+        self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
+        self._view.compileIcon.setAttribute('title', 'idle')
       }
       // reset the contractMetadata list (used by the publish action)
       self.data.contractsDetails = {}
@@ -120,9 +122,9 @@ module.exports = class CompileTab {
     })
 
     // Containers
-    var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
-    var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>`
+    self._view.warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
+    self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
+    self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
     var compileContainer = yo`
@@ -133,7 +135,7 @@ module.exports = class CompileTab {
             ${self._view.autoCompile}
             <span class="${css.autocompileText}">Auto compile</span>
           </div>
-          ${warnCompilationSlow}
+          ${self._view.warnCompilationSlow}
         </div>
       </div>`
     var errorContainer = yo`<div class='error'></div>`
