@@ -1,15 +1,15 @@
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
+const yo = require('yo-yo')
+const csjs = require('csjs-inject')
 
-var TreeView = require('../ui/TreeView')
-var modalDialog = require('../ui/modaldialog')
-var copyToClipboard = require('../ui/copy-to-clipboard')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var parseContracts = require('../contract/contractParser')
-var publishOnSwarm = require('../contract/publishOnSwarm')
+const TreeView = require('../ui/TreeView')
+const modalDialog = require('../ui/modaldialog')
+const copyToClipboard = require('../ui/copy-to-clipboard')
+const modalDialogCustom = require('../ui/modal-dialog-custom')
+const styleGuide = require('../ui/styles-guide/theme-chooser')
+const parseContracts = require('../contract/contractParser')
+const publishOnSwarm = require('../contract/publishOnSwarm')
 
-var styles = styleGuide.chooser()
+const styles = styleGuide.chooser()
 
 module.exports = class CompileTab {
   constructor (api = {}, events = {}, opts = {}) {
@@ -45,7 +45,7 @@ module.exports = class CompileTab {
     self._events.compiler.register('compilationDuration', function tabHighlighting (speed) {
       if (!self._view.warnCompilationSlow) return
       if (speed > self.data.maxTime) {
-        var msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
+        const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
         self._view.warnCompilationSlow.setAttribute('title', msg)
         self._view.warnCompilationSlow.style.display = 'inline-block'
       } else {
@@ -54,7 +54,7 @@ module.exports = class CompileTab {
     })
     self._events.editor.register('contentChanged', function changedFile () {
       if (!self._view.compileIcon) return
-      var compileTab = document.querySelector('.compileView') // @TODO: compileView tab
+      const compileTab = document.querySelector('.compileView') // @TODO: compileView tab
       compileTab.style.color = styles.colors.red // @TODO: compileView tab
       self._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
@@ -78,7 +78,7 @@ module.exports = class CompileTab {
     })
     self._events.compiler.register('compilationFinished', function finish (success, data, source) {
       if (self._view.compileIcon) {
-        var compileTab = document.querySelector('.compileView')
+        const compileTab = document.querySelector('.compileView')
         compileTab.style.color = styles.colors.black
         self._view.compileIcon.style.color = styles.colors.black
         self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
@@ -117,8 +117,6 @@ module.exports = class CompileTab {
         self._opts.renderer.error(msg, self._view.errorContainer, settings)
       }
     })
-
-    // Containers
     self._view.warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
@@ -183,14 +181,14 @@ module.exports = class CompileTab {
       'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     function details () {
-      var select = self._view.contractNames
+      const select = self._view.contractNames
       if (select.children.length > 0 && select.selectedIndex >= 0) {
-        var contractName = select.children[select.selectedIndex].innerHTML
-        var contractProperties = self.data.contractsDetails[contractName]
-        var log = yo`<div class="${css.detailsJSON}"></div>`
+        const contractName = select.children[select.selectedIndex].innerHTML
+        const contractProperties = self.data.contractsDetails[contractName]
+        const log = yo`<div class="${css.detailsJSON}"></div>`
         Object.keys(contractProperties).map(propertyName => {
-          var copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
-          var questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
+          const copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
+          const questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
           log.appendChild(yo`<div class=${css.log}>
             <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
             ${insertValue(contractProperties, propertyName)}
@@ -200,12 +198,11 @@ module.exports = class CompileTab {
       }
     }
     function insertValue (details, propertyName) {
-      var value = yo`<pre class="${css.value}"></pre>`
       var node
       if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
         node = yo`<pre>${details[propertyName]}</pre>`
       } else if (propertyName === 'abi' || propertyName === 'metadata') {
-        var treeView = new TreeView({
+        const treeView = new TreeView({
           extractData: function (item, parent, key) {
             var ret = {}
             if (item instanceof Array) {
@@ -233,11 +230,10 @@ module.exports = class CompileTab {
       } else {
         node = yo`<div>${JSON.stringify(details[propertyName], null, 4)}</div>`
       }
-      if (node) value.appendChild(node)
-      return value
+      return yo`<pre class="${css.value}">${node || ''}</pre>`
     }
     function publish () {
-      var selectContractNames = self._view.contractNames
+      const selectContractNames = self._view.contractNames
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
         var contract = self.data.contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
         if (contract.metadata === undefined || contract.metadata.length === 0) {
@@ -260,6 +256,10 @@ module.exports = class CompileTab {
       }
     }
     return { render () { return self._view.el } }
+  }
+  render () {
+    const self = this
+    if (self._view.el) return self._view.el
   }
 }
 
