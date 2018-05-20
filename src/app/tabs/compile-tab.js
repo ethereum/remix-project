@@ -117,6 +117,10 @@ module.exports = class CompileTab {
         self._opts.renderer.error(msg, self._view.errorContainer, settings)
       }
     })
+  }
+  render () {
+    const self = this
+    if (self._view.el) return self._view.el
     self._view.warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
@@ -255,11 +259,7 @@ module.exports = class CompileTab {
         }
       }
     }
-    return { render () { return self._view.el } }
-  }
-  render () {
-    const self = this
-    if (self._view.el) return self._view.el
+    return self._view.el
   }
 }
 
