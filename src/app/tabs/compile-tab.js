@@ -18,10 +18,12 @@ module.exports = class CompileTab {
     self._api = api
     self._events = events
     self._view = {
-      el: null
+      el: null,
+      autoCompile: null,
+      compileButton: null
     }
     self.data = {
-      autoCompile: self._opts.config.get('autoCompile') || false,
+      autoCompile: self._opts.config.get('autoCompile'),
       compileTimeout: null,
       contractsDetails: {},
       maxTime: 1000,
@@ -120,32 +122,34 @@ module.exports = class CompileTab {
     // Containers
     var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
+    self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>`
+    self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
+    if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
     var compileContainer = yo`
       <div class="${css.compileContainer}">
         <div class="${css.compileButtons}">
-          <div class="${css.compileButton} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>
+          ${self._view.compileButton}
           <div class="${css.autocompileContainer}">
-            <input class="${css.autocompile}" id="autoCompile" type="checkbox" title="Auto compile">
+            ${self._view.autoCompile}
             <span class="${css.autocompileText}">Auto compile</span>
           </div>
           ${warnCompilationSlow}
         </div>
       </div>`
-    compileContainer.querySelector('#compile').addEventListener('click', () => {
-      self._api.runCompiler()
-    })
-    var autoCompileInput = compileContainer.querySelector('#autoCompile')
-    var autoCompile = false
-    if (opts.config.exists('autoCompile')) {
-      autoCompile = opts.config.get('autoCompile')
-    }
-    opts.config.set('autoCompile', autoCompile)
-    if (autoCompile) {
-      autoCompileInput.setAttribute('checked', autoCompile)
-    }
-    autoCompileInput.addEventListener('change', function () {
-      opts.config.set('autoCompile', autoCompileInput.checked)
-    })
+    function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
+    function compile (event) { self._api.runCompiler() }
+    // compileContainer.querySelector('#compile').addEventListener('click', () => {
+    //   self._api.runCompiler()
+    // })
+    // var autoCompileInput = compileContainer.querySelector('#autoCompile')
+    // var autoCompile = false
+    // if (opts.config.exists('autoCompile')) {
+    //   autoCompile = opts.config.get('autoCompile')
+    // }
+    // opts.config.set('autoCompile', autoCompile)
+    // self._view.autoCompile.addEventListener('change', function () {
+    //
+    // })
     var errorContainer = yo`<div class='error'></div>`
     var contractsDetails = {}
     var contractEl = yo`
