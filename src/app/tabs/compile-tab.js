@@ -136,28 +136,14 @@ module.exports = class CompileTab {
           ${warnCompilationSlow}
         </div>
       </div>`
-    function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
-    function compile (event) { self._api.runCompiler() }
-    // compileContainer.querySelector('#compile').addEventListener('click', () => {
-    //   self._api.runCompiler()
-    // })
-    // var autoCompileInput = compileContainer.querySelector('#autoCompile')
-    // var autoCompile = false
-    // if (opts.config.exists('autoCompile')) {
-    //   autoCompile = opts.config.get('autoCompile')
-    // }
-    // opts.config.set('autoCompile', autoCompile)
-    // self._view.autoCompile.addEventListener('change', function () {
-    //
-    // })
     var errorContainer = yo`<div class='error'></div>`
-    var contractsDetails = {}
+    var contractNames = yo`<select class="${css.contractNames}" disabled></select>`
     var contractEl = yo`
       <div class="${css.container}">
-        <select class="${css.contractNames}" disabled></select>
+        ${contractNames}
         <div class="${css.contractButtons}">
-          <div title="Display Contract Details" class="${css.details}" onclick=${() => { details() }}>Details</div>
-          <div title="Publish on Swarm" class="${css.publish}" onclick=${() => { publish() }}>Publish on Swarm</div>
+          <div title="Display Contract Details" class="${css.details}" onclick=${details}>Details</div>
+          <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>Publish on Swarm</div>
         </div>
       </div>`
     var el = yo`
@@ -166,27 +152,28 @@ module.exports = class CompileTab {
         ${contractEl}
         ${errorContainer}
       </div>`
+    function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
+    function compile (event) { self._api.runCompiler() }
     function getContractNames (success, data) {
-      var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       contractNames.innerHTML = ''
       if (success) {
         contractNames.removeAttribute('disabled')
         opts.compiler.visitContracts((contract) => {
-          contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
+          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
           var contractName = yo`<option>${contract.name}</option>`
           contractNames.appendChild(contractName)
         })
-        self._api.resetDapp(contractsDetails)
+        self._api.resetDapp(self.data.contractsDetails)
       } else {
         contractNames.setAttribute('disabled', true)
         self._api.resetDapp({})
       }
     }
     function details () {
-      var select = contractEl.querySelector('select')
+      var select = contractNames
       if (select.children.length > 0 && select.selectedIndex >= 0) {
         var contractName = select.children[select.selectedIndex].innerHTML
-        var contractProperties = contractsDetails[contractName]
+        var contractProperties = self.data.contractsDetails[contractName]
         var log = yo`<div class="${css.detailsJSON}"></div>`
         Object.keys(contractProperties).map(propertyName => {
           var copyDetails = yo`<span class="${css.copyDetails}">
@@ -262,7 +249,7 @@ module.exports = class CompileTab {
     function publish () {
       var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
-        var contract = contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
+        var contract = self.data.contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
         if (contract.metadata === undefined || contract.metadata.length === 0) {
           modalDialogCustom.alert('This contract does not implement all functions and thus cannot be published.')
         } else {
