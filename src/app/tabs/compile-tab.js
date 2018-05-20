@@ -24,7 +24,8 @@ module.exports = class CompileTab {
       warnCompilationSlow: null,
       compileIcon: null,
       compileContainer: null,
-      errorContainer: null
+      errorContainer: null,
+      contractNames: null
     }
     self.data = {
       autoCompile: self._opts.config.get('autoCompile'),
@@ -141,10 +142,10 @@ module.exports = class CompileTab {
         </div>
       </div>`
     self._view.errorContainer = yo`<div class='error'></div>`
-    var contractNames = yo`<select class="${css.contractNames}" disabled></select>`
+    self._view.contractNames = yo`<select class="${css.contractNames}" disabled></select>`
     var contractEl = yo`
       <div class="${css.container}">
-        ${contractNames}
+        ${self._view.contractNames}
         <div class="${css.contractButtons}">
           <div title="Display Contract Details" class="${css.details}" onclick=${details}>Details</div>
           <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>Publish on Swarm</div>
@@ -159,22 +160,22 @@ module.exports = class CompileTab {
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
     function getContractNames (success, data) {
-      contractNames.innerHTML = ''
+      self._view.contractNames.innerHTML = ''
       if (success) {
-        contractNames.removeAttribute('disabled')
+        self._view.contractNames.removeAttribute('disabled')
         opts.compiler.visitContracts((contract) => {
           self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
           var contractName = yo`<option>${contract.name}</option>`
-          contractNames.appendChild(contractName)
+          self._view.contractNames.appendChild(contractName)
         })
         self._api.resetDapp(self.data.contractsDetails)
       } else {
-        contractNames.setAttribute('disabled', true)
+        self._view.contractNames.setAttribute('disabled', true)
         self._api.resetDapp({})
       }
     }
     function details () {
-      var select = contractNames
+      var select = self._view.contractNames
       if (select.children.length > 0 && select.selectedIndex >= 0) {
         var contractName = select.children[select.selectedIndex].innerHTML
         var contractProperties = self.data.contractsDetails[contractName]
@@ -251,7 +252,7 @@ module.exports = class CompileTab {
       return value
     }
     function publish () {
-      var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+      var selectContractNames = self._view.contractNames
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
         var contract = self.data.contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
         if (contract.metadata === undefined || contract.metadata.length === 0) {
