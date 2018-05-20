@@ -22,7 +22,8 @@ module.exports = class CompileTab {
       autoCompile: null,
       compileButton: null,
       warnCompilationSlow: null,
-      compileIcon: null
+      compileIcon: null,
+      compileContainer: null
     }
     self.data = {
       autoCompile: self._opts.config.get('autoCompile'),
@@ -127,7 +128,7 @@ module.exports = class CompileTab {
     self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
-    var compileContainer = yo`
+    self._view.compileContainer = yo`
       <div class="${css.compileContainer}">
         <div class="${css.compileButtons}">
           ${self._view.compileButton}
@@ -150,7 +151,7 @@ module.exports = class CompileTab {
       </div>`
     var el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
-        ${compileContainer}
+        ${self._view.compileContainer}
         ${contractEl}
         ${errorContainer}
       </div>`
