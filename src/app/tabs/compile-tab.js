@@ -88,7 +88,19 @@ module.exports = class CompileTab {
       // reset the contractMetadata list (used by the publish action)
       self.data.contractsDetails = {}
       // refill the dropdown list
-      getContractNames(success, data)
+      self._view.contractNames.innerHTML = ''
+      if (success) {
+        self._view.contractNames.removeAttribute('disabled')
+        self._opts.compiler.visitContracts(contract => {
+          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._opts.compiler.getSource(contract.file))
+          var contractName = yo`<option>${contract.name}</option>`
+          self._view.contractNames.appendChild(contractName)
+        })
+        self._api.resetDapp(self.data.contractsDetails)
+      } else {
+        self._view.contractNames.setAttribute('disabled', true)
+        self._api.resetDapp({})
+      }
       // hightlight the tab if error
       if (success) document.querySelector('.compileView').style.color = '' // @TODO: compileView tab
       else document.querySelector('.compileView').style.color = styles.colors.red // @TODO: compileView tab
@@ -169,21 +181,6 @@ module.exports = class CompileTab {
     }
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
-    function getContractNames (success, data) {
-      self._view.contractNames.innerHTML = ''
-      if (success) {
-        self._view.contractNames.removeAttribute('disabled')
-        self._opts.compiler.visitContracts(contract => {
-          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._opts.compiler.getSource(contract.file))
-          var contractName = yo`<option>${contract.name}</option>`
-          self._view.contractNames.appendChild(contractName)
-        })
-        self._api.resetDapp(self.data.contractsDetails)
-      } else {
-        self._view.contractNames.setAttribute('disabled', true)
-        self._api.resetDapp({})
-      }
-    }
     function details () {
       const select = self._view.contractNames
       if (select.children.length > 0 && select.selectedIndex >= 0) {
