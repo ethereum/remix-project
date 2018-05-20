@@ -11,13 +11,15 @@ var publishOnSwarm = require('../contract/publishOnSwarm')
 
 var styles = styleGuide.chooser()
 
-class CompileTab {
+module.exports = class CompileTab {
   constructor (api = {}, events = {}, opts = {}) {
     const self = this
     self._opts = opts
     self._api = api
     self._events = events
-    self._view = {}
+    self._view = {
+      el: null
+    }
     self.data = {
       autoCompile: self._opts.config.get('autoCompile') || false,
       compileTimeout: null,
@@ -119,23 +121,19 @@ class CompileTab {
     var warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     var compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     var compileContainer = yo`
-        <div class="${css.compileContainer}">
-          <div class="${css.compileButtons}">
-            <div class="${css.compileButton} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>
-            <div class="${css.autocompileContainer}">
-              <input class="${css.autocompile}" id="autoCompile" type="checkbox" title="Auto compile">
-              <span class="${css.autocompileText}">Auto compile</span>
-            </div>
-            ${warnCompilationSlow}
+      <div class="${css.compileContainer}">
+        <div class="${css.compileButtons}">
+          <div class="${css.compileButton} "id="compile" title="Compile source code">${compileIcon} Start to compile</div>
+          <div class="${css.autocompileContainer}">
+            <input class="${css.autocompile}" id="autoCompile" type="checkbox" title="Auto compile">
+            <span class="${css.autocompileText}">Auto compile</span>
           </div>
+          ${warnCompilationSlow}
         </div>
-    `
-
+      </div>`
     compileContainer.querySelector('#compile').addEventListener('click', () => {
       self._api.runCompiler()
     })
-
-    // ----------------- autoCompile -----------------
     var autoCompileInput = compileContainer.querySelector('#autoCompile')
     var autoCompile = false
     if (opts.config.exists('autoCompile')) {
@@ -145,18 +143,11 @@ class CompileTab {
     if (autoCompile) {
       autoCompileInput.setAttribute('checked', autoCompile)
     }
-
     autoCompileInput.addEventListener('change', function () {
       opts.config.set('autoCompile', autoCompileInput.checked)
     })
-
     var errorContainer = yo`<div class='error'></div>`
-
-    /* ------------------------------------------------
-      section CONTRACT DROPDOWN, DETAILS AND PUBLISH
-    ------------------------------------------------ */
     var contractsDetails = {}
-
     var contractEl = yo`
       <div class="${css.container}">
         <select class="${css.contractNames}" disabled></select>
@@ -164,12 +155,13 @@ class CompileTab {
           <div title="Display Contract Details" class="${css.details}" onclick=${() => { details() }}>Details</div>
           <div title="Publish on Swarm" class="${css.publish}" onclick=${() => { publish() }}>Publish on Swarm</div>
         </div>
-      </div>
-    `
-
-    // HELPERS
-
-    // GET NAMES OF ALL THE CONTRACTS
+      </div>`
+    var el = yo`
+      <div class="${css.compileTabView}" id="compileTabView">
+        ${compileContainer}
+        ${contractEl}
+        ${errorContainer}
+      </div>`
     function getContractNames (success, data) {
       var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       contractNames.innerHTML = ''
@@ -177,10 +169,7 @@ class CompileTab {
         contractNames.removeAttribute('disabled')
         opts.compiler.visitContracts((contract) => {
           contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
-          var contractName = yo`
-            <option>
-              ${contract.name}
-            </option>`
+          var contractName = yo`<option>${contract.name}</option>`
           contractNames.appendChild(contractName)
         })
         self._api.resetDapp(contractsDetails)
@@ -189,10 +178,8 @@ class CompileTab {
         self._api.resetDapp({})
       }
     }
-
     function details () {
       var select = contractEl.querySelector('select')
-
       if (select.children.length > 0 && select.selectedIndex >= 0) {
         var contractName = select.children[select.selectedIndex].innerHTML
         var contractProperties = contractsDetails[contractName]
@@ -204,15 +191,29 @@ class CompileTab {
           var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
           log.appendChild(yo`
             <div class=${css.log}>
-              <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
-              ${insertValue(contractProperties, propertyName)}
-            </div>
-            `)
+            <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
+            ${insertValue(contractProperties, propertyName)}
+          </div>`)
         })
         modalDialog(contractName, log, {label: ''}, {label: 'Close'})
       }
     }
-
+    function detailsHelpSection () {
+      return {
+        'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
+        'Opcodes': 'Assembly opcodes describing the contract',
+        'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
+        'bytecode': 'Bytecode being executed during contract creation',
+        'functionHashes': 'List of declared function and their corresponding hash',
+        'gasEstimates': 'Gas estimation for each function call',
+        'metadata': 'Contains all informations related to the compilation',
+        'metadataHash': 'Hash representing all metadata information',
+        'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
+        'name': 'Name of the compiled contract',
+        'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+        'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+      }
+    }
     function insertValue (details, propertyName) {
       var value = yo`<pre class="${css.value}"></pre>`
       var node
@@ -254,7 +255,6 @@ class CompileTab {
       if (node) value.appendChild(node)
       return value
     }
-
     function publish () {
       var selectContractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
@@ -279,37 +279,9 @@ class CompileTab {
         }
       }
     }
-
-    var el = yo`
-      <div class="${css.compileTabView}" id="compileTabView">
-        ${compileContainer}
-        ${contractEl}
-        ${errorContainer}
-      </div>
-    `
-
     return { render () { return el } }
   }
 }
-
-function detailsHelpSection () {
-  return {
-    'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
-    'Opcodes': 'Assembly opcodes describing the contract',
-    'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
-    'bytecode': 'Bytecode being executed during contract creation',
-    'functionHashes': 'List of declared function and their corresponding hash',
-    'gasEstimates': 'Gas estimation for each function call',
-    'metadata': 'Contains all informations related to the compilation',
-    'metadataHash': 'Hash representing all metadata information',
-    'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
-    'name': 'Name of the compiled contract',
-    'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
-    'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
-  }
-}
-
-module.exports = CompileTab
 
 const css = csjs`
   .compileTabView {
@@ -430,21 +402,21 @@ const css = csjs`
     animation: bounce 2s infinite;
   }
   @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   @-webkit-keyframes bounce {
-  0% {
-    margin-bottom: 0;
-    color: ${styles.colors.transparent};
+    0% {
+      margin-bottom: 0;
+      color: ${styles.colors.transparent};
+    }
+    70% {
+      margin-bottom: 0;
+      color: ${styles.rightPanel.text_Secondary};
+    }
+    100% {
+      margin-bottom: 0;
+      color: ${styles.colors.transparent};
+    }
   }
-  70% {
-    margin-bottom: 0;
-    color: ${styles.rightPanel.text_Secondary};
-  }
-  100% {
-    margin-bottom: 0;
-    color: ${styles.colors.transparent};
-  }
-}
 `
