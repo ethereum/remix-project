@@ -90,37 +90,31 @@ module.exports = class CompileTab {
       // refill the dropdown list
       getContractNames(success, data)
       // hightlight the tab if error
-      if (success) {
-        document.querySelector('.compileView').style.color = ''
-      } else {
-        document.querySelector('.compileView').style.color = styles.colors.red
-      }
+      if (success) document.querySelector('.compileView').style.color = '' // @TODO: compileView tab
+      else document.querySelector('.compileView').style.color = styles.colors.red // @TODO: compileView tab
       // display warning error if any
       var error = false
       if (data['error']) {
         error = true
         self._opts.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity})
       }
-      if (data['errors']) {
-        if (data['errors'].length) error = true
-        data['errors'].forEach(function (err) {
+      if (data.errors && data.errors.length) {
+        error = true
+        data.errors.forEach(function (err) {
           self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
         })
       }
-      if (!error) {
-        if (data.contracts) {
-          self._opts.compiler.visitContracts((contract) => {
-            self._opts.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
-          })
-        }
+      if (!error && data.contracts) {
+        self._opts.compiler.visitContracts((contract) => {
+          self._opts.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
+        })
       }
     })
     self._events.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        self._opts.renderer.error(`Static Analysis raised ${count} warning(s) that requires your attention.`, self._view.errorContainer, {
-          type: 'warning',
-          click: () => self._api.switchTab('staticanalysisView')
-        })
+        const msg = `Static Analysis raised ${count} warning(s) that requires your attention.`
+        const settings = { type: 'warning', click: () => self._api.switchTab('staticanalysisView') }
+        self._opts.renderer.error(msg, self._view.errorContainer, settings)
       }
     })
 
@@ -163,8 +157,8 @@ module.exports = class CompileTab {
       self._view.contractNames.innerHTML = ''
       if (success) {
         self._view.contractNames.removeAttribute('disabled')
-        opts.compiler.visitContracts((contract) => {
-          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, opts.compiler.getSource(contract.file))
+        self._opts.compiler.visitContracts(contract => {
+          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._opts.compiler.getSource(contract.file))
           var contractName = yo`<option>${contract.name}</option>`
           self._view.contractNames.appendChild(contractName)
         })
@@ -174,6 +168,20 @@ module.exports = class CompileTab {
         self._api.resetDapp({})
       }
     }
+    const help = {
+      'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
+      'Opcodes': 'Assembly opcodes describing the contract',
+      'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
+      'bytecode': 'Bytecode being executed during contract creation',
+      'functionHashes': 'List of declared function and their corresponding hash',
+      'gasEstimates': 'Gas estimation for each function call',
+      'metadata': 'Contains all informations related to the compilation',
+      'metadataHash': 'Hash representing all metadata information',
+      'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
+      'name': 'Name of the compiled contract',
+      'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+    }
     function details () {
       var select = self._view.contractNames
       if (select.children.length > 0 && select.selectedIndex >= 0) {
@@ -181,33 +189,14 @@ module.exports = class CompileTab {
         var contractProperties = self.data.contractsDetails[contractName]
         var log = yo`<div class="${css.detailsJSON}"></div>`
         Object.keys(contractProperties).map(propertyName => {
-          var copyDetails = yo`<span class="${css.copyDetails}">
-            ${copyToClipboard(() => contractProperties[propertyName])}
-          </span>`
-          var questionMark = yo`<span class="${css.questionMark}"><i title="${detailsHelpSection()[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
-          log.appendChild(yo`
-            <div class=${css.log}>
+          var copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
+          var questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
+          log.appendChild(yo`<div class=${css.log}>
             <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
             ${insertValue(contractProperties, propertyName)}
           </div>`)
         })
-        modalDialog(contractName, log, {label: ''}, {label: 'Close'})
-      }
-    }
-    function detailsHelpSection () {
-      return {
-        'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
-        'Opcodes': 'Assembly opcodes describing the contract',
-        'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
-        'bytecode': 'Bytecode being executed during contract creation',
-        'functionHashes': 'List of declared function and their corresponding hash',
-        'gasEstimates': 'Gas estimation for each function call',
-        'metadata': 'Contains all informations related to the compilation',
-        'metadataHash': 'Hash representing all metadata information',
-        'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
-        'name': 'Name of the compiled contract',
-        'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
-        'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+        modalDialog(contractName, log, { label: '' }, { label: 'Close' })
       }
     }
     function insertValue (details, propertyName) {
@@ -220,14 +209,10 @@ module.exports = class CompileTab {
           extractData: function (item, parent, key) {
             var ret = {}
             if (item instanceof Array) {
-              ret.children = item.map((item, index) => {
-                return {key: index, value: item}
-              })
+              ret.children = item.map((item, index) => ({ key: index, value: item }))
               ret.self = ''
             } else if (item instanceof Object) {
-              ret.children = Object.keys(item).map((key) => {
-                return {key: key, value: item[key]}
-              })
+              ret.children = Object.keys(item).map((key) => ({key: key, value: item[key]}))
               ret.self = ''
             } else {
               ret.self = item
@@ -268,8 +253,7 @@ module.exports = class CompileTab {
             } else {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br />The Swarm address of the metadata file is available in the contract details.</span>`)
             }
-          }, function (item) {
-            // triggered each time there's a new verified publish (means hash correspond)
+          }, function (item) { // triggered each time there's a new verified publish (means hash correspond)
             self._api.fileProvider('swarm').addReadOnly(item.hash, item.content)
           })
         }
