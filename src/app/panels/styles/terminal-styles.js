@@ -91,8 +91,9 @@ var css = csjs`
     word-break        : break-all;
     white-space       : pre-wrap;
     line-height       : 2ch;
-    margin            : 1ch;
+    padding           : 1ch;
     margin-top        : 2ch;
+    border-top        : 0.07ch solid ${styles.colors.veryLightGrey};
   }
   .cli                {
     line-height       : 1.7em;
