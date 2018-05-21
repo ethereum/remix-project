@@ -17,25 +17,36 @@ var typeConversion = remixLib.execution.typeConversion
 var css = csjs`
   .log {
     display: flex;
-    justify-content: space-between;
+    cursor: pointer;
+    align-items: center;
     cursor: pointer;
   }
   .log:hover {
     opacity: 0.8;
   }
-  .caret {
+  .arrow {
     color: ${styles.terminal.icon_Color_Menu};
-    font-size: 15px;
+    font-size: 20px;
     cursor: pointer;
     display: flex;
-    position: absolute;
-    left: 7px;
+    margin-left: 10px;
   }
-  .caret:hover {
+  .arrow:hover {
     color: ${styles.terminal.icon_HoverColor_Menu};
   }
   .txLog {
-    width: 75%;
+  }
+  .txStatus {
+    display: flex;
+    font-size: 20px;
+    margin-right: 20px;
+    float: left;
+  }
+  .succeeded {
+    color: green;
+  }
+  .failed {
+    color: red;
   }
   .txItem {
     color: ${styles.terminal.text_Primary};
@@ -49,7 +60,7 @@ var css = csjs`
     color: ${styles.terminal.text_Title_TransactionLog};
     font-weight: bold;
     float: left;
-    margin: 0 10px;
+    margin-right: 10px;
   }
   .txTable,
   .tr,
@@ -80,7 +91,7 @@ var css = csjs`
   }
   .buttons {
     display: flex;
-    margin-right: 10px;
+    margin-left: auto;
   }
   .debug {
     ${styles.terminal.button_Log_Debug}
@@ -193,14 +204,16 @@ function renderKnownTransaction (self, data) {
   var from = data.tx.from
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
+  var txType = 'knownTx'
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        <i class="${css.caret} fa fa-caret-right"></i>
+        ${checkTxStatus(data.tx, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
+        <i class="${css.arrow} fa fa-angle-down"></i>
       </div>
     </span>
   `
@@ -212,10 +225,11 @@ function renderCall (self, data) {
   var from = data.tx.from ? data.tx.from : ' - '
   var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
   var obj = {from, to}
+  var txType = 'call'
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        <i class="${css.caret} fa fa-caret-right"></i>
+        ${checkTxStatus(data.tx, txType)}
         <span class=${css.txLog}>
           <span class=${css.tx}>[call]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
@@ -225,6 +239,7 @@ function renderCall (self, data) {
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
+        <i class="${css.arrow} fa fa-angle-down"></i>
       </div>
     </span>
   `
@@ -235,14 +250,16 @@ function renderUnknownTransaction (self, data) {
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
+  var txType = 'unknownTx'
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        <i class="${css.caret} fa fa-caret-right"></i>
+        ${checkTxStatus(data.tx, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
+        <i class="${css.arrow} fa fa-angle-down"></i>
       </div>
     </span>
   `
@@ -254,6 +271,14 @@ function renderEmptyBlock (self, data) {
     <span class=${css.txLog}>
       <span class='${css.tx}'><div class=${css.txItem}>[<span class=${css.txItemTitle}>block:${data.block.number} - </span> 0 transactions]</span></span>
     </span>`
+}
+
+function checkTxStatus (tx, type) {
+  if (tx.status === '0x1' || type === 'call') {
+    return yo`<i class="${css.txStatus} ${css.succeeded} fa fa-check-circle"></i>`
+  } else {
+    return yo`<i class="${css.txStatus} ${css.failed} fa fa-times-circle"></i>`
+  }
 }
 
 function context (self, opts) {
@@ -318,16 +343,16 @@ function txDetails (e, tx, data, obj) {
   var from = obj.from
   var to = obj.to
   var log = document.querySelector(`#${tx.id} [class^='log']`)
-  var caret = document.querySelector(`#${tx.id} [class^='caret']`)
-  var caretDown = yo`<i class="${css.caret} fa fa-caret-down"></i>`
-  var caretRight = yo`<i class="${css.caret} fa fa-caret-right"></i>`
+  var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
+  var arrowUp = yo`<i class="${css.arrow} fa fa-angle-up"></i>`
+  var arrowDown = yo`<i class="${css.arrow} fa fa-angle-down"></i>`
   if (table && table.parentNode) {
     tx.removeChild(table)
-    log.removeChild(caret)
-    log.appendChild(caretRight)
+    log.removeChild(arrow)
+    log.appendChild(arrowDown)
   } else {
-    log.removeChild(caret)
-    log.appendChild(caretDown)
+    log.removeChild(arrow)
+    log.appendChild(arrowUp)
     table = createTable({
       status: data.tx.status,
       isCall: data.tx.isCall,
@@ -336,7 +361,7 @@ function txDetails (e, tx, data, obj) {
       from,
       to,
       gas: data.tx.gas,
-      input: data.tx.input,
+      input: helper.shortenHexData(data.tx.input),
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
       logs: data.logs,
