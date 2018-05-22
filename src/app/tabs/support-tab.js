@@ -26,8 +26,8 @@ module.exports = class SupportTab {
   }
   render () {
     const self = this
-    self._view.el = yo`
-      <div class="${css.supportTabView} "id="supportView">
+    var el = yo`
+      <div class="${css.supportTabView}" id="supportView">
         <div class="${css.infoBox}">
           Have a question, found a bug or want to propose a feature? Have a look at the
           <a target="_blank" href='https://github.com/ethereum/browser-solidity/issues'> issues</a> or check out
@@ -41,7 +41,8 @@ module.exports = class SupportTab {
           ${self._view.gitterIframe}
         </div>
       </div>`
-    return self._view.el
+    if (!self._view.el) self._view.el = el
+    return el
     function openLink () { window.open('https://gitter.im/ethereum/remix') }
   }
 }
