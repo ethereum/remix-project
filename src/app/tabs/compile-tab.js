@@ -135,7 +135,7 @@ module.exports = class CompileTab {
     if (self._view.el) return self._view.el
     self._view.warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    self._view.compileButton = yo`<div class="${css.compileButton} onclick=${compile} "id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
+    self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
     self._view.compileContainer = yo`
