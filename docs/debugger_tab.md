@@ -9,4 +9,7 @@ features).
 ![image](images/remix_debuggertab.png)
 
 For more information about debugging, click on the following link:
-../tutorial\_debug
+.. toctree::
+   :maxdepth: 2
+
+tutorial_debug.md
