@@ -44,7 +44,6 @@ module.exports = class SupportTab {
           ${self._view.gitterIframe}
         </div>
       </div>`
-    if (!self._view.el) self._view.el = el
     return self._view.el
     function openLink () { window.open('https://gitter.im/ethereum/remix') }
   }
