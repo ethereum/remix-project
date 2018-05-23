@@ -43,10 +43,23 @@ var css = csjs`
     float: left;
   }
   .succeeded {
-    color: green;
+    color: ${styles.terminal.icon_Color_Log_Succeed};
   }
   .failed {
-    color: red;
+    color: ${styles.terminal.icon_Color_Log_Failed};
+  }
+  .call {
+    font-size: 7px;
+    background-color: ${styles.terminal.icon_BackgroundColor_Log_Call};
+    border-radius: 50%;
+    min-width: 20px;
+    min-height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: ${styles.terminal.icon_Color_Log_Call};
+    text-transform: uppercase;
+    font-weight: bold;
   }
   .txItem {
     color: ${styles.terminal.text_Primary};
@@ -274,8 +287,11 @@ function renderEmptyBlock (self, data) {
 }
 
 function checkTxStatus (tx, type) {
-  if (tx.status === '0x1' || type === 'call') {
+  if (tx.status === '0x1') {
     return yo`<i class="${css.txStatus} ${css.succeeded} fa fa-check-circle"></i>`
+  }
+  if (type === 'call') {
+    return yo`<i class="${css.txStatus} ${css.call}">call</i>`
   } else {
     return yo`<i class="${css.txStatus} ${css.failed} fa fa-times-circle"></i>`
   }
