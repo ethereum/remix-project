@@ -13,7 +13,7 @@
     }
   ],
   "main": "./index.js",
-  "devDependencies": {
+  "dependencies": {
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-plugin-yo-yoify": "^0.3.3",
@@ -29,7 +29,9 @@
     "remix-core": "^0.0.11",
     "remix-lib": "^0.2.5",
     "remix-solidity": "^0.1.7",
-    "solc": "https://github.com/ethereum/solc-js",
+    "solc": "https://github.com/ethereum/solc-js"
+  },
+  "devDependencies": {
     "standard": "^7.0.1",
     "standard-reporter": "^1.0.5",
     "tape": "^4.6.0"
