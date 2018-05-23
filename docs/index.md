@@ -1,36 +1,24 @@
 Remix - Solidity IDE
 ====================
 
-Remix is Ethereum IDE for the smart contract programming language Solidity and
-has an integrated debugger and testing environment.
+##Welcome to Remix!
+We hope our tool will help you efficiently write, test, debug
+and deploy Solidity contracts straight from your browser.
 
-An up to date online version is available at
-[remix.ethereum.org](http://remix.ethereum.org)
+##Useful links
+If you are just getting started, this is a set of recommended resources and links:
+* [REMIX](http://remix.ethereum.org)
+* [Documentation about Solidity language](https://solidity.readthedocs.io)
+* [Remix support/community chat](https://gitter.im/ethereum/remix)
+* [Remix Github repository](https://github.com/ethereum/remix-ide)
 
-Please go to [solidity.readthedocs.io](http://solidity.readthedocs.io)
-for any information regarding `Solidity`
+##Getting started
+To see how Remix works and how you can build your first simple contract, [click
+here to get started](quickstart_javascript_vm.md)
 
-Overview
 --------
 
-Remix provides an integrated development environment (IDE) for smart
-contract development. It focuses on the development and deployment of
-Solidity written smart contracts.
 
-Remix is a good solution if you intend to:
-
-> -   Develop smart contracts (remix integrates a solidity editor).
-> -   Debug a smart contract's execution.
-> -   Access the state and properties of already deployed smart
->     contract.
-> -   Debug already committed transaction.
-> -   Analyze solidity code to reduce coding mistakes and to enforce
->     best practices.
-> -   Together with Mist (or any tool which inject web3), Remix can be
->     used to test and debug a Dapp (see ../tutorial\_mist)
-
-Developing smart contract requires deep understanding of the
-associated Blockchain technology.
 
 Contents
 ========
