@@ -1,46 +1,74 @@
-Remix: Ethereum - IDE
-====================
+Welcome to Remix documentation!
+===============================
 
-## Welcome!
-REMIX is a tool that can help you more efficiently **write, test, debug
-and deploy Solidity contracts** directly from the browser. No signup needed. Just open [the link](http://remix.ethereum.org) and get started. It works best in Chrome and/or Firefox.
+Remix is a powerful, open source tool that helps you write Solidity contracts straight from the browser.
+Written in Javascript, Remix supports both usage in the browser or locally.
 
-## Useful links
-If you are new to blockchain and Ethereum ecosystem, this is a set of recommended resources and links to help you start with building your smart contracts:
+Remix also supports testing, debugging and deploying of smart contracts and much more.
 
-* [REMIX: Ethereum IDE](http://remix.ethereum.org)
-* [Documentation about Solidity language](https://solidity.readthedocs.io)
-* [Remix support/community chat](https://gitter.im/ethereum/remix)
-* [Remix Github repository](https://github.com/ethereum/remix-ide)
+Our Remix project with all its features is available
+at `http://remix.ethereum.org` and more information can be found in these
+docs.  Our tool is available at `our GitHub repository
+<https://github.com/ethereum/remix-id>`__.
 
-## Getting started
-To see how Remix works and how you can build your first simple contract, [click
-here to get started!](quickstart_javascript_vm.md)
+This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
---------
+Contents:
 
+* :ref:`quick start`
+* :ref:`deploy and test`
+* :ref:`other remix features`
+* :ref:`tutorials and workshops`
+* :ref:`code contribution guide`
 
-
-Contents
-========
-
-:ref:`Keyword Index <genindex>`, :ref:`Search Page <search>`
+.. quick-start:
 
 .. toctree::
    :maxdepth: 2
+   :caption: Quick start
 
-   quickstart_javascript_vm.md
-   file_explorer.md
-   solidity_editor.md
-   compile_tab.md
-   run_tab.md
-   terminal.md
-   debugger_tab.md
-   analysis_tab.md
-   settings_tab.md
-   support_tab.md
-   workshop_Building_smart_contracts_with_Remix.md
-   tutorial_debug.md
-   tutorial_import.md
-   tutorial_connect_remix_with_your_filesystem.md
-   tutorial_mist.md
+   solidity_editor
+   compile_tab
+   quickstart_javascript_vm
+
+
+.. deploy and test:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Deploy and test
+
+   run_tab
+   udapp
+
+.. _other-remix-features:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Other Remix features
+
+   file_explorer
+   debugger_tab
+   analysis_tab
+   terminal
+
+.. _tutorials and workshops:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorials and workshops
+
+   workshop_Building_smart_contracts_with_Remix
+   tutorial_connect_remix_with_your_filesystem
+   tutorial_debug
+   tutorial_import
+   tutorial_mist
+
+.. _code-contribution-guide:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Code contribution guide
+
+   code_contribution_guide
+   support
