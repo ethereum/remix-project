@@ -11,5 +11,6 @@ module.exports = [
   require('./blockBlockhash'),
   require('./noReturn'),
   require('./selfdestruct'),
-  require('./guardConditions')
+  require('./guardConditions'),
+  require('./deleteDynamicArrays')
 ]
