@@ -37,7 +37,7 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
 
-source_suffix = ['.rst', '.md']
+source_suffix = ['.md']
 
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
@@ -94,7 +94,7 @@ exclude_patterns = ['_build']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-highlight_language = 'Solidity'\
+highlight_language = 'Solidity'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -110,7 +110,7 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
