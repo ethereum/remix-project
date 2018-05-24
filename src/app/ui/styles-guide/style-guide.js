@@ -459,6 +459,11 @@ function styleGuide () {
       text_Regular_TransactionLog: appProperties.supportText_Color,
       text_Button: appProperties.oppositeText_Color,
 
+      icon_Color_Log_Succeed: appProperties.success_BorderColor,
+      icon_Color_Log_Failed: appProperties.errorText_Color,
+      icon_BackgroundColor_Log_Call: appProperties.infoText_Color,
+      icon_Color_Log_Call: appProperties.icon_AltColor,
+
       icon_Color_TogglePanel: appProperties.icon_Color,
       icon_HoverColor_TogglePanel: appProperties.icon_HoverColor,
       icon_Color_Menu: appProperties.icon_Color,
