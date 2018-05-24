@@ -47,6 +47,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'Remix, Ethereum-IDE'
 copyright = u'2018, Remix'
+author = u'Remix team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
