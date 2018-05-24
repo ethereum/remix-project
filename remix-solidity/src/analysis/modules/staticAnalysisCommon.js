@@ -27,7 +27,10 @@ var basicTypes = {
   UINT: 'uint256',
   BOOL: 'bool',
   ADDRESS: 'address',
-  BYTES32: 'bytes32'
+  BYTES32: 'bytes32',
+  STRING_MEM: 'string memory',
+  BYTES_MEM: 'bytes memory',
+  BYTES4: 'bytes4'
 }
 
 var basicRegex = {
@@ -57,8 +60,12 @@ var builtinFunctions = {
   'mulmod(uint256,uint256,uint256)': true,
   'selfdestruct(address)': true,
   'revert()': true,
+  'revert(string memory)': true,
   'assert(bool)': true,
-  'require(bool)': true
+  'require(bool)': true,
+  'require(bool,string memory)': true,
+  'gasleft()': true,
+  'blockhash(uint)': true
 }
 
 var lowLevelCallTypes = {
@@ -75,6 +82,29 @@ var specialVariables = {
     obj: 'block',
     member: 'blockhash',
     type: buildFunctionSignature([basicTypes.UINT], [basicTypes.BYTES32], false)
+  }
+}
+
+var abiNamespace = {
+  ENCODE: {
+    obj: 'abi',
+    member: 'encode',
+    type: buildFunctionSignature([], [basicTypes.BYTES_MEM], false, 'pure')
+  },
+  ENCODEPACKED: {
+    obj: 'abi',
+    member: 'encodePacked',
+    type: buildFunctionSignature([], [basicTypes.BYTES_MEM], false, 'pure')
+  },
+  ENCODE_SELECT: {
+    obj: 'abi',
+    member: 'encodeWithSelector',
+    type: buildFunctionSignature([basicTypes.BYTES4], [basicTypes.BYTES_MEM], false, 'pure')
+  },
+  ENCODE_SIG: {
+    obj: 'abi',
+    member: 'encodeWithSignature',
+    type: buildFunctionSignature([basicTypes.STRING_MEM], [basicTypes.BYTES_MEM], false, 'pure')
   }
 }
 
@@ -405,6 +435,24 @@ function hasFunctionBody (funcNode) {
 }
 
 /**
+ * True if node is a delete instruction of a dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDeleteOfDynamicArray (node) {
+  return isDeleteUnaryOperation(node) && isDynamicArrayAccess(node.children[0])
+}
+
+/**
+ * True if node is node is a ref to a dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDynamicArrayAccess (node) {
+  return node && nodeType(node, exactMatch(nodeTypes.IDENTIFIER)) && (node.attributes.type.endsWith('[] storage ref') || node.attributes.type === 'bytes storage ref' || node.attributes.type === 'string storage ref')
+}
+
+/**
  * True if call to code within the current contracts context including (delegate) library call
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -419,7 +467,16 @@ function isLocalCallGraphRelevantNode (node) {
  * @return {bool}
  */
 function isBuiltinFunctionCall (node) {
-  return isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true
+  return (isLocalCall(node) && builtinFunctions[getLocalCallName(node) + '(' + getFunctionCallTypeParameterType(node) + ')'] === true) || isAbiNamespaceCall(node)
+}
+
+/**
+ * True if is builtin function like assert, sha3, erecover, ...
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isAbiNamespaceCall (node) {
+  return Object.keys(abiNamespace).some((key) => abiNamespace.hasOwnProperty(key) && node.children && node.children[0] && isSpecialVariableAccess(node.children[0], abiNamespace[key]))
 }
 
 /**
@@ -538,6 +595,15 @@ function isConstructor (node) {
  */
 function isPlusPlusUnaryOperation (node) {
   return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('++')))
+}
+
+/**
+ * True if unary delete operation
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isDeleteUnaryOperation (node) {
+  return nodeType(node, exactMatch(nodeTypes.UNARYOPERATION)) && operator(node, exactMatch(util.escapeRegExp('delete')))
 }
 
 /**
@@ -778,8 +844,8 @@ function exactMatch (regexStr) {
  *  list of return type names
  * @return {Boolean} isPayable
  */
-function buildFunctionSignature (paramTypes, returnTypes, isPayable) {
-  return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
+function buildFunctionSignature (paramTypes, returnTypes, isPayable, additionalMods) {
+  return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
 }
 
 /**
@@ -827,6 +893,10 @@ module.exports = {
   getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
 
   // #################### Complex Node Identification
+  isDeleteOfDynamicArray: isDeleteOfDynamicArray,
+  isAbiNamespaceCall: isAbiNamespaceCall,
+  isSpecialVariableAccess: isSpecialVariableAccess,
+  isDynamicArrayAccess: isDynamicArrayAccess,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
   isEffect: isEffect,
@@ -858,6 +928,7 @@ module.exports = {
   isRequireCall: isRequireCall,
 
   // #################### Trivial Node Identification
+  isDeleteUnaryOperation: isDeleteUnaryOperation,
   isFunctionDefinition: isFunctionDefinition,
   isModifierDefinition: isModifierDefinition,
   isInheritanceSpecifier: isInheritanceSpecifier,
