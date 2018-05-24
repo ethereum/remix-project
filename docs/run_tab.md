@@ -57,34 +57,10 @@ shows it in a pending mode. When transaction is mined the number of
 pending transactions is updated and the transaction is added to the log
 (see ../terminal)
 
-Instance List
--------------
-
-This section contains a list of instances to interact with.
-
-Several cases apply:
-:   -   The called function is declared as `constant` or `pure` in
-        Solidity. The action has a blue background, clicking it does not
-        create a new transaction. Clicking it is not necessary because
-        there are not state changes - but it will update the return
-        value of the function.
-    -   The called function has no special keywords. The action has a
-        light red background, clicking on does create a new transaction.
-        But this transaction cannot accept any amount of Ether.
-    -   The called function is declared as `payable` in Solidity. The
-        action has a red background, clicking it does create a new
-        transaction and this transaction can accept value.
-
-For more information about Solidity modifier, see [Solidity
-modifier](http://solidity.readthedocs.io/en/develop/miscellaneous.html?highlight=pure#modifiers)
-.
-
-If a function requires input parameters, it is required to specify them.
-
 USING ABI
 ---------
 
-Using `Create` or `At Address` is a classic use case of Remix. It is
+Using `Deploy` or `At Address` is a classic use case of Remix. It is
 possible though to interact with a contract by using its ABI. The ABI is
 a JSON array which describe its interface.
 
