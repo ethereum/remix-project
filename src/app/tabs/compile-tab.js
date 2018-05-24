@@ -124,8 +124,8 @@ module.exports = class CompileTab {
     })
     self._events.staticAnalysis.register('staticAnaysisWarning', (count) => {
       if (count) {
-        const msg = `Static Analysis raised ${count} warning(s) that requires your attention.`
-        const settings = { type: 'warning', click: () => self._api.switchTab('staticanalysisView') }
+        const msg = `Static Analysis raised ${count} warning(s) that requires your attention. Click here to show the warning(s).`
+        const settings = { type: 'staticAnalysisWarning', click: () => self._api.switchTab('staticanalysisView'), useSpan: true }
         self._opts.renderer.error(msg, self._view.errorContainer, settings)
       }
     })

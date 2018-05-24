@@ -90,7 +90,7 @@ staticAnalysisView.prototype.run = function () {
           }
           warningCount++
           var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
-          self.appAPI.renderWarning(msg, warningContainer, {type: 'warning', useSpan: true})
+          self.appAPI.renderWarning(msg, warningContainer, {type: 'staticAnalysisWarning', useSpan: true})
         })
       })
       if (warningContainer.html() === '') {
