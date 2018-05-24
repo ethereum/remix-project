@@ -187,6 +187,12 @@ module.exports = {
     if (code1 === code2) return true
     if (code2 === '0x') return false // abstract contract. see comment
 
+    if (code2.substr(2, 46) === '7300000000000000000000000000000000000000003014') {
+      // testing the following signature: PUSH20 00..00 ADDRESS EQ
+      // in the context of a library, that slot contains the address of the library (pushed by the compiler to avoid calling library other than with a DELEGATECALL)
+      // if code2 is not a library, well we still suppose that the comparison remain relevant even if we remove some information from `code1`
+      code1 = replaceLibReference(code1, 4)
+    }
     var pos = -1
     while ((pos = code2.search(/__(.*)__/)) !== -1) {
       code2 = replaceLibReference(code2, pos)
