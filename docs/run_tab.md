@@ -12,27 +12,32 @@ Run Setup
 The following settings allow you to directly influence the transaction
 execution:
 
-> -   Environment:
->     :   -   `JavaScript VM`: All the transactions will be executed in
->             a sandbox blockchain in the browser. This means nothing
->             will be persisted and a page reload will restart a new
->             blockchain from scratch, the old one will not be saved.
->         -   `Injected Provider`: Remix will connect to an injected
->             web3 provider. `Mist` and `Metamask` are example of
->             providers that inject web3, thus can be used with this
->             option.
->         -   `Web3 Provider`: Remix will connect to a remote node. You
->             will need to provide the URL address to the selected
->             provider: geth, parity or any Ethereum client.
->
-> -   Account: the list of accounts associated with the current
->     environment (and their associated balances).
-> -   Gas Limit: the maximum amount of gas that can be set for all the
->     transactions created in Remix.
-> -   Value: the amount of value for the next created transaction (this
->     value is always reset to 0 after each transaction execution).
->
-> ![image](images/remix_runtab_example.png)
+Environment:
+
+-   `JavaScript VM`: All the transactions will be executed in
+    a sandbox blockchain in the browser. This means nothing
+    will be persisted and a page reload will restart a new
+    blockchain from scratch, the old one will not be saved.
+
+-   `Injected Provider`: Remix will connect to an injected
+    web3 provider. `Mist` and `Metamask` are example of
+    providers that inject web3, thus can be used with this
+    option.
+
+-   `Web3 Provider`: Remix will connect to a remote node. You
+    will need to provide the URL address to the selected
+    provider: geth, parity or any Ethereum client.
+
+-   Account: the list of accounts associated with the current
+     environment (and their associated balances).
+
+-   Gas Limit: the maximum amount of gas that can be set for all the
+     transactions created in Remix.
+
+-   Value: the amount of value for the next created transaction (this
+     value is always reset to 0 after each transaction execution).
+
+ ![image](images/remix_runtab_example.png)
 
 Initiate Instance
 -----------------
@@ -44,6 +49,7 @@ This section contains the list of compiled contracts and 2 actions:
     deployed contract. There's no check at this point, so be careful
     when using this feature, and be sure you trust the contract at that
     address.
+    
 -   `Create` send a transaction that deploys the selected contract. When
     the transaction is mined, the newly created instance will be added
     (this might take several seconds). Note that if the `constructor`
@@ -114,7 +120,8 @@ Input parameters are `1` and
 all these transactions are created using the value of the accounts
 `account{0}`.
 
-``` {.sourceCode .none}
+::
+
 {
 "accounts": {
     "account{0}": "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
@@ -269,4 +276,3 @@ all these transactions are created using the value of the accounts
     ]
 }
 }
-```
