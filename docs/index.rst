@@ -66,3 +66,4 @@ This set of documents covers instructions on how to use Remix and some tutorials
    code_contribution_guide
    support
    support_tab
+   
