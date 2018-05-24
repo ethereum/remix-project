@@ -13,54 +13,36 @@ docs.  Our tool is available at `our GitHub repository
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
-.. quick-start:
+## Quick start
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Quick start
+* [Solidity Editor](solidity_editor.md)
+* [Compile Tab](compile_tab.md)
+* [Quick start with JavaScript VM](quickstart_javascript_vm.md)
+* [Settings](settings_tab.md)
 
-   solidity_editor
-   compile_tab
-   quickstart_javascript_vm
+## Deploy and test
 
+* [Run tab](run_tab.md)
+* [Interact with contract](udapp.md)
 
-.. deploy and test:
+## Other remix features
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Deploy and test
+* [File explorer](file_explorer.md)
+* [Debugger tab](debugger_tab.md)
+* [Analysis tab](analysis_tab.md)
+* [Terminal](terminal.md)
 
-   run_tab
-   udapp
+## Tutorials and workshops
 
-.. _other-remix-features:
+* [Workshop building smart contracts](workshop_Building_smart_contracts_with_Remix.md)
+* [Use Remix IDE with local files](tutorial_connect_remix_with_your_filesystem.md)
+* [How to debug a transaction](tutorial_debug.md)
+* [How to import solidity file](tutorial_import.md) 
+* [How to use Remix IDE in Mist](tutorial_mist.md)
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Other Remix features
+## How to contibute
 
-   file_explorer
-   debugger_tab
-   analysis_tab
-   terminal
+* [Contribution guide](code_contribution_guide.md)
+* [Support tab](support_tab.md)
+* [Support chat](support.md)
 
-.. _tutorials and workshops:
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Tutorials and workshops
-
-   workshop_Building_smart_contracts_with_Remix
-   tutorial_connect_remix_with_your_filesystem
-   tutorial_debug
-   tutorial_import
-   tutorial_mist
-
-.. _code-contribution-guide:
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Code contribution guide
-
-   code_contribution_guide
-   support
