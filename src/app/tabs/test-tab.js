@@ -45,7 +45,7 @@ function testTabView (api) {
 
   let runTests = function () {
     let contractSources = api.getAllSources()
-
+    container.innerHTML = ''
     remixTests.runTestSources(contractSources, testCallback, resultsCallback, finalCallback)
   }
 
