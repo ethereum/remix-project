@@ -13,8 +13,6 @@ docs.  Our tool is available at `our GitHub repository
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
-.. quick-start:
-
 .. toctree::
    :maxdepth: 2
    :caption: Quick start
@@ -25,16 +23,12 @@ This set of documents covers instructions on how to use Remix and some tutorials
    settings_tab
 
 
-.. deploy-and-test:
-
 .. toctree::
    :maxdepth: 2
    :caption: Deploy and test
 
    run_tab
    udapp
-
-.. other-remix-features:
 
 .. toctree::
    :maxdepth: 2
@@ -44,8 +38,6 @@ This set of documents covers instructions on how to use Remix and some tutorials
    debugger_tab
    analysis_tab
    terminal
-
-.. tutorials-and-workshops:
 
 .. toctree::
    :maxdepth: 2
@@ -57,8 +49,6 @@ This set of documents covers instructions on how to use Remix and some tutorials
    tutorial_import
    tutorial_mist
 
-.. code-contribution-guide:
-
 .. toctree::
    :maxdepth: 2
    :caption: Code contribution guide
@@ -66,4 +56,3 @@ This set of documents covers instructions on how to use Remix and some tutorials
    code_contribution_guide
    support
    support_tab
-   
