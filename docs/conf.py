@@ -294,11 +294,11 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # app setup hook
-def setup(app):
-     app.add_config_value('recommonmark_config', {
-         'url_resolver': lambda url: github_doc_root + url,
-         'enable_auto_toc_tree': True,
-         'enable_eval_rst': True,
-         'enable_auto_doc_ref': True,
-     }, True)
-     app.add_transform(AutoStructify)
+# def setup(app):
+#     app.add_config_value('recommonmark_config', {
+#         'url_resolver': lambda url: github_doc_root + url,
+#         'enable_auto_toc_tree': True,
+#         'enable_eval_rst': True,
+#         'enable_auto_doc_ref': True,
+#     }, True)
+#     app.add_transform(AutoStructify)
