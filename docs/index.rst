@@ -8,8 +8,7 @@ Remix also supports testing, debugging and deploying of smart contracts and much
 
 Our Remix project with all its features is available
 at `http://remix.ethereum.org` and more information can be found in these
-docs.  Our tool is available at `our GitHub repository
-<https://github.com/ethereum/remix-id>`__.
+docs.  Our tool is available at `our GitHub repository <https://github.com/ethereum/remix-id>`__.
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
