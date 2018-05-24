@@ -12,8 +12,6 @@ docs.  Our tool is available at `our GitHub repository <https://github.com/ether
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
-.. quick-start:
-
 .. toctree::
    :maxdepth: 2
    :caption: Quick start
@@ -23,17 +21,12 @@ This set of documents covers instructions on how to use Remix and some tutorials
    quickstart_javascript_vm
    settings_tab
 
-
-.. deploy and test:
-
 .. toctree::
    :maxdepth: 2
    :caption: Deploy and test
 
    run_tab
    udapp
-
-.. _other-remix-features:
 
 .. toctree::
    :maxdepth: 2
@@ -44,8 +37,6 @@ This set of documents covers instructions on how to use Remix and some tutorials
    analysis_tab
    terminal
 
-.. _tutorials and workshops:
-
 .. toctree::
    :maxdepth: 2
    :caption: Tutorials and workshops
@@ -55,8 +46,6 @@ This set of documents covers instructions on how to use Remix and some tutorials
    tutorial_debug
    tutorial_import
    tutorial_mist
-
-.. _code-contribution-guide:
 
 .. toctree::
    :maxdepth: 2
