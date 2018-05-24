@@ -13,14 +13,6 @@ docs.  Our tool is available at `our GitHub repository
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
-Contents:
-
-* :ref:`quick start`
-* :ref:`deploy and test`
-* :ref:`other remix features`
-* :ref:`tutorials and workshops`
-* :ref:`code contribution guide`
-
 .. quick-start:
 
 .. toctree::

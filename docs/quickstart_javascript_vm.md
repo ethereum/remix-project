@@ -26,9 +26,10 @@ should have 100 ether.
 
 Sample contract
 ---------------
+::
 
-``` {.sourceCode .none}
 pragma solidity ^0.4.16;
+
 contract testContract {
 
     uint value;
@@ -48,7 +49,6 @@ contract testContract {
         return value;
     }
 }
-```
 
 This contract is very basic. The goal is to quickly start to create and
 to interact with a sample contract.
