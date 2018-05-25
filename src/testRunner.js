@@ -36,6 +36,7 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
   let passingNum = 0
   let failureNum = 0
   let timePassed = 0
+  let web3 = new Web3();
 
   testCallback({type: 'contract', value: testName})
   async.eachOfLimit(runList, 1, function (func, index, next) {
@@ -56,15 +57,16 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
       })
     } else {
       method.send().on('receipt', function (receipt) {
-        let time = Math.ceil((Date.now() - startTime) / 1000.0)
-        if (func.type === 'test') {
+        try {
+          let time = Math.ceil((Date.now() - startTime) / 1000.0)
+          //if (func.type === 'test') {
           let topic = Web3.utils.sha3('AssertionEvent(bool,string)')
 
           let matchingEvents = []
           for (let i in receipt.events) {
             let event = receipt.events[i]
             if (event.raw.topics.indexOf(topic) >= 0) {
-              matchingEvents.push(Web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data))
+              matchingEvents.push(web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data))
             }
           }
 
@@ -81,6 +83,11 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
             testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: result[1], context: testName})
             failureNum += 1
           }
+          //}
+        } catch(err) {
+          console.log("error!");
+          console.dir(err);
+          return next(err)
         }
         next()
       }).on('error', function (err) {
