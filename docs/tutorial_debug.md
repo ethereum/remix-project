@@ -1,5 +1,5 @@
-Debugging a Transaction
-=======================
+Tutorial on debugging transactions with Remix
+===============================================
 
 The goal of this tutorial is to explain how to debug transaction using
 Remix.
