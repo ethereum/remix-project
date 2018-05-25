@@ -150,11 +150,17 @@ class MultiParamManager {
         ${this.multiFields}
         <div class="${css.group} ${css.multiArg}" >
           ${button}
-          ${copyToClipboard(() => {
-            var multiString = this.getMultiValsString()
-            var multiJSON = JSON.parse('[' + multiString + ']')
-            return txFormat.encodeData(this.funABI, multiJSON)
-          }, 'Encode values of input fields & copy to clipboard', 'fa-briefcase')}
+          ${copyToClipboard(
+            () => {
+              var multiString = this.getMultiValsString()
+              var multiJSON = JSON.parse('[' + multiString + ']')
+              var encodeObj = txFormat.encodeData(this.funABI, multiJSON)
+              if (encodeObj.error) {
+                return encodeObj.error
+              } else {
+                return encodeObj.data
+              }
+            }, 'Encode values of input fields & copy to clipboard', 'fa-briefcase')}
         </div>
       </div>
     </div>`
