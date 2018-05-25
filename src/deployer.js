@@ -55,6 +55,10 @@ function deployAll (compileResult, web3, callback) {
     function deployContracts (contractsToDeploy, next) {
       async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
         let contract = compiledObject[contractName]
+        if (!contract) {
+          console.error("Contract not found: " + contractName);
+          return nextEach(new Error("Contract not found: " + contractName));
+        }
         let contractObject = new web3.eth.Contract(contract.abi)
 
         let contractCode = '0x' + contract.code
