@@ -241,6 +241,7 @@ var css = csjs`
     padding-right: 26px;
     padding-top: 5px;
     float: right;
+    font-size: 16px;
   }
 `
 
