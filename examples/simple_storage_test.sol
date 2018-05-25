@@ -4,9 +4,17 @@ import "./simple_storage.sol";
 
 contract MyTest {
   SimpleStorage foo;
+  uint i = 0;
 
   function beforeAll() {
     foo = new SimpleStorage();
+  }
+
+  function beforeEach() {
+    if (i == 1) {
+      foo.set(200);
+    }
+    i += 1;
   }
 
   function initialValueShouldBe100() public {
