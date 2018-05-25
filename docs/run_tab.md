@@ -49,7 +49,7 @@ This section contains the list of compiled contracts and 2 actions:
     deployed contract. There's no check at this point, so be careful
     when using this feature, and be sure you trust the contract at that
     address.
-    
+
 -   `Create` send a transaction that deploys the selected contract. When
     the transaction is mined, the newly created instance will be added
     (this might take several seconds). Note that if the `constructor`
@@ -120,8 +120,7 @@ Input parameters are `1` and
 all these transactions are created using the value of the accounts
 `account{0}`.
 
-::
-
+``` {.sourceCode .none}
 {
 "accounts": {
     "account{0}": "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"
@@ -276,3 +275,4 @@ all these transactions are created using the value of the accounts
     ]
 }
 }
+```

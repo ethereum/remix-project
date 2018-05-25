@@ -20,7 +20,7 @@ the right:
 Create new File
 ---------------
 
-Creates a new file in the browser explorer.
+Creates a new `untitled.sol` file in Remix.
 
 Add Local File
 --------------
@@ -31,16 +31,22 @@ the Remix browser storage.
 Publish to Gist
 ---------------
 
-Publishes files from the browser storage to an anonymous public gist.
+Publishes all files from the browser folder to a gist.
+Gist API has changed in 2018 and it unfortunately requires users to be authenticated to be able to publish a gist.
 
-Copy to another instance
+Under https://github.com/settings/tokens select Generate new token.
+Then check only Create gists checkbox and generate a new token.
+
+Then paste it in Remix (right panel/Settings tab) and click Save. Now you should be able to use the feature.
+
+Copy to another Remix instance
 ------------------------
 
 Enables you to copy files from the browser storage to another instance
 (URL) of Remix.
 
-Connect to Localhost
+Connect your filesystem to Remix
 --------------------
 
-Allows to use file located in your file system (see
-../tutorial\_remixd\_filesystem).
+Allows to sync between Remix and your local file system (see
+[more about RemixD][http://remix.readthedocs.io/en/latest/tutorial_connect_remix_with_your_filesystem.html]).
