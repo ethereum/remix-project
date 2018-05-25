@@ -25,10 +25,5 @@ contract MyTest2 {
     return Assert.equal(foo.get(), 200, "initial value is not correct");
   }
 
-  // TODO: the tests don't necessarily run in order
-  //function initialValueShouldBe400() public constant returns (bool) {
-  //  return Assert.equal(foo.get(), 400, "initial value is not correct");
-  //}
-
 }
 
