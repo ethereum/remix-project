@@ -186,7 +186,7 @@ and here is the front end:
 function donate () {
     var donation = contractspec.at(document.getElementById('contractaddress').value)
     donation.donate({
-        from: document.getElementById('fromGive').value, 
+        from: document.getElementById('fromGive').value,
         value: document.getElementById('valueGive').value
     }, function (error, txHash) {       
         tryTillResponse(txHash, function (error, receipt) {

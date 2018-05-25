@@ -19,10 +19,10 @@ and `Remixd`.
 Be sure the user executing Remix has read/write permission on the
 folder.
 
-> **warning**
+**Warning!**
 
-> Remixd provides full read and write access to the given folder for any
-> application that can access the TCP port 65520 on your local host.
+`Remixd provides full read and write access to the given folder for any
+application that can access the TCP port 65520 on your local host.`
 
 From `Remix IDE`, you will need to activate the connection.
 

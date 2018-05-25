@@ -8,8 +8,5 @@ features).
 
 ![image](images/remix_debuggertab.png)
 
-For more information about debugging, click on the following link:
-.. toctree::
-   :maxdepth: 2
-
-tutorial_debug.md
+For more information about debugging, see the [Tutorial on debugging transactions with Remix
+](http://remix.readthedocs.io/en/latest/tutorial_debug.html)
