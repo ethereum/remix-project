@@ -154,7 +154,7 @@ class MultiParamManager {
             var multiString = this.getMultiValsString()
             var multiJSON = JSON.parse('[' + multiString + ']')
             return txFormat.encodeData(this.funABI, multiJSON)
-          })}
+          }, 'Encode values of input fields & copy to clipboard', 'fa-briefcase')}
         </div>
       </div>
     </div>`
