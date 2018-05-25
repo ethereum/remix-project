@@ -54,5 +54,5 @@ This set of documents covers instructions on how to use Remix and some tutorials
    :caption: Code contribution guide
 
    code_contribution_guide
-   support
+   Community
    support_tab
