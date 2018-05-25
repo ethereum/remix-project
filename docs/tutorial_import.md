@@ -6,8 +6,8 @@ This tutorial will show you how to import local and external files.
 The compilation result will also contain contracts implemented in the
 imported files.
 
-For a detailed explanation of the `import` keyword see the `Solidity`
-[documentation](https://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files)
+For a detailed explanation of the `import` keyword see the
+[Solidity documentation](https://solidity.readthedocs.io/en/develop/layout-of-source-files.html?highlight=import#importing-other-source-files)
 
 Importing a local file
 ----------------------

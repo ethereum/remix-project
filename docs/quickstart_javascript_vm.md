@@ -2,8 +2,7 @@ Quick Start using the JavaScript VM
 ===================================
 
 There are 3 type of environments Remix can be plugged to:
-`Javascript VM`, `Injected provider`, or `Web3 provider`. (see
-../run\_tab)
+`Javascript VM`, `Injected provider`, or `Web3 provider`. (for details see [Running transactions](http://remix.readthedocs.io/en/latest/run_tab.html))
 
 Both `Web3 provider` and `Injected provider` require the use of an
 external tool.
@@ -26,8 +25,7 @@ should have 100 ether.
 
 Sample contract
 ---------------
-::
-
+``` {.sourceCode .none}
 pragma solidity ^0.4.16;
 
 contract testContract {
@@ -49,6 +47,7 @@ contract testContract {
         return value;
     }
 }
+```
 
 This contract is very basic. The goal is to quickly start to create and
 to interact with a sample contract.
