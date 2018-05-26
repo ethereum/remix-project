@@ -34,7 +34,7 @@ Publish to Gist
 Publishes all files from the browser folder to a gist.
 Gist API has changed in 2018 and it unfortunately requires users to be authenticated to be able to publish a gist.
 
-Under https://github.com/settings/tokens select Generate new token.
+Click [this link](https://github.com/settings/tokens) to Github tokens setup  and select Generate new token.
 Then check only Create gists checkbox and generate a new token.
 
 Then paste it in Remix (right panel/Settings tab) and click Save. Now you should be able to use the feature.
@@ -49,4 +49,4 @@ Connect your filesystem to Remix
 --------------------
 
 Allows to sync between Remix and your local file system (see
-[more about RemixD][http://remix.readthedocs.io/en/latest/tutorial_connect_remix_with_your_filesystem.html]).
+[more about RemixD](http://remix.readthedocs.io/en/latest/tutorial_connect_remix_with_your_filesystem.html)).
