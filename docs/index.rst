@@ -57,7 +57,7 @@ Userful links:
    :caption: Tutorials and workshops
 
    workshop_Building_smart_contracts_with_Remix
-   tutorial_connect_remix_with_your_filesystem
+   tutorial_remixd_filesystem
    tutorial_debug
    tutorial_import
    tutorial_mist

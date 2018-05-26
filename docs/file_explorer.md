@@ -49,4 +49,4 @@ Connect your filesystem to Remix
 --------------------
 
 Allows to sync between Remix and your local file system (see
-[more about RemixD](http://remix.readthedocs.io/en/latest/tutorial_connect_remix_with_your_filesystem.html)).
+[more about RemixD](http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html)).

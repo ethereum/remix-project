@@ -3,7 +3,7 @@
 		"lerna": "^2.10.2"
 	},
 	"scripts": {
-    		"bootstrap": "lerna bootstrap",
+		"bootstrap": "lerna bootstrap",
 		"publish": "lerna publish"
-  	}
+	}
 }
