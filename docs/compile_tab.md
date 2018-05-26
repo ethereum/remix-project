@@ -25,4 +25,4 @@ using the bzz URL located in the details modal dialog `SWARM LOCATION`.
 Compilation Errors and Warning are displayed below the contract section.
 At each compilation, the static analysis tab builds a report. It is very
 valuable when addressing reported issues even if the compiler doesn't
-complain. (see ../analysis\_tab)
+complain. ([see more](http://remix.readthedocs.io/en/latest/analysis_tab.html))
