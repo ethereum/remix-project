@@ -1,4 +1,4 @@
-Support chat
+Community
 =======================
 
 We know that blockchain ecosystem is very new and that lots of information is scattered around the web.
@@ -11,4 +11,4 @@ we opened [contributors' channel](https://gitter.im/ethereum/remix-dev) speciall
 We would kindly ask you to respect the space and to use it for
 getting help with your work and the developers' channel for discussions related to working on Remix codebase. If you have
 ideas for collaborations or you want to promote your project, try to find some more appropriate channels to do so. Or you can contact
-main contributors directly on Gitter or Twitter. 
+main contributors directly on Gitter or Twitter.
