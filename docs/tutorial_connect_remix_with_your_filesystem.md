@@ -1,10 +1,10 @@
-Access your local filesystem by using Remixd
+Access your local filesystem by using RemixD
 ===================================================
 
-Remixd is an npm module. Its purpose is to give the remix web
+RemixD is an npm module. Its purpose is to give the remix web
 application access to a folder from your local computer.
 
-The code of Remixd can be checked out
+The code of RemixD can be checked out
 [here](https://github.com/ethereum/remixd) .
 
 Remixd can be globally installed using the following command:
@@ -21,8 +21,8 @@ folder.
 
 **Warning!**
 
-`Remixd provides full read and write access to the given folder for any
-application that can access the TCP port 65520 on your local host.`
+RemixD provides `full read and write access` to the given folder for `any
+application` that can access the `TCP port 65520` on your local host.
 
 From `Remix IDE`, you will need to activate the connection.
 

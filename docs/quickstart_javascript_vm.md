@@ -25,6 +25,7 @@ should have 100 ether.
 
 Sample contract
 ---------------
+
 ``` {.sourceCode .none}
 pragma solidity ^0.4.16;
 

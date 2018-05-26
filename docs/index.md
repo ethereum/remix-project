@@ -13,6 +13,19 @@ documentation and the source code of the project is available at [our GitHub rep
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
+Userful links:
+
+- [Solidity documentation](https://solidity.readthedocs.io/)
+
+- [Remix alpha](http://remix-alpha.ethereum.org/) - version where we test new Remix release (not stable!)
+
+- [Ethereum Stackexchange for Remix](https://ethereum.stackexchange.com/questions/tagged/remix)
+
+- [Community support channel](https://gitter.im/ethereum/remix)
+
+- [Dapp Developer resources (Ethereum wiki)](https://github.com/ethereum/wiki/wiki/Dapp-Developer-Resources)
+
+
 .. quick-start:
 
 .. toctree::
