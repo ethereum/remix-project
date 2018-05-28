@@ -4,7 +4,6 @@ var $ = require('jquery')
 var remixLib = require('remix-lib')
 var yo = require('yo-yo')
 var EventManager = remixLib.EventManager
-var imports = require('../compiler/compiler-imports')
 
 /*
   attach to files event (removed renamed)
@@ -161,7 +160,7 @@ class FileManager {
     if (provider !== null && this.opt.filesProviders[provider[0]]) {
       return this.opt.filesProviders[provider[0]]
     } else {
-      for (var handler of imports.handlers()) {
+      for (var handler of this.opt.compilerImport.handlers()) {
         if (handler.match.exec(file)) {
           return this.opt.filesProviders[handler.type]
         }

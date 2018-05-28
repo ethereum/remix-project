@@ -3,9 +3,12 @@ var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')
 var request = require('request')
 
-module.exports = {
-  previouslyHandled: {}, // cache import so we don't make the request at each compilation.
-  handleGithubCall: function (root, path, cb) {
+module.exports = class CompilerImports {
+  constructor () {
+    this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
+  }
+
+  handleGithubCal (root, path, cb) {
     return request.get(
       {
         url: 'https://api.github.com/repos/' + root + '/contents/' + path,
@@ -26,15 +29,15 @@ module.exports = {
           cb('Content not received')
         }
       })
-  },
+  }
 
-  handleSwarmImport: function (url, cleanUrl, cb) {
+  handleSwarmImport (url, cleanUrl, cb) {
     swarmgw.get(url, function (err, content) {
       cb(err, content, cleanUrl)
     })
-  },
+  }
 
-  handleIPFS: function (url, cb) {
+  handleIPFS (url, cb) {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
 
@@ -51,17 +54,21 @@ module.exports = {
         }
         cb(null, data, url)
       })
-  },
+  }
 
-  handlers: function () {
+  handlers () {
     return [
       { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
       { type: 'swarm', match: /^(bzz[ri]?:\/\/?(.*))$/, handler: (match, cb) => { this.handleSwarmImport(match[1], match[2], cb) } },
       { type: 'ipfs', match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
     ]
-  },
+  }
 
-  import: function (url, loadingCb, cb) {
+  isRelativeImport (url) {
+    return /^([A-Za-z0-9]+)/.exec(url)
+  }
+
+  import (url, loadingCb, cb) {
     var self = this
     var imported = this.previouslyHandled[url]
     if (imported) {
