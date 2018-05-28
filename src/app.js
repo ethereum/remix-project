@@ -263,9 +263,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       })
     } else if (self._components.compilerImport.isRelativeImport(url)) {
       // try to resolve localhost modules (aka truffle imports)
+      var splitted = /([^/]+)\/(.*)$/g.exec(url)
       async.tryEach([
         (cb) => { importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { importFileCb('localhost/nodes_modules/' + url, cb) }],
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
+        (cb) => { importFileCb('localhost/node_modules/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
         (error, result) => { filecb(error, result) }
       )
     } else {
