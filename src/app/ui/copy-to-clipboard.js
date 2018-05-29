@@ -21,7 +21,13 @@ module.exports = function copyToClipboard (getContent, tip = 'Copy value to to c
   copyIcon.onmouseleave = function (event) { copyIcon.style.color = styles.remix.icon_Color_CopyToClipboard }
   copyIcon.onclick = (event) => {
     event.stopPropagation()
-    var copiableContent = getContent()
+    var copiableContent
+    try {
+      copiableContent = getContent()
+    } catch (e) {
+      addTooltip(e.message)
+      return
+    }
     if (copiableContent) {   // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
       try {
         if (typeof copiableContent !== 'string') {
@@ -29,11 +35,7 @@ module.exports = function copyToClipboard (getContent, tip = 'Copy value to to c
         }
       } catch (e) {}
       copy(copiableContent)
-      if (copiableContent === 'cannot encode arguments') {
-        addTooltip(copiableContent)
-      } else {
-        addTooltip(tip)
-      }
+      addTooltip(tip)
     }
   }
   return copyIcon

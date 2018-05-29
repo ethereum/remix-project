@@ -163,7 +163,7 @@ class MultiParamManager {
                 encodeObj = txFormat.encodeData(this.funABI, multiJSON)
               }
               if (encodeObj.error) {
-                return encodeObj.error
+                throw new Error(encodeObj.error)
               } else {
                 return encodeObj.data
               }
