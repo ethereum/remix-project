@@ -29,7 +29,11 @@ module.exports = function copyToClipboard (getContent, tip = 'Copy value to to c
         }
       } catch (e) {}
       copy(copiableContent)
-      addTooltip(tip)
+      if (copiableContent === 'cannot encode arguments') {
+        addTooltip(copiableContent)
+      } else {
+        addTooltip(tip)
+      }
     }
   }
   return copyIcon
