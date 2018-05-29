@@ -36,7 +36,7 @@ var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var TxLogger = require('./app/execution/txLogger')
 var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
-var handleImports = require('./app/compiler/compiler-imports')
+var CompilerImport = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 var ContextualListener = require('./app/editor/contextualListener')
 var ContextView = require('./app/editor/contextView')
@@ -135,6 +135,7 @@ class App {
     self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
     self._view = {}
     self._components = {}
+    self._components.compilerImport = new CompilerImport()
     self.data = {
       _layout: {
         right: {
@@ -235,7 +236,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   function importExternal (url, cb) {
-    handleImports.import(url,
+    self._components.compilerImport.import(url,
       (loadingMsg) => {
         toolTip(loadingMsg)
       },
@@ -249,22 +250,34 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       })
   }
 
-  // ----------------- Compiler -----------------
-  var compiler = new Compiler((url, cb) => {
+  function importFileCb (url, filecb) {
     var provider = fileManager.fileProviderOf(url)
     if (provider) {
       provider.exists(url, (error, exist) => {
-        if (error) return cb(error)
+        if (error) return filecb(error)
         if (exist) {
-          return provider.get(url, cb)
+          return provider.get(url, filecb)
         } else {
-          importExternal(url, cb)
+          importExternal(url, filecb)
         }
       })
+    } else if (self._components.compilerImport.isRelativeImport(url)) {
+      // try to resolve localhost modules (aka truffle imports)
+      var splitted = /([^/]+)\/(.*)$/g.exec(url)
+      async.tryEach([
+        (cb) => { importFileCb('localhost/installed_contracts/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
+        (cb) => { importFileCb('localhost/node_modules/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
+        (error, result) => { filecb(error, result) }
+      )
     } else {
-      importExternal(url, cb)
+      importExternal(url, filecb)
     }
-  })
+  }
+
+  // ----------------- Compiler -----------------
+  var compiler = new Compiler(importFileCb)
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
   // ----------------- UniversalDApp -----------------
@@ -553,7 +566,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var fileManager = new FileManager({
     config: config,
     editor: editor,
-    filesProviders: filesProviders
+    filesProviders: filesProviders,
+    compilerImport: self._components.compilerImport
   })
 
   // Add files received from remote instance (i.e. another remix-ide)
