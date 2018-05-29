@@ -12,6 +12,7 @@ var nodeTypes = {
   ASSIGNMENT: 'Assignment',
   CONTRACTDEFINITION: 'ContractDefinition',
   UNARYOPERATION: 'UnaryOperation',
+  BINARYOPERATION: 'BinaryOperation',
   EXPRESSIONSTATEMENT: 'ExpressionStatement',
   MODIFIERDEFINITION: 'ModifierDefinition',
   MODIFIERINVOCATION: 'ModifierInvocation',
@@ -20,7 +21,11 @@ var nodeTypes = {
   INLINEASSEMBLY: 'InlineAssembly',
   BLOCK: 'Block',
   NEWEXPRESSION: 'NewExpression',
-  RETURN: 'Return'
+  RETURN: 'Return',
+  IFSTATEMENT: 'IfStatement',
+  FORSTATEMENT: 'ForStatement',
+  WHILESTATEMENT: 'WhileStatement',
+  DOWHILESTATEMENT: 'DoWhileStatement'
 }
 
 var basicTypes = {
@@ -145,7 +150,7 @@ function getEffectedVariableName (effectNode) {
  * @return {string} name of the function called
  */
 function getLocalCallName (localCallNode) {
-  if (!isLocalCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an local call Node')
+  if (!isLocalCall(localCallNode) && !isAbiNamespaceCall(localCallNode)) throw new Error('staticAnalysisCommon.js: not an local call Node')
   return localCallNode.children[0].attributes.value
 }
 
@@ -381,6 +386,10 @@ function getFullQuallyfiedFuncDefinitionIdent (contract, func, paramTypes) {
   return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
 }
 
+function getUnAssignedTopLevelBinOps (subScope) {
+  return subScope.children.filter(isBinaryOpInExpression)
+}
+
 // #################### Trivial Node Identification
 
 function isFunctionDefinition (node) {
@@ -421,6 +430,24 @@ function isInlineAssembly (node) {
 
 function isNewExpression (node) {
   return nodeType(node, exactMatch(nodeTypes.NEWEXPRESSION))
+}
+
+/**
+ * True if is Expression
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isExpressionStatement (node) {
+  return nodeType(node, exactMatch(nodeTypes.EXPRESSIONSTATEMENT))
+}
+
+/**
+ * True if is binaryop
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isBinaryOperation (node) {
+  return nodeType(node, exactMatch(nodeTypes.BINARYOPERATION))
 }
 
 // #################### Complex Node Identification
@@ -586,6 +613,42 @@ function isConstructor (node) {
   return isFunctionDefinition(node) && (
     node.attributes.isConstructor === true
   )
+}
+
+/**
+ * True if node is integer division that truncates (not only int literals since those yield a rational value)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isIntDivision (node) {
+  return isBinaryOperation(node) && operator(node, exactMatch(util.escapeRegExp('/'))) && expressionType(node, util.escapeRegExp('int'))
+}
+
+/**
+ * True if is block / SubScope has top level binops (e.g. that are not assigned to anything, most of the time confused compare instead of assign)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isSubScopeWithTopLevelUnAssignedBinOp (node) {
+  return nodeType(node, exactMatch(nodeTypes.BLOCK)) && node.children && node.children.some(isBinaryOpInExpression) ||
+          isSubScopeStatement(node) && node.children && node.children.some(isBinaryOpInExpression) // Second Case for if without braces
+}
+
+function isSubScopeStatement (node) {
+  return (nodeType(node, exactMatch(nodeTypes.IFSTATEMENT)) ||
+            nodeType(node, exactMatch(nodeTypes.FORSTATEMENT)) ||
+            nodeType(node, exactMatch(nodeTypes.WHILESTATEMENT)) ||
+            nodeType(node, exactMatch(nodeTypes.DOWHILESTATEMENT))) &&
+          minNrOfChildren(node, 2) && !nodeType(node.children[1], exactMatch(nodeTypes.BLOCK))
+}
+
+/**
+ * True if binary operation inside of expression statement
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isBinaryOpInExpression (node) {
+  return isExpressionStatement(node) && nrOfChildren(node, 1) && isBinaryOperation(node.children[0])
 }
 
 /**
@@ -891,12 +954,14 @@ module.exports = {
   getStateVariableDeclarationsFormContractNode: getStateVariableDeclarationsFormContractNode,
   getFunctionOrModifierDefinitionParameterPart: getFunctionOrModifierDefinitionParameterPart,
   getFunctionOrModifierDefinitionReturnParameterPart: getFunctionOrModifierDefinitionReturnParameterPart,
+  getUnAssignedTopLevelBinOps: getUnAssignedTopLevelBinOps,
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray: isDeleteOfDynamicArray,
   isAbiNamespaceCall: isAbiNamespaceCall,
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
+  isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
   isEffect: isEffect,
@@ -926,6 +991,7 @@ module.exports = {
   isSelfdestructCall: isSelfdestructCall,
   isAssertCall: isAssertCall,
   isRequireCall: isRequireCall,
+  isIntDivision: isIntDivision,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation: isDeleteUnaryOperation,
