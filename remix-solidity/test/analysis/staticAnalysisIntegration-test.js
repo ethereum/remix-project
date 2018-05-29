@@ -28,7 +28,9 @@ var testFiles = [
   'ctor.sol',
   'forgottenReturn.sol',
   'selfdestruct.sol',
-  'deleteDynamicArray.sol'
+  'deleteDynamicArray.sol',
+  'blockLevelCompare.sol',
+  'intDivisionTruncate.sol'
 ]
 
 var testFileAsts = {}
@@ -62,7 +64,9 @@ test('Integration test thisLocal.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -94,7 +98,9 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -126,7 +132,9 @@ test('Integration test constantFunctions.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 1,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -158,7 +166,9 @@ test('Integration test inlineAssembly.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -190,7 +200,9 @@ test('Integration test txOrigin.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -222,7 +234,9 @@ test('Integration test gasCosts.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 3,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 2
+    'deleteDynamicArray.sol': 2,
+    'blockLevelCompare.sol': 1,
+    'intDivisionTruncate.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -254,7 +268,9 @@ test('Integration test similarVariableNames.js', function (t) {
     'ctor.sol': 1,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 1
+    'deleteDynamicArray.sol': 1,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -286,7 +302,9 @@ test('Integration test inlineAssembly.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -318,7 +336,9 @@ test('Integration test blockTimestamp.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -350,7 +370,9 @@ test('Integration test lowLevelCalls.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -382,7 +404,9 @@ test('Integration test blockBlockhash.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -414,7 +438,9 @@ test('Integration test noReturn.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 1,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -446,7 +472,9 @@ test('Integration test selfdestruct.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 2,
-    'deleteDynamicArray.sol': 0
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -478,7 +506,9 @@ test('Integration test guardConditions.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 1
+    'deleteDynamicArray.sol': 1,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 1
   }
 
   runModuleOnFiles(module, t, (file, report) => {
@@ -510,11 +540,81 @@ test('Integration test deleteDynamicArrays.js', function (t) {
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
-    'deleteDynamicArray.sol': 2
+    'deleteDynamicArray.sol': 2,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0
   }
 
   runModuleOnFiles(module, t, (file, report) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteDynamicArrays warnings`)
+  })
+})
+
+test('Integration test assignAndCompare.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/analysis/modules/assignAndCompare')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 8,
+    'intDivisionTruncate.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of assignAndCompare warnings`)
+  })
+})
+
+test('Integration test intDivisionTruncate.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/analysis/modules/intDivisionTruncate')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 2
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of intDivisionTruncate warnings`)
   })
 })
 
@@ -524,7 +624,11 @@ function runModuleOnFiles (module, t, cb) {
 
   testFiles.forEach((fileName) => {
     statRunner.runWithModuleList(testFileAsts[fileName], [{ name: module.name, mod: new module.Module() }], (reports) => {
-      cb(fileName, reports[0].report)
+      let report = reports[0].report
+      if (report.some((x) => x['warning'].includes('INTERNAL ERROR'))) {
+        t.comment('Error while executing Module: ' + JSON.stringify(report))
+      }
+      cb(fileName, report)
     })
   })
 }

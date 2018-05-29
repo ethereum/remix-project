@@ -12,5 +12,6 @@ module.exports = [
   require('./noReturn'),
   require('./selfdestruct'),
   require('./guardConditions'),
-  require('./deleteDynamicArrays')
+  require('./deleteDynamicArrays'),
+  require('./assignAndCompare')
 ]
