@@ -329,9 +329,10 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     createPanel.innerHTML = ''
     if (opts.compiler.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
       var ctrabi = txHelper.getConstructorInterface(getSelectedContract().contract.object.abi)
+      var ctrEVMbc = getSelectedContract().contract.object.evm.bytecode.object
       var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
         createInstance(inputsValues)
-      }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy')
+      }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy', ctrEVMbc)
       createPanel.appendChild(createConstructorInstance.render())
       return
     } else {

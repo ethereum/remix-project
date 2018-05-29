@@ -2,6 +2,9 @@
 
 var yo = require('yo-yo')
 var css = require('./universal-dapp-styles')
+var copyToClipboard = require('./app/ui/copy-to-clipboard')
+var remixLib = require('remix-lib')
+var txFormat = remixLib.execution.txFormat
 
 class MultiParamManager {
 
@@ -12,14 +15,16 @@ class MultiParamManager {
     * @param {Function} clickMultiCallBack
     * @param {string} inputs
     * @param {string} title
+    * @param {string} evmBC
     *
     */
-  constructor (lookupOnly, funABI, clickCallBack, inputs, title) {
+  constructor (lookupOnly, funABI, clickCallBack, inputs, title, evmBC) {
     this.lookupOnly = lookupOnly
     this.funABI = funABI
     this.clickCallBack = clickCallBack
     this.inputs = inputs
     this.title = title
+    this.evmBC = evmBC
     this.basicInputField
     this.multiFields
   }
@@ -147,6 +152,22 @@ class MultiParamManager {
         ${this.multiFields}
         <div class="${css.group} ${css.multiArg}" >
           ${button}
+          ${copyToClipboard(
+            () => {
+              var multiString = this.getMultiValsString()
+              var multiJSON = JSON.parse('[' + multiString + ']')
+              var encodeObj
+              if (this.evmBC) {
+                encodeObj = txFormat.encodeData(this.funABI, multiJSON, this.evmBC)
+              } else {
+                encodeObj = txFormat.encodeData(this.funABI, multiJSON)
+              }
+              if (encodeObj.error) {
+                throw new Error(encodeObj.error)
+              } else {
+                return encodeObj.data
+              }
+            }, 'Encode values of input fields & copy to clipboard', 'fa-briefcase')}
         </div>
       </div>
     </div>`
