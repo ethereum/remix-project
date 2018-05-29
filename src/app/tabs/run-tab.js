@@ -355,7 +355,9 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
       if (!error) {
         appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
         opts.udapp.createContract(data, (error, txResult) => {
-          if (!error) {
+          if (error) {
+            appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
+          } else {
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
@@ -364,12 +366,14 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
                 return
               }
             }
+            if (txResult.result.status && txResult.result.status === '0x0') {
+              appAPI.logMessage(`creation of ${selectedContract.name} errored: transaction execution failed`)
+              return
+            }
             var noInstancesText = self._view.noInstancesText
             if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
             instanceContainer.appendChild(opts.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
-          } else {
-            appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           }
         })
       } else {
