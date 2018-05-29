@@ -14,7 +14,7 @@ var css = csjs`
   }
 `
 
-module.exports = function copyToClipboard (getContent, tip = 'Copy value to to clipboard', icon = 'fa-clipboard') {
+module.exports = function copyToClipboard (getContent, tip = 'Copy value to clipboard', icon = 'fa-clipboard') {
   var copyIcon = yo`<i title="${tip}" class="${css.copyIcon} fa ${icon}" aria-hidden="true"></i>`
   copyIcon.style.color = styles.remix.icon_Color_CopyToClipboard
   copyIcon.onmouseenter = function (event) { copyIcon.style.color = styles.remix.icon_HoverColor_CopyToClipboard }
