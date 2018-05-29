@@ -8,7 +8,7 @@ module.exports = class CompilerImports {
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
-  handleGithubCal (root, path, cb) {
+  handleGithubCall (root, path, cb) {
     return request.get(
       {
         url: 'https://api.github.com/repos/' + root + '/contents/' + path,
