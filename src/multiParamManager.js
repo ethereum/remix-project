@@ -158,7 +158,6 @@ class MultiParamManager {
               var multiJSON = JSON.parse('[' + multiString + ']')
               var encodeObj
               if (this.evmBC) {
-                console.log(this.evmBC)
                 encodeObj = txFormat.encodeData(this.funABI, multiJSON, this.evmBC)
               } else {
                 encodeObj = txFormat.encodeData(this.funABI, multiJSON)
