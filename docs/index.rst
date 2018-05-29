@@ -30,6 +30,7 @@ Userful links:
    :maxdepth: 2
    :caption: Quick start
 
+   packages
    solidity_editor
    compile_tab
    quickstart_javascript_vm
