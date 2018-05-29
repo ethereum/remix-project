@@ -15,14 +15,16 @@ class MultiParamManager {
     * @param {Function} clickMultiCallBack
     * @param {string} inputs
     * @param {string} title
+    * @param {string} evmBC
     *
     */
-  constructor (lookupOnly, funABI, clickCallBack, inputs, title) {
+  constructor (lookupOnly, funABI, clickCallBack, inputs, title, evmBC) {
     this.lookupOnly = lookupOnly
     this.funABI = funABI
     this.clickCallBack = clickCallBack
     this.inputs = inputs
     this.title = title
+    this.evmBC = evmBC
     this.basicInputField
     this.multiFields
   }
@@ -154,7 +156,13 @@ class MultiParamManager {
             () => {
               var multiString = this.getMultiValsString()
               var multiJSON = JSON.parse('[' + multiString + ']')
-              var encodeObj = txFormat.encodeData(this.funABI, multiJSON)
+              var encodeObj
+              if (this.evmBC) {
+                console.log(this.evmBC)
+                encodeObj = txFormat.encodeData(this.funABI, multiJSON, this.evmBC)
+              } else {
+                encodeObj = txFormat.encodeData(this.funABI, multiJSON)
+              }
               if (encodeObj.error) {
                 return encodeObj.error
               } else {
