@@ -237,6 +237,11 @@ var css = csjs`
     border-bottom-right-radius: 0;
     border-right: 0;
   }
+  .contractActionsContainerMultiInner .multiArg i {
+    padding-right: 26px;
+    padding-top: 5px;
+    float: right;
+  }
 `
 
 module.exports = css
