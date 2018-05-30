@@ -1,3 +1,4 @@
+module.exports = `
 pragma solidity ^0.4.7;
 
 library Assert {
@@ -99,4 +100,4 @@ library Assert {
   //}
 
 }
-
+`;

@@ -10,7 +10,8 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   let compiler, filepath
 
   const sources = {
-    'tests.sol': {content: fs.readFileSync('sol/tests.sol').toString()}
+    'tests.sol': {content: require('../sol/tests.sol.js') },
+    'remix_tests.sol': {content: require('../sol/tests.sol.js') }
   }
 
   // TODO: for now assumes filepath dir contains all tests, later all this
@@ -47,6 +48,10 @@ function compileFileOrFiles (filename, isDirectory, cb) {
 
 function compileContractSources (sources, cb) {
   let compiler, filepath
+
+  if(!sources['remix_tests.sol']) {
+    sources['remix_tests.sol'] = {content: require('../sol/tests.sol.js')}
+  }
 
   async.waterfall([
     function loadCompiler (next) {
