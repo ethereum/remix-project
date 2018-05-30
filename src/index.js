@@ -188,5 +188,6 @@ var runTestFiles = function (filepath, isDirectory, web3) {
 module.exports = {
   runTestFiles: runTestFiles,
   runTestSources: runTestSources,
-  runTest: TestRunner.runTest
+  runTest: TestRunner.runTest,
+  assertLibCode: require('../sol/tests.sol.js')
 }
