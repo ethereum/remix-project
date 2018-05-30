@@ -242,7 +242,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
-          filesProviders[type].addReadOnly(cleanUrl, content, url)
+          if (filesProviders[type]) {
+            filesProviders[type].addReadOnly(cleanUrl, content, url)
+          }
           cb(null, content)
         } else {
           cb(error)
