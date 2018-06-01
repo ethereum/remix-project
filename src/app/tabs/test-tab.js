@@ -43,10 +43,27 @@ function testTabView (api) {
     })
   }
 
+  function runTest (testFilePath) {
+    var provider = api.fileProviderOf(testFilePath)
+    provider.get(testFilePath, (error, content) => {
+      if (!error) {
+        var runningTest = {}
+        runningTest[testFilePath] = { content }
+        remixTests.runTestSources(runningTest, testCallback, resultsCallback, finalCallback, api.importFileCb)
+      }
+    })
+  }
+
   let runTests = function () {
-    let contractSources = api.getAllSources()
     container.innerHTML = ''
-    remixTests.runTestSources(contractSources, testCallback, resultsCallback, finalCallback)
+    var path = api.currentPath()
+    api.filesFromPath(path, (error, files) => {
+      if (!error) {
+        for (var file in files) {
+          if (/.(_test.sol)$/.exec(file)) runTest(path + file)
+        }
+      }
+    })
   }
 
   return yo`
