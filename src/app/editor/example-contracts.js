@@ -66,6 +66,31 @@ contract Ballot {
     }
 }`
 
+var ballotTest = `pragma solidity ^0.4.7;
+import "./remix_tests.sol"; // this import is automatically injected by Remix.
+import "./ballot.sol";
+
+contract test3 {
+   
+    Ballot ballotToTest;
+    function beforeAll () {
+        bytes32[] proposals;
+        proposals.push(0xabcd);
+        ballotToTest = new Ballot(proposals);
+    }
+    
+    function checkWinningProposal () public {
+        ballotToTest.vote(1);
+        Assert.equal(ballotToTest.winningProposal(), uint(1), "1 should be the winning proposal");
+    }
+    
+    function checkWinninProposalWithReturnValue () public constant returns (bool) {
+        return ballotToTest.winningProposal() == 1;
+    }
+}
+`
+
 module.exports = {
-  ballot: { name: 'ballot.sol', content: ballot }
+  ballot: { name: 'ballot.sol', content: ballot },
+  ballot_test: { name: 'ballot_test.sol', content: ballotTest }
 }
