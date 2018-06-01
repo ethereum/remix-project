@@ -16,10 +16,10 @@ var createWeb3Provider = function() {
   return web3
 }
 
-var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback) {
+var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback, importFileCb) {
   async.waterfall([
     function compile (next) {
-      Compiler.compileContractSources(contractSources, next)
+      Compiler.compileContractSources(contractSources, importFileCb, next)
     },
     function deployAllContracts (compilationResult, next) {
       let web3 = createWeb3Provider();
