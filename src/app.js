@@ -235,6 +235,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     return 'Are you sure you want to leave?'
   }
 
+  // Run the compiler instead of trying to save the website
+  $(window).keydown(function (e) {
+    // ctrl+s or command+s
+    if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+      e.preventDefault()
+      runCompiler()
+    }
+  })
+
   function importExternal (url, cb) {
     self._components.compilerImport.import(url,
       (loadingMsg) => {
