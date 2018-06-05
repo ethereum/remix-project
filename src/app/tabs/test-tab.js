@@ -1,4 +1,5 @@
 var yo = require('yo-yo')
+var async = require('async')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
@@ -28,7 +29,7 @@ function testTabView (api) {
     cb()
   }
 
-  let finalCallback = function (_err, result) {
+  let updateFinalResult = function (_err, result) {
     if (result.totalPassing > 0) {
       append(container, ('  ' + result.totalPassing + ' passing ') + ('(' + result.totalTime + 's)'))
     }
@@ -43,10 +44,32 @@ function testTabView (api) {
     })
   }
 
+  function runTest (testFilePath, callback) {
+    var provider = api.fileProviderOf(testFilePath)
+    provider.get(testFilePath, (error, content) => {
+      if (!error) {
+        var runningTest = {}
+        runningTest[testFilePath] = { content }
+        remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
+          updateFinalResult(error, result)
+          callback(error)
+        }, api.importFileCb)
+      }
+    })
+  }
+
   let runTests = function () {
-    let contractSources = api.getAllSources()
     container.innerHTML = ''
-    remixTests.runTestSources(contractSources, testCallback, resultsCallback, finalCallback)
+    var path = api.currentPath()
+    var tests = []
+    api.filesFromPath(path, (error, files) => {
+      if (!error) {
+        for (var file in files) {
+          if (/.(_test.sol)$/.exec(file)) tests.push(path + file)
+        }
+        async.eachOfSeries(tests, (value, key, callback) => { runTest(value, callback) })
+      }
+    })
   }
 
   return yo`

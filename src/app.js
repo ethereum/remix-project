@@ -6,6 +6,7 @@ var yo = require('yo-yo')
 var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
+var remixTests = require('remix-tests')
 var EventManager = remixLib.EventManager
 
 var UniversalDApp = require('./universal-dapp.js')
@@ -253,6 +254,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   function importFileCb (url, filecb) {
+    if (url.indexOf('/remix_tests.sol') !== -1) {
+      return filecb(null, remixTests.assertLibCode)
+    }
     var provider = fileManager.fileProviderOf(url)
     if (provider) {
       provider.exists(url, (error, exist) => {
@@ -714,6 +718,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ---------------- Righthand-panel --------------------
 
   var rhpAPI = {
+    importFileCb: importFileCb,
+    filesFromPath: (path, cb) => {
+      fileManager.filesFromPath(path, cb)
+    },
     newAccount: (pass, cb) => {
       udapp.newAccount(pass, cb)
     },
