@@ -39,6 +39,7 @@
     "remix-core": "latest",
     "remix-lib": "latest",
     "remix-solidity": "latest",
+    "remix-tests": "latest",
     "remixd": "git+https://github.com/ethereum/remixd.git",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
@@ -52,7 +53,7 @@
     "web3": "^0.18.0",
     "webworkify": "^1.2.1",
     "yo-yo": "^1.2.2",
-    "yo-yoify": "^3.1.0"
+    "yo-yoify": "^3.7.3"
   },
   "dependencies": {
     "http-server": "0.9.0",

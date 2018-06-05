@@ -9,3 +9,5 @@ package-lock.json
 remix
 .DS_Store
 contracts
+TODO
+.tern-port
