@@ -1,34 +1,34 @@
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
+const yo = require('yo-yo')
+const csjs = require('csjs-inject')
+const remixLib = require('remix-lib')
 
-var styleguide = require('../ui/styles-guide/theme-chooser')
-var PluginManager = require('../plugin/pluginManager')
-var TabbedMenu = require('../tabs/tabbed-menu')
-var CompileTab = require('../tabs/compile-tab')
-var SettingsTab = require('../tabs/settings-tab')
-var AnalysisTab = require('../tabs/analysis-tab')
-var DebuggerTab = require('../tabs/debugger-tab')
-var SupportTab = require('../tabs/support-tab')
-var PluginTab = require('../tabs/plugin-tab')
-var TestTab = require('../tabs/test-tab')
-var RunTab = require('../tabs/run-tab')
+const styleguide = require('../ui/styles-guide/theme-chooser')
+const PluginManager = require('../plugin/pluginManager')
+const TabbedMenu = require('../tabs/tabbed-menu')
+const CompileTab = require('../tabs/compile-tab')
+const SettingsTab = require('../tabs/settings-tab')
+const AnalysisTab = require('../tabs/analysis-tab')
+const DebuggerTab = require('../tabs/debugger-tab')
+const SupportTab = require('../tabs/support-tab')
+const PluginTab = require('../tabs/plugin-tab')
+const TestTab = require('../tabs/test-tab')
+const RunTab = require('../tabs/run-tab')
 
-var EventManager = remixLib.EventManager
-var styles = styleguide.chooser()
+const EventManager = remixLib.EventManager
+const styles = styleguide.chooser()
 
 module.exports = function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
-  var self = this
+  const self = this
   self._api = appAPI
   self.event = new EventManager()
   self._view = {}
 
-  var optionViews = yo`<div id="optionViews"></div>`
+  const optionViews = yo`<div id="optionViews"></div>`
   self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
   // load tabbed menu component
-  var tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
+  const tabEvents = {compiler: events.compiler, app: events.app, rhp: self.event}
   self._view.tabbedMenu = new TabbedMenu(appAPI, tabEvents)
-  var options = self._view.tabbedMenu.render()
+  const options = self._view.tabbedMenu.render()
   options.classList.add(css.opts)
   self._view.element = yo`
     <div id="righthand-panel" class=${css.panel}>
@@ -46,17 +46,17 @@ module.exports = function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
 
   events.rhp = self.event
 
-  var compileTab = new CompileTab(appAPI, events, opts)
+  const compileTab = new CompileTab(appAPI, events, opts)
   optionViews.appendChild(compileTab.render())
-  var runTab = new RunTab(appAPI, events, opts)
+  const runTab = new RunTab(appAPI, events, opts)
   optionViews.appendChild(runTab.render())
-  var settingsTab = new SettingsTab(appAPI, events, opts)
+  const settingsTab = new SettingsTab(appAPI, events, opts)
   optionViews.appendChild(settingsTab.render())
-  var analysisTab = new AnalysisTab(appAPI, events, opts)
+  const analysisTab = new AnalysisTab(appAPI, events, opts)
   optionViews.appendChild(analysisTab.render())
-  var debuggerTab = new DebuggerTab(appAPI, events, opts)
+  const debuggerTab = new DebuggerTab(appAPI, events, opts)
   optionViews.appendChild(debuggerTab.render())
-  var supportTab = new SupportTab(appAPI, events, opts)
+  const supportTab = new SupportTab(appAPI, events, opts)
   optionViews.appendChild(supportTab.render())
   var testTab = new TestTab(appAPI, events, opts)
   optionViews.appendChild(testTab.render())
@@ -71,8 +71,8 @@ module.exports = function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
 
   self.pluginManager = new PluginManager(opts.pluginAPI, events)
   events.rhp.register('plugin-loadRequest', (json) => {
-    var tab = new PluginTab({}, events, json)
-    var content = tab.render()
+    const tab = new PluginTab({}, events, json)
+    const content = tab.render()
     optionViews.appendChild(content)
     this._view.tabbedMenu.addTab(json.title, 'plugin', content)
     self.pluginManager.register(json, content)
@@ -84,9 +84,9 @@ module.exports = function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
     ;[...options.children].forEach((el) => { el.classList.add(css.options) })
 
     // ----------------- resizeable ui ---------------
-    var limit = 60
+    const limit = 60
     self._view.dragbar.addEventListener('mousedown', mousedown)
-    var ghostbar = yo`<div class=${css.ghostbar}></div>`
+    const ghostbar = yo`<div class=${css.ghostbar}></div>`
     function mousedown (event) {
       event.preventDefault()
       if (event.which === 1) {
@@ -106,8 +106,8 @@ module.exports = function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
       }
     }
     function getPosition (event) {
-      var lhp = window['filepanel'].offsetWidth
-      var max = document.body.offsetWidth - limit
+      const lhp = window['filepanel'].offsetWidth
+      const max = document.body.offsetWidth - limit
       var newpos = (event.pageX > max) ? max : event.pageX
       newpos = (newpos > (lhp + limit)) ? newpos : lhp + limit
       return newpos
@@ -125,7 +125,7 @@ module.exports = function RighthandPanel (appAPI = {}, events = {}, opts = {}) {
   }
 }
 
-var css = csjs`
+const css = csjs`
   #righthand-panel {
     display: flex;
     flex-direction: column;
