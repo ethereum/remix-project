@@ -155,6 +155,14 @@ class FileManager {
     }
   }
 
+  filesFromPath (path, cb) {
+    var provider = this.fileProviderOf(path)
+    if (provider) {
+      return provider.resolveDirectory(path, (error, filesTree) => { cb(error, filesTree) })
+    }
+    cb(`provider for path ${path} not found`)
+  }
+
   fileProviderOf (file) {
     var provider = file.match(/[^/]*/)
     if (provider !== null && this.opt.filesProviders[provider[0]]) {
