@@ -74,9 +74,7 @@ contract test3 {
    
     Ballot ballotToTest;
     function beforeAll () {
-        bytes32[] proposals;
-        proposals.push(0xabcd);
-        ballotToTest = new Ballot(proposals);
+       ballotToTest = new Ballot(2);
     }
     
     function checkWinningProposal () public {
