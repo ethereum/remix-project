@@ -46,7 +46,7 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   })
 }
 
-function compileContractSources (sources, cb) {
+function compileContractSources (sources, importFileCb, cb) {
   let compiler, filepath
 
   if(!sources['remix_tests.sol']) {
@@ -55,7 +55,7 @@ function compileContractSources (sources, cb) {
 
   async.waterfall([
     function loadCompiler (next) {
-      compiler = new RemixCompiler()
+      compiler = new RemixCompiler(importFileCb)
       compiler.onInternalCompilerLoaded()
       // compiler.event.register('compilerLoaded', this, function (version) {
       next()
