@@ -26,19 +26,10 @@ StackPanel.prototype.init = function () {
         self.basicPanel.update({})
         console.log(error)
       } else if (self.parent.currentStepIndex === index) {
-        self.basicPanel.update(self.format(stack))
+        self.basicPanel.update(stack)
       }
     })
   })
-}
-
-StackPanel.prototype.format = function (stack) {
-  var ret = []
-  stack.map(function (item, i) {
-    var hex = ui.normalizeHex(item)
-    ret.push(hex)
-  })
-  return ret
 }
 
 module.exports = StackPanel
