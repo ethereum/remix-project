@@ -68,6 +68,18 @@ module.exports = {
     return '0x' + hex
   },
 
+  normalizeHexAddress: function (hex) {
+    if (hex.indexOf('0x') === 0) hex = hex.replace('0x', '')
+    if (hex.length >= 40) {
+      var reg = /(.{40})$/.exec(hex)
+      if (reg) {
+        return '0x' + reg[0]
+      }
+    } else {
+      return '0x' + (new Array(40 - hex.length + 1).join('0')) + hex
+    }
+  },
+
   runInBrowser: function () {
     return typeof window !== 'undefined'
   }
