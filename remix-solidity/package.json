@@ -1,6 +1,6 @@
 {
   "name": "remix-solidity",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -22,8 +22,8 @@
     "ethereumjs-vm": "^2.3.3",
     "fast-async": "^6.1.2",
     "npm-run-all": "^4.0.2",
-    "remix-core": "^0.0.12",
-    "remix-lib": "^0.2.6",
+    "remix-core": "^0.0.13",
+    "remix-lib": "^0.2.7",
     "solc": "https://github.com/ethereum/solc-js",
     "standard": "^7.0.1",
     "tape": "^4.6.0",
