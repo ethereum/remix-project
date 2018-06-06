@@ -27,15 +27,15 @@ module.exports = class RighthandPanel {
     self._view = { el: null, tabbedMenu: null, tabbedMenuViewport: null, dragbar: null }
     self._components = {}
 
-    const optionViews = yo`<div id="optionViews"></div>`
-    self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
-    // load tabbed menu component
     const tabEvents = {compiler: self._events.compiler, app: self._events.app, rhp: self.event}
     self._view.tabbedMenu = new TabbedMenu(self._api, tabEvents)
+    const optionViews = self._view.tabbedMenu.renderViewport()
+    self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
+    // load tabbed menu component
     const options = self._view.tabbedMenu.render()
     options.classList.add(css.opts)
     self._view.element = yo`
-      <div id="righthand-panel" class=${css.panel}>
+      <div id="righthand-panel" class=${css.righthandpanel}>
         ${self._view.dragbar}
         <div id="header" class=${css.header}>
           <div class=${css.menu}>
@@ -133,65 +133,26 @@ module.exports = class RighthandPanel {
 }
 
 const css = csjs`
-  #righthand-panel {
-    display: flex;
-    flex-direction: column;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  #optionViews {
-    background-color: ${styles.rightPanel.backgroundColor_Tab};
-    overflow: scroll;
-    height: 100%;
-  }
-  #optionViews > div {
-    display: none;
-  }
-  #optionViews .pre {
-    word-wrap: break-word;
-    background-color: ${styles.rightPanel.BackgroundColor_Pre};
-    border-radius: 3px;
-    display: inline-block;
-    padding: 0 0.6em;
-  }
-  #optionViews .hide {
-    display: none;
-  }
-  a {
-    color: ${styles.rightPanel.text_link};
-  }
   .menu {
     display: flex;
     background-color: ${styles.rightPanel.BackgroundColor_Pre};
-  }
-  .options {
-    float: left;
-    padding-top: 0.7em;
-    min-width: 60px;
-    font-size: 0.9em;
-    cursor: pointer;
-    font-size: 1em;
-    text-align: center;
-  }
-  .opts {
-    display: flex;
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .opts_li {
-    display: block;
-    font-weight: bold;
-    color: ${styles.rightPanel.text_Teriary};
+
+  .righthandpanel      {
+    display            : flex;
+    flex-direction     : column;
+    top                : 0;
+    right              : 0;
+    bottom             : 0;
+    box-sizing         : border-box;
+    overflow           : hidden;
+    height             : 100%;
   }
-  .opts_li.active {
-    color: ${styles.rightPanel.text_Primary};
-  }
-  .opts_li:hover {
-    color: ${styles.rightPanel.icon_HoverColor_TogglePanel};
+  .header              {
+    height             : 100%;
   }
   .dragbar             {
     position           : absolute;
@@ -211,20 +172,5 @@ const css = csjs`
     z-index           : 9999;
     top               : 0;
     bottom            : 0;
-  }
-  .panel              {
-    height            : 100%;
-  }
-  .header             {
-    height            : 100%;
-  }
-  .solIcon {
-    margin-left: 10px;
-    margin-right: 30px;
-    display: flex;
-    align-self: center;
-    height: 29px;
-    width: 20px;
-    background-color: ${styles.colors.transparent};
   }
 `
