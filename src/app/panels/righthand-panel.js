@@ -17,8 +17,8 @@ const RunTab = require('../tabs/run-tab')
 const EventManager = remixLib.EventManager
 const styles = styleguide.chooser()
 
-var prototype = {
-  constructor: function RighthandPanel (api = {}, events = {}, opts = {}) {
+module.exports = class RighthandPanel {
+  constructor (api = {}, events = {}, opts = {}) {
     const self = this
     self._api = api
     self._events = events
@@ -81,12 +81,12 @@ var prototype = {
       this._view.tabbedMenu.addTab(json.title, 'plugin', content)
       self.pluginManager.register(json, content)
     })
-  },
-  render: function () {
+  }
+  render () {
     const self = this
     return self._view.element
-  },
-  init: function () {
+  }
+  init () {
     const self = this
     // ;[...options.children].forEach((el) => { el.classList.add(css.options) })
 
@@ -131,9 +131,6 @@ var prototype = {
     }
   }
 }
-prototype.constructor.prototype = prototype
-
-module.exports = prototype.constructor
 
 const css = csjs`
   #righthand-panel {
