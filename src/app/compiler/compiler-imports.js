@@ -65,7 +65,7 @@ module.exports = class CompilerImports {
   }
 
   isRelativeImport (url) {
-    return /^([A-Za-z0-9]+)/.exec(url)
+    return /^([^/]+)/.exec(url)
   }
 
   import (url, loadingCb, cb) {
