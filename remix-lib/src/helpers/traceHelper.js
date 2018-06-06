@@ -8,7 +8,7 @@ module.exports = {
       return this.contractCreationToken(vmTraceIndex)
     } else if (this.isCallInstruction(step)) {
       var stack = step.stack // callcode, delegatecall, ...
-      return ui.normalizeHex(stack[stack.length - 2])
+      return ui.normalizeHexAddress(stack[stack.length - 2])
     }
     return undefined
   },

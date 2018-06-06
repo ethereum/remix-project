@@ -168,7 +168,7 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
       this.processingAddress = traceHelper.contractCreationToken(this.processingIndex)
       this.storageCache[this.processingHash][this.processingAddress] = {}
     } else {
-      this.processingAddress = uiutil.normalizeHex(step.stack[step.stack.length - 2])
+      this.processingAddress = uiutil.normalizeHexAddress(step.stack[step.stack.length - 2])
       if (!self.storageCache[self.processingHash][this.processingAddress]) {
         self.vm.stateManager.dumpStorage(this.processingAddress, function (storage) {
           self.storageCache[self.processingHash][self.processingAddress] = storage
