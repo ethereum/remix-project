@@ -29,13 +29,13 @@ module.exports = class CompileTab {
       contractEl: null
     }
     self.data = {
+      hideWarnings: self._opts.config.get('hideWarnings') || false,
       autoCompile: self._opts.config.get('autoCompile'),
       compileTimeout: null,
       contractsDetails: {},
       maxTime: 1000,
       timeout: 300
     }
-    self._opts.config.set('hideWarnings', false)
     self._events.editor.register('contentChanged', scheduleCompilation)
     self._events.editor.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
@@ -146,6 +146,7 @@ module.exports = class CompileTab {
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
     self._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
+    if (self.data.hideWarnings) self._view.hideWarningsBox.setAttribute('checked', '')
     self._view.compileContainer = yo`
       <div class="${css.compileContainer}">
         <div class="${css.compileButtons}">
@@ -194,7 +195,7 @@ module.exports = class CompileTab {
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
     function hideWarnings (event) {
-      self._opts.config.set('hideWarnings', !self._opts.config.get('hideWarnings'))
+      self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
       self._api.runCompiler()
     }
     function details () {
