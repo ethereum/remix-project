@@ -38,9 +38,7 @@ module.exports = class RighthandPanel {
       <div id="righthand-panel" class=${css.righthandpanel}>
         ${self._view.dragbar}
         <div id="header" class=${css.header}>
-          <div class=${css.menu}>
-            ${options}
-          </div>
+          ${options}
           ${optionViews}
         </div>
       </div>
@@ -51,34 +49,27 @@ module.exports = class RighthandPanel {
     self._events.rhp = self.event
 
     const compileTab = new CompileTab(self._api, self._events, self._opts)
-    optionViews.appendChild(compileTab.render())
     const runTab = new RunTab(self._api, self._events, self._opts)
-    optionViews.appendChild(runTab.render())
     const settingsTab = new SettingsTab(self._api, self._events, self._opts)
-    optionViews.appendChild(settingsTab.render())
     const analysisTab = new AnalysisTab(self._api, self._events, self._opts)
-    optionViews.appendChild(analysisTab.render())
     const debuggerTab = new DebuggerTab(self._api, self._events, self._opts)
-    optionViews.appendChild(debuggerTab.render())
     const supportTab = new SupportTab(self._api, self._events, self._opts)
-    optionViews.appendChild(supportTab.render())
-    const testTab = new TestTab(self._api, events, opts)
-    optionViews.appendChild(testTab.render())
-    this._view.tabbedMenu.addTab('Compile', 'compileView', optionViews.querySelector('#compileTabView'))
-    this._view.tabbedMenu.addTab('Run', 'runView', optionViews.querySelector('#runTabView'))
-    this._view.tabbedMenu.addTab('Settings', 'settingsView', optionViews.querySelector('#settingsView'))
-    this._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', optionViews.querySelector('#staticanalysisView'))
-    this._view.tabbedMenu.addTab('Debugger', 'debugView', optionViews.querySelector('#debugView'))
-    this._view.tabbedMenu.addTab('Support', 'supportView', optionViews.querySelector('#supportView'))
-    this._view.tabbedMenu.addTab('Test', 'testView', optionViews.querySelector('#testView'))
-    this._view.tabbedMenu.selectTabByTitle('Compile')
+    const testTab = new TestTab(self._api, self._events, self._opts)
+    self._view.tabbedMenu.addTab('Compile', 'compileView', compileTab.render())
+    self._view.tabbedMenu.addTab('Run', 'runView', runTab.render())
+    self._view.tabbedMenu.addTab('Settings', 'settingsView', settingsTab.render())
+    self._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab.render())
+    self._view.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab.render())
+    self._view.tabbedMenu.addTab('Support', 'supportView', supportTab.render())
+    self._view.tabbedMenu.addTab('Test', 'testView', testTab.render())
+    self._view.tabbedMenu.selectTabByTitle('Compile')
 
     self.pluginManager = new PluginManager(self._opts.pluginAPI, self._events)
     self._events.rhp.register('plugin-loadRequest', (json) => {
       const tab = new PluginTab({}, self._events, json)
       const content = tab.render()
       optionViews.appendChild(content)
-      this._view.tabbedMenu.addTab(json.title, 'plugin', content)
+      self._view.tabbedMenu.addTab(json.title, 'plugin', content)
       self.pluginManager.register(json, content)
     })
   }
@@ -133,14 +124,6 @@ module.exports = class RighthandPanel {
 }
 
 const css = csjs`
-  .menu {
-    display: flex;
-    background-color: ${styles.rightPanel.BackgroundColor_Pre};
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
   .righthandpanel      {
     display            : flex;
     flex-direction     : column;
