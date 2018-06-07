@@ -38,7 +38,6 @@ module.exports = class CompileTab {
       maxTime: 1000,
       timeout: 300
     }
-    self._opts.config.set('hideWarnings', false)
     self._events.editor.register('contentChanged', scheduleCompilation)
     self._events.editor.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
