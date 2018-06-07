@@ -8,25 +8,23 @@ function append (container, txt) {
   container.appendChild(child)
 }
 
-function testTab (api = {}, events = {}, opts = {}) {
-  let el = prototype.render(api)
-  let gitterIsLoaded = false
-
-  events.app.register('tabChanged', (tabName) => {
-    if (tabName !== 'test' || gitterIsLoaded) {
-      return
-    }
-
-    yo.update(el, prototype.render(api))
-    el.style.display = 'block'
-    gitterIsLoaded = true
-  })
-
-  return { render () { return el } }
-}
-
 const prototype = {
-  constructor: testTab,
+  constructor: function testTab (api = {}, events = {}, opts = {}) {
+    let el = prototype.render(api)
+    let gitterIsLoaded = false
+
+    events.app.register('tabChanged', (tabName) => {
+      if (tabName !== 'test' || gitterIsLoaded) {
+        return
+      }
+
+      yo.update(el, prototype.render(api))
+      el.style.display = 'block'
+      gitterIsLoaded = true
+    })
+
+    return { render () { return el } }
+  },
   render: function render (api) {
     var container = yo`<div class="tests" id="tests"></div>`
 
