@@ -10,22 +10,27 @@ function append (container, txt) {
 
 const prototype = {
   constructor: function testTab (api = {}, events = {}, opts = {}) {
-    let el = prototype.render(api)
-    let gitterIsLoaded = false
+    const self = this
+    self._opts = opts
+    self._api = api
+    self._events = events
+    self._view = { el: null }
+    self._components = {}
+    self.data = {}
 
-    events.app.register('tabChanged', (tabName) => {
-      if (tabName !== 'test' || gitterIsLoaded) {
-        return
-      }
+    self._view.el = prototype.render()
 
-      yo.update(el, prototype.render(api))
-      el.style.display = 'block'
-      gitterIsLoaded = true
+    events.app.register('tabChanged', tabName => {
+      if (tabName !== 'test') return
+      yo.update(self._view.el, prototype.render())
+      self._view.el.style.display = 'block'
     })
 
-    return { render () { return el } }
+    return { render () { return self._view.el } }
   },
-  render: function render (api) {
+  render: function render () {
+    const self = this
+    const api = self._api
     var container = yo`<div class="tests" id="tests"></div>`
 
     let testCallback = function (result) {
@@ -89,7 +94,7 @@ const prototype = {
       })
     }
 
-    return yo`
+    var el = yo`
       <div class="${css.testTabView} "id="testView">
         <div>
           <div class="${css.infoBox}">
@@ -101,6 +106,7 @@ const prototype = {
         </div>
       </div>
     `
+    return el
   }
 }
 prototype.constructor.prototype = prototype
