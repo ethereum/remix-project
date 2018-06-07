@@ -38,6 +38,7 @@ module.exports = class CompileTab {
       maxTime: 1000,
       timeout: 300
     }
+    self._opts.config.set('hideWarnings', false)
     self._events.editor.register('contentChanged', scheduleCompilation)
     self._events.editor.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
@@ -333,6 +334,11 @@ const css = csjs`
     width: 90px;
     display: flex;
     align-items: center;
+  }
+  .hideWarningsContainer {
+    display: flex;
+    align-items: center;
+    margin-left: 2%
   }
   .autocompile {}
   .autocompileTitle {
