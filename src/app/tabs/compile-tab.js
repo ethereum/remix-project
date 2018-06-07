@@ -294,11 +294,6 @@ const css = csjs`
     display: flex;
     align-items: center;
   }
-  .hideWarningsContainer {
-    display: flex;
-    align-items: center;
-    margin-left: 2%
-  }
   .autocompile {}
   .autocompileTitle {
     font-weight: bold;
