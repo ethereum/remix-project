@@ -8,7 +8,7 @@ function append (container, txt) {
   container.appendChild(child)
 }
 
-function testTabView (api) {
+function render (api) {
   var container = yo`<div class="tests" id="tests"></div>`
 
   let testCallback = function (result) {
@@ -87,7 +87,7 @@ function testTabView (api) {
 }
 
 function testTab (api = {}, events = {}, opts = {}) {
-  let el = testTabView(api)
+  let el = render(api)
   let gitterIsLoaded = false
 
   events.app.register('tabChanged', (tabName) => {
@@ -95,7 +95,7 @@ function testTab (api = {}, events = {}, opts = {}) {
       return
     }
 
-    yo.update(el, testTabView(api))
+    yo.update(el, render(api))
     el.style.display = 'block'
     gitterIsLoaded = true
   })
@@ -103,4 +103,9 @@ function testTab (api = {}, events = {}, opts = {}) {
   return { render () { return el } }
 }
 
-module.exports = testTab
+const prototype = {
+  constructor: testTab,
+  render: render
+}
+prototype.constructor.prototype = prototype
+module.exports = prototype.constructor
