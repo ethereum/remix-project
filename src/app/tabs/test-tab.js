@@ -3,13 +3,8 @@ var async = require('async')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
-function append (container, txt) {
-  let child = yo`<div>${txt}</div>`
-  container.appendChild(child)
-}
-
-const prototype = {
-  constructor: function testTab (api = {}, events = {}, opts = {}) {
+module.exports = class TestTab {
+  constructor (api = {}, events = {}, opts = {}) {
     const self = this
     self._opts = opts
     self._api = api
@@ -18,20 +13,25 @@ const prototype = {
     self._components = {}
     self.data = {}
 
-    self._view.el = prototype.render()
+    self._view.el = self.render()
 
     events.app.register('tabChanged', tabName => {
       if (tabName !== 'test') return
-      yo.update(self._view.el, prototype.render())
+      yo.update(self._view.el, self.render())
       self._view.el.style.display = 'block'
     })
 
     return { render () { return self._view.el } }
-  },
-  render: function render () {
+  }
+  render () {
     const self = this
     const api = self._api
     var container = yo`<div class="tests" id="tests"></div>`
+
+    function append (container, txt) {
+      let child = yo`<div>${txt}</div>`
+      container.appendChild(child)
+    }
 
     let testCallback = function (result) {
       if (result.type === 'contract') {
@@ -109,5 +109,3 @@ const prototype = {
     return el
   }
 }
-prototype.constructor.prototype = prototype
-module.exports = prototype.constructor
