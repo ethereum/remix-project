@@ -34,7 +34,17 @@ module.exports = class RighthandPanel {
       tabbedMenuViewport: null,
       dragbar: null
     }
-    self._components = {}
+    self._components = {
+      pluginManager: new PluginManager(self._opts.pluginAPI, self._events),
+      tabbedMenu: new TabbedMenu(self._api, self._events),
+      compile: new CompileTab(self._api, self._events, self._opts),
+      run: new RunTab(self._api, self._events, self._opts),
+      settings: new SettingsTab(self._api, self._events, self._opts),
+      analysis: new AnalysisTab(self._api, self._events, self._opts),
+      debug: new DebuggerTab(self._api, self._events, self._opts),
+      support: new SupportTab(self._api, self._events, self._opts),
+      test: new TestTab(self._api, self._events, self._opts)
+    }
 
     self.event.register('plugin-loadRequest', json => {
       const tab = new PluginTab({}, self._events, json)
@@ -46,14 +56,6 @@ module.exports = class RighthandPanel {
     self._components.pluginManager = new PluginManager(self._opts.pluginAPI, self._events)
     self._components.tabbedMenu = new TabbedMenu(self._api, self._events)
 
-    const compile = new CompileTab(self._api, self._events, self._opts)
-    const run = new RunTab(self._api, self._events, self._opts)
-    const settings = new SettingsTab(self._api, self._events, self._opts)
-    const analysis = new AnalysisTab(self._api, self._events, self._opts)
-    const debug = new DebuggerTab(self._api, self._events, self._opts)
-    const support = new SupportTab(self._api, self._events, self._opts)
-    const test = new TestTab(self._api, self._events, self._opts)
-
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
     self._view.element = yo`
       <div id="righthand-panel" class=${css.righthandpanel}>
@@ -64,7 +66,7 @@ module.exports = class RighthandPanel {
         </div>
       </div>`
 
-    // const { compile, run, settings, analysis, debug, support } = self._components
+    const { compile, run, settings, analysis, debug, support, test } = self._components
     self._components.tabbedMenu.addTab('Compile', 'compileView', compile.render())
     self._components.tabbedMenu.addTab('Run', 'runView', run.render())
     self._components.tabbedMenu.addTab('Settings', 'settingsView', settings.render())
