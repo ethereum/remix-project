@@ -45,39 +45,33 @@ module.exports = class RighthandPanel {
 
     self._components.pluginManager = new PluginManager(self._opts.pluginAPI, self._events)
     self._components.tabbedMenu = new TabbedMenu(self._api, self._events)
-    const compileTab = new CompileTab(self._api, self._events, self._opts)
-    const runTab = new RunTab(self._api, self._events, self._opts)
-    const settingsTab = new SettingsTab(self._api, self._events, self._opts)
-    const analysisTab = new AnalysisTab(self._api, self._events, self._opts)
-    const debuggerTab = new DebuggerTab(self._api, self._events, self._opts)
-    const supportTab = new SupportTab(self._api, self._events, self._opts)
-    const testTab = new TestTab(self._api, self._events, self._opts)
-    self._view.tabbedMenu.addTab('Compile', 'compileView', compileTab.render())
-    self._view.tabbedMenu.addTab('Run', 'runView', runTab.render())
-    self._view.tabbedMenu.addTab('Settings', 'settingsView', settingsTab.render())
-    self._view.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab.render())
-    self._view.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab.render())
-    self._view.tabbedMenu.addTab('Support', 'supportView', supportTab.render())
-    self._view.tabbedMenu.addTab('Test', 'testView', testTab.render())
-    self._view.tabbedMenu.selectTabByTitle('Compile')
+
+    const compile = new CompileTab(self._api, self._events, self._opts)
+    const run = new RunTab(self._api, self._events, self._opts)
+    const settings = new SettingsTab(self._api, self._events, self._opts)
+    const analysis = new AnalysisTab(self._api, self._events, self._opts)
+    const debug = new DebuggerTab(self._api, self._events, self._opts)
+    const support = new SupportTab(self._api, self._events, self._opts)
+    const test = new TestTab(self._api, self._events, self._opts)
 
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
-    const optionViews = self._components.tabbedMenu.renderViewport()
-    const options = self._components.tabbedMenu.render()
     self._view.element = yo`
       <div id="righthand-panel" class=${css.righthandpanel}>
         ${self._view.dragbar}
         <div id="header" class=${css.header}>
-          ${options}
-          ${optionViews}
+          ${self._components.tabbedMenu.render()}
+          ${self._components.tabbedMenu.renderViewport()}
         </div>
       </div>`
-    self._components.tabbedMenu.addTab('Compile', 'compileView', compileTab.render())
-    self._components.tabbedMenu.addTab('Run', 'runView', runTab.render())
-    self._components.tabbedMenu.addTab('Settings', 'settingsView', settingsTab.render())
-    self._components.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysisTab.render())
-    self._components.tabbedMenu.addTab('Debugger', 'debugView', debuggerTab.render())
-    self._components.tabbedMenu.addTab('Support', 'supportView', supportTab.render())
+
+    // const { compile, run, settings, analysis, debug, support } = self._components
+    self._components.tabbedMenu.addTab('Compile', 'compileView', compile.render())
+    self._components.tabbedMenu.addTab('Run', 'runView', run.render())
+    self._components.tabbedMenu.addTab('Settings', 'settingsView', settings.render())
+    self._components.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysis.render())
+    self._components.tabbedMenu.addTab('Debugger', 'debugView', debug.render())
+    self._components.tabbedMenu.addTab('Support', 'supportView', support.render())
+    self._components.tabbedMenu.addTab('Test', 'testView', test.render())
     self._components.tabbedMenu.selectTabByTitle('Compile')
   }
   // showDebugger () {
