@@ -71,7 +71,8 @@ var builtinFunctions = {
   'require(bool)': true,
   'require(bool,string memory)': true,
   'gasleft()': true,
-  'blockhash(uint)': true
+  'blockhash(uint)': true,
+  'address(address)': true
 }
 
 var lowLevelCallTypes = {
