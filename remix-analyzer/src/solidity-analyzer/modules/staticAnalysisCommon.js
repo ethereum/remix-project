@@ -905,6 +905,15 @@ function isBytesLengthCheck (node) {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(basicTypes.UINT)), undefined, util.escapeRegExp('bytes *'), 'length')
 }
 
+/**
+ * True if it is a 'for' loop
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isForLoop (node) {
+  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))
+}
+
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node, retType, accessor, accessorType, memberName) {
@@ -1055,6 +1064,7 @@ module.exports = {
   isIntDivision: isIntDivision,
   isStringToBytesConversion: isStringToBytesConversion,
   isBytesLengthCheck: isBytesLengthCheck,
+  isForLoop: isForLoop,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation: isDeleteUnaryOperation,
