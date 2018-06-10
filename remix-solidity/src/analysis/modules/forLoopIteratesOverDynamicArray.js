@@ -8,11 +8,11 @@ function forLoopIteratesOverDynamicArray () {
 }
 
 forLoopIteratesOverDynamicArray.prototype.visit = function (node) {
-    if (common.isForLoop(node) &&
-    node.children[1].children[1].attributes.member_name === 'length' &&
-    node.children[1].children[1].children[0].attributes.type.indexOf('[]') != -1) {
-      this.relevantNodes.push(node)
-    }
+	if (common.isForLoop(node) &&
+	node.children[1].children[1].attributes.member_name === 'length' &&
+	node.children[1].children[1].children[0].attributes.type.indexOf('[]') !== -1) {
+		this.relevantNodes.push(node)
+	}
 }
 
 forLoopIteratesOverDynamicArray.prototype.report = function (compilationResults) {
