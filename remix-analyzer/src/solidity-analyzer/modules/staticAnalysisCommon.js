@@ -502,6 +502,24 @@ function isDynamicArrayAccess (node) {
 }
 
 /**
+ * True if node is a delete instruction for an element from a dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDeleteFromDynamicArray (node) {
+  return isDeleteUnaryOperation(node) && isIndexAccess(node.children[0])
+}
+
+/**
+ * True if node is the access of an index
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isIndexAccess (node) {
+  return node && node.name === 'IndexAccess'
+}
+
+/**
  * True if call to code within the current contracts context including (delegate) library call
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -999,9 +1017,11 @@ module.exports = {
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray: isDeleteOfDynamicArray,
+  isDeleteFromDynamicArray: isDeleteFromDynamicArray,
   isAbiNamespaceCall: isAbiNamespaceCall,
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
+  isIndexAccess: isIndexAccess,
   isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
