@@ -57,25 +57,10 @@ var css = csjs`
     overflow-y        : auto;
     font-family       : monospace;
     margin            : 0px;
-  }
-  .terminal_bg     {
-    display           : flex;
-    flex-direction    : column;
-    height            : 100%;
-    padding-left      : 5px;
-    padding-right     : 5px;
-    padding-bottom    : 3px;
-    overflow-y        : auto;
-    font-family       : monospace;
-    background-image  : ${styles.terminal.backgroundImage_Terminal};
-    opacity           : 0.1;
-    top               : 15%;
-    left              : 33%;
-    bottom            : 0;
-    right             : 0;
-    position          : absolute;
-    background-repeat : no-repeat;
-    background-size   : 45%;
+    background-image    : ${styles.terminal.backgroundImage_Terminal};
+    background-repeat   : no-repeat;
+    background-position : center 15%;
+    background-size     : auto calc(75% -  1.7em);
   }
   .terminal    {
     position: relative;
