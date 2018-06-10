@@ -145,8 +145,6 @@ class Terminal {
 
     self._view.term = yo`
       <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
-        <div class=${css.terminal_bg}>
-        </div>
         <div class=${css.terminal}>
             ${self._view.journal}
             ${self._view.cli}
