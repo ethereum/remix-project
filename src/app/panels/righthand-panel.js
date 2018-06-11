@@ -53,9 +53,6 @@ module.exports = class RighthandPanel {
       self._components.pluginManager.register(json, content)
     })
 
-    self._components.pluginManager = new PluginManager(self._opts.pluginAPI, self._events)
-    self._components.tabbedMenu = new TabbedMenu(self._api, self._events)
-
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
     self._view.element = yo`
       <div id="righthand-panel" class=${css.righthandpanel}>
