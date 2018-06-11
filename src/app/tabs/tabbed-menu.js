@@ -68,7 +68,14 @@ module.exports = class TabbedMenu {
 }
 
 const css = csjs`
-  li.active {
+  .menu {
+    display: flex;
+    background-color: ${styles.rightPanel.BackgroundColor_Pre};
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .active {
     background-color: ${styles.rightPanel.backgroundColor_Tab};
     color: ${styles.appProperties.mainText_Color}
   }
@@ -81,21 +88,19 @@ const css = csjs`
     font-size: 1em;
     text-align: center;
   }
-  .opts {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .optionViews {
+    background-color: ${styles.rightPanel.backgroundColor_Tab};
+    overflow: scroll;
+    height: 100%;
   }
-  .opts_li {
-    display: block;
-    font-weight: bold;
-    color: ${styles.rightPanel.text_Teriary}
+  .optionViews > div {
+    display: none;
   }
-  .opts_li.active {
-    color: ${styles.rightPanel.text_Primary}
-  }
-  .opts_li:hover {
-    color: ${styles.rightPanel.icon_HoverColor_TogglePanel}
+  .optionViews .pre {
+    word-wrap: break-word;
+    background-color: ${styles.rightPanel.BackgroundColor_Pre};
+    border-radius: 3px;
+    display: inline-block;
+    padding: 0 0.6em;
   }
 `

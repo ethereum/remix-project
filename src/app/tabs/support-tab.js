@@ -18,15 +18,18 @@ module.exports = class SupportTab {
     self._components = {}
     self._events.app.register('tabChanged', (tabName) => {
       if (tabName !== 'Support' || self.data.gitterIsLoaded) return
-      if (!self._view.gitterIframe) self._view.gitterIframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
-      yo.update(self._view.el, self.render())
+      const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
+      self._view.gitterIframe.parentNode.replaceChild(iframe, self._view.gitterIframe)
+      self._view.gitterIframe = iframe
       self._view.el.style.display = 'block'
       self.data.gitterIsLoaded = true
     })
   }
   render () {
     const self = this
-    var el = yo`
+    if (self._view.el) return self._view.el
+    self._view.gitterIframe = yo`<div></div>`
+    self._view.el = yo`
       <div class="${css.supportTabView}" id="supportView">
         <div class="${css.infoBox}">
           Have a question, found a bug or want to propose a feature? Have a look at the
@@ -41,8 +44,7 @@ module.exports = class SupportTab {
           ${self._view.gitterIframe}
         </div>
       </div>`
-    if (!self._view.el) self._view.el = el
-    return el
+    return self._view.el
     function openLink () { window.open('https://gitter.im/ethereum/remix') }
   }
 }
