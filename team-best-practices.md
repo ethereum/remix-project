@@ -10,6 +10,7 @@ This document is not in its final version, **a team meeting which aim to address
 This document link to other specialised best practices (like coding best practices).
 
 Related links:
+ - Remix basic FAQ: https://hackmd.io/KVooMJhWRImCGq6zkDgW9A
  - Remix weekly agenda: https://hackmd.io/2nJJZmMPQwCN4qwkxmfXVQ?edit
  - Remix live: remix.ethereum.org
  - Remix alpha live: remix-alpha.ethereum.org
