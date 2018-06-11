@@ -63,7 +63,7 @@ module.exports = class RighthandPanel {
         </div>
       </div>`
 
-    const { compile, run, settings, analysis, debug, support, test } = self._components
+    const { compile, run, settings, analysis, debug, support } = self._components
     self._components.tabbedMenu.addTab('Compile', 'compileView', compile.render())
     self._components.tabbedMenu.addTab('Run', 'runView', run.render())
     self._components.tabbedMenu.addTab('Settings', 'settingsView', settings.render())
