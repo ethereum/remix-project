@@ -370,6 +370,7 @@ function txDetails (e, tx, data, obj) {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
     table = createTable({
+      hash: data.tx.transactionHash,
       status: data.tx.status,
       isCall: data.tx.isCall,
       contractAddress: data.tx.contractAddress,
@@ -405,9 +406,19 @@ function createTable (opts) {
     </tr>`)
   }
 
+  var transactionHash = yo`
+    <tr class="${css.tr}">
+      <td class="${css.td}"> transaction hash </td>
+      <td class="${css.td}">${opts.hash}
+        ${copyToClipboard(() => opts.hash)}
+      </td>
+    </tr>
+  `
+  table.appendChild(transactionHash)
+
   var contractAddress = yo`
     <tr class="${css.tr}">
-      <td class="${css.td}"> contractAddress </td>
+      <td class="${css.td}"> contract address </td>
       <td class="${css.td}">${opts.contractAddress}
         ${copyToClipboard(() => opts.contractAddress)}
       </td>
