@@ -7,9 +7,9 @@ Ethereum tools for the web.
 *Are you looking for the Remix IDE? Follow [this link](https://github.com/ethereum/remix-ide)!*
 
 + [What is Remix?](#what-is-remix)
-+ [How to use Remix](#how-to-use)
++ [How to use Remix?](#how-to-use)
 + [Modules](#modules)
-+ [Contributing](#contributing)
++ [Contributing guidelines](#contributing)
 
 ## <a name="what-is-remix"></a>What is Remix?
 
