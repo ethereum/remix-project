@@ -200,13 +200,15 @@ class TxListener {
 
   _resolve (transactions, callback) {
     async.each(transactions, (tx, cb) => {
-      this._resolveTx(tx, (error, resolvedData) => {
-        if (error) cb(error)
-        if (resolvedData) {
-          this.event.trigger('txResolved', [tx, resolvedData])
-        }
-        this.event.trigger('newTransaction', [tx])
-        cb()
+      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+        this._resolveTx(receipt, (error, resolvedData) => {
+          if (error) cb(error)
+          if (resolvedData) {
+            this.event.trigger('txResolved', [receipt, resolvedData])
+          }
+          this.event.trigger('newTransaction', [receipt])
+          cb()
+        })
       })
     }, () => {
       callback()
