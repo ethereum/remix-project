@@ -201,6 +201,7 @@ class TxListener {
   _resolve (transactions, callback) {
     async.each(transactions, (tx, cb) => {
       executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+        if (error) return cb(error)
         this._resolveTx(receipt, (error, resolvedData) => {
           if (error) cb(error)
           if (resolvedData) {
