@@ -121,6 +121,7 @@ web3VmProvider.prototype.txProcessed = function (self, data) {
     })
   }
   self.txsReceipt[self.processingHash].logs = logs
+  self.txsReceipt[self.processingHash].transactionHash = self.processingHash
 
   if (data.createdAddress) {
     var address = util.hexConvert(data.createdAddress)
