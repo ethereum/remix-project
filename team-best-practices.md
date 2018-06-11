@@ -5,6 +5,7 @@ This document aims to address contibutors best practices of the following reposi
  - remix-ide https://github.com/ethereum/remix-ide
  - remix https://github.com/ethereum/remix
  - remix-tests https://github.com/ethereum/remix-tests
+ - remixd https://github.com/ethereum/remixd
 
 This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
 This document link to other specialised best practices (like coding best practices).
