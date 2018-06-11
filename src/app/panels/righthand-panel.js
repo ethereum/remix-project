@@ -70,7 +70,7 @@ module.exports = class RighthandPanel {
     self._components.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysis.render())
     self._components.tabbedMenu.addTab('Debugger', 'debugView', debug.render())
     self._components.tabbedMenu.addTab('Support', 'supportView', support.render())
-    self._components.tabbedMenu.addTab('Test', 'testView', test.render())
+    // self._components.tabbedMenu.addTab('Test', 'testView', test.render())
     self._components.tabbedMenu.selectTabByTitle('Compile')
   }
   // showDebugger () {
