@@ -1,6 +1,6 @@
 {
   "name": "remix-core",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -19,7 +19,7 @@
     "babel-preset-es2015": "^6.24.0",
     "babelify": "^7.3.0",
     "fast-async": "^6.1.2",
-    "remix-lib": "^0.2.8",
+    "remix-lib": "^0.2.9",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
   },
