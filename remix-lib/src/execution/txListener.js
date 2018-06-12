@@ -52,7 +52,7 @@ class TxListener {
       }
 
       addExecutionCosts(txResult, call)
-      this._resolveTx(call, (error, resolvedData) => {
+      this._resolveTx(call, call, (error, resolvedData) => {
         if (!error) {
           this.event.trigger('newCall', [call])
         }
@@ -200,14 +200,14 @@ class TxListener {
 
   _resolve (transactions, callback) {
     async.each(transactions, (tx, cb) => {
-      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+      this._api.resolveReceipt(tx, (error, receipt) => {
         if (error) return cb(error)
-        this._resolveTx(receipt, (error, resolvedData) => {
+        this._resolveTx(tx, receipt, (error, resolvedData) => {
           if (error) cb(error)
           if (resolvedData) {
-            this.event.trigger('txResolved', [receipt, resolvedData])
+            this.event.trigger('txResolved', [tx, receipt, resolvedData])
           }
-          this.event.trigger('newTransaction', [receipt])
+          this.event.trigger('newTransaction', [tx, receipt])
           cb()
         })
       })
@@ -216,10 +216,11 @@ class TxListener {
     })
   }
 
-  _resolveTx (tx, cb) {
+  _resolveTx (tx, receipt, cb) {
     var contracts = this._api.contracts()
     if (!contracts) return cb()
     var contractName
+    var fun
     if (!tx.to || tx.to === '0x0') { // testrpc returns 0x0 in that case
       // contract creation / resolve using the creation bytes code
       // if web3: we have to call getTransactionReceipt to get the created address
@@ -227,17 +228,13 @@ class TxListener {
       var code = tx.input
       contractName = this._tryResolveContract(code, contracts, true)
       if (contractName) {
-        this._api.resolveReceipt(tx, (error, receipt) => {
-          if (error) return cb(error)
-          var address = receipt.contractAddress
-          this._resolvedContracts[address] = contractName
-          var fun = this._resolveFunction(contractName, contracts, tx, true)
-          if (this._resolvedTransactions[tx.hash]) {
-            this._resolvedTransactions[tx.hash].contractAddress = address
-          }
-          return cb(null, {to: null, contractName: contractName, function: fun, creationAddress: address})
-        })
-        return
+        var address = receipt.contractAddress
+        this._resolvedContracts[address] = contractName
+        fun = this._resolveFunction(contractName, contracts, tx, true)
+        if (this._resolvedTransactions[tx.hash]) {
+          this._resolvedTransactions[tx.hash].contractAddress = address
+        }
+        return cb(null, {to: null, contractName: contractName, function: fun, creationAddress: address})
       }
       return cb()
     } else {
@@ -259,7 +256,7 @@ class TxListener {
         return
       }
       if (contractName) {
-        var fun = this._resolveFunction(contractName, contracts, tx, false)
+        fun = this._resolveFunction(contractName, contracts, tx, false)
         return cb(null, {to: tx.to, contractName: contractName, function: fun})
       }
       return cb()
