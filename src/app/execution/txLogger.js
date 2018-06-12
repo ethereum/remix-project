@@ -180,12 +180,12 @@ class TxLogger {
       }
     })
 
-    opts.events.txListener.register('newTransaction', (tx) => {
-      log(this, tx, opts.api)
+    opts.events.txListener.register('newTransaction', (tx, receipt) => {
+      log(this, tx, receipt, opts.api)
     })
 
     opts.events.txListener.register('newCall', (tx) => {
-      log(this, tx, opts.api)
+      log(this, tx, null, opts.api)
     })
   }
 }
@@ -199,17 +199,17 @@ function debug (e, data, self) {
   }
 }
 
-function log (self, tx, api) {
+function log (self, tx, receipt, api) {
   var resolvedTransaction = api.resolvedTransaction(tx.hash)
   if (resolvedTransaction) {
     api.parseLogs(tx, resolvedTransaction.contractName, api.compiledContracts(), (error, logs) => {
       if (!error) {
-        self.logKnownTX({ tx: tx, resolvedData: resolvedTransaction, logs: logs })
+        self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
       }
     })
   } else {
     // contract unknown - just displaying raw tx.
-    self.logUnknownTX({ tx: tx })
+    self.logUnknownTX({ tx: tx, receipt: receipt })
   }
 }
 
@@ -221,7 +221,7 @@ function renderKnownTransaction (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        ${checkTxStatus(data.tx, txType)}
+        ${checkTxStatus(data.receipt, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
@@ -267,7 +267,7 @@ function renderUnknownTransaction (self, data) {
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        ${checkTxStatus(data.tx, txType)}
+        ${checkTxStatus(data.receipt, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
@@ -370,8 +370,8 @@ function txDetails (e, tx, data, obj) {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
     table = createTable({
-      hash: data.tx.transactionHash,
-      status: data.tx.status,
+      hash: data.tx.hash,
+      status: data.receipt.status,
       isCall: data.tx.isCall,
       contractAddress: data.tx.contractAddress,
       data: data.tx,
