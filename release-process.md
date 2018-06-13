@@ -43,3 +43,17 @@ This is not strictly speaking a release. Updating the remix-alpha site is done t
  - Select `Master`
  - Click `Trigger custom build`
  - Once the build is finished (can take a while) and successful, check remix-alpha.ethereum.org is updated accordingly
+ 
+# beta testing remix
+
+We publish a new release roughly every month and greatly appreciate support on beta testing. 
+
+By giving report, beta testers help to:
+ - verify viabilty (in term core and UX design) of new features
+ - track possible regression
+ - propose new update
+ - contribute on reviewing / building Pull Request
+ 
+Current Beta testers:
+
+
