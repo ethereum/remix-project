@@ -9,6 +9,7 @@ var remixLib = require('remix-lib')
 var remixTests = require('remix-tests')
 var EventManager = remixLib.EventManager
 
+var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
 var Remixd = require('./lib/remixd')
@@ -293,6 +294,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- Compiler -----------------
   var compiler = new Compiler(importFileCb)
+  registry.put({api: compiler, name: 'compiler'})
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
   // ----------------- UniversalDApp -----------------

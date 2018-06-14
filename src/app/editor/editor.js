@@ -1,9 +1,8 @@
 'use strict'
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
+var registry = require('../../global/registry')
 
 require('brace/theme/tomorrow_night_blue')
 
@@ -65,6 +64,10 @@ document.head.appendChild(yo`
 
 function Editor (opts = {}) {
   var self = this
+
+  var eventsName = ['breakpointCleared', 'breakpointAdded', 'sessionSwitched', 'contentChanged'] // not used for legacyEvent
+  var {uid /* api, */, legacyEvents} = registry.put({api: this, events: eventsName, name: 'editor'})
+  self.event = legacyEvents
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
   if (styles.appProperties.aceTheme) {
@@ -85,8 +88,7 @@ function Editor (opts = {}) {
   el.className += ' ' + css['ace-editor']
   el.editor = editor // required to access the editor during tests
   self.render = function () { return el }
-  var event = new EventManager()
-  self.event = event
+
   var sessions = {}
   var sourceAnnotations = []
   var readOnlySessions = {}
@@ -103,14 +105,14 @@ function Editor (opts = {}) {
     var breakpoints = e.editor.session.getBreakpoints()
     for (var k in breakpoints) {
       if (k === row.toString()) {
-        event.trigger('breakpointCleared', [currentSession, row])
+        self.event.trigger('breakpointCleared', [currentSession, row])
         e.editor.session.clearBreakpoint(row)
         e.stop()
         return
       }
     }
     self.setBreakpoint(row)
-    event.trigger('breakpointAdded', [currentSession, row])
+    self.event.trigger('breakpointAdded', [currentSession, row])
     e.stop()
   })
 
@@ -277,10 +279,10 @@ function Editor (opts = {}) {
 
   // Do setup on initialisation here
   editor.on('changeSession', function () {
-    event.trigger('sessionSwitched', [])
+    self.event.trigger('sessionSwitched', [])
 
     editor.getSession().on('change', function () {
-      event.trigger('contentChanged', [])
+      self.event.trigger('contentChanged', [])
     })
   })
 
