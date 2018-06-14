@@ -2,7 +2,6 @@ const moduleID = require('./module-id.js')
 const remixLib = require('remix-lib')
 const EventManager = remixLib.EventManager
 
-
 module.exports = class registry {
   constructor () {
     this.state = {}
