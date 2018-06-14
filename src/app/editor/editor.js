@@ -66,7 +66,7 @@ function Editor (opts = {}) {
   var self = this
 
   var eventsName = ['breakpointCleared', 'breakpointAdded', 'sessionSwitched', 'contentChanged'] // not used for legacyEvent
-  var {uid /* api, */, legacyEvents} = registry.put({api: this, events: eventsName, name: 'editor'})
+  var {legacyEvents} = registry.put({api: this, events: eventsName, name: 'editor'})
   self.event = legacyEvents
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
