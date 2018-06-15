@@ -51,6 +51,13 @@ a {
   height: 70%;
   margin-right: 2%;
 }
+.testList {
+  ${styles.rightPanel.testTab.box_listTests}
+  line-height: 2em;
+  display: flex;
+  flex-direction: column;
+  margin: 2%;
+}
 `
 
 module.exports = css

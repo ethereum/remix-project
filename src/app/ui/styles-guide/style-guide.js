@@ -655,6 +655,17 @@ function styleGuide () {
       },
 
       /* ::::::::::::::
+         TEST TAB
+      ::::::::::::::: */
+      testTab: {
+        box_listTests: appProperties.uiElements.solidBorderBox({
+          BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
+          BorderColor: appProperties.solidBorderBox_BackgroundColor,
+          Color: appProperties.solidBorderBox_TextColor
+        })
+      },
+
+      /* ::::::::::::::
          SETTINGS TAB
       ::::::::::::::: */
       settingsTab: {

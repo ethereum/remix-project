@@ -16,7 +16,6 @@ module.exports = class TestTab {
       app: self._components.registry.get('app').api
     }
     self.data = {}
-
     self._view.el = self.render()
     self._deps.app.event.register('tabChanged', tabName => {
       if (tabName !== 'test') return
@@ -29,13 +28,15 @@ module.exports = class TestTab {
   render () {
     var self = this
     var container = yo`<div class="tests" id="tests"></div>`
-
+    self.data.allTests = getTests()
+    self.data.selectedTests = self.data.allTests
+    console.log(self.data.selectedTests)
     function append (container, txt) {
-      let child = yo`<div>${txt}</div>`
+      var child = yo`<div>${txt}</div>`
       container.appendChild(child)
     }
 
-    let testCallback = function (result) {
+    var testCallback = function (result) {
       if (result.type === 'contract') {
         append(container, '\n  ' + result.value)
       } else if (result.type === 'testPass') {
@@ -45,7 +46,7 @@ module.exports = class TestTab {
       }
     }
 
-    let resultsCallback = function (_err, result, cb) {
+    var resultsCallback = function (_err, result, cb) {
       // total stats for the test
       // result.passingNum
       // result.failureNum
@@ -53,7 +54,7 @@ module.exports = class TestTab {
       cb()
     }
 
-    let updateFinalResult = function (_err, result) {
+    var updateFinalResult = function (_err, result) {
       if (result.totalPassing > 0) {
         append(container, ('  ' + result.totalPassing + ' passing ') + ('(' + result.totalTime + 's)'))
       }
@@ -81,8 +82,7 @@ module.exports = class TestTab {
       })
     }
 
-    let runTests = function () {
-      container.innerHTML = ''
+    function getTests () {
       var path = this._deps.fileManager.currentPath()
       var provider = this._deps.fileManager.fileProviderOf(path)
       var tests = []
@@ -91,9 +91,31 @@ module.exports = class TestTab {
           for (var file in files) {
             if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
           }
-          async.eachOfSeries(tests, (value, key, callback) => { runTest(value, provider, callback) })
         }
       })
+      return tests
+    }
+
+    self._events.app.register('newTestFileCreated', file => {
+      self.data.allTests.push(file)
+      self.data.selectedTests.push(file)
+    })
+
+    function listTests () {
+      var tests = self.data.allTests
+      return tests.map(test => yo`<label><input onchange =${(e) => toggleCheckbox(e, test)} type="checkbox" checked="true">${test} </label>`)
+    }
+
+    function toggleCheckbox (e, test) {
+      var selectedTests = self.data.selectedTests
+      selectedTests = e.target.checked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
+      self.data.selectedTests = selectedTests
+    }
+
+    var runTests = function () {
+      container.innerHTML = ''
+      var tests = self.data.selectedTests
+      async.eachOfSeries(tests, (value, key, callback) => { runTest(value, callback) })
     }
 
     var el = yo`
@@ -103,6 +125,9 @@ module.exports = class TestTab {
           </div>
         </div>
         <div class="${css.testList}">
+          <div class=${css.testList}>
+            ${listTests()}
+          </div>
           <p><button onclick=${runTests}>Run Tests</button></p>
           ${container}
         </div>
