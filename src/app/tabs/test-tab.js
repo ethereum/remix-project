@@ -29,7 +29,7 @@ module.exports = class TestTab {
     const self = this
     var container = yo`<div class=${css.testsOutput} id="tests"></div>`
     self.data.allTests = getTests()
-    self.data.selectedTests = self.data.allTests
+    self.data.selectedTests = [...self.data.allTests]
     function append (container, txt) {
       var child = yo`<div>${txt}</div>`
       container.appendChild(child)
@@ -101,6 +101,13 @@ module.exports = class TestTab {
       testList.appendChild(test)
       self.data.allTests.push(file)
     })
+
+    // self._events.filePanel.register('fileRenamed', (oldName, newName, isFolder) => {
+    //   debugger
+    //   self.data.allTests = self.data.allTests.filter(e => e != oldName)
+    //   self.data.selectedTests = self.data.selectedTests.filter(e => e !== oldName)
+    //   if (/.(_test.sol)$/.exec(newName)) self.data.allTests.push(newName)
+    // })
 
     function listTests () {
       var tests = self.data.allTests
