@@ -26,11 +26,10 @@ module.exports = class TestTab {
     return { render () { return self._view.el } }
   }
   render () {
-    var self = this
-    var container = yo`<div class="tests" id="tests"></div>`
+    const self = this
+    var container = yo`<div class=${css.testsOutput} id="tests"></div>`
     self.data.allTests = getTests()
     self.data.selectedTests = self.data.allTests
-    console.log(self.data.selectedTests)
     function append (container, txt) {
       var child = yo`<div>${txt}</div>`
       container.appendChild(child)
@@ -96,9 +95,11 @@ module.exports = class TestTab {
       return tests
     }
 
-    self._events.app.register('newTestFileCreated', file => {
+    self._events.filePanel.register('newTestFileCreated', file => {
+      var testList = document.querySelector(`[class^='testList']`)
+      var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox">${file} </label>`
+      testList.appendChild(test)
       self.data.allTests.push(file)
-      self.data.selectedTests.push(file)
     })
 
     function listTests () {
@@ -120,15 +121,16 @@ module.exports = class TestTab {
 
     var el = yo`
       <div class="${css.testTabView} "id="testView">
-        <div>
-          <div class="${css.infoBox}">
-          </div>
+        <div class="${css.infoBox}">
+          Test your smart contract by creating a foo_test.sol file.
+          Open ballot_test.sol to see the example. For more details, see
+          How to test smart contracts guide in our documentation.
         </div>
-        <div class="${css.testList}">
-          <div class=${css.testList}>
-            ${listTests()}
+        <div class="${css.tests}">
+          <div class=${css.testList}>${listTests()}</div>
+          <div class=${css.buttons}>
+            <div class=${css.runButton} onclick=${runTests}>Run Tests</div>
           </div>
-          <p><button onclick=${runTests}>Run Tests</button></p>
           ${container}
         </div>
       </div>
