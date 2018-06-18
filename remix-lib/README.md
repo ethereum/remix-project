@@ -18,9 +18,7 @@ Provides:
         init: init,
         util: util,
         AstWalker: AstWalker,
-        global: global,
         ui: {
             styleGuide: styleGuide
-        }
         }
     }

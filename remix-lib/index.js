@@ -11,7 +11,6 @@ var Web3Providers = require('./src/web3Provider/web3Providers')
 var DummyProvider = require('./src/web3Provider/dummyProvider')
 var Web3VMProvider = require('./src/web3Provider/web3VmProvider')
 var AstWalker = require('./src/astWalker')
-var global = require('./src/global')
 var Storage = require('./src/storage')
 
 var EventsDecoder = require('./src/execution/eventsDecoder')
@@ -50,7 +49,6 @@ function modules () {
     init: init,
     util: util,
     AstWalker: AstWalker,
-    global: global,
     execution: {
       EventsDecoder: EventsDecoder,
       txExecution: txExecution,
