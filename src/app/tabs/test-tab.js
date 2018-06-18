@@ -97,9 +97,10 @@ module.exports = class TestTab {
 
     self._events.filePanel.register('newTestFileCreated', file => {
       var testList = document.querySelector(`[class^='testList']`)
-      var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox">${file} </label>`
+      var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file} </label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
+      self.data.selectedTests.push(file)
     })
 
     // self._events.filePanel.register('fileRenamed', (oldName, newName, isFolder) => {
