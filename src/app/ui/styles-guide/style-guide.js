@@ -662,6 +662,12 @@ function styleGuide () {
           BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
           BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
+        }),
+
+        button_runTests: appProperties.uiElements.button({
+          BackgroundColor: appProperties.primaryButton_BackgroundColor,
+          BorderColor: appProperties.primaryButton_BorderColor,
+          Color: appProperties.primaryButton_TextColor
         })
       },
 
