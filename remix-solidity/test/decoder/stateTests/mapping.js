@@ -15,7 +15,7 @@ module.exports = function testMappingStorage (st, cb) {
       console.log(error)
       st.end(error)
     } else {
-      remixLib.global.web3.eth.getTransaction(txHash, (error, tx) => {
+      vm.web3.eth.getTransaction(txHash, (error, tx) => {
         if (error) {
           console.log(error)
           st.end(error)
@@ -35,7 +35,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
             st.end(error)
           } else {
             console.log(txHash)
-            remixLib.global.web3.eth.getTransaction(txHash, (error, tx) => {
+            vm.web3.eth.getTransaction(txHash, (error, tx) => {
               if (error) {
                 console.log(error)
                 st.end(error)
