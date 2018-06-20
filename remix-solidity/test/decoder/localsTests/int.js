@@ -6,7 +6,6 @@ var vmCall = require('../vmCall')
 var remixLib = require('remix-lib')
 
 var traceHelper = remixLib.helpers.trace
-var global = remixLib.global
 var SolidityProxy = require('../../../src/decoder/solidityProxy')
 var InternalCallTree = require('../../../src/decoder/internalCallTree')
 var EventManager = remixLib.EventManager
@@ -17,7 +16,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
     if (error) {
       st.fail(error)
     } else {
-      global.web3.getTransaction(txHash, function (error, tx) {
+      vm.web3.eth.getTransaction(txHash, function (error, tx) {
         if (error) {
           st.fail(error)
         } else {
