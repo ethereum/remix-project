@@ -74,7 +74,7 @@ class FileManager {
   currentPath () {
     var self = this
     var currentFile = self._deps.config.get('currentFile')
-    var reg = /(.*\/).*/
+    var reg = /(.*)(\/).*/
     var path = reg.exec(currentFile)
     return path ? path[1] : null
   }
