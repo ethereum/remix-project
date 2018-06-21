@@ -10,7 +10,7 @@ let TestRunner = require('./testRunner.js')
 const Web3 = require('web3')
 const Provider = require('remix-simulator').Provider
 
-var createWeb3Provider = function() {
+var createWeb3Provider = function () {
   let web3 = new Web3()
   web3.setProvider(new Provider())
   return web3
@@ -22,7 +22,7 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
       Compiler.compileContractSources(contractSources, importFileCb, next)
     },
     function deployAllContracts (compilationResult, next) {
-      let web3 = createWeb3Provider();
+      let web3 = createWeb3Provider()
       Deployer.deployAll(compilationResult, web3, function (err, contracts) {
         if (err) {
           next(err)
@@ -35,7 +35,6 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
       let contractsToTest = []
 
       for (let filename in compilationResult) {
-        let contract = compilationResult[filename];
         if (filename.indexOf('_test.sol') < 0) {
           continue
         }
@@ -56,11 +55,11 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
         if (result.type === 'testFailure') {
           errors.push(result)
         }
-        testCallback(result);
+        testCallback(result)
       }
 
       var _resultsCallback = function (_err, result, cb) {
-        resultCallback(_err, result, () => {});
+        resultCallback(_err, result, () => {})
         totalPassing += result.passingNum
         totalFailing += result.failureNum
         totalTime += result.timePassed
@@ -79,21 +78,21 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
           return next(err)
         }
 
-        let finalResults = {};
+        let finalResults = {}
 
-        finalResults.totalPassing = totalPassing || 0;
-        finalResults.totalFailing = totalFailing || 0;
-        finalResults.totalTime = totalTime || 0;
-        finalResults.errors = [];
+        finalResults.totalPassing = totalPassing || 0
+        finalResults.totalFailing = totalFailing || 0
+        finalResults.totalTime = totalTime || 0
+        finalResults.errors = []
 
         errors.forEach((error, _index) => {
-          finalResults.errors.push({context: error.context, value: error.value, message: error.errMsg});
+          finalResults.errors.push({context: error.context, value: error.value, message: error.errMsg})
         })
 
-        next(null, finalResults);
+        next(null, finalResults)
       })
     }
-  ], finalCallback);
+  ], finalCallback)
 }
 
 var runTestFiles = function (filepath, isDirectory, web3) {
