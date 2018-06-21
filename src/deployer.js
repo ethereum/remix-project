@@ -53,7 +53,7 @@ function deployAll (compileResult, web3, callback) {
       next(null, contractsToDeploy)
     },
     function deployContracts (contractsToDeploy, next) {
-      var deployRunner = (deployObject, contractObject, contractName, callback) => {
+      var deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
         deployObject.estimateGas().then((gasValue) => {
           deployObject.send({
             from: accounts[0],
@@ -65,6 +65,7 @@ function deployAll (compileResult, web3, callback) {
             compiledObject[contractName].deployedAddress = receipt.contractAddress
 
             contracts[contractName] = contractObject
+            contracts[contractName].filename = filename
 
             callback(null, { result: { createdAddress: receipt.contractAddress } }) // TODO this will only work with JavaScriptV VM
           }).on('error', function (err) {
@@ -80,7 +81,7 @@ function deployAll (compileResult, web3, callback) {
           if (error) return nextEach(error)
           let contractObject = new web3.eth.Contract(contract.abi)
           let deployObject = contractObject.deploy({arguments: [], data: '0x' + contractDeployData.dataHex})
-          deployRunner(deployObject, contractObject, contractName, (error) => { nextEach(error) })
+          deployRunner(deployObject, contractObject, contractName, contract.filename, (error) => { nextEach(error) })
         }
 
         let encodeDataStepCallback = (msg) => { console.dir(msg) }
@@ -90,7 +91,7 @@ function deployAll (compileResult, web3, callback) {
           let code = compiledObject[libData.data.contractName].code
           let libraryObject = new web3.eth.Contract(abi)
           let deployObject = libraryObject.deploy({arguments: [], data: '0x' + code})
-          deployRunner(deployObject, libraryObject, libData.data.contractName, callback)
+          deployRunner(deployObject, libraryObject, libData.data.contractName, contract.filename, callback)
         }
 
         let funAbi = null // no need to set the abi for encoding the constructor
