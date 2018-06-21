@@ -1,6 +1,5 @@
 var async = require('async')
-
-// TODO: replace this with remix's own deployer code
+var remixLib = require('remix-lib')
 
 function deployAll (compileResult, web3, callback) {
   let compiledObject = {}
@@ -30,6 +29,7 @@ function deployAll (compileResult, web3, callback) {
           compiledObject[className].code = code
           compiledObject[className].filename = filename
           compiledObject[className].className = className
+          compiledObject[className].raw = contract
 
           if (contractFile.indexOf('_test.sol') >= 0) {
             compiledObject[className].isTest = true
@@ -53,35 +53,7 @@ function deployAll (compileResult, web3, callback) {
       next(null, contractsToDeploy)
     },
     function deployContracts (contractsToDeploy, next) {
-      async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
-        let contract = compiledObject[contractName]
-        if (!contract) {
-          console.error('Contract not found: ' + contractName)
-          return nextEach(new Error('Contract not found: ' + contractName))
-        }
-        let contractObject = new web3.eth.Contract(contract.abi)
-
-        let contractCode = '0x' + contract.code
-
-        // TODO: temporary code, and terrible if the contracts are not in order...
-        for (let name in compiledObject) {
-          let contractObj = compiledObject[name]
-          let linkReference = '__' + contractObj.filename + ':' + contractObj.className
-          let toReplace = linkReference + '_'.repeat(40 - linkReference.length)
-
-          if (contractCode.indexOf(linkReference) < 0) {
-            continue
-          }
-
-          if (!contractObj.deployedAddress) {
-            throw new Error('linking not found for ' + name + ' when deploying ' + contractName)
-          }
-
-          contractCode = contractCode.replace(new RegExp(toReplace, 'g'), contractObj.deployedAddress.slice(2))
-        }
-
-        let deployObject = contractObject.deploy({arguments: [], data: contractCode})
-
+      var deployRunner = (deployObject, contractObject, contractName, callback) => {
         deployObject.estimateGas().then((gasValue) => {
           deployObject.send({
             from: accounts[0],
@@ -94,12 +66,36 @@ function deployAll (compileResult, web3, callback) {
 
             contracts[contractName] = contractObject
 
-            nextEach()
+            callback(null, { result: { createdAddress: receipt.contractAddress } }) // TODO this will only work with JavaScriptV VM
           }).on('error', function (err) {
             console.dir(err)
-            nextEach(err)
+            callback(err)
           })
         })
+      }
+
+      async.eachOfLimit(contractsToDeploy, 1, function (contractName, index, nextEach) {
+        let contract = compiledObject[contractName]
+        let encodeDataFinalCallback = (error, contractDeployData) => {
+          if (error) return nextEach(error)
+          let contractObject = new web3.eth.Contract(contract.abi)
+          let deployObject = contractObject.deploy({arguments: [], data: '0x' + contractDeployData.dataHex})
+          deployRunner(deployObject, contractObject, contractName, (error) => { nextEach(error) })
+        }
+
+        let encodeDataStepCallback = (msg) => { console.dir(msg) }
+
+        let encodeDataDeployLibraryCallback = (libData, callback) => {
+          let abi = compiledObject[libData.data.contractName].abi
+          let code = compiledObject[libData.data.contractName].code
+          let libraryObject = new web3.eth.Contract(abi)
+          let deployObject = libraryObject.deploy({arguments: [], data: '0x' + code})
+          deployRunner(deployObject, libraryObject, libData.data.contractName, callback)
+        }
+
+        let funAbi = null // no need to set the abi for encoding the constructor
+        let params = '' // we suppose that the test contract does not have any param in the constructor
+        remixLib.execution.txFormat.encodeConstructorCallAndDeployLibraries(contractName, contract.raw, compileResult, params, funAbi, encodeDataFinalCallback, encodeDataStepCallback, encodeDataDeployLibraryCallback)
       }, function () {
         next(null, contracts)
       })
