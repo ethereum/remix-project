@@ -10,8 +10,8 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   let compiler, filepath
 
   const sources = {
-    'tests.sol': {content: require('../sol/tests.sol.js') },
-    'remix_tests.sol': {content: require('../sol/tests.sol.js') }
+    'tests.sol': { content: require('../sol/tests.sol.js') },
+    'remix_tests.sol': { content: require('../sol/tests.sol.js') }
   }
 
   // TODO: for now assumes filepath dir contains all tests, later all this
@@ -49,7 +49,7 @@ function compileFileOrFiles (filename, isDirectory, cb) {
 function compileContractSources (sources, importFileCb, cb) {
   let compiler, filepath
 
-  if(!sources['remix_tests.sol']) {
+  if (!sources['remix_tests.sol']) {
     sources['remix_tests.sol'] = {content: require('../sol/tests.sol.js')}
   }
 
