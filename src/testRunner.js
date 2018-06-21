@@ -61,19 +61,26 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
           let time = Math.ceil((Date.now() - startTime) / 1000.0)
           let topic = Web3.utils.sha3('AssertionEvent(bool,string)')
 
+          let testPassed = false
+
           for (let i in receipt.events) {
             let event = receipt.events[i]
             if (event.raw.topics.indexOf(topic) >= 0) {
               var testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
-              if (testEvent[0]) {
-                testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})
-                passingNum += 1
-              } else {
+              if (!testEvent[0]) {
                 testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: testEvent[1], context: testName})
                 failureNum += 1
+                return next()
               }
+              testPassed = true
             }
           }
+
+          if (testPassed) {
+            testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})
+            passingNum += 1
+          }
+
           return next()
         } catch (err) {
           console.log('error!')
