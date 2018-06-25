@@ -189,7 +189,6 @@ Ethdebugger.prototype.switchProvider = function (type) {
           self.web3 = !webDebugNode ? obj : webDebugNode
         }
         self.setManagers()
-        // self.traceManager.web3 = self.web3
       })
       self.event.trigger('providerChanged', [type])
     }
