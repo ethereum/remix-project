@@ -41,7 +41,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                 st.end(error)
               } else {
                 var TraceManager = require('remix-core').trace.TraceManager
-                var traceManager = new TraceManager()
+                var traceManager = new TraceManager({web3: vm.web3})
                 traceManager.resolveTrace(tx, () => {
                   var StorageResolver = require('remix-core').storage.StorageResolver
                   var StorageViewer = require('remix-core').storage.StorageViewer
@@ -49,7 +49,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                     stepIndex: 213,
                     tx: tx,
                     address: contractAddress
-                  }, new StorageResolver(), traceManager)
+                  }, new StorageResolver({web3: vm.web3}), traceManager)
                   var stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
                   stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
                     console.log('ok', JSON.stringify(result))
