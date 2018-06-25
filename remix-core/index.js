@@ -5,9 +5,6 @@ var StorageResolver = require('./src/storage/storageResolver')
 var TraceManager = require('./src/trace/traceManager')
 
 module.exports = {
-  global: {
-    web3: null
-  },
   code: {
     CodeManager: CodeManager,
     BreakpointManager: BreakpointManager
