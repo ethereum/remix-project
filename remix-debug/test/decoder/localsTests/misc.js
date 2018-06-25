@@ -1,7 +1,6 @@
 'use strict'
-var remixCore = require('remix-core')
-var TraceManager = remixCore.trace.TraceManager
-var CodeManager = remixCore.code.CodeManager
+var TraceManager = require('../../../src/trace/traceManager')
+var CodeManager = require('../../../src/code/codeManager')
 var vmCall = require('../vmCall')
 var remixLib = require('remix-lib')
 var traceHelper = remixLib.helpers.trace
