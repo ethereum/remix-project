@@ -1,5 +1,4 @@
 'use strict'
-var remixCore = require('remix-core')
 var EthDebugger = require('./src/Ethdebugger')
 
 var CodeManager = require('./src/code/codeManager')
@@ -24,7 +23,7 @@ module.exports = {
    * @param {Object} _debugger - type of EthDebugger
    * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
    */
-  BreakpointManager: remixCore.code.BreakpointManager,
+  BreakpointManager: BreakpointManager,
   code: {
     CodeManager: CodeManager,
     BreakpointManager: BreakpointManager
