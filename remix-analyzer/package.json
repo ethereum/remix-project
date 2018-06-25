@@ -1,0 +1,25 @@
+{
+  "name": "remix-analyzer",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "contributors": [
+    {
+      "name": "Alex Beregszaszi",
+      "email": "alex@rtfs.hu"
+    },
+    {
+      "name": "Iuri Matias",
+      "email": "iuri@ethereum.org"
+    },
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    }
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
