@@ -21,7 +21,7 @@ module.exports = function (st, vm, privateKey, contractBytecode, compilationResu
           st.fail(error)
         } else {
           tx.to = traceHelper.contractCreationToken('0')
-          var traceManager = new TraceManager()
+          var traceManager = new TraceManager({web3: vm.web3})
           var codeManager = new CodeManager(traceManager)
           codeManager.clear()
           var solidityProxy = new SolidityProxy(traceManager, codeManager)
