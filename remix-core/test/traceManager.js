@@ -3,8 +3,9 @@ var TraceManager = require('../src/trace/traceManager')
 var tape = require('tape')
 var remixLib = require('remix-lib')
 var Web3Providers = remixLib.vm.Web3Providers
-var global = remixLib.global
 var web3Test = require('./resources/testWeb3')
+
+let web3 = null
 
 tape('TraceManager', function (t) {
   var traceManager
@@ -18,16 +19,15 @@ tape('TraceManager', function (t) {
         console.log(mes)
         st.fail(mes)
       } else {
-        global.web3 = obj
-        global.web3Debug = obj
-        traceManager = new TraceManager()
+        web3 = obj
+        traceManager = new TraceManager({web3: web3})
         st.end()
       }
     })
   })
 
   t.test('TraceManager.resolveTrace', function (st) {
-    var tx = global.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    var tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     traceManager.resolveTrace(tx, function (error, result) {
       if (error) {
         st.fail(' - traceManager.resolveTrace - failed ' + result)
