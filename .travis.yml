@@ -2,10 +2,9 @@ language: node_js
 node_js:
   - stable
 env:
-  - TEST_DIR=remix-core
   - TEST_DIR=remix-lib
   - TEST_DIR=remix-solidity
-  - TEST_DIR=remix-debugger
+  - TEST_DIR=remix-debug
 script: 
   - cd $TEST_DIR && npm install && npm test
 deploy:
