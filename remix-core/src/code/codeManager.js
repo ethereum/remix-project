@@ -3,7 +3,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 var SourceMappingDecoder = remixLib.SourceMappingDecoder
-var codeResolver = require('./codeResolver')
+var CodeResolver = require('./codeResolver')
 
 /*
   resolve contract code referenced by vmtrace in order to be used by asm listview.
@@ -16,7 +16,7 @@ function CodeManager (_traceManager) {
   this.event = new EventManager()
   this.isLoading = false
   this.traceManager = _traceManager
-  this.codeResolver = codeResolver
+  this.codeResolver = new CodeResolver({web3: this.traceManager.web3})
 }
 
 /**
@@ -57,12 +57,13 @@ CodeManager.prototype.resolveStep = function (stepIndex, tx) {
  * @param {Function} cb - callback function, return the bytecode
  */
 CodeManager.prototype.getCode = function (address, cb) {
+  const self = this
   if (traceHelper.isContractCreation(address)) {
-    var codes = codeResolver.getExecutingCodeFromCache(address)
+    var codes = this.codeResolver.getExecutingCodeFromCache(address)
     if (!codes) {
       this.traceManager.getContractCreationCode(address, function (error, hexCode) {
         if (!error) {
-          codes = codeResolver.cacheExecutingCode(address, hexCode)
+          codes = self.codeResolver.cacheExecutingCode(address, hexCode)
           cb(null, codes)
         }
       })
@@ -70,7 +71,7 @@ CodeManager.prototype.getCode = function (address, cb) {
       cb(null, codes)
     }
   } else {
-    codeResolver.resolveCode(address, function (address, code) {
+    this.codeResolver.resolveCode(address, function (address, code) {
       cb(null, code)
     })
   }
@@ -111,12 +112,13 @@ CodeManager.prototype.getFunctionFromStep = function (stepIndex, sourceMap, ast)
  * @param {Function} callback - instruction index
  */
 CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
+  const self = this
   this.traceManager.getCurrentPC(step, function (error, pc) {
     if (error) {
       console.log(error)
       callback('Cannot retrieve current PC for ' + step, null)
     } else {
-      var itemIndex = codeResolver.getInstructionIndex(address, pc)
+      var itemIndex = self.codeResolver.getInstructionIndex(address, pc)
       callback(null, itemIndex)
     }
   })
@@ -132,7 +134,7 @@ CodeManager.prototype.getInstructionIndex = function (address, step, callback) {
  * @return {Object} return the ast node of the function
  */
 CodeManager.prototype.getFunctionFromPC = function (address, pc, sourceMap, ast) {
-  var instIndex = codeResolver.getInstructionIndex(address, pc)
+  var instIndex = this.codeResolver.getInstructionIndex(address, pc)
   return SourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', instIndex, sourceMap, ast)
 }
 
