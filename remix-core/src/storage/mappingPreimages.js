@@ -1,5 +1,3 @@
-var remixLib = require('remix-lib')
-var global = remixLib.global
 
 module.exports = {
   decodeMappingsKeys: decodeMappingsKeys
@@ -13,12 +11,12 @@ module.exports = {
   * @param {Function} callback  - calback
   * @return {Map} - solidity mapping location (e.g { "<mapping_slot>" : { "<mapping-key1>": preimageOf1 }, { "<mapping-key2>": preimageOf2 }, ... })
   */
-async function decodeMappingsKeys (storage, callback) {
+async function decodeMappingsKeys (web3, storage, callback) {
   var ret = {}
   for (var hashedLoc in storage) {
     var preimage
     try {
-      preimage = await getPreimage(storage[hashedLoc].key)
+      preimage = await getPreimage(web3, storage[hashedLoc].key)
     } catch (e) {
     }
     if (preimage) {
@@ -42,9 +40,9 @@ async function decodeMappingsKeys (storage, callback) {
   * @param {String} key  - key to retrieve the preimage of
   * @return {String} - preimage of the given key
   */
-function getPreimage (key) {
+function getPreimage (web3, key) {
   return new Promise((resolve, reject) => {
-    global.web3Debug.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, function (error, preimage) {
+    web3.debug.preimage(key.indexOf('0x') === 0 ? key : '0x' + key, function (error, preimage) {
       if (error) {
         resolve(null)
       } else {
