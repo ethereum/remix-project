@@ -10,6 +10,11 @@ require('./traceManager.js')
 require('./codeManager.js')
 require('./disassembler.js')
 
+require('./decoder/decodeInfo.js')
+require('./decoder/storageLocation.js')
+require('./decoder/storageDecoder.js')
+require('./decoder/localDecoder.js')
+
 var BreakpointManager = require('../src/code/breakpointManager')
 
 tape('debug contract', function (t) {
