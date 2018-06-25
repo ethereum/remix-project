@@ -1,8 +1,8 @@
 {
   "name": "remix-analyzer",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Remix Analyzer",
+  "main": "./index.js",
   "contributors": [
     {
       "name": "Alex Beregszaszi",
@@ -17,9 +17,28 @@
       "email": "yann@ethdev.com"
     }
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "remix-lib": "^0.2.9",
+    "babel-preset-es2015": "^6.24.0"
   },
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "test": "standard && tape ./test/tests.js"
+  },
+  "standard": {
+    "ignore": [
+      "node_modules/*",
+      "soljson.js"
+    ],
+    "parser": "babel-eslint"
+  },
+  "author": "Remix Team",
+  "license": "MIT",
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "devDependencies": {
+    "solc": "^0.4.24",
+    "standard": "^7.0.1",
+    "tape": "^4.6.0"
+  }
 }
