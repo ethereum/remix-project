@@ -26,7 +26,7 @@
     "ethereumjs-vm": "^2.3.3",
     "notify-error": "^1.2.0",
     "npm-run-all": "^4.1.2",
-    "remix-core": "^0.0.15",
+    "fast-async": "^6.1.2",
     "remix-lib": "^0.2.9",
     "remix-solidity": "^0.1.11",
     "solc": "https://github.com/ethereum/solc-js"
@@ -57,7 +57,8 @@
       "node_modules/*",
       "build/*",
       "test/resources/*"
-    ]
+    ],
+    "parser": "babel-eslint"
   },
   "babel": {
     "plugins": [
@@ -91,6 +92,18 @@
           "sourceMaps": true,
           "plugins": [
             [
+              [
+                "fast-async",
+                {
+                  "runtimePatten": null,
+                  "compiler": {
+                    "promises": true,
+                    "es7": true,
+                    "noRuntime": true,
+                    "wrapAwait": true
+                  }
+                }
+              ],
               "transform-object-assign"
             ]
           ],
