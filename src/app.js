@@ -46,10 +46,7 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
-<<<<<<< HEAD
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
-=======
->>>>>>> refactor rhpp
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
