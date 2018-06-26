@@ -2,20 +2,23 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
+var globalRegistry = require('../../global/registry')
 var helper = require('../../lib/helper')
 var styles = require('../ui/styles-guide/theme-chooser').chooser()
 
 var EventManager = remixLib.EventManager
 
 module.exports = class TabbedMenu {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
     self.event = new EventManager()
-    self._opts = opts
-    self._api = api
-    self._events = events
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    self._deps = {
+      app: self._components.registry.get('app').api
+    }
     self._view = { el: null, viewport: null, tabs: {}, contents: {} }
-    events.app.register('debuggingRequested', () => {
+    self._deps.app.event.register('debuggingRequested', () => {
       self.selectTabByTitle('Debugger')
     })
   }
@@ -63,7 +66,7 @@ module.exports = class TabbedMenu {
     var title = el.getAttribute('title')
     self._view.contents[el.getAttribute('title')].style.display = 'block'
     el.classList.add(css.active)
-    self._events.app.trigger('tabChanged', [title])
+    self._deps.app.event.trigger('tabChanged', [title])
   }
 }
 

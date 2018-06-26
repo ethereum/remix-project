@@ -2,6 +2,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const copy = require('clipboard-copy')
 
+var globalRegistry = require('../../global/registry')
 const TreeView = require('../ui/TreeView')
 const modalDialog = require('../ui/modaldialog')
 const copyToClipboard = require('../ui/copy-to-clipboard')
@@ -14,11 +15,8 @@ const addTooltip = require('../ui/tooltip')
 const styles = styleGuide.chooser()
 
 module.exports = class CompileTab {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
-    self._opts = opts
-    self._api = api
-    self._events = events
     self._view = {
       el: null,
       autoCompile: null,
@@ -30,22 +28,36 @@ module.exports = class CompileTab {
       contractNames: null,
       contractEl: null
     }
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    // dependencies
+    self._deps = {
+      app: self._components.registry.get('app').api,
+      udapp: self._components.registry.get('udapp').api,
+      udappUI: self._components.registry.get('udappUI').api,
+      editor: self._components.registry.get('editor').api,
+      config: self._components.registry.get('config').api,
+      compiler: self._components.registry.get('compiler').api,
+      staticAnalysis: self._components.registry.get('staticanalysis').api,
+      renderer: self._components.registry.get('renderer').api,
+      transactionContextAPI: self._components.registry.get('transactionContextAPI').api
+    }
     self.data = {
-      hideWarnings: self._opts.config.get('hideWarnings') || false,
-      autoCompile: self._opts.config.get('autoCompile'),
+      hideWarnings: self._deps.config.get('hideWarnings') || false,
+      autoCompile: self._deps.config.get('autoCompile'),
       compileTimeout: null,
       contractsDetails: {},
       maxTime: 1000,
       timeout: 300
     }
-    self._events.editor.register('contentChanged', scheduleCompilation)
-    self._events.editor.register('sessionSwitched', scheduleCompilation)
+    self._deps.editor.event.register('contentChanged', scheduleCompilation)
+    self._deps.editor.event.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
-      if (!self._opts.config.get('autoCompile')) return
+      if (!self._deps.config.get('autoCompile')) return
       if (self.data.compileTimeout) window.clearTimeout(self.data.compileTimeout)
-      self.data.compileTimeout = window.setTimeout(() => self._api.runCompiler(), self.data.timeout)
+      self.data.compileTimeout = window.setTimeout(() => self._deps.app.runCompiler(), self.data.timeout)
     }
-    self._events.compiler.register('compilationDuration', function tabHighlighting (speed) {
+    self._deps.compiler.event.register('compilationDuration', function tabHighlighting (speed) {
       if (!self._view.warnCompilationSlow) return
       if (speed > self.data.maxTime) {
         const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
@@ -55,31 +67,31 @@ module.exports = class CompileTab {
         self._view.warnCompilationSlow.style.display = 'none'
       }
     })
-    self._events.editor.register('contentChanged', function changedFile () {
+    self._deps.editor.event.register('contentChanged', function changedFile () {
       if (!self._view.compileIcon) return
       const compileTab = document.querySelector('.compileView') // @TODO: compileView tab
       compileTab.style.color = styles.colors.red // @TODO: compileView tab
       self._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
-    self._events.compiler.register('loadingCompiler', function start () {
+    self._deps.compiler.event.register('loadingCompiler', function start () {
       if (!self._view.compileIcon) return
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
       self._view.warnCompilationSlow.style.display = 'none'
       self._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
-    self._events.compiler.register('compilationStarted', function start () {
+    self._deps.compiler.event.register('compilationStarted', function start () {
       if (!self._view.compileIcon) return
       self._view.errorContainer.innerHTML = ''
       self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
       self._view.compileIcon.setAttribute('title', 'compiling...')
     })
-    self._events.compiler.register('compilerLoaded', function loaded () {
+    self._deps.compiler.event.register('compilerLoaded', function loaded () {
       if (!self._view.compileIcon) return
       self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       self._view.compileIcon.setAttribute('title', '')
     })
-    self._events.compiler.register('compilationFinished', function finish (success, data, source) {
+    self._deps.compiler.event.register('compilationFinished', function finish (success, data, source) {
       if (self._view.compileIcon) {
         const compileTab = document.querySelector('.compileView')
         compileTab.style.color = styles.colors.black
@@ -94,15 +106,17 @@ module.exports = class CompileTab {
       self._view.contractNames.innerHTML = ''
       if (success) {
         self._view.contractNames.removeAttribute('disabled')
-        self._opts.compiler.visitContracts(contract => {
-          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._opts.compiler.getSource(contract.file))
+        self._deps.compiler.visitContracts(contract => {
+          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._deps.compiler.getSource(contract.file))
           var contractName = yo`<option>${contract.name}</option>`
           self._view.contractNames.appendChild(contractName)
         })
-        self._api.resetDapp(self.data.contractsDetails)
+        self._deps.udapp.reset(self.data.contractsDetails, self._deps.transactionContextAPI)
+        self._deps.udappUI.reset()
       } else {
         self._view.contractNames.setAttribute('disabled', true)
-        self._api.resetDapp({})
+        self._deps.udapp.reset({}, self._deps.transactionContextAPI)
+        self._deps.udappUI.reset()
       }
       // hightlight the tab if error
       if (success) document.querySelector('.compileView').style.color = '' // @TODO: compileView tab
@@ -111,31 +125,31 @@ module.exports = class CompileTab {
       var error = false
       if (data['error']) {
         error = true
-        self._opts.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity})
+        self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity})
       }
       if (data.errors && data.errors.length) {
         error = true
         data.errors.forEach(function (err) {
-          if (self._opts.config.get('hideWarnings')) {
+          if (self._deps.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
-              self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
+              self._deps.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
             }
           } else {
-            self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
+            self._deps.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
           }
         })
       }
       if (!error && data.contracts) {
-        self._opts.compiler.visitContracts((contract) => {
-          self._opts.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
+        self._deps.compiler.visitContracts((contract) => {
+          self._deps.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
         })
       }
     })
-    self._events.staticAnalysis.register('staticAnaysisWarning', (count) => {
+    self._deps.staticAnalysis.event.register('staticAnaysisWarning', (count) => {
       if (count) {
         const msg = `Static Analysis raised ${count} warning(s) that requires your attention. Click here to show the warning(s).`
         const settings = { type: 'staticAnalysisWarning', click: () => self._api.switchTab('staticanalysisView'), useSpan: true }
-        self._opts.renderer.error(msg, self._view.errorContainer, settings)
+        self._deps.renderer.error(msg, self._view.errorContainer, settings)
       }
     })
   }
@@ -202,8 +216,8 @@ module.exports = class CompileTab {
       'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
       'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
-    function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
-    function compile (event) { self._api.runCompiler() }
+    function updateAutoCompile (event) { self._deps.config.set('autoCompile', self._view.autoCompile.checked) }
+    function compile (event) { self._deps.app.runCompiler() }
     function hideWarnings (event) {
       self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
       self._api.runCompiler()
