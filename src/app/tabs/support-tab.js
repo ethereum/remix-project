@@ -2,21 +2,22 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const remixLib = require('remix-lib')
 
+var globalRegistry = require('../../global/registry')
 const styles = require('../ui/styles-guide/theme-chooser').chooser()
 
 const EventManager = remixLib.EventManager
 
 module.exports = class SupportTab {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
     self.event = new EventManager()
-    self._api = api
-    self._events = events
-    self._opts = opts
     self._view = { el: null, gitterIframe: '' }
     self.data = { gitterIsLoaded: false }
     self._components = {}
-    self._events.app.register('tabChanged', (tabName) => {
+    self._components.registry = localRegistry || globalRegistry
+
+    var appEvent = self._components.registry.get('app').event
+    appEvent.register('tabChanged', (tabName) => {
       if (tabName !== 'Support' || self.data.gitterIsLoaded) return
       const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
       self._view.gitterIframe.parentNode.replaceChild(iframe, self._view.gitterIframe)

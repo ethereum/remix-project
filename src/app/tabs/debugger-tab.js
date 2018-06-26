@@ -2,18 +2,18 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
+var globalRegistry = require('../../global/registry')
 var EventManager = remixLib.EventManager
 var styles = require('../ui/styles-guide/theme-chooser').chooser()
 
 module.exports = class DebuggerTab {
-  constructor (opts = { api: {}, events: {} }) {
+  constructor (localRegistry) {
     const self = this
     self.event = new EventManager()
-    self._api = opts.api
-    self._events = opts.events
     self._view = { el: null }
     self.data = {}
     self._components = {}
+    self._components.registry = localRegistry || globalRegistry
   }
   render () {
     const self = this
