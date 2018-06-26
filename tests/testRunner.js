@@ -52,7 +52,7 @@ describe('testRunner', function () {
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract',    value: 'MyTest' },
+          { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
           { type: 'testPass',    value: 'Initial value should be100', time: 1, context: 'MyTest' },
           { type: 'testFailure', value: 'Initial value should be200', time: 1, context: 'MyTest', errMsg: 'function returned false' }
         ])
@@ -86,7 +86,7 @@ describe('testRunner', function () {
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract', value: 'MyTest' },
+          { type: 'contract', value: 'MyTest', filename: 'simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should be200', time: 1, context: 'MyTest' }
         ])

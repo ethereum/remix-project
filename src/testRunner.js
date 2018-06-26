@@ -38,7 +38,7 @@ function runTest (testName, testObject, testCallback, resultsCallback) {
   let timePassed = 0
   let web3 = new Web3()
 
-  testCallback({type: 'contract', value: testName})
+  testCallback({type: 'contract', value: testName, filename: testObject.filename})
   async.eachOfLimit(runList, 1, function (func, index, next) {
     let method = testObject.methods[func.name].apply(testObject.methods[func.name], [])
     let startTime = Date.now()
