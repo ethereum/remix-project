@@ -96,6 +96,10 @@ class EditorPanel {
     var command = self._components.terminal.commands[data.type]
     if (typeof command === 'function') command(data.value)
   }
+  logMessage (msg) {
+    var self = this
+    self.log({type: 'log', value: msg})
+  }
   render () {
     var self = this
     if (self._view.el) return self._view.el

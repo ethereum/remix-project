@@ -1,21 +1,24 @@
 var yo = require('yo-yo')
 var async = require('async')
+var globalRegistry = require('../../global/registry')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
 module.exports = class TestTab {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
-    self._opts = opts
-    self._api = api
-    self._events = events
     self._view = { el: null }
     self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    // dependencies
+    self._deps = {
+      fileManager: self._components.registry.get('filemanager').api
+    }
     self.data = {}
 
     self._view.el = self.render()
-
-    events.app.register('tabChanged', tabName => {
+    var appEvent = self._components.registry.get('app').event
+    appEvent.register('tabChanged', tabName => {
       if (tabName !== 'test') return
       yo.update(self._view.el, self.render())
       self._view.el.style.display = 'block'
@@ -24,8 +27,6 @@ module.exports = class TestTab {
     return { render () { return self._view.el } }
   }
   render () {
-    const self = this
-    const api = self._api
     var container = yo`<div class="tests" id="tests"></div>`
 
     function append (container, txt) {
@@ -67,7 +68,7 @@ module.exports = class TestTab {
     }
 
     function runTest (testFilePath, callback) {
-      var provider = api.fileProviderOf(testFilePath)
+      var provider = this._deps.fileManager.fileProviderOf(testFilePath)
       provider.get(testFilePath, (error, content) => {
         if (!error) {
           var runningTest = {}
@@ -75,14 +76,14 @@ module.exports = class TestTab {
           remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
             updateFinalResult(error, result)
             callback(error)
-          }, api.importFileCb)
+          }, this._deps.fileManager.importFileCb)
         }
       })
     }
 
     let runTests = function () {
       container.innerHTML = ''
-      var path = api.currentPath()
+      var path = this._deps.fileManager.currentPath()
       var tests = []
       api.filesFromPath(path, (error, files) => {
         if (!error) {
