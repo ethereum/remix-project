@@ -27,6 +27,7 @@ module.exports = class TestTab {
     return { render () { return self._view.el } }
   }
   render () {
+    var self = this
     var container = yo`<div class="tests" id="tests"></div>`
 
     function append (container, txt) {
@@ -85,7 +86,7 @@ module.exports = class TestTab {
       container.innerHTML = ''
       var path = this._deps.fileManager.currentPath()
       var tests = []
-      this._deps.fileManager.filesFromPath(path, (error, files) => {
+      self._deps.fileManager.filesFromPath(path, (error, files) => {
         if (!error) {
           for (var file in files) {
             if (/.(_test.sol)$/.exec(file)) tests.push(path + file)
