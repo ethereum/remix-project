@@ -2,6 +2,8 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const remixLib = require('remix-lib')
 
+var globalRegistry = require('../../global/registry')
+
 const styleguide = require('../ui/styles-guide/theme-chooser')
 const PluginManager = require('../plugin/pluginManager')
 const TabbedMenu = require('../tabs/tabbed-menu')
@@ -18,32 +20,28 @@ const EventManager = remixLib.EventManager
 const styles = styleguide.chooser()
 
 module.exports = class RighthandPanel {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
     self.event = new EventManager()
-    self._api = api
-    self._api.switchTab = x => { // @TODO: refactor
-      if (self._components.tabbedMenu) self._components.tabbedMenu.selectTabByClassName(x)
-    }
-    self._events = events
-    self._events.rhp = self.event // @TODO: refactor
-    self._opts = opts
     self._view = {
       element: null,
       tabbedMenu: null,
       tabbedMenuViewport: null,
       dragbar: null
     }
+
     self._components = {
-      pluginManager: new PluginManager(self._opts.pluginAPI, self._events),
-      tabbedMenu: new TabbedMenu(self._api, self._events),
-      compile: new CompileTab(self._api, self._events, self._opts),
-      run: new RunTab(self._api, self._events, self._opts),
-      settings: new SettingsTab(self._api, self._events, self._opts),
-      analysis: new AnalysisTab(self._api, self._events, self._opts),
-      debug: new DebuggerTab(self._api, self._events, self._opts),
-      support: new SupportTab(self._api, self._events, self._opts),
-      test: new TestTab(self._api, self._events, self._opts)
+      pluginManager: new PluginManager(),
+      tabbedMenu: new TabbedMenu(),
+      compile: new CompileTab(),
+      run: new RunTab(),
+      settings: new SettingsTab(),
+      analysis: new AnalysisTab(),
+      debug: new DebuggerTab(),
+      support: new SupportTab(),
+      test: new TestTab()
     }
 
     self.event.register('plugin-loadRequest', json => {
