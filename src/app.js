@@ -155,6 +155,7 @@ class App {
     self._components = {}
     self._components.compilerImport = new CompilerImport()
     registry.put({api: self._components.compilerImport, name: 'compilerimport'})
+    self._components.gistHandler = new GistHandler()
     self.data = {
       _layout: {
         right: {
@@ -252,6 +253,66 @@ class App {
       }
     }
   }
+  startdebugging (txHash) {
+    const self = this
+    self.event.trigger('debuggingRequested', [])
+    self._view.transactionDebugger.debug(txHash)
+  }
+  loadFromGist (gistId) {
+    const self = this
+    return self._components.gistHandler.handleLoad(gistId, function (gistId) {
+      request.get({
+        url: `https://api.github.com/gists/${gistId}`,
+        json: true
+      }, (error, response, data = {}) => {
+        if (error || !data.files) {
+          modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
+          return
+        }
+        self.loadFiles(data.files, 'gist', (errorLoadingFile) => {
+          if (!errorLoadingFile) self._api.filesProviders['gist'].id = gistId
+        })
+      })
+    })
+  }
+  loadFiles (filesSet, fileProvider, callback) {
+    const self = this
+    if (!fileProvider) fileProvider = 'browser'
+
+    async.each(Object.keys(filesSet), (file, callback) => {
+      helper.createNonClashingName(file, self._api.filesProviders[fileProvider],
+      (error, name) => {
+        if (error) {
+          modalDialogCustom.alert('Unexpected error loading the file ' + error)
+        } else if (helper.checkSpecialChars(name)) {
+          modalDialogCustom.alert('Special characters are not allowed')
+        } else {
+          self._api.filesProviders[fileProvider].set(name, filesSet[file].content)
+        }
+        callback()
+      })
+    }, (error) => {
+      if (!error) self._components.fileManager.switchFile()
+      if (callback) callback(error)
+    })
+  }
+  importExternal (url, cb) {
+    const self = this
+    self._components.compilerImport.import(url,
+      (loadingMsg) => {
+        toolTip(loadingMsg)
+      },
+      (error, content, cleanUrl, type, url) => {
+        if (!error) {
+          if (self._api.filesProviders[type]) {
+            self._api.filesProviders[type].addReadOnly(cleanUrl, content, url)
+          }
+          cb(null, content)
+        } else {
+          cb(error)
+        }
+      })
+  }
 }
 
 module.exports = App
@@ -291,23 +352,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   })
 
-  function importExternal (url, cb) {
-    self._components.compilerImport.import(url,
-      (loadingMsg) => {
-        toolTip(loadingMsg)
-      },
-      (error, content, cleanUrl, type, url) => {
-        if (!error) {
-          if (filesProviders[type]) {
-            filesProviders[type].addReadOnly(cleanUrl, content, url)
-          }
-          cb(null, content)
-        } else {
-          cb(error)
-        }
-      })
-  }
-
   function importFileCb (url, filecb) {
     if (url.indexOf('/remix_tests.sol') !== -1) {
       return filecb(null, remixTests.assertLibCode)
@@ -319,7 +363,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         if (exist) {
           return provider.get(url, filecb)
         } else {
-          importExternal(url, filecb)
+          self.importExternal(url, filecb)
         }
       })
     } else if (self._components.compilerImport.isRelativeImport(url)) {
@@ -333,7 +377,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         (error, result) => { filecb(error, result) }
       )
     } else {
-      importExternal(url, filecb)
+      self.importExternal(url, filecb)
     }
   }
 
@@ -386,7 +430,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   udapp.reset({})
   udappUI.reset()
   udapp.event.register('debugRequested', this, function (txResult) {
-    startdebugging(txResult.transactionHash)
+    self.startdebugging(txResult.transactionHash)
   })
 
   // ----------------- Tx listener -----------------
@@ -419,7 +463,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
   registry.put({api: eventsDecoder, name: 'eventsDecoder'})
 
-  txlistener.startListening()
+  txlistener.startListening()  
+
+  // ----------------- editor ----------------------------
+  this._components.editor = new Editor({}) // @TODO: put into editorpanel
+  var editor = self._components.editor // shortcut for the editor
+  registry.put({api: editor, name: 'editor'})
 
   // ----------------- Command Interpreter -----------------
   /*
@@ -427,71 +476,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     and interpret them as commands
   */
   var cmdInterpreter = new CommandInterpreter()
-  cmdInterpreter.event.register('debug', (hash, cb) => {
-    startdebugging(hash)
-    if (cb) cb()
-  })
-  cmdInterpreter.event.register('loadgist', (id, cb) => {
-    loadFromGist({gist: id})
-    if (cb) cb()
-  })
-  cmdInterpreter.event.register('loadurl', (url, cb) => {
-    importExternal(url, (err, content) => {
-      if (err) {
-        toolTip(`Unable to load ${url} from swarm: ${err}`)
-        if (cb) cb(err)
-      } else {
-        try {
-          content = JSON.parse(content)
-          async.eachOfSeries(content.sources, (value, file, callbackSource) => {
-            var url = value.urls[0] // @TODO retrieve all other contents ?
-            importExternal(url, (error, content) => {
-              if (error) {
-                toolTip(`Cannot retrieve the content of ${url}: ${error}`)
-              }
-              callbackSource()
-            })
-          }, (error) => {
-            if (cb) cb(error)
-          })
-        } catch (e) {}
-        if (cb) cb()
-      }
-    })
-  })
-  cmdInterpreter.event.register('setproviderurl', (url, cb) => {
-    executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
-      if (error) toolTip(error)
-      if (cb) cb()
-    })
-  })
-  cmdInterpreter.event.register('batch', (url, cb) => {
-    var content = editor.get(editor.current())
-    if (!content) {
-      toolTip('no content to execute')
-      if (cb) cb()
-      return
-    }
-    var split = content.split('\n')
-    async.eachSeries(split, (value, cb) => {
-      if (!cmdInterpreter.interpret(value, (error) => {
-        error ? cb(`Cannot run ${value}. stopping`) : cb()
-      })) {
-        cb(`Cannot interpret ${value}. stopping`)
-      }
-    }, (error) => {
-      if (error) toolTip(error)
-      if (cb) cb()
-    })
-  })
 
   registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
-
-  // ----------------- editor ----------------------------
-  this._components.editor = new Editor({}) // @TODO: put into editorpanel
-  var editor = self._components.editor // shortcut for the editor
-  registry.put({api: editor, name: 'editor'})
-
   var config = self._api.config
   var filesProviders = self._api.filesProviders
 
@@ -517,7 +503,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   this._view.centerpanel.appendChild(this._components.editorpanel.render())
 
   var queryParams = new QueryParams()
-  var gistHandler = new GistHandler()
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
@@ -532,57 +517,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   this.event = new EventManager()
 
-  // Add files received from remote instance (i.e. another remix-ide)
-  function loadFiles (filesSet, fileProvider, callback) {
-    if (!fileProvider) fileProvider = 'browser'
-
-    async.each(Object.keys(filesSet), (file, callback) => {
-      helper.createNonClashingName(file, filesProviders[fileProvider],
-      (error, name) => {
-        if (error) {
-          modalDialogCustom.alert('Unexpected error loading the file ' + error)
-        } else if (helper.checkSpecialChars(name)) {
-          modalDialogCustom.alert('Special characters are not allowed')
-        } else {
-          filesProviders[fileProvider].set(name, filesSet[file].content)
-        }
-        callback()
-      })
-    }, (error) => {
-      if (!error) fileManager.switchFile()
-      if (callback) callback(error)
-    })
-  }
-
   // Replace early callback with instant response
   loadFilesCallback = function (files) {
-    loadFiles(files)
+    self.loadFiles(files)
   }
 
   // Run if we did receive an event from remote instance while starting up
   if (filesToLoad !== null) {
-    loadFiles(filesToLoad)
+    self.loadFiles(filesToLoad)
   }
 
-  // ------------------ gist load ----------------
-  function loadFromGist (gistId) {
-    return gistHandler.handleLoad(gistId, function (gistId) {
-      request.get({
-        url: `https://api.github.com/gists/${gistId}`,
-        json: true
-      }, (error, response, data = {}) => {
-        if (error || !data.files) {
-          modalDialogCustom.alert(`Gist load error: ${error || data.message}`)
-          return
-        }
-        loadFiles(data.files, 'gist', (errorLoadingFile) => {
-          if (!errorLoadingFile) filesProviders['gist'].id = gistId
-        })
-      })
-    })
-  }
-
-  var loadingFromGist = loadFromGist(queryParams.get())
+  var loadingFromGist = self.loadFromGist(queryParams.get())
 
   // insert ballot contract if there are no files available
   if (!loadingFromGist) {
@@ -745,7 +690,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   txLogger.event.register('debugRequested', (hash) => {
-    startdebugging(hash)
+    self.startdebugging(hash)
   })
 
   var previousInput = ''
@@ -812,12 +757,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
 
     if (queryParams.get().debugtx) {
-      startdebugging(queryParams.get().debugtx)
+      self.startdebugging(queryParams.get().debugtx)
     }
   })
-
-  function startdebugging (txHash) {
-    self.event.trigger('debuggingRequested', [])
-    self._view.transactionDebugger.debug(txHash)
-  }
 }
