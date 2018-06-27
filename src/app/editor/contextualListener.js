@@ -18,7 +18,7 @@ class ContextualListener {
       compiler: self._components.registry.get('compiler').api,
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
-      offsetToLineColumnConverter: self._components.registry.get('offsetToLineColumnConverter').api
+      offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
     this._index = {
       Declarations: {},
