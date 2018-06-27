@@ -602,20 +602,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   chromeCloudStorageSync()
 
   // ---------------- FilePanel --------------------
-  var FilePanelAPI = {
-    switchFile: function (path) {
-      fileManager.switchFile(path)
-    },
-    event: fileManager.event,
-    config: config,
-    currentContent: function () {
-      return editor.get(config.get('currentFile'))
-    },
-    setText: function (text) {
-      editor.setText(text)
-    }
-  }
-  var filePanel = new FilePanel(FilePanelAPI, filesProviders)
+  var filePanel = new FilePanel()
 
   // TODO this should happen inside file-panel.js
   var filepanelContainer = document.querySelector('#filepanel')
