@@ -463,7 +463,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
   registry.put({api: eventsDecoder, name: 'eventsDecoder'})
 
-  txlistener.startListening()  
+  txlistener.startListening()
 
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
