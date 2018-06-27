@@ -497,12 +497,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- file manager ----------------------------
 
-  self._components.fileManager = new FileManager({
-    config: config,
-    editor: editor,
-    filesProviders: filesProviders,
-    compilerImport: self._components.compilerImport
-  })
+  self._components.fileManager = new FileManager()
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
