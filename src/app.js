@@ -569,29 +569,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ----------------- Renderer -----------------
-  var rendererAPI = {
-    error: (file, error) => {
-      if (file === config.get('currentFile')) {
-        editor.addAnnotation(error)
-      }
-    },
-    errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== config.get('currentFile')) {
-        // TODO: refactor with this._components.contextView.jumpTo
-        var provider = fileManager.fileProviderOf(errFile)
-        if (provider) {
-          provider.exists(errFile, (error, exist) => {
-            if (error) return console.log(error)
-            fileManager.switchFile(errFile)
-            editor.gotoLine(errLine, errCol)
-          })
-        }
-      } else {
-        editor.gotoLine(errLine, errCol)
-      }
-    }
-  }
-  var renderer = new Renderer(rendererAPI)
+  var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
   // ----------------- StaticAnalysis -----------------
