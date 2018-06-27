@@ -1,5 +1,6 @@
 /* global FileReader */
 var async = require('async')
+var $ = require('jquery')
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var Gists = require('gists')
