@@ -40,7 +40,9 @@ module.exports = class CompileTab {
       compiler: self._components.registry.get('compiler').api,
       staticAnalysis: self._components.registry.get('staticanalysis').api,
       renderer: self._components.registry.get('renderer').api,
-      transactionContextAPI: self._components.registry.get('transactionContextAPI').api
+      fileManager: self._components.registry.get('filemanager').api,
+      transactionContextAPI: self._components.registry.get('transactionContextAPI').api,
+      rightHandPanel: self._components.registry.get('righthandpanel').api
     }
     self.data = {
       hideWarnings: self._deps.config.get('hideWarnings') || false,
@@ -148,7 +150,7 @@ module.exports = class CompileTab {
     self._deps.staticAnalysis.event.register('staticAnaysisWarning', (count) => {
       if (count) {
         const msg = `Static Analysis raised ${count} warning(s) that requires your attention. Click here to show the warning(s).`
-        const settings = { type: 'staticAnalysisWarning', click: () => self._api.switchTab('staticanalysisView'), useSpan: true }
+        const settings = { type: 'staticAnalysisWarning', click: () => self._deps.rightHandPanel.focusOn('staticanalysisView'), useSpan: true }
         self._deps.renderer.error(msg, self._view.errorContainer, settings)
       }
     })
