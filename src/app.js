@@ -313,6 +313,35 @@ class App {
         }
       })
   }
+  importFileCb (url, filecb) {
+    const self = this
+    if (url.indexOf('/remix_tests.sol') !== -1) {
+      return filecb(null, remixTests.assertLibCode)
+    }
+    var provider = self._components.fileManager.fileProviderOf(url)
+    if (provider) {
+      provider.exists(url, (error, exist) => {
+        if (error) return filecb(error)
+        if (exist) {
+          return provider.get(url, filecb)
+        } else {
+          self.importExternal(url, filecb)
+        }
+      })
+    } else if (self._components.compilerImport.isRelativeImport(url)) {
+      // try to resolve localhost modules (aka truffle imports)
+      var splitted = /([^/]+)\/(.*)$/g.exec(url)
+      async.tryEach([
+        (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
+        (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
+        (error, result) => { filecb(error, result) }
+      )
+    } else {
+      self.importExternal(url, filecb)
+    }
+  }
 }
 
 module.exports = App
@@ -352,37 +381,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   })
 
-  function importFileCb (url, filecb) {
-    if (url.indexOf('/remix_tests.sol') !== -1) {
-      return filecb(null, remixTests.assertLibCode)
-    }
-    var provider = fileManager.fileProviderOf(url)
-    if (provider) {
-      provider.exists(url, (error, exist) => {
-        if (error) return filecb(error)
-        if (exist) {
-          return provider.get(url, filecb)
-        } else {
-          self.importExternal(url, filecb)
-        }
-      })
-    } else if (self._components.compilerImport.isRelativeImport(url)) {
-      // try to resolve localhost modules (aka truffle imports)
-      var splitted = /([^/]+)\/(.*)$/g.exec(url)
-      async.tryEach([
-        (cb) => { importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
-        (cb) => { importFileCb('localhost/node_modules/' + url, cb) },
-        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
-        (error, result) => { filecb(error, result) }
-      )
-    } else {
-      self.importExternal(url, filecb)
-    }
-  }
-
   // ----------------- Compiler -----------------
-  self._components.compiler = new Compiler(importFileCb)
+  self._components.compiler = new Compiler(self.importFileCb)
   var compiler = self._components.compiler
   registry.put({api: compiler, name: 'compiler'})
 
