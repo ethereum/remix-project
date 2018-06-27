@@ -1,6 +1,5 @@
 /* global FileReader */
 var async = require('async')
-var $ = require('jquery')
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var Gists = require('gists')
@@ -12,6 +11,8 @@ var tooltip = require('../ui/tooltip')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 var helper = require('../../lib/helper')
+
+var globalRegistry = require('../../global/registry')
 
 var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -39,14 +40,21 @@ var ghostbar = yo`<div class=${css.ghostbar}></div>`
       - call fileProvider API
 */
 
-function filepanel (appAPI, filesProvider) {
+function filepanel (localRegistry) {
   var self = this
-  var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
-  var fileSystemExplorer = new FileExplorer(appAPI, filesProvider['localhost'])
-  var swarmExplorer = new FileExplorer(appAPI, filesProvider['swarm'])
-  var githubExplorer = new FileExplorer(appAPI, filesProvider['github'])
-  var gistExplorer = new FileExplorer(appAPI, filesProvider['gist'])
-  var configExplorer = new FileExplorer(appAPI, filesProvider['config'])
+  self._components = {}
+  self._components.registry = localRegistry || globalRegistry
+  self._deps = {
+    fileProviders: self._components.registry.get('fileproviders').api,
+    fileManager: self._components.registry.get('filemanager').api,
+    config: self._components.registry.get('config').api
+  }
+  var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'])
+  var fileSystemExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['localhost'])
+  var swarmExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['swarm'])
+  var githubExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['github'])
+  var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'])
+  var configExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['config'])
 
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 
@@ -114,51 +122,51 @@ function filepanel (appAPI, filesProvider) {
   fileExplorer.ensureRoot()
   configExplorer.ensureRoot()
   var websocketconn = element.querySelector('.websocketconn')
-  filesProvider['localhost'].remixd.event.register('connecting', (event) => {
+  self._deps.fileProviders['localhost'].remixd.event.register('connecting', (event) => {
     websocketconn.style.color = styles.colors.yellow
     websocketconn.setAttribute('title', 'Connecting to localhost. ' + JSON.stringify(event))
   })
 
-  filesProvider['localhost'].remixd.event.register('connected', (event) => {
+  self._deps.fileProviders['localhost'].remixd.event.register('connected', (event) => {
     websocketconn.style.color = styles.colors.green
     websocketconn.setAttribute('title', 'Connected to localhost. ' + JSON.stringify(event))
     fileSystemExplorer.show()
   })
 
-  filesProvider['localhost'].remixd.event.register('errored', (event) => {
+  self._deps.fileProviders['localhost'].remixd.event.register('errored', (event) => {
     websocketconn.style.color = styles.colors.red
     websocketconn.setAttribute('title', 'localhost connection errored. ' + JSON.stringify(event))
     fileSystemExplorer.hide()
   })
 
-  filesProvider['localhost'].remixd.event.register('closed', (event) => {
+  self._deps.fileProviders['localhost'].remixd.event.register('closed', (event) => {
     websocketconn.style.color = styles.colors.black
     websocketconn.setAttribute('title', 'localhost connection closed. ' + JSON.stringify(event))
     fileSystemExplorer.hide()
   })
 
   fileExplorer.events.register('focus', function (path) {
-    appAPI.switchFile(path)
+    self._deps.fileManager.switchFile(path)
   })
 
   configExplorer.events.register('focus', function (path) {
-    appAPI.switchFile(path)
+    self._deps.fileManager.switchFile(path)
   })
 
   fileSystemExplorer.events.register('focus', function (path) {
-    appAPI.switchFile(path)
+    self._deps.fileManager.switchFile(path)
   })
 
   swarmExplorer.events.register('focus', function (path) {
-    appAPI.switchFile(path)
+    self._deps.fileManager.switchFile(path)
   })
 
   githubExplorer.events.register('focus', function (path) {
-    appAPI.switchFile(path)
+    self._deps.fileManager.switchFile(path)
   })
 
   gistExplorer.events.register('focus', function (path) {
-    appAPI.switchFile(path)
+    self._deps.fileManager.switchFile(path)
   })
 
   self.render = function render () { return element }
@@ -235,12 +243,12 @@ function filepanel (appAPI, filesProvider) {
 
   function createNewFile () {
     modalDialogCustom.prompt(null, 'File Name', 'Untitled.sol', (input) => {
-      helper.createNonClashingName(input, filesProvider['browser'], (error, newName) => {
+      helper.createNonClashingName(input, self._deps.fileProviders['browser'], (error, newName) => {
         if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
-        if (!filesProvider['browser'].set(newName, '')) {
+        if (!self._deps.fileProviders['browser'].set(newName, '')) {
           modalDialogCustom.alert('Failed to create file ' + newName)
         } else {
-          appAPI.switchFile(filesProvider['browser'].type + '/' + newName)
+          self._deps.fileManager.switchFile(self._deps.fileProviders['browser'].type + '/' + newName)
         }
       })
     }, null, true)
@@ -253,15 +261,15 @@ function filepanel (appAPI, filesProvider) {
     * @param {String} txHash    - hash of the transaction
     */
   function connectToLocalhost () {
-    if (filesProvider['localhost'].isConnected()) {
-      filesProvider['localhost'].close((error) => {
+    if (self._deps.fileProviders['localhost'].isConnected()) {
+      self._deps.fileProviders['localhost'].close((error) => {
         if (error) console.log(error)
       })
     } else {
       modalDialog('Connect to localhost', remixdDialog(),
         { label: 'Connect',
           fn: () => {
-            filesProvider['localhost'].init((error) => {
+            self._deps.fileProviders['localhost'].init((error) => {
               if (error) {
                 console.log(error)
               } else {
@@ -275,7 +283,7 @@ function filepanel (appAPI, filesProvider) {
   // ------------------ gist publish --------------
 
   function updateGist () {
-    var gistId = filesProvider['gist'].id
+    var gistId = self._deps.fileProviders['gist'].id
     if (!gistId) {
       tooltip('no gist content is currently loaded.')
     } else {
@@ -290,12 +298,12 @@ function filepanel (appAPI, filesProvider) {
   }
 
   function toGist (fileProviderName, id) {
-    packageFiles(filesProvider[fileProviderName], (error, packaged) => {
+    packageFiles(self._deps.fileProviders[fileProviderName], (error, packaged) => {
       if (error) {
         console.log(error)
         modalDialogCustom.alert('Failed to create gist: ' + error)
       } else {
-        var tokenAccess = appAPI.config.get('settings/gist-access-token')
+        var tokenAccess = self._deps.config.get('settings/gist-access-token')
         if (!tokenAccess) {
           modalDialogCustom.alert('Remix requires an access token (which includes gists creation permission). Please go to the settings tab for more information.')
         } else {
@@ -350,7 +358,7 @@ function filepanel (appAPI, filesProvider) {
     })
     function doCopy (target) {
       // package only files from the browser storage.
-      packageFiles(filesProvider['browser'], (error, packaged) => {
+      packageFiles(self._deps.fileProviders['browser'], (error, packaged) => {
         if (error) {
           console.log(error)
         } else {
