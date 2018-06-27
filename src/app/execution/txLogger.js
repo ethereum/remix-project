@@ -13,6 +13,7 @@ var helper = require('../../lib/helper')
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modal-dialog-custom')
 var typeConversion = remixLib.execution.typeConversion
+var globlalRegistry = require('../../global/registry')
 
 var css = csjs`
   .log {
@@ -123,9 +124,8 @@ var css = csjs`
   *
   */
 class TxLogger {
-  constructor (opts = {}) {
+  constructor (localRegistry) {
     this.event = new EventManager()
-    this.opts = opts
     this.seen = {}
     function filterTx (value, query) {
       if (value.length) {
@@ -134,7 +134,17 @@ class TxLogger {
       return false
     }
 
-    this.logKnownTX = opts.api.editorpanel.registerCommand('knownTransaction', (args, cmds, append) => {
+    this._components = {}
+    this._components.registry = localRegistry || globlalRegistry
+    // dependencies
+    this._deps = {
+      editorPanel: this._components.registry.get('editorpanel').api,
+      txListener: this._components.registry.get('txlistener').api,
+      eventsDecoder: this._components.registry.get('eventsdecoder').api,
+      compiler: this._components.registry.get('compiler').api
+    }
+
+    this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el
       if (data.tx.isCall) {
@@ -146,46 +156,46 @@ class TxLogger {
       append(el)
     }, { activate: true, filterFn: filterTx })
 
-    this.logUnknownTX = opts.api.editorpanel.registerCommand('unknownTransaction', (args, cmds, append) => {
+    this.logUnknownTX = this._deps.editorPanel.registerCommand('unknownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el = renderUnknownTransaction(this, data)
       append(el)
     }, { activate: false, filterFn: filterTx })
 
-    this.logEmptyBlock = opts.api.editorpanel.registerCommand('emptyBlock', (args, cmds, append) => {
+    this.logEmptyBlock = this._deps.editorPanel.registerCommand('emptyBlock', (args, cmds, append) => {
       var data = args[0]
       var el = renderEmptyBlock(this, data)
       append(el)
     }, { activate: true })
 
-    opts.api.editorpanel.event.register('terminalFilterChanged', (type, label) => {
+    this._deps.editorPanel.event.register('terminalFilterChanged', (type, label) => {
       if (type === 'deselect') {
         if (label === 'only remix transactions') {
-          opts.api.editorpanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+          this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
         } else if (label === 'all transactions') {
-          opts.api.editorpanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
+          this._deps.editorPanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
         }
       } else if (type === 'select') {
         if (label === 'only remix transactions') {
-          opts.api.editorpanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
+          this._deps.editorPanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
         } else if (label === 'all transactions') {
-          opts.api.editorpanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+          this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
         }
       }
     })
 
-    opts.events.txListener.register('newBlock', (block) => {
+    this._deps.txListener.event.register('newBlock', (block) => {
       if (!block.transactions.length) {
         this.logEmptyBlock({ block: block })
       }
     })
 
-    opts.events.txListener.register('newTransaction', (tx, receipt) => {
-      log(this, tx, receipt, opts.api)
+    this._deps.txListener.event.register('newTransaction', (tx, receipt) => {
+      log(this, tx, receipt)
     })
 
-    opts.events.txListener.register('newCall', (tx) => {
-      log(this, tx, null, opts.api)
+    this._deps.txListener.event.register('newCall', (tx) => {
+      log(this, tx, null)
     })
   }
 }
@@ -199,10 +209,14 @@ function debug (e, data, self) {
   }
 }
 
-function log (self, tx, receipt, api) {
-  var resolvedTransaction = api.resolvedTransaction(tx.hash)
+function log (self, tx, receipt) {
+  var resolvedTransaction = self._deps.txListener.resolvedTransaction(tx.hash)
   if (resolvedTransaction) {
-    api.parseLogs(tx, resolvedTransaction.contractName, api.compiledContracts(), (error, logs) => {
+    var compiledContracts = null
+    if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+      compiledContracts = self._deps.compiler.lastCompilationResult.data.contracts
+    }
+    self._deps.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
       if (!error) {
         self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
       }

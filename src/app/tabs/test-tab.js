@@ -77,7 +77,7 @@ module.exports = class TestTab {
           remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
             updateFinalResult(error, result)
             callback(error)
-          }, this._deps.app.importFileCb)
+          }, (url, cb) => { this._deps.app.importFileCb(url, cb) })
         }
       })
     }
