@@ -573,16 +573,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: renderer, name: 'renderer'})
 
   // ----------------- StaticAnalysis -----------------
-
-  var staticAnalysisAPI = {
-    renderWarning: (label, warningContainer, type) => {
-      return renderer.error(label, warningContainer, type)
-    },
-    offsetToLineColumn: (location, file) => {
-      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
-    }
-  }
-  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
+  var staticanalysis = new StaticAnalysis()
   registry.put({api: staticanalysis, name: 'staticanalysis'})
 
   // ---------------- Righthand-panel --------------------
