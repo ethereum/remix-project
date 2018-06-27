@@ -382,7 +382,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   // ----------------- Compiler -----------------
-  self._components.compiler = new Compiler(self.importFileCb)
+  self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
   var compiler = self._components.compiler
   registry.put({api: compiler, name: 'compiler'})
 
@@ -461,7 +461,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       }
     }
   })
-  registry.put({api: eventsDecoder, name: 'eventsDecoder'})
+  registry.put({api: eventsDecoder, name: 'eventsdecoder'})
 
   txlistener.startListening()
 
@@ -671,23 +671,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
   self._view.transactionDebugger.switchProvider(executionContext.getProvider())
 
-  var txLogger = new TxLogger({
-    api: {
-      editorpanel: self._components.editorpanel,
-      resolvedTransaction: function (hash) {
-        return txlistener.resolvedTransaction(hash)
-      },
-      parseLogs: function (tx, contractName, contracts, cb) {
-        eventsDecoder.parseLogs(tx, contractName, contracts, cb)
-      },
-      compiledContracts: function () {
-        return compiledContracts()
-      }
-    },
-    events: {
-      txListener: txlistener.event
-    }
-  })
+  var txLogger = new TxLogger()
 
   txLogger.event.register('debugRequested', (hash) => {
     self.startdebugging(hash)
