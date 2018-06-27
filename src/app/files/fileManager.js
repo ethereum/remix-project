@@ -38,31 +38,6 @@ class FileManager {
     self._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     self._deps.configExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     self._deps.gistExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-
-    // tabs
-    var $filesEl = $('#files')
-
-    // Switch tab
-    $filesEl.on('click', '.file:not(.active)', function (ev) {
-      ev.preventDefault()
-      self.switchFile($(this).find('.name').text())
-      return false
-    })
-
-    // Remove current tab
-    $filesEl.on('click', '.file .remove', function (ev) {
-      ev.preventDefault()
-      var name = $(this).parent().find('.name').text()
-      delete self.tabbedFiles[name]
-      self.refreshTabs()
-      if (Object.keys(self.tabbedFiles).length) {
-        self.switchFile(Object.keys(self.tabbedFiles)[0])
-      } else {
-        self._deps.editor.displayEmptyReadOnlySession()
-        self._deps.config.set('currentFile', '')
-      }
-      return false
-    })
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
@@ -136,7 +111,7 @@ class FileManager {
     var self = this
     if (file) return _switchFile(file)
     else {
-      var browserProvider = self._.filesProviders['browser']
+      var browserProvider = self._deps.filesProviders['browser']
       browserProvider.resolveDirectory('browser', (error, filesTree) => {
         if (error) console.error(error)
         var fileList = Object.keys(filesTree)
