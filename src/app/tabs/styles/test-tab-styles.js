@@ -16,9 +16,28 @@ var css = csjs`
     flex-direction: column;
     margin: 2%;
   }
-  .testsOutput {
+  .container {
     ${styles.rightPanel.testTab.box_listTests};
     margin: 2%;
+    padding-bottom: 5%;
+  }
+  .outputTitle {
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  .summaryTitle {
+    font-weight: bold;
+  }
+  .testPass {
+    background-color: ${styles.rightPanel.testTab.color_testPass};
+  }
+  .testLog {
+    margin-bottom: 1%;
+    border-radius: 4px;
+    padding: 1% 1% 1% 5%;
+  }
+  .testFailure {
+    background-color: ${styles.rightPanel.testTab.color_testFail};
   }
   .buttons {
     ${styles.rightPanel.testTab.box_listTests};
