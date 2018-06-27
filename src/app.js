@@ -133,8 +133,8 @@ class App {
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
     self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
     self._api.filesProviders['config'].init()
-    registry.put({api: self._api.filesProviders['browser'], name: 'fileProviders/browser'})
-    registry.put({api: self._api.filesProviders['config'], name: 'fileProviders/config'})
+    registry.put({api: self._api.filesProviders['browser'], name: 'fileproviders/browser'})
+    registry.put({api: self._api.filesProviders['config'], name: 'fileproviders/config'})
     var remixd = new Remixd()
     registry.put({api: remixd, name: 'remixd/config'})
     remixd.event.register('system', (message) => {
@@ -145,15 +145,16 @@ class App {
     self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
     self._api.filesProviders['gist'] = new NotPersistedExplorer('gist')
     self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
-    registry.put({api: self._api.filesProviders['localhost'], name: 'fileProviders/localhost'})
-    registry.put({api: self._api.filesProviders['swarm'], name: 'fileProviders/swarm'})
-    registry.put({api: self._api.filesProviders['github'], name: 'fileProviders/github'})
-    registry.put({api: self._api.filesProviders['gist'], name: 'fileProviders/gist'})
-    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileProviders/ipfs'})
+    registry.put({api: self._api.filesProviders['localhost'], name: 'fileproviders/localhost'})
+    registry.put({api: self._api.filesProviders['swarm'], name: 'fileproviders/swarm'})
+    registry.put({api: self._api.filesProviders['github'], name: 'fileproviders/github'})
+    registry.put({api: self._api.filesProviders['gist'], name: 'fileproviders/gist'})
+    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
+    registry.put({api: self._api.filesProviders, name: 'fileproviders'})
     self._view = {}
     self._components = {}
     self._components.compilerImport = new CompilerImport()
-    registry.put({api: self._components.compilerImport, name: 'compilerImport'})
+    registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self.data = {
       _layout: {
         right: {
