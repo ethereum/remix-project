@@ -27,21 +27,19 @@ module.exports = class TestTab {
   }
   render () {
     const self = this
-    var container = yo`<div class=${css.testsOutput} id="tests"></div>`
+    var testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
+    var testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
     self.data.allTests = getTests()
     self.data.selectedTests = [...self.data.allTests]
-    function append (container, txt) {
-      var child = yo`<div>${txt}</div>`
-      container.appendChild(child)
-    }
 
     var testCallback = function (result) {
+      testsOutput.hidden = false
       if (result.type === 'contract') {
-        append(container, '\n  ' + result.value)
+        testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
       } else if (result.type === 'testPass') {
-        append(container, '\t✓ ' + result.value)
+        testsOutput.appendChild(yo`<div class='${css.testPass} ${css.testLog}'>✓ (${result.value})</div>`)
       } else if (result.type === 'testFailure') {
-        append(container, '\t✘ ' + result.value)
+        testsOutput.appendChild(yo`<div class='${css.testFailure} ${css.testLog}'>✘ (${result.value})</div>`)
       }
     }
 
@@ -54,17 +52,17 @@ module.exports = class TestTab {
     }
 
     var updateFinalResult = function (_err, result) {
+      testsSummary.hidden = false
       if (result.totalPassing > 0) {
-        append(container, ('  ' + result.totalPassing + ' passing ') + ('(' + result.totalTime + 's)'))
+        testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
       }
       if (result.totalFailing > 0) {
-        append(container, ('  ' + result.totalFailing + ' failing'))
+        testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
       }
-
       result.errors.forEach((error, index) => {
-        append(container, '  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
-        append(container, '')
-        append(container, ('\t error: ' + error.message))
+        testsSummary.appendChild(yo`<div>${index + 1} ${error.context}} ${error.value} </div>`)
+        testsSummary.appendChild(yo`<div></div>`)
+        testsSummary.appendChild(yo`<div>error: ${error.message}</div>`)
       })
     }
 
@@ -96,7 +94,7 @@ module.exports = class TestTab {
     }
 
     self._events.filePanel.register('newTestFileCreated', file => {
-      var testList = document.querySelector(`[class^='testList']`)
+      var testList = document.querySelector("[class^='testList']")
       var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file} </label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
@@ -122,7 +120,8 @@ module.exports = class TestTab {
     }
 
     var runTests = function () {
-      container.innerHTML = ''
+      testsOutput.innerHTML = ''
+      testsSummary.innerHTML = ''
       var tests = self.data.selectedTests
       async.eachOfSeries(tests, (value, key, callback) => { runTest(value, callback) })
     }
@@ -139,7 +138,8 @@ module.exports = class TestTab {
           <div class=${css.buttons}>
             <div class=${css.runButton} onclick=${runTests}>Run Tests</div>
           </div>
-          ${container}
+          ${testsOutput}
+          ${testsSummary}
         </div>
       </div>
     `
