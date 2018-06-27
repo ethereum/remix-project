@@ -340,8 +340,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.compiler = new Compiler(importFileCb)
   var compiler = self._components.compiler
   registry.put({api: compiler, name: 'compiler'})
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+  registry.put({api: offsetToLineColumnConverter, name: 'offsetToLineColumnConverter'})
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -506,51 +507,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: editor, name: 'editor'})
 
   // ---------------- ContextualListener -----------------------
-  this._components.contextualListener = new ContextualListener({
-    getCursorPosition: () => {
-      return this._components.editor.getCursorPosition()
-    },
-    getCompilationResult: () => {
-      return compiler.lastCompilationResult
-    },
-    getCurrentFile: () => {
-      return config.get('currentFile')
-    },
-    getSourceName: (index) => {
-      return compiler.getSourceName(index)
-    },
-    highlight: (position, node) => {
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-        var css = 'highlightreference'
-        if (node.children && node.children.length) {
-          // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
-          css = 'highlightreference'
-          lineColumn = {
-            start: {
-              line: lineColumn.start.line,
-              column: 0
-            },
-            end: {
-              line: lineColumn.start.line + 1,
-              column: 0
-            }
-          }
-        }
-        var fileName = compiler.getSourceName(position.file)
-        if (fileName) {
-          return editor.addMarker(lineColumn, fileName, css)
-        }
-      }
-      return null
-    },
-    stopHighlighting: (event) => {
-      editor.removeMarker(event.eventId, event.fileTarget)
-    }
-  }, {
-    compiler: compiler.event,
-    editor: editor.event
-  })
+  this._components.contextualListener = new ContextualListener()
 
   // ---------------- ContextView -----------------------
   this._components.contextView = new ContextView({
