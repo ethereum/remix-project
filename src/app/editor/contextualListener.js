@@ -3,21 +3,30 @@ var remixLib = require('remix-lib')
 var SourceMappingDecoder = remixLib.SourceMappingDecoder
 var AstWalker = remixLib.AstWalker
 var EventManager = remixLib.EventManager
+var globalRegistry = require('../../global/registry')
 
 /*
   trigger contextChanged(nodes)
 */
 class ContextualListener {
-  constructor (api, events) {
+  constructor (localRegistry) {
+    var self = this
     this.event = new EventManager()
-    this._api = api
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    self._deps = {
+      compiler: self._components.registry.get('compiler').api,
+      editor: self._components.registry.get('editor').api,
+      config: self._components.registry.get('config').api,
+      offsetToLineColumnConverter: self._components.registry.get('offsetToLineColumnConverter').api
+    }
     this._index = {
       Declarations: {},
       FlatReferences: {}
     }
     this._activeHighlights = []
 
-    events.compiler.register('compilationFinished', (success, data, source) => {
+    self._deps.compiler.event.register('compilationFinished', (success, data, source) => {
       this._stopHighlighting()
       this._index = {
         Declarations: {},
@@ -28,12 +37,12 @@ class ContextualListener {
       }
     })
 
-    events.editor.register('contentChanged', () => { this._stopHighlighting() })
+    self._deps.editor.event.register('contentChanged', () => { this._stopHighlighting() })
 
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._highlightItems(api.getCursorPosition(), api.getCompilationResult(), api.getCurrentFile())
+      this._highlightItems(self._deps.editor.getCursorPosition(), self._deps.compiler.lastCompilationResult, self._deps.config.get('currentFile'))
     }, 1000)
   }
 
@@ -94,11 +103,39 @@ class ContextualListener {
 
   _highlight (node, compilationResult) {
     if (!node) return
+    var self = this
     var position = this.sourceMappingDecoder.decode(node.src)
-    var eventId = this._api.highlight(position, node)
+    var eventId = this._highlightInternal(position, node)
     if (eventId) {
-      this._activeHighlights.push({ eventId, position, fileTarget: this._api.getSourceName(position.file), nodeId: node.id })
+      this._activeHighlights.push({ eventId, position, fileTarget: self._deps.compiler.getSourceName(position.file), nodeId: node.id })
     }
+  }
+
+  _highlightInternal (position, node) {
+    var self = this
+    if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult)
+      var css = 'highlightreference'
+      if (node.children && node.children.length) {
+        // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
+        css = 'highlightreference'
+        lineColumn = {
+          start: {
+            line: lineColumn.start.line,
+            column: 0
+          },
+          end: {
+            line: lineColumn.start.line + 1,
+            column: 0
+          }
+        }
+      }
+      var fileName = self._deps.compiler.getSourceName(position.file)
+      if (fileName) {
+        return self._deps.editor.addMarker(lineColumn, fileName, css)
+      }
+    }
+    return null
   }
 
   _highlightExpressions (node, compilationResult) {
@@ -124,8 +161,10 @@ class ContextualListener {
   }
 
   _stopHighlighting () {
-    for (var event in this._activeHighlights) {
-      this._api.stopHighlighting(this._activeHighlights[event])
+    var self = this
+    for (var eventKey in this._activeHighlights) {
+      var event = this._activeHighlights[eventKey]
+      self._deps.editor.removeMarker(event.eventId, event.fileTarget)
     }
     this._activeHighlights = []
   }
