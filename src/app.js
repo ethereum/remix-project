@@ -46,6 +46,7 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
+var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -404,22 +405,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   // ----------------- Tx listener -----------------
-  var transactionReceiptResolver = {
-    _transactionReceipts: {},
-    resolve: function (tx, cb) {
-      if (this._transactionReceipts[tx.hash]) {
-        return cb(null, this._transactionReceipts[tx.hash])
-      }
-      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
-        if (!error) {
-          this._transactionReceipts[tx.hash] = receipt
-          cb(null, receipt)
-        } else {
-          cb(error)
-        }
-      })
-    }
-  }
+  var transactionReceiptResolver = new TransactionReceiptResolver()
 
   var compiledContracts = function () {
     if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
