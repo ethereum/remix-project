@@ -22,7 +22,7 @@ class ContextView {
       contextualListener: self._components.registry.get('contextualListener').api,
       editor: self._components.registry.get('editor').api,
       compiler: self._components.registry.get('compiler').api,
-      offsetToLineColumnConverter: self._components.registry.get('offsetToLineColumnConverter').api,
+      offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api,
       config: self._components.registry.get('config').api,
       fileManager: self._components.registry.get('filemanager').api
     }

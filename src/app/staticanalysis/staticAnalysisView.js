@@ -26,7 +26,7 @@ function staticAnalysisView (localRegistry) {
   self._deps = {
     compiler: self._components.registry.get('compiler').api,
     renderer: self._components.registry.get('renderer').api,
-    offsetToLineColumnConverter: self._components.registry.get('offsetToLineColumnConverter').api
+    offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
   }
 
   self._deps.compiler.event.register('compilationFinished', function (success, data, source) {
