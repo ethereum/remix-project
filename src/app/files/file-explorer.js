@@ -10,9 +10,11 @@ var helper = require('../../lib/helper')
 
 var css = require('./styles/file-explorer-styles')
 
+var globalRegistry = require('../../global/registry')
+
 let MENU_HANDLE
 
-function fileExplorer (appAPI, files) {
+function fileExplorer (localRegistry, files) {
   var self = this
   this.events = new EventManager()
   // file provider backend
@@ -22,13 +24,21 @@ function fileExplorer (appAPI, files) {
   // path currently focused on
   this.focusPath = null
 
+  self._components = {}
+  self._components.registry = localRegistry || globalRegistry
+  self._deps = {
+    config: self._components.registry.get('config').api,
+    editor: self._components.registry.get('editor').api,
+    fileManager: self._components.registry.get('filemanager').api
+  }
+
   // warn if file changed outside of Remix
   function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
   }
 
   this.files.event.register('fileExternallyChanged', (path, file) => {
-    if (appAPI.config.get('currentFile') === path && appAPI.currentContent() && appAPI.currentContent() !== file.content) {
+    if (self._deps.config.get('currentFile') === path && self._deps.editor.currentContent() && self._deps.editor.currentContent() !== file.content) {
       modalDialog(path + ' changed', remixdDialog(),
         {
           label: 'Keep the content displayed in Remix',
@@ -37,7 +47,7 @@ function fileExplorer (appAPI, files) {
         {
           label: 'Replace by the new content',
           fn: () => {
-            appAPI.setText(file.content)
+            self._deps.editor.setText(file.content)
           }
         }
       )
@@ -186,7 +196,7 @@ function fileExplorer (appAPI, files) {
   }
 
   // register to main app, trigger when the current file in the editor changed
-  appAPI.event.register('currentFileChanged', (newFile, explorer) => {
+  self._deps.fileManager.event.register('currentFileChanged', (newFile, explorer) => {
     if (self.focusElement && (!explorer || explorer.type !== files.type) && self.focusPath !== newFile) {
       self.focusElement.classList.remove(css.hasFocus)
       self.focusElement = null

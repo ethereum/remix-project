@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
+var $ = require('jquery')
 
 var Terminal = require('./terminal')
 var globalRegistry = require('../../global/registry')
@@ -20,7 +21,8 @@ class EditorPanel {
       txlistener: self._components.registry.get('txlistener').api,
       contextView: self._components.registry.get('contextview').api,
       udapp: self._components.registry.get('udapp').api,
-      cmdInterpreter: self._components.registry.get('cmdinterpreter').api
+      cmdInterpreter: self._components.registry.get('cmdinterpreter').api,
+      fileManager: self._components.registry.get('filemanager').api
     }
     self.event = new EventManager()
     self.data = {
@@ -171,6 +173,32 @@ class EditorPanel {
         </span>
       </div>
     `
+
+    // tabs
+    var $filesEl = $(self._view.filetabs)
+
+    // Switch tab
+    $filesEl.on('click', '.file:not(.active)', function (ev) {
+      ev.preventDefault()
+      self._deps.fileManager.switchFile($(this).find('.name').text())
+      return false
+    })
+
+    // Remove current tab
+    $filesEl.on('click', '.file .remove', function (ev) {
+      ev.preventDefault()
+      var name = $(this).parent().find('.name').text()
+      delete self._deps.fileManager.tabbedFiles[name]
+      self._deps.fileManager.refreshTabs()
+      if (Object.keys(self._deps.fileManager.tabbedFiles).length) {
+        self.switchFile(Object.keys(self._deps.fileManager.tabbedFiles)[0])
+      } else {
+        self._deps.editor.displayEmptyReadOnlySession()
+        self._deps.config.set('currentFile', '')
+      }
+      return false
+    })
+
     return self._view.tabsbar
     function toggleScrollers (event = {}) {
       if (event.type) self.data._focus = event.type
