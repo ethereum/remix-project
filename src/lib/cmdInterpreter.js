@@ -2,9 +2,12 @@
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
+var CommandInterpreterAPI = require('./cmdInterpreterAPI')
+
 class CmdInterpreter {
-  constructor () {
+  constructor (api) {
     this.event = new EventManager()
+    this.api = new CommandInterpreterAPI(this)
   }
   interpret (cmd, cb) {
     if (!cmd) return false
@@ -12,7 +15,7 @@ class CmdInterpreter {
     if (accept) {
       var param = accept[2]
       if (param) param = param.trim()
-      this.event.trigger(accept[1], [param, cb])
+      this.api[accept[1]](param, cb)
       return accept[1]
     }
     return null
