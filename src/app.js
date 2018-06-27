@@ -501,6 +501,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     })
   })
 
+  registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
+
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   var editor = self._components.editor // shortcut for the editor
@@ -526,18 +528,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ---------------- ContextView -----------------------
   this._components.contextView = new ContextView()
+  registry.put({api: this._components.contextView, name: 'contextview'})
 
   // ----------------- editor panel ----------------------
-  this._components.editorpanel = new EditorPanel({
-    api: {
-      cmdInterpreter: cmdInterpreter,
-      editor: self._components.editor,
-      config: self._api.config,
-      txListener: txlistener,
-      contextview: self._components.contextView,
-      udapp: () => { return udapp }
-    }
-  })
+  this._components.editorpanel = new EditorPanel()
   registry.put({ api: this._components.editorpanel, name: 'editorpanel' })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
 
