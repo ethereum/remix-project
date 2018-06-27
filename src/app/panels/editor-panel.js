@@ -3,32 +3,42 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
 var Terminal = require('./terminal')
+var globalRegistry = require('../../global/registry')
 
 var styles = require('./styles/editor-panel-styles')
 var cssTabs = styles.cssTabs
 var css = styles.css
 
 class EditorPanel {
-  constructor (opts = {}) {
+  constructor (localRegistry) {
     var self = this
-    self._api = opts.api
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    self._deps = {
+      config: self._components.registry.get('config').api,
+      editor: self._components.registry.get('editor').api,
+      txlistener: self._components.registry.get('txlistener').api,
+      contextView: self._components.registry.get('contextview').api,
+      udapp: self._components.registry.get('udapp').api,
+      cmdInterpreter: self._components.registry.get('cmdinterpreter').api
+    }
     self.event = new EventManager()
     self.data = {
       _FILE_SCROLL_DELTA: 200,
       _layout: {
         top: {
-          offset: self._api.config.get('terminal-top-offset') || 500,
+          offset: self._deps.config.get('terminal-top-offset') || 500,
           show: true
         }
       }
     }
     self._view = {}
     self._components = {
-      editor: opts.api.editor, // @TODO: instantiate in eventpanel instead of passing via `opts`
+      editor: self._deps.editor, // @TODO: instantiate in eventpanel instead of passing via `opts`
       terminal: new Terminal({
         api: {
-          cmdInterpreter: self._api.cmdInterpreter,
-          udapp: self._api.udapp,
+          cmdInterpreter: self._deps.cmdInterpreter,
+          udapp: self._deps.udapp,
           getPosition (event) {
             var limitUp = 36
             var limitDown = 20
@@ -36,12 +46,6 @@ class EditorPanel {
             var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
             newpos = (newpos < height - limitDown) ? newpos : height - limitDown
             return newpos
-          },
-          web3 () {
-            return self._api.web3()
-          },
-          context () {
-            return self._api.context()
           }
         }
       })
@@ -50,9 +54,9 @@ class EditorPanel {
       this.event.trigger('terminalFilterChanged', [type, value])
     })
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
-    if (self._api.txListener) {
+    if (self._deps.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
-        self._api.txListener.setListenOnNetwork(listenOnNetWork)
+        self._deps.txListener.setListenOnNetwork(listenOnNetWork)
       })
     }
     if (document && document.head) {
@@ -72,7 +76,7 @@ class EditorPanel {
         else delta = containerHeight
       } else {
         layout.show = true
-        self._api.config.set(`terminal-${direction}-offset`, delta)
+        self._deps.config.set(`terminal-${direction}-offset`, delta)
         layout.offset = delta
       }
     }
@@ -113,7 +117,7 @@ class EditorPanel {
       <div class=${css.content}>
         ${self._renderTabsbar()}
         <div class=${css.contextviewcontainer}>
-          ${self._api.contextview.render()}
+          ${self._deps.contextView.render()}
         </div>
         ${self._view.editor}
         ${self._view.terminal}
