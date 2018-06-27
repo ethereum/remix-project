@@ -506,39 +506,26 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var editor = self._components.editor // shortcut for the editor
   registry.put({api: editor, name: 'editor'})
 
+  var config = self._api.config
+  var filesProviders = self._api.filesProviders
+
+  // ----------------- file manager ----------------------------
+
+  self._components.fileManager = new FileManager({
+    config: config,
+    editor: editor,
+    filesProviders: filesProviders,
+    compilerImport: self._components.compilerImport
+  })
+  var fileManager = self._components.fileManager
+  registry.put({api: fileManager, name: 'filemanager'})
+
   // ---------------- ContextualListener -----------------------
   this._components.contextualListener = new ContextualListener()
+  registry.put({api: this._components.contextualListener, name: 'contextualListener'})
 
   // ---------------- ContextView -----------------------
-  this._components.contextView = new ContextView({
-    contextualListener: this._components.contextualListener,
-    jumpTo: (position) => {
-      function jumpToLine (lineColumn) {
-        if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-          editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
-        }
-      }
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-        var filename = compiler.getSourceName(position.file)
-        // TODO: refactor with rendererAPI.errorClick
-        if (filename !== config.get('currentFile')) {
-          var provider = fileManager.fileProviderOf(filename)
-          if (provider) {
-            provider.exists(filename, (error, exist) => {
-              if (error) return console.log(error)
-              fileManager.switchFile(filename)
-              jumpToLine(lineColumn)
-            })
-          }
-        } else {
-          jumpToLine(lineColumn)
-        }
-      }
-    }
-  }, {
-    contextualListener: this._components.contextualListener.event
-  })
+  this._components.contextView = new ContextView()
 
   // ----------------- editor panel ----------------------
   this._components.editorpanel = new EditorPanel({
@@ -571,18 +558,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }, false)
 
   this.event = new EventManager()
-
-  var config = self._api.config
-  var filesProviders = self._api.filesProviders
-
-  self._components.fileManager = new FileManager({
-    config: config,
-    editor: editor,
-    filesProviders: filesProviders,
-    compilerImport: self._components.compilerImport
-  })
-  var fileManager = self._components.fileManager
-  registry.put({api: fileManager, name: 'filemanager'})
 
   // Add files received from remote instance (i.e. another remix-ide)
   function loadFiles (filesSet, fileProvider, callback) {
