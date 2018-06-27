@@ -32,16 +32,18 @@ module.exports = class RighthandPanel {
       dragbar: null
     }
 
+    self._components.registry.put({api: this, name: 'righthandpanel'})
+
     self._components = {
-      pluginManager: new PluginManager(),
-      tabbedMenu: new TabbedMenu(),
-      compile: new CompileTab(),
-      run: new RunTab(),
-      settings: new SettingsTab(),
-      analysis: new AnalysisTab(),
-      debug: new DebuggerTab(),
-      support: new SupportTab(),
-      test: new TestTab()
+      pluginManager: new PluginManager(self._components.registry),
+      tabbedMenu: new TabbedMenu(self._components.registry),
+      compile: new CompileTab(self._components.registry),
+      run: new RunTab(self._components.registry),
+      settings: new SettingsTab(self._components.registry),
+      analysis: new AnalysisTab(self._components.registry),
+      debug: new DebuggerTab(self._components.registry),
+      support: new SupportTab(self._components.registry),
+      test: new TestTab(self._components.registry)
     }
 
     self.event.register('plugin-loadRequest', json => {
@@ -81,6 +83,11 @@ module.exports = class RighthandPanel {
     if (self._view.element) return self._view.element
     return self._view.element
   }
+
+  focusOn (x) {
+    if (this._components.tabbedMenu) this._components.tabbedMenu.selectTabByClassName(x)
+  }
+
   init () {
     // @TODO: init is for resizable drag bar only and should be refactored in the future
     const self = this
