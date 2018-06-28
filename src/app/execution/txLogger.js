@@ -120,7 +120,6 @@ var css = csjs`
   }`
 /**
   * This just export a function that register to `newTransaction` and forward them to the logger.
-  * Emit debugRequested
   *
   */
 class TxLogger {
@@ -141,7 +140,8 @@ class TxLogger {
       editorPanel: this._components.registry.get('editorpanel').api,
       txListener: this._components.registry.get('txlistener').api,
       eventsDecoder: this._components.registry.get('eventsdecoder').api,
-      compiler: this._components.registry.get('compiler').api
+      compiler: this._components.registry.get('compiler').api,
+      app: this._components.registry.get('app').api
     }
 
     this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
@@ -205,7 +205,7 @@ function debug (e, data, self) {
   if (data.tx.isCall && data.tx.envMode !== 'vm') {
     modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
   } else {
-    self.event.trigger('debugRequested', [data.tx.hash])
+    self._deps.app.startdebugging(data.tx.hash)
   }
 }
 
