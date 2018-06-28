@@ -1,5 +1,6 @@
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
+const copy = require('clipboard-copy')
 
 const TreeView = require('../ui/TreeView')
 const modalDialog = require('../ui/modaldialog')
@@ -8,6 +9,7 @@ const modalDialogCustom = require('../ui/modal-dialog-custom')
 const styleGuide = require('../ui/styles-guide/theme-chooser')
 const parseContracts = require('../contract/contractParser')
 const publishOnSwarm = require('../contract/publishOnSwarm')
+const addTooltip = require('../ui/tooltip')
 
 const styles = styleGuide.chooser()
 
@@ -166,10 +168,18 @@ module.exports = class CompileTab {
     self._view.contractNames = yo`<select class="${css.contractNames}" disabled></select>`
     self._view.contractEl = yo`
       <div class="${css.container}">
-        ${self._view.contractNames}
-        <div class="${css.contractButtons}">
+        <div class="${css.contractContainer}">
+          ${self._view.contractNames}
+        </div>
+        <div class="${css.contractHelperButtons}">
           <div title="Display Contract Details" class="${css.details}" onclick=${details}>Details</div>
           <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>Publish on Swarm</div>
+          <div title="Copy ABI to clipboard" class="${css.copyButton}" onclick=${copyABI}>
+            <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i> ABI
+          </div>
+          <div title="Copy Bytecode to clipboard" class="${css.copyButton} ${css.bytecodeButton}" onclick=${copyBytecode}>
+            <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i> Bytecode
+          </div>
         </div>
       </div>`
     self._view.el = yo`
@@ -194,6 +204,36 @@ module.exports = class CompileTab {
     }
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
+    function getContractProperty (property) {
+      const select = self._view.contractNames
+      if (select.children.length > 0 && select.selectedIndex >= 0) {
+        const contractName = select.children[select.selectedIndex].innerHTML
+        const contractProperties = self.data.contractsDetails[contractName]
+        return contractProperties[property] || null
+      }
+    }
+    function copyContractProperty (property) {
+      let content = getContractProperty(property)
+      if (!content) {
+        addTooltip('No content available for ' + property)
+        return
+      }
+
+      try {
+        if (typeof content !== 'string') {
+          content = JSON.stringify(content, null, '\t')
+        }
+      } catch (e) {}
+
+      copy(content)
+      addTooltip('Copied value to clipboard')
+    }
+    function copyABI () {
+      copyContractProperty('abi')
+    }
+    function copyBytecode () {
+      copyContractProperty('bytecode')
+    }
     function hideWarnings (event) {
       self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
       self._api.runCompiler()
@@ -331,25 +371,41 @@ const css = csjs`
   .container {
     ${styles.rightPanel.compileTab.box_CompileContainer};
     margin: 0;
+    margin-bottom: 2%;
+  }
+  .contractContainer {
     display: flex;
     align-items: center;
+    margin-bottom: 2%;
   }
   .contractNames {
     ${styles.rightPanel.compileTab.dropdown_CompileContract};
-    margin-right: 5%;
   }
-  .contractButtons {
+  .contractHelperButtons {
     display: flex;
     cursor: pointer;
-    justify-content: center;
     text-align: center;
+  }
+  .copyButton {
+    ${styles.rightPanel.compileTab.button_Details};
+    padding: 0 7px;
+    min-width: 50px;
+    width: auto;
+    margin-left: 5px;
+  }
+  .bytecodeButton {
+    min-width: 80px;
+  }
+  .copyIcon {
+    margin-right: 5px;
   }
   .details {
     ${styles.rightPanel.compileTab.button_Details};
   }
   .publish {
     ${styles.rightPanel.compileTab.button_Publish};
-    margin-left: 2%;
+    margin-left: 5px;
+    margin-right: 5px;
     width: 120px;
   }
   .log {
