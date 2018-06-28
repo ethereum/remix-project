@@ -478,8 +478,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var cmdInterpreter = new CommandInterpreter() // @TODO: put into editorpanel
 
   registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
-  var config = self._components.config
-
   // ----------------- file manager ----------------------------
 
   self._components.fileManager = new FileManager()
@@ -554,7 +552,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
-  var previouslyOpenedFile = config.get('currentFile')
+  var previouslyOpenedFile = self._components.config.get('currentFile')
   if (previouslyOpenedFile) {
     self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
       if (!error && content) {
@@ -612,7 +610,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var saveTimeout = null
 
   function editorOnChange () {
-    var currentFile = config.get('currentFile')
+    var currentFile = self._components.config.get('currentFile')
     if (!currentFile) {
       return
     }
