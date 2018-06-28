@@ -552,19 +552,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
-  var previouslyOpenedFile = self._components.config.get('currentFile')
-  if (previouslyOpenedFile) {
-    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) {
-        fileManager.switchFile(previouslyOpenedFile)
-      } else {
-        fileManager.switchFile()
-      }
-    })
-  } else {
-    fileManager.switchFile()
-  }
-
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
@@ -673,4 +660,18 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       self.startdebugging(queryParams.get().debugtx)
     }
   })
+
+  // Open last opened file
+  var previouslyOpenedFile = self._components.config.get('currentFile')
+  if (previouslyOpenedFile) {
+    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
+      if (!error && content) {
+        fileManager.switchFile(previouslyOpenedFile)
+      } else {
+        fileManager.switchFile()
+    }
+  })
+  } else {
+    fileManager.switchFile()
+  }
 }
