@@ -499,8 +499,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   this._view.centerpanel.appendChild(this._components.editorpanel.render())
 
-  var queryParams = new QueryParams()
-
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   var filesToLoad = null
@@ -524,6 +522,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
+  var queryParams = new QueryParams()
   var loadingFromGist = self.loadFromGist(queryParams.get())
 
   // insert ballot contract if there are no files available
