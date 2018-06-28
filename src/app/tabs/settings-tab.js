@@ -111,7 +111,7 @@ module.exports = class SettingsTab {
             <span class="${css.checkboxText}">Always use Ethereum VM at Load</span>
           </div>
           <div class="${css.crow}">
-            <div><input id="editorWrap" type="checkbox"></div>
+            <div><input id="editorWrap" type="checkbox" onchange=${function () { self._deps.editor.resize(this.checked) }}></div>
             <span class="${css.checkboxText}">Text Wrap</span>
           </div>
           <div class="${css.crow}">
