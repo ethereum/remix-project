@@ -579,8 +579,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   document.querySelector('#editorWrap').addEventListener('change', onResize)
 
   // ----------------- Debugger -----------------
-  var sourceHighlighter = new SourceHighlighter()
-  self._view.transactionDebugger = new Debugger('#debugger', sourceHighlighter)
+  self._view.transactionDebugger = new Debugger('#debugger', new SourceHighlighter())
   self._view.transactionDebugger.addProvider('vm', executionContext.vm())
   self._view.transactionDebugger.addProvider('injected', executionContext.internalWeb3())
   self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
