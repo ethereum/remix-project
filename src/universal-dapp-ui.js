@@ -8,9 +8,6 @@ var copyToClipboard = require('./app/ui/copy-to-clipboard')
 var css = require('./universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 
-/*
-  trigger debugRequested
-*/
 function UniversalDAppUI (udapp, opts = {}) {
   var self = this
   this.udapp = udapp

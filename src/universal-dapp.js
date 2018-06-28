@@ -21,9 +21,6 @@ var modalDialog = require('./app/ui/modaldialog')
 var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('./app/execution/confirmDialog')
 
-/*
-  trigger debugRequested
-*/
 function UniversalDApp (opts, localRegistry) {
   this.event = new EventManager()
   var self = this
