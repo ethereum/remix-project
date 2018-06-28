@@ -436,9 +436,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   udapp.reset({})
   udappUI.reset()
-  udapp.event.register('debugRequested', this, function (txResult) {
-    self.startdebugging(txResult.transactionHash)
-  })
 
   // ----------------- Tx listener -----------------
   var transactionReceiptResolver = new TransactionReceiptResolver()
