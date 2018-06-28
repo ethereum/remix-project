@@ -615,18 +615,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }, 5000)
   }
 
+  // auto save the file when content changed
   editor.event.register('contentChanged', editorOnChange)
-  // in order to save the file when switching
+  // save the file when switching
   editor.event.register('sessionSwitched', editorOnChange)
 
   executionContext.event.register('contextChanged', this, function (context) {
     self.runCompiler()
   })
 
+  // rerun the compiler when the environement changed
   executionContext.event.register('web3EndpointChanged', this, function (context) {
     self.runCompiler()
   })
 
+  // check init query parameters from the URL once the compiler is loaded
   compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
     self.runCompiler()
