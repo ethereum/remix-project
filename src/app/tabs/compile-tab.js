@@ -31,6 +31,7 @@ module.exports = class CompileTab {
       contractEl: null
     }
     self.data = {
+      hideWarnings: self._opts.config.get('hideWarnings') || false,
       autoCompile: self._opts.config.get('autoCompile'),
       compileTimeout: null,
       contractsDetails: {},
@@ -115,7 +116,13 @@ module.exports = class CompileTab {
       if (data.errors && data.errors.length) {
         error = true
         data.errors.forEach(function (err) {
-          self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
+          if (self._opts.config.get('hideWarnings')) {
+            if (err.severity !== 'warning') {
+              self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
+            }
+          } else {
+            self._opts.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
+          }
         })
       }
       if (!error && data.contracts) {
@@ -139,7 +146,9 @@ module.exports = class CompileTab {
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
+    self._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
+    if (self.data.hideWarnings) self._view.hideWarningsBox.setAttribute('checked', '')
     self._view.compileContainer = yo`
       <div class="${css.compileContainer}">
         <div class="${css.compileButtons}">
@@ -149,6 +158,10 @@ module.exports = class CompileTab {
             <span class="${css.autocompileText}">Auto compile</span>
           </div>
           ${self._view.warnCompilationSlow}
+          <div class=${css.hideWarningsContainer}>
+            ${self._view.hideWarningsBox}
+            <span class="${css.autocompileText}">Hide warnings</span>
+          </div>
         </div>
       </div>`
     self._view.errorContainer = yo`<div class='error'></div>`
@@ -220,6 +233,10 @@ module.exports = class CompileTab {
     }
     function copyBytecode () {
       copyContractProperty('bytecode')
+    }
+    function hideWarnings (event) {
+      self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
+      self._api.runCompiler()
     }
     function details () {
       const select = self._view.contractNames
