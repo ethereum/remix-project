@@ -384,10 +384,6 @@ const css = csjs`
   .contractHelperButtons {
     display: flex;
     cursor: pointer;
-<<<<<<< HEAD
-=======
-    justify-content: space-between;
->>>>>>> cbfc5f1... Added copy buttons for ABI and Bytecode
     text-align: center;
   }
   .copyButton {
