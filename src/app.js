@@ -586,15 +586,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
   self._view.transactionDebugger.switchProvider(executionContext.getProvider())
 
-  var txLogger = new TxLogger()
-
-  txLogger.event.register('debugRequested', (hash) => {
-    self.startdebugging(hash)
-  })
+  var txLogger = new TxLogger() // eslint-disable-line
 
   var previousInput = ''
   var saveTimeout = null
-
   function editorOnChange () {
     var currentFile = self._components.config.get('currentFile')
     if (!currentFile) {
@@ -668,8 +663,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         fileManager.switchFile(previouslyOpenedFile)
       } else {
         fileManager.switchFile()
-    }
-  })
+      }
+    })
   } else {
     fileManager.switchFile()
   }
