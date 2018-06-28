@@ -117,7 +117,7 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
-    self._api = {}
+    self._components = {}
     registry.put({api: self, name: 'app'})
     var fileStorage = new Storage('sol:')
     registry.put({api: fileStorage, name: 'fileStorage'})
@@ -125,46 +125,45 @@ class App {
     var configStorage = new Storage('config:')
     registry.put({api: configStorage, name: 'configStorage'})
 
-    self._api.config = new Config(fileStorage)
-    registry.put({api: self._api.config, name: 'config'})
+    self._components.config = new Config(fileStorage)
+    registry.put({api: self._components.config, name: 'config'})
 
-    executionContext.init(self._api.config)
+    executionContext.init(self._components.config)
     executionContext.listenOnLastBlock()
-    self._api.filesProviders = {}
-    self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
-    self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
-    self._api.filesProviders['config'].init()
-    registry.put({api: self._api.filesProviders['browser'], name: 'fileproviders/browser'})
-    registry.put({api: self._api.filesProviders['config'], name: 'fileproviders/config'})
+    self._components.filesProviders = {}
+    self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
+    self._components.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
+    self._components.filesProviders['config'].init()
+    registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
+    registry.put({api: self._components.filesProviders['config'], name: 'fileproviders/config'})
     var remixd = new Remixd()
     registry.put({api: remixd, name: 'remixd/config'})
     remixd.event.register('system', (message) => {
       if (message.error) toolTip(message.error)
     })
-    self._api.filesProviders['localhost'] = new SharedFolder(remixd)
-    self._api.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
-    self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
-    self._api.filesProviders['gist'] = new NotPersistedExplorer('gist')
-    self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
-    registry.put({api: self._api.filesProviders['localhost'], name: 'fileproviders/localhost'})
-    registry.put({api: self._api.filesProviders['swarm'], name: 'fileproviders/swarm'})
-    registry.put({api: self._api.filesProviders['github'], name: 'fileproviders/github'})
-    registry.put({api: self._api.filesProviders['gist'], name: 'fileproviders/gist'})
-    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
-    registry.put({api: self._api.filesProviders, name: 'fileproviders'})
+    self._components.filesProviders['localhost'] = new SharedFolder(remixd)
+    self._components.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
+    self._components.filesProviders['github'] = new BasicReadOnlyExplorer('github')
+    self._components.filesProviders['gist'] = new NotPersistedExplorer('gist')
+    self._components.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
+    registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
+    registry.put({api: self._components.filesProviders['swarm'], name: 'fileproviders/swarm'})
+    registry.put({api: self._components.filesProviders['github'], name: 'fileproviders/github'})
+    registry.put({api: self._components.filesProviders['gist'], name: 'fileproviders/gist'})
+    registry.put({api: self._components.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
+    registry.put({api: self._components.filesProviders, name: 'fileproviders'})
     self._view = {}
-    self._components = {}
     self._components.compilerImport = new CompilerImport()
     registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self._components.gistHandler = new GistHandler()
     self.data = {
       _layout: {
         right: {
-          offset: self._api.config.get('right-offset') || 400,
+          offset: self._components.config.get('right-offset') || 400,
           show: true
         }, // @TODO: adapt sizes proportionally to browser window size
         left: {
-          offset: self._api.config.get('left-offset') || 200,
+          offset: self._components.config.get('left-offset') || 200,
           show: true
         }
       }
@@ -179,7 +178,7 @@ class App {
         if (layout.show) delta = layout.offset
         else delta = 0
       } else {
-        self._api.config.set(`${direction}-offset`, delta)
+        self._components.config.set(`${direction}-offset`, delta)
         layout.offset = delta
       }
     }
@@ -232,7 +231,7 @@ class App {
 
     self._components.fileManager.saveCurrentFile()
     self._components.editor.clearAnnotations()
-    var currentFile = self._api.config.get('currentFile')
+    var currentFile = self._components.config.get('currentFile')
     if (currentFile) {
       if (/.(.sol)$/.exec(currentFile)) {
         // only compile *.sol file.
@@ -271,7 +270,7 @@ class App {
           return
         }
         self.loadFiles(data.files, 'gist', (errorLoadingFile) => {
-          if (!errorLoadingFile) self._api.filesProviders['gist'].id = gistId
+          if (!errorLoadingFile) self._components.filesProviders['gist'].id = gistId
         })
       })
     })
@@ -281,14 +280,14 @@ class App {
     if (!fileProvider) fileProvider = 'browser'
 
     async.each(Object.keys(filesSet), (file, callback) => {
-      helper.createNonClashingName(file, self._api.filesProviders[fileProvider],
+      helper.createNonClashingName(file, self._components.filesProviders[fileProvider],
       (error, name) => {
         if (error) {
           modalDialogCustom.alert('Unexpected error loading the file ' + error)
         } else if (helper.checkSpecialChars(name)) {
           modalDialogCustom.alert('Special characters are not allowed')
         } else {
-          self._api.filesProviders[fileProvider].set(name, filesSet[file].content)
+          self._components.filesProviders[fileProvider].set(name, filesSet[file].content)
         }
         callback()
       })
@@ -305,8 +304,8 @@ class App {
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
-          if (self._api.filesProviders[type]) {
-            self._api.filesProviders[type].addReadOnly(cleanUrl, content, url)
+          if (self._components.filesProviders[type]) {
+            self._components.filesProviders[type].addReadOnly(cleanUrl, content, url)
           }
           cb(null, content)
         } else {
@@ -476,11 +475,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     this module basically listen on user input (from terminal && editor)
     and interpret them as commands
   */
-  var cmdInterpreter = new CommandInterpreter()
+  var cmdInterpreter = new CommandInterpreter() // @TODO: put into editorpanel
 
   registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
-  var config = self._api.config
-  var filesProviders = self._api.filesProviders
+  var config = self._components.config
 
   // ----------------- file manager ----------------------------
 
@@ -532,13 +530,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // insert ballot contract if there are no files available
   if (!loadingFromGist) {
-    filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
+    self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
       if (error) console.error(error)
       if (Object.keys(filesList).length === 0) {
-        if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
+        if (!self._components.filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
           modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
         } else {
-          filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
+          self._components.filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
         }
       }
     })
@@ -558,7 +556,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   var previouslyOpenedFile = config.get('currentFile')
   if (previouslyOpenedFile) {
-    filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
+    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
       if (!error && content) {
         fileManager.switchFile(previouslyOpenedFile)
       } else {
