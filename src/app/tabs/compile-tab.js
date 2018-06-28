@@ -384,7 +384,6 @@ const css = csjs`
   .contractHelperButtons {
     display: flex;
     cursor: pointer;
-    justify-content: space-between;
     text-align: center;
   }
   .copyButton {
