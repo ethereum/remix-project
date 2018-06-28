@@ -85,6 +85,7 @@ class FileManager {
     self._deps.editor.discardCurrentSession()
     delete this.tabbedFiles[path]
     this.refreshTabs()
+    this.switchFile()
   }
 
   // Display files that have already been selected
