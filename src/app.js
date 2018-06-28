@@ -258,9 +258,9 @@ class App {
     self.event.trigger('debuggingRequested', [])
     self._view.transactionDebugger.debug(txHash)
   }
-  loadFromGist (gistId) {
+  loadFromGist (params) {
     const self = this
-    return self._components.gistHandler.handleLoad(gistId, function (gistId) {
+    return self._components.gistHandler.handleLoad(params, function (gistId) {
       request.get({
         url: `https://api.github.com/gists/${gistId}`,
         json: true
@@ -522,26 +522,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  var queryParams = new QueryParams()
-  var loadingFromGist = self.loadFromGist(queryParams.get())
-
-  // insert ballot contract if there are no files available
-  if (!loadingFromGist) {
-    self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        if (!self._components.filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
-          modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
-        } else {
-          self._components.filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
-        }
-      }
-    })
-  }
-
-  window.syncStorage = chromeCloudStorageSync
-  chromeCloudStorageSync()
-
   // ---------------- FilePanel --------------------
   var filePanel = new FilePanel()
   self._view.leftpanel.appendChild(filePanel.render())
@@ -614,6 +594,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.runCompiler()
   })
 
+  var queryParams = new QueryParams()
+
   // check init query parameters from the URL once the compiler is loaded
   compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
@@ -642,6 +624,25 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       self.startdebugging(queryParams.get().debugtx)
     }
   })
+
+  // chrome app
+  window.syncStorage = chromeCloudStorageSync
+  chromeCloudStorageSync()
+
+  var loadingFromGist = self.loadFromGist(queryParams.get())
+  if (!loadingFromGist) {
+    // insert ballot contract if there are no files to show
+    self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        if (!self._components.filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
+          modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
+        } else {
+          self._components.filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
+        }
+      }
+    })
+  }
 
   // Open last opened file
   var previouslyOpenedFile = self._components.config.get('currentFile')
