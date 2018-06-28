@@ -568,16 +568,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var node = document.getElementById('staticanalysisView')
   node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
-  // ----------------- editor resize ---------------
-
-  function onResize () {
-    editor.resize(document.querySelector('#editorWrap').checked)
-  }
-  onResize()
-
-  self._view.el.addEventListener('change', onResize)
-  document.querySelector('#editorWrap').addEventListener('change', onResize)
-
   // ----------------- Debugger -----------------
   self._view.transactionDebugger = new Debugger('#debugger', new SourceHighlighter())
   self._view.transactionDebugger.addProvider('vm', executionContext.vm())
