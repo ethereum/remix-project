@@ -544,11 +544,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ---------------- FilePanel --------------------
   var filePanel = new FilePanel()
-
-  // TODO this should happen inside file-panel.js
-  var filepanelContainer = document.querySelector('#filepanel')
-  filepanelContainer.appendChild(filePanel.render())
-
+  self._view.leftpanel.appendChild(filePanel.render())
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
   // ----------------- Renderer -----------------
