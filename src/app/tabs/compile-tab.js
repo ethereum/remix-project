@@ -127,7 +127,7 @@ module.exports = class CompileTab {
       var error = false
       if (data['error']) {
         error = true
-        self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity})
+        self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity || 'error'})
       }
       if (data.errors && data.errors.length) {
         error = true
