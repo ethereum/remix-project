@@ -119,6 +119,7 @@ class App {
     var self = this
     self._components = {}
     registry.put({api: self, name: 'app'})
+
     var fileStorage = new Storage('sol:')
     registry.put({api: fileStorage, name: 'fileStorage'})
 
@@ -130,17 +131,24 @@ class App {
 
     executionContext.init(self._components.config)
     executionContext.listenOnLastBlock()
+
+    self._components.compilerImport = new CompilerImport()
+    registry.put({api: self._components.compilerImport, name: 'compilerimport'})
+    self._components.gistHandler = new GistHandler()
+
     self._components.filesProviders = {}
     self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
     self._components.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
     self._components.filesProviders['config'].init()
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
     registry.put({api: self._components.filesProviders['config'], name: 'fileproviders/config'})
+
     var remixd = new Remixd()
-    registry.put({api: remixd, name: 'remixd/config'})
+    registry.put({api: remixd, name: 'remixd'})
     remixd.event.register('system', (message) => {
       if (message.error) toolTip(message.error)
     })
+
     self._components.filesProviders['localhost'] = new SharedFolder(remixd)
     self._components.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
     self._components.filesProviders['github'] = new BasicReadOnlyExplorer('github')
@@ -152,10 +160,9 @@ class App {
     registry.put({api: self._components.filesProviders['gist'], name: 'fileproviders/gist'})
     registry.put({api: self._components.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
+
     self._view = {}
-    self._components.compilerImport = new CompilerImport()
-    registry.put({api: self._components.compilerImport, name: 'compilerimport'})
-    self._components.gistHandler = new GistHandler()
+
     self.data = {
       _layout: {
         right: {
