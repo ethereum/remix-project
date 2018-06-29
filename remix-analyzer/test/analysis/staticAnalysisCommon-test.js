@@ -1,6 +1,6 @@
 var test = require('tape')
 
-var common = require('../../src/analysis/modules/staticAnalysisCommon')
+var common = require('../../src/solidity-analyzer/modules/staticAnalysisCommon')
 
 function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
