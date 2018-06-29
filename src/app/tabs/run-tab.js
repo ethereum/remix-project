@@ -198,15 +198,8 @@ function updateAccountBalances (container, self) {
            RECORDER
 ------------------------------------------------ */
 function makeRecorder (registry, runTabEvent, self) {
-  var recorder = new Recorder(self._deps.compiler, self._deps.udapp,
-  (msg) => {
+  var recorder = new Recorder(self._deps.compiler, self._deps.udapp, (msg) => {
     self._deps.editorPanel.logMessage(msg)
-  }, {
-    events: {
-      udapp: self._deps.udapp.event,
-      executioncontext: executionContext.event,
-      runtab: runTabEvent
-    }
   })
 
   recorder.event.register('newTxRecorded', (count) => {
@@ -217,6 +210,15 @@ function makeRecorder (registry, runTabEvent, self) {
     self.data.count = 0
     self._view.recorderCount.innerText = 0
   })
+
+  executionContext.event.register('contextChanged', () => {
+    recorder.clearAll()
+  })
+
+  runTabEvent.register('clearInstance', () => {
+    recorder.clearAll()
+  })
+
   var css2 = csjs`
     .container {}
     .runTxs {}
