@@ -5,7 +5,8 @@ var Web3Providers = remixLib.vm.Web3Providers
 var TraceManager = require('../src/trace/traceManager')
 var CodeManager = require('../src/code/codeManager')
 var web3Test = require('./resources/testWeb3')
-var global = remixLib.global
+
+let web3 = null
 
 tape('CodeManager', function (t) {
   var codeManager
@@ -17,12 +18,12 @@ tape('CodeManager', function (t) {
       console.log(mes)
       t.fail(mes)
     } else {
-      global.web3 = obj
-      var traceManager = new TraceManager()
+      web3 = obj
+      var traceManager = new TraceManager({web3: web3})
       codeManager = new CodeManager(traceManager)
-      var contractCode = global.web3.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
+      var contractCode = web3.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
       codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
-      var tx = global.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+      var tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
       traceManager.resolveTrace(tx, function (error, result) {
         if (error) {
           t.fail(' - traceManager.resolveTrace - failed ' + result)
@@ -63,7 +64,7 @@ function continueTesting (t, codeManager) {
         }
       }
     })
-    var tx = global.web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
+    var tx = web3.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     codeManager.resolveStep(0, tx)
     codeManager.resolveStep(70, tx)
   })

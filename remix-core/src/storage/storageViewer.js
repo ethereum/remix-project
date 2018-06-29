@@ -12,6 +12,7 @@ class StorageViewer {
   constructor (_context, _storageResolver, _traceManager) {
     this.context = _context
     this.storageResolver = _storageResolver
+    this.web3 = this.storageResolver.web3
     this.initialMappingsLocationPromise = null
     this.currentMappingsLocationPromise = null
     _traceManager.accumulateStorageChanges(this.context.stepIndex, this.context.address, {}, (error, storageChanges) => {
@@ -117,7 +118,7 @@ class StorageViewer {
     if (this.mappingsLocationChanges) {
       return callback(null, this.mappingsLocationChanges)
     }
-    mappingPreimages.decodeMappingsKeys(storageChanges, (error, mappings) => {
+    mappingPreimages.decodeMappingsKeys(this.web3, storageChanges, (error, mappings) => {
       if (!error) {
         this.mappingsLocationChanges = mappings
         return callback(null, this.mappingsLocationChanges)
