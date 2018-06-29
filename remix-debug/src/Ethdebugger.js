@@ -9,7 +9,7 @@ var localDecoder = require('./decoder/localDecoder')
 var InternalCallTree = require('./decoder/internalCallTree')
 
 var remixLib = require('remix-lib')
-var TraceManager = remixLib.trace.traceManager
+var TraceManager = remixLib.trace.TraceManager
 var CodeManager = remixLib.code.CodeManager
 var traceHelper = remixLib.helpers.trace
 var init = remixLib.init
