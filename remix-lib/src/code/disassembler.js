@@ -1,8 +1,7 @@
 'use strict'
 
 var parseCode = require('./codeUtils').parseCode
-var remixLib = require('remix-lib')
-var util = remixLib.util
+var util = require('../util')
 
 var createExpressions = function (instructions) {
   var expressions = []

@@ -1,10 +1,11 @@
 var remixLib = require('remix-lib')
 var compilerInput = remixLib.helpers.compiler.compilerInput
+var TraceManager = remixLib.trace.TraceManager
+
 var compiler = require('solc')
 var stateDecoder = require('../../../src/decoder/stateDecoder')
 var vmCall = require('../vmCall')
 
-var TraceManager = require('../../../src/trace/traceManager')
 var StorageResolver = require('../../../src/storage/storageResolver')
 var StorageViewer = require('../../../src/storage/storageViewer')
 

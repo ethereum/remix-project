@@ -1,6 +1,4 @@
 'use strict'
-var TraceManager = require('../../../src/trace/traceManager')
-var CodeManager = require('../../../src/code/codeManager')
 var vmCall = require('../vmCall')
 var remixLib = require('remix-lib')
 var traceHelper = remixLib.helpers.trace
@@ -8,6 +6,9 @@ var SolidityProxy = require('../../../src/decoder/solidityProxy')
 var InternalCallTree = require('../../../src/decoder/internalCallTree')
 var EventManager = remixLib.EventManager
 var helper = require('./helper')
+
+var TraceManager = remixLib.trace.TraceManager
+var CodeManager = remixLib.code.CodeManager
 
 module.exports = function (st, vm, privateKey, contractBytecode, compilationResult, cb) {
   vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, contractBytecode, function (error, txHash) {

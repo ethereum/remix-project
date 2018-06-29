@@ -1,8 +1,8 @@
 'use strict'
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var traceHelper = remixLib.helpers.trace
-var SourceMappingDecoder = remixLib.SourceMappingDecoder
+
+var EventManager = require('../eventManager')
+var traceHelper = require('../helpers/traceHelper')
+var SourceMappingDecoder = require('../sourceMappingDecoder')
 var CodeResolver = require('./codeResolver')
 
 /*

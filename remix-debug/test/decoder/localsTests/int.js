@@ -1,10 +1,10 @@
 'use strict'
 
-var TraceManager = require('../../../src/trace/traceManager')
-var CodeManager = require('../../../src/code/codeManager')
-
 var vmCall = require('../vmCall')
 var remixLib = require('remix-lib')
+
+var TraceManager = remixLib.trace.TraceManager
+var CodeManager = remixLib.code.CodeManager
 
 var traceHelper = remixLib.helpers.trace
 var SolidityProxy = require('../../../src/decoder/solidityProxy')
