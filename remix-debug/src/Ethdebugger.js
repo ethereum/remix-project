@@ -4,7 +4,6 @@ var TraceManager = remixCore.trace.TraceManager
 var StorageViewer = remixCore.storage.StorageViewer
 var remixLib = require('remix-lib')
 var traceHelper = remixLib.helpers.trace
-var global = remixLib.global
 var init = remixLib.init
 var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
@@ -35,6 +34,8 @@ function Ethdebugger (opts) {
   this.opts = opts || {}
   if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
+  this.web3 = opts.web3
+
   this.event = new EventManager()
 
   this.tx
@@ -43,7 +44,16 @@ function Ethdebugger (opts) {
   this.addProvider('DUMMYWEB3', new DummyProvider())
   this.switchProvider('DUMMYWEB3')
 
-  this.traceManager = new TraceManager()
+  this.traceManager = new TraceManager({web3: this.web3})
+  this.codeManager = new CodeManager(this.traceManager)
+  this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
+  this.storageResolver = null
+
+  this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+}
+
+Ethdebugger.prototype.setManagers = function () {
+  this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
   this.storageResolver = null
@@ -152,7 +162,7 @@ Ethdebugger.prototype.storageViewAt = function (step, address) {
 }
 /* set env */
 Ethdebugger.prototype.web3 = function () {
-  return global.web3
+  return this.web3
 }
 
 Ethdebugger.prototype.addProvider = function (type, obj) {
@@ -166,14 +176,19 @@ Ethdebugger.prototype.switchProvider = function (type) {
     if (error) {
       console.log('provider ' + type + ' not defined')
     } else {
-      global.web3 = obj
+      self.web3 = obj
+      self.setManagers()
+      // self.traceManager.web3 = self.web3
       executionContext.detectNetwork((error, network) => {
         if (error || !network) {
-          global.web3Debug = obj
+          self.web3Debug = obj
+          self.web3 = obj
         } else {
           var webDebugNode = init.web3DebugNode(network.name)
-          global.web3Debug = !webDebugNode ? obj : webDebugNode
+          self.web3Debug = !webDebugNode ? obj : webDebugNode
+          self.web3 = !webDebugNode ? obj : webDebugNode
         }
+        self.setManagers()
       })
       self.event.trigger('providerChanged', [type])
     }
@@ -214,7 +229,7 @@ Ethdebugger.prototype.debug = function (tx) {
       if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
         self.breakpointManager.jumpNextBreakpoint(false)
       }
-      self.storageResolver = new StorageResolver()
+      self.storageResolver = new StorageResolver({web3: self.traceManager.web3})
     } else {
       self.statusMessage = error ? error.message : 'Trace not loaded'
     }

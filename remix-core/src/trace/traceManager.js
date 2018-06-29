@@ -6,14 +6,14 @@ var TraceStepManager = require('./traceStepManager')
 var remixLib = require('remix-lib')
 var traceHelper = remixLib.helpers.trace
 var util = remixLib.util
-var global = remixLib.global
 
-function TraceManager () {
+function TraceManager (options) {
+  this.web3 = options.web3
   this.isLoading = false
   this.trace = null
   this.traceCache = new TraceCache()
   this.traceAnalyser = new TraceAnalyser(this.traceCache)
-  this.traceRetriever = new TraceRetriever()
+  this.traceRetriever = new TraceRetriever({web3: this.web3})
   this.traceStepManager = new TraceStepManager(this.traceAnalyser)
   this.tx
 }
@@ -22,7 +22,7 @@ function TraceManager () {
 TraceManager.prototype.resolveTrace = function (tx, callback) {
   this.tx = tx
   this.init()
-  if (!global.web3) callback('web3 not loaded', false)
+  if (!this.web3) callback('web3 not loaded', false)
   this.isLoading = true
   var self = this
   this.traceRetriever.getTrace(tx.hash, function (error, result) {
