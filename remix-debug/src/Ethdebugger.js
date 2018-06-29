@@ -3,10 +3,11 @@
 var StorageViewer = require('./storage/storageViewer')
 var StorageResolver = require('./storage/storageResolver')
 
-var SolidityProxy = require('./decoder/solidityProxy')
-var stateDecoder = require('./decoder/stateDecoder')
-var localDecoder = require('./decoder/localDecoder')
-var InternalCallTree = require('./decoder/internalCallTree')
+var SolidityDecoder = require('./solidity-decoder')
+var SolidityProxy = SolidityDecoder.SolidityProxy
+var stateDecoder = SolidityDecoder.stateDecoder
+var localDecoder = SolidityDecoder.localDecoder
+var InternalCallTree = SolidityDecoder.InternalCallTree
 
 var remixLib = require('remix-lib')
 var TraceManager = remixLib.trace.TraceManager

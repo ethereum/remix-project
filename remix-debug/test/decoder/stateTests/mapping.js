@@ -3,7 +3,7 @@ var compilerInput = remixLib.helpers.compiler.compilerInput
 var TraceManager = remixLib.trace.TraceManager
 
 var compiler = require('solc')
-var stateDecoder = require('../../../src/decoder/stateDecoder')
+var stateDecoder = require('../../../src/solidity-decoder/stateDecoder')
 var vmCall = require('../vmCall')
 
 var StorageResolver = require('../../../src/storage/storageResolver')
