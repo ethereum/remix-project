@@ -1,7 +1,6 @@
 'use strict'
 var tape = require('tape')
-var remixLib = require('remix-lib')
-var Web3Providers = remixLib.vm.Web3Providers
+var Web3Providers = require('../src/web3Provider/web3Providers')
 var TraceManager = require('../src/trace/traceManager')
 var CodeManager = require('../src/code/codeManager')
 var web3Test = require('./resources/testWeb3')

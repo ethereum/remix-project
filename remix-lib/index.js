@@ -22,6 +22,10 @@ var txRunner = require('./src/execution/txRunner')
 var executionContext = require('./src/execution/execution-context')
 var typeConversion = require('./src/execution/typeConversion')
 
+var CodeManager = require('./src/code/codeManager')
+var BreakpointManager = require('./src/code/breakpointManager')
+var TraceManager = require('./src/trace/traceManager')
+
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
 }
@@ -32,6 +36,13 @@ if (typeof (window) !== 'undefined') {
 
 function modules () {
   return {
+    code: {
+      CodeManager: CodeManager,
+      BreakpointManager: BreakpointManager
+    },
+    trace: {
+      TraceManager: TraceManager
+    },
     EventManager: EventManager,
     helpers: {
       trace: traceHelper,

@@ -6,16 +6,12 @@ var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
 
-require('./traceManager.js')
-require('./codeManager.js')
-require('./disassembler.js')
-
 require('./decoder/decodeInfo.js')
 require('./decoder/storageLocation.js')
 require('./decoder/storageDecoder.js')
 require('./decoder/localDecoder.js')
 
-var BreakpointManager = require('../src/code/breakpointManager')
+var BreakpointManager = remixLib.code.BreakpointManager
 
 tape('debug contract', function (t) {
   t.plan(12)

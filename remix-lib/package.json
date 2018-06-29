@@ -50,7 +50,8 @@
       "node_modules/*",
       "build/*",
       "test/resources/*"
-    ]
+    ],
+    "parser": "babel-eslint"
   },
   "browserify": {
     "transform": [

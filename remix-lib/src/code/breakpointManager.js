@@ -1,7 +1,7 @@
 'use strict'
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var helper = remixLib.helpers.trace
+
+var EventManager = require('../eventManager')
+var helper = require('../helpers/traceHelper')
 
 /**
   * allow to manage breakpoint

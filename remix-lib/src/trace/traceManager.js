@@ -3,9 +3,9 @@ var TraceAnalyser = require('./traceAnalyser')
 var TraceRetriever = require('./traceRetriever')
 var TraceCache = require('./traceCache')
 var TraceStepManager = require('./traceStepManager')
-var remixLib = require('remix-lib')
-var traceHelper = remixLib.helpers.trace
-var util = remixLib.util
+
+var traceHelper = require('../helpers/traceHelper')
+var util = require('../util')
 
 function TraceManager (options) {
   this.web3 = options.web3
