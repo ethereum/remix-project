@@ -13,19 +13,13 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (compiler, udapp, logMessageCallback, opts = {}) {
+  constructor (compiler, udapp, msgCallBack) {
     var self = this
-    self.logMessageCallback = logMessageCallback
+    self.msgCallBack = msgCallBack
     self.event = new EventManager()
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
-    opts.events.executioncontext.register('contextChanged', () => {
-      self.clearAll()
-    })
-    opts.events.runtab.register('clearInstance', () => {
-      self.clearAll()
-    })
 
-    opts.events.udapp.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+    udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
       var { from, to, value } = tx
 
@@ -70,7 +64,7 @@ class Recorder {
       }
     })
 
-    opts.events.udapp.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+    udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
       if (error) return console.log(error)
       if (call) return
 
@@ -184,7 +178,7 @@ class Recorder {
   run (records, accounts, options, abis, linkReferences, udapp, newContractFn) {
     var self = this
     self.setListen(false)
-    self.logMessageCallback(`Running ${records.length} transaction(s) ...`)
+    self.msgCallBack(`Running ${records.length} transaction(s) ...`)
     async.eachOfSeries(records, function (tx, index, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
@@ -241,14 +235,14 @@ class Recorder {
         cb(data.error)
         return
       } else {
-        self.logMessageCallback(`(${index}) ${JSON.stringify(record, null, '\t')}`)
-        self.logMessageCallback(`(${index}) data: ${data.data}`)
+        self.msgCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+        self.msgCallBack(`(${index}) data: ${data.data}`)
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
       udapp.runTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
-          self.logMessageCallback(err + '. Execution failed at ' + index)
+          self.msgCallBack(err + '. Execution failed at ' + index)
         } else {
           var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (address) {
