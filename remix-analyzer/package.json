@@ -28,8 +28,7 @@
   },
   "standard": {
     "ignore": [
-      "node_modules/*",
-      "soljson.js"
+      "node_modules/*"
     ],
     "parser": "babel-eslint"
   },
