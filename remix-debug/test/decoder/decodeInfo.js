@@ -1,14 +1,14 @@
 'use strict'
 var tape = require('tape')
 var compiler = require('solc')
-var astHelper = require('../../src/decoder/astHelper')
-var decodeInfo = require('../../src/decoder/decodeInfo')
-var stateDecoder = require('../../src/decoder/stateDecoder')
+var astHelper = require('../../src/solidity-decoder/astHelper')
+var decodeInfo = require('../../src/solidity-decoder/decodeInfo')
+var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
 var contracts = require('./contracts/miscContracts')
 var simplecontracts = require('./contracts/simpleContract')
 var remixLib = require('remix-lib')
 var compilerInput = remixLib.helpers.compiler.compilerInput
-var util = require('../../src/decoder/types/util')
+var util = require('../../src/solidity-decoder/types/util')
 
 tape('solidity', function (t) {
   t.test('astHelper, decodeInfo', function (st) {

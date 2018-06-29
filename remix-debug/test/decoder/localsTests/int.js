@@ -7,8 +7,8 @@ var TraceManager = remixLib.trace.TraceManager
 var CodeManager = remixLib.code.CodeManager
 
 var traceHelper = remixLib.helpers.trace
-var SolidityProxy = require('../../../src/decoder/solidityProxy')
-var InternalCallTree = require('../../../src/decoder/internalCallTree')
+var SolidityProxy = require('../../../src/solidity-decoder/solidityProxy')
+var InternalCallTree = require('../../../src/solidity-decoder/internalCallTree')
 var EventManager = remixLib.EventManager
 var helper = require('./helper')
 
