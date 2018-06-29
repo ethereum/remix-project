@@ -1,7 +1,7 @@
 var test = require('tape')
 var remixLib = require('remix-lib')
 
-var StatRunner = require('../../src/analysis/staticAnalysisRunner')
+var StatRunner = require('../../src/solidity-analyzer')
 var compilerInput = remixLib.helpers.compiler.compilerInput
 
 var compiler = require('solc')
@@ -19,7 +19,7 @@ test('staticAnalysisIssues.functionParameterPassingError', function (t) {
   t.plan(2)
   var res = compile('functionParameters.sol')
 
-  var module = require('../../src/analysis/modules/checksEffectsInteraction')
+  var module = require('../../src/solidity-analyzer/modules/checksEffectsInteraction')
 
   var statRunner = new StatRunner()
 
