@@ -29,15 +29,13 @@
     "webworkify": "^1.2.1"
   },
   "scripts": {
-    "test": "standard && npm run downloadsolc && tape ./test/tests.js",
+    "test": "standard && tape ./test/tests.js",
     "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget --no-check-certificate https://solc-bin.ethereum.org/soljson.js) && cd ..",
-    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc",
-    "postinstall": "npm-run-all -ls downloadsolc"
+    "prepublish": "mkdirp build"
   },
   "standard": {
     "ignore": [
-      "node_modules/*",
-      "soljson.js"
+      "node_modules/*"
     ],
     "parser": "babel-eslint"
   },

@@ -38,8 +38,7 @@
   "scripts": {
     "build": "mkdirp build; browserify index.js > build/app.js",
     "lint": "standard | notify-error",
-    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget --no-check-certificate https://solc-bin.ethereum.org/soljson.js) && cd ..",
-    "test": "standard && npm run downloadsolc && tape ./test/tests.js"
+    "test": "standard && tape ./test/tests.js"
   },
   "repository": {
     "type": "git",
