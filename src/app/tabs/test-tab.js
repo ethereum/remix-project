@@ -51,8 +51,9 @@ module.exports = class TestTab {
       cb()
     }
 
-    var updateFinalResult = function (_err, result) {
+    var updateFinalResult = function (_err, result, filename) {
       testsSummary.hidden = false
+      testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
       if (result.totalPassing > 0) {
         testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
       }
@@ -72,7 +73,7 @@ module.exports = class TestTab {
           var runningTest = {}
           runningTest[testFilePath] = { content }
           remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
-            updateFinalResult(error, result)
+            updateFinalResult(error, result, testFilePath)
             callback(error)
           }, (url, cb) => { this._deps.app.importFileCb(url, cb) })
         }
