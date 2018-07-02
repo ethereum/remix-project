@@ -27,7 +27,6 @@ class Terminal {
   constructor (opts = { auto: true }) {
     var self = this
     self.event = new EventManager()
-    self._api = opts.api
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
@@ -135,9 +134,6 @@ class Terminal {
         </div>
       </div>
     `
-    setInterval(() => {
-      updatePendingTxs(self._api.udapp, self._view.pendingTxCount)
-    }, 5000)
 
     function listenOnNetwork (ev) {
       self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
@@ -578,10 +574,5 @@ function domTerminalFeatures (self, scopedCommands) {
 }
 
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
-// PENDING TX
-function updatePendingTxs (udapp, el) {
-  var count = Object.keys(udapp.pendingTransactions()).length
-  el.innerText = count
-}
 
 module.exports = Terminal
