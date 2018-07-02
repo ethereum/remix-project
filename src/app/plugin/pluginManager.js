@@ -161,6 +161,11 @@ module.exports = class PluginManager {
       // }
     }, false)
   }
+  unregister (desc) {
+    const self = this
+    delete self.plugins[desc.title]
+    delete self.origins[desc.url]
+  }
   register (desc, content) {
     const self = this
     self.plugins[desc.title] = {content, origin: desc.url}

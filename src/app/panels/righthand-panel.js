@@ -16,7 +16,9 @@ const PluginTab = require('../tabs/plugin-tab')
 const TestTab = require('../tabs/test-tab')
 const RunTab = require('../tabs/run-tab')
 const PluginAPI = require('../plugin/pluginAPI')
+const plugins = require('../plugin/plugins')
 
+var toolTip = require('../ui/tooltip')
 const EventManager = remixLib.EventManager
 const styles = styleguide.chooser()
 
@@ -73,11 +75,24 @@ module.exports = class RighthandPanel {
       self.loadPlugin(json)
     })
 
+    self.event.register('plugin-name-loadRequest', name => {
+      if (plugins[name]) {
+        self.loadPlugin(plugins[name])
+      } else {
+        toolTip('unknown plugin ' + name)
+      }
+    })
+
     self.loadPlugin = function (json) {
-      var tab = new PluginTab(json)
-      var content = tab.render()
-      self._components.tabbedMenu.addTab(json.title, json.title + ' plugin', content)
-      self._components.pluginManager.register(json, content)
+      if (self._components.pluginManager.plugins[json.title]) {
+        self._components.tabbedMenu.removeTabByTitle(json.title)
+        self._components.pluginManager.unregister(json)
+      } else {
+        var tab = new PluginTab(json)
+        var content = tab.render()
+        self._components.tabbedMenu.addTab(json.title, json.title + ' plugin', content)
+        self._components.pluginManager.register(json, content)
+      }
     }
 
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
