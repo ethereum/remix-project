@@ -33,15 +33,11 @@ module.exports = class CompileTab {
     // dependencies
     self._deps = {
       app: self._components.registry.get('app').api,
-      udapp: self._components.registry.get('udapp').api,
-      udappUI: self._components.registry.get('udappUI').api,
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
       compiler: self._components.registry.get('compiler').api,
       staticAnalysis: self._components.registry.get('staticanalysis').api,
       renderer: self._components.registry.get('renderer').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      transactionContextAPI: self._components.registry.get('transactionContextAPI').api,
       rightHandPanel: self._components.registry.get('righthandpanel').api
     }
     self.data = {
@@ -113,12 +109,8 @@ module.exports = class CompileTab {
           var contractName = yo`<option>${contract.name}</option>`
           self._view.contractNames.appendChild(contractName)
         })
-        self._deps.udapp.reset(self.data.contractsDetails, self._deps.transactionContextAPI)
-        self._deps.udappUI.reset()
       } else {
         self._view.contractNames.setAttribute('disabled', true)
-        self._deps.udapp.reset({}, self._deps.transactionContextAPI)
-        self._deps.udappUI.reset()
       }
       // hightlight the tab if error
       if (success) document.querySelector('.compileView').style.color = '' // @TODO: compileView tab
