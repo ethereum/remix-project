@@ -5,7 +5,7 @@ var EventManager = remixLib.EventManager
 var CommandInterpreterAPI = require('./cmdInterpreterAPI')
 
 class CmdInterpreter {
-  constructor (api) {
+  constructor () {
     this.event = new EventManager()
     this.api = new CommandInterpreterAPI(this)
   }
