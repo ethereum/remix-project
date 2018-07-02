@@ -204,6 +204,10 @@ module.exports = class CompileTab {
     }
     function updateAutoCompile (event) { self._opts.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._api.runCompiler() }
+    function hideWarnings (event) {
+      self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
+      self._api.runCompiler()
+    }
     function getContractProperty (property) {
       const select = self._view.contractNames
       if (select.children.length > 0 && select.selectedIndex >= 0) {
@@ -233,10 +237,6 @@ module.exports = class CompileTab {
     }
     function copyBytecode () {
       copyContractProperty('bytecode')
-    }
-    function hideWarnings (event) {
-      self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
-      self._api.runCompiler()
     }
     function details () {
       const select = self._view.contractNames
