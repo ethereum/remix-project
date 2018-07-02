@@ -26,7 +26,8 @@ class EditorPanel {
     self._deps = {
       config: self._components.registry.get('config').api,
       txlistener: self._components.registry.get('txlistener').api,
-      fileManager: self._components.registry.get('filemanager').api
+      fileManager: self._components.registry.get('filemanager').api,
+      udapp: self._components.registry.get('udapp').api
     }
     self.data = {
       _FILE_SCROLL_DELTA: 200,
@@ -46,9 +47,11 @@ class EditorPanel {
       contextualListener: contextualListener,
       contextView: new ContextView({contextualListener: contextualListener, editor: editor}),
       terminal: new Terminal({
-        api: {
-          cmdInterpreter: new CommandInterpreter(), // @TODO: put into editorpanel
-          getPosition (event) {
+        udapp: self._deps.udapp,
+        cmdInterpreter: new CommandInterpreter()
+      },
+        {
+          getPosition: (event) => {
             var limitUp = 36
             var limitDown = 20
             var height = window.innerHeight
@@ -56,8 +59,7 @@ class EditorPanel {
             newpos = (newpos < height - limitDown) ? newpos : height - limitDown
             return newpos
           }
-        }
-      })
+        })
     }
 
     self._components.terminal.event.register('filterChanged', (type, value) => {
