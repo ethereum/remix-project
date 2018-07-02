@@ -46,13 +46,24 @@ module.exports = class TabbedMenu {
     if (self._view.el) self._view.el.appendChild(self._view.tabs[title])
     if (self._view.viewport) self._view.viewport.appendChild(self._view.contents[title])
   }
+  getTabByClass (tabClass) {
+    const self = this
+    return self._view.el.querySelector(`li.${tabClass}`)
+  }
+  updateTabTitle (tabClass, title) {
+    const self = this
+    var tab = self.getTabByClass(tabClass)
+    if (tab) tab.innerHTML = title
+  }
   selectTabByTitle (title) {
     const self = this
     self.selectTab(self._view.tabs[title])
   }
   selectTabByClassName (tabClass) {
     const self = this
-    self.selectTab(self._view.el.querySelector(`li.${tabClass}`))
+    var tab = self.getTabByClass(tabClass)
+    if (tab) self.selectTab(tab)
+    return tab
   }
   selectTab (el) {
     const self = this
