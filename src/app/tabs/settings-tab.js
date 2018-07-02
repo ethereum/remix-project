@@ -26,7 +26,8 @@ module.exports = class SettingsTab {
       compiler: self._components.registry.get('compiler').api,
       config: self._components.registry.get('config').api,
       editorPanel: self._components.registry.get('editorpanel').api,
-      editor: self._components.registry.get('editor').api
+      editor: self._components.registry.get('editor').api,
+      righthandpanel: self._components.registry.get('righthandpanel').api
     }
     self._view = { /* eslint-disable */
       el: null,
@@ -155,8 +156,9 @@ module.exports = class SettingsTab {
           </div>
           <div>
             ${self._view.pluginInput}
-            <input onclick=${onloadPlugin} type="button" value="Load" class="${css.pluginLoad}">
+            <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
           </div>
+          <input onclick=${() => { onLoadPlugin('oraclize') }} type="button" value="Oraclize" class="${css.pluginLoad}">
         </div>
       </div>`
     self._view.config.remixd = yo`
@@ -197,14 +199,18 @@ module.exports = class SettingsTab {
     function onchangeOption (event) {
       self._deps.config.set('settings/always-use-vm', !self._deps.config.get('settings/always-use-vm'))
     }
-    function onloadPlugin (event) {
+    function onLoadPlugin (name) {
+      // @TODO: BAD! REFACTOR: no module should trigger events of another modules emitter
+      self._deps.righthandpanel.event.trigger('plugin-name-loadRequest', [name])
+    }
+    function onloadPluginJson (event) {
       try {
         var json = JSON.parse(self._view.pluginInput.value)
       } catch (e) {
         return modal.alert('cannot parse the plugin definition to JSON')
       }
       // @TODO: BAD! REFACTOR: no module should trigger events of another modules emitter
-      self._events.rhp.trigger('plugin-loadRequest', [json])
+      self._deps.righthandpanel.event.trigger('plugin-loadRequest', [json])
     }
     function onswitch2darkTheme (event) {
       styleGuide.switchTheme('dark')
