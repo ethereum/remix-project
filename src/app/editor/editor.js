@@ -1,10 +1,9 @@
 'use strict'
-var remixLib = require('remix-lib')		
+var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
-var registry = require('../../global/registry')
 
 require('brace/theme/tomorrow_night_blue')
 
@@ -83,13 +82,12 @@ function Editor (opts = {}) {
       // @TODO add here other propositions
     }
   }
-  var event = new EventManager()
-  self.event = event
   langTools.addCompleter(flowCompleter)
   el.className += ' ' + css['ace-editor']
   el.editor = editor // required to access the editor during tests
   self.render = function () { return el }
-
+  var event = new EventManager()
+  self.event = event
   var sessions = {}
   var sourceAnnotations = []
   var readOnlySessions = {}
