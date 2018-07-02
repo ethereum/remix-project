@@ -77,7 +77,7 @@ module.exports = class RighthandPanel {
       var tab = new PluginTab(json)
       var content = tab.render()
       self._components.tabbedMenu.addTab(json.title, json.title + ' plugin', content)
-      self.pluginManager.register(json, content)
+      self._components.pluginManager.register(json, content)
     }
 
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
