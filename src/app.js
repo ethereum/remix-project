@@ -24,7 +24,6 @@ var BrowserfilesTree = require('./app/files/browser-files-tree')
 var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
-var Editor = require('./app/editor/editor')
 var Renderer = require('./app/ui/renderer')
 var Compiler = require('remix-solidity').Compiler
 var executionContext = require('./execution-context')
@@ -40,12 +39,9 @@ var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
 var CompilerImport = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
-var ContextualListener = require('./app/editor/contextualListener')
-var ContextView = require('./app/editor/contextView')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
-var CommandInterpreter = require('./lib/cmdInterpreter')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
 var SourceHighlighter = require('./app/editor/sourceHighlighter')
 
@@ -237,7 +233,7 @@ class App {
     if (self._view.transactionDebugger.isActive) return
 
     self._components.fileManager.saveCurrentFile()
-    self._components.editor.clearAnnotations()
+    self._components.editorpanel.getEditor().clearAnnotations()
     var currentFile = self._components.config.get('currentFile')
     if (currentFile) {
       if (/.(.sol)$/.exec(currentFile)) {
@@ -469,39 +465,23 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   txlistener.startListening()
 
-  // ----------------- editor ----------------------------
-  this._components.editor = new Editor({}) // @TODO: put into editorpanel
-  var editor = self._components.editor // shortcut for the editor
-  registry.put({api: editor, name: 'editor'})
+  // TODO: There are still a lot of dep between editorpanel and filemanager
 
-  // ----------------- Command Interpreter -----------------
-  /*
-    this module basically listen on user input (from terminal && editor)
-    and interpret them as commands
-  */
-  var cmdInterpreter = new CommandInterpreter() // @TODO: put into editorpanel
+  // ----------------- editor panel ----------------------
+  self._components.editorpanel = new EditorPanel()
+  registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
 
-  registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
   // ----------------- file manager ----------------------------
-
   self._components.fileManager = new FileManager()
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
-  // ---------------- ContextualListener -----------------------
-  this._components.contextualListener = new ContextualListener()
-  registry.put({api: this._components.contextualListener, name: 'contextualListener'})
+  self._components.editorpanel.init()
+  self._components.fileManager.init()
 
-  // ---------------- ContextView -----------------------
-  this._components.contextView = new ContextView()
-  registry.put({api: this._components.contextView, name: 'contextview'})
-
-  // ----------------- editor panel ----------------------
-  this._components.editorpanel = new EditorPanel()
-  registry.put({ api: this._components.editorpanel, name: 'editorpanel' })
-  this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
-
-  this._view.centerpanel.appendChild(this._components.editorpanel.render())
+  self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
+  self._view.centerpanel.appendChild(self._components.editorpanel.render())
+  var editor = self._components.editorpanel.getEditor()
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
