@@ -15,10 +15,12 @@ class FileManager {
   constructor (localRegistry) {
     this.tabbedFiles = {}
     this.event = new EventManager()
+    this._components = {}
+    this._components.registry = localRegistry || globalRegistry
+  }
 
+  init () {
     var self = this
-    self._components = {}
-    self._components.registry = localRegistry || globalRegistry
     self._deps = {
       compilerImport: self._components.registry.get('compilerimport').api,
       editor: self._components.registry.get('editor').api,
