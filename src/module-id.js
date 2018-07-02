@@ -1,4 +1,7 @@
 module.exports = stacktrace
+/*
+  Not used yet
+*/
 function stacktrace () {
   var _ = Error.prepareStackTrace
   Error.prepareStackTrace = (_, stack) => stack
