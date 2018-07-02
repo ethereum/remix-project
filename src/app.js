@@ -578,6 +578,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     if (queryParams.get().debugtx) {
       self.startdebugging(queryParams.get().debugtx)
     }
+
+    if (queryParams.get().pluginurl) {
+      var title = queryParams.get().plugintitle
+      var url = queryParams.get().pluginurl
+      modalDialogCustom.confirm(null, `Remix is going to load the extension "${title}" located at ${queryParams.get().pluginurl}. Are you sure to load this external extension?`, () => {
+        self._components.righthandpanel.loadPlugin({title, url})
+      })
+    }
   })
 
   // chrome app
