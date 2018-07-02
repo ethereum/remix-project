@@ -12,10 +12,7 @@ module.exports = class CompilerImports {
     return request.get(
       {
         url: 'https://api.github.com/repos/' + root + '/contents/' + path,
-        json: true,
-        headers: {
-          'User-Agent': 'Remix'
-        }
+        json: true
       },
       (err, r, data) => {
         if (err) {
