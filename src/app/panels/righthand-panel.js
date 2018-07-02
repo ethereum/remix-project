@@ -15,6 +15,7 @@ const SupportTab = require('../tabs/support-tab')
 const PluginTab = require('../tabs/plugin-tab')
 const TestTab = require('../tabs/test-tab')
 const RunTab = require('../tabs/run-tab')
+const PluginAPI = require('../plugin/pluginAPI')
 
 const EventManager = remixLib.EventManager
 const styles = styleguide.chooser()
@@ -24,6 +25,7 @@ module.exports = class RighthandPanel {
     const self = this
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
+    self._components.registry.put({api: this, name: 'righthandpanel'})
     self.event = new EventManager()
     self._view = {
       element: null,
@@ -32,11 +34,32 @@ module.exports = class RighthandPanel {
       dragbar: null
     }
 
-    self._components.registry.put({api: this, name: 'righthandpanel'})
+    self._deps = {
+      fileProviders: self._components.registry.get('fileproviders').api,
+      compiler: self._components.registry.get('compiler').api,
+      udapp: self._components.registry.get('udapp').api,
+      app: self._components.registry.get('app').api,
+      txlistener: self._components.registry.get('txlistener').api
+    }
+
+    var tabbedMenu = new TabbedMenu(self._components.registry)
+
+    var pluginAPI = new PluginAPI(
+      self._deps.fileProviders,
+      self._deps.compiler,
+      self._deps.udapp,
+      tabbedMenu
+    )
+
+    var pluginManager = new PluginManager(
+      pluginAPI,
+      self._deps.app,
+      self._deps.compiler,
+      self._deps.txlistener)
 
     self._components = {
-      pluginManager: new PluginManager(self._components.registry),
-      tabbedMenu: new TabbedMenu(self._components.registry),
+      pluginManager: pluginManager,
+      tabbedMenu: tabbedMenu,
       compile: new CompileTab(self._components.registry),
       run: new RunTab(self._components.registry),
       settings: new SettingsTab(self._components.registry),
@@ -47,11 +70,15 @@ module.exports = class RighthandPanel {
     }
 
     self.event.register('plugin-loadRequest', json => {
-      const tab = new PluginTab({}, self._events, json)
-      const content = tab.render()
-      self._components.tabbedMenu.addTab(json.title, 'plugin', content)
-      self._components.pluginManager.register(json, content)
+      self.loadPlugin(json)
     })
+
+    self.loadPlugin = function (json) {
+      var tab = new PluginTab(json)
+      var content = tab.render()
+      self._components.tabbedMenu.addTab(json.title, json.title + ' plugin', content)
+      self.pluginManager.register(json, content)
+    }
 
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`
     self._view.element = yo`
