@@ -59,7 +59,7 @@ class EditorPanel {
         }
       })
     }
-    
+
     self._components.terminal.event.register('filterChanged', (type, value) => {
       this.event.trigger('terminalFilterChanged', [type, value])
     })
