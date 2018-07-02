@@ -395,47 +395,16 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
-  // ----------------- UniversalDApp -----------------
-  var transactionContextAPI = {
-    getAddress: (cb) => {
-      cb(null, $('#txorigin').val())
-    },
-    getValue: (cb) => {
-      try {
-        var number = document.querySelector('#value').value
-        var select = document.getElementById('unit')
-        var index = select.selectedIndex
-        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-        var unit = 'ether' // default
-        if (selectedUnit === 'ether') {
-          unit = 'ether'
-        } else if (selectedUnit === 'finney') {
-          unit = 'finney'
-        } else if (selectedUnit === 'gwei') {
-          unit = 'gwei'
-        } else if (selectedUnit === 'wei') {
-          unit = 'wei'
-        }
-        cb(null, executionContext.web3().toWei(number, unit))
-      } catch (e) {
-        cb(e)
-      }
-    },
-    getGasLimit: (cb) => {
-      cb(null, $('#gasLimit').val())
-    }
-  }
-  // @TODO should put this in runtab
-  registry.put({api: transactionContextAPI, name: 'transactionContextAPI'})
 
-  var udapp = new UniversalDApp({ removable: false, removable_instances: true })
+  // ----------------- UniversalDApp -----------------
+  var udapp = new UniversalDApp({
+    removable: false,
+    removable_instances: true
+  })
   registry.put({api: udapp, name: 'udapp'})
 
   var udappUI = new UniversalDAppUI(udapp)
   registry.put({api: udappUI, name: 'udappUI'})
-
-  udapp.reset({})
-  udappUI.reset()
 
   // ----------------- Tx listener -----------------
   var transactionReceiptResolver = new TransactionReceiptResolver()

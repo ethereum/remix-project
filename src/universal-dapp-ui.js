@@ -12,9 +12,6 @@ function UniversalDAppUI (udapp, opts = {}) {
   this.udapp = udapp
 }
 
-UniversalDAppUI.prototype.reset = function () {
-}
-
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
   var noInstances = document.querySelector('[class^="noInstancesText"]')
   if (noInstances) {
