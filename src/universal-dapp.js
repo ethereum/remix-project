@@ -182,6 +182,10 @@ UniversalDApp.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }
 
+UniversalDApp.prototype.pendingTransactionsCount = function () {
+  return Object.keys(this.txRunner.pendingTxs).length
+}
+
 UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
   const self = this
   var logMsg
