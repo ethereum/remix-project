@@ -19,7 +19,7 @@ var addTooltip = require('../ui/tooltip')
 var css = require('./styles/run-tab-styles')
 var MultiParamManager = require('../../multiParamManager')
 
-function runTab (localRegistry) {
+function runTab (opts, localRegistry) {
   /* -------------------------
             VARIABLES
   --------------------------- */
@@ -35,6 +35,35 @@ function runTab (localRegistry) {
   }
   self._components = {}
   self._components.registry = localRegistry || globlalRegistry
+  self._components.transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var number = document.querySelector('#value').value
+        var select = document.getElementById('unit')
+        var index = select.selectedIndex
+        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        var unit = 'ether' // default
+        if (selectedUnit === 'ether') {
+          unit = 'ether'
+        } else if (selectedUnit === 'finney') {
+          unit = 'finney'
+        } else if (selectedUnit === 'gwei') {
+          unit = 'gwei'
+        } else if (selectedUnit === 'wei') {
+          unit = 'wei'
+        }
+        cb(null, executionContext.web3().toWei(number, unit))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
   // dependencies
   self._deps = {
     compiler: self._components.registry.get('compiler').api,
@@ -42,8 +71,10 @@ function runTab (localRegistry) {
     udappUI: self._components.registry.get('udappUI').api,
     config: self._components.registry.get('config').api,
     fileManager: self._components.registry.get('filemanager').api,
+    editor: self._components.registry.get('editor').api,
     logCallback: self._components.registry.get('logCallback').api
   }
+  self._deps.udapp.resetAPI(self._components.transactionContextAPI)
   self._view.recorderCount = yo`<span>0</span>`
   self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
   self._view.clearInstanceElement = yo`
