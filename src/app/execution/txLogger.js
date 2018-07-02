@@ -371,7 +371,7 @@ function txDetails (e, tx, data, obj) {
     log.appendChild(arrowUp)
     table = createTable({
       hash: data.tx.hash,
-      status: data.receipt.status,
+      status: data.receipt ? data.receipt.status : null,
       isCall: data.tx.isCall,
       contractAddress: data.tx.contractAddress,
       data: data.tx,
