@@ -1,4 +1,6 @@
 'use strict'
+var remixLib = require('remix-lib')		
+var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var ace = require('brace')
@@ -65,9 +67,6 @@ document.head.appendChild(yo`
 function Editor (opts = {}) {
   var self = this
 
-  var eventsName = ['breakpointCleared', 'breakpointAdded', 'sessionSwitched', 'contentChanged'] // not used for legacyEvent
-  var {legacyEvents} = registry.put({api: this, events: eventsName, name: 'editor'})
-  self.event = legacyEvents
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
   if (styles.appProperties.aceTheme) {
@@ -84,6 +83,8 @@ function Editor (opts = {}) {
       // @TODO add here other propositions
     }
   }
+  var event = new EventManager()
+  self.event = event
   langTools.addCompleter(flowCompleter)
   el.className += ' ' + css['ace-editor']
   el.editor = editor // required to access the editor during tests
