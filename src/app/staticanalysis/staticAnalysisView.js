@@ -20,6 +20,7 @@ function staticAnalysisView (localRegistry) {
   this.runner = new StaticAnalysisRunner()
   this.modulesView = renderModules(this.runner.modules())
   this.lastCompilationResult = null
+  this.lastCompilationSource = null
   self._components = {}
   self._components.registry = localRegistry || globlalRegistry
   // dependencies
@@ -31,9 +32,11 @@ function staticAnalysisView (localRegistry) {
 
   self._deps.compiler.event.register('compilationFinished', function (success, data, source) {
     self.lastCompilationResult = null
+    self.lastCompilationSource = null
     $('#staticanalysisresult').empty()
     if (success) {
       self.lastCompilationResult = data
+      self.lastCompilationSource = source
       if (self.view.querySelector('#autorunstaticanalysis').checked) {
         self.run()
       }
@@ -94,7 +97,7 @@ staticAnalysisView.prototype.run = function () {
               start: parseInt(split[0]),
               length: parseInt(split[1])
             }
-            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location, file)
+            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location, file, self.lastCompilationSource.sources)
             location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
           warningCount++
