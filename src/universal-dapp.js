@@ -29,7 +29,7 @@ function UniversalDApp (opts, localRegistry) {
   self.removable = opts.removable
   self.removable_instances = opts.removable_instances
   self._deps = {
-    config: self._components.registry.get('config').api
+    logCallback: self._components.registry.get('logCallback').api
   }
   executionContext.event.register('contextChanged', this, function (context) {
     self.reset(self.contracts)
@@ -190,9 +190,9 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     if (!error) {
       if (isUserAction) {
         if (!args.funABI.constant) {
-          self._deps.editorpanel.logMessage(`${logMsg} pending ... `)
+          self._deps.logCallback(`${logMsg} pending ... `)
         } else {
-          self._deps.editorpanel.logMessage(`${logMsg}`)
+          self._deps.logCallback(`${logMsg}`)
         }
       }
       self.callFunction(args.address, data, args.funABI, (error, txResult) => {
@@ -201,7 +201,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           if (isVM) {
             var vmError = txExecution.checkVMError(txResult)
             if (vmError.error) {
-              self._deps.editorpanel.logMessage(`${logMsg} errored: ${vmError.message} `)
+              self._deps.logCallback(`${logMsg} errored: ${vmError.message} `)
               return
             }
           }
@@ -210,14 +210,14 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
             outputCb(decoded)
           }
         } else {
-          self._deps.editorpanel.logMessage(`${logMsg} errored: ${error} `)
+          self._deps.logCallback(`${logMsg} errored: ${error} `)
         }
       })
     } else {
-      self._deps.editorpanel.logMessage(`${logMsg} errored: ${error} `)
+      self._deps.logCallback(`${logMsg} errored: ${error} `)
     }
   }, (msg) => {
-    self._deps.editorpanel.logMessage(msg)
+    self._deps.logCallback(msg)
   }, (data, runTxCallback) => {
     // called for libraries deployment
     self.runTx(data, runTxCallback)
