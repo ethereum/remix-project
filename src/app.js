@@ -384,6 +384,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   })
 
+  registry.put({api: (msg) => {
+    self._components.editorpanel.logHtmlMessage(msg)
+  }, name: 'logCallback'})
+
   // ----------------- Compiler -----------------
   self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
   var compiler = self._components.compiler
