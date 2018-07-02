@@ -13,9 +13,9 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (compiler, udapp, msgCallBack) {
+  constructor (compiler, udapp, logCallBack) {
     var self = this
-    self.msgCallBack = msgCallBack
+    self.logCallBack = logCallBack
     self.event = new EventManager()
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
 
@@ -178,7 +178,7 @@ class Recorder {
   run (records, accounts, options, abis, linkReferences, udapp, newContractFn) {
     var self = this
     self.setListen(false)
-    self.msgCallBack(`Running ${records.length} transaction(s) ...`)
+    self.logCallBack(`Running ${records.length} transaction(s) ...`)
     async.eachOfSeries(records, function (tx, index, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
@@ -235,14 +235,14 @@ class Recorder {
         cb(data.error)
         return
       } else {
-        self.msgCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
-        self.msgCallBack(`(${index}) data: ${data.data}`)
+        self.logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+        self.logCallBack(`(${index}) data: ${data.data}`)
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
       udapp.runTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
-          self.msgCallBack(err + '. Execution failed at ' + index)
+          self.logCallBack(err + '. Execution failed at ' + index)
         } else {
           var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (address) {
