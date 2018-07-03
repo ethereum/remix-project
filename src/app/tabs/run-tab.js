@@ -273,7 +273,7 @@ function makeRecorder (registry, runTabEvent, self) {
           if (txArray.length) {
             var noInstancesText = self._view.noInstancesText
             if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-            recorder.run(txArray, accounts, options, abis, linkReferences, udapp, (abi, address, contractName) => {
+            recorder.run(txArray, accounts, options, abis, linkReferences, self._deps.udapp, (abi, address, contractName) => {
               self._view.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, contractName))
             })
           }
