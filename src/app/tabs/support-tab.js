@@ -15,9 +15,12 @@ module.exports = class SupportTab {
     self.data = { gitterIsLoaded: false }
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
+    
+    self._deps = {
+      app: self._components.registry.get('app').api
+    }
 
-    var appEvent = self._components.registry.get('app').event
-    appEvent.register('tabChanged', (tabName) => {
+    self._deps.app.event.register('tabChanged', (tabName) => {
       if (tabName !== 'Support' || self.data.gitterIsLoaded) return
       const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
       self._view.gitterIframe.parentNode.replaceChild(iframe, self._view.gitterIframe)

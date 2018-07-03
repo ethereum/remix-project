@@ -54,8 +54,7 @@ module.exports = class SettingsTab {
     self._deps.compiler.setOptimize(self.data.optimize)
     self.data.currentTheme = self._components.themeStorage.get('theme') || 'light'
 
-    var compilerEvent = self._components.registry.get('compiler').event
-    compilerEvent.register('compilerLoaded', (version) => self.setVersionText(version))
+    self._deps.compiler.event.register('compilerLoaded', (version) => self.setVersionText(version))
     self.fetchAllVersion((allversions, selectedVersion) => {
       self.data.allversions = allversions
       self.data.selectedVersion = selectedVersion
