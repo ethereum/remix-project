@@ -252,10 +252,8 @@ function makeRecorder (registry, runTabEvent, self) {
     update account address in scenario.json
     popup if scenario.json not open - "Open a file with transactions you want to replay and click play again"
     */
-    var currentFile = self._deps.config.get('currentFile').api
-    var udappUI = self._deps.config.get('udappUI').api
-    var fileManager = self._deps.config.get('fileManager').api
-    fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
+    var currentFile = self._deps.config.get('currentFile')
+    self._deps.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
         modalDialogCustom.alert('Invalid Scenario File ' + error)
       } else {
@@ -274,7 +272,7 @@ function makeRecorder (registry, runTabEvent, self) {
             var noInstancesText = self._view.noInstancesText
             if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
             recorder.run(txArray, accounts, options, abis, linkReferences, self._deps.udapp, (abi, address, contractName) => {
-              self._view.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, contractName))
+              self._view.instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
             })
           }
         } else {
