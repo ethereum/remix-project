@@ -12,13 +12,13 @@ module.exports = class TestTab {
     self._components.registry = localRegistry || globalRegistry
     // dependencies
     self._deps = {
-      fileManager: self._components.registry.get('filemanager').api
+      fileManager: self._components.registry.get('filemanager').api,
+      app: self._components.registry.get('app').api
     }
     self.data = {}
 
     self._view.el = self.render()
-    var appEvent = self._components.registry.get('app').event
-    appEvent.register('tabChanged', tabName => {
+    self._deps.app.event.register('tabChanged', tabName => {
       if (tabName !== 'test') return
       yo.update(self._view.el, self.render())
       self._view.el.style.display = 'block'
