@@ -85,7 +85,7 @@ module.exports = class TestTab {
       container.innerHTML = ''
       var path = this._deps.fileManager.currentPath()
       var tests = []
-      api.filesFromPath(path, (error, files) => {
+      this._deps.fileManager.filesFromPath(path, (error, files) => {
         if (!error) {
           for (var file in files) {
             if (/.(_test.sol)$/.exec(file)) tests.push(path + file)
