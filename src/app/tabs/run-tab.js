@@ -198,7 +198,10 @@ function updateAccountBalances (container, self) {
            RECORDER
 ------------------------------------------------ */
 function makeRecorder (registry, runTabEvent, self) {
-  var recorder = new Recorder(self._deps.compiler, self._deps.udapp, {
+  var recorder = new Recorder(self._deps.compiler, self._deps.udapp,
+  (msg) => {
+    self._deps.editorPanel.logMessage(msg)
+  }, {
     events: {
       udapp: self._deps.udapp.event,
       executioncontext: executionContext.event,
