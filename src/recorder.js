@@ -13,9 +13,9 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (compiler, udapp, opts = {}) {
+  constructor (compiler, udapp, logMessageCallback, opts = {}) {
     var self = this
-    self._api = opts.api
+    self.logMessageCallback = logMessageCallback
     self.event = new EventManager()
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
     opts.events.executioncontext.register('contextChanged', () => {
@@ -184,7 +184,7 @@ class Recorder {
   run (records, accounts, options, abis, linkReferences, udapp, newContractFn) {
     var self = this
     self.setListen(false)
-    self._api.logMessage(`Running ${records.length} transaction(s) ...`)
+    self.logMessageCallback(`Running ${records.length} transaction(s) ...`)
     async.eachOfSeries(records, function (tx, index, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
@@ -241,14 +241,14 @@ class Recorder {
         cb(data.error)
         return
       } else {
-        self._api.logMessage(`(${index}) ${JSON.stringify(record, null, '\t')}`)
-        self._api.logMessage(`(${index}) data: ${data.data}`)
+        self.logMessageCallback(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+        self.logMessageCallback(`(${index}) data: ${data.data}`)
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
       udapp.runTx(record, function (err, txResult) {
         if (err) {
           console.error(err)
-          self._api.logMessage(err + '. Execution failed at ' + index)
+          self.logMessageCallback(err + '. Execution failed at ' + index)
         } else {
           var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (address) {
