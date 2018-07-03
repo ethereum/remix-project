@@ -15,7 +15,7 @@ module.exports = class SupportTab {
     self.data = { gitterIsLoaded: false }
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
-    
+
     self._deps = {
       app: self._components.registry.get('app').api
     }
