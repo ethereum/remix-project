@@ -65,6 +65,7 @@ document.head.appendChild(yo`
 
 function Editor (opts = {}) {
   var self = this
+
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
   if (styles.appProperties.aceTheme) {
@@ -103,14 +104,14 @@ function Editor (opts = {}) {
     var breakpoints = e.editor.session.getBreakpoints()
     for (var k in breakpoints) {
       if (k === row.toString()) {
-        event.trigger('breakpointCleared', [currentSession, row])
+        self.event.trigger('breakpointCleared', [currentSession, row])
         e.editor.session.clearBreakpoint(row)
         e.stop()
         return
       }
     }
     self.setBreakpoint(row)
-    event.trigger('breakpointAdded', [currentSession, row])
+    self.event.trigger('breakpointAdded', [currentSession, row])
     e.stop()
   })
 
@@ -277,10 +278,10 @@ function Editor (opts = {}) {
 
   // Do setup on initialisation here
   editor.on('changeSession', function () {
-    event.trigger('sessionSwitched', [])
+    self.event.trigger('sessionSwitched', [])
 
     editor.getSession().on('change', function () {
-      event.trigger('contentChanged', [])
+      self.event.trigger('contentChanged', [])
     })
   })
 
