@@ -100,6 +100,10 @@ class EditorPanel {
     var self = this
     self.log({type: 'log', value: msg})
   }
+  logHtmlMessage (msg) {
+    var self = this
+    self.log({type: 'html', value: msg})
+  }
   render () {
     var self = this
     if (self._view.el) return self._view.el
