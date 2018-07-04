@@ -8,17 +8,8 @@ var copyToClipboard = require('./app/ui/copy-to-clipboard')
 var css = require('./universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 
-/*
-  trigger debugRequested
-*/
 function UniversalDAppUI (udapp, opts = {}) {
-  var self = this
   this.udapp = udapp
-  self.el = yo`<div class=${css.udapp}></div>`
-}
-
-UniversalDAppUI.prototype.reset = function () {
-  this.el.innerHTML = ''
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {

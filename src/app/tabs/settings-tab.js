@@ -24,10 +24,7 @@ module.exports = class SettingsTab {
     // dependencies
     self._deps = {
       compiler: self._components.registry.get('compiler').api,
-      udapp: self._components.registry.get('udapp').api,
-      udappUI: self._components.registry.get('udappUI').api,
       config: self._components.registry.get('config').api,
-      fileManager: self._components.registry.get('filemanager').api,
       editorPanel: self._components.registry.get('editorpanel').api,
       editor: self._components.registry.get('editor').api
     }

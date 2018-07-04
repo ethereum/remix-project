@@ -19,7 +19,7 @@ var addTooltip = require('../ui/tooltip')
 var css = require('./styles/run-tab-styles')
 var MultiParamManager = require('../../multiParamManager')
 
-function runTab (localRegistry) {
+function runTab (opts, localRegistry) {
   /* -------------------------
             VARIABLES
   --------------------------- */
@@ -35,6 +35,35 @@ function runTab (localRegistry) {
   }
   self._components = {}
   self._components.registry = localRegistry || globlalRegistry
+  self._components.transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var number = document.querySelector('#value').value
+        var select = document.getElementById('unit')
+        var index = select.selectedIndex
+        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        var unit = 'ether' // default
+        if (selectedUnit === 'ether') {
+          unit = 'ether'
+        } else if (selectedUnit === 'finney') {
+          unit = 'finney'
+        } else if (selectedUnit === 'gwei') {
+          unit = 'gwei'
+        } else if (selectedUnit === 'wei') {
+          unit = 'wei'
+        }
+        cb(null, executionContext.web3().toWei(number, unit))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
   // dependencies
   self._deps = {
     compiler: self._components.registry.get('compiler').api,
@@ -42,9 +71,10 @@ function runTab (localRegistry) {
     udappUI: self._components.registry.get('udappUI').api,
     config: self._components.registry.get('config').api,
     fileManager: self._components.registry.get('filemanager').api,
-    editorPanel: self._components.registry.get('editorpanel').api,
-    editor: self._components.registry.get('editor').api
+    editor: self._components.registry.get('editor').api,
+    logCallback: self._components.registry.get('logCallback').api
   }
+  self._deps.udapp.resetAPI(self._components.transactionContextAPI)
   self._view.recorderCount = yo`<span>0</span>`
   self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
   self._view.clearInstanceElement = yo`
@@ -198,16 +228,7 @@ function updateAccountBalances (container, self) {
            RECORDER
 ------------------------------------------------ */
 function makeRecorder (registry, runTabEvent, self) {
-  var recorder = new Recorder(self._deps.compiler, self._deps.udapp,
-  (msg) => {
-    self._deps.editorPanel.logMessage(msg)
-  }, {
-    events: {
-      udapp: self._deps.udapp.event,
-      executioncontext: executionContext.event,
-      runtab: runTabEvent
-    }
-  })
+  var recorder = new Recorder(self._deps.compiler, self._deps.udapp, self._deps.logCallback)
 
   recorder.event.register('newTxRecorded', (count) => {
     self.data.count = count
@@ -217,6 +238,15 @@ function makeRecorder (registry, runTabEvent, self) {
     self.data.count = 0
     self._view.recorderCount.innerText = 0
   })
+
+  executionContext.event.register('contextChanged', () => {
+    recorder.clearAll()
+  })
+
+  runTabEvent.register('clearInstance', () => {
+    recorder.clearAll()
+  })
+
   var css2 = csjs`
     .container {}
     .runTxs {}
@@ -368,21 +398,21 @@ function contractDropdown (events, self) {
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
     txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
       if (!error) {
-        self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} pending...`)
+        self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
         self._deps.udapp.createContract(data, (error, txResult) => {
           if (error) {
-            self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} errored: ` + error)
+            self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
           } else {
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                self._deps.editorPanel.logMessage(vmError.message)
+                self._deps.logCallback(vmError.message)
                 return
               }
             }
             if (txResult.result.status && txResult.result.status === '0x0') {
-              self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} errored: transaction execution failed`)
+              self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
               return
             }
             var noInstancesText = self._view.noInstancesText
@@ -392,10 +422,10 @@ function contractDropdown (events, self) {
           }
         })
       } else {
-        self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} errored: ` + error)
+        self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
       }
     }, (msg) => {
-      self._deps.editorPanel.logMessage(msg)
+      self._deps.logCallback(msg)
     }, (data, runTxCallback) => {
       // called for libraries deployment
       self._deps.udapp.runTx(data, runTxCallback)
