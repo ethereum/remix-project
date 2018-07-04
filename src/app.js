@@ -376,24 +376,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // @TODO should put this in runtab
   registry.put({api: transactionContextAPI, name: 'transactionContextAPI'})
 
-  var udapp = new UniversalDApp({
-    api: {
-      logMessage: (msg) => {
-        self._components.editorpanel.log({ type: 'log', value: msg })
-      },
-      logHtmlMessage: (msg) => {
-        self._components.editorpanel.log({ type: 'html', value: msg })
-      },
-      config: self._api.config,
-      detectNetwork: (cb) => {
-        executionContext.detectNetwork(cb)
-      },
-      personalMode: () => {
-        return self._api.config.get('settings/personal-mode')
-      }
-    },
-    opt: { removable: false, removable_instances: true }
-  })
+  var udapp = new UniversalDApp({ removable: false, removable_instances: true })
   registry.put({api: udapp, name: 'udapp'})
 
   var udappUI = new UniversalDAppUI(udapp)
