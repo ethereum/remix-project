@@ -486,39 +486,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
 
-  var txLogger = new TxLogger() // eslint-disable-line
-
-  var previousInput = ''
-  var saveTimeout = null
-  function editorOnChange () {
-    var currentFile = self._components.config.get('currentFile')
-    if (!currentFile) {
-      return
-    }
-    var input = editor.get(currentFile)
-    if (!input) {
-      return
-    }
-    // if there's no change, don't do anything
-    if (input === previousInput) {
-      return
-    }
-    previousInput = input
-
-    // fire storage update
-    // NOTE: save at most once per 5 seconds
-    if (saveTimeout) {
-      window.clearTimeout(saveTimeout)
-    }
-    saveTimeout = window.setTimeout(() => {
-      fileManager.saveCurrentFile()
-    }, 5000)
-  }
-
-  // auto save the file when content changed
-  editor.event.register('contentChanged', editorOnChange)
-  // save the file when switching
-  editor.event.register('sessionSwitched', editorOnChange)
+  var txLogger = new TxLogger() // eslint-disable-line  
 
   executionContext.event.register('contextChanged', this, function (context) {
     self.runCompiler()
@@ -533,7 +501,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // check init query parameters from the URL once the compiler is loaded
   self._components.compiler.event.register('compilerLoaded', this, function (version) {
-    previousInput = ''
     self.runCompiler()
 
     if (queryParams.get().context) {
