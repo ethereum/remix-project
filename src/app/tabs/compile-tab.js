@@ -212,8 +212,8 @@ module.exports = class CompileTab {
     function updateAutoCompile (event) { self._deps.config.set('autoCompile', self._view.autoCompile.checked) }
     function compile (event) { self._deps.app.runCompiler() }
     function hideWarnings (event) {
-      self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
-      self._api.runCompiler()
+      self._deps.config.set('hideWarnings', self._view.hideWarningsBox.checked)
+      compile()
     }
     function getContractProperty (property) {
       const select = self._view.contractNames
