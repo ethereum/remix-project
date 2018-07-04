@@ -7,6 +7,8 @@ var ace = require('brace')
 
 require('brace/theme/tomorrow_night_blue')
 
+var globalRegistry = require('../../global/registry')
+
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
@@ -63,12 +65,18 @@ document.head.appendChild(yo`
   </style>
 `)
 
-function Editor (opts = {}) {
+function Editor (opts = {}, localRegistry) {
   var self = this
   var el = yo`<div id="input"></div>`
   var editor = ace.edit(el)
   if (styles.appProperties.aceTheme) {
     editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
+  }
+  self._components = {}
+  self._components.registry = localRegistry || globalRegistry
+  self._deps = {
+    fileManager: self._components.registry.get('filemanager').api,
+    config: self._components.registry.get('config').api
   }
 
   ace.acequire('ace/ext/language_tools')
@@ -275,11 +283,15 @@ function Editor (opts = {}) {
 
   this.find = (string) => editor.find(string)
 
+  this.previousInput = ''
+  this.saveTimeout = null
   // Do setup on initialisation here
   editor.on('changeSession', function () {
+    editorOnChange(self)
     event.trigger('sessionSwitched', [])
 
     editor.getSession().on('change', function () {
+      editorOnChange(self)
       event.trigger('contentChanged', [])
     })
   })
@@ -288,6 +300,31 @@ function Editor (opts = {}) {
   editor.commands.bindKeys({ 'ctrl-t': null })
 
   editor.resize(true)
+}
+
+function editorOnChange (self) {
+  var currentFile = self._deps.config.get('currentFile')
+  if (!currentFile) {
+    return
+  }
+  var input = self.get(currentFile)
+  if (!input) {
+    return
+  }
+  // if there's no change, don't do anything
+  if (input === self.previousInput) {
+    return
+  }
+  self.previousInput = input
+
+  // fire storage update
+  // NOTE: save at most once per 5 seconds
+  if (self.saveTimeout) {
+    window.clearTimeout(self.saveTimeout)
+  }
+  self.saveTimeout = window.setTimeout(() => {
+    self._deps.fileManager.saveCurrentFile()
+  }, 5000)
 }
 
 module.exports = Editor
