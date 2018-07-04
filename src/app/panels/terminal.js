@@ -579,13 +579,5 @@ function domTerminalFeatures (self, scopedCommands) {
 }
 
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
-<<<<<<< HEAD
-=======
-// PENDING TX
-function updatePendingTxs (udapp, el) {
-  var count = Object.keys(udapp.pendingTransactions()).length
-  el.innerText = count
-}
->>>>>>> fix terminal api
 
 module.exports = Terminal
