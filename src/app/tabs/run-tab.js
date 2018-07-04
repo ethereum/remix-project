@@ -8,6 +8,7 @@ var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
+var globlalRegistry = require('../../global/registry')
 var helper = require('../../lib/helper.js')
 var executionContext = require('../../execution-context')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
@@ -18,13 +19,12 @@ var addTooltip = require('../ui/tooltip')
 var css = require('./styles/run-tab-styles')
 var MultiParamManager = require('../../multiParamManager')
 
-function runTab (appAPI = {}, appEvents = {}, opts = {}) {
+function runTab (localRegistry) {
   /* -------------------------
             VARIABLES
   --------------------------- */
   var self = this
   var event = new EventManager()
-  appEvents.eventManager = event
   self._view = {}
   self.data = {
     count: 0,
@@ -33,7 +33,18 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
     another environment. e.g Transactions created in
     Javascript VM can be replayed in the Injected Web3.`
   }
-
+  self._components = {}
+  self._components.registry = localRegistry || globlalRegistry
+  // dependencies
+  self._deps = {
+    compiler: self._components.registry.get('compiler').api,
+    udapp: self._components.registry.get('udapp').api,
+    udappUI: self._components.registry.get('udappUI').api,
+    config: self._components.registry.get('config').api,
+    fileManager: self._components.registry.get('filemanager').api,
+    editorPanel: self._components.registry.get('editorpanel').api,
+    editor: self._components.registry.get('editor').api
+  }
   self._view.recorderCount = yo`<span>0</span>`
   self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
   self._view.clearInstanceElement = yo`
@@ -52,7 +63,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
     </div>`
 
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
-  var recorderInterface = makeRecorder(appAPI, appEvents, opts, self)
+  var recorderInterface = makeRecorder(localRegistry, event, self)
 
   self._view.collapsedView = yo`
     <div class=${css.recorderCollapsedView}>
@@ -92,8 +103,8 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
     --------------------------- */
   var el = yo`
   <div>
-    ${settings(container, appAPI, appEvents, opts)}
-    ${contractDropdown(event, appAPI, appEvents, opts, self)}
+    ${settings(container, self)}
+    ${contractDropdown(event, self)}
     ${recorderCard.render()}
     ${self._view.instanceContainer}
   </div>
@@ -114,7 +125,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   function setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
     selectExEnv.value = executionContext.getProvider()
-    fillAccountsList(appAPI, opts, el)
+    fillAccountsList(el, self)
     event.trigger('clearInstance', [])
   }
 
@@ -141,9 +152,9 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
     setFinalContext()
   })
 
-  fillAccountsList(appAPI, opts, el)
+  fillAccountsList(el, self)
   setInterval(() => {
-    updateAccountBalances(container, appAPI)
+    updateAccountBalances(container, self)
   }, 10000)
 
   event.register('clearInstance', () => {
@@ -156,10 +167,10 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   return { render () { return container } }
 }
 
-function fillAccountsList (appAPI, opts, container) {
+function fillAccountsList (container, self) {
   var $txOrigin = $(container.querySelector('#txorigin'))
   $txOrigin.empty()
-  opts.udapp.getAccounts((err, accounts) => {
+  self._deps.udapp.getAccounts((err, accounts) => {
     if (err) { addTooltip(`Cannot get account list: ${err}`) }
     if (accounts && accounts[0]) {
       for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])) }
@@ -170,11 +181,11 @@ function fillAccountsList (appAPI, opts, container) {
   })
 }
 
-function updateAccountBalances (container, appAPI) {
+function updateAccountBalances (container, self) {
   var accounts = $(container.querySelector('#txorigin')).children('option')
   accounts.each(function (index, value) {
     (function (acc) {
-      appAPI.getBalance(accounts[acc].value, function (err, res) {
+      self._deps.udapp.getBalanceInEther(accounts[acc].value, function (err, res) {
         if (!err) {
           accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res)
         }
@@ -186,15 +197,18 @@ function updateAccountBalances (container, appAPI) {
 /* ------------------------------------------------
            RECORDER
 ------------------------------------------------ */
-function makeRecorder (appAPI, appEvents, opts, self) {
-  var recorder = new Recorder(opts.compiler, opts.udapp, {
+function makeRecorder (registry, runTabEvent, self) {
+  var recorder = new Recorder(self._deps.compiler, self._deps.udapp,
+  (msg) => {
+    self._deps.editorPanel.logMessage(msg)
+  }, {
     events: {
-      udapp: appEvents.udapp,
+      udapp: self._deps.udapp.event,
       executioncontext: executionContext.event,
-      runtab: appEvents.eventManager
-    },
-    api: appAPI
+      runtab: runTabEvent
+    }
   })
+
   recorder.event.register('newTxRecorded', (count) => {
     self.data.count = count
     self._view.recorderCount.innerText = count
@@ -217,9 +231,10 @@ function makeRecorder (appAPI, appEvents, opts, self) {
 
   function triggerRecordButton () {
     var txJSON = JSON.stringify(recorder.getAll(), null, 2)
-    var path = appAPI.currentPath()
+    var fileManager = self._deps.fileManager
+    var path = fileManager.currentPath()
     modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', input => {
-      var fileProvider = appAPI.fileProviderOf(path)
+      var fileProvider = fileManager.fileProviderOf(path)
       if (fileProvider) {
         var newFile = path + input
         helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
@@ -227,7 +242,7 @@ function makeRecorder (appAPI, appEvents, opts, self) {
           if (!fileProvider.set(newFile, txJSON)) {
             modalDialogCustom.alert('Failed to create file ' + newFile)
           } else {
-            appAPI.switchFile(newFile)
+            fileManager.switchFile(newFile)
           }
         })
       }
@@ -240,8 +255,8 @@ function makeRecorder (appAPI, appEvents, opts, self) {
     update account address in scenario.json
     popup if scenario.json not open - "Open a file with transactions you want to replay and click play again"
     */
-    var currentFile = opts.config.get('currentFile')
-    appAPI.fileProviderOf(currentFile).get(currentFile, (error, json) => {
+    var currentFile = self._deps.config.get('currentFile')
+    self._deps.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
         modalDialogCustom.alert('Invalid Scenario File ' + error)
       } else {
@@ -259,8 +274,8 @@ function makeRecorder (appAPI, appEvents, opts, self) {
           if (txArray.length) {
             var noInstancesText = self._view.noInstancesText
             if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-            recorder.run(txArray, accounts, options, abis, linkReferences, opts.udapp, (abi, address, contractName) => {
-              self._view.instanceContainer.appendChild(opts.udappUI.renderInstanceFromABI(abi, address, contractName))
+            recorder.run(txArray, accounts, options, abis, linkReferences, self._deps.udapp, (abi, address, contractName) => {
+              self._view.instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
             })
           }
         } else {
@@ -276,13 +291,13 @@ function makeRecorder (appAPI, appEvents, opts, self) {
     CONTRACT (deploy or access deployed)
 ------------------------------------------------ */
 
-function contractDropdown (events, appAPI, appEvents, opts, self) {
+function contractDropdown (events, self) {
   var instanceContainer = self._view.instanceContainer
   var instanceContainerTitle = self._view.instanceContainerTitle
   instanceContainer.appendChild(instanceContainerTitle)
   instanceContainer.appendChild(self._view.noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
-  appEvents.compiler.register('compilationFinished', function (success, data, source) {
+  self._deps.compiler.event.register('compilationFinished', function (success, data, source) {
     getContractNames(success, data)
     if (success) {
       compFails.style.display = 'none'
@@ -301,12 +316,11 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     if (contractName) {
       return {
         name: contractName,
-        contract: opts.compiler.getContract(contractName)
+        contract: self._deps.compiler.getContract(contractName)
       }
     }
     return null
   }
-  appAPI.getSelectedContract = getSelectedContract
 
   var createPanel = yo`<div class="${css.button}"></div>`
 
@@ -319,7 +333,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
         ${createPanel}
         <div class="${css.button}">
           ${atAddressButtonInput}
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(opts.editor, opts.config) }}>At Address</div>
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress() }}>At Address</div>
         </div>
       </div>
     </div>
@@ -327,7 +341,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
 
   function setInputParamsPlaceHolder () {
     createPanel.innerHTML = ''
-    if (opts.compiler.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
+    if (self._deps.compiler.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
       var ctrabi = txHelper.getConstructorInterface(getSelectedContract().contract.object.abi)
       var ctrEVMbc = getSelectedContract().contract.object.evm.bytecode.object
       var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
@@ -352,44 +366,44 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     }
 
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-    txFormat.buildData(selectedContract.name, selectedContract.contract.object, opts.compiler.getContracts(), true, constructor, args, (error, data) => {
+    txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
       if (!error) {
-        appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
-        opts.udapp.createContract(data, (error, txResult) => {
+        self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} pending...`)
+        self._deps.udapp.createContract(data, (error, txResult) => {
           if (error) {
-            appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
+            self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           } else {
             var isVM = executionContext.isVM()
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                appAPI.logMessage(vmError.message)
+                self._deps.editorPanel.logMessage(vmError.message)
                 return
               }
             }
             if (txResult.result.status && txResult.result.status === '0x0') {
-              appAPI.logMessage(`creation of ${selectedContract.name} errored: transaction execution failed`)
+              self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} errored: transaction execution failed`)
               return
             }
             var noInstancesText = self._view.noInstancesText
             if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
             var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(opts.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+            instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
           }
         })
       } else {
-        appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
+        self._deps.editorPanel.logMessage(`creation of ${selectedContract.name} errored: ` + error)
       }
     }, (msg) => {
-      appAPI.logMessage(msg)
+      self._deps.editorPanel.logMessage(msg)
     }, (data, runTxCallback) => {
       // called for libraries deployment
-      opts.udapp.runTx(data, runTxCallback)
+      self._deps.udapp.runTx(data, runTxCallback)
     })
   }
 
   // ACCESS DEPLOYED INSTANCE
-  function loadFromAddress (editor, config) {
+  function loadFromAddress () {
     var noInstancesText = self._view.noInstancesText
     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
@@ -400,19 +414,19 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
       return modalDialogCustom.alert('Invalid checksum address.')
     }
-    if (/.(.abi)$/.exec(config.get('currentFile'))) {
+    if (/.(.abi)$/.exec(self._deps.config.get('currentFile'))) {
       modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', () => {
         var abi
         try {
-          abi = JSON.parse(editor.currentContent())
+          abi = JSON.parse(self._deps.editor.currentContent())
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
-        instanceContainer.appendChild(opts.udappUI.renderInstanceFromABI(abi, address, address))
+        instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, address))
       })
     } else {
-      var contract = opts.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
-      instanceContainer.appendChild(opts.udappUI.renderInstance(contract.object, address, selectContractNames.value))
+      var contract = self._deps.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
+      instanceContainer.appendChild(self._deps.udappUI.renderInstance(contract.object, address, selectContractNames.value))
     }
   }
 
@@ -422,7 +436,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
     contractNames.innerHTML = ''
     if (success) {
       selectContractNames.removeAttribute('disabled')
-      opts.compiler.visitContracts((contract) => {
+      self._deps.compiler.visitContracts((contract) => {
         contractNames.appendChild(yo`<option>${contract.name}</option>`)
       })
     } else {
@@ -436,7 +450,7 @@ function contractDropdown (events, appAPI, appEvents, opts, self) {
 /* ------------------------------------------------
     section SETTINGS: Environment, Account, Gas, Value
 ------------------------------------------------ */
-function settings (container, appAPI, appEvents, opts) {
+function settings (container, self) {
   // VARIABLES
   var net = yo`<span class=${css.network}></span>`
   const updateNetwork = () => {
@@ -511,15 +525,15 @@ function settings (container, appAPI, appEvents, opts) {
     </div>
   `
   // HELPER FUNCTIONS AND EVENTS
-  appEvents.udapp.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
+  self._deps.udapp.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
     if (error) return
     if (!lookupOnly) el.querySelector('#value').value = '0'
-    updateAccountBalances(container, appAPI)
+    updateAccountBalances(container, self)
   })
 
   setInterval(updateNetwork, 5000)
   function newAccount () {
-    appAPI.newAccount('', (error, address) => {
+    self._deps.udapp.newAccount('', (error, address) => {
       if (!error) {
         container.querySelector('#txorigin').appendChild(yo`<option value=${address}>${address}</option>`)
         addTooltip(`account ${address} created`)

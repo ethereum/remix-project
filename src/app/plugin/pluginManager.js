@@ -1,4 +1,7 @@
 'use strict'
+
+var globalRegistry = require('../../global/registry')
+var PluginAPI = require('./pluginAPI')
 /**
  * Register and Manage plugin:
  *
@@ -76,15 +79,19 @@
  *
  */
 module.exports = class PluginManager {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
-    self._opts = opts
-    self._api = api
-    self._events = events
     self.plugins = {}
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    self._components.pluginAPI = new PluginAPI(self._components.registry)
+    self._deps = {
+      compiler: self._components.registry.get('compiler').api,
+      app: self._components.registry.get('app').api
+    }
     self.inFocus
     self.allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
-    self._events.compiler.register('compilationFinished', (success, data, source) => {
+    self._deps.compiler.event.register('compilationFinished', (success, data, source) => {
       if (self.inFocus) {
         // trigger to the current focus
         self.post(self.inFocus, JSON.stringify({
@@ -96,7 +103,7 @@ module.exports = class PluginManager {
       }
     })
 
-    self._events.app.register('tabChanged', (tabName) => {
+    self._deps.app.event.register('tabChanged', (tabName) => {
       if (self.inFocus && self.inFocus !== tabName) {
         // trigger unfocus
         self.post(self.inFocus, JSON.stringify({
@@ -119,7 +126,7 @@ module.exports = class PluginManager {
           action: 'notification',
           key: 'compiler',
           type: 'compilationData',
-          value: [api.compiler.getCompilationResult()]
+          value: [self._deps.compiler.getCompilationResult()]
         }))
       }
     })
@@ -142,7 +149,7 @@ module.exports = class PluginManager {
           data.value.push((error, result) => {
             response(data.key, data.type, data.id, error, result)
           })
-          api[data.key][data.type].apply({}, data.value)
+          self._components.pluginAPI[data.key][data.type].apply({}, data.value)
         }
       }
     }, false)
