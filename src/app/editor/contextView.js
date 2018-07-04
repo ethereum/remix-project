@@ -14,13 +14,13 @@ var css = require('./styles/contextView-styles')
    - rename declaration/references
 */
 class ContextView {
-  constructor (localRegistry) {
+  constructor (opts, localRegistry) {
     const self = this
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
+    self.contextualListener = opts.contextualListener
+    self.editor = opts.editor
     self._deps = {
-      contextualListener: self._components.registry.get('contextualListener').api,
-      editor: self._components.registry.get('editor').api,
       compiler: self._components.registry.get('compiler').api,
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api,
       config: self._components.registry.get('config').api,
@@ -31,7 +31,7 @@ class ContextView {
     this._current
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.previousElement = null
-    self._deps.contextualListener.event.register('contextChanged', nodes => {
+    self.contextualListener.event.register('contextChanged', nodes => {
       this._nodes = nodes
       this.update()
     })
@@ -76,7 +76,7 @@ class ContextView {
       if (isDefinition(last)) {
         this._current = last
       } else {
-        var target = this._deps.contextualListener.declarationOf(last)
+        var target = this.contextualListener.declarationOf(last)
         if (target) {
           this._current = target
         } else {
@@ -94,7 +94,7 @@ class ContextView {
     var self = this
     function jumpToLine (lineColumn) {
       if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-        self._deps.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
+        self.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
       }
     }
     if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
@@ -119,12 +119,12 @@ class ContextView {
   _render (node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
     var self = this
-    var references = self._deps.contextualListener.referencesOf(node)
+    var references = self.contextualListener.referencesOf(node)
     var type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
     references = `${references ? references.length : '0'} reference(s)`
 
     var ref = 0
-    var nodes = self._deps.contextualListener.getActiveHighlights()
+    var nodes = self.contextualListener.getActiveHighlights()
     for (var k in nodes) {
       if (nodeAtCursorPosition.id === nodes[k].nodeId) {
         ref = k
@@ -161,7 +161,7 @@ class ContextView {
 
     function showGasEstimation () {
       if (node.name === 'FunctionDefinition') {
-        var result = self._deps.contextualListener.gasEstimation(node)
+        var result = self.contextualListener.gasEstimation(node)
         var executionCost = 'Execution cost: ' + result.executionCost + ' gas'
         var codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
         var estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`

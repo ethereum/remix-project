@@ -21,21 +21,21 @@ var modalDialog = require('./app/ui/modaldialog')
 var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('./app/execution/confirmDialog')
 
-/*
-  trigger debugRequested
-*/
 function UniversalDApp (opts, localRegistry) {
   this.event = new EventManager()
   var self = this
+  self.data = {}
   self._components = {}
   self._components.registry = localRegistry || globalRegistry
   self.removable = opts.removable
   self.removable_instances = opts.removable_instances
   self._deps = {
-    config: self._components.registry.get('config').api
+    config: self._components.registry.get('config').api,
+    compiler: self._components.registry.get('compiler').api,
+    logCallback: self._components.registry.get('logCallback').api
   }
   executionContext.event.register('contextChanged', this, function (context) {
-    self.reset(self.contracts)
+    self.resetEnvironment()
   })
   self._txRunnerAPI = {
     config: self._deps.config,
@@ -47,16 +47,15 @@ function UniversalDApp (opts, localRegistry) {
     }
   }
   self.txRunner = new TxRunner({}, self._txRunnerAPI)
+  self.data.contractsDetails = {}
+  self._deps.compiler.event.register('compilationFinished', (success, data, source) => {
+    self.data.contractsDetails = success && data ? data.contracts : {}
+  })
+  self.accounts = {}
+  self.resetEnvironment()
 }
 
-UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
-  this._deps.editorpanel = this._components.registry.get('editorpanel')
-  if (this._deps.editorpanel) this._deps.editorpanel = this._deps.editorpanel.api
-
-  this.contracts = contracts
-  if (transactionContextAPI) {
-    this.transactionContextAPI = transactionContextAPI
-  }
+UniversalDApp.prototype.resetEnvironment = function () {
   this.accounts = {}
   if (executionContext.isVM()) {
     this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
@@ -71,10 +70,14 @@ UniversalDApp.prototype.reset = function (contracts, transactionContextAPI) {
     executionContext.detectNetwork((error, network) => {
       if (!error && network) {
         var txLink = executionContext.txDetailsLink(network.name, txhash)
-        if (txLink) this._deps.editorpanel.logHtmlMessage(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
+        if (txLink) this._deps.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
       }
     })
   })
+}
+
+UniversalDApp.prototype.resetAPI = function (transactionContextAPI) {
+  this.transactionContextAPI = transactionContextAPI
 }
 
 UniversalDApp.prototype.newAccount = function (password, cb) {
@@ -179,6 +182,10 @@ UniversalDApp.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }
 
+UniversalDApp.prototype.pendingTransactionsCount = function () {
+  return Object.keys(this.txRunner.pendingTxs).length
+}
+
 UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
   const self = this
   var logMsg
@@ -189,13 +196,14 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
       logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     }
   }
-  txFormat.buildData(args.contractName, args.contractAbi, self.contracts, false, args.funABI, value, (error, data) => {
+  // contractsDetails is used to resolve libraries
+  txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, value, (error, data) => {
     if (!error) {
       if (isUserAction) {
         if (!args.funABI.constant) {
-          self._deps.editorpanel.logMessage(`${logMsg} pending ... `)
+          self._deps.logCallback(`${logMsg} pending ... `)
         } else {
-          self._deps.editorpanel.logMessage(`${logMsg}`)
+          self._deps.logCallback(`${logMsg}`)
         }
       }
       self.callFunction(args.address, data, args.funABI, (error, txResult) => {
@@ -204,7 +212,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           if (isVM) {
             var vmError = txExecution.checkVMError(txResult)
             if (vmError.error) {
-              self._deps.editorpanel.logMessage(`${logMsg} errored: ${vmError.message} `)
+              self._deps.logCallback(`${logMsg} errored: ${vmError.message} `)
               return
             }
           }
@@ -213,14 +221,14 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
             outputCb(decoded)
           }
         } else {
-          self._deps.editorpanel.logMessage(`${logMsg} errored: ${error} `)
+          self._deps.logCallback(`${logMsg} errored: ${error} `)
         }
       })
     } else {
-      self._deps.editorpanel.logMessage(`${logMsg} errored: ${error} `)
+      self._deps.logCallback(`${logMsg} errored: ${error} `)
     }
   }, (msg) => {
-    self._deps.editorpanel.logMessage(msg)
+    self._deps.logCallback(msg)
   }, (data, runTxCallback) => {
     // called for libraries deployment
     self.runTx(data, runTxCallback)

@@ -9,14 +9,14 @@ var globalRegistry = require('../../global/registry')
   trigger contextChanged(nodes)
 */
 class ContextualListener {
-  constructor (localRegistry) {
+  constructor (opts, localRegistry) {
     var self = this
     this.event = new EventManager()
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
+    self.editor = opts.editor
     self._deps = {
       compiler: self._components.registry.get('compiler').api,
-      editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
@@ -37,12 +37,12 @@ class ContextualListener {
       }
     })
 
-    self._deps.editor.event.register('contentChanged', () => { this._stopHighlighting() })
+    self.editor.event.register('contentChanged', () => { this._stopHighlighting() })
 
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._highlightItems(self._deps.editor.getCursorPosition(), self._deps.compiler.lastCompilationResult, self._deps.config.get('currentFile'))
+      this._highlightItems(self.editor.getCursorPosition(), self._deps.compiler.lastCompilationResult, self._deps.config.get('currentFile'))
     }, 1000)
   }
 
@@ -132,7 +132,7 @@ class ContextualListener {
       }
       var fileName = self._deps.compiler.getSourceName(position.file)
       if (fileName) {
-        return self._deps.editor.addMarker(lineColumn, fileName, css)
+        return self.editor.addMarker(lineColumn, fileName, css)
       }
     }
     return null
@@ -164,7 +164,7 @@ class ContextualListener {
     var self = this
     for (var eventKey in this._activeHighlights) {
       var event = this._activeHighlights[eventKey]
-      self._deps.editor.removeMarker(event.eventId, event.fileTarget)
+      self.editor.removeMarker(event.eventId, event.fileTarget)
     }
     this._activeHighlights = []
   }

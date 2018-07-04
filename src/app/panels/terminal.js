@@ -24,10 +24,11 @@ function register (api) { KONSOLES.push(api) }
 var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
 class Terminal {
-  constructor (opts = { auto: true }) {
+  constructor (opts, api) {
     var self = this
     self.event = new EventManager()
-    self._api = opts.api
+    self._api = api
+    self._opts = opts
     self.data = {
       lineLength: opts.lineLength || 80,
       session: [],
@@ -73,7 +74,7 @@ class Terminal {
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
       scopedCommands.log(`> ${script}`)
-      if (self._api.cmdInterpreter && self._api.cmdInterpreter.interpret(script)) return
+      if (self._opts.cmdInterpreter && self.opts.cmdInterpreter.interpret(script)) return
       self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else scopedCommands.log(output)
@@ -111,7 +112,7 @@ class Terminal {
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
-    self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>${self._view.pendingTxCount}</div>`
+    self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
     self._view.bar = yo`
       <div class=${css.bar}>
         ${self._view.dragbar}
@@ -136,8 +137,8 @@ class Terminal {
       </div>
     `
     setInterval(() => {
-      updatePendingTxs(self._api.udapp, self._view.pendingTxCount)
-    }, 5000)
+      self._view.pendingTxCount.innerHTML = self._opts.udapp.pendingTransactionsCount()
+    }, 1000)
 
     function listenOnNetwork (ev) {
       self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
@@ -578,10 +579,5 @@ function domTerminalFeatures (self, scopedCommands) {
 }
 
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
-// PENDING TX
-function updatePendingTxs (udapp, el) {
-  var count = Object.keys(udapp.pendingTransactions()).length
-  el.innerText = count
-}
 
 module.exports = Terminal
