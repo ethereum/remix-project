@@ -62,6 +62,8 @@ module.exports = class RighthandPanel {
 
     var analysisTab = new AnalysisTab(self._components.registry)
     analysisTab.event.register('newStaticAnaysisWarningMessage', (msg, settings) => { self._components.compile.addWarning(msg, settings) })
+    
+    self._components.debuggerTab = new DebuggerTab(self._components.registry)
 
     self._components = {
       pluginManager: pluginManager,
@@ -70,7 +72,7 @@ module.exports = class RighthandPanel {
       run: new RunTab(self._components.registry),
       settings: new SettingsTab(self._components.registry),
       analysis: analysisTab,
-      debug: new DebuggerTab(self._components.registry),
+      debug: self._components.debuggerTab,
       support: new SupportTab(self._components.registry),
       test: new TestTab(self._components.registry)
     }
@@ -128,6 +130,10 @@ module.exports = class RighthandPanel {
     const self = this
     if (self._view.element) return self._view.element
     return self._view.element
+  }
+
+  debugger () {
+    return this._components.debug.debugger()
   }
 
   focusOn (x) {

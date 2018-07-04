@@ -27,7 +27,6 @@ var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
 var Compiler = require('remix-solidity').Compiler
 var executionContext = require('./execution-context')
-var Debugger = require('./app/debugger/debugger')
 var FilePanel = require('./app/panels/file-panel')
 var EditorPanel = require('./app/panels/editor-panel')
 var RighthandPanel = require('./app/panels/righthand-panel')
@@ -42,7 +41,6 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
-var SourceHighlighter = require('./app/editor/sourceHighlighter')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -230,7 +228,7 @@ class App {
   }
   runCompiler () {
     const self = this
-    if (self._view.transactionDebugger.isActive) return
+    if (self._components.righthandpanel.debugger().isActive) return
 
     self._components.fileManager.saveCurrentFile()
     self._components.editorpanel.getEditor().clearAnnotations()
@@ -259,7 +257,7 @@ class App {
   startdebugging (txHash) {
     const self = this
     self.event.trigger('debuggingRequested', [])
-    self._view.transactionDebugger.debug(txHash)
+    self._components.righthandpanel.debugger().debug(txHash)
   }
   loadFromGist (params) {
     const self = this
@@ -487,13 +485,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
-
-  // ----------------- Debugger -----------------
-  self._view.transactionDebugger = new Debugger('#debugger', new SourceHighlighter())
-  self._view.transactionDebugger.addProvider('vm', executionContext.vm())
-  self._view.transactionDebugger.addProvider('injected', executionContext.internalWeb3())
-  self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
-  self._view.transactionDebugger.switchProvider(executionContext.getProvider())
 
   var txLogger = new TxLogger() // eslint-disable-line
 
