@@ -389,10 +389,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- Compiler -----------------
   self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
-  var compiler = self._components.compiler
-  registry.put({api: compiler, name: 'compiler'})
+  registry.put({api: self._components.compiler, name: 'compiler'})
 
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(self._components.compiler.event)
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
   // ----------------- UniversalDApp -----------------
@@ -409,8 +408,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var transactionReceiptResolver = new TransactionReceiptResolver()
 
   var compiledContracts = function () {
-    if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-      return compiler.lastCompilationResult.data.contracts
+    if (self._components.compiler.lastCompilationResult && self._components.compiler.lastCompilationResult.data) {
+      return self._components.compiler.lastCompilationResult.data.contracts
     }
     return null
   }
@@ -551,7 +550,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var queryParams = new QueryParams()
 
   // check init query parameters from the URL once the compiler is loaded
-  compiler.event.register('compilerLoaded', this, function (version) {
+  self._components.compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
     self.runCompiler()
 
