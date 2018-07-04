@@ -46,7 +46,6 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
-var PluginAPI = require('./app/plugin/pluginAPI')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -117,16 +116,26 @@ class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
     self._api = {}
+    registry.put({api: self, name: 'app'})
     var fileStorage = new Storage('sol:')
+    registry.put({api: fileStorage, name: 'fileStorage'})
+
     var configStorage = new Storage('config:')
+    registry.put({api: configStorage, name: 'configStorage'})
+
     self._api.config = new Config(fileStorage)
+    registry.put({api: self._api.config, name: 'config'})
+
     executionContext.init(self._api.config)
     executionContext.listenOnLastBlock()
     self._api.filesProviders = {}
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
     self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
     self._api.filesProviders['config'].init()
+    registry.put({api: self._api.filesProviders['browser'], name: 'fileProviders/browser'})
+    registry.put({api: self._api.filesProviders['config'], name: 'fileProviders/config'})
     var remixd = new Remixd()
+    registry.put({api: remixd, name: 'remixd/config'})
     remixd.event.register('system', (message) => {
       if (message.error) toolTip(message.error)
     })
@@ -135,9 +144,15 @@ class App {
     self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
     self._api.filesProviders['gist'] = new NotPersistedExplorer('gist')
     self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
+    registry.put({api: self._api.filesProviders['localhost'], name: 'fileProviders/localhost'})
+    registry.put({api: self._api.filesProviders['swarm'], name: 'fileProviders/swarm'})
+    registry.put({api: self._api.filesProviders['github'], name: 'fileProviders/github'})
+    registry.put({api: self._api.filesProviders['gist'], name: 'fileProviders/gist'})
+    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileProviders/ipfs'})
     self._view = {}
     self._components = {}
     self._components.compilerImport = new CompilerImport()
+    registry.put({api: self._components.compilerImport, name: 'compilerImport'})
     self.data = {
       _layout: {
         right: {
@@ -207,6 +222,34 @@ class App {
     self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
   }
+  runCompiler () {
+    const self = this
+    if (self._view.transactionDebugger.isActive) return
+
+    self._components.fileManager.saveCurrentFile()
+    self._components.editor.clearAnnotations()
+    var currentFile = self._api.config.get('currentFile')
+    if (currentFile) {
+      if (/.(.sol)$/.exec(currentFile)) {
+        // only compile *.sol file.
+        var target = currentFile
+        var sources = {}
+        var provider = self._components.fileManager.fileProviderOf(currentFile)
+        if (provider) {
+          provider.get(target, (error, content) => {
+            if (error) {
+              console.log(error)
+            } else {
+              sources[target] = { content }
+              self._components.compiler.compile(sources, target)
+            }
+          })
+        } else {
+          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
+        }
+      }
+    }
+  }
 }
 
 module.exports = App
@@ -242,7 +285,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     // ctrl+s or command+s
     if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
       e.preventDefault()
-      runCompiler()
+      self.runCompiler()
     }
   })
 
@@ -293,7 +336,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ----------------- Compiler -----------------
-  var compiler = new Compiler(importFileCb)
+  self._components.compiler = new Compiler(importFileCb)
+  var compiler = self._components.compiler
   registry.put({api: compiler, name: 'compiler'})
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
@@ -327,6 +371,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       cb(null, $('#gasLimit').val())
     }
   }
+  // @TODO should put this in runtab
+  registry.put({api: transactionContextAPI, name: 'transactionContextAPI'})
 
   var udapp = new UniversalDApp({
     api: {
@@ -346,10 +392,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     },
     opt: { removable: false, removable_instances: true }
   })
+  registry.put({api: udapp, name: 'udapp'})
 
   var udappUI = new UniversalDAppUI(udapp)
+  registry.put({api: udappUI, name: 'udappUI'})
 
-  udapp.reset({}, transactionContextAPI)
+  udapp.reset({})
   udappUI.reset()
   udapp.event.register('debugRequested', this, function (txResult) {
     startdebugging(txResult.transactionHash)
@@ -389,6 +437,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     event: {
       udapp: udapp.event
     }})
+  registry.put({api: txlistener, name: 'txlistener'})
 
   var eventsDecoder = new EventsDecoder({
     api: {
@@ -397,6 +446,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       }
     }
   })
+  registry.put({api: eventsDecoder, name: 'eventsDecoder'})
 
   txlistener.startListening()
 
@@ -467,6 +517,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   var editor = self._components.editor // shortcut for the editor
+  registry.put({api: editor, name: 'editor'})
 
   // ---------------- ContextualListener -----------------------
   this._components.contextualListener = new ContextualListener({
@@ -557,6 +608,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       udapp: () => { return udapp }
     }
   })
+  registry.put({ api: this._components.editorpanel, name: 'editorpanel' })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
 
   this._view.centerpanel.appendChild(this._components.editorpanel.render())
@@ -580,12 +632,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var config = self._api.config
   var filesProviders = self._api.filesProviders
 
-  var fileManager = new FileManager({
+  self._components.fileManager = new FileManager({
     config: config,
     editor: editor,
     filesProviders: filesProviders,
     compilerImport: self._components.compilerImport
   })
+  var fileManager = self._components.fileManager
+  registry.put({api: fileManager, name: 'filemanager'})
 
   // Add files received from remote instance (i.e. another remix-ide)
   function loadFiles (filesSet, fileProvider, callback) {
@@ -715,6 +769,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   }
   var renderer = new Renderer(rendererAPI)
+  registry.put({api: renderer, name: 'renderer'})
 
   // ----------------- StaticAnalysis -----------------
 
@@ -727,84 +782,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   }
   var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
+  registry.put({api: staticanalysis, name: 'staticanalysis'})
 
   // ---------------- Righthand-panel --------------------
-
-  var rhpAPI = {
-    importFileCb: importFileCb,
-    filesFromPath: (path, cb) => {
-      fileManager.filesFromPath(path, cb)
-    },
-    newAccount: (pass, cb) => {
-      udapp.newAccount(pass, cb)
-    },
-    setEditorSize (delta) {
-      $('#righthand-panel').css('width', delta)
-      self._view.centerpanel.style.right = delta + 'px'
-      document.querySelector(`.${css.dragbar2}`).style.right = delta + 'px'
-      onResize()
-    },
-    switchFile: function (path) {
-      fileManager.switchFile(path)
-    },
-    filesProviders: filesProviders,
-    fileProviderOf: (path) => {
-      return fileManager.fileProviderOf(path)
-    },
-    fileProvider: (name) => {
-      return self._api.filesProviders[name]
-    },
-    currentPath: function () {
-      return fileManager.currentPath()
-    },
-    getBalance: (address, callback) => {
-      udapp.getBalance(address, (error, balance) => {
-        if (error) {
-          callback(error)
-        } else {
-          callback(null, executionContext.web3().fromWei(balance, 'ether'))
-        }
-      })
-    },
-    currentCompiledSourceCode: () => {
-      if (compiler.lastCompilationResult.source) {
-        return compiler.lastCompilationResult.source.sources[compiler.lastCompilationResult.source.target]
-      }
-      return ''
-    },
-    resetDapp: (contracts) => {
-      udapp.reset(contracts, transactionContextAPI)
-      udappUI.reset()
-    },
-    setOptimize: (optimize, runCompilation) => {
-      compiler.setOptimize(optimize)
-      if (runCompilation) runCompiler()
-    },
-    runCompiler: () => {
-      runCompiler()
-    },
-    logMessage: (msg) => {
-      self._components.editorpanel.log({type: 'log', value: msg})
-    }
-  }
-  var rhpEvents = {
-    compiler: compiler.event,
-    app: self.event,
-    udapp: udapp.event,
-    editor: editor.event,
-    staticAnalysis: staticanalysis.event
-  }
-  var rhpOpts = {
-    pluginAPI: new PluginAPI(self, compiler),
-    udapp: udapp,
-    udappUI: udappUI,
-    compiler: compiler,
-    renderer: renderer,
-    editor: editor,
-    config: config
-  }
-
-  self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)
+  self._components.righthandpanel = new RighthandPanel()
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
@@ -861,11 +842,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
     }
   }
-  var transactionDebugger = new Debugger('#debugger', debugAPI, editor.event)
-  transactionDebugger.addProvider('vm', executionContext.vm())
-  transactionDebugger.addProvider('injected', executionContext.internalWeb3())
-  transactionDebugger.addProvider('web3', executionContext.internalWeb3())
-  transactionDebugger.switchProvider(executionContext.getProvider())
+  self._view.transactionDebugger = new Debugger('#debugger', debugAPI, editor.event)
+  self._view.transactionDebugger.addProvider('vm', executionContext.vm())
+  self._view.transactionDebugger.addProvider('injected', executionContext.internalWeb3())
+  self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
+  self._view.transactionDebugger.switchProvider(executionContext.getProvider())
 
   var txLogger = new TxLogger({
     api: {
@@ -888,34 +869,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   txLogger.event.register('debugRequested', (hash) => {
     startdebugging(hash)
   })
-
-  function runCompiler () {
-    if (transactionDebugger.isActive) return
-
-    fileManager.saveCurrentFile()
-    editor.clearAnnotations()
-    var currentFile = config.get('currentFile')
-    if (currentFile) {
-      if (/.(.sol)$/.exec(currentFile)) {
-        // only compile *.sol file.
-        var target = currentFile
-        var sources = {}
-        var provider = fileManager.fileProviderOf(currentFile)
-        if (provider) {
-          provider.get(target, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              sources[target] = { content }
-              compiler.compile(sources, target)
-            }
-          })
-        } else {
-          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
-        }
-      }
-    }
-  }
 
   var previousInput = ''
   var saveTimeout = null
@@ -950,16 +903,16 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   editor.event.register('sessionSwitched', editorOnChange)
 
   executionContext.event.register('contextChanged', this, function (context) {
-    runCompiler()
+    self.runCompiler()
   })
 
   executionContext.event.register('web3EndpointChanged', this, function (context) {
-    runCompiler()
+    self.runCompiler()
   })
 
   compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
-    runCompiler()
+    self.runCompiler()
 
     if (queryParams.get().context) {
       let context = queryParams.get().context
@@ -987,6 +940,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   function startdebugging (txHash) {
     self.event.trigger('debuggingRequested', [])
-    transactionDebugger.debug(txHash)
+    self._view.transactionDebugger.debug(txHash)
   }
 }

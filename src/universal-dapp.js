@@ -148,6 +148,17 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
   }
 }
 
+UniversalDApp.prototype.getBalanceInEther = function (address, callback) {
+  var self = this
+  self.getBalance(address, (error, balance) => {
+    if (error) {
+      callback(error)
+    } else {
+      callback(null, executionContext.web3().fromWei(balance, 'ether'))
+    }
+  })
+}
+
 UniversalDApp.prototype.pendingTransactions = function () {
   return this.txRunner.pendingTxs
 }

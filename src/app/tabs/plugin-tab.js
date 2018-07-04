@@ -2,17 +2,16 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
+var globalRegistry = require('../../global/registry')
 var EventManager = remixLib.EventManager
 
 module.exports = class plugintab {
-  constructor (api = {}, events = {}, opts = {}) {
+  constructor (localRegistry) {
     const self = this
     self.event = new EventManager()
-    self._opts = opts
-    self._api = api
-    self._events = events
     self._view = { el: null }
     self._components = {}
+    self._components.registry = localRegistry || globalRegistry
   }
   render () {
     const self = this
