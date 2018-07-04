@@ -219,7 +219,7 @@ module.exports = class CompileTab {
       'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     function updateAutoCompile (event) { self._deps.config.set('autoCompile', self._view.autoCompile.checked) }
-    function compile (event) { self._deps.app.runCompiler() }    
+    function compile (event) { self._deps.app.runCompiler() }
     function hideWarnings (event) {
       self._opts.config.set('hideWarnings', self._view.hideWarningsBox.checked)
       self._api.runCompiler()
