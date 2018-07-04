@@ -9,8 +9,7 @@ var globlalRegistry = require('../../global/registry')
 /**
  * Manage remix and source highlighting
  */
-function Debugger (id, sourceHighlighter, localRegistry) {
-  this.el = document.querySelector(id)
+function Debugger (container, sourceHighlighter, localRegistry) {
   this._components = {
     sourceHighlighter: sourceHighlighter
   }
@@ -32,7 +31,7 @@ function Debugger (id, sourceHighlighter, localRegistry) {
       }
     })
   this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
-  this.el.appendChild(this.debugger.render())
+  container.appendChild(this.debugger.render())
   this.isActive = false
 
   this.breakPointManager = new remixCore.code.BreakpointManager(this.debugger, (sourceLocation) => {

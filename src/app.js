@@ -27,8 +27,6 @@ var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
 var Compiler = require('remix-solidity').Compiler
 var executionContext = require('./execution-context')
-var Debugger = require('./app/debugger/debugger')
-var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var FilePanel = require('./app/panels/file-panel')
 var EditorPanel = require('./app/panels/editor-panel')
 var RighthandPanel = require('./app/panels/righthand-panel')
@@ -43,7 +41,6 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
-var SourceHighlighter = require('./app/editor/sourceHighlighter')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -113,6 +110,7 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
+    this.event = new EventManager()
     self._components = {}
     registry.put({api: self, name: 'app'})
 
@@ -230,7 +228,7 @@ class App {
   }
   runCompiler () {
     const self = this
-    if (self._view.transactionDebugger.isActive) return
+    if (self._components.righthandpanel.debugger().isActive) return
 
     self._components.fileManager.saveCurrentFile()
     self._components.editorpanel.getEditor().clearAnnotations()
@@ -259,7 +257,7 @@ class App {
   startdebugging (txHash) {
     const self = this
     self.event.trigger('debuggingRequested', [])
-    self._view.transactionDebugger.debug(txHash)
+    self._components.righthandpanel.debugger().debug(txHash)
   }
   loadFromGist (params) {
     const self = this
@@ -388,10 +386,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- Compiler -----------------
   self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
-  var compiler = self._components.compiler
-  registry.put({api: compiler, name: 'compiler'})
+  registry.put({api: self._components.compiler, name: 'compiler'})
 
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(self._components.compiler.event)
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
   // ----------------- UniversalDApp -----------------
@@ -407,15 +404,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- Tx listener -----------------
   var transactionReceiptResolver = new TransactionReceiptResolver()
 
-  var compiledContracts = function () {
-    if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-      return compiler.lastCompilationResult.data.contracts
-    }
-    return null
-  }
   var txlistener = new Txlistener({
     api: {
-      contracts: compiledContracts,
+      contracts: function () {
+        if (self._components.compiler.lastCompilationResult && self._components.compiler.lastCompilationResult.data) {
+          return self._components.compiler.lastCompilationResult.data.contracts
+        }
+        return null
+      },
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
       }
@@ -452,7 +448,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
   self._view.centerpanel.appendChild(self._components.editorpanel.render())
-  var editor = self._components.editorpanel.getEditor()
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
@@ -465,8 +460,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   }, false)
 
-  this.event = new EventManager()
-
   // Replace early callback with instant response
   loadFilesCallback = function (files) {
     self.loadFiles(files)
@@ -478,17 +471,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ---------------- FilePanel --------------------
-  var filePanel = new FilePanel()
-  self._view.leftpanel.appendChild(filePanel.render())
-  filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
+  self._components.filePanel = new FilePanel()
+  self._view.leftpanel.appendChild(self._components.filePanel.render())
+  self._components.filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
-
-  // ----------------- StaticAnalysis -----------------
-  var staticanalysis = new StaticAnalysis()
-  registry.put({api: staticanalysis, name: 'staticanalysis'})
 
   // ---------------- Righthand-panel --------------------
   self._components.righthandpanel = new RighthandPanel()
@@ -496,49 +485,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
 
-  var node = document.getElementById('staticanalysisView')
-  node.insertBefore(staticanalysis.render(), node.childNodes[0])
-
-  // ----------------- Debugger -----------------
-  self._view.transactionDebugger = new Debugger('#debugger', new SourceHighlighter())
-  self._view.transactionDebugger.addProvider('vm', executionContext.vm())
-  self._view.transactionDebugger.addProvider('injected', executionContext.internalWeb3())
-  self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
-  self._view.transactionDebugger.switchProvider(executionContext.getProvider())
-
-  var txLogger = new TxLogger() // eslint-disable-line
-
-  var previousInput = ''
-  var saveTimeout = null
-  function editorOnChange () {
-    var currentFile = self._components.config.get('currentFile')
-    if (!currentFile) {
-      return
-    }
-    var input = editor.get(currentFile)
-    if (!input) {
-      return
-    }
-    // if there's no change, don't do anything
-    if (input === previousInput) {
-      return
-    }
-    previousInput = input
-
-    // fire storage update
-    // NOTE: save at most once per 5 seconds
-    if (saveTimeout) {
-      window.clearTimeout(saveTimeout)
-    }
-    saveTimeout = window.setTimeout(() => {
-      fileManager.saveCurrentFile()
-    }, 5000)
-  }
-
-  // auto save the file when content changed
-  editor.event.register('contentChanged', editorOnChange)
-  // save the file when switching
-  editor.event.register('sessionSwitched', editorOnChange)
+  var txLogger = new TxLogger() // eslint-disable-line  
 
   executionContext.event.register('contextChanged', this, function (context) {
     self.runCompiler()
@@ -552,8 +499,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var queryParams = new QueryParams()
 
   // check init query parameters from the URL once the compiler is loaded
-  compiler.event.register('compilerLoaded', this, function (version) {
-    previousInput = ''
+  self._components.compiler.event.register('compilerLoaded', this, function (version) {
     self.runCompiler()
 
     if (queryParams.get().context) {
