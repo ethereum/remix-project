@@ -41,8 +41,7 @@ Remix is built out of 4 different modules:
 
 + [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
 + [`remix-lib`](remix-lib/README.md)
-+ [`remix-core`](remix-core/README.md) is a utility package, providing high-level abstractions to work with the Ethereum VM.
-+ [`remix-debugger`](remix-debugger/README.md) contains the **debugging webapp**.
++ [`remix-debug`](remix-debugger/README.md) contains the debugger.
 
 ## Contributing
 
