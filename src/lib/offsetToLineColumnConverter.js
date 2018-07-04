@@ -10,10 +10,10 @@ function offsetToColumnConverter (compilerEvent) {
   })
 }
 
-offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, file, compilationResult) {
+offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, file, sources) {
   if (!this.lineBreakPositionsByContent[file]) {
-    var filename = Object.keys(compilationResult.data.sources)[file]
-    this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(compilationResult.source.sources[filename].content)
+    var filename = Object.keys(sources)[file]
+    this.lineBreakPositionsByContent[file] = this.sourceMappingDecoder.getLinebreakPositions(sources[filename].content)
   }
   return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
 }

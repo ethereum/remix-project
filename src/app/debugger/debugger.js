@@ -36,7 +36,7 @@ function Debugger (id, sourceHighlighter, localRegistry) {
   this.isActive = false
 
   this.breakPointManager = new remixCore.code.BreakpointManager(this.debugger, (sourceLocation) => {
-    return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.data)
+    return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
@@ -74,8 +74,8 @@ function Debugger (id, sourceHighlighter, localRegistry) {
   this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
     if (self._deps.compiler.lastCompilationResult) {
       self.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
-        if (!error) {
-          var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult)
+        if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+          var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
           self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
         } else {
           self._components.sourceHighlighter.currentSourceLocation(null)
