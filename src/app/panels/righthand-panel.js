@@ -57,7 +57,11 @@ module.exports = class RighthandPanel {
       pluginAPI,
       self._deps.app,
       self._deps.compiler,
-      self._deps.txlistener)
+      self._deps.txlistener
+   )
+
+    var analysisTab = new AnalysisTab(self._components.registry)
+    analysisTab.event.register('newStaticAnaysisWarningMessage', (msg, settings) => { self._components.compile.addWarning(msg, settings) })
 
     self._components = {
       pluginManager: pluginManager,
@@ -65,7 +69,7 @@ module.exports = class RighthandPanel {
       compile: new CompileTab(self._components.registry),
       run: new RunTab(self._components.registry),
       settings: new SettingsTab(self._components.registry),
-      analysis: new AnalysisTab(self._components.registry),
+      analysis: analysisTab,
       debug: new DebuggerTab(self._components.registry),
       support: new SupportTab(self._components.registry),
       test: new TestTab(self._components.registry)
