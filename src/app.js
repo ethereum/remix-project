@@ -117,54 +117,60 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
-    self._api = {}
+    self._components = {}
     registry.put({api: self, name: 'app'})
+
     var fileStorage = new Storage('sol:')
     registry.put({api: fileStorage, name: 'fileStorage'})
 
     var configStorage = new Storage('config:')
     registry.put({api: configStorage, name: 'configStorage'})
 
-    self._api.config = new Config(fileStorage)
-    registry.put({api: self._api.config, name: 'config'})
+    self._components.config = new Config(fileStorage)
+    registry.put({api: self._components.config, name: 'config'})
 
-    executionContext.init(self._api.config)
+    executionContext.init(self._components.config)
     executionContext.listenOnLastBlock()
-    self._api.filesProviders = {}
-    self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
-    self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
-    self._api.filesProviders['config'].init()
-    registry.put({api: self._api.filesProviders['browser'], name: 'fileproviders/browser'})
-    registry.put({api: self._api.filesProviders['config'], name: 'fileproviders/config'})
-    var remixd = new Remixd()
-    registry.put({api: remixd, name: 'remixd/config'})
-    remixd.event.register('system', (message) => {
-      if (message.error) toolTip(message.error)
-    })
-    self._api.filesProviders['localhost'] = new SharedFolder(remixd)
-    self._api.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
-    self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
-    self._api.filesProviders['gist'] = new NotPersistedExplorer('gist')
-    self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
-    registry.put({api: self._api.filesProviders['localhost'], name: 'fileproviders/localhost'})
-    registry.put({api: self._api.filesProviders['swarm'], name: 'fileproviders/swarm'})
-    registry.put({api: self._api.filesProviders['github'], name: 'fileproviders/github'})
-    registry.put({api: self._api.filesProviders['gist'], name: 'fileproviders/gist'})
-    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
-    registry.put({api: self._api.filesProviders, name: 'fileproviders'})
-    self._view = {}
-    self._components = {}
+
     self._components.compilerImport = new CompilerImport()
     registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self._components.gistHandler = new GistHandler()
+
+    self._components.filesProviders = {}
+    self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
+    self._components.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
+    self._components.filesProviders['config'].init()
+    registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
+    registry.put({api: self._components.filesProviders['config'], name: 'fileproviders/config'})
+
+    var remixd = new Remixd()
+    registry.put({api: remixd, name: 'remixd'})
+    remixd.event.register('system', (message) => {
+      if (message.error) toolTip(message.error)
+    })
+
+    self._components.filesProviders['localhost'] = new SharedFolder(remixd)
+    self._components.filesProviders['swarm'] = new BasicReadOnlyExplorer('swarm')
+    self._components.filesProviders['github'] = new BasicReadOnlyExplorer('github')
+    self._components.filesProviders['gist'] = new NotPersistedExplorer('gist')
+    self._components.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
+    registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
+    registry.put({api: self._components.filesProviders['swarm'], name: 'fileproviders/swarm'})
+    registry.put({api: self._components.filesProviders['github'], name: 'fileproviders/github'})
+    registry.put({api: self._components.filesProviders['gist'], name: 'fileproviders/gist'})
+    registry.put({api: self._components.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
+    registry.put({api: self._components.filesProviders, name: 'fileproviders'})
+
+    self._view = {}
+
     self.data = {
       _layout: {
         right: {
-          offset: self._api.config.get('right-offset') || 400,
+          offset: self._components.config.get('right-offset') || 400,
           show: true
         }, // @TODO: adapt sizes proportionally to browser window size
         left: {
-          offset: self._api.config.get('left-offset') || 200,
+          offset: self._components.config.get('left-offset') || 200,
           show: true
         }
       }
@@ -179,7 +185,7 @@ class App {
         if (layout.show) delta = layout.offset
         else delta = 0
       } else {
-        self._api.config.set(`${direction}-offset`, delta)
+        self._components.config.set(`${direction}-offset`, delta)
         layout.offset = delta
       }
     }
@@ -232,7 +238,7 @@ class App {
 
     self._components.fileManager.saveCurrentFile()
     self._components.editor.clearAnnotations()
-    var currentFile = self._api.config.get('currentFile')
+    var currentFile = self._components.config.get('currentFile')
     if (currentFile) {
       if (/.(.sol)$/.exec(currentFile)) {
         // only compile *.sol file.
@@ -259,9 +265,9 @@ class App {
     self.event.trigger('debuggingRequested', [])
     self._view.transactionDebugger.debug(txHash)
   }
-  loadFromGist (gistId) {
+  loadFromGist (params) {
     const self = this
-    return self._components.gistHandler.handleLoad(gistId, function (gistId) {
+    return self._components.gistHandler.handleLoad(params, function (gistId) {
       request.get({
         url: `https://api.github.com/gists/${gistId}`,
         json: true
@@ -271,7 +277,7 @@ class App {
           return
         }
         self.loadFiles(data.files, 'gist', (errorLoadingFile) => {
-          if (!errorLoadingFile) self._api.filesProviders['gist'].id = gistId
+          if (!errorLoadingFile) self._components.filesProviders['gist'].id = gistId
         })
       })
     })
@@ -281,14 +287,14 @@ class App {
     if (!fileProvider) fileProvider = 'browser'
 
     async.each(Object.keys(filesSet), (file, callback) => {
-      helper.createNonClashingName(file, self._api.filesProviders[fileProvider],
+      helper.createNonClashingName(file, self._components.filesProviders[fileProvider],
       (error, name) => {
         if (error) {
           modalDialogCustom.alert('Unexpected error loading the file ' + error)
         } else if (helper.checkSpecialChars(name)) {
           modalDialogCustom.alert('Special characters are not allowed')
         } else {
-          self._api.filesProviders[fileProvider].set(name, filesSet[file].content)
+          self._components.filesProviders[fileProvider].set(name, filesSet[file].content)
         }
         callback()
       })
@@ -305,8 +311,8 @@ class App {
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
-          if (self._api.filesProviders[type]) {
-            self._api.filesProviders[type].addReadOnly(cleanUrl, content, url)
+          if (self._components.filesProviders[type]) {
+            self._components.filesProviders[type].addReadOnly(cleanUrl, content, url)
           }
           cb(null, content)
         } else {
@@ -476,12 +482,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     this module basically listen on user input (from terminal && editor)
     and interpret them as commands
   */
-  var cmdInterpreter = new CommandInterpreter()
+  var cmdInterpreter = new CommandInterpreter() // @TODO: put into editorpanel
 
   registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
-  var config = self._api.config
-  var filesProviders = self._api.filesProviders
-
   // ----------------- file manager ----------------------------
 
   self._components.fileManager = new FileManager()
@@ -502,8 +505,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
 
   this._view.centerpanel.appendChild(this._components.editorpanel.render())
-
-  var queryParams = new QueryParams()
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
@@ -528,46 +529,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  var loadingFromGist = self.loadFromGist(queryParams.get())
-
-  // insert ballot contract if there are no files available
-  if (!loadingFromGist) {
-    filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
-      if (error) console.error(error)
-      if (Object.keys(filesList).length === 0) {
-        if (!filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
-          modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
-        } else {
-          filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
-        }
-      }
-    })
-  }
-
-  window.syncStorage = chromeCloudStorageSync
-  chromeCloudStorageSync()
-
   // ---------------- FilePanel --------------------
   var filePanel = new FilePanel()
-
-  // TODO this should happen inside file-panel.js
-  var filepanelContainer = document.querySelector('#filepanel')
-  filepanelContainer.appendChild(filePanel.render())
-
+  self._view.leftpanel.appendChild(filePanel.render())
   filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
-
-  var previouslyOpenedFile = config.get('currentFile')
-  if (previouslyOpenedFile) {
-    filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) {
-        fileManager.switchFile(previouslyOpenedFile)
-      } else {
-        fileManager.switchFile()
-      }
-    })
-  } else {
-    fileManager.switchFile()
-  }
 
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
@@ -586,35 +551,19 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var node = document.getElementById('staticanalysisView')
   node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
-  // ----------------- editor resize ---------------
-
-  function onResize () {
-    editor.resize(document.querySelector('#editorWrap').checked)
-  }
-  onResize()
-
-  self._view.el.addEventListener('change', onResize)
-  document.querySelector('#editorWrap').addEventListener('change', onResize)
-
   // ----------------- Debugger -----------------
-  var sourceHighlighter = new SourceHighlighter()
-  self._view.transactionDebugger = new Debugger('#debugger', sourceHighlighter)
+  self._view.transactionDebugger = new Debugger('#debugger', new SourceHighlighter())
   self._view.transactionDebugger.addProvider('vm', executionContext.vm())
   self._view.transactionDebugger.addProvider('injected', executionContext.internalWeb3())
   self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
   self._view.transactionDebugger.switchProvider(executionContext.getProvider())
 
-  var txLogger = new TxLogger()
-
-  txLogger.event.register('debugRequested', (hash) => {
-    self.startdebugging(hash)
-  })
+  var txLogger = new TxLogger() // eslint-disable-line
 
   var previousInput = ''
   var saveTimeout = null
-
   function editorOnChange () {
-    var currentFile = config.get('currentFile')
+    var currentFile = self._components.config.get('currentFile')
     if (!currentFile) {
       return
     }
@@ -638,18 +587,23 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }, 5000)
   }
 
+  // auto save the file when content changed
   editor.event.register('contentChanged', editorOnChange)
-  // in order to save the file when switching
+  // save the file when switching
   editor.event.register('sessionSwitched', editorOnChange)
 
   executionContext.event.register('contextChanged', this, function (context) {
     self.runCompiler()
   })
 
+  // rerun the compiler when the environement changed
   executionContext.event.register('web3EndpointChanged', this, function (context) {
     self.runCompiler()
   })
 
+  var queryParams = new QueryParams()
+
+  // check init query parameters from the URL once the compiler is loaded
   compiler.event.register('compilerLoaded', this, function (version) {
     previousInput = ''
     self.runCompiler()
@@ -677,4 +631,37 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       self.startdebugging(queryParams.get().debugtx)
     }
   })
+
+  // chrome app
+  window.syncStorage = chromeCloudStorageSync
+  chromeCloudStorageSync()
+
+  var loadingFromGist = self.loadFromGist(queryParams.get())
+  if (!loadingFromGist) {
+    // insert ballot contract if there are no files to show
+    self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
+      if (error) console.error(error)
+      if (Object.keys(filesList).length === 0) {
+        if (!self._components.filesProviders['browser'].set(examples.ballot.name, examples.ballot.content)) {
+          modalDialogCustom.alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
+        } else {
+          self._components.filesProviders['browser'].set(examples.ballot_test.name, examples.ballot_test.content)
+        }
+      }
+    })
+  }
+
+  // Open last opened file
+  var previouslyOpenedFile = self._components.config.get('currentFile')
+  if (previouslyOpenedFile) {
+    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
+      if (!error && content) {
+        fileManager.switchFile(previouslyOpenedFile)
+      } else {
+        fileManager.switchFile()
+      }
+    })
+  } else {
+    fileManager.switchFile()
+  }
 }
