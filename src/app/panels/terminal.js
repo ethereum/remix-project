@@ -136,7 +136,7 @@ class Terminal {
       </div>
     `
     setInterval(() => {
-      updatePendingTxs(self._api, self._view.pendingTxCount)
+      updatePendingTxs(self._api.udapp, self._view.pendingTxCount)
     }, 5000)
 
     function listenOnNetwork (ev) {
@@ -579,8 +579,8 @@ function domTerminalFeatures (self, scopedCommands) {
 
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
 // PENDING TX
-function updatePendingTxs (api, el) {
-  var count = Object.keys(api.udapp.pendingTransactions()).length
+function updatePendingTxs (udapp, el) {
+  var count = Object.keys(udapp.pendingTransactions()).length
   el.innerText = count
 }
 
