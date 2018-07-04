@@ -24,16 +24,14 @@
     "npm-run-all": "^4.0.2",
     "remix-core": "^0.0.15",
     "remix-lib": "^0.2.9",
-    "solc": "https://github.com/ethereum/solc-js",
+    "solc": "^0.4.24",
     "standard": "^7.0.1",
     "tape": "^4.6.0",
     "webworkify": "^1.2.1"
   },
   "scripts": {
-    "test": "standard && npm run downloadsolc && tape ./test/tests.js",
-    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget --no-check-certificate https://solc-bin.ethereum.org/soljson.js) && cd ..",
-    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc",
-    "postinstall": "npm-run-all -ls downloadsolc"
+    "test": "standard && tape ./test/tests.js",
+    "prepublish": "mkdirp build"
   },
   "standard": {
     "ignore": [
