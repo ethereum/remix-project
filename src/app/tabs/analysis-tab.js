@@ -22,9 +22,11 @@ module.exports = class AnalysisTab {
     const self = this
     var staticanalysis = new StaticAnalysis()
     staticanalysis.event.register('staticAnaysisWarning', (count) => {
-      const msg = `Static Analysis raised ${count} warning(s) that requires your attention. Click here to show the warning(s).`
-      const settings = { type: 'staticAnalysisWarning', click: () => self._deps.rightHandPanel.focusOn('staticanalysisView'), useSpan: true }
-      self.event.trigger('newStaticAnaysisWarningMessage', [msg, settings])
+      if (count > 0) {
+        const msg = `Static Analysis raised ${count} warning(s) that requires your attention. Click here to show the warning(s).`
+        const settings = { type: 'staticAnalysisWarning', click: () => self._deps.rightHandPanel.focusOn('staticanalysisView'), useSpan: true }
+        self.event.trigger('newStaticAnaysisWarningMessage', [msg, settings])  
+      }
     })
     self._components.registry.put({api: staticanalysis, name: 'staticanalysis'})
     if (self._view.el) return self._view.el
