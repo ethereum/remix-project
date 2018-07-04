@@ -407,15 +407,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- Tx listener -----------------
   var transactionReceiptResolver = new TransactionReceiptResolver()
 
-  var compiledContracts = function () {
-    if (self._components.compiler.lastCompilationResult && self._components.compiler.lastCompilationResult.data) {
-      return self._components.compiler.lastCompilationResult.data.contracts
-    }
-    return null
-  }
   var txlistener = new Txlistener({
     api: {
-      contracts: compiledContracts,
+      contracts: function () {
+        if (self._components.compiler.lastCompilationResult && self._components.compiler.lastCompilationResult.data) {
+          return self._components.compiler.lastCompilationResult.data.contracts
+        }
+        return null
+      },
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
       }
