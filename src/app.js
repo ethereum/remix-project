@@ -47,6 +47,7 @@ var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
+var SourceHighlighter = require('./app/editor/sourceHighlighter')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -387,7 +388,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: compiler, name: 'compiler'})
 
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
-  registry.put({api: offsetToLineColumnConverter, name: 'offsetToLineColumnConverter'})
+  registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -596,45 +597,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   document.querySelector('#editorWrap').addEventListener('change', onResize)
 
   // ----------------- Debugger -----------------
-  var debugAPI = {
-    statementMarker: null,
-    fullLineMarker: null,
-    source: null,
-    currentSourceLocation: (lineColumnPos, location) => {
-      if (this.statementMarker) editor.removeMarker(this.statementMarker, this.source)
-      if (this.fullLineMarker) editor.removeMarker(this.fullLineMarker, this.source)
-      this.statementMarker = null
-      this.fullLineMarker = null
-      this.source = null
-      if (lineColumnPos) {
-        this.source = compiler.getSourceName(location.file)
-        if (config.get('currentFile') !== this.source) {
-          fileManager.switchFile(this.source)
-        }
-        this.statementMarker = editor.addMarker(lineColumnPos, this.source, css.highlightcode)
-        editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
-        if (lineColumnPos.start.line === lineColumnPos.end.line) {
-          this.fullLineMarker = editor.addMarker({
-            start: {
-              line: lineColumnPos.start.line,
-              column: 0
-            },
-            end: {
-              line: lineColumnPos.start.line + 1,
-              column: 0
-            }
-          }, this.source, css.highlightcode_fullLine)
-        }
-      }
-    },
-    lastCompilationResult: () => {
-      return compiler.lastCompilationResult
-    },
-    offsetToLineColumn: (location, file) => {
-      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
-    }
-  }
-  self._view.transactionDebugger = new Debugger('#debugger', debugAPI, editor.event)
+  var sourceHighlighter = new SourceHighlighter()
+  self._view.transactionDebugger = new Debugger('#debugger', sourceHighlighter)
   self._view.transactionDebugger.addProvider('vm', executionContext.vm())
   self._view.transactionDebugger.addProvider('injected', executionContext.internalWeb3())
   self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
