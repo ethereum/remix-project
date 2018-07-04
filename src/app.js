@@ -448,7 +448,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
   self._view.centerpanel.appendChild(self._components.editorpanel.render())
-  var editor = self._components.editorpanel.getEditor()
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
