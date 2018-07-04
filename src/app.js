@@ -133,8 +133,8 @@ class App {
     self._api.filesProviders['browser'] = new Browserfiles(fileStorage)
     self._api.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
     self._api.filesProviders['config'].init()
-    registry.put({api: self._api.filesProviders['browser'], name: 'fileProviders/browser'})
-    registry.put({api: self._api.filesProviders['config'], name: 'fileProviders/config'})
+    registry.put({api: self._api.filesProviders['browser'], name: 'fileproviders/browser'})
+    registry.put({api: self._api.filesProviders['config'], name: 'fileproviders/config'})
     var remixd = new Remixd()
     registry.put({api: remixd, name: 'remixd/config'})
     remixd.event.register('system', (message) => {
@@ -145,15 +145,16 @@ class App {
     self._api.filesProviders['github'] = new BasicReadOnlyExplorer('github')
     self._api.filesProviders['gist'] = new NotPersistedExplorer('gist')
     self._api.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
-    registry.put({api: self._api.filesProviders['localhost'], name: 'fileProviders/localhost'})
-    registry.put({api: self._api.filesProviders['swarm'], name: 'fileProviders/swarm'})
-    registry.put({api: self._api.filesProviders['github'], name: 'fileProviders/github'})
-    registry.put({api: self._api.filesProviders['gist'], name: 'fileProviders/gist'})
-    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileProviders/ipfs'})
+    registry.put({api: self._api.filesProviders['localhost'], name: 'fileproviders/localhost'})
+    registry.put({api: self._api.filesProviders['swarm'], name: 'fileproviders/swarm'})
+    registry.put({api: self._api.filesProviders['github'], name: 'fileproviders/github'})
+    registry.put({api: self._api.filesProviders['gist'], name: 'fileproviders/gist'})
+    registry.put({api: self._api.filesProviders['ipfs'], name: 'fileproviders/ipfs'})
+    registry.put({api: self._api.filesProviders, name: 'fileproviders'})
     self._view = {}
     self._components = {}
     self._components.compilerImport = new CompilerImport()
-    registry.put({api: self._components.compilerImport, name: 'compilerImport'})
+    registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self.data = {
       _layout: {
         right: {
@@ -496,12 +497,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- file manager ----------------------------
 
-  self._components.fileManager = new FileManager({
-    config: config,
-    editor: editor,
-    filesProviders: filesProviders,
-    compilerImport: self._components.compilerImport
-  })
+  self._components.fileManager = new FileManager()
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
@@ -606,20 +602,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   chromeCloudStorageSync()
 
   // ---------------- FilePanel --------------------
-  var FilePanelAPI = {
-    switchFile: function (path) {
-      fileManager.switchFile(path)
-    },
-    event: fileManager.event,
-    config: config,
-    currentContent: function () {
-      return editor.get(config.get('currentFile'))
-    },
-    setText: function (text) {
-      editor.setText(text)
-    }
-  }
-  var filePanel = new FilePanel(FilePanelAPI, filesProviders)
+  var filePanel = new FilePanel()
 
   // TODO this should happen inside file-panel.js
   var filepanelContainer = document.querySelector('#filepanel')
