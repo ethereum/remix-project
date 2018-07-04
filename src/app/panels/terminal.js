@@ -580,7 +580,7 @@ function domTerminalFeatures (self, scopedCommands) {
 function blockify (el) { return yo`<div class=${css.block}>${el}</div>` }
 // PENDING TX
 function updatePendingTxs (api, el) {
-  var count = Object.keys(api.udapp().pendingTransactions()).length
+  var count = Object.keys(api.udapp.pendingTransactions()).length
   el.innerText = count
 }
 
