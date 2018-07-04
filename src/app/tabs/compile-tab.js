@@ -25,6 +25,7 @@ module.exports = class CompileTab {
       compileIcon: null,
       compileContainer: null,
       errorContainer: null,
+      errorContainerHead: null,
       contractNames: null,
       contractEl: null
     }
@@ -36,9 +37,7 @@ module.exports = class CompileTab {
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
       compiler: self._components.registry.get('compiler').api,
-      staticAnalysis: self._components.registry.get('staticanalysis').api,
-      renderer: self._components.registry.get('renderer').api,
-      rightHandPanel: self._components.registry.get('righthandpanel').api
+      renderer: self._components.registry.get('renderer').api
     }
     self.data = {
       hideWarnings: self._deps.config.get('hideWarnings') || false,
@@ -80,6 +79,7 @@ module.exports = class CompileTab {
     self._deps.compiler.event.register('compilationStarted', function start () {
       if (!self._view.compileIcon) return
       self._view.errorContainer.innerHTML = ''
+      self._view.errorContainerHead.innerHTML = ''
       self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
       self._view.compileIcon.setAttribute('title', 'compiling...')
@@ -139,13 +139,10 @@ module.exports = class CompileTab {
         })
       }
     })
-    self._deps.staticAnalysis.event.register('staticAnaysisWarning', (count) => {
-      if (count) {
-        const msg = `Static Analysis raised ${count} warning(s) that requires your attention. Click here to show the warning(s).`
-        const settings = { type: 'staticAnalysisWarning', click: () => self._deps.rightHandPanel.focusOn('staticanalysisView'), useSpan: true }
-        self._deps.renderer.error(msg, self._view.errorContainer, settings)
-      }
-    })
+  }
+  addWarning (msg, settings) {
+    const self = this
+    self._deps.renderer.error(msg, self._view.errorContainerHead, settings)
   }
   render () {
     const self = this
@@ -173,6 +170,7 @@ module.exports = class CompileTab {
         </div>
       </div>`
     self._view.errorContainer = yo`<div class='error'></div>`
+    self._view.errorContainerHead = yo`<div class='error'></div>`
     self._view.contractNames = yo`<select class="${css.contractNames}" disabled></select>`
     self._view.contractEl = yo`
       <div class="${css.container}">
@@ -194,6 +192,7 @@ module.exports = class CompileTab {
       <div class="${css.compileTabView}" id="compileTabView">
         ${self._view.compileContainer}
         ${self._view.contractEl}
+        ${self._view.errorContainerHead}
         ${self._view.errorContainer}
       </div>`
     const help = {

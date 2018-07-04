@@ -28,7 +28,6 @@ var Renderer = require('./app/ui/renderer')
 var Compiler = require('remix-solidity').Compiler
 var executionContext = require('./execution-context')
 var Debugger = require('./app/debugger/debugger')
-var StaticAnalysis = require('./app/staticanalysis/staticAnalysisView')
 var FilePanel = require('./app/panels/file-panel')
 var EditorPanel = require('./app/panels/editor-panel')
 var RighthandPanel = require('./app/panels/righthand-panel')
@@ -483,18 +482,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
-  // ----------------- StaticAnalysis -----------------
-  var staticanalysis = new StaticAnalysis()
-  registry.put({api: staticanalysis, name: 'staticanalysis'})
-
   // ---------------- Righthand-panel --------------------
   self._components.righthandpanel = new RighthandPanel()
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
-
-  var node = document.getElementById('staticanalysisView')
-  node.insertBefore(staticanalysis.render(), node.childNodes[0])
 
   // ----------------- Debugger -----------------
   self._view.transactionDebugger = new Debugger('#debugger', new SourceHighlighter())
