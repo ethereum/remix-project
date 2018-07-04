@@ -113,6 +113,7 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
+    this.event = new EventManager()
     self._components = {}
     registry.put({api: self, name: 'app'})
 
@@ -464,8 +465,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       loadFilesCallback(ev.data[1])
     }
   }, false)
-
-  this.event = new EventManager()
 
   // Replace early callback with instant response
   loadFilesCallback = function (files) {
