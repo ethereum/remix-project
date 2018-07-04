@@ -2,6 +2,7 @@
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var SourceMappingDecoder = remixLib.SourceMappingDecoder
+var globalRegistry = require('../../global/registry')
 
 var css = require('./styles/contextView-styles')
 
@@ -13,15 +14,24 @@ var css = require('./styles/contextView-styles')
    - rename declaration/references
 */
 class ContextView {
-  constructor (api, event) {
-    this._api = api
-    this._event = event
+  constructor (localRegistry) {
+    const self = this
+    self._components = {}
+    self._components.registry = localRegistry || globalRegistry
+    self._deps = {
+      contextualListener: self._components.registry.get('contextualListener').api,
+      editor: self._components.registry.get('editor').api,
+      compiler: self._components.registry.get('compiler').api,
+      offsetToLineColumnConverter: self._components.registry.get('offsetToLineColumnConverter').api,
+      config: self._components.registry.get('config').api,
+      fileManager: self._components.registry.get('filemanager').api
+    }
     this._view
     this._nodes
     this._current
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.previousElement = null
-    event.contextualListener.register('contextChanged', nodes => {
+    self._deps.contextualListener.event.register('contextChanged', nodes => {
       this._nodes = nodes
       this.update()
     })
@@ -66,7 +76,7 @@ class ContextView {
       if (isDefinition(last)) {
         this._current = last
       } else {
-        var target = this._api.contextualListener.declarationOf(last)
+        var target = this._deps.contextualListener.declarationOf(last)
         if (target) {
           this._current = target
         } else {
@@ -80,15 +90,41 @@ class ContextView {
     return this.previousElement
   }
 
+  _jumpToInternal (position) {
+    var self = this
+    function jumpToLine (lineColumn) {
+      if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
+        self._deps.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
+      }
+    }
+    if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult)
+      var filename = self._deps.compiler.getSourceName(position.file)
+      // TODO: refactor with rendererAPI.errorClick
+      if (filename !== self._deps.config.get('currentFile')) {
+        var provider = self._deps.fileManager.fileProviderOf(filename)
+        if (provider) {
+          provider.exists(filename, (error, exist) => {
+            if (error) return console.log(error)
+            self._deps.fileManager.switchFile(filename)
+            jumpToLine(lineColumn)
+          })
+        }
+      } else {
+        jumpToLine(lineColumn)
+      }
+    }
+  }
+
   _render (node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
     var self = this
-    var references = this._api.contextualListener.referencesOf(node)
+    var references = self._deps.contextualListener.referencesOf(node)
     var type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
     references = `${references ? references.length : '0'} reference(s)`
 
     var ref = 0
-    var nodes = self._api.contextualListener.getActiveHighlights()
+    var nodes = self._deps.contextualListener.getActiveHighlights()
     for (var k in nodes) {
       if (nodeAtCursorPosition.id === nodes[k].nodeId) {
         ref = k
@@ -101,14 +137,14 @@ class ContextView {
       e.target.dataset.action === 'next' ? ref++ : ref--
       if (ref < 0) ref = nodes.length - 1
       if (ref >= nodes.length) ref = 0
-      self._api.jumpTo(nodes[ref].position)
+      self._jumpToInternal(nodes[ref].position)
     }
 
     function jumpTo () {
       if (node && node.src) {
         var position = self.sourceMappingDecoder.decode(node.src)
         if (position) {
-          self._api.jumpTo(position)
+          self._jumpToInternal(position)
         }
       }
     }
@@ -125,7 +161,7 @@ class ContextView {
 
     function showGasEstimation () {
       if (node.name === 'FunctionDefinition') {
-        var result = self._api.contextualListener.gasEstimation(node)
+        var result = self._deps.contextualListener.gasEstimation(node)
         var executionCost = 'Execution cost: ' + result.executionCost + ' gas'
         var codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
         var estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`

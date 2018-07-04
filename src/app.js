@@ -46,6 +46,7 @@ var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var CommandInterpreter = require('./lib/cmdInterpreter')
+var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -339,8 +340,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.compiler = new Compiler(importFileCb)
   var compiler = self._components.compiler
   registry.put({api: compiler, name: 'compiler'})
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
 
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(compiler.event)
+  registry.put({api: offsetToLineColumnConverter, name: 'offsetToLineColumnConverter'})
   // ----------------- UniversalDApp -----------------
   var transactionContextAPI = {
     getAddress: (cb) => {
@@ -387,22 +389,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   // ----------------- Tx listener -----------------
-  var transactionReceiptResolver = {
-    _transactionReceipts: {},
-    resolve: function (tx, cb) {
-      if (this._transactionReceipts[tx.hash]) {
-        return cb(null, this._transactionReceipts[tx.hash])
-      }
-      executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
-        if (!error) {
-          this._transactionReceipts[tx.hash] = receipt
-          cb(null, receipt)
-        } else {
-          cb(error)
-        }
-      })
-    }
-  }
+  var transactionReceiptResolver = new TransactionReceiptResolver()
 
   var compiledContracts = function () {
     if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
@@ -497,100 +484,37 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     })
   })
 
+  registry.put({api: cmdInterpreter, name: 'cmdinterpreter'})
+
   // ----------------- editor ----------------------------
   this._components.editor = new Editor({}) // @TODO: put into editorpanel
   var editor = self._components.editor // shortcut for the editor
   registry.put({api: editor, name: 'editor'})
 
-  // ---------------- ContextualListener -----------------------
-  this._components.contextualListener = new ContextualListener({
-    getCursorPosition: () => {
-      return this._components.editor.getCursorPosition()
-    },
-    getCompilationResult: () => {
-      return compiler.lastCompilationResult
-    },
-    getCurrentFile: () => {
-      return config.get('currentFile')
-    },
-    getSourceName: (index) => {
-      return compiler.getSourceName(index)
-    },
-    highlight: (position, node) => {
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-        var css = 'highlightreference'
-        if (node.children && node.children.length) {
-          // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
-          css = 'highlightreference'
-          lineColumn = {
-            start: {
-              line: lineColumn.start.line,
-              column: 0
-            },
-            end: {
-              line: lineColumn.start.line + 1,
-              column: 0
-            }
-          }
-        }
-        var fileName = compiler.getSourceName(position.file)
-        if (fileName) {
-          return editor.addMarker(lineColumn, fileName, css)
-        }
-      }
-      return null
-    },
-    stopHighlighting: (event) => {
-      editor.removeMarker(event.eventId, event.fileTarget)
-    }
-  }, {
-    compiler: compiler.event,
-    editor: editor.event
+  var config = self._api.config
+  var filesProviders = self._api.filesProviders
+
+  // ----------------- file manager ----------------------------
+
+  self._components.fileManager = new FileManager({
+    config: config,
+    editor: editor,
+    filesProviders: filesProviders,
+    compilerImport: self._components.compilerImport
   })
+  var fileManager = self._components.fileManager
+  registry.put({api: fileManager, name: 'filemanager'})
+
+  // ---------------- ContextualListener -----------------------
+  this._components.contextualListener = new ContextualListener()
+  registry.put({api: this._components.contextualListener, name: 'contextualListener'})
 
   // ---------------- ContextView -----------------------
-  this._components.contextView = new ContextView({
-    contextualListener: this._components.contextualListener,
-    jumpTo: (position) => {
-      function jumpToLine (lineColumn) {
-        if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-          editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
-        }
-      }
-      if (compiler.lastCompilationResult && compiler.lastCompilationResult.data) {
-        var lineColumn = offsetToLineColumnConverter.offsetToLineColumn(position, position.file, compiler.lastCompilationResult)
-        var filename = compiler.getSourceName(position.file)
-        // TODO: refactor with rendererAPI.errorClick
-        if (filename !== config.get('currentFile')) {
-          var provider = fileManager.fileProviderOf(filename)
-          if (provider) {
-            provider.exists(filename, (error, exist) => {
-              if (error) return console.log(error)
-              fileManager.switchFile(filename)
-              jumpToLine(lineColumn)
-            })
-          }
-        } else {
-          jumpToLine(lineColumn)
-        }
-      }
-    }
-  }, {
-    contextualListener: this._components.contextualListener.event
-  })
+  this._components.contextView = new ContextView()
+  registry.put({api: this._components.contextView, name: 'contextview'})
 
   // ----------------- editor panel ----------------------
-  this._components.editorpanel = new EditorPanel({
-    api: {
-      cmdInterpreter: cmdInterpreter,
-      editor: self._components.editor,
-      config: self._api.config,
-      txListener: txlistener,
-      contextview: self._components.contextView,
-      udapp: () => { return udapp }
-    }
-  })
+  this._components.editorpanel = new EditorPanel()
   registry.put({ api: this._components.editorpanel, name: 'editorpanel' })
   this._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
 
@@ -611,18 +535,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }, false)
 
   this.event = new EventManager()
-
-  var config = self._api.config
-  var filesProviders = self._api.filesProviders
-
-  self._components.fileManager = new FileManager({
-    config: config,
-    editor: editor,
-    filesProviders: filesProviders,
-    compilerImport: self._components.compilerImport
-  })
-  var fileManager = self._components.fileManager
-  registry.put({api: fileManager, name: 'filemanager'})
 
   // Add files received from remote instance (i.e. another remix-ide)
   function loadFiles (filesSet, fileProvider, callback) {
