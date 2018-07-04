@@ -475,9 +475,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ---------------- FilePanel --------------------
-  var filePanel = new FilePanel()
-  self._view.leftpanel.appendChild(filePanel.render())
-  filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
+  self._components.filePanel = new FilePanel()
+  self._view.leftpanel.appendChild(self._components.filePanel.render())
+  self._components.filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
 
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
