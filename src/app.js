@@ -313,6 +313,35 @@ class App {
         }
       })
   }
+  importFileCb (url, filecb) {
+    const self = this
+    if (url.indexOf('/remix_tests.sol') !== -1) {
+      return filecb(null, remixTests.assertLibCode)
+    }
+    var provider = self._components.fileManager.fileProviderOf(url)
+    if (provider) {
+      provider.exists(url, (error, exist) => {
+        if (error) return filecb(error)
+        if (exist) {
+          return provider.get(url, filecb)
+        } else {
+          self.importExternal(url, filecb)
+        }
+      })
+    } else if (self._components.compilerImport.isRelativeImport(url)) {
+      // try to resolve localhost modules (aka truffle imports)
+      var splitted = /([^/]+)\/(.*)$/g.exec(url)
+      async.tryEach([
+        (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
+        (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
+        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
+        (error, result) => { filecb(error, result) }
+      )
+    } else {
+      self.importExternal(url, filecb)
+    }
+  }
 }
 
 module.exports = App
@@ -352,37 +381,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   })
 
-  function importFileCb (url, filecb) {
-    if (url.indexOf('/remix_tests.sol') !== -1) {
-      return filecb(null, remixTests.assertLibCode)
-    }
-    var provider = fileManager.fileProviderOf(url)
-    if (provider) {
-      provider.exists(url, (error, exist) => {
-        if (error) return filecb(error)
-        if (exist) {
-          return provider.get(url, filecb)
-        } else {
-          self.importExternal(url, filecb)
-        }
-      })
-    } else if (self._components.compilerImport.isRelativeImport(url)) {
-      // try to resolve localhost modules (aka truffle imports)
-      var splitted = /([^/]+)\/(.*)$/g.exec(url)
-      async.tryEach([
-        (cb) => { importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
-        (cb) => { importFileCb('localhost/node_modules/' + url, cb) },
-        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
-        (error, result) => { filecb(error, result) }
-      )
-    } else {
-      self.importExternal(url, filecb)
-    }
-  }
-
   // ----------------- Compiler -----------------
-  self._components.compiler = new Compiler(importFileCb)
+  self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
   var compiler = self._components.compiler
   registry.put({api: compiler, name: 'compiler'})
 
@@ -461,7 +461,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       }
     }
   })
-  registry.put({api: eventsDecoder, name: 'eventsDecoder'})
+  registry.put({api: eventsDecoder, name: 'eventsdecoder'})
 
   txlistener.startListening()
 
@@ -569,42 +569,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   // ----------------- Renderer -----------------
-  var rendererAPI = {
-    error: (file, error) => {
-      if (file === config.get('currentFile')) {
-        editor.addAnnotation(error)
-      }
-    },
-    errorClick: (errFile, errLine, errCol) => {
-      if (errFile !== config.get('currentFile')) {
-        // TODO: refactor with this._components.contextView.jumpTo
-        var provider = fileManager.fileProviderOf(errFile)
-        if (provider) {
-          provider.exists(errFile, (error, exist) => {
-            if (error) return console.log(error)
-            fileManager.switchFile(errFile)
-            editor.gotoLine(errLine, errCol)
-          })
-        }
-      } else {
-        editor.gotoLine(errLine, errCol)
-      }
-    }
-  }
-  var renderer = new Renderer(rendererAPI)
+  var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
   // ----------------- StaticAnalysis -----------------
-
-  var staticAnalysisAPI = {
-    renderWarning: (label, warningContainer, type) => {
-      return renderer.error(label, warningContainer, type)
-    },
-    offsetToLineColumn: (location, file) => {
-      return offsetToLineColumnConverter.offsetToLineColumn(location, file, compiler.lastCompilationResult)
-    }
-  }
-  var staticanalysis = new StaticAnalysis(staticAnalysisAPI, compiler.event)
+  var staticanalysis = new StaticAnalysis()
   registry.put({api: staticanalysis, name: 'staticanalysis'})
 
   // ---------------- Righthand-panel --------------------
@@ -671,23 +640,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.transactionDebugger.addProvider('web3', executionContext.internalWeb3())
   self._view.transactionDebugger.switchProvider(executionContext.getProvider())
 
-  var txLogger = new TxLogger({
-    api: {
-      editorpanel: self._components.editorpanel,
-      resolvedTransaction: function (hash) {
-        return txlistener.resolvedTransaction(hash)
-      },
-      parseLogs: function (tx, contractName, contracts, cb) {
-        eventsDecoder.parseLogs(tx, contractName, contracts, cb)
-      },
-      compiledContracts: function () {
-        return compiledContracts()
-      }
-    },
-    events: {
-      txListener: txlistener.event
-    }
-  })
+  var txLogger = new TxLogger()
 
   txLogger.event.register('debugRequested', (hash) => {
     self.startdebugging(hash)

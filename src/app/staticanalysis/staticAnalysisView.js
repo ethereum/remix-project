@@ -9,18 +9,27 @@ var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
 var css = require('./styles/staticAnalysisView-styles')
+var globlalRegistry = require('../../global/registry')
 
 var EventManager = remixLib.EventManager
 
-function staticAnalysisView (appAPI, compilerEvent) {
+function staticAnalysisView (localRegistry) {
+  var self = this
   this.event = new EventManager()
   this.view = null
-  this.appAPI = appAPI
   this.runner = new StaticAnalysisRunner()
   this.modulesView = renderModules(this.runner.modules())
   this.lastCompilationResult = null
-  var self = this
-  compilerEvent.register('compilationFinished', function (success, data, source) {
+  self._components = {}
+  self._components.registry = localRegistry || globlalRegistry
+  // dependencies
+  self._deps = {
+    compiler: self._components.registry.get('compiler').api,
+    renderer: self._components.registry.get('renderer').api,
+    offsetToLineColumnConverter: self._components.registry.get('offsetToLineColumnConverter').api
+  }
+
+  self._deps.compiler.event.register('compilationFinished', function (success, data, source) {
     self.lastCompilationResult = null
     $('#staticanalysisresult').empty()
     if (success) {
@@ -85,12 +94,12 @@ staticAnalysisView.prototype.run = function () {
               start: parseInt(split[0]),
               length: parseInt(split[1])
             }
-            location = self.appAPI.offsetToLineColumn(location, file)
+            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location, file)
             location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
           warningCount++
           var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
-          self.appAPI.renderWarning(msg, warningContainer, {type: 'staticAnalysisWarning', useSpan: true})
+          self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning', useSpan: true})
         })
       })
       if (warningContainer.html() === '') {
