@@ -74,7 +74,7 @@ class Terminal {
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
       scopedCommands.log(`> ${script}`)
-      if (self._opts.cmdInterpreter && self.opts.cmdInterpreter.interpret(script)) return
+      if (self._opts.cmdInterpreter && self._opts.cmdInterpreter.interpret(script)) return
       self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else scopedCommands.log(output)
