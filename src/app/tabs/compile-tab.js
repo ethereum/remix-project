@@ -37,7 +37,9 @@ module.exports = class CompileTab {
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
       compiler: self._components.registry.get('compiler').api,
-      renderer: self._components.registry.get('renderer').api
+      renderer: self._components.registry.get('renderer').api,
+      swarmfileProvider: self._components.registry.get('fileproviders/swarm').api,
+      fileManager: self._components.registry.get('filemanager').api
     }
     self.data = {
       hideWarnings: self._deps.config.get('hideWarnings') || false,
@@ -304,7 +306,7 @@ module.exports = class CompileTab {
         if (contract.metadata === undefined || contract.metadata.length === 0) {
           modalDialogCustom.alert('This contract does not implement all functions and thus cannot be published.')
         } else {
-          publishOnSwarm(contract, self._api, function (err) {
+          publishOnSwarm(contract, self._deps.fileManager, function (err) {
             if (err) {
               try {
                 err = JSON.stringify(err)
@@ -315,7 +317,7 @@ module.exports = class CompileTab {
               modalDialogCustom.alert(yo`<span>Metadata published successfully.<br />The Swarm address of the metadata file is available in the contract details.</span>`)
             }
           }, function (item) { // triggered each time there's a new verified publish (means hash correspond)
-            self._api.fileProvider('swarm').addReadOnly(item.hash, item.content)
+            self._deps.swarmfileProvider.addReadOnly(item.hash, item.content)
           })
         }
       }

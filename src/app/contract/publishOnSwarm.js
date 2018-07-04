@@ -3,7 +3,7 @@
 var async = require('async')
 var swarmgw = require('swarmgw')
 
-module.exports = (contract, appAPI, cb, swarmVerifiedPublishCallBack) => {
+module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
   // gather list of files to publish
   var sources = []
 
@@ -32,7 +32,7 @@ module.exports = (contract, appAPI, cb, swarmVerifiedPublishCallBack) => {
       return cb('Metadata inconsistency')
     }
 
-    appAPI.fileProviderOf(fileName).get(fileName, (error, content) => {
+    fileManager.fileProviderOf(fileName).get(fileName, (error, content) => {
       if (error) {
         console.log(error)
       } else {
