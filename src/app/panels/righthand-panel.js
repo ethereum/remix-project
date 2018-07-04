@@ -62,7 +62,7 @@ module.exports = class RighthandPanel {
 
     var analysisTab = new AnalysisTab(self._components.registry)
     analysisTab.event.register('newStaticAnaysisWarningMessage', (msg, settings) => { self._components.compile.addWarning(msg, settings) })
-    
+
     self._components.debuggerTab = new DebuggerTab(self._components.registry)
 
     self._components = {
