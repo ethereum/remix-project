@@ -12,6 +12,12 @@ module.exports = (fileProviders, compiler, udapp, tabbedMenu) => {
       },
       updateTitle: (mod, title, cb) => {
         tabbedMenu.updateTabTitle(mod, title)
+        if (cb) cb()
+      },
+      detectNetWork: (mod, cb) => {
+        executionContext.detectNetwork((error, network) => {
+          cb(error, network)
+        })
       }
     },
     config: {
