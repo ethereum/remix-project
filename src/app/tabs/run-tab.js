@@ -266,7 +266,7 @@ function makeRecorder (registry, runTabEvent, self) {
     modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', input => {
       var fileProvider = fileManager.fileProviderOf(path)
       if (fileProvider) {
-        var newFile = path + input
+        var newFile = path + '/' + input
         helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
           if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
           if (!fileProvider.set(newFile, txJSON)) {
