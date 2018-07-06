@@ -150,15 +150,12 @@ module.exports = class SettingsTab {
       <div class="${css.info}">
         <div class=${css.title}>Plugin</div>
         <div class="${css.crowNoFlex}">
-          <div class=${css.attention}>
-            <i title="Do not use this feature yet" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>
-            <span> Do not use this alpha feature if you are not sure what you are doing!</span>
-          </div>
+          <div><input onclick=${() => { onLoadPlugin('oraclize') }} type="button" value="Oraclize" class="${css.pluginLoad}"></div>
+          <div><input onclick=${() => { onLoadPlugin('etherscan-general') }} type="button" value="Etherscan-general" class="${css.pluginLoad}"></div>
           <div>
             ${self._view.pluginInput}
             <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
           </div>
-          <input onclick=${() => { onLoadPlugin('oraclize') }} type="button" value="Oraclize" class="${css.pluginLoad}">
         </div>
       </div>`
     self._view.config.remixd = yo`
