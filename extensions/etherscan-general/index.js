@@ -68,7 +68,6 @@ function getToken (callback) {
   })
 }
 
-
 function httpGetAsync (url, callback) {
   var xmlHttp = new XMLHttpRequest()
   xmlHttp.onreadystatechange = function () {
