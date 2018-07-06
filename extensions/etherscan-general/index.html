@@ -30,21 +30,14 @@
 		<title></title>
 		<link rel="stylesheet" href="assets/css/pygment_trac.css">
 		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
-		<script type="text/javascript" src="bundle.js"></script>
-        <script type="text/javascript" src="plugin.js"></script>
+		<script type="text/javascript" src="api.js"></script>
+		<script type="text/javascript" src="index.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 	<body>
-		<div>PLUGIN</div>
-		<input type="text" id="filename"></input> 
-		<input type="text" id="valuetosend"></input> <br>
-		<input type="button" id="testmessageadd">add config</input> <br>
-		<input type="button" id="testmessageremove">remove config</input> <br>
-		<input type="button" id="testmessagerget">get config</input> <br>
-		<input type="button" id="testcontractcreation">oraclize contract creation</input> <br>
- 		<input type="button" id="testaccountcreation">account creation</input> <br>
- 		<input type="button" id="testchangetitle">change title</input> <br>
-		<br>
-		<div id='compilationdata'></div>
+		<div>Etherscan - Network Status</div>
+        <div id="network"></div>
+		<button id="updateBtn" >Update</button>
+		<div id="container"></div>
 	</body>
 </html>
