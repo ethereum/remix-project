@@ -13,23 +13,16 @@ module.exports = class TestTab {
     // dependencies
     self._deps = {
       fileManager: self._components.registry.get('filemanager').api,
-      app: self._components.registry.get('app').api
+      app: self._components.registry.get('app').api,
+      filePanel: self._components.registry.get('filepanel').api
     }
     self.data = {}
-    self._view.el = self.render()
-    self._deps.app.event.register('tabChanged', tabName => {
-      if (tabName !== 'test') return
-      yo.update(self._view.el, self.render())
-      self._view.el.style.display = 'block'
-    })
-
-    return { render () { return self._view.el } }
   }
   render () {
     const self = this
     var testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
     var testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
-    self.data.allTests = getTests()
+    self.data.allTests = getTests(self)
     self.data.selectedTests = [...self.data.allTests]
 
     var testCallback = function (result) {
@@ -61,28 +54,27 @@ module.exports = class TestTab {
         testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
       }
       result.errors.forEach((error, index) => {
-        testsSummary.appendChild(yo`<div>${index + 1} ${error.context}} ${error.value} </div>`)
-        testsSummary.appendChild(yo`<div></div>`)
+        testsSummary.appendChild(yo`<div>${error.context}: ${error.value} </div>`)
         testsSummary.appendChild(yo`<div>error: ${error.message}</div>`)
       })
     }
 
-    function runTest (testFilePath, provider, callback) {
-      provider.get(testFilePath, (error, content) => {
+    function runTest (testFilePath, callback) {
+      self._deps.fileManager.fileProviderOf(testFilePath).get(testFilePath, (error, content) => {
         if (!error) {
           var runningTest = {}
           runningTest[testFilePath] = { content }
           remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
             updateFinalResult(error, result, testFilePath)
             callback(error)
-          }, (url, cb) => { this._deps.app.importFileCb(url, cb) })
+          }, (url, cb) => { self._deps.app.importFileCb(url, cb) })
         }
       })
     }
 
-    function getTests () {
-      var path = this._deps.fileManager.currentPath()
-      var provider = this._deps.fileManager.fileProviderOf(path)
+    function getTests (self) {
+      var path = self._deps.fileManager.currentPath()
+      var provider = self._deps.fileManager.fileProviderOf(path)
       var tests = []
       self._deps.fileManager.filesFromPath(path, (error, files) => {
         if (!error) {
@@ -94,12 +86,15 @@ module.exports = class TestTab {
       return tests
     }
 
-    self._events.filePanel.register('newTestFileCreated', file => {
+    self._deps.filePanel.event.register('newTestFileCreated', file => {
       var testList = document.querySelector("[class^='testList']")
       var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file} </label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
       self.data.selectedTests.push(file)
+    })
+
+    self._deps.fileManager.event.register('currentFileChanged', (file, provider) => {
     })
 
     // self._events.filePanel.register('fileRenamed', (oldName, newName, isFolder) => {
@@ -128,7 +123,7 @@ module.exports = class TestTab {
     }
 
     var el = yo`
-      <div class="${css.testTabView} "id="testView">
+      <div class="${css.testTabView}" id="testView">
         <div class="${css.infoBox}">
           Test your smart contract by creating a foo_test.sol file.
           Open ballot_test.sol to see the example. For more details, see
@@ -144,6 +139,7 @@ module.exports = class TestTab {
         </div>
       </div>
     `
+    if (!self._view.el) self._view.el = el
     return el
   }
 }
