@@ -266,6 +266,18 @@ function getDeclaredVariableName (varDeclNode) {
 }
 
 /**
+ * Returns the type of a variable definition, Throws on wrong node.
+ * Example:
+ *   var x = 10; => x
+ * @varDeclNode {ASTNode} Variable declaration node
+ * @return {string} variable type
+ */
+function getDeclaredVariableType (varDeclNode) {
+  if (!isVariableDeclaration(varDeclNode)) throw new Error('staticAnalysisCommon.js: not a variable declaration')
+  return varDeclNode.attributes.type
+}
+
+/**
  * Returns state variable declaration nodes for a contract, Throws on wrong node.
  * Example:
  * contract foo {
@@ -757,7 +769,7 @@ function isBlockTimestampAccess (node) {
  * @return {bool}
  */
 function isBlockBlockHashAccess (node) {
-  return isSpecialVariableAccess(node, specialVariables.BLOCKHASH)
+  return isSpecialVariableAccess(node, specialVariables.BLOCKHASH) || isBuiltinFunctionCall(node) && getLocalCallName(node) === 'blockhash'
 }
 
 /**
@@ -919,6 +931,10 @@ function buildFunctionSignature (paramTypes, returnTypes, isPayable, additionalM
   return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
 }
 
+function buildAbiSignature (funName, paramTypes) {
+  return funName + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
+}
+
 /**
  * Finds first node of a certain type under a specific node.
  * @node {AstNode} node to start form
@@ -948,6 +964,7 @@ module.exports = {
   getContractName: getContractName,
   getEffectedVariableName: getEffectedVariableName,
   getDeclaredVariableName: getDeclaredVariableName,
+  getDeclaredVariableType: getDeclaredVariableType,
   getLocalCallName: getLocalCallName,
   getInheritsFromName: getInheritsFromName,
   getExternalDirectCallContractName: getExternalDirectCallContractName,
@@ -1033,6 +1050,7 @@ module.exports = {
     nodeType: nodeType,
     name: name,
     operator: operator,
-    buildFunctionSignature: buildFunctionSignature
+    buildFunctionSignature: buildFunctionSignature,
+    buildAbiSignature: buildAbiSignature
   }
 }
