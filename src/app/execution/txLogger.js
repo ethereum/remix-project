@@ -392,7 +392,7 @@ function txDetails (e, tx, data, obj) {
       from,
       to,
       gas: data.tx.gas,
-      input: helper.shortenHexData(data.tx.input),
+      input: data.tx.input,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
       logs: data.logs,
@@ -514,7 +514,7 @@ function createTable (opts) {
   var input = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> input </td>
-      <td class="${css.td}">${opts.input}
+      <td class="${css.td}">${helper.shortenHexData(opts.input)}
         ${copyToClipboard(() => opts.input)}
       </td>
     </tr>
