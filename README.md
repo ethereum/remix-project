@@ -46,7 +46,7 @@ There's two way of doing that:
 When loading the transaction succeed, the hash, from and to field will show up. 
 Then the vm trace is loaded.
 
-The debugger itself contains several controls that allow stepping over the trace and seing the current state of a selected step.
+The debugger itself contains several controls that allow stepping over the trace and seeing the current state of a selected step.
 
 #### Slider and Stepping action:
 
