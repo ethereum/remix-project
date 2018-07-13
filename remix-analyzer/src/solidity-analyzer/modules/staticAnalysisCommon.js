@@ -25,7 +25,8 @@ var nodeTypes = {
   IFSTATEMENT: 'IfStatement',
   FORSTATEMENT: 'ForStatement',
   WHILESTATEMENT: 'WhileStatement',
-  DOWHILESTATEMENT: 'DoWhileStatement'
+  DOWHILESTATEMENT: 'DoWhileStatement',
+  ELEMENTARYTYPENAMEEXPRESSION: 'ElementaryTypeNameExpression'
 }
 
 var basicTypes = {
@@ -859,6 +860,20 @@ function isTransfer (node) {
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
 }
 
+function isStringToBytesConversion (node) {
+  return isExplicitCast(node, util.escapeRegExp('string *'), util.escapeRegExp('bytes'))
+}
+
+function isExplicitCast (node, castFromType, castToType) {
+  return nodeType(node, exactMatch(nodeTypes.FUNCTIONCALL)) && nrOfChildren(node, 2) &&
+          nodeType(node.children[0], exactMatch(nodeTypes.ELEMENTARYTYPENAMEEXPRESSION)) && name(node.children[0], castToType) &&
+          nodeType(node.children[1], exactMatch(nodeTypes.IDENTIFIER)) && expressionType(node.children[1], castFromType)
+}
+
+function isBytesLengthCheck (node) {
+  return isMemberAccess(node, exactMatch(util.escapeRegExp(basicTypes.UINT)), undefined, util.escapeRegExp('bytes *'), 'length')
+}
+
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node, retType, accessor, accessorType, memberName) {
@@ -1000,6 +1015,8 @@ module.exports = {
   isAssertCall: isAssertCall,
   isRequireCall: isRequireCall,
   isIntDivision: isIntDivision,
+  isStringToBytesConversion: isStringToBytesConversion,
+  isBytesLengthCheck: isBytesLengthCheck,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation: isDeleteUnaryOperation,
