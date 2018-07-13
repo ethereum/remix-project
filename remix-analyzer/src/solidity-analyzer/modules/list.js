@@ -13,5 +13,6 @@ module.exports = [
   require('./selfdestruct'),
   require('./guardConditions'),
   require('./deleteDynamicArrays'),
-  require('./assignAndCompare')
+  require('./assignAndCompare'),
+  require('./stringBytesLength')
 ]
