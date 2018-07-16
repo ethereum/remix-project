@@ -7,7 +7,6 @@ var Terminal = require('./terminal')
 var Editor = require('../editor/editor')
 var globalRegistry = require('../../global/registry')
 
-var CommandInterpreter = require('../../lib/cmdInterpreter')
 var ContextualListener = require('../editor/contextualListener')
 var ContextView = require('../editor/contextView')
 var styles = require('./styles/editor-panel-styles')
@@ -47,8 +46,7 @@ class EditorPanel {
       contextualListener: contextualListener,
       contextView: new ContextView({contextualListener: contextualListener, editor: editor}),
       terminal: new Terminal({
-        udapp: self._deps.udapp,
-        cmdInterpreter: new CommandInterpreter()
+        udapp: self._deps.udapp
       },
         {
           getPosition: (event) => {
