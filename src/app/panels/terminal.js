@@ -8,6 +8,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var Web3 = require('web3')
 
+var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
 
@@ -37,6 +38,7 @@ class Terminal {
     }
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
+    self._components.cmdInterpreter = new CommandInterpreterAPI(this)
     self._components.dropdown = new Dropdown({
       options: [
         'only remix transactions',
@@ -74,7 +76,6 @@ class Terminal {
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
       scopedCommands.log(`> ${script}`)
-      if (self._opts.cmdInterpreter && self._opts.cmdInterpreter.interpret(script)) return
       self._shell(script, scopedCommands, function (error, output) {
         if (error) scopedCommands.error(error)
         else scopedCommands.log(output)
@@ -561,6 +562,7 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
+    remix: self._components.cmdInterpreter,
     web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
