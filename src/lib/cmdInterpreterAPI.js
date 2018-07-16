@@ -8,12 +8,12 @@ var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
 
 class CmdInterpreterAPI {
-  constructor (cmdInterpreter, localRegistry) {
+  constructor (terminal, localRegistry) {
     const self = this
     self.event = new EventManager()
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
-    self._components.cmdInterpreter = cmdInterpreter
+    self._components.terminal = terminal
     self._deps = {
       app: self._components.registry.get('app').api,
       editor: self._components.registry.get('editor').api
@@ -60,7 +60,7 @@ class CmdInterpreterAPI {
       if (cb) cb()
     })
   }
-  batch (url, cb) {
+  exeCurrent (cb) {
     const self = this
     var content = self._deps.editor.currentContent()
     if (!content) {
@@ -68,17 +68,7 @@ class CmdInterpreterAPI {
       if (cb) cb()
       return
     }
-    var split = content.split('\n')
-    async.eachSeries(split, (value, cb) => {
-      if (!self._components.cmdInterpreter.interpret(value, (error) => {
-        error ? cb(`Cannot run ${value}. stopping`) : cb()
-      })) {
-        cb(`Cannot interpret ${value}. stopping`)
-      }
-    }, (error) => {
-      if (error) toolTip(error)
-      if (cb) cb()
-    })
+    self._components.terminal.commands.script(content)
   }
 }
 
