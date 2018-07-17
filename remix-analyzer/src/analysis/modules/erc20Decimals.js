@@ -35,7 +35,7 @@ function report (contracts, multipleContractsWithSameName) {
         warnings.push({
           warning: 'ERC20 Contracts decimals function should have uint8 as return type',
           location: null,
-          more: 'https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md'
+          more: ' https://eips.ethereum.org/EIPS/eip-20'
         })
       }
     }
