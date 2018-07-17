@@ -1,0 +1,150 @@
+{
+  "name": "remix-debugger",
+  "version": "0.1.9",
+  "description": "Ethereum IDE and tools for the web",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    }
+  ],
+  "main": "./index.js",
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-yo-yoify": "^0.3.3",
+    "babel-polyfill": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1",
+    "browserify-livereload": "^1.0.10",
+    "clipboard-copy": "^1.2.0",
+    "csjs-inject": "^1.0.1",
+    "ethereum-common": "0.0.18",
+    "ethereumjs-block": "^1.2.2",
+    "ethereumjs-tx": "^1.1.1",
+    "ethereumjs-util": "^4.5.0",
+    "ethereumjs-vm": "^2.3.3",
+    "fast-async": "^6.1.2",
+    "http-server": "^0.9.0",
+    "nightwatch": "^0.9.5",
+    "notify-error": "^1.2.0",
+    "npm-run-all": "^4.1.2",
+    "onchange": "^3.3.0",
+    "remix-core": "^0.0.15",
+    "remix-lib": "^0.2.9",
+    "remix-solidity": "^0.1.11",
+    "selenium-standalone": "^6.0.1",
+    "solc": "^0.4.13",
+    "standard": "^7.0.1",
+    "standard-reporter": "^1.0.5",
+    "tape": "^4.6.0",
+    "watchify": "^3.9.0",
+    "web3": "^0.15.3",
+    "yo-yo": "^1.2.1",
+    "yo-yoify": "^3.1.0"
+  },
+  "scripts": {
+    "build": "mkdirp build; browserify index.js > build/app.js",
+    "lint": "standard | notify-error",
+    "nightwatch_local": "nightwatch --config nightwatch.js --env local",
+    "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
+    "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
+    "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
+    "nightwatch_remote_parallel": "nightwatch --config nightwatch.js --env safari,chrome,default",
+    "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
+    "onchange": "onchange build/app.js -- npm run lint",
+    "selenium": "selenium-standalone start",
+    "selenium-install": "selenium-standalone install",
+    "serve": "http-server .",
+    "start": "./runNode.sh",
+    "start_dev": "npm-run-all -lpr serve watch onchange",
+    "start_eth": "npm run warning_message; eth -j --rpccorsdomain '*'",
+    "start_geth": "npm run warning_message; geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
+    "test": "standard && tape ./test/tests.js && ./ci/browser_tests.sh",
+    "test-browser": "npm-run-all -lpr selenium serve waittest",
+    "waittest": "sleep 5 && npm run nightwatch_local",
+    "warning_message": "echo 'DO NOT DO THIS IF eth/geth STORES PRIVATE KEYS!! External system might be able to access your node through the RPC server.\n\n';",
+    "watch": "mkdirp build; watchify index.js -p [ browserify-livereload --host 127.0.0.1 --port 1337 ] -dv -o build/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix.git"
+  },
+  "author": "cpp-ethereum team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "standard": {
+    "ignore": [
+      "node_modules/*",
+      "build/*",
+      "test/resources/*"
+    ]
+  },
+  "babel": {
+    "plugins": [
+      "transform-es2015-template-literals",
+      "transform-es2015-literals",
+      "transform-es2015-function-name",
+      "transform-es2015-arrow-functions",
+      "transform-es2015-block-scoped-functions",
+      "transform-es2015-classes",
+      "transform-es2015-object-super",
+      "transform-es2015-shorthand-properties",
+      "transform-es2015-duplicate-keys",
+      "transform-es2015-computed-properties",
+      "transform-es2015-for-of",
+      "transform-es2015-sticky-regex",
+      "transform-es2015-unicode-regex",
+      "check-es2015-constants",
+      "transform-es2015-spread",
+      "transform-es2015-parameters",
+      "transform-es2015-destructuring",
+      "transform-es2015-block-scoping",
+      "transform-object-assign"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "sourceMapsAbsolute": false,
+          "sourceMaps": true,
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePattern": null,
+                "compiler": {
+                  "es7": true,
+                  "noRuntime": true,
+                  "promises": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            [
+              "yo-yoify"
+            ],
+            [
+              "transform-object-assign"
+            ]
+          ],
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}

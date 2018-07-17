@@ -1,61 +1,9 @@
 {
-  "name": "ethereum-remix",
-  "version": "0.0.2-alpha.0.0.7",
-  "description": "Ethereum IDE and tools for the web",
-  "contributors": [
-    {
-      "name": "Yann Levreau",
-      "email": "yann@ethdev.com"
-    },
-    {
-      "name": "Liana Husikyan",
-      "email": "liana@ethdev.com"
-    }
-  ],
-  "main": "./src/index.js",
-  "dependencies": {
-    "which": "^1.2.10"
-  },
-  "devDependencies": {
-    "browserify": "^13.0.1",
-    "ethereumjs-util": "^4.5.0",
-    "http-server": "^0.9.0",
-    "nightwatch": "^0.9.5",
-    "standard": "^7.0.1",
-    "standard-reporter": "^1.0.5",
-    "tape": "^4.6.0",
-    "web3": "^0.15.3",
-    "yo-yo": "^1.2.1",
-    "yo-yoify": "^3.1.0"
-  },
-  "scripts": {
-    "start_node": "./runNode.sh",
-    "start_eth": "eth -j --rpccorsdomain '*'",
-    "start_geth": "geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'",
-    "build": "mkdir -p build; browserify src/index.js -g yo-yoify -o build/app.js",
-    "test": "standard && tape ./test/tests.js",
-    "serve": "http-server .",
-    "nightwatch_local": "nightwatch --config nightwatch.js --env local",
-    "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
-    "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
-    "nightwatch_remote_safari": "nightwatch --config nightwatch.js --env safari",
-    "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ethereum/remix.git"
-  },
-  "author": "cpp-ethereum team",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ethereum/remix/issues"
-  },
-  "homepage": "https://github.com/ethereum/remix#readme",
-  "standard": {
-    "ignore": [
-      "node_modules/*",
-      "build/*",
-      "test/resources/*"
-    ]
-  }
+	"devDependencies": {
+		"lerna": "^2.10.2"
+	},
+	"scripts": {
+		"bootstrap": "lerna bootstrap",
+		"publish": "lerna publish"
+	}
 }
