@@ -1,13 +1,18 @@
 language: node_js
 node_js:
   - stable
+env:
+  - TEST_DIR=remix-lib
+  - TEST_DIR=remix-solidity
+  - TEST_DIR=remix-debug
 script: 
-  - npm run test
-  - ./ci/browser_tests.sh
+  - cd $TEST_DIR && npm install && npm test
 deploy:
   provider: script
-  script: ci/deploy_from_travis.sh
+  script: remix-debugger/ci/deploy_from_travis.sh
   skip_cleanup: true
   on:
         branch: master
+        condition: $TEST_DIR = remix-debugger
+cache: false
 

@@ -1,84 +1,52 @@
-# REMIX
+# Remix
 
 [![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-Ethereum IDE and tools for the web
 
-## REMIX WEBSITE:
+Ethereum tools for the web.
 
-Remix is avalaible at http://ethereum.github.io/remix. 
-You can use it either inside Mist or by connecting to geth or eth.
-Note that connecting to Geth does not work through https. 
+*Are you looking for the Remix IDE? Follow [this link](https://github.com/ethereum/remix-ide)!*
 
-You'll have to run your own node using the following parameters:
++ [What is Remix?](#what-is-remix)
++ [How to use Remix?](#how-to-use)
++ [Modules](#modules)
++ [Contributing guidelines](#contributing)
 
-Using Geth:
+## <a name="what-is-remix"></a>What is Remix?
 
-    geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'
-    
-Using Eth:
+**Remix** is a suite of tools to interact with the Ethereum blockchain in order to debug transactions, stored in this Git repository. A Remix transaction Web debugger is available [here](http://remix.ethereum.org), and its source code is part of this repository.
 
-    eth -j --rpccorsdomain '*'
+The **Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository **is available [here](https://github.com/ethereum/remix-ide)**, and an online version is available at https://remix.ethereum.org.
 
-geth will run the rpc server on http://localhost:8545, remix uses by default this url.
+## <a name="how-to-use"></a>How to use Remix
 
-Remix will use this instance of Geth to retrieve the transaction and the associated trace.
-This instance should **only** be used for debugging purposes. Never use features that could have an impact on your keys (do not unlock any keys, do not use this instance together with the wallet, do not activate the admin web3 API).
+### Prerequisites
 
-## INSTALLATION:
+To use Remix tools, you'll need to connect to an Ethereum node. You can do that using [the Mist browser](https://github.com/ethereum/mist), or by connecting to your local Ethereum node (`geth`, or `eth`). *Note: connecting to `geth` does not work through https.*
 
-Brief instructions to build for linux(Todo add other platforms) we will add detailed instructions later
++ Using `geth`: `geth --rpc --rpcapi 'web3,eth,debug' --rpcport 8545 --rpccorsdomain '*'`.
 
-Install eth or geth, npm and node.js (see https://docs.npmjs.com/getting-started/installing-node), then do:
++ Using `eth`: `eth -j --rpccorsdomain '*'`
 
-    git clone https://github.com/ethereum/remix
-    cd remix
-    npm install && npm run build && npm run start_node
+**DO NOT DO EXECUTE THESE COMMANDS IF `geth`/`eth` STORES YOUR PRIVATE KEYS**, as any external system might be able to access your node's RPC server!
 
-open remix/index.html in your browser.
+Those commands will run the RPC server on `localhost:8545`, which is the default URL that Remix will connect to. This instance should **only** be used for debugging purposes. Never use features that could have an impact on your keys: do not unlock any keys, do not use this instance together with the wallet, do not activate the admin `web3` API.
 
-## REMIX First Step:
+### Run the debugger
 
-Once remix is connected to a node, you will be able to debug transactions.
-There's two way of doing that:
- - using a block number and a transaction index.
- - using a transaction hash.
-
-When loading the transaction succeed, the hash, from and to field will show up. 
-Then the vm trace is loaded.
+See [here](remix-debugger/README.md) how to install, run and use the debugger locally.
 
 The debugger itself contains several controls that allow stepping over the trace and seeing the current state of a selected step.
 
-#### Slider and Stepping action:
+## <a name="modules"></a>Remix Modules
 
-The slider allows to move quickly from a state to another.
-Stepping actions are:
-- Step Into Back
-- Step Over Back
-- Step Over Forward
-- Step Into Forward
-- Jump Next Call (this will select the next state that refers to a context changes - CALL, CALLCODE, DELEGATECALL, CREATE)
+Remix is built out of 3 different modules:
 
-#### State Viewer:
- 
-The upper right panel contains basic informations about the current step:
-- VMTraceStep: the index in the trace of the current step.
-- Step
-- Add memory
-- Gas: gas used by this step
-- Remaining gas: gas left
-- Loaded address: the current code loaded, refers to the executing code.
++ [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
++ [`remix-lib`](remix-lib/README.md)
++ [`remix-debug`](remix-debugger/README.md) contains the debugger.
 
-The other 6 panels describe the current selected state:
- - Instructions list: list of all the instruction that defines the current executing code.
- - Stack
- - Storage Changes
- - Memory
- - Call Data$
- - Call Stack
+## Contributing
 
-## CODING STYLE:
+Everyone is very welcome to contribute on the codebase of Remix. Please reach us in [Gitter](https://gitter.im/ethereum/remix).
 
-Remix uses npm coding style: https://docs.npmjs.com/misc/coding-style
-Please be sure your code is compliant with this coding standard before sending PR.
-There's on the above page a bunch of links that propose integration with developer tools (Emacs, Atom, ...).
-You can also run 'npm run test' to check your local repository against the coding style.
+For more information on the contributing procedure, see [CONTRIBUTING.md](CONTRIBUTING.md). For more information on running and developing the Remix debugger, see [the debugger README.md](remix-debugging/README.md).

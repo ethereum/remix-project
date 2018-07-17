@@ -1,0 +1,90 @@
+{
+  "name": "remix-lib",
+  "version": "0.2.9",
+  "description": "Ethereum IDE and tools for the web",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    }
+  ],
+  "main": "./index.js",
+  "dependencies": {
+    "async": "^2.1.2",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babelify": "^7.3.0",
+    "ethereumjs-block": "^1.6.0",
+    "ethereumjs-tx": "^1.3.3",
+    "ethereumjs-util": "^5.1.2",
+    "ethereumjs-vm": "^2.3.3",
+    "ethers": "^3.0.15",
+    "fast-async": "^6.1.2",
+    "solc": "^0.4.13",
+    "standard": "^7.0.1",
+    "tape": "^4.6.0",
+    "web3": "^0.18.0"
+  },
+  "scripts": {
+    "test": "standard && tape ./test/tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix.git"
+  },
+  "author": "cpp-ethereum team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "standard": {
+    "ignore": [
+      "node_modules/*",
+      "build/*",
+      "test/resources/*"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePatten": null,
+                "compiler": {
+                  "promises": true,
+                  "es7": true,
+                  "noRuntime": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            "transform-object-assign"
+          ]
+        }
+      ],
+      [
+        "yo-yoify"
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}

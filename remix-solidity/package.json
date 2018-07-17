@@ -1,0 +1,85 @@
+{
+  "name": "remix-solidity",
+  "version": "0.1.11",
+  "description": "Ethereum IDE and tools for the web",
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    },
+    {
+      "name": "Liana Husikyan",
+      "email": "liana@ethdev.com"
+    }
+  ],
+  "main": "./index.js",
+  "dependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babelify": "^7.3.0",
+    "ethereumjs-util": "^4.5.0",
+    "ethereumjs-vm": "^2.3.3",
+    "fast-async": "^6.1.2",
+    "npm-run-all": "^4.0.2",
+    "remix-lib": "^0.2.9",
+    "solc": "https://github.com/ethereum/solc-js",
+    "standard": "^7.0.1",
+    "tape": "^4.6.0",
+    "webworkify": "^1.2.1"
+  },
+  "scripts": {
+    "downloadsolc": "cd node_modules/solc && (test -e soljson.js || wget --no-check-certificate https://solc-bin.ethereum.org/soljson.js) && cd ..",
+    "prepublish": "mkdirp build; npm-run-all -ls downloadsolc",
+    "postinstall": "npm-run-all -ls downloadsolc"
+  },
+  "standard": {
+    "ignore": [
+      "node_modules/*",
+      "soljson.js"
+    ],
+    "parser": "babel-eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix.git"
+  },
+  "author": "cpp-ethereum team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix#readme",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "plugins": [
+            [
+              "fast-async",
+              {
+                "runtimePatten": null,
+                "compiler": {
+                  "promises": true,
+                  "es7": true,
+                  "noRuntime": true,
+                  "wrapAwait": true
+                }
+              }
+            ],
+            "transform-object-assign"
+          ]
+        }
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}

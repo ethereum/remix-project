@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+  </head>
+  <body onload="loadDebugger()" >
+    <script type="text/javascript">
+      function loadDebugger() {
+        var container = document.getElementById('app')
+        container.debugger = new window.remix.ui.Debugger()
+        container.debugger.addProvider('INTERNAL')
+        container.debugger.switchProvider('INTERNAL')
+        container.appendChild(container.debugger.render())
+      }
+    </script>
+    <div id="app"></div>
+    <script src="build/app.js"></script>
+  </body>
+</html>
