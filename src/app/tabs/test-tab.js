@@ -49,13 +49,16 @@ module.exports = class TestTab {
       testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
       if (result.totalPassing > 0) {
         testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
+        testsSummary.appendChild(yo`<br>`)
       }
       if (result.totalFailing > 0) {
         testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
+        testsSummary.appendChild(yo`<br>`)
       }
       result.errors.forEach((error, index) => {
-        testsSummary.appendChild(yo`<div>${error.context}: ${error.value} </div>`)
-        testsSummary.appendChild(yo`<div>error: ${error.message}</div>`)
+        testsSummary.appendChild(yo`<div>${error.context} - ${error.value} </div>`)
+        testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >error: ${error.message}</div>`)
+        testsSummary.appendChild(yo`<br>`)
       })
     }
 
