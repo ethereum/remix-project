@@ -338,6 +338,15 @@ class Terminal {
     self._cmdIndex = -1
     self._cmdTemp = ''
 
+    var intro = yo`<div><div> - Welcome to Remix v0.6.4 - </div><br>
+                  <div>You can use this terminal for: </div>
+                  <div> - Checking transactions details and start debugging.</div>
+                  <div> - Running JavaScript scripts.</div>
+                  <div> - Running JavaScript scripts involving web3 if the current environement is injected provider or Web3 provider.</div>
+                  <div> - Executing common command to interact with the Remix interface (see list of commands below). Note that these command can also be included in a JavaScript script.</div></div>`
+
+    self.commands.html(intro)
+    self._shell('remix.help()', self.commands, () => {})
     return self._view.el
 
     function change (event) {
