@@ -249,7 +249,11 @@ function filepanel (localRegistry) {
         if (!self._deps.fileProviders['browser'].set(newName, '')) {
           modalDialogCustom.alert('Failed to create file ' + newName)
         } else {
-          self._deps.fileManager.switchFile(self._deps.fileProviders['browser'].type + '/' + newName)
+          var file = self._deps.fileProviders['browser'].type + '/' + newName
+          self._deps.fileManager.switchFile(file)
+          if (file.includes('_test.sol')) {
+            self.event.trigger('newTestFileCreated', [file])
+          }
         }
       })
     }, null, true)
