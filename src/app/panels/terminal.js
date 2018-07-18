@@ -547,6 +547,9 @@ class Terminal {
     return self.commands[name]
   }
   _shell (script, scopedCommands, done) { // default shell
+    if (script.indexOf('remix:') === 0) {
+      return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
+    }
     var self = this
     var context = domTerminalFeatures(self, scopedCommands)
     try {
