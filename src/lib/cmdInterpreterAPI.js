@@ -24,7 +24,7 @@ class CmdInterpreterAPI {
       'remix.loadgist(id)': 'Load a gist in the file explorer.',
       'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.',
       'remix.setproviderurl(url)': 'Change the current provider to Web3 provider and set the url endpoint.',
-      'remix.exeCurrent()': 'Run the script currenttly displayed in the editor',
+      'remix.exeCurrent()': 'Run the script currently displayed in the editor',
       'remix.help()': 'Display this help message'
     }
   }
@@ -84,6 +84,7 @@ class CmdInterpreterAPI {
     var help = yo`<div></div>`
     for (var k in self.commandHelp) {
       help.appendChild(yo`<div>${k}: ${self.commandHelp[k]}</div>`)
+      help.appendChild(yo`<br>`)
     }
     self._components.terminal.commands.html(help)
     if (cb) cb()
