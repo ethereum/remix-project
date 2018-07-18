@@ -1,4 +1,5 @@
 'use strict'
+var yo = require('yo-yo')
 var async = require('async')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
@@ -18,6 +19,14 @@ class CmdInterpreterAPI {
       app: self._components.registry.get('app').api,
       editor: self._components.registry.get('editor').api
     }
+    self.commandHelp = {
+      'remix.debug(hash)': 'Start debugging a transaction.',
+      'remix.loadgist(id)': 'Load a gist in the file explorer.',
+      'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.',
+      'remix.setproviderurl(url)': 'Change the current provider to Web3 provider and set the url endpoint.',
+      'remix.exeCurrent()': 'Run the script currenttly displayed in the editor',
+      'remix.help()': 'Display this help message'
+    }
   }
   debug (hash, cb) {
     const self = this
@@ -33,7 +42,7 @@ class CmdInterpreterAPI {
     const self = this
     self._deps.app.importExternal(url, (err, content) => {
       if (err) {
-        toolTip(`Unable to load ${url} from swarm: ${err}`)
+        toolTip(`Unable to load ${url}: ${err}`)
         if (cb) cb(err)
       } else {
         try {
@@ -69,6 +78,16 @@ class CmdInterpreterAPI {
       return
     }
     self._components.terminal.commands.script(content)
+  }
+  help (cb) {
+    const self = this
+    var help = yo`<div></div>`
+    for (var k in self.commandHelp) {
+      help.appendChild(yo`<div>${k}: ${self.commandHelp[k]}</div>`)
+    }
+    self._components.terminal.commands.html(help)
+    if (cb) cb()
+    return ''
   }
 }
 
