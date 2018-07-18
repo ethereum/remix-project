@@ -16,7 +16,6 @@ Related links:
  - Remix live: remix.ethereum.org
  - Remix alpha live: remix-alpha.ethereum.org
  - Remix-ide NPM module: https://www.npmjs.com/package/remix-ide
- - Remix-core NPM module: https://www.npmjs.com/package/remix-core
  - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
  - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
  - Remix-debug NPM module: https://www.npmjs.com/package/remix-debug

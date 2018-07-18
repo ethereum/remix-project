@@ -1,7 +1,7 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
-var remixCore = require('remix-core')
-var StorageViewer = remixCore.storage.StorageViewer
+var remixLib = require('remix-lib')
+var StorageViewer = remixLib.storage.StorageViewer
 var yo = require('yo-yo')
 
 function StoragePanel (_parent, _traceManager) {

@@ -2,7 +2,6 @@
 
 var Ethdebugger = require('./remix-debugger/src/ui/Ethdebugger')
 var remixLib = require('remix-lib')
-var remixCore = require('remix-core')
 var executionContext = require('../../execution-context')
 var globlalRegistry = require('../../global/registry')
 
@@ -34,7 +33,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   container.appendChild(this.debugger.render())
   this.isActive = false
 
-  this.breakPointManager = new remixCore.code.BreakpointManager(this.debugger, (sourceLocation) => {
+  this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources)
   })
 

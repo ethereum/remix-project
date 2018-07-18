@@ -1,10 +1,9 @@
 'use strict'
 var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
-var remixCore = require('remix-core')
-var TraceManager = remixCore.trace.TraceManager
-var VmDebugger = require('./VmDebugger')
 var remixLib = require('remix-lib')
+var TraceManager = remixLib.trace.TraceManager
+var VmDebugger = require('./VmDebugger')
 var global = remixLib.global
 var init = remixLib.init
 var executionContext = remixLib.execution.executionContext
@@ -13,10 +12,10 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var Web3Providers = remixLib.vm.Web3Providers
 var DummyProvider = remixLib.vm.DummyProvider
-var CodeManager = remixCore.code.CodeManager
-var remixSolidity = require('remix-solidity')
-var SolidityProxy = remixSolidity.SolidityProxy
-var InternalCallTree = remixSolidity.InternalCallTree
+var CodeManager = remixLib.code.CodeManager
+var remixDebug = require('remix-debug')
+var SolidityProxy = remixDebug.SolidityDecoder.SolidityProxy
+var InternalCallTree = remixDebug.SolidityDecoder.InternalCallTree
 
 var css = csjs`
   .statusMessage {
