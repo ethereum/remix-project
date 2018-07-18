@@ -39,6 +39,9 @@ var css = csjs`
   .testFailure {
     background-color: ${styles.rightPanel.testTab.color_testFail};
   }
+  .testFailureSummary {
+    color: ${styles.appProperties.errorText_Color};
+  }
   .buttons {
     ${styles.rightPanel.testTab.box_listTests};
     margin: 2%;
