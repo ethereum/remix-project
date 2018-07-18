@@ -154,6 +154,7 @@ class FileManager {
   }
 
   fileProviderOf (file) {
+    if (!file) return null
     var provider = file.match(/[^/]*/)
     if (provider !== null && this._deps.filesProviders[provider[0]]) {
       return this._deps.filesProviders[provider[0]]

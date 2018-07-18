@@ -655,6 +655,26 @@ function styleGuide () {
       },
 
       /* ::::::::::::::
+         TEST TAB
+      ::::::::::::::: */
+      testTab: {
+        box_listTests: appProperties.uiElements.solidBorderBox({
+          BackgroundColor: appProperties.solidBorderBox_BackgroundColor,
+          BorderColor: appProperties.solidBorderBox_BackgroundColor,
+          Color: appProperties.solidBorderBox_TextColor
+        }),
+
+        button_runTests: appProperties.uiElements.button({
+          BackgroundColor: appProperties.primaryButton_BackgroundColor,
+          BorderColor: appProperties.primaryButton_BorderColor,
+          Color: appProperties.primaryButton_TextColor
+        }),
+
+        color_testPass: appProperties.success_BackgroundColor,
+        color_testFail: appProperties.danger_BackgroundColor
+      },
+
+      /* ::::::::::::::
          SETTINGS TAB
       ::::::::::::::: */
       settingsTab: {

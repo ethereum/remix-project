@@ -474,6 +474,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.filePanel = new FilePanel()
   self._view.leftpanel.appendChild(self._components.filePanel.render())
   self._components.filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
+  registry.put({api: self._components.filePanel, name: 'filepanel'})
 
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
