@@ -16,21 +16,46 @@ var css = csjs`
   }
 
   .headerDraggableModal {
-    padding: 10px;
     cursor: move;
     z-index: 10;
     color: ${styles.appProperties.mainText_Color};
     background-color: ${styles.appProperties.quaternary_BackgroundColor};
     border-bottom: 2px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+  }
+  
+  .modalActions {
+    float: right;
+  }
+  
+  .modalAction {
+    padding-right: 1px;
+    padding-left: 1px;
+    cursor: pointer;
+    color: ${styles.appProperties.solidBorderBox_BorderColor};
   }
 `
 
 module.exports =
   class DraggableContent {
+    constructor (closeCb) {
+      this.closeCb = closeCb
+    }
+
     render (title, content) {
+      this.content = content
       var el = yo`
-    <div class=${css.containerDraggableModal} >
-      <div class="${css.headerDraggableModal} title">${title}</div>
+    <div class=${css.containerDraggableModal}>
+      <div>
+          <div class="${css.headerDraggableModal} title" title=${title}><span>${title}</span>
+            <div class=${css.modalActions}>
+              <i onclick=${() => { this.minimize() }} class="fa fa-window-minimize ${css.modalAction}"></i>
+              <i onclick=${() => { this.maximise() }} class="fa fa-window-maximize ${css.modalAction}"></i>
+              <i onclick=${() => { this.close() }} class="fa fa-window-close ${css.modalAction}"></i>
+            </div>
+          </div>
+        </div>
       ${content}
     </div>   `
       dragElement(el)
@@ -40,7 +65,25 @@ module.exports =
       return el
     }
     setTitle (title) {
-      this.el.querySelector('.title').innerHTML = title
+      this.el.querySelector('.title span').innerHTML = title
+    }
+    minimize () {
+      this.content.style.display = 'none'
+      this.el.style.height = 'inherit'
+      this.el.style.width = '150px'
+      this.el.querySelector('.title').style.width = '146px'
+    }
+    maximise () {
+      this.content.style.display = 'block'
+      this.el.style.height = '500px'
+      this.el.style.width = '500px'
+      this.el.querySelector('.title').style.width = 'inherit'
+    }
+    close () {
+      if (this.closeCb) this.closeCb()
+      if (this.el.parentElement) {
+        this.el.parentElement.removeChild(this.el)
+      }
     }
 }
 

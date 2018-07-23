@@ -89,7 +89,9 @@ module.exports = class RighthandPanel {
     })
 
     self.loadPlugin = function (json) {
-      var modal = new DraggableContent()
+      var modal = new DraggableContent(() => {
+        self._components.pluginManager.unregister(json)
+      })
       var tab = new PluginTab(json)
       var content = tab.render()
       document.querySelector('body').appendChild(modal.render(json.title, content))
