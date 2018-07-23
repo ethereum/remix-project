@@ -4,14 +4,14 @@ var executionContext = require('../../execution-context')
 /*
   Defines available API. `key` / `type`
 */
-module.exports = (fileProviders, compiler, udapp, tabbedMenu) => {
+module.exports = (pluginManager, fileProviders, compiler, udapp) => {
   return {
     app: {
       getExecutionContextProvider: (mod, cb) => {
         cb(null, executionContext.getProvider())
       },
       updateTitle: (mod, title, cb) => {
-        tabbedMenu.updateTabTitle(mod, title)
+        pluginManager.plugins[mod].modal.setTitle(title)
         if (cb) cb()
       },
       detectNetWork: (mod, cb) => {

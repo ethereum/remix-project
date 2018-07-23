@@ -15,8 +15,8 @@ const SupportTab = require('../tabs/support-tab')
 const PluginTab = require('../tabs/plugin-tab')
 const TestTab = require('../tabs/test-tab')
 const RunTab = require('../tabs/run-tab')
-const PluginAPI = require('../plugin/pluginAPI')
 const plugins = require('../plugin/plugins')
+const DraggableContent = require('../ui/draggableContent')
 
 var toolTip = require('../ui/tooltip')
 const EventManager = remixLib.EventManager
@@ -46,18 +46,12 @@ module.exports = class RighthandPanel {
 
     var tabbedMenu = new TabbedMenu(self._components.registry)
 
-    var pluginAPI = new PluginAPI(
-      self._deps.fileProviders,
-      self._deps.compiler,
-      self._deps.udapp,
-      tabbedMenu
-    )
-
     var pluginManager = new PluginManager(
-      pluginAPI,
       self._deps.app,
       self._deps.compiler,
-      self._deps.txlistener
+      self._deps.txlistener,
+      self._deps.fileProviders,
+      self._deps.udapp
    )
 
     var analysisTab = new AnalysisTab(self._components.registry)
@@ -82,23 +76,26 @@ module.exports = class RighthandPanel {
     })
 
     self.event.register('plugin-name-loadRequest', name => {
-      if (plugins[name]) {
-        self.loadPlugin(plugins[name])
+      var plugin = plugins[name]
+      if (plugin) {
+        if (!self._components.pluginManager.plugins[plugin.title]) {
+          self.loadPlugin(plugin)
+        } else {
+          toolTip(name + ' already loaded')
+        }
       } else {
         toolTip('unknown plugin ' + name)
       }
     })
 
     self.loadPlugin = function (json) {
-      if (self._components.pluginManager.plugins[json.title]) {
-        self._components.tabbedMenu.removeTabByTitle(json.title)
+      var modal = new DraggableContent(() => {
         self._components.pluginManager.unregister(json)
-      } else {
-        var tab = new PluginTab(json)
-        var content = tab.render()
-        self._components.tabbedMenu.addTab(json.title, json.title + ' plugin', content)
-        self._components.pluginManager.register(json, content)
-      }
+      })
+      var tab = new PluginTab(json)
+      var content = tab.render()
+      document.querySelector('body').appendChild(modal.render(json.title, content))
+      self._components.pluginManager.register(json, modal, content)
     }
 
     self._view.dragbar = yo`<div id="dragbar" class=${css.dragbar}></div>`

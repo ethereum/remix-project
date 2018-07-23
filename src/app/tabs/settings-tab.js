@@ -150,12 +150,11 @@ module.exports = class SettingsTab {
       <div class="${css.info}">
         <div class=${css.title}>Plugin</div>
         <div class="${css.crowNoFlex}">
-          <div><input onclick=${() => { onLoadPlugin('oraclize') }} type="button" value="Oraclize" class="${css.pluginLoad}"></div>
-          <div><input onclick=${() => { onLoadPlugin('etherscan-general') }} type="button" value="Etherscan-general" class="${css.pluginLoad}"></div>
-          <div>
-            ${self._view.pluginInput}
-            <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
-          </div>
+          <input onclick=${() => { onLoadPlugin('oraclize') }} type="button" value="Oraclize" class="${css.pluginLoad}">
+          <input onclick=${() => { onLoadPlugin('etherscan-general') }} type="button" value="Etherscan-general" class="${css.pluginLoad}">
+          <div>Load plugin from JSON description: </div>
+          ${self._view.pluginInput}
+          <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
         </div>
       </div>`
     self._view.config.remixd = yo`
@@ -331,7 +330,7 @@ const css = csjs`
   .select {
     font-weight: bold;
     margin-top: 1em;
-    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
+    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler};
   }
   .heading {
     margin-bottom: 0;
@@ -343,6 +342,7 @@ const css = csjs`
   input {
     margin-right: 5px;
     cursor: pointer;
+    width: inherit;
   }
   input[type=radio] {
     margin-top: 2px;
@@ -352,6 +352,9 @@ const css = csjs`
   }
   .pluginLoad {
     vertical-align: top;
+    ${styles.rightPanel.settingsTab.button_LoadPlugin};
+    width: inherit;
+    display: inline-block;
   }
   i.warnIt {
     color: ${styles.appProperties.warningText_Color};
