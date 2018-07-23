@@ -26,7 +26,7 @@ module.exports = class plugintab {
 }
 const css = csjs`
   .pluginTabView {
-    height: 100%;
+    height: 456px;
     width: 100%;
   }
   .iframe {
