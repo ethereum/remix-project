@@ -688,8 +688,13 @@ function styleGuide () {
           BackgroundColor: appProperties.dropdown_BackgroundColor,
           BorderColor: appProperties.dropdown_BorderColor,
           Color: appProperties.dropdown_TextColor
-        })
+        }),
 
+        button_LoadPlugin: appProperties.uiElements.button({
+          BackgroundColor: appProperties.secondaryButton_BackgroundColor,
+          BorderColor: appProperties.secondaryButton_BorderColor,
+          Color: appProperties.secondaryButton_TextColor
+        })
       },
 
       /* ::::::::::::::
