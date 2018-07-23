@@ -57,7 +57,7 @@ module.exports = class TestTab {
       }
       result.errors.forEach((error, index) => {
         testsSummary.appendChild(yo`<div>${error.context} - ${error.value} </div>`)
-        testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >error: ${error.message}</div>`)
+        testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${error.message}</div>`)
         testsSummary.appendChild(yo`<br>`)
       })
     }
