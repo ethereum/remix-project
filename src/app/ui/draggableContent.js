@@ -120,7 +120,7 @@ function dragElement (elmnt) {
   }
 
   function closeDragElement () {
-    /* stop moving when mouse button is released:*/
+    /* stop moving when mouse button is released: */
     document.onmouseup = null
     document.onmousemove = null
   }
