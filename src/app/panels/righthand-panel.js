@@ -76,8 +76,13 @@ module.exports = class RighthandPanel {
     })
 
     self.event.register('plugin-name-loadRequest', name => {
-      if (plugins[name]) {
-        self.loadPlugin(plugins[name])
+      var plugin = plugins[name]
+      if (plugin) {
+        if (!self._components.pluginManager.plugins[plugin.title]) {
+          self.loadPlugin(plugin)
+        } else {
+          toolTip(name + ' already loaded')
+        }
       } else {
         toolTip('unknown plugin ' + name)
       }
