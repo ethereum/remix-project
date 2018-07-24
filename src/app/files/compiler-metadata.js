@@ -15,7 +15,7 @@ class CompilerMetadata {
         var path = self._opts.fileManager.currentPath()
         if (provider && path) {
           self._opts.compiler.visitContracts((contract) => {
-            var fileName = path + contract.name + '.json'
+            var fileName = path + '/' + contract.name + '.json'
             provider.get(fileName, (error, content) => {
               if (!error) {
                 content = content || '{}'
@@ -50,7 +50,7 @@ class CompilerMetadata {
     var provider = self._opts.fileManager.currentFileProvider()
     var path = self._opts.fileManager.currentPath()
     if (provider && path) {
-      var fileName = path + contractName + '.json'
+      var fileName = path + '/' + contractName + '.json'
       provider.get(fileName, (error, content) => {
         if (error) return callback(error)
         try {
