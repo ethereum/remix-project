@@ -61,9 +61,9 @@ module.exports = class CompileTab {
       if (speed > self.data.maxTime) {
         const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
         self._view.warnCompilationSlow.setAttribute('title', msg)
-        self._view.warnCompilationSlow.style.display = 'inline-block'
+        self._view.warnCompilationSlow.style.visibility = 'visible'
       } else {
-        self._view.warnCompilationSlow.style.display = 'none'
+        self._view.warnCompilationSlow.style.visibility = 'hidden'
       }
     })
     self._deps.editor.event.register('contentChanged', function changedFile () {
@@ -75,7 +75,7 @@ module.exports = class CompileTab {
     self._deps.compiler.event.register('loadingCompiler', function start () {
       if (!self._view.compileIcon) return
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
-      self._view.warnCompilationSlow.style.display = 'none'
+      self._view.warnCompilationSlow.style.visibility = 'hidden'
       self._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
     self._deps.compiler.event.register('compilationStarted', function start () {
@@ -149,7 +149,7 @@ module.exports = class CompileTab {
   render () {
     const self = this
     if (self._view.el) return self._view.el
-    self._view.warnCompilationSlow = yo`<i title="Copy Address" style="display:none" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
+    self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
@@ -339,7 +339,10 @@ const css = csjs`
     margin-bottom: 2%;
   }
   .autocompileContainer {
-    width: 90px;
+    display: flex;
+    align-items: center;
+  }
+  .hideWarningsContainer {
     display: flex;
     align-items: center;
   }
