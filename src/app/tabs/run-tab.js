@@ -129,9 +129,9 @@ function runTab (opts, localRegistry) {
       status.appendChild(self._view.collapsedView)
     }
   })
-    /* -------------------------
-         MAIN HTML ELEMENT
-    --------------------------- */
+  /* -------------------------
+       MAIN HTML ELEMENT
+  --------------------------- */
   var el = yo`
   <div>
     ${settings(container, self)}
@@ -387,6 +387,31 @@ function contractDropdown (events, self) {
 
   selectContractNames.addEventListener('change', setInputParamsPlaceHolder)
 
+  function createInstanceCallback (error, selectedContract, data) {
+    if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+    self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+    self._deps.udapp.createContract(data, (error, txResult) => {
+      if (!error) {
+        var isVM = executionContext.isVM()
+        if (isVM) {
+          var vmError = txExecution.checkVMError(txResult)
+          if (vmError.error) {
+            self._deps.logCallback(vmError.message)
+            return
+          }
+        }
+        if (txResult.result.status && txResult.result.status === '0x0') {
+          self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
+          return
+        }
+        var noInstancesText = self._view.noInstancesText
+        if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+        instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+      }
+    })
+  }
+
   // DEPLOY INSTANCE
   function createInstance (args) {
     var selectedContract = getSelectedContract()
@@ -397,32 +422,22 @@ function contractDropdown (events, self) {
     }
 
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-    self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, librariesAddresses) => {
+    self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
       if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-      txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, constructor, args, librariesAddresses.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
-        if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-        self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
-        self._deps.udapp.createContract(data, (error, txResult) => {
-          if (!error) {
-            var isVM = executionContext.isVM()
-            if (isVM) {
-              var vmError = txExecution.checkVMError(txResult)
-              if (vmError.error) {
-                self._deps.logCallback(vmError.message)
-                return
-              }
-            }
-            if (txResult.result.status && txResult.result.status === '0x0') {
-              self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
-              return
-            }
-            var noInstancesText = self._view.noInstancesText
-            if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-            var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-            instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
-          }
+      if (contractMetadata.autoDeployLib) {
+        txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
+          createInstanceCallback(error, selectedContract, data)
+        }, (msg) => {
+          self._deps.logCallback(msg)
+        }, (data, runTxCallback) => {
+          // called for libraries deployment
+          self._deps.udapp.runTx(data, runTxCallback)
         })
-      })
+      } else {
+        txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
+          createInstanceCallback(error, selectedContract, data)
+        })
+      }
     })
   }
 
