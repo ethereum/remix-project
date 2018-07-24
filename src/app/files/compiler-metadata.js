@@ -26,7 +26,9 @@ class CompilerMetadata {
                   console.log(e)
                 }
                 var linkReferences = metadata['linkReferences']
+                var autoDeployLib = metadata['autoDeployLib']
                 if (!linkReferences) linkReferences = {}
+                if (autoDeployLib === undefined) autoDeployLib = true
                 for (var libFile in contract.object.evm.bytecode.linkReferences) {
                   if (!linkReferences[libFile]) linkReferences[libFile] = {}
                   for (var lib in contract.object.evm.bytecode.linkReferences[libFile]) {
@@ -36,6 +38,7 @@ class CompilerMetadata {
                   }
                 }
                 metadata['linkReferences'] = linkReferences
+                metadata['autoDeployLib'] = autoDeployLib
                 provider.set(fileName, JSON.stringify(metadata, null, '\t'))
               }
             })
