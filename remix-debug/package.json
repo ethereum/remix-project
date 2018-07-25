@@ -28,7 +28,7 @@
     "npm-run-all": "^4.1.2",
     "fast-async": "^6.1.2",
     "remix-lib": "^0.2.9",
-    "solc": "https://github.com/ethereum/solc-js"
+    "solc": "^0.4.24"
   },
   "devDependencies": {
     "standard": "^7.0.1",
