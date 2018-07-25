@@ -1,16 +1,17 @@
 'use strict'
 
-var CodeManager = require('./code/codeManager')
 var StorageViewer = require('./storage/storageViewer')
 var StorageResolver = require('./storage/storageResolver')
-var TraceManager = require('./trace/traceManager')
 
-var SolidityProxy = require('./decoder/solidityProxy')
-var stateDecoder = require('./decoder/stateDecoder')
-var localDecoder = require('./decoder/localDecoder')
-var InternalCallTree = require('./decoder/internalCallTree')
+var SolidityDecoder = require('./solidity-decoder')
+var SolidityProxy = SolidityDecoder.SolidityProxy
+var stateDecoder = SolidityDecoder.stateDecoder
+var localDecoder = SolidityDecoder.localDecoder
+var InternalCallTree = SolidityDecoder.InternalCallTree
 
 var remixLib = require('remix-lib')
+var TraceManager = remixLib.trace.TraceManager
+var CodeManager = remixLib.code.CodeManager
 var traceHelper = remixLib.helpers.trace
 var init = remixLib.init
 var executionContext = remixLib.execution.executionContext

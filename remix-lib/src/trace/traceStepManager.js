@@ -1,7 +1,7 @@
 'use strict'
-var remixLib = require('remix-lib')
-var traceHelper = remixLib.helpers.trace
-var util = remixLib.util
+
+var traceHelper = require('../helpers/traceHelper')
+var util = require('../util')
 
 function TraceStepManager (_traceAnalyser) {
   this.traceAnalyser = _traceAnalyser

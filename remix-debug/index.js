@@ -1,11 +1,11 @@
 'use strict'
 var EthDebugger = require('./src/Ethdebugger')
 
-var CodeManager = require('./src/code/codeManager')
-var BreakpointManager = require('./src/code/breakpointManager')
 var StorageViewer = require('./src/storage/storageViewer')
 var StorageResolver = require('./src/storage/storageResolver')
-var TraceManager = require('./src/trace/traceManager')
+
+var remixLib = require('remix-lib')
+var BreakpointManager = remixLib.code.BreakpointManager
 
 /*
   Use of breakPointManager :
@@ -24,16 +24,9 @@ module.exports = {
    * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
    */
   BreakpointManager: BreakpointManager,
-  code: {
-    CodeManager: CodeManager,
-    BreakpointManager: BreakpointManager
-  },
   storage: {
     StorageViewer: StorageViewer,
     StorageResolver: StorageResolver
-  },
-  trace: {
-    TraceManager: TraceManager
   }
 }
 

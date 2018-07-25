@@ -1,6 +1,5 @@
 'use strict'
-var remixLib = require('remix-lib')
-var helper = remixLib.util
+var helper = require('../util')
 
 function TraceCache () {
   this.init()
