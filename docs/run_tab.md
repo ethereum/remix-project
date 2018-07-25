@@ -112,7 +112,7 @@ In that case we use the addres of the previously created library :
 `created{1512830014773}`. the number is the id (timestamp) of the
 transaction that leads to the creation of the library.
 
-The third parameter corresponds to the call to te function `set` of the
+The third parameter corresponds to the call to the function `set` of the
 contract `test` (the property to is set to: `created{1512830015080}`) .
 Input parameters are `1` and
 `0xca35b7d915458ef540ade6068dfe2f44e8fa733c`
