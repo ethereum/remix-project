@@ -43,6 +43,7 @@ Userful links:
 
    run_tab
    udapp
+   contract_metadata
 
 .. toctree::
    :maxdepth: 2
