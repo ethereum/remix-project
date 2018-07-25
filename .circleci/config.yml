@@ -23,13 +23,13 @@ jobs:
       - checkout
       - run: npm install && npm run bootstrap
       - run: cd remix-debug && npm test
-      
-   remix-analyzer:
-     docker:
+ 
+  remix-analyzer:
+    docker:
         - image: circleci/node:7.10
-     environment:
-     working_directory: ~/repo
-     steps:
+    environment:
+    working_directory: ~/repo
+    steps:
       - checkout
       - run: npm install && npm run bootstrap
       - run: cd remix-analyzer && npm test
@@ -41,4 +41,3 @@ workflows:
       - remix-lib
       - remix-debug
       - remix-analyzer
-
