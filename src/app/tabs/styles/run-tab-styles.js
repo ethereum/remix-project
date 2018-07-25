@@ -35,6 +35,7 @@ var css = csjs`
     margin-top: .5em;
     display: flex;
     align-items: center;
+    width: 500px;
   }
   .col1 {
     width: 30%;
@@ -52,14 +53,21 @@ var css = csjs`
     display: flex;
     align-items: center;
     position: relative;
+    width: 259px;
+  }
+  .account {
+    display: flex;
+    align-items: center;
+    width: 266px;
   }
   .col2 {
     ${styles.rightPanel.runTab.input_RunTab}
+    border-radius: 3px;
   }
   .col2_1 {
     ${styles.rightPanel.runTab.input_RunTab}
-    width: 165px;
-    min-width: 165px;
+    width: 164px;
+    min-width: 164px;
   }
   .col2_2 {
     ${styles.rightPanel.runTab.dropdown_RunTab}
