@@ -29,7 +29,8 @@
     "webworkify": "^1.2.1"
   },
   "scripts": {
-    "test": "standard && tape ./test/tests.js"
+    "test": "standard && tape ./test/tests.js",
+    "prepublish": "mkdirp build"
   },
   "standard": {
     "ignore": [
