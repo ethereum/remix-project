@@ -4,6 +4,8 @@ var EthDebugger = require('./src/Ethdebugger')
 var StorageViewer = require('./src/storage/storageViewer')
 var StorageResolver = require('./src/storage/storageResolver')
 
+var SolidityDecoder = require('./src/solidity-decoder)
+
 var remixLib = require('remix-lib')
 var BreakpointManager = remixLib.code.BreakpointManager
 
@@ -27,6 +29,7 @@ module.exports = {
   storage: {
     StorageViewer: StorageViewer,
     StorageResolver: StorageResolver
-  }
+  },
+  SolidityDecoder: SolidityDecoder
 }
 
