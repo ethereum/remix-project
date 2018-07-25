@@ -15,10 +15,13 @@
   "main": "./index.js",
   "dependencies": {
     "ansi-gray": "^0.1.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-es2017": "^6.24.1",
+    "babelify": "^7.3.0",
     "body-parser": "^1.18.2",
     "color-support": "^1.1.3",
     "express": "^4.16.3",
+    "fast-async": "^6.3.7",
     "merge": "^1.2.0",
     "remix-lib": "^0.2.5",
     "standard": "^10.0.3",
