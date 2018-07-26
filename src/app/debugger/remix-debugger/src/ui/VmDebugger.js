@@ -12,7 +12,7 @@ var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
 var SolidityLocals = require('./SolidityLocals')
 var remixLib = require('remix-lib')
-var StorageResolver = remixLib.storage.StorageResolver
+var StorageResolver = remixLib.Storage.StorageResolver
 var yo = require('yo-yo')
 
 var css = csjs`
