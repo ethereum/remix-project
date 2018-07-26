@@ -16,7 +16,7 @@ npm install remix-debug
 
 ```javascript
 var Debugger = require('remix-debug').EthDebugger
-var BreakpointManager = require('remix-debug').EthDebugger
+var BreakpointManager = require('remix-debug').BreakpointManager
 
 var debugger = new Debugger({
   compilationResult: () => {
@@ -24,7 +24,10 @@ var debugger = new Debugger({
   }
 })
 
-debugger.addProvider(web3, 'web3')
+// Sample http provider, but your url or provider may be different.
+var web3Provider = new Web3.providers.HttpProvider("http://localhost:7545")
+
+debugger.addProvider('web3', web3Provider)
 debugger.switchProvider('web3')
 
 var breakPointManager = new remixCore.code.BreakpointManager(this.debugger, (sourceLocation) => {
