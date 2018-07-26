@@ -72,7 +72,12 @@ function Compiler (handleImportCall) {
 
   function onInternalCompilerLoaded () {
     if (worker === null) {
-      var compiler = solc(window.Module)
+      var compiler
+      if (typeof (window) === 'undefined') {
+        compiler = require('solc')
+      } else {
+        compiler = solc(window.Module)
+      }
 
       compileJSON = function (source, optimize, cb) {
         var missingInputs = []
