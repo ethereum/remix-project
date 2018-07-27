@@ -1,5 +1,5 @@
-Contract Metadata
-=================
+Build Artifact
+==============
 
 As compilation succeed Remix create a JSON file for each compiled contract.
 These JSON files contains several metadata
