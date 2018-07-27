@@ -1,21 +1,23 @@
 'use strict'
-var remixCore = require('remix-core')
-var TraceManager = remixCore.trace.TraceManager
-var StorageViewer = remixCore.storage.StorageViewer
+
+var StorageViewer = require('./storage/storageViewer')
+var StorageResolver = require('./storage/storageResolver')
+
+var SolidityDecoder = require('./solidity-decoder')
+var SolidityProxy = SolidityDecoder.SolidityProxy
+var stateDecoder = SolidityDecoder.stateDecoder
+var localDecoder = SolidityDecoder.localDecoder
+var InternalCallTree = SolidityDecoder.InternalCallTree
+
 var remixLib = require('remix-lib')
+var TraceManager = remixLib.trace.TraceManager
+var CodeManager = remixLib.code.CodeManager
 var traceHelper = remixLib.helpers.trace
 var init = remixLib.init
 var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
 var Web3Providers = remixLib.vm.Web3Providers
 var DummyProvider = remixLib.vm.DummyProvider
-var CodeManager = remixCore.code.CodeManager
-var remixSolidity = require('remix-solidity')
-var SolidityProxy = remixSolidity.SolidityProxy
-var stateDecoder = remixSolidity.stateDecoder
-var localDecoder = remixSolidity.localDecoder
-var InternalCallTree = remixSolidity.InternalCallTree
-var StorageResolver = remixCore.storage.StorageResolver
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
