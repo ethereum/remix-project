@@ -1,11 +1,17 @@
 'use strict'
 var tape = require('tape')
 var remixLib = require('remix-lib')
-var remixCore = require('remix-core')
 var compilerInput = remixLib.helpers.compiler.compilerInput
 var vmCall = require('./vmCall')
 var Debugger = require('../src/Ethdebugger')
 var compiler = require('solc')
+
+require('./decoder/decodeInfo.js')
+require('./decoder/storageLocation.js')
+require('./decoder/storageDecoder.js')
+require('./decoder/localDecoder.js')
+
+var BreakpointManager = remixLib.code.BreakpointManager
 
 tape('debug contract', function (t) {
   t.plan(12)
@@ -95,7 +101,7 @@ function testDebugging (t, debugManager) {
   })
 
   var sourceMappingDecoder = new remixLib.SourceMappingDecoder()
-  var breakPointManager = new remixCore.code.BreakpointManager(debugManager, (rawLocation) => {
+  var breakPointManager = new BreakpointManager(debugManager, (rawLocation) => {
     return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
   })
 

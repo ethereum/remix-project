@@ -35,14 +35,15 @@ Those commands will run the RPC server on `localhost:8545`, which is the default
 
 See [here](remix-debugger/README.md) how to install, run and use the debugger locally.
 
+The debugger itself contains several controls that allow stepping over the trace and seeing the current state of a selected step.
+
 ## <a name="modules"></a>Remix Modules
 
-Remix is built out of 4 different modules:
+Remix is built out of 3 different modules:
 
 + [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
 + [`remix-lib`](remix-lib/README.md)
-+ [`remix-core`](remix-core/README.md) is a utility package, providing high-level abstractions to work with the Ethereum VM.
-+ [`remix-debugger`](remix-debugger/README.md) contains the **debugging webapp**.
++ [`remix-debug`](remix-debugger/README.md) contains the debugger.
 
 ## Contributing
 
