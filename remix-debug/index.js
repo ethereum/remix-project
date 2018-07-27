@@ -1,6 +1,13 @@
 'use strict'
-var remixCore = require('remix-core')
 var EthDebugger = require('./src/Ethdebugger')
+
+var StorageViewer = require('./src/storage/storageViewer')
+var StorageResolver = require('./src/storage/storageResolver')
+
+var SolidityDecoder = require('./src/solidity-decoder')
+
+var remixLib = require('remix-lib')
+var BreakpointManager = remixLib.code.BreakpointManager
 
 /*
   Use of breakPointManager :
@@ -12,11 +19,17 @@ var EthDebugger = require('./src/Ethdebugger')
 */
 module.exports = {
   EthDebugger: EthDebugger,
-   /**
-    * constructor
-    *
-    * @param {Object} _debugger - type of EthDebugger
-    * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
-    */
-  BreakpointManager: remixCore.code.BreakpointManager
+  /**
+   * constructor
+   *
+   * @param {Object} _debugger - type of EthDebugger
+   * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
+   */
+  BreakpointManager: BreakpointManager,
+  SolidityDecoder: SolidityDecoder,
+  storage: {
+    StorageViewer: StorageViewer,
+    StorageResolver: StorageResolver
+  }
 }
+
