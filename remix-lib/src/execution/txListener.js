@@ -356,10 +356,10 @@ function getConstructorInterface (abi) {
 }
 
 function getFunction (abi, fnName) {
-  fnName = fnName.split('(')[0]
   for (var i = 0; i < abi.length; i++) {
-    if (abi[i].name === fnName) {
-      return abi[i]
+    var fn = abi[i]
+    if (fnName === fn.name + '(' + fn.inputs.map((value) => { return value.type }).join(',') + ')') {
+      return fn
     }
   }
   return null
