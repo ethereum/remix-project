@@ -1,6 +1,5 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
-// TODO: update this
 var remixDebug = require('remix-debug')
 var localDecoder = remixDebug.SolidityDecoder.localDecoder
 var solidityTypeFormatter = require('./SolidityTypeFormatter')

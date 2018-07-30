@@ -4,7 +4,6 @@ var StepManager = require('./StepManager')
 var remixLib = require('remix-lib')
 var TraceManager = remixLib.trace.TraceManager
 var VmDebugger = require('./VmDebugger')
-var global = remixLib.global
 var init = remixLib.init
 var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
