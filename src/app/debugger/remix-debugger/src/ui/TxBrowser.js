@@ -1,5 +1,4 @@
 var remixLib = require('remix-lib')
-var global = remixLib.global
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 var yo = require('yo-yo')
