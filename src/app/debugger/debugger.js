@@ -1,5 +1,4 @@
 'use strict'
-
 var Ethdebugger = require('./remix-debugger/src/ui/Ethdebugger')
 var remixLib = require('remix-lib')
 var executionContext = require('../../execution-context')
@@ -90,7 +89,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
  */
 Debugger.prototype.debug = function (txHash) {
   var self = this
-  this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
+  this.debugger.web3.eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
       self.debugger.debug(tx)
     }
@@ -120,7 +119,7 @@ Debugger.prototype.switchProvider = function (type) {
  * get the current provider
  */
 Debugger.prototype.web3 = function (type) {
-  return this.debugger.web3()
+  return this.debugger.web3
 }
 
 module.exports = Debugger
