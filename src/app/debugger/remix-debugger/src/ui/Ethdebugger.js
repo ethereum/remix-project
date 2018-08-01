@@ -57,6 +57,8 @@ function Ethdebugger (opts) {
     self.unLoad()
   })
   this.txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
+    console.dir('newTraceRequestd')
+    console.dir(arguments)
     self.startDebugging(blockNumber, txIndex, tx)
   })
   this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
@@ -90,13 +92,20 @@ Ethdebugger.prototype.addProvider = function (type, obj) {
   this.event.trigger('providerAdded', [type])
 }
 
+Ethdebugger.prototype.updateWeb3Reference = function () {
+  if (!this.txBrowser) return
+  this.txBrowser.web3 = this.web3
+}
+
 Ethdebugger.prototype.switchProvider = function (type) {
   var self = this
   this.web3Providers.get(type, function (error, obj) {
     if (error) {
       console.log('provider ' + type + ' not defined')
     } else {
-      global.web3 = obj
+      self.web3 = obj
+      self.setManagers()
+      self.updateWeb3Reference()
       executionContext.detectNetwork((error, network) => {
         if (error || !network) {
           global.web3Debug = obj
@@ -104,6 +113,7 @@ Ethdebugger.prototype.switchProvider = function (type) {
           var webDebugNode = init.web3DebugNode(network.name)
           global.web3Debug = !webDebugNode ? obj : webDebugNode
         }
+        self.updateWeb3Reference()
       })
       self.event.trigger('providerChanged', [type])
     }
@@ -156,6 +166,8 @@ Ethdebugger.prototype.stepChanged = function (stepIndex) {
 }
 
 Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
+  console.dir('startDebugging')
+  console.dir(arguments)
   if (this.traceManager.isLoading) {
     return
   }
@@ -165,6 +177,8 @@ Ethdebugger.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   console.log('loading trace...')
   this.tx = tx
   var self = this
+  console.dir('resolving a trace with tx: ')
+  console.dir(tx)
   this.traceManager.resolveTrace(tx, function (error, result) {
     console.log('trace loaded ' + result)
     if (result) {
