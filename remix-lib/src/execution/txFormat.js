@@ -1,7 +1,6 @@
 'use strict'
 var ethers = require('ethers')
 var helper = require('./txHelper')
-var executionContext = require('./execution-context')
 var asyncJS = require('async')
 var solcLinker = require('solc/linker')
 var ethJSUtil = require('ethereumjs-util')
@@ -320,7 +319,7 @@ module.exports = {
         if (err) {
           return callback(err)
         }
-        var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+        var address = txResult.result.createdAddress || txResult.result.contractAddress
         library.address = address
         callback(err, address)
       })
