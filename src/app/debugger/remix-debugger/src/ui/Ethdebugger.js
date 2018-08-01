@@ -79,6 +79,18 @@ function Ethdebugger (opts) {
   })
 }
 
+Ethdebugger.prototype.setManagers = function () {
+  this.traceManager = new TraceManager({web3: this.web3})
+  this.codeManager = new CodeManager(this.traceManager)
+  this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
+  this.storageResolver = null
+  var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+  this.callTree = callTree // TODO: currently used by browser solidity, we should improve the API
+  this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy, callTree)
+
+  this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
+}
+
 Ethdebugger.prototype.setBreakpointManager = function (breakpointManager) {
   this.breakpointManager = breakpointManager
 }
