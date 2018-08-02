@@ -536,7 +536,9 @@ function createTable (opts) {
     var outputDecoded = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> decoded output </td>
-      <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}</td>
+      <td class="${css.td}" id="decodedoutput" >${opts['decoded output']}
+        ${copyToClipboard(opts['decoded output'])}
+      </td>
     </tr>`
     table.appendChild(outputDecoded)
   }
