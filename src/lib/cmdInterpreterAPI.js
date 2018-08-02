@@ -92,7 +92,7 @@ class CmdInterpreterAPI {
       self.d.localsAt = (contractAddress, vmTraceIndex) => {
         debugSession.sourceLocationFromVMTraceIndex(contractAddress, vmTraceIndex, (error, location) => {
           if (error) return self.log(error)
-          debugSession.decodeLocalsAt(23, location, (error, locals) => { 
+          debugSession.decodeLocalsAt(23, location, (error, locals) => {
             if (error) return this._components.terminal.commands.html(error)
             var treeView = new TreeView({
               json: true,
