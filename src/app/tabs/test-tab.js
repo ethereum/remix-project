@@ -46,6 +46,10 @@ module.exports = class TestTab {
 
     var updateFinalResult = function (_err, result, filename) {
       testsSummary.hidden = false
+      if (_err) {
+        testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${_err.message}</div>`)
+        return
+      }
       testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
       if (result.totalPassing > 0) {
         testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
