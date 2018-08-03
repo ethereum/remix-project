@@ -13,7 +13,6 @@ class Mapping extends RefType {
 
   async decodeFromStorage (location, storageResolver) {
     var corrections = this.valueType.members ? this.valueType.members.map((value) => { return value.storagelocation }) : []
-     
     if (!this.initialDecodedState) { // cache the decoded initial storage
       var mappingsInitialPreimages
       try {
