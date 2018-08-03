@@ -88,6 +88,10 @@ function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
 }
 
+function sub (value1, value2) {
+  return toBN(value1).sub(toBN(value2))
+}
+
 function removeLocation (type) {
   return type.replace(/( storage ref| storage pointer| memory| calldata)/g, '')
 }

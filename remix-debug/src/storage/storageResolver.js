@@ -33,11 +33,13 @@ class StorageResolver {
    * compute the mappgings type locations for the current address (cached for a debugging session)
    * note: that only retrieve the first 100 items.
    *
-   * @param {String} address  - contract address
+   * @param {Object} tx
+   * @param {Int} stepIndex
    * @param {Object} address  - storage
+   * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
    * @return {Function} - callback
    */
-  initialPreimagesMappings (tx, stepIndex, address, callback) {
+  initialPreimagesMappings (tx, stepIndex, address, corrections, callback) {
     const self = this
     if (this.preimagesMappingByAddress[address]) {
       return callback(null, this.preimagesMappingByAddress[address])
@@ -46,7 +48,7 @@ class StorageResolver {
       if (error) {
         return callback(error)
       }
-      mappingPreimages.decodeMappingsKeys(self.web3, storage, (error, mappings) => {
+      mappingPreimages.decodeMappingsKeys(self.web3, storage, corrections, (error, mappings) => {
         if (error) {
           callback(error)
         } else {
