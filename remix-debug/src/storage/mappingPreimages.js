@@ -15,7 +15,7 @@ module.exports = {
   */
 async function decodeMappingsKeys (web3, storage, corrections, callback) {
   var ret = {}
-  if (!corrections.length) corrections.push(0)
+  if (!corrections.length) corrections.push({offset: 0, slot: 0})
   for (var hashedLoc in storage) {
     var preimage
     try {
