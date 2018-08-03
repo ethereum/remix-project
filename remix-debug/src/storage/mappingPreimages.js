@@ -1,5 +1,3 @@
-var BN = require('ethereumjs-util').BN
-var ethutil = require('ethereumjs-util')
 var util = require('../solidity-decoder/types/util')
 
 module.exports = {
