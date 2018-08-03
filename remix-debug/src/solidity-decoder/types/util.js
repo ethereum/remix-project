@@ -9,6 +9,7 @@ module.exports = {
   extractHexByteSlice: extractHexByteSlice,
   toBN: toBN,
   add: add,
+  sub: sub,
   extractLocation: extractLocation,
   removeLocation: removeLocation,
   normalizeHex: normalizeHex,
