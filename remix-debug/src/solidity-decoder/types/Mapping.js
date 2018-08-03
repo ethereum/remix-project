@@ -12,10 +12,12 @@ class Mapping extends RefType {
   }
 
   async decodeFromStorage (location, storageResolver) {
+    var corrections = this.valueType.members ? this.valueType.members.map((value) => { return value.storagelocation }) : []
+     
     if (!this.initialDecodedState) { // cache the decoded initial storage
       var mappingsInitialPreimages
       try {
-        mappingsInitialPreimages = await storageResolver.initialMappingsLocation()
+        mappingsInitialPreimages = await storageResolver.initialMappingsLocation(corrections)
         this.initialDecodedState = await this.decodeMappingsLocation(mappingsInitialPreimages, location, storageResolver)
       } catch (e) {
         return {
@@ -24,7 +26,7 @@ class Mapping extends RefType {
         }
       }
     }
-    var mappingPreimages = await storageResolver.mappingsLocation()
+    var mappingPreimages = await storageResolver.mappingsLocation(corrections)
     var ret = await this.decodeMappingsLocation(mappingPreimages, location, storageResolver) // fetch mapping storage changes
     ret = Object.assign({}, this.initialDecodedState, ret) // merge changes
     return {
