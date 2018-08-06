@@ -157,6 +157,7 @@ class TxLogger {
     }, { activate: true, filterFn: filterTx })
 
     this.logUnknownTX = this._deps.editorPanel.registerCommand('unknownTransaction', (args, cmds, append) => {
+      // triggered for transaction AND call
       var data = args[0]
       var el = renderUnknownTransaction(this, data)
       append(el)
@@ -277,11 +278,11 @@ function renderUnknownTransaction (self, data) {
   var from = data.tx.from
   var to = data.tx.to
   var obj = {from, to}
-  var txType = 'unknownTx'
+  var txType = 'unknown' + (data.tx.isCall ? 'Call' : 'Tx')
   var tx = yo`
     <span id="tx${data.tx.hash}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        ${checkTxStatus(data.receipt, txType)}
+        ${checkTxStatus(data.tx, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
@@ -304,7 +305,7 @@ function checkTxStatus (tx, type) {
   if (tx.status === '0x1') {
     return yo`<i class="${css.txStatus} ${css.succeeded} fa fa-check-circle"></i>`
   }
-  if (type === 'call') {
+  if (type === 'call' || type === 'unknownCall') {
     return yo`<i class="${css.txStatus} ${css.call}">call</i>`
   } else {
     return yo`<i class="${css.txStatus} ${css.failed} fa fa-times-circle"></i>`
