@@ -17,6 +17,7 @@ class CmdInterpreterAPI {
     self._components.terminal = terminal
     self._deps = {
       app: self._components.registry.get('app').api,
+      fileManager: self._components.registry.get('filemanager').api,
       editor: self._components.registry.get('editor').api
     }
     self.commandHelp = {
@@ -24,6 +25,7 @@ class CmdInterpreterAPI {
       'remix.loadgist(id)': 'Load a gist in the file explorer.',
       'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.',
       'remix.setproviderurl(url)': 'Change the current provider to Web3 provider and set the url endpoint.',
+      'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.',
       'remix.exeCurrent()': 'Run the script currently displayed in the editor',
       'remix.help()': 'Display this help message'
     }
@@ -70,14 +72,44 @@ class CmdInterpreterAPI {
     })
   }
   exeCurrent (cb) {
+    return this.execute(undefined, cb)
+  }
+  execute (file, cb) {
     const self = this
-    var content = self._deps.editor.currentContent()
-    if (!content) {
-      toolTip('no content to execute')
+
+    function _execute (content, cb) {
+      if (!content) {
+        toolTip('no content to execute')
+        if (cb) cb()
+        return
+      }
+
+      self._components.terminal.commands.script(content)
+    }
+
+    if (typeof file === 'undefined') {
+      var content = self._deps.editor.currentContent()
+      _execute(content, cb)
+      return
+    }
+
+    var provider = self._deps.fileManager.fileProviderOf(file)
+
+    if (!provider) {
+      toolTip(`provider for path ${file} not found`)
       if (cb) cb()
       return
     }
-    self._components.terminal.commands.script(content)
+
+    provider.get(file, (error, content) => {
+      if (error) {
+        toolTip(error)
+        if (cb) cb()
+        return
+      }
+
+      _execute(content, cb)
+    })
   }
   help (cb) {
     const self = this
