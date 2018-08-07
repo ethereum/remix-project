@@ -321,6 +321,9 @@ class App {
     }
     var provider = self._components.fileManager.fileProviderOf(url)
     if (provider) {
+      if (provider.type === 'localhost' && !provider.isConnected()) {
+        return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)
+      }
       provider.exists(url, (error, exist) => {
         if (error) return filecb(error)
         if (exist) {
