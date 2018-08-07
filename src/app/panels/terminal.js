@@ -2,6 +2,7 @@
 var yo = require('yo-yo')
 var javascriptserialize = require('javascript-serialize')
 var jsbeautify = require('js-beautify')
+var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
 var remixLib = require('remix-lib')
@@ -574,6 +575,7 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
+    ethers,
     remix: self._components.cmdInterpreter,
     web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
     console: {
