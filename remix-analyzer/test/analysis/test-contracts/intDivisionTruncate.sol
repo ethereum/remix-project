@@ -26,4 +26,13 @@ contract CharityCampaign {
         selfdestruct(beneficiary);
         return true;
     }
+
+    // FALSE POSITIVE FOR SELFDESTRUCT TERMINAL 
+    function endAmbiguous() public {
+        if(msg.sender == 0x0) {
+            selfdestruct(beneficiary);
+        } else {
+            selfdestruct(processor);
+        }
+    }
 }

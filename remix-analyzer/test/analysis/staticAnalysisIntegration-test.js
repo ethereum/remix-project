@@ -474,7 +474,7 @@ test('Integration test selfdestruct.js', function (t) {
     'selfdestruct.sol': 3,
     'deleteDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
-    'intDivisionTruncate.sol': 2
+    'intDivisionTruncate.sol': 5
   }
 
   runModuleOnFiles(module, t, (file, report) => {
