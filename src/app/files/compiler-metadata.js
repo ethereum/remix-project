@@ -73,7 +73,7 @@ class CompilerMetadata {
             if (error) return callback(error)
             try {
               var metadata = JSON.parse(content)
-              return callback(null, metadata[name + ':' + id] || metadata[name] || metadata[id])
+              return callback(null, metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()])
             } catch (e) {
               callback(e.message)
             }
