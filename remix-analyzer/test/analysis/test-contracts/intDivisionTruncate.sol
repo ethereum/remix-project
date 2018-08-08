@@ -21,8 +21,9 @@ contract CharityCampaign {
         return fee;
     }
 
-    function endCampaign() public {
+    function endCampaign() public returns (bool) {
         require(msg.sender == processor || msg.sender == beneficiary);
         selfdestruct(beneficiary);
+        return true;
     }
 }
