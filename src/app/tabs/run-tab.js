@@ -427,7 +427,7 @@ function contractDropdown (events, self) {
       var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
       self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
         if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-        if (contractMetadata.autoDeployLib) {
+        if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
           txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
             createInstanceCallback(error, selectedContract, data)
           }, (msg) => {
