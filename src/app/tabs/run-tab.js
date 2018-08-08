@@ -146,7 +146,6 @@ function runTab (opts, localRegistry) {
   return { render () { return container } }
 }
 
-
 var accountListCallId = 0
 var loadedAccounts = {}
 function fillAccountsList (container, self) {
