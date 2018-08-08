@@ -397,7 +397,7 @@ function isFunctionDefinition (node) {
 }
 
 function isStatement (node) {
-  return nodeType(node, 'Statement$') || isBlock(node)
+  return nodeType(node, 'Statement$') || isBlock(node) || isReturn(node)
 }
 
 function isBlock (node) {
