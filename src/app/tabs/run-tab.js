@@ -203,6 +203,7 @@ function fillAccountsList (container, self) {
   var $txOrigin = $(container.querySelector('#txorigin'))
   $txOrigin.empty()
   self._deps.udapp.getAccounts((err, accounts) => {
+    $txOrigin.empty()
     if (err) { addTooltip(`Cannot get account list: ${err}`) }
     if (accounts && accounts[0]) {
       for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])) }
