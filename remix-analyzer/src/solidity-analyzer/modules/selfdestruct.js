@@ -3,6 +3,7 @@ var desc = 'Be aware of caller contracts.'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var AbstractAst = require('./abstractAstView')
+var algo = require('./algorithmCategories')
 
 function selfdestruct () {
   this.abstractAst = new AbstractAst()
@@ -15,9 +16,9 @@ function selfdestruct () {
   this.report = this.abstractAst.build_report(report)
 }
 
-selfdestruct.prototype.visit = function () { throw new Error('constantFunctions.js no visit function set upon construction') }
+selfdestruct.prototype.visit = function () { throw new Error('selfdestruct.js no visit function set upon construction') }
 
-selfdestruct.prototype.report = function () { throw new Error('constantFunctions.js no report function set upon construction') }
+selfdestruct.prototype.report = function () { throw new Error('selfdestruct.js no report function set upon construction') }
 
 function report (contracts, multipleContractsWithSameName) {
   var warnings = []
@@ -53,5 +54,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.HEURISTIC,
   Module: selfdestruct
 }

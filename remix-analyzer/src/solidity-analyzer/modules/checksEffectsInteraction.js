@@ -4,6 +4,7 @@ var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
+var algo = require('./algorithmCategories')
 
 function checksEffectsInteraction () {
   this.abstractAst = new AbstractAst()
@@ -84,5 +85,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.HEURISTIC,
   Module: checksEffectsInteraction
 }
