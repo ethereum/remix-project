@@ -4,6 +4,7 @@ var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var fcallGraph = require('./functionCallGraph')
 var AbstractAst = require('./abstractAstView')
+var algo = require('./algorithmCategories')
 
 function constantFunctions () {
   this.abstractAst = new AbstractAst()
@@ -104,5 +105,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.MISC,
+  algorithm: algo.HEURISTIC,
   Module: constantFunctions
 }

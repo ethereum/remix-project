@@ -1,6 +1,7 @@
 var name = 'Gas costs: '
 var desc = 'Warn if the gas requirements of functions are too high.'
 var categories = require('./categories')
+var algo = require('./algorithmCategories')
 
 function gasCosts () {
 }
@@ -61,5 +62,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.GAS,
+  algorithm: algo.EXACT,
   Module: gasCosts
 }

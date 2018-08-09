@@ -2,6 +2,7 @@ var name = 'Block timestamp: '
 var desc = 'Semantics maybe unclear'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function blockTimestamp () {
   this.warningNowNodes = []
@@ -35,6 +36,7 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.EXACT,
   Module: blockTimestamp
 }
 
