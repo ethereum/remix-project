@@ -8,6 +8,7 @@ var vm = require('vm')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var Web3 = require('web3')
+var swarmgw = require('swarmgw')
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
@@ -575,6 +576,7 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
+    swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,
     web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
