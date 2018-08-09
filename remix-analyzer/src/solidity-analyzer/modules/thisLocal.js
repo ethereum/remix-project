@@ -2,6 +2,7 @@ var name = 'This on local calls: '
 var desc = 'Invocation of local functions via this'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function thisLocal () {
   this.warningNodes = []
@@ -25,5 +26,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.GAS,
+  algorithm: algo.EXACT,
   Module: thisLocal
 }

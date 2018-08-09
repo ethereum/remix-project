@@ -2,6 +2,7 @@ var name = 'Result not used: '
 var desc = 'The result of an operation was not used.'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function assignAndCompare () {
   this.warningNodes = []
@@ -24,5 +25,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.MISC,
+  algorithm: algo.EXACT,
   Module: assignAndCompare
 }

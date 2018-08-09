@@ -3,6 +3,7 @@ var desc = 'Function with return type is not returning'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var AbstractAst = require('./abstractAstView')
+var algo = require('./algorithmCategories')
 
 function noReturn () {
   this.abstractAst = new AbstractAst()
@@ -69,5 +70,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.MISC,
+  algorithm: algo.EXACT,
   Module: noReturn
 }
