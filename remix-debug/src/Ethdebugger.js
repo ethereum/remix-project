@@ -36,7 +36,8 @@ function Ethdebugger (opts) {
   this.opts = opts || {}
   if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
-  this.web3 = opts.web3
+  this.executionContext = opts.executionContext || executionContext;
+  this.web3 = opts.web3 || this.executionContext.web3;
 
   this.event = new EventManager()
 
@@ -55,6 +56,7 @@ function Ethdebugger (opts) {
 }
 
 Ethdebugger.prototype.setManagers = function () {
+  console.log("remix-debug: setManagers");
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
@@ -181,7 +183,7 @@ Ethdebugger.prototype.switchProvider = function (type) {
       self.web3 = obj
       self.setManagers()
       // self.traceManager.web3 = self.web3
-      executionContext.detectNetwork((error, network) => {
+      self.executionContext.detectNetwork((error, network) => {
         if (error || !network) {
           self.web3Debug = obj
           self.web3 = obj
@@ -198,6 +200,7 @@ Ethdebugger.prototype.switchProvider = function (type) {
 }
 
 Ethdebugger.prototype.debug = function (tx) {
+  debugger;
   this.setCompilationResult(this.opts.compilationResult())
   if (tx instanceof Object) {
     this.txBrowser.load(tx.hash)
@@ -209,7 +212,6 @@ Ethdebugger.prototype.debug = function (tx) {
 Ethdebugger.prototype.unLoad = function () {
   this.traceManager.init()
   this.codeManager.clear()
-  this.stepManager.reset()
   this.event.trigger('traceUnloaded')
 }
 
@@ -224,8 +226,10 @@ Ethdebugger.prototype.debug = function (tx) {
   console.log('loading trace...')
   this.tx = tx
   var self = this
+  debugger;
   this.traceManager.resolveTrace(tx, function (error, result) {
     console.log('trace loaded ' + result)
+    console.dir(arguments);
     if (result) {
       self.event.trigger('newTraceLoaded', [self.traceManager.trace])
       if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
