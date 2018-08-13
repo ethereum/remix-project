@@ -40,10 +40,7 @@ module.exports = class CompilerImports {
 
     return request.get(
       {
-        url: 'https://gateway.ipfs.io/' + url,
-        headers: {
-          'User-Agent': 'Remix'
-        }
+        url: 'https://gateway.ipfs.io/' + url
       },
       (err, r, data) => {
         if (err) {
