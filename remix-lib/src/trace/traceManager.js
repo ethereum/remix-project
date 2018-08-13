@@ -20,6 +20,8 @@ function TraceManager (options) {
 
 // init section
 TraceManager.prototype.resolveTrace = function (tx, callback) {
+  console.dir("resolveTrace: ");
+  console.dir(arguments);
   this.tx = tx
   this.init()
   if (!this.web3) callback('web3 not loaded', false)
@@ -68,6 +70,8 @@ TraceManager.prototype.isLoaded = function () {
 }
 
 TraceManager.prototype.getLength = function (callback) {
+  console.dir(this.trace)
+  console.trace('getLength')
   if (!this.trace) {
     callback('no trace available', null)
   } else {
