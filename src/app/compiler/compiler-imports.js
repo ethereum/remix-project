@@ -53,9 +53,24 @@ module.exports = class CompilerImports {
       })
   }
 
+  handleHttpCall (url, cleanUrl, cb) {
+    return request.get(
+      {
+        url
+      },
+    (err, r, data) => {
+      if (err) {
+        return cb(err || 'Unknown transport error')
+      }
+      cb(null, data, cleanUrl)
+    })
+  }
+
   handlers () {
     return [
       { type: 'github', match: /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/, handler: (match, cb) => { this.handleGithubCall(match[3], match[4], cb) } },
+      { type: 'http', match: /^(http?:\/\/?(.*))$/, handler: (match, cb) => { this.handleHttpCall(match[1], match[2], cb) } },
+      { type: 'https', match: /^(https?:\/\/?(.*))$/, handler: (match, cb) => { this.handleHttpCall(match[1], match[2], cb) } },
       { type: 'swarm', match: /^(bzz[ri]?:\/\/?(.*))$/, handler: (match, cb) => { this.handleSwarmImport(match[1], match[2], cb) } },
       { type: 'ipfs', match: /^(ipfs:\/\/?.+)/, handler: (match, cb) => { this.handleIPFS(match[1], cb) } }
     ]
