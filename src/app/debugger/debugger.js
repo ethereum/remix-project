@@ -1,5 +1,6 @@
 'use strict'
-var Ethdebugger = require('./remix-debugger/src/ui/Ethdebugger')
+var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
+var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var executionContext = require('../../execution-context')
 var globlalRegistry = require('../../global/registry')
@@ -20,6 +21,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   }
   this.debugger = new Ethdebugger(
     {
+      executionContext: executionContext,
       compilationResult: () => {
         var compilationResult = this._deps.compiler.lastCompilationResult
         if (compilationResult) {
@@ -28,8 +30,12 @@ function Debugger (container, sourceHighlighter, localRegistry) {
         return null
       }
     })
+  this.debugger_ui = new EthdebuggerUI({debugger: this.debugger})
   this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
-  container.appendChild(this.debugger.render())
+  //
+  // TODO: render doesn't exist anymore
+  container.appendChild(this.debugger_ui.render())
+  //
   this.isActive = false
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
@@ -50,6 +56,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   })
 
   executionContext.event.register('contextChanged', this, function (context) {
+    debugger;
     self.switchProvider(context)
   })
 
@@ -103,6 +110,7 @@ Debugger.prototype.debug = function (txHash) {
  * @param {Object} obj  - provider
  */
 Debugger.prototype.addProvider = function (type, obj) {
+  debugger;
   this.debugger.addProvider(type, obj)
 }
 
@@ -112,6 +120,7 @@ Debugger.prototype.addProvider = function (type, obj) {
  * @param {String} type - type/name of the provider to use
  */
 Debugger.prototype.switchProvider = function (type) {
+  debugger;
   this.debugger.switchProvider(type)
 }
 

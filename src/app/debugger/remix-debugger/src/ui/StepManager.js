@@ -8,7 +8,7 @@ var util = remixLib.util
 
 function StepManager (_parent, _traceManager) {
   this.event = new EventManager()
-  this.parent = _parent
+  this.parent = _parent.debugger
   this.traceManager = _traceManager
   this.sourceMapByAddress = {}
   this.solidityMode = false
