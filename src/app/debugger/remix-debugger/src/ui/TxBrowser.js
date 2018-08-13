@@ -49,6 +49,7 @@ function TxBrowser (_parent) {
   this.txNumber
   this.view
   this.displayConnectionSetting = true
+  this.web3 = _parent.debugger.web3
   var self = this
   _parent.event.register('providerChanged', this, function (provider) {
     self.displayConnectionSetting = provider === 'INTERNAL'

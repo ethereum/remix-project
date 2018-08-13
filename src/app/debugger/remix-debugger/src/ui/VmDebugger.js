@@ -11,8 +11,8 @@ var StepDetail = require('./StepDetail')
 var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
 var SolidityLocals = require('./SolidityLocals')
-var remixLib = require('remix-lib')
-var StorageResolver = remixLib.Storage.StorageResolver
+var remixDebug = require('remix-debug')
+var StorageResolver = remixDebug.storage.StorageResolver
 var yo = require('yo-yo')
 
 var css = csjs`
@@ -25,7 +25,9 @@ var css = csjs`
   }
 `
 
-function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {
+function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
+  let _parent = _parentUI.debugger
+
   this.asmCode = new CodeListView(_parent, _codeManager)
   this.stackPanel = new StackPanel(_parent, _traceManager)
   this.storagePanel = new StoragePanel(_parent, _traceManager)
@@ -39,24 +41,24 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
   this.returnValuesPanel.data = {}
-  _parent.event.register('indexChanged', this.returnValuesPanel, function (index) {
+  _parentUI.event.register('indexChanged', this.returnValuesPanel, function (index) {
     var self = this
     _traceManager.getReturnValue(index, function (error, returnValue) {
       if (error) {
         self.update([error])
-      } else if (_parent.currentStepIndex === index) {
+      } else if (_parentUI.currentStepIndex === index) {
         self.update([returnValue])
       }
     })
   })
   /* Return values - */
 
-  this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parent, _traceManager)
+  this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parentUI, _traceManager)
 
   this.view
   var self = this
   _parent.event.register('newTraceLoaded', this, function () {
-    var storageResolver = new StorageResolver()
+    var storageResolver = new StorageResolver({web3: _parent.web3})
     self.storagePanel.storageResolver = storageResolver
     self.solidityState.storageResolver = storageResolver
     self.solidityLocals.storageResolver = storageResolver
