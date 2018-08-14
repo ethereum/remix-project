@@ -530,10 +530,14 @@ function settings (container, self) {
   `
   var accountEl = yo`
     <div class="${css.crow}">
-      <div class="${css.col1_1}">Account</div>
-      <select name="txorigin" class="${css.select}" id="txorigin"></select>
-        ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+      <div class="${css.col1_1}">
+        Account
         <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
+      </div>
+      <div class=${css.account}>
+        <select name="txorigin" class="${css.select}" id="txorigin"></select>
+        ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+      </div>
     </div>
   `
   var gasPriceEl = yo`

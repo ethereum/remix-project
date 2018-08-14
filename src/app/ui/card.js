@@ -80,7 +80,6 @@ const css = csjs`
   }
   .expandCollapseButton {}
   .arrow {
-    margin-right        : 15px;
     color               : ${styles.appProperties.icon_Color};
     font-weight         : bold;
     cursor              : pointer;
