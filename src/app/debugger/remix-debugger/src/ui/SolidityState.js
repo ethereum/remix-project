@@ -3,8 +3,7 @@ var DropdownPanel = require('./DropdownPanel')
 var remixDebug = require('remix-debug')
 var stateDecoder = remixDebug.SolidityDecoder.stateDecoder
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
-var remixLib = require('remix-lib')
-var StorageViewer = remixLib.Storage.StorageViewer
+var StorageViewer = remixDebug.storage.StorageViewer
 var yo = require('yo-yo')
 
 function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
