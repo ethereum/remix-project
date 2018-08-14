@@ -8,7 +8,7 @@ var vm = require('vm')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var Web3 = require('web3')
-var swarmgw = require('swarmgw')
+var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
