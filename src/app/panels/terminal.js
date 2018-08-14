@@ -73,6 +73,7 @@ class Terminal {
     self.registerCommand('html', self._blocksRenderer('html'), { activate: true })
     self.registerCommand('log', self._blocksRenderer('log'), { activate: true })
     self.registerCommand('info', self._blocksRenderer('info'), { activate: true })
+    self.registerCommand('warn', self._blocksRenderer('warn'), { activate: true })
     self.registerCommand('error', self._blocksRenderer('error'), { activate: true })
     self.registerCommand('script', function execute (args, scopedCommands, append) {
       var script = String(args[0])
@@ -86,6 +87,7 @@ class Terminal {
 
     self.registerFilter('log', basicFilter)
     self.registerFilter('info', basicFilter)
+    self.registerFilter('warn', basicFilter)
     self.registerFilter('error', basicFilter)
     self.registerFilter('script', basicFilter)
 
@@ -481,7 +483,7 @@ class Terminal {
         if (args.length) append(args[0])
       }
     }
-    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
+    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, warn: 'yellow', error: styles.terminal.text_ErrorLog }[mode] // defaults
     if (mode) {
       return function logger (args, scopedCommands, append) {
         var types = args.map(type)
@@ -581,6 +583,7 @@ function domTerminalFeatures (self, scopedCommands) {
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
+      warn: function () { scopedCommands.warn.apply(scopedCommands, arguments) },
       error: function () { scopedCommands.error.apply(scopedCommands, arguments) }
     },
     setTimeout: (fn, time) => {
