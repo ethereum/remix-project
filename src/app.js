@@ -148,6 +148,8 @@ class App {
     self._components.filesProviders['github'] = new BasicReadOnlyExplorer('github')
     self._components.filesProviders['gist'] = new NotPersistedExplorer('gist')
     self._components.filesProviders['ipfs'] = new BasicReadOnlyExplorer('ipfs')
+    self._components.filesProviders['https'] = new BasicReadOnlyExplorer('https')
+    self._components.filesProviders['http'] = new BasicReadOnlyExplorer('http')
     registry.put({api: self._components.filesProviders['localhost'], name: 'fileproviders/localhost'})
     registry.put({api: self._components.filesProviders['swarm'], name: 'fileproviders/swarm'})
     registry.put({api: self._components.filesProviders['github'], name: 'fileproviders/github'})
