@@ -80,12 +80,10 @@ StepManager.prototype.resolveToReducedTrace = function (value, incr) {
 }
 
 StepManager.prototype.render = function () {
-  return (
-  yo`<div>
+  return yo`<div>
         ${this.slider.render()}
         ${this.buttonNavigator.render()}
       </div>`
-  )
 }
 
 StepManager.prototype.reset = function () {

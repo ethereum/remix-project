@@ -75,15 +75,18 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   })
 
   // register selected code item, highlight the corresponding source location
-  this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
+  this.debugger_ui.event.register('indexChanged', function (index) {
     if (self._deps.compiler.lastCompilationResult) {
-      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
-        if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-          var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
-          self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
-        } else {
-          self._components.sourceHighlighter.currentSourceLocation(null)
-        }
+      self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+        if (error) return console.log(error)
+        self.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+          if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+            var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
+            self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
+          } else {
+            self._components.sourceHighlighter.currentSourceLocation(null)
+          }
+        })
       })
     }
   })

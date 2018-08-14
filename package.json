@@ -38,7 +38,7 @@
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
     "remix-analyzer": "latest",
-    "remix-lib": "../remix/remix-lib",
+    "remix-lib": "./remix/remix-lib",
     "remix-solidity": "latest",
     "remix-tests": "latest",
     "remixd": "git+https://github.com/ethereum/remixd.git",
@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
-    "remix-debug": "../remix/remix-debug",
+    "remix-debug": "./remix/remix-debug",
     "remixd": "git+https://github.com/ethereum/remixd.git"
   },
   "repository": {

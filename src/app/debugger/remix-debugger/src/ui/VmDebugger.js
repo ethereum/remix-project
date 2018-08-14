@@ -29,14 +29,14 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   let _parent = _parentUI.debugger
 
   this.asmCode = new CodeListView(_parent, _codeManager)
-  this.stackPanel = new StackPanel(_parent, _traceManager)
-  this.storagePanel = new StoragePanel(_parent, _traceManager)
-  this.memoryPanel = new MemoryPanel(_parent, _traceManager)
-  this.calldataPanel = new CalldataPanel(_parent, _traceManager)
-  this.callstackPanel = new CallstackPanel(_parent, _traceManager)
-  this.stepDetail = new StepDetail(_parent, _traceManager)
-  this.solidityState = new SolidityState(_parent, _traceManager, _codeManager, _solidityProxy)
-  this.solidityLocals = new SolidityLocals(_parent, _traceManager, _callTree)
+  this.stackPanel = new StackPanel(_parentUI, _traceManager)
+  this.storagePanel = new StoragePanel(_parentUI, _traceManager)
+  this.memoryPanel = new MemoryPanel(_parentUI, _traceManager)
+  this.calldataPanel = new CalldataPanel(_parentUI, _traceManager)
+  this.callstackPanel = new CallstackPanel(_parentUI, _traceManager)
+  this.stepDetail = new StepDetail(_parentUI, _traceManager)
+  this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
+  this.solidityLocals = new SolidityLocals(_parentUI, _traceManager, _callTree)
 
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})

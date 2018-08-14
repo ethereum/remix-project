@@ -69,18 +69,7 @@ function EthdebuggerUI (opts) {
   this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
     self.unLoad()
   })
-  this.stepManager = new StepManager(this, this.debugger.traceManager)
-  this.stepManager.event.register('stepChanged', this, function (stepIndex) {
-    self.stepChanged(stepIndex)
-  })
 
-  this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
-      if (!error) {
-        self.event.trigger('sourceLocationChanged', [sourceLocation])
-      }
-    })
-  })
 }
 
 EthdebuggerUI.prototype.setManagers = function () {
@@ -186,11 +175,11 @@ EthdebuggerUI.prototype.debug = function (tx) {
 }
 
 EthdebuggerUI.prototype.render = function () {
-  var view = yo`<div>
-        <div class="${css.innerShift}">
+  this.browserView = yo`<div class="${css.innerShift}">
           ${this.txBrowser.render()}
-          ${this.stepManager.render()}
-        </div>
+        </div>`
+  var view = yo`<div>
+        ${this.browserView}
         <div class="${css.statusMessage}" >${this.statusMessage}</div>
      </div>`
   if (!this.view) {
@@ -220,8 +209,6 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
     return
   }
 
-  this.statusMessage = 'Loading trace...'
-  yo.update(this.view, this.render())
   console.log('loading trace...')
   this.tx = tx
   //this.tx.hash = txIndex
@@ -232,8 +219,21 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   //this.debugger.addProvider('web3', executionContext.web3())
   //this.debugger.switchProvider('web3')
 
-  this.vmDebugger = new VmDebugger(this, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+  this.stepManager = new StepManager(this, this.debugger.traceManager)
+  this.stepManager.event.register('stepChanged', this, function (stepIndex) {
+    self.stepChanged(stepIndex)
+  })
 
+  this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
+    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
+      if (!error) {
+        self.event.trigger('sourceLocationChanged', [sourceLocation])
+      }
+    })
+  })
+
+  this.vmDebugger = new VmDebugger(this, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+  this.browserView.appendChild(this.stepManager.render())
   this.view.appendChild(this.vmDebugger.render())
 
   this.debugger.debug(tx)
