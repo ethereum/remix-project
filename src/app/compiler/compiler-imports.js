@@ -1,6 +1,6 @@
 'use strict'
 var base64 = require('js-base64').Base64
-var swarmgw = require('swarmgw')
+var swarmgw = require('swarmgw')()
 var request = require('request')
 
 module.exports = class CompilerImports {
