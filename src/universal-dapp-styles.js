@@ -78,7 +78,10 @@ var css = csjs`
   }
   .contractActions {
   }
-  .instanceButton {}
+  .instanceButton {
+    border-radius: 3px;
+    border: .3px solid hsla(0, 82%, 82%, .5);
+  }
   .closeIcon {
     font-size: 12px;
     cursor: pointer;
@@ -157,7 +160,8 @@ var css = csjs`
     border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
     padding: 0px 5px 5px 0px;
     background-color: ${styles.appProperties.primary_BackgroundColor};
-    width: 100%;
+    width: 99%;
+    border-radius: 3px;
   }
   .multiHeader {
     text-align: left;
