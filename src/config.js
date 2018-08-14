@@ -41,7 +41,9 @@ function Config (storage) {
         this.items[key].indexOf('swarm/') !== 0 &&
         this.items[key].indexOf('gist/') !== 0 &&
         this.items[key].indexOf('github/') !== 0 &&
-        this.items[key].indexOf('ipfs/') !== 0) {
+        this.items[key].indexOf('ipfs/') !== 0 &&
+        this.items[key].indexOf('http/') !== 0 &&
+        this.items[key].indexOf('https/') !== 0) {
         this.items[key] = 'browser/' + this.items[key]
       }
     }
