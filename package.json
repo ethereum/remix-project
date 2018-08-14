@@ -45,7 +45,7 @@
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
     "standard": "^8.5.0",
-    "swarmgw": "^0.2.0",
+    "swarmgw": "^0.3.1",
     "tape": "^4.5.1",
     "uglify-js": "^2.8.16",
     "vm-browserify": "0.0.4",
