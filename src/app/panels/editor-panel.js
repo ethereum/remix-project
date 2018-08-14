@@ -24,7 +24,7 @@ class EditorPanel {
     var self = this
     self._deps = {
       config: self._components.registry.get('config').api,
-      txlistener: self._components.registry.get('txlistener').api,
+      txListener: self._components.registry.get('txlistener').api,
       fileManager: self._components.registry.get('filemanager').api,
       udapp: self._components.registry.get('udapp').api
     }
