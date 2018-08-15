@@ -48,14 +48,13 @@ function EthdebuggerUI (opts) {
     self.debugger.codeManager.resolveStep(index, self.tx)
   })
 
-  executionContext.event.register('contextChanged', this, function() {
-    console.dir("== contextChanged!!");
+  executionContext.event.register('contextChanged', this, function () {
     self.updateWeb3Reference()
-  });
+  })
 
-  setTimeout(function() {
+  setTimeout(function () {
     self.updateWeb3Reference()
-  }, 10000);
+  }, 10000)
 
   this.txBrowser = new TxBrowser(this)
   this.txBrowser.event.register('newTxLoading', this, function () {
@@ -124,24 +123,20 @@ EthdebuggerUI.prototype.addProvider = function (type, obj) {
 }
 
 EthdebuggerUI.prototype.updateWeb3Reference = function () {
-  debugger;
   if (!this.txBrowser) return
   this.txBrowser.web3 = this.debugger.web3
 }
 
 EthdebuggerUI.prototype.switchProvider = function (type) {
-  debugger;
   var self = this
   this.web3Providers.get(type, function (error, obj) {
-    debugger;
     if (error) {
       console.log('provider ' + type + ' not defined')
     } else {
       self.web3 = obj
-      //self.setManagers()
+      // self.setManagers()
       self.updateWeb3Reference()
       executionContext.detectNetwork((error, network) => {
-        debugger;
         if (error || !network) {
           self.web3Debug = obj
           self.web3 = obj
@@ -202,7 +197,7 @@ EthdebuggerUI.prototype.stepChanged = function (stepIndex) {
 }
 
 EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
-  const self = this;
+  const self = this
   console.dir('startDebugging')
   console.dir(arguments)
   if (this.debugger.traceManager.isLoading) {
@@ -211,13 +206,13 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
 
   console.log('loading trace...')
   this.tx = tx
-  //this.tx.hash = txIndex
+  // this.tx.hash = txIndex
 
   // this.debugger.setCompilationResult(this.opts.compilationResult())
   // this.setCompilationResult(this.opts.compilationResult())
 
-  //this.debugger.addProvider('web3', executionContext.web3())
-  //this.debugger.switchProvider('web3')
+  // this.debugger.addProvider('web3', executionContext.web3())
+  // this.debugger.switchProvider('web3')
 
   this.stepManager = new StepManager(this, this.debugger.traceManager)
   this.stepManager.event.register('stepChanged', this, function (stepIndex) {
@@ -238,8 +233,8 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
 
   this.debugger.debug(tx)
 
-  //console.dir(this.vmDebugger.render())
-  //console.dir(this.view)
+  // console.dir(this.vmDebugger.render())
+  // console.dir(this.view)
 
   self.debugger.event.register('newTraceLoaded', function () {
     // self.
@@ -247,20 +242,20 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
 
   console.dir('resolving a trace with tx: ')
   console.dir(tx)
-  //this.debugger.traceManager.resolveTrace(tx, function (error, result) {
-  //  console.log('trace loaded ' + result)
-  //  if (result) {
-  //    self.statusMessage = ''
-  //    yo.update(self.view, self.render())
-  //    self.debugger.event.trigger('newTraceLoaded', [self.debugger.traceManager.trace])
-  //    // if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
-  //    //  self.breakpointManager.jumpNextBreakpoint(0, false)
-  //    // }
-  //  } else {
-  //    self.statusMessage = error ? error.message : 'Trace not loaded'
-  //    yo.update(self.view, self.render())
-  //  }
-  //})
+  //  this.debugger.traceManager.resolveTrace(tx, function (error, result) {
+  //    console.log('trace loaded ' + result)
+  //    if (result) {
+  //      self.statusMessage = ''
+  //      yo.update(self.view, self.render())
+  //      self.debugger.event.trigger('newTraceLoaded', [self.debugger.traceManager.trace])
+  //      // if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
+  //      //  self.breakpointManager.jumpNextBreakpoint(0, false)
+  //      // }
+  //    } else {
+  //      self.statusMessage = error ? error.message : 'Trace not loaded'
+  //      yo.update(self.view, self.render())
+  //    }
+  //  })
 }
 
 module.exports = EthdebuggerUI
