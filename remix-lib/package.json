@@ -30,7 +30,7 @@
     "solc": "^0.4.13",
     "standard": "^7.0.1",
     "tape": "^4.6.0",
-    "web3": "^0.18.0"
+    "web3": "0.20.7"
   },
   "scripts": {
     "test": "standard && tape ./test/tests.js"
