@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var async = require('async')
 var helper = require('../../lib/helper.js')
+var tooltip = require('../ui/tooltip')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var globalRegistry = require('../../global/registry')
 var css = require('./styles/test-tab-styles')
@@ -19,13 +20,12 @@ module.exports = class TestTab {
       filePanel: self._components.registry.get('filepanel').api
     }
     self.data = {}
+    self.testList = yo`<div class=${css.testList}></div>`
   }
   render () {
     const self = this
     var testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
     var testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
-    self.data.allTests = getTests(self)
-    self.data.selectedTests = [...self.data.allTests]
 
     var testCallback = function (result) {
       testsOutput.hidden = false
@@ -81,29 +81,38 @@ module.exports = class TestTab {
       })
     }
 
-    function getTests (self) {
+    function getTests (self, cb) {
       var path = self._deps.fileManager.currentPath()
       var provider = self._deps.fileManager.fileProviderOf(path)
       var tests = []
       self._deps.fileManager.filesFromPath(path, (error, files) => {
+        if (error) return cb(error)
         if (!error) {
           for (var file in files) {
             if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
           }
+          cb(null, tests)
         }
       })
-      return tests
     }
 
     self._deps.filePanel.event.register('newTestFileCreated', file => {
       var testList = document.querySelector("[class^='testList']")
-      var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file} </label>`
+      var test = yo`<label><input onchange=${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file}</label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
       self.data.selectedTests.push(file)
     })
 
     self._deps.fileManager.event.register('currentFileChanged', (file, provider) => {
+      getTests(self, (error, tests) => {
+        if (error) return tooltip(error)
+        self.data.allTests = tests
+        self.data.selectedTests = [...self.data.allTests]
+        yo.update(self.testList, yo`<div class=${css.testList}>${listTests()}</div>`)
+        testsOutput.innerHTML = ''
+        testsSummary.innerHTML = ''
+      })
     })
 
     // self._events.filePanel.register('fileRenamed', (oldName, newName, isFolder) => {
@@ -161,7 +170,7 @@ module.exports = class TestTab {
           <div class=${css.generateTestFile} onclick=${generateTestFile}>Generate test file</div>
         </div>
         <div class="${css.tests}">
-          <div class=${css.testList}>${listTests()}</div>
+          ${self.testList}
           <div class=${css.buttons}>
             <div class=${css.runButton} onclick=${runTests}>Run Tests</div>
           </div>
