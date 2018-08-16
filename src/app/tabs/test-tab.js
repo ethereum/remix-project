@@ -1,5 +1,7 @@
 var yo = require('yo-yo')
 var async = require('async')
+var helper = require('../../lib/helper.js')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 var globalRegistry = require('../../global/registry')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
@@ -129,12 +131,29 @@ module.exports = class TestTab {
       async.eachOfSeries(tests, (value, key, callback) => { runTest(value, callback) })
     }
 
+    var generateTestFile = function () {
+      var fileManager = self._deps.fileManager
+      var path = fileManager.currentPath()
+      var fileProvider = fileManager.fileProviderOf(path)
+      if (fileProvider) {
+        helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
+          if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+          if (!fileProvider.set(newFile, testContractSample)) {
+            modalDialogCustom.alert('Failed to create test file ' + newFile)
+          } else {
+            fileManager.switchFile(newFile)
+          }
+        })
+      }
+    }
+
     var el = yo`
       <div class="${css.testTabView}" id="testView">
         <div class="${css.infoBox}">
           Test your smart contract by creating a foo_test.sol file.
           Open ballot_test.sol to see the example. For more details, see
           How to test smart contracts guide in our documentation.
+          <div class=${css.generateTestFile} onclick=${generateTestFile}>Generate test file</div>
         </div>
         <div class="${css.tests}">
           <div class=${css.testList}>${listTests()}</div>
@@ -150,3 +169,43 @@ module.exports = class TestTab {
     return el
   }
 }
+
+var testContractSample = `pragma solidity ^0.4.0;
+import "remix_tests.sol"; // this import is automatically injected by Remix.
+
+// file name has to end with '_test.sol'
+contract test_1 {
+    
+    function beforeAll () {
+      // here should instanciate tested contract
+    }
+    
+    function check1 () public {
+      // this function is not constant, use 'Assert' to test the contract
+      Assert.equal(uint(2), uint(1), "error message");
+      Assert.equal(uint(2), uint(2), "error message");
+    }
+    
+    function check2 () public constant returns (bool) {
+      // this function is constant, use the return value (true or false) to test the contract
+      return true;
+    }
+}
+
+contract test_2 {
+   
+    function beforeAll () {
+      // here should instanciate tested contract
+    }
+    
+    function check1 () public {
+      // this function is not constant, use 'Assert' to test the contract
+      Assert.equal(uint(2), uint(1), "error message");
+      Assert.equal(uint(2), uint(2), "error message");
+    }
+    
+    function check2 () public constant returns (bool) {
+      // this function is constant, use the return value (true or false) to test the contract
+      return true;
+    }
+}`

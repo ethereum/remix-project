@@ -11,7 +11,7 @@ module.exports = {
     var len = data.length
     return data.slice(0, 5) + '...' + data.slice(len - 5, len)
   },
-  createNonClashingName (name, fileProvider, cb) {
+  createNonClashingNameWithPrefix (name, fileProvider, prefix, cb) {
     var counter = ''
     var ext = 'sol'
     var reg = /(.*)\.([^.]+)/g
@@ -24,7 +24,7 @@ module.exports = {
     async.whilst(
       () => { return exist },
       (callback) => {
-        fileProvider.exists(name + counter + '.' + ext, (error, currentExist) => {
+        fileProvider.exists(name + counter + prefix + '.' + ext, (error, currentExist) => {
           if (error) {
             callback(error)
           } else {
@@ -34,8 +34,11 @@ module.exports = {
           }
         })
       },
-      (error) => { cb(error, name + counter + '.' + ext) }
+      (error) => { cb(error, name + counter + prefix + '.' + ext) }
     )
+  },
+  createNonClashingName (name, fileProvider, cb) {
+    this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
   },
   checkSpecialChars (name) {
     return name.match(/[/:*?"<>\\'|]/) != null

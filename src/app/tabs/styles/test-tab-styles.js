@@ -49,6 +49,10 @@ var css = csjs`
   .runButton {
     ${styles.rightPanel.testTab.button_runTests};
   }
+  .generateTestFile {
+    ${styles.rightPanel.testTab.button_generateTestFile};
+    min-width: 100px
+  }
 `
 
 module.exports = css
