@@ -150,8 +150,13 @@ module.exports = class TestTab {
     var el = yo`
       <div class="${css.testTabView}" id="testView">
         <div class="${css.infoBox}">
-          Test your smart contract by creating a foo_test.sol file.
-          Open ballot_test.sol to see the example. For more details, see
+        <div class="${css.title}">Unit Testing</div>
+          Test your smart contract by creating a foo_test.sol file. Open ballot_test.sol to see the example.
+          <br/>
+          Then use the stand alone NPM module remix-tests to run unit tests in your Continuous Integration
+          <a href="https://www.npmjs.com/package/remix-tests">https://www.npmjs.com/package/remix-tests</a>.
+          <br/>
+          For more details, see
           How to test smart contracts guide in our documentation.
           <div class=${css.generateTestFile} onclick=${generateTestFile}>Generate test file</div>
         </div>
