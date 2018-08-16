@@ -109,7 +109,13 @@ module.exports = class TestTab {
         if (error) return tooltip(error)
         self.data.allTests = tests
         self.data.selectedTests = [...self.data.allTests]
-        yo.update(self.testList, yo`<div class=${css.testList}>${listTests()}</div>`)
+        if (!tests.length) {
+          yo.update(self.testList, yo`<div class=${css.testList}>No test file available</div>`)
+        } else {
+          yo.update(self.testList, yo`<div class=${css.testList}>${listTests()}</div>`)
+        }
+        testsOutput.hidden = true
+        testsSummary.hidden = true
         testsOutput.innerHTML = ''
         testsSummary.innerHTML = ''
       })
