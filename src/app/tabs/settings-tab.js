@@ -2,8 +2,8 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
+const defaultPlugins = require('../plugin/plugins')
 var globalRegistry = require('../../global/registry')
-var modal = require('../ui/modal-dialog-custom')
 var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
@@ -30,6 +30,7 @@ module.exports = class SettingsTab {
       optionVM: null, personal: null, warnPersonalMode: null,
       pluginInput: null, versionSelector: null, version: null,
       theme: { dark: null, light: null },
+      plugins: {},
       config: {
         general: null, themes: null,
         plugin: null
@@ -109,15 +110,15 @@ module.exports = class SettingsTab {
           <label for="themeDark">Dark Theme</label>
         </div>
       </div>`
+    self._view.config.plugins = yo`<div></div>`
     self._view.config.plugin = yo`
       <div class="${css.info}">
         <div class=${css.title}>Plugin</div>
         <div class="${css.crowNoFlex}">
-          <input onclick=${() => { onLoadPlugin('oraclize') }} type="button" value="Oraclize" class="${css.pluginLoad}">
-          <input onclick=${() => { onLoadPlugin('etherscan-general') }} type="button" value="Etherscan-general" class="${css.pluginLoad}">
           <div>Load plugin from JSON description: </div>
           ${self._view.pluginInput}
           <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
+          ${self._view.config.plugins}
         </div>
       </div>`
     self._view.el = yo`
@@ -127,21 +128,57 @@ module.exports = class SettingsTab {
         ${self._view.gistToken}
         ${self._view.config.themes}
       </div>`
-    function onchangeOption (event) {
-      self._deps.config.set('settings/always-use-vm', !self._deps.config.get('settings/always-use-vm'))
+
+    function loadPlugins (plugins, opt) {
+      for (var k in plugins) {
+        var plugin = plugins[k]
+        if (!self._view.plugins[plugin.title]) self._view.plugins[plugin.title] = {}
+        self._view.plugins[plugin.title].json = plugin
+        self._view.plugins[plugin.title].el = yo`<div class="${css.pluginLoad}">
+        <div style="display: inline-block" onclick=${() => { onLoadPlugin(plugin.title) }}>${plugin.title}</div>
+        ${opt.removable ? yo`<span class="removePlugin" onclick=${() => { onRemovePlugin(plugin.title) }}><i class="fa fa-close"></i></span>` : yo`<span></span>`}
+        </div>`
+        self._view.config.plugins.appendChild(self._view.plugins[plugin.title].el)
+      }
     }
+
+    function getSavedPlugin () {
+      var savedPlugin = self._deps.config.get('settings/plugins-list')
+      return savedPlugin ? JSON.parse(savedPlugin) : {}
+    }
+    function setSavedPlugin (savedPlugins) {
+      self._deps.config.set('settings/plugins-list', JSON.stringify(savedPlugins))
+    }
+    loadPlugins(defaultPlugins, {removable: false})
+    loadPlugins(getSavedPlugin(), {removable: true})
+
     function onLoadPlugin (name) {
-      // @TODO: BAD! REFACTOR: no module should trigger events of another modules emitter
-      self._deps.righthandpanel.event.trigger('plugin-name-loadRequest', [name])
+      self.event.trigger('plugin-loadRequest', [self._view.plugins[name].json])
+    }
+    function onRemovePlugin (name) {
+      var savedPlugin = getSavedPlugin()
+      delete savedPlugin[name]
+      setSavedPlugin(savedPlugin)
+      if (self._view.plugins[name]) {
+        self._view.plugins[name].el.parentNode.removeChild(self._view.plugins[name].el)
+        delete self._view.plugins[name]
+      }
     }
     function onloadPluginJson (event) {
       try {
         var json = JSON.parse(self._view.pluginInput.value)
       } catch (e) {
-        return modal.alert('cannot parse the plugin definition to JSON')
+        return tooltip('cannot parse the plugin definition to JSON')
       }
-      // @TODO: BAD! REFACTOR: no module should trigger events of another modules emitter
-      self._deps.righthandpanel.event.trigger('plugin-loadRequest', [json])
+      var savedPlugin = getSavedPlugin()
+      if (self._view.plugins[json.title]) return tooltip('Plugin already loaded')
+      savedPlugin[json.title] = json
+      setSavedPlugin(savedPlugin)
+      loadPlugins([json], {removable: true})
+    }
+
+    function onchangeOption (event) {
+      self._deps.config.set('settings/always-use-vm', !self._deps.config.get('settings/always-use-vm'))
     }
     function onswitch2darkTheme (event) {
       styleGuide.switchTheme('dark')
@@ -217,6 +254,9 @@ const css = csjs`
     ${styles.rightPanel.settingsTab.button_LoadPlugin};
     width: inherit;
     display: inline-block;
+  }
+  .removePlugin {
+    cursor: pointer;
   }
   i.warnIt {
     color: ${styles.appProperties.warningText_Color};
