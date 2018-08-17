@@ -98,8 +98,10 @@ function Debugger (container, sourceHighlighter, localRegistry) {
  */
 Debugger.prototype.debug = function (txHash) {
   var self = this
+
   this.debugger.web3.eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
+      self.debugger_ui.txBrowser.event.trigger('newTraceRequested', [undefined, undefined, tx])
       self.debugger.debug(tx)
     }
   })
