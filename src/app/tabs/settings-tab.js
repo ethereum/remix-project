@@ -32,7 +32,7 @@ module.exports = class SettingsTab {
       theme: { dark: null, light: null },
       config: {
         general: null, themes: null,
-        plugin: null, remixd: null, localremixd: null
+        plugin: null
       }
     } /* eslint-enable */
     self.data = {}
@@ -120,39 +120,12 @@ module.exports = class SettingsTab {
           <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
         </div>
       </div>`
-    self._view.config.remixd = yo`
-      <div class="${css.info}">
-        <div class=${css.title}>Remixd</div>
-        <div class="${css.crow}">
-          Remixd is a tool which allow Remix IDE to access files located in your local computer.
-          it can also be used to setup a development environment.
-        </div>
-        <div class="${css.crow}">More infos:</div>
-        <div class="${css.crow}"><a target="_blank" href="https://github.com/ethereum/remixd"> https://github.com/ethereum/remixd</a></div>
-        <div class="${css.crow}"><a target="_blank" href="https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a></div>
-        <div class="${css.crow}">Installation: <pre class=${css.remixdinstallation}>npm install remixd -g</pre></div>
-      </div>`
-    self._view.config.localremixd = yo`
-      <div class="${css.info}">
-        <div class=${css.title}>Running Remix locally</div>
-        <div class="${css.crow}">
-          as a NPM module:
-        </div>
-        <a target="_blank" href="https://www.npmjs.com/package/remix-ide">https://www.npmjs.com/package/remix-ide</a>
-        <pre class=${css.remixdinstallation}>npm install remix-ide -g</pre>
-        <div class="${css.crow}">
-          as an electron app:
-        </div>
-        <a target="_blank" href="https://github.com/horizon-games/remix-app">https://github.com/horizon-games/remix-app</a>
-      </div>`
     self._view.el = yo`
       <div class="${css.settingsTabView} "id="settingsView">
         ${self._view.config.general}
         ${self._view.config.plugin}
         ${self._view.gistToken}
         ${self._view.config.themes}
-        ${self._view.config.remixd}
-        ${self._view.config.localremixd}
       </div>`
     function onchangeOption (event) {
       self._deps.config.set('settings/always-use-vm', !self._deps.config.get('settings/always-use-vm'))
@@ -250,11 +223,6 @@ const css = csjs`
   }
   .icon {
     margin-right: .5em;
-  }
-  .remixdinstallation {
-    padding: 3px;
-    border-radius: 2px;
-    margin-left: 5px;
   }
   .savegisttoken {
     margin-left: 5px;
