@@ -1,5 +1,8 @@
 var yo = require('yo-yo')
 var async = require('async')
+var helper = require('../../lib/helper.js')
+var tooltip = require('../ui/tooltip')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 var globalRegistry = require('../../global/registry')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
@@ -17,13 +20,12 @@ module.exports = class TestTab {
       filePanel: self._components.registry.get('filepanel').api
     }
     self.data = {}
+    self.testList = yo`<div class=${css.testList}></div>`
   }
   render () {
     const self = this
     var testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
     var testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
-    self.data.allTests = getTests(self)
-    self.data.selectedTests = [...self.data.allTests]
 
     var testCallback = function (result) {
       testsOutput.hidden = false
@@ -79,29 +81,44 @@ module.exports = class TestTab {
       })
     }
 
-    function getTests (self) {
+    function getTests (self, cb) {
       var path = self._deps.fileManager.currentPath()
       var provider = self._deps.fileManager.fileProviderOf(path)
       var tests = []
       self._deps.fileManager.filesFromPath(path, (error, files) => {
+        if (error) return cb(error)
         if (!error) {
           for (var file in files) {
             if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
           }
+          cb(null, tests)
         }
       })
-      return tests
     }
 
     self._deps.filePanel.event.register('newTestFileCreated', file => {
       var testList = document.querySelector("[class^='testList']")
-      var test = yo`<label><input onchange =${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file} </label>`
+      var test = yo`<label><input onchange=${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file}</label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
       self.data.selectedTests.push(file)
     })
 
     self._deps.fileManager.event.register('currentFileChanged', (file, provider) => {
+      getTests(self, (error, tests) => {
+        if (error) return tooltip(error)
+        self.data.allTests = tests
+        self.data.selectedTests = [...self.data.allTests]
+        if (!tests.length) {
+          yo.update(self.testList, yo`<div class=${css.testList}>No test file available</div>`)
+        } else {
+          yo.update(self.testList, yo`<div class=${css.testList}>${listTests()}</div>`)
+        }
+        testsOutput.hidden = true
+        testsSummary.hidden = true
+        testsOutput.innerHTML = ''
+        testsSummary.innerHTML = ''
+      })
     })
 
     // self._events.filePanel.register('fileRenamed', (oldName, newName, isFolder) => {
@@ -129,15 +146,37 @@ module.exports = class TestTab {
       async.eachOfSeries(tests, (value, key, callback) => { runTest(value, callback) })
     }
 
+    var generateTestFile = function () {
+      var fileManager = self._deps.fileManager
+      var path = fileManager.currentPath()
+      var fileProvider = fileManager.fileProviderOf(path)
+      if (fileProvider) {
+        helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
+          if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+          if (!fileProvider.set(newFile, testContractSample)) {
+            modalDialogCustom.alert('Failed to create test file ' + newFile)
+          } else {
+            fileManager.switchFile(newFile)
+          }
+        })
+      }
+    }
+
     var el = yo`
       <div class="${css.testTabView}" id="testView">
         <div class="${css.infoBox}">
-          Test your smart contract by creating a foo_test.sol file.
-          Open ballot_test.sol to see the example. For more details, see
+        <div class="${css.title}">Unit Testing</div>
+          Test your smart contract by creating a foo_test.sol file. Open ballot_test.sol to see the example.
+          <br/>
+          Then use the stand alone NPM module remix-tests to run unit tests in your Continuous Integration
+          <a href="https://www.npmjs.com/package/remix-tests">https://www.npmjs.com/package/remix-tests</a>.
+          <br/>
+          For more details, see
           How to test smart contracts guide in our documentation.
+          <div class=${css.generateTestFile} onclick=${generateTestFile}>Generate test file</div>
         </div>
         <div class="${css.tests}">
-          <div class=${css.testList}>${listTests()}</div>
+          ${self.testList}
           <div class=${css.buttons}>
             <div class=${css.runButton} onclick=${runTests}>Run Tests</div>
           </div>
@@ -150,3 +189,43 @@ module.exports = class TestTab {
     return el
   }
 }
+
+var testContractSample = `pragma solidity ^0.4.0;
+import "remix_tests.sol"; // this import is automatically injected by Remix.
+
+// file name has to end with '_test.sol'
+contract test_1 {
+    
+    function beforeAll () {
+      // here should instanciate tested contract
+    }
+    
+    function check1 () public {
+      // this function is not constant, use 'Assert' to test the contract
+      Assert.equal(uint(2), uint(1), "error message");
+      Assert.equal(uint(2), uint(2), "error message");
+    }
+    
+    function check2 () public constant returns (bool) {
+      // this function is constant, use the return value (true or false) to test the contract
+      return true;
+    }
+}
+
+contract test_2 {
+   
+    function beforeAll () {
+      // here should instanciate tested contract
+    }
+    
+    function check1 () public {
+      // this function is not constant, use 'Assert' to test the contract
+      Assert.equal(uint(2), uint(1), "error message");
+      Assert.equal(uint(2), uint(2), "error message");
+    }
+    
+    function check2 () public constant returns (bool) {
+      // this function is constant, use the return value (true or false) to test the contract
+      return true;
+    }
+}`

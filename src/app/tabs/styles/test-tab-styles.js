@@ -49,6 +49,15 @@ var css = csjs`
   .runButton {
     ${styles.rightPanel.testTab.button_runTests};
   }
+  .generateTestFile {
+    ${styles.rightPanel.testTab.button_generateTestFile};
+    min-width: 100px
+  }
+  .title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
 `
 
 module.exports = css
