@@ -13,7 +13,7 @@ var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
 var langTools = ace.acequire('ace/ext/language_tools')
-require('./mode-solidity.js')
+require('ace-mode-solidity/build/remix-ide/mode-solidity')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
@@ -143,7 +143,7 @@ function Editor (opts = {}, localRegistry) {
   }
 
   function createSession (content) {
-    var s = new ace.EditSession(content, 'ace/mode/javascript')
+    var s = new ace.EditSession(content, 'ace/mode/solidity')
     s.setUndoManager(new ace.UndoManager())
     s.setTabSize(4)
     s.setUseSoftTabs(true)
