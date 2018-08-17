@@ -148,9 +148,9 @@ module.exports = class SettingsTab {
     self._view.el = yo`
       <div class="${css.settingsTabView} "id="settingsView">
         ${self._view.config.general}
+        ${self._view.config.plugin}
         ${self._view.gistToken}
         ${self._view.config.themes}
-        ${self._view.config.plugin}
         ${self._view.config.remixd}
         ${self._view.config.localremixd}
       </div>`
