@@ -73,13 +73,17 @@ TxBrowser.prototype.setDefaultValues = function () {
   }
 }
 
-TxBrowser.prototype.submit = function () {
+TxBrowser.prototype.submit = function (tx) {
+  var self = this
+  self.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
+  if (tx) {
+    return self.update(null, tx)
+  }
   if (!this.txNumber) {
+    self.update('no tx index or tx hash to look for')
     return
   }
-  this.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
   try {
-    var self = this
     if (this.txNumber.indexOf('0x') !== -1) {
       self.web3.eth.getTransaction(this.txNumber, function (error, result) {
         self.update(error, result)
@@ -150,9 +154,9 @@ TxBrowser.prototype.updateTxN = function (ev) {
   this.txNumber = ev.target.value
 }
 
-TxBrowser.prototype.load = function (txHash) {
+TxBrowser.prototype.load = function (txHash, tx) {
   this.txNumber = txHash
-  this.submit()
+  this.submit(tx)
 }
 
 TxBrowser.prototype.unload = function (txHash) {
