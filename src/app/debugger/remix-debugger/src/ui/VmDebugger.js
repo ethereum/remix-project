@@ -1,4 +1,5 @@
 'use strict'
+var csjs = require('csjs-inject')
 var CodeListView = require('./CodeListView')
 var CalldataPanel = require('./CalldataPanel')
 var MemoryPanel = require('./MemoryPanel')
@@ -13,6 +14,16 @@ var SolidityLocals = require('./SolidityLocals')
 var remixCore = require('remix-core')
 var StorageResolver = remixCore.storage.StorageResolver
 var yo = require('yo-yo')
+
+var css = csjs`
+  .asmCode {
+    float: left;
+    width: 250px;
+  }
+  .stepDetail {
+    float: right;
+  }
+`
 
 function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _callTree) {
   this.asmCode = new CodeListView(_parent, _codeManager)
@@ -50,33 +61,50 @@ function VmDebugger (_parent, _traceManager, _codeManager, _solidityProxy, _call
     self.solidityState.storageResolver = storageResolver
     self.solidityLocals.storageResolver = storageResolver
     self.fullStoragesChangesPanel.storageResolver = storageResolver
+    self.headView.style.display = 'block'
     self.view.style.display = 'block'
   })
   _parent.event.register('traceUnloaded', this, function () {
+    self.headView.style.display = 'none'
     self.view.style.display = 'none'
   })
   _parent.callTree.event.register('callTreeReady', () => {
+    self.asmCode.basicPanel.show()
     if (_parent.callTree.reducedTrace.length) {
       self.solidityLocals.basicPanel.show()
       self.solidityState.basicPanel.show()
-    } else {
-      self.asmCode.basicPanel.show()
     }
+    self.stackPanel.basicPanel.show()
+    self.storagePanel.basicPanel.show()
+    self.memoryPanel.basicPanel.show()
+    self.calldataPanel.basicPanel.show()
+    self.callstackPanel.basicPanel.show()
   })
+}
+
+VmDebugger.prototype.renderHead = function () {
+  var headView = yo`<div id='vmheadView' style='display:none'>
+        <div>
+          <div class=${css.asmCode}>${this.asmCode.render()}</div>
+          <div class=${css.stepDetail}>${this.stepDetail.render()}</div>
+        </div>
+      </div>`
+  if (!this.headView) {
+    this.headView = headView
+  }
+  return headView
 }
 
 VmDebugger.prototype.render = function () {
   var view = yo`<div id='vmdebugger' style='display:none'>
         <div>
-            ${this.asmCode.render()}
             ${this.solidityLocals.render()}
             ${this.solidityState.render()}
-            ${this.stepDetail.render()}
             ${this.stackPanel.render()}
-            ${this.storagePanel.render()}
             ${this.memoryPanel.render()}
-            ${this.calldataPanel.render()}
+            ${this.storagePanel.render()}
             ${this.callstackPanel.render()}
+            ${this.calldataPanel.render()}
             ${this.returnValuesPanel.render()}
             ${this.fullStoragesChangesPanel.render()}
           </div>
