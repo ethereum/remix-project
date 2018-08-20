@@ -15,6 +15,7 @@ function StepManager (_parent, _traceManager) {
 
   var self = this
   this.parent.event.register('newTraceLoaded', this, function () {
+    if (!this.slider) return
     self.traceManager.getLength(function (error, length) {
       if (error) {
         console.log(error)
@@ -33,6 +34,7 @@ function StepManager (_parent, _traceManager) {
   })
 
   this.parent.callTree.event.register('callTreeReady', () => {
+    if (!this.slider) return
     if (this.parent.callTree.functionCallStack.length) {
       this.jumpTo(this.parent.callTree.functionCallStack[0])
     }
@@ -63,6 +65,14 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
     self.parent.breakpointManager.jumpPreviousBreakpoint(this.parent.currentStepIndex, true)
   })
+}
+
+StepManager.prototype.remove = function () {
+  // used to stop listenning on event. bad and should be "refactored"
+  this.slider.view = null
+  this.slider = null
+  this.buttonNavigator.view = null
+  this.buttonNavigator = null
 }
 
 StepManager.prototype.resolveToReducedTrace = function (value, incr) {
