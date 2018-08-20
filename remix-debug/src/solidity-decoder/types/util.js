@@ -9,6 +9,7 @@ module.exports = {
   extractHexByteSlice: extractHexByteSlice,
   toBN: toBN,
   add: add,
+  sub: sub,
   extractLocation: extractLocation,
   removeLocation: removeLocation,
   normalizeHex: normalizeHex,
@@ -86,6 +87,10 @@ function toBN (value) {
 
 function add (value1, value2) {
   return toBN(value1).add(toBN(value2))
+}
+
+function sub (value1, value2) {
+  return toBN(value1).sub(toBN(value2))
 }
 
 function removeLocation (type) {
