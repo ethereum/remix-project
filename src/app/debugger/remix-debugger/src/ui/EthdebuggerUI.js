@@ -56,7 +56,7 @@ function EthdebuggerUI (opts) {
     self.updateWeb3Reference()
   }, 10000)
 
-  this.txBrowser = new TxBrowser(this)
+  this.txBrowser = new TxBrowser(this, {displayConnectionSetting: false})
   this.txBrowser.event.register('newTxLoading', this, function () {
     self.unLoad()
   })
