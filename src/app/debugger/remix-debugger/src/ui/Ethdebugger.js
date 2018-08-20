@@ -133,6 +133,7 @@ Ethdebugger.prototype.render = function () {
   var view = yo`<div>
         <div class="${css.innerShift}">
           ${this.txBrowser.render()}
+          ${this.vmDebugger.renderHead()}
           ${this.stepManager.render()}
         </div>
         <div class="${css.statusMessage}" >${this.statusMessage}</div>

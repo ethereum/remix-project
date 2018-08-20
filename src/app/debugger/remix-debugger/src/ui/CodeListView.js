@@ -11,9 +11,8 @@ var styles = styleGuide.chooser()
 var css = csjs`
   .instructions {
     ${styles.rightPanel.debuggerTab.box_Debugger}
-    width: 75%;
     overflow-y: scroll;
-    max-height: 250px;
+    max-height: 100px;
   }
 `
 function CodeListView (_parent, _codeManager) {
@@ -24,7 +23,7 @@ function CodeListView (_parent, _codeManager) {
   this.address
   this.codeView
   this.itemSelected
-  this.basicPanel = new DropdownPanel('Instructions', {json: false})
+  this.basicPanel = new DropdownPanel('Instructions', {json: false, displayContentOnly: true})
   this.basicPanel.event.register('hide', () => {
     this.event.trigger('hide', [])
   })

@@ -4,7 +4,6 @@ var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 var yo = require('yo-yo')
 var init = remixLib.init
-var DropdownPanel = require('./DropdownPanel')
 var csjs = require('csjs-inject')
 var styleGuide = require('../../../../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -39,9 +38,6 @@ var css = csjs`
   .txbutton:hover {
     color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
-  .txinfo {
-    margin-top: 5px;
-  }
   .vmargin {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -54,8 +50,6 @@ function TxBrowser (_parent) {
   this.txNumber
   this.view
   this.displayConnectionSetting = true
-  this.basicPanel = new DropdownPanel('Transaction', {json: true})
-  this.basicPanel.data = {}
   var self = this
   _parent.event.register('providerChanged', this, function (provider) {
     self.displayConnectionSetting = provider === 'INTERNAL'
@@ -74,8 +68,6 @@ function TxBrowser (_parent) {
 
 TxBrowser.prototype.setDefaultValues = function () {
   this.connectInfo = ''
-  this.basicPanel.update({})
-  this.basicPanel.hide()
   if (this.view) {
     yo.update(this.view, this.render())
   }
@@ -124,7 +116,6 @@ TxBrowser.prototype.update = function (error, tx) {
       this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
     }
   }
-  this.basicPanel.update(info)
 }
 
 TxBrowser.prototype.updateWeb3Url = function (newhost) {
@@ -198,9 +189,6 @@ TxBrowser.prototype.render = function () {
           </div>
         </div>
         <span id='error'></span>
-        <div style=${css.txinfo} id='txinfo'>
-          ${this.basicPanel.render()}
-        </div>
       </div>`
   if (!this.view) {
     this.view = view

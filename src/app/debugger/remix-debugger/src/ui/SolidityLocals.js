@@ -49,6 +49,7 @@ class SolidityLocals {
 }
 
 function decode (self, sourceLocation) {
+  self.basicPanel.setMessage('')
   self.traceManager.waterfall([
     self.traceManager.getStackAt,
     self.traceManager.getMemoryAt,
@@ -67,6 +68,9 @@ function decode (self, sourceLocation) {
           localDecoder.solidityLocals(self.parent.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
             if (!locals.error) {
               self.basicPanel.update(locals)
+            }
+            if (!Object.keys(locals).length) {
+              self.basicPanel.setMessage('no locals')
             }
           })
         } catch (e) {

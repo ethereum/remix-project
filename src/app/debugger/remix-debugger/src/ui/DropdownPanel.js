@@ -61,6 +61,7 @@ function DropdownPanel (_name, _opts) {
   this.name = _name
   this.header = ''
   this.json = _opts.json
+  this.displayContentOnly = _opts.displayContentOnly
   if (this.json) {
     this.treeView = new TreeView(_opts)
   }
@@ -97,8 +98,10 @@ DropdownPanel.prototype.update = function (_data, _header) {
     this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
     this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.mainText_Color
     this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
-    this.view.querySelector('.title div.btn').style.display = 'block'
-    this.view.querySelector('.title span').innerText = _header || ' '
+    if (!this.displayContentOnly) {
+      this.view.querySelector('.title div.btn').style.display = 'block'
+      this.view.querySelector('.title span').innerText = _header || ' '
+    }
     this.message('')
     if (this.json) {
       this.treeView.update(_data)
@@ -120,6 +123,18 @@ DropdownPanel.prototype.render = function (overridestyle) {
   }
   overridestyle === undefined ? {} : overridestyle
   var self = this
+  var title = !self.displayContentOnly ? yo`<div class="${css.title} title">
+      <div class="${css.icon} fa fa-caret-right" onclick=${function () { self.toggle() }} ></div>
+      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
+      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fa fa-clipboard"></div>
+    </div>` : yo`<div></div>`
+
+  var contentNode = yo`<div class='dropdownpanel' style='display:none'>
+      <i class="${css.refresh} fa fa-refresh" aria-hidden="true"></i>
+      <div class='dropdowncontent'>${content}</div>
+      <div class='dropdownrawcontent' style='display:none'></div>
+      <div class='message' style='display:none'></div>
+    </div>`
   var view = yo`
     <div>
     <style>
@@ -133,21 +148,13 @@ DropdownPanel.prototype.render = function (overridestyle) {
         to {transform:rotate(359deg);}
       }
     </style>
-    <div class="${css.title} title">
-      <div class="${css.icon} fa fa-caret-right" onclick=${function () { self.toggle() }} ></div>
-      <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
-      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fa fa-clipboard"></div>
-    </div>
-    <div class='dropdownpanel' style='display:none'>
-      <i class="${css.refresh} fa fa-refresh" aria-hidden="true"></i>
-      <div class='dropdowncontent'>${content}</div>
-      <div class='dropdownrawcontent' style='display:none'></div>
-      <div class='message' style='display:none'></div>
-    </div>
+    ${title}
+    ${contentNode}
     </div>`
   if (!this.view) {
     this.view = view
   }
+  if (self.displayContentOnly) contentNode.style.display = 'block'
   return view
 }
 
@@ -171,7 +178,7 @@ DropdownPanel.prototype.toggle = function () {
 }
 
 DropdownPanel.prototype.hide = function () {
-  if (this.view) {
+  if (this.view && !this.displayContentOnly) {
     var caret = this.view.querySelector('.title').firstElementChild
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = 'none'
@@ -181,7 +188,7 @@ DropdownPanel.prototype.hide = function () {
 }
 
 DropdownPanel.prototype.show = function () {
-  if (this.view) {
+  if (this.view && !this.displayContentOnly) {
     var caret = this.view.querySelector('.title').firstElementChild
     var el = this.view.querySelector('.dropdownpanel')
     el.style.display = ''

@@ -6,7 +6,7 @@ function StepDetail (_parent, _traceManager) {
   this.parent = _parent
   this.traceManager = _traceManager
 
-  this.basicPanel = new DropdownPanel('Step detail', {json: true})
+  this.basicPanel = new DropdownPanel('Step detail', {json: true, displayContentOnly: true})
 
   this.detail = initDetail()
   this.view
