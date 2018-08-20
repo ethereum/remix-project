@@ -18,6 +18,7 @@ var Recorder = require('../../recorder')
 var addTooltip = require('../ui/tooltip')
 var css = require('./styles/run-tab-styles')
 var MultiParamManager = require('../../multiParamManager')
+var modalDialog = require('../ui/modaldialog')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -421,24 +422,44 @@ function contractDropdown (events, self) {
       return
     }
 
-    var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-    self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
-      if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-      if (contractMetadata.autoDeployLib) {
-        txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
-          createInstanceCallback(error, selectedContract, data)
-        }, (msg) => {
-          self._deps.logCallback(msg)
-        }, (data, runTxCallback) => {
-          // called for libraries deployment
-          self._deps.udapp.runTx(data, runTxCallback)
-        })
-      } else {
-        txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
-          createInstanceCallback(error, selectedContract, data)
-        })
-      }
-    })
+    var forceSend = () => {
+      var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
+      self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
+        if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+        if (contractMetadata.autoDeployLib) {
+          txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
+            createInstanceCallback(error, selectedContract, data)
+          }, (msg) => {
+            self._deps.logCallback(msg)
+          }, (data, runTxCallback) => {
+            // called for libraries deployment
+            self._deps.udapp.runTx(data, runTxCallback)
+          })
+        } else {
+          txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
+            createInstanceCallback(error, selectedContract, data)
+          })
+        }
+      })
+    }
+
+    if (selectedContract.contract.object.evm.deployedBytecode.object.length / 2 > 24576) {
+      modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
+      More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
+      </div>`,
+        {
+          label: 'Force Send',
+          fn: () => {
+            forceSend()
+          }}, {
+            label: 'Cancel',
+            fn: () => {
+              self._deps.logCallback(`creation of ${selectedContract.name} canceled by user.`)
+            }
+          })
+    } else {
+      forceSend()
+    }
   }
 
   // ACCESS DEPLOYED INSTANCE
