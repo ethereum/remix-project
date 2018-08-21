@@ -36,7 +36,6 @@ function loadTraceNotFound (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .click('#txinfo .title')
     .execute(function () {
       return document.querySelector('#debugger #error').innerHTML
     }, [], function (result) {
