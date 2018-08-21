@@ -40,8 +40,8 @@ function loadTraceNotFound (browser) {
       return document.querySelector('div[class^="container"] #error').innerHTML
     }, [], function (result) {
       console.log(result.value)
-      if (result.value.indexOf('unable to retrieve tx 0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51') === -1) {
-        browser.assert.fail(' "unable to retrieve tx ..." error message should have been displayed ', 'info about error', '')
+      if (result.value.indexOf('0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51') === -1) {
+        browser.assert.fail(' error with transaction hash should have been displayed', 'info about error', '')
       }
     })
   return browser
