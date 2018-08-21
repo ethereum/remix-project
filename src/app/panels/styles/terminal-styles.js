@@ -79,6 +79,7 @@ var css = csjs`
     padding           : 1ch;
     margin-top        : 2ch;
     border-top        : 0.07ch solid ${styles.colors.veryLightGrey};
+    color             : ${styles.appProperties.mainText_Color};
   }
   .cli                {
     line-height       : 1.7em;
