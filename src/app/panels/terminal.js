@@ -199,6 +199,10 @@ class Terminal {
         background-color : #a6aeba;
         cursor           : pointer;
       }
+      .ul                 {
+        padding-left     : 20px;
+        padding-bottom   : 5px;
+      }
     `
     var text = yo`<div class="${css2.overlay} ${css2.text}"></div>`
     var background = yo`<div class="${css2.overlay} ${css2.background}"></div>`
@@ -342,13 +346,21 @@ class Terminal {
 
     var intro = yo`<div><div> - Welcome to Remix v0.6.4 - </div><br>
                   <div>You can use this terminal for: </div>
-                  <div> - Checking transactions details and start debugging.</div>
-                  <div> - Running JavaScript scripts.</div>
-                  <div> - Running JavaScript scripts involving web3 if the current environement is injected provider or Web3 provider.</div>
-                  <div> - Executing common command to interact with the Remix interface (see list of commands below). Note that these command can also be included in a JavaScript script.</div></div>`
+                  <ul class=${css2.ul}>
+                    <li>Checking transactions details and start debugging.</li>
+                    <li>Running JavaScript scripts. The following libraries are accessible:
+                      <ul class=${css2.ul}>
+                        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
+                        <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
+                        <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
+                      </ul>
+                    </li>
+                    <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
+                  </ul>
+                  </div>`
 
-    self.commands.html(intro)
     self._shell('remix.help()', self.commands, () => {})
+    self.commands.html(intro)
     return self._view.el
 
     function change (event) {
@@ -579,7 +591,7 @@ function domTerminalFeatures (self, scopedCommands) {
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,
-    web3: executionContext.getProvider() !== 'vm' ? new Web3(executionContext.web3().currentProvider) : null,
+    web3: new Web3(executionContext.web3().currentProvider),
     console: {
       log: function () { scopedCommands.log.apply(scopedCommands, arguments) },
       info: function () { scopedCommands.info.apply(scopedCommands, arguments) },
