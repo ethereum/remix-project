@@ -37,7 +37,7 @@ function loadTraceNotFound (browser) {
     .setValue('#txinput', '0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
     .execute(function () {
-      return document.querySelector('#debugger #error').innerHTML
+      return document.querySelector('div[class^="container"] #error').innerHTML
     }, [], function (result) {
       console.log(result.value)
       if (result.value.indexOf('unable to retrieve tx 0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51') === -1) {
