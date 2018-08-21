@@ -45,8 +45,6 @@ function runTests (browser, testData) {
       .click('span#tx0x0571a2439ea58bd349dd130afb8aff62a33af14c06de0dbc3928519bdf13ce2e div[class^="debug"]')
       .pause(1000)
       .click('#jumppreviousbreakpoint')
-      .click('#stepdetail .title .fa')
-      .click('#asmcodes .title .fa')
       .pause(500)
       .perform(function (client, done) {
         console.log('goToVMtraceStep')
