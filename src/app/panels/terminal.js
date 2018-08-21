@@ -483,7 +483,7 @@ class Terminal {
         if (args.length) append(args[0])
       }
     }
-    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, warn: 'yellow', error: styles.terminal.text_ErrorLog }[mode] // defaults
+    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, warn: styles.terminal.text_WarnLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
     if (mode) {
       return function logger (args, scopedCommands, append) {
         var types = args.map(type)
