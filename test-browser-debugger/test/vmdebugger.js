@@ -18,8 +18,6 @@ module.exports = {
   'vmdebugger': function (browser) {
     loadTraceNotFound(browser)
     .click('#unload')
-    loadTrace(browser)
-    .click('#unload')
     panels(browser)
     .click('#unload')
     slider(browser)
@@ -38,33 +36,14 @@ function loadTraceNotFound (browser) {
     .clearValue('#txinput')
     .setValue('#txinput', '0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51')
     .click('#load')
-    .click('#txinfo .title')
     .execute(function () {
-      return document.querySelector('#txinfo .dropdownpanel .dropdownrawcontent').innerHTML
+      return document.querySelector('div[class^="container"] #error').innerHTML
     }, [], function (result) {
       console.log(result.value)
-      if (result.value.indexOf('not found') === -1) {
-        browser.assert.fail(' txinput panel does not contain <not found> ', 'info about error', '')
+      if (result.value.indexOf('0x20ef65b8b186ca942zcccd634f37074dde49b541c27994fc7596740ef44cfd51') === -1) {
+        browser.assert.fail(' error with transaction hash should have been displayed', 'info about error', '')
       }
     })
-  return browser
-}
-
-function loadTrace (browser) {
-  browser
-    .clearValue('#txinput')
-    .setValue('#txinput', '0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')
-    .click('#load')
-    .click('#txinfo .title')
-    .execute(function () {
-      return document.querySelector('#txinfo .dropdownpanel .dropdownrawcontent').innerHTML
-    }, [], function (result) {
-      if (result.value.indexOf('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51') === -1) {
-        browser.assert.fail(' txinput panel does not contain 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51 ', 'info about error', '')
-      }
-    })
-    .click('#unload')
-    .waitForElementNotVisible('#vmdebugger', 1000)
   return browser
 }
 
