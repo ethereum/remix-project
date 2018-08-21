@@ -148,7 +148,7 @@
     "linkremixcore": "cd node_modules && rm -rf remix-core && ln -s ../remix/remix-core remix-core && cd ..",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../remix/remix-lib remix-lib && cd ..",
     "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../remix/remix-solidity remix-solidity && cd ..",
-    "build": "browserify src/index.js -o build/app.js",
+    "build": "browserify src/index.js -o build/app.js --exclude solc",
     "build_debugger": "browserify src/app/debugger/remix-debugger/index.js -o src/app/debugger/remix-debugger/build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='assets/css/font-awesome.min.css' assets/css/",
@@ -175,6 +175,6 @@
     "start": "npm-run-all -lpr serve watch onchange remixd",
     "test": "npm run csslint; standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
-    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js"
+    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc"
   }
 }
