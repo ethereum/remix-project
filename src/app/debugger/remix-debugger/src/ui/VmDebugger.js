@@ -64,12 +64,9 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.solidityState.storageResolver = storageResolver
     self.solidityLocals.storageResolver = storageResolver
     self.fullStoragesChangesPanel.storageResolver = storageResolver
-    self.headView.style.display = 'block'
-    self.view.style.display = 'block'
   })
   _parent.event.register('traceUnloaded', this, function () {
-    self.headView.style.display = 'none'
-    self.view.style.display = 'none'
+    if (!self.view) return
   })
   _parent.callTree.event.register('callTreeReady', () => {
     if (!self.view) return
@@ -87,7 +84,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
 }
 
 VmDebugger.prototype.renderHead = function () {
-  var headView = yo`<div id='vmheadView' style='display:none'>
+  var headView = yo`<div id='vmheadView'>
         <div>
           <div class=${css.asmCode}>${this.asmCode.render()}</div>
           <div class=${css.stepDetail}>${this.stepDetail.render()}</div>
@@ -105,7 +102,7 @@ VmDebugger.prototype.remove = function () {
 }
 
 VmDebugger.prototype.render = function () {
-  var view = yo`<div id='vmdebugger' style='display:none'>
+  var view = yo`<div id='vmdebugger'>
         <div>
             ${this.solidityLocals.render()}
             ${this.solidityState.render()}
