@@ -36,7 +36,8 @@ function Ethdebugger (opts) {
   this.opts = opts || {}
   if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
-  this.web3 = opts.web3
+  this.executionContext = opts.executionContext || executionContext
+  this.web3 = opts.web3 || this.executionContext.web3
 
   this.event = new EventManager()
 
@@ -181,7 +182,7 @@ Ethdebugger.prototype.switchProvider = function (type) {
       self.web3 = obj
       self.setManagers()
       // self.traceManager.web3 = self.web3
-      executionContext.detectNetwork((error, network) => {
+      self.executionContext.detectNetwork((error, network) => {
         if (error || !network) {
           self.web3Debug = obj
           self.web3 = obj
@@ -209,7 +210,6 @@ Ethdebugger.prototype.debug = function (tx) {
 Ethdebugger.prototype.unLoad = function () {
   this.traceManager.init()
   this.codeManager.clear()
-  this.stepManager.reset()
   this.event.trigger('traceUnloaded')
 }
 
@@ -225,7 +225,6 @@ Ethdebugger.prototype.debug = function (tx) {
   this.tx = tx
   var self = this
   this.traceManager.resolveTrace(tx, function (error, result) {
-    console.log('trace loaded ' + result)
     if (result) {
       self.event.trigger('newTraceLoaded', [self.traceManager.trace])
       if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
