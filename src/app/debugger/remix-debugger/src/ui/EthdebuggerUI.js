@@ -52,8 +52,6 @@ function EthdebuggerUI (opts) {
     self.unLoad()
   })
   this.txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
-    console.dir('newTraceRequestd')
-    console.dir(arguments)
     self.startDebugging(blockNumber, txIndex, tx)
   })
   this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
