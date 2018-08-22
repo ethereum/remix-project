@@ -60,10 +60,10 @@ function StepManager (_parent, _traceManager) {
     self.jumpTo(exceptionIndex)
   })
   this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpNextBreakpoint(this.parent.currentStepIndex, true)
+    self.parent.breakpointManager.jumpNextBreakpoint(_parent.currentStepIndex, true)
   })
   this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpPreviousBreakpoint(this.parent.currentStepIndex, true)
+    self.parent.breakpointManager.jumpPreviousBreakpoint(_parent.currentStepIndex, true)
   })
 }
 
