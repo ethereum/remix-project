@@ -66,6 +66,12 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.solidityState.storageResolver = storageResolver
     self.solidityLocals.storageResolver = storageResolver
     self.fullStoragesChangesPanel.storageResolver = storageResolver
+    self.asmCode.basicPanel.show()
+    self.stackPanel.basicPanel.show()
+    self.storagePanel.basicPanel.show()
+    self.memoryPanel.basicPanel.show()
+    self.calldataPanel.basicPanel.show()
+    self.callstackPanel.basicPanel.show()
   })
   _parent.event.register('traceUnloaded', this, function () {
     if (!self.view) return
@@ -76,12 +82,6 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
       self.solidityLocals.basicPanel.show()
       self.solidityState.basicPanel.show()
     }
-    self.asmCode.basicPanel.show()
-    self.stackPanel.basicPanel.show()
-    self.storagePanel.basicPanel.show()
-    self.memoryPanel.basicPanel.show()
-    self.calldataPanel.basicPanel.show()
-    self.callstackPanel.basicPanel.show()
   })
 }
 
