@@ -115,4 +115,4 @@ Please feel free! Open an issue or a pull request. Please conform to [`standard`
 
 ## License
 
-[ISC](LICENSE.md) © 2018 Remix Team
+[MIT](LICENSE.md) © 2018 Remix Team
