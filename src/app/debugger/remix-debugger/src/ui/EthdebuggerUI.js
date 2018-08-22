@@ -63,9 +63,9 @@ EthdebuggerUI.prototype.get_web3 = function () {
   return this.web3
 }
 
-EthdebuggerUI.prototype.updateWeb3Reference = function () {
+EthdebuggerUI.prototype.updateWeb3Reference = function (web3) {
   if (!this.txBrowser) return
-  this.txBrowser.web3 = executionContext.web3()
+  this.txBrowser.web3 = web3 || executionContext.web3()
 }
 
 EthdebuggerUI.prototype.setCompilationResult = function (compilationResult) {

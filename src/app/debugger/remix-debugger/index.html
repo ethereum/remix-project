@@ -9,8 +9,6 @@
         var container = document.getElementById('app')
         var debuggerBackend = new window.remix.ui.DebuggerBackend({})
         container.debugger = new window.remix.ui.Debugger({debugger: debuggerBackend})
-        debuggerBackend.addProvider('INTERNAL')
-        debuggerBackend.switchProvider('INTERNAL')
         container.appendChild(container.debugger.render())
       }
     </script>

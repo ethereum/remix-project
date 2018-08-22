@@ -58,6 +58,7 @@ function loadTestWeb3 (data) {
   uiTestweb3.currentProvider = {host: 'web3 modified for testing purposes :)'}
   vmdebugger.addProvider('TEST', uiTestweb3)
   vmdebugger.switchProvider('TEST')
+  container.debugger.updateWeb3Reference(uiTestweb3)
 }
 
 function waitForRemix (data) {
