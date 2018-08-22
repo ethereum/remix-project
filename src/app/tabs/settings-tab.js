@@ -7,7 +7,6 @@ var globalRegistry = require('../../global/registry')
 var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
-
 var styles = styleGuide.chooser()
 var Storage = remixLib.Storage
 var EventManager = remixLib.EventManager
@@ -117,12 +116,12 @@ module.exports = class SettingsTab {
         <div class="${css.crowNoFlex}">
           <div>Load plugin from JSON description: </div>
           ${self._view.pluginInput}
-          <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.pluginLoad}">
+          <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.initPlugin}">
           ${self._view.config.plugins}
         </div>
       </div>`
     self._view.el = yo`
-      <div class="${css.settingsTabView} "id="settingsView">
+      <div class="${css.settingsTabView}" id="settingsView">
         ${self._view.config.general}
         ${self._view.config.plugin}
         ${self._view.gistToken}
@@ -135,8 +134,8 @@ module.exports = class SettingsTab {
         if (!self._view.plugins[plugin.title]) self._view.plugins[plugin.title] = {}
         self._view.plugins[plugin.title].json = plugin
         self._view.plugins[plugin.title].el = yo`<div class="${css.pluginLoad}">
-        <div style="display: inline-block" onclick=${() => { onLoadPlugin(plugin.title) }}>${plugin.title}</div>
-        ${opt.removable ? yo`<span class="removePlugin" onclick=${() => { onRemovePlugin(plugin.title) }}><i class="fa fa-close"></i></span>` : yo`<span></span>`}
+        <div class="${css.aPlugin}" onclick=${() => { onLoadPlugin(plugin.title) }}>${plugin.title}</div>
+        ${opt.removable ? yo`<span class="${css.removePlugin}" onclick=${() => { onRemovePlugin(plugin.title) }}><i class="fa fa-close"></i></span>` : yo`<span></span>`}
         </div>`
         self._view.config.plugins.appendChild(self._view.plugins[plugin.title].el)
       }
@@ -255,6 +254,15 @@ const css = csjs`
     width: inherit;
     display: inline-block;
   }
+  .initPlugin {
+    vertical-align: top;
+    ${styles.rightPanel.settingsTab.button_initPlugin};
+    width: inherit;
+    display: block;
+    max-height: inherit;
+    padding:7px;
+  }
+
   .removePlugin {
     cursor: pointer;
   }
@@ -266,5 +274,28 @@ const css = csjs`
   }
   .savegisttoken {
     margin-left: 5px;
+  }
+  .aPlugin {
+    display: inline-block;
+    padding-left: 10px;
+    padding-top: 4px;
+    padding-bottom: 6px;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .pluginLoad {
+    vertical-align: top;
+    max-height: inherit;
+    margin: 2px;
+
+  }
+  .removePlugin{
+    padding-left: 7px;
+    padding-right: 7px;
+    border-left: 2px solid ${styles.appProperties.primary_BackgroundColor};
+    margin-left: 10px;
   }
 `
