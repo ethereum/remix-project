@@ -43,11 +43,7 @@ function EthdebuggerUI (opts) {
     self.updateWeb3Reference()
   })
 
-  setTimeout(function () {
-    self.updateWeb3Reference()
-  }, 10000)
-
-  this.txBrowser = new TxBrowser(this, {displayConnectionSetting: false})
+  this.txBrowser = new TxBrowser(this, {displayConnectionSetting: false, web3: executionContext.web3()})
   this.txBrowser.event.register('newTxLoading', this, function () {
     self.unLoad()
   })
@@ -69,7 +65,7 @@ EthdebuggerUI.prototype.get_web3 = function () {
 
 EthdebuggerUI.prototype.updateWeb3Reference = function () {
   if (!this.txBrowser) return
-  this.txBrowser.web3 = this.debugger.web3
+  this.txBrowser.web3 = executionContext.web3()
 }
 
 EthdebuggerUI.prototype.setCompilationResult = function (compilationResult) {
