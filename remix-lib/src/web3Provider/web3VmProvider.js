@@ -198,9 +198,6 @@ web3VmProvider.prototype.getCode = function (address, cb) {
 web3VmProvider.prototype.setProvider = function (provider) {}
 
 web3VmProvider.prototype.traceTransaction = function (txHash, options, cb) {
-  console.dir("traceTransaction: ");
-  console.dir(arguments);
-  console.trace("here");
   if (this.vmTraces[txHash]) {
     if (cb) {
       cb(null, this.vmTraces[txHash])
