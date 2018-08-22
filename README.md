@@ -2,6 +2,7 @@
 
 [![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![CircleCI](https://circleci.com/gh/ethereum/remix.svg?style=svg)](https://circleci.com/gh/ethereum/remix)
+[![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix.readthedocs.io/en/latest/)
 
 Ethereum tools for the web.
 
@@ -17,6 +18,8 @@ Ethereum tools for the web.
 **Remix** is a suite of tools to interact with the Ethereum blockchain in order to debug transactions, stored in this Git repository. A Remix transaction Web debugger is available [here](http://remix.ethereum.org), and its source code is part of this repository.
 
 The **Remix IDE** is an IDE for Solidity dApp developers, powered by Remix. The Remix IDE repository **is available [here](https://github.com/ethereum/remix-ide)**, and an online version is available at https://remix.ethereum.org.
+
+For more, check out the [Remix documentation on ReadTheDocs](https://remix.readthedocs.io/en/latest/).
 
 ## <a name="how-to-use"></a>How to use Remix
 
