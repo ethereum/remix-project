@@ -13,6 +13,7 @@ class CompilerMetadata {
     var self = this
     self._events.compiler.register('compilationFinished', (success, data, source) => {
       if (!success) return
+      if (!self._opts.config.get('settings/generate-contract-metadata')) return
       var provider = self._opts.fileManager.currentFileProvider()
       var path = self._opts.fileManager.currentPath()
       if (provider && path) {
@@ -71,6 +72,7 @@ class CompilerMetadata {
           var fileName = path + '/' + contractName + '.json'
           provider.get(fileName, (error, content) => {
             if (error) return callback(error)
+            if (!content) return callback()
             try {
               var metadata = JSON.parse(content)
               return callback(null, metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()])

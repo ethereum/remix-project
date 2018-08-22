@@ -26,7 +26,7 @@ module.exports = class SettingsTab {
     }
     self._view = { /* eslint-disable */
       el: null,
-      optionVM: null, personal: null, warnPersonalMode: null,
+      optionVM: null, personal: null, warnPersonalMode: null, generateContractMetadata: null,
       pluginInput: null, versionSelector: null, version: null,
       theme: { dark: null, light: null },
       plugins: {},
@@ -62,6 +62,8 @@ module.exports = class SettingsTab {
     It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM.
     Remix never persist any passphrase.`.split('\n').map(s => s.trim()).join(' ')
     self._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i>`
+    self._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox">`
+    if (self._deps.config.get('settings/generate-contract-metadata')) self._view.generateContractMetadata.setAttribute('checked', '')
     self._view.pluginInput = yo`<textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>`
 
     self._view.theme.light = yo`<input onchange=${onswitch2lightTheme} class="${css.col1}" name="theme" id="themeLight" type="radio">`
@@ -71,6 +73,10 @@ module.exports = class SettingsTab {
     self._view.config.general = yo`
       <div class="${css.info}">
           <div class=${css.title}>General settings</div>
+          <div class="${css.crow}">
+            <div>${self._view.generateContractMetadata}</div>
+            <span class="${css.checkboxText}">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploy libraries automatically.</span>
+          </div>
           <div class="${css.crow}">
             <div>${self._view.optionVM}</div>
             <span class="${css.checkboxText}">Always use Ethereum VM at Load</span>
@@ -176,6 +182,9 @@ module.exports = class SettingsTab {
       loadPlugins([json], {removable: true})
     }
 
+    function onchangeGenerateContractMetadata (event) {
+      self._deps.config.set('settings/generate-contract-metadata', !self._deps.config.get('settings/generate-contract-metadata'))
+    }
     function onchangeOption (event) {
       self._deps.config.set('settings/always-use-vm', !self._deps.config.get('settings/always-use-vm'))
     }
