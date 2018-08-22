@@ -107,7 +107,7 @@ class BreakpointManager {
       currentStep += direction
     }
     this.event.trigger('NoBreakpointHit', [])
-    if (this.debugger.stepManager && defaultToLimit) {
+    if (defaultToLimit) {
       if (direction === -1) {
         this.jumpToCallback(0)
       } else if (direction === 1) {
