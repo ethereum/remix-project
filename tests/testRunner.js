@@ -50,7 +50,7 @@ describe('testRunner', function () {
         assert.equal(results.failureNum, 2)
       })
 
-      it('should returns 3 messages', function () {
+      it('should returns 5 messages', function () {
         assert.deepEqual(tests, [
           { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
           { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
@@ -107,10 +107,10 @@ describe('testRunner', function () {
           }
           var resultsCallback = function (_err, _results) {
             results = _results
-            console.log(results)
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest', contracts.StringTest, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest2', contracts.StringTest2, testCallback, resultsCallback)
         })
       })
 
@@ -118,14 +118,15 @@ describe('testRunner', function () {
         assert.equal(results.passingNum, 1)
       })
 
-      it('should 0 failing tests', function () {
-        assert.equal(results.failureNum, 0)
+      it('should 1 failing tests', function () {
+        assert.equal(results.failureNum, 1)
       })
 
-      it('should returns 2 messages', function () {
+      it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract', value: 'MyTest', filename: 'simple_string_test.sol' },
-          { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'MyTest' }
+          { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
+          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "function returned false" },
+          { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
       })
     })
