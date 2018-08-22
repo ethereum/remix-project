@@ -18,9 +18,12 @@ var yo = require('yo-yo')
 var css = csjs`
   .asmCode {
     float: left;
-    width: 250px;
+    width: 50%;
   }
   .stepDetail {
+  }
+  .vmheadView {
+    margin-top:10px;
   }
 `
 
@@ -83,7 +86,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
 }
 
 VmDebugger.prototype.renderHead = function () {
-  var headView = yo`<div id='vmheadView'>
+  var headView = yo`<div id='vmheadView' class=${css.vmheadView}>
         <div>
           <div class=${css.asmCode}>${this.asmCode.render()}</div>
           <div class=${css.stepDetail}>${this.stepDetail.render()}</div>
