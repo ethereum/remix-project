@@ -210,6 +210,7 @@ function Compiler (handleImportCall) {
       self.event.trigger('compilationFinished', [false, data, source])
     } else if (missingInputs !== undefined && missingInputs.length > 0) {
       // try compiling again with the new set of inputs
+
       internalCompile(source.sources, source.target, missingInputs)
     } else {
       data = updateInterface(data)
