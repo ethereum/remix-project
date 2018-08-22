@@ -68,7 +68,8 @@ function filepanel (localRegistry) {
     },
     {
       fileManager: self._deps.fileManager,
-      compiler: self._deps.compiler
+      compiler: self._deps.compiler,
+      config: self._deps.config
     }
   )
   self._compilerMetadata.syncContractMetadata()

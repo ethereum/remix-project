@@ -397,6 +397,7 @@ function contractDropdown (events, self) {
             self._deps.udapp.runTx(data, runTxCallback)
           })
         } else {
+          if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) self._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
           txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
             createInstanceCallback(error, selectedContract, data)
           })
