@@ -40,11 +40,11 @@ function Debugger (container, sourceHighlighter, localRegistry) {
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources)
+  }, (step) => {
+    this.debugger_ui.stepManager.jumpTo(step)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
-  this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {
-  })
 
   var self = this
   self._deps.editor.event.register('breakpointCleared', (fileName, row) => {
