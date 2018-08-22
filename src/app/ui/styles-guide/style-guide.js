@@ -701,6 +701,11 @@ function styleGuide () {
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
           Color: appProperties.secondaryButton_TextColor
+        }),
+        button_initPlugin: appProperties.uiElements.button({
+          BackgroundColor: appProperties.transactButton_BackgroundColor,
+          BorderColor: appProperties.transactButton_BorderColor,
+          Color: appProperties.secondaryButton_TextColor
         })
       },
 

@@ -15,10 +15,8 @@ const SupportTab = require('../tabs/support-tab')
 const PluginTab = require('../tabs/plugin-tab')
 const TestTab = require('../tabs/test-tab')
 const RunTab = require('../tabs/run-tab')
-const plugins = require('../plugin/plugins')
 const DraggableContent = require('../ui/draggableContent')
 
-var toolTip = require('../ui/tooltip')
 const EventManager = remixLib.EventManager
 const styles = styleguide.chooser()
 
@@ -71,21 +69,8 @@ module.exports = class RighthandPanel {
       test: new TestTab(self._components.registry)
     }
 
-    self.event.register('plugin-loadRequest', json => {
+    self._components.settings.event.register('plugin-loadRequest', json => {
       self.loadPlugin(json)
-    })
-
-    self.event.register('plugin-name-loadRequest', name => {
-      var plugin = plugins[name]
-      if (plugin) {
-        if (!self._components.pluginManager.plugins[plugin.title]) {
-          self.loadPlugin(plugin)
-        } else {
-          toolTip(name + ' already loaded')
-        }
-      } else {
-        toolTip('unknown plugin ' + name)
-      }
     })
 
     self.loadPlugin = function (json) {
