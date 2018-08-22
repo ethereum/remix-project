@@ -5,8 +5,6 @@ function TraceRetriever (options) {
 }
 
 TraceRetriever.prototype.getTrace = function (txHash, callback) {
-  console.dir("getTrace: ");
-  console.dir(arguments);
   var options = {
     disableStorage: true,
     disableMemory: false,
