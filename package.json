@@ -157,6 +157,7 @@
     "make-mock-compiler": "node ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
     "nightwatch_local": "nightwatch --config nightwatch.js --env local",
+    "nightwatch_local_debugger": "nightwatch --config nightwatch_debugger.js --env local",
     "nightwatch_remote_chrome": "nightwatch --config nightwatch.js --env chrome",
     "nightwatch_remote_firefox": "nightwatch --config nightwatch.js --env default",
     "nightwatch_remote_ie": "nightwatch --config nightwatch.js --env ie",
