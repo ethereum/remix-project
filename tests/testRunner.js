@@ -43,16 +43,18 @@ describe('testRunner', function () {
       })
 
       it('should 1 passing test', function () {
-        assert.equal(results.passingNum, 1)
+        assert.equal(results.passingNum, 2)
       })
 
       it('should 1 failing test', function () {
-        assert.equal(results.failureNum, 1)
+        assert.equal(results.failureNum, 2)
       })
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
           { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
+          { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
+          { type: 'testPass',    value: 'Should trigger one pass', time: 1, context: 'MyTest'},
           { type: 'testPass',    value: 'Initial value should be100', time: 1, context: 'MyTest' },
           { type: 'testFailure', value: 'Initial value should be200', time: 1, context: 'MyTest', errMsg: 'function returned false' }
         ])
