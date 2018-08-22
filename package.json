@@ -42,7 +42,7 @@
     "colors": "^1.1.2",
     "commander": "^2.13.0",
     "remix-simulator": "latest",
-    "remix-solidity": "https://github.com/0mkara/remix-solidity",
+    "remix-solidity": "^0.2.2",
     "solc": "^0.4.24",
     "standard": "^10.0.3",
     "web3": "1.0.0-beta.27"
