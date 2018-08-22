@@ -21,7 +21,7 @@ class BreakpointManager {
     this.breakpoints = {}
     this.locationToRowConverter = _locationToRowConverter
     this.previousLine
-    this.jumpToCallback = _jumpToCallback
+    this.jumpToCallback = _jumpToCallback || (() => {})
   }
 
   /**
