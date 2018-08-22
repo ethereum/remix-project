@@ -3,11 +3,7 @@ contract SimpleString {
   string public storedData;
 
   function SimpleString() public {
-    storedData = "Hello";
-  }
-
-  function set(string x) public {
-    storedData = x;
+    storedData = "Hello world!";
   }
 
   function get() public view returns (string retVal) {
