@@ -21,7 +21,6 @@ var css = csjs`
     width: 250px;
   }
   .stepDetail {
-    float: right;
   }
 `
 
