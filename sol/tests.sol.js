@@ -51,10 +51,10 @@ library Assert {
   }
 
   // TODO: needs to be convert to bytes first to be comparable
-  //function equal(string a, string b, string message) public returns (bool result) {
-  //  result = (a == b);
-  //  AssertionEvent(result, message);
-  //}
+  function equal(string a, string b, string message) public returns (bool result) {
+     result = (keccak256(a) == keccak256(b));
+     AssertionEvent(result, message);
+  }
 
   function notEqual(uint a, uint b, string message) public returns (bool result) {
     result = (a != b);
@@ -94,10 +94,10 @@ library Assert {
   }
 
   // TODO: needs to be convert to bytes first to be comparable
-  //function notEqual(string a, string b, string message) public returns (bool result) {
-  //  result = (a != b);
-  //  AssertionEvent(result, message);
-  //}
+  function notEqual(string a, string b, string message) public returns (bool result) {
+    result = (keccak256(a) != keccak256(b));
+    AssertionEvent(result, message);
+  }
 
 }
 `

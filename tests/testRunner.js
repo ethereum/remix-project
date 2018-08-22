@@ -94,5 +94,40 @@ describe('testRunner', function () {
         ])
       })
     })
+
+    // Test string comparision
+    describe('test with beforeAll', function () {
+      let filename = 'tests/examples_3/simple_string_test.sol'
+      let tests = [], results = {}
+
+      before(function (done) {
+        compileAndDeploy(filename, function (_err, contracts) {
+          var testCallback = function (test) {
+            tests.push(test)
+          }
+          var resultsCallback = function (_err, _results) {
+            results = _results
+            console.log(results)
+            done()
+          }
+          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
+        })
+      })
+
+      it('should 1 passing tests', function () {
+        assert.equal(results.passingNum, 1)
+      })
+
+      it('should 0 failing tests', function () {
+        assert.equal(results.failureNum, 0)
+      })
+
+      it('should returns 2 messages', function () {
+        assert.deepEqual(tests, [
+          { type: 'contract', value: 'MyTest', filename: 'simple_string_test.sol' },
+          { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'MyTest' }
+        ])
+      })
+    })
   })
 })
