@@ -2,7 +2,6 @@
 var yo = require('yo-yo')
 var async = require('async')
 var remixLib = require('remix-lib')
-var remixCore = require('remix-core')
 var EventManager = remixLib.EventManager
 
 var executionContext = require('../execution-context')
@@ -106,7 +105,7 @@ class CmdInterpreterAPI {
       }
       self.d.goTo = (row) => {
         if (self._deps.editor.current()) {
-          var breakPoint = new remixCore.code.BreakpointManager(self.d, (sourceLocation) => {
+          var breakPoint = new remixLib.code.BreakpointManager(self.d, (sourceLocation) => {
             return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
           })
           breakPoint.event.register('breakpointHit', (sourceLocation, currentStep) => {
