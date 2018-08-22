@@ -1,7 +1,10 @@
+/* global Worker */
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const copy = require('clipboard-copy')
-
+var minixhr = require('minixhr')
+var tooltip = require('../ui/tooltip')
+var QueryParams = require('../../lib/query-params')
 var globalRegistry = require('../../global/registry')
 const TreeView = require('../ui/TreeView')
 const modalDialog = require('../ui/modaldialog')
@@ -11,6 +14,7 @@ const styleGuide = require('../ui/styles-guide/theme-chooser')
 const parseContracts = require('../contract/contractParser')
 const publishOnSwarm = require('../contract/publishOnSwarm')
 const addTooltip = require('../ui/tooltip')
+var helper = require('../../lib/helper')
 
 const styles = styleGuide.chooser()
 
@@ -27,10 +31,15 @@ module.exports = class CompileTab {
       errorContainer: null,
       errorContainerHead: null,
       contractNames: null,
-      contractEl: null
+      contractEl: null,
+      config: {
+        solidity: null
+      },
+      optimize: null
     }
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
+    self._components.queryParams = new QueryParams()
     // dependencies
     self._deps = {
       app: self._components.registry.get('app').api,
@@ -47,8 +56,15 @@ module.exports = class CompileTab {
       compileTimeout: null,
       contractsDetails: {},
       maxTime: 1000,
-      timeout: 300
+      timeout: 300,
+      allversions: null,
+      selectedVersion: null,
+      baseurl: 'https://solc-bin.ethereum.org/bin'
     }
+    self.data.optimize = !!self._components.queryParams.get().optimize
+    self._components.queryParams.update({ optimize: self.data.optimize })
+    self._deps.compiler.setOptimize(self.data.optimize)
+
     self._deps.editor.event.register('contentChanged', scheduleCompilation)
     self._deps.editor.event.register('sessionSwitched', scheduleCompilation)
     function scheduleCompilation () {
@@ -149,6 +165,44 @@ module.exports = class CompileTab {
   render () {
     const self = this
     if (self._view.el) return self._view.el
+
+    function onchangeLoadVersion (event) {
+      self.data.selectedVersion = self._view.versionSelector.value
+      self._updateVersionSelector()
+    }
+
+    function onchangeOptimize (event) {
+      self.data.optimize = !!self._view.optimize.checked
+      self._components.queryParams.update({ optimize: self.data.optimize })
+      self._deps.compiler.setOptimize(self.data.optimize)
+      self._deps.app.runCompiler()
+    }
+
+    self._deps.compiler.event.register('compilerLoaded', (version) => self.setVersionText(version))
+    self.fetchAllVersion((allversions, selectedVersion) => {
+      self.data.allversions = allversions
+      self.data.selectedVersion = selectedVersion
+      if (self._view.versionSelector) self._updateVersionSelector()
+    })
+
+    self._view.optimize = yo`<input onchange=${onchangeOptimize} id="optimize" type="checkbox">`
+    if (self.data.optimize) self._view.optimize.setAttribute('checked', '')
+
+    self._view.versionSelector = yo`
+      <select onchange=${onchangeLoadVersion} class="${css.select}" id="versionSelector" disabled>
+        <option disabled selected>Select new compiler version</option>
+      </select>`
+    if (self.data.allversions && self.data.selectedVersion) self._updateVersionSelector()
+    self._view.version = yo`<span id="version"></span>`
+
+    self._view.config.solidity = yo`
+      <div class="${css.info}">
+        <span>Current version:</span> ${self._view.version}
+        <div class="${css.crow}">
+          ${self._view.versionSelector}
+        </div>
+      </div>`
+
     self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
@@ -158,13 +212,18 @@ module.exports = class CompileTab {
     if (self.data.hideWarnings) self._view.hideWarningsBox.setAttribute('checked', '')
     self._view.compileContainer = yo`
       <div class="${css.compileContainer}">
+      ${self._view.config.solidity}
         <div class="${css.compileButtons}">
           ${self._view.compileButton}
+          ${self._view.warnCompilationSlow}
           <div class="${css.autocompileContainer}">
             ${self._view.autoCompile}
             <span class="${css.autocompileText}">Auto compile</span>
           </div>
-          ${self._view.warnCompilationSlow}
+          <div class="${css.crow}">
+            <div>${self._view.optimize}</div>
+            <span class="${css.checkboxText}">Enable Optimization</span>
+          </div>
           <div class=${css.hideWarningsContainer}>
             ${self._view.hideWarningsBox}
             <span class="${css.autocompileText}">Hide warnings</span>
@@ -324,9 +383,93 @@ module.exports = class CompileTab {
     }
     return self._view.el
   }
+  setVersionText (text) {
+    const self = this
+    self.data.version = text
+    if (self._view.version) self._view.version.innerText = text
+  }
+  _updateVersionSelector () {
+    const self = this
+    self._view.versionSelector.innerHTML = ''
+    self._view.versionSelector.appendChild(yo`<option disabled selected>Select new compiler version</option>`)
+    self.data.allversions.forEach(build => self._view.versionSelector.appendChild(yo`<option value=${build.path}>${build.longVersion}</option>`))
+    self._view.versionSelector.removeAttribute('disabled')
+    self._components.queryParams.update({ version: self.data.selectedVersion })
+    var url
+    if (self.data.selectedVersion === 'builtin') {
+      var location = window.document.location
+      location = location.protocol + '//' + location.host + '/' + location.pathname
+      if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
+      if (!location.endsWith('/')) location += '/'
+      url = location + 'soljson.js'
+    } else {
+      if (self.data.selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(self.data.selectedVersion)) {
+        return console.log('loading ' + self.data.selectedVersion + ' not allowed')
+      }
+      url = `${self.data.baseurl}/${self.data.selectedVersion}`
+    }
+    var isFirefox = typeof InstallTrigger !== 'undefined'
+    if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
+      // Workers cannot load js on "file:"-URLs and we get a
+      // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
+      // resort to non-worker version in that case.
+      self._deps.compiler.loadVersion(true, url)
+      self.setVersionText('(loading using worker)')
+    } else {
+      self._deps.compiler.loadVersion(false, url)
+      self.setVersionText('(loading)')
+    }
+  }
+  fetchAllVersion (callback) {
+    var self = this
+    minixhr(`${self.data.baseurl}/list.json`, function (json, event) {
+      // @TODO: optimise and cache results to improve app loading times
+      var allversions, selectedVersion
+      if (event.type !== 'error') {
+        try {
+          const data = JSON.parse(json)
+          allversions = data.builds.slice().reverse()
+          selectedVersion = data.releases[data.latestRelease]
+          if (self._components.queryParams.get().version) selectedVersion = self._components.queryParams.get().version
+        } catch (e) {
+          tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
+        }
+      } else {
+        allversions = [{ path: 'builtin', longVersion: 'latest local version' }]
+        selectedVersion = 'builtin'
+      }
+      callback(allversions, selectedVersion)
+    })
+  }
 }
 
 const css = csjs`
+  .crow {
+    display: flex;
+    overflow: auto;
+    clear: both;
+    padding: .2em;
+  }
+  .checkboxText {
+    font-weight: normal;
+  }
+  .crow label {
+    cursor:pointer;
+  }
+  .crowNoFlex {
+    overflow: auto;
+    clear: both;
+  }
+  .select {
+    font-weight: bold;
+    margin-top: 1em;
+    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler};
+  }
+  .info {
+    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
+    margin-bottom: 1em;
+    word-break: break-word;
+  }
   .compileTabView {
     padding: 2%;
   }

@@ -684,6 +684,18 @@ function styleGuideDark () {
           BackgroundColor: appProperties.dropdown_BackgroundColor,
           BorderColor: appProperties.dropdown_BorderColor,
           Color: appProperties.dropdown_TextColor
+        }),
+
+        button_LoadPlugin: appProperties.uiElements.button({
+          BackgroundColor: appProperties.secondaryButton_BackgroundColor,
+          BorderColor: appProperties.secondaryButton_BorderColor,
+          Color: appProperties.secondaryButton_TextColor
+        }),
+
+        button_initPlugin: appProperties.uiElements.button({
+          BackgroundColor: appProperties.transactButton_BackgroundColor,
+          BorderColor: appProperties.transactButton_BorderColor,
+          Color: appProperties.secondaryButton_TextColor
         })
 
       },
