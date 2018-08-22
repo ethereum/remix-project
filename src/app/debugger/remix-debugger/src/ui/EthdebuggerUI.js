@@ -116,39 +116,9 @@ EthdebuggerUI.prototype.get_web3 = function () {
   return this.web3
 }
 
-EthdebuggerUI.prototype.addProvider = function (type, obj) {
-  this.web3Providers.addProvider(type, obj)
-  this.event.trigger('providerAdded', [type])
-}
-
 EthdebuggerUI.prototype.updateWeb3Reference = function () {
   if (!this.txBrowser) return
   this.txBrowser.web3 = this.debugger.web3
-}
-
-EthdebuggerUI.prototype.switchProvider = function (type) {
-  var self = this
-  this.web3Providers.get(type, function (error, obj) {
-    if (error) {
-      console.log('provider ' + type + ' not defined')
-    } else {
-      self.web3 = obj
-      // self.setManagers()
-      self.updateWeb3Reference()
-      executionContext.detectNetwork((error, network) => {
-        if (error || !network) {
-          self.web3Debug = obj
-          self.web3 = obj
-        } else {
-          var webDebugNode = init.web3DebugNode(network.name)
-          self.web3Debug = !webDebugNode ? obj : webDebugNode
-          self.web3 = !webDebugNode ? obj : webDebugNode
-        }
-        self.updateWeb3Reference()
-      })
-      self.event.trigger('providerChanged', [type])
-    }
-  })
 }
 
 EthdebuggerUI.prototype.setCompilationResult = function (compilationResult) {
