@@ -30,6 +30,7 @@ module.exports = {
   storage: {
     StorageViewer: StorageViewer,
     StorageResolver: StorageResolver
-  }
+  },
+  SolidityDecoder: SolidityDecoder
 }
 
