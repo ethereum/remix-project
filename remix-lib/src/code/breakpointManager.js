@@ -15,12 +15,13 @@ class BreakpointManager {
     * @param {Object} _debugger - type of EthDebugger
     * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
     */
-  constructor (_debugger, _locationToRowConverter) {
+  constructor (_debugger, _locationToRowConverter, _jumpToCallback) {
     this.event = new EventManager()
     this.debugger = _debugger
     this.breakpoints = {}
     this.locationToRowConverter = _locationToRowConverter
     this.previousLine
+    this.jumpToCallback = _jumpToCallback
   }
 
   /**
@@ -67,7 +68,7 @@ class BreakpointManager {
         sourceLocation.start + sourceLocation.length >= previousSourceLocation.start + previousSourceLocation.length)) {
         return false
       } else {
-        if (self.debugger.stepManager) self.debugger.stepManager.jumpTo(currentStep)
+        self.jumpToCallback(currentStep)
         self.event.trigger('breakpointHit', [sourceLocation, currentStep])
         return true
       }
@@ -108,9 +109,9 @@ class BreakpointManager {
     this.event.trigger('NoBreakpointHit', [])
     if (this.debugger.stepManager && defaultToLimit) {
       if (direction === -1) {
-        this.debugger.stepManager.jumpTo(0)
+        this.jumpToCallback(0)
       } else if (direction === 1) {
-        this.debugger.stepManager.jumpTo(this.debugger.traceManager.trace.length - 1)
+        this.jumpToCallback(this.debugger.traceManager.trace.length - 1)
       }
     }
   }
