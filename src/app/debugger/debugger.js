@@ -78,7 +78,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
     if (self._deps.compiler.lastCompilationResult) {
       self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
         if (error) return console.log(error)
-        self.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+        self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
           if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
             var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
             self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
