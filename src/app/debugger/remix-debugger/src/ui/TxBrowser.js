@@ -53,7 +53,7 @@ function TxBrowser (_parent, opts) {
   this.txNumber
   this.view
   this.displayConnectionSetting = opts.displayConnectionSetting
-  this.web3 = _parent.debugger.web3
+  this.web3 = opts.web3
   var self = this
   _parent.event.register('providerChanged', this, function (provider) {
     self.setDefaultValues()
