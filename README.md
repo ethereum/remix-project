@@ -40,11 +40,15 @@ The debugger itself contains several controls that allow stepping over the trace
 
 ## <a name="modules"></a>Remix Modules
 
-Remix is built out of 3 different modules:
+Remix is built out of several different modules:
 
++ [`remix-analyzer`](remix-analyzer/README.md)
 + [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
 + [`remix-lib`](remix-lib/README.md)
-+ [`remix-debug`](remix-debugger/README.md) contains the debugger.
++ [`remix-debug`](remix-debugger/README.md) is now *deprecated*. It contains the debugger.
++ [`remix-tests`](remix-tests/README.md) contains our tests.
+
+Each generally has their own npm package and test suite, as well as basic documentation.
 
 ## Contributing
 
