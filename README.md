@@ -3,6 +3,8 @@
 Remix-Tests
 ---
 
+> Tests for the Ethereum tool suite [Remix](https://github.com/ethereum/remix)
+
 ### Installation
 
 `npm -g install remix-tests`
@@ -107,3 +109,10 @@ params:
 `finalCallback(err)` - called when all tests finish running.
 `importCb(url, cb)`
 
+## Contribute
+
+Please feel free! Open an issue or a pull request. Please conform to [`standard`](https://standardjs.com/) for code styles, and make sure that you add any relevant tests.
+
+## License
+
+[ISC](LICENSE.md) © 2018 Remix Team
