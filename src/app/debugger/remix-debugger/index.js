@@ -1,6 +1,6 @@
 'use strict'
 var VMDebugger = require('./src/ui/VmDebugger')
-var Debugger = require('./src/ui/Ethdebugger')
+var Debugger = require('./src/ui/EthdebuggerUI')
 
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
