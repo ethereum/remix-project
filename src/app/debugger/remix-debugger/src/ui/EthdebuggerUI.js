@@ -7,17 +7,8 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
 var remixLib = require('remix-lib')
-// var TraceManager = remixLib.trace.TraceManager
-var init = remixLib.init
 var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
-// var Web3Providers = remixLib.vm.Web3Providers
-// var DummyProvider = remixLib.vm.DummyProvider
-// var CodeManager = remixLib.code.CodeManager
-
-// var remixDebug = require('remix-debug')
-// var SolidityProxy = remixDebug.SolidityDecoder.SolidityProxy
-// var InternalCallTree = remixDebug.SolidityDecoder.InternalCallTree
 
 var css = csjs`
   .statusMessage {
@@ -68,44 +59,6 @@ function EthdebuggerUI (opts) {
   this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
     self.unLoad()
   })
-}
-
-EthdebuggerUI.prototype.setManagers = function () {
-  // const self = this
-  // this.traceManager = new TraceManager({web3: this.web3})
-  // this.codeManager = new CodeManager(this.traceManager)
-  // this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
-  // this.storageResolver = null
-  // var callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
-  // this.callTree = callTree // TODO: currently used by browser solidity, we should improve the API
-  // this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy, callTree)
-
-  // this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { includeLocalVariables: true })
-  // this.txBrowser = new TxBrowser(this)
-  // this.txBrowser.event.register('newTxLoading', this, function () {
-  //  self.unLoad()
-  // })
-  // this.txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
-  //  console.dir('newTraceRequestd')
-  //  console.dir(arguments)
-  //  self.startDebugging(blockNumber, txIndex, tx)
-  // })
-  // this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-  //  self.unLoad()
-  // })
-  // this.stepManager = new StepManager(this, this.traceManager)
-  // this.stepManager.event.register('stepChanged', this, function (stepIndex) {
-  //  self.stepChanged(stepIndex)
-  // })
-  // this.vmDebugger = new VmDebugger(this, this.traceManager, this.codeManager, this.solidityProxy, callTree)
-
-  // this.codeManager.event.register('changed', this, (code, address, instIndex) => {
-  //  this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.solidityProxy.contracts, (error, sourceLocation) => {
-  //    if (!error) {
-  //      this.event.trigger('sourceLocationChanged', [sourceLocation])
-  //    }
-  //  })
-  // })
 }
 
 EthdebuggerUI.prototype.setBreakpointManager = function (breakpointManager) {
@@ -159,9 +112,6 @@ EthdebuggerUI.prototype.render = function () {
 }
 
 EthdebuggerUI.prototype.unLoad = function () {
-  // this.debugger.traceManager.init()
-  // this.debugger.codeManager.clear()
-  // this.debugger.stepManager.reset()
   this.debugger.unLoad()
   yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
   yo.update(this.debuggerPanelsView, yo`<div></div>`)
@@ -180,21 +130,11 @@ EthdebuggerUI.prototype.stepChanged = function (stepIndex) {
 
 EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   const self = this
-  console.dir('startDebugging')
-  console.dir(arguments)
   if (this.debugger.traceManager.isLoading) {
     return
   }
 
-  console.log('loading trace...')
   this.tx = tx
-  // this.tx.hash = txIndex
-
-  // this.debugger.setCompilationResult(this.opts.compilationResult())
-  // this.setCompilationResult(this.opts.compilationResult())
-
-  // this.debugger.addProvider('web3', executionContext.web3())
-  // this.debugger.switchProvider('web3')
 
   this.stepManager = new StepManager(this, this.debugger.traceManager)
   this.stepManager.event.register('stepChanged', this, function (stepIndex) {
@@ -215,26 +155,6 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   yo.update(this.stepManagerView, this.stepManager.render())
 
   this.debugger.debug(tx)
-
-  // console.dir(this.vmDebugger.render())
-  // console.dir(this.view)
-
-  console.dir('resolving a trace with tx: ')
-  console.dir(tx)
-  //  this.debugger.traceManager.resolveTrace(tx, function (error, result) {
-  //    console.log('trace loaded ' + result)
-  //    if (result) {
-  //      self.statusMessage = ''
-  //      yo.update(self.view, self.render())
-  //      self.debugger.event.trigger('newTraceLoaded', [self.debugger.traceManager.trace])
-  //      // if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
-  //      //  self.breakpointManager.jumpNextBreakpoint(0, false)
-  //      // }
-  //    } else {
-  //      self.statusMessage = error ? error.message : 'Trace not loaded'
-  //      yo.update(self.view, self.render())
-  //    }
-  //  })
 }
 
 module.exports = EthdebuggerUI
