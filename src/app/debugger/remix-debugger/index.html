@@ -7,10 +7,11 @@
     <script type="text/javascript">
       function loadDebugger() {
         var container = document.getElementById('app')
-        container.debugger = new window.remix.ui.Debugger()
-        container.debugger.addProvider('INTERNAL')
-        container.debugger.switchProvider('INTERNAL')
-        container.appendChild(container.debugger_ui.render())
+        var debuggerBackend = new window.remix.ui.DebuggerBackend({})
+        container.debugger = new window.remix.ui.Debugger({debugger: debuggerBackend})
+        debuggerBackend.addProvider('INTERNAL')
+        debuggerBackend.switchProvider('INTERNAL')
+        container.appendChild(container.debugger.render())
       }
     </script>
     <div id="app"></div>
