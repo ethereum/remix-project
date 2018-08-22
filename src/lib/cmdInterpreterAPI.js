@@ -215,8 +215,8 @@ class CmdInterpreterAPI {
     const self = this
     var help = yo`<div>Here are some examples of scripts that can be run (using remix.exeCurrent() or directly from the console)</div>`
     help.appendChild(yo`<br>`)
+    help.appendChild(yo`<br>`)
     help.appendChild(yo`<div>remix.debug('0x3c247ac268afb9a9c183feb9d4e83df51efbc8a2f4624c740789b788dac43029', function (error, debugSession) {
-     remix.d = debugSession
      remix.log = function () { arguments[0] != null ? console.log(arguments[0]) : console.log(arguments[1]) }
 
      remix.d.traceManager.getLength(remix.log)
@@ -231,9 +231,13 @@ class CmdInterpreterAPI {
     help.appendChild(yo`<br>`)
     help.appendChild(yo`<div>remix.highlight(contractAddress, vmTraceIndex)</div>`)
     help.appendChild(yo`<br>`)
-    help.appendChild(yo`<div>remix.stateAt(vmTraceIndex)<br/></div>`)
+    help.appendChild(yo`<div>remix.goTo(row) (this log the index in the vm trace, state and local variables)</div>`)
     help.appendChild(yo`<br>`)
-    help.appendChild(yo`<div>remix.localsAt(vmTraceIndex)<br/></div>`)
+    help.appendChild(yo`<div>remix.stateAt(vmTraceIndex)</div>`)
+    help.appendChild(yo`<br>`)
+    help.appendChild(yo`<div>remix.localsAt(vmTraceIndex)</div>`)
+    help.appendChild(yo`<br>`)
+    help.appendChild(yo`<div>Please see <a href="https://www.npmjs.com/package/remix-debug" target="_blank">https://www.npmjs.com/package/remix-debug</a> for more informations</div>`)
     self._components.terminal.commands.html(help)
     if (cb) cb()
     return ''
