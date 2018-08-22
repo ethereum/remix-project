@@ -13,7 +13,7 @@ function loadJSON (url, callback) {
 
 function loadTestWeb3 (data) {
   var container = document.getElementById('app')
-  var vmdebugger = container.debugger
+  var vmdebugger = container.debugger.debugger
   var uiTestweb3 = {}
   uiTestweb3.eth = {}
   uiTestweb3.debug = {}
