@@ -1,8 +1,7 @@
 'use strict'
-
-var Ethdebugger = require('./remix-debugger/src/ui/Ethdebugger')
+var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
+var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
-var remixCore = require('remix-core')
 var executionContext = require('../../execution-context')
 var globlalRegistry = require('../../global/registry')
 
@@ -22,6 +21,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   }
   this.debugger = new Ethdebugger(
     {
+      executionContext: executionContext,
       compilationResult: () => {
         var compilationResult = this._deps.compiler.lastCompilationResult
         if (compilationResult) {
@@ -30,17 +30,21 @@ function Debugger (container, sourceHighlighter, localRegistry) {
         return null
       }
     })
+  this.debugger_ui = new EthdebuggerUI({debugger: this.debugger})
   this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
-  container.appendChild(this.debugger.render())
+  //
+  // TODO: render doesn't exist anymore
+  container.appendChild(this.debugger_ui.render())
+  //
   this.isActive = false
 
-  this.breakPointManager = new remixCore.code.BreakpointManager(this.debugger, (sourceLocation) => {
+  this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources)
+  }, (step) => {
+    this.debugger_ui.stepManager.jumpTo(step)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
-  this.breakPointManager.event.register('breakpointHit', (sourceLocation) => {
-  })
 
   var self = this
   self._deps.editor.event.register('breakpointCleared', (fileName, row) => {
@@ -70,15 +74,18 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   })
 
   // register selected code item, highlight the corresponding source location
-  this.debugger.codeManager.event.register('changed', this, function (code, address, index) {
+  this.debugger_ui.event.register('indexChanged', function (index) {
     if (self._deps.compiler.lastCompilationResult) {
-      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
-        if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-          var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
-          self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
-        } else {
-          self._components.sourceHighlighter.currentSourceLocation(null)
-        }
+      self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+        if (error) return console.log(error)
+        self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+          if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+            var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
+            self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
+          } else {
+            self._components.sourceHighlighter.currentSourceLocation(null)
+          }
+        })
       })
     }
   })
@@ -91,9 +98,10 @@ function Debugger (container, sourceHighlighter, localRegistry) {
  */
 Debugger.prototype.debug = function (txHash) {
   var self = this
-  this.debugger.web3().eth.getTransaction(txHash, function (error, tx) {
+
+  this.debugger.web3.eth.getTransaction(txHash, function (error, tx) {
     if (!error) {
-      self.debugger.debug(tx)
+      self.debugger_ui.debug(tx)
     }
   })
 }
@@ -121,7 +129,7 @@ Debugger.prototype.switchProvider = function (type) {
  * get the current provider
  */
 Debugger.prototype.web3 = function (type) {
-  return this.debugger.web3()
+  return this.debugger.web3
 }
 
 module.exports = Debugger

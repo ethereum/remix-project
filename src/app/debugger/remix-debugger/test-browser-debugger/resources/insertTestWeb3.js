@@ -13,7 +13,7 @@ function loadJSON (url, callback) {
 
 function loadTestWeb3 (data) {
   var container = document.getElementById('app')
-  var vmdebugger = container.debugger
+  var vmdebugger = container.debugger.debugger
   var uiTestweb3 = {}
   uiTestweb3.eth = {}
   uiTestweb3.debug = {}
@@ -58,6 +58,7 @@ function loadTestWeb3 (data) {
   uiTestweb3.currentProvider = {host: 'web3 modified for testing purposes :)'}
   vmdebugger.addProvider('TEST', uiTestweb3)
   vmdebugger.switchProvider('TEST')
+  container.debugger.updateWeb3Reference(uiTestweb3)
 }
 
 function waitForRemix (data) {

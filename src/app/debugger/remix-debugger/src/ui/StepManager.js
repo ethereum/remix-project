@@ -8,13 +8,14 @@ var util = remixLib.util
 
 function StepManager (_parent, _traceManager) {
   this.event = new EventManager()
-  this.parent = _parent
+  this.parent = _parent.debugger
   this.traceManager = _traceManager
   this.sourceMapByAddress = {}
   this.solidityMode = false
 
   var self = this
   this.parent.event.register('newTraceLoaded', this, function () {
+    if (!this.slider) return
     self.traceManager.getLength(function (error, length) {
       if (error) {
         console.log(error)
@@ -33,6 +34,7 @@ function StepManager (_parent, _traceManager) {
   })
 
   this.parent.callTree.event.register('callTreeReady', () => {
+    if (!this.slider) return
     if (this.parent.callTree.functionCallStack.length) {
       this.jumpTo(this.parent.callTree.functionCallStack[0])
     }
@@ -58,11 +60,19 @@ function StepManager (_parent, _traceManager) {
     self.jumpTo(exceptionIndex)
   })
   this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpNextBreakpoint(this.parent.currentStepIndex, true)
+    self.parent.breakpointManager.jumpNextBreakpoint(_parent.currentStepIndex, true)
   })
   this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpPreviousBreakpoint(this.parent.currentStepIndex, true)
+    self.parent.breakpointManager.jumpPreviousBreakpoint(_parent.currentStepIndex, true)
   })
+}
+
+StepManager.prototype.remove = function () {
+  // used to stop listenning on event. bad and should be "refactored"
+  this.slider.view = null
+  this.slider = null
+  this.buttonNavigator.view = null
+  this.buttonNavigator = null
 }
 
 StepManager.prototype.resolveToReducedTrace = function (value, incr) {
@@ -80,12 +90,10 @@ StepManager.prototype.resolveToReducedTrace = function (value, incr) {
 }
 
 StepManager.prototype.render = function () {
-  return (
-  yo`<div>
+  return yo`<div>
         ${this.slider.render()}
         ${this.buttonNavigator.render()}
       </div>`
-  )
 }
 
 StepManager.prototype.reset = function () {

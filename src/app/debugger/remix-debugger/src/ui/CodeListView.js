@@ -12,7 +12,7 @@ var css = csjs`
   .instructions {
     ${styles.rightPanel.debuggerTab.box_Debugger}
     overflow-y: scroll;
-    max-height: 100px;
+    max-height: 150px;
   }
 `
 function CodeListView (_parent, _codeManager) {

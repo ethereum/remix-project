@@ -2,8 +2,9 @@
 var yo = require('yo-yo')
 var DropdownPanel = require('./DropdownPanel')
 
-function StepDetail (_parent, _traceManager) {
-  this.parent = _parent
+function StepDetail (_parentUI, _traceManager) {
+  this.debugger = _parentUI.debugger
+  this.parentUI = _parentUI
   this.traceManager = _traceManager
 
   this.basicPanel = new DropdownPanel('Step detail', {json: true, displayContentOnly: true})
@@ -19,17 +20,17 @@ StepDetail.prototype.render = function () {
 
 StepDetail.prototype.init = function () {
   var self = this
-  this.parent.event.register('traceUnloaded', this, function () {
+  this.debugger.event.register('traceUnloaded', this, function () {
     self.detail = initDetail()
     self.basicPanel.update(self.detail)
   })
 
-  this.parent.event.register('newTraceLoaded', this, function () {
+  this.debugger.event.register('newTraceLoaded', this, function () {
     self.detail = initDetail()
     self.basicPanel.update(self.detail)
   })
 
-  this.parent.event.register('indexChanged', this, function (index) {
+  this.parentUI.event.register('indexChanged', this, function (index) {
     if (index < 0) return
 
     self.detail['vm trace step'] = index

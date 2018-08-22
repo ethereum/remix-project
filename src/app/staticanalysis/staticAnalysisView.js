@@ -1,5 +1,5 @@
 'use strict'
-var StaticAnalysisRunner = require('remix-solidity').CodeAnalysis
+var StaticAnalysisRunner = require('remix-analyzer').CodeAnalysis
 var yo = require('yo-yo')
 var $ = require('jquery')
 var remixLib = require('remix-lib')

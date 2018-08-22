@@ -1,10 +1,9 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
-var remixSolidity = require('remix-solidity')
-var stateDecoder = remixSolidity.stateDecoder
+var remixDebug = require('remix-debug')
+var stateDecoder = remixDebug.SolidityDecoder.stateDecoder
 var solidityTypeFormatter = require('./SolidityTypeFormatter')
-var remixCore = require('remix-core')
-var StorageViewer = remixCore.storage.StorageViewer
+var StorageViewer = remixDebug.storage.StorageViewer
 var yo = require('yo-yo')
 
 function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
