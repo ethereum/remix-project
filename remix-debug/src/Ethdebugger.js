@@ -36,8 +36,8 @@ function Ethdebugger (opts) {
   this.opts = opts || {}
   if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
-  this.executionContext = opts.executionContext || executionContext;
-  this.web3 = opts.web3 || this.executionContext.web3;
+  this.executionContext = opts.executionContext || executionContext
+  this.web3 = opts.web3 || this.executionContext.web3
 
   this.event = new EventManager()
 
@@ -56,7 +56,6 @@ function Ethdebugger (opts) {
 }
 
 Ethdebugger.prototype.setManagers = function () {
-  console.log("remix-debug: setManagers");
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
@@ -200,7 +199,6 @@ Ethdebugger.prototype.switchProvider = function (type) {
 }
 
 Ethdebugger.prototype.debug = function (tx) {
-  debugger;
   this.setCompilationResult(this.opts.compilationResult())
   if (tx instanceof Object) {
     this.txBrowser.load(tx.hash)
@@ -226,10 +224,7 @@ Ethdebugger.prototype.debug = function (tx) {
   console.log('loading trace...')
   this.tx = tx
   var self = this
-  debugger;
   this.traceManager.resolveTrace(tx, function (error, result) {
-    console.log('trace loaded ' + result)
-    console.dir(arguments);
     if (result) {
       self.event.trigger('newTraceLoaded', [self.traceManager.trace])
       if (self.breakpointManager && self.breakpointManager.hasBreakpoint()) {
