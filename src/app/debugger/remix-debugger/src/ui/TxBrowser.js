@@ -23,8 +23,8 @@ var css = csjs`
   }
   .txinput {
     ${styles.rightPanel.debuggerTab.input_Debugger}
-    min-width: 30px;
     margin: 3px;
+    width: inherit;
   }
   .txbuttons {
     width: 100%;
@@ -32,6 +32,10 @@ var css = csjs`
     justify-content: center;
   }
   .txbutton {
+    ${styles.rightPanel.debuggerTab.button_Debugger}
+    width: inherit;
+  }
+  .txbuttonstart {
     ${styles.rightPanel.debuggerTab.button_Debugger}
   }
   .txbutton:hover {
@@ -187,8 +191,8 @@ TxBrowser.prototype.render = function () {
             <input class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
           </div>
           <div class="${css.txbuttons}">
-            <button id='load' class='fa fa-play ${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}></button>
-            <button id='unload' class='fa fa-stop ${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}></button>
+            <button id='load' class='${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}>Start debugging</button>
+            <button id='unload' class='${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}>Stop</button>
           </div>
         </div>
         <span id='error'></span>
