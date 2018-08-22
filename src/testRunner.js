@@ -7,7 +7,7 @@ function getAvailableFunctions (jsonInterface) {
 }
 
 function getTestFunctions (jsonInterface) {
-  let specialFunctions = ['beforeAll', 'beforeEach']
+  let specialFunctions = ['beforeAll', 'beforeEach', 'afterAll', 'afterEach']
   return jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
 }
 
@@ -25,6 +25,13 @@ function createRunList (jsonInterface) {
       runList.push({name: 'beforeEach', type: 'internal', constant: false})
     }
     runList.push({name: func.name, type: 'test', constant: func.constant})
+    if (availableFunctions.indexOf('afterEach') >= 0) {
+      runList.push({name: 'afterEach', type: 'internal', constant: false})
+    }
+  }
+
+  if (availableFunctions.indexOf('afterAll') >= 0) {
+    runList.push({name: 'afterAll', type: 'internal', constant: false})
   }
 
   return runList
