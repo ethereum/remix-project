@@ -461,6 +461,7 @@ function styleGuideDark () {
       text_Secondary: appProperties.supportText_Color,
       text_RegularLog: appProperties.mainText_Color,
       text_InfoLog: appProperties.supportText_Color,
+      text_WarnLog: appProperties.warningText_Color,
       text_ErrorLog: appProperties.errorText_Color,
       text_Title_TransactionLog: appProperties.infoText_Color,
       text_Regular_TransactionLog: appProperties.supportText_Color,
