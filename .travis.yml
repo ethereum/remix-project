@@ -6,7 +6,7 @@ branches:
   - master
   - remix_live
 script:
-  - npm run lint && npm run test && npm run downloadsolc && npm run make-mock-compiler && npm run build
+  - npm run lint && npm run test && npm run make-mock-compiler && npm run build
   - ./ci/browser_tests.sh
 deploy:
   - provider: script
