@@ -1,12 +1,13 @@
 'use strict'
 var DropdownPanel = require('./DropdownPanel')
-var remixCore = require('remix-core')
-var StorageViewer = remixCore.storage.StorageViewer
+var remixDebug = require('remix-debug')
+var StorageViewer = remixDebug.storage.StorageViewer
 var yo = require('yo-yo')
 
 function FullStoragesChanges (_parent, _traceManager) {
   this.storageResolver = null
   this.parent = _parent
+  this.debugger = _parent.debugger
   this.traceManager = _traceManager
   this.addresses = []
   this.view
@@ -25,7 +26,7 @@ FullStoragesChanges.prototype.render = function () {
 
 FullStoragesChanges.prototype.init = function () {
   var self = this
-  this.parent.event.register('newTraceLoaded', this, function (length) {
+  this.debugger.event.register('newTraceLoaded', this, function (length) {
     self.panels = []
     self.traceManager.getAddresses(function (error, addresses) {
       if (!error) {
@@ -41,7 +42,7 @@ FullStoragesChanges.prototype.init = function () {
     })
   })
 
-  this.parent.event.register('indexChanged', this, function (index) {
+  this.debugger.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (self.parent.currentStepIndex !== index) return
     if (!self.storageResolver) return

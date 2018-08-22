@@ -54,7 +54,7 @@ function panels (browser) {
     .click('#load')
     .multipleClick('#intoforward', 63)
     .assertStack(['0:0x00', '1:0x60', '2:0x65', '3:0x38', '4:0x55', '5:0x60fe47b1'])
-    .assertStorageChanges(['0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563:Objectkey:0x00value:0x38'])
+    .assertStorageChanges(['0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563:Object'])
     .assertCallData(['0:0x60fe47b10000000000000000000000000000000000000000000000000000000000000038'])
     .assertCallStack(['0:0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5'])
     .assertStackValue(1, '1:0x60')

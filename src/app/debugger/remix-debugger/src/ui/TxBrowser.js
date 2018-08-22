@@ -1,5 +1,4 @@
 var remixLib = require('remix-lib')
-var global = remixLib.global
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 var yo = require('yo-yo')
@@ -24,8 +23,8 @@ var css = csjs`
   }
   .txinput {
     ${styles.rightPanel.debuggerTab.input_Debugger}
-    min-width: 30px;
     margin: 3px;
+    width: inherit;
   }
   .txbuttons {
     width: 100%;
@@ -33,6 +32,10 @@ var css = csjs`
     justify-content: center;
   }
   .txbutton {
+    ${styles.rightPanel.debuggerTab.button_Debugger}
+    width: inherit;
+  }
+  .txbuttonstart {
     ${styles.rightPanel.debuggerTab.button_Debugger}
   }
   .txbutton:hover {
@@ -43,16 +46,16 @@ var css = csjs`
     margin-bottom: 10px;
   }
 `
-function TxBrowser (_parent) {
+function TxBrowser (_parent, opts) {
   this.event = new EventManager()
 
   this.blockNumber
   this.txNumber
   this.view
-  this.displayConnectionSetting = true
+  this.displayConnectionSetting = opts.displayConnectionSetting
+  this.web3 = opts.web3
   var self = this
   _parent.event.register('providerChanged', this, function (provider) {
-    self.displayConnectionSetting = provider === 'INTERNAL'
     self.setDefaultValues()
     if (self.view) {
       yo.update(self.view, self.render())
@@ -73,19 +76,23 @@ TxBrowser.prototype.setDefaultValues = function () {
   }
 }
 
-TxBrowser.prototype.submit = function () {
+TxBrowser.prototype.submit = function (tx) {
+  var self = this
+  self.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
+  if (tx) {
+    return self.update(null, tx)
+  }
   if (!this.txNumber) {
+    self.update('no tx index or tx hash to look for')
     return
   }
-  this.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
   try {
-    var self = this
     if (this.txNumber.indexOf('0x') !== -1) {
-      global.web3.eth.getTransaction(this.txNumber, function (error, result) {
+      self.web3.eth.getTransaction(this.txNumber, function (error, result) {
         self.update(error, result)
       })
     } else {
-      global.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
+      self.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
         self.update(error, result)
       })
     }
@@ -150,9 +157,9 @@ TxBrowser.prototype.updateTxN = function (ev) {
   this.txNumber = ev.target.value
 }
 
-TxBrowser.prototype.load = function (txHash) {
+TxBrowser.prototype.load = function (txHash, tx) {
   this.txNumber = txHash
-  this.submit()
+  this.submit(tx)
 }
 
 TxBrowser.prototype.unload = function (txHash) {
@@ -184,8 +191,8 @@ TxBrowser.prototype.render = function () {
             <input class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
           </div>
           <div class="${css.txbuttons}">
-            <button id='load' class='fa fa-play ${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}></button>
-            <button id='unload' class='fa fa-stop ${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}></button>
+            <button id='load' class='${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}>Start debugging</button>
+            <button id='unload' class='${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}>Stop</button>
           </div>
         </div>
         <span id='error'></span>

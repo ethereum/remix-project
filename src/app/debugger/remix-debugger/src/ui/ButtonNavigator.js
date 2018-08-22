@@ -51,6 +51,7 @@ function ButtonNavigator (_parent, _traceManager) {
   this.revertionPoint = null
 
   _parent.event.register('indexChanged', this, (index) => {
+    if (!this.view) return
     if (index < 0) return
     if (_parent.currentStepIndex !== index) return
 
