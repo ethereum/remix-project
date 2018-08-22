@@ -7,6 +7,10 @@ var EventManager = remixLib.EventManager
 var executionContext = require('../execution-context')
 var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
+var SourceHighlighter = require('../app/editor/sourceHighlighter')
+var RemixDebug = require('remix-debug').EthDebugger
+var TreeView = require('../app/ui/TreeView') // TODO setup a direct reference to the UI components
+var solidityTypeFormatter = require('../app/debugger/remix-debugger/src/ui/SolidityTypeFormatter')
 
 class CmdInterpreterAPI {
   constructor (terminal, localRegistry) {
@@ -15,10 +19,13 @@ class CmdInterpreterAPI {
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.terminal = terminal
+    self._components.sourceHighlighter = new SourceHighlighter()
     self._deps = {
       app: self._components.registry.get('app').api,
       fileManager: self._components.registry.get('filemanager').api,
-      editor: self._components.registry.get('editor').api
+      editor: self._components.registry.get('editor').api,
+      compiler: self._components.registry.get('compiler').api,
+      offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
     self.commandHelp = {
       'remix.debug(hash)': 'Start debugging a transaction.',
@@ -27,13 +34,95 @@ class CmdInterpreterAPI {
       'remix.setproviderurl(url)': 'Change the current provider to Web3 provider and set the url endpoint.',
       'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.',
       'remix.exeCurrent()': 'Run the script currently displayed in the editor',
-      'remix.help()': 'Display this help message'
+      'remix.help()': 'Display this help message',
+      'remix.debugHelp()': 'Display help message for debugging'
     }
   }
+  log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
+  highlight (rawLocation) {
+    var self = this
+    if (!rawLocation) {
+      self._components.sourceHighlighter.currentSourceLocation(null)
+      return
+    }
+    var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
+    self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
+  }
   debug (hash, cb) {
-    const self = this
-    self._deps.app.startdebugging(hash)
-    if (cb) cb()
+    var self = this
+    delete self.d
+    executionContext.web3().eth.getTransaction(hash, (error, tx) => {
+      if (error) return cb(error)
+      var debugSession = new RemixDebug({
+        compilationResult: () => {
+          return self._deps.compiler.lastCompilationResult.data
+        }
+      })
+      debugSession.addProvider('web3', executionContext.web3())
+      debugSession.switchProvider('web3')
+      debugSession.debug(tx)
+      self.d = debugSession
+      this._components.terminal.commands.log('A new debugging session is available at remix.d')
+      if (cb) cb(null, debugSession)
+      // helpers
+      self.d.highlight = (address, vmtraceIndex) => {
+        if (!address) return self.highlight()
+        self.d.sourceLocationFromVMTraceIndex(address, vmtraceIndex, (error, rawLocation) => {
+          if (!error && rawLocation) {
+            self.highlight(rawLocation)
+          }
+        })
+      }
+      self.d.stateAt = (vmTraceIndex) => {
+        self.d.extractStateAt(vmTraceIndex, (error, state) => {
+          if (error) return self.log(error)
+          self.d.decodeStateAt(vmTraceIndex, state, (error, state) => {
+            if (error) return this._components.terminal.commands.html(error)
+            var treeView = new TreeView({
+              json: true,
+              formatSelf: solidityTypeFormatter.formatSelf,
+              extractData: solidityTypeFormatter.extractData
+            })
+            self.log('State at ' + vmTraceIndex)
+            self._components.terminal.commands.html(treeView.render(state, true))
+          })
+        })
+      }
+      self.d.localsAt = (contractAddress, vmTraceIndex) => {
+        debugSession.sourceLocationFromVMTraceIndex(contractAddress, vmTraceIndex, (error, location) => {
+          if (error) return self.log(error)
+          debugSession.decodeLocalsAt(23, location, (error, locals) => {
+            if (error) return this._components.terminal.commands.html(error)
+            var treeView = new TreeView({
+              json: true,
+              formatSelf: solidityTypeFormatter.formatSelf,
+              extractData: solidityTypeFormatter.extractData
+            })
+            self.log('Locals at ' + vmTraceIndex)
+            self._components.terminal.commands.html(treeView.render(locals, true))
+          })
+        })
+      }
+      self.d.goTo = (row) => {
+        if (self._deps.editor.current()) {
+          var breakPoint = new remixLib.code.BreakpointManager(self.d, (sourceLocation) => {
+            return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
+          })
+          breakPoint.event.register('breakpointHit', (sourceLocation, currentStep) => {
+            self.log(null, 'step index ' + currentStep)
+            self.highlight(sourceLocation)
+            self.d.stateAt(currentStep)
+            self.d.traceManager.getCurrentCalledAddressAt(currentStep, (error, address) => {
+              if (error) return self.log(address)
+              self.d.localsAt(address, currentStep)
+            })
+          })
+          breakPoint.event.register('NoBreakpointHit', () => { self.log('line ' + row + ' is not part of the current execution') })
+          breakPoint.add({fileName: self._deps.editor.current(), row: row - 1})
+          breakPoint.jumpNextBreakpoint(0, true)
+        }
+      }
+    })
   }
   loadgist (id, cb) {
     const self = this
@@ -118,6 +207,33 @@ class CmdInterpreterAPI {
       help.appendChild(yo`<div>${k}: ${self.commandHelp[k]}</div>`)
       help.appendChild(yo`<br>`)
     }
+    self._components.terminal.commands.html(help)
+    if (cb) cb()
+    return ''
+  }
+  debugHelp (cb) {
+    const self = this
+    var help = yo`<div>Here are some examples of scripts that can be run (using remix.exeCurrent() or directly from the console)</div>`
+    help.appendChild(yo`<br>`)
+    help.appendChild(yo`<div>remix.debug('0x3c247ac268afb9a9c183feb9d4e83df51efbc8a2f4624c740789b788dac43029', function (error, debugSession) {
+     remix.d = debugSession
+     remix.log = function () { arguments[0] != null ? console.log(arguments[0]) : console.log(arguments[1]) }
+
+     remix.d.traceManager.getLength(remix.log)
+     remix.storageView = remix.d.storageViewAt(97, '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a')
+     console.log('storage at 97 :')
+     remix.storageView.storageRange(remix.log)
+})<br/></div>`)
+    help.appendChild(yo`<div>remix.log = function () { arguments[0] != null ? console.log(arguments[0]) : console.log(arguments[1]) }
+    remix.d.extractStateAt(2, function (error, state) {
+        remix.d.decodeStateAt(97, state, remix.log)
+    })<br/></div>`)
+    help.appendChild(yo`<br>`)
+    help.appendChild(yo`<div>remix.highlight(contractAddress, vmTraceIndex)</div>`)
+    help.appendChild(yo`<br>`)
+    help.appendChild(yo`<div>remix.stateAt(vmTraceIndex)<br/></div>`)
+    help.appendChild(yo`<br>`)
+    help.appendChild(yo`<div>remix.localsAt(vmTraceIndex)<br/></div>`)
     self._components.terminal.commands.html(help)
     if (cb) cb()
     return ''
