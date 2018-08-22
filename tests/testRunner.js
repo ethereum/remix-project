@@ -114,8 +114,8 @@ describe('testRunner', function () {
         })
       })
 
-      it('should 1 passing tests', function () {
-        assert.equal(results.passingNum, 1)
+      it('should 2 passing tests', function () {
+        assert.equal(results.passingNum, 2)
       })
 
       it('should 1 failing tests', function () {
@@ -126,6 +126,7 @@ describe('testRunner', function () {
         assert.deepEqual(tests, [
           { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
           { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "function returned false" },
+          { type: 'testPass', value: 'Value should not be hello world', time: 1, context: 'StringTest' },
           { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
       })
