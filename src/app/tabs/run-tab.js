@@ -25,7 +25,7 @@ function runTab (opts, localRegistry) {
             VARIABLES
   --------------------------- */
   var self = this
-  var event = new EventManager()
+  self.event = new EventManager()
   self._view = {}
   self.data = {
     count: 0,
@@ -80,7 +80,7 @@ function runTab (opts, localRegistry) {
   self._view.recorderCount = yo`<span>0</span>`
   self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
   self._view.clearInstanceElement = yo`
-    <i class="${css.clearinstance} ${css.icon} fa fa-trash" onclick=${() => clearInstanceList(self)}
+    <i class="${css.clearinstance} ${css.icon} fa fa-trash" onclick=${() => self.event.trigger('clearInstance', [])}
     title="Clear instances list and reset recorder" aria-hidden="true">
   </i>`
   self._view.instanceContainerTitle = yo`
@@ -95,7 +95,7 @@ function runTab (opts, localRegistry) {
     </div>`
 
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
-  var recorderInterface = makeRecorder(localRegistry, event, self)
+  var recorderInterface = makeRecorder(localRegistry, self.event, self)
 
   self._view.collapsedView = yo`
     <div class=${css.recorderCollapsedView}>
@@ -136,81 +136,42 @@ function runTab (opts, localRegistry) {
   var el = yo`
   <div>
     ${settings(container, self)}
-    ${contractDropdown(event, self)}
+    ${contractDropdown(self.event, self)}
     ${recorderCard.render()}
     ${self._view.instanceContainer}
   </div>
   `
   container.appendChild(el)
 
-  /* -------------------------
-        HELPER FUNCTIONS
-  --------------------------- */
-
-  // DROPDOWN
-  var selectExEnv = el.querySelector('#selectExEnvOptions')
-
-  function clearInstanceList (self) {
-    event.trigger('clearInstance', [])
-  }
-
-  function setFinalContext () {
-    // set the final context. Cause it is possible that this is not the one we've originaly selected
-    selectExEnv.value = executionContext.getProvider()
-    fillAccountsList(el, self)
-    event.trigger('clearInstance', [])
-  }
-
-  selectExEnv.addEventListener('change', function (event) {
-    let context = selectExEnv.options[selectExEnv.selectedIndex].value
-    executionContext.executionContextChange(context, null, () => {
-      modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-        modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
-          executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {
-            if (alertMsg) {
-              modalDialogCustom.alert(alertMsg)
-            }
-            setFinalContext()
-          })
-        }, setFinalContext)
-      }, setFinalContext)
-    }, (alertMsg) => {
-      modalDialogCustom.alert(alertMsg)
-    }, setFinalContext)
-  })
-
-  selectExEnv.value = executionContext.getProvider()
-  executionContext.event.register('contextChanged', (context, silent) => {
-    setFinalContext()
-  })
-
-  fillAccountsList(el, self)
-  setInterval(() => {
-    updateAccountBalances(container, self)
-  }, 10000)
-
-  event.register('clearInstance', () => {
-    var instanceContainer = self._view.instanceContainer
-    var instanceContainerTitle = self._view.instanceContainerTitle
-    instanceContainer.innerHTML = '' // clear the instances list
-    instanceContainer.appendChild(instanceContainerTitle)
-    instanceContainer.appendChild(self._view.noInstancesText)
-  })
   return { render () { return container } }
 }
 
+var accountListCallId = 0
+var loadedAccounts = {}
 function fillAccountsList (container, self) {
-  var $txOrigin = $(container.querySelector('#txorigin'))
-  $txOrigin.empty()
-  self._deps.udapp.getAccounts((err, accounts) => {
-    if (err) { addTooltip(`Cannot get account list: ${err}`) }
-    if (accounts && accounts[0]) {
-      for (var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])) }
-      $txOrigin.val(accounts[0])
-    } else {
-      $txOrigin.val('unknown')
-    }
-  })
+  accountListCallId++
+  (function (callid) {
+    var txOrigin = container.querySelector('#txorigin')
+    self._deps.udapp.getAccounts((err, accounts) => {
+      if (accountListCallId > callid) return
+      accountListCallId++
+      if (err) { addTooltip(`Cannot get account list: ${err}`) }
+      for (var loadedaddress in loadedAccounts) {
+        if (accounts.indexOf(loadedaddress) === -1) {
+          txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
+          delete loadedAccounts[loadedaddress]
+        }
+      }
+      for (var i in accounts) {
+        var address = accounts[i]
+        if (!loadedAccounts[address]) {
+          txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
+          loadedAccounts[address] = 1
+        }
+      }
+      txOrigin.setAttribute('value', accounts[0])
+    })
+  })(accountListCallId)
 }
 
 function updateAccountBalances (container, self) {
@@ -426,7 +387,7 @@ function contractDropdown (events, self) {
       var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
       self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
         if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-        if (contractMetadata.autoDeployLib) {
+        if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
           txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
             createInstanceCallback(error, selectedContract, data)
           }, (msg) => {
@@ -513,15 +474,22 @@ function contractDropdown (events, self) {
 function settings (container, self) {
   // VARIABLES
   var net = yo`<span class=${css.network}></span>`
-  const updateNetwork = () => {
-    executionContext.detectNetwork((err, { id, name } = {}) => {
-      if (err) {
-        console.error(err)
-        net.innerHTML = 'can\'t detect network '
-      } else {
-        net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
-      }
-    })
+  var networkcallid = 0
+  const updateNetwork = (cb) => {
+    networkcallid++
+    (function (callid) {
+      executionContext.detectNetwork((err, { id, name } = {}) => {
+        if (networkcallid > callid) return
+        networkcallid++
+        if (err) {
+          console.error(err)
+          net.innerHTML = 'can\'t detect network '
+        } else {
+          net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+        }
+        if (cb) cb(err, {id, name})
+      })
+    })(networkcallid)
   }
   var environmentEl = yo`
     <div class="${css.crow}">
@@ -530,7 +498,7 @@ function settings (container, self) {
       </div>
       <div class=${css.environment}>
         ${net}
-        <select id="selectExEnvOptions" onchange=${updateNetwork} class="${css.select}">
+        <select id="selectExEnvOptions" onchange=${() => { updateNetwork() }} class="${css.select}">
           <option id="vm-mode"
             title="Execution environment does not connect to any node, everything is local and in memory only."
             value="vm" checked name="executionContext"> JavaScript VM
@@ -595,7 +563,57 @@ function settings (container, self) {
     updateAccountBalances(container, self)
   })
 
-  setInterval(updateNetwork, 5000)
+  // DROPDOWN
+  var selectExEnv = environmentEl.querySelector('#selectExEnvOptions')
+
+  function setFinalContext () {
+    // set the final context. Cause it is possible that this is not the one we've originaly selected
+    selectExEnv.value = executionContext.getProvider()
+    self.event.trigger('clearInstance', [])
+    updateNetwork()
+    fillAccountsList(el, self)
+  }
+
+  self.event.register('clearInstance', () => {
+    var instanceContainer = self._view.instanceContainer
+    var instanceContainerTitle = self._view.instanceContainerTitle
+    instanceContainer.innerHTML = '' // clear the instances list
+    instanceContainer.appendChild(instanceContainerTitle)
+    instanceContainer.appendChild(self._view.noInstancesText)
+  })
+
+  selectExEnv.addEventListener('change', function (event) {
+    let context = selectExEnv.options[selectExEnv.selectedIndex].value
+    executionContext.executionContextChange(context, null, () => {
+      modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
+        modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+          executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {
+            if (alertMsg) {
+              modalDialogCustom.alert(alertMsg)
+            }
+            setFinalContext()
+          })
+        }, setFinalContext)
+      }, setFinalContext)
+    }, (alertMsg) => {
+      modalDialogCustom.alert(alertMsg)
+    }, setFinalContext)
+  })
+
+  selectExEnv.value = executionContext.getProvider()
+  executionContext.event.register('contextChanged', (context, silent) => {
+    setFinalContext()
+  })
+
+  setInterval(() => {
+    updateNetwork()
+    fillAccountsList(el, self)
+  }, 5000)
+
+  setInterval(() => {
+    updateAccountBalances(container, self)
+  }, 10000)
+
   function newAccount () {
     self._deps.udapp.newAccount('', (error, address) => {
       if (!error) {
