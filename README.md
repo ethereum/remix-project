@@ -56,6 +56,8 @@ supported values currently are: `bool` `uint` `int` `address` `bytes32`
 
 ### Command Line
 
+Remix-Tests will assume the tests will files whose name end with "_test.sol". e.g `simple_storage_test.sol`
+
 Usage:
 
 * A directory with tests files `remix-tests examples/`
