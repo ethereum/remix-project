@@ -133,7 +133,7 @@ module.exports = class SettingsTab {
         var plugin = plugins[k]
         if (!self._view.plugins[plugin.title]) self._view.plugins[plugin.title] = {}
         self._view.plugins[plugin.title].json = plugin
-        self._view.plugins[plugin.title].el = yo`<div class="${css.pluginLoad}">
+        self._view.plugins[plugin.title].el = yo`<div title=${plugin.title} class="${css.pluginLoad}">
         <div class="${css.aPlugin}" onclick=${() => { onLoadPlugin(plugin.title) }}>${plugin.title}</div>
         ${opt.removable ? yo`<span class="${css.removePlugin}" onclick=${() => { onRemovePlugin(plugin.title) }}><i class="fa fa-close"></i></span>` : yo`<span></span>`}
         </div>`
