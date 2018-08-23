@@ -13,6 +13,8 @@ var helper = require('../../lib/helper.js')
 var executionContext = require('../../execution-context')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var copyToClipboard = require('../ui/copy-to-clipboard')
+const Buffer = require('safe-buffer').Buffer
+var Personal = require('web3-eth-personal')
 var Card = require('../ui/card')
 var Recorder = require('../../recorder')
 var addTooltip = require('../ui/tooltip')
@@ -527,6 +529,7 @@ function settings (container, self) {
       <div class=${css.account}>
         <select name="txorigin" class="${css.select}" id="txorigin"></select>
         ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
+        <i class="fa fa-pencil-square-o ${css.icon}" aria-hiden="true" onclick=${signMessage} title="Sign a message using this account key"></i>
       </div>
     </div>
   `
@@ -623,6 +626,65 @@ function settings (container, self) {
       } else {
         addTooltip('Cannot create an account: ' + error)
       }
+    })
+  }
+  function signMessage (event) {
+    self._deps.udapp.getAccounts((err, accounts) => {
+      if (err) { addTooltip(`Cannot get account list: ${err}`) }
+      var signMessageDialog = {'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
+      var $txOrigin = container.querySelector('#txorigin')
+      var account = $txOrigin.selectedOptions[0].value
+      var isVM = executionContext.isVM()
+      var isInjected = executionContext.getProvider() === "injected"
+      function alertSignedData(error, signedData) {
+        if (error && error.message !== '') {
+          console.log(error)    
+          addTooltip(error.message)
+        } else {
+          modalDialogCustom.alert(signedData)
+        }
+      }
+      if (isVM) {
+        modalDialogCustom.promptMulti(signMessageDialog, (message) => {
+          const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
+          var privKey = self._deps.udapp.accounts[account].privateKey
+          try {
+            var rsv = ethJSUtil.ecsign(personalMsg, privKey)
+            var rsvJson = JSON.stringify(rsv, null, '\t')
+            var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
+            modalDialogCustom.alert(rsvJson + '\n' + signedData)
+          } catch (e) {
+            addTooltip(e.message)
+            return
+          }
+        }, false)
+      } else if (isInjected) {
+        modalDialogCustom.promptMulti(signMessageDialog, (message) => {
+          const hashedMsg = executionContext.web3().sha3(message) 
+          try {
+            executionContext.web3().eth.sign(account, hashedMsg, alertSignedData)
+          } catch (e) {
+            addTooltip(e.message)
+            console.log(e)
+            return
+          }
+        })
+      } else {
+        modalDialogCustom.promptPassphrase('Passphrase to sign a message', 'Enter your passphrase for this account to sign the message', '', (passphrase) => {
+          modalDialogCustom.promptMulti(signMessageDialog, (message) => {
+            const hashedMsg = executionContext.web3().sha3(message)
+            try {
+              var personal = new Personal(executionContext.web3().currentProvider)
+              personal.sign('0x' + Buffer.from(message).toString('hex'), account, passphrase, alertSignedData) 
+            } catch (e) {
+              addTooltip(e.message)
+              comsole.log(e)
+              return
+            }
+          }) 
+        }, false)
+      }
+      
     })
   }
 
