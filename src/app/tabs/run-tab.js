@@ -631,17 +631,17 @@ function settings (container, self) {
   function signMessage (event) {
     self._deps.udapp.getAccounts((err, accounts) => {
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
-      var signMessageDialog = {'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
+      var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
       var $txOrigin = container.querySelector('#txorigin')
       var account = $txOrigin.selectedOptions[0].value
       var isVM = executionContext.isVM()
-      var isInjected = executionContext.getProvider() === "injected"
-      function alertSignedData(error, signedData) {
+      var isInjected = executionContext.getProvider() === 'injected'
+      function alertSignedData (error, hash, signedData) {
         if (error && error.message !== '') {
-          console.log(error)    
+          console.log(error)
           addTooltip(error.message)
         } else {
-          modalDialogCustom.alert(signedData)
+          modalDialogCustom.alert(yo`<div><b>hash:</b>${hash}<br><b>signature:</b>${signedData}</div>`)
         }
       }
       if (isVM) {
@@ -650,9 +650,8 @@ function settings (container, self) {
           var privKey = self._deps.udapp.accounts[account].privateKey
           try {
             var rsv = ethJSUtil.ecsign(personalMsg, privKey)
-            var rsvJson = JSON.stringify(rsv, null, '\t')
             var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-            modalDialogCustom.alert(rsvJson + '\n' + signedData)
+            alertSignedData(null, '0x' + personalMsg.toString('hex'), signedData)
           } catch (e) {
             addTooltip(e.message)
             return
@@ -660,9 +659,11 @@ function settings (container, self) {
         }, false)
       } else if (isInjected) {
         modalDialogCustom.promptMulti(signMessageDialog, (message) => {
-          const hashedMsg = executionContext.web3().sha3(message) 
+          const hashedMsg = executionContext.web3().sha3(message)
           try {
-            executionContext.web3().eth.sign(account, hashedMsg, alertSignedData)
+            executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
+              alertSignedData(error, hashedMsg, signedData)
+            })
           } catch (e) {
             addTooltip(e.message)
             console.log(e)
@@ -675,16 +676,20 @@ function settings (container, self) {
             const hashedMsg = executionContext.web3().sha3(message)
             try {
               var personal = new Personal(executionContext.web3().currentProvider)
-              personal.sign('0x' + Buffer.from(message).toString('hex'), account, passphrase, alertSignedData) 
+              personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
+                alertSignedData(error, hashedMsg, signedData)
+                web3.eth.personal.ecRecover(hashedMsg, signedData, (error, data) => {
+                  addTooltip(data)
+                })
+              })
             } catch (e) {
               addTooltip(e.message)
-              comsole.log(e)
+              console.log(e)
               return
             }
-          }) 
+          })
         }, false)
       }
-      
     })
   }
 
