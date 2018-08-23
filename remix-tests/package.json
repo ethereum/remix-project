@@ -1,6 +1,6 @@
 {
   "name": "remix-tests",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Tests for the Ethereum tool suite Remix",
   "main": "./src/index.js",
   "contributors": [
