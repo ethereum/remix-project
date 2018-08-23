@@ -50,7 +50,7 @@ describe('testRunner', function () {
         assert.equal(results.failureNum, 2)
       })
 
-      it('should returns 3 messages', function () {
+      it('should returns 5 messages', function () {
         assert.deepEqual(tests, [
           { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
           { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
@@ -91,6 +91,43 @@ describe('testRunner', function () {
           { type: 'contract', value: 'MyTest', filename: 'simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should be200', time: 1, context: 'MyTest' }
+        ])
+      })
+    })
+
+    // Test string comparision
+    describe('test with beforeAll', function () {
+      let filename = 'tests/examples_3/simple_string_test.sol'
+      let tests = [], results = {}
+
+      before(function (done) {
+        compileAndDeploy(filename, function (_err, contracts) {
+          var testCallback = function (test) {
+            tests.push(test)
+          }
+          var resultsCallback = function (_err, _results) {
+            results = _results
+            done()
+          }
+          TestRunner.runTest('StringTest', contracts.StringTest, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest2', contracts.StringTest2, testCallback, resultsCallback)
+        })
+      })
+
+      it('should 2 passing tests', function () {
+        assert.equal(results.passingNum, 2)
+      })
+
+      it('should 1 failing tests', function () {
+        assert.equal(results.failureNum, 1)
+      })
+
+      it('should returns 3 messages', function () {
+        assert.deepEqual(tests, [
+          { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
+          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "function returned false" },
+          { type: 'testPass', value: 'Value should not be hello world', time: 1, context: 'StringTest' },
+          { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
       })
     })
