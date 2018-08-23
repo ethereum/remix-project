@@ -6,7 +6,7 @@ class CompilerMetadata {
     var self = this
     self._events = events
     self._opts = opts
-    self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42']
+    self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'Custom']
   }
 
   syncContractMetadata () {
