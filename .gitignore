@@ -9,3 +9,5 @@ docs/_build
 package-lock.json
 .DS_Store
 .tern-port
+TODO
+soljson.js

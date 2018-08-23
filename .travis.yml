@@ -5,6 +5,7 @@ env:
   - TEST_DIR=remix-lib
   - TEST_DIR=remix-solidity
   - TEST_DIR=remix-debug
+  - TEST_DIR=remix-tests
 script: 
   - cd $TEST_DIR && npm install && npm test
 deploy:
@@ -15,4 +16,3 @@ deploy:
         branch: master
         condition: $TEST_DIR = remix-debugger
 cache: false
-
