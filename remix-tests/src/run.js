@@ -20,10 +20,20 @@ function mapVerbosity (v) {
   }
   return levels[v]
 }
+const version = require('../package.json').version
+
+commander.version(version)
+
+commander.command('version').description('output the version number').action(function () {
+  console.log(version)
+})
+
+commander.command('help').description('output usage information').action(function () {
+  commander.help()
+})
+
 // get current version
-const pjson = require('../package.json')
 commander
-  .version(pjson.version)
   .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
   .action(function (filename) {
     // Console message
