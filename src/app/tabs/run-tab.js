@@ -678,9 +678,6 @@ function settings (container, self) {
               var personal = new Personal(executionContext.web3().currentProvider)
               personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
                 alertSignedData(error, hashedMsg, signedData)
-                web3.eth.personal.ecRecover(hashedMsg, signedData, (error, data) => {
-                  addTooltip(data)
-                })
               })
             } catch (e) {
               addTooltip(e.message)
