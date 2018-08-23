@@ -195,14 +195,6 @@ module.exports = class CompileTab {
     if (self.data.allversions && self.data.selectedVersion) self._updateVersionSelector()
     self._view.version = yo`<span id="version"></span>`
 
-    self._view.config.solidity = yo`
-      <div class="${css.info}">
-        <span>Current version:</span> ${self._view.version}
-        <div class="${css.crow}">
-          ${self._view.versionSelector}
-        </div>
-      </div>`
-
     self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
     self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
@@ -212,21 +204,27 @@ module.exports = class CompileTab {
     if (self.data.hideWarnings) self._view.hideWarningsBox.setAttribute('checked', '')
     self._view.compileContainer = yo`
       <div class="${css.compileContainer}">
-      ${self._view.config.solidity}
-        <div class="${css.compileButtons}">
-          ${self._view.compileButton}
-          ${self._view.warnCompilationSlow}
-          <div class="${css.autocompileContainer}">
-            ${self._view.autoCompile}
-            <span class="${css.autocompileText}">Auto compile</span>
-          </div>
+        <div class="${css.info}">
+          <span>Current version:</span> ${self._view.version}
           <div class="${css.crow}">
-            <div>${self._view.optimize}</div>
-            <span class="${css.checkboxText}">Enable Optimization</span>
+            ${self._view.versionSelector}
           </div>
-          <div class=${css.hideWarningsContainer}>
-            ${self._view.hideWarningsBox}
-            <span class="${css.autocompileText}">Hide warnings</span>
+          <div class="${css.compileButtons}">
+            <div class=${css.checkboxes}>
+              <div class="${css.autocompileContainer}">
+                ${self._view.autoCompile}
+                <span class="${css.autocompileText}">Auto compile</span>
+              </div>
+              <div class="${css.optimizeContainer}">
+                <div>${self._view.optimize}</div>
+                <span class="${css.checkboxText}">Enable Optimization</span>
+              </div>
+              <div class=${css.hideWarningsContainer}>
+                ${self._view.hideWarningsBox}
+                <span class="${css.autocompileText}">Hide warnings</span>
+              </div>
+            </div>
+            ${self._view.compileButton}
           </div>
         </div>
       </div>`
@@ -462,7 +460,7 @@ const css = csjs`
   }
   .select {
     font-weight: bold;
-    margin-top: 1em;
+    margin: 10px 0px;
     ${styles.rightPanel.settingsTab.dropdown_SelectCompiler};
   }
   .info {
@@ -509,12 +507,19 @@ const css = csjs`
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .name {
     display: flex;
   }
   .size {
     display: flex;
+  }
+  .checkboxes {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   .compileButton {
     ${styles.rightPanel.compileTab.button_Compile};
@@ -532,6 +537,9 @@ const css = csjs`
     display: flex;
     align-items: center;
     margin-bottom: 2%;
+  }
+  .optimizeContainer {
+    display: flex;
   }
   .contractNames {
     ${styles.rightPanel.compileTab.dropdown_CompileContract};
