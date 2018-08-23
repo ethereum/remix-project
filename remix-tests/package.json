@@ -1,0 +1,53 @@
+{
+  "name": "remix-tests",
+  "version": "0.0.6",
+  "description": "Tests for the Ethereum tool suite Remix",
+  "main": "./src/index.js",
+  "contributors": [
+    {
+      "name": "Iuri Matias",
+      "email": "iuri@ethereum.org"
+    },
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    }
+  ],
+  "bin": {
+    "remix-tests": "./bin/remix-tests"
+  },
+  "scripts": {
+    "lint": "standard",
+    "test": "standard && mocha tests/ -t 300000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-tests.git"
+  },
+  "author": "Remix Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-tests/issues"
+  },
+  "standard": {
+    "ignore": [
+      "tests/"
+    ]
+  },
+  "homepage": "https://github.com/ethereum/remix-tests#readme",
+  "dependencies": {
+    "async": "^2.6.0",
+    "babel-preset-es2017": "^6.24.1",
+    "change-case": "^3.0.1",
+    "colors": "^1.1.2",
+    "commander": "^2.13.0",
+    "remix-simulator": "latest",
+    "remix-solidity": "^0.2.2",
+    "solc": "^0.4.24",
+    "standard": "^10.0.3",
+    "web3": "1.0.0-beta.27"
+  },
+  "devDependencies": {
+    "mocha": "^5.1.0"
+  }
+}
