@@ -48,6 +48,11 @@ commander
     web3.setProvider(new Provider())
     // web3.setProvider(new web3.providers.WebsocketProvider('ws://localhost:8546'))
 
+    if (!fs.existsSync(filename)) {
+      console.error(filename + ' not found')
+      process.exit(1)
+    }
+
     let isDirectory = fs.lstatSync(filename).isDirectory()
     RemixTests.runTestFiles(filename, isDirectory, web3)
   })
