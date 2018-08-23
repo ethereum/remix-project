@@ -372,6 +372,8 @@ function contractDropdown (events, self) {
         if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
         var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
         instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+      } else {
+        self._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
       }
     })
   }
