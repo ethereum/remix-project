@@ -1,7 +1,7 @@
 {
   "name": "remix-tests",
   "version": "0.0.6",
-  "description": "",
+  "description": "Tests for the Ethereum tool suite Remix",
   "main": "./src/index.js",
   "contributors": [
     {
@@ -25,7 +25,7 @@
     "url": "git+https://github.com/ethereum/remix-tests.git"
   },
   "author": "Remix Team",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ethereum/remix-tests/issues"
   },
