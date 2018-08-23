@@ -14,6 +14,7 @@ var css = csjs`
     overflow: auto; /* Enable scroll if needed */
     background-color: ${styles.colors.black}; /* Fallback color */
     background-color: ${styles.colors.opacityBlack}; /* Black w/ opacity */
+    word-wrap: break-word;
   }
   .modalHeader {
     padding: 2px 16px;
