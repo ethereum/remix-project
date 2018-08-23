@@ -4,7 +4,8 @@
     "remix-debug",
     "remix-lib",
     "remix-solidity",
-    "remix-analyzer"
+    "remix-analyzer",
+    "remix-tests"
   ],
   "version": "independent"
 }
