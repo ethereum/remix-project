@@ -2,28 +2,28 @@ Welcome to Remix documentation!
 ===============================
 
 Remix is a powerful, open source tool that helps you write Solidity contracts straight from the browser.
-Written in Javascript, Remix supports both usage in the browser or locally.
+Written in JavaScript, Remix supports both usage in the browser and locally.
 
 Remix also supports testing, debugging and deploying of smart contracts and much more.
 
 Our Remix project with all its features is available
 at `remix.ethereum.org <http://remix.ethereum.org>`__ and more information can be found in these
-docs.  Our tool is available at `our GitHub repository
+docs.  Our IDE tool is available at `our GitHub repository
 <https://github.com/ethereum/remix-ide>`__.
 
 This set of documents covers instructions on how to use Remix and some tutorials to help you get started.
 
-Userful links:
+Useful links:
 
 - `Solidity documentation <https://solidity.readthedocs.io>`__
 
-- `Remix alpha <http://remix-alpha.ethereum.org>`__ - version where we test new Remix release (not stable!)
+- `Remix alpha <http://remix-alpha.ethereum.org>`__ - The version where we test new Remix release (not stable!).
 
-- `Ethereum Stackexchange for Remix <https://ethereum.stackexchange.com/questions/tagged/remix>`__
+- `Ethereum StackExchange for Remix <https://ethereum.stackexchange.com/questions/tagged/remix>`__
 
 - `Community support channel <https://gitter.im/ethereum/remix>`__
 
-- `Dapp Developer resources (Ethereum wiki) <https://github.com/ethereum/wiki/wiki/Dapp-Developer-Resources>`__
+- `Ðapp Developer resources (Ethereum wiki) <https://github.com/ethereum/wiki/wiki/Dapp-Developer-Resources>`__
 
 
 .. toctree::
