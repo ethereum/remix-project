@@ -24,10 +24,7 @@ var debugger = new Debugger({
   }
 })
 
-// Sample http provider, but your url or provider may be different.
-var web3Provider = new Web3.providers.HttpProvider("http://localhost:7545")
-
-debugger.addProvider('web3', web3Provider)
+debugger.addProvider(web3, 'web3')
 debugger.switchProvider('web3')
 
 var breakPointManager = new remixCore.code.BreakpointManager(this.debugger, (sourceLocation) => {
