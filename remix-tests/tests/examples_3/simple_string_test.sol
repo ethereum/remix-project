@@ -1,5 +1,4 @@
 pragma solidity ^0.4.7;
-import "./tests.sol";
 import "./simple_string.sol";
 
 contract StringTest {
