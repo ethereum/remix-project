@@ -78,8 +78,9 @@ module.exports = {
 
   getFunction: function (abi, fnName) {
     for (var i = 0; i < abi.length; i++) {
-      if (abi[i].name === fnName) {
-        return abi[i]
+      var fn = abi[i]
+      if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => { return value.type }).join(',') + ')') {
+        return fn
       }
     }
     return null
