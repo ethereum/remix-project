@@ -275,7 +275,7 @@ class TxListener {
       var methodIdentifiers = contract.object.evm.methodIdentifiers
       for (var fn in methodIdentifiers) {
         if (methodIdentifiers[fn] === inputData.substring(0, 8)) {
-          var fnabi = getFunction(abi, fn)
+          var fnabi = txHelper.getFunction(abi, fn)
           this._resolvedTransactions[tx.hash] = {
             contractName: contractName,
             to: tx.to,
@@ -299,7 +299,7 @@ class TxListener {
       var bytecode = contract.object.evm.bytecode.object
       var params = null
       if (bytecode && bytecode.length) {
-        params = this._decodeInputParams(inputData.substring(bytecode.length), getConstructorInterface(abi))
+        params = this._decodeInputParams(inputData.substring(bytecode.length), txHelper.getConstructorInterface(abi))
       }
       this._resolvedTransactions[tx.hash] = {
         contractName: contractName,
@@ -340,29 +340,6 @@ class TxListener {
     }
     return ret
   }
-}
-
-// those function will be duplicate after the merged of the compile and run tabs split
-function getConstructorInterface (abi) {
-  var funABI = { 'name': '', 'inputs': [], 'type': 'constructor', 'outputs': [] }
-  for (var i = 0; i < abi.length; i++) {
-    if (abi[i].type === 'constructor') {
-      funABI.inputs = abi[i].inputs || []
-      break
-    }
-  }
-
-  return funABI
-}
-
-function getFunction (abi, fnName) {
-  for (var i = 0; i < abi.length; i++) {
-    var fn = abi[i]
-    if (fnName === fn.name + '(' + fn.inputs.map((value) => { return value.type }).join(',') + ')') {
-      return fn
-    }
-  }
-  return null
 }
 
 module.exports = TxListener
