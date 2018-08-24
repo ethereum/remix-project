@@ -73,7 +73,8 @@ function Compiler (handleImportCall) {
   function onInternalCompilerLoaded () {
     if (worker === null) {
       var compiler
-      if (typeof (window) === 'undefined') {
+      var userAgent = navigator.userAgent.toLowerCase()
+      if (typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1) {
         compiler = require('solc')
       } else {
         compiler = solc(window.Module)
