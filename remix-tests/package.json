@@ -43,6 +43,7 @@
     "commander": "^2.13.0",
     "remix-simulator": "0.0.3",
     "remix-solidity": "^0.2.5",
+    "signale": "^1.2.1",
     "solc": "^0.4.24",
     "standard": "^10.0.3",
     "web3": "1.0.0-beta.27"
