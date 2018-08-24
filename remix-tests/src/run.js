@@ -2,6 +2,7 @@ const commander = require('commander')
 const Web3 = require('web3')
 const RemixTests = require('./index.js')
 const fs = require('fs')
+const signale = require('signale')
 
 const Provider = require('remix-simulator').Provider
 
@@ -16,7 +17,8 @@ commander.action(function (filename) {
 })
 
 if (!process.argv.slice(2).length) {
-  console.log('please specify filename')
+  signale.fatal('Please specify a filename')
+  process.exit()
 }
 
 commander.parse(process.argv)
