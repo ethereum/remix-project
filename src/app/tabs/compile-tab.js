@@ -235,10 +235,12 @@ module.exports = class CompileTab {
       <div class="${css.container}">
         <div class="${css.contractContainer}">
           ${self._view.contractNames}
+          <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>
+            <i class="${css.copyIcon} fa fa-upload" aria-hidden="true"></i>
+          </div>
         </div>
         <div class="${css.contractHelperButtons}">
           <div title="Display Contract Details" class="${css.details}" onclick=${details}>Details</div>
-          <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>Publish on Swarm</div>
           <div title="Copy ABI to clipboard" class="${css.copyButton}" onclick=${copyABI}>
             <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i> ABI
           </div>
@@ -523,9 +525,8 @@ const css = csjs`
   }
   .compileButton {
     ${styles.rightPanel.compileTab.button_Compile};
-    width: 120px;
-    min-width: 110px;
-    margin-right: 1%;
+    width: 100%;
+    margin: 15px 0 10px 0;
     font-size: 12px;
   }
   .container {
@@ -548,6 +549,8 @@ const css = csjs`
     display: flex;
     cursor: pointer;
     text-align: center;
+    justify-content: flex-end;
+    margin: 15px 15px 10px 0;
   }
   .copyButton {
     ${styles.rightPanel.compileTab.button_Details};
@@ -564,12 +567,14 @@ const css = csjs`
   }
   .details {
     ${styles.rightPanel.compileTab.button_Details};
+    min-width: 100px;
+    width: 130px;
   }
   .publish {
-    ${styles.rightPanel.compileTab.button_Publish};
-    margin-left: 5px;
-    margin-right: 5px;
-    width: 120px;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
   }
   .log {
     ${styles.rightPanel.compileTab.box_CompileContainer};
