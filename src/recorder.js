@@ -201,6 +201,8 @@ class Recorder {
       var fnABI
       if (tx.record.type === 'constructor') {
         fnABI = txHelper.getConstructorInterface(abi)
+      } else if (tx.record.type === 'fallback') {
+        fnABI = txHelper.getFallbackInterface(abi)
       } else {
         fnABI = txHelper.getFunction(abi, record.name + record.inputs)
       }
