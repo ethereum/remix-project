@@ -1,11 +1,16 @@
+/* eslint no-extend-native: "warn" */
 let fs = require('fs')
 var async = require('async')
 var path = require('path')
 const signale = require('signale')
 let RemixCompiler = require('remix-solidity').Compiler
 
-// TODO: replace this with remix's own compiler code
+String.prototype.regexIndexOf = function (regex, startpos) {
+  var indexOf = this.substring(startpos || 0).search(regex)
+  return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf
+}
 
+// TODO: replace this with remix's own compiler code
 function compileFileOrFiles (filename, isDirectory, cb) {
   let compiler, filepath
 
@@ -23,7 +28,8 @@ function compileFileOrFiles (filename, isDirectory, cb) {
     // only process .sol files
     if (file.split('.').pop() === 'sol') {
       let c = fs.readFileSync(path.join(filepath, file)).toString()
-      if (file.indexOf('_test.sol') > 0) {
+      const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+      if (file.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
         c = c.replace(/(pragma solidity \^\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
       }
       sources[file] = { content: c }
@@ -58,7 +64,7 @@ function compileContractSources (sources, importFileCb, cb) {
   let compiler, filepath
 
   if (!sources['remix_tests.sol']) {
-    sources['remix_tests.sol'] = {content: require('../sol/tests.sol.js')}
+    sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
   }
 
   async.waterfall([
