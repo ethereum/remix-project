@@ -75,7 +75,7 @@ module.exports = {
 
     return funABI
   },
-  
+
   serializeInputs: function (fnAbi) {
     var serialized = '('
     if (fnAbi.inputs && fnAbi.inputs.length) {
