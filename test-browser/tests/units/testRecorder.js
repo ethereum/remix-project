@@ -129,7 +129,7 @@ var records = `{
         "to": "created{1512830015080}",
         "abi": "0xc41589e7559804ea4a2080dad19d876a024ccb05117835447d72ce08c1d020ec",
         "name": "set",
-        "inputs": "(uint256,address)"
+        "inputs": "(uint256,address)",
         "type": "function",
         "from": "account{0}"
       }
@@ -247,7 +247,7 @@ var scenario = {
         'linkReferences': {},
         'name': '',
         'type': 'constructor',
-        'inputs': '(uint256)'
+        'inputs': '(uint256)',
         'from': 'account{0}'
       }
     },
@@ -261,7 +261,7 @@ var scenario = {
         'to': 'created{1512912691086}',
         'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
         'name': 'set',
-        'inputs': '(uint256)'
+        'inputs': '(uint256)',
         'type': 'function',
         'from': 'account{0}'
       }
