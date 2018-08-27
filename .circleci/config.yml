@@ -26,10 +26,10 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dep-bundle-20-{{ checksum "package.json" }}
+            - dep-bundle-21-{{ checksum "package.json" }}
       - run: npm install
       - save_cache:
-          key: dep-bundle-20-{{ checksum "package.json" }}
+          key: dep-bundle-21-{{ checksum "package.json" }}
           paths:
             - ~/repo/node_modules
       - run: npm run lint && npm run test && npm run make-mock-compiler && npm run build
@@ -46,10 +46,10 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dep-bundle-15-{{ checksum "package.json" }}
+            - dep-bundle-16-{{ checksum "package.json" }}
       - run: npm install
       - save_cache:
-          key: dep-bundle-15-{{ checksum "package.json" }}
+          key: dep-bundle-16-{{ checksum "package.json" }}
           paths:
             - ~/repo/node_modules
       - run: npm run build_debugger
