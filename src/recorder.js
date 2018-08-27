@@ -51,8 +51,8 @@ class Recorder {
           record.to = `created{${creationTimestamp}}`
           record.abi = this.data._contractABIReferences[creationTimestamp]
         }
-
         record.name = payLoad.funAbi.name
+        record.inputs = txHelper.serializeInputs(payLoad.funAbi)
         record.type = payLoad.funAbi.type
 
         udapp.getAccounts((error, accounts) => {
@@ -201,8 +201,10 @@ class Recorder {
       var fnABI
       if (tx.record.type === 'constructor') {
         fnABI = txHelper.getConstructorInterface(abi)
+      } else if (tx.record.type === 'fallback') {
+        fnABI = txHelper.getFallbackInterface(abi)
       } else {
-        fnABI = txHelper.getFunction(abi, record.name)
+        fnABI = txHelper.getFunction(abi, record.name + record.inputs)
       }
       if (!fnABI) {
         modal.alert('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)

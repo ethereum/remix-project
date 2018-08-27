@@ -87,6 +87,7 @@ var records = `{
         "contractName": "testLib",
         "bytecode": "60606040523415600e57600080fd5b60968061001c6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680636d4ce63c146044575b600080fd5b604a6060565b6040518082815260200191505060405180910390f35b6000610d809050905600a165627a7a7230582022d123b15248b8176151f8d45c2dc132063bcc9bb8d5cd652aea7efae362c8050029",
         "linkReferences": {},
+        "inputs": "()",  
         "type": "constructor",
         "from": "account{0}"
       }
@@ -113,6 +114,7 @@ var records = `{
         },
         "name": "",
         "type": "constructor",
+        "inputs": "(uint256)",
         "from": "account{0}"
       }
     },
@@ -127,6 +129,7 @@ var records = `{
         "to": "created{1512830015080}",
         "abi": "0xc41589e7559804ea4a2080dad19d876a024ccb05117835447d72ce08c1d020ec",
         "name": "set",
+        "inputs": "(uint256,address)",
         "type": "function",
         "from": "account{0}"
       }
@@ -244,6 +247,7 @@ var scenario = {
         'linkReferences': {},
         'name': '',
         'type': 'constructor',
+        'inputs': '(uint256)',
         'from': 'account{0}'
       }
     },
@@ -257,6 +261,7 @@ var scenario = {
         'to': 'created{1512912691086}',
         'abi': '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
         'name': 'set',
+        'inputs': '(uint256)',
         'type': 'function',
         'from': 'account{0}'
       }
