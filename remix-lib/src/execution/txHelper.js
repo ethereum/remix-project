@@ -75,6 +75,15 @@ module.exports = {
 
     return funABI
   },
+  
+  serializeInputs: function (fnAbi) {
+    var serialized = '('
+    if (fnAbi.inputs && fnAbi.inputs.length) {
+      serialized += fnAbi.inputs.map((input) => { return input.type }).join(',')
+    }
+    serialized += ')'
+    return serialized
+  },
 
   getFunction: function (abi, fnName) {
     for (var i = 0; i < abi.length; i++) {
