@@ -135,7 +135,7 @@ TxRunner.prototype.runInNode = function (from, to, data, value, gasLimit, useCal
     return executionContext.web3().eth.call(tx, function (error, result) {
       callback(error, {
         result: result,
-        transactionHash: result.transactionHash
+        transactionHash: result ? result.transactionHash : null
       })
     })
   }
@@ -187,7 +187,7 @@ function tryTillResponse (txhash, done) {
     } else {
       done(err, {
         result: result,
-        transactionHash: result.transactionHash
+        transactionHash: result ? result.transactionHash : null
       })
     }
   })
