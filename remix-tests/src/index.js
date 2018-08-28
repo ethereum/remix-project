@@ -1,6 +1,7 @@
 const async = require('async')
 const path = require('path')
 const fs = require('fs')
+const { Signale } = require('signale')
 require('colors')
 
 let Compiler = require('./compiler.js')
@@ -15,6 +16,28 @@ var createWeb3Provider = function () {
   web3.setProvider(new Provider())
   return web3
 }
+
+// signale configuration
+const options = {
+  types: {
+    result: {
+      badge: '\t✓',
+      label: '',
+      color: 'greenBright'
+    },
+    name: {
+      badge: '\n\t◼',
+      label: '',
+      color: 'white'
+    },
+    error: {
+      badge: '\t✘',
+      label: '',
+      color: 'redBright'
+    }
+  }
+}
+const signale = new Signale(options)
 
 var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback, importFileCb) {
   async.waterfall([
@@ -134,11 +157,11 @@ var runTestFiles = function (filepath, isDirectory, web3) {
 
       var testCallback = function (result) {
         if (result.type === 'contract') {
-          console.log('\n  ' + result.value)
+          signale.name(result.value.white)
         } else if (result.type === 'testPass') {
-          console.log('\t✓ '.green.bold + result.value.grey)
+          signale.result(result.value)
         } else if (result.type === 'testFailure') {
-          console.log('\t✘ '.bold.red + result.value.red)
+          signale.result(result.value.red)
           errors.push(result)
         }
       }
