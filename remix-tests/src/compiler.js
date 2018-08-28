@@ -1,11 +1,16 @@
+/* eslint no-extend-native: "warn" */
 let fs = require('fs')
 var async = require('async')
 var path = require('path')
-
+const signale = require('signale')
 let RemixCompiler = require('remix-solidity').Compiler
 
-// TODO: replace this with remix's own compiler code
+String.prototype.regexIndexOf = function (regex, startpos) {
+  var indexOf = this.substring(startpos || 0).search(regex)
+  return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf
+}
 
+// TODO: replace this with remix's own compiler code
 function compileFileOrFiles (filename, isDirectory, cb) {
   let compiler, filepath
 
@@ -13,13 +18,22 @@ function compileFileOrFiles (filename, isDirectory, cb) {
     'tests.sol': { content: require('../sol/tests.sol.js') },
     'remix_tests.sol': { content: require('../sol/tests.sol.js') }
   }
+  // signale.debug(sources)
 
   // TODO: for now assumes filepath dir contains all tests, later all this
   // should be replaced with remix's & browser solidity compiler code
   filepath = (isDirectory ? filename : path.dirname(filename))
 
   fs.readdirSync(filepath).forEach(file => {
-    sources[file] = {content: fs.readFileSync(path.join(filepath, file)).toString()}
+    // only process .sol files
+    if (file.split('.').pop() === 'sol') {
+      let c = fs.readFileSync(path.join(filepath, file)).toString()
+      const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+      if (file.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
+        c = c.replace(/(pragma solidity \^\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
+      }
+      sources[file] = { content: c }
+    }
   })
 
   async.waterfall([
@@ -39,7 +53,7 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   ], function (err, result) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
-      console.dir(errors)
+      signale.fatal(errors)
       return cb(new Error('errors compiling'))
     }
     cb(err, result.contracts)
@@ -50,7 +64,7 @@ function compileContractSources (sources, importFileCb, cb) {
   let compiler, filepath
 
   if (!sources['remix_tests.sol']) {
-    sources['remix_tests.sol'] = {content: require('../sol/tests.sol.js')}
+    sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
   }
 
   async.waterfall([
@@ -70,7 +84,7 @@ function compileContractSources (sources, importFileCb, cb) {
   ], function (err, result) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
-      console.dir(errors)
+      signale.fatal(errors)
       return cb(new Error('errors compiling'))
     }
     cb(err, result.contracts)
