@@ -12,7 +12,6 @@ const Web3 = require('web3')
 const Provider = require('remix-simulator').Provider
 
 var createWeb3Provider = function () {
-  signale.info('Creating providers')
   let web3 = new Web3()
   web3.setProvider(new Provider())
   return web3
