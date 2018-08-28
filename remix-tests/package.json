@@ -46,7 +46,8 @@
     "signale": "^1.2.1",
     "solc": "^0.4.24",
     "standard": "^10.0.3",
-    "web3": "1.0.0-beta.27"
+    "web3": "1.0.0-beta.27",
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "mocha": "^5.1.0"
