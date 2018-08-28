@@ -1,5 +1,5 @@
 pragma solidity ^0.4.7;
-import "./tests.sol";
+import "remix_test.sol";
 import "./simple_storage.sol";
 
 contract MyTest2 {
@@ -26,4 +26,3 @@ contract MyTest2 {
   }
 
 }
-
