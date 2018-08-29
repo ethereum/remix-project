@@ -29,7 +29,7 @@
     "web3": "1.0.0-beta.27"
   },
   "scripts": {
-    "test": "standard"
+    "test": "standard && mocha test/"
   },
   "bin": {
     "ethsim": "./bin/ethsim",
