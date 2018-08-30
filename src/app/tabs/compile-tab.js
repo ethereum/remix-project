@@ -236,7 +236,7 @@ module.exports = class CompileTab {
         <div class="${css.contractContainer}">
           ${self._view.contractNames}
           <div title="Publish on Swarm" class="${css.publish}" onclick=${publish}>
-            <i class="${css.copyIcon} fa fa-upload" aria-hidden="true"></i>
+            <i class="${css.copyIcon} fa fa-upload" aria-hidden="true"></i><span>Swarm</span>
           </div>
         </div>
         <div class="${css.contractHelperButtons}">
@@ -544,6 +544,7 @@ const css = csjs`
   }
   .contractNames {
     ${styles.rightPanel.compileTab.dropdown_CompileContract};
+    width:78%;
   }
   .contractHelperButtons {
     display: flex;
@@ -558,6 +559,7 @@ const css = csjs`
     min-width: 50px;
     width: auto;
     margin-left: 5px;
+    background-color: inherit;
   }
   .bytecodeButton {
     min-width: 80px;
@@ -567,8 +569,8 @@ const css = csjs`
   }
   .details {
     ${styles.rightPanel.compileTab.button_Details};
-    min-width: 100px;
-    width: 130px;
+    min-width: 70px;
+    width: 80px;
   }
   .publish {
     display: flex;
