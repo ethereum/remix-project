@@ -134,7 +134,7 @@ describe('testRunner', function () {
 
     // Test signed/unsigned integer weight
     describe('test number weight', function () {
-      let filename = 'tests/integer/integer_test.sol'
+      let filename = 'tests/number/number_test.sol'
       let tests = [], results = {}
 
       before(function (done) {
@@ -150,11 +150,11 @@ describe('testRunner', function () {
         })
       })
 
-      it('should have 2 passing tests', function () {
-        assert.equal(results.passingNum, 2)
+      it('should have 6 passing tests', function () {
+        assert.equal(results.passingNum, 6)
       })
-      it('should have 1 failing tests', function () {
-        assert.equal(results.failureNum, 1)
+      it('should have 2 failing tests', function () {
+        assert.equal(results.failureNum, 2)
       })
     })
   })
