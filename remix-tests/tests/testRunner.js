@@ -95,8 +95,8 @@ describe('testRunner', function () {
       })
     })
 
-    // Test string comparision
-    describe('test with beforeAll', function () {
+    // Test string equality
+    describe('test string equality', function () {
       let filename = 'tests/examples_3/simple_string_test.sol'
       let tests = [], results = {}
 
@@ -129,6 +129,32 @@ describe('testRunner', function () {
           { type: 'testPass', value: 'Value should not be hello world', time: 1, context: 'StringTest' },
           { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
+      })
+    })
+
+    // Test signed/unsigned integer weight
+    describe('test number weight', function () {
+      let filename = 'tests/integer/integer_test.sol'
+      let tests = [], results = {}
+
+      before(function (done) {
+        compileAndDeploy(filename, function (_err, contracts) {
+          var testCallback = function (test) {
+            tests.push(test)
+          }
+          var resultsCallback = function (_err, _results) {
+            results = _results
+            done()
+          }
+          TestRunner.runTest('IntegerTest', contracts.IntegerTest, testCallback, resultsCallback)
+        })
+      })
+
+      it('should have 2 passing tests', function () {
+        assert.equal(results.passingNum, 2)
+      })
+      it('should have 1 failing tests', function () {
+        assert.equal(results.failureNum, 1)
       })
     })
   })
