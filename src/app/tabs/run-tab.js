@@ -326,9 +326,9 @@ function contractDropdown (events, self) {
       </div>
       <div class="${css.buttons}">
         ${createPanel}
-        <div class="${css.button}">
-          ${atAddressButtonInput}
+        <div class="${css.button} ${css.atAddressSect}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress() }}>At Address</div>
+          ${atAddressButtonInput}
         </div>
       </div>
     </div>
