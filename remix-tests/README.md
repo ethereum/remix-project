@@ -101,7 +101,7 @@ params:
 * `{ type: 'testPass', value: '<name of testing function>', time: <time taken>, context: '<TestName>'}`
 * `{ type: 'testFailure', value: '<name of testing function>', time: <time taken>, context: '<TestName>', errMsg: '<message in the Assert>' }`
 
-`resultCallback(object)`
+`resultCallback(err, object)`
 * `passingNum` - number of passing tests
 * `failureNum` - number of failing tests
 * `timePassed` - time it took for all the tests to run (in seconds)
