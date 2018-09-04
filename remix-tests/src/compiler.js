@@ -18,7 +18,6 @@ function compileFileOrFiles (filename, isDirectory, cb) {
     'tests.sol': { content: require('../sol/tests.sol.js') },
     'remix_tests.sol': { content: require('../sol/tests.sol.js') }
   }
-  // signale.debug(sources)
 
   // TODO: for now assumes filepath dir contains all tests, later all this
   // should be replaced with remix's & browser solidity compiler code
@@ -63,8 +62,16 @@ function compileFileOrFiles (filename, isDirectory, cb) {
 function compileContractSources (sources, importFileCb, cb) {
   let compiler, filepath
 
-  if (!sources['remix_tests.sol']) {
+  // Iterate over sources keys. Inject test libraries. Inject test library import statements.
+  if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
     sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
+  }
+  const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+  for (let file in sources) {
+    const c = sources[file].content
+    if (file.indexOf('_test.sol') > 0 && c && c.regexIndexOf(s) < 0) {
+      sources[file].content = c.replace(/(pragma solidity \^\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
+    }
   }
 
   async.waterfall([
