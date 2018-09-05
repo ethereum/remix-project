@@ -1,4 +1,5 @@
 'use strict'
+// TODO: this file doesn't seem to be used any more and can be removed
 var VMDebugger = require('./src/ui/VmDebugger')
 var Debugger = require('./src/ui/EthdebuggerUI')
 var DebuggerBackend = require('remix-debug').EthDebugger
