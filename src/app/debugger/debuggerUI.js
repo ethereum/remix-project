@@ -5,7 +5,7 @@ var SourceHighlighter = require('../editor/sourceHighlighter')
 class DebuggerUI {
 
   constructor (container) {
-    this.transactionDebugger = new Debugger(container, new SourceHighlighter())
+    this.transactionDebugger = new Debugger(new SourceHighlighter())
     this.isActive = false
 
     this.debugger_ui = new OldEthdebuggerUI({debugger: this.transactionDebugger.debugger})
