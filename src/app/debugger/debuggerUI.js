@@ -1,6 +1,9 @@
 var OldEthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
 var Debugger = require('../debugger/debugger')
 var SourceHighlighter = require('../editor/sourceHighlighter')
+var TxBrowser = require('./debuggerUI/TxBrowser')
+var remixLib = require('remix-lib')
+var executionContext = remixLib.execution.executionContext
 
 class DebuggerUI {
 
@@ -8,7 +11,12 @@ class DebuggerUI {
     this.transactionDebugger = new Debugger(new SourceHighlighter())
     this.isActive = false
 
-    this.debugger_ui = new OldEthdebuggerUI({debugger: this.transactionDebugger.debugger})
+    this.debugger_ui = new OldEthdebuggerUI({
+      debugger: this.transactionDebugger.debugger
+    })
+
+    this.startTxBrowser()
+
     container.appendChild(this.debugger_ui.render())
 
     this.listenToEvents()
@@ -29,6 +37,25 @@ class DebuggerUI {
     })
   }
 
+  startTxBrowser () {
+    const self = this
+
+    let txBrowser = new TxBrowser(this.debugger_ui, {displayConnectionSetting: false, web3: executionContext.web3()})
+    this.debugger_ui.txBrowser = txBrowser
+
+    txBrowser.event.register('newTxLoading', this, function () {
+      self.debugger_ui.unLoad()
+    })
+    txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
+      self.debugger_ui.startDebugging(blockNumber, txIndex, tx)
+    })
+    txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
+      self.debugger_ui.unLoad()
+    })
+
+    this.txBrowser = this.debugger_ui.txBrowser
+  }
+
   view () {
     return this.transactionDebugger
   }
@@ -43,7 +70,15 @@ class DebuggerUI {
       if (error) {
         return console.error("coudn't get txHash: " + error)
       }
-      self.debugger_ui.debug(tx)
+      self.transactionDebugger.debugger.solidityProxy.reset({})
+
+      if (tx instanceof Object) {
+        self.txBrowser.load(tx.hash, tx)
+      } else if (tx instanceof String) {
+        self.txBrowser.load(tx)
+      }
+
+      // self.debugger_ui.debug(tx)
     })
   }
 }

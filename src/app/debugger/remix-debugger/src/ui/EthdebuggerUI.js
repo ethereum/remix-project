@@ -1,5 +1,5 @@
 'use strict'
-var TxBrowser = require('./TxBrowser')
+// var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
 var VmDebugger = require('./VmDebugger')
 
@@ -24,7 +24,7 @@ function EthdebuggerUI (opts) {
   this.opts = opts || {}
   this.debugger = opts.debugger
 
-  if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
+  // if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
   var self = this
   this.event = new EventManager()
@@ -42,17 +42,6 @@ function EthdebuggerUI (opts) {
   executionContext.event.register('contextChanged', this, function () {
     self.updateWeb3Reference()
   })
-
-  this.txBrowser = new TxBrowser(this, {displayConnectionSetting: false, web3: executionContext.web3()})
-  this.txBrowser.event.register('newTxLoading', this, function () {
-    self.unLoad()
-  })
-  this.txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
-    self.startDebugging(blockNumber, txIndex, tx)
-  })
-  this.txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-    self.unLoad()
-  })
 }
 
 EthdebuggerUI.prototype.setBreakpointManager = function (breakpointManager) {
@@ -68,22 +57,24 @@ EthdebuggerUI.prototype.updateWeb3Reference = function (web3) {
   this.txBrowser.web3 = web3 || executionContext.web3()
 }
 
-EthdebuggerUI.prototype.setCompilationResult = function (compilationResult) {
-  if (compilationResult && compilationResult.sources && compilationResult.contracts) {
-    this.debugger.solidityProxy.reset(compilationResult)
-  } else {
-    this.debugger.solidityProxy.reset({})
-  }
-}
+// EthdebuggerUI.prototype.setCompilationResult = function (compilationResult) {
+//   if (compilationResult && compilationResult.sources && compilationResult.contracts) {
+//     this.debugger.solidityProxy.reset(compilationResult)
+//   } else {
+//     this.debugger.solidityProxy.reset({})
+//   }
+// }
 
-EthdebuggerUI.prototype.debug = function (tx) {
-  this.setCompilationResult(this.opts.compilationResult())
-  if (tx instanceof Object) {
-    this.txBrowser.load(tx.hash, tx)
-  } else if (tx instanceof String) {
-    this.txBrowser.load(tx)
-  }
-}
+// EthdebuggerUI.prototype.debug = function (tx) {
+//   // this.setCompilationResult(this.opts.compilationResult())
+//
+//   this.debugger.solidityProxy.reset({})
+//   if (tx instanceof Object) {
+//     this.txBrowser.load(tx.hash, tx)
+//   } else if (tx instanceof String) {
+//     this.txBrowser.load(tx)
+//   }
+// }
 
 EthdebuggerUI.prototype.render = function () {
   this.debuggerPanelsView = yo`<div class="${css.innerShift}"></div>`
