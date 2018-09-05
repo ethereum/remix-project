@@ -46,6 +46,7 @@ var css = csjs`
     margin-bottom: 10px;
   }
 `
+
 function TxBrowser (_parent, opts) {
   this.event = new EventManager()
 
@@ -62,12 +63,6 @@ function TxBrowser (_parent, opts) {
     }
   })
 }
-
-// creation 0xa9619e1d0a35b2c1d686f5b661b3abd87f998d2844e8e9cc905edb57fc9ce349
-// invokation 0x71a6d583d16d142c5c3e8903060e8a4ee5a5016348a9448df6c3e63b68076ec4 0xcda2b2835add61af54cf83bd076664d98d7908c6cd98d86423b3b48d8b8e51ff
-// test:
-// creation: 0x72908de76f99fca476f9e3a3b5d352f350a98cd77d09cebfc59ffe32a6ecaa0b
-// invokation: 0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51
 
 TxBrowser.prototype.setDefaultValues = function () {
   this.connectInfo = ''
@@ -176,9 +171,8 @@ TxBrowser.prototype.connectionSetting = function () {
     var self = this
     return yo`<div class="${css.vmargin}"><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${global.web3.currentProvider ? global.web3.currentProvider.host : ' - none - '} type='text' />
               <span>${this.connectInfo}</span></div>`
-  } else {
-    return ''
   }
+  return ''
 }
 
 TxBrowser.prototype.render = function () {
