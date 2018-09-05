@@ -24,8 +24,6 @@ function EthdebuggerUI (opts) {
   this.opts = opts || {}
   this.debugger = opts.debugger
 
-  // if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
-
   var self = this
   this.event = new EventManager()
 
@@ -56,25 +54,6 @@ EthdebuggerUI.prototype.updateWeb3Reference = function (web3) {
   if (!this.txBrowser) return
   this.txBrowser.web3 = web3 || executionContext.web3()
 }
-
-// EthdebuggerUI.prototype.setCompilationResult = function (compilationResult) {
-//   if (compilationResult && compilationResult.sources && compilationResult.contracts) {
-//     this.debugger.solidityProxy.reset(compilationResult)
-//   } else {
-//     this.debugger.solidityProxy.reset({})
-//   }
-// }
-
-// EthdebuggerUI.prototype.debug = function (tx) {
-//   // this.setCompilationResult(this.opts.compilationResult())
-//
-//   this.debugger.solidityProxy.reset({})
-//   if (tx instanceof Object) {
-//     this.txBrowser.load(tx.hash, tx)
-//   } else if (tx instanceof String) {
-//     this.txBrowser.load(tx)
-//   }
-// }
 
 EthdebuggerUI.prototype.render = function () {
   this.debuggerPanelsView = yo`<div class="${css.innerShift}"></div>`
