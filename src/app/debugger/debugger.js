@@ -1,5 +1,4 @@
 'use strict'
-// var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
 var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
@@ -33,15 +32,12 @@ function Debugger (container, sourceHighlighter, localRegistry) {
         return null
       }
     })
-  // this.debugger_ui = new EthdebuggerUI({debugger: this.debugger})
   this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
-  // container.appendChild(this.debugger_ui.render())
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources, this._deps.compiler.lastCompilationResult.data.sources)
   }, (step) => {
     self.event.trigger('breakpointStep', [step])
-    // this.debugger_ui.stepManager.jumpTo(step)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
