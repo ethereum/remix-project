@@ -40,7 +40,7 @@ class DebuggerUI {
   startTxBrowser () {
     const self = this
 
-    let txBrowser = new TxBrowser(this.debugger_ui, {displayConnectionSetting: false, web3: executionContext.web3()})
+    let txBrowser = new TxBrowser(this.debugger_ui, {web3: executionContext.web3()})
     this.debugger_ui.txBrowser = txBrowser
 
     txBrowser.event.register('newTxLoading', this, function () {

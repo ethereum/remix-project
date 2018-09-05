@@ -2,7 +2,6 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 var yo = require('yo-yo')
-var init = remixLib.init
 var csjs = require('csjs-inject')
 var styleGuide = require('../../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -53,11 +52,11 @@ function TxBrowser (_parent, opts) {
   this.blockNumber
   this.txNumber
   this.view
-  this.displayConnectionSetting = opts.displayConnectionSetting
   this.web3 = opts.web3
   var self = this
   _parent.event.register('providerChanged', this, function (provider) {
     self.setDefaultValues()
+    // TODO: looks redudant since setDefaultValues already re-renders
     if (self.view) {
       yo.update(self.view, self.render())
     }
@@ -120,30 +119,6 @@ TxBrowser.prototype.update = function (error, tx) {
   }
 }
 
-TxBrowser.prototype.updateWeb3Url = function (newhost) {
-  init.setProvider(global.web3, newhost)
-  var self = this
-  this.checkWeb3(function (error, block) {
-    if (!error) {
-      self.connectInfo = 'Connected to ' + global.web3.currentProvider.host + '. Current block number: ' + block
-    } else {
-      self.connectInfo = 'Unable to connect to ' + global.web3.currentProvider.host + '. ' + error.message
-    }
-    yo.update(self.view, self.render())
-  })
-}
-
-TxBrowser.prototype.checkWeb3 = function (callback) {
-  try {
-    global.web3.eth.getBlockNumber(function (error, block) {
-      callback(error, block)
-    })
-  } catch (e) {
-    console.log(e)
-    callback(e.message, null)
-  }
-}
-
 TxBrowser.prototype.updateBlockN = function (ev) {
   this.blockNumber = ev.target.value
 }
@@ -166,19 +141,9 @@ TxBrowser.prototype.init = function (ev) {
   this.setDefaultValues()
 }
 
-TxBrowser.prototype.connectionSetting = function () {
-  if (this.displayConnectionSetting) {
-    var self = this
-    return yo`<div class="${css.vmargin}"><span>Node URL: </span><input onkeyup=${function () { self.updateWeb3Url(arguments[0].target.value) }} value=${global.web3.currentProvider ? global.web3.currentProvider.host : ' - none - '} type='text' />
-              <span>${this.connectInfo}</span></div>`
-  }
-  return ''
-}
-
 TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div class="${css.container}">
-        ${this.connectionSetting()}
         <div class="${css.txContainer}">
           <div class="${css.txinputs}">
             <input class="${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
