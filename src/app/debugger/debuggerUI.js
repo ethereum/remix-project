@@ -18,13 +18,8 @@ class DebuggerUI {
 
   listenToEvents () {
     const self = this
-    this.transactionDebugger.debugger.event.register('newTraceLoaded', this, function () {
-      self.isActive = true
-    })
-
-    this.transactionDebugger.debugger.event.register('traceUnloaded', this, function () {
-      self._components.sourceHighlighter.currentSourceLocation(null)
-      self.isActive = false
+    this.transactionDebugger.event.register('debuggerStatus', function (isActive) {
+      self.isActive = isActive
     })
   }
 
@@ -34,6 +29,10 @@ class DebuggerUI {
 
   isDebuggerActive () {
     return this.isActive
+  }
+
+  debug(txHash) {
+    this.transactionDebugger.debug(txHash)
   }
 }
 

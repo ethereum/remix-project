@@ -2,6 +2,7 @@
 var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
 var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var executionContext = require('../../execution-context')
 var globlalRegistry = require('../../global/registry')
 
@@ -9,6 +10,9 @@ var globlalRegistry = require('../../global/registry')
  * Manage remix and source highlighting
  */
 function Debugger (container, sourceHighlighter, localRegistry) {
+  var self = this
+  this.event = new EventManager()
+
   this._components = {
     sourceHighlighter: sourceHighlighter
   }
@@ -44,7 +48,6 @@ function Debugger (container, sourceHighlighter, localRegistry) {
 
   this.debugger.setBreakpointManager(this.breakPointManager)
 
-  var self = this
   self._deps.editor.event.register('breakpointCleared', (fileName, row) => {
     this.breakPointManager.remove({fileName: fileName, row: row})
   })
@@ -77,6 +80,15 @@ function Debugger (container, sourceHighlighter, localRegistry) {
         })
       })
     }
+  })
+
+  this.debugger.event.register('newTraceLoaded', this, function () {
+    self.event.trigger('debuggerStatus', [true])
+  })
+
+  this.debugger.event.register('traceUnloaded', this, function () {
+    self._components.sourceHighlighter.currentSourceLocation(null)
+    self.event.trigger('debuggerStatus', [false])
   })
 }
 
