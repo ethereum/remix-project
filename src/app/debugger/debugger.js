@@ -12,6 +12,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   this._components = {
     sourceHighlighter: sourceHighlighter
   }
+  // TODO: localRegistry doesn't seem to be actually used anywhere
   this._components.registry = localRegistry || globlalRegistry
   // dependencies
   this._deps = {
