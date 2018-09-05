@@ -116,11 +116,4 @@ Debugger.prototype.debug = function (txHash) {
   })
 }
 
-/**
- * get the current provider
- */
-Debugger.prototype.web3 = function (type) {
-  return this.debugger.web3
-}
-
 module.exports = Debugger
