@@ -75,14 +75,13 @@ TxBrowser.prototype.submit = function (tx) {
   }
   try {
     if (this.txNumber.indexOf('0x') !== -1) {
-      self.web3.eth.getTransaction(this.txNumber, function (error, result) {
-        self.update(error, result)
-      })
-    } else {
-      self.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
+      return self.web3.eth.getTransaction(this.txNumber, function (error, result) {
         self.update(error, result)
       })
     }
+    self.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
+      self.update(error, result)
+    })
   } catch (e) {
     self.update(e.message)
   }
@@ -92,23 +91,23 @@ TxBrowser.prototype.update = function (error, tx) {
   var info = {}
   if (error) {
     this.view.querySelector('#error').innerHTML = error
-  } else {
-    if (tx) {
-      this.view.querySelector('#error').innerHTML = ''
-      if (!tx.to) {
-        tx.to = traceHelper.contractCreationToken('0')
-      }
-      info.from = tx.from
-      info.to = tx.to
-      info.hash = tx.hash
-      this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
-    } else {
-      var mes = '<not found>'
-      info.from = mes
-      info.to = mes
-      info.hash = mes
-      this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
+    return
+  }
+  if (tx) {
+    this.view.querySelector('#error').innerHTML = ''
+    if (!tx.to) {
+      tx.to = traceHelper.contractCreationToken('0')
     }
+    info.from = tx.from
+    info.to = tx.to
+    info.hash = tx.hash
+    this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+  } else {
+    var mes = '<not found>'
+    info.from = mes
+    info.to = mes
+    info.hash = mes
+    this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
   }
 }
 
@@ -145,9 +144,11 @@ TxBrowser.prototype.render = function () {
         </div>
         <span id='error'></span>
       </div>`
+
   if (!this.view) {
     this.view = view
   }
+
   return view
 }
 
