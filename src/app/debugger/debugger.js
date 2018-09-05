@@ -1,5 +1,5 @@
 'use strict'
-var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
+// var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
 var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
@@ -33,17 +33,15 @@ function Debugger (container, sourceHighlighter, localRegistry) {
         return null
       }
     })
-  this.debugger_ui = new EthdebuggerUI({debugger: this.debugger})
+  // this.debugger_ui = new EthdebuggerUI({debugger: this.debugger})
   this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
-  //
-  // TODO: render doesn't exist anymore
-  container.appendChild(this.debugger_ui.render())
-  //
+  // container.appendChild(this.debugger_ui.render())
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources, this._deps.compiler.lastCompilationResult.data.sources)
   }, (step) => {
-    this.debugger_ui.stepManager.jumpTo(step)
+    self.event.trigger('breakpointStep', [step])
+    // this.debugger_ui.stepManager.jumpTo(step)
   })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
@@ -65,23 +63,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
     self.debugger.unLoad()
   })
 
-  // register selected code item, highlight the corresponding source location
-  this.debugger_ui.event.register('indexChanged', function (index) {
-    if (self._deps.compiler.lastCompilationResult) {
-      self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
-        if (error) return console.log(error)
-        self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
-          if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-            var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
-            self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
-          } else {
-            self._components.sourceHighlighter.currentSourceLocation(null)
-          }
-        })
-      })
-    }
-  })
-
+  //
   // ====================
   // listen to events
   this.debugger.event.register('newTraceLoaded', this, function () {
@@ -101,19 +83,31 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   this.debugger.switchProvider(executionContext.getProvider())
 }
 
+Debugger.prototype.registerAndHighlightCodeItem = function (index) {
+  const self = this
+  // register selected code item, highlight the corresponding source location
+  if (self._deps.compiler.lastCompilationResult) {
+    self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+      if (error) return console.log(error)
+      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+        if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
+          var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
+          self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
+        } else {
+          self._components.sourceHighlighter.currentSourceLocation(null)
+        }
+      })
+    })
+  }
+}
+
 /**
  * Start debugging using Remix
  *
  * @param {String} txHash    - hash of the transaction
  */
-Debugger.prototype.debug = function (txHash) {
-  var self = this
-
-  this.debugger.web3.eth.getTransaction(txHash, function (error, tx) {
-    if (!error) {
-      self.debugger_ui.debug(tx)
-    }
-  })
+Debugger.prototype.debug = function (txHash, cb) {
+  this.debugger.web3.eth.getTransaction(txHash, cb)
 }
 
 module.exports = Debugger
