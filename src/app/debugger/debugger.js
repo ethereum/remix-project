@@ -116,25 +116,6 @@ Debugger.prototype.debug = function (txHash) {
   })
 }
 
-//  /**
-//   * add a new web3 provider to remix
-//   *
-//   * @param {String} type - type/name of the provider to add
-//   * @param {Object} obj  - provider
-//   */
-//  Debugger.prototype.addProvider = function (type, obj) {
-//    this.debugger.addProvider(type, obj)
-//  }
-
-//  /**
-//   * switch the provider
-//   *
-//   * @param {String} type - type/name of the provider to use
-//   */
-//  Debugger.prototype.switchProvider = function (type) {
-//    this.debugger.switchProvider(type)
-//  }
-
 /**
  * get the current provider
  */
