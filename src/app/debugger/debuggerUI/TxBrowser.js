@@ -53,14 +53,15 @@ function TxBrowser (_parent, opts) {
   this.txNumber
   this.view
   this.web3 = opts.web3
-  var self = this
-  _parent.event.register('providerChanged', this, function (provider) {
-    self.setDefaultValues()
-    // TODO: looks redudant since setDefaultValues already re-renders
-    if (self.view) {
-      yo.update(self.view, self.render())
-    }
-  })
+  this.setDefaultValues()
+  // var self = this
+  // _parent.event.register('providerChanged', this, function (provider) {
+  //   self.setDefaultValues()
+  //   // TODO: looks redudant since setDefaultValues already re-renders
+  //   if (self.view) {
+  //     yo.update(self.view, self.render())
+  //   }
+  // })
 }
 
 TxBrowser.prototype.setDefaultValues = function () {
@@ -134,10 +135,6 @@ TxBrowser.prototype.load = function (txHash, tx) {
 
 TxBrowser.prototype.unload = function (txHash) {
   this.event.trigger('unloadRequested')
-  this.init()
-}
-
-TxBrowser.prototype.init = function (ev) {
   this.setDefaultValues()
 }
 

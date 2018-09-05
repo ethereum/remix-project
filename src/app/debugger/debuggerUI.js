@@ -53,6 +53,10 @@ class DebuggerUI {
       self.debugger_ui.unLoad()
     })
 
+    this.debugger_ui.event.register('providerChanged', this, function (provider) {
+      txBrowser.setDefaultValues()
+    })
+
     this.txBrowser = this.debugger_ui.txBrowser
   }
 
