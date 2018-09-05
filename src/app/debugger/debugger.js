@@ -4,7 +4,7 @@ var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var executionContext = require('../../execution-context')
-var globlalRegistry = require('../../global/registry')
+var globalRegistry = require('../../global/registry')
 
 /**
  * Manage remix and source highlighting
@@ -17,7 +17,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
     sourceHighlighter: sourceHighlighter
   }
   // TODO: localRegistry doesn't seem to be actually used anywhere
-  this._components.registry = localRegistry || globlalRegistry
+  this._components.registry = localRegistry || globalRegistry
   // dependencies
   this._deps = {
     offsetToLineColumnConverter: this._components.registry.get('offsettolinecolumnconverter').api,
