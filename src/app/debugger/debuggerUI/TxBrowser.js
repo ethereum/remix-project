@@ -92,15 +92,17 @@ TxBrowser.prototype.update = function (error, tx) {
     this.view.querySelector('#error').innerHTML = error
     return
   }
-  if (tx) {
-    this.view.querySelector('#error').innerHTML = ''
-    if (!tx.to) {
-      tx.to = traceHelper.contractCreationToken('0')
-    }
-    this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
-  } else {
+
+  if (!tx) {
     this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
+    return
   }
+
+  this.view.querySelector('#error').innerHTML = ''
+  if (!tx.to) {
+    tx.to = traceHelper.contractCreationToken('0')
+  }
+  this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
 }
 
 TxBrowser.prototype.updateBlockN = function (ev) {
