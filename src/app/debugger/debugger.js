@@ -8,15 +8,14 @@ var globalRegistry = require('../../global/registry')
 /**
  * Manage remix and source highlighting
  */
-function Debugger (container, sourceHighlighter, localRegistry) {
+function Debugger (sourceHighlighter) {
   var self = this
   this.event = new EventManager()
 
   this._components = {
     sourceHighlighter: sourceHighlighter
   }
-  // TODO: localRegistry doesn't seem to be actually used anywhere
-  this._components.registry = localRegistry || globalRegistry
+  this._components.registry = globalRegistry
   // dependencies
   this._deps = {
     offsetToLineColumnConverter: this._components.registry.get('offsettolinecolumnconverter').api,
