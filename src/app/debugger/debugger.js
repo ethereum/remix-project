@@ -35,7 +35,6 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   // TODO: render doesn't exist anymore
   container.appendChild(this.debugger_ui.render())
   //
-  this.isActive = false
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources, this._deps.compiler.lastCompilationResult.data.sources)
@@ -56,15 +55,6 @@ function Debugger (container, sourceHighlighter, localRegistry) {
 
   executionContext.event.register('contextChanged', this, function (context) {
     self.switchProvider(context)
-  })
-
-  this.debugger.event.register('newTraceLoaded', this, function () {
-    self.isActive = true
-  })
-
-  this.debugger.event.register('traceUnloaded', this, function () {
-    self._components.sourceHighlighter.currentSourceLocation(null)
-    self.isActive = false
   })
 
   // unload if a file has changed (but not if tabs were switched)
