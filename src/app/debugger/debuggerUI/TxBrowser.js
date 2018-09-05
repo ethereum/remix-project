@@ -54,14 +54,6 @@ function TxBrowser (_parent, opts) {
   this.view
   this.web3 = opts.web3
   this.setDefaultValues()
-  // var self = this
-  // _parent.event.register('providerChanged', this, function (provider) {
-  //   self.setDefaultValues()
-  //   // TODO: looks redudant since setDefaultValues already re-renders
-  //   if (self.view) {
-  //     yo.update(self.view, self.render())
-  //   }
-  // })
 }
 
 TxBrowser.prototype.setDefaultValues = function () {
