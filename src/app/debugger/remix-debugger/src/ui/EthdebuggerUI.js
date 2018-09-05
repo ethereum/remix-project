@@ -46,10 +46,6 @@ EthdebuggerUI.prototype.setBreakpointManager = function (breakpointManager) {
   this.breakpointManager = breakpointManager
 }
 
-EthdebuggerUI.prototype.get_web3 = function () {
-  return this.web3
-}
-
 EthdebuggerUI.prototype.updateWeb3Reference = function (web3) {
   if (!this.txBrowser) return
   this.txBrowser.web3 = web3 || executionContext.web3()
