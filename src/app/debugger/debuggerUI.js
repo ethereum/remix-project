@@ -73,12 +73,6 @@ class DebuggerUI {
       }
     })
 
-    // txBrowser.event.register('newTxLoading', this, function () {
-    //   self.debugger_ui.unLoad()
-    // })
-    // txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
-    //   self.debugger_ui.startDebugging(blockNumber, txIndex, tx)
-    // })
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
       self.debugger_ui.unLoad()
     })
