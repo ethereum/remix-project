@@ -36,7 +36,7 @@ var css = csjs`
   }
 `
 
-function ButtonNavigator (_parent, _traceManager) {
+function ButtonNavigator () {
   this.event = new EventManager()
   this.intoBackDisabled = true
   this.overBackDisabled = true
@@ -46,8 +46,6 @@ function ButtonNavigator (_parent, _traceManager) {
   this.jumpNextBreakpointDisabled = true
   this.jumpPreviousBreakpointDisabled = true
 
-  this.traceManager = _traceManager
-  this.currentCall = null
   this.revertionPoint = null
   this.view
 }
@@ -131,6 +129,7 @@ ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
 }
 
 ButtonNavigator.prototype.resetAndCheckRevertionPoint = function (revertedReason, revertionPoint) {
+  // TODO: since this is only used for the jump, this value should instead be outside of the view
   if (revertionPoint) {
     this.revertionPoint = revertionPoint
   }

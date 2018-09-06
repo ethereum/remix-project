@@ -40,7 +40,7 @@ function StepManager (_parent, _traceManager) {
     }
   })
 
-  this.buttonNavigator = new ButtonNavigator(_parent, this.traceManager)
+  this.buttonNavigator = new ButtonNavigator()
 
   _parent.event.register('indexChanged', this, (index) => {
     // if (!this.view) return
