@@ -88,8 +88,6 @@ function ButtonNavigator (_parent, _traceManager) {
   this.view
 }
 
-module.exports = ButtonNavigator
-
 ButtonNavigator.prototype.render = function () {
   var self = this
   var view = yo`<div class="${css.buttons}">
@@ -130,29 +128,43 @@ ButtonNavigator.prototype.reset = function () {
   resetWarning(this)
 }
 
-ButtonNavigator.prototype.stepChanged = function (step) {
+ButtonNavigator.prototype.stepChanged = function (stepState, jumpOutDisabled) {
+  if (stepState === 'invalid') {
+    // TODO: probably not necessary, already implicit done in the next steps
+    this.reset()
+    this.updateAll()
+    return
+  }
+
+  this.intoBackDisabled = (stepState === 'initial')
+  this.overBackDisabled = (stepState === 'initial')
+  this.jumpPreviousBreakpointDisabled = (stepState === 'initial')
+  this.jumpNextBreakpointDisabled = (stepState === 'end')
+  this.intoForwardDisabled = (stepState === 'end')
+  this.overForwardDisabled = (stepState === 'end')
+  this.jumpNextBreakpointDisabled = jumpOutDisabled
+
+  this.updateAll()
+}
+
+ButtonNavigator.prototype.old_stepChanged = function (step) {
+  var self = this
   this.intoBackDisabled = step <= 0
   this.overBackDisabled = step <= 0
-  if (!this.traceManager) {
-    this.intoForwardDisabled = true
-    this.overForwardDisabled = true
-  } else {
-    var self = this
-    this.traceManager.getLength(function (error, length) {
-      if (error) {
-        self.reset()
-        console.log(error)
-      } else {
-        self.jumpNextBreakpointDisabled = step >= length - 1
-        self.jumpPreviousBreakpointDisabled = step <= 0
-        self.intoForwardDisabled = step >= length - 1
-        self.overForwardDisabled = step >= length - 1
-        var stepOut = self.traceManager.findStepOut(step)
-        self.jumpOutDisabled = stepOut === step
-      }
-      self.updateAll()
-    })
-  }
+  this.traceManager.getLength(function (error, length) {
+    if (error) {
+      console.log(error)
+      self.reset()
+    } else {
+      self.jumpNextBreakpointDisabled = step >= length - 1
+      self.jumpPreviousBreakpointDisabled = step <= 0
+      self.intoForwardDisabled = step >= length - 1
+      self.overForwardDisabled = step >= length - 1
+      var stepOut = self.traceManager.findStepOut(step)
+      self.jumpOutDisabled = stepOut === step
+    }
+    self.updateAll()
+  })
   this.updateAll()
 }
 

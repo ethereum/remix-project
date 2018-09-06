@@ -29,7 +29,7 @@ function StepManager (_parent, _traceManager) {
   this.slider = new Slider((step) => {
     return this.solidityMode ? this.resolveToReducedTrace(step, 0) : step
   })
-  this.slider.event.register('moved', this, function (step) {
+  this.slider.event.register('sliderMoved', this, function (step) {
     self.sliderMoved(step)
   })
 
@@ -197,8 +197,25 @@ StepManager.prototype.jumpOut = function () {
 }
 
 StepManager.prototype.changeState = function (step) {
+  const self = this
   this.currentStepIndex = step
-  this.buttonNavigator.stepChanged(step)
+
+  this.traceManager.getLength(function (error, length) {
+    let stepState = 'valid'
+
+    if (error) {
+      stepState = 'invalid'
+    } else if (step <= 0) {
+      stepState = 'initial'
+    } else if (step >= length - 1) {
+      stepState = 'end'
+    }
+
+    let jumpOutDisabled = (step === self.traceManager.findStepOut(step))
+
+    self.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
+  })
+
   this.event.trigger('stepChanged', [step])
 }
 

@@ -63,7 +63,7 @@ class Slider {
     if (value === this.previousValue) return
     this.previousValue = value
 
-    this.event.trigger('moved', [value])
+    this.event.trigger('sliderMoved', [value])
   }
 
   setValue (value) {
