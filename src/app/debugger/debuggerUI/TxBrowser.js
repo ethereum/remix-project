@@ -1,6 +1,5 @@
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var traceHelper = remixLib.helpers.trace
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var styleGuide = require('../../ui/styles-guide/theme-chooser')
@@ -64,27 +63,29 @@ TxBrowser.prototype.setDefaultValues = function () {
 }
 
 TxBrowser.prototype.submit = function (tx) {
-  var self = this
-  self.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
-  if (tx) {
-    return self.update(null, tx)
-  }
-  if (!this.txNumber) {
-    self.update('no tx index or tx hash to look for')
-    return
-  }
-  try {
-    if (this.txNumber.indexOf('0x') !== -1) {
-      return self.web3.eth.getTransaction(this.txNumber, function (error, result) {
-        self.update(error, result)
-      })
-    }
-    self.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
-      self.update(error, result)
-    })
-  } catch (e) {
-    self.update(e.message)
-  }
+  this.event.trigger('requestDebug', [this.blockNumber, this.txNumber, tx])
+
+  // var self = this
+  // self.event.trigger('newTxLoading', [this.blockNumber, this.txNumber])
+  // if (tx) {
+  //   return self.update(null, tx)
+  // }
+  // if (!this.txNumber) {
+  //   self.update('no tx index or tx hash to look for')
+  //   return
+  // }
+  // try {
+  //   if (this.txNumber.indexOf('0x') !== -1) {
+  //     return self.web3.eth.getTransaction(this.txNumber, function (error, result) {
+  //       self.update(error, result)
+  //     })
+  //   }
+  //   self.web3.eth.getTransactionFromBlock(this.blockNumber, this.txNumber, function (error, result) {
+  //     self.update(error, result)
+  //   })
+  // } catch (e) {
+  //   self.update(e.message)
+  // }
 }
 
 TxBrowser.prototype.update = function (error, tx) {
@@ -99,10 +100,7 @@ TxBrowser.prototype.update = function (error, tx) {
   }
 
   this.view.querySelector('#error').innerHTML = ''
-  if (!tx.to) {
-    tx.to = traceHelper.contractCreationToken('0')
-  }
-  this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
+  // this.event.trigger('newTraceRequested', [this.blockNumber, this.txNumber, tx])
 }
 
 TxBrowser.prototype.updateBlockN = function (ev) {

@@ -4,6 +4,7 @@ var SourceHighlighter = require('../editor/sourceHighlighter')
 var TxBrowser = require('./debuggerUI/TxBrowser')
 var remixLib = require('remix-lib')
 var executionContext = remixLib.execution.executionContext
+var traceHelper = remixLib.helpers.trace
 
 class DebuggerUI {
 
@@ -39,16 +40,45 @@ class DebuggerUI {
 
   startTxBrowser () {
     const self = this
+    let web3 = executionContext.web3()
 
-    let txBrowser = new TxBrowser(this.debugger_ui, {web3: executionContext.web3()})
+    let txBrowser = new TxBrowser(this.debugger_ui, {web3: web3})
     this.debugger_ui.txBrowser = txBrowser
 
-    txBrowser.event.register('newTxLoading', this, function () {
+    txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
       self.debugger_ui.unLoad()
+
+      if (tx) {
+        if (!tx.to) {
+          tx.to = traceHelper.contractCreationToken('0')
+        }
+        return self.debugger_ui.startDebugging(blockNumber, txNumber, tx)
+      }
+
+      try {
+        if (txNumber.indexOf('0x') !== -1) {
+          return web3.eth.getTransaction(txNumber, function (error, result) {
+            let tx = result
+            txBrowser.update(error, result)
+            self.debugger_ui.startDebugging(blockNumber, txNumber, tx)
+          })
+        }
+        web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (error, result) {
+          let tx = result
+          txBrowser.update(error, result)
+          self.debugger_ui.startDebugging(blockNumber, txNumber, tx)
+        })
+      } catch (e) {
+        self.update(e.message)
+      }
     })
-    txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
-      self.debugger_ui.startDebugging(blockNumber, txIndex, tx)
-    })
+
+    // txBrowser.event.register('newTxLoading', this, function () {
+    //   self.debugger_ui.unLoad()
+    // })
+    // txBrowser.event.register('newTraceRequested', this, function (blockNumber, txIndex, tx) {
+    //   self.debugger_ui.startDebugging(blockNumber, txIndex, tx)
+    // })
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
       self.debugger_ui.unLoad()
     })
