@@ -20,7 +20,7 @@ function StepManager (_parent, _traceManager) {
       if (error) {
         console.log(error)
       } else {
-        self.slider.init(length)
+        self.slider.setSliderLength(length)
         self.init()
       }
     })
