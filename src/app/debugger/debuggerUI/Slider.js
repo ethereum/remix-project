@@ -38,8 +38,14 @@ class Slider {
     var slider = this.view.querySelector('#slider')
     slider.setAttribute('max', length - 1)
     this.max = length - 1
-    this.updateDisabled(length === 0)
-    this.disabled = length === 0
+    this.disabled = (length === 0)
+
+    if (this.disabled) {
+      this.view.querySelector('#slider').setAttribute('disabled', true)
+    } else {
+      this.view.querySelector('#slider').removeAttribute('disabled')
+    }
+
     this.setValue(0)
   }
 
@@ -61,13 +67,6 @@ class Slider {
     this.view.querySelector('#slider').value = value
   }
 
-  updateDisabled (disabled) {
-    if (disabled) {
-      this.view.querySelector('#slider').setAttribute('disabled', true)
-    } else {
-      this.view.querySelector('#slider').removeAttribute('disabled')
-    }
-  }
 }
 
 module.exports = Slider
