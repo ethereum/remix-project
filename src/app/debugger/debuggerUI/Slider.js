@@ -9,7 +9,6 @@ class Slider {
     this.max
     this.disabled = true
     this.view
-    this.solidityMode = false
     this.stepOverride = _stepOverride
 
     this.previousValue = null
