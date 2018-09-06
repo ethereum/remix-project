@@ -4,9 +4,8 @@ var EventManager = remixLib.EventManager
 var yo = require('yo-yo')
 
 class Slider {
-  constructor (_traceManager, _stepOverride) {
+  constructor (_stepOverride) {
     this.event = new EventManager()
-    this.traceManager = _traceManager
     this.max
     this.disabled = true
     this.view
