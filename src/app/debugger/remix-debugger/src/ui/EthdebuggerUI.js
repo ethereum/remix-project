@@ -1,6 +1,6 @@
 'use strict'
 // var TxBrowser = require('./TxBrowser')
-var StepManager = require('./StepManager')
+// var StepManager = require('./StepManager')
 var VmDebugger = require('./VmDebugger')
 
 var yo = require('yo-yo')
@@ -91,15 +91,10 @@ EthdebuggerUI.prototype.stepChanged = function (stepIndex) {
 EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   const self = this
   if (this.debugger.traceManager.isLoading) {
-    return
+    return false
   }
 
   this.tx = tx
-
-  this.stepManager = new StepManager(this, this.debugger.traceManager)
-  this.stepManager.event.register('stepChanged', this, function (stepIndex) {
-    self.stepChanged(stepIndex)
-  })
 
   this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
     self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
@@ -109,12 +104,14 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
     })
   })
 
+  return true
+}
+
+EthdebuggerUI.prototype.createAndAddVmDebugger = function () {
   this.vmDebugger = new VmDebugger(this, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
   yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
   yo.update(this.debuggerPanelsView, this.vmDebugger.render())
   yo.update(this.stepManagerView, this.stepManager.render())
-
-  this.debugger.debug(tx)
 }
 
 module.exports = EthdebuggerUI
