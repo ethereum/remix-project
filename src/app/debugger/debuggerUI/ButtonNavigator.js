@@ -147,27 +147,6 @@ ButtonNavigator.prototype.stepChanged = function (stepState, jumpOutDisabled) {
   this.updateAll()
 }
 
-ButtonNavigator.prototype.old_stepChanged = function (step) {
-  var self = this
-  this.intoBackDisabled = step <= 0
-  this.overBackDisabled = step <= 0
-  this.traceManager.getLength(function (error, length) {
-    if (error) {
-      console.log(error)
-      self.reset()
-    } else {
-      self.jumpNextBreakpointDisabled = step >= length - 1
-      self.jumpPreviousBreakpointDisabled = step <= 0
-      self.intoForwardDisabled = step >= length - 1
-      self.overForwardDisabled = step >= length - 1
-      var stepOut = self.traceManager.findStepOut(step)
-      self.jumpOutDisabled = stepOut === step
-    }
-    self.updateAll()
-  })
-  this.updateAll()
-}
-
 ButtonNavigator.prototype.updateAll = function () {
   this.updateDisabled('intoback', this.intoBackDisabled)
   this.updateDisabled('overback', this.overBackDisabled)
