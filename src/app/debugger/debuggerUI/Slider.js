@@ -34,7 +34,7 @@ class Slider {
     return view
   }
 
-  init (length) {
+  setSliderLength (length) {
     var slider = this.view.querySelector('#slider')
     slider.setAttribute('max', length - 1)
     this.max = length - 1
@@ -51,6 +51,7 @@ class Slider {
 
   onChange (event) {
     var value = parseInt(this.view.querySelector('#slider').value)
+
     if (this.stepOverride) {
       var correctedValue = this.stepOverride(value)
       if (correctedValue !== value) {
@@ -58,8 +59,10 @@ class Slider {
         value = correctedValue
       }
     }
+
     if (value === this.previousValue) return
     this.previousValue = value
+
     this.event.trigger('moved', [value])
   }
 
