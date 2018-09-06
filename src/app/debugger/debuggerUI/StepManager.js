@@ -26,7 +26,7 @@ function StepManager (_parent, _traceManager) {
     })
   })
 
-  this.slider = new Slider(this.traceManager, (step) => {
+  this.slider = new Slider((step) => {
     return this.solidityMode ? this.resolveToReducedTrace(step, 0) : step
   })
   this.slider.event.register('moved', this, function (step) {
