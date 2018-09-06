@@ -49,42 +49,6 @@ function ButtonNavigator (_parent, _traceManager) {
   this.traceManager = _traceManager
   this.currentCall = null
   this.revertionPoint = null
-
-  _parent.event.register('indexChanged', this, (index) => {
-    if (!this.view) return
-    if (index < 0) return
-    if (_parent.currentStepIndex !== index) return
-
-    this.traceManager.buildCallPath(index, (error, callsPath) => {
-      if (error) {
-        console.log(error)
-        resetWarning(this)
-      } else {
-        this.currentCall = callsPath[callsPath.length - 1]
-        if (this.currentCall.reverted) {
-          this.revertionPoint = this.currentCall.return
-          this.view.querySelector('#reverted').style.display = 'block'
-          this.view.querySelector('#reverted #outofgas').style.display = this.currentCall.outOfGas ? 'inline' : 'none'
-          this.view.querySelector('#reverted #parenthasthrown').style.display = 'none'
-        } else {
-          var k = callsPath.length - 2
-          while (k >= 0) {
-            var parent = callsPath[k]
-            if (parent.reverted) {
-              this.revertionPoint = parent.return
-              this.view.querySelector('#reverted').style.display = 'block'
-              this.view.querySelector('#reverted #parenthasthrown').style.display = parent ? 'inline' : 'none'
-              this.view.querySelector('#reverted #outofgas').style.display = 'none'
-              return
-            }
-            k--
-          }
-          resetWarning(this)
-        }
-      }
-    })
-  })
-
   this.view
 }
 
@@ -125,7 +89,7 @@ ButtonNavigator.prototype.reset = function () {
   this.jumpOutDisabled = true
   this.jumpNextBreakpointDisabled = true
   this.jumpPreviousBreakpointDisabled = true
-  resetWarning(this)
+  this.resetWarning('')
 }
 
 ButtonNavigator.prototype.stepChanged = function (stepState, jumpOutDisabled) {
@@ -166,10 +130,17 @@ ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
   }
 }
 
-function resetWarning (self) {
-  self.view.querySelector('#reverted #outofgas').style.display = 'none'
-  self.view.querySelector('#reverted #parenthasthrown').style.display = 'none'
-  self.view.querySelector('#reverted').style.display = 'none'
+ButtonNavigator.prototype.resetAndCheckRevertionPoint = function (revertedReason, revertionPoint) {
+  if (revertionPoint) {
+    this.revertionPoint = revertionPoint
+  }
+  this.resetWarning(revertedReason)
+}
+
+ButtonNavigator.prototype.resetWarning = function (revertedReason) {
+  this.view.querySelector('#reverted #outofgas').style.display = (revertedReason === 'outofgas') ? 'inline' : 'none'
+  this.view.querySelector('#reverted #parenthasthrown').style.display = (revertedReason === 'parenthasthrown') ? 'inline' : 'none'
+  this.view.querySelector('#reverted').style.display = (revertedReason === '') ? 'none' : 'block'
 }
 
 module.exports = ButtonNavigator

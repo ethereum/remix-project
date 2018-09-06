@@ -41,6 +41,45 @@ function StepManager (_parent, _traceManager) {
   })
 
   this.buttonNavigator = new ButtonNavigator(_parent, this.traceManager)
+
+  _parent.event.register('indexChanged', this, (index) => {
+    // if (!this.view) return
+    if (index < 0) return
+    if (_parent.currentStepIndex !== index) return
+
+    self.traceManager.buildCallPath(index, (error, callsPath) => {
+      if (error) {
+        console.log(error)
+        if (self.buttonNavigator) {
+          self.buttonNavigator.resetWarning('')
+        }
+      } else {
+        self.currentCall = callsPath[callsPath.length - 1]
+        if (self.currentCall.reverted) {
+          let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
+          if (self.buttonNavigator) {
+            self.buttonNavigator.resetAndCheckRevertionPoint(revertedReason, self.currentCall.return)
+          }
+        } else {
+          var k = callsPath.length - 2
+          while (k >= 0) {
+            var parent = callsPath[k]
+            if (parent.reverted) {
+              let revertedReason = parent ? 'parenthasthrown' : ''
+              if (self.buttonNavigator) {
+                return self.buttonNavigator.resetAndCheckRevertionPoint(revertedReason, parent.return)
+              }
+            }
+            k--
+          }
+          if (self.buttonNavigator) {
+            self.buttonNavigator.resetWarning('')
+          }
+        }
+      }
+    })
+  })
+
   this.buttonNavigator.event.register('stepIntoBack', this, function () {
     self.stepIntoBack()
   })
