@@ -3,7 +3,9 @@
   "version": "0.1.8-alpha.4",
   "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
   "main": "./src/index.js",
-  "bin" : { "remixd" : "./bin/remixd" },
+  "bin": {
+    "remixd": "./bin/remixd"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./bin/remixd"
