@@ -46,6 +46,14 @@ This section list all the available key and value pair which define this API:
  - runTx `@param {Object} tx`
  - getAccounts `@return {Array} acccounts`
  - createVMAccount `@param {String} privateKey, @param {String} balance (hex)`
+
+### editor
+ - getCurrentFile `@return {String} current file path displayed in the editor`
+ - getFile `@param {String} path, @return {String} content`
+ - setFile `@param {String} path, @param {String} content`
+ - highlight `@param {Object} lineColumnPos, @param {String} filePath, @param {String} hexColor `
+ 
+ 
  
 
 
