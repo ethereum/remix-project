@@ -3,8 +3,9 @@ var WebSocketServer = require('websocket').server
 var http = require('http')
 
 class WebSocket {
-  constructor () {
+  constructor (port) {
     this.connection = null
+    this.port = port
   }
 
   start (callback) {
@@ -14,7 +15,7 @@ class WebSocket {
       response.end()
     })
     var loopback = '127.0.0.1'
-    this.server.listen(65520, loopback, function () {
+    this.server.listen(this.port, loopback, function () {
       console.log((new Date()) + ' Remixd is listening on ' + loopback + ':65520')
     })
 

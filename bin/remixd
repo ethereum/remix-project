@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var Router = require('../src/router')
+var servicesList = require('../src/servicesList')
 var program = require('commander')
 var startmistGeth = require('../src/services/startMistGeth')
 var startFrontend = require('../src/services/startFrontend')
@@ -17,6 +18,7 @@ program
 .option('-a, --auto-mine', 'mine pending transactions')
 .option('-r, --rpc <cors-domains>', 'start rpc server. Values are CORS domain')
 .option('-rp, --rpc-port', 'rpc server port (default 8545)')
+.option('--profiler', 'start profiler service')
 .parse(process.argv)
 console.log('example: --dev-path /home/devchains/chain1 --mist --geth --frontend /home/frontend --frontend-port 8084 --auto-mine')
 program.outputHelp()
@@ -43,8 +45,17 @@ if (program.frontend) {
 if (program.sharedFolder) {
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
   console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolinc links are not forwarded to Remix IDE\n')
-  var router = new Router()
-  killCallBack.push(router.start(program.sharedFolder))
+  var sharedFolderrouter = new Router(65520, servicesList['sharedfolder'], (webSocket) => {
+    servicesList['sharedfolder'].setWebSocket(webSocket)
+    servicesList['sharedfolder'].setupNotifications(program.sharedFolder)
+    servicesList['sharedfolder'].sharedFolder(program.sharedFolder)
+  })
+  killCallBack.push(sharedFolderrouter.start())
+}
+
+if (program.profiler) {
+  var profilerRouter = new Router(65521, servicesList['profiler'])
+  killCallBack.push(profilerRouter.start())
 }
 
 // kill
