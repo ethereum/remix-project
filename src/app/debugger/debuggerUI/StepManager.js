@@ -89,13 +89,13 @@ StepManager.prototype.startSlider = function () {
         return console.log(error)
       }
       self.slider.setSliderLength(length)
-      self.updateStep(0)
+      self.step_manager.jumpTo(0)
     })
   })
 
   this.slider = new Slider()
   this.slider.event.register('sliderMoved', (step) => {
-    self.updateStep(step)
+    self.step_manager.jumpTo(step)
   })
 
   this.parent.callTree.event.register('callTreeReady', () => {
