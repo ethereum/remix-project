@@ -1,17 +1,18 @@
-var servicesList = require('./servicesList')
 var Websocket = require('./websocket')
 
 class Router {
-  start (sharedFolder) {
-    var websocket = new Websocket()
+  constructor (port, service, initCallback) {
+    this.port = port
+    this.service = service
+    this.initCallback = initCallback
+  }
+  start () {
+    var websocket = new Websocket(this.port)
     this.websocket = websocket
     this.websocket.start((message) => {
       this.call(message.id, message.service, message.fn, message.args)
     })
-    servicesList['sharedfolder'].setWebSocket(this.websocket)
-    servicesList['sharedfolder'].setupNotifications(sharedFolder)
-    servicesList['sharedfolder'].sharedFolder(sharedFolder)
-    console.log('Shared folder : ' + sharedFolder)
+    if (this.initCallback) this.initCallback(this.websocket)
     return function () {
       if (websocket) {
         websocket.close()
@@ -21,7 +22,7 @@ class Router {
 
   call (callid, name, fn, args) {
     try {
-      servicesList[name][fn](args, (error, data) => {
+      this.service[fn](args, (error, data) => {
         var response = {
           id: callid,
           type: 'reply',
