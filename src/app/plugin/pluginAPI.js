@@ -4,7 +4,7 @@ var executionContext = require('../../execution-context')
 /*
   Defines available API. `key` / `type`
 */
-module.exports = (pluginManager, fileProviders, compiler, udapp) => {
+module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) => {
   return {
     app: {
       getExecutionContextProvider: (mod, cb) => {
@@ -62,6 +62,36 @@ module.exports = (pluginManager, fileProviders, compiler, udapp) => {
         udapp.createVMAccount(privateKey, balance, (error, address) => {
           cb(error, address)
         })
+      }
+    },
+    editor: {
+      getCurrentFile: (mod, cb) => {
+        var path = fileManager.currentPath()
+        if (!path) {
+          cb('no file selected')
+        } else {
+          this.getFile(mod, path, cb)
+        }
+      },
+      getFile: (mod, path, cb) => {
+        var provider = fileManager.fileProviderOf(path)
+        if (provider) {
+          provider.get(mod + '/' + path, (error, content) => {
+            cb(error, content)
+          })
+        } else {
+          cb(path + 'not available')
+        }
+      },
+      setFile: (mod, path, content, cb) => {
+        var provider = fileManager.fileProviderOf(path)
+        if (provider) {
+          provider.set(mod + '/' + path, content, (error) => {
+            cb(error)
+          })
+        } else {
+          cb(path + 'not available')
+        }
       }
     }
   }
