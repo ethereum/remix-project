@@ -34,7 +34,7 @@ class DebuggerUI {
     })
 
     this.transactionDebugger.event.register('breakpointStep', function (step) {
-      self.stepManager.step_manager.jumpTo(step)
+      self.stepManager.stepManager.jumpTo(step)
     })
 
     this.debugger_ui.event.register('indexChanged', function (index) {
@@ -106,7 +106,7 @@ class DebuggerUI {
     if (!shouldOpenDebugger) return
 
     this.transactionDebugger.step_manager = new StepManager(this.debugger_ui, this.transactionDebugger.debugger.traceManager)
-    this.stepManager = new StepManagerUI(this.transactionDebugger)
+    this.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
     this.stepManager.event.register('stepChanged', this, function (stepIndex) {
       self.debugger_ui.stepChanged(stepIndex)
     })

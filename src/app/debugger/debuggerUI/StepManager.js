@@ -5,9 +5,9 @@ var yo = require('yo-yo')
 var ButtonNavigator = require('./ButtonNavigator')
 var Slider = require('./Slider')
 
-function StepManager (_debugger) {
+function StepManager (stepManager) {
   this.event = new EventManager()
-  this.step_manager = _debugger.step_manager
+  this.stepManager = stepManager
   this.startSlider()
   this.startButtonNavigator()
 }
@@ -16,52 +16,25 @@ StepManager.prototype.startSlider = function () {
   const self = this
 
   this.slider = new Slider()
-  this.slider.event.register('sliderMoved', (step) => {
-    self.step_manager.jumpTo(step)
-  })
-  this.step_manager.event.register('traceLengthChanged', (length) => {
-    self.slider.setSliderLength(length)
-  })
+  this.slider.event.register('sliderMoved', self.stepManager.jumpTo.bind(this.stepManager))
+  this.stepManager.event.register('traceLengthChanged', self.slider.setSliderLength.bind(this.slider))
 }
 
 StepManager.prototype.startButtonNavigator = function () {
   const self = this
   this.buttonNavigator = new ButtonNavigator()
 
-  this.step_manager.event.register('revertWarning', (revertedReason) => {
-    if (self.buttonNavigator) {
-      self.buttonNavigator.resetWarning(revertedReason)
-    }
-  })
+  this.stepManager.event.register('revertWarning', self.buttonNavigator.resetWarning.bind(this.buttonNavigator))
+  this.stepManager.event.register('stepChanged', self.updateStep.bind(this))
 
-  this.buttonNavigator.event.register('stepIntoBack', this, function () {
-    self.step_manager.stepIntoBack()
-  })
-  this.buttonNavigator.event.register('stepIntoForward', this, function () {
-    self.step_manager.stepIntoForward()
-  })
-  this.buttonNavigator.event.register('stepOverBack', this, function () {
-    self.step_manager.stepOverBack()
-  })
-  this.buttonNavigator.event.register('stepOverForward', this, function () {
-    self.step_manager.stepOverForward()
-  })
-  this.buttonNavigator.event.register('jumpOut', this, function () {
-    self.step_manager.jumpOut()
-  })
-  this.buttonNavigator.event.register('jumpToException', this, function () {
-    self.step_manager.jumpToException()
-  })
-  this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
-    self.step_manager.jumpNextBreakpoint()
-  })
-  this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
-    self.step_manager.jumpPreviousBreakpoint()
-  })
-
-  this.step_manager.event.register('stepChanged', (step, stepState, jumpOutDisabled) => {
-    self.updateStep(step, stepState, jumpOutDisabled)
-  })
+  this.buttonNavigator.event.register('stepIntoBack', self.stepManager.stepIntoBack.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepIntoForward', self.stepManager.stepIntoForward.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepOverBack', self.stepManager.stepOverBack.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepOverForward', self.stepManager.stepOverForward.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpOut', self.stepManager.jumpOut.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpToException', self.stepManager.jumpToException.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpNextBreakpoint', self.stepManager.jumpNextBreakpoint.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpPreviousBreakpoint', self.stepManager.jumpPreviousBreakpoint.bind(this.stepManager))
 }
 
 StepManager.prototype.updateStep = function (step, stepState, jumpOutDisabled) {
