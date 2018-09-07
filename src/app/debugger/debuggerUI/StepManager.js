@@ -18,6 +18,25 @@ class DebuggerStepManager {
     this.currentStepIndex = 0
   }
 
+  triggerStepChanged (step) {
+    const self = this
+    this.traceManager.getLength(function (error, length) {
+      let stepState = 'valid'
+
+      if (error) {
+        stepState = 'invalid'
+      } else if (step <= 0) {
+        stepState = 'initial'
+      } else if (step >= length - 1) {
+        stepState = 'end'
+      }
+
+      let jumpOutDisabled = (step === self.traceManager.findStepOut(step))
+
+      self.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
+    })
+  }
+
   stepIntoBack () {
     if (!this.traceManager.isLoaded()) return
     var step = this.currentStepIndex - 1
@@ -171,38 +190,39 @@ StepManager.prototype.startButtonNavigator = function () {
     self.parent.breakpointManager.jumpPreviousBreakpoint(self._parent.currentStepIndex, true)
   })
 
-  this.step_manager.event.register('stepChanged', (step) => {
-    self.updateStep(step)
+  this.step_manager.event.register('stepChanged', (step, stepState, jumpOutDisabled) => {
+    self.updateStep(step, stepState, jumpOutDisabled)
   })
 }
 
-StepManager.prototype.updateStep = function (step) {
+StepManager.prototype.updateStep = function (step, stepState, jumpOutDisabled) {
   this.slider.setValue(step)
-  this.changeState(step)
-}
-
-StepManager.prototype.changeState = function (step) {
-  const self = this
-  this.currentStepIndex = step
-
-  this.traceManager.getLength(function (error, length) {
-    let stepState = 'valid'
-
-    if (error) {
-      stepState = 'invalid'
-    } else if (step <= 0) {
-      stepState = 'initial'
-    } else if (step >= length - 1) {
-      stepState = 'end'
-    }
-
-    let jumpOutDisabled = (step === self.traceManager.findStepOut(step))
-
-    self.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
-  })
-
+  this.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
   this.event.trigger('stepChanged', [step])
 }
+
+// StepManager.prototype.changeState = function (step) {
+//   const self = this
+//   this.currentStepIndex = step
+//
+//   this.traceManager.getLength(function (error, length) {
+//     let stepState = 'valid'
+//
+//     if (error) {
+//       stepState = 'invalid'
+//     } else if (step <= 0) {
+//       stepState = 'initial'
+//     } else if (step >= length - 1) {
+//       stepState = 'end'
+//     }
+//
+//     let jumpOutDisabled = (step === self.traceManager.findStepOut(step))
+//
+//     self.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
+//   })
+//
+//   this.event.trigger('stepChanged', [step])
+// }
 
 StepManager.prototype.remove = function () {
   // used to stop listenning on event. bad and should be "refactored"
