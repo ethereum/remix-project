@@ -195,41 +195,6 @@ StepManager.prototype.startButtonNavigator = function () {
   const self = this
   this.buttonNavigator = new ButtonNavigator()
 
-  // self._parent.event.register('indexChanged', this, (index) => {
-  //   // if (!this.view) return
-  //   if (index < 0) return
-  //   if (self._parent.currentStepIndex !== index) return
-
-  //   self.traceManager.buildCallPath(index, (error, callsPath) => {
-  //     if (error) {
-  //       console.log(error)
-  //       if (self.buttonNavigator) {
-  //         self.buttonNavigator.resetWarning('')
-  //       }
-  //       return
-  //     }
-  //     self.currentCall = callsPath[callsPath.length - 1]
-  //     if (self.currentCall.reverted) {
-  //       let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
-  //       self.revertionPoint = self.currentCall.return
-  //       if (self.buttonNavigator) {
-  //         self.buttonNavigator.resetWarning(revertedReason)
-  //       }
-  //       return
-  //     }
-  //     for (var k = callsPath.length - 2; k >= 0; k--) {
-  //       var parent = callsPath[k]
-  //       if (!parent.reverted) continue
-  //       self.revertionPoint = parent.return
-  //       if (self.buttonNavigator) {
-  //         self.buttonNavigator.resetWarning('parenthasthrown')
-  //       }
-  //     }
-  //     if (self.buttonNavigator) {
-  //       self.buttonNavigator.resetWarning('')
-  //     }
-  //   })
-  // })
   this.step_manager.event.register('revertWarning', (revertedReason) => {
     if (self.buttonNavigator) {
       self.buttonNavigator.resetWarning(revertedReason)
