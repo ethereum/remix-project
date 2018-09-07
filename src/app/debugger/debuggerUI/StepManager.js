@@ -9,14 +9,17 @@ var Slider = require('./Slider')
 
 function StepManager (_parent, _traceManager) {
   this.event = new EventManager()
+  this._parent = _parent
   this.parent = _parent.debugger
   this.traceManager = _traceManager
-  this.sourceMapByAddress = {}
-  this.solidityMode = false
-
   this.revertionPoint = null
 
-  var self = this
+  this.startSlider()
+  this.startButtonNavigator()
+}
+
+StepManager.prototype.startSlider = function () {
+  const self = this
   this.parent.event.register('newTraceLoaded', this, function () {
     if (!this.slider) return
     self.traceManager.getLength(function (error, length) {
@@ -39,13 +42,16 @@ function StepManager (_parent, _traceManager) {
       this.jumpTo(this.parent.callTree.functionCallStack[0])
     }
   })
+}
 
+StepManager.prototype.startButtonNavigator = function () {
+  const self = this
   this.buttonNavigator = new ButtonNavigator()
 
-  _parent.event.register('indexChanged', this, (index) => {
+  self._parent.event.register('indexChanged', this, (index) => {
     // if (!this.view) return
     if (index < 0) return
-    if (_parent.currentStepIndex !== index) return
+    if (self._parent.currentStepIndex !== index) return
 
     self.traceManager.buildCallPath(index, (error, callsPath) => {
       if (error) {
@@ -66,7 +72,7 @@ function StepManager (_parent, _traceManager) {
       }
       for (var k = callsPath.length - 2; k >= 0; k--) {
         var parent = callsPath[k]
-        if (!parent.reverted)  continue
+        if (!parent.reverted) continue
         self.revertionPoint = parent.return
         if (self.buttonNavigator) {
           self.buttonNavigator.resetWarning('parenthasthrown')
@@ -97,10 +103,10 @@ function StepManager (_parent, _traceManager) {
     self.jumpTo(self.revertionPoint)
   })
   this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpNextBreakpoint(_parent.currentStepIndex, true)
+    self.parent.breakpointManager.jumpNextBreakpoint(self._parent.currentStepIndex, true)
   })
   this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpPreviousBreakpoint(_parent.currentStepIndex, true)
+    self.parent.breakpointManager.jumpPreviousBreakpoint(self._parent.currentStepIndex, true)
   })
 }
 
