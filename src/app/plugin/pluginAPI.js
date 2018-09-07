@@ -67,7 +67,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
     },
     editor: {
       getCurrentFile: (mod, cb) => {
-        var path = fileManager.currentPath()
+        var path = fileManager.currentFile()
         if (!path) {
           cb('no file selected')
         } else {
@@ -78,7 +78,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         var provider = fileManager.fileProviderOf(path)
         if (provider) {
           // TODO add approval to user for external plugin to get the content of the given `path`
-          provider.get(mod + '/' + path, (error, content) => {
+          provider.get(path, (error, content) => {
             cb(error, content)
           })
         } else {
@@ -89,7 +89,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         var provider = fileManager.fileProviderOf(path)
         if (provider) {
           // TODO add approval to user for external plugin to set the content of the given `path`
-          provider.set(mod + '/' + path, content, (error) => {
+          provider.set(path, content, (error) => {
             cb(error)
           })
         } else {
@@ -97,8 +97,15 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         }
       },
       highlight: (mod, lineColumnPos, filePath, hexColor, cb) => {
+        var position
+        try {
+          position = JSON.parse(lineColumnPos)
+        } catch (e) {
+          return cb(e.message)
+        }
         highlighter.currentSourceLocation(null)
-        highlighter.currentSourceLocation(lineColumnPos, filePath, hexColor)
+        highlighter.currentSourceLocationFromfileName(position, filePath, hexColor)
+        cb()
       }
     }
   }
