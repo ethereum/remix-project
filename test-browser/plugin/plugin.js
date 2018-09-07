@@ -68,4 +68,9 @@ window.onload = function () {
     extension.call('editor', 'getCurrentFile', [],
     function (error, result) { console.log(error, result) })
   })
+
+  document.querySelector('input#sethighlight').addEventListener('click', function () {
+    extension.call('editor', 'highlight', [document.getElementById('filename').value, document.getElementById('valuetosend').value, document.getElementById('valuetosend2').value],
+    function (error, result) { console.log(error, result) })
+  })
 }
