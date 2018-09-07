@@ -183,62 +183,15 @@ StepManager.prototype.init = function () {
   this.changeState(0)
 }
 
-// StepManager.prototype.jumpTo = function (step) {
-//   if (!this.traceManager.inRange(step)) return
-//   this.slider.setValue(step)
-//   this.changeState(step)
-// }
-
 StepManager.prototype.sliderMoved = function (step) {
   if (!this.traceManager.inRange(step)) return
   this.changeState(step)
 }
 
-// StepManager.prototype.stepIntoForward = function () {
-//   if (!this.traceManager.isLoaded()) return
-//   var step = this.currentStepIndex + 1
-//   if (!this.traceManager.inRange(step)) {
-//     return
-//   }
-//   this.slider.setValue(step)
-//   this.changeState(step)
-// }
-
 StepManager.prototype.updateStep = function (step) {
   this.slider.setValue(step)
   this.changeState(step)
 }
-
-// StepManager.prototype.stepIntoBack = function () {
-//   if (!this.traceManager.isLoaded()) return
-//   var step = this.currentStepIndex - 1
-//   if (!this.traceManager.inRange(step)) {
-//     return
-//   }
-//   this.slider.setValue(step)
-//   this.changeState(step)
-// }
-
-// StepManager.prototype.stepOverForward = function () {
-//   if (!this.traceManager.isLoaded()) return
-//   var step = this.traceManager.findStepOverForward(this.currentStepIndex)
-//   this.slider.setValue(step)
-//   this.changeState(step)
-// }
-
-// StepManager.prototype.stepOverBack = function () {
-//   if (!this.traceManager.isLoaded()) return
-//   var step = this.traceManager.findStepOverBack(this.currentStepIndex)
-//   this.slider.setValue(step)
-//   this.changeState(step)
-// }
-
-// StepManager.prototype.jumpOut = function () {
-//   if (!this.traceManager.isLoaded()) return
-//   var step = this.traceManager.findStepOut(this.currentStepIndex)
-//   this.slider.setValue(step)
-//   this.changeState(step)
-// }
 
 StepManager.prototype.changeState = function (step) {
   const self = this
