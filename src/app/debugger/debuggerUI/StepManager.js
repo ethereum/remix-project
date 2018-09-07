@@ -150,18 +150,18 @@ class DebuggerStepManager {
   }
 
   jumpToException () {
-    self.jumpTo(self.revertionPoint)
+    this.jumpTo(this.revertionPoint)
   }
 
   jumpNextBreakpoint () {
     // TODO: this is the same currentStepIndex var but currently coupled all the way up to EthDebuggerUI
     // the trigger in updateStep is updating it in EthDebuggerUI
     // the refactor should remove it
-    self.parent.breakpointManager.jumpNextBreakpoint(self._parent.currentStepIndex, true)
+    this.parent.breakpointManager.jumpNextBreakpoint(this._parent.currentStepIndex, true)
   }
 
   jumpPreviousBreakpoint () {
-    self.parent.breakpointManager.jumpPreviousBreakpoint(self._parent.currentStepIndex, true)
+    this.parent.breakpointManager.jumpPreviousBreakpoint(this._parent.currentStepIndex, true)
   }
 
 }
