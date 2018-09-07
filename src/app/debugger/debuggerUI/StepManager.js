@@ -110,12 +110,6 @@ StepManager.prototype.startButtonNavigator = function () {
   })
 }
 
-StepManager.prototype.reset = function () {
-  this.slider.setValue(0)
-  this.currentStepIndex = 0
-  this.buttonNavigator.reset()
-}
-
 StepManager.prototype.init = function () {
   this.slider.setValue(0)
   this.changeState(0)
