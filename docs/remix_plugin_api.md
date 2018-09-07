@@ -49,9 +49,9 @@ This section list all the available key and value pair which define this API:
 
 ### editor
  - getCurrentFile `@return {String} current file path displayed in the editor`
- - getFile `@param {String} path, @return {String} content`
+ - getFile `@param {String} path`
  - setFile `@param {String} path, @param {String} content`
- - highlight `@param {Object} lineColumnPos, @param {String} filePath, @param {String} hexColor `
+ - highlight `@param {Object} lineColumnPos, @param {String} filePath, @param {String} hexColor`
  
  
  
