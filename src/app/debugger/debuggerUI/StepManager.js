@@ -14,9 +14,9 @@ class DebuggerStepManager {
     this._parent = _parent
     this.parent = _parent.debugger
     this.traceManager = _traceManager
-    this.revertionPoint = null
     this.currentStepIndex = 0
     this.traceLength = 0
+    this.revertionPoint = null
 
     this.listenToEvents()
   }
@@ -41,6 +41,45 @@ class DebuggerStepManager {
       if (self.parent.callTree.functionCallStack.length) {
         self.jumpTo(self.parent.callTree.functionCallStack[0])
       }
+    })
+
+    this._parent.event.register('indexChanged', this, (index) => {
+      if (index < 0) return
+      if (self._parent.currentStepIndex !== index) return
+
+      self.traceManager.buildCallPath(index, (error, callsPath) => {
+        if (error) {
+          console.log(error)
+          return self.event.trigger('revertWarning', [''])
+          // if (self.buttonNavigator) {
+          //   self.buttonNavigator.resetWarning('')
+          // }
+          // return
+        }
+        self.currentCall = callsPath[callsPath.length - 1]
+        if (self.currentCall.reverted) {
+          let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
+          self.revertionPoint = self.currentCall.return
+          return self.event.trigger('revertWarning', [revertedReason])
+          // if (self.buttonNavigator) {
+          //   self.buttonNavigator.resetWarning(revertedReason)
+          // }
+          // return
+        }
+        for (var k = callsPath.length - 2; k >= 0; k--) {
+          var parent = callsPath[k]
+          if (!parent.reverted) continue
+          self.revertionPoint = parent.return
+          self.event.trigger('revertWarning', ['parenthasthrown'])
+          // if (self.buttonNavigator) {
+          //   self.buttonNavigator.resetWarning('parenthasthrown')
+          // }
+        }
+        self.event.trigger('revertWarning', [''])
+        // if (self.buttonNavigator) {
+        //   self.buttonNavigator.resetWarning('')
+        // }
+      })
     })
   }
 
@@ -110,6 +149,21 @@ class DebuggerStepManager {
     this.event.trigger('stepChanged', [step])
   }
 
+  jumpToException () {
+    self.jumpTo(self.revertionPoint)
+  }
+
+  jumpNextBreakpoint () {
+    // TODO: this is the same currentStepIndex var but currently coupled all the way up to EthDebuggerUI
+    // the trigger in updateStep is updating it in EthDebuggerUI
+    // the refactor should remove it
+    self.parent.breakpointManager.jumpNextBreakpoint(self._parent.currentStepIndex, true)
+  }
+
+  jumpPreviousBreakpoint () {
+    self.parent.breakpointManager.jumpPreviousBreakpoint(self._parent.currentStepIndex, true)
+  }
+
 }
 
 function StepManager (_parent, _traceManager) {
@@ -141,40 +195,45 @@ StepManager.prototype.startButtonNavigator = function () {
   const self = this
   this.buttonNavigator = new ButtonNavigator()
 
-  self._parent.event.register('indexChanged', this, (index) => {
-    // if (!this.view) return
-    if (index < 0) return
-    if (self._parent.currentStepIndex !== index) return
+  // self._parent.event.register('indexChanged', this, (index) => {
+  //   // if (!this.view) return
+  //   if (index < 0) return
+  //   if (self._parent.currentStepIndex !== index) return
 
-    self.traceManager.buildCallPath(index, (error, callsPath) => {
-      if (error) {
-        console.log(error)
-        if (self.buttonNavigator) {
-          self.buttonNavigator.resetWarning('')
-        }
-        return
-      }
-      self.currentCall = callsPath[callsPath.length - 1]
-      if (self.currentCall.reverted) {
-        let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
-        self.revertionPoint = self.currentCall.return
-        if (self.buttonNavigator) {
-          self.buttonNavigator.resetWarning(revertedReason)
-        }
-        return
-      }
-      for (var k = callsPath.length - 2; k >= 0; k--) {
-        var parent = callsPath[k]
-        if (!parent.reverted) continue
-        self.revertionPoint = parent.return
-        if (self.buttonNavigator) {
-          self.buttonNavigator.resetWarning('parenthasthrown')
-        }
-      }
-      if (self.buttonNavigator) {
-        self.buttonNavigator.resetWarning('')
-      }
-    })
+  //   self.traceManager.buildCallPath(index, (error, callsPath) => {
+  //     if (error) {
+  //       console.log(error)
+  //       if (self.buttonNavigator) {
+  //         self.buttonNavigator.resetWarning('')
+  //       }
+  //       return
+  //     }
+  //     self.currentCall = callsPath[callsPath.length - 1]
+  //     if (self.currentCall.reverted) {
+  //       let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
+  //       self.revertionPoint = self.currentCall.return
+  //       if (self.buttonNavigator) {
+  //         self.buttonNavigator.resetWarning(revertedReason)
+  //       }
+  //       return
+  //     }
+  //     for (var k = callsPath.length - 2; k >= 0; k--) {
+  //       var parent = callsPath[k]
+  //       if (!parent.reverted) continue
+  //       self.revertionPoint = parent.return
+  //       if (self.buttonNavigator) {
+  //         self.buttonNavigator.resetWarning('parenthasthrown')
+  //       }
+  //     }
+  //     if (self.buttonNavigator) {
+  //       self.buttonNavigator.resetWarning('')
+  //     }
+  //   })
+  // })
+  this.step_manager.event.register('revertWarning', (revertedReason) => {
+    if (self.buttonNavigator) {
+      self.buttonNavigator.resetWarning(revertedReason)
+    }
   })
 
   this.buttonNavigator.event.register('stepIntoBack', this, function () {
@@ -193,13 +252,13 @@ StepManager.prototype.startButtonNavigator = function () {
     self.step_manager.jumpOut()
   })
   this.buttonNavigator.event.register('jumpToException', this, function () {
-    self.step_manager.jumpTo(self.revertionPoint)
+    self.step_manager.jumpToException()
   })
   this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpNextBreakpoint(self._parent.currentStepIndex, true)
+    self.step_manager.jumpNextBreakpoint()
   })
   this.buttonNavigator.event.register('jumpPreviousBreakpoint', (exceptionIndex) => {
-    self.parent.breakpointManager.jumpPreviousBreakpoint(self._parent.currentStepIndex, true)
+    self.step_manager.jumpPreviousBreakpoint()
   })
 
   this.step_manager.event.register('stepChanged', (step, stepState, jumpOutDisabled) => {
