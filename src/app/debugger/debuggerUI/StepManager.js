@@ -89,7 +89,7 @@ StepManager.prototype.startSlider = function () {
         return console.log(error)
       }
       self.slider.setSliderLength(length)
-      self.init()
+      self.updateStep(0)
     })
   })
 
@@ -174,11 +174,6 @@ StepManager.prototype.startButtonNavigator = function () {
   this.step_manager.event.register('stepChanged', (step) => {
     self.updateStep(step)
   })
-}
-
-StepManager.prototype.init = function () {
-  this.slider.setValue(0)
-  this.changeState(0)
 }
 
 StepManager.prototype.updateStep = function (step) {
