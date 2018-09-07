@@ -67,7 +67,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
     },
     editor: {
       getCurrentFile: (mod, cb) => {
-        var path = fileManager.currentPath()
+        var path = fileManager.currentFile()
         if (!path) {
           cb('no file selected')
         } else {

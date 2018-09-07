@@ -79,6 +79,11 @@ class FileManager {
     return null
   }
 
+  currentFile () {
+    var self = this
+    return self._deps.config.get('currentFile')
+  }
+
   currentPath () {
     var self = this
     var currentFile = self._deps.config.get('currentFile')
