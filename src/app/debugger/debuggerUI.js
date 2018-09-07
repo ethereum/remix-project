@@ -2,7 +2,8 @@ var OldEthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
 var Debugger = require('../debugger/debugger')
 var SourceHighlighter = require('../editor/sourceHighlighter')
 var TxBrowser = require('./debuggerUI/TxBrowser')
-var StepManager = require('./debuggerUI/StepManager')
+var StepManagerUI = require('./debuggerUI/StepManager')
+var StepManager = require('./stepManager')
 var remixLib = require('remix-lib')
 var executionContext = remixLib.execution.executionContext
 var traceHelper = remixLib.helpers.trace
@@ -104,7 +105,8 @@ class DebuggerUI {
     let shouldOpenDebugger = this.debugger_ui.startDebugging(blockNumber, txNumber, tx)
     if (!shouldOpenDebugger) return
 
-    this.stepManager = new StepManager(this.debugger_ui, this.transactionDebugger.debugger.traceManager)
+    this.transactionDebugger.step_manager = new StepManager(this.debugger_ui, this.transactionDebugger.debugger.traceManager)
+    this.stepManager = new StepManagerUI(this.transactionDebugger)
     this.stepManager.event.register('stepChanged', this, function (stepIndex) {
       self.debugger_ui.stepChanged(stepIndex)
     })
