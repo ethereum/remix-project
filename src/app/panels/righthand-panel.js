@@ -36,6 +36,7 @@ module.exports = class RighthandPanel {
 
     self._deps = {
       fileProviders: self._components.registry.get('fileproviders').api,
+      fileManager: self._components.registry.get('filemanager').api,
       compiler: self._components.registry.get('compiler').api,
       udapp: self._components.registry.get('udapp').api,
       app: self._components.registry.get('app').api,
@@ -49,6 +50,7 @@ module.exports = class RighthandPanel {
       self._deps.compiler,
       self._deps.txlistener,
       self._deps.fileProviders,
+      self._deps.fileManager,
       self._deps.udapp
    )
 

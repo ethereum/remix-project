@@ -4,20 +4,6 @@ var globlalRegistry = require('../../global/registry')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
-var css = csjs`
-  .highlightcode {
-    position:absolute;
-    z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
-  }
-  .highlightcode_fullLine {
-    position:absolute;
-    z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
-    opacity: 0.5;
-  }
-`
-
 class SourceHighlighter {
   constructor (localRegistry) {
     const self = this
@@ -38,16 +24,43 @@ class SourceHighlighter {
   currentSourceLocation (lineColumnPos, location) {
     if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
+    if (location && location.file !== undefined) {
+      var path = this._deps.compiler.getSourceName(location.file)
+      if (path) {
+        this.currentSourceLocationFromfileName(lineColumnPos, path)
+      }
+    }
+  }
+
+  currentSourceLocationFromfileName (lineColumnPos, filePath, style) {
+    if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
+    if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
     this.statementMarker = null
     this.fullLineMarker = null
     this.source = null
     if (lineColumnPos) {
-      this.source = this._deps.compiler.getSourceName(location.file)
+      this.source = filePath
       if (this._deps.config.get('currentFile') !== this.source) {
         this._deps.fileManager.switchFile(this.source)
       }
+
+      var css = csjs`
+        .highlightcode {
+          position:absolute;
+          z-index:20;
+          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
+        }
+        .highlightcode_fullLine {
+          position:absolute;
+          z-index:20;
+          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
+          opacity: 0.5;
+        }
+        `
+
       this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode)
       this._deps.editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
+
       if (lineColumnPos.start.line === lineColumnPos.end.line) {
         this.fullLineMarker = this._deps.editor.addMarker({
           start: {
