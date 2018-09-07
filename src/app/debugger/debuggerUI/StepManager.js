@@ -13,6 +13,8 @@ function StepManager (_parent, _traceManager) {
   this.sourceMapByAddress = {}
   this.solidityMode = false
 
+  this.revertionPoint = null
+
   var self = this
   this.parent.event.register('newTraceLoaded', this, function () {
     if (!this.slider) return
@@ -58,7 +60,8 @@ function StepManager (_parent, _traceManager) {
         if (self.currentCall.reverted) {
           let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
           if (self.buttonNavigator) {
-            self.buttonNavigator.resetAndCheckRevertionPoint(revertedReason, self.currentCall.return)
+            self.revertionPoint = self.currentCall.return
+            self.buttonNavigator.resetWarning(revertedReason)
           }
         } else {
           var k = callsPath.length - 2
@@ -67,7 +70,8 @@ function StepManager (_parent, _traceManager) {
             if (parent.reverted) {
               let revertedReason = parent ? 'parenthasthrown' : ''
               if (self.buttonNavigator) {
-                return self.buttonNavigator.resetAndCheckRevertionPoint(revertedReason, parent.return)
+                self.revertionPoint = parent.return
+                self.buttonNavigator.resetWarning(revertedReason)
               }
             }
             k--
@@ -95,8 +99,8 @@ function StepManager (_parent, _traceManager) {
   this.buttonNavigator.event.register('jumpOut', this, function () {
     self.jumpOut()
   })
-  this.buttonNavigator.event.register('jumpToException', this, function (exceptionIndex) {
-    self.jumpTo(exceptionIndex)
+  this.buttonNavigator.event.register('jumpToException', this, function () {
+    self.jumpTo(self.revertionPoint)
   })
   this.buttonNavigator.event.register('jumpNextBreakpoint', (exceptionIndex) => {
     self.parent.breakpointManager.jumpNextBreakpoint(_parent.currentStepIndex, true)

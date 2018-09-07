@@ -66,7 +66,7 @@ ButtonNavigator.prototype.render = function () {
       <button id='jumpnextbreakpoint' title='Jump to the next breakpoint' class='${css.navigator} ${css.jumpButton} fa fa-step-forward' onclick=${function () { self.event.trigger('jumpNextBreakpoint') }} disabled=${this.jumpNextBreakpointDisabled} ></button>
     </div>
     <div id='reverted' style="display:none">
-      <button id='jumptoexception' title='Jump to exception' class='${css.navigator} ${css.button} fa fa-exclamation-triangle' onclick=${function () { self.event.trigger('jumpToException', [self.revertionPoint]) }} disabled=${this.jumpOutDisabled} >
+      <button id='jumptoexception' title='Jump to exception' class='${css.navigator} ${css.button} fa fa-exclamation-triangle' onclick=${function () { self.event.trigger('jumpToException') }} disabled=${this.jumpOutDisabled} >
       </button>
       <span>State changes made during this call will be reverted.</span>
       <span id='outofgas' style="display:none">This call will run out of gas.</span>
@@ -126,14 +126,6 @@ ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
   } else {
     document.getElementById(id).removeAttribute('disabled')
   }
-}
-
-ButtonNavigator.prototype.resetAndCheckRevertionPoint = function (revertedReason, revertionPoint) {
-  // TODO: since this is only used for the jump, this value should instead be outside of the view
-  if (revertionPoint) {
-    this.revertionPoint = revertionPoint
-  }
-  this.resetWarning(revertedReason)
 }
 
 ButtonNavigator.prototype.resetWarning = function (revertedReason) {
