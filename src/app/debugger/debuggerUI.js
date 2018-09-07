@@ -33,7 +33,7 @@ class DebuggerUI {
     })
 
     this.transactionDebugger.event.register('breakpointStep', function (step) {
-      self.stepManager.jumpTo(step)
+      self.stepManager.step_manager.jumpTo(step)
     })
 
     this.debugger_ui.event.register('indexChanged', function (index) {
