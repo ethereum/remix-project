@@ -97,8 +97,15 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         }
       },
       highlight: (mod, lineColumnPos, filePath, hexColor, cb) => {
+        var position
+        try {
+          position = JSON.parse(lineColumnPos)
+        } catch (e) {
+          return cb(e.message)
+        }
         highlighter.currentSourceLocation(null)
-        highlighter.currentSourceLocation(lineColumnPos, filePath, hexColor)
+        highlighter.currentSourceLocationFromfileName(position, filePath, hexColor)
+        cb()
       }
     }
   }
