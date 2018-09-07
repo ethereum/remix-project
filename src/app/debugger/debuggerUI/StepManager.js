@@ -104,21 +104,6 @@ function StepManager (_parent, _traceManager) {
   })
 }
 
-StepManager.prototype.remove = function () {
-  // used to stop listenning on event. bad and should be "refactored"
-  this.slider.view = null
-  this.slider = null
-  this.buttonNavigator.view = null
-  this.buttonNavigator = null
-}
-
-StepManager.prototype.render = function () {
-  return yo`<div>
-        ${this.slider.render()}
-        ${this.buttonNavigator.render()}
-      </div>`
-}
-
 StepManager.prototype.reset = function () {
   this.slider.setValue(0)
   this.currentStepIndex = 0
@@ -203,6 +188,21 @@ StepManager.prototype.changeState = function (step) {
   })
 
   this.event.trigger('stepChanged', [step])
+}
+
+StepManager.prototype.remove = function () {
+  // used to stop listenning on event. bad and should be "refactored"
+  this.slider.view = null
+  this.slider = null
+  this.buttonNavigator.view = null
+  this.buttonNavigator = null
+}
+
+StepManager.prototype.render = function () {
+  return yo`<div>
+        ${this.slider.render()}
+        ${this.buttonNavigator.render()}
+      </div>`
 }
 
 module.exports = StepManager
