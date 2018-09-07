@@ -71,7 +71,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         if (!path) {
           cb('no file selected')
         } else {
-          this.getFile(mod, path, cb)
+          cb(null, path)
         }
       },
       getFile: (mod, path, cb) => {
