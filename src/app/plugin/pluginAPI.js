@@ -1,10 +1,11 @@
 'use strict'
 var executionContext = require('../../execution-context')
-
+var SourceHighlighter = require('../editor/sourceHighlighter')
 /*
   Defines available API. `key` / `type`
 */
 module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) => {
+  var highlighter = new SourceHighlighter()
   return {
     app: {
       getExecutionContextProvider: (mod, cb) => {
@@ -76,22 +77,28 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
       getFile: (mod, path, cb) => {
         var provider = fileManager.fileProviderOf(path)
         if (provider) {
+          // TODO add approval to user for external plugin to get the content of the given `path`
           provider.get(mod + '/' + path, (error, content) => {
             cb(error, content)
           })
         } else {
-          cb(path + 'not available')
+          cb(path + ' not available')
         }
       },
       setFile: (mod, path, content, cb) => {
         var provider = fileManager.fileProviderOf(path)
         if (provider) {
+          // TODO add approval to user for external plugin to set the content of the given `path`
           provider.set(mod + '/' + path, content, (error) => {
             cb(error)
           })
         } else {
-          cb(path + 'not available')
+          cb(path + ' not available')
         }
+      },
+      highlight: (mod, lineColumnPos, filePath, hexColor, cb) => {
+        highlighter.currentSourceLocation(null)
+        highlighter.currentSourceLocation(lineColumnPos, filePath, hexColor)
       }
     }
   }
