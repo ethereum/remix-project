@@ -53,4 +53,19 @@ window.onload = function () {
     extension.call('app', 'updateTitle', ['changed title ' + k++],
     function (error, result) { console.log(error, result) })
   })
+
+  document.querySelector('input#setcontentof').addEventListener('click', function () {
+    extension.call('editor', 'setFile', [document.getElementById('filename').value, document.getElementById('valuetosend').value],
+    function (error, result) { console.log(error, result) })
+  })
+
+  document.querySelector('input#getcontentof').addEventListener('click', function () {
+    extension.call('editor', 'getFile', [document.getElementById('filename').value],
+    function (error, result) { console.log(error, result) })
+  })
+
+  document.querySelector('input#getcurrent').addEventListener('click', function () {
+    extension.call('editor', 'getCurrentFile', [],
+    function (error, result) { console.log(error, result) })
+  })
 }
