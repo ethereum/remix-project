@@ -94,8 +94,8 @@ StepManager.prototype.startSlider = function () {
   })
 
   this.slider = new Slider()
-  this.slider.event.register('sliderMoved', this, function (step) {
-    self.sliderMoved(step)
+  this.slider.event.register('sliderMoved', (step) => {
+    self.updateStep(step)
   })
 
   this.parent.callTree.event.register('callTreeReady', () => {
@@ -179,11 +179,6 @@ StepManager.prototype.startButtonNavigator = function () {
 StepManager.prototype.init = function () {
   this.slider.setValue(0)
   this.changeState(0)
-}
-
-StepManager.prototype.sliderMoved = function (step) {
-  if (!this.traceManager.inRange(step)) return
-  this.changeState(step)
 }
 
 StepManager.prototype.updateStep = function (step) {
