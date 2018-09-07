@@ -16,6 +16,32 @@ class DebuggerStepManager {
     this.traceManager = _traceManager
     this.revertionPoint = null
     this.currentStepIndex = 0
+    this.traceLength = 0
+
+    this.listenToEvents()
+  }
+
+  listenToEvents () {
+    const self = this
+
+    this.parent.event.register('newTraceLoaded', this, function () {
+      self.traceManager.getLength(function (error, newLength) {
+        if (error) {
+          return console.log(error)
+        }
+        if (self.traceLength !== newLength) {
+          self.event.trigger('traceLengthChanged', [newLength])
+          self.traceLength = newLength
+        }
+        self.jumpTo(0)
+      })
+    })
+
+    this.parent.callTree.event.register('callTreeReady', () => {
+      if (self.parent.callTree.functionCallStack.length) {
+        self.jumpTo(self.parent.callTree.functionCallStack[0])
+      }
+    })
   }
 
   triggerStepChanged (step) {
@@ -101,27 +127,13 @@ function StepManager (_parent, _traceManager) {
 
 StepManager.prototype.startSlider = function () {
   const self = this
-  this.parent.event.register('newTraceLoaded', this, function () {
-    if (!this.slider) return
-    self.traceManager.getLength(function (error, length) {
-      if (error) {
-        return console.log(error)
-      }
-      self.slider.setSliderLength(length)
-      self.step_manager.jumpTo(0)
-    })
-  })
 
   this.slider = new Slider()
   this.slider.event.register('sliderMoved', (step) => {
     self.step_manager.jumpTo(step)
   })
-
-  this.parent.callTree.event.register('callTreeReady', () => {
-    if (!this.slider) return
-    if (this.parent.callTree.functionCallStack.length) {
-      this.step_manager.jumpTo(this.parent.callTree.functionCallStack[0])
-    }
+  this.step_manager.event.register('traceLengthChanged', (length) => {
+    self.slider.setSliderLength(length)
   })
 }
 
