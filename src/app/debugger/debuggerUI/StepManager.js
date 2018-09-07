@@ -172,8 +172,6 @@ StepManager.prototype.startButtonNavigator = function () {
   })
 
   this.step_manager.event.register('stepChanged', (step) => {
-    console.dir("==> stepChanged")
-    console.dir(step)
     self.updateStep(step)
   })
 }
