@@ -46,7 +46,6 @@ function ButtonNavigator () {
   this.jumpNextBreakpointDisabled = true
   this.jumpPreviousBreakpointDisabled = true
 
-  this.revertionPoint = null
   this.view
 }
 
