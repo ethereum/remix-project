@@ -53,31 +53,27 @@ function StepManager (_parent, _traceManager) {
         if (self.buttonNavigator) {
           self.buttonNavigator.resetWarning('')
         }
-      } else {
-        self.currentCall = callsPath[callsPath.length - 1]
-        if (self.currentCall.reverted) {
-          let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
-          if (self.buttonNavigator) {
-            self.revertionPoint = self.currentCall.return
-            self.buttonNavigator.resetWarning(revertedReason)
-          }
-        } else {
-          var k = callsPath.length - 2
-          while (k >= 0) {
-            var parent = callsPath[k]
-            if (parent.reverted) {
-              let revertedReason = parent ? 'parenthasthrown' : ''
-              if (self.buttonNavigator) {
-                self.revertionPoint = parent.return
-                self.buttonNavigator.resetWarning(revertedReason)
-              }
-            }
-            k--
-          }
-          if (self.buttonNavigator) {
-            self.buttonNavigator.resetWarning('')
-          }
+        return
+      }
+      self.currentCall = callsPath[callsPath.length - 1]
+      if (self.currentCall.reverted) {
+        let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
+        self.revertionPoint = self.currentCall.return
+        if (self.buttonNavigator) {
+          self.buttonNavigator.resetWarning(revertedReason)
         }
+        return
+      }
+      for (var k = callsPath.length - 2; k >= 0; k--) {
+        var parent = callsPath[k]
+        if (!parent.reverted)  continue
+        self.revertionPoint = parent.return
+        if (self.buttonNavigator) {
+          self.buttonNavigator.resetWarning('parenthasthrown')
+        }
+      }
+      if (self.buttonNavigator) {
+        self.buttonNavigator.resetWarning('')
       }
     })
   })
@@ -132,10 +128,6 @@ StepManager.prototype.reset = function () {
 StepManager.prototype.init = function () {
   this.slider.setValue(0)
   this.changeState(0)
-}
-
-StepManager.prototype.newTraceAvailable = function () {
-  this.init()
 }
 
 StepManager.prototype.jumpTo = function (step) {
