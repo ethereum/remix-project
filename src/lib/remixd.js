@@ -4,8 +4,9 @@ var modalDialog = require('../app/ui/modaldialog')
 var yo = require('yo-yo')
 
 class Remixd {
-  constructor () {
+  constructor (port) {
     this.event = new EventManager()
+    this.port = port
     this.callbacks = {}
     this.callid = 0
     this.socket = null
@@ -30,7 +31,7 @@ class Remixd {
       } catch (e) {}
     }
     this.event.trigger('connecting', [])
-    this.socket = new WebSocket('ws://localhost:65520', 'echo-protocol') // eslint-disable-line
+    this.socket = new WebSocket('ws://localhost:' + this.port, 'echo-protocol') // eslint-disable-line
 
     this.socket.addEventListener('open', (event) => {
       this.connected = true
