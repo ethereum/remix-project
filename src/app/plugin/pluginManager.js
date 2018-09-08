@@ -1,4 +1,6 @@
 'use strict'
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var executionContext = require('../../execution-context')
 const PluginAPI = require('./pluginAPI')
 /**
@@ -80,6 +82,7 @@ const PluginAPI = require('./pluginAPI')
 module.exports = class PluginManager {
   constructor (app, compiler, txlistener, fileProviders, fileManager, udapp) {
     const self = this
+    self.event = new EventManager()
     var pluginAPI = new PluginAPI(
       this,
       fileProviders,
@@ -90,6 +93,14 @@ module.exports = class PluginManager {
     self.plugins = {}
     self.origins = {}
     self.inFocus
+    fileManager.event.register('currentFileChanged', (file, provider) => {
+      self.broadcast(JSON.stringify({
+        action: 'notification',
+        key: 'editor',
+        type: 'currentFileChanged',
+        value: [ file ]
+      }))
+    })
     compiler.event.register('compilationFinished', (success, data, source) => {
       self.broadcast(JSON.stringify({
         action: 'notification',
@@ -183,6 +194,11 @@ module.exports = class PluginManager {
     if (this.origins[origin]) {
       this.post(this.origins[origin], value)
     }
+  }
+  receivedDataFrom (methodName, mod) {
+    // TODO check whether 'mod' as right to do that
+    arguments.shift()
+    this.event.trigger(methodName, [arguments])
   }
   post (name, value) {
     const self = this
