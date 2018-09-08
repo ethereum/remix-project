@@ -2,8 +2,8 @@
 var yo = require('yo-yo')
 const copy = require('clipboard-copy')
 var remixLib = require('remix-lib')
-var TreeView = require('../../../ui/TreeView') // TODO setup a direct reference to the UI components
 var EventManager = remixLib.EventManager
+var TreeView = require('../../../ui/TreeView') // TODO setup a direct reference to the UI components
 
 var csjs = require('csjs-inject')
 var styleGuide = require('../../../ui/styles-guide/theme-chooser')
@@ -69,51 +69,46 @@ function DropdownPanel (_name, _opts) {
 }
 
 DropdownPanel.prototype.setMessage = function (message) {
-  if (this.view) {
-    this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
-    this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
-    this.message(message)
-  }
+  if (!this.view) return
+  this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
+  this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
+  this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
+  this.message(message)
 }
 
 DropdownPanel.prototype.setLoading = function () {
-  if (this.view) {
-    this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
-    this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'inline-block'
-    this.message('')
-  }
+  if (!this.view) return
+  this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
+  this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
+  this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'inline-block'
+  this.message('')
 }
 
 DropdownPanel.prototype.setUpdating = function () {
-  if (this.view) {
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.greyedText_color
-  }
+  if (!this.view) return
+  this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.greyedText_color
 }
 
 DropdownPanel.prototype.update = function (_data, _header) {
-  if (this.view) {
-    this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
-    this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.mainText_Color
-    this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
-    if (!this.displayContentOnly) {
-      this.view.querySelector('.title div.btn').style.display = 'block'
-      this.view.querySelector('.title span').innerText = _header || ' '
-    }
-    this.message('')
-    if (this.json) {
-      this.treeView.update(_data)
-    }
+  if (!this.view) return
+  this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
+  this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
+  this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.mainText_Color
+  this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
+  if (!this.displayContentOnly) {
+    this.view.querySelector('.title div.btn').style.display = 'block'
+    this.view.querySelector('.title span').innerText = _header || ' '
+  }
+  this.message('')
+  if (this.json) {
+    this.treeView.update(_data)
   }
 }
 
 DropdownPanel.prototype.setContent = function (node) {
-  if (this.view) {
-    var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
-    parent.replaceChild(node, parent.firstElementChild)
-  }
+  if (!this.view) return
+  var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
+  parent.replaceChild(node, parent.firstElementChild)
 }
 
 DropdownPanel.prototype.render = function (overridestyle) {
@@ -178,31 +173,28 @@ DropdownPanel.prototype.toggle = function () {
 }
 
 DropdownPanel.prototype.hide = function () {
-  if (this.view && !this.displayContentOnly) {
-    var caret = this.view.querySelector('.title').firstElementChild
-    var el = this.view.querySelector('.dropdownpanel')
-    el.style.display = 'none'
-    caret.className = `${css.icon} fa fa-caret-right`
-    this.event.trigger('hide', [])
-  }
+  if (!(this.view && !this.displayContentOnly)) return
+  var caret = this.view.querySelector('.title').firstElementChild
+  var el = this.view.querySelector('.dropdownpanel')
+  el.style.display = 'none'
+  caret.className = `${css.icon} fa fa-caret-right`
+  this.event.trigger('hide', [])
 }
 
 DropdownPanel.prototype.show = function () {
-  if (this.view && !this.displayContentOnly) {
-    var caret = this.view.querySelector('.title').firstElementChild
-    var el = this.view.querySelector('.dropdownpanel')
-    el.style.display = ''
-    caret.className = `${css.icon} fa fa-caret-down`
-    this.event.trigger('show', [])
-  }
+  if (!(this.view && !this.displayContentOnly)) return
+  var caret = this.view.querySelector('.title').firstElementChild
+  var el = this.view.querySelector('.dropdownpanel')
+  el.style.display = ''
+  caret.className = `${css.icon} fa fa-caret-down`
+  this.event.trigger('show', [])
 }
 
 DropdownPanel.prototype.message = function (message) {
-  if (this.view) {
-    var mes = this.view.querySelector('.dropdownpanel .message')
-    mes.innerText = message
-    mes.style.display = (message === '') ? 'none' : 'block'
-  }
+  if (!this.view) return
+  var mes = this.view.querySelector('.dropdownpanel .message')
+  mes.innerText = message
+  mes.style.display = (message === '') ? 'none' : 'block'
 }
 
 module.exports = DropdownPanel
