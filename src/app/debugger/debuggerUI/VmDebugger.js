@@ -128,6 +128,38 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   })
 
   this.stepDetail = new StepDetail(_parentUI, _traceManager)
+  _parentUI.debugger.event.register('traceUnloaded', this, function () {
+    self.stepDetail.reset()
+  })
+  _parentUI.debugger.event.register('newTraceLoaded', this, function () {
+    self.stepDetail.reset()
+  })
+
+  _parentUI.event.register('indexChanged', this, function (index) {
+    if (index < 0) return
+
+    self.stepDetail.updateField('vm trace step', index)
+
+    _traceManager.getCurrentStep(index, function (error, step) {
+      self.stepDetail.updateField('execution step', (error ? '-' : step))
+    })
+
+    _traceManager.getMemExpand(index, function (error, addmem) {
+      self.stepDetail.updateField('add memory', (error ? '-' : addmem))
+    })
+
+    _traceManager.getStepCost(index, function (error, gas) {
+      self.stepDetail.updateField('gas', (error ? '-' : gas))
+    })
+
+    _traceManager.getCurrentCalledAddressAt(index, function (error, address) {
+      self.stepDetail.updateField('loaded address', (error ? '-' : address))
+    })
+
+    _traceManager.getRemainingGas(index, function (error, remaingas) {
+      self.stepDetail.updateField('remaining gas', (error ? '-' : remaingas))
+    })
+  })
 
   this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   this.solidityLocals = new SolidityLocals(_parentUI, _traceManager, _callTree)
