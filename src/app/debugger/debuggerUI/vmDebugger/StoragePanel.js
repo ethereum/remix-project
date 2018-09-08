@@ -3,9 +3,6 @@ var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
 function StoragePanel (_parent, _traceManager) {
-  this.parent = _parent
-  this.storageResolver = null
-  this.traceManager = _traceManager
   this.basicPanel = new DropdownPanel('Storage', {json: true})
 }
 
