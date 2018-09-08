@@ -127,7 +127,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
-  this.stepDetail = new StepDetail(_parentUI, _traceManager)
+  this.stepDetail = new StepDetail()
   _parentUI.debugger.event.register('traceUnloaded', this, function () {
     self.stepDetail.reset()
   })
