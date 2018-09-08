@@ -101,7 +101,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
-  this.storagePanel = new StoragePanel(_parentUI, _traceManager)
+  this.storagePanel = new StoragePanel()
   _parentUI.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (_parentUI.currentStepIndex !== index) return
