@@ -52,7 +52,9 @@ module.exports = class RighthandPanel {
       self._deps.fileProviders,
       self._deps.fileManager,
       self._deps.udapp
-   )
+    )
+
+    self._components.registry.put({api: pluginManager, name: 'pluginmanager'})
 
     var analysisTab = new AnalysisTab(self._components.registry)
     analysisTab.event.register('newStaticAnaysisWarningMessage', (msg, settings) => { self._components.compile.addWarning(msg, settings) })
