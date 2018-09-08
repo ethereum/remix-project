@@ -2,9 +2,7 @@
 var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
-function CalldataPanel (_parentUI, _traceManager) {
-  this._parentUI = _parentUI
-  this.traceManager = _traceManager
+function CalldataPanel () {
   this.basicPanel = new DropdownPanel('Call Data', {json: true})
 }
 

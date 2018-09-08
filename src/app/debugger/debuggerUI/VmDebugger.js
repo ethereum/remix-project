@@ -38,7 +38,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.asmCode.changed([], '', -1)
   })
 
-  this.calldataPanel = new CalldataPanel(_parentUI, _traceManager)
+  this.calldataPanel = new CalldataPanel()
   _parentUI.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (_parentUI.currentStepIndex !== index) return
