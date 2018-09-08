@@ -1,12 +1,7 @@
-'use strict'
 var yo = require('yo-yo')
 var DropdownPanel = require('./DropdownPanel')
 
 function StepDetail (_parentUI, _traceManager) {
-  this.debugger = _parentUI.debugger
-  this.parentUI = _parentUI
-  this.traceManager = _traceManager
-
   this.basicPanel = new DropdownPanel('Step detail', {json: true, displayContentOnly: true})
 
   this.detail = {
