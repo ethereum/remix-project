@@ -162,9 +162,6 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.calldataPanel.basicPanel.show()
     self.callstackPanel.basicPanel.show()
   })
-  _parent.event.register('traceUnloaded', this, function () {
-    if (!self.view) return
-  })
   _parent.callTree.event.register('callTreeReady', () => {
     if (!self.view) return
     if (_parent.callTree.reducedTrace.length) {
