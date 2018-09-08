@@ -11,6 +11,13 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
       getExecutionContextProvider: (mod, cb) => {
         cb(null, executionContext.getProvider())
       },
+      getProviderEndpoint: (mod, cb) => {
+        if (executionContext.getProvider() === 'web3') {
+          cb(null, executionContext.web3().currentProvider.host)
+        } else {
+          cb('no endpoint: current provider is either injected or vm')
+        }
+      },
       updateTitle: (mod, title, cb) => {
         pluginManager.plugins[mod].modal.setTitle(title)
         if (cb) cb()
