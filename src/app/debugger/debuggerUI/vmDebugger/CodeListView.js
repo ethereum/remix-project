@@ -15,10 +15,8 @@ var css = csjs`
     max-height: 150px;
   }
 `
-function CodeListView (_parent, _codeManager) {
+function CodeListView () {
   this.event = new EventManager()
-  this.parent = _parent
-  this.codeManager = _codeManager
   this.code
   this.address
   this.codeView
@@ -30,19 +28,10 @@ function CodeListView (_parent, _codeManager) {
   this.basicPanel.event.register('show', () => {
     this.event.trigger('show', [])
   })
-  this.init()
 }
 
 CodeListView.prototype.render = function () {
   return yo`<div id='asmcodes' >${this.basicPanel.render({height: style.instructionsList.height})}</div>`
-}
-
-CodeListView.prototype.init = function () {
-  var self = this
-  this.codeManager.event.register('changed', this, this.changed)
-  this.parent.event.register('traceUnloaded', this, function () {
-    self.changed([], '', -1)
-  })
 }
 
 CodeListView.prototype.indexChanged = function (index) {
