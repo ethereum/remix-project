@@ -15,6 +15,7 @@ var remixDebug = require('remix-debug')
 var remixLib = require('remix-lib')
 var ui = remixLib.helpers.ui
 var StorageResolver = remixDebug.storage.StorageResolver
+var StorageViewer = remixDebug.storage.StorageViewer
 var yo = require('yo-yo')
 
 var css = csjs`
@@ -101,7 +102,30 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   })
 
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
+  _parentUI.event.register('indexChanged', this, function (index) {
+    if (index < 0) return
+    if (_parentUI.currentStepIndex !== index) return
+    if (!self.storageResolver) return
 
+    _traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+      if (error) return
+      var storageViewer = new StorageViewer({
+        stepIndex: _parentUI.currentStepIndex,
+        tx: _parentUI.tx,
+        address: address
+      }, self.storageResolver, _traceManager)
+
+      storageViewer.storageRange((error, storage) => {
+        if (error) {
+          console.log(error)
+          self.storagePanel.update({})
+        } else if (_parentUI.currentStepIndex === index) {
+          var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
+          self.storagePanel.update(storage, header)
+        }
+      })
+    })
+  })
 
   this.stepDetail = new StepDetail(_parentUI, _traceManager)
   this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
@@ -127,11 +151,10 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
 
   _parent.event.register('newTraceLoaded', this, function () {
     if (!self.view) return
-    var storageResolver = new StorageResolver({web3: _parent.web3})
-    self.storagePanel.storageResolver = storageResolver
-    self.solidityState.storageResolver = storageResolver
-    self.solidityLocals.storageResolver = storageResolver
-    self.fullStoragesChangesPanel.storageResolver = storageResolver
+    self.storageResolver = new StorageResolver({web3: _parent.web3})
+    self.solidityState.storageResolver = self.storageResolver
+    self.solidityLocals.storageResolver = self.storageResolver
+    self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
     self.storagePanel.basicPanel.show()
