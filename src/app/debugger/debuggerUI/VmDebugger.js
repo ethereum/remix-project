@@ -70,7 +70,20 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
-  this.callstackPanel = new CallstackPanel(_parentUI, _traceManager)
+  this.callstackPanel = new CallstackPanel()
+  _parentUI.event.register('indexChanged', this, function (index) {
+    if (index < 0) return
+    if (_parentUI.currentStepIndex !== index) return
+
+    _traceManager.getMemoryAt(index, function (error, callstack) {
+      if (error) {
+        console.log(error)
+        self.callstackPanel.update({})
+      } else if (_parentUI.currentStepIndex === index) {
+        self.callstackPanel.update(callstack)
+      }
+    })
+  })
 
   this.stackPanel = new StackPanel(_parentUI, _traceManager)
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
