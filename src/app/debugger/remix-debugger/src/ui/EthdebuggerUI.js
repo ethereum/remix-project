@@ -1,7 +1,7 @@
 'use strict'
 // var TxBrowser = require('./TxBrowser')
 // var StepManager = require('./StepManager')
-var VmDebugger = require('./VmDebugger')
+// var VmDebugger = require('./VmDebugger')
 
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
@@ -103,8 +103,7 @@ EthdebuggerUI.prototype.startDebugging = function (blockNumber, txIndex, tx) {
   return true
 }
 
-EthdebuggerUI.prototype.createAndAddVmDebugger = function () {
-  this.vmDebugger = new VmDebugger(this, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+EthdebuggerUI.prototype.andAddVmDebugger = function () {
   yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
   yo.update(this.debuggerPanelsView, this.vmDebugger.render())
   yo.update(this.stepManagerView, this.stepManager.render())
