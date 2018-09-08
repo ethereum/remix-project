@@ -39,6 +39,19 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   })
 
   this.calldataPanel = new CalldataPanel(_parentUI, _traceManager)
+  _parentUI.event.register('indexChanged', this, function (index) {
+    if (index < 0) return
+    if (_parentUI.currentStepIndex !== index) return
+
+    _traceManager.getCallDataAt(index, function (error, calldata) {
+      if (error) {
+        console.log(error)
+        self.calldataPanel.update({})
+      } else if (_parentUI.currentStepIndex === index) {
+        self.calldataPanel.update(calldata)
+      }
+    })
+  })
 
   this.stackPanel = new StackPanel(_parentUI, _traceManager)
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
