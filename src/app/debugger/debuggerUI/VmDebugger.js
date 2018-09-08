@@ -5,7 +5,7 @@ var CalldataPanel = require('./vmDebugger/CalldataPanel')
 var MemoryPanel = require('./vmDebugger/MemoryPanel')
 var CallstackPanel = require('./vmDebugger/CallstackPanel')
 var StackPanel = require('./vmDebugger/StackPanel')
-var StoragePanel = require('../remix-debugger/src/ui/StoragePanel')
+var StoragePanel = require('./vmDebugger/StoragePanel')
 var FullStoragesChangesPanel = require('../remix-debugger/src/ui/FullStoragesChanges')
 var StepDetail = require('../remix-debugger/src/ui/StepDetail')
 var DropdownPanel = require('../remix-debugger/src/ui/DropdownPanel')
@@ -85,7 +85,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
-  this.stackPanel = new StackPanel(_parentUI, _traceManager)
+  this.stackPanel = new StackPanel()
   _parentUI.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (_parentUI.currentStepIndex !== index) return
@@ -101,6 +101,8 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   })
 
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
+
+
   this.stepDetail = new StepDetail(_parentUI, _traceManager)
   this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   this.solidityLocals = new SolidityLocals(_parentUI, _traceManager, _callTree)
