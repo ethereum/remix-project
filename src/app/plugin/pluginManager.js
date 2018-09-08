@@ -91,15 +91,12 @@ module.exports = class PluginManager {
     self.origins = {}
     self.inFocus
     compiler.event.register('compilationFinished', (success, data, source) => {
-      if (self.inFocus) {
-        // trigger to the current focus
-        self.post(self.inFocus, JSON.stringify({
-          action: 'notification',
-          key: 'compiler',
-          type: 'compilationFinished',
-          value: [ success, data, source ]
-        }))
-      }
+      self.broadcast(JSON.stringify({
+        action: 'notification',
+        key: 'compiler',
+        type: 'compilationFinished',
+        value: [ success, data, source ]
+      }))
     })
 
     txlistener.event.register('newTransaction', (tx) => {
@@ -113,6 +110,7 @@ module.exports = class PluginManager {
     })
 
     app.event.register('tabChanged', (tabName) => {
+      // TODO Fix this cause this event is no longer triggered
       if (self.inFocus && self.inFocus !== tabName) {
         // trigger unfocus
         self.post(self.inFocus, JSON.stringify({
