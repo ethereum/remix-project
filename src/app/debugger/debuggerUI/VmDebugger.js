@@ -1,6 +1,6 @@
 'use strict'
 var csjs = require('csjs-inject')
-var CodeListView = require('../remix-debugger/src/ui/CodeListView')
+var CodeListView = require('./vmDebugger/CodeListView')
 var CalldataPanel = require('../remix-debugger/src/ui/CalldataPanel')
 var MemoryPanel = require('../remix-debugger/src/ui/MemoryPanel')
 var CallstackPanel = require('../remix-debugger/src/ui/CallstackPanel')
