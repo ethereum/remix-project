@@ -31,7 +31,13 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   let _parent = _parentUI.debugger
   var self = this
   this.view
-  this.asmCode = new CodeListView(_parent, _codeManager)
+
+  this.asmCode = new CodeListView()
+  _codeManager.event.register('changed', this.asmCode.changed.bind(this.asmCode))
+  _parent.event.register('traceUnloaded', this, function () {
+    self.asmCode.changed([], '', -1)
+  })
+
   this.stackPanel = new StackPanel(_parentUI, _traceManager)
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
   this.memoryPanel = new MemoryPanel(_parentUI, _traceManager)
