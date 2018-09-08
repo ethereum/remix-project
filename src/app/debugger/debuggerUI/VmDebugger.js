@@ -12,6 +12,8 @@ var DropdownPanel = require('../remix-debugger/src/ui/DropdownPanel')
 var SolidityState = require('../remix-debugger/src/ui/SolidityState')
 var SolidityLocals = require('../remix-debugger/src/ui/SolidityLocals')
 var remixDebug = require('remix-debug')
+var remixLib = require('remix-lib')
+var ui = remixLib.helpers.ui
 var StorageResolver = remixDebug.storage.StorageResolver
 var yo = require('yo-yo')
 
@@ -53,9 +55,23 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
+  this.memoryPanel = new MemoryPanel()
+  _parentUI.event.register('indexChanged', this, function (index) {
+    if (index < 0) return
+    if (_parentUI.currentStepIndex !== index) return
+
+    _traceManager.getMemoryAt(index, function (error, memory) {
+      if (error) {
+        console.log(error)
+        self.memoryPanel.update({})
+      } else if (_parentUI.currentStepIndex === index) {
+        self.memoryPanel.update(ui.formatMemory(memory, 16))
+      }
+    })
+  })
+
   this.stackPanel = new StackPanel(_parentUI, _traceManager)
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
-  this.memoryPanel = new MemoryPanel(_parentUI, _traceManager)
   this.callstackPanel = new CallstackPanel(_parentUI, _traceManager)
   this.stepDetail = new StepDetail(_parentUI, _traceManager)
   this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
