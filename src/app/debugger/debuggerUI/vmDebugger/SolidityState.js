@@ -13,6 +13,7 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
   this.solidityProxy = _solidityProxy
   this.basicPanel = new DropdownPanel('Solidity State', {
     json: true,
+    // TODO: used by TreeView ui
     formatSelf: solidityTypeFormatter.formatSelf,
     extractData: solidityTypeFormatter.extractData
   })
@@ -24,11 +25,10 @@ function SolidityState (_parent, _traceManager, _codeManager, _solidityProxy) {
 }
 
 SolidityState.prototype.render = function () {
-  if (!this.view) {
-    this.view = yo`<div id='soliditystate' >
+  if (this.view) return
+  this.view = yo`<div id='soliditystate' >
       ${this.basicPanel.render()}
     </div>`
-  }
   return this.view
 }
 
@@ -63,41 +63,30 @@ SolidityState.prototype.init = function () {
 function decode (self, index) {
   self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, (error, address) => {
     if (error) {
-      self.basicPanel.update({})
-      console.log(error)
-    } else {
-      if (self.stateVariablesByAddresses[address]) {
-        extractStateVariables(self, self.stateVariablesByAddresses[address], address)
-      } else {
-        self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
-          if (error) {
-            self.basicPanel.update({})
-            console.log(error)
-          } else {
-            self.stateVariablesByAddresses[address] = stateVars
-            extractStateVariables(self, stateVars, address)
-          }
-        })
-      }
+      return self.basicPanel.update({})
     }
+    if (self.stateVariablesByAddresses[address]) {
+      return extractStateVariables(self, self.stateVariablesByAddresses[address], address)
+    }
+    self.solidityProxy.extractStateVariablesAt(index, function (error, stateVars) {
+      if (error) {
+        return self.basicPanel.update({})
+      }
+      self.stateVariablesByAddresses[address] = stateVars
+      extractStateVariables(self, stateVars, address)
+    })
   })
 }
 
 function extractStateVariables (self, stateVars, address) {
-  var storageViewer = new StorageViewer({
-    stepIndex: self.parent.currentStepIndex,
-    tx: self.parent.tx,
-    address: address
-  }, self.storageResolver, self.traceManager)
+  var storageViewer = new StorageViewer({ stepIndex: self.parent.currentStepIndex, tx: self.parent.tx, address: address }, self.storageResolver, self.traceManager)
   stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
     self.basicPanel.setMessage('')
-    if (!result.error) {
-      self.basicPanel.update(result)
-    } else {
-      self.basicPanel.setMessage(result.error)
+    if (result.error) {
+      return self.basicPanel.setMessage(result.error)
     }
+    self.basicPanel.update(result)
   })
 }
 
 module.exports = SolidityState
-
