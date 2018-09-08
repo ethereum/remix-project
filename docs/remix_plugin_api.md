@@ -31,6 +31,7 @@ This section list all the available key and value pair which define this API:
 ### app
 
  - getExecutionContextProvider `@return {String} provider (injected | web3 | vm)`
+ - getProviderEndpoint `@return {String} provider endpoint url if web3, returns an error if injected or javascript VM`
  - updateTitle `@param {String} title`
  
 ### config
