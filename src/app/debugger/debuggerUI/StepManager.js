@@ -10,31 +10,28 @@ function StepManager (stepManager) {
   this.stepManager = stepManager
   this.startSlider()
   this.startButtonNavigator()
+  this.stepManager.event.register('stepChanged', this.updateStep.bind(this))
 }
 
 StepManager.prototype.startSlider = function () {
-  const self = this
-
   this.slider = new Slider()
-  this.slider.event.register('sliderMoved', self.stepManager.jumpTo.bind(this.stepManager))
-  this.stepManager.event.register('traceLengthChanged', self.slider.setSliderLength.bind(this.slider))
+  this.slider.event.register('sliderMoved', this.stepManager.jumpTo.bind(this.stepManager))
+  this.stepManager.event.register('traceLengthChanged', this.slider.setSliderLength.bind(this.slider))
 }
 
 StepManager.prototype.startButtonNavigator = function () {
-  const self = this
   this.buttonNavigator = new ButtonNavigator()
 
-  this.stepManager.event.register('revertWarning', self.buttonNavigator.resetWarning.bind(this.buttonNavigator))
-  this.stepManager.event.register('stepChanged', self.updateStep.bind(this))
+  this.stepManager.event.register('revertWarning', this.buttonNavigator.resetWarning.bind(this.buttonNavigator))
 
-  this.buttonNavigator.event.register('stepIntoBack', self.stepManager.stepIntoBack.bind(this.stepManager))
-  this.buttonNavigator.event.register('stepIntoForward', self.stepManager.stepIntoForward.bind(this.stepManager))
-  this.buttonNavigator.event.register('stepOverBack', self.stepManager.stepOverBack.bind(this.stepManager))
-  this.buttonNavigator.event.register('stepOverForward', self.stepManager.stepOverForward.bind(this.stepManager))
-  this.buttonNavigator.event.register('jumpOut', self.stepManager.jumpOut.bind(this.stepManager))
-  this.buttonNavigator.event.register('jumpToException', self.stepManager.jumpToException.bind(this.stepManager))
-  this.buttonNavigator.event.register('jumpNextBreakpoint', self.stepManager.jumpNextBreakpoint.bind(this.stepManager))
-  this.buttonNavigator.event.register('jumpPreviousBreakpoint', self.stepManager.jumpPreviousBreakpoint.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepIntoBack', this.stepManager.stepIntoBack.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepIntoForward', this.stepManager.stepIntoForward.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepOverBack', this.stepManager.stepOverBack.bind(this.stepManager))
+  this.buttonNavigator.event.register('stepOverForward', this.stepManager.stepOverForward.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpOut', this.stepManager.jumpOut.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpToException', this.stepManager.jumpToException.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpNextBreakpoint', this.stepManager.jumpNextBreakpoint.bind(this.stepManager))
+  this.buttonNavigator.event.register('jumpPreviousBreakpoint', this.stepManager.jumpPreviousBreakpoint.bind(this.stepManager))
 }
 
 StepManager.prototype.updateStep = function (step, stepState, jumpOutDisabled) {
