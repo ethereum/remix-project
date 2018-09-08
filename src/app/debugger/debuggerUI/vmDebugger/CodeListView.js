@@ -46,31 +46,31 @@ CodeListView.prototype.init = function () {
 }
 
 CodeListView.prototype.indexChanged = function (index) {
-  if (index >= 0) {
-    if (this.itemSelected) {
-      this.itemSelected.removeAttribute('selected')
-      this.itemSelected.removeAttribute('style')
-      if (this.itemSelected.firstChild) {
-        this.itemSelected.firstChild.removeAttribute('style')
-      }
-    }
-    this.itemSelected = this.codeView.children[index]
-    this.itemSelected.setAttribute('style', 'background-color: ' + styles.rightPanel.debuggerTab.text_BgHighlight)
-    this.itemSelected.setAttribute('selected', 'selected')
+  if (index < 0) return
+  if (this.itemSelected) {
+    this.itemSelected.removeAttribute('selected')
+    this.itemSelected.removeAttribute('style')
     if (this.itemSelected.firstChild) {
-      this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
+      this.itemSelected.firstChild.removeAttribute('style')
     }
-    this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetTop)
   }
+  this.itemSelected = this.codeView.children[index]
+  this.itemSelected.setAttribute('style', 'background-color: ' + styles.rightPanel.debuggerTab.text_BgHighlight)
+  this.itemSelected.setAttribute('selected', 'selected')
+  if (this.itemSelected.firstChild) {
+    this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
+  }
+  this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetTop)
 }
 
 CodeListView.prototype.changed = function (code, address, index) {
-  if (this.address !== address) {
-    this.code = code
-    this.address = address
-    this.codeView = this.renderAssemblyItems()
-    this.basicPanel.setContent(this.codeView)
+  if (this.address === address) {
+    return this.indexChanged(index)
   }
+  this.code = code
+  this.address = address
+  this.codeView = this.renderAssemblyItems()
+  this.basicPanel.setContent(this.codeView)
   this.indexChanged(index)
 }
 
