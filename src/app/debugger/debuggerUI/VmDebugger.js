@@ -1,7 +1,7 @@
 'use strict'
 var csjs = require('csjs-inject')
 var CodeListView = require('./vmDebugger/CodeListView')
-var CalldataPanel = require('../remix-debugger/src/ui/CalldataPanel')
+var CalldataPanel = require('./vmDebugger/CalldataPanel')
 var MemoryPanel = require('../remix-debugger/src/ui/MemoryPanel')
 var CallstackPanel = require('../remix-debugger/src/ui/CallstackPanel')
 var StackPanel = require('../remix-debugger/src/ui/StackPanel')
@@ -38,10 +38,11 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.asmCode.changed([], '', -1)
   })
 
+  this.calldataPanel = new CalldataPanel(_parentUI, _traceManager)
+
   this.stackPanel = new StackPanel(_parentUI, _traceManager)
   this.storagePanel = new StoragePanel(_parentUI, _traceManager)
   this.memoryPanel = new MemoryPanel(_parentUI, _traceManager)
-  this.calldataPanel = new CalldataPanel(_parentUI, _traceManager)
   this.callstackPanel = new CallstackPanel(_parentUI, _traceManager)
   this.stepDetail = new StepDetail(_parentUI, _traceManager)
   this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
