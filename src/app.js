@@ -339,9 +339,9 @@ class App {
       var splitted = /([^/]+)\/(.*)$/g.exec(url)
       async.tryEach([
         (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
+        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
         (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
-        (cb) => { if (!splitted) { cb('url not parseable' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
+        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
         (error, result) => { filecb(error, result) }
       )
     } else {
