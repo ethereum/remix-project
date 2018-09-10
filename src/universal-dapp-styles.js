@@ -241,6 +241,9 @@ var css = csjs`
     border-bottom-right-radius: 0;
     border-right: 0;
   }
+  .hasArgs .contractActionsContainerMulti button {
+    border-radius: 3px;
+  }
   .contractActionsContainerMultiInner .multiArg i {
     padding-right: 26px;
     padding-top: 5px;
