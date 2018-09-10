@@ -137,7 +137,7 @@ class App {
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
     registry.put({api: self._components.filesProviders['config'], name: 'fileproviders/config'})
 
-    var remixd = new Remixd()
+    var remixd = new Remixd(65520)
     registry.put({api: remixd, name: 'remixd'})
     remixd.event.register('system', (message) => {
       if (message.error) toolTip(message.error)
