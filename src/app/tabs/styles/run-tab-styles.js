@@ -131,6 +131,18 @@ var css = csjs`
   }
   .atAddress {
     ${styles.rightPanel.runTab.button_atAddress}
+    min-width: 100px;
+    width: 100px;
+    font-size: 10px;
+    margin: 0;
+    word-break: inherit;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+  }
+  .atAddressSect input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
   .create {
     ${styles.rightPanel.runTab.button_Create}
