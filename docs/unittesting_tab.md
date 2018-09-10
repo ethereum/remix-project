@@ -20,5 +20,5 @@ Continuous integration
 ----------------------
 
 remix-tests is also a CLI, it can be used in a continuous integration environement which support node.js.
-Please find more information
-https://github.com/ethereum/remix/tree/master/remix-tests
+Please find more information in the [remix-test repository](https://github.com/ethereum/remix/tree/master/remix-tests)
+
