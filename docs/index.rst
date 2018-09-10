@@ -44,6 +44,7 @@ Userful links:
    run_tab
    udapp
    contract_metadata
+   unittesting_tab
 
 .. toctree::
    :maxdepth: 2
