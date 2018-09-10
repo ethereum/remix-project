@@ -41,6 +41,7 @@
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
+    "remix-lib": "^0.3.7",
     "remix-simulator": "0.0.3",
     "remix-solidity": "^0.2.7",
     "signale": "^1.2.1",
