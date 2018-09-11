@@ -7,7 +7,9 @@ module.exports = {
   addFile: addFile,
   switchFile: switchFile,
   verifyContract: verifyContract,
+  selectContract,
   testFunction,
+  testConstantFunction,
   checkDebug,
   goToVMtraceStep,
   useFilter,
@@ -20,7 +22,8 @@ module.exports = {
   getEditorValue,
   testEditorValue,
   renameFile,
-  removeFile
+  removeFile,
+  getAddressAtPosition
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -37,6 +40,13 @@ function getCompiledContracts (browser, compiled, callback) {
     }
   }, [], function (result) {
     callback(result)
+  })
+}
+
+function selectContract (browser, contractName, callback) {
+  browser.click('.runView')
+  .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
+    callback()
   })
 }
 
@@ -112,6 +122,34 @@ function verifyCallReturnValue (browser, address, checks, done) {
       browser.assert.equal(result.value[k], checks[k])
     }
     done()
+  })
+}
+
+function getAddressAtPosition (browser, index, callback) {
+  index = index + 2
+  browser.execute(function (index) {
+    return document.querySelector('.instance:nth-of-type(' + index + ')').getAttribute('id').replace('instance', '')
+  }, [index], function (result) {
+    callback(result.value)
+  })
+}
+
+function testConstantFunction (browser, address, fnFullName, expectedInput, expectedOutput, cb) {
+  browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]').perform(function (client, done) {
+    client.execute(function () {
+      document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+    }, [], function () {
+      if (expectedInput) {
+        client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+      }
+      done()
+    })
+  })
+  .click('.instance button[title="' + fnFullName + '"]')
+  .pause(1000)
+  .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
+  .assert.containsText('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]', expectedOutput).perform(() => {
+    cb()
   })
 }
 
@@ -330,11 +368,9 @@ function useFilter (browser, filter, test, done) {
 
 function switchFile (browser, name, done) {
   browser
-    .useXpath()
-    .click('//ul[@id="files"]//span[text()="' + name + '"]')
-    .useCss()
+    .click('li[key="' + name + '"]')
     .pause(2000)
-    .perform(function () {
+    .perform(() => {
       done()
     })
 }
