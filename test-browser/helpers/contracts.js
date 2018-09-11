@@ -73,7 +73,7 @@ function verifyContract (browser, compiledContractNames, callback) {
       browser.assert.fail('compiled contract ' + compiledContractNames + ' not found - none found', 'info about error', '')
       browser.end()
     }
-    console.log('contracts all found ' + result.value)
+    console.log('contracts all found ' + compiledContractNames)
     callback()
   })
 }
