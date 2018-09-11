@@ -102,7 +102,7 @@ class Terminal {
     if (self._view.el) return self._view.el
     self._view.journal = yo`<div class=${css.journal}></div>`
     self._view.input = yo`
-      <span class=${css.input} contenteditable="true" onkeydown=${change}></span>
+      <span class=${css.input} contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
     `
     self._view.input.innerText = '\n'
     self._view.cli = yo`
@@ -141,14 +141,6 @@ class Terminal {
         </div>
       </div>
     `
-    setInterval(() => {
-      self._view.pendingTxCount.innerHTML = self._opts.udapp.pendingTransactionsCount()
-    }, 1000)
-
-    function listenOnNetwork (ev) {
-      self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
-    }
-
     self._view.term = yo`
       <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         <div class=${css.terminal}>
@@ -163,7 +155,38 @@ class Terminal {
         ${self._view.term}
       </div>
     `
+    setInterval(() => {
+      self._view.pendingTxCount.innerHTML = self._opts.udapp.pendingTransactionsCount()
+    }, 1000)
 
+    function listenOnNetwork (ev) {
+      self.event.trigger('listenOnNetWork', [ev.currentTarget.checked])
+    }
+    function paste (event) {
+      const selection = window.getSelection()
+      if (!selection.rangeCount) return false
+      event.preventDefault()
+      event.stopPropagation()
+      var clipboard = (event.clipboardData || window.clipboardData)
+      var text = clipboard.getData('text/plain')
+      text = text.replace(/[^\x20-\xFF]/gi, '') // remove non-UTF-8 characters
+      var temp = document.createElement('div')
+      temp.innerHTML = text
+      var textnode = document.createTextNode(temp.textContent)
+      selection.getRangeAt(0).insertNode(textnode)
+      selection.empty()
+      self.scroll2bottom()
+      placeCaretAtEnd(event.currentTarget)
+    }
+    function placeCaretAtEnd (el) {
+      el.focus()
+      var range = document.createRange()
+      range.selectNodeContents(el)
+      range.collapse(false)
+      var sel = window.getSelection()
+      sel.removeAllRanges()
+      sel.addRange(range)
+    }
     function throttle (fn, wait) {
       var time = Date.now()
       return function debounce () {
