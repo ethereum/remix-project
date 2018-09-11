@@ -61,7 +61,6 @@ function verifyContract (browser, compiledContractNames, callback) {
   getCompiledContracts(browser, compiledContractNames, (result) => {
     if (result.value) {
       for (var contract in compiledContractNames) {
-        console.log(' - ' + result.value)
         console.log(' - ' + compiledContractNames[contract])
         if (result.value.indexOf(compiledContractNames[contract]) === -1) {
           browser.assert.fail('compiled contract ' + compiledContractNames + ' not found', 'info about error', '')
