@@ -161,6 +161,9 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
+  console.dir('solidity proxy is')
+  console.dir(_solidityProxy)
+
   this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   this.solidityLocals = new SolidityLocals(_parentUI, _traceManager, _callTree)
 
@@ -185,7 +188,8 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   _parent.event.register('newTraceLoaded', this, function () {
     if (!self.view) return
     self.storageResolver = new StorageResolver({web3: _parent.web3})
-    self.solidityState.storageResolver = self.storageResolver
+    // self.solidityState.storageResolver = self.storageResolver
+    self.solidityState.debuggerSolidityState.storageResolver = self.storageResolver
     self.solidityLocals.storageResolver = self.storageResolver
     self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
