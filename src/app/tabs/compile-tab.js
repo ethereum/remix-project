@@ -560,6 +560,7 @@ const css = csjs`
     width: auto;
     margin-left: 5px;
     background-color: inherit;
+    border: inherit;
   }
   .bytecodeButton {
     min-width: 80px;
