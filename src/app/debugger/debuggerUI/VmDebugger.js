@@ -7,7 +7,10 @@ var CallstackPanel = require('./vmDebugger/CallstackPanel')
 var StackPanel = require('./vmDebugger/StackPanel')
 var StoragePanel = require('./vmDebugger/StoragePanel')
 var StepDetail = require('./vmDebugger/StepDetail')
+
+var DebuggerSolidityState = require('../solidityState')
 var SolidityState = require('./vmDebugger/SolidityState')
+
 var SolidityLocals = require('../remix-debugger/src/ui/SolidityLocals')
 var FullStoragesChangesPanel = require('../remix-debugger/src/ui/FullStoragesChanges')
 var DropdownPanel = require('../remix-debugger/src/ui/DropdownPanel')
@@ -161,10 +164,19 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     })
   })
 
-  console.dir('solidity proxy is')
-  console.dir(_solidityProxy)
+  this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
+  this.solidityState = new SolidityState()
+  this.debuggerSolidityState.init()
+  this.debuggerSolidityState.event.register('solidityState', this, function (state) {
+    self.solidityState.update(state)
+  })
+  this.debuggerSolidityState.event.register('solidityStateMessage', this, function (message) {
+    self.solidityState.setMessage(message)
+  })
+  this.debuggerSolidityState.event.register('solidityStateUpdating', this, function () {
+    self.solidityState.setUpdating()
+  })
 
-  this.solidityState = new SolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   this.solidityLocals = new SolidityLocals(_parentUI, _traceManager, _callTree)
 
   /* Return values - */
@@ -189,7 +201,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     if (!self.view) return
     self.storageResolver = new StorageResolver({web3: _parent.web3})
     // self.solidityState.storageResolver = self.storageResolver
-    self.solidityState.debuggerSolidityState.storageResolver = self.storageResolver
+    self.debuggerSolidityState.storageResolver = self.storageResolver
     self.solidityLocals.storageResolver = self.storageResolver
     self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
