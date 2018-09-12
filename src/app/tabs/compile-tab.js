@@ -365,7 +365,7 @@ module.exports = class CompileTab {
         if (contract.metadata === undefined || contract.metadata.length === 0) {
           modalDialogCustom.alert('This contract does not implement all functions and thus cannot be published.')
         } else {
-          publishOnSwarm(contract, self._deps.fileManager, function (err) {
+          publishOnSwarm(contract, self._deps.fileManager, function (err, uploaded) {
             if (err) {
               try {
                 err = JSON.stringify(err)
@@ -373,7 +373,10 @@ module.exports = class CompileTab {
               modalDialogCustom.alert(yo`<span>Failed to publish metadata file to swarm, please check the Swarm gateways is available ( swarm-gateways.net ).<br />
               ${err}</span>`)
             } else {
-              modalDialogCustom.alert(yo`<span>Metadata published successfully.<br />The Swarm address of the metadata file is available in the contract details.</span>`)
+              var result = yo`<div>${uploaded.map((value) => {
+                return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
+              })}</div>`
+              modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
             }
           }, function (item) { // triggered each time there's a new verified publish (means hash correspond)
             self._deps.swarmfileProvider.addReadOnly(item.hash, item.content)

@@ -53,11 +53,12 @@ function FilesTree (name, storage) {
     return content
   }
 
-  this.set = function (path, content) {
+  this.set = function (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
     updateRefs(unprefixedpath, 'add')
     var exists = storage.exists(unprefixedpath)
     if (!storage.set(unprefixedpath, content)) {
+      if (cb) cb('error updating ' + path)
       return false
     }
     if (!exists) {
@@ -65,6 +66,7 @@ function FilesTree (name, storage) {
     } else {
       event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
     }
+    if (cb) cb()
     return true
   }
 

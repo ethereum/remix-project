@@ -38,16 +38,18 @@ function Files (storage) {
     return content
   }
 
-  this.set = function (path, content) {
+  this.set = function (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
     // NOTE: ignore the config file
     if (path === '.remix.config') {
+      if (cb) cb('change not allowed')
       return false
     }
 
     if (!this.isReadOnly(unprefixedpath)) {
       var exists = storage.exists(unprefixedpath)
       if (!storage.set(unprefixedpath, content)) {
+        if (cb) cb('error updating ' + path)
         return false
       }
       if (!exists) {
@@ -55,9 +57,10 @@ function Files (storage) {
       } else {
         event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
       }
+      if (cb) cb()
       return true
     }
-
+    if (cb) cb('is read only')
     return false
   }
 
