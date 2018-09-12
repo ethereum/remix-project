@@ -1,7 +1,6 @@
 const async = require('async')
 const path = require('path')
 const fs = require('fs')
-const { Signale } = require('signale')
 require('colors')
 
 let Compiler = require('./compiler.js')
@@ -16,28 +15,6 @@ var createWeb3Provider = function () {
   web3.setProvider(new Provider())
   return web3
 }
-
-// signale configuration
-const options = {
-  types: {
-    result: {
-      badge: '\t✓',
-      label: '',
-      color: 'greenBright'
-    },
-    name: {
-      badge: '\n\t◼',
-      label: '',
-      color: 'white'
-    },
-    error: {
-      badge: '\t✘',
-      label: '',
-      color: 'redBright'
-    }
-  }
-}
-const signale = new Signale(options)
 
 var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback, importFileCb) {
   async.waterfall([
@@ -119,6 +96,28 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
 }
 
 var runTestFiles = function (filepath, isDirectory, web3) {
+  const { Signale } = require('signale')
+  // signale configuration
+  const options = {
+    types: {
+      result: {
+        badge: '\t✓',
+        label: '',
+        color: 'greenBright'
+      },
+      name: {
+        badge: '\n\t◼',
+        label: '',
+        color: 'white'
+      },
+      error: {
+        badge: '\t✘',
+        label: '',
+        color: 'redBright'
+      }
+    }
+  }
+  const signale = new Signale(options)
   async.waterfall([
     function compile (next) {
       Compiler.compileFileOrFiles(filepath, isDirectory, next)

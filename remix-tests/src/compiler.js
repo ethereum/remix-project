@@ -2,13 +2,15 @@
 let fs = require('fs')
 var async = require('async')
 var path = require('path')
-const signale = require('signale')
 let RemixCompiler = require('remix-solidity').Compiler
 
 String.prototype.regexIndexOf = function (regex, startpos) {
   var indexOf = this.substring(startpos || 0).search(regex)
   return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf
 }
+
+var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
+var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
 
 // TODO: replace this with remix's own compiler code
 function compileFileOrFiles (filename, isDirectory, cb) {
@@ -52,7 +54,7 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   ], function (err, result) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
-      signale.fatal(errors)
+      if (!isBrowser) require('signale').fatal(errors)
       return cb(new Error('errors compiling'))
     }
     cb(err, result.contracts)
@@ -91,7 +93,7 @@ function compileContractSources (sources, importFileCb, cb) {
   ], function (err, result) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
-      signale.fatal(errors)
+      if (!isBrowser) require('signale').fatal(errors)
       return cb(new Error('errors compiling'))
     }
     cb(err, result.contracts)
