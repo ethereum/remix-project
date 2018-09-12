@@ -195,6 +195,22 @@ class FileManager {
       }
     }
   }
+
+  syncEditor (path) {
+    var self = this
+    var currentFile = this._deps.config.get('currentFile')
+    if (path !== currentFile) return
+
+    var provider = this.fileProviderOf(currentFile)
+    if (provider) {
+      provider.get(currentFile, (error, content) => {
+        if (error) console.log(error)
+        self._deps.editor.setText(content)
+      })
+    } else {
+      console.log('cannot save ' + currentFile + '. Does not belong to any explorer')
+    }
+  }
 }
 
 module.exports = FileManager
