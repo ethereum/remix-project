@@ -7,11 +7,6 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
   // gather list of files to publish
   var sources = []
 
-  sources.push({
-    content: contract.metadata,
-    hash: contract.metadataHash
-  })
-
   var metadata
   try {
     metadata = JSON.parse(contract.metadata)
@@ -38,7 +33,8 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
       } else {
         sources.push({
           content: content,
-          hash: hash
+          hash: hash,
+          filename: fileName
         })
       }
       cb()
@@ -48,12 +44,27 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
       cb(error)
     } else {
       // publish the list of sources in order, fail if any failed
+      var uploaded = []
       async.eachSeries(sources, function (item, cb) {
-        swarmVerifiedPublish(item.content, item.hash, (error) => {
+        swarmVerifiedPublish(item.content, item.hash, (error, result) => {
           if (!error && swarmVerifiedPublishCallBack) swarmVerifiedPublishCallBack(item)
+          item.output = result
+          uploaded.push(item)
+          // TODO this is a fix cause Solidity metadata does not contain the right swarm hash (poc 0.3)
+          metadata.sources[item.filename].urls[0] = result.url
           cb(error)
         })
-      }, cb)
+      }, () => {
+        swarmVerifiedPublish(JSON.stringify(metadata), '', (error, result) => {
+          uploaded.push({
+            content: contract.metadata,
+            hash: contract.metadataHash,
+            filename: 'metadata.json',
+            output: result
+          })
+          cb(error, uploaded)
+        })
+      })
     }
   })
 }
@@ -63,9 +74,9 @@ function swarmVerifiedPublish (content, expectedHash, cb) {
     if (err) {
       cb(err)
     } else if (ret !== expectedHash) {
-      cb('Hash mismatch')
+      cb(null, { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + ret, hash: ret })
     } else {
-      cb()
+      cb(null, { message: 'ok', url: 'bzz-raw://' + ret, hash: ret })
     }
   })
 }
