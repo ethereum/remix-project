@@ -73,6 +73,9 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
       }
     },
     editor: {
+      getFilesFromPath: (mod, path, cb) => {
+        fileManager.filesFromPath(path, cb)
+      },
       getCurrentFile: (mod, cb) => {
         var path = fileManager.currentFile()
         if (!path) {
