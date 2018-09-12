@@ -73,4 +73,9 @@ window.onload = function () {
     extension.call('editor', 'highlight', [document.getElementById('filename').value, document.getElementById('valuetosend').value, document.getElementById('valuetosend2').value],
     function (error, result) { console.log(error, result) })
   })
+
+  document.querySelector('input#getfilesfrompath').addEventListener('click', function () {
+    extension.call('editor', 'getFilesFromPath', [document.getElementById('filename').value],
+    function (error, result) { console.log(error, result) })
+  })
 }
