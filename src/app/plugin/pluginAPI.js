@@ -97,7 +97,8 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         if (provider) {
           // TODO add approval to user for external plugin to set the content of the given `path`
           provider.set(path, content, (error) => {
-            cb(error)
+            if (error) return cb(error)
+            fileManager.syncEditor(path)
           })
         } else {
           cb(path + ' not available')
