@@ -393,7 +393,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
           modalDialog('Confirm transaction', content,
             { label: 'Confirm',
               fn: () => {
-                self._api.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+                self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
                 // TODO: check if this is check is still valid given the refactor
                 if (!content.gasPriceStatus) {
                   cancelCb('Given gas price is not correct')
