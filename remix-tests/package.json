@@ -50,6 +50,9 @@
     "web3": "1.0.0-beta.34",
     "winston": "^3.0.0"
   },
+  "peerDependencies": {
+    "yo-yoify": "latest"
+  },
   "devDependencies": {
     "mocha": "^5.1.0"
   }
