@@ -183,6 +183,9 @@ class MultiParamManager {
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {
       contractProperty.classList.add(css.hasArgs)
+    } else if (this.funABI.type === 'fallback') {
+      contractProperty.classList.add(css.hasArgs)
+      this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
     } else {
       this.contractActionsContainerSingle.querySelector('i').style.visibility = 'hidden'
       this.basicInputField.style.display = 'none'
