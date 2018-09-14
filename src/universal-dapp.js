@@ -205,7 +205,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     }
   }
   // contractsDetails is used to resolve libraries
-  txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, value, (error, data) => {
+  txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
     if (!error) {
       if (isUserAction) {
         if (!args.funABI.constant) {
@@ -214,6 +214,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           self._deps.logCallback(`${logMsg}`)
         }
       }
+      if (args.funABI.type === 'fallback') data.dataHex = value
       self.callFunction(args.address, data, args.funABI, (error, txResult) => {
         if (!error) {
           var isVM = executionContext.isVM()
