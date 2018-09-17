@@ -48,20 +48,18 @@ class TxRunner {
         return callback(err, resp)
       }
       self.event.trigger('transactionBroadcasted', [resp])
-
       var listenOnResponse = () => {
         return new Promise(async (resolve, reject) => {
           var result = await tryTillReceiptAvailable(resp)
           tx = await tryTillTxAvailable(resp)
           resolve({
-            result, 
+            result,
             tx,
-            transactionHash: result ? result.transactionHash : null,
+            transactionHash: result ? result.transactionHash : null
           })
         })
       }
       listenOnResponse().then((txData) => { callback(null, txData) }).catch((error) => { callback(error) })
-
     }
     var args = pass !== null ? [tx, pass, cb] : [tx, cb]
     try {
