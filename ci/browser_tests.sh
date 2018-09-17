@@ -19,7 +19,7 @@ else
   OS="linux"
   FILEFORMAT="tar.gz"
 fi
-SC_VERSION="4.4.11"
+SC_VERSION="4.5.1"
 SAUCECONNECT_URL="https://saucelabs.com/downloads/sc-$SC_VERSION-$OS.$FILEFORMAT"
 SAUCECONNECT_USERNAME="chriseth"
 SAUCECONNECT_ACCESSKEY="b781828a-9e9c-43d8-89d4-2fbb879595ca"
