@@ -28,6 +28,7 @@ class CmdInterpreterAPI {
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
     self.commandHelp = {
+      'remix.getFile(path)': 'Returns te content of the file located at the given path',
       'remix.debug(hash)': 'Start debugging a transaction.',
       'remix.loadgist(id)': 'Load a gist in the file explorer.',
       'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm, ipfs or raw http',
@@ -162,6 +163,14 @@ class CmdInterpreterAPI {
   }
   exeCurrent (cb) {
     return this.execute(undefined, cb)
+  }
+  getFile (path, cb) {
+    var provider = this._deps.fileManager.fileProviderOf(path)
+    if (provider) {
+      provider.get(path, cb)
+    } else {
+      cb('file not found')
+    }
   }
   execute (file, cb) {
     const self = this
