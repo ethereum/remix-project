@@ -303,6 +303,25 @@ function contractDropdown (events, self) {
     }
   })
 
+  var deployAction = (value) => {
+    self._view.createPanel.style.display = value
+    self._view.orLabel.style.display = value
+  }
+
+  self._deps.fileManager.event.register('currentFileChanged', (currentFile) => {
+    if (/.(.abi)$/.exec(currentFile)) {
+      deployAction('none')
+      compFails.style.display = 'none'
+      document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
+      var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+      contractNames.innerHTML = ''
+      contractNames.appendChild(yo`<option>(abi)</option>`)
+      selectContractNames.setAttribute('disabled', true)
+    } else if (/.(.sol)$/.exec(currentFile)) {
+      deployAction('block')
+    }
+  })
+
   var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
   var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
 
@@ -317,15 +336,16 @@ function contractDropdown (events, self) {
     return null
   }
 
-  var createPanel = yo`<div class="${css.button}"></div>`
-
+  self._view.createPanel = yo`<div class="${css.button}"></div>`
+  self._view.orLabel = yo`<div class="${css.orLabel}">or</div>`
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
         ${selectContractNames} ${compFails}
       </div>
       <div class="${css.buttons}">
-        ${createPanel}
+        ${self._view.createPanel}
+        ${self._view.orLabel}
         <div class="${css.button} ${css.atAddressSect}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress() }}>At Address</div>
           ${atAddressButtonInput}
@@ -335,17 +355,17 @@ function contractDropdown (events, self) {
   `
 
   function setInputParamsPlaceHolder () {
-    createPanel.innerHTML = ''
+    self._view.createPanel.innerHTML = ''
     if (self._deps.compiler.getContract && selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
       var ctrabi = txHelper.getConstructorInterface(getSelectedContract().contract.object.abi)
       var ctrEVMbc = getSelectedContract().contract.object.evm.bytecode.object
       var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
         createInstance(inputsValues)
       }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy', ctrEVMbc)
-      createPanel.appendChild(createConstructorInstance.render())
+      self._view.createPanel.appendChild(createConstructorInstance.render())
       return
     } else {
-      createPanel.innerHTML = 'No compiled contracts'
+      self._view.createPanel.innerHTML = 'No compiled contracts'
     }
   }
 
