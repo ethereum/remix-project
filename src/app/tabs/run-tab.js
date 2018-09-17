@@ -292,6 +292,7 @@ function contractDropdown (events, self) {
   instanceContainer.appendChild(instanceContainerTitle)
   instanceContainer.appendChild(self._view.noInstancesText)
   var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
+  var info = yo`<i class="fa fa-question-circle-o ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
   self._deps.compiler.event.register('compilationFinished', function (success, data, source) {
     getContractNames(success, data)
     if (success) {
@@ -341,7 +342,7 @@ function contractDropdown (events, self) {
   var el = yo`
     <div class="${css.container}">
       <div class="${css.subcontainer}">
-        ${selectContractNames} ${compFails}
+        ${selectContractNames} ${compFails} ${info}
       </div>
       <div class="${css.buttons}">
         ${self._view.createPanel}
