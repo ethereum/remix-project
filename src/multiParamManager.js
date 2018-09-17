@@ -122,7 +122,6 @@ class MultiParamManager {
 
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
-      this.emptyInputs()
     }
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
@@ -138,7 +137,6 @@ class MultiParamManager {
       } else {
         this.clickCallBack(this.funABI.inputs, '')
       }
-      this.emptyInputs()
     }
 
     var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
