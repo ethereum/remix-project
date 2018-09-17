@@ -238,6 +238,9 @@ var css = csjs`
   .orLabel {
     text-align: center;
   }
+  .infoDeployAction {
+    margin-left: 5px;
+  }
 `
 
 module.exports = css
