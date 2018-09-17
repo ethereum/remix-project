@@ -148,7 +148,8 @@ var css = csjs`
     ${styles.rightPanel.runTab.button_Create}
   }
   .input {
-    ${styles.rightPanel.runTab.input_RunTab}
+    ${styles.rightPanel.runTab.input_RunTab};
+    font-size: 10px;
   }
   .noInstancesText {
     ${styles.rightPanel.runTab.box_Instance}
@@ -233,7 +234,10 @@ var css = csjs`
     justify-content: space-evenly;
     ${styles.rightPanel.runTab.box_Info_RunTab};
     width: 145px;
-}
+  }
+  .orLabel {
+    text-align: center;
+  }
 `
 
 module.exports = css
