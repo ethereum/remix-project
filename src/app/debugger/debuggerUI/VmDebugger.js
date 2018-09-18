@@ -10,9 +10,8 @@ var StepDetail = require('./vmDebugger/StepDetail')
 
 var DebuggerSolidityState = require('../solidityState')
 var SolidityState = require('./vmDebugger/SolidityState')
-
-// var SolidityLocals = require('../remix-debugger/src/ui/SolidityLocals')
 var SolidityLocals = require('./vmDebugger/SolidityLocals')
+
 var FullStoragesChangesPanel = require('../remix-debugger/src/ui/FullStoragesChanges')
 var DropdownPanel = require('./vmDebugger/DropdownPanel')
 var remixDebug = require('remix-debug')
