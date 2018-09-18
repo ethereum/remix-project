@@ -9,6 +9,7 @@ var StoragePanel = require('./vmDebugger/StoragePanel')
 var StepDetail = require('./vmDebugger/StepDetail')
 
 var DebuggerSolidityState = require('../solidityState')
+var DebuggerSolidityLocals = require('../solidityLocals')
 var SolidityState = require('./vmDebugger/SolidityState')
 var SolidityLocals = require('./vmDebugger/SolidityLocals')
 
@@ -177,7 +178,18 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.solidityState.setUpdating()
   })
 
-  this.solidityLocals = new SolidityLocals(_parentUI, _traceManager, _callTree)
+  this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, _traceManager, _callTree)
+  this.solidityLocals = new SolidityLocals()
+  this.debuggerSolidityLocals.event.register('solidityLocals', this, function (state) {
+    self.solidityLocals.update(state)
+  })
+  this.debuggerSolidityLocals.event.register('solidityLocalsMessage', this, function (message) {
+    self.solidityLocals.setMessage(message)
+  })
+  this.debuggerSolidityLocals.event.register('solidityLocalsUpdating', this, function () {
+    self.solidityLocals.setUpdating()
+  })
+  this.debuggerSolidityLocals.init()
 
   /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
@@ -202,7 +214,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.storageResolver = new StorageResolver({web3: _parent.web3})
     // self.solidityState.storageResolver = self.storageResolver
     self.debuggerSolidityState.storageResolver = self.storageResolver
-    self.solidityLocals.debuggerSolidityLocals.storageResolver = self.storageResolver
+    self.debuggerSolidityLocals.storageResolver = self.storageResolver
     self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
