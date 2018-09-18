@@ -8,58 +8,14 @@ var solidityTypeFormatter = require('./utils/SolidityTypeFormatter')
 var StorageViewer = remixDebug.storage.StorageViewer
 var yo = require('yo-yo')
 
-// class DebuggerSolidityLocals {
-// 
-//   constructor (_parent, _traceManager, _internalTreeCall) {
-// 
-//   }
-// 
-// }
-
-class SolidityLocals {
+class DebuggerSolidityLocals {
 
   constructor (_parent, _traceManager, _internalTreeCall) {
-    const self = this
     this.event = new EventManager()
     this.parent = _parent
     this.internalTreeCall = _internalTreeCall
     this.storageResolver = null
     this.traceManager = _traceManager
-    this.basicPanel = new DropdownPanel('Solidity Locals', {
-      json: true,
-      formatSelf: solidityTypeFormatter.formatSelf,
-      extractData: solidityTypeFormatter.extractData
-    })
-    this.init()
-
-    this.event.register('solidityLocals', this, function (state) {
-      self.update(state)
-    })
-    this.event.register('solidityLocalsMessage', this, function (message) {
-      self.setMessage(message)
-    })
-    this.event.register('solidityLocalsUpdating', this, function () {
-      self.setUpdating()
-    })
-
-    this.view
-  }
-
-  update (data) {
-    this.basicPanel.update(data)
-  }
-
-  setMessage (message) {
-    this.basicPanel.setMessage(message)
-  }
-
-  setUpdating () {
-    this.basicPanel.setUpdating()
-  }
-
-  render () {
-    this.view = yo`<div id='soliditylocals'>${this.basicPanel.render()}</div>`
-    return this.view
   }
 
   init () {
@@ -108,6 +64,56 @@ class SolidityLocals {
           console.log(error)
         }
       })
+  }
+
+}
+
+class SolidityLocals {
+
+  constructor (_parent, _traceManager, _internalTreeCall) {
+    const self = this
+    this.event = new EventManager()
+    this.basicPanel = new DropdownPanel('Solidity Locals', {
+      json: true,
+      formatSelf: solidityTypeFormatter.formatSelf,
+      extractData: solidityTypeFormatter.extractData
+    })
+
+    this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parent, _traceManager, _internalTreeCall)
+    this.parent = this.debuggerSolidityLocals.parent
+    this.internalTreeCall = this.debuggerSolidityLocals.internalTreeCall
+    this.storageResolver = this.debuggerSolidityLocals.storageResolver
+    this.traceManager = this.debuggerSolidityLocals.traceManager
+
+    this.debuggerSolidityLocals.event.register('solidityLocals', this, function (state) {
+      self.update(state)
+    })
+    this.debuggerSolidityLocals.event.register('solidityLocalsMessage', this, function (message) {
+      self.setMessage(message)
+    })
+    this.debuggerSolidityLocals.event.register('solidityLocalsUpdating', this, function () {
+      self.setUpdating()
+    })
+    this.debuggerSolidityLocals.init()
+
+    this.view
+  }
+
+  update (data) {
+    this.basicPanel.update(data)
+  }
+
+  setMessage (message) {
+    this.basicPanel.setMessage(message)
+  }
+
+  setUpdating () {
+    this.basicPanel.setUpdating()
+  }
+
+  render () {
+    this.view = yo`<div id='soliditylocals'>${this.basicPanel.render()}</div>`
+    return this.view
   }
 }
 
