@@ -645,7 +645,6 @@ function settings (container, self) {
   function newAccount () {
     self._deps.udapp.newAccount('', (error, address) => {
       if (!error) {
-        container.querySelector('#txorigin').appendChild(yo`<option value=${address}>${address}</option>`)
         addTooltip(`account ${address} created`)
       } else {
         addTooltip('Cannot create an account: ' + error)
