@@ -139,7 +139,7 @@ module.exports = class CompileTab {
         error = true
         self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
-          return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i><br>
+          return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
                                             The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br> 
                                             The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet. 
                                             It is heavily recommended to use another browser (not affected by this issue) until the issue is finally fixed.</b><br>
