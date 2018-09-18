@@ -13,6 +13,8 @@ var swarmgw = require('swarmgw')()
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
+var AutoCompletePopup = require('../ui/auto-complete-popup')
+var Commands = require('../constants/commands')
 
 var csjs = require('csjs-inject')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
@@ -61,6 +63,17 @@ class Terminal {
       if (label === 'script') {
         self.updateJournal({ type: 'select', value: label })
       }
+    })
+    self._components.autoCompletePopup = new AutoCompletePopup()
+    self._components.autoCompletePopup.event.register('handleSelect', function (input) {
+      self._components.autoCompletePopup.data._options = []
+      self._components.autoCompletePopup._startingElement = 0
+      self._view.input.innerText = input
+      self._view.input.focus()
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
+    })
+    self._components.autoCompletePopup.event.register('updateList', function () {
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
     })
     self._commands = {}
     self.commands = {}
@@ -149,10 +162,12 @@ class Terminal {
         </div>
       </div>
     `
+    self._view.autoCompletePopup = self._components.autoCompletePopup.render()
     self._view.el = yo`
       <div class=${css.panel}>
         ${self._view.bar}
         ${self._view.term}
+        ${self._view.autoCompletePopup}
       </div>
     `
     setInterval(() => {
@@ -391,12 +406,14 @@ class Terminal {
     return self._view.el
 
     function change (event) {
+      handleAutoComplete(event)
       if (self._view.input.innerText.length === 0) self._view.input.innerText += '\n'
       if (event.which === 13) {
         if (event.ctrlKey) { // <ctrl+enter>
           self._view.input.innerText += '\n'
           putCursor2End(self._view.input)
           self.scroll2bottom()
+          removeAutoComplete()
         } else { // <enter>
           self._cmdIndex = -1
           self._cmdTemp = ''
@@ -407,6 +424,7 @@ class Terminal {
             self._cmdHistory.unshift(script)
             self.commands.script(script)
           }
+          removeAutoComplete()
         }
       } else if (event.which === 38) { // <arrowUp>
         var len = self._cmdHistory.length
@@ -417,6 +435,7 @@ class Terminal {
         self._view.input.innerText = self._cmdHistory[self._cmdIndex]
         putCursor2End(self._view.input)
         self.scroll2bottom()
+        removeAutoComplete()
       } else if (event.which === 40) { // <arrowDown>
         if (self._cmdIndex > -1) {
           self._cmdIndex--
@@ -424,6 +443,7 @@ class Terminal {
         self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
         putCursor2End(self._view.input)
         self.scroll2bottom()
+        removeAutoComplete()
       } else {
         self._cmdTemp = self._view.input.innerText
       }
@@ -454,6 +474,40 @@ class Terminal {
       sel.addRange(range)
 
       editable.focus()
+    }
+    function handleAutoComplete (event) {
+      if (event.which === 9) {
+        event.preventDefault()
+        if (self._view.input.innerText.length >= 2) {
+          self._components.autoCompletePopup.data._options = []
+          Commands.allPrograms.forEach(item => {
+            if (Object.keys(item)[0].substring(0, Object.keys(item)[0].length - 1).includes(self._view.input.innerText.trim())) {
+              self._components.autoCompletePopup.data._options.push(item)
+            } else if (self._view.input.innerText.trim().includes(Object.keys(item)[0]) || (Object.keys(item)[0] === self._view.input.innerText.trim())) {
+              Commands.allCommands.forEach(item => {
+                if (Object.keys(item)[0].includes(self._view.input.innerText.trim())) {
+                  self._components.autoCompletePopup.data._options.push(item)
+                }
+              })
+            }
+          })
+        }
+        if (self._components.autoCompletePopup.data._options.length === 1) {
+          self._view.input.innerText = Object.keys(self._components.autoCompletePopup.data._options[0])[0]
+          self._components.autoCompletePopup.data._options = []
+          putCursor2End(self._view.input)
+        }
+      }
+      if (event.which === 27 || event.which === 8 || event.which === 46) {
+        self._components.autoCompletePopup.data._options = []
+        self._components.autoCompletePopup._startingElement = 0
+      }
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
+    }
+    function removeAutoComplete () {
+      self._components.autoCompletePopup.data._options = []
+      self._components.autoCompletePopup._startingElement = 0
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
     }
   }
   updateJournal (filterEvent) {
