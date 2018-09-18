@@ -615,7 +615,7 @@ const css = csjs`
     color: ${styles.rightPanel.modalDialog_text_Secondary};
   }
   .icon {
-    margin-right: 3%;
+    margin-right: 0.3em;
   }
   .spinningIcon {
     margin-right: .3em;

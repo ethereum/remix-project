@@ -114,7 +114,7 @@ class ContextualListener {
   _highlightInternal (position, node) {
     var self = this
     if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult.source.sources)
+      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
       var css = 'highlightreference'
       if (node.children && node.children.length) {
         // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
