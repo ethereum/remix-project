@@ -78,7 +78,7 @@ class AutoCompletePopup {
       }
     }
     function handleListIteration (event) {
-      if (event.srcElement.value === 'true') {
+      if (event.srcElement.value === 'true' || event.which === 40) {
         if ((self._startingElement + self._elementsToShow) < self.data._options.length) {
           self._startingElement += self._elementsToShow
         }
