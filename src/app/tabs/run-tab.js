@@ -344,7 +344,7 @@ function contractDropdown (events, self) {
       <div class="${css.subcontainer}">
         ${selectContractNames} ${compFails} ${info}
       </div>
-      <div class="${css.buttons}">
+      <div>
         ${self._view.createPanel}
         ${self._view.orLabel}
         <div class="${css.button} ${css.atAddressSect}">

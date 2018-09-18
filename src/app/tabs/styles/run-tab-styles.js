@@ -124,7 +124,7 @@ var css = csjs`
   .button {
     display: flex;
     align-items: center;
-    margin-top: 2%;
+    margin-top: 13px;
   }
   .transaction {
     ${styles.rightPanel.runTab.button_transaction}
