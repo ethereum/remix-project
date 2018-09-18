@@ -127,6 +127,10 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         highlighter.currentSourceLocation(null)
         highlighter.currentSourceLocationFromfileName(position, filePath, hexColor)
         cb()
+      },
+      discardHighlight: (mod, cb) => {
+        highlighter.currentSourceLocation(null)
+        cb()
       }
     }
   }

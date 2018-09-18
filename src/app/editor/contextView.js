@@ -98,7 +98,7 @@ class ContextView {
       }
     }
     if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult.source.sources)
+      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
       var filename = self._deps.compiler.getSourceName(position.file)
       // TODO: refactor with rendererAPI.errorClick
       if (filename !== self._deps.config.get('currentFile')) {

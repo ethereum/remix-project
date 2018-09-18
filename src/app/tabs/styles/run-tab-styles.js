@@ -124,7 +124,7 @@ var css = csjs`
   .button {
     display: flex;
     align-items: center;
-    margin-top: 2%;
+    margin-top: 13px;
   }
   .transaction {
     ${styles.rightPanel.runTab.button_transaction}
@@ -140,6 +140,9 @@ var css = csjs`
     border-bottom-right-radius: 0;
     border-right: 0;
   }
+  .atAddressSect {
+    margin-top: 6px;
+  }
   .atAddressSect input {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
@@ -148,7 +151,8 @@ var css = csjs`
     ${styles.rightPanel.runTab.button_Create}
   }
   .input {
-    ${styles.rightPanel.runTab.input_RunTab}
+    ${styles.rightPanel.runTab.input_RunTab};
+    font-size: 10px;
   }
   .noInstancesText {
     ${styles.rightPanel.runTab.box_Instance}
@@ -233,7 +237,14 @@ var css = csjs`
     justify-content: space-evenly;
     ${styles.rightPanel.runTab.box_Info_RunTab};
     width: 145px;
-}
+  }
+  .orLabel {
+    margin-left: 44px;
+  }
+  .infoDeployAction {
+    margin-left: 5px;
+    font-size: 13px;
+  }
 `
 
 module.exports = css
