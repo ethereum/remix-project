@@ -13,7 +13,7 @@ var SolidityState = require('./vmDebugger/SolidityState')
 
 var SolidityLocals = require('../remix-debugger/src/ui/SolidityLocals')
 var FullStoragesChangesPanel = require('../remix-debugger/src/ui/FullStoragesChanges')
-var DropdownPanel = require('../remix-debugger/src/ui/DropdownPanel')
+var DropdownPanel = require('./vmDebugger/DropdownPanel')
 var remixDebug = require('remix-debug')
 var remixLib = require('remix-lib')
 var ui = remixLib.helpers.ui
