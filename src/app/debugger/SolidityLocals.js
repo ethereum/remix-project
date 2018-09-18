@@ -40,24 +40,23 @@ class DebuggerSolidityLocals {
       self.traceManager.getCurrentCalledAddressAt],
       self.parent.currentStepIndex,
       (error, result) => {
-        if (!error) {
-          var stack = result[0].value
-          var memory = result[1].value
-          try {
-            var storageViewer = new StorageViewer({ stepIndex: self.parent.currentStepIndex, tx: self.parent.tx, address: result[2].value }, self.storageResolver, self.traceManager)
-            localDecoder.solidityLocals(self.parent.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
-              if (!locals.error) {
-                self.event.trigger('solidityLocals', [locals])
-              }
-              if (!Object.keys(locals).length) {
-                self.event.trigger('solidityLocalsMessage', ['no locals'])
-              }
-            })
-          } catch (e) {
-            self.event.trigger('solidityLocalsMessage', [e.message])
-          }
-        } else {
-          console.log(error)
+        if (error) {
+          return console.log(error)
+        }
+        var stack = result[0].value
+        var memory = result[1].value
+        try {
+          var storageViewer = new StorageViewer({ stepIndex: self.parent.currentStepIndex, tx: self.parent.tx, address: result[2].value }, self.storageResolver, self.traceManager)
+          localDecoder.solidityLocals(self.parent.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
+            if (!locals.error) {
+              self.event.trigger('solidityLocals', [locals])
+            }
+            if (!Object.keys(locals).length) {
+              self.event.trigger('solidityLocalsMessage', ['no locals'])
+            }
+          })
+        } catch (e) {
+          self.event.trigger('solidityLocalsMessage', [e.message])
         }
       })
   }
