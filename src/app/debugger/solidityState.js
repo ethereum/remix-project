@@ -23,8 +23,7 @@ class DebuggerSolidityState {
     var decodeTimeout = null
     this.parent.event.register('indexChanged', this, function (index) {
       if (index < 0) {
-        self.setMessage('invalid step index')
-        return
+        return self.event.trigger('solidityStateMessage', ['invalid step index'])
       }
 
       if (self.parent.currentStepIndex !== index) return
