@@ -202,7 +202,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.storageResolver = new StorageResolver({web3: _parent.web3})
     // self.solidityState.storageResolver = self.storageResolver
     self.debuggerSolidityState.storageResolver = self.storageResolver
-    self.solidityLocals.storageResolver = self.storageResolver
+    self.solidityLocals.debuggerSolidityLocals.storageResolver = self.storageResolver
     self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
