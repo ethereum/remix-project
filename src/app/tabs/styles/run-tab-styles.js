@@ -240,6 +240,7 @@ var css = csjs`
   }
   .infoDeployAction {
     margin-left: 5px;
+    font-size: 13px;
   }
 `
 
