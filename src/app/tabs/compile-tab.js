@@ -138,6 +138,13 @@ module.exports = class CompileTab {
       if (data['error']) {
         error = true
         self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity || 'error'})
+        if (data['error'].mode === 'panic') {
+          return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i><br>
+                                            The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br> 
+                                            The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet. 
+                                            It is heavily recommended to use another browser (not affected by this issue) until the issue is finally fixed.</b><br>
+                                            Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.</div>`)
+        }
       }
       if (data.errors && data.errors.length) {
         error = true
@@ -447,6 +454,10 @@ module.exports = class CompileTab {
 }
 
 const css = csjs`
+  .panicError {
+    color: red;
+    font-size: 20px;
+  }
   .crow {
     display: flex;
     overflow: auto;
