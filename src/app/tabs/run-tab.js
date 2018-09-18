@@ -310,12 +310,12 @@ function contractDropdown (events, self) {
   }
 
   self._deps.fileManager.event.register('currentFileChanged', (currentFile) => {
+    document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
+    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+    contractNames.innerHTML = ''
     if (/.(.abi)$/.exec(currentFile)) {
       deployAction('none')
       compFails.style.display = 'none'
-      document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
-      var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-      contractNames.innerHTML = ''
       contractNames.appendChild(yo`<option>(abi)</option>`)
       selectContractNames.setAttribute('disabled', true)
     } else if (/.(.sol)$/.exec(currentFile)) {
