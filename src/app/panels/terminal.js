@@ -427,23 +427,29 @@ class Terminal {
           removeAutoComplete()
         }
       } else if (event.which === 38) { // <arrowUp>
-        var len = self._cmdHistory.length
-        if (len === 0) return event.preventDefault()
-        if (self._cmdHistory.length - 1 > self._cmdIndex) {
-          self._cmdIndex++
+        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
+          self._components.autoCompletePopup._view.autoComplete.children[1].onclick(event)
+        } else {
+          var len = self._cmdHistory.length
+          if (len === 0) return event.preventDefault()
+          if (self._cmdHistory.length - 1 > self._cmdIndex) {
+            self._cmdIndex++
+          }
+          self._view.input.innerText = self._cmdHistory[self._cmdIndex]
+          putCursor2End(self._view.input)
+          self.scroll2bottom()
         }
-        self._view.input.innerText = self._cmdHistory[self._cmdIndex]
-        putCursor2End(self._view.input)
-        self.scroll2bottom()
-        removeAutoComplete()
       } else if (event.which === 40) { // <arrowDown>
-        if (self._cmdIndex > -1) {
-          self._cmdIndex--
+        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
+          self._components.autoCompletePopup._view.autoComplete.children[1].onclick(event)
+        } else {
+          if (self._cmdIndex > -1) {
+            self._cmdIndex--
+          }
+          self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+          putCursor2End(self._view.input)
+          self.scroll2bottom()
         }
-        self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
-        putCursor2End(self._view.input)
-        self.scroll2bottom()
-        removeAutoComplete()
       } else {
         self._cmdTemp = self._view.input.innerText
       }
