@@ -236,7 +236,7 @@ var css = csjs`
     width: 145px;
   }
   .orLabel {
-    text-align: center;
+    margin-left: 44px;
   }
   .infoDeployAction {
     margin-left: 5px;
