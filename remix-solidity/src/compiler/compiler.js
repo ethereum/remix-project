@@ -93,7 +93,7 @@ function Compiler (handleImportCall) {
           result = compiler.compileStandardWrapper(input, missingInputsCallback)
           result = JSON.parse(result)
         } catch (exception) {
-          result = { error: 'Uncaught JavaScript exception:\n' + exception }
+          result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
         }
 
         compilationFinished(result, missingInputs, source)
