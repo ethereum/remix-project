@@ -184,6 +184,35 @@ tape('test abiEncoderV2', function (t) {
   })
 })
 
+tape('test abiEncoderV2 array of tuple', function (t) {
+  t.test('(abiEncoderV2)', function (st) {
+    /*
+    {
+	    "685e37ad": "addStructs((uint256,string))",
+	    "e5cb65f9": "addStructs((uint256,string)[])"
+    }
+    */
+    st.plan(2)
+
+    var output = compiler.compileStandardWrapper(compilerInput(abiEncoderV2ArrayOfTuple))
+    output = JSON.parse(output)
+    var contract = output.contracts['test.sol']['test']
+    txFormat.encodeParams('[34, "test"]', contract.abi[0], (error, encoded) => {
+      console.log(error)
+      var decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[0])
+      console.log(decoded)
+      st.equal(decoded[0], 'tuple(uint256,string): _strucmts 34,test')
+    })
+
+    txFormat.encodeParams('[[34, "test"], [123, "test2"]]', contract.abi[1], (error, encoded) => {
+      console.log(error)
+      var decoded = txFormat.decodeResponse(util.hexToIntArray(encoded.dataHex), contract.abi[1])
+      console.log(decoded)
+      st.equal(decoded[0], 'tuple(uint256,string)[]: strucmts 34,test,123,test2')
+    })
+  })
+})
+
 var uintContract = `contract uintContractTest {
     uint _tp;
     address _ap;
@@ -249,5 +278,23 @@ contract test {
         mm.a = 123;
         mm.b = 133;
         return mm;
+    }
+}`
+
+var abiEncoderV2ArrayOfTuple = `pragma experimental ABIEncoderV2;
+contract test {
+    
+    struct MyStruct {uint256 num; string _string;}
+    
+    constructor (MyStruct[] _structs, string _str) {
+        
+    }
+    
+    function addStructs(MyStruct[] _structs) public returns (MyStruct[] strucmts) { 
+       strucmts = _structs;
+    }
+    
+    function addStructs(MyStruct _structs) public returns (MyStruct _strucmts) { 
+      _strucmts = _structs;
     }
 }`
