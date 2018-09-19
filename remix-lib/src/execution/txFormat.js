@@ -186,14 +186,12 @@ module.exports = {
         callback('Error encoding arguments: ' + e)
         return
       }
-      if (!isConstructor || funArgs.length > 0) {
-        try {
-          data = helper.encodeParams(funAbi, funArgs)
-          dataHex = data.toString('hex')
-        } catch (e) {
-          callback('Error encoding arguments: ' + e)
-          return
-        }
+      try {
+        data = helper.encodeParams(funAbi, funArgs)
+        dataHex = data.toString('hex')
+      } catch (e) {
+        callback('Error encoding arguments: ' + e)
+        return
       }
       if (data.slice(0, 9) === 'undefined') {
         dataHex = data.slice(9)
