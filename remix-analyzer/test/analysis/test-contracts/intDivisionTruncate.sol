@@ -21,8 +21,18 @@ contract CharityCampaign {
         return fee;
     }
 
-    function endCampaign() public {
+    function endCampaign() public returns (bool) {
         require(msg.sender == processor || msg.sender == beneficiary);
         selfdestruct(beneficiary);
+        return true;
+    }
+
+    // FALSE POSITIVE FOR SELFDESTRUCT TERMINAL 
+    function endAmbiguous() public {
+        if(msg.sender == 0x0) {
+            selfdestruct(beneficiary);
+        } else {
+            selfdestruct(processor);
+        }
     }
 }

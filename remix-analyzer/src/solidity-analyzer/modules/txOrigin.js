@@ -1,6 +1,7 @@
 var name = 'Transaction origin: '
 var desc = 'Warn if tx.origin is used'
 var categories = require('./categories')
+var algo = require('./algorithmCategories')
 
 function txOrigin () {
   this.txOriginNodes = []
@@ -31,5 +32,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.EXACT,
   Module: txOrigin
 }
