@@ -396,6 +396,14 @@ function isFunctionDefinition (node) {
   return nodeType(node, exactMatch(nodeTypes.FUNCTIONDEFINITION))
 }
 
+function isStatement (node) {
+  return nodeType(node, 'Statement$') || isBlock(node) || isReturn(node)
+}
+
+function isBlock (node) {
+  return nodeType(node, exactMatch(nodeTypes.BLOCK))
+}
+
 function isModifierDefinition (node) {
   return nodeType(node, exactMatch(nodeTypes.MODIFIERDEFINITION))
 }
@@ -1009,6 +1017,8 @@ module.exports = {
   isInlineAssembly: isInlineAssembly,
   isNewExpression: isNewExpression,
   isReturn: isReturn,
+  isStatement: isStatement,
+  isBlock: isBlock,
 
   // #################### Constants
   nodeTypes: nodeTypes,

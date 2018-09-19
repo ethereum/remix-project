@@ -2,6 +2,7 @@ var name = 'Inline assembly: '
 var desc = 'Use of Inline Assembly'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function inlineAssembly () {
   this.inlineAssNodes = []
@@ -26,5 +27,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.EXACT,
   Module: inlineAssembly
 }

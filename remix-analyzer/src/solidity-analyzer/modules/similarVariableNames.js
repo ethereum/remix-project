@@ -6,6 +6,7 @@ var AbstractAst = require('./abstractAstView')
 var levenshtein = require('fast-levenshtein')
 var remixLib = require('remix-lib')
 var util = remixLib.util
+var algo = require('./algorithmCategories')
 
 function similarVariableNames () {
   this.abstractAst = new AbstractAst()
@@ -82,5 +83,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.MISC,
+  algorithm: algo.EXACT,
   Module: similarVariableNames
 }

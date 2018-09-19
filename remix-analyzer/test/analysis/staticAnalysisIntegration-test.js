@@ -466,15 +466,15 @@ test('Integration test selfdestruct.js', function (t) {
     'notReentrant.sol': 0,
     'structReentrant.sol': 0,
     'thisLocal.sol': 0,
-    'globals.sol': 1,
+    'globals.sol': 2,
     'library.sol': 0,
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 2,
+    'selfdestruct.sol': 3,
     'deleteDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
-    'intDivisionTruncate.sol': 1
+    'intDivisionTruncate.sol': 5
   }
 
   runModuleOnFiles(module, t, (file, report) => {

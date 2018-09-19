@@ -2,6 +2,7 @@ var name = 'Low level calls: '
 var desc = 'Semantics maybe unclear'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function lowLevelCalls () {
   this.llcNodes = []
@@ -59,6 +60,7 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.EXACT,
   Module: lowLevelCalls
 }
 

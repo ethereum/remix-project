@@ -2,6 +2,7 @@ var name = 'Guard Conditions: '
 var desc = 'Use require and appropriately'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function guardConditions () {
   this.guards = []
@@ -25,5 +26,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.MISC,
+  algorithm: algo.EXACT,
   Module: guardConditions
 }

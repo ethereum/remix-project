@@ -2,6 +2,7 @@ var name = 'Block.blockhash usage: '
 var desc = 'Semantics maybe unclear'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function blockBlockhash () {
   this.warningNodes = []
@@ -27,6 +28,7 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.SECURITY,
+  algorithm: algo.EXACT,
   Module: blockBlockhash
 }
 
