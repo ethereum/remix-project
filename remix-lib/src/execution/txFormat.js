@@ -364,7 +364,7 @@ module.exports = {
         var outputTypes = []
         for (i = 0; i < fnabi.outputs.length; i++) {
           var type = fnabi.outputs[i].type
-          outputTypes.push(type === 'tuple' ? helper.makeFullTupleTypeDefinition(fnabi.outputs[i]) : type)
+          outputTypes.push(type.indexOf('tuple') === 0 ? helper.makeFullTupleTypeDefinition(fnabi.outputs[i]) : type)
         }
 
         if (!response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
