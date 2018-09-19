@@ -88,7 +88,16 @@ module.exports = {
   getFunction: function (abi, fnName) {
     for (var i = 0; i < abi.length; i++) {
       var fn = abi[i]
-      if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => { return value.type }).join(',') + ')') {
+      if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
+        if (value.components) {
+          // we extract the size (if array) and append it later
+          var size = value.type.match(/([a-zA-Z0-9])(\[.*\])/)
+          size = size ? size[2] : ''
+          return `(${value.components.map((value) => { return value.type }).join(',')})${size}`
+        } else {
+          return value.type
+        }
+      }).join(',') + ')') {
         return fn
       }
     }
