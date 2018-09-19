@@ -12,7 +12,7 @@ function sendTx (vm, from, to, value, data, cb) {
     gasLimit: new BN(3000000, 10),
     to: to,
     value: new BN(value, 10),
-    data: new Buffer(data, 'hex')
+    data: Buffer.from(data, 'hex')
   })
   tx.sign(from.privateKey)
   var block = new Block({

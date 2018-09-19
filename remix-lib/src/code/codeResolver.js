@@ -48,7 +48,7 @@ CodeResolver.prototype.cacheExecutingCode = function (address, hexCode) {
 }
 
 CodeResolver.prototype.formatCode = function (hexCode) {
-  var code = codeUtils.nameOpCodes(new Buffer(hexCode.substring(2), 'hex'))
+  var code = codeUtils.nameOpCodes(Buffer.from(hexCode.substring(2), 'hex'))
   return {
     code: code[0],
     instructionsIndexByBytesOffset: code[1]
