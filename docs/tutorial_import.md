@@ -17,7 +17,7 @@ Please use ./ for relative paths to increase portability.
 
 ![image](tuto_basicimport.png)
 
-Importing from Github
+Importing from GitHub
 ---------------------
 
 It is possible to import files directly from GitHub with URLs like
