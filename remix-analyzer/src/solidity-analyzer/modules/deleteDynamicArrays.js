@@ -2,6 +2,7 @@ var name = 'Delete on dynamic Array: '
 var desc = 'Use require and appropriately'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
+var algo = require('./algorithmCategories')
 
 function deleteDynamicArrays () {
   this.rel = []
@@ -25,5 +26,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.GAS,
+  algorithm: algo.EXACT,
   Module: deleteDynamicArrays
 }
