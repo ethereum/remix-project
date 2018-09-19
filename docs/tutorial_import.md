@@ -20,7 +20,7 @@ Please use ./ for relative paths to increase portability.
 Importing from Github
 ---------------------
 
-It is possible to import files directly from github with URLs like
+It is possible to import files directly from GitHub with URLs like
 `https://github.com/<owner>/<repo>/<path to the file>`.
 
 ![image](tuto_importgit.png)
