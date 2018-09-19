@@ -1,6 +1,6 @@
 {
   "name": "remix-tests",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Tests for the Ethereum tool suite Remix",
   "main": "./src/index.js",
   "contributors": [
@@ -41,9 +41,9 @@
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
-    "remix-lib": "^0.3.7",
-    "remix-simulator": "0.0.3",
-    "remix-solidity": "^0.2.7",
+    "remix-lib": "^0.3.8",
+    "remix-simulator": "^0.0.4",
+    "remix-solidity": "^0.2.8",
     "signale": "^1.2.1",
     "solc": "^0.4.24",
     "standard": "^10.0.3",

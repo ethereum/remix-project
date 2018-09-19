@@ -1,6 +1,6 @@
 {
   "name": "remix-analyzer",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Remix Analyzer",
   "main": "./index.js",
   "contributors": [
@@ -21,7 +21,7 @@
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-es2015": "^6.24.0",
-    "remix-lib": "^0.3.7",
+    "remix-lib": "^0.3.8",
     "solc": "^0.4.24",
     "standard": "^7.0.1",
     "tape": "^4.6.0"
