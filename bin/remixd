@@ -22,7 +22,6 @@ program
 .on('--help', function(){
   console.log('\nExample:\n\n    remixd --dev-path /home/devchains/chain1 --mist --geth --frontend /home/frontend --frontend-port 8084 --auto-mine')
 }).parse(process.argv)
-program.outputHelp()
 
 var killCallBack = []
 
