@@ -75,9 +75,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
 
   this.asmCode = new CodeListView()
   this.vmDebuggerLogic.event.register('codeManagerChanged', this.asmCode.changed.bind(this.asmCode))
-  this.vmDebuggerLogic.event.register('traceUnloaded', function () {
-    self.asmCode.changed([], '', -1)
-  })
+  this.vmDebuggerLogic.event.register('traceUnloaded', this.asmCode.reset.bind(this.asmCode))
 
   this.calldataPanel = new CalldataPanel()
   _parentUI.event.register('indexChanged', this, function (index) {

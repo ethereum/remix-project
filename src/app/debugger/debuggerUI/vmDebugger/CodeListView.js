@@ -52,6 +52,10 @@ CodeListView.prototype.indexChanged = function (index) {
   this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetTop)
 }
 
+CodeListView.prototype.reset = function () {
+  this.changed([], '', -1)
+}
+
 CodeListView.prototype.changed = function (code, address, index) {
   if (this.address === address) {
     return this.indexChanged(index)
