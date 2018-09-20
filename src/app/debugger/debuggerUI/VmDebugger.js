@@ -48,6 +48,7 @@ class VmDebuggerLogic {
 
     this.listenToEvents()
     this.listenToCodeManagerEvents()
+    this.listenToTraceManagerEvents()
   }
 
   listenToEvents () {
@@ -63,6 +64,25 @@ class VmDebuggerLogic {
       self.event.trigger('codeManagerChanged', [code, address, index])
     })
   }
+
+  listenToTraceManagerEvents () {
+    const self = this
+
+    this._parentUI.event.register('indexChanged', this, function (index) {
+      if (index < 0) return
+      if (self._parentUI.currentStepIndex !== index) return
+
+      self._traceManager.getCallDataAt(index, function (error, calldata) {
+        if (error) {
+          console.log(error)
+          self.event.trigger('traceManagerCallDataUpdate', [{}])
+        } else if (self._parentUI.currentStepIndex === index) {
+          self.event.trigger('traceManagerCallDataUpdate', [calldata])
+        }
+      })
+    })
+  }
+
 }
 
 function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
@@ -78,19 +98,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.vmDebuggerLogic.event.register('traceUnloaded', this.asmCode.reset.bind(this.asmCode))
 
   this.calldataPanel = new CalldataPanel()
-  _parentUI.event.register('indexChanged', this, function (index) {
-    if (index < 0) return
-    if (_parentUI.currentStepIndex !== index) return
-
-    _traceManager.getCallDataAt(index, function (error, calldata) {
-      if (error) {
-        console.log(error)
-        self.calldataPanel.update({})
-      } else if (_parentUI.currentStepIndex === index) {
-        self.calldataPanel.update(calldata)
-      }
-    })
-  })
+  this.vmDebuggerLogic.event.register('traceManagerCallDataUpdate', this.calldataPanel.update.bind(this.calldataPanel))
 
   this.memoryPanel = new MemoryPanel()
   _parentUI.event.register('indexChanged', this, function (index) {
