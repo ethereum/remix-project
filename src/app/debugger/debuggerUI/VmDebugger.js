@@ -80,6 +80,15 @@ class VmDebuggerLogic {
           self.event.trigger('traceManagerCallDataUpdate', [calldata])
         }
       })
+
+      self._traceManager.getMemoryAt(index, function (error, memory) {
+        if (error) {
+          console.log(error)
+          self.event.trigger('traceManagerMemoryUpdate', [{}])
+        } else if (self._parentUI.currentStepIndex === index) {
+          self.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
+        }
+      })
     })
   }
 
@@ -101,19 +110,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.vmDebuggerLogic.event.register('traceManagerCallDataUpdate', this.calldataPanel.update.bind(this.calldataPanel))
 
   this.memoryPanel = new MemoryPanel()
-  _parentUI.event.register('indexChanged', this, function (index) {
-    if (index < 0) return
-    if (_parentUI.currentStepIndex !== index) return
-
-    _traceManager.getMemoryAt(index, function (error, memory) {
-      if (error) {
-        console.log(error)
-        self.memoryPanel.update({})
-      } else if (_parentUI.currentStepIndex === index) {
-        self.memoryPanel.update(ui.formatMemory(memory, 16))
-      }
-    })
-  })
+  this.vmDebuggerLogic.event.register('traceManagerMemoryUpdate', this.memoryPanel.update.bind(this.memoryPanel))
 
   this.callstackPanel = new CallstackPanel()
   _parentUI.event.register('indexChanged', this, function (index) {
