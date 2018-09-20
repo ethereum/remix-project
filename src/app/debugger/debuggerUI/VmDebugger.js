@@ -38,6 +38,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   let _parent = _parentUI.debugger
   var self = this
   this.view
+  this.storageResolver = null
 
   this.asmCode = new CodeListView()
   _codeManager.event.register('changed', this.asmCode.changed.bind(this.asmCode))
@@ -208,6 +209,44 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   /* Return values - */
 
   this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parentUI, _traceManager)
+  this.addresses = []
+  _parentUI.debugger.event.register('newTraceLoaded', this, function (length) {
+    self.panels = []
+    _traceManager.getAddresses(function (error, addresses) {
+      if (!error) {
+        self.addresses = addresses
+        self.fullStoragesChangesPanel.update({})
+      }
+    })
+
+    _traceManager.getLength(function (error, length) {
+      if (!error) {
+        self.traceLength = length
+      }
+    })
+  })
+
+  _parentUI.debugger.event.register('indexChanged', this, function (index) {
+    if (index < 0) return
+    if (_parent.currentStepIndex !== index) return
+    if (!self.storageResolver) return
+
+    if (index === self.traceLength - 1) {
+      var storageJSON = {}
+      for (var k in self.addresses) {
+        var address = self.addresses[k]
+        var storageViewer = new StorageViewer({ stepIndex: _parent.currentStepIndex, tx: _parent.tx, address: address }, self.storageResolver, _traceManager)
+        storageViewer.storageRange(function (error, result) {
+          if (!error) {
+            storageJSON[address] = result
+            self.fullStoragesChangesPanel.update(storageJSON)
+          }
+        })
+      }
+    } else {
+      self.fullStoragesChangesPanel.update({})
+    }
+  })
 
   _parent.event.register('newTraceLoaded', this, function () {
     if (!self.view) return
@@ -215,7 +254,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     // self.solidityState.storageResolver = self.storageResolver
     self.debuggerSolidityState.storageResolver = self.storageResolver
     self.debuggerSolidityLocals.storageResolver = self.storageResolver
-    self.fullStoragesChangesPanel.storageResolver = self.storageResolver
+    // self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
     self.storagePanel.basicPanel.show()
