@@ -1,7 +1,4 @@
-'use strict'
 var DropdownPanel = require('./DropdownPanel')
-var remixDebug = require('remix-debug')
-var StorageViewer = remixDebug.storage.StorageViewer
 var yo = require('yo-yo')
 
 function FullStoragesChanges (_parent, _traceManager) {
