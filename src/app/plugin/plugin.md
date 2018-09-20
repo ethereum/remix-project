@@ -23,7 +23,9 @@ plugin api
 ### app
 
  - getExecutionContextProvider `@return {String} provider (injected | web3 | vm)`
+ - getProviderEndpoint `@return {String} url`
  - updateTitle `@param {String} title`
+ - detectNetWork `@return {Object} {name, id}`
  
 ### config
 
@@ -38,4 +40,12 @@ plugin api
  - runTx `@param {Object} tx`
  - getAccounts `@return {Array} acccounts`
  - createVMAccount `@param {String} privateKey, @param {String} balance (hex)`
+ 
+### editor
+ - getFilesFromPath `@param {Array} [path]`
+ - getCurrentFile `@return {String} path`
+ - getFile `@param {String} path`
+ - setFile `@param {String} path, @param {String} content`
+ - highlight `@param {Object} lineColumnPos {start: {line, column}, end: {line, column}}, @param {String} path, @param {String} hexColor`
+ - discardHighlight
  
