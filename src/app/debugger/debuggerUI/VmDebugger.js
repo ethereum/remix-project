@@ -117,7 +117,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     if (index < 0) return
     if (_parentUI.currentStepIndex !== index) return
 
-    _traceManager.getMemoryAt(index, function (error, callstack) {
+    _traceManager.getCallStackAt(index, function (error, callstack) {
       if (error) {
         console.log(error)
         self.callstackPanel.update({})
@@ -132,7 +132,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     if (index < 0) return
     if (_parentUI.currentStepIndex !== index) return
 
-    _traceManager.getMemoryAt(index, function (error, stack) {
+    _traceManager.getStackAt(index, function (error, stack) {
       if (error) {
         console.log(error)
         self.stackPanel.update({})
