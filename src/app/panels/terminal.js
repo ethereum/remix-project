@@ -369,7 +369,7 @@ class Terminal {
     self._cmdIndex = -1
     self._cmdTemp = ''
 
-    var intro = yo`<div><div> - Welcome to Remix v0.7.2 - </div><br>
+    var intro = yo`<div><div> - Welcome to Remix v0.7.3 - </div><br>
                   <div>You can use this terminal for: </div>
                   <ul class=${css2.ul}>
                     <li>Checking transactions details and start debugging.</li>
