@@ -17,6 +17,7 @@ var FullStoragesChangesPanel = require('./vmDebugger/FullStoragesChanges')
 var DropdownPanel = require('./vmDebugger/DropdownPanel')
 var remixDebug = require('remix-debug')
 var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var ui = remixLib.helpers.ui
 var StorageResolver = remixDebug.storage.StorageResolver
 var StorageViewer = remixDebug.storage.StorageViewer
@@ -34,15 +35,52 @@ var css = csjs`
   }
 `
 
+class VmDebuggerLogic {
+
+  constructor (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
+    this.event = new EventManager()
+    this._parentUI = _parentUI
+    this._parent = this._parentUI.debugger
+    this._traceManager = _traceManager
+    this._codeManager = _codeManager
+    this._solidityProxy = _solidityProxy
+    this._callTree = _callTree
+
+    this.listenToEvents()
+    this.listenToCodeManagerEvents()
+  }
+
+  listenToEvents () {
+    const self = this
+    this._parent.event.register('traceUnloaded', function () {
+      self.event.trigger('traceUnloaded')
+    })
+  }
+
+  listenToCodeManagerEvents () {
+    const self = this
+    this._codeManager.event.register('changed', function (code, address, index) {
+      self.event.trigger('codeManagerChanged', [code, address, index])
+    })
+  }
+}
+
 function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
   let _parent = _parentUI.debugger
   var self = this
   this.view
   this.storageResolver = null
 
+  this.vmDebuggerLogic = new VmDebuggerLogic(_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree)
+
   this.asmCode = new CodeListView()
-  _codeManager.event.register('changed', this.asmCode.changed.bind(this.asmCode))
-  _parent.event.register('traceUnloaded', this, function () {
+  // _codeManager.event.register('changed', this.asmCode.changed.bind(this.asmCode))
+  // _parent.event.register('traceUnloaded', this, function () {
+  //   self.asmCode.changed([], '', -1)
+  // })
+
+  this.vmDebuggerLogic.event.register('codeManagerChanged', this.asmCode.changed.bind(this.asmCode))
+  this.vmDebuggerLogic.event.register('traceUnloaded', function () {
     self.asmCode.changed([], '', -1)
   })
 
