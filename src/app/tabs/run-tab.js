@@ -306,9 +306,10 @@ function contractDropdown (events, self) {
     }
   }
 
-  self._deps.pluginManager.event.register('sendCompilationResult', (mod, file, source, languageVersion, data) => {
+  self._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
     // TODO check whether the tab is configured
-    newlyCompiled(true, data, source)
+    self._deps.compiler.ldCompilationResult(file, source, languageVersion, data)
+    newlyCompiled(true)
   })
 
   self._deps.compiler.event.register('compilationFinished', newlyCompiled)
