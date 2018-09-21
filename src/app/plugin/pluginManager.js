@@ -195,10 +195,10 @@ module.exports = class PluginManager {
       this.post(this.origins[origin], value)
     }
   }
-  receivedDataFrom (methodName, mod) {
+  receivedDataFrom (methodName, mod, argumentsArray) {
     // TODO check whether 'mod' as right to do that
-    arguments.shift()
-    this.event.trigger(methodName, [arguments])
+    console.log(argumentsArray)
+    this.event.trigger(methodName, argumentsArray)
   }
   post (name, value) {
     const self = this
