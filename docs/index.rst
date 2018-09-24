@@ -60,6 +60,7 @@ Userful links:
    :caption: Tutorials and workshops
 
    workshop_Building_smart_contracts_with_Remix
+   tutorial_eattheblock.md
    tutorial_remixd_filesystem
    tutorial_debug
    tutorial_import
