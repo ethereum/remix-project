@@ -16,7 +16,7 @@ npm install remix-debug
 
 ```javascript
 var Debugger = require('remix-debug').EthDebugger
-var BreakpointManager = require('remix-debug').EthDebugger
+var BreakpointManager = require('remix-debug').BreakpointManager
 
 var debugger = new Debugger({
   compilationResult: () => {
