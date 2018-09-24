@@ -1,7 +1,7 @@
 Packages
 ========
 
-This part focuses on using `Remix IDE`, which is a browser based smart contract IDE. We will basically answer to the question: 
+This part focuses on using `Remix IDE`, which is a browser based smart contract IDE. We will basically answer the question: 
 Where can I use / download `Remix IDE`, and what is the difference between packages?
 
 - An online version is available at [https://remix.ethereum.org](https://remix.ethereum.org). This version is stable and is updated at almost every release.
