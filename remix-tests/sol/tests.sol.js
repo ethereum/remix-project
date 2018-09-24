@@ -97,5 +97,64 @@ library Assert {
     AssertionEvent(result, message);
   }
 
+  /*----------------- Greater than --------------------*/
+  function greaterThan(uint a, uint b, string message) public constant returns (bool result) {
+    result = (a > b);
+    emit AssertionEvent(result, message);
+  }
+
+  function greaterThan(int a, int b, string message) public constant returns (bool result) {
+    result = (a > b);
+    emit AssertionEvent(result, message);
+  }
+  // TODO: safely compare between uint and int
+  function greaterThan(uint a, int b, string message) public constant returns (bool result) {
+    if(b < int(0)) {
+      // int is negative uint "a" always greater
+      result = true;
+    } else {
+      result = (a > uint(b));
+    }
+    emit AssertionEvent(result, message);
+  }
+  function greaterThan(int a, uint b, string message) public constant returns (bool result) {
+    if(a < int(0)) {
+      // int is negative uint "b" always greater
+      result = false;
+    } else {
+      result = (uint(a) > b);
+    }
+    emit AssertionEvent(result, message);
+  }
+  /*----------------- Lesser than --------------------*/
+  function lesserThan(uint a, uint b, string message) public constant returns (bool result) {
+    result = (a < b);
+    emit AssertionEvent(result, message);
+  }
+
+  function lesserThan(int a, int b, string message) public constant returns (bool result) {
+    result = (a < b);
+    emit AssertionEvent(result, message);
+  }
+  // TODO: safely compare between uint and int
+  function lesserThan(uint a, int b, string message) public constant returns (bool result) {
+    if(b < int(0)) {
+      // int is negative int "b" always lesser
+      result = false;
+    } else {
+      result = (a < uint(b));
+    }
+    emit AssertionEvent(result, message);
+  }
+
+  function lesserThan(int a, uint b, string message) public constant returns (bool result) {
+    if(a < int(0)) {
+      // int is negative int "a" always lesser
+      result = true;
+    } else {
+      result = (uint(a) < b);
+    }
+    emit AssertionEvent(result, message);
+  }
 }
 `
