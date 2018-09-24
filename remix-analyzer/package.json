@@ -28,7 +28,7 @@
   },
   "scripts": {
     "lint": "standard",
-    "test": "lint && tape ./test/tests.js"
+    "test": "npm run lint && tape ./test/tests.js"
   },
   "standard": {
     "ignore": [
