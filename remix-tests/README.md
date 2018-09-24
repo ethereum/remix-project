@@ -44,21 +44,22 @@ contract MyTest {
 ```
 
 Available special functions:
-* `beforeEach` - runs before each test
-* `beforeAll` - runs before all tests
+* `beforeEach()` - runs before each test
+* `beforeAll()` - runs before all tests
 
 #### Assert library
 
-Available functions:
-`Assert.ok(value, message)`
-`Assert.equal(value1, value2, message)`
-`Assert.notEqual(value1, value2, message)`
-
-supported values currently are: `bool` `uint` `int` `address` `bytes32`
+| Available functions  | Supported types |
+| ------------- | ------------- |
+| `Assert.ok()`  | `bool`  |
+| `Assert.equal()`  | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
+| `Assert.notEqual()` | `uint`, `int`, `bool`, `address`, `bytes32`, `string`  |
+| `Assert.greaterThan()` | `uint`, `int` |
+| `Assert.lesserThan()` | `uint`, `int` |
 
 ### Command Line
 
-Remix-Tests will assume the tests will files whose name end with "_test.sol". e.g `simple_storage_test.sol`
+Remix-Tests will assume the tests will files whose name end with `"_test.sol"`. e.g `simple_storage_test.sol`
 
 Usage:
 
