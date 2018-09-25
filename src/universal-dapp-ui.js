@@ -12,20 +12,20 @@ function UniversalDAppUI (udapp, opts = {}) {
   this.udapp = udapp
 }
 
-UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
+UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName, compiler) {
   var noInstances = document.querySelector('[class^="noInstancesText"]')
   if (noInstances) {
     noInstances.parentNode.removeChild(noInstances)
   }
   var abi = this.udapp.getABI(contract)
-  return this.renderInstanceFromABI(abi, address, contractName)
+  return this.renderInstanceFromABI(abi, address, contractName, compiler)
 }
 
 // TODO this function was named before "appendChild".
 // this will render an instance: contract name, contract address, and all the public functions
 // basically this has to be called for the "atAddress" (line 393) and when a contract creation succeed
 // this returns a DOM element
-UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
+UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName, compiler) {
   var self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
   var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
