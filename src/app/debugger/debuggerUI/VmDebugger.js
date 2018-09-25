@@ -149,6 +149,14 @@ class VmDebuggerLogic {
       self._traceManager.getRemainingGas(index, function (error, remaining) {
         self.event.trigger('traceRemainingGasUpdate', [error, remaining])
       })
+
+      self._traceManager.getReturnValue(index, function (error, returnValue) {
+        if (error) {
+          self.event.trigger('traceReturnValueUpdate', [[error]])
+        } else if (self._parentUI.currentStepIndex === index) {
+          self.event.trigger('traceReturnValueUpdate', [[returnValue]])
+        }
+      })
     })
   }
 
@@ -234,21 +242,9 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   })
   this.debuggerSolidityLocals.init()
 
-  /* Return values - */
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
   this.returnValuesPanel.data = {}
-  _parentUI.event.register('indexChanged', this.returnValuesPanel, function (index) {
-    if (!self.view) return
-    var innerself = this
-    _traceManager.getReturnValue(index, function (error, returnValue) {
-      if (error) {
-        innerself.update([error])
-      } else if (_parentUI.currentStepIndex === index) {
-        innerself.update([returnValue])
-      }
-    })
-  })
-  /* Return values - */
+  this.debuggerSolidityLocals.event.register('traceReturnValueUpdate', this.returnValuesPanel.update.bind(this.returnValuesPanel))
 
   this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parentUI, _traceManager)
   this.addresses = []
