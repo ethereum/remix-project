@@ -48,7 +48,7 @@ class VmDebuggerLogic {
     this.storageResolver = null
   }
 
-  start() {
+  start () {
     this.listenToEvents()
     this.listenToCodeManagerEvents()
     this.listenToTraceManagerEvents()
@@ -115,9 +115,8 @@ class VmDebuggerLogic {
 
       self._traceManager.getCurrentCalledAddressAt(index, (error, address) => {
         if (error) return
-        if (!self.storageResolver){
-          return;
-        }
+        if (!self.storageResolver) return
+
         var storageViewer = new StorageViewer({ stepIndex: self._parentUI.currentStepIndex, tx: self._parentUI.tx, address: address }, self.storageResolver, self._traceManager)
 
         storageViewer.storageRange((error, storage) => {
@@ -150,7 +149,6 @@ class VmDebuggerLogic {
       self._traceManager.getRemainingGas(index, function (error, remaining) {
         self.event.trigger('traceRemainingGasUpdate', [error, remaining])
       })
-
     })
   }
 
@@ -183,34 +181,30 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.vmDebuggerLogic.event.register('traceManagerStorageUpdate', this.storagePanel.update.bind(this.storagePanel))
 
   this.stepDetail = new StepDetail()
-  _parentUI.debugger.event.register('traceUnloaded', this, function () {
-    self.stepDetail.reset()
-  })
-  _parentUI.debugger.event.register('newTraceLoaded', this, function () {
-    self.stepDetail.reset()
-  })
+  _parentUI.debugger.event.register('traceUnloaded', this.stepDetail.reset.bind(this.stepDetail))
+  _parentUI.debugger.event.register('newTraceLoaded', this.stepDetail.reset.bind(this.stepDetail))
 
-  this.vmDebuggerLogic.event.register('traceCurrentStepUpdate', function(error, step) {
+  this.vmDebuggerLogic.event.register('traceCurrentStepUpdate', function (error, step) {
     self.stepDetail.updateField('execution step', (error ? '-' : step))
   })
 
-  this.vmDebuggerLogic.event.register('traceMemExpandUpdate', function(error, addmem) {
+  this.vmDebuggerLogic.event.register('traceMemExpandUpdate', function (error, addmem) {
     self.stepDetail.updateField('add memory', (error ? '-' : addmem))
   })
 
-  this.vmDebuggerLogic.event.register('traceStepCostUpdate', function(error, gas) {
+  this.vmDebuggerLogic.event.register('traceStepCostUpdate', function (error, gas) {
     self.stepDetail.updateField('gas', (error ? '-' : gas))
   })
 
-  this.vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', function(error, address) {
+  this.vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', function (error, address) {
     self.stepDetail.updateField('loaded address', (error ? '-' : address))
   })
 
-  this.vmDebuggerLogic.event.register('traceRemainingGasUpdate', function(error, remainingGas) {
+  this.vmDebuggerLogic.event.register('traceRemainingGasUpdate', function (error, remainingGas) {
     self.stepDetail.updateField('remaining gas', (error ? '-' : remainingGas))
   })
 
-  this.vmDebuggerLogic.event.register('indexUpdate', function(index) {
+  this.vmDebuggerLogic.event.register('indexUpdate', function (index) {
     self.stepDetail.updateField('vm trace step', index)
   })
 
