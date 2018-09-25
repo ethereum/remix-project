@@ -13,6 +13,7 @@ class Slider {
   }
 
   setSliderLength (length) {
+    if (!this.view) return
     this.view.querySelector('#slider').setAttribute('max', length - 1)
     this.max = length - 1
     this.disabled = (length === 0)
@@ -27,6 +28,7 @@ class Slider {
   }
 
   onChange (event) {
+    if (!this.view) return
     var value = parseInt(this.view.querySelector('#slider').value)
     if (value === this.previousValue) return
 
@@ -35,6 +37,7 @@ class Slider {
   }
 
   setValue (value) {
+    if (!this.view) return
     this.view.querySelector('#slider').value = value
   }
 
