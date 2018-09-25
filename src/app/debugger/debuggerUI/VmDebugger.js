@@ -75,6 +75,8 @@ class VmDebuggerLogic {
       if (index < 0) return
       if (self._parentUI.currentStepIndex !== index) return
 
+      self.event.trigger('indexUpdate', [index])
+
       self._traceManager.getCallDataAt(index, function (error, calldata) {
         if (error) {
           console.log(error)
@@ -128,6 +130,27 @@ class VmDebuggerLogic {
           }
         })
       })
+
+      self._traceManager.getCurrentStep(index, function (error, step) {
+        self.event.trigger('traceCurrentStepUpdate', [error, step])
+      })
+
+      self._traceManager.getMemExpand(index, function (error, addmem) {
+        self.event.trigger('traceMemExpandUpdate', [error, addmem])
+      })
+
+      self._traceManager.getStepCost(index, function (error, gas) {
+        self.event.trigger('traceStepCostUpdate', [error, gas])
+      })
+
+      self._traceManager.getCurrentCalledAddressAt(index, function (error, address) {
+        self.event.trigger('traceCurrentCalledAddressAtUpdate', [error, address])
+      })
+
+      self._traceManager.getRemainingGas(index, function (error, remaining) {
+        self.event.trigger('traceRemainingGasUpdate', [error, remaining])
+      })
+
     })
   }
 
@@ -167,31 +190,55 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.stepDetail.reset()
   })
 
-  _parentUI.event.register('indexChanged', this, function (index) {
-    if (index < 0) return
-
-    self.stepDetail.updateField('vm trace step', index)
-
-    _traceManager.getCurrentStep(index, function (error, step) {
-      self.stepDetail.updateField('execution step', (error ? '-' : step))
-    })
-
-    _traceManager.getMemExpand(index, function (error, addmem) {
-      self.stepDetail.updateField('add memory', (error ? '-' : addmem))
-    })
-
-    _traceManager.getStepCost(index, function (error, gas) {
-      self.stepDetail.updateField('gas', (error ? '-' : gas))
-    })
-
-    _traceManager.getCurrentCalledAddressAt(index, function (error, address) {
-      self.stepDetail.updateField('loaded address', (error ? '-' : address))
-    })
-
-    _traceManager.getRemainingGas(index, function (error, remaingas) {
-      self.stepDetail.updateField('remaining gas', (error ? '-' : remaingas))
-    })
+  this.vmDebuggerLogic.event.register('traceCurrentStepUpdate', function(error, step) {
+    self.stepDetail.updateField('execution step', (error ? '-' : step))
   })
+
+  this.vmDebuggerLogic.event.register('traceMemExpandUpdate', function(error, addmem) {
+    self.stepDetail.updateField('add memory', (error ? '-' : addmem))
+  })
+
+  this.vmDebuggerLogic.event.register('traceStepCostUpdate', function(error, gas) {
+    self.stepDetail.updateField('gas', (error ? '-' : gas))
+  })
+
+  this.vmDebuggerLogic.event.register('traceCurrentCalledAddressAtUpdate', function(error, address) {
+    self.stepDetail.updateField('loaded address', (error ? '-' : address))
+  })
+
+  this.vmDebuggerLogic.event.register('traceRemainingGasUpdate', function(error, remainingGas) {
+    self.stepDetail.updateField('remaining gas', (error ? '-' : remainingGas))
+  })
+
+  this.vmDebuggerLogic.event.register('indexUpdate', function(index) {
+    self.stepDetail.updateField('vm trace step', index)
+  })
+
+  // _parentUI.event.register('indexChanged', this, function (index) {
+  //   if (index < 0) return
+
+  //   self.stepDetail.updateField('vm trace step', index)
+
+  //   // _traceManager.getCurrentStep(index, function (error, step) {
+  //   //   self.stepDetail.updateField('execution step', (error ? '-' : step))
+  //   // })
+
+  //   // _traceManager.getMemExpand(index, function (error, addmem) {
+  //   //   self.stepDetail.updateField('add memory', (error ? '-' : addmem))
+  //   // })
+
+  //   // _traceManager.getStepCost(index, function (error, gas) {
+  //   //   self.stepDetail.updateField('gas', (error ? '-' : gas))
+  //   // })
+
+  //   // _traceManager.getCurrentCalledAddressAt(index, function (error, address) {
+  //   //   self.stepDetail.updateField('loaded address', (error ? '-' : address))
+  //   // })
+
+  //   // _traceManager.getRemainingGas(index, function (error, remaingas) {
+  //   //   self.stepDetail.updateField('remaining gas', (error ? '-' : remaingas))
+  //   // })
+  // })
 
   this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   this.solidityState = new SolidityState()
