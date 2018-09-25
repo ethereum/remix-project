@@ -45,7 +45,10 @@ class VmDebuggerLogic {
     this._codeManager = _codeManager
     this._solidityProxy = _solidityProxy
     this._callTree = _callTree
+    this.storageResolver = null
+  }
 
+  start() {
     this.listenToEvents()
     this.listenToCodeManagerEvents()
     this.listenToTraceManagerEvents()
@@ -89,6 +92,42 @@ class VmDebuggerLogic {
           self.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
         }
       })
+
+      self._traceManager.getCallStackAt(index, function (error, callstack) {
+        if (error) {
+          console.log(error)
+          self.event.trigger('traceManagerCallStackUpdate', [{}])
+        } else if (self._parentUI.currentStepIndex === index) {
+          self.event.trigger('traceManagerCallStackUpdate', [callstack])
+        }
+      })
+
+      self._traceManager.getStackAt(index, function (error, callstack) {
+        if (error) {
+          console.log(error)
+          self.event.trigger('traceManagerStackUpdate', [{}])
+        } else if (self._parentUI.currentStepIndex === index) {
+          self.event.trigger('traceManagerStackUpdate', [callstack])
+        }
+      })
+
+      self._traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+        if (error) return
+        if (!self.storageResolver){
+          return;
+        }
+        var storageViewer = new StorageViewer({ stepIndex: self._parentUI.currentStepIndex, tx: self._parentUI.tx, address: address }, self.storageResolver, self._traceManager)
+
+        storageViewer.storageRange((error, storage) => {
+          if (error) {
+            console.log(error)
+            self.event.trigger('traceManagerStorageUpdate', [{}])
+          } else if (self._parentUI.currentStepIndex === index) {
+            var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
+            self.event.trigger('traceManagerStorageUpdate', [storage, header])
+          }
+        })
+      })
     })
   }
 
@@ -98,7 +137,6 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   let _parent = _parentUI.debugger
   var self = this
   this.view
-  this.storageResolver = null
 
   this.vmDebuggerLogic = new VmDebuggerLogic(_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree)
 
@@ -113,60 +151,13 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.vmDebuggerLogic.event.register('traceManagerMemoryUpdate', this.memoryPanel.update.bind(this.memoryPanel))
 
   this.callstackPanel = new CallstackPanel()
-  _parentUI.event.register('indexChanged', this, function (index) {
-    if (index < 0) return
-    if (_parentUI.currentStepIndex !== index) return
-
-    _traceManager.getCallStackAt(index, function (error, callstack) {
-      if (error) {
-        console.log(error)
-        self.callstackPanel.update({})
-      } else if (_parentUI.currentStepIndex === index) {
-        self.callstackPanel.update(callstack)
-      }
-    })
-  })
+  this.vmDebuggerLogic.event.register('traceManagerCallStackUpdate', this.callstackPanel.update.bind(this.callstackPanel))
 
   this.stackPanel = new StackPanel()
-  _parentUI.event.register('indexChanged', this, function (index) {
-    if (index < 0) return
-    if (_parentUI.currentStepIndex !== index) return
-
-    _traceManager.getStackAt(index, function (error, stack) {
-      if (error) {
-        console.log(error)
-        self.stackPanel.update({})
-      } else if (_parentUI.currentStepIndex === index) {
-        self.stackPanel.update(stack)
-      }
-    })
-  })
+  this.vmDebuggerLogic.event.register('traceManagerStackUpdate', this.stackPanel.update.bind(this.stackPanel))
 
   this.storagePanel = new StoragePanel()
-  _parentUI.event.register('indexChanged', this, function (index) {
-    if (index < 0) return
-    if (_parentUI.currentStepIndex !== index) return
-    if (!self.storageResolver) return
-
-    _traceManager.getCurrentCalledAddressAt(index, (error, address) => {
-      if (error) return
-      var storageViewer = new StorageViewer({
-        stepIndex: _parentUI.currentStepIndex,
-        tx: _parentUI.tx,
-        address: address
-      }, self.storageResolver, _traceManager)
-
-      storageViewer.storageRange((error, storage) => {
-        if (error) {
-          console.log(error)
-          self.storagePanel.update({})
-        } else if (_parentUI.currentStepIndex === index) {
-          var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
-          self.storagePanel.update(storage, header)
-        }
-      })
-    })
-  })
+  this.vmDebuggerLogic.event.register('traceManagerStorageUpdate', this.storagePanel.update.bind(this.storagePanel))
 
   this.stepDetail = new StepDetail()
   _parentUI.debugger.event.register('traceUnloaded', this, function () {
@@ -265,13 +256,13 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   _parentUI.debugger.event.register('indexChanged', this, function (index) {
     if (index < 0) return
     if (_parent.currentStepIndex !== index) return
-    if (!self.storageResolver) return
+    if (!self.vmDebuggerLogic.storageResolver) return
 
     if (index === self.traceLength - 1) {
       var storageJSON = {}
       for (var k in self.addresses) {
         var address = self.addresses[k]
-        var storageViewer = new StorageViewer({ stepIndex: _parent.currentStepIndex, tx: _parent.tx, address: address }, self.storageResolver, _traceManager)
+        var storageViewer = new StorageViewer({ stepIndex: _parent.currentStepIndex, tx: _parent.tx, address: address }, self.vmDebuggerLogic.storageResolver, _traceManager)
         storageViewer.storageRange(function (error, result) {
           if (!error) {
             storageJSON[address] = result
@@ -286,10 +277,10 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
 
   _parent.event.register('newTraceLoaded', this, function () {
     if (!self.view) return
-    self.storageResolver = new StorageResolver({web3: _parent.web3})
+    self.vmDebuggerLogic.storageResolver = new StorageResolver({web3: _parent.web3})
     // self.solidityState.storageResolver = self.storageResolver
-    self.debuggerSolidityState.storageResolver = self.storageResolver
-    self.debuggerSolidityLocals.storageResolver = self.storageResolver
+    self.debuggerSolidityState.storageResolver = self.vmDebuggerLogic.storageResolver
+    self.debuggerSolidityLocals.storageResolver = self.vmDebuggerLogic.storageResolver
     // self.fullStoragesChangesPanel.storageResolver = self.storageResolver
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
@@ -305,6 +296,8 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
       self.solidityState.basicPanel.show()
     }
   })
+
+  this.vmDebuggerLogic.start()
 }
 
 VmDebugger.prototype.renderHead = function () {
