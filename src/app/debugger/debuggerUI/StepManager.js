@@ -35,6 +35,7 @@ StepManager.prototype.startButtonNavigator = function () {
 }
 
 StepManager.prototype.updateStep = function (step, stepState, jumpOutDisabled) {
+  if (!this.slider) return
   this.slider.setValue(step)
   this.buttonNavigator.stepChanged(stepState, jumpOutDisabled)
   this.event.trigger('stepChanged', [step])

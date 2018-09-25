@@ -128,6 +128,7 @@ ButtonNavigator.prototype.updateDisabled = function (id, disabled) {
 }
 
 ButtonNavigator.prototype.resetWarning = function (revertedReason) {
+  if (!this.view) return
   this.view.querySelector('#reverted #outofgas').style.display = (revertedReason === 'outofgas') ? 'inline' : 'none'
   this.view.querySelector('#reverted #parenthasthrown').style.display = (revertedReason === 'parenthasthrown') ? 'inline' : 'none'
   this.view.querySelector('#reverted').style.display = (revertedReason === '') ? 'none' : 'block'
