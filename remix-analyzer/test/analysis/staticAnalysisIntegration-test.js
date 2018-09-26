@@ -639,7 +639,7 @@ test('Integration test intDivisionTruncate.js', function (t) {
 test('Integration test erc20Decimal.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../src/analysis/modules/erc20Decimals')
+  var module = require('../../src/solidity-analyzer/modules/erc20Decimals')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,

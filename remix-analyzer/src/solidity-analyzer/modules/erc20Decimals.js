@@ -3,6 +3,7 @@ var desc = 'Decimal should be uint8'
 var categories = require('./categories')
 var common = require('./staticAnalysisCommon')
 var AbstractAst = require('./abstractAstView')
+var algo = require('./algorithmCategories')
 
 function erc20Decimals () {
   this.abstractAst = new AbstractAst()
@@ -57,5 +58,6 @@ module.exports = {
   name: name,
   description: desc,
   category: categories.ERC,
+  algorithm: algo.EXACT,
   Module: erc20Decimals
 }
