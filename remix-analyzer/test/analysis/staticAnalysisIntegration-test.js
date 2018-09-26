@@ -487,7 +487,7 @@ test('Integration test selfdestruct.js', function (t) {
     'selfdestruct.sol': 3,
     'deleteDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
-    'intDivisionTruncate.sol': 1, // 5
+    'intDivisionTruncate.sol': 5,
     'stringBytesLength.sol': 0
   }
 
@@ -639,7 +639,7 @@ test('Integration test intDivisionTruncate.js', function (t) {
 test('Integration test stringBytesLength.js', function (t) {
   t.plan(testFiles.length)
 
-  var module = require('../../src/analysis/modules/stringBytesLength')
+  var module = require('../../src/solidity-analyzer/modules/stringBytesLength')
 
   var lengthCheck = {
     'KingOfTheEtherThrone.sol': 0,
