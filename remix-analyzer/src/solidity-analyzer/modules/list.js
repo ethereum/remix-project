@@ -14,5 +14,6 @@ module.exports = [
   require('./guardConditions'),
   require('./deleteDynamicArrays'),
   require('./assignAndCompare'),
-  require('./erc20Decimals')
+  require('./erc20Decimals'),
+  require('./stringBytesLength')
 ]
