@@ -31,6 +31,7 @@ function abstractAstView () {
  *      "modifierInvocations": [], // Modifier invocation AST nodes that are applied on this function
  *      "localVariables": [],      // Local variable declaration nodes
  *      "parameters": []           // Parameter types of the function in order of definition
+ *      "returns": []              // list of return vars as { type: ... , name: ... }
  *    }
  *  ],
  *  "modifiers": [],              // Modifiers definded by the contract, format similar to functions
