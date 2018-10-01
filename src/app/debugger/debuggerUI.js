@@ -9,6 +9,8 @@ var remixLib = require('remix-lib')
 var executionContext = remixLib.execution.executionContext
 var traceHelper = remixLib.helpers.trace
 
+var VmDebuggerLogic = require('./VmDebugger')
+
 class DebuggerUI {
 
   constructor (container) {
@@ -114,7 +116,8 @@ class DebuggerUI {
 
     this.debugger_ui.stepManager = this.stepManager
 
-    this.debugger_ui.vmDebugger = new VmDebugger(this.debugger_ui, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
+    this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger_ui, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
+    this.debugger_ui.vmDebugger = new VmDebugger(this.vmDebuggerLogic)
     this.debugger_ui.andAddVmDebugger()
 
     this.transactionDebugger.debugger.debug(tx)
