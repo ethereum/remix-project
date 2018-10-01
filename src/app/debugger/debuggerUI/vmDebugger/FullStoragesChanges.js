@@ -1,7 +1,7 @@
 var DropdownPanel = require('./DropdownPanel')
 var yo = require('yo-yo')
 
-function FullStoragesChanges (_parent, _traceManager) {
+function FullStoragesChanges () {
   this.view
   this.basicPanel = new DropdownPanel('Full Storages Changes', {json: true})
 }
