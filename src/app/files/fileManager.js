@@ -40,6 +40,9 @@ class FileManager {
     self._deps.localhostExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     self._deps.configExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     self._deps.gistExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+
+    self._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
+    self._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {

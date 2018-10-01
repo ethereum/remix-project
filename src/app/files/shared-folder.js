@@ -14,6 +14,13 @@ module.exports = class SharedFolder {
     this.filesContent = {}
     this.files = {}
 
+    var remixdEvents = ['connecting', 'connected', 'errored', 'closed']
+    remixdEvents.forEach((value) => {
+      remixd.event.register(value, (event) => {
+        this.event.trigger(value, [event])
+      })
+    })
+
     remixd.event.register('notified', (data) => {
       if (data.scope === 'sharedfolder') {
         if (data.name === 'created') {
