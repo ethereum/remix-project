@@ -1,13 +1,5 @@
-const serve = require('serve')
-
 module.exports = function (path, port) {
-  var server = serve(path, {
-    port: port
-  })
-
-  function kill () {
-    console.log('stopping frontend')
-    server.stop()
-  }
+  console.log('\x1b[31m%s\x1b[0m', '[ERR] Front end capability is not available anymore')
+  function kill () {}
   return kill
 }
