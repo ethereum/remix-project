@@ -46,6 +46,8 @@ class VmDebuggerLogic {
     this._solidityProxy = _solidityProxy
     this._callTree = _callTree
     this.storageResolver = null
+
+    this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   }
 
   start () {
@@ -54,6 +56,9 @@ class VmDebuggerLogic {
     this.listenToTraceManagerEvents()
     this.listenToFullStorageChanges()
     this.listenToNewChanges()
+
+    this.debuggerSolidityState.init()
+    this.listenToSolidityStateEvents()
   }
 
   listenToEvents () {
@@ -208,6 +213,7 @@ class VmDebuggerLogic {
     const self = this
     self._parent.event.register('newTraceLoaded', this, function () {
       self.storageResolver = new StorageResolver({web3: self._parent.web3})
+      self.debuggerSolidityState.storageResolver = self.storageResolver
       self.event.trigger('newTrace', [])
     })
 
@@ -215,6 +221,19 @@ class VmDebuggerLogic {
       if (self._parent.callTree.reducedTrace.length) {
         return self.event.trigger('newCallTree', [])
       }
+    })
+  }
+
+  listenToSolidityStateEvents () {
+    const self = this
+    this.debuggerSolidityState.event.register('solidityState', this, function (state) {
+      self.event.trigger('solidityState', [state])
+    })
+    this.debuggerSolidityState.event.register('solidityStateMessage', this, function (message) {
+      self.event.trigger('solidityStateMessage', [message])
+    })
+    this.debuggerSolidityState.event.register('solidityStateUpdating', this, function () {
+      self.event.trigger('solidityStateUpdating', [])
     })
   }
 
@@ -274,16 +293,16 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.stepDetail.updateField('vm trace step', index)
   })
 
-  this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
+  // this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
   this.solidityState = new SolidityState()
-  this.debuggerSolidityState.init()
-  this.debuggerSolidityState.event.register('solidityState', this, function (state) {
+  // this.debuggerSolidityState.init()
+  this.vmDebuggerLogic.event.register('solidityState', this, function (state) {
     self.solidityState.update(state)
   })
-  this.debuggerSolidityState.event.register('solidityStateMessage', this, function (message) {
+  this.vmDebuggerLogic.event.register('solidityStateMessage', this, function (message) {
     self.solidityState.setMessage(message)
   })
-  this.debuggerSolidityState.event.register('solidityStateUpdating', this, function () {
+  this.vmDebuggerLogic.event.register('solidityStateUpdating', this, function () {
     self.solidityState.setUpdating()
   })
 
@@ -318,7 +337,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.vmDebuggerLogic.event.register('newTrace', () => {
     if (!self.view) return
 
-    self.debuggerSolidityState.storageResolver = self.vmDebuggerLogic.storageResolver
+    // self.debuggerSolidityState.storageResolver = self.vmDebuggerLogic.storageResolver
     self.debuggerSolidityLocals.storageResolver = self.vmDebuggerLogic.storageResolver
     // self.solidityState.storageResolver = self.storageResolver
     // self.fullStoragesChangesPanel.storageResolver = self.storageResolver
