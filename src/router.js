@@ -1,13 +1,14 @@
 var Websocket = require('./websocket')
 
 class Router {
-  constructor (port, service, initCallback) {
+  constructor (port, service, opt, initCallback) {
+    this.opt = opt
     this.port = port
     this.service = service
     this.initCallback = initCallback
   }
   start () {
-    var websocket = new Websocket(this.port)
+    var websocket = new Websocket(this.port, this.opt)
     this.websocket = websocket
     this.websocket.start((message) => {
       this.call(message.id, message.service, message.fn, message.args)
