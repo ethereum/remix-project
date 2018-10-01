@@ -38,6 +38,10 @@ module.exports = {
     }
   },
 
+  folderIsReadOnly: function (args, cb) {
+    return cb(null, this.readOnly)
+  },
+
   get: function (args, cb) {
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (!fs.existsSync(path)) {
