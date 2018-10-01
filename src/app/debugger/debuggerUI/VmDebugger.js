@@ -54,8 +54,8 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.vmDebuggerLogic.event.register('traceManagerStorageUpdate', this.storagePanel.update.bind(this.storagePanel))
 
   this.stepDetail = new StepDetail()
-  _parentUI.debugger.event.register('traceUnloaded', this.stepDetail.reset.bind(this.stepDetail))
-  _parentUI.debugger.event.register('newTraceLoaded', this.stepDetail.reset.bind(this.stepDetail))
+  this.vmDebuggerLogic.event.register('traceUnloaded', this.stepDetail.reset.bind(this.stepDetail))
+  this.vmDebuggerLogic.event.register('newTraceLoaded', this.stepDetail.reset.bind(this.stepDetail))
 
   this.vmDebuggerLogic.event.register('traceCurrentStepUpdate', function (error, step) {
     self.stepDetail.updateField('execution step', (error ? '-' : step))
@@ -107,7 +107,7 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
   this.returnValuesPanel.data = {}
   this.vmDebuggerLogic.event.register('traceReturnValueUpdate', this.returnValuesPanel.update.bind(this.returnValuesPanel))
 
-  this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parentUI, _traceManager)
+  this.fullStoragesChangesPanel = new FullStoragesChangesPanel()
   this.addresses = []
 
   this.vmDebuggerLogic.event.register('traceAddressesUpdate', function (_addresses) {

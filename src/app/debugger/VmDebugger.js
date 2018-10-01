@@ -43,6 +43,15 @@ class VmDebuggerLogic {
     this._parent.event.register('traceUnloaded', function () {
       self.event.trigger('traceUnloaded')
     })
+
+    // TODO: is it the same?
+    this._parentUI.debugger.event.register('traceUnloaded', function () {
+      self.event.trigger('traceUnloaded')
+    })
+
+    this._parentUI.debugger.event.register('newTraceLoaded', function () {
+      self.event.trigger('newTraceLoaded')
+    })
   }
 
   listenToCodeManagerEvents () {
