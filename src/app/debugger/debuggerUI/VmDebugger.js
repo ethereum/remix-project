@@ -14,8 +14,6 @@ var SolidityLocals = require('./vmDebugger/SolidityLocals')
 var FullStoragesChangesPanel = require('./vmDebugger/FullStoragesChanges')
 var DropdownPanel = require('./vmDebugger/DropdownPanel')
 
-var VmDebuggerLogic = require('../VmDebugger')
-
 var css = csjs`
   .asmCode {
     float: left;
@@ -28,11 +26,11 @@ var css = csjs`
   }
 `
 
-function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
+function VmDebugger (vmDebuggerLogic) {
   var self = this
   this.view
 
-  this.vmDebuggerLogic = new VmDebuggerLogic(_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree)
+  this.vmDebuggerLogic = vmDebuggerLogic
 
   this.asmCode = new CodeListView()
   this.vmDebuggerLogic.event.register('codeManagerChanged', this.asmCode.changed.bind(this.asmCode))
