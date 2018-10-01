@@ -205,7 +205,7 @@ class EditorPanel {
       if (Object.keys(self._deps.fileManager.tabbedFiles).length) {
         self._deps.fileManager.switchFile(Object.keys(self._deps.fileManager.tabbedFiles)[0])
       } else {
-        self._deps.editor.displayEmptyReadOnlySession()
+        self._components.editor.displayEmptyReadOnlySession()
         self._deps.config.set('currentFile', '')
       }
       return false
