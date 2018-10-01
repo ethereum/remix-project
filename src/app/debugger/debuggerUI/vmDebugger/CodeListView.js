@@ -1,5 +1,5 @@
 'use strict'
-var style = require('../../remix-debugger/src/ui/styles/basicStyles')
+var style = require('../styles/basicStyles')
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var DropdownPanel = require('./DropdownPanel')
