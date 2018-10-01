@@ -10,7 +10,7 @@ var globalRegistry = require('../global/registry')
 var SourceHighlighter = require('../app/editor/sourceHighlighter')
 var RemixDebug = require('remix-debug').EthDebugger
 var TreeView = require('../app/ui/TreeView') // TODO setup a direct reference to the UI components
-var solidityTypeFormatter = require('../app/debugger/remix-debugger/src/ui/SolidityTypeFormatter')
+var solidityTypeFormatter = require('../app/debugger/debuggerUI/vmDebugger/utils/SolidityTypeFormatter')
 
 class CmdInterpreterAPI {
   constructor (terminal, localRegistry) {
