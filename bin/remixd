@@ -4,6 +4,7 @@ var servicesList = require('../src/servicesList')
 var program = require('commander')
 var startmistGeth = require('../src/services/startMistGeth')
 var startFrontend = require('../src/services/startFrontend')
+var vyper = require('../src/services/vyper')
 var fs = require('fs-extra')
 
 program
@@ -12,6 +13,7 @@ program
 .option('--remix-ide  <url>', 'URL of remix instance allowed to connect to this web sockect connection')
 .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
 .option('--read-only', 'Treat shared folder as read-only (experimental)')
+.option('--vyper', 'Run a local vyper compiler')
 .option('-m, --mist', 'start mist')
 .option('-g, --geth', 'start geth')
 .option('-p, --dev-path <dev-path>', 'Folder used by mist/geth to start the development instance')
@@ -26,6 +28,11 @@ program
 }).parse(process.argv)
 
 var killCallBack = []
+
+if (program.vyper) {
+  console.log('starting vyper compiler')
+  vyper()
+}
 
 if (!program.remixIde) {
   return console.log('\x1b[31m%s\x1b[0m', '[ERR] URL Remix IDE instance has to be provided.')
