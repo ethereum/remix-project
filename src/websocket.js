@@ -3,9 +3,10 @@ var WebSocketServer = require('websocket').server
 var http = require('http')
 
 class WebSocket {
-  constructor (port) {
+  constructor (port, opt) {
     this.connection = null
     this.port = port
+    this.opt = opt
   }
 
   start (callback) {
@@ -25,7 +26,7 @@ class WebSocket {
     })
 
     this.wsServer.on('request', (request) => {
-      if (!originIsAllowed(request.origin)) {
+      if (!originIsAllowed(request.origin, this)) {
         request.reject()
         console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.')
         return
@@ -67,9 +68,8 @@ class WebSocket {
   }
 }
 
-function originIsAllowed (origin) {
-  console.log('origin', origin)
-  return true
+function originIsAllowed (origin, self) {
+  return origin === self.opt.remixIdeUrl
 }
 
 module.exports = WebSocket
