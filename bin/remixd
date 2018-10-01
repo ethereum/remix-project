@@ -55,7 +55,7 @@ if (program.sharedFolder) {
   var sharedFolderrouter = new Router(65520, servicesList['sharedfolder'], { remixIdeUrl: program.remixIde }, (webSocket) => {
     servicesList['sharedfolder'].setWebSocket(webSocket)
     servicesList['sharedfolder'].setupNotifications(program.sharedFolder)
-    servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly)
+    servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly || false)
   })
   killCallBack.push(sharedFolderrouter.start())
 }
