@@ -10,6 +10,7 @@ program
 .usage('-s <shared folder>')
 .description('Provide a two ways connection between the local computer and Remix IDE')
 .option('-s, --shared-folder <path>', 'Folder to share with Remix IDE')
+.option('--read-only', 'Treat shared folder as read-only (experimental)')
 .option('-m, --mist', 'start mist')
 .option('-g, --geth', 'start geth')
 .option('-p, --dev-path <dev-path>', 'Folder used by mist/geth to start the development instance')
@@ -48,7 +49,7 @@ if (program.sharedFolder) {
   var sharedFolderrouter = new Router(65520, servicesList['sharedfolder'], (webSocket) => {
     servicesList['sharedfolder'].setWebSocket(webSocket)
     servicesList['sharedfolder'].setupNotifications(program.sharedFolder)
-    servicesList['sharedfolder'].sharedFolder(program.sharedFolder)
+    servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly)
   })
   killCallBack.push(sharedFolderrouter.start())
 }
