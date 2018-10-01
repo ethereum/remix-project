@@ -52,6 +52,7 @@ class VmDebuggerLogic {
     this.listenToEvents()
     this.listenToCodeManagerEvents()
     this.listenToTraceManagerEvents()
+    this.listenToFullStorageChanges()
   }
 
   listenToEvents () {
@@ -160,6 +161,21 @@ class VmDebuggerLogic {
     })
   }
 
+  listenToFullStorageChanges () {
+    const self = this
+
+    self._parentUI.debugger.event.register('newTraceLoaded', function (length) {
+      self._traceManager.getAddresses(function (error, addresses) {
+        if (error) return
+        self.event.trigger('traceAddressesUpdate', [addresses])
+      })
+
+      self._traceManager.getLength(function (error, length) {
+        if (error) return
+        self.event.trigger('traceLengthUpdate', [length])
+      })
+    })
+  }
 }
 
 function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
@@ -248,20 +264,14 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
 
   this.fullStoragesChangesPanel = new FullStoragesChangesPanel(_parentUI, _traceManager)
   this.addresses = []
-  _parentUI.debugger.event.register('newTraceLoaded', this, function (length) {
-    self.panels = []
-    _traceManager.getAddresses(function (error, addresses) {
-      if (!error) {
-        self.addresses = addresses
-        self.fullStoragesChangesPanel.update({})
-      }
-    })
 
-    _traceManager.getLength(function (error, length) {
-      if (!error) {
-        self.traceLength = length
-      }
-    })
+  this.vmDebuggerLogic.event.register('traceAddressesUpdate', function (addresses) {
+    self.addresses = addresses
+    self.fullStoragesChangesPanel.update({})
+  })
+
+  this.vmDebuggerLogic.event.register('traceLengthUpdate', function (length) {
+    self.traceLength = length
   })
 
   _parentUI.debugger.event.register('indexChanged', this, function (index) {
