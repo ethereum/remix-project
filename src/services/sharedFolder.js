@@ -12,8 +12,9 @@ module.exports = {
     this.websocket = websocket
   },
 
-  sharedFolder: function (sharedFolder) {
+  sharedFolder: function (sharedFolder, readOnly) {
     this.sharedFolder = sharedFolder
+    this.readOnly = readOnly
   },
 
   list: function (args, cb) {
@@ -62,6 +63,7 @@ module.exports = {
   },
 
   set: function (args, cb) {
+    if (this.readOnly) return cb('Cannot write file: read-only mode selected')
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (fs.existsSync(path) && !isRealPath(path, cb)) return
     if (args.content === 'undefined') { // no !!!!!
@@ -76,6 +78,7 @@ module.exports = {
   },
 
   rename: function (args, cb) {
+    if (this.readOnly) return cb('Cannot rename file: read-only mode selected')
     var oldpath = utils.absolutePath(args.oldPath, this.sharedFolder)
     if (!fs.existsSync(oldpath)) {
       return cb('File not found ' + oldpath)
@@ -89,6 +92,7 @@ module.exports = {
   },
 
   remove: function (args, cb) {
+    if (this.readOnly) return cb('Cannot remove file: read-only mode selected')
     var path = utils.absolutePath(args.path, this.sharedFolder)
     if (!fs.existsSync(path)) {
       return cb('File not found ' + path)
