@@ -95,12 +95,21 @@ class FileManager {
     return path ? path[1] : null
   }
 
+  removeTabsOf (provider) {
+    for (var tab in this.tabbedFiles) {
+      if (this.fileProviderOf(tab).type === provider.type) {
+        this.fileRemovedEvent(tab)
+      }
+    }
+  }
+
   fileRemovedEvent (path) {
     var self = this
+    if (!this.tabbedFiles[path]) return
     if (path === self._deps.config.get('currentFile')) {
       self._deps.config.set('currentFile', '')
     }
-    self._deps.editor.discardCurrentSession()
+    self._deps.editor.discard(path)
     delete this.tabbedFiles[path]
     this.refreshTabs()
     this.switchFile()
