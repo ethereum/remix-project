@@ -476,7 +476,6 @@ function contractDropdown (events, self) {
   function loadFromAddress () {
     var noInstancesText = self._view.noInstancesText
     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-    var selectedContract = getSelectedContract()
     var address = atAddressButtonInput.value
     if (!ethJSUtil.isValidAddress(address)) {
       return modalDialogCustom.alert('Invalid address.')
@@ -492,10 +491,11 @@ function contractDropdown (events, self) {
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
-        instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, address, selectedContract.compiler))
+        instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, address))
       })
     } else {
-      instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value, selectedContract.compiler))
+      var selectedContract = getSelectedContract()
+      instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
     }
   }
 
