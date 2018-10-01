@@ -53,6 +53,7 @@ class VmDebuggerLogic {
     this.listenToCodeManagerEvents()
     this.listenToTraceManagerEvents()
     this.listenToFullStorageChanges()
+    this.listenToNewChanges()
   }
 
   listenToEvents () {
@@ -202,10 +203,25 @@ class VmDebuggerLogic {
       }
     })
   }
+
+  listenToNewChanges () {
+    const self = this
+    self._parent.event.register('newTraceLoaded', this, function () {
+      self.storageResolver = new StorageResolver({web3: self._parent.web3})
+      self.event.trigger('newTrace', [])
+    })
+
+    self._parent.event.register('callTreeReady', function () {
+      if (self._parent.callTree.reducedTrace.length) {
+        return self.event.trigger('newCallTree', [])
+      }
+    })
+  }
+
 }
 
 function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
-  let _parent = _parentUI.debugger
+  // let _parent = _parentUI.debugger
   var self = this
   this.view
 
@@ -299,13 +315,14 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.fullStoragesChangesPanel.update(data)
   })
 
-  _parent.event.register('newTraceLoaded', this, function () {
+  this.vmDebuggerLogic.event.register('newTrace', () => {
     if (!self.view) return
-    self.vmDebuggerLogic.storageResolver = new StorageResolver({web3: _parent.web3})
-    // self.solidityState.storageResolver = self.storageResolver
+
     self.debuggerSolidityState.storageResolver = self.vmDebuggerLogic.storageResolver
     self.debuggerSolidityLocals.storageResolver = self.vmDebuggerLogic.storageResolver
+    // self.solidityState.storageResolver = self.storageResolver
     // self.fullStoragesChangesPanel.storageResolver = self.storageResolver
+
     self.asmCode.basicPanel.show()
     self.stackPanel.basicPanel.show()
     self.storagePanel.basicPanel.show()
@@ -313,12 +330,11 @@ function VmDebugger (_parentUI, _traceManager, _codeManager, _solidityProxy, _ca
     self.calldataPanel.basicPanel.show()
     self.callstackPanel.basicPanel.show()
   })
-  _parent.callTree.event.register('callTreeReady', () => {
+
+  this.vmDebuggerLogic.event.register('newCallTree', () => {
     if (!self.view) return
-    if (_parent.callTree.reducedTrace.length) {
-      self.solidityLocals.basicPanel.show()
-      self.solidityState.basicPanel.show()
-    }
+    self.solidityLocals.basicPanel.show()
+    self.solidityState.basicPanel.show()
   })
 
   this.vmDebuggerLogic.start()
