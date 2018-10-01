@@ -11,6 +11,7 @@ module.exports = class SharedFolder {
     this.error = { 'EEXIST': 'File already exists' }
     this._isReady = false
     this._readOnlyFiles = {}
+    this._readOnlyMode = false
     this.filesContent = {}
     this.files = {}
 
@@ -58,8 +59,12 @@ module.exports = class SharedFolder {
 
   init (cb) {
     this._remixd.ensureSocket((error) => {
+      if (error) return cb(error)
       this._isReady = !error
-      cb(error)
+      this._remixd.call('sharedfolder', 'folderIsReadOnly', {}, (error, result) => {
+        this._readOnlyMode = result
+        cb(error)
+      })
     })
   }
 
@@ -110,7 +115,7 @@ module.exports = class SharedFolder {
   }
 
   isReadOnly (path) {
-    return this._readOnlyFiles[path] === 1
+    return this._readOnlyMode || this._readOnlyFiles[path] === 1
   }
 
   remove (path) {
