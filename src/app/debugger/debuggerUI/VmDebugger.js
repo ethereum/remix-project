@@ -186,20 +186,19 @@ class VmDebuggerLogic {
       if (self._parent.currentStepIndex !== index) return
       if (!self.storageResolver) return
 
-      if (index === self.traceLength - 1) {
-        var storageJSON = {}
-        for (var k in self.addresses) {
-          var address = self.addresses[k]
-          var storageViewer = new StorageViewer({ stepIndex: self._parent.currentStepIndex, tx: self._parent.tx, address: address }, self.storageResolver, self._traceManager)
-          storageViewer.storageRange(function (error, result) {
-            if (!error) {
-              storageJSON[address] = result
-              self.event.trigger('traceLengthUpdate', [storageJSON])
-            }
-          })
-        }
-      } else {
-        self.event.trigger('traceLengthUpdate', [{}])
+      if (index !== self.traceLength - 1) {
+        return self.event.trigger('traceLengthUpdate', [{}])
+      }
+      var storageJSON = {}
+      for (var k in self.addresses) {
+        var address = self.addresses[k]
+        var storageViewer = new StorageViewer({ stepIndex: self._parent.currentStepIndex, tx: self._parent.tx, address: address }, self.storageResolver, self._traceManager)
+        storageViewer.storageRange(function (error, result) {
+          if (!error) {
+            storageJSON[address] = result
+            self.event.trigger('traceLengthUpdate', [storageJSON])
+          }
+        })
       }
     })
   }
