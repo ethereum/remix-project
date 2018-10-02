@@ -62,10 +62,6 @@ class DebuggerUI {
       self.debugger.codeManager.resolveStep(index, self.tx)
     })
 
-    executionContext.event.register('contextChanged', this, function () {
-      self.updateWeb3Reference()
-    })
-
     container.appendChild(this.render())
 
     this.setEditor()
@@ -114,7 +110,7 @@ class DebuggerUI {
     const self = this
     let web3 = executionContext.web3()
 
-    let txBrowser = new TxBrowser(this, {web3: web3})
+    let txBrowser = new TxBrowser()
     this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
@@ -198,11 +194,6 @@ class DebuggerUI {
         self.txBrowser.load(tx)
       }
     })
-  }
-
-  updateWeb3Reference (web3) {
-    if (!this.txBrowser) return
-    this.txBrowser.web3 = web3 || executionContext.web3()
   }
 
   render () {
