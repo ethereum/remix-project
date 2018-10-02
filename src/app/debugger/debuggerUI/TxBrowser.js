@@ -45,13 +45,12 @@ var css = csjs`
   }
 `
 
-function TxBrowser (_parent, opts) {
+function TxBrowser () {
   this.event = new EventManager()
 
   this.blockNumber
   this.txNumber
   this.view
-  this.web3 = opts.web3
   this.setDefaultValues()
 }
 
