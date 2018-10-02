@@ -11,7 +11,7 @@ var StorageViewer = require('../../../src/storage/storageViewer')
 
 module.exports = function testMappingStorage (st, cb) {
   var mappingStorage = require('../contracts/mappingStorage')
-  var privateKey = new Buffer('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
+  var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
   var vm = vmCall.initVM(st, privateKey)
   var output = compiler.compileStandardWrapper(compilerInput(mappingStorage.contract))
   output = JSON.parse(output)
