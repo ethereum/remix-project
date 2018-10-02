@@ -62,7 +62,7 @@ class DebuggerUI {
       self.debugger.codeManager.resolveStep(index, self.tx)
     })
 
-    this.executionContext.event.register('contextChanged', this, function () {
+    executionContext.event.register('contextChanged', this, function () {
       self.updateWeb3Reference()
     })
 
