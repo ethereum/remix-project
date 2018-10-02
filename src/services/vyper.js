@@ -1,4 +1,4 @@
-var spawn = require('child_process').spawn
+var exec = require('child_process').exec
 var stdout = require('stdout')
 
 module.exports = function () {
@@ -15,7 +15,7 @@ module.exports = function () {
 function run (app, args) {
   var proc
   try {
-    proc = spawn(app, args)
+    proc = exec(app, args)
     proc.on('error', (err) => {
       console.log('\x1b[31m%s\x1b[0m', '[ERR] can\'t start ' + app + '. seems not installed')
       console.log(err)
