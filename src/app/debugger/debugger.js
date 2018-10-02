@@ -65,7 +65,7 @@ function Debugger (sourceHighlighter) {
   })
 
   this.debugger.event.register('traceUnloaded', this, function () {
-    self._components.sourceHighlighter.currentSourceLocation(null)
+    self.sourceHighlighter.currentSourceLocation(null)
     self.event.trigger('debuggerStatus', [false])
   })
 
@@ -86,9 +86,9 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
       self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self._deps.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
         if (!error && self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
           var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources)
-          self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
+          self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
         } else {
-          self._components.sourceHighlighter.currentSourceLocation(null)
+          self.sourceHighlighter.currentSourceLocation(null)
         }
       })
     })
