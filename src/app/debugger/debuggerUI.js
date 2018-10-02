@@ -12,6 +12,7 @@ var EventManager = remixLib.EventManager
 var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
 
+var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
 
 var yo = require('yo-yo')
@@ -55,6 +56,18 @@ class DebuggerUI {
 
     this.setEditor()
     this.listenToEvents()
+  }
+
+  setupExecutionContext () {
+    this.executionContext.event.register('contextChanged', this, function (context) {
+      // TODO: was already broken
+      //self.switchProvider(context)
+    })
+
+    this.debugger.addProvider('vm', this.executionContext.vm())
+    this.debugger.addProvider('injected', this.executionContext.internalWeb3())
+    this.debugger.addProvider('web3', this.executionContext.internalWeb3())
+    this.debugger.switchProvider(this.executionContext.getProvider())
   }
 
   setEditor () {
