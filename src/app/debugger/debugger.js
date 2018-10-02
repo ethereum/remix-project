@@ -8,14 +8,13 @@ var globalRegistry = require('../../global/registry')
 /**
  * Manage remix and source highlighting
  */
-function Debugger (sourceHighlighter) {
+function Debugger () {
   var self = this
   this.event = new EventManager()
 
-  this.sourceHighlighter = sourceHighlighter
   this.registry = globalRegistry
-  this.offsetToLineColumnConverter = this.registry.get('offsettolinecolumnconverter').api,
-  this.editor = this.registry.get('editor').api,
+  this.offsetToLineColumnConverter = this.registry.get('offsettolinecolumnconverter').api
+  this.editor = this.registry.get('editor').api
   this.compiler = this.registry.get('compiler').api
 
   this.debugger = new Ethdebugger(
@@ -63,7 +62,6 @@ function Debugger (sourceHighlighter) {
   })
 
   this.debugger.event.register('traceUnloaded', this, function () {
-    self.sourceHighlighter.currentSourceLocation(null)
     self.event.trigger('debuggerStatus', [false])
   })
 
@@ -78,19 +76,18 @@ function Debugger (sourceHighlighter) {
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   const self = this
   // register selected code item, highlight the corresponding source location
-  if (self.compiler.lastCompilationResult) {
-    self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
-      if (error) return console.log(error)
-      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
-        if (!error && self.compiler.lastCompilationResult && self.compiler.lastCompilationResult.data) {
-          var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources)
-          self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
-        } else {
-          self.sourceHighlighter.currentSourceLocation(null)
-        }
-      })
+  if (!self.compiler.lastCompilationResult) return
+  self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+    if (error) return console.log(error)
+    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+      if (!error && self.compiler.lastCompilationResult && self.compiler.lastCompilationResult.data) {
+        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources)
+        self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
+      } else {
+        self.event.trigger('newSourceLocation', [null])
+      }
     })
-  }
+  })
 }
 
 module.exports = Debugger
