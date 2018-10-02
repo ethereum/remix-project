@@ -1,4 +1,4 @@
-var OldEthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
+var OldEthdebuggerUI = require('./EthdebuggerUI')
 var Debugger = require('../debugger/debugger')
 var SourceHighlighter = require('../editor/sourceHighlighter')
 var TxBrowser = require('./debuggerUI/TxBrowser')
