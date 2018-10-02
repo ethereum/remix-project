@@ -37,8 +37,6 @@ class DebuggerUI {
     this.registry = globalRegistry
     this.event = new EventManager()
 
-    this.setupExecutionContext()
-
     this.transactionDebugger = new Debugger({
       executionContext: executionContext,
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
@@ -64,7 +62,7 @@ class DebuggerUI {
       self.debugger.codeManager.resolveStep(index, self.tx)
     })
 
-    executionContext.event.register('contextChanged', this, function () {
+    this.executionContext.event.register('contextChanged', this, function () {
       self.updateWeb3Reference()
     })
 
@@ -72,18 +70,6 @@ class DebuggerUI {
 
     this.setEditor()
     this.listenToEvents()
-  }
-
-  setupExecutionContext () {
-    this.executionContext.event.register('contextChanged', this, function (context) {
-      // TODO: was already broken
-      //self.switchProvider(context)
-    })
-
-    this.debugger.addProvider('vm', this.executionContext.vm())
-    this.debugger.addProvider('injected', this.executionContext.internalWeb3())
-    this.debugger.addProvider('web3', this.executionContext.internalWeb3())
-    this.debugger.switchProvider(this.executionContext.getProvider())
   }
 
   setEditor () {
