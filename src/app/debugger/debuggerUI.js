@@ -8,12 +8,12 @@ var StepManager = require('./stepManager')
 var SourceHighlighter = require('../editor/sourceHighlighter')
 
 var remixLib = require('remix-lib')
-var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 
 var VmDebuggerLogic = require('./VmDebugger')
 
+var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
 
 var yo = require('yo-yo')
@@ -34,12 +34,21 @@ class DebuggerUI {
   constructor (container) {
     const self = this
 
-    this.sourceHighlighter = new SourceHighlighter()
-    this.transactionDebugger = new Debugger(this.sourceHighlighter)
+    this.registry = globalRegistry
+    this.event = new EventManager()
+
+    this.setupExecutionContext()
+
+    this.transactionDebugger = new Debugger({
+      executionContext: executionContext,
+      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
+      compiler: this.registry.get('compiler').api
+    })
 
     this.debugger = this.transactionDebugger.debugger
     this.isActive = false
-    this.event = new EventManager()
+
+    this.sourceHighlighter = new SourceHighlighter()
 
     this.startTxBrowser()
     // this.startStepManager()
@@ -61,9 +70,20 @@ class DebuggerUI {
 
     container.appendChild(this.render())
 
-    this.registry = globalRegistry
     this.setEditor()
     this.listenToEvents()
+  }
+
+  setupExecutionContext () {
+    this.executionContext.event.register('contextChanged', this, function (context) {
+      // TODO: was already broken
+      //self.switchProvider(context)
+    })
+
+    this.debugger.addProvider('vm', this.executionContext.vm())
+    this.debugger.addProvider('injected', this.executionContext.internalWeb3())
+    this.debugger.addProvider('web3', this.executionContext.internalWeb3())
+    this.debugger.switchProvider(this.executionContext.getProvider())
   }
 
   setEditor () {
