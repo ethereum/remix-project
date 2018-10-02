@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./bin/remixd",
     "npip": "npip",
-    "install": "npip install"
+    "install-python-deps": "npip install",
+    "prepublish": "npm run install-python-deps"
   },
   "repository": {
     "type": "git",
