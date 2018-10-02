@@ -26,6 +26,8 @@ plugin api
  - getProviderEndpoint `@return {String} url`
  - updateTitle `@param {String} title`
  - detectNetWork `@return {Object} {name, id}`
+ - addProvider `@param {String} name, @param {String} url`
+ - removeProvider `@return {String} name`
  
 ### config
 

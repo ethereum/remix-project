@@ -26,6 +26,14 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         executionContext.detectNetwork((error, network) => {
           cb(error, network)
         })
+      },
+      addProvider: (mod, name, url, cb) => {
+        executionContext.addProvider({ name, url })
+        cb()
+      },
+      removeProvider: (mod, name, cb) => {
+        executionContext.removeProvider(name)
+        cb()
       }
     },
     config: {
