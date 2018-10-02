@@ -2,7 +2,7 @@ var spawn = require('child_process').spawn
 var stdout = require('stdout')
 
 module.exports = function () {
-  var vyperServer = run('./python_modules/bin/vyper-serve', [])
+  var vyperServer = run('./node_modules/.bin/nopenv vyper-serve', [])
   function kill () {
     if (vyperServer) {
       console.log('stopping vyper compiler')
