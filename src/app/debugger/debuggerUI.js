@@ -34,10 +34,6 @@ class DebuggerUI {
     this.isActive = false
     this.event = new EventManager()
 
-    // this.debugger_ui = new OldEthdebuggerUI({
-    //   debugger: this.transactionDebugger.debugger
-    // })
-
     this.startTxBrowser()
     // this.startStepManager()
     this.stepManager = null
@@ -75,10 +71,6 @@ class DebuggerUI {
       self.transactionDebugger.registerAndHighlightCodeItem(index)
     })
   }
-
-  // startStepManager () {
-  //   this.stepManager = null
-  // }
 
   startTxBrowser () {
     const self = this
@@ -167,8 +159,6 @@ class DebuggerUI {
       } else if (tx instanceof String) {
         self.txBrowser.load(tx)
       }
-
-      // self.debugger_ui.debug(tx)
     })
   }
 
