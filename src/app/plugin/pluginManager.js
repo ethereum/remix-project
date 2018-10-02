@@ -172,7 +172,12 @@ module.exports = class PluginManager {
       data.value.push((error, result) => {
         response(data.key, data.type, data.id, error, result)
       })
-      pluginAPI[data.key][data.type].apply({}, data.value)
+      if (pluginAPI[data.key] && pluginAPI[data.key][data.type]) {
+        pluginAPI[data.key][data.type].apply({}, data.value)
+      } else {
+        response(data.key, data.type, data.id, `Endpoint ${data.key}/${data.type} not present`, null)
+      }
+      
     }, false)
   }
   unregister (desc) {
