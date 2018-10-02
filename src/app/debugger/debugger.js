@@ -31,7 +31,6 @@ function Debugger (sourceHighlighter) {
         return null
       }
     })
-  this.sourceMappingDecoder = new remixLib.SourceMappingDecoder()
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources, this._deps.compiler.lastCompilationResult.data.sources)
