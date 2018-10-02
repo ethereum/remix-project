@@ -2,10 +2,8 @@
 var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var executionContext = require('../../execution-context')
-var globalRegistry = require('../../global/registry')
 
-function Debugger () {
+function Debugger (options) {
   var self = this
   this.event = new EventManager()
 
@@ -22,7 +20,7 @@ function Debugger () {
   }
   this.debugger = new Ethdebugger(
     {
-      executionContext: executionContext,
+      executionContext: this.executionContext,
       compilationResult: () => {
         if (this._deps.compilersArtefacts['__last']) return this._deps.compilersArtefacts['__last'].getData()
         return null
@@ -37,8 +35,9 @@ function Debugger () {
 
   this.debugger.setBreakpointManager(this.breakPointManager)
 
-  executionContext.event.register('contextChanged', this, function (context) {
-    self.switchProvider(context)
+  this.executionContext.event.register('contextChanged', this, function (context) {
+    // TODO: was already broken
+    //self.switchProvider(context)
   })
 
   this.debugger.event.register('newTraceLoaded', this, function () {
@@ -49,10 +48,10 @@ function Debugger () {
     self.event.trigger('debuggerStatus', [false])
   })
 
-  this.debugger.addProvider('vm', executionContext.vm())
-  this.debugger.addProvider('injected', executionContext.internalWeb3())
-  this.debugger.addProvider('web3', executionContext.internalWeb3())
-  this.debugger.switchProvider(executionContext.getProvider())
+  this.debugger.addProvider('vm', this.executionContext.vm())
+  this.debugger.addProvider('injected', this.executionContext.internalWeb3())
+  this.debugger.addProvider('web3', this.executionContext.internalWeb3())
+  this.debugger.switchProvider(this.executionContext.getProvider())
 }
 
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
