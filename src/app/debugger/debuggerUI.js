@@ -12,6 +12,8 @@ var EventManager = remixLib.EventManager
 var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
 
+var globalRegistry = require('../../global/registry')
+
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
