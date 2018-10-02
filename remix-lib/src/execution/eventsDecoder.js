@@ -42,7 +42,7 @@ class EventsDecoder {
     var abi = new ethers.Interface(contract.abi)
     for (var e in abi.events) {
       var event = abi.events[e]
-      eventABI[ethJSUtil.sha3(new Buffer(event.signature)).toString('hex')] = { event: event.name, inputs: event.inputs, object: event }
+      eventABI[ethJSUtil.sha3(Buffer.from(event.signature)).toString('hex')] = { event: event.name, inputs: event.inputs, object: event }
     }
     return eventABI
   }
