@@ -150,7 +150,7 @@ class DebuggerUI {
 
   debug (txHash) {
     const self = this
-    this.transactionDebugger.debug(txHash, (error, tx) => {
+    this.transactionDebugger.debugger.web3.eth.getTransaction(txHash, (error, tx) => {
       if (error) {
         return console.error("coudn't get txHash: " + error)
       }

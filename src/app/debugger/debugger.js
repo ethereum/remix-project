@@ -96,13 +96,4 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   }
 }
 
-/**
- * Start debugging using Remix
- *
- * @param {String} txHash    - hash of the transaction
- */
-Debugger.prototype.debug = function (txHash, cb) {
-  this.debugger.web3.eth.getTransaction(txHash, cb)
-}
-
 module.exports = Debugger
