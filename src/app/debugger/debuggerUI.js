@@ -14,6 +14,8 @@ var traceHelper = remixLib.helpers.trace
 
 var VmDebuggerLogic = require('./VmDebugger')
 
+var globalRegistry = require('../../global/registry')
+
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
@@ -59,7 +61,27 @@ class DebuggerUI {
 
     container.appendChild(this.render())
 
+    this.registry = globalRegistry
+    this.setEditor()
     this.listenToEvents()
+  }
+
+  setEditor () {
+    const self = this
+    this.editor = this.registry.get('editor').api
+
+    self.editor.event.register('breakpointCleared', (fileName, row) => {
+      self.transactionDebugger.breakPointManager.remove({fileName: fileName, row: row})
+    })
+
+    self.editor.event.register('breakpointAdded', (fileName, row) => {
+      self.transactionDebugger.breakPointManager.add({fileName: fileName, row: row})
+    })
+
+    // unload if a file has changed (but not if tabs were switched)
+    self.editor.event.register('contentChanged', function () {
+      self.transactionDebugger.debugger.unLoad()
+    })
   }
 
   listenToEvents () {
@@ -77,7 +99,7 @@ class DebuggerUI {
       self.transactionDebugger.registerAndHighlightCodeItem(index)
     })
 
-    this.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
+    this.transactionDebugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
       self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
     })
   }
