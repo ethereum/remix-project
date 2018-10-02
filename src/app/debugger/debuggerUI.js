@@ -31,7 +31,10 @@ class DebuggerUI {
 
   constructor (container) {
     const self = this
-    this.transactionDebugger = new Debugger(new SourceHighlighter())
+
+    this.sourceHighlighter = new SourceHighlighter()
+    this.transactionDebugger = new Debugger(this.sourceHighlighter)
+
     this.debugger = this.transactionDebugger.debugger
     this.isActive = false
     this.event = new EventManager()
@@ -62,6 +65,7 @@ class DebuggerUI {
   listenToEvents () {
     const self = this
     this.transactionDebugger.event.register('debuggerStatus', function (isActive) {
+      self.sourceHighlighter.currentSourceLocation(null)
       self.isActive = isActive
     })
 
@@ -71,6 +75,10 @@ class DebuggerUI {
 
     this.event.register('indexChanged', function (index) {
       self.transactionDebugger.registerAndHighlightCodeItem(index)
+    })
+
+    this.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
+      self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
     })
   }
 
