@@ -7,7 +7,7 @@ jobs:
   remix-ide:
     docker:
       # specify the version you desire here
-      - image: circleci/python:3.7-rc-node
+      - image: circleci/node:9.11.2
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -38,7 +38,7 @@ jobs:
   remix-debugger:
     docker:
       # specify the version you desire here
-      - image: circleci/python:3.7-rc-node
+      - image: circleci/node:9.11.2
     
     working_directory: ~/repo
 
