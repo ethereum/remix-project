@@ -1,4 +1,4 @@
-var OldEthdebuggerUI = require('./EthdebuggerUI')
+// var OldEthdebuggerUI = require('./EthdebuggerUI')
 var Debugger = require('../debugger/debugger')
 var SourceHighlighter = require('../editor/sourceHighlighter')
 var TxBrowser = require('./debuggerUI/TxBrowser')
@@ -7,25 +7,56 @@ var StepManager = require('./stepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 var remixLib = require('remix-lib')
 var executionContext = remixLib.execution.executionContext
+var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
 
 var VmDebuggerLogic = require('./VmDebugger')
 
+var yo = require('yo-yo')
+var csjs = require('csjs-inject')
+
+var css = csjs`
+  .statusMessage {
+    margin-left: 15px;
+  }
+  .innerShift {
+    padding: 2px;
+    margin-left: 10px;
+  }
+`
+
 class DebuggerUI {
 
   constructor (container) {
+    const self = this
     this.transactionDebugger = new Debugger(new SourceHighlighter())
+    this.debugger = this.transactionDebugger.debugger
     this.isActive = false
+    this.event = new EventManager()
 
-    this.debugger_ui = new OldEthdebuggerUI({
-      debugger: this.transactionDebugger.debugger
-    })
+    // this.debugger_ui = new OldEthdebuggerUI({
+    //   debugger: this.transactionDebugger.debugger
+    // })
 
     this.startTxBrowser()
     // this.startStepManager()
     this.stepManager = null
 
-    container.appendChild(this.debugger_ui.render())
+    this.currentStepIndex = -1
+    this.tx
+    this.statusMessage = ''
+
+    this.view
+
+    this.event.register('indexChanged', this, function (index) {
+      self.debugger.codeManager.resolveStep(index, self.tx)
+    })
+
+    executionContext.event.register('contextChanged', this, function () {
+      self.updateWeb3Reference()
+    })
+
+    container.appendChild(this.render())
 
     this.listenToEvents()
   }
@@ -40,7 +71,7 @@ class DebuggerUI {
       self.stepManager.stepManager.jumpTo(step)
     })
 
-    this.debugger_ui.event.register('indexChanged', function (index) {
+    this.event.register('indexChanged', function (index) {
       self.transactionDebugger.registerAndHighlightCodeItem(index)
     })
   }
@@ -53,11 +84,11 @@ class DebuggerUI {
     const self = this
     let web3 = executionContext.web3()
 
-    let txBrowser = new TxBrowser(this.debugger_ui, {web3: web3})
-    this.debugger_ui.txBrowser = txBrowser
+    let txBrowser = new TxBrowser(this, {web3: web3})
+    this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
-      self.debugger_ui.unLoad()
+      self.unLoad()
 
       if (tx) {
         if (!tx.to) {
@@ -85,14 +116,14 @@ class DebuggerUI {
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-      self.debugger_ui.unLoad()
+      self.unLoad()
     })
 
-    this.debugger_ui.event.register('providerChanged', this, function (provider) {
+    this.event.register('providerChanged', this, function (provider) {
       txBrowser.setDefaultValues()
     })
 
-    this.txBrowser = this.debugger_ui.txBrowser
+    this.txBrowser = this.txBrowser
   }
 
   view () {
@@ -105,20 +136,20 @@ class DebuggerUI {
 
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
-    let shouldOpenDebugger = this.debugger_ui.startDebugging(blockNumber, txNumber, tx)
+    let shouldOpenDebugger = this.UIstartDebugging(blockNumber, txNumber, tx)
     if (!shouldOpenDebugger) return
 
-    this.transactionDebugger.step_manager = new StepManager(this.debugger_ui, this.transactionDebugger.debugger.traceManager)
+    this.transactionDebugger.step_manager = new StepManager(this, this.transactionDebugger.debugger.traceManager)
     this.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
     this.stepManager.event.register('stepChanged', this, function (stepIndex) {
-      self.debugger_ui.stepChanged(stepIndex)
+      self.stepChanged(stepIndex)
     })
 
-    this.debugger_ui.stepManager = this.stepManager
+    this.stepManager = this.stepManager
 
-    this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger_ui, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
-    this.debugger_ui.vmDebugger = new VmDebugger(this.vmDebuggerLogic)
-    this.debugger_ui.andAddVmDebugger()
+    this.vmDebuggerLogic = new VmDebuggerLogic(this, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
+    this.vmDebugger = new VmDebugger(this.vmDebuggerLogic)
+    this.andAddVmDebugger()
 
     this.transactionDebugger.debugger.debug(tx)
   }
@@ -140,6 +171,74 @@ class DebuggerUI {
       // self.debugger_ui.debug(tx)
     })
   }
+
+  updateWeb3Reference (web3) {
+    if (!this.txBrowser) return
+    this.txBrowser.web3 = web3 || executionContext.web3()
+  }
+
+  render () {
+    this.debuggerPanelsView = yo`<div class="${css.innerShift}"></div>`
+    this.debuggerHeadPanelsView = yo`<div class="${css.innerShift}"></div>`
+    this.stepManagerView = yo`<div class="${css.innerShift}"></div>`
+
+    var view = yo`<div>
+        <div class="${css.innerShift}">
+          ${this.txBrowser.render()}
+          ${this.debuggerHeadPanelsView}
+          ${this.stepManagerView}
+        </div>
+        <div class="${css.statusMessage}" >${this.statusMessage}</div>
+        ${this.debuggerPanelsView}
+     </div>`
+    if (!this.view) {
+      this.view = view
+    }
+    return view
+  }
+
+  unLoad () {
+    this.debugger.unLoad()
+    yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
+    yo.update(this.debuggerPanelsView, yo`<div></div>`)
+    yo.update(this.stepManagerView, yo`<div></div>`)
+    if (this.vmDebugger) this.vmDebugger.remove()
+    if (this.stepManager) this.stepManager.remove()
+    this.vmDebugger = null
+    this.stepManager = null
+    this.event.trigger('traceUnloaded')
+  }
+
+  stepChanged (stepIndex) {
+    this.currentStepIndex = stepIndex
+    this.event.trigger('indexChanged', [stepIndex])
+  }
+
+  UIstartDebugging (blockNumber, txIndex, tx) {
+    const self = this
+    if (this.debugger.traceManager.isLoading) {
+      return false
+    }
+
+    this.tx = tx
+
+    this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
+      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
+        if (!error) {
+          self.event.trigger('sourceLocationChanged', [sourceLocation])
+        }
+      })
+    })
+
+    return true
+  }
+
+  andAddVmDebugger () {
+    yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
+    yo.update(this.debuggerPanelsView, this.vmDebugger.render())
+    yo.update(this.stepManagerView, this.stepManager.render())
+  }
+
 }
 
 module.exports = DebuggerUI
