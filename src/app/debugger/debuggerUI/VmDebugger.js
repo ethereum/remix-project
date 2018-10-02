@@ -80,26 +80,14 @@ function VmDebugger (vmDebuggerLogic) {
   })
 
   this.solidityState = new SolidityState()
-  this.vmDebuggerLogic.event.register('solidityState', this, function (state) {
-    self.solidityState.update(state)
-  })
-  this.vmDebuggerLogic.event.register('solidityStateMessage', this, function (message) {
-    self.solidityState.setMessage(message)
-  })
-  this.vmDebuggerLogic.event.register('solidityStateUpdating', this, function () {
-    self.solidityState.setUpdating()
-  })
+  this.vmDebuggerLogic.event.register('solidityState', this.solidityState.update.bind(this.solidityState))
+  this.vmDebuggerLogic.event.register('solidityStateMessage', this.solidityState.setMessage.bind(this.solidityState))
+  this.vmDebuggerLogic.event.register('solidityStateUpdating', this.solidityState.setUpdating.bind(this.solidityState))
 
   this.solidityLocals = new SolidityLocals()
-  this.vmDebuggerLogic.event.register('solidityLocals', this, function (state) {
-    self.solidityLocals.update(state)
-  })
-  this.vmDebuggerLogic.event.register('solidityLocalsMessage', this, function (message) {
-    self.solidityLocals.setMessage(message)
-  })
-  this.vmDebuggerLogic.event.register('solidityLocalsUpdating', this, function () {
-    self.solidityLocals.setUpdating()
-  })
+  this.vmDebuggerLogic.event.register('solidityLocals', this.solidityLocals.update.bind(this.solidityLocals))
+  this.vmDebuggerLogic.event.register('solidityLocalsMessage', this.solidityLocals.setMessage.bind(this.solidityLocals))
+  this.vmDebuggerLogic.event.register('solidityLocalsUpdating', this.solidityLocals.setUpdating.bind(this.solidityLocals))
 
   this.returnValuesPanel = new DropdownPanel('Return Value', {json: true})
   this.returnValuesPanel.data = {}
@@ -112,9 +100,7 @@ function VmDebugger (vmDebuggerLogic) {
     self.fullStoragesChangesPanel.update({})
   })
 
-  this.vmDebuggerLogic.event.register('traceStorageUpdate', function (data) {
-    self.fullStoragesChangesPanel.update(data)
-  })
+  this.vmDebuggerLogic.event.register('traceStorageUpdate', this.fullStoragesChangesPanel.update.bind(this.fullStoragesChangesPanel))
 
   this.vmDebuggerLogic.event.register('newTrace', () => {
     if (!self.view) return
