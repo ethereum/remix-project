@@ -1,10 +1,12 @@
-// var OldEthdebuggerUI = require('./EthdebuggerUI')
-var Debugger = require('../debugger/debugger')
-var SourceHighlighter = require('../editor/sourceHighlighter')
 var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
-var StepManager = require('./stepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
+
+var Debugger = require('../debugger/debugger')
+var StepManager = require('./stepManager')
+
+var SourceHighlighter = require('../editor/sourceHighlighter')
+
 var remixLib = require('remix-lib')
 var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
