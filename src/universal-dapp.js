@@ -83,7 +83,7 @@ UniversalDApp.prototype.resetAPI = function (transactionContextAPI) {
 UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
   this._addAccount(privateKey, balance)
   executionContext.vm().stateManager.cache.flush(function () {})
-  privateKey = new Buffer(privateKey, 'hex')
+  privateKey = Buffer.from(privateKey, 'hex')
   cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
 }
 
@@ -118,7 +118,7 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
   }
 
   if (self.accounts) {
-    privateKey = new Buffer(privateKey, 'hex')
+    privateKey = Buffer.from(privateKey, 'hex')
     var address = ethJSUtil.privateToAddress(privateKey)
 
     // FIXME: we don't care about the callback, but we should still make this proper
@@ -165,7 +165,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       return cb('No accounts?')
     }
 
-    executionContext.vm().stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
+    executionContext.vm().stateManager.getAccountBalance(Buffer.from(address, 'hex'), function (err, res) {
       if (err) {
         cb('Account not found')
       } else {
