@@ -163,6 +163,8 @@ class DebuggerUI {
       return
     }
 
+    // TODO: move this to a param to .debug()
+    // still here because tx is being reffered in children
     this.tx = tx
 
     this.transactionDebugger.debug(this)
