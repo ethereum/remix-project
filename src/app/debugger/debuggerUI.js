@@ -49,7 +49,6 @@ class DebuggerUI {
     // this.startStepManager()
     this.stepManager = null
 
-    this.currentStepIndex = -1
     this.tx
     this.statusMessage = ''
 
@@ -167,7 +166,7 @@ class DebuggerUI {
     this.transactionDebugger.debug(this, tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
       self.stepManager.event.register('stepChanged', this, function (stepIndex) {
-        self.currentStepIndex = stepIndex
+        self.stepManager.currentStepIndex = stepIndex
         self.event.trigger('indexChanged', [stepIndex])
       })
 
