@@ -2,33 +2,29 @@
 var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var traceHelper = remixLib.helpers.trace
-
-var StepManager = require('./stepManager')
-var VmDebuggerLogic = require('./VmDebugger')
 
 function Debugger (options) {
   var self = this
   this.event = new EventManager()
 
   this.executionContext = options.executionContext
-  // dependencies
   this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
-  this.compilersArtefacts = options.compilersArtefacts
+  this.compiler = options.compiler
 
-  this.debugger = new Ethdebugger({
-    executionContext: options.executionContext,
-    compilationResult: () => {
-      if (this.compilersArtefacts['__last']) return this.compilersArtefacts['__last'].getData()
-      return null
-    }
-  })
+  this.debugger = new Ethdebugger(
+    {
+      executionContext: this.executionContext,
+      compilationResult: () => {
+        var compilationResult = this.compiler.lastCompilationResult
+        if (compilationResult) {
+          return compilationResult.data
+        }
+        return null
+      }
+    })
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
-    if (!this.compilersArtefacts['__last']) return null
-    let compilationData = this.compilersArtefacts['__last'].getData()
-    if (!compilationData) return null
-    return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationData.sources, compilationData.sources)
+    return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.compiler.lastCompilationResult.source.sources, this.compiler.lastCompilationResult.data.sources)
   }, (step) => {
     self.event.trigger('breakpointStep', [step])
   })
@@ -36,7 +32,8 @@ function Debugger (options) {
   this.debugger.setBreakpointManager(this.breakPointManager)
 
   this.executionContext.event.register('contextChanged', this, function (context) {
-    self.debugger.switchProvider(context)
+    // TODO: was already broken
+    //self.switchProvider(context)
   })
 
   this.debugger.event.register('newTraceLoaded', this, function () {
@@ -45,10 +42,6 @@ function Debugger (options) {
 
   this.debugger.event.register('traceUnloaded', this, function () {
     self.event.trigger('debuggerStatus', [false])
-  })
-
-  this.event.register('breakpointStep', function (step) {
-    self.step_manager.jumpTo(step)
   })
 
   this.debugger.addProvider('vm', this.executionContext.vm())
@@ -60,85 +53,18 @@ function Debugger (options) {
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   const self = this
   // register selected code item, highlight the corresponding source location
-  if (!self.compilersArtefacts['__last']) {
-    self.event.trigger('newSourceLocation', [null])
-    return
-  }
-  var compilerData = self.compilersArtefacts['__last'].getData()
+  if (!self.compiler.lastCompilationResult) return
   self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
     if (error) return console.log(error)
-    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilerData.contracts, function (error, rawLocation) {
-      if (!error) {
-        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilerData.sources, compilerData.sources)
+    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+      if (!error && self.compiler.lastCompilationResult && self.compiler.lastCompilationResult.data) {
+        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources)
         self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
       } else {
         self.event.trigger('newSourceLocation', [null])
       }
     })
   })
-}
-
-Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
-  const self = this
-  let web3 = this.executionContext.web3()
-
-  if (this.debugger.traceManager.isLoading) {
-    return
-  }
-
-  self.debugger.solidityProxy.reset({})
-
-  if (tx) {
-    if (!tx.to) {
-      tx.to = traceHelper.contractCreationToken('0')
-    }
-    return self.debugTx(tx, loadingCb)
-  }
-
-  try {
-    if (txNumber.indexOf('0x') !== -1) {
-      return web3.eth.getTransaction(txNumber, function (_error, result) {
-        let tx = result
-        self.debugTx(tx, loadingCb)
-      })
-    }
-    web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
-      let tx = result
-      self.debugTx(tx, loadingCb)
-    })
-  } catch (e) {
-    console.error(e.message)
-  }
-}
-
-Debugger.prototype.debugTx = function (tx, loadingCb) {
-  const self = this
-  this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
-
-  this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
-      if (!error) {
-        self.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
-      }
-    })
-  })
-
-  this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
-
-  this.step_manager.event.register('stepChanged', this, function (stepIndex) {
-    self.debugger.codeManager.resolveStep(stepIndex, tx)
-    self.step_manager.event.trigger('indexChanged', [stepIndex])
-    self.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])
-    self.registerAndHighlightCodeItem(stepIndex)
-  })
-
-  loadingCb()
-  this.debugger.debug(tx)
-}
-
-Debugger.prototype.unload = function () {
-  this.debugger.unLoad()
-  this.event.trigger('debuggerUnloaded')
 }
 
 module.exports = Debugger
