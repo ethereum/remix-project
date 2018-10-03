@@ -6,13 +6,14 @@ var StorageViewer = remixDebug.storage.StorageViewer
 
 class DebuggerSolidityLocals {
 
-  constructor (_parent, _stepManager, _traceManager, _internalTreeCall) {
+  constructor (_parent, tx, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
     this.parent = _parent
     this.stepManager = _stepManager
     this.internalTreeCall = _internalTreeCall
     this.storageResolver = null
     this.traceManager = _traceManager
+    this.tx = tx
   }
 
   init () {
