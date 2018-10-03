@@ -79,7 +79,7 @@ class DebuggerUI {
 
     // unload if a file has changed (but not if tabs were switched)
     self.editor.event.register('contentChanged', function () {
-      self.transactionDebugger.debugger.unLoad()
+      self.debugger.unLoad()
     })
   }
 
@@ -109,11 +109,13 @@ class DebuggerUI {
     this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
+      self.debugger.unLoad()
       self.unLoad()
       self.getTxAndDebug(blockNumber, txNumber, tx)
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
+      self.debugger.unLoad()
       self.unLoad()
     })
   }
@@ -169,7 +171,8 @@ class DebuggerUI {
     this.transactionDebugger.debug(this, tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
       self.stepManager.event.register('stepChanged', this, function (stepIndex) {
-        self.stepChanged(stepIndex)
+        self.currentStepIndex = stepIndex
+        self.event.trigger('indexChanged', [stepIndex])
       })
 
       self.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)
@@ -217,7 +220,6 @@ class DebuggerUI {
   }
 
   unLoad () {
-    this.debugger.unLoad()
     yo.update(this.debuggerHeadPanelsView, yo`<div></div>`)
     yo.update(this.debuggerPanelsView, yo`<div></div>`)
     yo.update(this.stepManagerView, yo`<div></div>`)
@@ -226,11 +228,6 @@ class DebuggerUI {
     this.vmDebugger = null
     this.stepManager = null
     this.event.trigger('traceUnloaded')
-  }
-
-  stepChanged (stepIndex) {
-    this.currentStepIndex = stepIndex
-    this.event.trigger('indexChanged', [stepIndex])
   }
 
   andAddVmDebugger () {
