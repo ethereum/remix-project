@@ -259,7 +259,7 @@ test('Integration test gasCosts.js', function (t) {
     'forgottenReturn.sol': 3,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 2,
-    'deleteFromDynamicArray.sol': 2,
+    'deleteFromDynamicArray.sol': 1,
     'blockLevelCompare.sol': 1,
     'intDivisionTruncate.sol': 1,
     'ERC20.sol': 2,
