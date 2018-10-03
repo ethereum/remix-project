@@ -6,7 +6,7 @@ var StorageViewer = remixDebug.storage.StorageViewer
 
 class DebuggerSolidityState {
 
-  constructor (_parent, _stepManager, _traceManager, _codeManager, _solidityProxy) {
+  constructor (_parent, tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
     this.event = new EventManager()
     this.storageResolver = null
     this.parent = _parent
@@ -15,6 +15,7 @@ class DebuggerSolidityState {
     this.codeManager = _codeManager
     this.solidityProxy = _solidityProxy
     this.stateVariablesByAddresses = {}
+    this.tx = tx
     _parent.event.register('traceUnloaded', () => { this.stateVariablesByAddresses = {} })
     _parent.event.register('newTraceLoaded', () => { this.stateVariablesByAddresses = {} })
   }
