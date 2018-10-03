@@ -4,6 +4,7 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
 var StepManager = require('./stepManager')
+var VmDebuggerLogic = require('./VmDebugger')
 
 function Debugger (options) {
   var self = this
@@ -89,6 +90,8 @@ Debugger.prototype.debug = function (parent) {
       }
     })
   })
+
+  this.vmDebuggerLogic = new VmDebuggerLogic(parent, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
 }
 
 module.exports = Debugger

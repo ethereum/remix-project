@@ -3,7 +3,6 @@ var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 
 var Debugger = require('./debugger/debugger')
-var VmDebuggerLogic = require('./VmDebugger')
 
 var SourceHighlighter = require('../editor/sourceHighlighter')
 
@@ -173,8 +172,7 @@ class DebuggerUI {
       self.stepChanged(stepIndex)
     })
 
-    this.vmDebuggerLogic = new VmDebuggerLogic(this, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
-    this.vmDebugger = new VmDebugger(this.vmDebuggerLogic)
+    this.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)
     this.andAddVmDebugger()
 
     this.transactionDebugger.debugger.debug(tx)
