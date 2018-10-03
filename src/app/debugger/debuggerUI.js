@@ -2,7 +2,7 @@ var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 
-var Debugger = require('../debugger/debugger')
+var Debugger = require('./debugger/debugger')
 var StepManager = require('./stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
 
