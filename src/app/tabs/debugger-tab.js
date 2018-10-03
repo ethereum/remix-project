@@ -39,7 +39,7 @@ class DebuggerTab {
       </div>`
 
     this.debuggerUI = new DebuggerUI(self._view.el.querySelector('#debugger'))
-    self._view.transactionDebugger = this.debuggerUI.view()
+    // self._view.transactionDebugger = this.debuggerUI.view()
     return self._view.el
   }
 
