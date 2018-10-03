@@ -107,44 +107,17 @@ class DebuggerUI {
 
   startTxBrowser () {
     const self = this
-    let web3 = executionContext.web3()
-
     let txBrowser = new TxBrowser()
     this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
       self.unLoad()
-
-      if (tx) {
-        if (!tx.to) {
-          tx.to = traceHelper.contractCreationToken('0')
-        }
-        return self.startDebugging(blockNumber, txNumber, tx)
-      }
-
-      try {
-        if (txNumber.indexOf('0x') !== -1) {
-          return web3.eth.getTransaction(txNumber, function (error, result) {
-            let tx = result
-            txBrowser.update(error, result)
-            self.startDebugging(blockNumber, txNumber, tx)
-          })
-        }
-        web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (error, result) {
-          let tx = result
-          txBrowser.update(error, result)
-          self.startDebugging(blockNumber, txNumber, tx)
-        })
-      } catch (e) {
-        self.update(e.message)
-      }
+      self.getTxAndDebug(blockNumber, txNumber, tx)
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
       self.unLoad()
     })
-
-    this.txBrowser = this.txBrowser
   }
 
   view () {
@@ -155,8 +128,38 @@ class DebuggerUI {
     return this.isActive
   }
 
+  getTxAndDebug (blockNumber, txNumber, tx) {
+    const self = this
+    let web3 = executionContext.web3()
+
+    if (tx) {
+      if (!tx.to) {
+        tx.to = traceHelper.contractCreationToken('0')
+      }
+      return self.startDebugging(blockNumber, txNumber, tx)
+    }
+
+    try {
+      if (txNumber.indexOf('0x') !== -1) {
+        return web3.eth.getTransaction(txNumber, function (error, result) {
+          let tx = result
+          self.txBrowser.update(error, result)
+          self.startDebugging(blockNumber, txNumber, tx)
+        })
+      }
+      web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (error, result) {
+        let tx = result
+        self.txBrowser.update(error, result)
+        self.startDebugging(blockNumber, txNumber, tx)
+      })
+    } catch (e) {
+      console.error(e.message)
+    }
+  }
+
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
+
     let shouldOpenDebugger = this.UIstartDebugging(blockNumber, txNumber, tx)
     if (!shouldOpenDebugger) return
 
@@ -177,7 +180,8 @@ class DebuggerUI {
 
   debug (txHash) {
     const self = this
-    this.transactionDebugger.debugger.web3.eth.getTransaction(txHash, (error, tx) => {
+    let web3 = executionContext.web3()
+    web3.eth.getTransaction(txHash, (error, tx) => {
       if (error) {
         return console.error("coudn't get txHash: " + error)
       }
@@ -185,9 +189,12 @@ class DebuggerUI {
 
       if (tx instanceof Object) {
         self.txBrowser.load(tx.hash, tx)
+        self.getTxAndDebug(null, tx.hash, tx)
       } else if (tx instanceof String) {
         self.txBrowser.load(tx)
+        self.getTxAndDebug(null, tx)
       }
+
     })
   }
 
