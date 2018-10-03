@@ -173,14 +173,6 @@ class DebuggerUI {
       self.stepChanged(stepIndex)
     })
 
-    this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
-        if (!error) {
-          self.event.trigger('sourceLocationChanged', [sourceLocation])
-        }
-      })
-    })
-
     this.vmDebuggerLogic = new VmDebuggerLogic(this, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
     this.vmDebugger = new VmDebugger(this.vmDebuggerLogic)
     this.andAddVmDebugger()
