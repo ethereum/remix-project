@@ -3,10 +3,10 @@ var EventManager = remixLib.EventManager
 
 class DebuggerStepManager {
 
-  constructor (_debugger, _traceManager) {
+  constructor (_debugger, traceManager) {
     this.event = new EventManager()
-    this.parent = _debugger
-    this.traceManager = _traceManager
+    this.debugger = _debugger
+    this.traceManager = traceManager
     this.currentStepIndex = 0
     this.traceLength = 0
     this.revertionPoint = null
@@ -17,7 +17,7 @@ class DebuggerStepManager {
   listenToEvents () {
     const self = this
 
-    this.parent.event.register('newTraceLoaded', this, function () {
+    this.debugger.event.register('newTraceLoaded', this, function () {
       self.traceManager.getLength(function (error, newLength) {
         if (error) {
           return console.log(error)
@@ -30,9 +30,9 @@ class DebuggerStepManager {
       })
     })
 
-    this.parent.callTree.event.register('callTreeReady', () => {
-      if (self.parent.callTree.functionCallStack.length) {
-        self.jumpTo(self.parent.callTree.functionCallStack[0])
+    this.debugger.callTree.event.register('callTreeReady', () => {
+      if (self.debugger.callTree.functionCallStack.length) {
+        self.jumpTo(self.debugger.callTree.functionCallStack[0])
       }
     })
 
@@ -133,14 +133,11 @@ class DebuggerStepManager {
   }
 
   jumpNextBreakpoint () {
-    // TODO: this is the same currentStepIndex var but currently coupled all the way up to EthDebuggerUI
-    // the trigger in updateStep is updating it in EthDebuggerUI
-    // the refactor should remove it
-    this.parent.breakpointManager.jumpNextBreakpoint(this.currentStepIndex, true)
+    this.debugger.breakpointManager.jumpNextBreakpoint(this.currentStepIndex, true)
   }
 
   jumpPreviousBreakpoint () {
-    this.parent.breakpointManager.jumpPreviousBreakpoint(this.currentStepIndex, true)
+    this.debugger.breakpointManager.jumpPreviousBreakpoint(this.currentStepIndex, true)
   }
 
 }
