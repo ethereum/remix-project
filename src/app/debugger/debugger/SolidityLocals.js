@@ -6,9 +6,10 @@ var StorageViewer = remixDebug.storage.StorageViewer
 
 class DebuggerSolidityLocals {
 
-  constructor (_parent, _traceManager, _internalTreeCall) {
+  constructor (_parent, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
     this.parent = _parent
+    this.stepManager = _stepManager
     this.internalTreeCall = _internalTreeCall
     this.storageResolver = null
     this.traceManager = _traceManager
@@ -38,7 +39,7 @@ class DebuggerSolidityLocals {
       self.traceManager.getStackAt,
       self.traceManager.getMemoryAt,
       self.traceManager.getCurrentCalledAddressAt],
-      self.parent.currentStepIndex,
+      self.stepManager.currentStepIndex,
       (error, result) => {
         if (error) {
           return console.log(error)
@@ -46,8 +47,8 @@ class DebuggerSolidityLocals {
         var stack = result[0].value
         var memory = result[1].value
         try {
-          var storageViewer = new StorageViewer({ stepIndex: self.parent.currentStepIndex, tx: self.parent.tx, address: result[2].value }, self.storageResolver, self.traceManager)
-          localDecoder.solidityLocals(self.parent.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
+          var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.parent.tx, address: result[2].value }, self.storageResolver, self.traceManager)
+          localDecoder.solidityLocals(self.stepManager.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
             if (!locals.error) {
               self.event.trigger('solidityLocals', [locals])
             }

@@ -6,10 +6,11 @@ var StorageViewer = remixDebug.storage.StorageViewer
 
 class DebuggerSolidityState {
 
-  constructor (_parent, _traceManager, _codeManager, _solidityProxy) {
+  constructor (_parent, _stepManager, _traceManager, _codeManager, _solidityProxy) {
     this.event = new EventManager()
     this.storageResolver = null
     this.parent = _parent
+    this.stepManager = _stepManager
     this.traceManager = _traceManager
     this.codeManager = _codeManager
     this.solidityProxy = _solidityProxy
@@ -26,7 +27,7 @@ class DebuggerSolidityState {
         return self.event.trigger('solidityStateMessage', ['invalid step index'])
       }
 
-      if (self.parent.currentStepIndex !== index) return
+      if (self.stepManager.currentStepIndex !== index) return
       if (!self.solidityProxy.loaded()) {
         return self.event.trigger('solidityStateMessage', ['invalid step index'])
       }
@@ -46,7 +47,7 @@ class DebuggerSolidityState {
 
   decode (index) {
     const self = this
-    self.traceManager.getCurrentCalledAddressAt(self.parent.currentStepIndex, function (error, address) {
+    self.traceManager.getCurrentCalledAddressAt(self.stepManager.currentStepIndex, function (error, address) {
       if (error) {
         return self.event.trigger('solidityState', [{}])
       }
@@ -65,7 +66,7 @@ class DebuggerSolidityState {
 
   extractStateVariables (stateVars, address) {
     const self = this
-    var storageViewer = new StorageViewer({ stepIndex: self.parent.currentStepIndex, tx: self.parent.tx, address: address }, self.storageResolver, self.traceManager)
+    var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.parent.tx, address: address }, self.storageResolver, self.traceManager)
     stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
       self.event.trigger('solidityStateMessage', [''])
       if (result.error) {

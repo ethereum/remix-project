@@ -10,18 +10,19 @@ var DebuggerSolidityLocals = require('./solidityLocals')
 
 class VmDebuggerLogic {
 
-  constructor (_parentUI, _traceManager, _codeManager, _solidityProxy, _callTree) {
+  constructor (_parentUI, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
     this.event = new EventManager()
     this._parentUI = _parentUI
     this._parent = this._parentUI.debugger
+    this.stepManager = _stepManager
     this._traceManager = _traceManager
     this._codeManager = _codeManager
     this._solidityProxy = _solidityProxy
     this._callTree = _callTree
     this.storageResolver = null
 
-    this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _traceManager, _codeManager, _solidityProxy)
-    this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, _traceManager, _callTree)
+    this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _stepManager, _traceManager, _codeManager, _solidityProxy)
+    this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, _stepManager, _traceManager, _callTree)
   }
 
   start () {
@@ -66,7 +67,7 @@ class VmDebuggerLogic {
 
     this._parentUI.event.register('indexChanged', this, function (index) {
       if (index < 0) return
-      if (self._parentUI.currentStepIndex !== index) return
+      if (self.stepManager.currentStepIndex !== index) return
 
       self.event.trigger('indexUpdate', [index])
 
@@ -74,7 +75,7 @@ class VmDebuggerLogic {
         if (error) {
           console.log(error)
           self.event.trigger('traceManagerCallDataUpdate', [{}])
-        } else if (self._parentUI.currentStepIndex === index) {
+        } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerCallDataUpdate', [calldata])
         }
       })
@@ -83,7 +84,7 @@ class VmDebuggerLogic {
         if (error) {
           console.log(error)
           self.event.trigger('traceManagerMemoryUpdate', [{}])
-        } else if (self._parentUI.currentStepIndex === index) {
+        } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
         }
       })
@@ -92,7 +93,7 @@ class VmDebuggerLogic {
         if (error) {
           console.log(error)
           self.event.trigger('traceManagerCallStackUpdate', [{}])
-        } else if (self._parentUI.currentStepIndex === index) {
+        } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerCallStackUpdate', [callstack])
         }
       })
@@ -101,7 +102,7 @@ class VmDebuggerLogic {
         if (error) {
           console.log(error)
           self.event.trigger('traceManagerStackUpdate', [{}])
-        } else if (self._parentUI.currentStepIndex === index) {
+        } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerStackUpdate', [callstack])
         }
       })
@@ -110,13 +111,13 @@ class VmDebuggerLogic {
         if (error) return
         if (!self.storageResolver) return
 
-        var storageViewer = new StorageViewer({ stepIndex: self._parentUI.currentStepIndex, tx: self._parentUI.tx, address: address }, self.storageResolver, self._traceManager)
+        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self._parentUI.tx, address: address }, self.storageResolver, self._traceManager)
 
         storageViewer.storageRange((error, storage) => {
           if (error) {
             console.log(error)
             self.event.trigger('traceManagerStorageUpdate', [{}])
-          } else if (self._parentUI.currentStepIndex === index) {
+          } else if (self.stepManager.currentStepIndex === index) {
             var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
             self.event.trigger('traceManagerStorageUpdate', [storage, header])
           }
@@ -146,7 +147,7 @@ class VmDebuggerLogic {
       self._traceManager.getReturnValue(index, function (error, returnValue) {
         if (error) {
           self.event.trigger('traceReturnValueUpdate', [[error]])
-        } else if (self._parentUI.currentStepIndex === index) {
+        } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceReturnValueUpdate', [[returnValue]])
         }
       })
@@ -175,7 +176,7 @@ class VmDebuggerLogic {
 
     self._parentUI.debugger.event.register('indexChanged', this, function (index) {
       if (index < 0) return
-      if (self._parent.currentStepIndex !== index) return
+      if (self.stepManager.currentStepIndex !== index) return
       if (!self.storageResolver) return
 
       if (index !== self.traceLength - 1) {
@@ -184,7 +185,7 @@ class VmDebuggerLogic {
       var storageJSON = {}
       for (var k in self.addresses) {
         var address = self.addresses[k]
-        var storageViewer = new StorageViewer({ stepIndex: self._parent.currentStepIndex, tx: self._parent.tx, address: address }, self.storageResolver, self._traceManager)
+        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self._parent.tx, address: address }, self.storageResolver, self._traceManager)
         storageViewer.storageRange(function (error, result) {
           if (!error) {
             storageJSON[address] = result
