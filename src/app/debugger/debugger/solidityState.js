@@ -66,7 +66,7 @@ class DebuggerSolidityState {
 
   extractStateVariables (stateVars, address) {
     const self = this
-    var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.parent.tx, address: address }, self.storageResolver, self.traceManager)
+    var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self.traceManager)
     stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
       self.event.trigger('solidityStateMessage', [''])
       if (result.error) {
