@@ -81,6 +81,14 @@ Debugger.prototype.debug = function (parent) {
   parent.event.register('indexChanged', this, (index) => {
     self.step_manager.event.trigger('indexChanged', [index])
   })
+
+  this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
+    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
+      if (!error) {
+        parent.event.trigger('sourceLocationChanged', [sourceLocation])
+      }
+    })
+  })
 }
 
 module.exports = Debugger
