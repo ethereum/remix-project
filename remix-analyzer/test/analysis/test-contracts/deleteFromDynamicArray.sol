@@ -6,7 +6,8 @@ contract arr {
         return array;
     }
 
-    function safeRemoveAtIndex(uint index) returns (uint[]) {
+    // TODO: deleteFromDynamicArray should not generate warnings if array item is shifted and removed
+    /* function safeRemoveAtIndex(uint index) returns (uint[]) {
         if (index >= array.length) return;
 
         for (uint i = index; i < array.length-1; i++) {
@@ -17,5 +18,5 @@ contract arr {
         array.length--;
 
         return array;
-    }
+    } */
 }
