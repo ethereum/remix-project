@@ -4,14 +4,13 @@ var VmDebugger = require('./debuggerUI/VmDebugger')
 
 var Debugger = require('../debugger/debugger')
 var StepManager = require('./stepManager')
+var VmDebuggerLogic = require('./VmDebugger')
 
 var SourceHighlighter = require('../editor/sourceHighlighter')
 
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
-
-var VmDebuggerLogic = require('./VmDebugger')
 
 var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
@@ -143,10 +142,6 @@ class DebuggerUI {
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
       self.unLoad()
-    })
-
-    this.event.register('providerChanged', this, function (provider) {
-      txBrowser.setDefaultValues()
     })
 
     this.txBrowser = this.txBrowser
