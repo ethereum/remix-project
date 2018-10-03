@@ -10,7 +10,7 @@ var DebuggerSolidityLocals = require('./solidityLocals')
 
 class VmDebuggerLogic {
 
-  constructor (_parentUI, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
+  constructor (_parentUI, tx, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
     this.event = new EventManager()
     this._parentUI = _parentUI
     this._parent = this._parentUI.debugger
@@ -20,9 +20,10 @@ class VmDebuggerLogic {
     this._solidityProxy = _solidityProxy
     this._callTree = _callTree
     this.storageResolver = null
+    this.tx = tx
 
-    this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, _stepManager, _traceManager, _codeManager, _solidityProxy)
-    this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, _stepManager, _traceManager, _callTree)
+    this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, tx, _stepManager, _traceManager, _codeManager, _solidityProxy)
+    this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, tx, _stepManager, _traceManager, _callTree)
   }
 
   start () {
@@ -111,7 +112,7 @@ class VmDebuggerLogic {
         if (error) return
         if (!self.storageResolver) return
 
-        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self._parentUI.tx, address: address }, self.storageResolver, self._traceManager)
+        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self._traceManager)
 
         storageViewer.storageRange((error, storage) => {
           if (error) {
@@ -185,7 +186,7 @@ class VmDebuggerLogic {
       var storageJSON = {}
       for (var k in self.addresses) {
         var address = self.addresses[k]
-        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self._parent.tx, address: address }, self.storageResolver, self._traceManager)
+        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self._traceManager)
         storageViewer.storageRange(function (error, result) {
           if (!error) {
             storageJSON[address] = result

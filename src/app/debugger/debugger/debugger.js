@@ -91,7 +91,7 @@ Debugger.prototype.debug = function (parent, tx, loadingCb) {
     })
   })
 
-  this.vmDebuggerLogic = new VmDebuggerLogic(parent, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+  this.vmDebuggerLogic = new VmDebuggerLogic(parent, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
 
   loadingCb()
   this.debugger.debug(tx)

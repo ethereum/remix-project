@@ -47,7 +47,7 @@ class DebuggerSolidityLocals {
         var stack = result[0].value
         var memory = result[1].value
         try {
-          var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.parent.tx, address: result[2].value }, self.storageResolver, self.traceManager)
+          var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: result[2].value }, self.storageResolver, self.traceManager)
           localDecoder.solidityLocals(self.stepManager.currentStepIndex, self.internalTreeCall, stack, memory, storageViewer, sourceLocation).then((locals) => {
             if (!locals.error) {
               self.event.trigger('solidityLocals', [locals])
