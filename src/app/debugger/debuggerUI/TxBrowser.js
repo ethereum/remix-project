@@ -89,7 +89,6 @@ TxBrowser.prototype.updateTxN = function (ev) {
 
 TxBrowser.prototype.load = function (txHash, tx) {
   this.txNumber = txHash
-  this.submit(tx)
 }
 
 TxBrowser.prototype.unload = function (txHash) {
