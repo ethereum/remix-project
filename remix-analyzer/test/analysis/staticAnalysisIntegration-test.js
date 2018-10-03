@@ -29,6 +29,7 @@ var testFiles = [
   'forgottenReturn.sol',
   'selfdestruct.sol',
   'deleteDynamicArray.sol',
+  'deleteFromDynamicArray.sol',
   'blockLevelCompare.sol',
   'intDivisionTruncate.sol',
   'ERC20.sol',
@@ -67,6 +68,7 @@ test('Integration test thisLocal.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -103,6 +105,7 @@ test('Integration test checksEffectsInteraction.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -139,6 +142,7 @@ test('Integration test constantFunctions.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 1,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -175,6 +179,7 @@ test('Integration test inlineAssembly.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -211,6 +216,7 @@ test('Integration test txOrigin.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -247,6 +253,7 @@ test('Integration test gasCosts.js', function (t) {
     'forgottenReturn.sol': 3,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 2,
+    'deleteFromDynamicArray.sol': 2,
     'blockLevelCompare.sol': 1,
     'intDivisionTruncate.sol': 1,
     'ERC20.sol': 2,
@@ -283,6 +290,7 @@ test('Integration test similarVariableNames.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 1,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -319,6 +327,7 @@ test('Integration test inlineAssembly.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -355,6 +364,7 @@ test('Integration test blockTimestamp.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -391,6 +401,7 @@ test('Integration test lowLevelCalls.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -427,6 +438,7 @@ test('Integration test blockBlockhash.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -463,6 +475,7 @@ test('Integration test noReturn.js', function (t) {
     'forgottenReturn.sol': 1,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -499,6 +512,7 @@ test('Integration test selfdestruct.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 3,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'ERC20.sol': 0,
     'intDivisionTruncate.sol': 5,
@@ -535,6 +549,7 @@ test('Integration test guardConditions.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 1,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 1,
     'ERC20.sol': 0,
@@ -571,6 +586,7 @@ test('Integration test deleteDynamicArrays.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 2,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -579,6 +595,43 @@ test('Integration test deleteDynamicArrays.js', function (t) {
 
   runModuleOnFiles(module, t, (file, report) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteDynamicArrays warnings`)
+  })
+})
+
+test('Integration test deleteFromDynamicArray.js', function (t) {
+  t.plan(testFiles.length)
+
+  var module = require('../../src/solidity-analyzer/modules/deleteFromDynamicArray')
+
+  var lengthCheck = {
+    'KingOfTheEtherThrone.sol': 0,
+    'assembly.sol': 0,
+    'ballot.sol': 0,
+    'ballot_reentrant.sol': 0,
+    'ballot_withoutWarnings.sol': 0,
+    'cross_contract.sol': 0,
+    'inheritance.sol': 0,
+    'modifier1.sol': 0,
+    'modifier2.sol': 0,
+    'notReentrant.sol': 0,
+    'structReentrant.sol': 0,
+    'thisLocal.sol': 0,
+    'globals.sol': 0,
+    'library.sol': 0,
+    'transfer.sol': 0,
+    'ctor.sol': 0,
+    'forgottenReturn.sol': 0,
+    'selfdestruct.sol': 0,
+    'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 1,
+    'blockLevelCompare.sol': 0,
+    'intDivisionTruncate.sol': 0,
+    'ERC20.sol': 0,
+    'stringBytesLength.sol': 0
+  }
+
+  runModuleOnFiles(module, t, (file, report) => {
+    t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteFromDynamicArray warnings`)
   })
 })
 
@@ -607,6 +660,7 @@ test('Integration test assignAndCompare.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 8,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
@@ -643,6 +697,7 @@ test('Integration test intDivisionTruncate.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 2,
     'ERC20.sol': 0,
@@ -679,6 +734,7 @@ test('Integration test erc20Decimal.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 1,
@@ -715,6 +771,7 @@ test('Integration test stringBytesLength.js', function (t) {
     'forgottenReturn.sol': 0,
     'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
+    'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
     'intDivisionTruncate.sol': 0,
     'ERC20.sol': 0,
