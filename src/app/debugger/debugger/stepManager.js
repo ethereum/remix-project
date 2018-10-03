@@ -45,34 +45,20 @@ class DebuggerStepManager {
         if (error) {
           console.log(error)
           return self.event.trigger('revertWarning', [''])
-          // if (self.buttonNavigator) {
-          //   self.buttonNavigator.resetWarning('')
-          // }
-          // return
         }
         self.currentCall = callsPath[callsPath.length - 1]
         if (self.currentCall.reverted) {
           let revertedReason = self.currentCall.outofgas ? 'outofgas' : ''
           self.revertionPoint = self.currentCall.return
           return self.event.trigger('revertWarning', [revertedReason])
-          // if (self.buttonNavigator) {
-          //   self.buttonNavigator.resetWarning(revertedReason)
-          // }
-          // return
         }
         for (var k = callsPath.length - 2; k >= 0; k--) {
           var parent = callsPath[k]
           if (!parent.reverted) continue
           self.revertionPoint = parent.return
           self.event.trigger('revertWarning', ['parenthasthrown'])
-          // if (self.buttonNavigator) {
-          //   self.buttonNavigator.resetWarning('parenthasthrown')
-          // }
         }
         self.event.trigger('revertWarning', [''])
-        // if (self.buttonNavigator) {
-        //   self.buttonNavigator.resetWarning('')
-        // }
       })
     })
   }
