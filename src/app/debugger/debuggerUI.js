@@ -160,8 +160,19 @@ class DebuggerUI {
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
 
-    let shouldOpenDebugger = this.UIstartDebugging(blockNumber, txNumber, tx)
-    if (!shouldOpenDebugger) return
+    if (this.debugger.traceManager.isLoading) {
+      return
+    }
+
+    this.tx = tx
+
+    this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
+      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
+        if (!error) {
+          self.event.trigger('sourceLocationChanged', [sourceLocation])
+        }
+      })
+    })
 
     this.transactionDebugger.step_manager = new StepManager(this, this.transactionDebugger.debugger.traceManager)
     this.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
@@ -233,25 +244,6 @@ class DebuggerUI {
   stepChanged (stepIndex) {
     this.currentStepIndex = stepIndex
     this.event.trigger('indexChanged', [stepIndex])
-  }
-
-  UIstartDebugging (blockNumber, txIndex, tx) {
-    const self = this
-    if (this.debugger.traceManager.isLoading) {
-      return false
-    }
-
-    this.tx = tx
-
-    this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
-      self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
-        if (!error) {
-          self.event.trigger('sourceLocationChanged', [sourceLocation])
-        }
-      })
-    })
-
-    return true
   }
 
   andAddVmDebugger () {
