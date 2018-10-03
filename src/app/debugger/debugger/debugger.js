@@ -76,7 +76,11 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
 }
 
 Debugger.prototype.debug = function (parent) {
-  this.step_manager = new StepManager(parent, this.debugger.traceManager)
+  const self = this
+  this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
+  parent.event.register('indexChanged', this, (index) => {
+    self.step_manager.event.trigger('indexChanged', [index])
+  })
 }
 
 module.exports = Debugger

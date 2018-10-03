@@ -3,10 +3,9 @@ var EventManager = remixLib.EventManager
 
 class DebuggerStepManager {
 
-  constructor (_parent, _traceManager) {
+  constructor (_debugger, _traceManager) {
     this.event = new EventManager()
-    this._parent = _parent
-    this.parent = _parent.debugger
+    this.parent = _debugger
     this.traceManager = _traceManager
     this.currentStepIndex = 0
     this.traceLength = 0
@@ -37,9 +36,9 @@ class DebuggerStepManager {
       }
     })
 
-    this._parent.event.register('indexChanged', this, (index) => {
+    this.event.register('indexChanged', this, (index) => {
       if (index < 0) return
-      if (self._parent.currentStepIndex !== index) return
+      if (self.currentStepIndex !== index) return
 
       self.traceManager.buildCallPath(index, (error, callsPath) => {
         if (error) {
@@ -137,11 +136,11 @@ class DebuggerStepManager {
     // TODO: this is the same currentStepIndex var but currently coupled all the way up to EthDebuggerUI
     // the trigger in updateStep is updating it in EthDebuggerUI
     // the refactor should remove it
-    this.parent.breakpointManager.jumpNextBreakpoint(this._parent.currentStepIndex, true)
+    this.parent.breakpointManager.jumpNextBreakpoint(this.currentStepIndex, true)
   }
 
   jumpPreviousBreakpoint () {
-    this.parent.breakpointManager.jumpPreviousBreakpoint(this._parent.currentStepIndex, true)
+    this.parent.breakpointManager.jumpPreviousBreakpoint(this.currentStepIndex, true)
   }
 
 }
