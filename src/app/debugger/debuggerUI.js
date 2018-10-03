@@ -120,10 +120,6 @@ class DebuggerUI {
     })
   }
 
-  view () {
-    return this.transactionDebugger
-  }
-
   isDebuggerActive () {
     return this.isActive
   }
