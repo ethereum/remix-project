@@ -3,7 +3,6 @@ var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 
 var Debugger = require('./debugger/debugger')
-var StepManager = require('./debugger/stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
 
 var SourceHighlighter = require('../editor/sourceHighlighter')
@@ -166,18 +165,18 @@ class DebuggerUI {
 
     this.tx = tx
 
+    this.transactionDebugger.debug(this)
+    this.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
+    this.stepManager.event.register('stepChanged', this, function (stepIndex) {
+      self.stepChanged(stepIndex)
+    })
+
     this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
       self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
         if (!error) {
           self.event.trigger('sourceLocationChanged', [sourceLocation])
         }
       })
-    })
-
-    this.transactionDebugger.step_manager = new StepManager(this, this.transactionDebugger.debugger.traceManager)
-    this.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
-    this.stepManager.event.register('stepChanged', this, function (stepIndex) {
-      self.stepChanged(stepIndex)
     })
 
     this.vmDebuggerLogic = new VmDebuggerLogic(this, this.transactionDebugger.debugger.traceManager, this.transactionDebugger.debugger.codeManager, this.transactionDebugger.debugger.solidityProxy, this.transactionDebugger.debugger.callTree)
@@ -203,7 +202,6 @@ class DebuggerUI {
         self.txBrowser.load(tx)
         self.getTxAndDebug(null, tx)
       }
-
     })
   }
 

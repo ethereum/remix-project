@@ -3,6 +3,8 @@ var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 
+var StepManager = require('./stepManager')
+
 function Debugger (options) {
   var self = this
   this.event = new EventManager()
@@ -71,6 +73,10 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
       }
     })
   })
+}
+
+Debugger.prototype.debug = function (parent) {
+  this.step_manager = new StepManager(parent, this.debugger.traceManager)
 }
 
 module.exports = Debugger
