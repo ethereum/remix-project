@@ -11,17 +11,16 @@ function Debugger (options) {
   this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
   this.compiler = options.compiler
 
-  this.debugger = new Ethdebugger(
-    {
-      executionContext: this.executionContext,
-      compilationResult: () => {
-        var compilationResult = this.compiler.lastCompilationResult
-        if (compilationResult) {
-          return compilationResult.data
-        }
-        return null
+  this.debugger = new Ethdebugger({
+    executionContext: this.executionContext,
+    compilationResult: () => {
+      var compilationResult = this.compiler.lastCompilationResult
+      if (compilationResult) {
+        return compilationResult.data
       }
-    })
+      return null
+    }
+  })
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.compiler.lastCompilationResult.source.sources, this.compiler.lastCompilationResult.data.sources)
