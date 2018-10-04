@@ -199,11 +199,6 @@ class VmDebuggerLogic {
       self.storageResolver = new StorageResolver({web3: self.debugger.web3})
       self.debuggerSolidityState.storageResolver = self.storageResolver
       self.debuggerSolidityLocals.storageResolver = self.storageResolver
-
-      // self.debuggerSolidityState.storageResolver = self.vmDebuggerLogic.storageResolver
-      // self.solidityState.storageResolver = self.storageResolver
-      // self.fullStoragesChangesPanel.storageResolver = self.storageResolver
-
       self.event.trigger('newTrace', [])
     })
 
