@@ -11,25 +11,18 @@ function Debugger (options) {
   var self = this
   this.event = new EventManager()
 
-  this._components = {
-    sourceHighlighter: sourceHighlighter
-  }
-  this._components.registry = globalRegistry
-  // dependencies
-  this._deps = {
-    offsetToLineColumnConverter: this._components.registry.get('offsettolinecolumnconverter').api,
-    editor: this._components.registry.get('editor').api,
-    compiler: this._components.registry.get('compiler').api,
-    compilersArtefacts: this._components.registry.get('compilersartefacts').api
-  }
-  this.debugger = new Ethdebugger(
-    {
-      executionContext: this.executionContext,
-      compilationResult: () => {
-        if (this._deps.compilersArtefacts['__last']) return this._deps.compilersArtefacts['__last'].getData()
+  this.executionContext = options.executionContext
+  this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
+  this.compiler = options.compiler
+  this.compilerArtefacts = options.compilersArtefacts
+
+  this.debugger = new Ethdebugger({
+    executionContext: options.executionContext,
+    compilationResult: () => {
+      if (this.options.compilersArtefacts['__last']) return this.options.compilersArtefacts['__last'].getData()
         return null
-      }
-    })
+    }
+  })
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources, this._deps.compiler.lastCompilationResult.data.sources)
