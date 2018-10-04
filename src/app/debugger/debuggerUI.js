@@ -80,10 +80,6 @@ class DebuggerUI {
       self.isActive = isActive
     })
 
-    this.transactionDebugger.event.register('breakpointStep', function (step) {
-      self.stepManager.stepManager.jumpTo(step)
-    })
-
     this.transactionDebugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
       self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
     })
