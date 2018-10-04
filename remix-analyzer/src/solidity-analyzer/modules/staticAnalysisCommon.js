@@ -71,7 +71,8 @@ var builtinFunctions = {
   'require(bool)': true,
   'require(bool,string memory)': true,
   'gasleft()': true,
-  'blockhash(uint)': true
+  'blockhash(uint)': true,
+  'address(address)': true
 }
 
 var lowLevelCallTypes = {
@@ -501,6 +502,24 @@ function isDynamicArrayAccess (node) {
 }
 
 /**
+ * True if node is a delete instruction for an element from a dynamic array
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isDeleteFromDynamicArray (node) {
+  return isDeleteUnaryOperation(node) && isIndexAccess(node.children[0])
+}
+
+/**
+ * True if node is the access of an index
+ * @node {ASTNode} node to check for
+ * @return {bool}
+ */
+function isIndexAccess (node) {
+  return node && node.name === 'IndexAccess'
+}
+
+/**
  * True if call to code within the current contracts context including (delegate) library call
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -886,6 +905,15 @@ function isBytesLengthCheck (node) {
   return isMemberAccess(node, exactMatch(util.escapeRegExp(basicTypes.UINT)), undefined, util.escapeRegExp('bytes *'), 'length')
 }
 
+/**
+ * True if it is a 'for' loop
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isForLoop (node) {
+  return nodeType(node, exactMatch(nodeTypes.FORSTATEMENT))
+}
+
 // #################### Complex Node Identification - Private
 
 function isMemberAccess (node, retType, accessor, accessorType, memberName) {
@@ -998,9 +1026,11 @@ module.exports = {
 
   // #################### Complex Node Identification
   isDeleteOfDynamicArray: isDeleteOfDynamicArray,
+  isDeleteFromDynamicArray: isDeleteFromDynamicArray,
   isAbiNamespaceCall: isAbiNamespaceCall,
   isSpecialVariableAccess: isSpecialVariableAccess,
   isDynamicArrayAccess: isDynamicArrayAccess,
+  isIndexAccess: isIndexAccess,
   isSubScopeWithTopLevelUnAssignedBinOp: isSubScopeWithTopLevelUnAssignedBinOp,
   hasFunctionBody: hasFunctionBody,
   isInteraction: isInteraction,
@@ -1034,6 +1064,7 @@ module.exports = {
   isIntDivision: isIntDivision,
   isStringToBytesConversion: isStringToBytesConversion,
   isBytesLengthCheck: isBytesLengthCheck,
+  isForLoop: isForLoop,
 
   // #################### Trivial Node Identification
   isDeleteUnaryOperation: isDeleteUnaryOperation,
