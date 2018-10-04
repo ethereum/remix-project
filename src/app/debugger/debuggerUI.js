@@ -57,6 +57,7 @@ class DebuggerUI {
       self.debugger.codeManager.resolveStep(index, self.tx)
       self.transactionDebugger.step_manager.event.trigger('indexChanged', [index])
       self.transactionDebugger.vmDebuggerLogic.event.trigger('indexChanged', [index])
+      self.transactionDebugger.registerAndHighlightCodeItem(index)
     })
 
     container.appendChild(this.render())
@@ -92,10 +93,6 @@ class DebuggerUI {
 
     this.transactionDebugger.event.register('breakpointStep', function (step) {
       self.stepManager.stepManager.jumpTo(step)
-    })
-
-    this.event.register('indexChanged', function (index) {
-      self.transactionDebugger.registerAndHighlightCodeItem(index)
     })
 
     this.transactionDebugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
