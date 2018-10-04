@@ -18,7 +18,7 @@ function staticAnalysisView (localRegistry) {
   this.event = new EventManager()
   this.view = null
   this.runner = new StaticAnalysisRunner()
-  this.modulesView = renderModules(this.runner.modules())
+  this.modulesView = this.renderModules()
   this.lastCompilationResult = null
   this.lastCompilationSource = null
   self._components = {}
@@ -53,7 +53,23 @@ staticAnalysisView.prototype.render = function () {
       </div>
       <div class="${css.buttons}">
         <button class=${css.buttonRun} onclick=${function () { self.run() }} >Run</button>
-        <label class="${css.label}" for="autorunstaticanalysis"><input id="autorunstaticanalysis" type="checkbox" style="vertical-align:bottom" checked="true">Auto run</label>
+        <label class="${css.label}" for="autorunstaticanalysis">
+          <input id="autorunstaticanalysis"
+            type="checkbox"
+            style="vertical-align:bottom"
+            checked="true"
+          >
+          Auto run
+        </label>
+        <label class="${css.label}" for="checkallstaticanalysis">
+          <input id="checkallstaticanalysis"
+            type="checkbox"
+            onclick="${function (event) { self.checkAll(event) }}"
+            style="vertical-align:bottom"
+            checked="true"
+          >
+          Check/Uncheck all
+        </label>
       </div>
       <div class="${css.result}" "id='staticanalysisresult'></div>
     </div>
@@ -118,10 +134,34 @@ staticAnalysisView.prototype.run = function () {
   }
 }
 
-module.exports = staticAnalysisView
+staticAnalysisView.prototype.checkAll = function (event) {
+  if (!this.view) {
+    return
+  }
+  var all = this.view.querySelectorAll('[name="staticanalysismodule"]')
+  var isAnySelected = false
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].checked === true) {
+      isAnySelected = true
+      break
+    }
+  }
+  for (var j = 0; j < all.length; j++) {
+    all[j].checked = !isAnySelected
+  }
+  event.target.checked = !isAnySelected
+}
 
-function renderModules (modules) {
-  var groupedModules = utils.groupBy(preProcessModules(modules), 'categoryId')
+staticAnalysisView.prototype.checkModule = function (event) {
+  var selectAll = this.view.querySelector('[id="checkallstaticanalysis" ]')
+  if (event.target.checked) {
+    selectAll.checked = true
+  }
+}
+
+staticAnalysisView.prototype.renderModules = function () {
+  var self = this
+  var groupedModules = utils.groupBy(preProcessModules(self.runner.modules()), 'categoryId')
   return Object.keys(groupedModules).map((categoryId, i) => {
     var category = groupedModules[categoryId]
     var entriesDom = category.map((item, i) => {
@@ -131,7 +171,10 @@ function renderModules (modules) {
             type="checkbox"
             name="staticanalysismodule"
             index=${item._index}
-            checked="true" style="vertical-align:bottom">
+            checked="true"
+            style="vertical-align:bottom"
+            onclick="${function (event) { self.checkModule(event) }}"
+            >
           ${item.name}
           ${item.description}
         </label>
@@ -143,6 +186,8 @@ function renderModules (modules) {
               </div>`
   })
 }
+
+module.exports = staticAnalysisView
 
 function preProcessModules (arr) {
   return arr.map((item, i) => {
