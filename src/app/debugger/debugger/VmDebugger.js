@@ -22,7 +22,7 @@ class VmDebuggerLogic {
     this.storageResolver = null
     this.tx = tx
 
-    this.debuggerSolidityState = new DebuggerSolidityState(_parentUI, tx, _stepManager, _traceManager, _codeManager, _solidityProxy)
+    this.debuggerSolidityState = new DebuggerSolidityState(tx, _stepManager, _traceManager, _codeManager, _solidityProxy)
     this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, tx, _stepManager, _traceManager, _callTree)
   }
 
@@ -33,7 +33,6 @@ class VmDebuggerLogic {
     this.listenToFullStorageChanges()
     this.listenToNewChanges()
 
-    this.debuggerSolidityState.init()
     this.listenToSolidityStateEvents()
 
     this.debuggerSolidityLocals.init()
@@ -220,6 +219,7 @@ class VmDebuggerLogic {
 
   listenToSolidityStateEvents () {
     const self = this
+    this._parentUI.event.register('indexChanged', this.debuggerSolidityState.init.bind(this.debuggerSolidityState))
     this.debuggerSolidityState.event.register('solidityState', function (state) {
       self.event.trigger('solidityState', [state])
     })
@@ -229,6 +229,8 @@ class VmDebuggerLogic {
     this.debuggerSolidityState.event.register('solidityStateUpdating', function () {
       self.event.trigger('solidityStateUpdating', [])
     })
+    this._parentUI.event.register('traceUnloaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
+    this._parentUI.event.register('newTraceLoaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
   }
 
   listenToSolidityLocalsEvents () {

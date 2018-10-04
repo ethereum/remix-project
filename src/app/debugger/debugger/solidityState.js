@@ -6,44 +6,43 @@ var StorageViewer = remixDebug.storage.StorageViewer
 
 class DebuggerSolidityState {
 
-  constructor (_parent, tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
+  constructor (tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
     this.event = new EventManager()
     this.storageResolver = null
-    this.parent = _parent
     this.stepManager = _stepManager
     this.traceManager = _traceManager
     this.codeManager = _codeManager
     this.solidityProxy = _solidityProxy
     this.stateVariablesByAddresses = {}
     this.tx = tx
-    _parent.event.register('traceUnloaded', () => { this.stateVariablesByAddresses = {} })
-    _parent.event.register('newTraceLoaded', () => { this.stateVariablesByAddresses = {} })
   }
 
-  init () {
+  init (index) {
     var self = this
     var decodeTimeout = null
-    this.parent.event.register('indexChanged', this, function (index) {
-      if (index < 0) {
-        return self.event.trigger('solidityStateMessage', ['invalid step index'])
-      }
+    if (index < 0) {
+      return self.event.trigger('solidityStateMessage', ['invalid step index'])
+    }
 
-      if (self.stepManager.currentStepIndex !== index) return
-      if (!self.solidityProxy.loaded()) {
-        return self.event.trigger('solidityStateMessage', ['invalid step index'])
-      }
+    if (self.stepManager.currentStepIndex !== index) return
+    if (!self.solidityProxy.loaded()) {
+      return self.event.trigger('solidityStateMessage', ['invalid step index'])
+    }
 
-      if (!self.storageResolver) {
-        return
-      }
-      if (decodeTimeout) {
-        window.clearTimeout(decodeTimeout)
-      }
-      self.event.trigger('solidityStateUpdating')
-      decodeTimeout = setTimeout(function () {
-        self.decode(index)
-      }, 500)
-    })
+    if (!self.storageResolver) {
+      return
+    }
+    if (decodeTimeout) {
+      window.clearTimeout(decodeTimeout)
+    }
+    self.event.trigger('solidityStateUpdating')
+    decodeTimeout = setTimeout(function () {
+      self.decode(index)
+    }, 500)
+  }
+
+  reset () {
+    this.stateVariablesByAddresses = {}
   }
 
   decode (index) {
