@@ -8,7 +8,6 @@ var SourceHighlighter = require('../editor/sourceHighlighter')
 
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var traceHelper = remixLib.helpers.trace
 
 var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
@@ -98,7 +97,7 @@ class DebuggerUI {
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
       self.debugger.unLoad()
       self.unLoad()
-      self.getTxAndDebug(blockNumber, txNumber, tx)
+      self.startDebugging(blockNumber, txNumber, tx)
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
@@ -111,35 +110,6 @@ class DebuggerUI {
     return this.isActive
   }
 
-  getTxAndDebug (blockNumber, txNumber, tx) {
-    const self = this
-    let web3 = executionContext.web3()
-
-    if (tx) {
-      if (!tx.to) {
-        tx.to = traceHelper.contractCreationToken('0')
-      }
-      return self.startDebugging(blockNumber, txNumber, tx)
-    }
-
-    try {
-      if (txNumber.indexOf('0x') !== -1) {
-        return web3.eth.getTransaction(txNumber, function (error, result) {
-          let tx = result
-          self.txBrowser.update(error, result)
-          self.startDebugging(blockNumber, txNumber, tx)
-        })
-      }
-      web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (error, result) {
-        let tx = result
-        self.txBrowser.update(error, result)
-        self.startDebugging(blockNumber, txNumber, tx)
-      })
-    } catch (e) {
-      console.error(e.message)
-    }
-  }
-
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
 
@@ -147,10 +117,10 @@ class DebuggerUI {
       return
     }
 
-    this.transactionDebugger.debug(tx, () => {
+    this.transactionDebugger.debug(blockNumber, txNumber, tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
       self.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)
-      self.andAddVmDebugger()
+      self.renderDebugger()
     })
   }
 
@@ -165,10 +135,10 @@ class DebuggerUI {
 
       if (tx instanceof Object) {
         self.txBrowser.load(tx.hash, tx)
-        self.getTxAndDebug(null, tx.hash, tx)
+        self.startDebugging(null, tx.hash, tx)
       } else if (tx instanceof String) {
         self.txBrowser.load(tx)
-        self.getTxAndDebug(null, tx)
+        self.startDebugging(null, tx)
       }
     })
   }
@@ -204,7 +174,7 @@ class DebuggerUI {
     this.event.trigger('traceUnloaded')
   }
 
-  andAddVmDebugger () {
+  renderDebugger () {
     yo.update(this.debuggerHeadPanelsView, this.vmDebugger.renderHead())
     yo.update(this.debuggerPanelsView, this.vmDebugger.render())
     yo.update(this.stepManagerView, this.stepManager.render())

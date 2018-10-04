@@ -2,6 +2,7 @@
 var Ethdebugger = require('remix-debug').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
+var traceHelper = remixLib.helpers.trace
 
 var StepManager = require('./stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
@@ -76,7 +77,34 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   })
 }
 
-Debugger.prototype.debug = function (tx, loadingCb) {
+Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
+  const self = this
+  let web3 = this.executionContext.web3()
+
+  if (tx) {
+    if (!tx.to) {
+      tx.to = traceHelper.contractCreationToken('0')
+    }
+    return self.debugTx(tx, loadingCb)
+  }
+
+  try {
+    if (txNumber.indexOf('0x') !== -1) {
+      return web3.eth.getTransaction(txNumber, function (_error, result) {
+        let tx = result
+        self.debugTx(tx, loadingCb)
+      })
+    }
+    web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
+      let tx = result
+      self.debugTx(tx, loadingCb)
+    })
+  } catch (e) {
+    console.error(e.message)
+  }
+}
+
+Debugger.prototype.debugTx = function (tx, loadingCb) {
   const self = this
   this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
 
