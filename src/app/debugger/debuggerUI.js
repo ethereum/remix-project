@@ -113,10 +113,6 @@ class DebuggerUI {
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
 
-    if (this.debugger.traceManager.isLoading) {
-      return
-    }
-
     this.transactionDebugger.debug(blockNumber, txNumber, tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
       self.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)

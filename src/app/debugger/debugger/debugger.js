@@ -81,6 +81,10 @@ Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
   const self = this
   let web3 = this.executionContext.web3()
 
+  if (this.debugger.traceManager.isLoading) {
+    return
+  }
+
   if (tx) {
     if (!tx.to) {
       tx.to = traceHelper.contractCreationToken('0')
