@@ -31,7 +31,7 @@ class DebuggerUI {
     this.registry = globalRegistry
     this.event = new EventManager()
 
-    this.transactionDebugger = new Debugger({
+    this.debugger = new Debugger({
       executionContext: executionContext,
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
       compiler: this.registry.get('compiler').api
@@ -59,31 +59,30 @@ class DebuggerUI {
     this.editor = this.registry.get('editor').api
 
     self.editor.event.register('breakpointCleared', (fileName, row) => {
-      self.transactionDebugger.breakPointManager.remove({fileName: fileName, row: row})
+      self.debugger.breakPointManager.remove({fileName: fileName, row: row})
     })
 
     self.editor.event.register('breakpointAdded', (fileName, row) => {
-      self.transactionDebugger.breakPointManager.add({fileName: fileName, row: row})
+      self.debugger.breakPointManager.add({fileName: fileName, row: row})
     })
 
-    // unload if a file has changed (but not if tabs were switched)
     self.editor.event.register('contentChanged', function () {
-      self.transactionDebugger.unload()
+      self.debugger.unload()
     })
   }
 
   listenToEvents () {
     const self = this
-    this.transactionDebugger.event.register('debuggerStatus', function (isActive) {
+    this.debugger.event.register('debuggerStatus', function (isActive) {
       self.sourceHighlighter.currentSourceLocation(null)
       self.isActive = isActive
     })
 
-    this.transactionDebugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
+    this.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
       self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
     })
 
-    this.transactionDebugger.event.register('debuggerUnloaded', self.unLoad.bind(this))
+    this.debugger.event.register('debuggerUnloaded', self.unLoad.bind(this))
   }
 
   startTxBrowser () {
@@ -92,12 +91,12 @@ class DebuggerUI {
     this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
-      self.transactionDebugger.unload()
+      self.debugger.unload()
       self.startDebugging(blockNumber, txNumber, tx)
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-      self.transactionDebugger.unload()
+      self.debugger.unload()
     })
   }
 
@@ -108,9 +107,9 @@ class DebuggerUI {
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
 
-    this.transactionDebugger.debug(blockNumber, txNumber, tx, () => {
-      self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
-      self.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)
+    this.debugger.debug(blockNumber, txNumber, tx, () => {
+      self.stepManager = new StepManagerUI(this.debugger.step_manager)
+      self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
       self.renderDebugger()
     })
   }
