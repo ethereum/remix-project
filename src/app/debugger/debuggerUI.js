@@ -37,7 +37,6 @@ class DebuggerUI {
       compiler: this.registry.get('compiler').api
     })
 
-    this.debugger = this.transactionDebugger.debugger
     this.isActive = false
 
     this.sourceHighlighter = new SourceHighlighter()
@@ -69,7 +68,7 @@ class DebuggerUI {
 
     // unload if a file has changed (but not if tabs were switched)
     self.editor.event.register('contentChanged', function () {
-      self.debugger.unLoad()
+      self.transactionDebugger.unload()
     })
   }
 
@@ -83,6 +82,8 @@ class DebuggerUI {
     this.transactionDebugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
       self.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
     })
+
+    this.transactionDebugger.event.register('debuggerUnloaded', self.unLoad.bind(this))
   }
 
   startTxBrowser () {
@@ -91,14 +92,12 @@ class DebuggerUI {
     this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
-      self.debugger.unLoad()
-      self.unLoad()
+      self.transactionDebugger.unload()
       self.startDebugging(blockNumber, txNumber, tx)
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-      self.debugger.unLoad()
-      self.unLoad()
+      self.transactionDebugger.unload()
     })
   }
 
