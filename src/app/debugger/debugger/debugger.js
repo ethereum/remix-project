@@ -90,16 +90,6 @@ Debugger.prototype.debug = function (tx, loadingCb) {
 
   this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
 
-  this.debugger.event.register('traceUnloaded', function () {
-    console.dir('---> traceUnloaded on debugger')
-    self.vmDebuggerLogic.event.trigger('traceUnloaded')
-  })
-
-  // TODO: doesn't seem to be triggered; parent=debuggerUI
-  // parent.event.register('newTraceLoaded', function () {
-  //   self.vmDebuggerLogic.event.trigger('newTraceLoaded')
-  // })
-
   loadingCb()
   this.debugger.debug(tx)
 }
