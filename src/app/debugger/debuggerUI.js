@@ -121,22 +121,7 @@ class DebuggerUI {
   }
 
   debug (txHash) {
-    const self = this
-    let web3 = executionContext.web3()
-    web3.eth.getTransaction(txHash, (error, tx) => {
-      if (error) {
-        return console.error("coudn't get txHash: " + error)
-      }
-      self.transactionDebugger.debugger.solidityProxy.reset({})
-
-      if (tx instanceof Object) {
-        self.txBrowser.load(tx.hash, tx)
-        self.startDebugging(null, tx.hash, tx)
-      } else if (tx instanceof String) {
-        self.txBrowser.load(tx)
-        self.startDebugging(null, tx)
-      }
-    })
+    this.startDebugging(null, txHash, null)
   }
 
   render () {
