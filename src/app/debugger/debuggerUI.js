@@ -29,8 +29,6 @@ var css = csjs`
 class DebuggerUI {
 
   constructor (container) {
-    const self = this
-
     this.registry = globalRegistry
     this.event = new EventManager()
 
@@ -48,17 +46,9 @@ class DebuggerUI {
     this.startTxBrowser()
     this.stepManager = null
 
-    this.tx
     this.statusMessage = ''
 
     this.view
-
-    this.event.register('indexChanged', this, function (index) {
-      self.debugger.codeManager.resolveStep(index, self.tx)
-      self.transactionDebugger.step_manager.event.trigger('indexChanged', [index])
-      self.transactionDebugger.vmDebuggerLogic.event.trigger('indexChanged', [index])
-      self.transactionDebugger.registerAndHighlightCodeItem(index)
-    })
 
     container.appendChild(this.render())
 
@@ -163,8 +153,11 @@ class DebuggerUI {
 
     this.transactionDebugger.debug(tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
-      self.stepManager.event.register('stepChanged', this, function (stepIndex) {
-        self.event.trigger('indexChanged', [stepIndex])
+      self.transactionDebugger.step_manager.event.register('stepChanged', this, function (stepIndex) {
+        self.transactionDebugger.debugger.codeManager.resolveStep(stepIndex, self.tx)
+        self.transactionDebugger.step_manager.event.trigger('indexChanged', [stepIndex])
+        self.transactionDebugger.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])
+        self.transactionDebugger.registerAndHighlightCodeItem(stepIndex)
       })
 
       self.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)
