@@ -13,7 +13,7 @@ class VmDebuggerLogic {
   constructor (_parentUI, tx, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
     this.event = new EventManager()
     this._parentUI = _parentUI
-    this._parent = this._parentUI.debugger
+    this.debugger = this._parentUI.debugger
     this.stepManager = _stepManager
     this._traceManager = _traceManager
     this._codeManager = _codeManager
@@ -34,22 +34,21 @@ class VmDebuggerLogic {
     this.listenToNewChanges()
 
     this.listenToSolidityStateEvents()
-
     this.listenToSolidityLocalsEvents()
   }
 
   listenToEvents () {
     const self = this
-    this._parent.event.register('traceUnloaded', function () {
+    this.debugger.event.register('traceUnloaded', function () {
       self.event.trigger('traceUnloaded')
     })
 
     // TODO: is it the same?
-    this._parentUI.debugger.event.register('traceUnloaded', function () {
+    this.debugger.event.register('traceUnloaded', function () {
       self.event.trigger('traceUnloaded')
     })
 
-    this._parentUI.debugger.event.register('newTraceLoaded', function () {
+    this.debugger.event.register('newTraceLoaded', function () {
       self.event.trigger('newTraceLoaded')
     })
   }
@@ -159,7 +158,7 @@ class VmDebuggerLogic {
     this.address = []
     this.traceLength = 0
 
-    self._parentUI.debugger.event.register('newTraceLoaded', function (length) {
+    self.debugger.event.register('newTraceLoaded', function (length) {
       self._traceManager.getAddresses(function (error, addresses) {
         if (error) return
         self.event.trigger('traceAddressesUpdate', [addresses])
@@ -173,7 +172,7 @@ class VmDebuggerLogic {
       })
     })
 
-    self._parentUI.debugger.event.register('indexChanged', this, function (index) {
+    self.debugger.event.register('indexChanged', this, function (index) {
       if (index < 0) return
       if (self.stepManager.currentStepIndex !== index) return
       if (!self.storageResolver) return
@@ -197,8 +196,8 @@ class VmDebuggerLogic {
 
   listenToNewChanges () {
     const self = this
-    self._parent.event.register('newTraceLoaded', this, function () {
-      self.storageResolver = new StorageResolver({web3: self._parent.web3})
+    self.debugger.event.register('newTraceLoaded', this, function () {
+      self.storageResolver = new StorageResolver({web3: self.debugger.web3})
       self.debuggerSolidityState.storageResolver = self.storageResolver
       self.debuggerSolidityLocals.storageResolver = self.storageResolver
 
@@ -209,8 +208,8 @@ class VmDebuggerLogic {
       self.event.trigger('newTrace', [])
     })
 
-    self._parent.event.register('callTreeReady', function () {
-      if (self._parent.callTree.reducedTrace.length) {
+    self.debugger.event.register('callTreeReady', function () {
+      if (self.debugger.callTree.reducedTrace.length) {
         return self.event.trigger('newCallTree', [])
       }
     })
