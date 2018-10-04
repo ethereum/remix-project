@@ -46,7 +46,6 @@ class DebuggerUI {
     this.sourceHighlighter = new SourceHighlighter()
 
     this.startTxBrowser()
-    // this.startStepManager()
     this.stepManager = null
 
     this.tx
@@ -56,6 +55,8 @@ class DebuggerUI {
 
     this.event.register('indexChanged', this, function (index) {
       self.debugger.codeManager.resolveStep(index, self.tx)
+      self.transactionDebugger.step_manager.event.trigger('indexChanged', [index])
+      self.transactionDebugger.vmDebuggerLogic.event.trigger('indexChanged', [index])
     })
 
     container.appendChild(this.render())
@@ -163,7 +164,7 @@ class DebuggerUI {
     // still here because tx is being reffered in children
     this.tx = tx
 
-    this.transactionDebugger.debug(this, tx, () => {
+    this.transactionDebugger.debug(tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
       self.stepManager.event.register('stepChanged', this, function (stepIndex) {
         self.stepManager.currentStepIndex = stepIndex
