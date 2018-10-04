@@ -10,10 +10,9 @@ var DebuggerSolidityLocals = require('./solidityLocals')
 
 class VmDebuggerLogic {
 
-  constructor (_parentUI, tx, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
+  constructor (_debugger, tx, _stepManager, _traceManager, _codeManager, _solidityProxy, _callTree) {
     this.event = new EventManager()
-    this._parentUI = _parentUI
-    this.debugger = this._parentUI.debugger
+    this.debugger = _debugger
     this.stepManager = _stepManager
     this._traceManager = _traceManager
     this._codeManager = _codeManager
@@ -63,7 +62,7 @@ class VmDebuggerLogic {
   listenToTraceManagerEvents () {
     const self = this
 
-    this._parentUI.event.register('indexChanged', this, function (index) {
+    this.event.register('indexChanged', this, function (index) {
       if (index < 0) return
       if (self.stepManager.currentStepIndex !== index) return
 
@@ -217,7 +216,7 @@ class VmDebuggerLogic {
 
   listenToSolidityStateEvents () {
     const self = this
-    this._parentUI.event.register('indexChanged', this.debuggerSolidityState.init.bind(this.debuggerSolidityState))
+    this.event.register('indexChanged', this.debuggerSolidityState.init.bind(this.debuggerSolidityState))
     this.debuggerSolidityState.event.register('solidityState', function (state) {
       self.event.trigger('solidityState', [state])
     })
@@ -227,13 +226,13 @@ class VmDebuggerLogic {
     this.debuggerSolidityState.event.register('solidityStateUpdating', function () {
       self.event.trigger('solidityStateUpdating', [])
     })
-    this._parentUI.event.register('traceUnloaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
-    this._parentUI.event.register('newTraceLoaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
+    this.event.register('traceUnloaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
+    this.event.register('newTraceLoaded', this.debuggerSolidityState.reset.bind(this.debuggerSolidityState))
   }
 
   listenToSolidityLocalsEvents () {
     const self = this
-    this._parentUI.event.register('sourceLocationChanged', this.debuggerSolidityLocals.init.bind(this.debuggerSolidityLocals))
+    this.event.register('sourceLocationChanged', this.debuggerSolidityLocals.init.bind(this.debuggerSolidityLocals))
     this.debuggerSolidityLocals.event.register('solidityLocals', function (state) {
       self.event.trigger('solidityLocals', [state])
     })

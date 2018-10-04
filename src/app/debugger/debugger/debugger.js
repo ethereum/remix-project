@@ -76,22 +76,29 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   })
 }
 
-Debugger.prototype.debug = function (parent, tx, loadingCb) {
+Debugger.prototype.debug = function (tx, loadingCb) {
   const self = this
   this.step_manager = new StepManager(this.debugger, this.debugger.traceManager)
-  parent.event.register('indexChanged', this, (index) => {
-    self.step_manager.event.trigger('indexChanged', [index])
-  })
 
   this.debugger.codeManager.event.register('changed', this, (code, address, instIndex) => {
     self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, this.step_manager.currentStepIndex, this.debugger.solidityProxy.contracts, (error, sourceLocation) => {
       if (!error) {
-        parent.event.trigger('sourceLocationChanged', [sourceLocation])
+        self.vmDebuggerLogic.event.trigger('sourceLocationChanged', [sourceLocation])
       }
     })
   })
 
-  this.vmDebuggerLogic = new VmDebuggerLogic(parent, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+  this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+
+  this.debugger.event.register('traceUnloaded', function () {
+    console.dir('---> traceUnloaded on debugger')
+    self.vmDebuggerLogic.event.trigger('traceUnloaded')
+  })
+
+  // TODO: doesn't seem to be triggered; parent=debuggerUI
+  // parent.event.register('newTraceLoaded', function () {
+  //   self.vmDebuggerLogic.event.trigger('newTraceLoaded')
+  // })
 
   loadingCb()
   this.debugger.debug(tx)
