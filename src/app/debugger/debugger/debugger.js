@@ -90,6 +90,13 @@ Debugger.prototype.debug = function (tx, loadingCb) {
 
   this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
 
+  this.step_manager.event.register('stepChanged', this, function (stepIndex) {
+    self.debugger.codeManager.resolveStep(stepIndex, tx)
+    self.step_manager.event.trigger('indexChanged', [stepIndex])
+    self.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])
+    self.registerAndHighlightCodeItem(stepIndex)
+  })
+
   loadingCb()
   this.debugger.debug(tx)
 }
