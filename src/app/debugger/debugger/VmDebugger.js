@@ -23,7 +23,7 @@ class VmDebuggerLogic {
     this.tx = tx
 
     this.debuggerSolidityState = new DebuggerSolidityState(tx, _stepManager, _traceManager, _codeManager, _solidityProxy)
-    this.debuggerSolidityLocals = new DebuggerSolidityLocals(_parentUI, tx, _stepManager, _traceManager, _callTree)
+    this.debuggerSolidityLocals = new DebuggerSolidityLocals(tx, _stepManager, _traceManager, _callTree)
   }
 
   start () {
@@ -35,7 +35,6 @@ class VmDebuggerLogic {
 
     this.listenToSolidityStateEvents()
 
-    this.debuggerSolidityLocals.init()
     this.listenToSolidityLocalsEvents()
   }
 
@@ -235,7 +234,7 @@ class VmDebuggerLogic {
 
   listenToSolidityLocalsEvents () {
     const self = this
-
+    this._parentUI.event.register('sourceLocationChanged', this.debuggerSolidityLocals.init.bind(this.debuggerSolidityLocals))
     this.debuggerSolidityLocals.event.register('solidityLocals', function (state) {
       self.event.trigger('solidityLocals', [state])
     })

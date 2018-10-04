@@ -6,9 +6,8 @@ var StorageViewer = remixDebug.storage.StorageViewer
 
 class DebuggerSolidityLocals {
 
-  constructor (_parent, tx, _stepManager, _traceManager, _internalTreeCall) {
+  constructor (tx, _stepManager, _traceManager, _internalTreeCall) {
     this.event = new EventManager()
-    this.parent = _parent
     this.stepManager = _stepManager
     this.internalTreeCall = _internalTreeCall
     this.storageResolver = null
@@ -16,21 +15,19 @@ class DebuggerSolidityLocals {
     this.tx = tx
   }
 
-  init () {
+  init (sourceLocation) {
     const self = this
     var decodeTimeout = null
-    this.parent.event.register('sourceLocationChanged', this, (sourceLocation) => {
-      if (!this.storageResolver) {
-        return self.event.trigger('solidityLocalsMessage', ['storage not ready'])
-      }
-      if (decodeTimeout) {
-        window.clearTimeout(decodeTimeout)
-      }
-      self.event.trigger('solidityLocalsUpdating')
-      decodeTimeout = setTimeout(function () {
-        self.decode(sourceLocation)
-      }, 500)
-    })
+    if (!this.storageResolver) {
+      return self.event.trigger('solidityLocalsMessage', ['storage not ready'])
+    }
+    if (decodeTimeout) {
+      window.clearTimeout(decodeTimeout)
+    }
+    self.event.trigger('solidityLocalsUpdating')
+    decodeTimeout = setTimeout(function () {
+      self.decode(sourceLocation)
+    }, 500)
   }
 
   decode (sourceLocation) {
