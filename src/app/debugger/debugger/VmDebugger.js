@@ -42,7 +42,6 @@ class VmDebuggerLogic {
       self.event.trigger('traceUnloaded')
     })
 
-    // TODO: is it the same?
     this.debugger.event.register('traceUnloaded', function () {
       self.event.trigger('traceUnloaded')
     })
