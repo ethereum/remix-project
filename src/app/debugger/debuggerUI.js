@@ -147,19 +147,8 @@ class DebuggerUI {
       return
     }
 
-    // TODO: move this to a param to .debug()
-    // still here because tx is being reffered in children
-    this.tx = tx
-
     this.transactionDebugger.debug(tx, () => {
       self.stepManager = new StepManagerUI(this.transactionDebugger.step_manager)
-      self.transactionDebugger.step_manager.event.register('stepChanged', this, function (stepIndex) {
-        self.transactionDebugger.debugger.codeManager.resolveStep(stepIndex, self.tx)
-        self.transactionDebugger.step_manager.event.trigger('indexChanged', [stepIndex])
-        self.transactionDebugger.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])
-        self.transactionDebugger.registerAndHighlightCodeItem(stepIndex)
-      })
-
       self.vmDebugger = new VmDebugger(this.transactionDebugger.vmDebuggerLogic)
       self.andAddVmDebugger()
     })
