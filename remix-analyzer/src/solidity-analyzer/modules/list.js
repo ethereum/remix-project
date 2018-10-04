@@ -15,5 +15,7 @@ module.exports = [
   require('./deleteDynamicArrays'),
   require('./assignAndCompare'),
   require('./erc20Decimals'),
-  require('./stringBytesLength')
+  require('./stringBytesLength'),
+  require('./deleteFromDynamicArray'),
+  require('./forLoopIteratesOverDynamicArray')
 ]
