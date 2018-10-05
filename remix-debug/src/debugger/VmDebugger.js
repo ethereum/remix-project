@@ -1,4 +1,4 @@
-var remixDebug = require('remix-debug')
+var remixDebug = require('../../index.js')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var ui = remixLib.helpers.ui
