@@ -1,5 +1,5 @@
 'use strict'
-var Ethdebugger = require('remix-debug').EthDebugger
+var Ethdebugger = require('../../index.js').EthDebugger
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
