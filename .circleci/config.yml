@@ -34,30 +34,9 @@ jobs:
             - ~/repo/node_modules
       - run: npm run lint && npm run test && npm run make-mock-compiler && npm run build
       - run: ./ci/browser_tests.sh
-  
-  remix-debugger:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:9.11.2
-    
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dep-bundle-17-{{ checksum "package.json" }}
-      - run: npm install
-      - save_cache:
-          key: dep-bundle-17-{{ checksum "package.json" }}
-          paths:
-            - ~/repo/node_modules
-      - run: npm run build_debugger
-      - run: ./ci/browser_tests_debugger.sh
 
 workflows:
   version: 2
   build_all:
     jobs:
       - remix-ide
-      - remix-debugger
