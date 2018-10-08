@@ -18,10 +18,6 @@ function Debugger (options) {
   this.debugger = new Ethdebugger({
     executionContext: this.executionContext,
     compilationResult: () => {
-
-      console.dir(self.compiler.lastCompilationResult)
-      window.a = self.compiler.lastCompilationResult
-
       var compilationResult = this.compiler.lastCompilationResult
       if (compilationResult) {
         return compilationResult.data
