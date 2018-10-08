@@ -83,7 +83,9 @@ module.exports = class TestTab {
 
     function getTests (self, cb) {
       var path = self._deps.fileManager.currentPath()
+      if (!path) return cb(null, [])
       var provider = self._deps.fileManager.fileProviderOf(path)
+      if (!provider) return cb(null, [])
       var tests = []
       self._deps.fileManager.filesFromPath(path, (error, files) => {
         if (error) return cb(error)

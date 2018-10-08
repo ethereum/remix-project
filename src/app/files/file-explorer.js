@@ -39,6 +39,8 @@ function fileExplorer (localRegistry, files) {
 
   this.files.event.register('fileExternallyChanged', (path, file) => {
     if (self._deps.config.get('currentFile') === path && self._deps.editor.currentContent() && self._deps.editor.currentContent() !== file.content) {
+      if (this.files.isReadOnly(path)) return self._deps.editor.setText(file.content)
+
       modalDialog(path + ' changed', remixdDialog(),
         {
           label: 'Keep the content displayed in Remix',

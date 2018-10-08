@@ -225,9 +225,8 @@ function Editor (opts = {}, localRegistry) {
   }
 
   this.discard = function (path) {
-    if (currentSession !== path) {
-      delete sessions[path]
-    }
+    if (sessions[path]) delete sessions[path]
+    if (currentSession === path) currentSession = null
   }
 
   this.resize = function (useWrapMode) {
