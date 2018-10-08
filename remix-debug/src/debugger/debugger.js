@@ -86,8 +86,6 @@ Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
     return
   }
 
-  self.debugger.solidityProxy.reset({})
-
   if (tx) {
     if (!tx.to) {
       tx.to = traceHelper.contractCreationToken('0')
