@@ -1,8 +1,7 @@
 'use strict'
 var yo = require('yo-yo')
 const copy = require('clipboard-copy')
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../../../lib/events')
 var TreeView = require('../../../ui/TreeView') // TODO setup a direct reference to the UI components
 
 var csjs = require('csjs-inject')

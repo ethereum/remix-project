@@ -1,4 +1,3 @@
-// var remixLib = require('remix-lib')
 var styleGuideLight = require('./style-guide')
 var styleGuideDark = require('./styleGuideDark')
 var Storage = require('remix-lib').Storage
