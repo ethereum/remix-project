@@ -6,8 +6,7 @@ var Debugger = require('./debugger/debugger')
 
 var SourceHighlighter = require('../editor/sourceHighlighter')
 
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')

@@ -2,7 +2,7 @@
 var yo = require('yo-yo')
 var async = require('async')
 var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../lib/events')
 
 var executionContext = require('../execution-context')
 var toolTip = require('../app/ui/tooltip')

@@ -1,5 +1,4 @@
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../../lib/events')
 var yo = require('yo-yo')
 
 var ButtonNavigator = require('./ButtonNavigator')

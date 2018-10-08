@@ -2,7 +2,7 @@
 var remixLib = require('remix-lib')
 var SourceMappingDecoder = remixLib.SourceMappingDecoder
 var AstWalker = remixLib.AstWalker
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
 
 /*

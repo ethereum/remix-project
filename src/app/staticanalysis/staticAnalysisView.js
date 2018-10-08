@@ -11,7 +11,7 @@ var styles = styleGuide.chooser()
 var css = require('./styles/staticAnalysisView-styles')
 var globlalRegistry = require('../../global/registry')
 
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 function staticAnalysisView (localRegistry) {
   var self = this

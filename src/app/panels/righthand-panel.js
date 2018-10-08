@@ -1,6 +1,6 @@
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
-const remixLib = require('remix-lib')
+const EventManager = require('../../lib/events')
 
 var globalRegistry = require('../../global/registry')
 
@@ -17,7 +17,6 @@ const TestTab = require('../tabs/test-tab')
 const RunTab = require('../tabs/run-tab')
 const DraggableContent = require('../ui/draggableContent')
 
-const EventManager = remixLib.EventManager
 const styles = styleguide.chooser()
 
 module.exports = class RighthandPanel {

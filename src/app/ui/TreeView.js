@@ -29,8 +29,7 @@ var css = csjs`
   }
 `
 
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 /**
  * TreeView

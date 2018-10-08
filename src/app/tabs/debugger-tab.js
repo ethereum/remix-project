@@ -1,11 +1,10 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
 
 var DebuggerUI = require('../debugger/debuggerUI')
 
 var globalRegistry = require('../../global/registry')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 var styles = require('../ui/styles-guide/theme-chooser').chooser()
 
 const css = csjs`
