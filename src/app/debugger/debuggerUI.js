@@ -16,6 +16,8 @@ var remixLib = require('remix-lib')
 var Web3Providers = remixLib.vm.Web3Providers
 var DummyProvider = remixLib.vm.DummyProvider
 
+var init = remixLib.init
+
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
@@ -51,15 +53,15 @@ class DebuggerUI {
       compilersArtefacts: this.registry.get('compilersartefacts').api
     })
 
-    this.debugger.web3Providers = new Web3Providers()
-    this.debugger.executionContext = this.executionContext
-    this.debugger.addProvider('DUMMYWEB3', new DummyProvider())
-    this.debugger.switchProvider('DUMMYWEB3')
+    this.web3Providers = new Web3Providers()
+    this.executionContext = this.executionContext
+    this.addProvider('DUMMYWEB3', new DummyProvider())
+    this.switchProvider('DUMMYWEB3')
 
-    this.debugger.addProvider('vm', this.executionContext.vm())
-    this.debugger.addProvider('injected', this.executionContext.internalWeb3())
-    this.debugger.addProvider('web3', this.executionContext.internalWeb3())
-    this.debugger.switchProvider(this.executionContext.getProvider())
+    this.addProvider('vm', this.executionContext.vm())
+    this.addProvider('injected', this.executionContext.internalWeb3())
+    this.addProvider('web3', this.executionContext.internalWeb3())
+    this.switchProvider(this.executionContext.getProvider())
 
     this.isActive = false
 
@@ -78,17 +80,35 @@ class DebuggerUI {
     this.listenToEvents()
   }
 
-  setupExecutionContext () {
-    this.executionContext.event.register('contextChanged', this, function (context) {
-      // TODO: was already broken
-      //self.switchProvider(context)
-    })
 
-    this.debugger.addProvider('vm', this.executionContext.vm())
-    this.debugger.addProvider('injected', this.executionContext.internalWeb3())
-    this.debugger.addProvider('web3', this.executionContext.internalWeb3())
-    this.debugger.switchProvider(this.executionContext.getProvider())
+
+  addProvider (type, obj) {
+    this.web3Providers.addProvider(type, obj)
+    this.event.trigger('providerAdded', [type])
   }
+
+  switchProvider (type) {
+    var self = this
+    this.web3Providers.get(type, function (error, obj) {
+      if (error) {
+        console.log('provider ' + type + ' not defined')
+      } else {
+        self.debugger.updateWeb3(obj)
+        self.executionContext.detectNetwork((error, network) => {
+          if (error || !network) {
+            self.debugger.debugger.updateWeb3(obj)
+          } else {
+            var webDebugNode = init.web3DebugNode(network.name)
+            self.debugger.updateWeb3(!webDebugNode ? obj : webDebugNode)
+          }
+        })
+        self.event.trigger('providerChanged', [type])
+      }
+    })
+  }
+
+
+
 
   setEditor () {
     const self = this
