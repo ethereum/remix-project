@@ -40,10 +40,6 @@ function Ethdebugger (opts) {
 
   this.tx
 
-  // this.web3Providers = new Web3Providers()
-  // this.addProvider('DUMMYWEB3', new DummyProvider())
-  // this.switchProvider('DUMMYWEB3')
-
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
   this.solidityProxy = new SolidityProxy(this.traceManager, this.codeManager)
@@ -160,44 +156,11 @@ Ethdebugger.prototype.storageViewAt = function (step, address) {
     address: address
   }, this.storageResolver, this.traceManager)
 }
-/* set env */
-// Ethdebugger.prototype.web3 = function () {
-//   return this.web3
-// }
 
 Ethdebugger.prototype.updateWeb3 = function (web3) {
   this.web3 = web3
+  this.setManagers()
 }
-
-// Ethdebugger.prototype.addProvider = function (type, obj) {
-//   this.web3Providers.addProvider(type, obj)
-//   this.event.trigger('providerAdded', [type])
-// }
-// 
-// Ethdebugger.prototype.switchProvider = function (type) {
-//   var self = this
-//   this.web3Providers.get(type, function (error, obj) {
-//     if (error) {
-//       console.log('provider ' + type + ' not defined')
-//     } else {
-//       self.web3 = obj
-//       self.setManagers()
-//       // self.traceManager.web3 = self.web3
-//       self.executionContext.detectNetwork((error, network) => {
-//         if (error || !network) {
-//           self.web3Debug = obj
-//           self.web3 = obj
-//         } else {
-//           var webDebugNode = init.web3DebugNode(network.name)
-//           self.web3Debug = !webDebugNode ? obj : webDebugNode
-//           self.web3 = !webDebugNode ? obj : webDebugNode
-//         }
-//         self.setManagers()
-//       })
-//       self.event.trigger('providerChanged', [type])
-//     }
-//   })
-// }
 
 Ethdebugger.prototype.debug = function (tx) {
   this.setCompilationResult(this.opts.compilationResult())

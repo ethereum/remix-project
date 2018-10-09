@@ -79,30 +79,19 @@ Debugger.prototype.switchProvider = function (type) {
     if (error) {
       console.log('provider ' + type + ' not defined')
     } else {
-      //self.web3 = obj
       self.debugger.updateWeb3(obj)
-      self.debugger.setManagers()
-      // self.traceManager.web3 = self.web3
       self.executionContext.detectNetwork((error, network) => {
         if (error || !network) {
-          // self.web3Debug = obj
-          // self.web3 = obj
           self.debugger.updateWeb3(obj)
         } else {
           var webDebugNode = init.web3DebugNode(network.name)
-          // self.web3Debug = !webDebugNode ? obj : webDebugNode
-          // self.web3 = !webDebugNode ? obj : webDebugNode
           self.debugger.updateWeb3(!webDebugNode ? obj : webDebugNode)
         }
-        self.debugger.setManagers()
       })
       self.event.trigger('providerChanged', [type])
     }
   })
 }
-
-
-
 
 
 
