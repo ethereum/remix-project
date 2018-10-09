@@ -13,11 +13,8 @@ var remixLib = require('remix-lib')
 var TraceManager = remixLib.trace.TraceManager
 var CodeManager = remixLib.code.CodeManager
 var traceHelper = remixLib.helpers.trace
-var init = remixLib.init
-var executionContext = remixLib.execution.executionContext
+// var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
-var Web3Providers = remixLib.vm.Web3Providers
-var DummyProvider = remixLib.vm.DummyProvider
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -36,16 +33,16 @@ function Ethdebugger (opts) {
   this.opts = opts || {}
   if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
-  this.executionContext = opts.executionContext || executionContext
-  this.web3 = opts.web3 || this.executionContext.web3
+  // this.executionContext = opts.executionContext || executionContext
+  this.web3 = opts.web3
 
   this.event = new EventManager()
 
   this.tx
 
-  this.web3Providers = new Web3Providers()
-  this.addProvider('DUMMYWEB3', new DummyProvider())
-  this.switchProvider('DUMMYWEB3')
+  // this.web3Providers = new Web3Providers()
+  // this.addProvider('DUMMYWEB3', new DummyProvider())
+  // this.switchProvider('DUMMYWEB3')
 
   this.traceManager = new TraceManager({web3: this.web3})
   this.codeManager = new CodeManager(this.traceManager)
@@ -164,39 +161,43 @@ Ethdebugger.prototype.storageViewAt = function (step, address) {
   }, this.storageResolver, this.traceManager)
 }
 /* set env */
-Ethdebugger.prototype.web3 = function () {
-  return this.web3
+// Ethdebugger.prototype.web3 = function () {
+//   return this.web3
+// }
+
+Ethdebugger.prototype.updateWeb3 = function (web3) {
+  this.web3 = web3
 }
 
-Ethdebugger.prototype.addProvider = function (type, obj) {
-  this.web3Providers.addProvider(type, obj)
-  this.event.trigger('providerAdded', [type])
-}
-
-Ethdebugger.prototype.switchProvider = function (type) {
-  var self = this
-  this.web3Providers.get(type, function (error, obj) {
-    if (error) {
-      console.log('provider ' + type + ' not defined')
-    } else {
-      self.web3 = obj
-      self.setManagers()
-      // self.traceManager.web3 = self.web3
-      self.executionContext.detectNetwork((error, network) => {
-        if (error || !network) {
-          self.web3Debug = obj
-          self.web3 = obj
-        } else {
-          var webDebugNode = init.web3DebugNode(network.name)
-          self.web3Debug = !webDebugNode ? obj : webDebugNode
-          self.web3 = !webDebugNode ? obj : webDebugNode
-        }
-        self.setManagers()
-      })
-      self.event.trigger('providerChanged', [type])
-    }
-  })
-}
+// Ethdebugger.prototype.addProvider = function (type, obj) {
+//   this.web3Providers.addProvider(type, obj)
+//   this.event.trigger('providerAdded', [type])
+// }
+// 
+// Ethdebugger.prototype.switchProvider = function (type) {
+//   var self = this
+//   this.web3Providers.get(type, function (error, obj) {
+//     if (error) {
+//       console.log('provider ' + type + ' not defined')
+//     } else {
+//       self.web3 = obj
+//       self.setManagers()
+//       // self.traceManager.web3 = self.web3
+//       self.executionContext.detectNetwork((error, network) => {
+//         if (error || !network) {
+//           self.web3Debug = obj
+//           self.web3 = obj
+//         } else {
+//           var webDebugNode = init.web3DebugNode(network.name)
+//           self.web3Debug = !webDebugNode ? obj : webDebugNode
+//           self.web3 = !webDebugNode ? obj : webDebugNode
+//         }
+//         self.setManagers()
+//       })
+//       self.event.trigger('providerChanged', [type])
+//     }
+//   })
+// }
 
 Ethdebugger.prototype.debug = function (tx) {
   this.setCompilationResult(this.opts.compilationResult())
