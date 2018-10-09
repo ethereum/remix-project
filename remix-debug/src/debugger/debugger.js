@@ -7,8 +7,6 @@ var traceHelper = remixLib.helpers.trace
 var StepManager = require('./stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
 
-var init = remixLib.init
-
 function Debugger (options) {
   var self = this
   this.event = new EventManager()
@@ -49,31 +47,6 @@ function Debugger (options) {
 
 }
 
-Debugger.prototype.addProvider = function (type, obj) {
-  this.web3Providers.addProvider(type, obj)
-  this.event.trigger('providerAdded', [type])
-}
-
-Debugger.prototype.switchProvider = function (type) {
-  var self = this
-  this.web3Providers.get(type, function (error, obj) {
-    if (error) {
-      console.log('provider ' + type + ' not defined')
-    } else {
-      self.debugger.updateWeb3(obj)
-      self.executionContext.detectNetwork((error, network) => {
-        if (error || !network) {
-          self.debugger.updateWeb3(obj)
-        } else {
-          var webDebugNode = init.web3DebugNode(network.name)
-          self.debugger.updateWeb3(!webDebugNode ? obj : webDebugNode)
-        }
-      })
-      self.event.trigger('providerChanged', [type])
-    }
-  })
-}
-
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   const self = this
   // register selected code item, highlight the corresponding source location
@@ -89,6 +62,10 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
       }
     })
   })
+}
+
+Debugger.prototype.updateWeb3 = function (web3) {
+  this.debugger.web3 = web3
 }
 
 Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
