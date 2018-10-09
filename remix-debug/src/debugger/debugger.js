@@ -20,7 +20,6 @@ function Debugger (options) {
   this.compiler = options.compiler
 
   this.debugger = new Ethdebugger({
-    // executionContext: this.executionContext,
     web3: this.executionContext.web3,
     compilationResult: () => {
       var compilationResult = this.compiler.lastCompilationResult
@@ -43,11 +42,6 @@ function Debugger (options) {
 
   this.debugger.setBreakpointManager(this.breakPointManager)
 
-  this.executionContext.event.register('contextChanged', this, function (context) {
-    // TODO: was already broken
-    // self.switchProvider(context)
-  })
-
   this.debugger.event.register('newTraceLoaded', this, function () {
     self.event.trigger('debuggerStatus', [true])
   })
@@ -65,8 +59,6 @@ function Debugger (options) {
   this.addProvider('web3', this.executionContext.internalWeb3())
   this.switchProvider(this.executionContext.getProvider())
 }
-
-
 
 Debugger.prototype.addProvider = function (type, obj) {
   this.web3Providers.addProvider(type, obj)
@@ -92,8 +84,6 @@ Debugger.prototype.switchProvider = function (type) {
     }
   })
 }
-
-
 
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   const self = this
