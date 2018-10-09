@@ -44,7 +44,6 @@ function Debugger (options) {
   this.event.register('breakpointStep', function (step) {
     self.step_manager.jumpTo(step)
   })
-
 }
 
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
