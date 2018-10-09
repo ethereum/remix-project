@@ -7,20 +7,17 @@ var traceHelper = remixLib.helpers.trace
 var StepManager = require('./stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
 
-var Web3Providers = remixLib.vm.Web3Providers
-var DummyProvider = remixLib.vm.DummyProvider
 var init = remixLib.init
 
 function Debugger (options) {
   var self = this
   this.event = new EventManager()
 
-  this.executionContext = options.executionContext
   this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
   this.compiler = options.compiler
 
   this.debugger = new Ethdebugger({
-    web3: this.executionContext.web3,
+    web3: options.web3,
     compilationResult: () => {
       var compilationResult = this.compiler.lastCompilationResult
       if (compilationResult) {
@@ -29,10 +26,6 @@ function Debugger (options) {
       return null
     }
   })
-
-  this.web3Providers = new Web3Providers()
-  this.addProvider('DUMMYWEB3', new DummyProvider())
-  this.switchProvider('DUMMYWEB3')
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.compiler.lastCompilationResult.source.sources, this.compiler.lastCompilationResult.data.sources)
@@ -54,10 +47,6 @@ function Debugger (options) {
     self.step_manager.jumpTo(step)
   })
 
-  this.addProvider('vm', this.executionContext.vm())
-  this.addProvider('injected', this.executionContext.internalWeb3())
-  this.addProvider('web3', this.executionContext.internalWeb3())
-  this.switchProvider(this.executionContext.getProvider())
 }
 
 Debugger.prototype.addProvider = function (type, obj) {
@@ -104,7 +93,7 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
 
 Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
   const self = this
-  let web3 = this.executionContext.web3()
+  let web3 = this.debugger.web3
 
   if (this.debugger.traceManager.isLoading) {
     return
