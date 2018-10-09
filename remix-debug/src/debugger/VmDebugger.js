@@ -1,9 +1,8 @@
-var remixDebug = require('../../index.js')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var ui = remixLib.helpers.ui
-var StorageResolver = remixDebug.storage.StorageResolver
-var StorageViewer = remixDebug.storage.StorageViewer
+var StorageResolver = require('../storage/storageResolver')
+var StorageViewer = require('../storage/storageViewer')
 
 var DebuggerSolidityState = require('./solidityState')
 var DebuggerSolidityLocals = require('./solidityLocals')

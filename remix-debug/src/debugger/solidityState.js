@@ -1,8 +1,7 @@
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var remixDebug = require('../../index.js')
-var stateDecoder = remixDebug.SolidityDecoder.stateDecoder
-var StorageViewer = remixDebug.storage.StorageViewer
+var stateDecoder = require('../solidity-decoder/stateDecoder')
+var StorageViewer = require('../storage/storageViewer')
 
 class DebuggerSolidityState {
 
