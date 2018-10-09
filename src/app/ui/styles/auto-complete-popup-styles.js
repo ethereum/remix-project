@@ -31,6 +31,7 @@ var css = csjs`
     font-family      : monospace;
     font-size        : 10px;
     display          : block;
+    cursor           : pointer;
   }
 
   .popupcontent div  {
