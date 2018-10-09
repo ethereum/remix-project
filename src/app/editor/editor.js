@@ -297,7 +297,7 @@ function Editor (opts = {}, localRegistry) {
 
   // Unmap ctrl-t & ctrl-f
   editor.commands.bindKeys({ 'ctrl-t': null })
-
+  editor.setShowPrintMargin(false)
   editor.resize(true)
 }
 
