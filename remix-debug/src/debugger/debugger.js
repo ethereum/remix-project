@@ -7,6 +7,10 @@ var traceHelper = remixLib.helpers.trace
 var StepManager = require('./stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
 
+var Web3Providers = remixLib.vm.Web3Providers
+var DummyProvider = remixLib.vm.DummyProvider
+var init = remixLib.init
+
 function Debugger (options) {
   var self = this
   this.event = new EventManager()
@@ -16,7 +20,8 @@ function Debugger (options) {
   this.compiler = options.compiler
 
   this.debugger = new Ethdebugger({
-    executionContext: this.executionContext,
+    // executionContext: this.executionContext,
+    web3: this.executionContext.web3,
     compilationResult: () => {
       var compilationResult = this.compiler.lastCompilationResult
       if (compilationResult) {
@@ -25,6 +30,10 @@ function Debugger (options) {
       return null
     }
   })
+
+  this.web3Providers = new Web3Providers()
+  this.addProvider('DUMMYWEB3', new DummyProvider())
+  this.switchProvider('DUMMYWEB3')
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
     return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.compiler.lastCompilationResult.source.sources, this.compiler.lastCompilationResult.data.sources)
@@ -51,11 +60,51 @@ function Debugger (options) {
     self.step_manager.jumpTo(step)
   })
 
-  this.debugger.addProvider('vm', this.executionContext.vm())
-  this.debugger.addProvider('injected', this.executionContext.internalWeb3())
-  this.debugger.addProvider('web3', this.executionContext.internalWeb3())
-  this.debugger.switchProvider(this.executionContext.getProvider())
+  this.addProvider('vm', this.executionContext.vm())
+  this.addProvider('injected', this.executionContext.internalWeb3())
+  this.addProvider('web3', this.executionContext.internalWeb3())
+  this.switchProvider(this.executionContext.getProvider())
 }
+
+
+
+Debugger.prototype.addProvider = function (type, obj) {
+  this.web3Providers.addProvider(type, obj)
+  this.event.trigger('providerAdded', [type])
+}
+
+Debugger.prototype.switchProvider = function (type) {
+  var self = this
+  this.web3Providers.get(type, function (error, obj) {
+    if (error) {
+      console.log('provider ' + type + ' not defined')
+    } else {
+      //self.web3 = obj
+      self.debugger.updateWeb3(obj)
+      self.debugger.setManagers()
+      // self.traceManager.web3 = self.web3
+      self.executionContext.detectNetwork((error, network) => {
+        if (error || !network) {
+          // self.web3Debug = obj
+          // self.web3 = obj
+          self.debugger.updateWeb3(obj)
+        } else {
+          var webDebugNode = init.web3DebugNode(network.name)
+          // self.web3Debug = !webDebugNode ? obj : webDebugNode
+          // self.web3 = !webDebugNode ? obj : webDebugNode
+          self.debugger.updateWeb3(!webDebugNode ? obj : webDebugNode)
+        }
+        self.debugger.setManagers()
+      })
+      self.event.trigger('providerChanged', [type])
+    }
+  })
+}
+
+
+
+
+
 
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   const self = this
