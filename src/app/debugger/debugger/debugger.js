@@ -61,11 +61,9 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   if (!self._deps.compilersArtefacts['__last']) return
   self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
     if (error) return console.log(error)
-    var compilerData = self._deps.compilersArtefacts['__last'].getdata()
-    if (!compilerData) return
-    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilerData.contracts, function (error, rawLocation) {
+    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
       if (!error) {
-        var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilerData.source.sources)
+        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilerData.source.sources, compilerData.data.sources)
         self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
       } else {
         self.event.trigger('newSourceLocation', [null])
