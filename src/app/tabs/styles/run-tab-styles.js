@@ -44,7 +44,7 @@ var css = csjs`
   }
   .col1_1 {
     font-size: 12px;
-    width: 25%;
+    width: 10%;
     min-width: 75px;
     float: left;
     align-self: center;
