@@ -57,7 +57,7 @@ Debugger.prototype.registerAndHighlightCodeItem = function (index) {
     if (error) return console.log(error)
     self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
       if (!error && self.compiler.lastCompilationResult && self.compiler.lastCompilationResult.data) {
-        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources)
+        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources, self.compiler.lastCompilationResult.data.sources)
         self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
       } else {
         self.event.trigger('newSourceLocation', [null])
