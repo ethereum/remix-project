@@ -19,4 +19,8 @@ module.exports = class CompilerAbstract {
   visitContracts (calllback) {
     return txHelper.visitContracts(this.data.contracts, calllback)
   }
+
+  getData () {
+    return this.data
+  }
 }

@@ -39,7 +39,6 @@ function runTab (opts, localRegistry) {
   }
   self._components = {}
   self._components.registry = localRegistry || globlalRegistry
-  self._components.compilersArtefacts = {}
   self._components.transactionContextAPI = {
     getAddress: (cb) => {
       cb(null, $('#txorigin').val())
@@ -79,9 +78,9 @@ function runTab (opts, localRegistry) {
     editor: self._components.registry.get('editor').api,
     logCallback: self._components.registry.get('logCallback').api,
     filePanel: self._components.registry.get('filepanel').api,
-    pluginManager: self._components.registry.get('pluginmanager').api
+    pluginManager: self._components.registry.get('pluginmanager').api,
+    compilersArtefacts: self._components.registry.get('compilersartefacts').api
   }
-  self._components.compilersArtefacts['solidity'] = self._deps.compiler
   self._deps.udapp.resetAPI(self._components.transactionContextAPI)
   self._view.recorderCount = yo`<span>0</span>`
   self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
@@ -312,11 +311,18 @@ function contractDropdown (events, self) {
   self._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
     // TODO check whether the tab is configured
     let compiler = new CompilerAbstract(languageVersion, data)
-    self._components.compilersArtefacts[languageVersion] = compiler
+    self._deps.compilersArtefacts[languageVersion] = compiler
+    self._deps.compilersArtefacts['__last'] = compiler
     newlyCompiled(true, data, source, compiler, languageVersion)
   })
 
-  self._deps.compiler.event.register('compilationFinished', (success, data, source) => { newlyCompiled(success, data, source, self._deps.compiler, 'solidity') })
+  self._deps.compiler.event.register('compilationFinished', (success, data, source) => {
+    var name = 'solidity'
+    let compiler = new CompilerAbstract(name, data)
+    self._deps.compilersArtefacts[name] = compiler
+    self._deps.compilersArtefacts['__last'] = compiler
+    newlyCompiled(success, data, source, self._deps.compiler, name) 
+  })
 
   var deployAction = (value) => {
     self._view.createPanel.style.display = value
@@ -343,7 +349,7 @@ function contractDropdown (events, self) {
   function getSelectedContract () {
     var contract = selectContractNames.children[selectContractNames.selectedIndex]
     var contractName = contract.innerHTML
-    var compiler = self._components.compilersArtefacts[contract.getAttribute('compiler')]
+    var compiler = self._deps.compilersArtefacts[contract.getAttribute('compiler')]
     if (!compiler) return null
 
     if (contractName) {
