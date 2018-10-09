@@ -392,9 +392,12 @@ function contractDropdown (events, self) {
 
   selectContractNames.addEventListener('change', setInputParamsPlaceHolder)
 
-  function createInstanceCallback (error, selectedContract, data) {
-    if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+  function createInstanceCallback (selectedContract, data) {
     self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+    if (data) {
+      data.contractName = selectedContract.name
+      data.linkReferences = selectedContract.contract.object.evm.bytecode.linkReferences
+    }
     self._deps.udapp.createContract(data, (error, txResult) => {
       if (!error) {
         var isVM = executionContext.isVM()
@@ -434,9 +437,8 @@ function contractDropdown (events, self) {
         if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
           txFormat.buildData(selectedContract.name, selectedContract.contract.object, compiler.getContracts(), true, constructor, args, (error, data) => {
-            data.contractName = selectedContract.name
-            data.linkReferences = selectedContract.contract.object.evm.bytecode.linkReferences
-            createInstanceCallback(error, selectedContract, data)
+            if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+            createInstanceCallback(selectedContract, data)
           }, (msg) => {
             self._deps.logCallback(msg)
           }, (data, runTxCallback) => {
@@ -446,8 +448,8 @@ function contractDropdown (events, self) {
         } else {
           if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) self._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
           txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
-            if (data) data.contractName = selectedContract.name
-            createInstanceCallback(error, selectedContract, data)
+            if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+            createInstanceCallback(selectedContract, data)
           })
         }
       })
