@@ -13,7 +13,6 @@ var remixLib = require('remix-lib')
 var TraceManager = remixLib.trace.TraceManager
 var CodeManager = remixLib.code.CodeManager
 var traceHelper = remixLib.helpers.trace
-// var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
 
 /**
@@ -33,7 +32,6 @@ function Ethdebugger (opts) {
   this.opts = opts || {}
   if (!this.opts.compilationResult) this.opts.compilationResult = () => { return null }
 
-  // this.executionContext = opts.executionContext || executionContext
   this.web3 = opts.web3
 
   this.event = new EventManager()
