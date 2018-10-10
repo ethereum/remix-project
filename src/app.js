@@ -396,6 +396,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter(self._components.compiler.event)
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
+  self._components.compilersArtefacts = {} // store all the possible compilation data (key represent a compiler name)
+  registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
+
   // ----------------- UniversalDApp -----------------
   var udapp = new UniversalDApp({
     removable: false,
@@ -412,9 +415,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var txlistener = new Txlistener({
     api: {
       contracts: function () {
-        if (self._components.compiler.lastCompilationResult && self._components.compiler.lastCompilationResult.data) {
-          return self._components.compiler.lastCompilationResult.data.contracts
-        }
+        if (self._components.compilersArtefacts['__last']) return self._components.compilersArtefacts['__last'].getContracts()
         return null
       },
       resolveReceipt: function (tx, cb) {

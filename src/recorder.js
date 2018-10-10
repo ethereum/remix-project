@@ -13,7 +13,7 @@ var modal = require('./app/ui/modal-dialog-custom')
   *
   */
 class Recorder {
-  constructor (compiler, udapp, logCallBack) {
+  constructor (udapp, logCallBack) {
     var self = this
     self.logCallBack = logCallBack
     self.event = new EventManager()
@@ -27,25 +27,22 @@ class Recorder {
       if (this.data._listen) {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
-          var selectedContract = compiler.getContract(payLoad.contractName)
-          if (selectedContract) {
-            var abi = selectedContract.object.abi
-            var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
-            record.abi = sha3
-            record.contractName = payLoad.contractName
-            record.bytecode = payLoad.contractBytecode
-            record.linkReferences = selectedContract.object.evm.bytecode.linkReferences
-            if (record.linkReferences && Object.keys(record.linkReferences).length) {
-              for (var file in record.linkReferences) {
-                for (var lib in record.linkReferences[file]) {
-                  self.data._linkReferences[lib] = '<address>'
-                }
+          var abi = payLoad.contractABI
+          var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
+          record.abi = sha3
+          record.contractName = payLoad.contractName
+          record.bytecode = payLoad.contractBytecode
+          record.linkReferences = payLoad.linkReferences
+          if (record.linkReferences && Object.keys(record.linkReferences).length) {
+            for (var file in record.linkReferences) {
+              for (var lib in record.linkReferences[file]) {
+                self.data._linkReferences[lib] = '<address>'
               }
             }
-            self.data._abis[sha3] = abi
-
-            this.data._contractABIReferences[timestamp] = sha3
           }
+          self.data._abis[sha3] = abi
+
+          this.data._contractABIReferences[timestamp] = sha3
         } else {
           var creationTimestamp = this.data._createdContracts[to]
           record.to = `created{${creationTimestamp}}`

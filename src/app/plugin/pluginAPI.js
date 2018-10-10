@@ -44,6 +44,9 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
     compiler: {
       getCompilationResult: (mod, cb) => {
         cb(null, compiler.lastCompilationResult)
+      },
+      sendCompilationResult: (mod, file, source, languageVersion, data, cb) => {
+        pluginManager.receivedDataFrom('sendCompilationResult', mod, [file, source, languageVersion, data])
       }
     },
     udapp: {
