@@ -34,10 +34,11 @@ _debugger = new Debugger({
 })
 
 // with vm
-contextManager.initProviders()
 contextManager.event.register('providerChanged', () => {
 	_debugger.updateWeb3(contextManager.getWeb3())
 })
+
+contextManager.initProviders()
 
 contextManager.switchProvider('vm')
 
