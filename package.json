@@ -166,7 +166,7 @@
     "nightwatch_remote_debugger_parallel": "nightwatch --config nightwatch_debugger.js --env safari,chrome,default",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
-    "remixd": "./node_modules/remixd/bin/remixd -s ./contracts",
+    "remixd": "./node_modules/remixd/bin/remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "serve": "execr --silent http-server .",
