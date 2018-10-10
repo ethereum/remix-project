@@ -11,7 +11,8 @@ function Debugger (options) {
   var self = this
   this.event = new EventManager()
 
-  this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
+  // TODO: temporarily commented out
+  // this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
   this.compiler = options.compiler
 
   this.debugger = new Ethdebugger({
@@ -25,11 +26,12 @@ function Debugger (options) {
     }
   })
 
-  this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
-    return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.compiler.lastCompilationResult.source.sources, this.compiler.lastCompilationResult.data.sources)
-  }, (step) => {
-    self.event.trigger('breakpointStep', [step])
-  })
+  // TODO: temporarily commented out
+  // this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
+  //   return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this.compiler.lastCompilationResult.source.sources, this.compiler.lastCompilationResult.data.sources)
+  // }, (step) => {
+  //   self.event.trigger('breakpointStep', [step])
+  // })
 
   this.debugger.setBreakpointManager(this.breakPointManager)
 
@@ -47,20 +49,22 @@ function Debugger (options) {
 }
 
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
-  const self = this
-  // register selected code item, highlight the corresponding source location
-  if (!self.compiler.lastCompilationResult) return
-  self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
-    if (error) return console.log(error)
-    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
-      if (!error && self.compiler.lastCompilationResult && self.compiler.lastCompilationResult.data) {
-        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources, self.compiler.lastCompilationResult.data.sources)
-        self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
-      } else {
-        self.event.trigger('newSourceLocation', [null])
-      }
-    })
-  })
+  return
+  // TODO: temporarily commented out
+  // const self = this
+  // // register selected code item, highlight the corresponding source location
+  // if (!self.compiler.lastCompilationResult) return
+  // self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
+  //   if (error) return console.log(error)
+  //   self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+  //     if (!error && self.compiler.lastCompilationResult && self.compiler.lastCompilationResult.data) {
+  //       var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self.compiler.lastCompilationResult.source.sources, self.compiler.lastCompilationResult.data.sources)
+  //       self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
+  //     } else {
+  //       self.event.trigger('newSourceLocation', [null])
+  //     }
+  //   })
+  // })
 }
 
 Debugger.prototype.updateWeb3 = function (web3) {
