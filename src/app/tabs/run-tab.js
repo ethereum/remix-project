@@ -321,7 +321,7 @@ function contractDropdown (events, self) {
     let compiler = new CompilerAbstract(name, data)
     self._deps.compilersArtefacts[name] = compiler
     self._deps.compilersArtefacts['__last'] = compiler
-    newlyCompiled(success, data, source, self._deps.compiler, name) 
+    newlyCompiled(success, data, source, self._deps.compiler, name)
   })
 
   var deployAction = (value) => {
