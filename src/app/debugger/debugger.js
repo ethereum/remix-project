@@ -17,16 +17,14 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   this._deps = {
     offsetToLineColumnConverter: this._components.registry.get('offsettolinecolumnconverter').api,
     editor: this._components.registry.get('editor').api,
-    compiler: this._components.registry.get('compiler').api
+    compiler: this._components.registry.get('compiler').api,
+    compilersArtefacts: this._components.registry.get('compilersartefacts').api
   }
   this.debugger = new Ethdebugger(
     {
       executionContext: executionContext,
       compilationResult: () => {
-        var compilationResult = this._deps.compiler.lastCompilationResult
-        if (compilationResult) {
-          return compilationResult.data
-        }
+        if (this._deps.compilersArtefacts['__last']) return this._deps.compilersArtefacts['__last'].getData()
         return null
       }
     })
