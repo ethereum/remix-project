@@ -1,9 +1,11 @@
 {
-	"devDependencies": {
-		"lerna": "^2.10.2"
-	},
-	"scripts": {
-		"bootstrap": "lerna bootstrap",
-		"publish": "lerna publish"
-	}
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "lerna": "^2.10.2"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "publish": "lerna publish",
+    "release": "lerna bootstrap; lerna publish; gulp; gulp publishTag;"
+  }
 }
