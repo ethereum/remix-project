@@ -8,5 +8,14 @@
     "remix-tests",
     "remix-simulator"
   ],
-  "version": "independent"
+  "command": {
+    "init": {
+      "exact": true
+    },
+    "publish": {
+      "exact": true,
+      "skipGit": true
+    }
+  },
+  "version": "0.0.1"
 }
