@@ -136,13 +136,17 @@ function ExecutionContext () {
   }
 
   this.removeProvider = function (name) {
-    delete this.customNetWorks[name]
-    self.event.trigger('removeProvider', [name])
+    if (name && this.customNetWorks[name]) {
+      delete this.customNetWorks[name]
+      self.event.trigger('removeProvider', [name])
+    }
   }
 
   this.addProvider = function (network) {
-    this.customNetWorks[network.name] = network
-    self.event.trigger('addProvider', [network])
+    if (network && network.name && network.url) {
+      this.customNetWorks[network.name] = network
+      self.event.trigger('addProvider', [network])
+    }
   }
 
   this.internalWeb3 = function () {
