@@ -29,16 +29,16 @@ const r = repl.start({
   eval: (cmd, context, filename, cb) => {
     let command = cmd.trim()
     if (command === 'next' || command === 'n') {
-      cmd_line.debugger.step_manager.stepOverForward()
+      cmd_line.debugger.step_manager.stepOverForward(true)
     }
     if (command === 'previous' || command === 'p' || command === 'prev') {
-      cmd_line.debugger.step_manager.stepOverBack()
+      cmd_line.debugger.step_manager.stepOverBack(true)
     }
     if (command === 'step' || command === 's') {
-      cmd_line.debugger.step_manager.stepIntoForward()
+      cmd_line.debugger.step_manager.stepIntoForward(true)
     }
     if (command === 'stepback' || command === 'sb') {
-      cmd_line.debugger.step_manager.stepIntoBack()
+      cmd_line.debugger.step_manager.stepIntoBack(true)
     }
     if (command === 'exit' || command === 'quit') {
       process.exit(0)
