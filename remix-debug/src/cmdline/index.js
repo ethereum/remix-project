@@ -48,12 +48,13 @@ class CmdLine {
 
         let line
         line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line - 1]
-        console.dir(line)
+        console.dir("    " + (lineColumnPos.start.line - 1) + "  " + line)
         line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line]
-        console.dir(line)
-        console.dir("^^^^^^^^^^^^^^^ ")
+        console.dir("=>  " + lineColumnPos.start.line + "  " + line)
         line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line + 1]
-        console.dir(line)
+        console.dir("    " + (lineColumnPos.start.line + 1) + "  " + line)
+        line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line + 2]
+        console.dir("    " + (lineColumnPos.start.line + 2) + "  " + line)
       });
 
       self.debugger.step_manager.event.register('stepChanged', (stepIndex) => {
