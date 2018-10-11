@@ -22,6 +22,7 @@ var css = require('./styles/run-tab-styles')
 var MultiParamManager = require('../../multiParamManager')
 var modalDialog = require('../ui/modaldialog')
 var CompilerAbstract = require('../compiler/compiler-abstract')
+var tootip = require('../ui/tooltip')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -637,6 +638,22 @@ function settings (container, self) {
     instanceContainer.innerHTML = '' // clear the instances list
     instanceContainer.appendChild(instanceContainerTitle)
     instanceContainer.appendChild(self._view.noInstancesText)
+  })
+
+  executionContext.event.register('addProvider', (network) => {
+    selectExEnv.appendChild(yo`<option
+            title="Manually added environment: ${network.url}"
+            value="${network.name}" name="executionContext"> ${network.name}
+          </option>`)
+    tootip(`${network.name} [${network.url}] added`)
+  })
+
+  executionContext.event.register('removeProvider', (name) => {
+    var env = selectExEnv.querySelector(`option[value="${name}"]`)
+    if (env) {
+      selectExEnv.removeChild(env)
+      tootip(`${name} removed`)
+    }
   })
 
   selectExEnv.addEventListener('change', function (event) {

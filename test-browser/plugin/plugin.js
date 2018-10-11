@@ -78,4 +78,14 @@ window.onload = function () {
     extension.call('editor', 'getFilesFromPath', [document.getElementById('filename').value],
     function (error, result) { console.log(error, result) })
   })
+
+  document.querySelector('input#addnetwork').addEventListener('click', function () {
+    extension.call('app', 'addProvider', [document.getElementById('filename').value, document.getElementById('valuetosend').value],
+    function (error, result) { console.log(error, result) })
+  })
+
+  document.querySelector('input#removenetwork').addEventListener('click', function () {
+    extension.call('app', 'removeProvider', [document.getElementById('filename').value],
+    function (error, result) { console.log(error, result) })
+  })
 }
