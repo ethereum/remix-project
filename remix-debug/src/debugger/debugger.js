@@ -115,7 +115,6 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
 	this.vmDebuggerLogic.start()
 
   this.step_manager.event.register('stepChanged', this, function (stepIndex) {
-		console.dir("stepChanged, going to trigger the other components.. " + stepIndex);
     self.debugger.codeManager.resolveStep(stepIndex, tx)
     self.step_manager.event.trigger('indexChanged', [stepIndex])
     self.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])

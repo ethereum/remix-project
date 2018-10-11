@@ -42,46 +42,39 @@ class CmdLine {
     this.debugger.debug(null, txNumber, null, () => {
 
       self.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
-        console.dir("newSourceLocation")
-
         if (!lineColumnPos || !lineColumnPos.start) return;
 
+        let content = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")
+
         let line
-        line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line - 1]
-        console.dir("    " + (lineColumnPos.start.line - 1) + "  " + line)
-        line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line]
-        console.dir("=>  " + lineColumnPos.start.line + "  " + line)
-        line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line + 1]
-        console.dir("    " + (lineColumnPos.start.line + 1) + "  " + line)
-        line = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")[lineColumnPos.start.line + 2]
-        console.dir("    " + (lineColumnPos.start.line + 2) + "  " + line)
-      });
+        line = content[lineColumnPos.start.line - 2]
+        if ( line !== undefined) {
+          console.dir("    " + (lineColumnPos.start.line - 1) + ":  " + line)
+        }
+        line = content[lineColumnPos.start.line - 1]
+        if ( line !== undefined) {
+          console.dir("    " + lineColumnPos.start.line + ":  " + line)
+        }
 
-      self.debugger.step_manager.event.register('stepChanged', (stepIndex) => {
-        // console.dir("---------")
-        // console.dir("stepChanged: " + stepIndex)
-        // console.dir("---------")
-      })
+        let currentLineNumber = lineColumnPos.start.line
+        let currentLine = content[currentLineNumber]
+        console.dir("=>  " + (currentLineNumber + 1) + ":  " + currentLine)
 
-      self.debugger.step_manager.event.register('traceLengthChanged', (traceLength) => {
-        // console.dir("---------")
-        // console.dir("traceLengthChanged: " + traceLength)
-        // console.dir("---------")
+        let startLine = lineColumnPos.start.line
+        for (var i=1; i < 4; i++) {
+          let line = content[startLine + i]
+          console.dir("    " + (startLine + i + 1) + ":  " + line)
+        }
       });
 
       self.debugger.vmDebuggerLogic.event.register('solidityState', (data) => {
         self.solidityState = data
       });
 
+      // TODO: this doesnt work too well, it should request the data instead...
       self.debugger.vmDebuggerLogic.event.register('solidityLocals', (data) => {
+        if (JSON.stringify(data) === '{}') return
         self.solidityLocals = data
-      });
-
-      self.debugger.vmDebuggerLogic.event.register('traceManagerMemoryUpdate', (data) => {
-        // console.dir("---------")
-        // console.dir("traceManagerMemoryUpdate")
-        // console.dir(data)
-        // console.dir("---------")
       });
 
     })
