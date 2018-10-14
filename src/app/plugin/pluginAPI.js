@@ -115,6 +115,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
           provider.set(path, content, (error) => {
             if (error) return cb(error)
             fileManager.syncEditor(path)
+            cb()
           })
         } else {
           cb(path + ' not available')
