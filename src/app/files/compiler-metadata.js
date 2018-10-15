@@ -18,7 +18,7 @@ class CompilerMetadata {
       var path = self._opts.fileManager.currentPath()
       if (provider && path) {
         self._opts.compiler.visitContracts((contract) => {
-          var fileNameDeploy = path + '/' + contract.name + '.deploy.json'    
+          var fileNameDeploy = path + '/' + contract.name + '.deploy.json'
           provider.get(fileNameDeploy, (error, content) => {
             if (!error) {
               content = content || '{}'
