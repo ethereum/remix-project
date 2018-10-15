@@ -70,7 +70,7 @@ class CompilerMetadata {
     return metadata
   }
 
-  metadataOf (contractName, callback) {
+  deployMetadataOf (contractName, callback) {
     var self = this
     var provider = self._opts.fileManager.currentFileProvider()
     var path = self._opts.fileManager.currentPath()
@@ -79,7 +79,7 @@ class CompilerMetadata {
         if (err) {
           console.log(err)
         } else {
-          var fileName = path + '/' + contractName + '.json'
+          var fileName = path + '/' + contractName + '.deploy.json'
           provider.get(fileName, (error, content) => {
             if (error) return callback(error)
             if (!content) return callback()
