@@ -18,7 +18,7 @@ class CompilerMetadata {
       var path = self._opts.fileManager.currentPath()
       if (provider && path) {
         self._opts.compiler.visitContracts((contract) => {
-          var fileNameDeploy = path + '/' + contract.name + '.deploy.json'          
+          var fileNameDeploy = path + '/' + contract.name + '.deploy.json'    
           provider.get(fileNameDeploy, (error, content) => {
             if (!error) {
               content = content || '{}'
@@ -42,7 +42,7 @@ class CompilerMetadata {
               bytecode: contract.object.evm.bytecode,
               deployedBytecode: contract.object.evm.deployedBytecode,
               gasEstimates: contract.object.evm.gasEstimates,
-              methodIdentifiers: contract.object.evm.methodIdentifiers,
+              methodIdentifiers: contract.object.evm.methodIdentifiers
             }
             provider.set(fileNameData, JSON.stringify(data, null, '\t'))
           })
