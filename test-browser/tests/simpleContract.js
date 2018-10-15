@@ -115,7 +115,7 @@ function testManualDeployLib (browser, callback) {
 }
 
 function checkDeployShouldFail (browser, callback) {
-  contractHelper.switchFile(browser, 'browser/test.json', () => {
+  contractHelper.switchFile(browser, 'browser/test.deploy.json', () => {
     browser.getEditorValue((content) => {
       var config = JSON.parse(content)
       config['VM:-'].autoDeployLib = false
@@ -133,7 +133,7 @@ function checkDeployShouldFail (browser, callback) {
 }
 
 function checkDeployShouldSucceed (browser, address, callback) {
-  contractHelper.switchFile(browser, 'browser/test.json', () => {
+  contractHelper.switchFile(browser, 'browser/test.deploy.json', () => {
     browser.getEditorValue((content) => {
       var config = JSON.parse(content)
       config['VM:-'].autoDeployLib = false
