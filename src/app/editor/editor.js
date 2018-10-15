@@ -14,6 +14,9 @@ require('brace/ext/language_tools')
 require('brace/ext/searchbox')
 var langTools = ace.acequire('ace/ext/language_tools')
 require('ace-mode-solidity/build/remix-ide/mode-solidity')
+require('brace/mode/javascript')
+require('brace/mode/python')
+require('brace/mode/json')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
@@ -101,6 +104,14 @@ function Editor (opts = {}, localRegistry) {
   var currentSession
 
   var emptySession = createSession('')
+  var modes = {
+    'sol': 'ace/mode/solidity',
+    'js': 'ace/mode/javascript',
+    'py': 'ace/mode/python',
+    'txt': 'ace/mode/text',
+    'json': 'ace/mode/json',
+    'abi': 'ace/mode/json',
+  }
 
   editor.on('guttermousedown', function (e) {
     var target = e.domEvent.target
@@ -142,8 +153,9 @@ function Editor (opts = {}, localRegistry) {
     }
   }
 
-  function createSession (content) {
-    var s = new ace.EditSession(content, 'ace/mode/solidity')
+  function createSession (content, mode) {
+    var s = new ace.EditSession(content)
+    s.setMode(mode || 'ace/mode/text')
     s.setUndoManager(new ace.UndoManager())
     s.setTabSize(4)
     s.setUseSoftTabs(true)
@@ -157,9 +169,15 @@ function Editor (opts = {}, localRegistry) {
     editor.focus()
   }
 
+  function getMode (path) {
+    var ext = path.indexOf('.') !== -1 ? /[^.]+$/.exec(path) : null
+    if (ext) ext = ext[0]
+    return ext && modes[ext] ? modes[ext] : modes['txt']
+  }
+
   this.open = function (path, content) {
     if (!sessions[path]) {
-      var session = createSession(content)
+      var session = createSession(content, getMode(path))
       sessions[path] = session
       readOnlySessions[path] = false
     } else if (sessions[path].getValue() !== content) {
@@ -170,7 +188,7 @@ function Editor (opts = {}, localRegistry) {
 
   this.openReadOnly = function (path, content) {
     if (!sessions[path]) {
-      var session = createSession(content)
+      var session = createSession(content, getMode(path))
       sessions[path] = session
       readOnlySessions[path] = true
     }
