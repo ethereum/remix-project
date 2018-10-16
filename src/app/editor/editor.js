@@ -110,7 +110,7 @@ function Editor (opts = {}, localRegistry) {
     'py': 'ace/mode/python',
     'txt': 'ace/mode/text',
     'json': 'ace/mode/json',
-    'abi': 'ace/mode/json',
+    'abi': 'ace/mode/json'
   }
 
   editor.on('guttermousedown', function (e) {
