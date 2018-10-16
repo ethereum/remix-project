@@ -1,4 +1,5 @@
 {
+  "version": "0.1.0",
   "devDependencies": {
     "gulp": "^3.9.1",
     "lerna": "^2.10.2"
