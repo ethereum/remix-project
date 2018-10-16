@@ -64,7 +64,7 @@ class VmDebuggerLogic {
 
       self._traceManager.getCallDataAt(index, function (error, calldata) {
         if (error) {
-          console.log(error)
+          // console.log(error)
           self.event.trigger('traceManagerCallDataUpdate', [{}])
         } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerCallDataUpdate', [calldata])
@@ -73,7 +73,7 @@ class VmDebuggerLogic {
 
       self._traceManager.getMemoryAt(index, function (error, memory) {
         if (error) {
-          console.log(error)
+          // console.log(error)
           self.event.trigger('traceManagerMemoryUpdate', [{}])
         } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
@@ -82,7 +82,7 @@ class VmDebuggerLogic {
 
       self._traceManager.getCallStackAt(index, function (error, callstack) {
         if (error) {
-          console.log(error)
+          // console.log(error)
           self.event.trigger('traceManagerCallStackUpdate', [{}])
         } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerCallStackUpdate', [callstack])
@@ -91,7 +91,7 @@ class VmDebuggerLogic {
 
       self._traceManager.getStackAt(index, function (error, callstack) {
         if (error) {
-          console.log(error)
+          // console.log(error)
           self.event.trigger('traceManagerStackUpdate', [{}])
         } else if (self.stepManager.currentStepIndex === index) {
           self.event.trigger('traceManagerStackUpdate', [callstack])
@@ -106,7 +106,7 @@ class VmDebuggerLogic {
 
         storageViewer.storageRange((error, storage) => {
           if (error) {
-            console.log(error)
+            // console.log(error)
             self.event.trigger('traceManagerStorageUpdate', [{}])
           } else if (self.stepManager.currentStepIndex === index) {
             var header = storageViewer.isComplete(address) ? 'completely loaded' : 'partially loaded...'
