@@ -18,8 +18,10 @@ class CompilerMetadata {
       var path = self._opts.fileManager.currentPath()
       if (provider && path) {
         self._opts.compiler.visitContracts((contract) => {
-          var fileNameDeploy = path + '/' + contract.name + '.deploy.json'
-          provider.get(fileNameDeploy, (error, content) => {
+          if (contract.file !== source.target) return
+
+          var fileName = path + '/' + contract.name + '.json'
+          provider.get(fileName, (error, content) => {
             if (!error) {
               content = content || '{}'
               var metadata
@@ -29,22 +31,24 @@ class CompilerMetadata {
                 console.log(e)
               }
 
+              var deploy = metadata.deploy || {}
               self.networks.forEach((network) => {
-                metadata[network] = self._syncContext(contract, metadata[network] || {})
+                deploy[network] = self._syncContext(contract, deploy[network] || {})
               })
-              provider.set(fileNameDeploy, JSON.stringify(metadata, null, '\t'))
+
+              var data = {
+                deploy,
+                data: {
+                  bytecode: contract.object.evm.bytecode,
+                  deployedBytecode: contract.object.evm.deployedBytecode,
+                  gasEstimates: contract.object.evm.gasEstimates,
+                  methodIdentifiers: contract.object.evm.methodIdentifiers
+                },
+                abi: contract.object.abi
+              }
+
+              provider.set(fileName, JSON.stringify(data, null, '\t'))
             }
-          })
-          var fileNameData = path + '/' + contract.name + '.data.json'
-          var fileNameAbi = path + '/' + contract.name + '.abi'
-          provider.set(fileNameAbi, JSON.stringify(contract.object.abi, null, '\t'), () => {
-            var data = {
-              bytecode: contract.object.evm.bytecode,
-              deployedBytecode: contract.object.evm.deployedBytecode,
-              gasEstimates: contract.object.evm.gasEstimates,
-              methodIdentifiers: contract.object.evm.methodIdentifiers
-            }
-            provider.set(fileNameData, JSON.stringify(data, null, '\t'))
           })
         })
       }
@@ -79,7 +83,7 @@ class CompilerMetadata {
         if (err) {
           console.log(err)
         } else {
-          var fileName = path + '/' + contractName + '.deploy.json'
+          var fileName = path + '/' + contractName + '.json'
           provider.get(fileName, (error, content) => {
             if (error) return callback(error)
             if (!content) return callback()
