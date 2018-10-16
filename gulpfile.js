@@ -2,9 +2,10 @@
 
 'use strict';
 var gulp = require('gulp');
+var exec = require('child_process').exec;
 
-var lernaJSON = require('./lerna.json');
+var packageJSON = require('./package.json');
 
 gulp.task('publishTag', function () {
-    exec("git tag v"+ lernaJSON.version +"; git push --tags");
+    exec("git tag v"+ packageJSON.version +"; git push --tags");
 });
