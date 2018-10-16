@@ -102,10 +102,12 @@ class CmdLine {
   }
 
   displayLocals () {
+    console.dir("= displayLocals")
     console.dir(this.solidityLocals)
   }
 
   displayGlobals () {
+    console.dir("= displayGlobals")
     console.dir(this.solidityState)
     if (this.solidityState && this.solidityState.voters) {
       console.dir(this.solidityState.voters)

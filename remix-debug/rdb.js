@@ -6,6 +6,7 @@ var fs = require('fs')
 
 //var filename = 'test/sol/ballot.sol'
 var filename = 'test/sol/simple_storage.sol'
+var short_filename = "simple_storage.sol"
 //var filename = 'browser/ballot.sol'
 
 var input_json = {
@@ -27,7 +28,7 @@ var input_json = {
   }
 }
 
-input_json.sources[filename] = {content: fs.readFileSync(filename).toString()}
+input_json.sources[short_filename] = {content: fs.readFileSync(filename).toString()}
 
 console.dir(input_json)
 
@@ -53,7 +54,7 @@ var deployContract = function (cb) {
   let txNumber = null
   let tx = null
 
-  let code = compilation.data.contracts[filename].SimpleStorage.evm.bytecode.object
+  let code = compilation.data.contracts[short_filename].SimpleStorage.evm.bytecode.object
   console.dir("deploying...")
   console.dir(code)
   _web3.eth.sendTransaction({data: "0x" + code, from: _web3.eth.accounts[0], gas: 800000}, cb)
@@ -65,14 +66,18 @@ let _web3 = cmd_line.debugger.debugger.web3
 // var tx = "0x04aa74287b3c52e2ecab1cb066d22116317155503681870c516c95cdb148fa28"
 // var tx = "0x04aa74287b3c52e2ecab1cb066d22116317155503681870c516c95cdb148fa28"
 // var tx = "0x28bd66d99bc45b3f8d959126a26b8c97092892e63fc8ed90eb1598ebedf600ef"
-// var tx = "0x3a7355c59f95db494872f33890dbabaceae1ca5330db86db49d24a5c29cd829a"
+var tx = "0xf510c4f0b1d9ee262d7b9e9e87b4262f275fe029c2c733feef7dfa1e2b1e32aa"
 // _web3.eth.getTransactionReceipt(tx, (err, data) => {
 //   console.dir(err)
 //   console.dir(data)
 
-  deployContract((err, tx) => {
-  cmd_line.startDebug(tx, filename)
-  })
+//  deployContract((err, tx) => {
+  cmd_line.startDebug(tx, short_filename)
+
+cmd_line.events.on("source", () => {
+  cmd_line.getSource().forEach(console.dir)
+})
+ // })
 //})
 
 const repl = require('repl')
