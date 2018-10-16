@@ -38,7 +38,6 @@ class InternalCallTree {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
-            console.log('ready')
             createReducedTrace(this, traceManager.trace.length - 1)
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
