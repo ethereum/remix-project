@@ -36,7 +36,12 @@ class DebuggerSolidityState {
     }
     self.event.trigger('solidityStateUpdating')
     decodeTimeout = setTimeout(function () {
-      self.decode(index)
+      // necessary due to some states that can crash the debugger
+      try {
+        self.decode(index)
+      } catch(err) {
+      }
+
     }, 500)
   }
 
