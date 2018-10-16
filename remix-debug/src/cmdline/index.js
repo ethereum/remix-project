@@ -44,7 +44,7 @@ class CmdLine {
       self.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
         if (!lineColumnPos || !lineColumnPos.start) return;
 
-        let content = self.compilation.lastCompilationResult.source.sources['browser/ballot.sol'].content.split("\n")
+        let content = self.compilation.lastCompilationResult.source.sources[filename].content.split("\n")
 
         let line
         line = content[lineColumnPos.start.line - 2]

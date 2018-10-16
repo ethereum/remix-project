@@ -1,6 +1,7 @@
 'use strict'
 var EthDebugger = require('./src/Ethdebugger')
 var TransactionDebugger = require('./src/debugger/debugger')
+var CmdLine = require('./src/cmdline')
 
 var StorageViewer = require('./src/storage/storageViewer')
 var StorageResolver = require('./src/storage/storageResolver')
@@ -32,6 +33,7 @@ module.exports = {
   storage: {
     StorageViewer: StorageViewer,
     StorageResolver: StorageResolver
-  }
+  },
+  CmdLine: CmdLine
 }
 

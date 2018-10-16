@@ -37,7 +37,7 @@ class ContextManager {
     var self = this
     this.web3Providers.get(type, function (error, obj) {
       if (error) {
-        console.log('provider ' + type + ' not defined')
+        // console.log('provider ' + type + ' not defined')
       } else {
         self.web3 = obj
         self.executionContext.detectNetwork((error, network) => {
