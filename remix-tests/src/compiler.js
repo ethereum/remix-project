@@ -9,18 +9,28 @@ String.prototype.regexIndexOf = function (regex, startpos) {
   return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf
 }
 
+function writeTestAccountsContract (accounts) {
+  var testAccountContract = require('../sol/tests_accounts.sol.js')
+  var body = 'address[' + accounts.length + '] memory accounts'
+  if (!accounts.length) body += ';'
+  else {
+    body += '= [' + accounts.map((value) => { return `address(${value})` }).join(',') + '];'
+  }
+  return testAccountContract.replace('>accounts<', body)
+}
+
 var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
 var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
 
 // TODO: replace this with remix's own compiler code
-function compileFileOrFiles (filename, isDirectory, cb) {
+function compileFileOrFiles (filename, isDirectory, opts, cb) {
   let compiler, filepath
-
+  let accounts = opts.accounts || []
   const sources = {
     'tests.sol': { content: require('../sol/tests.sol.js') },
-    'remix_tests.sol': { content: require('../sol/tests.sol.js') }
+    'remix_tests.sol': { content: require('../sol/tests.sol.js') },
+    'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
   }
-
   // TODO: for now assumes filepath dir contains all tests, later all this
   // should be replaced with remix's & browser solidity compiler code
   filepath = (isDirectory ? filename : path.dirname(filename))
@@ -61,12 +71,13 @@ function compileFileOrFiles (filename, isDirectory, cb) {
   })
 }
 
-function compileContractSources (sources, importFileCb, cb) {
+function compileContractSources (sources, importFileCb, cb, opts) {
   let compiler, filepath
-
+  let accounts = opts.accounts || []
   // Iterate over sources keys. Inject test libraries. Inject test library import statements.
   if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
     sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
+    sources['remix_accounts.sol'] = { content: writeTestAccountsContract(accounts) }
   }
   const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
   for (let file in sources) {

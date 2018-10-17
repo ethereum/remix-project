@@ -16,13 +16,22 @@ var createWeb3Provider = function () {
   return web3
 }
 
-var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback, importFileCb) {
+var runTestSources = function (contractSources, testCallback, resultCallback, finalCallback, importFileCb, opts) {
+  opts = opts || {}
+  let web3 = opts.web3 || createWeb3Provider()
+  let accounts = opts.accounts || null
   async.waterfall([
+    function getAccountList (next) {
+      if (accounts) return next()
+      web3.eth.getAccounts((_err, _accounts) => {
+        accounts = _accounts
+        next()
+      })
+    },
     function compile (next) {
       Compiler.compileContractSources(contractSources, importFileCb, next)
     },
     function deployAllContracts (compilationResult, next) {
-      let web3 = createWeb3Provider()
       Deployer.deployAll(compilationResult, web3, function (err, contracts) {
         if (err) {
           next(err)
@@ -33,19 +42,21 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
     },
     function determineTestContractsToRun (compilationResult, contracts, next) {
       let contractsToTest = []
+      let contractsToTestDetails = []
 
       for (let filename in compilationResult) {
         if (filename.indexOf('_test.sol') < 0) {
           continue
         }
         Object.keys(compilationResult[filename]).forEach(contractName => {
+          contractsToTestDetails.push(compilationResult[filename][contractName])
           contractsToTest.push(contractName)
         })
       }
 
-      next(null, contractsToTest, contracts)
+      next(null, contractsToTest, contractsToTestDetails, contracts)
     },
-    function runTests (contractsToTest, contracts, next) {
+    function runTests (contractsToTest, contractsToTestDetails, contracts, next) {
       let totalPassing = 0
       let totalFailing = 0
       let totalTime = 0
@@ -67,7 +78,7 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
       }
 
       async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-        TestRunner.runTest(contractName, contracts[contractName], _testCallback, (err, result) => {
+        TestRunner.runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
           if (err) {
             return cb(err)
           }
@@ -95,7 +106,8 @@ var runTestSources = function (contractSources, testCallback, resultCallback, fi
   ], finalCallback)
 }
 
-var runTestFiles = function (filepath, isDirectory, web3) {
+var runTestFiles = function (filepath, isDirectory, web3, opts) {
+  opts = opts || {}
   const { Signale } = require('signale')
   // signale configuration
   const options = {
@@ -118,37 +130,49 @@ var runTestFiles = function (filepath, isDirectory, web3) {
     }
   }
   const signale = new Signale(options)
+  let accounts = opts.accounts || null
   async.waterfall([
+    function getAccountList (next) {
+      if (accounts) return next(null)
+      web3.eth.getAccounts((_err, _accounts) => {
+        accounts = _accounts
+        next(null)
+      })
+    },
     function compile (next) {
-      Compiler.compileFileOrFiles(filepath, isDirectory, next)
+      Compiler.compileFileOrFiles(filepath, isDirectory, { accounts }, next)
     },
     function deployAllContracts (compilationResult, next) {
       Deployer.deployAll(compilationResult, web3, function (err, contracts) {
         if (err) {
           next(err)
         }
-
         next(null, compilationResult, contracts)
       })
     },
     function determineTestContractsToRun (compilationResult, contracts, next) {
       let contractsToTest = []
-      if (isDirectory) {
-        fs.readdirSync(filepath).forEach(filename => {
-          if (filename.indexOf('_test.sol') < 0) {
-            return
-          }
-          Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
-            contractsToTest.push(contractName)
-          })
+      let contractsToTestDetails = []
+      var gatherContractsFrom = (filename) => {
+        if (filename.indexOf('_test.sol') < 0) {
+          return
+        }
+        Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
+          contractsToTest.push(contractName)
+          contractsToTestDetails.push(compilationResult[path.basename(filename)][contractName])
         })
-      } else {
-        contractsToTest = Object.keys(compilationResult[path.basename(filepath)])
       }
 
-      next(null, contractsToTest, contracts)
+      if (isDirectory) {
+        fs.readdirSync(filepath).forEach(filename => {
+          gatherContractsFrom(filename)
+        })
+      } else {
+        gatherContractsFrom(filepath)
+      }
+      next(null, contractsToTest, contractsToTestDetails, contracts)
     },
-    function runTests (contractsToTest, contracts, next) {
+    function runTests (contractsToTest, contractsToTestDetails, contracts, next) {
       let totalPassing = 0
       let totalFailing = 0
       let totalTime = 0
@@ -172,7 +196,7 @@ var runTestFiles = function (filepath, isDirectory, web3) {
       }
 
       async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-        TestRunner.runTest(contractName, contracts[contractName], testCallback, (err, result) => {
+        TestRunner.runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, testCallback, (err, result) => {
           if (err) {
             return cb(err)
           }
