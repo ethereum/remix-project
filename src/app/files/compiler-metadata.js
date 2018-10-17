@@ -89,7 +89,7 @@ class CompilerMetadata {
             if (!content) return callback()
             try {
               var metadata = JSON.parse(content)
-              medatada = metadata.deploy || {}
+              metadata = metadata.deploy || {}
               return callback(null, metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()])
             } catch (e) {
               callback(e.message)
