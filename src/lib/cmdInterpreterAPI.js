@@ -174,7 +174,7 @@ class CmdInterpreterAPI {
     }
   }
   setFile (path, content, cb) {
-    cb = cb || () => {}
+    cb = cb || function () {}
     var provider = this._deps.fileManager.fileProviderOf(path)
     if (provider) {
       provider.set(path, content, (error) => {
