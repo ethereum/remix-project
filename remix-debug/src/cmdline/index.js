@@ -83,19 +83,21 @@ class CmdLine {
     this.filename = filename
     this.debugger.debug(null, txNumber, null, () => {
 
-      self.debugger.event.register('newSourceLocation', function (lineColumnPos, _rawLocation) {
+      self.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
         self.lineColumnPos = lineColumnPos
-        self.events.emit("source")
+        self.events.emit("source", [lineColumnPos, rawLocation])
       });
 
       self.debugger.vmDebuggerLogic.event.register('solidityState', (data) => {
         self.solidityState = data
+        self.events.emit("globals", data)
       });
 
       // TODO: this doesnt work too well, it should request the data instead...
       self.debugger.vmDebuggerLogic.event.register('solidityLocals', (data) => {
         if (JSON.stringify(data) === '{}') return
         self.solidityLocals = data
+        self.events.emit("locals", data)
       });
 
     })
