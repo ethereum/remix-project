@@ -5,7 +5,7 @@ var SourceHighlighter = require('../editor/sourceHighlighter')
   Defines available API. `key` / `type`
 */
 module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) => {
-  var highlighter = new SourceHighlighter()
+  let highlighters = {}
   return {
     app: {
       getExecutionContextProvider: (mod, cb) => {
@@ -136,12 +136,13 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
         } catch (e) {
           return cb(e.message)
         }
-        highlighter.currentSourceLocation(null)
-        highlighter.currentSourceLocationFromfileName(position, filePath, hexColor)
+        if (!highlighters[mod]) highlighters[mod] = new SourceHighlighter()
+        highlighters[mod].currentSourceLocation(null)
+        highlighters[mod].currentSourceLocationFromfileName(position, filePath, hexColor)
         cb()
       },
       discardHighlight: (mod, cb) => {
-        highlighter.currentSourceLocation(null)
+        if (highlighters[mod]) highlighters[mod].currentSourceLocation(null)
         cb()
       }
     }
