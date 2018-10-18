@@ -118,7 +118,7 @@ function checkDeployShouldFail (browser, callback) {
   contractHelper.switchFile(browser, 'browser/test.json', () => {
     browser.getEditorValue((content) => {
       var config = JSON.parse(content)
-      config['VM:-'].autoDeployLib = false
+      config.deploy['VM:-'].autoDeployLib = false
       browser.setEditorValue(JSON.stringify(config), () => {
         contractHelper.switchFile(browser, 'browser/Untitled5.sol', () => {
           contractHelper.selectContract(browser, 'test', () => { // deploy lib
@@ -136,8 +136,8 @@ function checkDeployShouldSucceed (browser, address, callback) {
   contractHelper.switchFile(browser, 'browser/test.json', () => {
     browser.getEditorValue((content) => {
       var config = JSON.parse(content)
-      config['VM:-'].autoDeployLib = false
-      config['VM:-']['linkReferences']['browser/Untitled5.sol'].lib = address
+      config.deploy['VM:-'].autoDeployLib = false
+      config.deploy['VM:-']['linkReferences']['browser/Untitled5.sol'].lib = address
       browser.setEditorValue(JSON.stringify(config), () => {
         contractHelper.switchFile(browser, 'browser/Untitled5.sol', () => {
           contractHelper.selectContract(browser, 'test', () => { // deploy lib
