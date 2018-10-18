@@ -83,7 +83,7 @@ module.exports = class RighthandPanel {
       })
       var tab = new PluginTab(json)
       var content = tab.render()
-      document.querySelector('body').appendChild(modal.render(json.title, content))
+      document.querySelector('body').appendChild(modal.render(json.title, json.url, content))
       self._components.pluginManager.register(json, modal, content)
     }
 
