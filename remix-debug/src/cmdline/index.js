@@ -42,10 +42,6 @@ class CmdLine {
   getSource() {
     const self = this
 
-    console.dir("getSource")
-    console.dir(this.lineColumnPos)
-    console.dir(this.filename)
-
     let lineColumnPos = this.lineColumnPos
 
     if (!lineColumnPos || !lineColumnPos.start) return;
@@ -111,10 +107,6 @@ class CmdLine {
   displayGlobals () {
     console.dir("= displayGlobals")
     console.dir(this.solidityState)
-    if (this.solidityState && this.solidityState.voters) {
-      console.dir(this.solidityState.voters)
-      console.dir(this.solidityState.voters.value)
-    }
   }
 }
 
