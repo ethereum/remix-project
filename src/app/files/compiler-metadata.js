@@ -18,6 +18,8 @@ class CompilerMetadata {
       var path = self._opts.fileManager.currentPath()
       if (provider && path) {
         self._opts.compiler.visitContracts((contract) => {
+          if (contract.file !== source.target) return
+
           var fileName = path + '/' + contract.name + '.json'
           provider.get(fileName, (error, content) => {
             if (!error) {
@@ -29,11 +31,23 @@ class CompilerMetadata {
                 console.log(e)
               }
 
+              var deploy = metadata.deploy || {}
               self.networks.forEach((network) => {
-                metadata[network] = self._syncContext(contract, metadata[network] || {})
+                deploy[network] = self._syncContext(contract, deploy[network] || {})
               })
 
-              provider.set(fileName, JSON.stringify(metadata, null, '\t'))
+              var data = {
+                deploy,
+                data: {
+                  bytecode: contract.object.evm.bytecode,
+                  deployedBytecode: contract.object.evm.deployedBytecode,
+                  gasEstimates: contract.object.evm.gasEstimates,
+                  methodIdentifiers: contract.object.evm.methodIdentifiers
+                },
+                abi: contract.object.abi
+              }
+
+              provider.set(fileName, JSON.stringify(data, null, '\t'))
             }
           })
         })
@@ -60,7 +74,7 @@ class CompilerMetadata {
     return metadata
   }
 
-  metadataOf (contractName, callback) {
+  deployMetadataOf (contractName, callback) {
     var self = this
     var provider = self._opts.fileManager.currentFileProvider()
     var path = self._opts.fileManager.currentPath()
@@ -75,6 +89,7 @@ class CompilerMetadata {
             if (!content) return callback()
             try {
               var metadata = JSON.parse(content)
+              metadata = metadata.deploy || {}
               return callback(null, metadata[name + ':' + id] || metadata[name] || metadata[id] || metadata[name.toLowerCase() + ':' + id] || metadata[name.toLowerCase()])
             } catch (e) {
               callback(e.message)
