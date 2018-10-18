@@ -53,11 +53,7 @@ class DebuggerSolidityState {
 
   decode (index) {
     const self = this
-    console.dir("currentStepIndex")
-    console.dir(self.stepManager.currentStepIndex)
     self.traceManager.getCurrentCalledAddressAt(self.stepManager.currentStepIndex, function (error, address) {
-      console.dir(error)
-      console.dir(address)
       if (error) {
         return self.event.trigger('solidityState', [{}])
       }
