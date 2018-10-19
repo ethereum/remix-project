@@ -8,6 +8,7 @@ class CmdLine {
   constructor () {
     this.events = new EventManager()
     this.lineColumnPos = null
+    this.rawLocation = null
   }
 
   connect (providerType, url) {
@@ -87,6 +88,7 @@ class CmdLine {
 
       self.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
         self.lineColumnPos = lineColumnPos
+        self.rawLocation = rawLocation
         self.events.emit("source", [lineColumnPos, rawLocation])
       });
 
@@ -102,16 +104,23 @@ class CmdLine {
         self.events.emit("locals", data)
       });
 
-      cb()
+      if (cb) {
+        // TODO: this should be an onReady event
+        setTimeout(cb, 1000);
+      }
     })
   }
 
+  triggerSourceUpdate() {
+    this.events.emit("source", [this.lineColumnPos, this.rawLocation])
+  }
+
   stepJumpNextBreakpoint() {
-   this.debugger.step_manager.stepJumpNextBreakpoint()
+   this.debugger.step_manager.jumpNextBreakpoint()
   }
 
   stepJumpPreviousBreakpoint() {
-   this.debugger.step_manager.stepJumpPreviousBreakpoint()
+   this.debugger.step_manager.jumpPreviousBreakpoint()
   }
 
   stepOverForward(solidityMode) {
