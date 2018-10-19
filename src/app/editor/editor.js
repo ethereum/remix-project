@@ -108,6 +108,7 @@ function Editor (opts = {}, localRegistry) {
     'sol': 'ace/mode/solidity',
     'js': 'ace/mode/javascript',
     'py': 'ace/mode/python',
+    'vy': 'ace/mode/python',
     'txt': 'ace/mode/text',
     'json': 'ace/mode/json',
     'abi': 'ace/mode/json'
