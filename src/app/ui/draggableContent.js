@@ -43,12 +43,12 @@ module.exports =
       this.closeCb = closeCb
     }
 
-    render (title, content) {
+    render (title, url, content) {
       this.content = content
       var el = yo`
     <div class=${css.containerDraggableModal}>
       <div>
-          <div class="${css.headerDraggableModal} title" title=${title}><span>${title}</span>
+          <div class="${css.headerDraggableModal} title" title=${title}><span title="${title}" >${title}</span><span title="${url}" > - ${url}</span>
             <div class=${css.modalActions}>
               <i onclick=${() => { this.minimize() }} class="fa fa-window-minimize ${css.modalAction}"></i>
               <i onclick=${() => { this.maximise() }} class="fa fa-window-maximize ${css.modalAction}"></i>

@@ -90,6 +90,7 @@ module.exports = class PluginManager {
       compiler,
       udapp
     )
+    self._components = { pluginAPI }
     self.plugins = {}
     self.origins = {}
     self.inFocus
@@ -181,6 +182,7 @@ module.exports = class PluginManager {
   }
   unregister (desc) {
     const self = this
+    self._components.pluginAPI.editor.discardHighlight(desc.title, () => {})
     delete self.plugins[desc.title]
     delete self.origins[desc.url]
   }
