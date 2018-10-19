@@ -80,7 +80,6 @@ class CmdLine {
     return source
   }
 
-  // TODO: is filename really necessary?
   startDebug(txNumber, filename, cb) {
     const self = this
     this.filename = filename
@@ -105,6 +104,38 @@ class CmdLine {
 
       cb()
     })
+  }
+
+  stepJumpNextBreakpoint() {
+   this.debugger.step_manager.stepJumpNextBreakpoint()
+  }
+
+  stepJumpPreviousBreakpoint() {
+   this.debugger.step_manager.stepJumpPreviousBreakpoint()
+  }
+
+  stepOverForward(solidityMode) {
+   this.debugger.step_manager.stepOverForward(solidityMode)
+  }
+
+  stepOverBack(solidityMode) {
+   this.debugger.step_manager.stepOverBack(solidityMode)
+  }
+
+  stepIntoForward(solidityMode) {
+   this.debugger.step_manager.stepIntoForward(solidityMode)
+  }
+
+  stepIntoBack(solidityMode) {
+   this.debugger.step_manager.stepIntoBack(solidityMode)
+  }
+
+  currentStep() {
+    return this.debugger.step_manager.currentStepIndex
+  }
+
+  unload() {
+    return this.debugger.unload()
   }
 
   displayLocals () {
