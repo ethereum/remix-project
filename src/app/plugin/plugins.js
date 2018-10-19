@@ -4,6 +4,10 @@ module.exports = {
   'oraclize': {
     url: 'https://remix-plugin.oraclize.it',
     title: 'Oraclize'
+  },
+  'solium': {
+    url: 'https://two-water.surge.sh',
+    title: 'Solium'
   }
   /*
   'etherscan-general': {
