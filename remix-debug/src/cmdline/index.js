@@ -130,6 +130,14 @@ class CmdLine {
    this.debugger.step_manager.stepIntoBack(solidityMode)
   }
 
+  jumpTo(step) {
+    this.debugger.step_manager.jumpTo(step)
+  }
+
+  getTraceLength() {
+    return this.debugger.step_manager.traceLength
+  }
+
   currentStep() {
     return this.debugger.step_manager.currentStepIndex
   }
