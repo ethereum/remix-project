@@ -33,7 +33,7 @@ class ContextManager {
     this.event.trigger('providerAdded', [type])
   }
 
-  switchProvider (type) {
+  switchProvider (type, cb) {
     var self = this
     this.web3Providers.get(type, function (error, obj) {
       if (error) {
@@ -48,6 +48,7 @@ class ContextManager {
             self.web3 = (!webDebugNode ? obj : webDebugNode)
           }
           self.event.trigger('providerChanged', [type, self.web3])
+          if (cb) return cb();
         })
         self.event.trigger('providerChanged', [type, self.web3])
       }

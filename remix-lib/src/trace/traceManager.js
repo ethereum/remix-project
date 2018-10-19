@@ -120,7 +120,7 @@ TraceManager.prototype.getStackAt = function (stepIndex, callback) {
     return callback(check, null)
   }
   var stack
-  if (this.trace[stepIndex].stack) { // there's always a stack
+  if (this.trace[stepIndex] && this.trace[stepIndex].stack) { // there's always a stack
     stack = this.trace[stepIndex].stack.slice(0)
     stack.reverse()
     callback(null, stack)
