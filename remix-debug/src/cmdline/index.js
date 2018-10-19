@@ -15,6 +15,13 @@ class CmdLine {
     this.web3 = new Web3(new Web3.providers.HttpProvider(url))
   }
 
+  loadCompilationData (inputJson, outputJson) {
+    let data = {}
+    data.data = outputJson
+    data.source = { sources: inputJson.sources }
+    this.loadCompilationResult(data)
+  }
+
   loadCompilationResult (compilationResult) {
     this.compilation = {}
     this.compilation.lastCompilationResult = compilationResult
