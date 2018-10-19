@@ -20,7 +20,7 @@ class CmdLine {
     this.compilation.lastCompilationResult = compilationResult
   }
 
-  initDebugger () {
+  initDebugger (cb) {
     const self = this
     this.contextManager = new ContextManager()
 
@@ -36,7 +36,7 @@ class CmdLine {
     this.contextManager.initProviders()
 
     this.contextManager.addProvider('debugger_web3', this.web3)
-    this.contextManager.switchProvider('debugger_web3')
+    this.contextManager.switchProvider('debugger_web3', cb)
   }
 
   getSource() {
@@ -44,7 +44,7 @@ class CmdLine {
 
     let lineColumnPos = this.lineColumnPos
 
-    if (!lineColumnPos || !lineColumnPos.start) return;
+    if (!lineColumnPos || !lineColumnPos.start) return [];
 
     let content = self.compilation.lastCompilationResult.source.sources[this.filename].content.split("\n")
 
@@ -74,7 +74,7 @@ class CmdLine {
   }
 
   // TODO: is filename really necessary?
-  startDebug(txNumber, filename) {
+  startDebug(txNumber, filename, cb) {
     const self = this
     this.filename = filename
     this.debugger.debug(null, txNumber, null, () => {
@@ -96,6 +96,7 @@ class CmdLine {
         self.events.emit("locals", data)
       });
 
+      cb()
     })
   }
 
