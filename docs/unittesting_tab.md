@@ -24,6 +24,8 @@ This execute tests. The execution is run in a separate environment and the resul
 | `Assert.greaterThan()` | `uint`, `int` |
 | `Assert.lesserThan()` | `uint`, `int` |
 
+see [https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol](https://github.com/ethereum/remix/blob/master/remix-tests/tests/examples_4/SafeMath_test.sol) for some code sample
+
 Continuous integration
 ----------------------
 
