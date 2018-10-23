@@ -8,6 +8,10 @@ module.exports = {
   'solium': {
     url: 'https://two-water.surge.sh',
     title: 'Solium'
+  },
+  'ethdoc': {
+    url: 'https://swarm-gateways.net/bzz:/ethdoc.remixide.eth',
+    title: 'ethdoc'
   }
   /*
   'etherscan-general': {
