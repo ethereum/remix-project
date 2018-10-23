@@ -11,7 +11,11 @@ module.exports = {
   },
   'ethdoc': {
     url: 'https://swarm-gateways.net/bzz:/ethdoc.remixide.eth',
-    title: 'ethdoc'
+    title: 'Ethdoc'
+  },
+  'openzeppelin snippet': {
+    "url": "https://left-edge.surge.sh",
+    "title": "Openzeppelin snippet"
   }
   /*
   'etherscan-general': {
