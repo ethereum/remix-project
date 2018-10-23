@@ -29,7 +29,7 @@ var css = csjs`
     float: right;
     color: ${styles.appProperties.solidBorderBox_BorderColor};
   }
-  
+
   .modalAction {
     padding-right: 1px;
     padding-left: 1px;
@@ -76,9 +76,9 @@ module.exports =
       this.el.style.width = '150px'
       this.el.querySelector('.title').style.width = '146px'
     }
-    maximise () {      
+    maximise () {
       this.content.style.display = 'block'
-      var body =  document.querySelector('body')
+      var body = document.querySelector('body')
       this.el.style.height = this.isMaximised ? '500px' : body.offsetHeight + 'px'
       this.el.style.width = this.isMaximised ? '500px' : body.offsetWidth + 'px'
       this.isMaximised = !this.isMaximised
@@ -104,7 +104,7 @@ function dragElement (elmnt) {
 
   function dragMouseDown (e) {
     e = e || window.event
-    if (e.button != 0) return
+    if (e.button !== 0) return
     e.preventDefault()
     // get the mouse cursor position at startup:
     pos3 = e.clientX
