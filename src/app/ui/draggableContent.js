@@ -41,6 +41,7 @@ module.exports =
   class DraggableContent {
     constructor (closeCb) {
       this.closeCb = closeCb
+      this.isMaximised = false
     }
 
     render (title, content) {
@@ -68,6 +69,7 @@ module.exports =
       this.el.querySelector('.title span').innerHTML = title
     }
     minimize () {
+      this.isMaximised = false
       this.content.style.display = 'none'
       this.el.style.height = 'inherit'
       this.el.style.width = '150px'
@@ -75,8 +77,12 @@ module.exports =
     }
     maximise () {
       this.content.style.display = 'block'
-      this.el.style.height = '500px'
-      this.el.style.width = '500px'
+      var body =  document.querySelector('body')
+      this.el.style.height = this.isMaximised ? '500px' : body.offsetHeight + 'px'
+      this.el.style.width = this.isMaximised ? '500px' : body.offsetWidth + 'px'
+      this.isMaximised = !this.isMaximised
+      this.el.style.top = this.isMaximised ? '0%' : '20%'
+      this.el.style.left = this.isMaximised ? '0%' : '50%'
       this.el.querySelector('.title').style.width = 'inherit'
     }
     close () {
