@@ -8,25 +8,26 @@ var css = csjs`
   .containerDraggableModal {
     position: absolute;
     z-index: 1000;
-    background-color: ${styles.appProperties.quaternary_BackgroundColor};
+    background-color: ${styles.appProperties.light_BackgroundColor};
     text-align: center;
     width: 500px;
     height: 500px;
-    border: 2px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
   }
 
   .headerDraggableModal {
     cursor: move;
     z-index: 10;
     color: ${styles.appProperties.mainText_Color};
-    background-color: ${styles.appProperties.quaternary_BackgroundColor};
-    border-bottom: 2px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    background-color: ${styles.appProperties.primary_BackgroundColor};
+    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
     text-overflow: ellipsis;
     overflow-x: hidden;
   }
   
   .modalActions {
     float: right;
+    color: ${styles.appProperties.solidBorderBox_BorderColor};
   }
   
   .modalAction {
@@ -53,7 +54,7 @@ module.exports =
             <div class=${css.modalActions}>
               <i onclick=${() => { this.minimize() }} class="fa fa-window-minimize ${css.modalAction}"></i>
               <i onclick=${() => { this.maximise() }} class="fa fa-window-maximize ${css.modalAction}"></i>
-              <i onclick=${() => { this.close() }} class="fa fa-window-close ${css.modalAction}"></i>
+              <i onclick=${() => { this.close() }} class="fa fa-window-close-o ${css.modalAction}"></i>
             </div>
           </div>
         </div>
@@ -75,7 +76,7 @@ module.exports =
       this.el.style.width = '150px'
       this.el.querySelector('.title').style.width = '146px'
     }
-    maximise () {
+    maximise () {      
       this.content.style.display = 'block'
       var body =  document.querySelector('body')
       this.el.style.height = this.isMaximised ? '500px' : body.offsetHeight + 'px'
