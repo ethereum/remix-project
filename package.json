@@ -1,12 +1,15 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "devDependencies": {
     "gulp": "^3.9.1",
     "lerna": "^2.10.2"
   },
   "scripts": {
+    "diff": "lerna diff",
+    "updated": "lerna updated",
     "bootstrap": "lerna bootstrap",
     "publish": "lerna publish",
-    "release": "lerna bootstrap; lerna publish; gulp; gulp publishTag;"
+    "release": "lerna bootstrap; lerna publish;",
+    "tag": "gulp; gulp publishTag;"
   }
 }
