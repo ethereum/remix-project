@@ -199,17 +199,17 @@ import "remix_tests.sol"; // this import is automatically injected by Remix.
 // file name has to end with '_test.sol'
 contract test_1 {
     
-    function beforeAll () {
-      // here should instanciate tested contract
+    function beforeAll() public {
+      // here should instantiate tested contract
     }
     
-    function check1 () public {
+    function check1() public {
       // this function is not constant, use 'Assert' to test the contract
       Assert.equal(uint(2), uint(1), "error message");
       Assert.equal(uint(2), uint(2), "error message");
     }
     
-    function check2 () public constant returns (bool) {
+    function check2() public constant returns (bool) {
       // this function is constant, use the return value (true or false) to test the contract
       return true;
     }
@@ -217,17 +217,17 @@ contract test_1 {
 
 contract test_2 {
    
-    function beforeAll () {
-      // here should instanciate tested contract
+    function beforeAll() public {
+      // here should instantiate tested contract
     }
     
-    function check1 () public {
+    function check1() public {
       // this function is not constant, use 'Assert' to test the contract
       Assert.equal(uint(2), uint(1), "error message");
       Assert.equal(uint(2), uint(2), "error message");
     }
     
-    function check2 () public constant returns (bool) {
+    function check2() public constant returns (bool) {
       // this function is constant, use the return value (true or false) to test the contract
       return true;
     }
