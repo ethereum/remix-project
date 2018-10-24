@@ -16,6 +16,10 @@ module.exports = {
   'openzeppelin snippet': {
     url: 'https://left-edge.surge.sh',
     title: 'Openzeppelin snippet'
+  },
+  'vyper': {
+    url: 'https://plugin.vyper.live',
+    title: 'Vyper'
   }
   /*
   'etherscan-general': {
