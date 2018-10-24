@@ -118,7 +118,7 @@ module.exports = class SettingsTab {
     self._view.config.plugins = yo`<div></div>`
     self._view.config.plugin = yo`
       <div class="${css.info}">
-        <div class=${css.title}>Plugin</div>
+        <div class=${css.title}>Plugin <i title="This section is still under heavy development, please use it carefully" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i> </div>
         <div class="${css.crowNoFlex}">
           <div>Load plugin from JSON description: </div>
           ${self._view.pluginInput}
