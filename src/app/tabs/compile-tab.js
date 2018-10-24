@@ -84,8 +84,6 @@ module.exports = class CompileTab {
     })
     self._deps.editor.event.register('contentChanged', function changedFile () {
       if (!self._view.compileIcon) return
-      const compileTab = document.querySelector('.compileView') // @TODO: compileView tab
-      compileTab.style.color = styles.colors.red // @TODO: compileView tab
       self._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
     self._deps.compiler.event.register('loadingCompiler', function start () {
@@ -258,6 +256,7 @@ module.exports = class CompileTab {
       </div>`
     self._view.el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
+        <div class="${css.title}">Solidity compiler</div>
         ${self._view.compileContainer}
         ${self._view.contractEl}
         ${self._view.errorContainerHead}
@@ -454,6 +453,11 @@ module.exports = class CompileTab {
 }
 
 const css = csjs`
+  .title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
   .panicError {
     color: red;
     font-size: 20px;
