@@ -377,7 +377,7 @@ class Terminal {
                       <ul class=${css2.ul}>
                         <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
                         <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
-                        <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>                
+                        <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
                       </ul>
                     </li>
                     <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
