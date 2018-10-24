@@ -568,7 +568,7 @@ const css = csjs`
     margin: 15px 15px 10px 0;
   }
   .copyButton {
-    ${styles.rightPanel.compileTab.button_Details};
+    ${styles.rightPanel.compileTab.button_Publish};
     padding: 0 7px;
     min-width: 50px;
     width: auto;

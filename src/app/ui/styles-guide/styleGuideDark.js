@@ -545,13 +545,13 @@ function styleGuideDark () {
         button_Details: appProperties.uiElements.button({
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.primaryButton_TextColor
         }),
 
         button_Publish: appProperties.uiElements.button({
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.teriaryButton_TextColor
         }),
 
         dropdown_CompileContract: appProperties.uiElements.dropdown({
@@ -561,7 +561,7 @@ function styleGuideDark () {
         }),
 
         box_CompileContainer: appProperties.uiElements.solidBorderBox({
-          BackgroundColor: appProperties.quaternary_BackgroundColor,
+          BackgroundColor: appProperties.primary_BackgroundColor,
           BorderColor: appProperties.solidBorderBox_BackgroundColor,
           Color: appProperties.solidBorderBox_TextColor
         }),
