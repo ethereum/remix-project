@@ -10,7 +10,7 @@ module.exports = {
     title: 'Solium'
   },
   'ethdoc': {
-    url: 'https://swarm-gateways.net/bzz:/ethdoc.remixide.eth',
+    url: 'https://30400.swarm-gateways.net/bzz:/ethdoc.remixide.eth',
     title: 'Ethdoc'
   },
   'openzeppelin snippet': {
