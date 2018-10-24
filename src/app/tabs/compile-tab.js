@@ -256,7 +256,6 @@ module.exports = class CompileTab {
       </div>`
     self._view.el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
-        <div class="${css.title}">Solidity compiler</div>
         ${self._view.compileContainer}
         ${self._view.contractEl}
         ${self._view.errorContainerHead}
