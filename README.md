@@ -20,7 +20,7 @@ Remixd needs `npm` and `node`
 ```
   Usage: remixd -s <shared folder>
 
-  Provide a two ways connection between the local computer and Remix IDE.
+  Provide a two-way connection between the local computer and Remix IDE.
   
 
   Options:
