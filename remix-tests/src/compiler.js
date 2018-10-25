@@ -37,16 +37,31 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
   // should be replaced with remix's & browser solidity compiler code
   filepath = (isDirectory ? filename : path.dirname(filename))
 
-  fs.readdirSync(filepath).forEach(file => {
+  // https://github.com/mikeal/node-utils/blob/master/file/lib/main.js
+  fs.walkSync = function (start, callback) {
+    fs.readdirSync(start).forEach(name => {
+      if (name === 'node_modules') {
+        return; // hack
+      }
+      var abspath = path.join(start, name);
+      if (fs.statSync(abspath).isDirectory()) {
+        fs.walkSync(abspath, callback);
+      } else {
+        callback(abspath);
+      }
+    });
+  };
+
+  fs.walkSync(filepath, foundpath => {
     // only process .sol files
-    if (file.split('.').pop() === 'sol') {
-      let c = fs.readFileSync(path.join(filepath, file)).toString()
+    if (foundpath.split('.').pop() === 'sol') {
+      let c = fs.readFileSync(foundpath).toString()
       const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
       let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
       if (file.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
         c = includeTestLibs.concat(c)
       }
-      sources[file] = { content: c }
+      sources[foundpath] = { content: c }
     }
   })
 
@@ -62,7 +77,7 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
       compiler.event.register('compilationFinished', this, function (success, data, source) {
         next(null, data)
       })
-      compiler.compile(sources, filepath)
+      compiler.compile(sources, false)
     }
   ], function (err, result) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
