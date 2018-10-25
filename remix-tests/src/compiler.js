@@ -35,7 +35,7 @@ function compileFileOrFiles (filename, isDirectory, cb) {
       }
       sources[file] = { content: c }
     }
-  })  
+  })
 
   async.waterfall([
     function loadCompiler (next) {
