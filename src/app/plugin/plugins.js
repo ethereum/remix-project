@@ -22,8 +22,8 @@ module.exports = {
     title: 'Vyper'
   },
   'slither/mythril': {
-    url: "http://jittery-space.surge.sh",
-    title: "Slither/Mythril"
+    url: 'http://jittery-space.surge.sh',
+    title: 'Slither/Mythril'
   }
   /*
   'etherscan-general': {
