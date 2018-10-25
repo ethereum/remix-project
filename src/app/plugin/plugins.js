@@ -20,6 +20,10 @@ module.exports = {
   'vyper': {
     url: 'https://plugin.vyper.live',
     title: 'Vyper'
+  },
+  'slither/mythril': {
+    url: 'http://jittery-space.surge.sh',
+    title: 'Slither/Mythril'
   }
   /*
   'etherscan-general': {
