@@ -23,7 +23,7 @@ module.exports = {
   },
   'Analysis Plugin': {
     url: "http://jittery-space.surge.sh",
-    title: "Analysis Plugin",
+    title: "Analysis Plugin"
   }
   /*
   'etherscan-general': {
