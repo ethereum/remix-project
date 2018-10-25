@@ -164,8 +164,26 @@ var runTestFiles = function (filepath, isDirectory, web3, opts) {
       }
 
       if (isDirectory) {
-        fs.readdirSync(filepath).forEach(filename => {
-          gatherContractsFrom(filename)
+        fs.walkSync = function (start, callback) {
+          fs.readdirSync(start).forEach(name => {
+            if (name === 'node_modules') {
+              return; // hack
+            }
+            var abspath = path.join(start, name);
+            if (fs.statSync(abspath).isDirectory()) {
+              fs.walkSync(abspath, callback);
+            } else {
+              callback(abspath);
+            }
+          });
+        };
+        fs.walkSync(filepath, foundpath => {
+          if (foundpath.indexOf('_test.sol') < 0) {
+            return
+          }
+          Object.keys(compilationResult[foundpath]).forEach(contractName => {
+            contractsToTest.push(contractName)
+          })
         })
       } else {
         gatherContractsFrom(filepath)
