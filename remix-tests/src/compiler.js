@@ -41,16 +41,16 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
   fs.walkSync = function (start, callback) {
     fs.readdirSync(start).forEach(name => {
       if (name === 'node_modules') {
-        return; // hack
+        return // hack
       }
-      var abspath = path.join(start, name);
+      var abspath = path.join(start, name)
       if (fs.statSync(abspath).isDirectory()) {
-        fs.walkSync(abspath, callback);
+        fs.walkSync(abspath, callback)
       } else {
-        callback(abspath);
+        callback(abspath)
       }
-    });
-  };
+    })
+  }
 
   fs.walkSync(filepath, foundpath => {
     // only process .sol files
