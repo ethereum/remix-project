@@ -24,6 +24,10 @@ module.exports = {
   'slither/mythril': {
     url: 'http://jittery-space.surge.sh',
     title: 'Slither/Mythril'
+  },
+  'pipeline': {
+    url: 'http://pipeline.pipeos.one',
+    title: 'Pipeline'
   }
   /*
   'etherscan-general': {
