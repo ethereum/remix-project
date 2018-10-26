@@ -31,3 +31,5 @@ Continuous integration
 
 remix-tests is also a CLI, it can be used in a continuous integration environement which support node.js.
 Please find more information in the [remix-test repository](https://github.com/ethereum/remix/tree/master/remix-tests)
+
+See also: example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [https://travis-ci.org/su-squares/ethereum-contract/builds/446186067](Travis build) that uses remix-tests for continuous integration testing.
