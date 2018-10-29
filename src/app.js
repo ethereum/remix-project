@@ -359,8 +359,7 @@ function run () {
     modalDialogCustom.alert('This UNSTABLE ALPHA branch of Remix has been moved to http://ethereum.github.io/remix-live-alpha.')
   } else if (window.location.hostname === 'remix-alpha.ethereum.org' ||
   (window.location.hostname === 'ethereum.github.io' && window.location.pathname.indexOf('/remix-live-alpha') === 0)) {
-    modalDialogCustom.alert(`This instance of the Remix IDE is an UNSTABLE ALPHA branch.\n
-Please only use it if you know what you are doing, otherwise visit the stable version at http://remix.ethereum.org.`)
+    modalDialogCustom.alert(`Welcome to the Remix alpha instance. Please use it to try out latest features. But use preferably https://remix.ethereum.org for any production work.`)
   } else if (window.location.protocol.indexOf('http') === 0 &&
   window.location.hostname !== 'remix.ethereum.org' &&
   window.location.hostname !== 'localhost' &&
