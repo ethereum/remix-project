@@ -13,6 +13,7 @@ var css = csjs`
     width: 500px;
     height: 500px;
     border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    overflow-y: hidden;
   }
 
   .headerDraggableModal {
