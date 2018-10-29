@@ -26,7 +26,7 @@ module.exports = {
     title: 'Slither/Mythril'
   },
   'pipeline': {
-    url: 'http://pipeline.pipeos.one',
+    url: 'https://pipeline.pipeos.one',
     title: 'Pipeline'
   }
   /*
