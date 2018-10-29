@@ -26,7 +26,8 @@ class EditorPanel {
       config: self._components.registry.get('config').api,
       txListener: self._components.registry.get('txlistener').api,
       fileManager: self._components.registry.get('filemanager').api,
-      udapp: self._components.registry.get('udapp').api
+      udapp: self._components.registry.get('udapp').api,
+      compiler: self._components.registry.get('compiler').api
     }
     self.data = {
       _FILE_SCROLL_DELTA: 200,
@@ -46,7 +47,10 @@ class EditorPanel {
       contextualListener: contextualListener,
       contextView: new ContextView({contextualListener: contextualListener, editor: editor}),
       terminal: new Terminal({
-        udapp: self._deps.udapp
+        udapp: self._deps.udapp,
+        compilers: {
+          'solidity': self._deps.compiler
+        }
       },
         {
           getPosition: (event) => {
