@@ -404,6 +404,7 @@ function contractDropdown (events, self) {
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.contract.object.evm.bytecode.linkReferences
+      data.contractABI = selectedContract.contract.object.abi
     }
     self._deps.udapp.createContract(data, (error, txResult) => {
       if (!error) {

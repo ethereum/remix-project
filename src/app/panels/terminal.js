@@ -613,6 +613,7 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
+    compilers: self._opts.compilers,
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,
