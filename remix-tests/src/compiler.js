@@ -41,7 +41,7 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
       let c = fs.readFileSync(path.join(filepath, file)).toString()
       const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
       if (file.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
-        c = c.replace(/(pragma solidity \^\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
+        c = c.replace(/(pragma solidity \^?\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
       }
       sources[file] = { content: c }
     }
