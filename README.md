@@ -50,6 +50,7 @@ Remix is built out of several different modules:
 + [`remix-lib`](remix-lib/README.md)
 + [`remix-debug`](remix-debugger/README.md) is now *deprecated*. It contains the debugger.
 + [`remix-tests`](remix-tests/README.md) contains our tests.
++ [`remixd`](remixd/README.md) CLI which allow accessing local element from Remix IDE (see https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html)
 
 Each generally has their own npm package and test suite, as well as basic documentation.
 
