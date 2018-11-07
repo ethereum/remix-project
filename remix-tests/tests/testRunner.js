@@ -61,7 +61,7 @@ describe('testRunner', function () {
 
       it('should returns 5 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
+          { type: 'contract',    value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
           { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
           { type: 'testPass',    value: 'Should trigger one pass', time: 1, context: 'MyTest'},
           { type: 'testPass',    value: 'Initial value should be100', time: 1, context: 'MyTest' },
@@ -97,7 +97,7 @@ describe('testRunner', function () {
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract', value: 'MyTest', filename: 'simple_storage_test.sol' },
+          { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should be200', time: 1, context: 'MyTest' }
         ])
@@ -133,8 +133,8 @@ describe('testRunner', function () {
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
-          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "initial value is not correct" },
+          { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
+          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "function returned false" },
           { type: 'testPass', value: 'Value should not be hello world', time: 1, context: 'StringTest' },
           { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
