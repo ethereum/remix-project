@@ -29,8 +29,8 @@ function compileAndDeploy (filename, callback) {
   ], function (_err, contracts) {
     callback(null, compilationData, contracts, accounts)
   })
-}  
-  
+}
+
 
 describe('testRunner', function () {
   describe('#runTest', function() {
@@ -47,7 +47,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, compilationData['simple_storage_test.sol']['MyTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -83,7 +83,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, compilationData['simple_storage_test.sol']['MyTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -118,8 +118,8 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('StringTest', contracts.StringTest, compilationData['simple_string_test.sol']['StringTest'], { accounts }, testCallback, resultsCallback)
-          TestRunner.runTest('StringTest2', contracts.StringTest2, compilationData['simple_string_test.sol']['StringTest2'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest2', contracts.StringTest2, compilationData[filename]['StringTest2'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -155,7 +155,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('IntegerTest', contracts.IntegerTest, compilationData['number_test.sol']['IntegerTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -181,9 +181,9 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          
-          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData['sender_test.sol']['SenderTest'], { accounts }, testCallback, resultsCallback)
-          
+
+          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback)
+
         })
       })
 
