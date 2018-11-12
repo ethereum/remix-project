@@ -220,15 +220,15 @@ module.exports = class CompileTab {
             <div class=${css.checkboxes}>
               <div class="${css.autocompileContainer}">
                 ${self._view.autoCompile}
-                <span class="${css.autocompileText}">Auto compile</span>
+                <label for="autoCompile" class="${css.autocompileText}">Auto compile</label>
               </div>
               <div class="${css.optimizeContainer}">
                 <div>${self._view.optimize}</div>
-                <span class="${css.checkboxText}">Enable Optimization</span>
+                <label for="optimize" class="${css.checkboxText}">Enable Optimization</label>
               </div>
               <div class=${css.hideWarningsContainer}>
                 ${self._view.hideWarningsBox}
-                <span class="${css.autocompileText}">Hide warnings</span>
+                <label for="hideWarningsBox" class="${css.autocompileText}">Hide warnings</label>
               </div>
             </div>
             ${self._view.compileButton}
