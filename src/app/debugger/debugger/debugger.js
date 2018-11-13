@@ -33,8 +33,7 @@ function Debugger (options) {
   this.debugger.setBreakpointManager(this.breakPointManager)
 
   this.executionContext.event.register('contextChanged', this, function (context) {
-    // TODO: was already broken
-    // self.switchProvider(context)
+    self.debugger.switchProvider(context)
   })
 
   this.debugger.event.register('newTraceLoaded', this, function () {
