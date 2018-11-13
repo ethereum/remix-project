@@ -1,7 +1,6 @@
 'use strict'
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var executionContext = require('../../execution-context')
 const PluginAPI = require('./pluginAPI')
 /**
  * Register and Manage plugin:
