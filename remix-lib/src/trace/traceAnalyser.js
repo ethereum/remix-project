@@ -82,9 +82,12 @@ TraceAnalyser.prototype.buildStorage = function (index, step, context) {
     this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
   } else if (traceHelper.isSSTOREInstruction(step)) {
     this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1], step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
-  } else if (traceHelper.isReturnInstruction(step)) {
+  } else if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step)) {
     context.storageContext.pop()
     this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
+  } else if (traceHelper.isRevertInstruction(step)) {
+    context.storageContext.pop()
+    this.traceCache.resetStoreChanges()
   }
   return context
 }
