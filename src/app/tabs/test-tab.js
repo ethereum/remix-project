@@ -101,7 +101,7 @@ module.exports = class TestTab {
 
     self._deps.filePanel.event.register('newTestFileCreated', file => {
       var testList = document.querySelector("[class^='testList']")
-      var test = yo`<label><input onchange=${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file}</label>`
+      var test = yo`<label><input class="singleTest" onchange=${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file}</label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
       self.data.selectedTests.push(file)
@@ -133,13 +133,29 @@ module.exports = class TestTab {
 
     function listTests () {
       var tests = self.data.allTests
-      return tests.map(test => yo`<label><input onchange =${(e) => toggleCheckbox(e, test)} type="checkbox" checked="true">${test} </label>`)
+      return tests.map(test => yo`<label><input class="singleTest" onchange =${(e) => toggleCheckbox(e, test)} type="checkbox" checked="true">${test} </label>`)
     }
 
     function toggleCheckbox (e, test) {
       var selectedTests = self.data.selectedTests
       selectedTests = e.target.checked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
       self.data.selectedTests = selectedTests
+      var selectAll = document.querySelector('[id="checkAllTests"]')
+      if (e.target.checked) {
+        selectAll.checked = true
+      }
+    }
+
+    function checkAll (event) {
+      var all = self.testList.children
+     
+      var checkBoxes = document.querySelectorAll('input.singleTest')
+      var isAnySelected = document.querySelectorAll('input.singleTest:checked').length != 0
+      // checks/unchecks all
+      checkBoxes.forEach (function(checkBox) {
+        checkBox.checked = !isAnySelected
+      })
+      event.target.checked = !isAnySelected
     }
 
     var runTests = function () {
@@ -182,7 +198,15 @@ module.exports = class TestTab {
         <div class="${css.tests}">
           ${self.testList}
           <div class=${css.buttons}>
-            <div class=${css.runButton} onclick=${runTests}>Run Tests</div>
+            <div class=${css.runButton}  onclick=${runTests}>Run Tests</div>
+            <label class="${css.label}" for="checkAllTests">
+              <input id="checkAllTests"
+                type="checkbox"
+                onclick="${function (event) { checkAll(event) }}"
+                checked="true"
+              >
+              Check/Uncheck all
+            </label>
           </div>
           ${testsOutput}
           ${testsSummary}
