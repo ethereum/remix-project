@@ -71,7 +71,7 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
   })
 }
 
-function compileContractSources (sources, importFileCb, cb, opts) {
+function compileContractSources (sources, importFileCb, opts, cb) {
   let compiler, filepath
   let accounts = opts.accounts || []
   // Iterate over sources keys. Inject test libraries. Inject test library import statements.
