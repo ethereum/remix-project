@@ -33,6 +33,10 @@ module.exports = {
     return step.op === 'STOP'
   },
 
+  isRevertInstruction: function (step) {
+    return step.op === 'REVERT'
+  },
+
   isSSTOREInstruction: function (step) {
     return step.op === 'SSTORE'
   },
