@@ -166,22 +166,20 @@ class VmDebuggerLogic {
       })
     })
 
-    self.debugger.event.register('indexChanged', this, function (index) {
+    self.event.register('indexChanged', this, function (index) {
       if (index < 0) return
       if (self.stepManager.currentStepIndex !== index) return
       if (!self.storageResolver) return
-
-      if (index !== self.traceLength - 1) {
-        return self.event.trigger('traceLengthUpdate', [{}])
-      }
-      var storageJSON = {}
+      
+      // Full storage changes are queried for each step (not only at the end of the trace as it was before)
+      let storageJSON = {}
       for (var k in self.addresses) {
-        var address = self.addresses[k]
-        var storageViewer = new StorageViewer({ stepIndex: self.stepManager.currentStepIndex, tx: self.tx, address: address }, self.storageResolver, self._traceManager)
-        storageViewer.storageRange(function (error, result) {
+        let address = self.addresses[k]
+        let storage = {}
+        self._traceManager.accumulateStorageChanges(self.stepManager.currentStepIndex, address, storage, (error, result) => {
           if (!error) {
             storageJSON[address] = result
-            self.event.trigger('traceLengthUpdate', [storageJSON])
+            self.event.trigger('traceStorageUpdate', [storageJSON])
           }
         })
       }
