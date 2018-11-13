@@ -112,7 +112,6 @@ module.exports = class PluginManager {
     })
 
     txlistener.event.register('newTransaction', (tx) => {
-      if (executionContext.getProvider() !== 'vm') return
       self.broadcast(JSON.stringify({
         action: 'notification',
         key: 'txlistener',
