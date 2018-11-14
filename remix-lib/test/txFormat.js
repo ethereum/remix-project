@@ -11,7 +11,7 @@ var executionContext = require('../src/execution/execution-context')
 
 var context
 tape('ContractParameters - (TxFormat.buildData) - format input parameters', function (t) {
-  var output = compiler.compileStandardWrapper(compilerInput(uintContract))
+  var output = compiler.compile(compilerInput(uintContract))
   output = JSON.parse(output)
   var contract = output.contracts['test.sol']['uintContractTest']
   context = { output, contract }
@@ -37,7 +37,7 @@ function testWithInput (st, params, expected) {
 
 tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) {
   executionContext.setContext('vm')
-  var compileData = compiler.compileStandardWrapper(compilerInput(deploySimpleLib))
+  var compileData = compiler.compile(compilerInput(deploySimpleLib))
 
   var fakeDeployedContracts = {
     lib1: '0xf7a10e525d4b168f45f74db1b61f63d3e7619e11',
@@ -140,7 +140,7 @@ tape('EncodeParameter', function (t) {
 })
 
 function encodeFunctionCallTest (st) {
-  var output = compiler.compileStandardWrapper(compilerInput(encodeFunctionCall))
+  var output = compiler.compile(compilerInput(encodeFunctionCall))
   output = JSON.parse(output)
   var contract = output.contracts['test.sol']['testContractLinkLibrary']
   txFormat.encodeFunctionCall('123, "test string"', contract.abi[0], (error, encoded) => {
@@ -154,7 +154,7 @@ function encodeFunctionCallTest (st) {
 tape('test fallback function', function (t) {
   t.test('(fallback)', function (st) {
     st.plan(2)
-    var output = compiler.compileStandardWrapper(compilerInput(fallbackFunction))
+    var output = compiler.compile(compilerInput(fallbackFunction))
     output = JSON.parse(output)
     var contract = output.contracts['test.sol']['fallbackFunctionContract']
     st.equal(txHelper.encodeFunctionId(contract.abi[0]), '0x805da4ad')
@@ -171,7 +171,7 @@ tape('test abiEncoderV2', function (t) {
   var decodedData = `[${value1}, ${value2}, "${value3}"], 23`
   t.test('(abiEncoderV2)', function (st) {
     st.plan(2)
-    var output = compiler.compileStandardWrapper(compilerInput(abiEncoderV2))
+    var output = compiler.compile(compilerInput(abiEncoderV2))
     output = JSON.parse(output)
     var contract = output.contracts['test.sol']['test']
     txFormat.encodeFunctionCall(decodedData, contract.abi[0], (error, encoded) => {
@@ -194,7 +194,7 @@ tape('test abiEncoderV2 array of tuple', function (t) {
     */
     st.plan(2)
 
-    var output = compiler.compileStandardWrapper(compilerInput(abiEncoderV2ArrayOfTuple))
+    var output = compiler.compile(compilerInput(abiEncoderV2ArrayOfTuple))
     output = JSON.parse(output)
     var contract = output.contracts['test.sol']['test']
     txFormat.encodeParams('[34, "test"]', contract.abi[0], (error, encoded) => {
