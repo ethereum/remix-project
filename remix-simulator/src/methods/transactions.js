@@ -39,7 +39,7 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
       'cumulativeGasUsed': '0x06345f',
       'contractAddress': receipt.contractAddress,
       'logs': receipt.logs,
-      'status': 1
+      'status': receipt.status
     }
 
     cb(null, r)
