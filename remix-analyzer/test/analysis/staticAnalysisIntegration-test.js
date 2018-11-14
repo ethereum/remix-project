@@ -41,7 +41,7 @@ var testFileAsts = {}
 
 testFiles.forEach((fileName) => {
   var content = fs.readFileSync(path.join(__dirname, 'test-contracts', fileName), 'utf8')
-  testFileAsts[fileName] = JSON.parse(compiler.compileStandardWrapper(compilerInput(content)))
+  testFileAsts[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
 })
 
 test('Integration test thisLocal.js', function (t) {

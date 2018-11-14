@@ -11,7 +11,7 @@ var path = require('path')
 
 function compile (fileName) {
   var content = fs.readFileSync(path.join(__dirname, 'test-contracts', fileName), 'utf8')
-  return JSON.parse(compiler.compileStandardWrapper(compilerInput(content)))
+  return JSON.parse(compiler.compile(compilerInput(content)))
 }
 
 test('staticAnalysisIssues.functionParameterPassingError', function (t) {

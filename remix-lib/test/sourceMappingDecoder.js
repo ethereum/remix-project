@@ -7,7 +7,7 @@ var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 
 tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
-    var output = compiler.compileStandardWrapper(compilerInput(contracts))
+    var output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
     var sourceMappingDecoder = new SourceMappingDecoder()
     var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])

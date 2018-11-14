@@ -8,7 +8,7 @@ var compilerInput = remixLib.helpers.compiler.compilerInput
 
 tape('solidity', function (t) {
   t.test('storage location', function (st) {
-    var output = compiler.compileStandardWrapper(compilerInput(contracts))
+    var output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
     var stateDec = stateDecoder.extractStateVariables('contractUint', output.sources)
     checkLocation(st, stateDec[0].storagelocation, 0, 0)

@@ -12,7 +12,7 @@ var util = require('../../src/solidity-decoder/types/util')
 
 tape('solidity', function (t) {
   t.test('astHelper, decodeInfo', function (st) {
-    var output = compiler.compileStandardWrapper(compilerInput(contracts))
+    var output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
 
     var state = astHelper.extractStateDefinitions('test.sol:contractUint', output.sources)
@@ -65,7 +65,7 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[5].attributes.type, states, 'contractSmallVariable', util.extractLocationFromAstVariable(stateDef[5]))
     checkDecodeInfo(st, parsedType, 1, 2, 'int16')
 
-    output = compiler.compileStandardWrapper(compilerInput(simplecontracts))
+    output = compiler.compile(compilerInput(simplecontracts))
     output = JSON.parse(output)
 
     state = astHelper.extractStateDefinitions('test.sol:simpleContract', output.sources)
