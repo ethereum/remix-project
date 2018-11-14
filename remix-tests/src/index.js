@@ -153,7 +153,7 @@ var runTestFiles = function (filepath, isDirectory, web3, opts) {
     function determineTestContractsToRun (compilationResult, contracts, next) {
       let contractsToTest = []
       let contractsToTestDetails = []
-      var gatherContractsFrom = (filename) => {
+      const gatherContractsFrom = (filename) => {
         if (filename.indexOf('_test.sol') < 0) {
           return
         }
@@ -178,12 +178,7 @@ var runTestFiles = function (filepath, isDirectory, web3, opts) {
           })
         }
         fs.walkSync(filepath, foundpath => {
-          if (foundpath.indexOf('_test.sol') < 0) {
-            return
-          }
-          Object.keys(compilationResult[foundpath]).forEach(contractName => {
-            contractsToTest.push(contractName)
-          })
+          gatherContractsFrom(foundpath)
         })
       } else {
         gatherContractsFrom(filepath)
