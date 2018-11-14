@@ -20,7 +20,7 @@ function Debugger (options) {
     executionContext: options.executionContext,
     compilationResult: () => {
       if (this.compilersArtefacts['__last']) return this.compilersArtefacts['__last'].getData()
-        return null
+      return null
     }
   })
 
