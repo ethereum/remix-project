@@ -1,7 +1,6 @@
 'use strict'
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
-var executionContext = require('../../execution-context')
 const PluginAPI = require('./pluginAPI')
 /**
  * Register and Manage plugin:
@@ -112,7 +111,6 @@ module.exports = class PluginManager {
     })
 
     txlistener.event.register('newTransaction', (tx) => {
-      if (executionContext.getProvider() !== 'vm') return
       self.broadcast(JSON.stringify({
         action: 'notification',
         key: 'txlistener',
