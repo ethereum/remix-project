@@ -43,9 +43,9 @@ function runTests (browser, testData) {
         {types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"'}, null, null)
       .pause(500)
       .click('span#tx0x0571a2439ea58bd349dd130afb8aff62a33af14c06de0dbc3928519bdf13ce2e div[class^="debug"]')
-      .pause(1000)
+      .pause(2000)
       .click('#jumppreviousbreakpoint')
-      .pause(500)
+      .pause(2000)
       .perform(function (client, done) {
         console.log('goToVMtraceStep')
         contractHelper.goToVMtraceStep(browser, 47, () => {
