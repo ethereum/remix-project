@@ -1,4 +1,3 @@
-'use strict'
 var yo = require('yo-yo')
 var BN = require('ethereumjs-util').BN
 
@@ -69,3 +68,4 @@ function fontColor (data) {
   }
   return 'color:' + color
 }
+
