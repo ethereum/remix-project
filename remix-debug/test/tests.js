@@ -17,7 +17,7 @@ tape('debug contract', function (t) {
   t.plan(12)
   var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
   var vm = vmCall.initVM(t, privateKey)
-  var output = compiler.compileStandardWrapper(compilerInput(ballot))
+  var output = compiler.compile(compilerInput(ballot))
   output = JSON.parse(output)
   var web3VM = new remixLib.vm.Web3VMProvider()
   web3VM.setVM(vm)
