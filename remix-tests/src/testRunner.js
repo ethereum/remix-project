@@ -133,8 +133,8 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
         next(err)
       })
     }
-  }, function () {
-    resultsCallback(null, {
+  }, function (error) {
+    resultsCallback(error, {
       passingNum: passingNum,
       failureNum: failureNum,
       timePassed: timePassed
