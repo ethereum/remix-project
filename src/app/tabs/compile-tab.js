@@ -61,7 +61,8 @@ module.exports = class CompileTab {
       selectedVersion: null,
       baseurl: 'https://solc-bin.ethereum.org/bin'
     }
-    self.data.optimize = !!self._components.queryParams.get().optimize
+    self.data.optimize = self._components.queryParams.get().optimize
+    self.data.optimize = self.data.optimize === 'true'
     self._components.queryParams.update({ optimize: self.data.optimize })
     self._deps.compiler.setOptimize(self.data.optimize)
 
