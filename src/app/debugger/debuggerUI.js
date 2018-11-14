@@ -34,7 +34,8 @@ class DebuggerUI {
     this.debugger = new Debugger({
       executionContext: executionContext,
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-      compiler: this.registry.get('compiler').api
+      compiler: this.registry.get('compiler').api,
+      compilersArtefacts: this.registry.get('compilersartefacts').api
     })
 
     this.isActive = false
