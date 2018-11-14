@@ -170,7 +170,7 @@ class VmDebuggerLogic {
       if (index < 0) return
       if (self.stepManager.currentStepIndex !== index) return
       if (!self.storageResolver) return
-      
+
       // Full storage changes are queried for each step (not only at the end of the trace as it was before)
       let storageJSON = {}
       for (var k in self.addresses) {
