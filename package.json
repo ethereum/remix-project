@@ -144,10 +144,12 @@
     "remix-ide": "./bin/remix-ide"
   },
   "scripts": {
-    "setupremix": "npm run pullremix && npm run linkremixlib && npm run linkremixsolidity;",
+    "setupremix": "npm run linkremixlib && npm run linkremixsolidity && npm run linkremixsimulator && npm run linkremixtests",
     "pullremix": "git clone https://github.com/ethereum/remix",
-    "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../remix/remix-lib remix-lib && cd ..",
-    "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../remix/remix-solidity remix-solidity && cd ..",
+    "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../../remix/remix-lib remix-lib && cd ..",
+    "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../../remix/remix-solidity remix-solidity && cd ..",
+    "linkremixsimulator": "cd node_modules && rm -rf remix-simulator && ln -s ../../remix/remix-simulator remix-simulator && cd ..",
+    "linkremixtests": "cd node_modules && rm -rf remix-tests && ln -s ../../remix/remix-tests remix-tests && cd ..",
     "build": "browserify src/index.js -o build/app.js --exclude solc",
     "build_debugger": "browserify src/app/debugger/remix-debugger/index.js -o src/app/debugger/remix-debugger/build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
