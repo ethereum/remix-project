@@ -25,7 +25,6 @@ class DebuggerTab {
     self._view = { el: null }
     self.data = {}
     self._components = {}
-    // TODO: what is this used for? is repated in debugger.js
     self._components.registry = localRegistry || globalRegistry
   }
 

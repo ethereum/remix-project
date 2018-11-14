@@ -12,20 +12,23 @@ function Debugger (options) {
   this.event = new EventManager()
 
   this.executionContext = options.executionContext
+  // dependencies
   this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
-  this.compiler = options.compiler
-  this.compilerArtefacts = options.compilersArtefacts
+  this.compilersArtefacts = options.compilersArtefacts
 
   this.debugger = new Ethdebugger({
     executionContext: options.executionContext,
     compilationResult: () => {
-      if (this.options.compilersArtefacts['__last']) return this.options.compilersArtefacts['__last'].getData()
+      if (this.compilersArtefacts['__last']) return this.compilersArtefacts['__last'].getData()
         return null
     }
   })
 
   this.breakPointManager = new remixLib.code.BreakpointManager(this.debugger, (sourceLocation) => {
-    return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, this._deps.compiler.lastCompilationResult.source.sources, this._deps.compiler.lastCompilationResult.data.sources)
+    if (!this.compilersArtefacts['__last']) return null
+    let compilationData = this.compilersArtefacts['__last'].getData()
+    if (!compilationData) return null
+    return self.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationData.sources, compilationData.sources)
   }, (step) => {
     self.event.trigger('breakpointStep', [step])
   })
@@ -57,12 +60,16 @@ function Debugger (options) {
 Debugger.prototype.registerAndHighlightCodeItem = function (index) {
   const self = this
   // register selected code item, highlight the corresponding source location
-  if (!self._deps.compilersArtefacts['__last']) return
+  if (!self.compilersArtefacts['__last']) {
+    self.event.trigger('newSourceLocation', [null])
+    return
+  }
+  var compilerData = self.compilersArtefacts['__last'].getData()
   self.debugger.traceManager.getCurrentCalledAddressAt(index, (error, address) => {
     if (error) return console.log(error)
-    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, self.compiler.lastCompilationResult.data.contracts, function (error, rawLocation) {
+    self.debugger.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, index, compilerData.contracts, function (error, rawLocation) {
       if (!error) {
-        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilerData.source.sources, compilerData.data.sources)
+        var lineColumnPos = self.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, compilerData.sources, compilerData.sources)
         self.event.trigger('newSourceLocation', [lineColumnPos, rawLocation])
       } else {
         self.event.trigger('newSourceLocation', [null])
