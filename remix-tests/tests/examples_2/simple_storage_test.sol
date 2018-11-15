@@ -1,11 +1,11 @@
-pragma solidity ^0.4.7;
+pragma solidity ^0.5.0;
 import "./simple_storage.sol";
 
 contract MyTest {
   SimpleStorage foo;
   uint i = 0;
 
-  function beforeEach() {
+  function beforeEach() public {
     foo = new SimpleStorage();
     if (i == 1) {
       foo.set(200);

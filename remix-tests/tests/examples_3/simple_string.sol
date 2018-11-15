@@ -1,4 +1,4 @@
-pragma solidity ^0.4.7;
+pragma solidity ^0.5.0;
 contract SimpleString {
   string public storedData;
 
@@ -6,7 +6,7 @@ contract SimpleString {
     storedData = "Hello world!";
   }
 
-  function get() public view returns (string retVal) {
+  function get() public view returns (string memory retVal) {
     return storedData;
   }
 }
