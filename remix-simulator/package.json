@@ -1,6 +1,6 @@
 {
   "name": "remix-simulator",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -15,6 +15,7 @@
   "main": "./index.js",
   "dependencies": {
     "ansi-gray": "^0.1.1",
+    "babel-eslint": "^7.1.1",
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-es2017": "^6.24.1",
     "babelify": "^7.3.0",
@@ -23,7 +24,7 @@
     "express": "^4.16.3",
     "fast-async": "^6.3.7",
     "merge": "^1.2.0",
-    "remix-lib": "^0.2.5",
+    "remix-lib": "0.3.11",
     "standard": "^10.0.3",
     "time-stamp": "^2.0.0",
     "web3": "1.0.0-beta.27"
