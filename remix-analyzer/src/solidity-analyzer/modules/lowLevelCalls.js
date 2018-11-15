@@ -11,12 +11,18 @@ function lowLevelCalls () {
 lowLevelCalls.prototype.visit = function (node) {
   if (common.isLowLevelCallInst(node)) {
     this.llcNodes.push({node: node, type: common.lowLevelCallTypes.CALL})
+  } else if (common.isLowLevelCallInst050(node)) {
+    this.llcNodes.push({node: node, type: common.lowLevelCallTypes.CALL})
   } else if (common.isLowLevelCallcodeInst(node)) {
     this.llcNodes.push({node: node, type: common.lowLevelCallTypes.CALLCODE})
   } else if (common.isLowLevelDelegatecallInst(node)) {
     this.llcNodes.push({node: node, type: common.lowLevelCallTypes.DELEGATECALL})
   } else if (common.isLowLevelSendInst(node)) {
     this.llcNodes.push({node: node, type: common.lowLevelCallTypes.SEND})
+  } else if (common.isLowLevelSendInst050(node)) {
+    this.llcNodes.push({node: node, type: common.lowLevelCallTypes.SEND})
+  } else if (common.isLLDelegatecallInst050(node)) {
+    this.llcNodes.push({node: node, type: common.lowLevelCallTypes.DELEGATECALL})
   }
 }
 

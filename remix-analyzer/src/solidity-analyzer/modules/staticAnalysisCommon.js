@@ -33,6 +33,7 @@ var basicTypes = {
   UINT: 'uint256',
   BOOL: 'bool',
   ADDRESS: 'address',
+  PAYABLE_ADDRESS: 'address payable',
   BYTES32: 'bytes32',
   STRING_MEM: 'string memory',
   BYTES_MEM: 'bytes memory',
@@ -52,7 +53,9 @@ var basicRegex = {
 var basicFunctionTypes = {
   SEND: buildFunctionSignature([basicTypes.UINT], [basicTypes.BOOL], false),
   CALL: buildFunctionSignature([], [basicTypes.BOOL], true),
+  'CALL-v0.5': buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], true),
   DELEGATECALL: buildFunctionSignature([], [basicTypes.BOOL], false),
+  'DELEGATECALL-v0.5': buildFunctionSignature([basicTypes.BYTES_MEM], [basicTypes.BOOL, basicTypes.BYTES_MEM], false),
   TRANSFER: buildFunctionSignature([basicTypes.UINT], [], false)
 }
 
@@ -65,6 +68,7 @@ var builtinFunctions = {
   'addmod(uint256,uint256,uint256)': true,
   'mulmod(uint256,uint256,uint256)': true,
   'selfdestruct(address)': true,
+  'selfdestruct(address payable)': true,
   'revert()': true,
   'revert(string memory)': true,
   'assert(bool)': true,
@@ -77,8 +81,10 @@ var builtinFunctions = {
 
 var lowLevelCallTypes = {
   CALL: { ident: 'call', type: basicFunctionTypes.CALL },
+  'CALL-v0.5': { ident: 'call', type: basicFunctionTypes['CALL-v0.5'] },
   CALLCODE: { ident: 'callcode', type: basicFunctionTypes.CALL },
   DELEGATECALL: { ident: 'delegatecall', type: basicFunctionTypes.DELEGATECALL },
+  'DELEGATECALL-v0.5': { ident: 'delegatecall', type: basicFunctionTypes['DELEGATECALL-v0.5'] },
   SEND: { ident: 'send', type: basicFunctionTypes.SEND },
   TRANSFER: { ident: 'transfer', type: basicFunctionTypes.TRANSFER }
 }
@@ -588,7 +594,7 @@ function isStorageVariableDeclaration (node) {
  * @return {bool}
  */
 function isInteraction (node) {
-  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node)
+  return isLLCall(node) || isLLSend(node) || isExternalDirectCall(node) || isTransfer(node) || isLLCall050(node) || isLLSend050(node)
 }
 
 /**
@@ -833,11 +839,25 @@ function isLowLevelCall (node) {
   return isLLCall(node) ||
           isLLCallcode(node) ||
           isLLDelegatecall(node) ||
-          isLLSend(node)
+          isLLSend(node) ||
+          isLLSend050(node) ||
+          isLLCall050(node) ||
+          isLLDelegatecall050(node)
 }
 
 /**
- * True if low level send
+ * True if low level send (solidity >= 0.5)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isLLSend050 (node) {
+  return isMemberAccess(node,
+          exactMatch(util.escapeRegExp(lowLevelCallTypes.SEND.type)),
+          undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.SEND.ident))
+}
+
+/**
+ * True if low level send (solidity < 0.5)
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
@@ -856,6 +876,17 @@ function isLLCall (node) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.CALL.type)),
           undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.CALL.ident))
+}
+
+/**
+ * True if low level payable call (solidity >= 0.5)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isLLCall050 (node) {
+  return isMemberAccess(node,
+          exactMatch(util.escapeRegExp(lowLevelCallTypes['CALL-v0.5'].type)),
+          undefined, exactMatch(basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes['CALL-v0.5'].ident))
 }
 
 /**
@@ -881,6 +912,17 @@ function isLLDelegatecall (node) {
 }
 
 /**
+ * True if low level delegatecall (solidity >= 0.5)
+ * @node {ASTNode} some AstNode
+ * @return {bool}
+ */
+function isLLDelegatecall050 (node) {
+  return isMemberAccess(node,
+          exactMatch(util.escapeRegExp(lowLevelCallTypes['DELEGATECALL-v0.5'].type)),
+          undefined, matches(basicTypes.PAYABLE_ADDRESS, basicTypes.ADDRESS), exactMatch(lowLevelCallTypes['DELEGATECALL-v0.5'].ident))
+}
+
+/**
  * True if transfer call
  * @node {ASTNode} some AstNode
  * @return {bool}
@@ -888,7 +930,7 @@ function isLLDelegatecall (node) {
 function isTransfer (node) {
   return isMemberAccess(node,
           exactMatch(util.escapeRegExp(lowLevelCallTypes.TRANSFER.type)),
-          undefined, exactMatch(basicTypes.ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
+          undefined, matches(basicTypes.ADDRESS, basicTypes.PAYABLE_ADDRESS), exactMatch(lowLevelCallTypes.TRANSFER.ident))
 }
 
 function isStringToBytesConversion (node) {
@@ -960,6 +1002,14 @@ function operator (node, opRegex) {
 
 function exactMatch (regexStr) {
   return '^' + regexStr + '$'
+}
+
+function matches () {
+  var args = []
+  for (var k = 0; k < arguments.length; k++) {
+    args.push(arguments[k])
+  }
+  return '(' + args.join('|') + ')'
 }
 
 /**
@@ -1048,6 +1098,9 @@ module.exports = {
   isTransfer: isTransfer,
   isLowLevelCall: isLowLevelCall,
   isLowLevelCallInst: isLLCall,
+  isLowLevelCallInst050: isLLCall050,
+  isLowLevelSendInst050: isLLSend050,
+  isLLDelegatecallInst050: isLLDelegatecall050,
   isLowLevelCallcodeInst: isLLCallcode,
   isLowLevelDelegatecallInst: isLLDelegatecall,
   isLowLevelSendInst: isLLSend,
