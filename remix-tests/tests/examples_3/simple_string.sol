@@ -2,7 +2,7 @@ pragma solidity ^0.4.7;
 contract SimpleString {
   string public storedData;
 
-  function SimpleString() public {
+  constructor() public {
     storedData = "Hello world!";
   }
 
