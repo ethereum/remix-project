@@ -123,7 +123,6 @@ describe('testRunner', function () {
       })
 
       it('should returns 3 messages', function () {
-        console.log(tests)
         assert.deepEqual(tests, [
           { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
           { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "initial value is not correct" },
