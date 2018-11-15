@@ -1,4 +1,4 @@
-ppragma solidity ^0.5.0;
+pragma solidity ^0.5.0;
 import "remix_tests.sol";
 import "./simple_storage.sol";
 
