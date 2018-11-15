@@ -10,7 +10,7 @@ contract SafeMathTest {
     safemathproxy = new SafeMathProxy();
   }
 
-  function unsafeMultiplicationShouldOverflow() public constant returns (bool) {
+  function unsafeMultiplicationShouldOverflow() public view returns (bool) {
     uint256 a = 4;
     uint256 b = 2 ** 256 - 1;
     return Assert.equal(
@@ -20,7 +20,7 @@ contract SafeMathTest {
     );
   }
 
-  function safeMultiplicationShouldRevert() public constant returns (bool) {
+  function safeMultiplicationShouldRevert() public view returns (bool) {
     uint256 a = 4;
     uint256 b = 2 ** 256 - 1;
     return Assert.equal(
@@ -30,7 +30,7 @@ contract SafeMathTest {
     );
   }
 
-  function safeDivisionByZeroShouldRevert() public constant returns (bool) {
+  function safeDivisionByZeroShouldRevert() public view returns (bool) {
     uint256 a = 4;
     uint256 b = 0;
     return Assert.equal(
@@ -40,7 +40,7 @@ contract SafeMathTest {
     );
   }
 
-  function unsafeSubtractShouldUnderflow() public constant returns (bool) {
+  function unsafeSubtractShouldUnderflow() public view returns (bool) {
     uint256 a = 0;
     uint256 b = a - 1;
     return Assert.equal(

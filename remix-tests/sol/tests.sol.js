@@ -98,17 +98,17 @@ library Assert {
   }
 
   /*----------------- Greater than --------------------*/
-  function greaterThan(uint a, uint b, string message) public constant returns (bool result) {
+  function greaterThan(uint a, uint b, string message) public view returns (bool result) {
     result = (a > b);
     emit AssertionEvent(result, message);
   }
 
-  function greaterThan(int a, int b, string message) public constant returns (bool result) {
+  function greaterThan(int a, int b, string message) public view returns (bool result) {
     result = (a > b);
     emit AssertionEvent(result, message);
   }
   // TODO: safely compare between uint and int
-  function greaterThan(uint a, int b, string message) public constant returns (bool result) {
+  function greaterThan(uint a, int b, string message) public view returns (bool result) {
     if(b < int(0)) {
       // int is negative uint "a" always greater
       result = true;
@@ -117,7 +117,7 @@ library Assert {
     }
     emit AssertionEvent(result, message);
   }
-  function greaterThan(int a, uint b, string message) public constant returns (bool result) {
+  function greaterThan(int a, uint b, string message) public view returns (bool result) {
     if(a < int(0)) {
       // int is negative uint "b" always greater
       result = false;
@@ -127,17 +127,17 @@ library Assert {
     emit AssertionEvent(result, message);
   }
   /*----------------- Lesser than --------------------*/
-  function lesserThan(uint a, uint b, string message) public constant returns (bool result) {
+  function lesserThan(uint a, uint b, string message) public view returns (bool result) {
     result = (a < b);
     emit AssertionEvent(result, message);
   }
 
-  function lesserThan(int a, int b, string message) public constant returns (bool result) {
+  function lesserThan(int a, int b, string message) public view returns (bool result) {
     result = (a < b);
     emit AssertionEvent(result, message);
   }
   // TODO: safely compare between uint and int
-  function lesserThan(uint a, int b, string message) public constant returns (bool result) {
+  function lesserThan(uint a, int b, string message) public view returns (bool result) {
     if(b < int(0)) {
       // int is negative int "b" always lesser
       result = false;
@@ -147,7 +147,7 @@ library Assert {
     emit AssertionEvent(result, message);
   }
 
-  function lesserThan(int a, uint b, string message) public constant returns (bool result) {
+  function lesserThan(int a, uint b, string message) public view returns (bool result) {
     if(a < int(0)) {
       // int is negative int "a" always lesser
       result = true;
