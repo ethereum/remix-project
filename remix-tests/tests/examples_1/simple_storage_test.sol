@@ -1,10 +1,10 @@
-pragma solidity ^0.4.7;
+pragma solidity ^0.5.0;
 import "./simple_storage.sol";
 
 contract MyTest {
   SimpleStorage foo;
 
-  function beforeAll() {
+  function beforeAll() public {
     foo = new SimpleStorage();
   }
 
