@@ -1,5 +1,5 @@
 # Release process
-This document details step for publishing packages and tag the code base accordingly:
+This document details steps for publishing packages and tag the code base accordingly:
 
 - checkout a new branch
 - npm run publish
