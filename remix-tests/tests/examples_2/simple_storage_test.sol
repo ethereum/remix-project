@@ -13,12 +13,12 @@ contract MyTest {
     i += 1;
   }
 
-  function initialValueShouldBe100() public constant returns (bool) {
+  function initialValueShouldBe100() public view returns (bool) {
     //return Assert.equal(foo.get(), 100, "initial value is not correct");
     return foo.get() == 100;
   }
 
-  function initialValueShouldBe200() public constant returns (bool) {
+  function initialValueShouldBe200() public view returns (bool) {
     //return Assert.equal(foo.get(), 200, "initial value is not correct");
     return foo.get() == 200;
   }
