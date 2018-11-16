@@ -68,7 +68,10 @@ class Terminal {
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
       self._components.autoCompletePopup.data._options = []
       self._components.autoCompletePopup._startingElement = 0
-      self._view.input.innerText = input
+      let textList = self._view.input.innerText.split(' ')
+      textList.pop()
+      textList.push(input)
+      self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
       self._view.input.focus()
       yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
     })
@@ -167,7 +170,6 @@ class Terminal {
       <div class=${css.panel}>
         ${self._view.bar}
         ${self._view.term}
-        ${self._view.autoCompletePopup}
       </div>
     `
     setInterval(() => {
@@ -428,7 +430,7 @@ class Terminal {
         }
       } else if (event.which === 38) { // <arrowUp>
         if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
-          self._components.autoCompletePopup._view.autoComplete.children[1].onclick(event)
+          self._components.autoCompletePopup._view.autoComplete.children[1].children[0].onclick(event)
         } else {
           var len = self._cmdHistory.length
           if (len === 0) return event.preventDefault()
@@ -441,7 +443,7 @@ class Terminal {
         }
       } else if (event.which === 40) { // <arrowDown>
         if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
-          self._components.autoCompletePopup._view.autoComplete.children[1].onclick(event)
+          self._components.autoCompletePopup._view.autoComplete.children[1].children[1].onclick(event)
         } else {
           if (self._cmdIndex > -1) {
             self._cmdIndex--
@@ -484,14 +486,16 @@ class Terminal {
     function handleAutoComplete (event) {
       if (event.which === 9) {
         event.preventDefault()
+        let textList = self._view.input.innerText.split(' ')
+        let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
         if (self._view.input.innerText.length >= 2) {
           self._components.autoCompletePopup.data._options = []
           Commands.allPrograms.forEach(item => {
-            if (Object.keys(item)[0].substring(0, Object.keys(item)[0].length - 1).includes(self._view.input.innerText.trim())) {
+            if (Object.keys(item)[0].substring(0, Object.keys(item)[0].length - 1).includes(autoCompleteInput.trim())) {
               self._components.autoCompletePopup.data._options.push(item)
-            } else if (self._view.input.innerText.trim().includes(Object.keys(item)[0]) || (Object.keys(item)[0] === self._view.input.innerText.trim())) {
+            } else if (autoCompleteInput.trim().includes(Object.keys(item)[0]) || (Object.keys(item)[0] === autoCompleteInput.trim())) {
               Commands.allCommands.forEach(item => {
-                if (Object.keys(item)[0].includes(self._view.input.innerText.trim())) {
+                if (Object.keys(item)[0].includes(autoCompleteInput.trim())) {
                   self._components.autoCompletePopup.data._options.push(item)
                 }
               })
@@ -499,7 +503,9 @@ class Terminal {
           })
         }
         if (self._components.autoCompletePopup.data._options.length === 1) {
-          self._view.input.innerText = Object.keys(self._components.autoCompletePopup.data._options[0])[0]
+          textList.pop()
+          textList.push(Object.keys(self._components.autoCompletePopup.data._options[0])[0])
+          self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
           self._components.autoCompletePopup.data._options = []
           putCursor2End(self._view.input)
         }
@@ -513,6 +519,7 @@ class Terminal {
     function removeAutoComplete () {
       self._components.autoCompletePopup.data._options = []
       self._components.autoCompletePopup._startingElement = 0
+      self._components.autoCompletePopup._removePopUp()
       yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
     }
   }
