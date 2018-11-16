@@ -10,9 +10,11 @@ const allCommands = [
   {'remix.debugHelp()': 'Display help message for debugging'},
   {'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.'},
   {'remix.exeCurrent()': 'Run the script currently displayed in the editor.'},
+  {'remix.getFile(path)': 'Returns the content of the file located at the given path'},
   {'remix.help()': 'Display this help message.'},
   {'remix.loadgist(id)': 'Load a gist in the file explorer.'},
   {'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm or ipfs.'},
+  {'remix.setFile(path, content)': 'set the content of the file located at the given path'},
   {'remix.setproviderurl(url)': 'Change the current provider to Web3 provider and set the url endpoint.'},
 
   {'swarmgw.get(url, cb)': 'Download files from Swarm via https://swarm-gateways.net/'},
