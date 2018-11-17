@@ -11,7 +11,7 @@ Remixd can be globally installed using the following command:
 `npm install -g remixd`.
 
 Then `remixd -s <absolute-path-to-the-shared-folder> --remix-ide <your-remix-ide-URL-instance>` will start Remixd
-and share the given folder. Remix URL instance can be identified by clicking on `copy and paste` icon.
+and share the given folder. 
 
 For example, to sync your local folder to the official Remix IDE, 
 `remixd -s <absolute-path-to-the-shared-folder> --remix-ide https://remix.ethereum.org`
