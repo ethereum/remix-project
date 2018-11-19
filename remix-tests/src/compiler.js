@@ -26,13 +26,14 @@ var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electro
 
 // TODO: replace this with remix's own compiler code
 function compileFileOrFiles (filename, isDirectory, opts, cb) {
-  let compiler, filepath
+  let compiler
   let accounts = opts.accounts || []
   const sources = {
     'tests.sol': { content: require('../sol/tests.sol.js') },
     'remix_tests.sol': { content: require('../sol/tests.sol.js') },
     'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
   }
+  const filepath = (isDirectory ? filename : path.dirname(filename))
   // TODO: for now assumes filepath dir contains all tests, later all this
   // should be replaced with remix's & browser solidity compiler code
 
@@ -40,7 +41,6 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
   // We should only look into current file if a full file name with path is given
   // We should only walk through directory if a directory name is passed
   try {
-    filepath = (isDirectory ? filename : path.dirname(filename))
     // walkSync only if it is a directory
     fs.walkSync(filepath, foundpath => {
       // only process .sol files
@@ -68,7 +68,7 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
         compiler.event.register('compilationFinished', this, function (success, data, source) {
           next(null, data)
         })
-        compiler.compile(sources, false)
+        compiler.compile(sources, filepath)
       }
     ], function (err, result) {
       let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
