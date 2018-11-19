@@ -11,3 +11,4 @@ package-lock.json
 .tern-port
 TODO
 soljson.js
+lerna-debug.log
