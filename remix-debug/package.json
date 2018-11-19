@@ -24,7 +24,7 @@
     "notify-error": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "remix-lib": "^0.3.8",
-    "solc": "^0.4.24"
+    "solc": "^0.5.0"
   },
   "devDependencies": {
     "standard": "^7.0.1",
