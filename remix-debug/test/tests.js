@@ -109,8 +109,8 @@ function testDebugging (t, debugManager) {
 
   breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
     console.log('breakpointHit')
-    t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 591, length: 1, file: 0, jump: '-' }))
-    t.equal(step, 75)
+    t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 587, length: 1, file: 0, jump: '-' }))
+    t.equal(step, 74)
   })
 
   breakPointManager.event.register('noBreakpointHit', function () {
@@ -120,7 +120,7 @@ function testDebugging (t, debugManager) {
   breakPointManager.jumpNextBreakpoint(0, true)
 }
 
-var ballot = `pragma solidity ^0.4.0;
+var ballot = `pragma solidity ^0.5.0;
 contract Ballot {
 
     struct Voter {
@@ -138,13 +138,13 @@ contract Ballot {
     Proposal[] proposals;
 
     /// Create a new ballot with $(_numProposals) different proposals.
-    function Ballot() public {
+    constructor() public {
         uint p = 45;
         chairperson = msg.sender;
         address addressLocal = msg.sender; // copy of state variable
         voters[chairperson].weight = 1;
         proposals.length = 1;
-        Proposal[] proposalsLocals = proposals; // copy of state variable
+        Proposal[] storage proposalsLocals = proposals; // copy of state variable
     }
 
     /// Give $(toVoter) the right to vote on this ballot.
@@ -179,7 +179,7 @@ contract Ballot {
         proposals[toProposal].voteCount += sender.weight;
     }
 
-    function winningProposal() public constant returns (uint8 _winningProposal) {
+    function winningProposal() public view returns (uint8 _winningProposal) {
         uint256 winningVoteCount = 0;
         for (uint8 prop = 0; prop < proposals.length; prop++)
             if (proposals[prop].voteCount > winningVoteCount) {
