@@ -9,7 +9,7 @@ contract miscLocal {
             three, 
             four
         }
-        function miscLocal () {
+        constructor () public {
             bool boolFalse = false;
             bool boolTrue = true;
             enumDef testEnum;
@@ -31,7 +31,7 @@ contract miscLocal {
   }
 
   contract miscLocal2 {
-      function miscLocal2 () {
+      constructor () public {
            bytes memory dynbytes = "dynamicbytes";
            string memory smallstring = "test_test_test";
         }
