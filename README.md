@@ -36,9 +36,10 @@ Or if you want to clone the github repository (`wget` need to be installed first
 
 ```bash
 git clone https://github.com/ethereum/remix-ide.git
+git clone https://github.com/ethereum/remix.git # only if you plan to link remix and remix-ide repositories and develop on it.
 cd remix-ide
 npm install
-npm run setupremix  # this will clone https://github.com/ethereum/remix for you and link it to remix-ide. Only execute this step if you want to contribute on Remix development
+npm run setupremix  # only if you plan to link remix and remix-ide repositories and develop on it.
 npm start
 ```
 
