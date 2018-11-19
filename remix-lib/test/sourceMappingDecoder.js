@@ -107,12 +107,12 @@ tape('SourceMappingDecoder', function (t) {
 })
 
 var contracts = `contract test {
-    function f1() returns (uint) {
+    function f1() public returns (uint) {
         uint t = 4;
         return t;
     }
     
-    function f2() {
+    function f2() public {
         
     }
 }
