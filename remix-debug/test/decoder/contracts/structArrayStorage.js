@@ -25,7 +25,7 @@ module.exports = {
         string str;
     }
     simpleStruct[][3] arrayStruct;
-    function structArrayStorage () {
+    constructor () public {
         intStructDec.i8 = 32;
         intStructDec.i16 = -54;
         intStructDec.ui32 = 128;

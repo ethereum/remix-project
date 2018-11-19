@@ -67,7 +67,6 @@ tape('solidity', function (t) {
 
     output = compiler.compile(compilerInput(simplecontracts))
     output = JSON.parse(output)
-
     state = astHelper.extractStateDefinitions('test.sol:simpleContract', output.sources)
     states = astHelper.extractStatesDefinitions(output.sources)
     stateDef = state.stateDefinitions
@@ -81,10 +80,10 @@ tape('solidity', function (t) {
     state = astHelper.extractStateDefinitions('test.sol:test2', output.sources)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[0].attributes.type, states, 'test1', util.extractLocationFromAstVariable(stateDef[0]))
-    checkDecodeInfo(st, parsedType, 0, 32, 'struct test1.str')
+    checkDecodeInfo(st, parsedType, 1, 32, 'struct test1.str')
 
     state = stateDecoder.extractStateVariables('test.sol:test2', output.sources)
-    checkDecodeInfo(st, parsedType, 0, 32, 'struct test1.str')
+    checkDecodeInfo(st, parsedType, 1, 32, 'struct test1.str')
 
     st.end()
   })

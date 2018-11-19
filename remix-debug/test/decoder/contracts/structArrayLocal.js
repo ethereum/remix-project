@@ -24,7 +24,7 @@ contract structArrayLocal {
         enumdef c;
     }    
     
-    function structArrayLocal () {
+    constructor () public {
         bytes memory bytesSimple = "test_super";
         teststruct memory e;
         e.a = "test";
