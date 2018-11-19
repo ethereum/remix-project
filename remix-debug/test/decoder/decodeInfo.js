@@ -12,7 +12,7 @@ var util = require('../../src/solidity-decoder/types/util')
 
 tape('solidity', function (t) {
   t.test('astHelper, decodeInfo', function (st) {
-    var output = compiler.compileStandardWrapper(compilerInput(contracts))
+    var output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
 
     var state = astHelper.extractStateDefinitions('test.sol:contractUint', output.sources)
@@ -65,9 +65,8 @@ tape('solidity', function (t) {
     parsedType = decodeInfo.parseType(stateDef[5].attributes.type, states, 'contractSmallVariable', util.extractLocationFromAstVariable(stateDef[5]))
     checkDecodeInfo(st, parsedType, 1, 2, 'int16')
 
-    output = compiler.compileStandardWrapper(compilerInput(simplecontracts))
+    output = compiler.compile(compilerInput(simplecontracts))
     output = JSON.parse(output)
-
     state = astHelper.extractStateDefinitions('test.sol:simpleContract', output.sources)
     states = astHelper.extractStatesDefinitions(output.sources)
     stateDef = state.stateDefinitions
@@ -81,10 +80,10 @@ tape('solidity', function (t) {
     state = astHelper.extractStateDefinitions('test.sol:test2', output.sources)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[0].attributes.type, states, 'test1', util.extractLocationFromAstVariable(stateDef[0]))
-    checkDecodeInfo(st, parsedType, 0, 32, 'struct test1.str')
+    checkDecodeInfo(st, parsedType, 1, 32, 'struct test1.str')
 
     state = stateDecoder.extractStateVariables('test.sol:test2', output.sources)
-    checkDecodeInfo(st, parsedType, 0, 32, 'struct test1.str')
+    checkDecodeInfo(st, parsedType, 1, 32, 'struct test1.str')
 
     st.end()
   })
