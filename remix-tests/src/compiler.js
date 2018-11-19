@@ -41,7 +41,6 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
   // We should only look into current file if a full file name with path is given
   // We should only walk through directory if a directory name is passed
   try {
-    filepath = (isDirectory ? filename : path.dirname(filename))
     // walkSync only if it is a directory
     fs.walkSync(filepath, foundpath => {
       // only process .sol files
@@ -69,7 +68,7 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
         compiler.event.register('compilationFinished', this, function (success, data, source) {
           next(null, data)
         })
-        compiler.compile(sources, false)
+        compiler.compile(sources, filepath)
       }
     ], function (err, result) {
       let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
