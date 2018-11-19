@@ -3,7 +3,7 @@ import "remix_accounts.sol";
 
 contract SenderTest {
    
-    function beforeAll () {}
+    function beforeAll () public {}
     
     /// 1
     function checkSenderIs1 () public {
