@@ -17,6 +17,7 @@ module.exports = `
     
     contract test1 {
         struct str {
+            uint8 ui;
         }
     }
 

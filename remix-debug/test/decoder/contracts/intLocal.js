@@ -9,7 +9,7 @@ contract proxy {
     }
 }
 contract intLocal {
-    function intLocal () {
+    constructor () public {
       proxy.testStruct memory p;
       uint8 ui8 = 130;
       uint16 ui16 = 456;
@@ -31,11 +31,11 @@ contract intLocal {
       level11();
     }
     
-    function level11() {
+    function level11() public {
       uint8 ui8 = 123;
       level12();
     }
-    function level12() {
+    function level12() public {
       uint8 ui81 = 12;
     }
   }
