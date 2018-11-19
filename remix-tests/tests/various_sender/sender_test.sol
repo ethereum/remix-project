@@ -1,10 +1,9 @@
-pragma solidity ^0.4.7;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "remix_accounts.sol";
 
 contract SenderTest {
    
-    function beforeAll () {}
+    function beforeAll () public {}
     
     /// 1
     function checkSenderIs1 () public {

@@ -22,7 +22,7 @@ module.exports = function (self) {
 
         compileJSON = function (input) {
           try {
-            return compiler.compileStandardWrapper(input, function (path) {
+            return compiler.compile(input, function (path) {
               missingInputs.push(path)
               return { 'error': 'Deferred import' }
             })

@@ -7,7 +7,7 @@ var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 
 tape('SourceMappingDecoder', function (t) {
   t.test('SourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
-    var output = compiler.compileStandardWrapper(compilerInput(contracts))
+    var output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
     var sourceMappingDecoder = new SourceMappingDecoder()
     var node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
@@ -107,12 +107,12 @@ tape('SourceMappingDecoder', function (t) {
 })
 
 var contracts = `contract test {
-    function f1() returns (uint) {
+    function f1() public returns (uint) {
         uint t = 4;
         return t;
     }
     
-    function f2() {
+    function f2() public {
         
     }
 }
