@@ -1,6 +1,4 @@
 module.exports = `
-pragma solidity ^0.5.0;
-
 library Assert {
 
   event AssertionEvent(
