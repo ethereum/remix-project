@@ -13,7 +13,7 @@ module.exports = function testMappingStorage (st, cb) {
   var mappingStorage = require('../contracts/mappingStorage')
   var privateKey = Buffer.from('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', 'hex')
   var vm = vmCall.initVM(st, privateKey)
-  var output = compiler.compileStandardWrapper(compilerInput(mappingStorage.contract))
+  var output = compiler.compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output)
   vmCall.sendTx(vm, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, txHash) {
     if (error) {
@@ -48,7 +48,7 @@ function testMapping (st, vm, privateKey, contractAddress, output, cb) {
                 var traceManager = new TraceManager({web3: vm.web3})
                 traceManager.resolveTrace(tx, () => {
                   var storageViewer = new StorageViewer({
-                    stepIndex: 213,
+                    stepIndex: 268,
                     tx: tx,
                     address: contractAddress
                   }, new StorageResolver({web3: vm.web3}), traceManager)
