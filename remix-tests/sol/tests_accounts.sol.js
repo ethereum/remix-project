@@ -1,5 +1,4 @@
-module.exports = `pragma solidity ^0.5.0;
-
+module.exports = `
 library TestsAccounts {
     function getAccount(uint index) public returns (address) {
         >accounts<
