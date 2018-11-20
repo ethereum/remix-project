@@ -89,12 +89,12 @@ function testReturnValues (browser, callback) {
  "1": "bytes2: _b2 0x1223",
  "2": "bytes3: _b3 0x000000",
  "3": "bytes: _blit 0x123498",
- "4": "bytes5: _b5 0x0000043245",
- "5": "bytes6: _b6 0x002345532532",
+ "4": "bytes5: _b5 0x0432450000",
+ "5": "bytes6: _b6 0x234553253200",
  "6": "string: _str this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string",
  "7": "bytes7: _b7 0x03252353253253",
- "8": "bytes22: _b22 0x00000000000000000000325235235325325325235325",
- "9": "bytes32: _b32 0x0000000000000000000000000000000000032523532532523532523532523532"
+ "8": "bytes22: _b22 0x32523523532532532523532500000000000000000000",
+ "9": "bytes32: _b32 0x0325235325325235325235325235320000000000000000000000000000000000"
 }`).pause(500).testFunction('retunValues3 - transact (not payable)',
         '0x94c4b4324bad773dec29af3ffe26a698c32b5caf8a1eedf8889563158639d28a',
         '[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues3() 0x5e7...26e9f\nvalue:0 wei\ndata:0x033...e0a7d\nlogs:0\nhash:0x94c...9d28a', null, `{
@@ -137,7 +137,7 @@ function testInputValues (browser, callback) {
     "indexed": true,
     "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
    },
-   "3": "0x00001234",
+   "3": "0x12340000",
    "4": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
    "_i": "-123",
    "_u": "123",
@@ -145,7 +145,7 @@ function testInputValues (browser, callback) {
     "indexed": true,
     "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
    },
-   "_b": "0x00001234",
+   "_b": "0x12340000",
    "_notIndexed": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
    "length": 5
   }
@@ -158,37 +158,37 @@ function testInputValues (browser, callback) {
 // @TODO test: bytes8[3][] type as input
 
 var sources = [
-  {'browser/Untitled.sol': {content: `pragma solidity ^0.4.0;
-      contract TestContract { function f() returns (uint) { return 8; } 
-      function g() returns (uint, string, bool, uint) {  
+  {'browser/Untitled.sol': {content: `
+      contract TestContract { function f() public returns (uint) { return 8; } 
+      function g() public returns (uint, string memory, bool, uint) {  
         uint payment = 345;
         bool payed = true;
         string memory comment = "comment_comment_";
         uint month = 4;
         return (payment, comment, payed, month); } }`}},
-  {'browser/returnValues.sol': {content: `pragma solidity ^0.4.0;
-    contract testReturnValues {
+  {'browser/returnValues.sol': {content: `
+  contract testReturnValues {
     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
-    function retunValues1 () returns (bool _b, uint _u, int _i, address _a)  {
+    function retunValues1 () public returns (bool _b, uint _u, int _i, address _a)  {
         _b = true;
         _u = 345;
         _i = -345;
         _a = msg.sender;
     }
     
-    function retunValues2 () returns (byte _b, bytes2 _b2, bytes3 _b3, bytes _blit, bytes5 _b5, bytes6 _b6, string _str, bytes7 _b7, bytes22 _b22, bytes32 _b32)  {
+    function retunValues2 () public returns (byte _b, bytes2 _b2, bytes3 _b3, bytes memory _blit, bytes5 _b5, bytes6 _b6, string memory _str, bytes7 _b7, bytes22 _b22, bytes32 _b32)  {
         _b = 0x12;
         _b2 = 0x1223;
-        _b5 = 0x43245;
-        _b6 = 0x2345532532;
-        _b7 = 0x3252353253253;
-        _b22 = 0x325235235325325325235325;
-        _b32 = 0x32523532532523532523532523532;
+        _b5 = hex"043245";
+        _b6 = hex"2345532532";
+        _b7 = hex"03252353253253";
+        _b22 = hex"325235235325325325235325";
+        _b32 = hex"032523532532523532523532523532";
         _blit = hex"123498";
         _str = "this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string";
     }
     
-    function retunValues3 () returns (ActionChoices _en, int[5][] _a1)  {
+    function retunValues3 () public returns (ActionChoices _en, int[5][] memory _a1)  {
        _en = ActionChoices.GoStraight;
        int[5][] memory a = new int[5][](3);
        a[0] = [int(1),-45,-78,56,60];
@@ -197,18 +197,18 @@ var sources = [
       _a1 = a;
     }
   }`}},
-  {'browser/inputValues.sol': {content: `pragma solidity ^0.4.0;
+  {'browser/inputValues.sol': {content: `
   contract test {
-      event event1(int _i, uint indexed _u, string indexed _str, bytes4 _b, string _notIndexed);
-      function inputValue1 (uint _u, int _i, string _str) returns (uint _uret, int _iret, string _strret) {
-        _uret = _u;
-        _iret = _i;
-        _strret = _str;
-      }
-      function inputValue2 (uint[3] _n, bytes8[4] _b8) returns (uint[3] _nret, bytes8[4] _b8ret){
-          _nret = _n;
-          _b8ret = _b8;
-          event1(-123, 123, "test", 0x1234, "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ");
-      }
-  }`}}
+    event event1(int _i, uint indexed _u, string indexed _str, bytes4 _b, string _notIndexed);
+    function inputValue1 (uint _u, int _i, string memory _str) public returns (uint _uret, int _iret, string memory _strret) {
+      _uret = _u;
+      _iret = _i;
+      _strret = _str;
+    }
+    function inputValue2 (uint[3] memory _n, bytes8[4] memory _b8) public returns (uint[3] memory _nret, bytes8[4] memory _b8ret){
+        _nret = _n;
+        _b8ret = _b8;
+        emit event1(-123, 123, "test", hex"1234", "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ");
+    }
+}`}}
 ]
