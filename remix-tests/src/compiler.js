@@ -11,11 +11,12 @@ String.prototype.regexIndexOf = function (regex, startpos) {
 
 function writeTestAccountsContract (accounts) {
   var testAccountContract = require('../sol/tests_accounts.sol.js')
-  // TODO: this will only work for solidity 0.5.0
-  var body = 'address payable[' + accounts.length + '] memory accounts'
+  var body = 'address[' + accounts.length + '] memory accounts;'
   if (!accounts.length) body += ';'
   else {
-    body += '= [' + accounts.map((value) => { return `address(${value})` }).join(',') + '];'
+    accounts.map((address, index) => {
+      body += `\naccounts[${index}] = ${address};\n`
+    })
   }
   return testAccountContract.replace('>accounts<', body)
 }
