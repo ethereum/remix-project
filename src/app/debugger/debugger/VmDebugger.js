@@ -195,7 +195,7 @@ class VmDebuggerLogic {
       self.event.trigger('newTrace', [])
     })
 
-    self.debugger.event.register('callTreeReady', function () {
+    self.debugger.event.register('callTreeReady', this, function () {
       if (self.debugger.callTree.reducedTrace.length) {
         return self.event.trigger('newCallTree', [])
       }
