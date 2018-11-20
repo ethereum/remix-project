@@ -182,7 +182,7 @@ describe('testRunner', function () {
             done()
           }
 
-          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData['sender_test.sol']['SenderTest'], { accounts }, testCallback, resultsCallback)
 
         })
       })
