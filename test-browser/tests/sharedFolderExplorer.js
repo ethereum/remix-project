@@ -6,23 +6,22 @@ var sauce = require('./sauce')
 var assetsTestContract = `import "./contract.sol";
 contract Assets {
     uint[] proposals;
-    function add(uint8 _numProposals) {
+    function add(uint8 _numProposals) public {
         proposals.length = _numProposals;
     }
 }
 `
 
-var gmbhTestContract = `
-contract gmbh {
+var gmbhTestContract = `contract gmbh {
     uint[] proposals;
-    function register(uint8 _numProposals) {
+    function register(uint8 _numProposals) public {
         proposals.length = _numProposals;
     }
 }
 `
 var sources = [
   {
-    'localhost/folder1/contract2.sol': {content: 'contract test2 { function get () returns (uint) { return 11; }}'}
+    'localhost/folder1/contract2.sol': {content: 'contract test2 { function get () public returns (uint) { return 11; }}'}
   },
   {
     'localhost/src/gmbh/company.sol': {content: assetsTestContract}

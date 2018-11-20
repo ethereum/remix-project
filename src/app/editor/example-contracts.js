@@ -1,7 +1,6 @@
 'use strict'
 
-var ballot = `pragma solidity ^0.4.0;
-contract Ballot {
+var ballot = `contract Ballot {
 
     struct Voter {
         uint weight;
@@ -18,7 +17,7 @@ contract Ballot {
     Proposal[] proposals;
 
     /// Create a new ballot with $(_numProposals) different proposals.
-    function Ballot(uint8 _numProposals) public {
+    constructor(uint8 _numProposals) public {
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
         proposals.length = _numProposals;
@@ -56,7 +55,7 @@ contract Ballot {
         proposals[toProposal].voteCount += sender.weight;
     }
 
-    function winningProposal() public constant returns (uint8 _winningProposal) {
+    function winningProposal() public view returns (uint8 _winningProposal) {
         uint256 winningVoteCount = 0;
         for (uint8 prop = 0; prop < proposals.length; prop++)
             if (proposals[prop].voteCount > winningVoteCount) {
@@ -64,16 +63,17 @@ contract Ballot {
                 _winningProposal = prop;
             }
     }
-}`
+}
+`
 
-var ballotTest = `pragma solidity ^0.4.7;
+var ballotTest = `
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "./ballot.sol";
 
 contract test3 {
    
     Ballot ballotToTest;
-    function beforeAll () {
+    function beforeAll () public {
        ballotToTest = new Ballot(2);
     }
     
@@ -82,7 +82,7 @@ contract test3 {
         Assert.equal(ballotToTest.winningProposal(), uint(1), "1 should be the winning proposal");
     }
     
-    function checkWinninProposalWithReturnValue () public constant returns (bool) {
+    function checkWinninProposalWithReturnValue () public view returns (bool) {
         return ballotToTest.winningProposal() == 1;
     }
 }
