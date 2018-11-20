@@ -197,8 +197,8 @@ var ENS = `pragma solidity ^0.4.0;
 import './AbstractENS.sol';
 
 /**
-* The ENS registry contract.
-*/
+ * The ENS registry contract.
+ */
 contract ENS is AbstractENS {
   struct Record {
       address owner;
