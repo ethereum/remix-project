@@ -11,7 +11,7 @@ contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
   uint x;
-  function() { 
+  function() external { 
       x++;
     uint test;
     uint test1;

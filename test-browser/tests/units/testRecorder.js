@@ -61,13 +61,13 @@ module.exports = {
   }
 }
 
-var sources = [{'browser/testRecorder.sol': {content: `pragma solidity ^0.4.0;contract testRecorder {
-    function testRecorder(uint p) {
-        
-    }
-    function set (uint _p) {
-            
-    }
+var sources = [{'browser/testRecorder.sol': {content: `contract testRecorder {
+  constructor(uint p) public {
+      
+  }
+  function set (uint _p) public {
+          
+  }
 }`}}]
 
 var records = `{
