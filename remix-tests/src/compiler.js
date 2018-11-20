@@ -30,8 +30,9 @@ function compileFileOrFiles (filename, isDirectory, cb) {
     if (file.split('.').pop() === 'sol') {
       let c = fs.readFileSync(path.join(filepath, file)).toString()
       const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+      let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
       if (file.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
-        c = c.replace(/(pragma solidity \^\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
+        c = includeTestLibs.concat(c)
       }
       sources[file] = { content: c }
     }
@@ -69,10 +70,11 @@ function compileContractSources (sources, importFileCb, cb) {
     sources['remix_tests.sol'] = { content: require('../sol/tests.sol.js') }
   }
   const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+  let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
   for (let file in sources) {
     const c = sources[file].content
     if (file.indexOf('_test.sol') > 0 && c && c.regexIndexOf(s) < 0) {
-      sources[file].content = c.replace(/(pragma solidity \^\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
+      sources[file].content = includeTestLibs.concat(c)
     }
   }
 
