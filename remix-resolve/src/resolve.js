@@ -91,4 +91,4 @@ const resolve = async function (fileRoot, sourcePath) {
   return response
 }
 
-module.exports = { resolve }
+module.exports = resolve
