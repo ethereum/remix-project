@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/ethereum/remix-tests.svg?branch=master)](https://travis-ci.org/ethereum/remix-tests)
-
 Remix-Tests
 ---
 
@@ -42,6 +40,8 @@ contract MyTest {
 
 }
 ```
+
+See also: example [Su Squares contract](https://github.com/su-squares/ethereum-contract/tree/e542f37d4f8f6c7b07d90a6554424268384a4186) and [https://travis-ci.org/su-squares/ethereum-contract/builds/446186067](Travis build) that uses remix-tests for continuous integration testing.
 
 Available special functions:
 * `beforeEach()` - runs before each test

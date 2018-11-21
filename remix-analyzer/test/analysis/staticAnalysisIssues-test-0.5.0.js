@@ -4,14 +4,17 @@ var remixLib = require('remix-lib')
 var StatRunner = require('../../src/solidity-analyzer')
 var compilerInput = remixLib.helpers.compiler.compilerInput
 
-var compiler = require('solc')
+const niv = require('npm-install-version')
+niv.install('solc@0.5.0')
+var compiler = niv.require('solc@0.5.0')
 
 var fs = require('fs')
 var path = require('path')
+var folder = 'solidity-v0.5'
 
 function compile (fileName) {
-  var content = fs.readFileSync(path.join(__dirname, 'test-contracts', fileName), 'utf8')
-  return JSON.parse(compiler.compileStandardWrapper(compilerInput(content)))
+  var content = fs.readFileSync(path.join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+  return JSON.parse(compiler.compile(compilerInput(content)))
 }
 
 test('staticAnalysisIssues.functionParameterPassingError', function (t) {

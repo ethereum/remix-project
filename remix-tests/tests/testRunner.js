@@ -10,18 +10,27 @@ const Provider = require('remix-simulator').Provider
 function compileAndDeploy (filename, callback) {
   let web3 = new Web3()
   web3.setProvider(new Provider())
-
+  let compilationData
+  let accounts
   async.waterfall([
+    function getAccountList (next) {
+      web3.eth.getAccounts((_err, _accounts) => {
+        accounts = _accounts
+        next(_err)
+      })
+    },
     function compile (next) {
-      Compiler.compileFileOrFiles(filename, false, next)
+      Compiler.compileFileOrFiles(filename, false, {accounts}, next)
     },
     function deployAllContracts (compilationResult, next) {
+      compilationData = compilationResult
       Deployer.deployAll(compilationResult, web3, next)
     }
   ], function (_err, contracts) {
-    callback(null, contracts)
+    callback(null, compilationData, contracts, accounts)
   })
-}
+}  
+  
 
 describe('testRunner', function () {
   describe('#runTest', function() {
@@ -30,7 +39,7 @@ describe('testRunner', function () {
       let tests = [], results = {}
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, contracts) {
+        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
           var testCallback = function (test) {
             tests.push(test)
           }
@@ -38,7 +47,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, compilationData['simple_storage_test.sol']['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -66,7 +75,7 @@ describe('testRunner', function () {
       let tests = [], results = {}
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, contracts) {
+        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
           var testCallback = function (test) {
             tests.push(test)
           }
@@ -74,7 +83,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, compilationData['simple_storage_test.sol']['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -101,7 +110,7 @@ describe('testRunner', function () {
       let tests = [], results = {}
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, contracts) {
+        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
           var testCallback = function (test) {
             tests.push(test)
           }
@@ -109,8 +118,8 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('StringTest', contracts.StringTest, testCallback, resultsCallback)
-          TestRunner.runTest('StringTest2', contracts.StringTest2, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest', contracts.StringTest, compilationData['simple_string_test.sol']['StringTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest2', contracts.StringTest2, compilationData['simple_string_test.sol']['StringTest2'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -125,7 +134,7 @@ describe('testRunner', function () {
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
           { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
-          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "function returned false" },
+          { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "initial value is not correct" },
           { type: 'testPass', value: 'Value should not be hello world', time: 1, context: 'StringTest' },
           { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
@@ -138,7 +147,7 @@ describe('testRunner', function () {
       let tests = [], results = {}
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, contracts) {
+        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
           var testCallback = function (test) {
             tests.push(test)
           }
@@ -146,7 +155,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('IntegerTest', contracts.IntegerTest, testCallback, resultsCallback)
+          TestRunner.runTest('IntegerTest', contracts.IntegerTest, compilationData['number_test.sol']['IntegerTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -155,6 +164,34 @@ describe('testRunner', function () {
       })
       it('should have 2 failing tests', function () {
         assert.equal(results.failureNum, 2)
+      })
+    })
+
+    // Test Transaction with different sender
+    describe('various sender', function () {
+      let filename = 'tests/various_sender/sender_test.sol'
+      let tests = [], results = {}
+
+      before(function (done) {
+        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
+          var testCallback = function (test) {
+            tests.push(test)
+          }
+          var resultsCallback = function (_err, _results) {
+            results = _results
+            done()
+          }
+          
+          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData['sender_test.sol']['SenderTest'], { accounts }, testCallback, resultsCallback)
+          
+        })
+      })
+
+        it('should have 4 passing tests', function () {
+          assert.equal(results.passingNum, 4)
+      })
+      it('should have 1 failing tests', function () {
+        assert.equal(results.failureNum, 0)
       })
     })
   })

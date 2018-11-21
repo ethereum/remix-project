@@ -4,10 +4,13 @@ var remixLib = require('remix-lib')
 var StatRunner = require('../../src/solidity-analyzer')
 var compilerInput = remixLib.helpers.compiler.compilerInput
 
-var compiler = require('solc')
+const niv = require('npm-install-version')
+niv.install('solc@0.5.0')
+var compiler = niv.require('solc@0.5.0')
 
 var fs = require('fs')
 var path = require('path')
+var folder = 'solidity-v0.5'
 
 var testFiles = [
   'KingOfTheEtherThrone.sol',
@@ -40,8 +43,8 @@ var testFiles = [
 var testFileAsts = {}
 
 testFiles.forEach((fileName) => {
-  var content = fs.readFileSync(path.join(__dirname, 'test-contracts', fileName), 'utf8')
-  testFileAsts[fileName] = JSON.parse(compiler.compileStandardWrapper(compilerInput(content)))
+  var content = fs.readFileSync(path.join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
+  testFileAsts[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
 })
 
 test('Integration test thisLocal.js', function (t) {
@@ -131,7 +134,7 @@ test('Integration test constantFunctions.js', function (t) {
     'ballot.sol': 0,
     'ballot_reentrant.sol': 0,
     'ballot_withoutWarnings.sol': 0,
-    'cross_contract.sol': 1,
+    'cross_contract.sol': 0,
     'inheritance.sol': 0,
     'modifier1.sol': 1,
     'modifier2.sol': 0,
@@ -143,7 +146,7 @@ test('Integration test constantFunctions.js', function (t) {
     'transfer.sol': 0,
     'ctor.sol': 0,
     'forgottenReturn.sol': 0,
-    'selfdestruct.sol': 1,
+    'selfdestruct.sol': 0,
     'deleteDynamicArray.sol': 0,
     'deleteFromDynamicArray.sol': 0,
     'blockLevelCompare.sol': 0,
@@ -281,7 +284,7 @@ test('Integration test similarVariableNames.js', function (t) {
     'KingOfTheEtherThrone.sol': 0,
     'assembly.sol': 0,
     'ballot.sol': 2,
-    'ballot_reentrant.sol': 3,
+    'ballot_reentrant.sol': 11,
     'ballot_withoutWarnings.sol': 0,
     'cross_contract.sol': 0,
     'inheritance.sol': 0,
@@ -462,6 +465,10 @@ test('Integration test blockBlockhash.js', function (t) {
   })
 })
 
+/*
+
+! No return gives compilation error with solidity 0.5.0
+
 test('Integration test noReturn.js', function (t) {
   t.plan(testFiles.length)
 
@@ -499,6 +506,7 @@ test('Integration test noReturn.js', function (t) {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of noReturn warnings`)
   })
 })
+*/
 
 test('Integration test selfdestruct.js', function (t) {
   t.plan(testFiles.length)

@@ -1,7 +1,7 @@
 # Remix
 
 [![Join the chat at https://gitter.im/ethereum/remix](https://badges.gitter.im/ethereum/remix.svg)](https://gitter.im/ethereum/remix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![CircleCI](https://circleci.com/gh/ethereum/remix.svg?style=svg)](https://circleci.com/gh/ethereum/remix)
+[![CircleCI](https://circleci.com/gh/ethereum/remix/tree/master.svg?style=svg)](https://circleci.com/gh/ethereum/remix/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/docs/badge/?version=latest)](https://remix.readthedocs.io/en/latest/)
 
 Ethereum tools for the web.
@@ -50,6 +50,7 @@ Remix is built out of several different modules:
 + [`remix-lib`](remix-lib/README.md)
 + [`remix-debug`](remix-debugger/README.md) is now *deprecated*. It contains the debugger.
 + [`remix-tests`](remix-tests/README.md) contains our tests.
++ [`remixd`](https://github.com/ethereum/remixd/tree/master) CLI which allow accessing local element from Remix IDE (see https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html)
 
 Each generally has their own npm package and test suite, as well as basic documentation.
 

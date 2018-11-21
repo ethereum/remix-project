@@ -1,6 +1,6 @@
 {
   "name": "remix-lib",
-  "version": "0.3.8",
+  "version": "0.3.12",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -27,7 +27,7 @@
     "ethereumjs-vm": "^2.3.3",
     "ethers": "^3.0.15",
     "fast-async": "^6.1.2",
-    "solc": "^0.4.13",
+    "solc": "^0.5.0",
     "standard": "^7.0.1",
     "tape": "^4.6.0",
     "web3": "0.20.6"

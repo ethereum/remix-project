@@ -10,7 +10,7 @@ function txOrigin () {
 txOrigin.prototype.visit = function (node) {
   if (node.name === 'MemberAccess' &&
   node.attributes.member_name === 'origin' &&
-  node.attributes.type === 'address' &&
+  (node.attributes.type === 'address' || node.attributes.type === 'address payable') &&
   node.children && node.children.length &&
   node.children[0].attributes.type === 'tx' &&
   node.children[0].attributes.value === 'tx') {

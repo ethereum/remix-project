@@ -90,7 +90,7 @@ function Compiler (handleImportCall) {
         var result
         try {
           var input = compilerInput(source.sources, {optimize: optimize, target: source.target})
-          result = compiler.compileStandardWrapper(input, missingInputsCallback)
+          result = compiler.compile(input, missingInputsCallback)
           result = JSON.parse(result)
         } catch (exception) {
           result = { error: { formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' } }
@@ -313,7 +313,7 @@ function Compiler (handleImportCall) {
       while ((match = importRegex.exec(files[fileName].content))) {
         var importFilePath = match[1]
         if (importFilePath.startsWith('./')) {
-          var path = /(.*\/).*/.exec(target)
+          var path = /(.*\/).*/.exec(fileName)
           if (path !== null) {
             importFilePath = importFilePath.replace('./', path[1])
           } else {
