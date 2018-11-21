@@ -144,15 +144,17 @@ module.exports = class TestTab {
       if (e.target.checked) {
         selectAll.checked = true
       }
+      if (selectedTests.length === 0) {
+        selectAll.checked = false
+      }
+
     }
 
     function checkAll (event) {
-      var all = self.testList.children
-     
       var checkBoxes = document.querySelectorAll('input.singleTest')
-      var isAnySelected = document.querySelectorAll('input.singleTest:checked').length != 0
+      var isAnySelected = document.querySelectorAll('input.singleTest:checked').length !== 0
       // checks/unchecks all
-      checkBoxes.forEach (function(checkBox) {
+      checkBoxes.forEach(function (checkBox) {
         checkBox.checked = !isAnySelected
       })
       event.target.checked = !isAnySelected
