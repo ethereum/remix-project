@@ -32,7 +32,7 @@ function Debugger (options) {
 
   this.executionContext.event.register('contextChanged', this, function (context) {
     // TODO: was already broken
-    //self.switchProvider(context)
+    // self.switchProvider(context)
   })
 
   this.debugger.event.register('newTraceLoaded', this, function () {
