@@ -41,7 +41,7 @@
     "remix-analyzer": "0.2.12",
     "remix-lib": "0.3.12",
     "remix-solidity": "0.2.13",
-    "remix-tests": "0.0.19",
+    "remix-tests": "0.0.20",
     "remixd": "git+https://github.com/ethereum/remixd.git",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
