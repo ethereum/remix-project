@@ -193,7 +193,7 @@ module.exports = class TestTab {
   }
 }
 
-var testContractSample = `
+var testContractSample = `pragma solidity >=0.4.0 <0.6.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 
 // file name has to end with '_test.sol'
