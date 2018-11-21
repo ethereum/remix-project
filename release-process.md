@@ -1,6 +1,8 @@
 # Release process
 This document details steps for publishing packages and tag the code base accordingly:
 
+- fetch origin/master
+- checkout origin/master
 - checkout a new branch
 - npm run publish
 - commit
@@ -10,6 +12,6 @@ This document details steps for publishing packages and tag the code base accord
 - fetch origin/master
 - checkout origin/master
 - npm run tag
-- github-changes -o ethereum -r remix -a --only-pulls --use-commit-body --only-merges --between-tags <previous>...<next> 
+- github-changes -o ethereum -r remix -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version 
 - create a new release out of the changelog.md
 - in changelog put list of published packages with version
