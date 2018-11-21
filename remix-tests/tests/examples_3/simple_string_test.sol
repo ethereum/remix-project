@@ -1,22 +1,22 @@
-pragma solidity ^0.4.7;
+pragma solidity ^0.5.0;
 import "./simple_string.sol";
 
 contract StringTest {
   SimpleString foo;
 
-  function beforeAll() {
+  function beforeAll() public {
     foo = new SimpleString();
   }
 
-  function initialValueShouldBeHello() public constant returns (bool) {
+  function initialValueShouldBeHello() public returns (bool) {
     return Assert.equal(foo.get(), "Hello world!", "initial value is not correct");
   }
 
-  function valueShouldNotBeHelloWorld() public constant returns (bool) {
+  function valueShouldNotBeHelloWorld() public returns (bool) {
     return Assert.notEqual(foo.get(), "Hello wordl!", "initial value is not correct");
   }
 
-  function valueShouldBeHelloWorld() public constant returns (bool) {
+  function valueShouldBeHelloWorld() public returns (bool) {
     return Assert.equal(foo.get(), "Hello wordl!", "initial value is not correct");
   }
 }

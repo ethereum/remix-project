@@ -85,6 +85,7 @@ function ExecutionContext () {
 
   this.blockGasLimitDefault = 4300000
   this.blockGasLimit = this.blockGasLimitDefault
+  this.customNetWorks = {}
 
   this.init = function (config) {
     if (config.get('settings/always-use-vm')) {
@@ -131,6 +132,20 @@ function ExecutionContext () {
           callback(err, { id, name })
         }
       })
+    }
+  }
+
+  this.removeProvider = function (name) {
+    if (name && this.customNetWorks[name]) {
+      delete this.customNetWorks[name]
+      self.event.trigger('removeProvider', [name])
+    }
+  }
+
+  this.addProvider = function (network) {
+    if (network && network.name && network.url) {
+      this.customNetWorks[network.name] = network
+      self.event.trigger('addProvider', [network])
     }
   }
 
@@ -181,6 +196,11 @@ function ExecutionContext () {
 
     if (context === 'web3') {
       confirmCb(cb)
+    }
+
+    if (this.customNetWorks[context]) {
+      var provider = this.customNetWorks[context]
+      setProviderFromEndpoint(provider.url, provider.name, () => { cb() })
     }
   }
 
