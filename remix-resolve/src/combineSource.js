@@ -39,4 +39,4 @@ const combineSource = async function (rootpath, sources) {
   return sources
 }
 
-module.exports = { combineSource }
+module.exports = combineSource
