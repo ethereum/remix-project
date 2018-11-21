@@ -139,14 +139,9 @@ staticAnalysisView.prototype.checkAll = function (event) {
   if (!this.view) {
     return
   }
-  var all = this.view.querySelectorAll('[name="staticanalysismodule"]')
-  var isAnySelected = false
-  for (var i = 0; i < all.length; i++) {
-    if (all[i].checked === true) {
-      isAnySelected = true
-      break
-    }
-  }
+  var all = this.view.querySelectorAll('[id="staticanalysismodule]"')
+  var isAnySelected =  this.view.querySelectorAll('[id="staticanalysismodule]":checked').length !== 0;
+  
   for (var j = 0; j < all.length; j++) {
     all[j].checked = !isAnySelected
   }
@@ -154,9 +149,12 @@ staticAnalysisView.prototype.checkAll = function (event) {
 }
 
 staticAnalysisView.prototype.checkModule = function (event) {
-  var selectAll = this.view.querySelector('[id="checkallstaticanalysis" ]')
+  var selectAll = this.view.querySelector('[id="checkallstaticanalysis"]')
+  var selected = this.view.querySelectorAll('[id="staticanalysismodule]":checked')
   if (event.target.checked) {
     selectAll.checked = true
+  } else if (selected.length === 0) {
+    selectAll.checked = false
   }
 }
 
