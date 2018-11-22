@@ -1,7 +1,7 @@
 This document includes:
- - how to make npm, github release of remix-* packages
  - how to update remix.ethereum.org.
  - how to update remix-alpha.ethereum.org.
+ - how to release remix IDE.
 
 # remix-* release (npm release, github release) 
    
@@ -54,6 +54,22 @@ By giving report, beta testers help to:
  - propose new update
  - contribute on reviewing / building Pull Request
  
-Current Beta testers:
+# remix IDE release
 
-
+ - git fetch origin master
+ - git checkout origin/master
+ - git checkout -b bumpVersion
+ - update package.json version and version in terminal.js
+ - create a PR and wait for test
+ - merge PR
+ - git fetch origin master
+ - git checkout origin/master
+ - git tag v(version-number)
+ - git push --tags
+ - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
+ - publish a release in github using the changelog
+ - rm -rf node_modules
+ - npm install
+ - remove all soljson.js files in root folder
+ - npm run build
+ - npm publish
