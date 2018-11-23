@@ -67,7 +67,6 @@ async function extractHexValue (location, storageResolver, byteLength) {
   try {
     slotvalue = await readFromStorage(location.slot, storageResolver)
   } catch (e) {
-    console.log(e)
     return '0x'
   }
   return extractHexByteSlice(slotvalue, byteLength, location.offset)
