@@ -9,28 +9,26 @@ describe('testRunner', function () {
       let tests = [], results = {}
 
       before(function (done) {
-        const content = fs.readFileSync('../remix-resolve/tests/example_1/greeter.sol')
+        const content = fs.readFileSync('../remix-resolve/tests/example_1/greeter.sol').toString()
         var sources = []
-        sources['greeter.sol'] = content
-        rr.combineSource('/home/0mkar/Karma/remix/remix-resolve/tests/example_1/greeter.sol', sources)
+        sources['greeter.sol'] = { 'content': content }
+        rr.combineSource('/home/0mkar/Karma/remix/remix-resolve/tests/example_1/', sources)
+          .then(sources => {
+            results = sources
+            done()
+          })
+          .catch(e => {
+            throw e
+          })
       })
 
       it('should 1 passing test', function () {
-        assert.equal(results.passingNum, 2)
-      })
-
-      it('should 1 failing test', function () {
-        assert.equal(results.failureNum, 2)
+        assert.equal(Object.keys(results).length, 2)
       })
 
       it('should returns 5 messages', function () {
-        assert.deepEqual(tests, [
-          { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
-          { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
-          { type: 'testPass',    value: 'Should trigger one pass', time: 1, context: 'MyTest'},
-          { type: 'testPass',    value: 'Initial value should be100', time: 1, context: 'MyTest' },
-          { type: 'testFailure', value: 'Initial value should be200', time: 1, context: 'MyTest', errMsg: 'function returned false' }
-        ])
+        assert.deepEqual(results, { 'mortal.sol':{ content: 'pragma solidity ^0.5.0;\n\ncontract Mortal {\n    /* Define variable owner of the type address */\n    address payable owner;\n\n    /* This function is executed at initialization and sets the owner of the contract */\n    function mortal() public { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() public { if (msg.sender == owner) selfdestruct(owner); }\n}\n' },
+        'greeter.sol': { content: 'pragma solidity ^0.5.0;\nimport \'mortal.sol\';\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n' }})
       })
     })
   })
