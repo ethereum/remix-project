@@ -137,28 +137,25 @@ module.exports = class TestTab {
     }
 
     function toggleCheckbox (e, test) {
-      var selectedTests = self.data.selectedTests
+      let selectedTests = self.data.selectedTests
       selectedTests = e.target.checked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
       self.data.selectedTests = selectedTests
-      var selectAll = document.querySelector('[id="checkAllTests"]')
+      let checkAll = document.querySelector('[id="checkAllTests"]')
       if (e.target.checked) {
-        selectAll.checked = true
+        checkAll.checked = true
+      } else if (!selectedTests.length) {
+        checkAll.checked = false
       }
-      if (selectedTests.length === 0) {
-        selectAll.checked = false
-      }
-
     }
 
     function checkAll (event) {
-      var checkBoxes = document.querySelectorAll('input.singleTest')
-      var isAnySelected = document.querySelectorAll('input.singleTest:checked').length !== 0
+      const checkBoxes = document.querySelectorAll('.singleTest')
+      const selectionsCount = document.querySelectorAll('.singleTest:checked').length
       // checks/unchecks all
-      checkBoxes.forEach(function (checkBox) {
-        checkBox.checked = !isAnySelected
-      })
-      event.target.checked = !isAnySelected
+      checkBoxes.forEach(checkbox => checkbox.checked = !selectionsCount)
+      event.target.checked = !selectionsCount
     }
+
 
     var runTests = function () {
       testsOutput.innerHTML = ''
@@ -195,12 +192,12 @@ module.exports = class TestTab {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class=${css.generateTestFile} onclick=${generateTestFile}>Generate test file</div>
+          <div class="${css.generateTestFile}" onclick="${generateTestFile}">Generate test file</div>
         </div>
         <div class="${css.tests}">
           ${self.testList}
-          <div class=${css.buttons}>
-            <div class=${css.runButton}  onclick=${runTests}>Run Tests</div>
+          <div class="${css.buttons}">
+            <div class="${css.runButton}"  onclick="${runTests}">Run Tests</div>
             <label class="${css.label}" for="checkAllTests">
               <input id="checkAllTests"
                 type="checkbox"

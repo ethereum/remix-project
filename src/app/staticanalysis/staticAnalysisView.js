@@ -50,7 +50,7 @@ staticAnalysisView.prototype.render = function () {
         ${this.modulesView}
       </div>
       <div class="${css.buttons}">
-        <button class=${css.buttonRun} onclick=${function () { self.run() }} >Run</button>
+        <button class="${css.buttonRun}" onclick="${function () { self.run() }}" >Run</button>
         <label class="${css.label}" for="autorunstaticanalysis">
           <input id="autorunstaticanalysis"
             type="checkbox"
@@ -59,8 +59,8 @@ staticAnalysisView.prototype.render = function () {
           >
           Auto run
         </label>
-        <label class="${css.label}" for="checkallstaticanalysis">
-          <input id="checkallstaticanalysis"
+        <label class="${css.label}" for="checkAllTests">
+          <input id="checkAllTests"
             type="checkbox"
             onclick="${function (event) { self.checkAll(event) }}"
             style="vertical-align:bottom"
@@ -135,27 +135,25 @@ staticAnalysisView.prototype.run = function () {
   }
 }
 
+staticAnalysisView.prototype.checkModule = function (event) {
+  let selected = document.querySelectorAll('[name="staticanalysismodule"]:checked')
+  let checkAll = document.querySelector('[id="checkAllTests"]')
+  if (event.target.checked) {
+    checkAll.checked = true
+  } else if (!selected.length) {
+    checkAll.checked = false
+  }
+}
+
 staticAnalysisView.prototype.checkAll = function (event) {
   if (!this.view) {
     return
   }
-  var all = this.view.querySelectorAll('[id="staticanalysismodule]"')
-  var isAnySelected =  this.view.querySelectorAll('[id="staticanalysismodule]":checked').length !== 0;
-  
-  for (var j = 0; j < all.length; j++) {
-    all[j].checked = !isAnySelected
-  }
-  event.target.checked = !isAnySelected
-}
-
-staticAnalysisView.prototype.checkModule = function (event) {
-  var selectAll = this.view.querySelector('[id="checkallstaticanalysis"]')
-  var selected = this.view.querySelectorAll('[id="staticanalysismodule]":checked')
-  if (event.target.checked) {
-    selectAll.checked = true
-  } else if (selected.length === 0) {
-    selectAll.checked = false
-  }
+  var checkBoxes = this.view.querySelectorAll('[name="staticanalysismodule"]')
+  var selectionsCount =  this.view.querySelectorAll('[name="staticanalysismodule"]:checked').length;
+  // checks/unchecks all
+  checkBoxes.forEach(checkbox => checkbox.checked = !selectionsCount)
+  event.target.checked = !selectionsCount
 }
 
 staticAnalysisView.prototype.renderModules = function () {
@@ -168,6 +166,7 @@ staticAnalysisView.prototype.renderModules = function () {
         <label class="${css.label}">
           <input id="staticanalysismodule_${categoryId}_${i}"
             type="checkbox"
+            class="staticAnalysisItem"
             name="staticanalysismodule"
             index=${item._index}
             checked="true"
