@@ -2,9 +2,9 @@
 var ethers = require('ethers')
 
 module.exports = {
-  makeFullTupleTypeDefinition: function (typeDef) {
+  makeFullTypeDefinition: function (typeDef) {
     if (typeDef && typeDef.type.indexOf('tuple') === 0 && typeDef.components) {
-      var innerTypes = typeDef.components.map((innerType) => innerType.type)
+      var innerTypes = typeDef.components.map((innerType) => { return this.makeFullTypeDefinition(innerType) })
       return `tuple(${innerTypes.join(',')})${this.extractSize(typeDef.type)}`
     }
     return typeDef.type
@@ -15,7 +15,7 @@ module.exports = {
     if (funABI.inputs && funABI.inputs.length) {
       for (var i = 0; i < funABI.inputs.length; i++) {
         var type = funABI.inputs[i].type
-        types.push(type.indexOf('tuple') === 0 ? this.makeFullTupleTypeDefinition(funABI.inputs[i]) : type)
+        types.push(type.indexOf('tuple') === 0 ? this.makeFullTypeDefinition(funABI.inputs[i]) : type)
         if (args.length < types.length) {
           args.push('')
         }
@@ -95,9 +95,8 @@ module.exports = {
       var fn = abi[i]
       if (fn.type === 'function' && fnName === fn.name + '(' + fn.inputs.map((value) => {
         if (value.components) {
-          // we extract the size (if array) and append it later
-          var size = this.extractSize(value.type)
-          return `(${value.components.map((value) => { return value.type }).join(',')})${size}`
+          let fullType = this.makeFullTypeDefinition(value)
+          return fullType.replace(/tuple/g, '') // return of makeFullTypeDefinition might contain `tuple`, need to remove it cause `methodIdentifier` (fnName) does not include `tuple` keyword
         } else {
           return value.type
         }
