@@ -19,8 +19,10 @@ For example, to sync your local folder to the official Remix IDE,
 The folder is shared using a websocket connection between `Remix IDE`
 and `Remixd`.
 
-Be sure the user executing Remix has read/write permission on the
+Be sure the user executing Remixd has read/write permission on the
 folder.
+
+There is an option to run remixd in read-only mode, use `--read-only` flag.
 
 **Warning!**
 
