@@ -38,7 +38,6 @@ Alternatively `remixd` can be used to setup a development environment that can b
   -a, --auto-mine                       mine pending transactions
   -r, --rpc <cors-domains>              start rpc server. Values are CORS domain
   -rp, --rpc-port                       rpc server port (default 8545)
-  --profiler                            start profiler service
   -h, --help                            output usage information
 
 ```
