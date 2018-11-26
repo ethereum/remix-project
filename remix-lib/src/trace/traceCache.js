@@ -82,6 +82,11 @@ TraceCache.prototype.pushContractCreation = function (token, code) {
   this.contractCreation[token] = code
 }
 
+TraceCache.prototype.resetStoreChanges = function (index, address, key, value) {
+  this.sstore = {}
+  this.storageChanges = []
+}
+
 TraceCache.prototype.pushStoreChanges = function (index, address, key, value) {
   this.sstore[index] = {
     'address': address,
