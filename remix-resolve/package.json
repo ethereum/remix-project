@@ -4,7 +4,7 @@
   "description": "Solidity import resolver engine",
   "main": "./src/index.js",
   "bin": {
-    "remix-tests": "./bin/remix-resolve"
+    "remix-resolve": "./bin/remix-resolve"
   },
   "scripts": {
     "lint": "standard",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix-tests.git"
+    "url": "git+https://github.com/ethereum/remix.git"
   },
   "keywords": [
     "solidity",
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "solc": "^0.5.0",
     "url": "^0.11.0",
     "valid-url": "^1.0.9"
   },
