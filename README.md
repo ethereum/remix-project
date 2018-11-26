@@ -1,15 +1,15 @@
 # Remixd
 
-Remixd is a tool that intend to be used with [Remix IDE](http://github.com/ethereum/browser-solidity) (aka. Browser-Solidity). It allows a websocket connection between
+`remixd` is a tool that intend to be used with [Remix IDE](http://github.com/ethereum/browser-solidity) (aka. Browser-Solidity). It allows a websocket connection between
 `Remix IDE` (web application) and the local computer.
 
-Practically Remix IDE make available a folder shared by Remixd.
+Practically Remix IDE make available a folder shared by `remixd`.
 
 More details are explained in this [tutorial](http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html).
 
-Alternatively Remixd can be used to setup a development environment that can be used with other popular frameworks like Embark, Truffle, Ganache, etc..
+Alternatively `remixd` can be used to setup a development environment that can be used with other popular frameworks like Embark, Truffle, Ganache, etc..
 
-Remixd needs `npm` and `node`
+`remixd` needs `npm` and `node`
 
 ## INSTALLATION
 
@@ -25,16 +25,20 @@ Remixd needs `npm` and `node`
 
   Options:
 
-    -s, --shared-folder <path>            Folder to share with Remix IDE
-    -m, --mist                            start mist
-    -g, --geth                            start geth
-    -p, --dev-path <dev-path>             Folder used by mist/geth to start the development instance
-    -f, --frontend <front-end>            Folder that should be served by remixd
-    -p, --frontend-port <front-end-port>  Http port used by the frontend (default 8082)
-    -a, --auto-mine                       mine pending transactions
-    -r, --rpc <cors-domains>              start rpc server. Values are CORS domain
-    -rp, --rpc-port                       rpc server port (default 8545)
-    -h, --help                            output usage information
+  --remix-ide  <url>                    URL of remix instance allowed to connect to this web sockect connection
+  -s, --shared-folder <path>            Folder to share with Remix IDE
+  --read-only                           Treat shared folder as read-only (experimental)
+  --vyper                               Run a local vyper compiler
+  -m, --mist                            start mist
+  -g, --geth                            start geth
+  -p, --dev-path <dev-path>             Folder used by mist/geth to start the development instance
+  -f, --frontend <front-end>            Folder that should be served by remixd
+  -p, --frontend-port <front-end-port>  Http port used by the frontend (default 8082)
+  -a, --auto-mine                       mine pending transactions
+  -r, --rpc <cors-domains>              start rpc server. Values are CORS domain
+  -rp, --rpc-port                       rpc server port (default 8545)
+  --profiler                            start profiler service
+  -h, --help                            output usage information
 
 ```
 
