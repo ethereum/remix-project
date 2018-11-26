@@ -371,7 +371,7 @@ module.exports = class CompileTab {
       if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
         var contract = self.data.contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
         if (contract.metadata === undefined || contract.metadata.length === 0) {
-          modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
+          modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
         } else {
           publishOnSwarm(contract, self._deps.fileManager, function (err, uploaded) {
             if (err) {
