@@ -435,7 +435,7 @@ function contractDropdown (events, self) {
     var selectedContract = getSelectedContract()
 
     if (selectedContract.contract.object.evm.bytecode.object.length === 0) {
-      modalDialogCustom.alert('This contract does not implement all functions and thus cannot be created.')
+      modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
       return
     }
 
