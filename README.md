@@ -25,7 +25,8 @@ Alternatively `remixd` can be used to setup a development environment that can b
 
   Options:
 
-  --remix-ide  <url>                    URL of remix instance allowed to connect to this web sockect connection
+  --remix-ide  <url>                    URL of remix instance allowed to connect to this 
+                                        web sockect connection
   -s, --shared-folder <path>            Folder to share with Remix IDE
   --read-only                           Treat shared folder as read-only (experimental)
   --vyper                               Run a local vyper compiler
