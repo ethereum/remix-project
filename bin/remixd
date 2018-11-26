@@ -22,7 +22,6 @@ program
 .option('-a, --auto-mine', 'mine pending transactions')
 .option('-r, --rpc <cors-domains>', 'start rpc server. Values are CORS domain')
 .option('-rp, --rpc-port', 'rpc server port (default 8545)')
-.option('--profiler', 'start profiler service')
 .on('--help', function(){
   console.log('\nExample:\n\n    remixd --dev-path /home/devchains/chain1 --mist --geth --frontend /home/frontend --frontend-port 8084 --auto-mine')
 }).parse(process.argv)
@@ -65,11 +64,6 @@ if (program.sharedFolder) {
     servicesList['sharedfolder'].sharedFolder(program.sharedFolder, program.readOnly || false)
   })
   killCallBack.push(sharedFolderrouter.start())
-}
-
-if (program.profiler) {
-  var profilerRouter = new Router(65521, servicesList['profiler'])
-  killCallBack.push(profilerRouter.start())
 }
 
 // kill
