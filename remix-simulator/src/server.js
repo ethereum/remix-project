@@ -1,9 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const expressWs = require('express-ws')(app)
+const expressWs = require('express-ws')
 const Provider = require('./provider')
 const log = require('./utils/logs.js')
+
+expressWs(app)
 
 var provider = new Provider()
 
@@ -14,7 +16,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to remix-simulator')
 })
 
-app.use(function (req, res) {
+app.use((req, res) => {
   provider.sendAsync(req.body, (err, jsonResponse) => {
     if (err) {
       res.send({error: err})
@@ -23,15 +25,15 @@ app.use(function (req, res) {
   })
 })
 
-app.ws('/', function(ws, req) {
-  ws.on('message', function(msg) {
+app.ws('/', (ws, req) => {
+  ws.on('message', function (msg) {
     provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
       if (err) {
-        ws.send({error: err});
+        ws.send({error: err})
       }
-      ws.send(JSON.stringify(jsonResponse));
+      ws.send(JSON.stringify(jsonResponse))
     })
-  });
-});
+  })
+})
 
 app.listen(8545, () => log('Remix Simulator listening on port 8545!'))
