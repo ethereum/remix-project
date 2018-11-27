@@ -21,6 +21,7 @@ var css = csjs`
   }
   .caret_tv {
     width: 10px;
+    flex-shrink: 0;
   }
   .label_tv {
     display: flex;
