@@ -17,6 +17,8 @@ const handleGithubCall = async function (fullpath, repoPath, path, filename, fil
     } else {
       throw Error('Content not received!')
     }
+  }).catch(function (e) {
+    throw e
   })
   return data
 }
