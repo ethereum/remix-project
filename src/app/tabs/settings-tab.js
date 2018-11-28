@@ -75,7 +75,7 @@ module.exports = class SettingsTab {
           <div class=${css.title}>General settings</div>
           <div class="${css.crow}">
             <div>${self._view.generateContractMetadata}</div>
-            <span class="${css.checkboxText}">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploy libraries automatically.</span>
+            <span class="${css.checkboxText}">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</span>
           </div>
           <div class="${css.crow}">
             <div>${self._view.optionVM}</div>
