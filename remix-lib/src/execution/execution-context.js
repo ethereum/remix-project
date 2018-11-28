@@ -67,7 +67,7 @@ var vm = new EthJSVM({
 vm.stateManager = stateManager
 vm.blockchain = stateManager.blockchain
 vm.trie = stateManager.trie
-vm.stateManager.checkpoint()
+vm.stateManager.checkpoint(() => {})
 
 var web3VM = new Web3VMProvider()
 web3VM.setVM(vm)
