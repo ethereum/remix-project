@@ -13,6 +13,8 @@ var swarmgw = require('swarmgw')()
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
+var AutoCompletePopup = require('../ui/auto-complete-popup')
+var Commands = require('../constants/commands')
 
 var csjs = require('csjs-inject')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
@@ -61,6 +63,20 @@ class Terminal {
       if (label === 'script') {
         self.updateJournal({ type: 'select', value: label })
       }
+    })
+    self._components.autoCompletePopup = new AutoCompletePopup()
+    self._components.autoCompletePopup.event.register('handleSelect', function (input) {
+      self._components.autoCompletePopup.data._options = []
+      self._components.autoCompletePopup._startingElement = 0
+      let textList = self._view.input.innerText.split(' ')
+      textList.pop()
+      textList.push(input)
+      self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
+      self._view.input.focus()
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
+    })
+    self._components.autoCompletePopup.event.register('updateList', function () {
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
     })
     self._commands = {}
     self.commands = {}
@@ -149,6 +165,7 @@ class Terminal {
         </div>
       </div>
     `
+    self._view.autoCompletePopup = self._components.autoCompletePopup.render()
     self._view.el = yo`
       <div class=${css.panel}>
         ${self._view.bar}
@@ -391,12 +408,14 @@ class Terminal {
     return self._view.el
 
     function change (event) {
+      handleAutoComplete(event)
       if (self._view.input.innerText.length === 0) self._view.input.innerText += '\n'
       if (event.which === 13) {
         if (event.ctrlKey) { // <ctrl+enter>
           self._view.input.innerText += '\n'
           putCursor2End(self._view.input)
           self.scroll2bottom()
+          removeAutoComplete()
         } else { // <enter>
           self._cmdIndex = -1
           self._cmdTemp = ''
@@ -407,23 +426,32 @@ class Terminal {
             self._cmdHistory.unshift(script)
             self.commands.script(script)
           }
+          removeAutoComplete()
         }
       } else if (event.which === 38) { // <arrowUp>
-        var len = self._cmdHistory.length
-        if (len === 0) return event.preventDefault()
-        if (self._cmdHistory.length - 1 > self._cmdIndex) {
-          self._cmdIndex++
+        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
+          self._components.autoCompletePopup._view.autoComplete.children[1].children[0].onclick(event)
+        } else {
+          var len = self._cmdHistory.length
+          if (len === 0) return event.preventDefault()
+          if (self._cmdHistory.length - 1 > self._cmdIndex) {
+            self._cmdIndex++
+          }
+          self._view.input.innerText = self._cmdHistory[self._cmdIndex]
+          putCursor2End(self._view.input)
+          self.scroll2bottom()
         }
-        self._view.input.innerText = self._cmdHistory[self._cmdIndex]
-        putCursor2End(self._view.input)
-        self.scroll2bottom()
       } else if (event.which === 40) { // <arrowDown>
-        if (self._cmdIndex > -1) {
-          self._cmdIndex--
+        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
+          self._components.autoCompletePopup._view.autoComplete.children[1].children[1].onclick(event)
+        } else {
+          if (self._cmdIndex > -1) {
+            self._cmdIndex--
+          }
+          self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+          putCursor2End(self._view.input)
+          self.scroll2bottom()
         }
-        self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
-        putCursor2End(self._view.input)
-        self.scroll2bottom()
       } else {
         self._cmdTemp = self._view.input.innerText
       }
@@ -454,6 +482,45 @@ class Terminal {
       sel.addRange(range)
 
       editable.focus()
+    }
+    function handleAutoComplete (event) {
+      if (event.which === 9) {
+        event.preventDefault()
+        let textList = self._view.input.innerText.split(' ')
+        let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
+        if (self._view.input.innerText.length >= 2) {
+          self._components.autoCompletePopup.data._options = []
+          Commands.allPrograms.forEach(item => {
+            if (Object.keys(item)[0].substring(0, Object.keys(item)[0].length - 1).includes(autoCompleteInput.trim())) {
+              self._components.autoCompletePopup.data._options.push(item)
+            } else if (autoCompleteInput.trim().includes(Object.keys(item)[0]) || (Object.keys(item)[0] === autoCompleteInput.trim())) {
+              Commands.allCommands.forEach(item => {
+                if (Object.keys(item)[0].includes(autoCompleteInput.trim())) {
+                  self._components.autoCompletePopup.data._options.push(item)
+                }
+              })
+            }
+          })
+        }
+        if (self._components.autoCompletePopup.data._options.length === 1) {
+          textList.pop()
+          textList.push(Object.keys(self._components.autoCompletePopup.data._options[0])[0])
+          self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
+          self._components.autoCompletePopup.data._options = []
+          putCursor2End(self._view.input)
+        }
+      }
+      if (event.which === 27 || event.which === 8 || event.which === 46) {
+        self._components.autoCompletePopup.data._options = []
+        self._components.autoCompletePopup._startingElement = 0
+      }
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
+    }
+    function removeAutoComplete () {
+      self._components.autoCompletePopup.data._options = []
+      self._components.autoCompletePopup._startingElement = 0
+      self._components.autoCompletePopup._removePopUp()
+      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
     }
   }
   updateJournal (filterEvent) {
