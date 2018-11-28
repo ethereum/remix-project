@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 app.use((req, res) => {
   provider.sendAsync(req.body, (err, jsonResponse) => {
     if (err) {
-      res.send({error: err})
+      return res.send({error: err})
     }
     res.send(jsonResponse)
   })
@@ -29,7 +29,7 @@ app.ws('/', (ws, req) => {
   ws.on('message', function (msg) {
     provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
       if (err) {
-        ws.send({error: err})
+        return ws.send({error: err})
       }
       ws.send(JSON.stringify(jsonResponse))
     })
