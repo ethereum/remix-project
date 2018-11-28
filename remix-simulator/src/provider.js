@@ -36,6 +36,10 @@ Provider.prototype.sendAsync = function (payload, callback) {
   callback(new Error('unknown method ' + payload.method))
 }
 
+Provider.prototype.send = function (payload, callback) {
+  this.sendAsync(payload, callback || function () {})
+}
+
 Provider.prototype.isConnected = function () {
   return true
 }
