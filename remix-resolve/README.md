@@ -12,3 +12,25 @@
 	'greeter.sol': { content: 'pragma solidity ^0.5.0;\nimport \'mortal.sol\';\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n' }
 }
 ```
+#### API
+
+`combineSource(sources)`
+
+Returns `json` object with exact same path as `import` statement.
+
+**Output**
+```json
+{
+	'./mortal.sol': { content: '...' },
+	'greeter.sol': { content: '...' }
+}
+```
+
+`resolve(path, combinedSources)` function should be called from within `handleImportCb` function of `solc.compile(input, handleImportCb)`.
+
+```javascript
+const rr = require('remix-resolve')
+function handleImportCb(path) {
+	return rr.resolve(path, combinedSources)
+}
+```
