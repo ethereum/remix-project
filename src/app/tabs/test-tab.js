@@ -101,7 +101,7 @@ module.exports = class TestTab {
 
     self._deps.filePanel.event.register('newTestFileCreated', file => {
       var testList = document.querySelector("[class^='testList']")
-      var test = yo`<label><input class="singleTest" onchange=${(e) => toggleCheckbox(e, file)} type="checkbox" checked="true">${file}</label>`
+      var test = yo`<label class="singleTestLabel"><input class="singleTest" onchange=${(e) => toggleCheckbox(e.target.checked, file)} type="checkbox" checked="true">${file}</label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
       self.data.selectedTests.push(file)
@@ -133,15 +133,17 @@ module.exports = class TestTab {
 
     function listTests () {
       var tests = self.data.allTests
-      return tests.map(test => yo`<label><input class="singleTest" onchange =${(e) => toggleCheckbox(e, test)} type="checkbox" checked="true">${test} </label>`)
+      return tests.map(test => yo`<label class="singleTestLabel"><input class="singleTest" onchange =${(e) => toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">${test} </label>`)
     }
 
-    function toggleCheckbox (e, test) {
+    function toggleCheckbox (eChecked, test) {
+      if (!self.data.selectedTests)
+        self.data.selectedTests = document.querySelectorAll('.singleTest:checked')
       let selectedTests = self.data.selectedTests
-      selectedTests = e.target.checked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
+      selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => {el !== test})
       self.data.selectedTests = selectedTests
       let checkAll = document.querySelector('[id="checkAllTests"]')
-      if (e.target.checked) {
+      if (eChecked) {
         checkAll.checked = true
       } else if (!selectedTests.length) {
         checkAll.checked = false
@@ -149,13 +151,16 @@ module.exports = class TestTab {
     }
 
     function checkAll (event) {
-      const checkBoxes = document.querySelectorAll('.singleTest')
+      let checkBoxes = document.querySelectorAll('.singleTest')
+      const checkboxesLabels = document.querySelectorAll(".singleTestLabel")
       const selectionsCount = document.querySelectorAll('.singleTest:checked').length
       // checks/unchecks all
-      checkBoxes.forEach(checkbox => checkbox.checked = !selectionsCount)
+      for (let i = 0; i < checkBoxes.length; i++) {
+        checkBoxes[i].checked = !selectionsCount;
+        toggleCheckbox(!selectionsCount, checkboxesLabels[i].innerText)
+      }
       event.target.checked = !selectionsCount
     }
-
 
     var runTests = function () {
       testsOutput.innerHTML = ''
