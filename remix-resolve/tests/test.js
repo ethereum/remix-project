@@ -2,10 +2,6 @@ const rr = require('../src/index.js')
 const assert = require('assert')
 const fs = require('fs')
 const solc = require('solc')
-const Compiler = require('remix-solidity').Compiler
-const async = require('async')
-const Promise = require('promise')
-const sleep = require('sleep')
 
 describe('testRunner', function () {
   describe('#combineSource', function() {
