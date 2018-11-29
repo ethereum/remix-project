@@ -18,7 +18,7 @@ Alternatively `remixd` can be used to setup a development environment that can b
 ## HELP SECTION
 
 ```
-  Usage: remixd -s <shared folder>
+  Usage: remixd -s <shared folder> --remix-ide https://remix.ethereum.org
 
   Provide a two-way connection between the local computer and Remix IDE.
   
@@ -44,7 +44,7 @@ Alternatively `remixd` can be used to setup a development environment that can b
 
 ## SHARE A FOLDER
 
-`remixd -s <absolute-path>`
+`remixd -s <absolute-path> --remix-ide https://remix.ethereum.org`
 
 The current user should have `read/write` access to the folder (at least `read` access).
 
@@ -80,7 +80,7 @@ Usage:
  
 ---
  
- `remixd -s /home/user/project1/contracts`
+ `remixd -s /home/user/project1/contracts --remix-ide https://remix.ethereum.org`
  
  - allow accessing the local folder from Remix IDE (http://remix.ethereum.org)
   
