@@ -137,10 +137,11 @@ module.exports = class TestTab {
     }
 
     function toggleCheckbox (eChecked, test) {
-      if (!self.data.selectedTests)
+      if (!self.data.selectedTests) {
         self.data.selectedTests = document.querySelectorAll('.singleTest:checked')
+      }
       let selectedTests = self.data.selectedTests
-      selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => {el !== test})
+      selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
       self.data.selectedTests = selectedTests
       let checkAll = document.querySelector('[id="checkAllTests"]')
       if (eChecked) {
@@ -152,11 +153,11 @@ module.exports = class TestTab {
 
     function checkAll (event) {
       let checkBoxes = document.querySelectorAll('.singleTest')
-      const checkboxesLabels = document.querySelectorAll(".singleTestLabel")
+      const checkboxesLabels = document.querySelectorAll('.singleTestLabel')
       const selectionsCount = document.querySelectorAll('.singleTest:checked').length
       // checks/unchecks all
       for (let i = 0; i < checkBoxes.length; i++) {
-        checkBoxes[i].checked = !selectionsCount;
+        checkBoxes[i].checked = !selectionsCount
         toggleCheckbox(!selectionsCount, checkboxesLabels[i].innerText)
       }
       event.target.checked = !selectionsCount
