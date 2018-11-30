@@ -81,9 +81,18 @@ class CmdLine {
     return source
   }
 
+  getCurrentLine() {
+    let lineColumnPos = this.lineColumnPos
+    if (!lineColumnPos) return ""
+    let currentLineNumber = lineColumnPos.start.line
+    let content = this.compilation.lastCompilationResult.source.sources[this.filename].content.split("\n")
+    return content[currentLineNumber]
+  }
+
   startDebug(txNumber, filename, cb) {
     const self = this
     this.filename = filename
+    this.txHash = txNumber
     this.debugger.debug(null, txNumber, null, () => {
 
       self.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
@@ -109,6 +118,13 @@ class CmdLine {
         setTimeout(cb, 1000);
       }
     })
+  }
+
+  getVars() {
+    return {
+      locals: this.solidityLocals,
+      contract: this.solidityState
+    }
   }
 
   triggerSourceUpdate() {
@@ -144,11 +160,41 @@ class CmdLine {
   }
 
   getTraceLength() {
+    if (!this.debugger.step_manager) return 0;
     return this.debugger.step_manager.traceLength
   }
 
+  getCodeFirstStep() {
+    if (!this.debugger.step_manager) return 0;
+    return this.debugger.step_manager.calculateFirstStep()
+  }
+
+  getCodeTraceLength() {
+    if (!this.debugger.step_manager) return 0;
+    return this.debugger.step_manager.calculateCodeLength()
+  }
+
+  nextStep() {
+    if (!this.debugger.step_manager) return 0;
+    return this.debugger.step_manager.nextStep()
+  }
+
+  previousStep() {
+    if (!this.debugger.step_manager) return 0;
+    return this.debugger.step_manager.previousStep()
+  }
+
   currentStep() {
+    if (!this.debugger.step_manager) return 0;
     return this.debugger.step_manager.currentStepIndex
+  }
+
+  canGoNext() {
+    return this.currentStep() < this.getCodeTraceLength()
+  }
+
+  canGoPrevious() {
+    return this.currentStep() > this.getCodeFirstStep()
   }
 
   unload() {

@@ -10,6 +10,7 @@ class DebuggerStepManager {
     this.traceManager = traceManager
     this.currentStepIndex = 0
     this.traceLength = 0
+    this.codeTraceLength = 0
     this.revertionPoint = null
 
     this.listenToEvents()
@@ -26,6 +27,7 @@ class DebuggerStepManager {
         if (self.traceLength !== newLength) {
           self.event.trigger('traceLengthChanged', [newLength])
           self.traceLength = newLength
+          self.codeTraceLength = self.calculateCodeLength()
         }
         self.jumpTo(0)
       })
@@ -154,6 +156,37 @@ class DebuggerStepManager {
 
   jumpPreviousBreakpoint () {
     this.debugger.breakpointManager.jumpPreviousBreakpoint(this.currentStepIndex, true)
+  }
+
+  calculateFirstStep() {
+    let step = this.resolveToReducedTrace(0, 1)
+    return this.resolveToReducedTrace(step, 1)
+  }
+
+  calculateCodeStepList() {
+    let step = 0
+    let steps = []
+    while (step < this.traceLength) {
+      let _step = this.resolveToReducedTrace(step, 1)
+      if (!_step) break;
+      steps.push(_step)
+      step += 1
+    }
+    steps = steps.filter((item, pos, self) => { return steps.indexOf(item) === pos })
+    return steps
+  }
+
+  calculateCodeLength() {
+    let steps = this.calculateCodeStepList().reverse()
+    return this.calculateCodeStepList().reverse()[1] || this.traceLength;
+  }
+
+  nextStep() {
+    return this.resolveToReducedTrace(this.currentStepIndex, 1);
+  }
+
+  previousStep() {
+    return this.resolveToReducedTrace(this.currentStepIndex, -1);
   }
 
   resolveToReducedTrace (value, incr) {
