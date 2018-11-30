@@ -4,15 +4,12 @@ var compilation = require('./compilation.json')
 var solc = require('solc')
 var fs = require('fs')
 
-//var filename = 'test/sol/ballot.sol'
 var filename = 'test/sol/simple_storage.sol'
 var short_filename = "simple_storage.sol"
-//var filename = 'browser/ballot.sol'
 
 var input_json = {
   language: 'Solidity',
   sources: {
-    //"test/sol/ballot.sol": {content: fs.readFileSync('test/sol/ballot.sol').toString()}
   },
   settings: {
     optimizer: {
@@ -61,15 +58,7 @@ var deployContract = function (cb) {
 }
 
 let _web3 = cmd_line.debugger.debugger.web3
-// var tx = "0x8c44e1b6bcb557512184f851502e43160f415e2e12b2b98ba12b96b699b85859"
-// var tx = "0xae365458de8c6669eb146ce2ade4c7767c0edddaee98f5c1878c7c5e5510a0de"
-// var tx = "0x04aa74287b3c52e2ecab1cb066d22116317155503681870c516c95cdb148fa28"
-// var tx = "0x04aa74287b3c52e2ecab1cb066d22116317155503681870c516c95cdb148fa28"
-// var tx = "0x28bd66d99bc45b3f8d959126a26b8c97092892e63fc8ed90eb1598ebedf600ef"
 var tx = "0xf510c4f0b1d9ee262d7b9e9e87b4262f275fe029c2c733feef7dfa1e2b1e32aa"
-// _web3.eth.getTransactionReceipt(tx, (err, data) => {
-//   console.dir(err)
-//   console.dir(data)
 
 //  deployContract((err, tx) => {
   cmd_line.startDebug(tx, short_filename)
