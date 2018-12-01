@@ -39,7 +39,7 @@
     "onchange": "^3.2.1",
     "remix-debug": "0.2.14",
     "remix-analyzer": "0.2.13",
-    "remix-lib": "0.3.13",
+    "remix-lib": "0.4.1",
     "remix-solidity": "0.2.14",
     "remix-tests": "0.0.21",
     "remixd": "git+https://github.com/ethereum/remixd.git",
