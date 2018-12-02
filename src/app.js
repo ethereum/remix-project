@@ -7,7 +7,7 @@ var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
 var remixTests = require('remix-tests')
-var EventManager = remixLib.EventManager
+var EventManager = require('./lib/events')
 
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')

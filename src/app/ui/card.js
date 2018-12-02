@@ -2,8 +2,7 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var styleGuide = require('./styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 module.exports = class Card {
   constructor (api, events, opts) {

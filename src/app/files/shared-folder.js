@@ -1,5 +1,5 @@
 'use strict'
-var EventManager = require('remix-lib').EventManager
+var EventManager = require('../../lib/events')
 var pathtool = require('path')
 
 module.exports = class SharedFolder {

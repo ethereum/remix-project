@@ -9,7 +9,7 @@ var copyToClipboard = require('../ui/copy-to-clipboard')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 var Storage = remixLib.Storage
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 module.exports = class SettingsTab {
   constructor (localRegistry) {

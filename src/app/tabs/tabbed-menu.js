@@ -1,12 +1,11 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
 
 var globalRegistry = require('../../global/registry')
 var helper = require('../../lib/helper')
 var styles = require('../ui/styles-guide/theme-chooser').chooser()
 
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 module.exports = class TabbedMenu {
   constructor (localRegistry) {

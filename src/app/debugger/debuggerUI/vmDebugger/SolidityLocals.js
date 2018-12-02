@@ -1,6 +1,5 @@
 'use strict'
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../../../lib/events')
 var DropdownPanel = require('./DropdownPanel')
 var solidityTypeFormatter = require('./utils/SolidityTypeFormatter')
 var yo = require('yo-yo')

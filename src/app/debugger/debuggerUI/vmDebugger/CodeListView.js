@@ -1,9 +1,8 @@
 'use strict'
 var style = require('../styles/basicStyles')
 var yo = require('yo-yo')
-var remixLib = require('remix-lib')
 var DropdownPanel = require('./DropdownPanel')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../../../lib/events')
 var csjs = require('csjs-inject')
 var styleGuide = require('../../../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()

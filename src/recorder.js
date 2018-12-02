@@ -1,5 +1,5 @@
 var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('./lib/events')
 var ethutil = require('ethereumjs-util')
 var executionContext = require('./execution-context')
 var format = remixLib.execution.txFormat
