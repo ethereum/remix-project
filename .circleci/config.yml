@@ -8,7 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:9.11.2
-      
+
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -26,10 +26,10 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dep-bundle-23-{{ checksum "package.json" }}
+            - dep-bundle-24-{{ checksum "package.json" }}
       - run: npm install
       - save_cache:
-          key: dep-bundle-23-{{ checksum "package.json" }}
+          key: dep-bundle-24-{{ checksum "package.json" }}
           paths:
             - ~/repo/node_modules
       - run: npm run lint && npm run test && npm run make-mock-compiler && npm run build
