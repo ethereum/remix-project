@@ -2,15 +2,20 @@ var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
 
-var Debugger = require('./debugger/debugger')
+var Debugger = require('remix-debug').TransactionDebugger
 
 var SourceHighlighter = require('../editor/sourceHighlighter')
 
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
+
+var remixLib = require('remix-lib')
+var Web3Providers = remixLib.vm.Web3Providers
+var DummyProvider = remixLib.vm.DummyProvider
+
+var init = remixLib.init
 
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
@@ -25,17 +30,76 @@ var css = csjs`
   }
 `
 
+class ContextManager {
+  constructor () {
+    this.executionContext = executionContext
+    this.web3 = this.executionContext.web3()
+    this.event = new EventManager()
+  }
+
+  initProviders () {
+    this.web3Providers = new Web3Providers()
+    this.addProvider('DUMMYWEB3', new DummyProvider())
+    this.switchProvider('DUMMYWEB3')
+
+    this.addProvider('vm', this.executionContext.vm())
+    this.addProvider('injected', this.executionContext.internalWeb3())
+    this.addProvider('web3', this.executionContext.internalWeb3())
+    this.switchProvider(this.executionContext.getProvider())
+  }
+
+  getWeb3 () {
+    return this.web3
+  }
+
+  addProvider (type, obj) {
+    this.web3Providers.addProvider(type, obj)
+    this.event.trigger('providerAdded', [type])
+  }
+
+  switchProvider (type) {
+    var self = this
+    this.web3Providers.get(type, function (error, obj) {
+      if (error) {
+        console.log('provider ' + type + ' not defined')
+      } else {
+        self.web3 = obj
+        self.executionContext.detectNetwork((error, network) => {
+          if (error || !network) {
+            self.web3 = obj
+          } else {
+            var webDebugNode = init.web3DebugNode(network.name)
+            self.web3 = (!webDebugNode ? obj : webDebugNode)
+          }
+          self.event.trigger('providerChanged', [type, self.web3])
+        })
+        self.event.trigger('providerChanged', [type, self.web3])
+      }
+    })
+  }
+
+}
+
 class DebuggerUI {
 
   constructor (container) {
     this.registry = globalRegistry
     this.event = new EventManager()
 
+    this.executionContext = executionContext
+
+    this.contextManager = new ContextManager()
+
     this.debugger = new Debugger({
-      executionContext: executionContext,
+      web3: this.contextManager.getWeb3(),
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-      compiler: this.registry.get('compiler').api,
-      compilersArtefacts: this.registry.get('compilersartefacts').api
+      compiler: this.registry.get('compiler').api
+    })
+
+    this.contextManager.initProviders()
+
+    this.contextManager.event.register('providerChanged', () => {
+      this.debugger.updateWeb3(this.contextManager.getWeb3())
     })
 
     this.isActive = false
@@ -108,6 +172,7 @@ class DebuggerUI {
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
 
+    this.debugger.debugger.updateWeb3(this.executionContext.web3())
     this.debugger.debug(blockNumber, txNumber, tx, () => {
       self.stepManager = new StepManagerUI(this.debugger.step_manager)
       self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)

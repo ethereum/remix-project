@@ -1,11 +1,10 @@
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
-const remixLib = require('remix-lib')
 
 var globalRegistry = require('../../global/registry')
 const styles = require('../ui/styles-guide/theme-chooser').chooser()
 
-const EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 
 module.exports = class SupportTab {
   constructor (localRegistry) {

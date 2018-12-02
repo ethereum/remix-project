@@ -8,7 +8,7 @@ var remixLib = require('remix-lib')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 var helper = require('../../lib/helper')
 var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modal-dialog-custom')

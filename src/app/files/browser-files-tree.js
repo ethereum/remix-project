@@ -1,6 +1,6 @@
 'use strict'
 
-var EventManager = require('remix-lib').EventManager
+var EventManager = require('../../lib/events')
 
 function FilesTree (name, storage) {
   var self = this

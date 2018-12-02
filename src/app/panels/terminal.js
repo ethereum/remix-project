@@ -5,8 +5,7 @@ var jsbeautify = require('js-beautify')
 var ethers = require('ethers')
 var type = require('component-type')
 var vm = require('vm')
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
+var EventManager = require('../../lib/events')
 var Web3 = require('web3')
 var swarmgw = require('swarmgw')()
 
