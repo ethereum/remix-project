@@ -21,7 +21,6 @@ var helper = require('./lib/helper')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
 var BrowserfilesTree = require('./app/files/browser-files-tree')
-var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
@@ -539,10 +538,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       })
     }
   })
-
-  // chrome app
-  window.syncStorage = chromeCloudStorageSync
-  chromeCloudStorageSync()
 
   var loadingFromGist = self.loadFromGist(queryParams.get())
   if (!loadingFromGist) {
