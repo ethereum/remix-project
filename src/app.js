@@ -503,42 +503,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   var queryParams = new QueryParams()
 
-  // check init query parameters from the URL once the compiler is loaded
-  self._components.compiler.event.register('compilerLoaded', this, function (version) {
-    self.runCompiler()
-
-    if (queryParams.get().context) {
-      let context = queryParams.get().context
-      let endPointUrl = queryParams.get().endPointUrl
-      executionContext.setContext(context, endPointUrl,
-      () => {
-        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-          if (!endPointUrl) {
-            endPointUrl = 'http://localhost:8545'
-          }
-          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
-            executionContext.setProviderFromEndpoint(target, context)
-          }, () => {})
-        }, () => {})
-      },
-      (alertMsg) => {
-        modalDialogCustom.alert(alertMsg)
-      })
-    }
-
-    if (queryParams.get().debugtx) {
-      self.startdebugging(queryParams.get().debugtx)
-    }
-
-    if (queryParams.get().pluginurl) {
-      var title = queryParams.get().plugintitle
-      var url = queryParams.get().pluginurl
-      modalDialogCustom.confirm(null, `Remix is going to load the extension "${title}" located at ${queryParams.get().pluginurl}. Are you sure to load this external extension?`, () => {
-        self._components.righthandpanel.loadPlugin({title, url})
-      })
-    }
-  })
-
   var loadingFromGist = self.loadFromGist(queryParams.get())
   if (!loadingFromGist) {
     // insert ballot contract if there are no files to show
