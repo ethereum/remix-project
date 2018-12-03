@@ -42,7 +42,6 @@ module.exports = class CompileTab {
     self._components.queryParams = new QueryParams()
     // dependencies
     self._deps = {
-      app: self._components.registry.get('app').api,
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
       compiler: self._components.registry.get('compiler').api,
@@ -71,7 +70,7 @@ module.exports = class CompileTab {
     function scheduleCompilation () {
       if (!self._deps.config.get('autoCompile')) return
       if (self.data.compileTimeout) window.clearTimeout(self.data.compileTimeout)
-      self.data.compileTimeout = window.setTimeout(() => self._deps.app.runCompiler(), self.data.timeout)
+      self.data.compileTimeout = window.setTimeout(() => self.runCompiler(), self.data.timeout)
     }
     self._deps.compiler.event.register('compilationDuration', function tabHighlighting (speed) {
       if (!self._view.warnCompilationSlow) return
@@ -165,6 +164,15 @@ module.exports = class CompileTab {
         })
       }
     })
+
+    // Run the compiler instead of trying to save the website
+    $(window).keydown(function (e) {
+      // ctrl+s or command+s
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+        e.preventDefault()
+        self.runCompiler()
+      }
+    })
   }
   addWarning (msg, settings) {
     const self = this
@@ -183,7 +191,7 @@ module.exports = class CompileTab {
       self.data.optimize = !!self._view.optimize.checked
       self._components.queryParams.update({ optimize: self.data.optimize })
       self._deps.compiler.setOptimize(self.data.optimize)
-      self._deps.app.runCompiler()
+      self.runCompiler()
     }
 
     self._deps.compiler.event.register('compilerLoaded', (version) => self.setVersionText(version))
@@ -279,7 +287,7 @@ module.exports = class CompileTab {
       'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     function updateAutoCompile (event) { self._deps.config.set('autoCompile', self._view.autoCompile.checked) }
-    function compile (event) { self._deps.app.runCompiler() }
+    function compile (event) { self.runCompiler() }
     function hideWarnings (event) {
       self._deps.config.set('hideWarnings', self._view.hideWarningsBox.checked)
       compile()
@@ -451,6 +459,32 @@ module.exports = class CompileTab {
       }
       callback(allversions, selectedVersion)
     })
+  }
+  runCompiler () {
+    const self = this
+    self._deps.fileManager.saveCurrentFile()
+    self._deps.editor.clearAnnotations()
+    var currentFile = self._deps.config.get('currentFile')
+    if (currentFile) {
+      if (/.(.sol)$/.exec(currentFile)) {
+        // only compile *.sol file.
+        var target = currentFile
+        var sources = {}
+        var provider = self._deps.fileManager.fileProviderOf(currentFile)
+        if (provider) {
+          provider.get(target, (error, content) => {
+            if (error) {
+              console.log(error)
+            } else {
+              sources[target] = { content }
+              self.compiler.compile(sources, target)
+            }
+          })
+        } else {
+          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
+        }
+      }
+    }
   }
 }
 
