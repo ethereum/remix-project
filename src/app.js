@@ -492,15 +492,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   var txLogger = new TxLogger() // eslint-disable-line  
 
-  executionContext.event.register('contextChanged', this, function (context) {
-    self.runCompiler()
-  })
-
-  // rerun the compiler when the environement changed
-  executionContext.event.register('web3EndpointChanged', this, function (context) {
-    self.runCompiler()
-  })
-
   var queryParams = new QueryParams()
 
   var loadingFromGist = self.loadFromGist(queryParams.get())
