@@ -226,35 +226,7 @@ class App {
     self._adjustLayout('left', self.data._layout.left.offset)
     self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
-  }
-  runCompiler () {
-    const self = this
-    if (self._components.righthandpanel.debugger().isDebuggerActive()) return
-
-    self._components.fileManager.saveCurrentFile()
-    self._components.editorpanel.getEditor().clearAnnotations()
-    var currentFile = self._components.config.get('currentFile')
-    if (currentFile) {
-      if (/.(.sol)$/.exec(currentFile)) {
-        // only compile *.sol file.
-        var target = currentFile
-        var sources = {}
-        var provider = self._components.fileManager.fileProviderOf(currentFile)
-        if (provider) {
-          provider.get(target, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              sources[target] = { content }
-              self._components.compiler.compile(sources, target)
-            }
-          })
-        } else {
-          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
-        }
-      }
-    }
-  }
+  }  
   startdebugging (txHash) {
     const self = this
     self.event.trigger('debuggingRequested', [])
@@ -375,15 +347,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   window.onbeforeunload = function () {
     return 'Are you sure you want to leave?'
   }
-
-  // Run the compiler instead of trying to save the website
-  $(window).keydown(function (e) {
-    // ctrl+s or command+s
-    if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
-      e.preventDefault()
-      self.runCompiler()
-    }
-  })
 
   registry.put({api: msg => self._components.editorpanel.logHtmlMessage(msg), name: 'logCallback'})
 
