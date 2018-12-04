@@ -5,7 +5,7 @@ const resolve = require('./resolve.js')
 combineSource(//basepath, //sources object)
 */
 const combineSource = async function (rootpath, sources) {
-  let fn, importLine, ir
+  let fn, ir
   var matches = []
   ir = /^(?:import){1}(.+){0,1}\s['"](.+)['"];/gm
   let match = null
@@ -15,8 +15,8 @@ const combineSource = async function (rootpath, sources) {
       matches.push(match)
     }
     for (let match of matches) {
-      importLine = match[0]
-      const extra = match[1] ? match[1] : ''
+      // importLine = match[0]
+      // const extra = match[1] ? match[1] : ''
       if (validUrl.isUri(rootpath)) {
         fn = url.resolve(rootpath, match[2])
       } else {
@@ -27,8 +27,8 @@ const combineSource = async function (rootpath, sources) {
         if (fn.localeCompare('remix_tests.sol') !== 0 && fn.localeCompare('tests.sol') !== 0) {
           let subSorce = {}
           const response = await resolve(rootpath, fn)
-          sources[fileName].content = sources[fileName].content.replace(importLine, 'import' + extra + ' \'' + response.filename + '\';')
-          subSorce[response.filename] = { content: response.content }
+          // sources[fileName].content = sources[fileName].content.replace(importLine, 'import' + extra + ' \'' + response.filename + '\';')
+          subSorce[fn] = { content: response.content }
           sources = Object.assign(await combineSource(response.rootpath, subSorce), sources)
         }
       } catch (e) {

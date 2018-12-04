@@ -7,7 +7,7 @@ describe('testRunner', function () {
   describe('#combineSource', function() {
     describe('test example_1 [local imports]]', function () {
       let filename = '../remix-resolve/tests/example_1/greeter.sol'
-      let tests = [], results = {}
+      let results = {}
 
       before(function (done) {
         const content = fs.readFileSync(filename).toString()
@@ -35,7 +35,7 @@ describe('testRunner', function () {
 
     describe('test example_2 [github imports]', function () {
       let filename = '../remix-resolve/tests/example_2/github_import.sol'
-      let tests = [], results = {}
+      let results = {}
 
       before(function (done) {
         const content = fs.readFileSync(filename).toString()
@@ -65,7 +65,7 @@ describe('testRunner', function () {
   // Test successful compile after combineSource
   describe('test example_1 for successful compile', function() {
     let filename = '../remix-resolve/tests/example_1/greeter.sol'
-    let tests = [], results = {}
+    let results = {}
 
     before(function (done) {
       const content = fs.readFileSync(filename).toString()
@@ -131,6 +131,55 @@ describe('testRunner', function () {
       done()
     })
     it('should not match file not found error msg', function () {
+      const msg = "{\"contracts\":{},\"errors\":[{\"component\":\"general\",\"formattedMessage\":\"github_import.sol:2:1: ParserError: Source \\\"https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol\\\" not found: File not found.\\nimport 'https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol';\\n^-------------------------------------------------------------------------------------^\\n\",\"message\":\"Source \\\"https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol\\\" not found: File not found.\",\"severity\":\"error\",\"sourceLocation\":{\"end\":111,\"file\":\"github_import.sol\",\"start\":24},\"type\":\"ParserError\"}],\"sources\":{}}"
+      assert.notDeepStrictEqual(results, msg)
+    })
+  })
+
+  // Test handleImportCb
+  describe('test github imports with callback', function() {
+    let filename = '../remix-resolve/tests/example_1/greeter.sol'
+    let sources = {}, results = {}
+
+    before(function (done) {
+      const outputSelection = {
+          // Enable the metadata and bytecode outputs of every single contract.
+          '*': {
+              '': ['ast', 'legacyAST'],
+              '*': ['abi', 'evm.bytecode.object', 'devdoc', 'userdoc', 'evm.gasEstimates']
+          }
+      }
+      const settings = {
+          optimizer: { enabled: true, runs: 500 },
+          evmVersion: 'byzantium',
+          outputSelection
+      }
+
+      const content = fs.readFileSync(filename).toString()
+      var sources = []
+      sources['greeter.sol'] = { 'content': content }
+      rr.combineSource('../remix-resolve/tests/example_1/', sources)
+        .then(combinedSources => {
+          console.log(combinedSources)
+          const input = { language: 'Solidity', sources: combinedSources, settings }
+          const findImportsSync = function (path) {
+            console.log(path)
+            console.log(sources)
+            // return rr.getFile(path, sources)
+          }
+          try {
+            results = solc.compile(JSON.stringify(input), findImportsSync)
+            done()
+          } catch (e) {
+            throw e
+          }
+        })
+        .catch(e => {
+          throw e
+        })
+    })
+    it('should not match file not found error msg', function () {
+      console.log(results)
       const msg = "{\"contracts\":{},\"errors\":[{\"component\":\"general\",\"formattedMessage\":\"github_import.sol:2:1: ParserError: Source \\\"https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol\\\" not found: File not found.\\nimport 'https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol';\\n^-------------------------------------------------------------------------------------^\\n\",\"message\":\"Source \\\"https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol\\\" not found: File not found.\",\"severity\":\"error\",\"sourceLocation\":{\"end\":111,\"file\":\"github_import.sol\",\"start\":24},\"type\":\"ParserError\"}],\"sources\":{}}"
       assert.notDeepStrictEqual(results, msg)
     })
