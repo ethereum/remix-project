@@ -165,7 +165,7 @@ describe('testRunner', function () {
           const findImportsSync = function (path) {
             console.log(path)
             console.log(sources)
-            // return rr.getFile(path, sources)
+            return rr.getFile(path, combinedSources)
           }
           try {
             results = solc.compile(JSON.stringify(input), findImportsSync)
