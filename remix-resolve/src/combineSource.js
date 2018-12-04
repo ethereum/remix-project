@@ -28,7 +28,8 @@ const combineSource = async function (rootpath, sources) {
           let subSorce = {}
           const response = await resolve(rootpath, fn)
           // sources[fileName].content = sources[fileName].content.replace(importLine, 'import' + extra + ' \'' + response.filename + '\';')
-          subSorce[fn] = { content: response.content }
+          const regex = /(\.+\/)/g
+          subSorce[fn.replace(regex, '')] = { content: response.content }
           sources = Object.assign(await combineSource(response.rootpath, subSorce), sources)
         }
       } catch (e) {
