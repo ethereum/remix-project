@@ -1,4 +1,6 @@
 module.exports = `
+pragma solidity >=0.4.22 <0.6.0;
+
 library Assert {
 
   event AssertionEvent(
@@ -27,13 +29,13 @@ library Assert {
   }
 
   // TODO: only for certain versions of solc
-  //function equal(fixed a, fixed b, string memory message) public returns (bool result) {
+  //function equal(fixed a, fixed b, string message) public returns (bool result) {
   //  result = (a == b);
   //  emit AssertionEvent(result, message);
   //}
 
   // TODO: only for certain versions of solc
-  //function equal(ufixed a, ufixed b, string memory message) public returns (bool result) {
+  //function equal(ufixed a, ufixed b, string message) public returns (bool result) {
   //  result = (a == b);
   //  emit AssertionEvent(result, message);
   //}
@@ -49,7 +51,7 @@ library Assert {
   }
 
   function equal(string memory a, string memory b, string memory message) public returns (bool result) {
-     result = (keccak256(abi.encode(a)) == keccak256(abi.encode(b)));
+     result = (keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b)));
      emit AssertionEvent(result, message);
   }
 
@@ -69,13 +71,13 @@ library Assert {
   }
 
   // TODO: only for certain versions of solc
-  //function notEqual(fixed a, fixed b, string memory message) public returns (bool result) {
+  //function notEqual(fixed a, fixed b, string message) public returns (bool result) {
   //  result = (a != b);
   //  emit AssertionEvent(result, message);
   //}
 
   // TODO: only for certain versions of solc
-  //function notEqual(ufixed a, ufixed b, string memory message) public returns (bool result) {
+  //function notEqual(ufixed a, ufixed b, string message) public returns (bool result) {
   //  result = (a != b);
   //  emit AssertionEvent(result, message);
   //}
@@ -91,7 +93,7 @@ library Assert {
   }
 
   function notEqual(string memory a, string memory b, string memory message) public returns (bool result) {
-    result = (keccak256(abi.encode(a)) != keccak256(abi.encode(b)));
+    result = (keccak256(abi.encodePacked(a)) != keccak256(abi.encodePacked(b)));
     emit AssertionEvent(result, message);
   }
 
