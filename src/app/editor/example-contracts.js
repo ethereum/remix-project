@@ -68,6 +68,7 @@ contract Ballot {
 `
 
 var ballotTest = `
+pragma solidity >=0.4.22 <0.6.0;
 import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "./ballot.sol";
 
