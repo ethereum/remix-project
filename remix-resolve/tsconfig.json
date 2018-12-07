@@ -4,7 +4,7 @@
   "compileOptions": {
     "baseUrl": "./src",
     "outDir": "./dist",
-    "sourceMap": false,
+    "sourceMap": true,
     "declaration": false,
     "module": "commonjs",
     "strict": true,
