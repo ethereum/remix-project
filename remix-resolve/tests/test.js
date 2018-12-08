@@ -1,4 +1,4 @@
-const rr = require('../src/index.js')
+const rr = require('../dist/index.js')
 const assert = require('assert')
 const fs = require('fs')
 const solc = require('solc')
