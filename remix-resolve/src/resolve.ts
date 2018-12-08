@@ -63,15 +63,10 @@ export class ImportResolver {
         type: 'ipfs',
         match: (url) => { return /^(ipfs:\/\/?.+)/.exec(url) },
         handle: (match) => { this.handleIPFS(match[1]) }
-      },
-      {
-        type: 'local',
-        match: (url) => { return /(^(?!(?:http:\/\/)|(?:https:\/\/)?(?:www.)?(?:github.com)))(^\/*[\w+-_/]*\/)*?(\w+\.sol)/g.exec(url) },
-        handle: (match) => { this.handleLocal(match[2], match[3]) }
       }
     ]
   }
-  resolve(filePath: string, customHandlers: Handler[]) {
+  async resolve(filePath: string, customHandlers: Handler[]) {
     var imported: Imported = this.previouslyHandled[filePath]
     if(imported) {
       return imported
