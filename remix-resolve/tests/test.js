@@ -2,7 +2,6 @@ const rr = require('../dist/index.js')
 const assert = require('assert')
 const fs = require('fs')
 const path = require('path')
-const solc = require('solc')
 
 describe('testRunner', function () {
   describe('#resolve', function() {
@@ -12,16 +11,14 @@ describe('testRunner', function () {
 
       before(function (done) {
         const resolver = new rr.ImportResolver()
-        const content = fs.readFileSync(filename).toString()
         var sources = []
-        sources['greeter.sol'] = { 'content': content }
         function handleLocal(pathString, filePath) {
           // if no relative/absolute path given then search in node_modules folder
           if (pathString && pathString.indexOf('.') !== 0 && pathString.indexOf('/') !== 0) {
             return handleNodeModulesImport(pathString, filePath, pathString)
           } else {
             const o = { encoding: 'UTF-8' }
-            const p = pathString ? path.resolve('', pathString, filePath) : path.resolve(pathString, filePath)
+            const p = pathString ? path.resolve(pathString, filePath) : path.resolve(pathString, filePath)
             const content = fs.readFileSync(p, o)
             return content
           }
@@ -43,11 +40,11 @@ describe('testRunner', function () {
           })
       })
 
-      it('should 1 passing test', function () {
+      it('should have 3 items', function () {
         assert.equal(Object.keys(results).length, 3)
       })
 
-      it('should returns 2 contracts with specified content', function () {
+      it('should returns contract content of given local path', function () {
         const expt = {
           content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
           cleanURL: '../remix-resolve/tests/example_1/greeter.sol',
