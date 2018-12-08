@@ -1,3 +1,4 @@
+import axios from 'axios'
 interface Imported {
   content: string;
   cleanURL: string;
@@ -31,8 +32,30 @@ export class ImportResolver {
   handleSwarm(url: string, cleanURL: string) {
     return
   }
-  handleIPFS(url: string) {
-    return
+  async handleIPFS(url: string) {
+    // replace ipfs:// with /ipfs/
+    url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
+    console.log(url)
+    try {
+      const response = await axios.get('http://localhost:8080/' + url)
+      return response.data
+    } catch (e) {
+      throw e
+    }
+    /*axios.get('http://localhost:8080/' + url)
+      .then(function (response) {
+        // handle success
+        console.log(response);
+        return response.data
+      })
+      .catch(function (error) {
+      // handle error
+      console.log(error);
+      })
+      .then(function () {
+      // always executed
+      });
+    */
   }
   handleLocal(root: string, filePath: string) {
     return
@@ -66,13 +89,13 @@ export class ImportResolver {
       }
     ]
   }
-  async resolve(filePath: string, customHandlers: Handler[]) {
+  async resolve(filePath: string, customHandlers?: Handler[]) {
     var imported: Imported = this.previouslyHandled[filePath]
     if(imported) {
       return imported
     }
     const builtinHandlers: Handler[] = this.getHandlers()
-    const handlers: Handler[] = [...builtinHandlers, ...customHandlers]
+    const handlers: Handler[] = customHandlers ? [...builtinHandlers, ...customHandlers] : [...builtinHandlers]
     handlers.forEach(handler => {
       const match = handler.match(filePath)
       if(match) {

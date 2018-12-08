@@ -6,7 +6,7 @@ const path = require('path')
 describe('testRunner', function () {
   describe('#resolve', function() {
     describe('test example_1 [local imports]]', function () {
-      let filename = '../remix-resolve/tests/example_1/greeter.sol'
+      const fileName = '../remix-resolve/tests/example_1/greeter.sol'
       let results = {}
 
       before(function (done) {
@@ -30,7 +30,7 @@ describe('testRunner', function () {
             handle: (match) => { return handleLocal(match[2], match[3]) }
           }
         ]
-        resolver.resolve(filename, localFSHandler)
+        resolver.resolve(fileName, localFSHandler)
           .then(sources => {
             results = sources
             done()
@@ -51,6 +51,29 @@ describe('testRunner', function () {
           type: 'local'
         }
         assert.deepEqual(results, expt)
+      })
+    })
+    // test IPFShandle
+    describe('test getting IPFS files', function() {
+      const fileName = 'ipfs://' + 'QmeKtwMBqz5Ac7oL8SyTD96mccEzw9X9d39jLb2kgnBYbn'
+      let results = []
+
+      before(function(done) {
+        const resolver = new rr.ImportResolver()
+        var sources = []
+        resolver.resolve(fileName)
+          .then(sources => {
+            console.log(sources)
+            results = sources
+            done()
+          })
+          .catch(e => {
+            throw e
+          })
+      })
+
+      it('should have 3 items', function () {
+        assert.equal(Object.keys(results).length, 3)
       })
     })
   })
