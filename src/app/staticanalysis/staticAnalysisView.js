@@ -149,11 +149,9 @@ staticAnalysisView.prototype.checkAll = function (event) {
   if (!this.view) {
     return
   }
-  var checkBoxes = this.view.querySelectorAll('[name="staticanalysismodule"]')
-  var selectionsCount = this.view.querySelectorAll('[name="staticanalysismodule"]:checked').length
   // checks/unchecks all
-  checkBoxes.forEach((checkbox) => { checkbox.checked = !selectionsCount })
-  event.target.checked = !selectionsCount
+  var checkBoxes = this.view.querySelectorAll('[name="staticanalysismodule"]')
+  checkBoxes.forEach((checkbox) => { checkbox.checked = event.target.checked })
 }
 
 staticAnalysisView.prototype.renderModules = function () {
