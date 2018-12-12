@@ -12,7 +12,7 @@ class CmdLine {
   }
 
   connect (providerType, url) {
-    if (providerType !== 'http') throw new Error("unsupported provider type")
+    if (providerType !== 'http') throw new Error('unsupported provider type')
     this.web3 = new Web3(new Web3.providers.HttpProvider(url))
   }
 
@@ -47,167 +47,166 @@ class CmdLine {
     this.contextManager.switchProvider('debugger_web3', cb)
   }
 
-  getSource() {
+  getSource () {
     const self = this
 
     let lineColumnPos = this.lineColumnPos
 
-    if (!lineColumnPos || !lineColumnPos.start) return [];
+    if (!lineColumnPos || !lineColumnPos.start) return []
 
-    let content = self.compilation.lastCompilationResult.source.sources[this.filename].content.split("\n")
+    let content = self.compilation.lastCompilationResult.source.sources[this.filename].content.split('\n')
 
     let source = []
 
     let line
     line = content[lineColumnPos.start.line - 2]
-    if ( line !== undefined) {
-      source.push("    " + (lineColumnPos.start.line - 1) + ":  " + line)
+    if (line !== undefined) {
+      source.push('    ' + (lineColumnPos.start.line - 1) + ':  ' + line)
     }
     line = content[lineColumnPos.start.line - 1]
-    if ( line !== undefined) {
-      source.push("    " + lineColumnPos.start.line + ":  " + line)
+    if (line !== undefined) {
+      source.push('    ' + lineColumnPos.start.line + ':  ' + line)
     }
 
     let currentLineNumber = lineColumnPos.start.line
     let currentLine = content[currentLineNumber]
-    source.push("=>  " + (currentLineNumber + 1) + ":  " + currentLine)
+    source.push('=>  ' + (currentLineNumber + 1) + ':  ' + currentLine)
 
     let startLine = lineColumnPos.start.line
-    for (var i=1; i < 4; i++) {
+    for (var i = 1; i < 4; i++) {
       let line = content[startLine + i]
-      source.push("    " + (startLine + i + 1) + ":  " + line)
+      source.push('    ' + (startLine + i + 1) + ':  ' + line)
     }
 
     return source
   }
 
-  getCurrentLine() {
+  getCurrentLine () {
     let lineColumnPos = this.lineColumnPos
-    if (!lineColumnPos) return ""
+    if (!lineColumnPos) return ''
     let currentLineNumber = lineColumnPos.start.line
-    let content = this.compilation.lastCompilationResult.source.sources[this.filename].content.split("\n")
+    let content = this.compilation.lastCompilationResult.source.sources[this.filename].content.split('\n')
     return content[currentLineNumber]
   }
 
-  startDebug(txNumber, filename, cb) {
+  startDebug (txNumber, filename, cb) {
     const self = this
     this.filename = filename
     this.txHash = txNumber
     this.debugger.debug(null, txNumber, null, () => {
-
       self.debugger.event.register('newSourceLocation', function (lineColumnPos, rawLocation) {
         self.lineColumnPos = lineColumnPos
         self.rawLocation = rawLocation
-        self.events.emit("source", [lineColumnPos, rawLocation])
-      });
+        self.events.emit('source', [lineColumnPos, rawLocation])
+      })
 
       self.debugger.vmDebuggerLogic.event.register('solidityState', (data) => {
         self.solidityState = data
-        self.events.emit("globals", data)
-      });
+        self.events.emit('globals', data)
+      })
 
       // TODO: this doesnt work too well, it should request the data instead...
       self.debugger.vmDebuggerLogic.event.register('solidityLocals', (data) => {
         if (JSON.stringify(data) === '{}') return
         self.solidityLocals = data
-        self.events.emit("locals", data)
-      });
+        self.events.emit('locals', data)
+      })
 
       if (cb) {
         // TODO: this should be an onReady event
-        setTimeout(cb, 1000);
+        setTimeout(cb, 1000)
       }
     })
   }
 
-  getVars() {
+  getVars () {
     return {
       locals: this.solidityLocals,
       contract: this.solidityState
     }
   }
 
-  triggerSourceUpdate() {
-    this.events.emit("source", [this.lineColumnPos, this.rawLocation])
+  triggerSourceUpdate () {
+    this.events.emit('source', [this.lineColumnPos, this.rawLocation])
   }
 
-  stepJumpNextBreakpoint() {
-   this.debugger.step_manager.jumpNextBreakpoint()
+  stepJumpNextBreakpoint () {
+    this.debugger.step_manager.jumpNextBreakpoint()
   }
 
-  stepJumpPreviousBreakpoint() {
-   this.debugger.step_manager.jumpPreviousBreakpoint()
+  stepJumpPreviousBreakpoint () {
+    this.debugger.step_manager.jumpPreviousBreakpoint()
   }
 
-  stepOverForward(solidityMode) {
-   this.debugger.step_manager.stepOverForward(solidityMode)
+  stepOverForward (solidityMode) {
+    this.debugger.step_manager.stepOverForward(solidityMode)
   }
 
-  stepOverBack(solidityMode) {
-   this.debugger.step_manager.stepOverBack(solidityMode)
+  stepOverBack (solidityMode) {
+    this.debugger.step_manager.stepOverBack(solidityMode)
   }
 
-  stepIntoForward(solidityMode) {
-   this.debugger.step_manager.stepIntoForward(solidityMode)
+  stepIntoForward (solidityMode) {
+    this.debugger.step_manager.stepIntoForward(solidityMode)
   }
 
-  stepIntoBack(solidityMode) {
-   this.debugger.step_manager.stepIntoBack(solidityMode)
+  stepIntoBack (solidityMode) {
+    this.debugger.step_manager.stepIntoBack(solidityMode)
   }
 
-  jumpTo(step) {
+  jumpTo (step) {
     this.debugger.step_manager.jumpTo(step)
   }
 
-  getTraceLength() {
-    if (!this.debugger.step_manager) return 0;
+  getTraceLength () {
+    if (!this.debugger.step_manager) return 0
     return this.debugger.step_manager.traceLength
   }
 
-  getCodeFirstStep() {
-    if (!this.debugger.step_manager) return 0;
+  getCodeFirstStep () {
+    if (!this.debugger.step_manager) return 0
     return this.debugger.step_manager.calculateFirstStep()
   }
 
-  getCodeTraceLength() {
-    if (!this.debugger.step_manager) return 0;
+  getCodeTraceLength () {
+    if (!this.debugger.step_manager) return 0
     return this.debugger.step_manager.calculateCodeLength()
   }
 
-  nextStep() {
-    if (!this.debugger.step_manager) return 0;
+  nextStep () {
+    if (!this.debugger.step_manager) return 0
     return this.debugger.step_manager.nextStep()
   }
 
-  previousStep() {
-    if (!this.debugger.step_manager) return 0;
+  previousStep () {
+    if (!this.debugger.step_manager) return 0
     return this.debugger.step_manager.previousStep()
   }
 
-  currentStep() {
-    if (!this.debugger.step_manager) return 0;
+  currentStep () {
+    if (!this.debugger.step_manager) return 0
     return this.debugger.step_manager.currentStepIndex
   }
 
-  canGoNext() {
+  canGoNext () {
     return this.currentStep() < this.getCodeTraceLength()
   }
 
-  canGoPrevious() {
+  canGoPrevious () {
     return this.currentStep() > this.getCodeFirstStep()
   }
 
-  unload() {
+  unload () {
     return this.debugger.unload()
   }
 
   displayLocals () {
-    console.dir("= displayLocals")
+    console.dir('= displayLocals')
     console.dir(this.solidityLocals)
   }
 
   displayGlobals () {
-    console.dir("= displayGlobals")
+    console.dir('= displayGlobals')
     console.dir(this.solidityState)
   }
 }
