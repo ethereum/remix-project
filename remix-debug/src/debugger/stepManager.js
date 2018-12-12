@@ -158,17 +158,17 @@ class DebuggerStepManager {
     this.debugger.breakpointManager.jumpPreviousBreakpoint(this.currentStepIndex, true)
   }
 
-  calculateFirstStep() {
+  calculateFirstStep () {
     let step = this.resolveToReducedTrace(0, 1)
     return this.resolveToReducedTrace(step, 1)
   }
 
-  calculateCodeStepList() {
+  calculateCodeStepList () {
     let step = 0
     let steps = []
     while (step < this.traceLength) {
       let _step = this.resolveToReducedTrace(step, 1)
-      if (!_step) break;
+      if (!_step) break
       steps.push(_step)
       step += 1
     }
@@ -176,17 +176,17 @@ class DebuggerStepManager {
     return steps
   }
 
-  calculateCodeLength() {
-    let steps = this.calculateCodeStepList().reverse()
-    return this.calculateCodeStepList().reverse()[1] || this.traceLength;
+  calculateCodeLength () {
+    this.calculateCodeStepList().reverse()
+    return this.calculateCodeStepList().reverse()[1] || this.traceLength
   }
 
-  nextStep() {
-    return this.resolveToReducedTrace(this.currentStepIndex, 1);
+  nextStep () {
+    return this.resolveToReducedTrace(this.currentStepIndex, 1)
   }
 
-  previousStep() {
-    return this.resolveToReducedTrace(this.currentStepIndex, -1);
+  previousStep () {
+    return this.resolveToReducedTrace(this.currentStepIndex, -1)
   }
 
   resolveToReducedTrace (value, incr) {

@@ -48,7 +48,7 @@ class ContextManager {
             self.web3 = (!webDebugNode ? obj : webDebugNode)
           }
           self.event.trigger('providerChanged', [type, self.web3])
-          if (cb) return cb();
+          if (cb) return cb()
         })
         self.event.trigger('providerChanged', [type, self.web3])
       }

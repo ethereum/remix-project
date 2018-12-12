@@ -40,7 +40,7 @@ class DebuggerSolidityLocals {
       self.stepManager.currentStepIndex,
       (error, result) => {
         if (error) {
-          return error;
+          return error
         }
         var stack = result[0].value
         var memory = result[1].value

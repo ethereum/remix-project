@@ -112,11 +112,11 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
   })
 
   this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
-	this.vmDebuggerLogic.start()
+  this.vmDebuggerLogic.start()
 
   this.step_manager.event.register('stepChanged', this, function (stepIndex) {
     if (!stepIndex) {
-      return self.event.trigger("endDebug")
+      return self.event.trigger('endDebug')
     }
 
     self.debugger.codeManager.resolveStep(stepIndex, tx)
