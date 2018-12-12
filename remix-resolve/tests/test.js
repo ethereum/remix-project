@@ -55,25 +55,30 @@ describe('testRunner', function () {
     })
     // test IPFShandle
     describe('test getting IPFS files', function() {
-      const fileName = 'ipfs://' + 'QmeKtwMBqz5Ac7oL8SyTD96mccEzw9X9d39jLb2kgnBYbn'
+      const fileName = 'ipfs://QmeKtwMBqz5Ac7oL8SyTD96mccEzw9X9d39jLb2kgnBYbn'
       let results = []
 
-      before(function(done) {
-        const resolver = new rr.ImportResolver()
-        var sources = []
-        resolver.resolve(fileName)
-          .then(sources => {
-            console.log(sources)
-            results = sources
-            done()
-          })
-          .catch(e => {
-            throw e
-          })
+      before(async function() {
+        try {
+          const resolver = new rr.ImportResolver()
+          var sources = await resolver.resolve(fileName)
+          results = sources
+          return
+        } catch (e) {
+          throw e
+        }
       })
 
       it('should have 3 items', function () {
         assert.equal(Object.keys(results).length, 3)
+      })
+      it('should returns contract content of given local path', function () {
+        const expt = {
+          content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
+          cleanURL: 'ipfs://QmeKtwMBqz5Ac7oL8SyTD96mccEzw9X9d39jLb2kgnBYbn',
+          type: 'ipfs'
+        }
+        assert.deepEqual(results, expt)
       })
     })
   })
