@@ -5,7 +5,7 @@ interface Imported {
   type: string;
 }
 
-interface PrvHandld {
+interface PreviouslyHandledImports {
   [filePath: string]: Imported
 }
 
@@ -16,46 +16,53 @@ interface Handler {
 }
 
 export class ImportResolver {
-  previouslyHandled: PrvHandld[]
+  previouslyHandled: PreviouslyHandledImports
   constructor() {
-    this.previouslyHandled = []
+    this.previouslyHandled = {}
   }
+  /**
+  * Handle an import statement based on github
+  * @params root The root of the github import statement
+  * @params filePath path of the file in github
+  */
   handleGithubCall(root: string, filePath: string) {
     return
   }
+  /**
+  * Handle an import statement based on http
+  * @params url The url of the import statement
+  * @params cleanURL
+  */
   handleHttp(url: string, cleanURL: string) {
     return
   }
+  /**
+  * Handle an import statement based on https
+  * @params url The url of the import statement
+  * @params cleanURL
+  */
   handleHttps(url: string, cleanURL: string) {
     return
   }
   handleSwarm(url: string, cleanURL: string) {
     return
   }
+  /**
+  * Handle an import statement based on IPFS
+  * @params url The url of the IPFS import statement
+  */
   async handleIPFS(url: string) {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
-    console.log(url)
     try {
-      const response = await axios.get('http://localhost:8080/' + url)
+      const req = 'https://gateway.ipfs.io/' + url
+      // If you don't find greeter.sol on ipfs gateway use local
+      // const req = 'http://localhost:8080/' + url
+      const response = await axios.get(req)
       return response.data
     } catch (e) {
       throw e
     }
-    /*axios.get('http://localhost:8080/' + url)
-      .then(function (response) {
-        // handle success
-        console.log(response);
-        return response.data
-      })
-      .catch(function (error) {
-      // handle error
-      console.log(error);
-      })
-      .then(function () {
-      // always executed
-      });
-    */
   }
   handleLocal(root: string, filePath: string) {
     return
@@ -65,27 +72,27 @@ export class ImportResolver {
       {
         type: 'github',
         match: (url) => { return /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url) },
-        handle: (match) => { this.handleGithubCall(match[3], match[4]) }
+        handle: (match) => this.handleGithubCall(match[3], match[4])
       },
       {
         type: 'http',
         match: (url) => { return /^(http?:\/\/?(.*))$/.exec(url) },
-        handle: (match) => { this.handleHttp(match[1], match[2]) }
+        handle: (match) => this.handleHttp(match[1], match[2])
       },
       {
         type: 'https',
         match: (url) => { return /^(https?:\/\/?(.*))$/.exec(url) },
-        handle: (match) => { this.handleHttps(match[1], match[2]) }
+        handle: (match) => this.handleHttps(match[1], match[2])
       },
       {
         type: 'swarm',
         match: (url) => { return /^(bzz-raw?:\/\/?(.*))$/.exec(url) },
-        handle: (match) => { this.handleSwarm(match[1], match[2]) }
+        handle: (match) => this.handleSwarm(match[1], match[2])
       },
       {
         type: 'ipfs',
         match: (url) => { return /^(ipfs:\/\/?.+)/.exec(url) },
-        handle: (match) => { this.handleIPFS(match[1]) }
+        handle: (match) => this.handleIPFS(match[1])
       }
     ]
   }
@@ -99,7 +106,7 @@ export class ImportResolver {
     const matchedHandler = handlers.filter(handler => handler.match(filePath))
     const handler: Handler = matchedHandler[0]
     const match = handler.match(filePath)
-    const content: any = handler.handle(match)
+    const content: string = await handler.handle(match)
     imported = {
       content,
       cleanURL: filePath,
