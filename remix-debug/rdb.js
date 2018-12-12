@@ -76,16 +76,16 @@ const r = repl.start({
   eval: (cmd, context, filename, cb) => {
     let command = cmd.trim()
     if (command === 'next' || command === 'n') {
-      cmd_line.debugger.step_manager.stepOverForward(true)
+      cmd_line.stepOverForward(true)
     }
     if (command === 'previous' || command === 'p' || command === 'prev') {
-      cmd_line.debugger.step_manager.stepOverBack(true)
+      cmd_line.stepOverBack(true)
     }
     if (command === 'step' || command === 's') {
-      cmd_line.debugger.step_manager.stepIntoForward(true)
+      cmd_line.stepIntoForward(true)
     }
     if (command === 'stepback' || command === 'sb') {
-      cmd_line.debugger.step_manager.stepIntoBack(true)
+      cmd_line.stepIntoBack(true)
     }
     if (command === 'exit' || command === 'quit') {
       process.exit(0)
@@ -98,7 +98,7 @@ const r = repl.start({
     }
     if (command.split(' ')[0] === 'jump') {
       let stepIndex = parseInt(command.split(' ')[1], 10)
-      cmd_line.debugger.step_manager.jumpTo(stepIndex)
+      cmd_line.jumpTo(stepIndex)
     }
     cb(null, '');
   }
