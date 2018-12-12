@@ -39,11 +39,10 @@ class DebuggerSolidityState {
       // necessary due to some states that can crash the debugger
       try {
         self.decode(index)
-      } catch(err) {
-        console.dir("====> error")
+      } catch (err) {
+        console.dir('====> error')
         console.dir(err)
       }
-
     }, 500)
   }
 
