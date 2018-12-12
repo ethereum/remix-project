@@ -96,18 +96,16 @@ export class ImportResolver {
     }
     const builtinHandlers: Handler[] = this.getHandlers()
     const handlers: Handler[] = customHandlers ? [...builtinHandlers, ...customHandlers] : [...builtinHandlers]
-    handlers.forEach(handler => {
-      const match = handler.match(filePath)
-      if(match) {
-        const content: any = handler.handle(match)
-        imported = {
-          content,
-          cleanURL: filePath,
-          type: handler.type
-        }
-        this.previouslyHandled[filePath] = imported
-      }
-    })
+    const matchedHandler = handlers.filter(handler => handler.match(filePath))
+    const handler: Handler = matchedHandler[0]
+    const match = handler.match(filePath)
+    const content: any = handler.handle(match)
+    imported = {
+      content,
+      cleanURL: filePath,
+      type: handler.type
+    }
+    this.previouslyHandled[filePath] = imported
     return imported
   }
 }
