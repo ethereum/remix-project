@@ -15,6 +15,7 @@ class ContextualListener {
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self.editor = opts.editor
+    self.pluginManager = opts.pluginManager
     self._deps = {
       compilersArtefacts: self._components.registry.get('compilersartefacts').api,
       config: self._components.registry.get('config').api,
@@ -26,15 +27,13 @@ class ContextualListener {
     }
     this._activeHighlights = []
 
-    self._deps.compiler.event.register('compilationFinished', (success, data, source) => {
+    self.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
       this._stopHighlighting()
       this._index = {
         Declarations: {},
         FlatReferences: {}
       }
-      if (success) {
-        this._buildIndex(data, source)
-      }
+      this._buildIndex(data, source)
     })
 
     self.editor.event.register('contentChanged', () => { this._stopHighlighting() })

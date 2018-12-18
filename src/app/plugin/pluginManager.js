@@ -101,15 +101,7 @@ module.exports = class PluginManager {
         value: [ file ]
       }))
     })
-    compiler.event.register('compilationFinished', (success, data, source) => {
-      self.broadcast(JSON.stringify({
-        action: 'notification',
-        key: 'compiler',
-        type: 'compilationFinished',
-        value: [ success, data, source ]
-      }))
-    })
-
+    
     txlistener.event.register('newTransaction', (tx) => {
       self.broadcast(JSON.stringify({
         action: 'notification',
@@ -117,38 +109,6 @@ module.exports = class PluginManager {
         type: 'newTransaction',
         value: [tx]
       }))
-    })
-
-    app.event.register('tabChanged', (tabName) => {
-      // TODO Fix this cause this event is no longer triggered
-      if (self.inFocus && self.inFocus !== tabName) {
-        // trigger unfocus
-        self.post(self.inFocus, JSON.stringify({
-          action: 'notification',
-          key: 'app',
-          type: 'unfocus',
-          value: []
-        }))
-      }
-      if (self.plugins[tabName]) {
-        // trigger focus
-        self.post(tabName, JSON.stringify({
-          action: 'notification',
-          key: 'app',
-          type: 'focus',
-          value: []
-        }))
-        self.inFocus = tabName
-        pluginAPI.compiler.getCompilationResult(tabName, (error, data) => {
-          if (!error) return
-          self.post(tabName, JSON.stringify({
-            action: 'notification',
-            key: 'compiler',
-            type: 'compilationData',
-            value: [data]
-          }))
-        })
-      }
     })
 
     window.addEventListener('message', (event) => {
@@ -202,7 +162,13 @@ module.exports = class PluginManager {
   receivedDataFrom (methodName, mod, argumentsArray) {
     // TODO check whether 'mod' as right to do that
     console.log(argumentsArray)
-    this.event.trigger(methodName, argumentsArray)
+    this.event.trigger(methodName, argumentsArray) // forward to internal modules
+    this.broadcast(JSON.stringify({ // forward to plugins
+      action: 'notification',
+      key: mod,
+      type: methodName,
+      value: argumentsArray
+    }))
   }
   post (name, value) {
     const self = this

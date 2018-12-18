@@ -303,7 +303,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   registry.put({api: msg => self._components.editorpanel.logHtmlMessage(msg), name: 'logCallback'})
-
+  
   // helper for converting offset to line/column
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
@@ -361,6 +361,23 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.fileManager = new FileManager()
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
+
+  // ---------------- Plugin Manager -------------------------------
+
+  let pluginManager = new PluginManager(
+    self,
+    self._components.compilersArtefacts,
+    txlistener,
+    self._components.fileProviders,
+    self._components.fileManager,
+    udapp)
+  registry.put({api: pluginManager, name: 'pluginmanager'})
+
+  pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+    // TODO check whether the tab is configured
+    let compiler = new CompilerAbstract(languageVersion, data, source)
+    self._components.compilersArtefacts['__last'] = compiler
+  })
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
