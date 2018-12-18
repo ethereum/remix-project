@@ -36,6 +36,16 @@ var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
+const CompilerAbstract = require('./app/compiler/compiler-abstract')
+const PluginManager = require('./app/plugin/pluginManager')
+const CompileTab = require('./app/tabs/compile-tab')
+const SettingsTab = require('./app/tabs/settings-tab')
+const AnalysisTab = require('./app/tabs/analysis-tab')
+const DebuggerTab = require('./app/tabs/debugger-tab')
+const SupportTab = require('./app/tabs/support-tab')
+const TestTab = require('./app/tabs/test-tab')
+const RunTab = require('./app/tabs/run-tab')
+
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
@@ -389,8 +399,20 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
+  // ---------------- Tabs -------------------------------
+  let compileTab = new CompileTab(self._components.registry)
+  let tabs = {
+    compile: compileTab,
+    run: new RunTab(self._components.registry),
+    settings: new SettingsTab(self._components.registry),
+    analysis: new AnalysisTab(self._components.registry),
+    debug: new DebuggerTab(self._components.registry),
+    support: new SupportTab(self._components.registry),
+    test: new TestTab(self._components.registry, compileTab)
+  }
+
   // ---------------- Righthand-panel --------------------
-  self._components.righthandpanel = new RighthandPanel()
+  self._components.righthandpanel = new RighthandPanel({ tabs, pluginManager })
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
