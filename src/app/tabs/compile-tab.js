@@ -56,6 +56,7 @@ module.exports = class CompileTab {
       swarmfileProvider: self._components.registry.get('fileproviders/swarm').api,
       fileManager: self._components.registry.get('filemanager').api,
       fileProviders: self._components.registry.get('fileproviders').api,
+      pluginManager: self._components.registry.get('pluginmanager').api
     }
     self.data = {
       hideWarnings: self._deps.config.get('hideWarnings') || false,
@@ -127,6 +128,8 @@ module.exports = class CompileTab {
       // refill the dropdown list
       self._view.contractNames.innerHTML = ''
       if (success) {
+        // TODO consider using compile tab as a proper module instead of just forwarding event
+        self._deps.pluginManager.receivedDataFrom('sendCompilationResult', 'solidity-compiler', [data.target, source, self.data.selectedVersion, data] )
         self._view.contractNames.removeAttribute('disabled')
         self._components.compiler.visitContracts(contract => {
           self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._components.compiler.getSource(contract.file))
