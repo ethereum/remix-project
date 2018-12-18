@@ -49,7 +49,7 @@ function filepanel (localRegistry) {
     fileProviders: self._components.registry.get('fileproviders').api,
     fileManager: self._components.registry.get('filemanager').api,
     config: self._components.registry.get('config').api,
-    pluginManager: self._components.registry.get('pluginmanager').api,
+    pluginManager: self._components.registry.get('pluginmanager').api
   }
   var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'])
   var fileSystemExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['localhost'])

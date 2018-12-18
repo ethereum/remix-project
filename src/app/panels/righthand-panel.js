@@ -26,7 +26,7 @@ module.exports = class RighthandPanel {
     }
 
     var tabbedMenu = new TabbedMenu(self._components.registry)
-    
+
     self._components = {
       tabbedMenu: tabbedMenu,
       tabs

@@ -47,8 +47,8 @@ class CmdInterpreterAPI {
       self._components.sourceHighlighter.currentSourceLocation(null)
       return
     }
-    var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, 
-      self._deps.compilersArtefacts['__last'].getSourceCode().sources, 
+    var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file,
+      self._deps.compilersArtefacts['__last'].getSourceCode().sources,
       self._deps.compilersArtefacts['__last'].getAsts())
     self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
   }
@@ -110,8 +110,8 @@ class CmdInterpreterAPI {
       self.d.goTo = (row) => {
         if (self._deps.editor.current()) {
           var breakPoint = new remixLib.code.BreakpointManager(self.d, (sourceLocation) => {
-            return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, 
-              self._deps.compilersArtefacts['__last'].getSourceCode().sources, 
+            return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file,
+              self._deps.compilersArtefacts['__last'].getSourceCode().sources,
               self._deps.compilersArtefacts['__last'].getAsts())
           })
           breakPoint.event.register('breakpointHit', (sourceLocation, currentStep) => {

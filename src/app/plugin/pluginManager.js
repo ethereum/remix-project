@@ -101,7 +101,7 @@ module.exports = class PluginManager {
         value: [ file ]
       }))
     })
-    
+
     txlistener.event.register('newTransaction', (tx) => {
       self.broadcast(JSON.stringify({
         action: 'notification',

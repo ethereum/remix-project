@@ -229,7 +229,7 @@ class App {
     self._adjustLayout('left', self.data._layout.left.offset)
     self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
-  }  
+  }
   startdebugging (txHash) {
     const self = this
     self.event.trigger('debuggingRequested', [])
@@ -303,7 +303,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   registry.put({api: msg => self._components.editorpanel.logHtmlMessage(msg), name: 'logCallback'})
-  
+
   // helper for converting offset to line/column
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
