@@ -18,7 +18,6 @@ module.exports = class SettingsTab {
     self._components.registry = localRegistry || globalRegistry
     // dependencies
     self._deps = {
-      compiler: self._components.registry.get('compiler').api,
       config: self._components.registry.get('config').api,
       editorPanel: self._components.registry.get('editorpanel').api,
       editor: self._components.registry.get('editor').api,

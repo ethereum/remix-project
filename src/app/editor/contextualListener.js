@@ -16,7 +16,7 @@ class ContextualListener {
     self._components.registry = localRegistry || globalRegistry
     self.editor = opts.editor
     self._deps = {
-      compiler: self._components.registry.get('compiler').api,
+      compilersArtefacts: self._components.registry.get('compilersartefacts').api,
       config: self._components.registry.get('config').api,
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
@@ -42,7 +42,9 @@ class ContextualListener {
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      this._highlightItems(self.editor.getCursorPosition(), self._deps.compiler.lastCompilationResult, self._deps.config.get('currentFile'))
+      if (self._deps.compilersArtefacts['__last']) {
+        this._highlightItems(self.editor.getCursorPosition(), self._deps.compilersArtefacts['__last'], self._deps.config.get('currentFile'))
+      }
     }, 1000)
   }
 
@@ -106,15 +108,17 @@ class ContextualListener {
     var self = this
     var position = this.sourceMappingDecoder.decode(node.src)
     var eventId = this._highlightInternal(position, node)
-    if (eventId) {
-      this._activeHighlights.push({ eventId, position, fileTarget: self._deps.compiler.getSourceName(position.file), nodeId: node.id })
+    let lastCompilationResult = self._deps.compilersArtefacts['__last']
+    if (eventId && lastCompilationResult) {
+      this._activeHighlights.push({ eventId, position, fileTarget: lastCompilationResult.getSourceName(position.file), nodeId: node.id })
     }
   }
 
   _highlightInternal (position, node) {
     var self = this
-    if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
+    let lastCompilationResult = self._deps.compilersArtefacts['__last']
+    if (lastCompilationResult) {
+      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
       var css = 'highlightreference'
       if (node.children && node.children.length) {
         // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
@@ -130,7 +134,7 @@ class ContextualListener {
           }
         }
       }
-      var fileName = self._deps.compiler.getSourceName(position.file)
+      var fileName = lastCompilationResult.getSourceName(position.file)
       if (fileName) {
         return self.editor.addMarker(lineColumn, fileName, css)
       }

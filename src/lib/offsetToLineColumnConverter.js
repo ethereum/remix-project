@@ -7,7 +7,7 @@ function offsetToColumnConverter () {
   var self = this
   // we don't listen anymore on compilation result for clearing the cache
 }
-
+  
 offsetToColumnConverter.prototype.offsetToLineColumn = function (rawLocation, file, sources, asts) {
   if (!this.lineBreakPositionsByContent[file]) {
     for (var filename in asts) {

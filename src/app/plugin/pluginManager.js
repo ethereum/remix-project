@@ -79,14 +79,14 @@ const PluginAPI = require('./pluginAPI')
  *
  */
 module.exports = class PluginManager {
-  constructor (app, compiler, txlistener, fileProviders, fileManager, udapp) {
+  constructor (app, compilersArtefacts, txlistener, fileProviders, fileManager, udapp) {
     const self = this
     self.event = new EventManager()
     var pluginAPI = new PluginAPI(
       this,
       fileProviders,
       fileManager,
-      compiler,
+      compilersArtefacts,
       udapp
     )
     self._components = { pluginAPI }
