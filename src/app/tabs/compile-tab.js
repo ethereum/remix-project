@@ -1,8 +1,13 @@
 /* global Worker */
+const async = require('async')
+const $ = require('jquery')
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const copy = require('clipboard-copy')
 var minixhr = require('minixhr')
+var remixTests = require('remix-tests')
+var Compiler = require('remix-solidity').Compiler
+var CompilerImport = require('../compiler/compiler-imports')
 var tooltip = require('../ui/tooltip')
 var QueryParams = require('../../lib/query-params')
 var globalRegistry = require('../../global/registry')
@@ -40,14 +45,17 @@ module.exports = class CompileTab {
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.queryParams = new QueryParams()
+    self._components.compilerImport = new CompilerImport()
+    self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
+        
     // dependencies
     self._deps = {
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
-      compiler: self._components.registry.get('compiler').api,
       renderer: self._components.registry.get('renderer').api,
       swarmfileProvider: self._components.registry.get('fileproviders/swarm').api,
-      fileManager: self._components.registry.get('filemanager').api
+      fileManager: self._components.registry.get('filemanager').api,
+      fileProviders: self._components.registry.get('fileproviders').api,
     }
     self.data = {
       hideWarnings: self._deps.config.get('hideWarnings') || false,
@@ -63,7 +71,7 @@ module.exports = class CompileTab {
     self.data.optimize = self._components.queryParams.get().optimize
     self.data.optimize = self.data.optimize === 'true'
     self._components.queryParams.update({ optimize: self.data.optimize })
-    self._deps.compiler.setOptimize(self.data.optimize)
+    self._components.compiler.setOptimize(self.data.optimize)
 
     self._deps.editor.event.register('contentChanged', scheduleCompilation)
     self._deps.editor.event.register('sessionSwitched', scheduleCompilation)
@@ -72,7 +80,7 @@ module.exports = class CompileTab {
       if (self.data.compileTimeout) window.clearTimeout(self.data.compileTimeout)
       self.data.compileTimeout = window.setTimeout(() => self.runCompiler(), self.data.timeout)
     }
-    self._deps.compiler.event.register('compilationDuration', function tabHighlighting (speed) {
+    self._components.compiler.event.register('compilationDuration', function tabHighlighting (speed) {
       if (!self._view.warnCompilationSlow) return
       if (speed > self.data.maxTime) {
         const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
@@ -86,13 +94,13 @@ module.exports = class CompileTab {
       if (!self._view.compileIcon) return
       self._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
     })
-    self._deps.compiler.event.register('loadingCompiler', function start () {
+    self._components.compiler.event.register('loadingCompiler', function start () {
       if (!self._view.compileIcon) return
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
       self._view.warnCompilationSlow.style.visibility = 'hidden'
       self._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
     })
-    self._deps.compiler.event.register('compilationStarted', function start () {
+    self._components.compiler.event.register('compilationStarted', function start () {
       if (!self._view.compileIcon) return
       self._view.errorContainer.innerHTML = ''
       self._view.errorContainerHead.innerHTML = ''
@@ -100,12 +108,12 @@ module.exports = class CompileTab {
       self._view.compileIcon.classList.add(`${css.spinningIcon}`)
       self._view.compileIcon.setAttribute('title', 'compiling...')
     })
-    self._deps.compiler.event.register('compilerLoaded', function loaded () {
+    self._components.compiler.event.register('compilerLoaded', function loaded () {
       if (!self._view.compileIcon) return
       self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       self._view.compileIcon.setAttribute('title', '')
     })
-    self._deps.compiler.event.register('compilationFinished', function finish (success, data, source) {
+    self._components.compiler.event.register('compilationFinished', function finish (success, data, source) {
       if (self._view.compileIcon) {
         const compileTab = document.querySelector('.compileView')
         compileTab.style.color = styles.colors.black
@@ -120,8 +128,8 @@ module.exports = class CompileTab {
       self._view.contractNames.innerHTML = ''
       if (success) {
         self._view.contractNames.removeAttribute('disabled')
-        self._deps.compiler.visitContracts(contract => {
-          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._deps.compiler.getSource(contract.file))
+        self._components.compiler.visitContracts(contract => {
+          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._components.compiler.getSource(contract.file))
           var contractName = yo`<option>${contract.name}</option>`
           self._view.contractNames.appendChild(contractName)
         })
@@ -159,7 +167,7 @@ module.exports = class CompileTab {
         })
       }
       if (!error && data.contracts) {
-        self._deps.compiler.visitContracts((contract) => {
+        self._components.compiler.visitContracts((contract) => {
           self._deps.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
         })
       }
@@ -190,11 +198,11 @@ module.exports = class CompileTab {
     function onchangeOptimize (event) {
       self.data.optimize = !!self._view.optimize.checked
       self._components.queryParams.update({ optimize: self.data.optimize })
-      self._deps.compiler.setOptimize(self.data.optimize)
+      self._components.compiler.setOptimize(self.data.optimize)
       self.runCompiler()
     }
 
-    self._deps.compiler.event.register('compilerLoaded', (version) => self.setVersionText(version))
+    self._components.compiler.event.register('compilerLoaded', (version) => self.setVersionText(version))
     self.fetchAllVersion((allversions, selectedVersion) => {
       self.data.allversions = allversions
       self.data.selectedVersion = selectedVersion
@@ -432,10 +440,10 @@ module.exports = class CompileTab {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
       // resort to non-worker version in that case.
-      self._deps.compiler.loadVersion(true, url)
+      self._components.compiler.loadVersion(true, url)
       self.setVersionText('(loading using worker)')
     } else {
-      self._deps.compiler.loadVersion(false, url)
+      self._components.compiler.loadVersion(false, url)
       self.setVersionText('(loading)')
     }
   }
@@ -477,13 +485,62 @@ module.exports = class CompileTab {
               console.log(error)
             } else {
               sources[target] = { content }
-              self.compiler.compile(sources, target)
+              self._components.compiler.compile(sources, target)
             }
           })
         } else {
           console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
         }
       }
+    }
+  }
+  importExternal (url, cb) {
+    const self = this
+    self._components.compilerImport.import(url,
+      (loadingMsg) => {
+        toolTip(loadingMsg)
+      },
+      (error, content, cleanUrl, type, url) => {
+        if (!error) {
+          if (self._deps.filesProviders[type]) {
+            self._deps.filesProviders[type].addReadOnly(cleanUrl, content, url)
+          }
+          cb(null, content)
+        } else {
+          cb(error)
+        }
+      })
+  }
+  importFileCb (url, filecb) {
+    const self = this
+    if (url.indexOf('/remix_tests.sol') !== -1) {
+      return filecb(null, remixTests.assertLibCode)
+    }
+    var provider = self._deps.fileManager.fileProviderOf(url)
+    if (provider) {
+      if (provider.type === 'localhost' && !provider.isConnected()) {
+        return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)
+      }
+      provider.exists(url, (error, exist) => {
+        if (error) return filecb(error)
+        if (exist) {
+          return provider.get(url, filecb)
+        } else {
+          self.importExternal(url, filecb)
+        }
+      })
+    } else if (self._components.compilerImport.isRelativeImport(url)) {
+      // try to resolve localhost modules (aka truffle imports)
+      var splitted = /([^/]+)\/(.*)$/g.exec(url)
+      async.tryEach([
+        (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
+        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
+        (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
+        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
+        (error, result) => { filecb(error, result) }
+      )
+    } else {
+      self.importExternal(url, filecb)
     }
   }
 }
