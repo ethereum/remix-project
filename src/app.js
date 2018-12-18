@@ -1,12 +1,10 @@
 'use strict'
 
-var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
-var remixTests = require('remix-tests')
 var EventManager = require('./lib/events')
 
 var registry = require('./global/registry')
@@ -14,7 +12,6 @@ var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
 var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
-
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
@@ -24,7 +21,6 @@ var BrowserfilesTree = require('./app/files/browser-files-tree')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
-var Compiler = require('remix-solidity').Compiler
 var executionContext = require('./execution-context')
 var FilePanel = require('./app/panels/file-panel')
 var EditorPanel = require('./app/panels/editor-panel')
@@ -34,7 +30,6 @@ var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var TxLogger = require('./app/execution/txLogger')
 var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
-var CompilerImport = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
@@ -125,8 +120,6 @@ class App {
     executionContext.init(self._components.config)
     executionContext.listenOnLastBlock()
 
-    self._components.compilerImport = new CompilerImport()
-    registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self._components.gistHandler = new GistHandler()
 
     self._components.filesProviders = {}
@@ -270,55 +263,6 @@ class App {
       if (callback) callback(error)
     })
   }
-  importExternal (url, cb) {
-    const self = this
-    self._components.compilerImport.import(url,
-      (loadingMsg) => {
-        toolTip(loadingMsg)
-      },
-      (error, content, cleanUrl, type, url) => {
-        if (!error) {
-          if (self._components.filesProviders[type]) {
-            self._components.filesProviders[type].addReadOnly(cleanUrl, content, url)
-          }
-          cb(null, content)
-        } else {
-          cb(error)
-        }
-      })
-  }
-  importFileCb (url, filecb) {
-    const self = this
-    if (url.indexOf('/remix_tests.sol') !== -1) {
-      return filecb(null, remixTests.assertLibCode)
-    }
-    var provider = self._components.fileManager.fileProviderOf(url)
-    if (provider) {
-      if (provider.type === 'localhost' && !provider.isConnected()) {
-        return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)
-      }
-      provider.exists(url, (error, exist) => {
-        if (error) return filecb(error)
-        if (exist) {
-          return provider.get(url, filecb)
-        } else {
-          self.importExternal(url, filecb)
-        }
-      })
-    } else if (self._components.compilerImport.isRelativeImport(url)) {
-      // try to resolve localhost modules (aka truffle imports)
-      var splitted = /([^/]+)\/(.*)$/g.exec(url)
-      async.tryEach([
-        (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
-        (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
-        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
-        (error, result) => { filecb(error, result) }
-      )
-    } else {
-      self.importExternal(url, filecb)
-    }
-  }
 }
 
 module.exports = App
@@ -350,13 +294,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   registry.put({api: msg => self._components.editorpanel.logHtmlMessage(msg), name: 'logCallback'})
 
-  // ----------------- Compiler -----------------
-  self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
-  registry.put({api: self._components.compiler, name: 'compiler'})
-
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(self._components.compiler.event)
+  // helper for converting offset to line/column
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
+  // json structure for hosting the last compilattion result
   self._components.compilersArtefacts = {} // store all the possible compilation data (key represent a compiler name)
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
