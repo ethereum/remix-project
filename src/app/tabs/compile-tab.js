@@ -8,7 +8,6 @@ var minixhr = require('minixhr')
 var remixTests = require('remix-tests')
 var Compiler = require('remix-solidity').Compiler
 var CompilerImport = require('../compiler/compiler-imports')
-var tooltip = require('../ui/tooltip')
 var QueryParams = require('../../lib/query-params')
 var globalRegistry = require('../../global/registry')
 const TreeView = require('../ui/TreeView')
@@ -47,7 +46,7 @@ module.exports = class CompileTab {
     self._components.queryParams = new QueryParams()
     self._components.compilerImport = new CompilerImport()
     self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
-        
+
     // dependencies
     self._deps = {
       editor: self._components.registry.get('editor').api,
@@ -129,7 +128,7 @@ module.exports = class CompileTab {
       self._view.contractNames.innerHTML = ''
       if (success) {
         // TODO consider using compile tab as a proper module instead of just forwarding event
-        self._deps.pluginManager.receivedDataFrom('sendCompilationResult', 'solidity-compiler', [data.target, source, self.data.selectedVersion, data] )
+        self._deps.pluginManager.receivedDataFrom('sendCompilationResult', 'solidity-compiler', [data.target, source, self.data.selectedVersion, data])
         self._view.contractNames.removeAttribute('disabled')
         self._components.compiler.visitContracts(contract => {
           self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._components.compiler.getSource(contract.file))
@@ -462,7 +461,7 @@ module.exports = class CompileTab {
           selectedVersion = data.releases[data.latestRelease]
           if (self._components.queryParams.get().version) selectedVersion = self._components.queryParams.get().version
         } catch (e) {
-          tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
+          addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
         }
       } else {
         allversions = [{ path: 'builtin', longVersion: 'latest local version' }]
@@ -501,7 +500,7 @@ module.exports = class CompileTab {
     const self = this
     self._components.compilerImport.import(url,
       (loadingMsg) => {
-        toolTip(loadingMsg)
+       addTooltip(loadingMsg)
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {

@@ -100,9 +100,9 @@ class ContextView {
     let lastCompilationResult = self._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.data) {
       var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(
-        position, 
-        position.file, 
-        lastCompilationResult.getSourceCode().sources, 
+        position,
+        position.file,
+        lastCompilationResult.getSourceCode().sources,
         lastCompilationResult.getAsts())
       var filename = lastCompilationResult.getSourceName(position.file)
       // TODO: refactor with rendererAPI.errorClick

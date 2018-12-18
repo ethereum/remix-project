@@ -111,9 +111,9 @@ staticAnalysisView.prototype.run = function () {
               start: parseInt(split[0]),
               length: parseInt(split[1])
             }
-            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location, 
-              parseInt(file), 
-              self.lastCompilationSource.sources, 
+            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location,
+              parseInt(file),
+              self.lastCompilationSource.sources,
               self.lastCompilationResult.sources)
             location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
