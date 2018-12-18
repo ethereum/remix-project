@@ -90,10 +90,13 @@ class DebuggerUI {
 
     this.contextManager = new ContextManager()
 
+    // TODO debugging with source highlight is disabled. see line 98
     this.debugger = new Debugger({
       web3: this.contextManager.getWeb3(),
       offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-      compiler: this.registry.get('compiler').api
+      compiler: {
+        lastCompilationResult: null
+      }
     })
 
     this.contextManager.initProviders()
