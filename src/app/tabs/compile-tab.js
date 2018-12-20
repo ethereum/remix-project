@@ -500,7 +500,7 @@ module.exports = class CompileTab {
     const self = this
     self._components.compilerImport.import(url,
       (loadingMsg) => {
-       addTooltip(loadingMsg)
+        addTooltip(loadingMsg)
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
