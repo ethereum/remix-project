@@ -21,12 +21,12 @@ var modalDialog = require('./app/ui/modaldialog')
 var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('./app/execution/confirmDialog')
 
-function UniversalDApp (opts, localRegistry) {
+function UniversalDApp () {
   this.event = new EventManager()
   var self = this
   self.data = {}
   self._components = {}
-  self._components.registry = localRegistry || globalRegistry
+  self._components.registry = globalRegistry
   self._deps = {
     config: self._components.registry.get('config').api,
     compilersartefacts: self._components.registry.get('compilersartefacts').api,
