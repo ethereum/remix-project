@@ -26,6 +26,7 @@ var CompilerAbstract = require('../compiler/compiler-abstract')
 var tootip = require('../ui/tooltip')
 
 var confirmDialog = require('../execution/confirmDialog')
+var modalCustom = require('../ui/modal-dialog-custom')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -814,13 +815,23 @@ function settings (container, self) {
   }, 10000)
 
   function newAccount () {
-    self._deps.udapp.newAccount('', (error, address) => {
-      if (!error) {
-        addTooltip(`account ${address} created`)
-      } else {
-        addTooltip('Cannot create an account: ' + error)
+    self._deps.udapp.newAccount('',
+      (cb) => {
+        modalCustom.promptPassphraseCreation((error, passphrase) => {
+          if (error) {
+            return modalCustom.alert(error)
+          }
+          cb(passphrase)
+        }, () => {})
+      },
+      (error, address) => {
+        if (!error) {
+          addTooltip(`account ${address} created`)
+        } else {
+          addTooltip('Cannot create an account: ' + error)
+        }
       }
-    })
+    )
   }
   function signMessage (event) {
     self._deps.udapp.getAccounts((err, accounts) => {

@@ -75,18 +75,14 @@ UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
   cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
 }
 
-UniversalDApp.prototype.newAccount = function (password, cb) {
+UniversalDApp.prototype.newAccount = function (password, passwordPromptCb, cb) {
   if (!executionContext.isVM()) {
     if (!this._deps.config.get('settings/personal-mode')) {
       return cb('Not running in personal mode')
     }
-    modalCustom.promptPassphraseCreation((error, passphrase) => {
-      if (error) {
-        modalCustom.alert(error)
-      } else {
-        executionContext.web3().personal.newAccount(passphrase, cb)
-      }
-    }, () => {})
+    passwordPromptCb((passphrase) => {
+      executionContext.web3().personal.newAccount(passphrase, cb)
+    })
   } else {
     var privateKey
     do {
