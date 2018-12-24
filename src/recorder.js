@@ -1,3 +1,4 @@
+var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = require('./lib/events')
 var ethutil = require('ethereumjs-util')
@@ -297,7 +298,27 @@ class Recorder {
                 }
               })
         },
-
+        (error, continueTxExecution, cancelCb) => {
+          if (error) {
+            var msg = typeof error !== 'string' ? error.message : error
+            modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+            The transaction execution will likely fail. Do you want to force sending? <br>
+            ${msg}
+            </div>`,
+              {
+                label: 'Send Transaction',
+                fn: () => {
+                  continueTxExecution()
+                }}, {
+                  label: 'Cancel Transaction',
+                  fn: () => {
+                    cancelCb()
+                  }
+                })
+          } else {
+            continueTxExecution()
+          }
+        },
         function (err, txResult) {
           if (err) {
             console.error(err)

@@ -14,7 +14,6 @@ var executionContext = require('./execution-context')
 var globalRegistry = require('./global/registry')
 
 var modalCustom = require('./app/ui/modal-dialog-custom')
-var modalDialog = require('./app/ui/modaldialog')
 
 function UniversalDApp () {
   this.event = new EventManager()
@@ -189,8 +188,8 @@ UniversalDApp.prototype.pendingTransactionsCount = function () {
   * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
   * @param {Function} callback    - callback.
   */
-UniversalDApp.prototype.createContract = function (data, confirmationCb, callback) {
-  this.runTx({data: data, useCall: false}, confirmationCb, (error, txResult) => {
+UniversalDApp.prototype.createContract = function (data, confirmationCb, continueCb, callback) {
+  this.runTx({data: data, useCall: false}, confirmationCb, continueCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -204,8 +203,8 @@ UniversalDApp.prototype.createContract = function (data, confirmationCb, callbac
   * @param {Object} funAbi    - abi definition of the function to call.
   * @param {Function} callback    - callback.
   */
-UniversalDApp.prototype.callFunction = function (to, data, funAbi, confirmationCb, callback) {
-  this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, (error, txResult) => {
+UniversalDApp.prototype.callFunction = function (to, data, funAbi, confirmationCb, continueCb, callback) {
+  this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, continueCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -247,7 +246,7 @@ UniversalDApp.prototype.silentRunTx = function (tx, cb) {
   cb)
 }
 
-UniversalDApp.prototype.runTx = function (args, confirmationCb, cb) {
+UniversalDApp.prototype.runTx = function (args, confirmationCb, continueCb, cb) {
   const self = this
   async.waterfall([
     function getGasLimit (next) {
@@ -293,28 +292,7 @@ UniversalDApp.prototype.runTx = function (args, confirmationCb, cb) {
       var timestamp = Date.now()
 
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-      self.txRunner.rawRun(tx, confirmationCb,
-        (error, continueTxExecution, cancelCb) => {
-          if (error) {
-            var msg = typeof error !== 'string' ? error.message : error
-            modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-            The transaction execution will likely fail. Do you want to force sending? <br>
-            ${msg}
-            </div>`,
-              {
-                label: 'Send Transaction',
-                fn: () => {
-                  continueTxExecution()
-                }}, {
-                  label: 'Cancel Transaction',
-                  fn: () => {
-                    cancelCb()
-                  }
-                })
-          } else {
-            continueTxExecution()
-          }
-        },
+      self.txRunner.rawRun(tx, confirmationCb, continueCb,
         function (okCb, cancelCb) {
           modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account ' + tx.from, '', okCb, cancelCb)
         },

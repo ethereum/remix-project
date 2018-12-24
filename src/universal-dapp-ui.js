@@ -181,6 +181,28 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
           })
     }
 
+    var continueCb = (error, continueTxExecution, cancelCb) => {
+      if (error) {
+        var msg = typeof error !== 'string' ? error.message : error
+        modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+        The transaction execution will likely fail. Do you want to force sending? <br>
+        ${msg}
+        </div>`,
+          {
+            label: 'Send Transaction',
+            fn: () => {
+              continueTxExecution()
+            }}, {
+              label: 'Cancel Transaction',
+              fn: () => {
+                cancelCb()
+              }
+            })
+      } else {
+        continueTxExecution()
+      }
+    }
+
     var outputCb = (decoded) => {
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
@@ -195,7 +217,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
           self.udapp._deps.logCallback(`${logMsg}`)
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
-        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, (error, txResult) => {
+        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
             if (isVM) {
