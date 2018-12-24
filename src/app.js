@@ -314,7 +314,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- UniversalDApp -----------------
   var udapp = new UniversalDApp({
-    removable: false,
     removable_instances: true
   })
   registry.put({api: udapp, name: 'udapp'})
@@ -434,7 +433,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
 
-  var txLogger = new TxLogger() // eslint-disable-line  
+  var txLogger = new TxLogger() // eslint-disable-line
 
   var queryParams = new QueryParams()
 
