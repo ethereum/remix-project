@@ -452,7 +452,27 @@ function contractDropdown (events, self) {
               }
             })
       },
-
+      (error, continueTxExecution, cancelCb) => {
+        if (error) {
+          var msg = typeof error !== 'string' ? error.message : error
+          modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+          The transaction execution will likely fail. Do you want to force sending? <br>
+          ${msg}
+          </div>`,
+            {
+              label: 'Send Transaction',
+              fn: () => {
+                continueTxExecution()
+              }}, {
+                label: 'Cancel Transaction',
+                fn: () => {
+                  cancelCb()
+                }
+              })
+        } else {
+          continueTxExecution()
+        }
+      },
       (error, txResult) => {
         if (!error) {
           var isVM = executionContext.isVM()
