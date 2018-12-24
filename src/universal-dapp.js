@@ -9,31 +9,12 @@ var remixLib = require('remix-lib')
 var EventManager = require('./lib/events')
 var crypto = require('crypto')
 var TxRunner = remixLib.execution.txRunner
-var txExecution = remixLib.execution.txExecution
-var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var executionContext = require('./execution-context')
 var globalRegistry = require('./global/registry')
 
 var modalCustom = require('./app/ui/modal-dialog-custom')
 var modalDialog = require('./app/ui/modaldialog')
-var TreeView = require('./app/ui/TreeView')
-
-function decodeResponseToTreeView (response, fnabi) {
-  var treeView = new TreeView({
-    extractData: (item, parent, key) => {
-      var ret = {}
-      if (BN.isBN(item)) {
-        ret.self = item.toString(10)
-        ret.children = []
-      } else {
-        ret = treeView.extractDataDefault(item, parent, key)
-      }
-      return ret
-    }
-  })
-  return treeView.render(txFormat.decodeResponse(response, fnabi))
-}
 
 function UniversalDApp () {
   this.event = new EventManager()
@@ -200,55 +181,6 @@ UniversalDApp.prototype.pendingTransactions = function () {
 
 UniversalDApp.prototype.pendingTransactionsCount = function () {
   return Object.keys(this.txRunner.pendingTxs).length
-}
-
-UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, confirmationCb, outputCb) {
-  const self = this
-  var logMsg
-  if (isUserAction) {
-    if (!args.funABI.constant) {
-      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-    } else {
-      logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-    }
-  }
-  txFormat.buildData(args.contractName, args.contractAbi, self._deps.compilersartefacts['__last'].getData().contracts, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
-    if (!error) {
-      if (isUserAction) {
-        if (!args.funABI.constant) {
-          self._deps.logCallback(`${logMsg} pending ... `)
-        } else {
-          self._deps.logCallback(`${logMsg}`)
-        }
-      }
-      if (args.funABI.type === 'fallback') data.dataHex = value
-      self.callFunction(args.address, data, args.funABI, confirmationCb, (error, txResult) => {
-        if (!error) {
-          var isVM = executionContext.isVM()
-          if (isVM) {
-            var vmError = txExecution.checkVMError(txResult)
-            if (vmError.error) {
-              self._deps.logCallback(`${logMsg} errored: ${vmError.message} `)
-              return
-            }
-          }
-          if (lookupOnly) {
-            var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
-            outputCb(decoded)
-          }
-        } else {
-          self._deps.logCallback(`${logMsg} errored: ${error} `)
-        }
-      })
-    } else {
-      self._deps.logCallback(`${logMsg} errored: ${error} `)
-    }
-  }, (msg) => {
-    self._deps.logCallback(msg)
-  }, (data, runTxCallback) => {
-    // called for libraries deployment
-    self.runTx(data, confirmationCb, runTxCallback)
-  })
 }
 
 /**

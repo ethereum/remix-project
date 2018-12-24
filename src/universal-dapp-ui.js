@@ -3,20 +3,41 @@
 
 var $ = require('jquery')
 var yo = require('yo-yo')
+var ethJSUtil = require('ethereumjs-util')
+var BN = ethJSUtil.BN
 var helper = require('./lib/helper')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
 var css = require('./universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
 var remixLib = require('remix-lib')
 var typeConversion = remixLib.execution.typeConversion
+var txExecution = remixLib.execution.txExecution
+var txFormat = remixLib.execution.txFormat
 
 var executionContext = require('./execution-context')
 
 var modalDialog = require('./app/ui/modaldialog')
 var confirmDialog = require('./app/execution/confirmDialog')
+var TreeView = require('./app/ui/TreeView')
 
 function UniversalDAppUI (udapp, opts = {}) {
   this.udapp = udapp
+}
+
+function decodeResponseToTreeView (response, fnabi) {
+  var treeView = new TreeView({
+    extractData: (item, parent, key) => {
+      var ret = {}
+      if (BN.isBN(item)) {
+        ret.self = item.toString(10)
+        ret.children = []
+      } else {
+        ret = treeView.extractDataDefault(item, parent, key)
+      }
+      return ret
+    }
+  })
+  return treeView.render(txFormat.decodeResponse(response, fnabi))
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
@@ -97,67 +118,110 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
   function clickButton (valArr, inputsValues) {
-    self.udapp.call(true, args, inputsValues, lookupOnly,
+    var logMsg
+    if (!args.funABI.constant) {
+      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    } else {
+      logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    }
 
-      (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-        if (network.name !== 'Main') {
-          return continueTxExecution(null)
-        }
-        var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-        var content = confirmDialog(tx, amount, gasEstimation, self,
-          (gasPrice, cb) => {
-            let txFeeText, priceStatus
-            // TODO: this try catch feels like an anti pattern, can/should be
-            // removed, but for now keeping the original logic
-            try {
-              var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-              txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
-              priceStatus = true
-            } catch (e) {
-              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-              priceStatus = false
-            }
-            cb(txFeeText, priceStatus)
-          },
-          (cb) => {
-            executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-              var warnMessage = ' Please fix this issue before sending any transaction. '
-              if (error) {
-                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-              }
-              try {
-                var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
-                cb(null, gasPriceValue)
-              } catch (e) {
-                cb(warnMessage + e.message, null, false)
-              }
-            })
-          }
-        )
-        modalDialog('Confirm transaction', content,
-          { label: 'Confirm',
-            fn: () => {
-              self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-              // TODO: check if this is check is still valid given the refactor
-              if (!content.gasPriceStatus) {
-                cancelCb('Given gas price is not correct')
-              } else {
-                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-                continueTxExecution(gasPrice)
-              }
-            }}, {
-              label: 'Cancel',
-              fn: () => {
-                return cancelCb('Transaction canceled by user.')
-              }
-            })
-      },
+    var value = inputsValues
 
-      (decoded) => {
-        outputOverride.innerHTML = ''
-        outputOverride.appendChild(decoded)
+    var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      if (network.name !== 'Main') {
+        return continueTxExecution(null)
       }
-    )
+      var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+      var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+        (gasPrice, cb) => {
+          let txFeeText, priceStatus
+          // TODO: this try catch feels like an anti pattern, can/should be
+          // removed, but for now keeping the original logic
+          try {
+            var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+            txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+            priceStatus = true
+          } catch (e) {
+            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+            priceStatus = false
+          }
+          cb(txFeeText, priceStatus)
+        },
+        (cb) => {
+          executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+            var warnMessage = ' Please fix this issue before sending any transaction. '
+            if (error) {
+              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+            }
+            try {
+              var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+              cb(null, gasPriceValue)
+            } catch (e) {
+              cb(warnMessage + e.message, null, false)
+            }
+          })
+        }
+      )
+      modalDialog('Confirm transaction', content,
+        { label: 'Confirm',
+          fn: () => {
+            self.udapp._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            // TODO: check if this is check is still valid given the refactor
+            if (!content.gasPriceStatus) {
+              cancelCb('Given gas price is not correct')
+            } else {
+              var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+              continueTxExecution(gasPrice)
+            }
+          }}, {
+            label: 'Cancel',
+            fn: () => {
+              return cancelCb('Transaction canceled by user.')
+            }
+          })
+    }
+
+    var outputCb = (decoded) => {
+      outputOverride.innerHTML = ''
+      outputOverride.appendChild(decoded)
+    }
+
+    // contractsDetails is used to resolve libraries
+    txFormat.buildData(args.contractName, args.contractAbi, self.udapp.data.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
+      if (!error) {
+        if (!args.funABI.constant) {
+          self.udapp._deps.logCallback(`${logMsg} pending ... `)
+        } else {
+          self.udapp._deps.logCallback(`${logMsg}`)
+        }
+        if (args.funABI.type === 'fallback') data.dataHex = value
+        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, (error, txResult) => {
+          if (!error) {
+            var isVM = executionContext.isVM()
+            if (isVM) {
+              var vmError = txExecution.checkVMError(txResult)
+              if (vmError.error) {
+                self.udapp._deps.logCallback(`${logMsg} errored: ${vmError.message} `)
+                return
+              }
+            }
+            if (lookupOnly) {
+              var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              outputCb(decoded)
+            }
+          } else {
+            self.udapp._deps.logCallback(`${logMsg} errored: ${error} `)
+          }
+        })
+      } else {
+        self.udapp._deps.logCallback(`${logMsg} errored: ${error} `)
+      }
+    }, (msg) => {
+      self.udapp._deps.logCallback(msg)
+    }, (data, runTxCallback) => {
+      // called for libraries deployment
+      self.udapp.runTx(data, confirmationCb, runTxCallback)
+    })
   }
 
   var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
