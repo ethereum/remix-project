@@ -7,6 +7,13 @@ var helper = require('./lib/helper')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
 var css = require('./universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
+var remixLib = require('remix-lib')
+var typeConversion = remixLib.execution.typeConversion
+
+var executionContext = require('./execution-context')
+
+var modalDialog = require('./app/ui/modaldialog')
+var confirmDialog = require('./app/execution/confirmDialog')
 
 function UniversalDAppUI (udapp, opts = {}) {
   this.udapp = udapp
@@ -90,10 +97,67 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
   function clickButton (valArr, inputsValues) {
-    self.udapp.call(true, args, inputsValues, lookupOnly, (decoded) => {
-      outputOverride.innerHTML = ''
-      outputOverride.appendChild(decoded)
-    })
+    self.udapp.call(true, args, inputsValues, lookupOnly,
+
+      (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+        if (network.name !== 'Main') {
+          return continueTxExecution(null)
+        }
+        var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+        var content = confirmDialog(tx, amount, gasEstimation, self,
+          (gasPrice, cb) => {
+            let txFeeText, priceStatus
+            // TODO: this try catch feels like an anti pattern, can/should be
+            // removed, but for now keeping the original logic
+            try {
+              var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+              txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+              priceStatus = true
+            } catch (e) {
+              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+              priceStatus = false
+            }
+            cb(txFeeText, priceStatus)
+          },
+          (cb) => {
+            executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+              var warnMessage = ' Please fix this issue before sending any transaction. '
+              if (error) {
+                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+              }
+              try {
+                var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                cb(null, gasPriceValue)
+              } catch (e) {
+                cb(warnMessage + e.message, null, false)
+              }
+            })
+          }
+        )
+        modalDialog('Confirm transaction', content,
+          { label: 'Confirm',
+            fn: () => {
+              self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+              // TODO: check if this is check is still valid given the refactor
+              if (!content.gasPriceStatus) {
+                cancelCb('Given gas price is not correct')
+              } else {
+                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                continueTxExecution(gasPrice)
+              }
+            }}, {
+              label: 'Cancel',
+              fn: () => {
+                return cancelCb('Transaction canceled by user.')
+              }
+            })
+      },
+
+      (decoded) => {
+        outputOverride.innerHTML = ''
+        outputOverride.appendChild(decoded)
+      }
+    )
   }
 
   var multiParamManager = new MultiParamManager(lookupOnly, args.funABI, (valArray, inputsValues, domEl) => {
