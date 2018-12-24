@@ -13,13 +13,10 @@ var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var executionContext = require('./execution-context')
-var modalCustom = require('./app/ui/modal-dialog-custom')
 var globalRegistry = require('./global/registry')
 
+var modalCustom = require('./app/ui/modal-dialog-custom')
 var modalDialog = require('./app/ui/modaldialog')
-var typeConversion = remixLib.execution.typeConversion
-var confirmDialog = require('./app/execution/confirmDialog')
-
 var TreeView = require('./app/ui/TreeView')
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -205,7 +202,7 @@ UniversalDApp.prototype.pendingTransactionsCount = function () {
   return Object.keys(this.txRunner.pendingTxs).length
 }
 
-UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
+UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, confirmationCb, outputCb) {
   const self = this
   var logMsg
   if (isUserAction) {
@@ -225,7 +222,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
         }
       }
       if (args.funABI.type === 'fallback') data.dataHex = value
-      self.callFunction(args.address, data, args.funABI, (error, txResult) => {
+      self.callFunction(args.address, data, args.funABI, confirmationCb, (error, txResult) => {
         if (!error) {
           var isVM = executionContext.isVM()
           if (isVM) {
@@ -250,7 +247,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     self._deps.logCallback(msg)
   }, (data, runTxCallback) => {
     // called for libraries deployment
-    self.runTx(data, runTxCallback)
+    self.runTx(data, confirmationCb, runTxCallback)
   })
 }
 
@@ -260,8 +257,8 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
   * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
   * @param {Function} callback    - callback.
   */
-UniversalDApp.prototype.createContract = function (data, callback) {
-  this.runTx({data: data, useCall: false}, (error, txResult) => {
+UniversalDApp.prototype.createContract = function (data, confirmationCb, callback) {
+  this.runTx({data: data, useCall: false}, confirmationCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -275,8 +272,8 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   * @param {Object} funAbi    - abi definition of the function to call.
   * @param {Function} callback    - callback.
   */
-UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
-  this.runTx({to: to, data: data, useCall: funAbi.constant}, (error, txResult) => {
+UniversalDApp.prototype.callFunction = function (to, data, funAbi, confirmationCb, callback) {
+  this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -318,7 +315,7 @@ UniversalDApp.prototype.silentRunTx = function (tx, cb) {
   cb)
 }
 
-UniversalDApp.prototype.runTx = function (args, cb) {
+UniversalDApp.prototype.runTx = function (args, confirmationCb, cb) {
   const self = this
   async.waterfall([
     function getGasLimit (next) {
@@ -364,61 +361,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       var timestamp = Date.now()
 
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-      self.txRunner.rawRun(tx,
-
-        (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-          if (network.name !== 'Main') {
-            return continueTxExecution(null)
-          }
-          var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-          var content = confirmDialog(tx, amount, gasEstimation, self,
-            (gasPrice, cb) => {
-              let txFeeText, priceStatus
-              // TODO: this try catch feels like an anti pattern, can/should be
-              // removed, but for now keeping the original logic
-              try {
-                var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-                txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
-                priceStatus = true
-              } catch (e) {
-                txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-                priceStatus = false
-              }
-              cb(txFeeText, priceStatus)
-            },
-            (cb) => {
-              executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-                var warnMessage = ' Please fix this issue before sending any transaction. '
-                if (error) {
-                  return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-                }
-                try {
-                  var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
-                  cb(null, gasPriceValue)
-                } catch (e) {
-                  cb(warnMessage + e.message, null, false)
-                }
-              })
-            }
-          )
-          modalDialog('Confirm transaction', content,
-            { label: 'Confirm',
-              fn: () => {
-                self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-                // TODO: check if this is check is still valid given the refactor
-                if (!content.gasPriceStatus) {
-                  cancelCb('Given gas price is not correct')
-                } else {
-                  var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-                  continueTxExecution(gasPrice)
-                }
-              }}, {
-                label: 'Cancel',
-                fn: () => {
-                  return cancelCb('Transaction canceled by user.')
-                }
-              })
-        },
+      self.txRunner.rawRun(tx, confirmationCb,
         (error, continueTxExecution, cancelCb) => {
           if (error) {
             var msg = typeof error !== 'string' ? error.message : error

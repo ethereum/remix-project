@@ -7,6 +7,7 @@ var csjs = require('csjs-inject')
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
+var typeConversion = remixLib.execution.typeConversion
 var EventManager = require('../../lib/events')
 var globlalRegistry = require('../../global/registry')
 var helper = require('../../lib/helper.js')
@@ -23,6 +24,8 @@ var MultiParamManager = require('../../multiParamManager')
 var modalDialog = require('../ui/modaldialog')
 var CompilerAbstract = require('../compiler/compiler-abstract')
 var tootip = require('../ui/tooltip')
+
+var confirmDialog = require('../execution/confirmDialog')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -394,28 +397,85 @@ function contractDropdown (events, self) {
       data.linkReferences = selectedContract.contract.object.evm.bytecode.linkReferences
       data.contractABI = selectedContract.contract.object.abi
     }
-    self._deps.udapp.createContract(data, (error, txResult) => {
-      if (!error) {
-        var isVM = executionContext.isVM()
-        if (isVM) {
-          var vmError = txExecution.checkVMError(txResult)
-          if (vmError.error) {
-            self._deps.logCallback(vmError.message)
+    self._deps.udapp.createContract(data,
+
+      (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+        if (network.name !== 'Main') {
+          return continueTxExecution(null)
+        }
+        var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+        var content = confirmDialog(tx, amount, gasEstimation, self,
+          (gasPrice, cb) => {
+            let txFeeText, priceStatus
+            // TODO: this try catch feels like an anti pattern, can/should be
+            // removed, but for now keeping the original logic
+            try {
+              var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+              txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+              priceStatus = true
+            } catch (e) {
+              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+              priceStatus = false
+            }
+            cb(txFeeText, priceStatus)
+          },
+          (cb) => {
+            executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+              var warnMessage = ' Please fix this issue before sending any transaction. '
+              if (error) {
+                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+              }
+              try {
+                var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                cb(null, gasPriceValue)
+              } catch (e) {
+                cb(warnMessage + e.message, null, false)
+              }
+            })
+          }
+        )
+        modalDialog('Confirm transaction', content,
+          { label: 'Confirm',
+            fn: () => {
+              self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+              // TODO: check if this is check is still valid given the refactor
+              if (!content.gasPriceStatus) {
+                cancelCb('Given gas price is not correct')
+              } else {
+                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                continueTxExecution(gasPrice)
+              }
+            }}, {
+              label: 'Cancel',
+              fn: () => {
+                return cancelCb('Transaction canceled by user.')
+              }
+            })
+      },
+
+      (error, txResult) => {
+        if (!error) {
+          var isVM = executionContext.isVM()
+          if (isVM) {
+            var vmError = txExecution.checkVMError(txResult)
+            if (vmError.error) {
+              self._deps.logCallback(vmError.message)
+              return
+            }
+          }
+          if (txResult.result.status && txResult.result.status === '0x0') {
+            self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
             return
           }
+          var noInstancesText = self._view.noInstancesText
+          if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+          var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+          instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+        } else {
+          self._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
         }
-        if (txResult.result.status && txResult.result.status === '0x0') {
-          self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
-          return
-        }
-        var noInstancesText = self._view.noInstancesText
-        if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
-      } else {
-        self._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
       }
-    })
+    )
   }
 
   // DEPLOY INSTANCE
@@ -439,7 +499,63 @@ function contractDropdown (events, self) {
             self._deps.logCallback(msg)
           }, (data, runTxCallback) => {
             // called for libraries deployment
-            self._deps.udapp.runTx(data, runTxCallback)
+            self._deps.udapp.runTx(data,
+
+              (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+                if (network.name !== 'Main') {
+                  return continueTxExecution(null)
+                }
+                var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+                var content = confirmDialog(tx, amount, gasEstimation, self,
+                  (gasPrice, cb) => {
+                    let txFeeText, priceStatus
+                    // TODO: this try catch feels like an anti pattern, can/should be
+                    // removed, but for now keeping the original logic
+                    try {
+                      var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+                      txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+                      priceStatus = true
+                    } catch (e) {
+                      txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+                      priceStatus = false
+                    }
+                    cb(txFeeText, priceStatus)
+                  },
+                  (cb) => {
+                    executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+                      var warnMessage = ' Please fix this issue before sending any transaction. '
+                      if (error) {
+                        return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+                      }
+                      try {
+                        var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                        cb(null, gasPriceValue)
+                      } catch (e) {
+                        cb(warnMessage + e.message, null, false)
+                      }
+                    })
+                  }
+                )
+                modalDialog('Confirm transaction', content,
+                  { label: 'Confirm',
+                    fn: () => {
+                      self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+                      // TODO: check if this is check is still valid given the refactor
+                      if (!content.gasPriceStatus) {
+                        cancelCb('Given gas price is not correct')
+                      } else {
+                        var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                        continueTxExecution(gasPrice)
+                      }
+                    }}, {
+                      label: 'Cancel',
+                      fn: () => {
+                        return cancelCb('Transaction canceled by user.')
+                      }
+                    })
+              },
+
+              runTxCallback)
           })
         } else {
           if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) self._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
