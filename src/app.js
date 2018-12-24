@@ -313,9 +313,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
   // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp({
-    removable_instances: true
-  })
+  var udapp = new UniversalDApp({})
   registry.put({api: udapp, name: 'udapp'})
 
   var udappUI = new UniversalDAppUI(udapp)

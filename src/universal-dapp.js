@@ -27,7 +27,6 @@ function UniversalDApp (opts, localRegistry) {
   self.data = {}
   self._components = {}
   self._components.registry = localRegistry || globalRegistry
-  self.removable_instances = opts.removable_instances
   self._deps = {
     config: self._components.registry.get('config').api,
     compilersartefacts: self._components.registry.get('compilersartefacts').api,

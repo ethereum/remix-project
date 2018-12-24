@@ -38,10 +38,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     ${copyToClipboard(() => address)}
   </div>`
 
-  if (self.udapp.removable_instances) {
-    var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    title.appendChild(close)
-  }
+  var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
+  title.appendChild(close)
 
   function remove () {
     instance.remove()
