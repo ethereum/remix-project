@@ -1,18 +1,15 @@
 'use strict'
 var $ = require('jquery')
 var yo = require('yo-yo')
-var csjs = require('csjs-inject')
 var EventManager = require('../../lib/events')
 var globlalRegistry = require('../../global/registry')
-var helper = require('../../lib/helper.js')
 var executionContext = require('../../execution-context')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
 var Card = require('../ui/card')
-var Recorder = require('../../recorder')
 var css = require('./styles/run-tab-styles')
 
 var SettingsUI = require('./runTab/settings.js')
 var ContractDropdownUI = require('./runTab/contractDropdown.js')
+var RecorderUI = require('./runTab/recorder.js')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -90,7 +87,9 @@ function runTab (opts, localRegistry) {
     </div>`
 
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
-  var recorderInterface = makeRecorder(localRegistry, self.event, self)
+
+  var recorderInterface = new RecorderUI(self.event, self)
+  recorderInterface.render()
 
   self._view.collapsedView = yo`
     <div class=${css.recorderCollapsedView}>
@@ -141,100 +140,6 @@ function runTab (opts, localRegistry) {
   container.appendChild(el)
 
   return { render () { return container } }
-}
-
-/* ------------------------------------------------
-           RECORDER
------------------------------------------------- */
-function makeRecorder (registry, runTabEvent, self) {
-  var recorder = new Recorder(self._deps.udapp, self._deps.logCallback)
-
-  recorder.event.register('newTxRecorded', (count) => {
-    self.data.count = count
-    self._view.recorderCount.innerText = count
-  })
-  recorder.event.register('cleared', () => {
-    self.data.count = 0
-    self._view.recorderCount.innerText = 0
-  })
-
-  executionContext.event.register('contextChanged', () => {
-    recorder.clearAll()
-  })
-
-  runTabEvent.register('clearInstance', () => {
-    recorder.clearAll()
-  })
-
-  var css2 = csjs`
-    .container {}
-    .runTxs {}
-    .recorder {}
-  `
-
-  var runButton = yo`<i class="fa fa-play runtransaction ${css2.runTxs} ${css.icon}"  title="Run Transactions" aria-hidden="true"></i>`
-  var recordButton = yo`
-    <i class="fa fa-floppy-o savetransaction ${css2.recorder} ${css.icon}"
-      onclick=${triggerRecordButton} title="Save Transactions" aria-hidden="true">
-    </i>`
-
-  function triggerRecordButton () {
-    var txJSON = JSON.stringify(recorder.getAll(), null, 2)
-    var fileManager = self._deps.fileManager
-    var path = fileManager.currentPath()
-    modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', input => {
-      var fileProvider = fileManager.fileProviderOf(path)
-      if (fileProvider) {
-        var newFile = path + '/' + input
-        helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
-          if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-          if (!fileProvider.set(newFile, txJSON)) {
-            modalDialogCustom.alert('Failed to create file ' + newFile)
-          } else {
-            fileManager.switchFile(newFile)
-          }
-        })
-      }
-    })
-  }
-
-  runButton.onclick = () => {
-    /*
-    @TODO
-    update account address in scenario.json
-    popup if scenario.json not open - "Open a file with transactions you want to replay and click play again"
-    */
-    var currentFile = self._deps.config.get('currentFile')
-    self._deps.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
-      if (error) {
-        modalDialogCustom.alert('Invalid Scenario File ' + error)
-      } else {
-        if (currentFile.match('.json$')) {
-          try {
-            var obj = JSON.parse(json)
-            var txArray = obj.transactions || []
-            var accounts = obj.accounts || []
-            var options = obj.options || {}
-            var abis = obj.abis || {}
-            var linkReferences = obj.linkReferences || {}
-          } catch (e) {
-            return modalDialogCustom.alert('Invalid Scenario File, please try again')
-          }
-          if (txArray.length) {
-            var noInstancesText = self._view.noInstancesText
-            if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-            recorder.run(txArray, accounts, options, abis, linkReferences, self._deps.udapp, (abi, address, contractName) => {
-              self._view.instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
-            })
-          }
-        } else {
-          modalDialogCustom.alert('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
-        }
-      }
-    })
-  }
-
-  return { recordButton, runButton }
 }
 
 module.exports = runTab
