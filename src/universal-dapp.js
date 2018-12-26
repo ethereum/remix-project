@@ -1,7 +1,3 @@
-/* global */
-'use strict'
-
-var yo = require('yo-yo')
 var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
@@ -17,8 +13,7 @@ function UniversalDApp (globalRegistry) {
   this.data = {}
   this._deps = {
     config: globalRegistry.get('config').api,
-    compiler: globalRegistry.get('compiler').api,
-    logCallback: globalRegistry.get('logCallback').api
+    compiler: globalRegistry.get('compiler').api
   }
   executionContext.event.register('contextChanged', this, function (context) {
     self.resetEnvironment()
@@ -50,10 +45,8 @@ UniversalDApp.prototype.resetEnvironment = function () {
   this.txRunner = new TxRunner(this.accounts, this._txRunnerAPI)
   this.txRunner.event.register('transactionBroadcasted', (txhash) => {
     executionContext.detectNetwork((error, network) => {
-      if (!error && network) {
-        var txLink = executionContext.txDetailsLink(network.name, txhash)
-        if (txLink) this._deps.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
-      }
+      if (error || !network) return
+      this.event.trigger('transactionBroadcasted', [txhash, network.name])
     })
   })
 }
