@@ -223,9 +223,9 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     txFormat.buildData(args.contractName, args.contractAbi, self.compilerData.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
         if (!args.funABI.constant) {
-          self.registry.logCallback(`${logMsg} pending ... `)
+          self.registry.get('logCallback').api(`${logMsg} pending ... `)
         } else {
-          self.registry.logCallback(`${logMsg}`)
+          self.registry.get('logCallback').api(`${logMsg}`)
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
@@ -234,7 +234,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                self.registry.logCallback(`${logMsg} errored: ${vmError.message} `)
+                self.registry.get('logCallback').api(`${logMsg} errored: ${vmError.message} `)
                 return
               }
             }
@@ -243,14 +243,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               outputCb(decoded)
             }
           } else {
-            self.registry.logCallback(`${logMsg} errored: ${error} `)
+            self.registry.get('logCallback').api(`${logMsg} errored: ${error} `)
           }
         })
       } else {
-        self.registry.logCallback(`${logMsg} errored: ${error} `)
+        self.registry.get('logCallback').api(`${logMsg} errored: ${error} `)
       }
     }, (msg) => {
-      self.registry.logCallback(msg)
+      self.registry.get('logCallback').api(msg)
     }, (data, runTxCallback) => {
       // called for libraries deployment
       self.udapp.runTx(data, confirmationCb, runTxCallback)
