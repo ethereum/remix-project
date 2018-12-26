@@ -8,7 +8,7 @@ var modalDialogCustom = require('../../ui/modal-dialog-custom')
 
 class RecorderUI {
 
-  constructor (registry, runTabEvent, parentSelf) {
+  constructor (runTabEvent, parentSelf) {
     this.parentSelf = parentSelf
     this.recorder = new Recorder(this.parentSelf._deps.udapp, this.parentSelf._deps.logCallback)
 

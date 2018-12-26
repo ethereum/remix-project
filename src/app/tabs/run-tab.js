@@ -1,4 +1,3 @@
-'use strict'
 var $ = require('jquery')
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
@@ -12,18 +11,13 @@ var ContractDropdownUI = require('./runTab/contractDropdown.js')
 var RecorderUI = require('./runTab/recorder.js')
 
 function runTab (opts, localRegistry) {
-  /* -------------------------
-            VARIABLES
-  --------------------------- */
   var self = this
   self.event = new EventManager()
   self._view = {}
   self.data = {
     count: 0,
-    text: `All transactions (deployed contracts and function executions)
-    in this environment can be saved and replayed in
-    another environment. e.g Transactions created in
-    Javascript VM can be replayed in the Injected Web3.`
+    text: `All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
+    another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.`
   }
   self._components = {}
   self._components.registry = localRegistry || globlalRegistry
@@ -124,9 +118,6 @@ function runTab (opts, localRegistry) {
       status.appendChild(self._view.collapsedView)
     }
   })
-  /* -------------------------
-       MAIN HTML ELEMENT
-  --------------------------- */
   var settingsUI = new SettingsUI(container, self)
   var contractDropdownUI = new ContractDropdownUI(self)
   var el = yo`
