@@ -14,14 +14,11 @@ var executionContext = remixLib.execution.executionContext
 
 function UniversalDApp (globalRegistry) {
   this.event = new EventManager()
-  var self = this
-  self.data = {}
-  self._components = {}
-  self._components.registry = globalRegistry
-  self._deps = {
-    config: self._components.registry.get('config').api,
-    compilersartefacts: self._components.registry.get('compilersartefacts').api,
-    logCallback: self._components.registry.get('logCallback').api
+  this.data = {}
+  this._deps = {
+    config: globalRegistry.get('config').api,
+    compiler: globalRegistry.get('compiler').api,
+    logCallback: globalRegistry.get('logCallback').api
   }
   executionContext.event.register('contextChanged', this, function (context) {
     self.resetEnvironment()
