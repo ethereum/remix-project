@@ -181,13 +181,21 @@ class SettingsUI {
         }, () => {})
       },
       (error, address) => {
-        if (!error) {
-          addTooltip(`account ${address} created`)
-        } else {
-          addTooltip('Cannot create an account: ' + error)
+        if (error) {
+          return addTooltip('Cannot create an account: ' + error)
         }
+        addTooltip(`account ${address} created`)
       }
     )
+  }
+
+  alertSignedData (error, hash, signedData) {
+    if (error && error.message !== '') {
+      console.log(error)
+      addTooltip(error.message)
+    } else {
+      modalDialogCustom.alert(yo`<div><b>hash:</b>${hash}<br><b>signature:</b>${signedData}</div>`)
+    }
   }
 
   signMessage (event) {
@@ -198,14 +206,6 @@ class SettingsUI {
       var account = $txOrigin.selectedOptions[0].value
       var isVM = executionContext.isVM()
       var isInjected = executionContext.getProvider() === 'injected'
-      function alertSignedData (error, hash, signedData) {
-        if (error && error.message !== '') {
-          console.log(error)
-          addTooltip(error.message)
-        } else {
-          modalDialogCustom.alert(yo`<div><b>hash:</b>${hash}<br><b>signature:</b>${signedData}</div>`)
-        }
-      }
       if (isVM) {
         modalDialogCustom.promptMulti(signMessageDialog, (message) => {
           const personalMsg = ethJSUtil.hashPersonalMessage(Buffer.from(message))
@@ -213,7 +213,7 @@ class SettingsUI {
           try {
             var rsv = ethJSUtil.ecsign(personalMsg, privKey)
             var signedData = ethJSUtil.toRpcSig(rsv.v, rsv.r, rsv.s)
-            alertSignedData(null, '0x' + personalMsg.toString('hex'), signedData)
+            this.alertSignedData(null, '0x' + personalMsg.toString('hex'), signedData)
           } catch (e) {
             addTooltip(e.message)
             return
@@ -224,7 +224,7 @@ class SettingsUI {
           const hashedMsg = executionContext.web3().sha3(message)
           try {
             executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-              alertSignedData(error, hashedMsg, signedData)
+              this.alertSignedData(error, hashedMsg, signedData)
             })
           } catch (e) {
             addTooltip(e.message)
@@ -239,7 +239,7 @@ class SettingsUI {
             try {
               var personal = new Personal(executionContext.web3().currentProvider)
               personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
-                alertSignedData(error, hashedMsg, signedData)
+                this.alertSignedData(error, hashedMsg, signedData)
               })
             } catch (e) {
               addTooltip(e.message)
@@ -252,12 +252,11 @@ class SettingsUI {
     })
   }
 
-  // TODO: cb param doesn't seem to be used
-  updateNetwork (cb) {
+  updateNetwork () {
     let self = this
     var networkcallid = 0
     networkcallid++
-    (function (callid) {
+    ((callid) => {
       executionContext.detectNetwork((err, { id, name } = {}) => {
         if (networkcallid > callid) return
         networkcallid++
@@ -267,8 +266,6 @@ class SettingsUI {
         } else {
           self.netUI.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
         }
-        // TODO: cb param doesn't seem to be used
-        if (cb) cb(err, {id, name})
       })
     })(networkcallid)
   }
@@ -279,7 +276,7 @@ var accountListCallId = 0
 var loadedAccounts = {}
 function fillAccountsList (container, self) {
   accountListCallId++
-  (function (callid) {
+  ((callid) => {
     var txOrigin = container.querySelector('#txorigin')
     self._deps.udapp.getAccounts((err, accounts) => {
       if (accountListCallId > callid) return
@@ -305,12 +302,11 @@ function fillAccountsList (container, self) {
 
 function updateAccountBalances (container, self) {
   var accounts = $(container.querySelector('#txorigin')).children('option')
-  accounts.each(function (index, value) {
-    (function (acc) {
-      self._deps.udapp.getBalanceInEther(accounts[acc].value, function (err, res) {
-        if (!err) {
-          accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res)
-        }
+  accounts.each((index, value) => {
+    ((acc) => {
+      self._deps.udapp.getBalanceInEther(accounts[acc].value, (err, res) => {
+        if (err) return
+        accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res)
       })
     })(index)
   })
