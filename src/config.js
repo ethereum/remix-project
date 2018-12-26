@@ -53,6 +53,8 @@ function Config (storage) {
     return this.unpersistedItems[key]
   }
 
+  // TODO: this only used for *one* property "doNotShowTransactionConfirmationAgain"
+  // and can be removed once it's refactored away in txRunner
   this.setUnpersistedProperty = function (key, value) {
     this.unpersistedItems[key] = value
   }
