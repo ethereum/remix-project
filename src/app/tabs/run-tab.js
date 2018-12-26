@@ -12,7 +12,7 @@ var Recorder = require('../../recorder')
 var css = require('./styles/run-tab-styles')
 
 var SettingsUI = require('./runTab/settings.js')
-var contractDropdownUI = require('./runTab/contractDropdown.js')
+var ContractDropdownUI = require('./runTab/contractDropdown.js')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -129,10 +129,11 @@ function runTab (opts, localRegistry) {
        MAIN HTML ELEMENT
   --------------------------- */
   var settingsUI = new SettingsUI(container, self)
+  var contractDropdownUI = new ContractDropdownUI(self)
   var el = yo`
   <div>
     ${settingsUI.render()}
-    ${contractDropdownUI(self.event, self)}
+    ${contractDropdownUI.render()}
     ${recorderCard.render()}
     ${self._view.instanceContainer}
   </div>

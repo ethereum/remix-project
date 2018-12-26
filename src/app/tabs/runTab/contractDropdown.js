@@ -14,67 +14,110 @@ var confirmDialog = require('../../execution/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../../multiParamManager')
 
-function contractDropdown (events, self) {
-  var instanceContainer = self._view.instanceContainer
-  var instanceContainerTitle = self._view.instanceContainerTitle
-  instanceContainer.appendChild(instanceContainerTitle)
-  instanceContainer.appendChild(self._view.noInstancesText)
-  var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
-  var info = yo`<i class="fa fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
+class ContractDropdownUI {
+  constructor (parentSelf) {
+    this.parentSelf = parentSelf
+  }
 
-  var newlyCompiled = (success, data, source, compiler, compilerFullName) => {
-    getContractNames(success, data, compiler, compilerFullName)
-    if (success) {
-      compFails.style.display = 'none'
+  render () {
+    this.instanceContainer = this.parentSelf._view.instanceContainer
+    var instanceContainerTitle = this.parentSelf._view.instanceContainerTitle
+    this.instanceContainer.appendChild(instanceContainerTitle)
+    this.instanceContainer.appendChild(this.parentSelf._view.noInstancesText)
+    var compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
+    var info = yo`<i class="fa fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
+
+    var newlyCompiled = (success, data, source, compiler, compilerFullName) => {
+      this.getContractNames(success, data, compiler, compilerFullName)
+      if (success) {
+        compFails.style.display = 'none'
+        document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
+      } else {
+        compFails.style.display = 'block'
+        document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
+      }
+    }
+
+    this.parentSelf._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+      // TODO check whether the tab is configured
+      let compiler = new CompilerAbstract(languageVersion, data)
+      this.parentSelf._deps.compilersArtefacts[languageVersion] = compiler
+      this.parentSelf._deps.compilersArtefacts['__last'] = compiler
+      newlyCompiled(true, data, source, compiler, languageVersion)
+    })
+
+    this.parentSelf._deps.compiler.event.register('compilationFinished', (success, data, source) => {
+      var name = 'solidity'
+      let compiler = new CompilerAbstract(name, data)
+      this.parentSelf._deps.compilersArtefacts[name] = compiler
+      this.parentSelf._deps.compilersArtefacts['__last'] = compiler
+      newlyCompiled(success, data, source, this.parentSelf._deps.compiler, name)
+    })
+
+    var deployAction = (value) => {
+      this.parentSelf._view.createPanel.style.display = value
+      this.parentSelf._view.orLabel.style.display = value
+    }
+
+    this.parentSelf._deps.fileManager.event.register('currentFileChanged', (currentFile) => {
       document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
+      var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+      contractNames.innerHTML = ''
+      if (/.(.abi)$/.exec(currentFile)) {
+        deployAction('none')
+        compFails.style.display = 'none'
+        contractNames.appendChild(yo`<option>(abi)</option>`)
+        this.selectContractNames.setAttribute('disabled', true)
+      } else if (/.(.sol)$/.exec(currentFile)) {
+        deployAction('block')
+      }
+    })
+
+    this.atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
+    this.selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
+
+    this.parentSelf._view.createPanel = yo`<div class="${css.button}"></div>`
+    this.parentSelf._view.orLabel = yo`<div class="${css.orLabel}">or</div>`
+    var el = yo`
+      <div class="${css.container}">
+        <div class="${css.subcontainer}">
+          ${this.selectContractNames} ${compFails} ${info}
+        </div>
+        <div>
+          ${this.parentSelf._view.createPanel}
+          ${this.parentSelf._view.orLabel}
+          <div class="${css.button} ${css.atAddressSect}">
+            <div class="${css.atAddress}" onclick=${function () { this.loadFromAddress() }}>At Address</div>
+            ${this.atAddressButtonInput}
+          </div>
+        </div>
+      </div>
+    `
+    this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
+
+    return el
+  }
+
+  setInputParamsPlaceHolder () {
+    this.parentSelf._view.createPanel.innerHTML = ''
+    if (this.selectContractNames.selectedIndex >= 0 && this.selectContractNames.children.length > 0) {
+      var selectedContract = this.getSelectedContract()
+      var ctrabi = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
+      var ctrEVMbc = selectedContract.contract.object.evm.bytecode.object
+      var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
+        this.createInstance(inputsValues, selectedContract.compiler)
+      }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy', ctrEVMbc)
+      this.parentSelf._view.createPanel.appendChild(createConstructorInstance.render())
+      return
     } else {
-      compFails.style.display = 'block'
-      document.querySelector(`.${css.contractNames}`).classList.add(css.contractNamesError)
+      this.parentSelf._view.createPanel.innerHTML = 'No compiled contracts'
     }
   }
 
-  self._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
-    // TODO check whether the tab is configured
-    let compiler = new CompilerAbstract(languageVersion, data)
-    self._deps.compilersArtefacts[languageVersion] = compiler
-    self._deps.compilersArtefacts['__last'] = compiler
-    newlyCompiled(true, data, source, compiler, languageVersion)
-  })
-
-  self._deps.compiler.event.register('compilationFinished', (success, data, source) => {
-    var name = 'solidity'
-    let compiler = new CompilerAbstract(name, data)
-    self._deps.compilersArtefacts[name] = compiler
-    self._deps.compilersArtefacts['__last'] = compiler
-    newlyCompiled(success, data, source, self._deps.compiler, name)
-  })
-
-  var deployAction = (value) => {
-    self._view.createPanel.style.display = value
-    self._view.orLabel.style.display = value
-  }
-
-  self._deps.fileManager.event.register('currentFileChanged', (currentFile) => {
-    document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
-    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    contractNames.innerHTML = ''
-    if (/.(.abi)$/.exec(currentFile)) {
-      deployAction('none')
-      compFails.style.display = 'none'
-      contractNames.appendChild(yo`<option>(abi)</option>`)
-      selectContractNames.setAttribute('disabled', true)
-    } else if (/.(.sol)$/.exec(currentFile)) {
-      deployAction('block')
-    }
-  })
-
-  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
-  var selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
-
-  function getSelectedContract () {
-    var contract = selectContractNames.children[selectContractNames.selectedIndex]
+  getSelectedContract () {
+    var contract = this.selectContractNames.children[this.selectContractNames.selectedIndex]
     var contractName = contract.innerHTML
-    var compiler = self._deps.compilersArtefacts[contract.getAttribute('compiler')]
+    var compiler = this.parentSelf._deps.compilersArtefacts[contract.getAttribute('compiler')]
     if (!compiler) return null
 
     if (contractName) {
@@ -87,57 +130,21 @@ function contractDropdown (events, self) {
     return null
   }
 
-  self._view.createPanel = yo`<div class="${css.button}"></div>`
-  self._view.orLabel = yo`<div class="${css.orLabel}">or</div>`
-  var el = yo`
-    <div class="${css.container}">
-      <div class="${css.subcontainer}">
-        ${selectContractNames} ${compFails} ${info}
-      </div>
-      <div>
-        ${self._view.createPanel}
-        ${self._view.orLabel}
-        <div class="${css.button} ${css.atAddressSect}">
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress() }}>At Address</div>
-          ${atAddressButtonInput}
-        </div>
-      </div>
-    </div>
-  `
-
-  function setInputParamsPlaceHolder () {
-    self._view.createPanel.innerHTML = ''
-    if (selectContractNames.selectedIndex >= 0 && selectContractNames.children.length > 0) {
-      var selectedContract = getSelectedContract()
-      var ctrabi = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-      var ctrEVMbc = selectedContract.contract.object.evm.bytecode.object
-      var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
-        createInstance(inputsValues, selectedContract.compiler)
-      }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy', ctrEVMbc)
-      self._view.createPanel.appendChild(createConstructorInstance.render())
-      return
-    } else {
-      self._view.createPanel.innerHTML = 'No compiled contracts'
-    }
-  }
-
-  selectContractNames.addEventListener('change', setInputParamsPlaceHolder)
-
-  function createInstanceCallback (selectedContract, data) {
-    self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+  createInstanceCallback (selectedContract, data) {
+    this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.contract.object.evm.bytecode.linkReferences
       data.contractABI = selectedContract.contract.object.abi
     }
-    self._deps.udapp.createContract(data,
+    this.parentSelf._deps.udapp.createContract(data,
 
       (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
         if (network.name !== 'Main') {
           return continueTxExecution(null)
         }
         var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-        var content = confirmDialog(tx, amount, gasEstimation, self,
+        var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
           (gasPrice, cb) => {
             let txFeeText, priceStatus
             // TODO: this try catch feels like an anti pattern, can/should be
@@ -170,7 +177,7 @@ function contractDropdown (events, self) {
         modalDialog('Confirm transaction', content,
           { label: 'Confirm',
             fn: () => {
-              self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+              this.parentSelf._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
               // TODO: check if this is check is still valid given the refactor
               if (!content.gasPriceStatus) {
                 cancelCb('Given gas price is not correct')
@@ -215,28 +222,28 @@ function contractDropdown (events, self) {
           if (isVM) {
             var vmError = txExecution.checkVMError(txResult)
             if (vmError.error) {
-              self._deps.logCallback(vmError.message)
+              this.parentSelf._deps.logCallback(vmError.message)
               return
             }
           }
           if (txResult.result.status && txResult.result.status === '0x0') {
-            self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
+            this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
             return
           }
-          var noInstancesText = self._view.noInstancesText
+          var noInstancesText = this.parentSelf._view.noInstancesText
           if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
           var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-          instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+          this.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstance(selectedContract.contract.object, address, this.selectContractNames.value))
         } else {
-          self._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
+          this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
         }
       }
     )
   }
 
   // DEPLOY INSTANCE
-  function createInstance (args, compiler) {
-    var selectedContract = getSelectedContract()
+  createInstance (args, compiler) {
+    var selectedContract = this.getSelectedContract()
 
     if (selectedContract.contract.object.evm.bytecode.object.length === 0) {
       modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
@@ -245,23 +252,23 @@ function contractDropdown (events, self) {
 
     var forceSend = () => {
       var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-      self._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
-        if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+      this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
+        if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
           txFormat.buildData(selectedContract.name, selectedContract.contract.object, compiler.getContracts(), true, constructor, args, (error, data) => {
-            if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-            createInstanceCallback(selectedContract, data)
+            if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+            this.createInstanceCallback(selectedContract, data)
           }, (msg) => {
-            self._deps.logCallback(msg)
+            this.parentSelf._deps.logCallback(msg)
           }, (data, runTxCallback) => {
             // called for libraries deployment
-            self._deps.udapp.runTx(data,
+            this.parentSelf._deps.udapp.runTx(data,
               (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
                 if (network.name !== 'Main') {
                   return continueTxExecution(null)
                 }
                 var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-                var content = confirmDialog(tx, amount, gasEstimation, self,
+                var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
                   (gasPrice, cb) => {
                     let txFeeText, priceStatus
                     // TODO: this try catch feels like an anti pattern, can/should be
@@ -294,7 +301,7 @@ function contractDropdown (events, self) {
                 modalDialog('Confirm transaction', content,
                   { label: 'Confirm',
                     fn: () => {
-                      self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+                      this.parentSelf._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
                       // TODO: check if this is check is still valid given the refactor
                       if (!content.gasPriceStatus) {
                         cancelCb('Given gas price is not correct')
@@ -315,10 +322,10 @@ function contractDropdown (events, self) {
               runTxCallback)
           })
         } else {
-          if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) self._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+          if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
           txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
-            if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-            createInstanceCallback(selectedContract, data)
+            if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+            this.createInstanceCallback(selectedContract, data)
           })
         }
       })
@@ -335,7 +342,7 @@ function contractDropdown (events, self) {
           }}, {
             label: 'Cancel',
             fn: () => {
-              self._deps.logCallback(`creation of ${selectedContract.name} canceled by user.`)
+              this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} canceled by user.`)
             }
           })
     } else {
@@ -344,48 +351,47 @@ function contractDropdown (events, self) {
   }
 
   // ACCESS DEPLOYED INSTANCE
-  function loadFromAddress () {
-    var noInstancesText = self._view.noInstancesText
+  loadFromAddress () {
+    var noInstancesText = this.parentSelf._view.noInstancesText
     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-    var address = atAddressButtonInput.value
+    var address = this.atAddressButtonInput.value
     if (!ethJSUtil.isValidAddress(address)) {
       return modalDialogCustom.alert('Invalid address.')
     }
     if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
       return modalDialogCustom.alert('Invalid checksum address.')
     }
-    if (/.(.abi)$/.exec(self._deps.config.get('currentFile'))) {
+    if (/.(.abi)$/.exec(this.parentSelf._deps.config.get('currentFile'))) {
       modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', () => {
         var abi
         try {
-          abi = JSON.parse(self._deps.editor.currentContent())
+          abi = JSON.parse(this.parentSelf._deps.editor.currentContent())
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
-        instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, address))
+        this.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstanceFromABI(abi, address, address))
       })
     } else {
-      var selectedContract = getSelectedContract()
-      instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
+      var selectedContract = this.getSelectedContract()
+      this.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstance(selectedContract.contract.object, address, this.selectContractNames.value))
     }
   }
 
   // GET NAMES OF ALL THE CONTRACTS
-  function getContractNames (success, data, compiler, compilerFullName) {
+  getContractNames (success, data, compiler, compilerFullName) {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     contractNames.innerHTML = ''
     if (success) {
-      selectContractNames.removeAttribute('disabled')
+      this.selectContractNames.removeAttribute('disabled')
       compiler.visitContracts((contract) => {
         contractNames.appendChild(yo`<option compiler="${compilerFullName}">${contract.name}</option>`)
       })
     } else {
-      selectContractNames.setAttribute('disabled', true)
+      this.selectContractNames.setAttribute('disabled', true)
     }
-    setInputParamsPlaceHolder()
+    this.setInputParamsPlaceHolder()
   }
 
-  return el
 }
 
-module.exports = contractDropdown
+module.exports = ContractDropdownUI
