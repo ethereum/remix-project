@@ -474,6 +474,9 @@ function contractDropdown (events, self) {
           continueTxExecution()
         }
       },
+      function (okCb, cancelCb) {
+        modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      },
       (error, txResult) => {
         if (!error) {
           var isVM = executionContext.isVM()
@@ -521,7 +524,6 @@ function contractDropdown (events, self) {
           }, (data, runTxCallback) => {
             // called for libraries deployment
             self._deps.udapp.runTx(data,
-
               (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
                 if (network.name !== 'Main') {
                   return continueTxExecution(null)
@@ -575,7 +577,9 @@ function contractDropdown (events, self) {
                       }
                     })
               },
-
+              function (okCb, cancelCb) {
+                modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+              },
               runTxCallback)
           })
         } else {

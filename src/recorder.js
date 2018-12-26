@@ -9,8 +9,9 @@ var typeConversion = remixLib.execution.typeConversion
 var async = require('async')
 var modal = require('./app/ui/modal-dialog-custom')
 
-var modalDialog = require('./app/ui/modaldialog')
 var confirmDialog = require('./app/execution/confirmDialog')
+var modalCustom = require('./app/ui/modal-dialog-custom')
+var modalDialog = require('./app/ui/modaldialog')
 
 /**
   * Record transaction as long as the user create them.
@@ -318,6 +319,9 @@ class Recorder {
           } else {
             continueTxExecution()
           }
+        },
+        function (okCb, cancelCb) {
+          modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
         },
         function (err, txResult) {
           if (err) {
