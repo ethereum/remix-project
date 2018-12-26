@@ -6,11 +6,12 @@ var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
-var EventManager = require('./lib/events')
 var crypto = require('crypto')
 var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
-var executionContext = require('./execution-context')
+var EventManager = remixLib.EventManager
+var executionContext = remixLib.execution.executionContext
+
 var globalRegistry = require('./global/registry')
 
 function UniversalDApp () {
