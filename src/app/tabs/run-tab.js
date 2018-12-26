@@ -32,14 +32,8 @@ function runTab (opts, localRegistry) {
         var index = select.selectedIndex
         var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
         var unit = 'ether' // default
-        if (selectedUnit === 'ether') {
-          unit = 'ether'
-        } else if (selectedUnit === 'finney') {
-          unit = 'finney'
-        } else if (selectedUnit === 'gwei') {
-          unit = 'gwei'
-        } else if (selectedUnit === 'wei') {
-          unit = 'wei'
+        if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+          unit = selectedUnit
         }
         cb(null, executionContext.web3().toWei(number, unit))
       } catch (e) {
