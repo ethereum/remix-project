@@ -40,8 +40,11 @@ UniversalDApp.prototype.resetEnvironment = function () {
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
     executionContext.vm().stateManager.cache.flush(function () {})
   }
+  // TODO: most params here can be refactored away in txRunner
   this.txRunner = new TxRunner(this.accounts, {
+    // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
     config: this.config,
+    // TODO: to refactor, TxRunner already has access to executionContext
     detectNetwork: (cb) => {
       executionContext.detectNetwork(cb)
     },
