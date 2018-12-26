@@ -10,7 +10,6 @@ var executionContext = remixLib.execution.executionContext
 
 function UniversalDApp (globalRegistry) {
   this.event = new EventManager()
-  this.data = {}
   this._deps = {
     config: globalRegistry.get('config').api,
     compiler: globalRegistry.get('compiler').api

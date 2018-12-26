@@ -21,8 +21,9 @@ var modalCustom = require('./app/ui/modal-dialog-custom')
 var modalDialog = require('./app/ui/modaldialog')
 var TreeView = require('./app/ui/TreeView')
 
-function UniversalDAppUI (udapp, opts = {}) {
+function UniversalDAppUI (udapp, registry) {
   this.udapp = udapp
+  this.registry = registry
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -217,9 +218,9 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     txFormat.buildData(args.contractName, args.contractAbi, self.udapp.data.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
         if (!args.funABI.constant) {
-          self.udapp._deps.logCallback(`${logMsg} pending ... `)
+          self.registry.logCallback(`${logMsg} pending ... `)
         } else {
-          self.udapp._deps.logCallback(`${logMsg}`)
+          self.registry.logCallback(`${logMsg}`)
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
         self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
@@ -228,7 +229,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
             if (isVM) {
               var vmError = txExecution.checkVMError(txResult)
               if (vmError.error) {
-                self.udapp._deps.logCallback(`${logMsg} errored: ${vmError.message} `)
+                self.registry.logCallback(`${logMsg} errored: ${vmError.message} `)
                 return
               }
             }
@@ -237,14 +238,14 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
               outputCb(decoded)
             }
           } else {
-            self.udapp._deps.logCallback(`${logMsg} errored: ${error} `)
+            self.registry.logCallback(`${logMsg} errored: ${error} `)
           }
         })
       } else {
-        self.udapp._deps.logCallback(`${logMsg} errored: ${error} `)
+        self.registry.logCallback(`${logMsg} errored: ${error} `)
       }
     }, (msg) => {
-      self.udapp._deps.logCallback(msg)
+      self.registry.logCallback(msg)
     }, (data, runTxCallback) => {
       // called for libraries deployment
       self.udapp.runTx(data, confirmationCb, runTxCallback)
