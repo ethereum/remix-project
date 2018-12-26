@@ -320,7 +320,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     if (txLink) registry.get('logCallback').api.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
   })
 
-  var udappUI = new UniversalDAppUI(udapp)
+  var udappUI = new UniversalDAppUI(udapp, registry)
   registry.put({api: udappUI, name: 'udappUI'})
 
   // ----------------- Tx listener -----------------
