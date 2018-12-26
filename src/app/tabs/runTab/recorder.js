@@ -21,13 +21,8 @@ class RecorderUI {
       this.parentSelf._view.recorderCount.innerText = 0
     })
 
-    executionContext.event.register('contextChanged', () => {
-      this.recorder.clearAll()
-    })
-
-    runTabEvent.register('clearInstance', () => {
-      this.recorder.clearAll()
-    })
+    executionContext.event.register('contextChanged', this.recorder.clearAll.bind(this.recorder))
+    runTabEvent.register('clearInstance', this.recorder.clearAll.bind(this.recorder))
   }
 
   render () {
@@ -50,29 +45,27 @@ class RecorderUI {
     var currentFile = this.parentSelf._deps.config.get('currentFile')
     this.parentSelf._deps.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
-        modalDialogCustom.alert('Invalid Scenario File ' + error)
-      } else {
-        if (currentFile.match('.json$')) {
-          try {
-            var obj = JSON.parse(json)
-            var txArray = obj.transactions || []
-            var accounts = obj.accounts || []
-            var options = obj.options || {}
-            var abis = obj.abis || {}
-            var linkReferences = obj.linkReferences || {}
-          } catch (e) {
-            return modalDialogCustom.alert('Invalid Scenario File, please try again')
-          }
-          if (txArray.length) {
-            var noInstancesText = this.parentSelf._view.noInstancesText
-            if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-            this.recorder.run(txArray, accounts, options, abis, linkReferences, this.parentSelf._deps.udapp, (abi, address, contractName) => {
-              this.parentSelf._view.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
-            })
-          }
-        } else {
-          modalDialogCustom.alert('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
-        }
+        return modalDialogCustom.alert('Invalid Scenario File ' + error)
+      }
+      if (!currentFile.match('.json$')) {
+        modalDialogCustom.alert('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
+      }
+      try {
+        var obj = JSON.parse(json)
+        var txArray = obj.transactions || []
+        var accounts = obj.accounts || []
+        var options = obj.options || {}
+        var abis = obj.abis || {}
+        var linkReferences = obj.linkReferences || {}
+      } catch (e) {
+        return modalDialogCustom.alert('Invalid Scenario File, please try again')
+      }
+      if (txArray.length) {
+        var noInstancesText = this.parentSelf._view.noInstancesText
+        if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+        this.recorder.run(txArray, accounts, options, abis, linkReferences, this.parentSelf._deps.udapp, (abi, address, contractName) => {
+          this.parentSelf._view.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
+        })
       }
     })
   }
@@ -83,17 +76,13 @@ class RecorderUI {
     var path = fileManager.currentPath()
     modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', input => {
       var fileProvider = fileManager.fileProviderOf(path)
-      if (fileProvider) {
-        var newFile = path + '/' + input
-        helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
-          if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-          if (!fileProvider.set(newFile, txJSON)) {
-            modalDialogCustom.alert('Failed to create file ' + newFile)
-          } else {
-            fileManager.switchFile(newFile)
-          }
-        })
-      }
+      if (!fileProvider) return
+      var newFile = path + '/' + input
+      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
+        if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+        if (!fileProvider.set(newFile, txJSON)) return modalDialogCustom.alert('Failed to create file ' + newFile)
+        fileManager.switchFile(newFile)
+      })
     })
   }
 
