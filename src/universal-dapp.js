@@ -8,16 +8,13 @@ var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
 
-function UniversalDApp (globalRegistry, config) {
+function UniversalDApp (config) {
   this.event = new EventManager()
   var self = this
   self._deps = {
     config: globalRegistry.get('config').api,
     compiler: globalRegistry.get('compiler').api
   }
-  executionContext.event.register('contextChanged', this, function (context) {
-    self.resetEnvironment()
-  })
   self._txRunnerAPI = {
     config: self._deps.config,
     detectNetwork: (cb) => {
@@ -30,6 +27,7 @@ function UniversalDApp (globalRegistry, config) {
   self.txRunner = new TxRunner({}, self._txRunnerAPI)
   self.accounts = {}
   self.resetEnvironment()
+  executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 }
 
 UniversalDApp.prototype.resetEnvironment = function () {
