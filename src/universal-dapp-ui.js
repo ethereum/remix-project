@@ -24,6 +24,11 @@ var TreeView = require('./app/ui/TreeView')
 function UniversalDAppUI (udapp, registry) {
   this.udapp = udapp
   this.registry = registry
+
+  this.compilerData = {contractsDetails: {}}
+  registry.get('compiler').api.event.register('compilationFinished', (success, data, source) => {
+    this.compilerData.contractsDetails = success && data ? data.contracts : {}
+  })
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -215,7 +220,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     }
 
     // contractsDetails is used to resolve libraries
-    txFormat.buildData(args.contractName, args.contractAbi, self.udapp.data.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
+    txFormat.buildData(args.contractName, args.contractAbi, self.compilerData.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
         if (!args.funABI.constant) {
           self.registry.logCallback(`${logMsg} pending ... `)
