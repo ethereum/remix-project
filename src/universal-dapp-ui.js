@@ -16,8 +16,9 @@ var txFormat = remixLib.execution.txFormat
 
 var executionContext = require('./execution-context')
 
-var modalDialog = require('./app/ui/modaldialog')
 var confirmDialog = require('./app/execution/confirmDialog')
+var modalCustom = require('./app/ui/modal-dialog-custom')
+var modalDialog = require('./app/ui/modaldialog')
 var TreeView = require('./app/ui/TreeView')
 
 function UniversalDAppUI (udapp, opts = {}) {
@@ -208,6 +209,10 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
       outputOverride.appendChild(decoded)
     }
 
+    var promptCb = (okCb, cancelCb) => {
+      modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+    }
+
     // contractsDetails is used to resolve libraries
     txFormat.buildData(args.contractName, args.contractAbi, self.udapp.data.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
@@ -217,7 +222,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
           self.udapp._deps.logCallback(`${logMsg}`)
         }
         if (args.funABI.type === 'fallback') data.dataHex = value
-        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, (error, txResult) => {
+        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
           if (!error) {
             var isVM = executionContext.isVM()
             if (isVM) {
