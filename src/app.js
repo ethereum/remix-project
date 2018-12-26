@@ -314,6 +314,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- UniversalDApp -----------------
   var udapp = new UniversalDApp(registry.get('config').api)
+  // TODO: to remove when possible
   registry.put({api: udapp, name: 'udapp'})
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
     var txLink = executionContext.txDetailsLink(networkName, txhash)
@@ -321,6 +322,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   var udappUI = new UniversalDAppUI(udapp, registry)
+  // TODO: to remove when possible
   registry.put({api: udappUI, name: 'udappUI'})
 
   // ----------------- Tx listener -----------------
