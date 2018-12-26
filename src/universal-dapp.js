@@ -12,9 +12,7 @@ var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
 
-var globalRegistry = require('./global/registry')
-
-function UniversalDApp () {
+function UniversalDApp (globalRegistry) {
   this.event = new EventManager()
   var self = this
   self.data = {}
