@@ -11,8 +11,43 @@ const DraggableContent = require('../ui/draggableContent')
 
 const styles = styleguide.chooser()
 
-module.exports = class RighthandPanel {
-  constructor ({pluginManager, tabs}, localRegistry) {
+const css = csjs`
+  .righthandpanel      {
+    display            : flex;
+    flex-direction     : column;
+    top                : 0;
+    right              : 0;
+    bottom             : 0;
+    box-sizing         : border-box;
+    overflow           : hidden;
+    height             : 100%;
+  }
+  .header              {
+    height             : 100%;
+  }
+  .dragbar             {
+    position           : absolute;
+    width              : 0.5em;
+    top                : 3em;
+    bottom             : 0;
+    cursor             : col-resize;
+    z-index            : 999;
+    border-left        : 2px solid ${styles.rightPanel.bar_Dragging};
+  }
+  .ghostbar           {
+    width             : 3px;
+    background-color  : ${styles.rightPanel.bar_Ghost};
+    opacity           : 0.5;
+    position          : absolute;
+    cursor            : col-resize;
+    z-index           : 9999;
+    top               : 0;
+    bottom            : 0;
+  }
+`
+
+class RighthandPanel {
+  constructor (localRegistry) {
     const self = this
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
@@ -125,37 +160,4 @@ module.exports = class RighthandPanel {
   }
 }
 
-const css = csjs`
-  .righthandpanel      {
-    display            : flex;
-    flex-direction     : column;
-    top                : 0;
-    right              : 0;
-    bottom             : 0;
-    box-sizing         : border-box;
-    overflow           : hidden;
-    height             : 100%;
-  }
-  .header              {
-    height             : 100%;
-  }
-  .dragbar             {
-    position           : absolute;
-    width              : 0.5em;
-    top                : 3em;
-    bottom             : 0;
-    cursor             : col-resize;
-    z-index            : 999;
-    border-left        : 2px solid ${styles.rightPanel.bar_Dragging};
-  }
-  .ghostbar           {
-    width             : 3px;
-    background-color  : ${styles.rightPanel.bar_Ghost};
-    opacity           : 0.5;
-    position          : absolute;
-    cursor            : col-resize;
-    z-index           : 9999;
-    top               : 0;
-    bottom            : 0;
-  }
-`
+module.exports = RighthandPanel
