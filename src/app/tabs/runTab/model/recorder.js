@@ -1,17 +1,12 @@
-var yo = require('yo-yo')
-var remixLib = require('remix-lib')
-var EventManager = require('./lib/events')
+var async = require('async')
 var ethutil = require('ethereumjs-util')
-var executionContext = require('./execution-context')
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
+var executionContext = remixLib.execution.executionContext
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var typeConversion = remixLib.execution.typeConversion
-var async = require('async')
-var modal = require('./app/ui/modal-dialog-custom')
-
-var confirmDialog = require('./app/execution/confirmDialog')
-var modalCustom = require('./app/ui/modal-dialog-custom')
-var modalDialog = require('./app/ui/modaldialog')
+var helper = require('../../../../lib/helper.js')
 
 /**
   * Record transaction as long as the user create them.
@@ -19,13 +14,15 @@ var modalDialog = require('./app/ui/modaldialog')
   *
   */
 class Recorder {
-  constructor (udapp, logCallBack) {
+  constructor (udapp, fileManager, config) {
     var self = this
-    self.logCallBack = logCallBack
     self.event = new EventManager()
     self.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
+    this.udapp = udapp
+    this.fileManager = fileManager
+    this.config = config
 
-    udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
+    this.udapp.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
       var { from, to, value } = tx
 
@@ -58,7 +55,7 @@ class Recorder {
         record.inputs = txHelper.serializeInputs(payLoad.funAbi)
         record.type = payLoad.funAbi.type
 
-        udapp.getAccounts((error, accounts) => {
+        this.udapp.getAccounts((error, accounts) => {
           if (error) return console.log(error)
           record.from = `account{${accounts.indexOf(from)}}`
           self.data._usedAccounts[record.from] = from
@@ -67,13 +64,13 @@ class Recorder {
       }
     })
 
-    udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+    this.udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
       if (error) return console.log(error)
       if (call) return
 
       var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
       if (!address) return // not a contract creation
-      address = addressToString(address)
+      address = this.addressToString(address)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
@@ -178,15 +175,15 @@ class Recorder {
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, linkReferences, udapp, newContractFn) {
+  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
     var self = this
     self.setListen(false)
-    self.logCallBack(`Running ${records.length} transaction(s) ...`)
+    logCallBack(`Running ${records.length} transaction(s) ...`)
     async.eachOfSeries(records, function (tx, index, cb) {
       var record = self.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
-        modal.alert('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
+        alertCb('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
         return
       }
       /* Resolve Library */
@@ -210,7 +207,7 @@ class Recorder {
         fnABI = txHelper.getFunction(abi, record.name + record.inputs)
       }
       if (!fnABI) {
-        modal.alert('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
+        alertCb('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
         cb('cannot resolve abi')
         return
       }
@@ -230,107 +227,29 @@ class Recorder {
             tx.record.parameters[index] = value
           })
         } catch (e) {
-          modal.alert('cannot resolve input parameters ' + JSON.stringify(tx.record.parameters) + '. Execution stopped at ' + index)
+          alertCb('cannot resolve input parameters ' + JSON.stringify(tx.record.parameters) + '. Execution stopped at ' + index)
           return
         }
       }
       var data = format.encodeData(fnABI, tx.record.parameters, tx.record.bytecode)
       if (data.error) {
-        modal.alert(data.error + '. Record:' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
+        alertCb(data.error + '. Record:' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
         cb(data.error)
         return
       } else {
-        self.logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
-        self.logCallBack(`(${index}) data: ${data.data}`)
+        logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+        logCallBack(`(${index}) data: ${data.data}`)
         record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
       }
-      udapp.runTx(record,
-
-        (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-          if (network.name !== 'Main') {
-            return continueTxExecution(null)
-          }
-          var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-          var content = confirmDialog(tx, amount, gasEstimation, self,
-            (gasPrice, cb) => {
-              let txFeeText, priceStatus
-              // TODO: this try catch feels like an anti pattern, can/should be
-              // removed, but for now keeping the original logic
-              try {
-                var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-                txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
-                priceStatus = true
-              } catch (e) {
-                txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-                priceStatus = false
-              }
-              cb(txFeeText, priceStatus)
-            },
-            (cb) => {
-              executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-                var warnMessage = ' Please fix this issue before sending any transaction. '
-                if (error) {
-                  return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-                }
-                try {
-                  var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
-                  cb(null, gasPriceValue)
-                } catch (e) {
-                  cb(warnMessage + e.message, null, false)
-                }
-              })
-            }
-          )
-          modalDialog('Confirm transaction', content,
-            { label: 'Confirm',
-              fn: () => {
-                udapp._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-                // TODO: check if this is check is still valid given the refactor
-                if (!content.gasPriceStatus) {
-                  cancelCb('Given gas price is not correct')
-                } else {
-                  var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-                  continueTxExecution(gasPrice)
-                }
-              }}, {
-                label: 'Cancel',
-                fn: () => {
-                  return cancelCb('Transaction canceled by user.')
-                }
-              })
-        },
-        (error, continueTxExecution, cancelCb) => {
-          if (error) {
-            var msg = typeof error !== 'string' ? error.message : error
-            modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-            The transaction execution will likely fail. Do you want to force sending? <br>
-            ${msg}
-            </div>`,
-              {
-                label: 'Send Transaction',
-                fn: () => {
-                  continueTxExecution()
-                }}, {
-                  label: 'Cancel Transaction',
-                  fn: () => {
-                    cancelCb()
-                  }
-                })
-          } else {
-            continueTxExecution()
-          }
-        },
-        function (okCb, cancelCb) {
-          modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-        },
+      self.udapp.runTx(record, confirmationCb, continueCb, promptCb,
         function (err, txResult) {
           if (err) {
             console.error(err)
-            self.logCallBack(err + '. Execution failed at ' + index)
+            logCallBack(err + '. Execution failed at ' + index)
           } else {
             var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
             if (address) {
-              address = addressToString(address)
+              address = self.addressToString(address)
               // save back created addresses for the convertion from tokens to real adresses
               self.data._createdContracts[address] = tx.timestamp
               self.data._createdContractsReverse[tx.timestamp] = address
@@ -342,17 +261,119 @@ class Recorder {
       )
     }, () => { self.setListen(true); self.clearAll() })
   }
-}
 
-function addressToString (address) {
-  if (!address) return null
-  if (typeof address !== 'string') {
-    address = address.toString('hex')
+  addressToString (address) {
+    if (!address) return null
+    if (typeof address !== 'string') {
+      address = address.toString('hex')
+    }
+    if (address.indexOf('0x') === -1) {
+      address = '0x' + address
+    }
+    return address
   }
-  if (address.indexOf('0x') === -1) {
-    address = '0x' + address
+
+  runScenario (continueCb, promptCb, alertCb, confirmDialog, modalDialog, logCallBack, cb) {
+    var currentFile = this.config.get('currentFile')
+    this.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
+      if (error) {
+        return cb('Invalid Scenario File ' + error)
+      }
+      if (!currentFile.match('.json$')) {
+        return cb('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
+      }
+      try {
+        var obj = JSON.parse(json)
+        var txArray = obj.transactions || []
+        var accounts = obj.accounts || []
+        var options = obj.options || {}
+        var abis = obj.abis || {}
+        var linkReferences = obj.linkReferences || {}
+      } catch (e) {
+        return cb('Invalid Scenario File, please try again')
+      }
+
+      if (!txArray.length) {
+        return
+      }
+
+      var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+        if (network.name !== 'Main') {
+          return continueTxExecution(null)
+        }
+        var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+
+        // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
+        var content = confirmDialog(tx, amount, gasEstimation, this.recorder,
+          (gasPrice, cb) => {
+            let txFeeText, priceStatus
+            // TODO: this try catch feels like an anti pattern, can/should be
+            // removed, but for now keeping the original logic
+            try {
+              var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+              txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+              priceStatus = true
+            } catch (e) {
+              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+              priceStatus = false
+            }
+            cb(txFeeText, priceStatus)
+          },
+          (cb) => {
+            executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+              var warnMessage = ' Please fix this issue before sending any transaction. '
+              if (error) {
+                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+              }
+              try {
+                var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                cb(null, gasPriceValue)
+              } catch (e) {
+                cb(warnMessage + e.message, null, false)
+              }
+            })
+          }
+        )
+        modalDialog('Confirm transaction', content,
+          { label: 'Confirm',
+            fn: () => {
+              this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+              // TODO: check if this is check is still valid given the refactor
+              if (!content.gasPriceStatus) {
+                cancelCb('Given gas price is not correct')
+              } else {
+                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                continueTxExecution(gasPrice)
+              }
+            }}, {
+              label: 'Cancel',
+              fn: () => {
+                return cancelCb('Transaction canceled by user.')
+              }
+            })
+      }
+
+      this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
+        cb(null, abi, address, contractName)
+      })
+    })
   }
-  return address
+
+  saveScenario (promptCb, cb) {
+    var txJSON = JSON.stringify(this.getAll(), null, 2)
+    var path = this.fileManager.currentPath()
+    promptCb(path, input => {
+      var fileProvider = this.fileManager.fileProviderOf(path)
+      if (!fileProvider) return
+      var newFile = path + '/' + input
+      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
+        if (error) return cb('Failed to create file. ' + newFile + ' ' + error)
+        if (!fileProvider.set(newFile, txJSON)) return cb('Failed to create file ' + newFile)
+        this.fileManager.switchFile(newFile)
+      })
+    })
+  }
+
 }
 
 module.exports = Recorder

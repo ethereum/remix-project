@@ -8,6 +8,8 @@ var css = require('./styles/run-tab-styles')
 
 var SettingsUI = require('./runTab/settings.js')
 var ContractDropdownUI = require('./runTab/contractDropdown.js')
+
+var Recorder = require('./runTab/model/recorder.js')
 var RecorderUI = require('./runTab/recorder.js')
 
 function runTab (opts, localRegistry) {
@@ -76,7 +78,19 @@ function runTab (opts, localRegistry) {
 
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
 
-  var recorderInterface = new RecorderUI(self.event, self)
+  var recorder = new Recorder(self._deps.udapp, self._deps.fileManager, self._deps.udapp.config)
+  recorder.event.register('newTxRecorded', (count) => {
+    this.data.count = count
+    this._view.recorderCount.innerText = count
+  })
+  recorder.event.register('cleared', () => {
+    this.data.count = 0
+    this._view.recorderCount.innerText = 0
+  })
+  executionContext.event.register('contextChanged', recorder.clearAll.bind(recorder))
+  self.event.register('clearInstance', recorder.clearAll.bind(recorder))
+
+  var recorderInterface = new RecorderUI(recorder, self)
   recorderInterface.render()
 
   self._view.collapsedView = yo`
