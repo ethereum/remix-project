@@ -6,7 +6,9 @@ var executionContext = require('../../execution-context')
 var Card = require('../ui/card')
 var css = require('./styles/run-tab-styles')
 
+var Settings = require('./runTab/model/settings.js')
 var SettingsUI = require('./runTab/settings.js')
+
 var ContractDropdownUI = require('./runTab/contractDropdown.js')
 
 var Recorder = require('./runTab/model/recorder.js')
@@ -126,7 +128,21 @@ function runTab (opts, localRegistry) {
       status.appendChild(self._view.collapsedView)
     }
   })
-  var settingsUI = new SettingsUI(container, self)
+
+  var settings = new Settings(self._deps.udapp)
+  var settingsUI = new SettingsUI(settings)
+
+  self.event.register('clearInstance', () => {
+    var instanceContainer = self._view.instanceContainer
+    var instanceContainerTitle = self._view.instanceContainerTitle
+    instanceContainer.innerHTML = '' // clear the instances list
+    instanceContainer.appendChild(instanceContainerTitle)
+    instanceContainer.appendChild(self._view.noInstancesText)
+  })
+  settingsUI.event.register('clearInstance', () => {
+    this.event.trigger('clearInstance', [])
+  })
+
   var contractDropdownUI = new ContractDropdownUI(self)
   var el = yo`
   <div>
