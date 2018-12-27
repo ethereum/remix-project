@@ -1,28 +1,17 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
-var helper = require('../../../lib/helper.js')
-var executionContext = require('../../../execution-context')
-var Recorder = require('../../../recorder')
+
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
+var modalDialog = require('../../ui/modaldialog')
+var confirmDialog = require('../../execution/confirmDialog')
 
 class RecorderUI {
 
-  constructor (runTabEvent, parentSelf) {
+  constructor (recorder, parentSelf) {
+    this.recorder = recorder
     this.parentSelf = parentSelf
-    this.recorder = new Recorder(this.parentSelf._deps.udapp, this.parentSelf._deps.logCallback)
-
-    this.recorder.event.register('newTxRecorded', (count) => {
-      this.parentSelf.data.count = count
-      this.parentSelf._view.recorderCount.innerText = count
-    })
-    this.recorder.event.register('cleared', () => {
-      this.parentSelf.data.count = 0
-      this.parentSelf._view.recorderCount.innerText = 0
-    })
-
-    executionContext.event.register('contextChanged', this.recorder.clearAll.bind(this.recorder))
-    runTabEvent.register('clearInstance', this.recorder.clearAll.bind(this.recorder))
+    this.logCallBack = this.parentSelf._deps.logCallback
   }
 
   render () {
@@ -42,48 +31,58 @@ class RecorderUI {
   }
 
   runScenario () {
-    var currentFile = this.parentSelf._deps.config.get('currentFile')
-    this.parentSelf._deps.fileManager.fileProviderOf(currentFile).get(currentFile, (error, json) => {
+    var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
-        return modalDialogCustom.alert('Invalid Scenario File ' + error)
+        var msg = typeof error !== 'string' ? error.message : error
+        modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+        The transaction execution will likely fail. Do you want to force sending? <br>
+        ${msg}
+        </div>`,
+          {
+            label: 'Send Transaction',
+            fn: () => {
+              continueTxExecution()
+            }}, {
+              label: 'Cancel Transaction',
+              fn: () => {
+                cancelCb()
+              }
+            })
+      } else {
+        continueTxExecution()
       }
-      if (!currentFile.match('.json$')) {
-        modalDialogCustom.alert('A scenario file is required. Please make sure a scenario file is currently displayed in the editor. The file must be of type JSON. Use the "Save Transactions" Button to generate a new Scenario File.')
+    }
+
+    var promptCb = (okCb, cancelCb) => {
+      modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+    }
+
+    var alertCb = (msg) => {
+      modalDialogCustom.alert(msg)
+    }
+
+    // TODO: there is still a UI dependency to remove here, it's still too coupled at this point to remove easily
+    this.recorder.runScenario(continueCb, promptCb, alertCb, confirmDialog, modalDialog, this.logCallBack, (error, abi, address, contractName) => {
+      if (error) {
+        return modalDialogCustom.alert(error)
       }
-      try {
-        var obj = JSON.parse(json)
-        var txArray = obj.transactions || []
-        var accounts = obj.accounts || []
-        var options = obj.options || {}
-        var abis = obj.abis || {}
-        var linkReferences = obj.linkReferences || {}
-      } catch (e) {
-        return modalDialogCustom.alert('Invalid Scenario File, please try again')
-      }
-      if (txArray.length) {
-        var noInstancesText = this.parentSelf._view.noInstancesText
-        if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-        this.recorder.run(txArray, accounts, options, abis, linkReferences, this.parentSelf._deps.udapp, (abi, address, contractName) => {
-          this.parentSelf._view.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
-        })
-      }
+
+      var noInstancesText = this.parentSelf._view.noInstancesText
+      if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+
+      this.parentSelf._view.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
     })
   }
 
   triggerRecordButton () {
-    var txJSON = JSON.stringify(this.recorder.getAll(), null, 2)
-    var fileManager = this.parentSelf._deps.fileManager
-    var path = fileManager.currentPath()
-    modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', input => {
-      var fileProvider = fileManager.fileProviderOf(path)
-      if (!fileProvider) return
-      var newFile = path + '/' + input
-      helper.createNonClashingName(newFile, fileProvider, (error, newFile) => {
-        if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-        if (!fileProvider.set(newFile, txJSON)) return modalDialogCustom.alert('Failed to create file ' + newFile)
-        fileManager.switchFile(newFile)
-      })
-    })
+    this.recorder.saveScenario(
+      (path, cb) => {
+        modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)
+      },
+      (error) => {
+        if (error) return modalDialogCustom.alert(error)
+      }
+    )
   }
 
 }
