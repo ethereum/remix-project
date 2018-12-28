@@ -100,8 +100,8 @@ class ContractDropdownUI {
     }
 
     var selectedContract = this.getSelectedContract()
-    var ctrabi = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-    var ctrEVMbc = selectedContract.contract.object.evm.bytecode.object
+    var ctrabi = txHelper.getConstructorInterface(selectedContract.abi)
+    var ctrEVMbc = selectedContract.bytecodeObject
     var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
       this.createInstance(inputsValues, selectedContract.compiler)
     }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy', ctrEVMbc)
@@ -111,23 +111,17 @@ class ContractDropdownUI {
   getSelectedContract () {
     var contract = this.selectContractNames.children[this.selectContractNames.selectedIndex]
     var contractName = contract.innerHTML
-    var compiler = this.dropdownLogic.getContractCompiler(contract.getAttribute('compiler'))
-    if (!compiler) return null
+    var compilerAtributeName = contract.getAttribute('compiler')
 
-    if (!contractName) return null
-    return {
-      name: contractName,
-      contract: compiler.getContract(contractName),
-      compiler
-    }
+    return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
   createInstanceCallback (selectedContract, data) {
     this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
     if (data) {
       data.contractName = selectedContract.name
-      data.linkReferences = selectedContract.contract.object.evm.bytecode.linkReferences
-      data.contractABI = selectedContract.contract.object.abi
+      data.linkReferences = selectedContract.bytecodeLinkReferences
+      data.contractABI = selectedContract.abi
     }
     this.parentSelf._deps.udapp.createContract(data,
 
@@ -226,7 +220,7 @@ class ContractDropdownUI {
         }
         this.event.trigger('clearInstance')
         var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        this.event.trigger('newContractInstanceAdded', [selectedContract.contract.object, address, this.selectContractNames.value])
+        this.event.trigger('newContractInstanceAdded', [selectedContract, address, this.selectContractNames.value])
       }
     )
   }
@@ -235,17 +229,16 @@ class ContractDropdownUI {
   createInstance (args, compiler) {
     var selectedContract = this.getSelectedContract()
 
-    if (selectedContract.contract.object.evm.bytecode.object.length === 0) {
-      modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
-      return
+    if (selectedContract.bytecodeObject.length === 0) {
+      return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
     }
 
     var forceSend = () => {
-      var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
+      var constructor = txHelper.getConstructorInterface(selectedContract.abi)
       this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
         if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-          txFormat.buildData(selectedContract.name, selectedContract.contract.object, compiler.getContracts(), true, constructor, args, (error, data) => {
+          txFormat.buildData(selectedContract.name, selectedContract.object, compiler.getContracts(), true, constructor, args, (error, data) => {
             if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
             this.createInstanceCallback(selectedContract, data)
           }, (msg) => {
@@ -312,8 +305,8 @@ class ContractDropdownUI {
               runTxCallback)
           })
         } else {
-          if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-          txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
+          if (Object.keys(selectedContract.bytecodeLinkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+          txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
             if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
             this.createInstanceCallback(selectedContract, data)
           })
@@ -321,7 +314,7 @@ class ContractDropdownUI {
       })
     }
 
-    if (selectedContract.contract.object.evm.deployedBytecode && selectedContract.contract.object.evm.deployedBytecode.object.length / 2 > 24576) {
+    if (selectedContract.deployedBytecode && selectedContract.deployedBytecode.object.length / 2 > 24576) {
       modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
       </div>`,
@@ -356,7 +349,7 @@ class ContractDropdownUI {
           return this.event.trigger('newContractABIAdded', [abi, address])
         }
         var selectedContract = this.getSelectedContract()
-        this.event.trigger('newContractInstanceAdded', [selectedContract.contract.object, address, this.selectContractNames.value])
+        this.event.trigger('newContractInstanceAdded', [selectedContract.object, address, this.selectContractNames.value])
       }
     )
   }

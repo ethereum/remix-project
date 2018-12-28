@@ -62,8 +62,24 @@ class DropdownLogic {
     return contracts
   }
 
-  getContractCompiler (name) {
-    return this.parentSelf._deps.compilersArtefacts[name]
+  getSelectedContract (contractName, compilerAtributeName) {
+    if (!contractName) return null
+
+    var compiler = this.parentSelf._deps.compilersArtefacts[compilerAtributeName]
+    if (!compiler) return null
+
+    var contract = compiler.getContract(contractName)
+
+    return {
+      name: contractName,
+      contract: contract,
+      compiler: compiler,
+      abi: contract.object.abi,
+      bytecodeObject: contract.object.evm.bytecode.object,
+      bytecodeLinkReferences: contract.object.evm.bytecode.linkReferences,
+      object: contract.object,
+      deployedBytecode: contract.object.evm.deployedBytecode
+    }
   }
 }
 
