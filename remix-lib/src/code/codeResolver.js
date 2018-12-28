@@ -29,7 +29,6 @@ CodeResolver.prototype.resolveCode = function (address, callBack) {
 }
 
 CodeResolver.prototype.loadCode = function (address, callback) {
-  console.log('loading new code from web3 ' + address)
   this.web3.eth.getCode(address, function (error, result) {
     if (error) {
       console.log(error)
