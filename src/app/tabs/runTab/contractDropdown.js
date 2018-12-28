@@ -1,13 +1,10 @@
 var yo = require('yo-yo')
 var css = require('../styles/run-tab-styles')
-var executionContext = require('../../../execution-context')
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
 var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
-var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
-var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('../../execution/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../../multiParamManager')
@@ -100,11 +97,9 @@ class ContractDropdownUI {
     }
 
     var selectedContract = this.getSelectedContract()
-    var ctrabi = txHelper.getConstructorInterface(selectedContract.abi)
-    var ctrEVMbc = selectedContract.bytecodeObject
-    var createConstructorInstance = new MultiParamManager(0, ctrabi, (valArray, inputsValues) => {
+    var createConstructorInstance = new MultiParamManager(0, selectedContract.getConstructorInterface(), (valArray, inputsValues) => {
       this.createInstance(inputsValues, selectedContract.compiler)
-    }, txHelper.inputParametersDeclarationToString(ctrabi.inputs), 'Deploy', ctrEVMbc)
+    }, selectedContract.getConstructorInputs(), 'Deploy', selectedContract.bytecodeObject)
     this.createPanel.appendChild(createConstructorInstance.render())
   }
 
@@ -129,15 +124,15 @@ class ContractDropdownUI {
         if (network.name !== 'Main') {
           return continueTxExecution(null)
         }
-        var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+        var amount = this.dropdownLogic.fromWei(tx.value, true)
         var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
           (gasPrice, cb) => {
             let txFeeText, priceStatus
             // TODO: this try catch feels like an anti pattern, can/should be
             // removed, but for now keeping the original logic
             try {
-              var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-              txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+              var fee = this.dropdownLogic.calculateFee(tx.gas, gasPrice, 'gwei')
+              txFeeText = ' ' + this.dropdownLogic.fromWei(fee) + ' Ether'
               priceStatus = true
             } catch (e) {
               txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
@@ -146,13 +141,13 @@ class ContractDropdownUI {
             cb(txFeeText, priceStatus)
           },
           (cb) => {
-            executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+            this.dropdownLogic.getGasPrice((error, gasPrice) => {
               var warnMessage = ' Please fix this issue before sending any transaction. '
               if (error) {
                 return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
               }
               try {
-                var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                var gasPriceValue = this.dropdownLogic.fromWei(gasPrice, false, 'gwei')
                 cb(null, gasPriceValue)
               } catch (e) {
                 cb(warnMessage + e.message, null, false)
@@ -168,7 +163,7 @@ class ContractDropdownUI {
               if (!content.gasPriceStatus) {
                 cancelCb('Given gas price is not correct')
               } else {
-                var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                var gasPrice = this.dropdownLogic.toWei(content.querySelector('#gasprice').value, 'gwei')
                 continueTxExecution(gasPrice)
               }
             }}, {
@@ -206,17 +201,15 @@ class ContractDropdownUI {
         if (error) {
           return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
         }
-        var isVM = executionContext.isVM()
+        var isVM = this.dropdownLogic.isVM()
         if (isVM) {
           var vmError = txExecution.checkVMError(txResult)
           if (vmError.error) {
-            this.parentSelf._deps.logCallback(vmError.message)
-            return
+            return this.parentSelf._deps.logCallback(vmError.message)
           }
         }
         if (txResult.result.status && txResult.result.status === '0x0') {
-          this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
-          return
+          return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
         this.event.trigger('clearInstance')
         var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
@@ -234,7 +227,7 @@ class ContractDropdownUI {
     }
 
     var forceSend = () => {
-      var constructor = txHelper.getConstructorInterface(selectedContract.abi)
+      var constructor = selectedContract.getConstructorInterface()
       this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
         if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
@@ -250,15 +243,15 @@ class ContractDropdownUI {
                 if (network.name !== 'Main') {
                   return continueTxExecution(null)
                 }
-                var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+                var amount = this.dropdownLogic.fromWei(tx.value, true, 'ether')
                 var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
                   (gasPrice, cb) => {
                     let txFeeText, priceStatus
                     // TODO: this try catch feels like an anti pattern, can/should be
                     // removed, but for now keeping the original logic
                     try {
-                      var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-                      txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+                      var fee = this.dropdownLogic.calculateFee(tx.gas, gasPrice)
+                      txFeeText = ' ' + this.dropdownLogic.fromWei(fee, false, 'ether') + ' Ether'
                       priceStatus = true
                     } catch (e) {
                       txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
@@ -267,13 +260,13 @@ class ContractDropdownUI {
                     cb(txFeeText, priceStatus)
                   },
                   (cb) => {
-                    executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+                    this.dropdownLogic.getGasPrice((error, gasPrice) => {
                       var warnMessage = ' Please fix this issue before sending any transaction. '
                       if (error) {
                         return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
                       }
                       try {
-                        var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+                        var gasPriceValue = this.dropdownLogic.fromWei(gasPrice, false, 'gwei')
                         cb(null, gasPriceValue)
                       } catch (e) {
                         cb(warnMessage + e.message, null, false)
@@ -289,7 +282,7 @@ class ContractDropdownUI {
                       if (!content.gasPriceStatus) {
                         cancelCb('Given gas price is not correct')
                       } else {
-                        var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+                        var gasPrice = this.dropdownLogic.toWei(content.querySelector('#gasprice').value, 'gwei')
                         continueTxExecution(gasPrice)
                       }
                     }}, {
@@ -314,7 +307,7 @@ class ContractDropdownUI {
       })
     }
 
-    if (selectedContract.deployedBytecode && selectedContract.deployedBytecode.object.length / 2 > 24576) {
+    if (selectedContract.isOverSizeLimit()) {
       modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
       </div>`,
