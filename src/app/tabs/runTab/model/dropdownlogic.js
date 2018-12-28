@@ -1,5 +1,8 @@
 var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
+var txHelper = remixLib.execution.txHelper
+var executionContext = remixLib.execution.executionContext
+var typeConversion = remixLib.execution.typeConversion
 var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 
@@ -78,9 +81,44 @@ class DropdownLogic {
       bytecodeObject: contract.object.evm.bytecode.object,
       bytecodeLinkReferences: contract.object.evm.bytecode.linkReferences,
       object: contract.object,
-      deployedBytecode: contract.object.evm.deployedBytecode
+      deployedBytecode: contract.object.evm.deployedBytecode,
+      getConstructorInterface: () => {
+        return txHelper.getConstructorInterface(contract.object.abi)
+      },
+      getConstructorInputs: () => {
+        var constructorInteface = txHelper.getConstructorInterface(contract.object.abi)
+        return txHelper.inputParametersDeclarationToString(constructorInteface.inputs)
+      },
+      isOverSizeLimit: () => {
+        var deployedBytecode = contract.object.evm.deployedBytecode
+        return (deployedBytecode && deployedBytecode.object.length / 2 > 24576)
+      }
     }
   }
+
+  fromWei (value, doTypeConversion, unit) {
+    if (doTypeConversion) {
+      return executionContext.web3().fromWei(typeConversion.toInt(value), unit || 'ether')
+    }
+    return executionContext.web3().fromWei(value.toString(10), unit || 'ether')
+  }
+
+  toWei (value, unit) {
+    return executionContext.web3().toWei(value, unit || 'gwei')
+  }
+
+  calculateFee (gas, gasPrice, unit) {
+    return executionContext.web3().toBigNumber(gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), unit || 'gwei')))
+  }
+
+  getGasPrice (cb) {
+    return executionContext.web3().eth.getGasPrice(cb)
+  }
+
+  isVM () {
+    return executionContext.isVM()
+  }
+
 }
 
 module.exports = DropdownLogic
