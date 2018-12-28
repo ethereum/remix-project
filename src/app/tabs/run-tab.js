@@ -9,6 +9,7 @@ var css = require('./styles/run-tab-styles')
 var Settings = require('./runTab/model/settings.js')
 var SettingsUI = require('./runTab/settings.js')
 
+var DropdownLogic = require('./runTab/model/dropdownLogic.js')
 var ContractDropdownUI = require('./runTab/contractDropdown.js')
 
 var Recorder = require('./runTab/model/recorder.js')
@@ -133,17 +134,31 @@ function runTab (opts, localRegistry) {
   var settingsUI = new SettingsUI(settings)
 
   self.event.register('clearInstance', () => {
-    var instanceContainer = self._view.instanceContainer
-    var instanceContainerTitle = self._view.instanceContainerTitle
-    instanceContainer.innerHTML = '' // clear the instances list
-    instanceContainer.appendChild(instanceContainerTitle)
-    instanceContainer.appendChild(self._view.noInstancesText)
+    this._view.instanceContainer.innerHTML = '' // clear the instances list
+    this._view.instanceContainer.appendChild(self._view.instanceContainerTitle)
+    this._view.instanceContainer.appendChild(self._view.noInstancesText)
   })
   settingsUI.event.register('clearInstance', () => {
     this.event.trigger('clearInstance', [])
   })
 
-  var contractDropdownUI = new ContractDropdownUI(self)
+  var dropdownLogic = new DropdownLogic(self)
+  var contractDropdownUI = new ContractDropdownUI(dropdownLogic, self)
+
+  contractDropdownUI.event.register('clearInstance', () => {
+    var noInstancesText = this._view.noInstancesText
+    if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+  })
+  contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
+    this._view.instanceContainer.appendChild(this._deps.udappUI.renderInstanceFromABI(abi, address, address))
+  })
+  contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
+    this._view.instanceContainer.appendChild(this._deps.udappUI.renderInstance(contractObject, address, value))
+  })
+
+  this._view.instanceContainer.appendChild(this._view.instanceContainerTitle)
+  this._view.instanceContainer.appendChild(this._view.noInstancesText)
+
   var el = yo`
   <div>
     ${settingsUI.render()}
