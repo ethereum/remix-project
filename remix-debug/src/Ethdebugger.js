@@ -183,7 +183,6 @@ Ethdebugger.prototype.debug = function (tx) {
     tx.to = traceHelper.contractCreationToken('0')
   }
   this.setCompilationResult(this.opts.compilationResult())
-  console.log('loading trace...')
   this.tx = tx
   var self = this
   this.traceManager.resolveTrace(tx, function (error, result) {
