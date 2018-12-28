@@ -5,6 +5,7 @@ var uiHelper = require('./src/helpers/uiHelper')
 var compilerHelper = require('./src/helpers/compilerHelper')
 var SourceMappingDecoder = require('./src/sourceMappingDecoder')
 var SourceLocationTracker = require('./src/sourceLocationTracker')
+var OffsetToColumnConverter = require('./src/offsetToLineColumnConverter')
 var init = require('./src/init')
 var util = require('./src/util')
 var Web3Providers = require('./src/web3Provider/web3Providers')
@@ -56,6 +57,7 @@ function modules () {
     },
     SourceMappingDecoder: SourceMappingDecoder,
     SourceLocationTracker: SourceLocationTracker,
+    OffsetToColumnConverter: OffsetToColumnConverter,
     Storage: Storage,
     init: init,
     util: util,

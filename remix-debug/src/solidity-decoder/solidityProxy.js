@@ -117,7 +117,7 @@ class SolidityProxy {
     if (this.sources[file]) {
       return this.sources[file].legacyAST
     } else {
-      console.log('AST not found for file id ' + sourceLocation.file)
+      // console.log('AST not found for file id ' + sourceLocation.file)
       return null
     }
   }
