@@ -2,7 +2,6 @@ var yo = require('yo-yo')
 var css = require('../styles/run-tab-styles')
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
-var txExecution = remixLib.execution.txExecution
 var txFormat = remixLib.execution.txFormat
 var EventManager = remixLib.EventManager
 var confirmDialog = require('../../execution/confirmDialog')
@@ -111,114 +110,49 @@ class ContractDropdownUI {
     return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
+  // ===============
+  // TODO: move this to DropdownLogic
+  // ===============
   createInstanceCallback (selectedContract, data) {
     this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
-    if (data) {
-      data.contractName = selectedContract.name
-      data.linkReferences = selectedContract.bytecodeLinkReferences
-      data.contractABI = selectedContract.abi
-    }
-    this.parentSelf._deps.udapp.createContract(data,
 
-      (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-        if (network.name !== 'Main') {
-          return continueTxExecution(null)
-        }
-        var amount = this.dropdownLogic.fromWei(tx.value, true)
-        var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
-          (gasPrice, cb) => {
-            let txFeeText, priceStatus
-            // TODO: this try catch feels like an anti pattern, can/should be
-            // removed, but for now keeping the original logic
-            try {
-              var fee = this.dropdownLogic.calculateFee(tx.gas, gasPrice, 'gwei')
-              txFeeText = ' ' + this.dropdownLogic.fromWei(fee) + ' Ether'
-              priceStatus = true
-            } catch (e) {
-              txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-              priceStatus = false
-            }
-            cb(txFeeText, priceStatus)
-          },
-          (cb) => {
-            this.dropdownLogic.getGasPrice((error, gasPrice) => {
-              var warnMessage = ' Please fix this issue before sending any transaction. '
-              if (error) {
-                return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-              }
-              try {
-                var gasPriceValue = this.dropdownLogic.fromWei(gasPrice, false, 'gwei')
-                cb(null, gasPriceValue)
-              } catch (e) {
-                cb(warnMessage + e.message, null, false)
-              }
-            })
-          }
-        )
-        modalDialog('Confirm transaction', content,
-          { label: 'Confirm',
+    var continueCb = (error, continueTxExecution, cancelCb) => {
+      if (error) {
+        var msg = typeof error !== 'string' ? error.message : error
+        modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+        The transaction execution will likely fail. Do you want to force sending? <br>
+        ${msg}
+        </div>`,
+          {
+            label: 'Send Transaction',
             fn: () => {
-              this.parentSelf._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-              // TODO: check if this is check is still valid given the refactor
-              if (!content.gasPriceStatus) {
-                cancelCb('Given gas price is not correct')
-              } else {
-                var gasPrice = this.dropdownLogic.toWei(content.querySelector('#gasprice').value, 'gwei')
-                continueTxExecution(gasPrice)
-              }
+              continueTxExecution()
             }}, {
-              label: 'Cancel',
+              label: 'Cancel Transaction',
               fn: () => {
-                return cancelCb('Transaction canceled by user.')
+                cancelCb()
               }
             })
-      },
-      (error, continueTxExecution, cancelCb) => {
-        if (error) {
-          var msg = typeof error !== 'string' ? error.message : error
-          modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-          The transaction execution will likely fail. Do you want to force sending? <br>
-          ${msg}
-          </div>`,
-            {
-              label: 'Send Transaction',
-              fn: () => {
-                continueTxExecution()
-              }}, {
-                label: 'Cancel Transaction',
-                fn: () => {
-                  cancelCb()
-                }
-              })
-        } else {
-          continueTxExecution()
-        }
-      },
-      function (okCb, cancelCb) {
-        modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-      },
-      (error, txResult) => {
-        if (error) {
-          return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
-        }
-        var isVM = this.dropdownLogic.isVM()
-        if (isVM) {
-          var vmError = txExecution.checkVMError(txResult)
-          if (vmError.error) {
-            return this.parentSelf._deps.logCallback(vmError.message)
-          }
-        }
-        if (txResult.result.status && txResult.result.status === '0x0') {
-          return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
-        }
-        this.event.trigger('clearInstance')
-        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
-        this.event.trigger('newContractInstanceAdded', [selectedContract, address, this.selectContractNames.value])
+      } else {
+        continueTxExecution()
       }
-    )
+    }
+
+    var promptCb = function (okCb, cancelCb) {
+      modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+    }
+
+    this.dropdownLogic.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, (error, contractObject, address) => {
+      this.event.trigger('clearInstance')
+
+      if (error) {
+        return this.parentSelf._deps.logCallback(error)
+      }
+
+      this.event.trigger('newContractInstanceAdded', [contractObject, address, this.selectContractNames.value])
+    })
   }
 
-  // DEPLOY INSTANCE
   createInstance (args, compiler) {
     var selectedContract = this.getSelectedContract()
 
@@ -226,6 +160,9 @@ class ContractDropdownUI {
       return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
     }
 
+    // ===============
+    // TODO: move this to DropdownLogic
+    // ===============
     var forceSend = () => {
       var constructor = selectedContract.getConstructorInterface()
       this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
@@ -237,65 +174,11 @@ class ContractDropdownUI {
           }, (msg) => {
             this.parentSelf._deps.logCallback(msg)
           }, (data, runTxCallback) => {
+            var promptCb = (okCb, cancelCb) => {
+              modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+            }
             // called for libraries deployment
-            this.parentSelf._deps.udapp.runTx(data,
-              (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-                if (network.name !== 'Main') {
-                  return continueTxExecution(null)
-                }
-                var amount = this.dropdownLogic.fromWei(tx.value, true, 'ether')
-                var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
-                  (gasPrice, cb) => {
-                    let txFeeText, priceStatus
-                    // TODO: this try catch feels like an anti pattern, can/should be
-                    // removed, but for now keeping the original logic
-                    try {
-                      var fee = this.dropdownLogic.calculateFee(tx.gas, gasPrice)
-                      txFeeText = ' ' + this.dropdownLogic.fromWei(fee, false, 'ether') + ' Ether'
-                      priceStatus = true
-                    } catch (e) {
-                      txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-                      priceStatus = false
-                    }
-                    cb(txFeeText, priceStatus)
-                  },
-                  (cb) => {
-                    this.dropdownLogic.getGasPrice((error, gasPrice) => {
-                      var warnMessage = ' Please fix this issue before sending any transaction. '
-                      if (error) {
-                        return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-                      }
-                      try {
-                        var gasPriceValue = this.dropdownLogic.fromWei(gasPrice, false, 'gwei')
-                        cb(null, gasPriceValue)
-                      } catch (e) {
-                        cb(warnMessage + e.message, null, false)
-                      }
-                    })
-                  }
-                )
-                modalDialog('Confirm transaction', content,
-                  { label: 'Confirm',
-                    fn: () => {
-                      this.parentSelf._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-                      // TODO: check if this is check is still valid given the refactor
-                      if (!content.gasPriceStatus) {
-                        cancelCb('Given gas price is not correct')
-                      } else {
-                        var gasPrice = this.dropdownLogic.toWei(content.querySelector('#gasprice').value, 'gwei')
-                        continueTxExecution(gasPrice)
-                      }
-                    }}, {
-                      label: 'Cancel',
-                      fn: () => {
-                        return cancelCb('Transaction canceled by user.')
-                      }
-                    })
-              },
-              function (okCb, cancelCb) {
-                modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-              },
-              runTxCallback)
+            this.dropdownLogic.runTransaction(data, promptCb, modalDialog, confirmDialog, runTxCallback)
           })
         } else {
           if (Object.keys(selectedContract.bytecodeLinkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
