@@ -25,21 +25,19 @@ function staticAnalysisView (localRegistry) {
   self._components.registry = localRegistry || globlalRegistry
   // dependencies
   self._deps = {
-    compiler: self._components.registry.get('compiler').api,
+    pluginManager: self._components.registry.get('pluginmanager').api,
     renderer: self._components.registry.get('renderer').api,
     offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
   }
 
-  self._deps.compiler.event.register('compilationFinished', function (success, data, source) {
+  self._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
     self.lastCompilationResult = null
     self.lastCompilationSource = null
     $('#staticanalysisresult').empty()
-    if (success) {
-      self.lastCompilationResult = data
-      self.lastCompilationSource = source
-      if (self.view.querySelector('#autorunstaticanalysis').checked) {
-        self.run()
-      }
+    self.lastCompilationResult = data
+    self.lastCompilationSource = source
+    if (self.view.querySelector('#autorunstaticanalysis').checked) {
+      self.run()
     }
   })
 }
@@ -113,7 +111,10 @@ staticAnalysisView.prototype.run = function () {
               start: parseInt(split[0]),
               length: parseInt(split[1])
             }
-            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location, parseInt(file), self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
+            location = self._deps.offsetToLineColumnConverter.offsetToLineColumn(location,
+              parseInt(file),
+              self.lastCompilationSource.sources,
+              self.lastCompilationResult.sources)
             location = Object.keys(self.lastCompilationResult.contracts)[file] + ':' + (location.start.line + 1) + ':' + (location.start.column + 1) + ':'
           }
           warningCount++

@@ -24,7 +24,7 @@ class CmdInterpreterAPI {
       app: self._components.registry.get('app').api,
       fileManager: self._components.registry.get('filemanager').api,
       editor: self._components.registry.get('editor').api,
-      compiler: self._components.registry.get('compiler').api,
+      compilersArtefacts: self._components.registry.get('compilersartefacts').api,
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
     self.commandHelp = {
@@ -47,7 +47,9 @@ class CmdInterpreterAPI {
       self._components.sourceHighlighter.currentSourceLocation(null)
       return
     }
-    var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
+    var lineColumnPos = self._deps.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file,
+      self._deps.compilersArtefacts['__last'].getSourceCode().sources,
+      self._deps.compilersArtefacts['__last'].getAsts())
     self._components.sourceHighlighter.currentSourceLocation(lineColumnPos, rawLocation)
   }
   debug (hash, cb) {
@@ -57,7 +59,7 @@ class CmdInterpreterAPI {
       if (error) return cb(error)
       var debugSession = new RemixDebug({
         compilationResult: () => {
-          return self._deps.compiler.lastCompilationResult.data
+          return self._deps.compilersArtefacts['__last'].getData()
         }
       })
       debugSession.addProvider('web3', executionContext.web3())
@@ -108,7 +110,9 @@ class CmdInterpreterAPI {
       self.d.goTo = (row) => {
         if (self._deps.editor.current()) {
           var breakPoint = new remixLib.code.BreakpointManager(self.d, (sourceLocation) => {
-            return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
+            return self._deps.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file,
+              self._deps.compilersArtefacts['__last'].getSourceCode().sources,
+              self._deps.compilersArtefacts['__last'].getAsts())
           })
           breakPoint.event.register('breakpointHit', (sourceLocation, currentStep) => {
             self.log(null, 'step index ' + currentStep)

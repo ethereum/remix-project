@@ -90,16 +90,10 @@ class DebuggerUI {
 
     this.contextManager = new ContextManager()
 
-    this.debugger = new Debugger({
-      web3: this.contextManager.getWeb3(),
-      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-      compiler: this.registry.get('compiler').api
-    })
-
     this.contextManager.initProviders()
 
     this.contextManager.event.register('providerChanged', () => {
-      this.debugger.updateWeb3(this.contextManager.getWeb3())
+      if (this.debugger) this.debugger.updateWeb3(this.contextManager.getWeb3())
     })
 
     this.isActive = false
@@ -116,7 +110,6 @@ class DebuggerUI {
     container.appendChild(this.render())
 
     this.setEditor()
-    this.listenToEvents()
   }
 
   setEditor () {
@@ -124,20 +117,22 @@ class DebuggerUI {
     this.editor = this.registry.get('editor').api
 
     self.editor.event.register('breakpointCleared', (fileName, row) => {
-      self.debugger.breakPointManager.remove({fileName: fileName, row: row})
+      if (self.debugger) self.debugger.breakPointManager.remove({fileName: fileName, row: row})
     })
 
     self.editor.event.register('breakpointAdded', (fileName, row) => {
-      self.debugger.breakPointManager.add({fileName: fileName, row: row})
+      if (self.debugger) self.debugger.breakPointManager.add({fileName: fileName, row: row})
     })
 
     self.editor.event.register('contentChanged', function () {
-      self.debugger.unload()
+      if (self.debugger) self.debugger.unload()
     })
   }
 
   listenToEvents () {
     const self = this
+    if (!self.debugger) return
+
     this.debugger.event.register('debuggerStatus', function (isActive) {
       self.sourceHighlighter.currentSourceLocation(null)
       self.isActive = isActive
@@ -156,12 +151,12 @@ class DebuggerUI {
     this.txBrowser = txBrowser
 
     txBrowser.event.register('requestDebug', function (blockNumber, txNumber, tx) {
-      self.debugger.unload()
+      if (self.debugger) self.debugger.unload()
       self.startDebugging(blockNumber, txNumber, tx)
     })
 
     txBrowser.event.register('unloadRequested', this, function (blockNumber, txIndex, tx) {
-      self.debugger.unload()
+      if (self.debugger) self.debugger.unload()
     })
   }
 
@@ -171,6 +166,20 @@ class DebuggerUI {
 
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
+    if (this.debugger) delete this.debugger
+
+    let compilers = this.registry.get('compilersartefacts').api
+    let lastCompilationResult
+    if (compilers['__last']) lastCompilationResult = compilers['__last']
+
+    // TODO debugging with source highlight is disabled. see line 98
+    this.debugger = new Debugger({
+      web3: this.contextManager.getWeb3(),
+      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
+      compiler: { lastCompilationResult }
+    })
+
+    this.listenToEvents()
 
     this.debugger.debugger.updateWeb3(this.executionContext.web3())
     this.debugger.debug(blockNumber, txNumber, tx, () => {

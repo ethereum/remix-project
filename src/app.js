@@ -1,12 +1,10 @@
 'use strict'
 
-var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
-var remixTests = require('remix-tests')
 var EventManager = require('./lib/events')
 
 var registry = require('./global/registry')
@@ -14,18 +12,15 @@ var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
 var Remixd = require('./lib/remixd')
 var OffsetToLineColumnConverter = require('./lib/offsetToLineColumnConverter')
-
 var QueryParams = require('./lib/query-params')
 var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
 var BrowserfilesTree = require('./app/files/browser-files-tree')
-var chromeCloudStorageSync = require('./app/files/chromeCloudStorageSync')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
-var Compiler = require('remix-solidity').Compiler
 var executionContext = require('./execution-context')
 var FilePanel = require('./app/panels/file-panel')
 var EditorPanel = require('./app/panels/editor-panel')
@@ -35,12 +30,21 @@ var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var TxLogger = require('./app/execution/txLogger')
 var Txlistener = remixLib.execution.txListener
 var EventsDecoder = remixLib.execution.EventsDecoder
-var CompilerImport = require('./app/compiler/compiler-imports')
 var FileManager = require('./app/files/fileManager')
 var BasicReadOnlyExplorer = require('./app/files/basicReadOnlyExplorer')
 var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
+
+const CompilerAbstract = require('./app/compiler/compiler-abstract')
+const PluginManager = require('./app/plugin/pluginManager')
+const CompileTab = require('./app/tabs/compile-tab')
+const SettingsTab = require('./app/tabs/settings-tab')
+const AnalysisTab = require('./app/tabs/analysis-tab')
+const DebuggerTab = require('./app/tabs/debugger-tab')
+const SupportTab = require('./app/tabs/support-tab')
+const TestTab = require('./app/tabs/test-tab')
+const RunTab = require('./app/tabs/run-tab')
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -126,8 +130,6 @@ class App {
     executionContext.init(self._components.config)
     executionContext.listenOnLastBlock()
 
-    self._components.compilerImport = new CompilerImport()
-    registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self._components.gistHandler = new GistHandler()
 
     self._components.filesProviders = {}
@@ -228,34 +230,6 @@ class App {
     self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
   }
-  runCompiler () {
-    const self = this
-    if (self._components.righthandpanel.debugger().isDebuggerActive()) return
-
-    self._components.fileManager.saveCurrentFile()
-    self._components.editorpanel.getEditor().clearAnnotations()
-    var currentFile = self._components.config.get('currentFile')
-    if (currentFile) {
-      if (/.(.sol)$/.exec(currentFile)) {
-        // only compile *.sol file.
-        var target = currentFile
-        var sources = {}
-        var provider = self._components.fileManager.fileProviderOf(currentFile)
-        if (provider) {
-          provider.get(target, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              sources[target] = { content }
-              self._components.compiler.compile(sources, target)
-            }
-          })
-        } else {
-          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
-        }
-      }
-    }
-  }
   startdebugging (txHash) {
     const self = this
     self.event.trigger('debuggingRequested', [])
@@ -299,55 +273,6 @@ class App {
       if (callback) callback(error)
     })
   }
-  importExternal (url, cb) {
-    const self = this
-    self._components.compilerImport.import(url,
-      (loadingMsg) => {
-        toolTip(loadingMsg)
-      },
-      (error, content, cleanUrl, type, url) => {
-        if (!error) {
-          if (self._components.filesProviders[type]) {
-            self._components.filesProviders[type].addReadOnly(cleanUrl, content, url)
-          }
-          cb(null, content)
-        } else {
-          cb(error)
-        }
-      })
-  }
-  importFileCb (url, filecb) {
-    const self = this
-    if (url.indexOf('/remix_tests.sol') !== -1) {
-      return filecb(null, remixTests.assertLibCode)
-    }
-    var provider = self._components.fileManager.fileProviderOf(url)
-    if (provider) {
-      if (provider.type === 'localhost' && !provider.isConnected()) {
-        return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)
-      }
-      provider.exists(url, (error, exist) => {
-        if (error) return filecb(error)
-        if (exist) {
-          return provider.get(url, filecb)
-        } else {
-          self.importExternal(url, filecb)
-        }
-      })
-    } else if (self._components.compilerImport.isRelativeImport(url)) {
-      // try to resolve localhost modules (aka truffle imports)
-      var splitted = /([^/]+)\/(.*)$/g.exec(url)
-      async.tryEach([
-        (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
-        (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
-        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
-        (error, result) => { filecb(error, result) }
-      )
-    } else {
-      self.importExternal(url, filecb)
-    }
-  }
 }
 
 module.exports = App
@@ -377,24 +302,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     return 'Are you sure you want to leave?'
   }
 
-  // Run the compiler instead of trying to save the website
-  $(window).keydown(function (e) {
-    // ctrl+s or command+s
-    if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
-      e.preventDefault()
-      self.runCompiler()
-    }
-  })
-
   registry.put({api: msg => self._components.editorpanel.logHtmlMessage(msg), name: 'logCallback'})
 
-  // ----------------- Compiler -----------------
-  self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
-  registry.put({api: self._components.compiler, name: 'compiler'})
-
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(self._components.compiler.event)
+  // helper for converting offset to line/column
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
+  // json structure for hosting the last compilattion result
   self._components.compilersArtefacts = {} // store all the possible compilation data (key represent a compiler name)
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
@@ -448,6 +362,23 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
+  // ---------------- Plugin Manager -------------------------------
+
+  let pluginManager = new PluginManager(
+    self,
+    self._components.compilersArtefacts,
+    txlistener,
+    self._components.fileProviders,
+    self._components.fileManager,
+    udapp)
+  registry.put({api: pluginManager, name: 'pluginmanager'})
+
+  pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+    // TODO check whether the tab is configured
+    let compiler = new CompilerAbstract(languageVersion, data, source)
+    self._components.compilersArtefacts['__last'] = compiler
+  })
+
   self._components.editorpanel.init()
   self._components.fileManager.init()
 
@@ -485,64 +416,27 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
+  // ---------------- Tabs -------------------------------
+  let compileTab = new CompileTab(self._components.registry)
+  let tabs = {
+    compile: compileTab,
+    run: new RunTab(self._components.registry),
+    settings: new SettingsTab(self._components.registry),
+    analysis: new AnalysisTab(self._components.registry),
+    debug: new DebuggerTab(self._components.registry),
+    support: new SupportTab(self._components.registry),
+    test: new TestTab(self._components.registry, compileTab)
+  }
+
   // ---------------- Righthand-panel --------------------
-  self._components.righthandpanel = new RighthandPanel()
+  self._components.righthandpanel = new RighthandPanel({ tabs, pluginManager })
   self._view.rightpanel.appendChild(self._components.righthandpanel.render())
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
 
   var txLogger = new TxLogger() // eslint-disable-line  
 
-  executionContext.event.register('contextChanged', this, function (context) {
-    self.runCompiler()
-  })
-
-  // rerun the compiler when the environement changed
-  executionContext.event.register('web3EndpointChanged', this, function (context) {
-    self.runCompiler()
-  })
-
   var queryParams = new QueryParams()
-
-  // check init query parameters from the URL once the compiler is loaded
-  self._components.compiler.event.register('compilerLoaded', this, function (version) {
-    self.runCompiler()
-
-    if (queryParams.get().context) {
-      let context = queryParams.get().context
-      let endPointUrl = queryParams.get().endPointUrl
-      executionContext.setContext(context, endPointUrl,
-      () => {
-        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-          if (!endPointUrl) {
-            endPointUrl = 'http://localhost:8545'
-          }
-          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
-            executionContext.setProviderFromEndpoint(target, context)
-          }, () => {})
-        }, () => {})
-      },
-      (alertMsg) => {
-        modalDialogCustom.alert(alertMsg)
-      })
-    }
-
-    if (queryParams.get().debugtx) {
-      self.startdebugging(queryParams.get().debugtx)
-    }
-
-    if (queryParams.get().pluginurl) {
-      var title = queryParams.get().plugintitle
-      var url = queryParams.get().pluginurl
-      modalDialogCustom.confirm(null, `Remix is going to load the extension "${title}" located at ${queryParams.get().pluginurl}. Are you sure to load this external extension?`, () => {
-        self._components.righthandpanel.loadPlugin({title, url})
-      })
-    }
-  })
-
-  // chrome app
-  window.syncStorage = chromeCloudStorageSync
-  chromeCloudStorageSync()
 
   var loadingFromGist = self.loadFromGist(queryParams.get())
   if (!loadingFromGist) {
