@@ -142,6 +142,10 @@ class ContractDropdownUI {
       modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
+    var statusCb = (msg) => {
+      return this.parentSelf._deps.logCallback(msg)
+    }
+
     var finalCb = (error, contractObject, address) => {
       this.event.trigger('clearInstance')
 
@@ -159,7 +163,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, finalCb)
+            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, statusCb, finalCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -167,7 +171,7 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, finalCb)
+    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, statusCb, finalCb)
   }
 
   loadFromAddress () {
