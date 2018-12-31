@@ -43,7 +43,7 @@
     "remix-lib": "0.4.1",
     "remix-solidity": "0.3.1",
     "remix-tests": "0.1.1",
-    "remixd": "git+https://github.com/ethereum/remixd.git",
+    "remixd": "0.1.8-alpha.6",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
-    "remixd": "git+https://github.com/ethereum/remixd.git"
+    "remixd": "0.1.8-alpha.6"
   },
   "repository": {
     "type": "git",
