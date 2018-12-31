@@ -4,7 +4,7 @@ var SourceHighlighter = require('../editor/sourceHighlighter')
 /*
   Defines available API. `key` / `type`
 */
-module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) => {
+module.exports = (pluginManager, fileProviders, fileManager, compilesrArtefacts, udapp) => {
   let highlighters = {}
   return {
     app: {
@@ -51,7 +51,7 @@ module.exports = (pluginManager, fileProviders, fileManager, compiler, udapp) =>
     },
     compiler: {
       getCompilationResult: (mod, cb) => {
-        cb(null, compiler.lastCompilationResult)
+        cb(null, compilesrArtefacts['__last'])
       },
       sendCompilationResult: (mod, file, source, languageVersion, data, cb) => {
         pluginManager.receivedDataFrom('sendCompilationResult', mod, [file, source, languageVersion, data])

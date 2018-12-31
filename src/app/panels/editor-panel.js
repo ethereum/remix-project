@@ -26,7 +26,7 @@ class EditorPanel {
       txListener: self._components.registry.get('txlistener').api,
       fileManager: self._components.registry.get('filemanager').api,
       udapp: self._components.registry.get('udapp').api,
-      compiler: self._components.registry.get('compiler').api
+      pluginManager: self._components.registry.get('pluginmanager').api
     }
     self.data = {
       _FILE_SCROLL_DELTA: 200,
@@ -40,16 +40,18 @@ class EditorPanel {
     self._view = {}
     var editor = new Editor({})
     self._components.registry.put({api: editor, name: 'editor'})
-    var contextualListener = new ContextualListener({editor: editor})
+
+    var contextualListener = new ContextualListener({editor, pluginManager: self._deps.pluginManager})
+    var contextView = new ContextView({contextualListener, editor})
+
     self._components = {
       editor: editor,
       contextualListener: contextualListener,
-      contextView: new ContextView({contextualListener: contextualListener, editor: editor}),
+      contextView: contextView,
+      // TODO list of compilers is always empty; should find a path to add plugin compiler here
       terminal: new Terminal({
         udapp: self._deps.udapp,
-        compilers: {
-          'solidity': self._deps.compiler
-        }
+        compilers: {}
       },
         {
           getPosition: (event) => {

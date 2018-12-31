@@ -1,23 +1,23 @@
 'use strict'
 var executionContext = require('../../execution-context')
+var CompilerAbstract = require('../compiler/compiler-abstract')
 
 class CompilerMetadata {
-  constructor (events, opts) {
+  constructor (opts) {
     var self = this
-    self._events = events
     self._opts = opts
     self.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'Custom']
   }
 
   syncContractMetadata () {
     var self = this
-    self._events.compiler.register('compilationFinished', (success, data, source) => {
-      if (!success) return
+    self._opts.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
       if (!self._opts.config.get('settings/generate-contract-metadata')) return
+      let compiler = new CompilerAbstract(languageVersion, data, source)
       var provider = self._opts.fileManager.currentFileProvider()
       var path = self._opts.fileManager.currentPath()
       if (provider && path) {
-        self._opts.compiler.visitContracts((contract) => {
+        compiler.visitContracts((contract) => {
           if (contract.file !== source.target) return
 
           var fileName = path + '/' + contract.name + '.json'

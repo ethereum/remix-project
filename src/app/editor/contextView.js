@@ -21,7 +21,7 @@ class ContextView {
     self.contextualListener = opts.contextualListener
     self.editor = opts.editor
     self._deps = {
-      compiler: self._components.registry.get('compiler').api,
+      compilersArtefacts: self._components.registry.get('compilersartefacts').api,
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api,
       config: self._components.registry.get('config').api,
       fileManager: self._components.registry.get('filemanager').api
@@ -97,9 +97,14 @@ class ContextView {
         self.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
       }
     }
-    if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
-      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, self._deps.compiler.lastCompilationResult.source.sources, self._deps.compiler.lastCompilationResult.data.sources)
-      var filename = self._deps.compiler.getSourceName(position.file)
+    let lastCompilationResult = self._deps.compilersArtefacts['__last']
+    if (lastCompilationResult && lastCompilationResult.data) {
+      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(
+        position,
+        position.file,
+        lastCompilationResult.getSourceCode().sources,
+        lastCompilationResult.getAsts())
+      var filename = lastCompilationResult.getSourceName(position.file)
       // TODO: refactor with rendererAPI.errorClick
       if (filename !== self._deps.config.get('currentFile')) {
         var provider = self._deps.fileManager.fileProviderOf(filename)

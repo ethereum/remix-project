@@ -8,15 +8,16 @@ var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
 module.exports = class TestTab {
-  constructor (localRegistry) {
+  constructor (localRegistry, compileTab) {
+    // TODO here is a direct reference to compile tab, should be removed
     const self = this
+    self.compileTab = compileTab
     self._view = { el: null }
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     // dependencies
     self._deps = {
       fileManager: self._components.registry.get('filemanager').api,
-      app: self._components.registry.get('app').api,
       filePanel: self._components.registry.get('filepanel').api
     }
     self.data = {}
@@ -76,7 +77,7 @@ module.exports = class TestTab {
           remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
             updateFinalResult(error, result, testFilePath)
             callback(error)
-          }, (url, cb) => { self._deps.app.importFileCb(url, cb) })
+          }, (url, cb) => { self.compileTab.importFileCb(url, cb) })
         }
       })
     }

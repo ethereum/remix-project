@@ -14,7 +14,7 @@ class SourceHighlighter {
       editor: self._components.registry.get('editor').api,
       config: self._components.registry.get('config').api,
       fileManager: self._components.registry.get('filemanager').api,
-      compiler: self._components.registry.get('compiler').api
+      compilerArtefacts: self._components.registry.get('compilersartefacts').api
     }
     this.statementMarker = null
     this.fullLineMarker = null
@@ -24,8 +24,9 @@ class SourceHighlighter {
   currentSourceLocation (lineColumnPos, location) {
     if (this.statementMarker) this._deps.editor.removeMarker(this.statementMarker, this.source)
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
-    if (location && location.file !== undefined) {
-      var path = this._deps.compiler.getSourceName(location.file)
+    let lastCompilationResult = this._deps.compilerArtefacts['__last']
+    if (location && location.file !== undefined && lastCompilationResult) {
+      var path = lastCompilationResult.getSourceName(location.file)
       if (path) {
         this.currentSourceLocationFromfileName(lineColumnPos, path)
       }
