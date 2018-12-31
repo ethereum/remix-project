@@ -1,6 +1,7 @@
 var ethJSUtil = require('ethereumjs-util')
 var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
+var txFormat = remixLib.execution.txFormat
 var executionContext = remixLib.execution.executionContext
 var typeConversion = remixLib.execution.typeConversion
 var txExecution = remixLib.execution.txExecution
@@ -262,6 +263,34 @@ class DropdownLogic {
     }
 
     this.parentSelf._deps.udapp.runTx(data, confirmationCb, promptCb, finalCb)
+  }
+
+  forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, cb) {
+    var constructor = selectedContract.getConstructorInterface()
+    this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
+      if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+      if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
+        txFormat.buildData(selectedContract.name, selectedContract.object, selectedContract.compiler.getContracts(), true, constructor, args, (error, data) => {
+          if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+
+          this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+          this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
+        }, (msg) => {
+          this.parentSelf._deps.logCallback(msg)
+        }, (data, runTxCallback) => {
+          // called for libraries deployment
+          this.runTransaction(data, promptCb, modalDialog, confirmDialog, runTxCallback)
+        })
+      } else {
+        if (Object.keys(selectedContract.bytecodeLinkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+        txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
+          if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+
+          this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+          this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
+        })
+      }
+    })
   }
 
 }

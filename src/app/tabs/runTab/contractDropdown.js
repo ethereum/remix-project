@@ -2,7 +2,6 @@ var yo = require('yo-yo')
 var css = require('../styles/run-tab-styles')
 var modalDialogCustom = require('../../ui/modal-dialog-custom')
 var remixLib = require('remix-lib')
-var txFormat = remixLib.execution.txFormat
 var EventManager = remixLib.EventManager
 var confirmDialog = require('../../execution/confirmDialog')
 var modalDialog = require('../../ui/modaldialog')
@@ -97,7 +96,7 @@ class ContractDropdownUI {
 
     var selectedContract = this.getSelectedContract()
     var createConstructorInstance = new MultiParamManager(0, selectedContract.getConstructorInterface(), (valArray, inputsValues) => {
-      this.createInstance(inputsValues, selectedContract.compiler)
+      this.createInstance(inputsValues)
     }, selectedContract.getConstructorInputs(), 'Deploy', selectedContract.bytecodeObject)
     this.createPanel.appendChild(createConstructorInstance.render())
   }
@@ -110,11 +109,12 @@ class ContractDropdownUI {
     return this.dropdownLogic.getSelectedContract(contractName, compilerAtributeName)
   }
 
-  // ===============
-  // TODO: move this to DropdownLogic
-  // ===============
-  createInstanceCallback (selectedContract, data) {
-    this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+  createInstance (args) {
+    var selectedContract = this.getSelectedContract()
+
+    if (selectedContract.bytecodeObject.length === 0) {
+      return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
+    }
 
     var continueCb = (error, continueTxExecution, cancelCb) => {
       if (error) {
@@ -138,11 +138,11 @@ class ContractDropdownUI {
       }
     }
 
-    var promptCb = function (okCb, cancelCb) {
+    var promptCb = (okCb, cancelCb) => {
       modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
-    this.dropdownLogic.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, (error, contractObject, address) => {
+    var finalCb = (error, contractObject, address) => {
       this.event.trigger('clearInstance')
 
       if (error) {
@@ -150,63 +150,24 @@ class ContractDropdownUI {
       }
 
       this.event.trigger('newContractInstanceAdded', [contractObject, address, this.selectContractNames.value])
-    })
-  }
-
-  createInstance (args, compiler) {
-    var selectedContract = this.getSelectedContract()
-
-    if (selectedContract.bytecodeObject.length === 0) {
-      return modalDialogCustom.alert('This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
-    }
-
-    // ===============
-    // TODO: move this to DropdownLogic
-    // ===============
-    var forceSend = () => {
-      var constructor = selectedContract.getConstructorInterface()
-      this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
-        if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-        if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-          txFormat.buildData(selectedContract.name, selectedContract.object, compiler.getContracts(), true, constructor, args, (error, data) => {
-            if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-            this.createInstanceCallback(selectedContract, data)
-          }, (msg) => {
-            this.parentSelf._deps.logCallback(msg)
-          }, (data, runTxCallback) => {
-            var promptCb = (okCb, cancelCb) => {
-              modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
-            }
-            // called for libraries deployment
-            this.dropdownLogic.runTransaction(data, promptCb, modalDialog, confirmDialog, runTxCallback)
-          })
-        } else {
-          if (Object.keys(selectedContract.bytecodeLinkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-          txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
-            if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-            this.createInstanceCallback(selectedContract, data)
-          })
-        }
-      })
     }
 
     if (selectedContract.isOverSizeLimit()) {
-      modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
+      return modalDialog('Contract code size over limit', yo`<div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br>
       More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank">eip-170</a>
       </div>`,
         {
           label: 'Force Send',
           fn: () => {
-            forceSend()
+            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, finalCb)
           }}, {
             label: 'Cancel',
             fn: () => {
               this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} canceled by user.`)
             }
           })
-    } else {
-      forceSend()
     }
+    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, finalCb)
   }
 
   loadFromAddress () {
