@@ -9,32 +9,39 @@ var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 
 class DropdownLogic {
-  constructor (parentSelf) {
-    this.parentSelf = parentSelf
+  constructor (fileManager, pluginManager, compilersArtefacts, compiler, config, editor, udapp, filePanel) {
+    this.pluginManager = pluginManager
+    this.compilersArtefacts = compilersArtefacts
+    this.compiler = compiler
+    this.config = config
+    this.editor = editor
+    this.udapp = udapp
+    this.filePanel = filePanel
+
     this.event = new EventManager()
 
     this.listenToCompilationEvents()
 
-    this.parentSelf._deps.fileManager.event.register('currentFileChanged', (currentFile) => {
+    fileManager.event.register('currentFileChanged', (currentFile) => {
       this.event.trigger('currentFileChanged', [currentFile])
     })
   }
 
   listenToCompilationEvents () {
-    this.parentSelf._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+    this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
       let compiler = new CompilerAbstract(languageVersion, data)
-      this.parentSelf._deps.compilersArtefacts[languageVersion] = compiler
-      this.parentSelf._deps.compilersArtefacts['__last'] = compiler
+      this.compilersArtefacts[languageVersion] = compiler
+      this.compilersArtefacts['__last'] = compiler
       this.event.trigger('newlyCompiled', [true, data, source, compiler, languageVersion])
     })
 
-    this.parentSelf._deps.compiler.event.register('compilationFinished', (success, data, source) => {
+    this.compiler.event.register('compilationFinished', (success, data, source) => {
       var name = 'solidity'
       let compiler = new CompilerAbstract(name, data)
-      this.parentSelf._deps.compilersArtefacts[name] = compiler
-      this.parentSelf._deps.compilersArtefacts['__last'] = compiler
-      this.event.trigger('newlyCompiled', [success, data, source, this.parentSelf._deps.compiler, name])
+      this.compilersArtefacts[name] = compiler
+      this.compilersArtefacts['__last'] = compiler
+      this.event.trigger('newlyCompiled', [success, data, source, this.compiler, name])
     })
   }
 
@@ -45,11 +52,11 @@ class DropdownLogic {
     if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
       return cb('Invalid checksum address.')
     }
-    if (/.(.abi)$/.exec(this.parentSelf._deps.config.get('currentFile'))) {
+    if (/.(.abi)$/.exec(this.config.get('currentFile'))) {
       confirmCb(() => {
         var abi
         try {
-          abi = JSON.parse(this.parentSelf._deps.editor.currentContent())
+          abi = JSON.parse(this.editor.currentContent())
         } catch (e) {
           return cb('Failed to parse the current file as JSON ABI.')
         }
@@ -70,7 +77,7 @@ class DropdownLogic {
   getSelectedContract (contractName, compilerAtributeName) {
     if (!contractName) return null
 
-    var compiler = this.parentSelf._deps.compilersArtefacts[compilerAtributeName]
+    var compiler = this.compilersArtefacts[compilerAtributeName]
     if (!compiler) return null
 
     var contract = compiler.getContract(contractName)
@@ -185,7 +192,7 @@ class DropdownLogic {
           })
     }
 
-    this.parentSelf._deps.udapp.createContract(data, confirmationCb, continueCb, promptCb,
+    this.udapp.createContract(data, confirmationCb, continueCb, promptCb,
       (error, txResult) => {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error}`)
@@ -212,7 +219,7 @@ class DropdownLogic {
         return continueTxExecution(null)
       }
       var amount = this.fromWei(tx.value, true, 'ether')
-      var content = confirmDialog(tx, amount, gasEstimation, this.parentSelf,
+      var content = confirmDialog(tx, amount, gasEstimation, null,
         (gasPrice, cb) => {
           let txFeeText, priceStatus
           // TODO: this try catch feels like an anti pattern, can/should be
@@ -245,7 +252,7 @@ class DropdownLogic {
       modalDialog('Confirm transaction', content,
         { label: 'Confirm',
           fn: () => {
-            this.parentSelf._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            this.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
             // TODO: check if this is check is still valid given the refactor
             if (!content.gasPriceStatus) {
               cancelCb('Given gas price is not correct')
@@ -262,34 +269,32 @@ class DropdownLogic {
       )
     }
 
-    this.parentSelf._deps.udapp.runTx(data, confirmationCb, promptCb, finalCb)
+    this.udapp.runTx(data, confirmationCb, promptCb, finalCb)
   }
 
-  forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, cb) {
+  forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
     var constructor = selectedContract.getConstructorInterface()
-    this.parentSelf._deps.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
-      if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+    // TODO: deployMetadataOf can be moved here
+    this.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
+      if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
       if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-        txFormat.buildData(selectedContract.name, selectedContract.object, selectedContract.compiler.getContracts(), true, constructor, args, (error, data) => {
-          if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
+        return txFormat.buildData(selectedContract.name, selectedContract.object, selectedContract.compiler.getContracts(), true, constructor, args, (error, data) => {
+          if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
-          this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+          statusCb(`creation of ${selectedContract.name} pending...`)
           this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
-        }, (msg) => {
-          this.parentSelf._deps.logCallback(msg)
-        }, (data, runTxCallback) => {
+        }, statusCb, (data, runTxCallback) => {
           // called for libraries deployment
           this.runTransaction(data, promptCb, modalDialog, confirmDialog, runTxCallback)
         })
-      } else {
-        if (Object.keys(selectedContract.bytecodeLinkReferences).length) this.parentSelf._deps.logCallback(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
-        txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
-          if (error) return this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
-
-          this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} pending...`)
-          this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
-        })
       }
+      if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+      txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
+        if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
+
+        statusCb(`creation of ${selectedContract.name} pending...`)
+        this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
+      })
     })
   }
 

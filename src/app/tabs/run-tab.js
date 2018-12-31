@@ -142,7 +142,16 @@ function runTab (opts, localRegistry) {
     this.event.trigger('clearInstance', [])
   })
 
-  var dropdownLogic = new DropdownLogic(self)
+  var dropdownLogic = new DropdownLogic(
+    this.parentSelf._deps.fileManager,
+    this.parentSelf._deps.pluginManager,
+    this.parentSelf._deps.compilersArtefacts,
+    this.parentSelf._deps.compiler,
+    this.parentSelf._deps.config,
+    this.parentSelf._deps.editor,
+    this.parentSelf._deps.udapp,
+    this.parentSelf._deps.filePanel
+  )
   var contractDropdownUI = new ContractDropdownUI(dropdownLogic, self)
 
   contractDropdownUI.event.register('clearInstance', () => {
