@@ -8,9 +8,9 @@ var modalDialog = require('../../ui/modaldialog')
 var MultiParamManager = require('../../../multiParamManager')
 
 class ContractDropdownUI {
-  constructor (dropdownLogic, parentSelf) {
-    this.parentSelf = parentSelf
+  constructor (dropdownLogic, logCallback) {
     this.dropdownLogic = dropdownLogic
+    this.logCallback = logCallback
     this.event = new EventManager()
 
     this.listenToEvents()
@@ -143,14 +143,14 @@ class ContractDropdownUI {
     }
 
     var statusCb = (msg) => {
-      return this.parentSelf._deps.logCallback(msg)
+      return this.logCallback(msg)
     }
 
     var finalCb = (error, contractObject, address) => {
       this.event.trigger('clearInstance')
 
       if (error) {
-        return this.parentSelf._deps.logCallback(error)
+        return this.logCallback(error)
       }
 
       this.event.trigger('newContractInstanceAdded', [contractObject, address, this.selectContractNames.value])
@@ -167,7 +167,7 @@ class ContractDropdownUI {
           }}, {
             label: 'Cancel',
             fn: () => {
-              this.parentSelf._deps.logCallback(`creation of ${selectedContract.name} canceled by user.`)
+              this.logCallback(`creation of ${selectedContract.name} canceled by user.`)
             }
           })
     }

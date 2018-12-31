@@ -143,16 +143,16 @@ function runTab (opts, localRegistry) {
   })
 
   var dropdownLogic = new DropdownLogic(
-    this.parentSelf._deps.fileManager,
-    this.parentSelf._deps.pluginManager,
-    this.parentSelf._deps.compilersArtefacts,
-    this.parentSelf._deps.compiler,
-    this.parentSelf._deps.config,
-    this.parentSelf._deps.editor,
-    this.parentSelf._deps.udapp,
-    this.parentSelf._deps.filePanel
+    this._deps.fileManager,
+    this._deps.pluginManager,
+    this._deps.compilersArtefacts,
+    this._deps.compiler,
+    this._deps.config,
+    this._deps.editor,
+    this._deps.udapp,
+    this._deps.filePanel
   )
-  var contractDropdownUI = new ContractDropdownUI(dropdownLogic, self)
+  var contractDropdownUI = new ContractDropdownUI(dropdownLogic, this._deps.logCallback)
 
   contractDropdownUI.event.register('clearInstance', () => {
     var noInstancesText = this._view.noInstancesText
