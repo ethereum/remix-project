@@ -59,6 +59,7 @@ module.exports = class CompileTab {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
+      defaultVersion: 'soljson-v0.5.1+commit.c8a2cb62.js',
       baseurl: 'https://solc-bin.ethereum.org/bin'
     }
     self.data.optimize = self._components.queryParams.get().optimize
@@ -200,7 +201,6 @@ module.exports = class CompileTab {
       <select onchange=${onchangeLoadVersion} class="${css.select}" id="versionSelector" disabled>
         <option disabled selected>Select new compiler version</option>
       </select>`
-    if (self.data.allversions && self.data.selectedVersion) self._updateVersionSelector()
     self._view.version = yo`<span id="version"></span>`
 
     self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
@@ -440,7 +440,7 @@ module.exports = class CompileTab {
         try {
           const data = JSON.parse(json)
           allversions = data.builds.slice().reverse()
-          selectedVersion = data.releases[data.latestRelease]
+          selectedVersion = self.data.defaultVersion
           if (self._components.queryParams.get().version) selectedVersion = self._components.queryParams.get().version
         } catch (e) {
           tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
