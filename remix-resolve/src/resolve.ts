@@ -1,5 +1,5 @@
 import axios from 'axios'
-interface Imported {
+export interface Imported {
   content: string;
   cleanURL: string;
   type: string;
@@ -96,7 +96,7 @@ export class ImportResolver {
       }
     ]
   }
-  async resolve(filePath: string, customHandlers?: Handler[]) {
+  async resolve(filePath: string, customHandlers?: Handler[]): Promise<Imported> {
     var imported: Imported = this.previouslyHandled[filePath]
     if(imported) {
       return imported
