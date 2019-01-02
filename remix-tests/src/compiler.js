@@ -47,8 +47,9 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
       if (foundpath.split('.').pop() === 'sol') {
         let c = fs.readFileSync(foundpath).toString()
         const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+        let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
         if (foundpath.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
-          c = c.replace(/(pragma solidity \^?\d+\.\d+\.\d+;)/, '$1\nimport \'remix_tests.sol\';')
+          c = includeTestLibs.concat(c)
         }
         sources[foundpath] = { content: c }
       }
