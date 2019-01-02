@@ -1,5 +1,7 @@
 # Current "Best Practice" Conventions
 
+
+- Please use [JS Standard Style](https://standardjs.com/) as a coding style guide.
 - `ES6 class` rather than ES5 to create class.
 - CSS declaration using `csjs-inject`.
 - CSS files: 
@@ -147,4 +149,5 @@ setTimeout(function () {
   userCard.setNickname('new name') 
   usercard.update()
 }, 5000)
+
 ```
