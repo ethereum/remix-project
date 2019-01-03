@@ -476,7 +476,7 @@ module.exports = class CompileTab {
     self._deps.editor.clearAnnotations()
     var currentFile = self._deps.config.get('currentFile')
     if (currentFile) {
-      if (/.(.sol)$/.exec(currentFile)) {
+      if (/\.sol$/.exec(currentFile)) {
         // only compile *.sol file.
         var target = currentFile
         var sources = {}
