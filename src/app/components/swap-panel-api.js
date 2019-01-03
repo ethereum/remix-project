@@ -5,25 +5,30 @@ const remixLib = require('remix-lib')
 const styleguide = require('../ui/styles-guide/theme-chooser')
 const styles = styleguide.chooser()
 
-const EventManager = remixLib.EventManager
+const EventEmmitter = require('events')
 
 class SwapPanelApi {
-  constructor (swapPanelComponent, pluginManagerApi) {
+  constructor (swapPanelComponent, verticalIconsComponent, pluginManagerComponent) {
     this.component = swapPanelComponent
+    verticalIconsComponent.event.on('showContent', (moduleName) => {
+      this.component.showContent(moduleName)
+    })
+    pluginManagerComponent.event.on('internalActivated', (mod, content) => {
+      this.add(mod.name, content)
+    })
   }
 
   /*
-    viewTitle: string
     content: DOM element
+    by appManager
   */
-  addView(viewTitle, content) {
+  add (moduleName, content) {
     // add the DOM to the swappanel
-    this.component.addView(viewTitle, contents)
+    return this.component.add(moduleName, content)
   }
 
-  activate() {
-    this.event.emit(activated)
-    this.pluginManagerApi.activated(this.type)
+  reference (modulename, domElement) {
+    this.nodes[modulename] = domElement
   }
 }
 

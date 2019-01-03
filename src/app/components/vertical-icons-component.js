@@ -5,34 +5,39 @@ const remixLib = require('remix-lib')
 
 const styleguide = require('../ui/styles-guide/theme-chooser')
 const styles = styleguide.chooser()
+const EventEmmitter = require('events')
   
   // Component
   class VerticalIconComponent {
   
-    constructor(appManager) {
-      this.appManager = appManager
-      appManager.event.register('activated', (item) => {
-        this.addIcon(item)
-      })
-      appManager.event.register('deactivated', (item) => {
-        this.removeIcon(item)
-      })
+    constructor() {
+      this.event = new EventEmmitter
     }
   
-    addIcon (item) {
-
+    addIcon (mod) {
+      let self = this
+      this.view.appendChild(yo`<div onclick=${(e) => { self._iconClick(mod.name)}} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>`)
     }
 
     removeIcon (item) {
 
     }
 
+    select (name) {
+      this.event.emit('showContent', name)
+    }
+
+    _iconClick (name) {
+      // called when an icon has been clicked
+      this.event.emit('showContent', name)
+    }
+
     render() {
-        yo`
-          <div id='plugins' class=${css.plugins} >
-            <h3>example</h3>
+        this.view = yo`
+          <div id='icons'>
           </div>
         `
+        return this.view
     }
   }
 
