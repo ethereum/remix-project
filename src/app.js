@@ -445,7 +445,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     type: 'solidityCompile',
     methods: [],
   }
-  appManager.addPlugin({json: compileTabProfile, api: compileTab})
+  appManager.addPlugin({json: compileTabProfile, api: new InternalModule(compileTab) })
 
   const testTab = new TestTab(self._components.registry, compileTab)
   const testTabProfile = {

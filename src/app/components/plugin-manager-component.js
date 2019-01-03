@@ -25,11 +25,15 @@ class PluginManagerComponent {
   }
 
   _activate(item) {
-    this.appManager.activate(item)
+    this.event.emit('activation', item)
   }
 
   _deactivate(item) {
-    this.appManager.deactivate(item)
+    this.event.emit('deactivation', item)
+  }
+
+  _addPlugin(url){
+    this.event.emit('plugin loading', url)
   }
 
   renderItem (item) {
@@ -42,6 +46,7 @@ class PluginManagerComponent {
         <button onclick=${() => { self._activate(item) }} ><button>
         <button onclick=${() => { self._deactivate(item) }} ><button>
       </div>
+      <button onclick=${} ><button>
     `
   }
 }
