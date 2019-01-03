@@ -8,7 +8,8 @@ const styles = styleguide.chooser()
 // API
 class VerticalIconsApi {
 
-  constructor(verticalIconsComponent) {
+  constructor(verticalIconsComponent, pluginManagerApi) {
+    pluginManagerApi.event.on('activate', (module) => verticalIconsComponent.addIcon(module) )
     this.component = verticalIconsComponent
   }
 
