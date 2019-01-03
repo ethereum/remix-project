@@ -8,11 +8,7 @@ const styles = styleguide.chooser()
 const EventManager = remixLib.EventManager
 
 class PluginManagerComponent {
-  constructor (appManager) {
-    this.appManager = appManager
-    appManager.event.register('pluginLoaded', () => {
-      // call this.renderItem
-    })
+  constructor () {
   }
 
   render () {
@@ -24,16 +20,17 @@ class PluginManagerComponent {
     `
   }
 
+  addItem (item) {
+    // add to appManager and then render
+    renderItem(item)
+  }
+
   _activate(item) {
     this.event.emit('activation', item)
   }
 
   _deactivate(item) {
     this.event.emit('deactivation', item)
-  }
-
-  _addPlugin(url){
-    this.event.emit('plugin loading', url)
   }
 
   renderItem (item) {
@@ -46,7 +43,6 @@ class PluginManagerComponent {
         <button onclick=${() => { self._activate(item) }} ><button>
         <button onclick=${() => { self._deactivate(item) }} ><button>
       </div>
-      <button onclick=${} ><button>
     `
   }
 }
