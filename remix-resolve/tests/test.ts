@@ -1,4 +1,4 @@
-import { RemixResolve, ImportResolver } from '../src'
+import { RemixResolve, ImportResolver, RemixResolveApi } from '../src'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as assert from 'assert'
@@ -10,10 +10,10 @@ const RemixResolveProfile: PluginProfile<RemixResolve> = {
   url: ''
 }
 interface IAppManager {
-  modules: {},
-  plugins: {
-    'remix-resolve': RemixResolve
-  }
+  modules: {
+    remixResolve: RemixResolve
+  },
+  plugins: {}
 }
 
 describe('testRunner', () => {
@@ -72,14 +72,13 @@ describe('testRunner', () => {
       // AppManager tests
       describe('test with AppManager', () => {
         let app: AppManager<IAppManager>
-        let api: Plugin<RemixResolve>
+        let api: RemixResolveApi
 
         before(() => {
-          api = new Plugin(RemixResolveProfile)
+          api = new RemixResolveApi()
           app = new AppManager({
-            plugins: [{ json: RemixResolveProfile, api }]
+            modules: [{ json: RemixResolveProfile, api }]
           })
-          app.activate(api.type)
         })
         it('Plugin should be added to app', () => {
           assert.equal(typeof(app.calls[api.type].resolve), 'function')
