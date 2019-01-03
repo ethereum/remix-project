@@ -263,7 +263,6 @@ function filepanel (localRegistry) {
     document.removeEventListener('mousemove', moveGhostbar)
     document.removeEventListener('mouseup', removeGhostbar)
     document.removeEventListener('keydown', cancelGhostbar)
-    self.event.trigger('resize', [getPosition(event)])
   }
 
   function createNewFile () {
