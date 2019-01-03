@@ -27,5 +27,4 @@ class SwapPanelApi {
   }
 }
 
-
 module.exports = SwapPanelApi

@@ -7,7 +7,7 @@ const styles = styleguide.chooser()
 
 const EventManager = remixLib.EventManager
 
-class SwapPanelApi {
+class PluginManagerApi {
   constructor (swapPanelComponent) {
     this.component = swapPanelComponent
   }
