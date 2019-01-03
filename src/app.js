@@ -37,7 +37,17 @@ var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
 const CompilerAbstract = require('./app/compiler/compiler-abstract')
-const PluginManager = require('./app/plugin/pluginManager')
+// const PluginManager = require('./app/plugin/pluginManager')
+
+// var IconPanel = require('./app/panels/left-icon-panel')
+
+const VerticalIconsComponent = require('./app/components/vertical-icons-component')
+const VerticalIconsApi = require('./app/components/vertical-icons-api')
+// var VerticalIconsProfile = require('./app/panels/vertical-icons-profile')
+
+const SwapPanelComponent = require('./app/component/swap-panel-component')
+const SwapPanelComponent = require('./app/component/swap-panel-api')
+
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
@@ -45,6 +55,8 @@ const DebuggerTab = require('./app/tabs/debugger-tab')
 const SupportTab = require('./app/tabs/support-tab')
 const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
+
+const appManager = require('remix-plugin').appManager
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -188,46 +200,53 @@ class App {
       }
     }
     if (direction === 'left') {
-      self._view.leftpanel.style.width = delta + 'px'
-      self._view.centerpanel.style.left = delta + 'px'
+      self._view.swappanel.style.width = delta + 'px'
+      self._view.mainpanel.style.left = delta + 'px'
     }
-    if (direction === 'right') {
-      self._view.rightpanel.style.width = delta + 'px'
-      self._view.centerpanel.style.right = delta + 'px'
-    }
+    // if (direction === 'right') {
+    //   self._view.mainpanel.style.width = delta + 'px'
+    //   self._view.swappanel.style.right = delta + 'px'
+    // }
   }
   init () {
     var self = this
     run.apply(self)
   }
+  
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    self._view.leftpanel = yo`
-      <div id="filepanel" class=${css.leftpanel}>
+    // not resizable
+    self._view.iconpanel = yo`
+      <div id="icon-panel" class=${css.iconpanel} style="width: 50px;">
+      ${''}
+      </div>
+    `
+
+    // center panel, resizable
+    self._view.swappanel = yo`
+      <div id="swap-panel" class=${css.swappanel}>
         ${''}
       </div>
     `
-    self._view.centerpanel = yo`
+
+    // handle the editor + terminal
+    self._view.mainpanel = yo`
       <div id="editor-container" class=${css.centerpanel}>
         ${''}
       </div>
     `
-    self._view.rightpanel = yo`
-      <div class=${css.rightpanel}>
-        ${''}
-      </div>
-    `
+    
     self._view.el = yo`
       <div class=${css.browsersolidity}>
-        ${self._view.leftpanel}
-        ${self._view.centerpanel}
-        ${self._view.rightpanel}
+        ${self._view.iconpanel}
+        ${self._view.swappanel}
+        ${self._view.mainpanel}
       </div>
     `
     // INIT
     self._adjustLayout('left', self.data._layout.left.offset)
-    self._adjustLayout('right', self.data._layout.right.offset)
+    // self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
   }
   startdebugging (txHash) {
@@ -365,22 +384,112 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
-  // ---------------- Plugin Manager -------------------------------
+  // ----------------- app manager ----------------------------
+  const VerticalIconsProfile = {
+    type: 'verticalIcons',
+    methods: ['addIcon', 'removeIcon'],
+  }
+  
+  const SwapPanelProfile = {
+    type: 'swapPanel',
+    methods: ['addView', 'showContent'],
+  }
 
-  let pluginManager = new PluginManager(
-    self,
-    self._components.compilersArtefacts,
-    txlistener,
-    self._components.fileProviders,
-    self._components.fileManager,
-    udapp)
-  registry.put({api: pluginManager, name: 'pluginmanager'})
+  const PluginManagerProfile = {
+    type: 'pluginManager',
+    methods: [],
+  }
 
-  pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
-    // TODO check whether the tab is configured
-    let compiler = new CompilerAbstract(languageVersion, data, source)
-    self._components.compilersArtefacts['__last'] = compiler
+  const FileManagerProfile = {
+    type: 'fileManager',
+    methods: [],
+  }
+
+  const SettingsProfile = {
+    type: 'settings',
+    methods: [],
+  }
+
+  const appManager = new appManager()
+
+  const swapPanelComponent = new SwapPanelComponent()
+  const pluginManagerComponent = new PluginManagerComponent(appManager)
+  const verticalIconComponent = new VerticalIconsComponent(appManager)
+
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent)
+  const verticalIconApi = new VerticalsIconApi(verticalIconComponent)
+  const pluginManagerAPI = new pluginManagerAPI(pluginManagerComponent)
+
+  self._components.filePanel = new FilePanel()
+  registry.put({api: self._components.filePanel, name: 'filepanel'})
+
+  var settings = new SettingsTab()
+
+  // All Plugins and Modules are registered in the contructor
+  // You cannot add module after
+  appManager.init({
+    // Module should be activated by default
+    modules: [
+      { json: VerticalIconsProfile, api: verticalIconApi },
+      { json: SwapPanelProfile, api: swapPanelApi },
+      { json: PluginManagerProfile, api: pluginManagerApi },
+      { json: FileManagerProfile, api: self._components.filePanel },
+      { json: SettingsProfile, api: settings }
+    ],
+    // Plugins need to be activated
+    plugins: [],
+    options: {
+      bootstrap: 'pluginManager'
+    }
   })
+
+  const compileTab = new CompileTab(self._components.registry)
+  const compileTabProfile = {
+    type: 'solidityCompile',
+    methods: [],
+  }
+  appManager.addPlugin({json: compileTabProfile, api: compileTab})
+
+  const testTab = new TestTab(self._components.registry, compileTab)
+  const testTabProfile = {
+    type: 'solidityUnitTesting',
+    methods: [],
+  }
+  appManager.addPlugin({json: testTabProfile, api: testTab})
+
+  const runTab = new RunTab(self._components.registry)
+  const runTabProfile = {
+    type: 'runTransaction',
+    methods: [],
+  }
+  appManager.addPlugin({json: runTabProfile, api: runTab})
+
+  const analysisTab = new AnalysisTab(self._components.registry)
+  const analysisTabProfile = {
+    type: 'solidityStaticAnalisys',
+    methods: [],
+  }
+  appManager.addPlugin({json: analysisTabProfile, api: analysisTab})
+
+  const debuggerTab = new DebuggerTab(self._components.registry)
+  const debuggerTabProfile = {
+    type: 'debugger',
+    methods: [],
+  }
+  appManager.addPlugin({json: debuggerTabProfile, api: debuggerTab})
+
+  const supportTab = new SupportTab(self._components.registry)
+  const supportTabProfile = {
+    type: 'support',
+    methods: [],
+  }
+  appManager.addPlugin({json: supportTabProfile, api: supportTab})
+
+  self._components.iconpanel.appendChild(verticalIconComponent.render())
+  self._components.iconpanel.event.register('resize', delta => self._adjustLayout('left', delta))
+
+  self._components.swappanel.appendChild(swapPanelComponent.render())
+  self._components.swappanel.event.register('resize', delta => self._adjustLayout('center', delta))
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
@@ -409,35 +518,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  // ---------------- FilePanel --------------------
-  self._components.filePanel = new FilePanel()
-  self._view.leftpanel.appendChild(self._components.filePanel.render())
-  self._components.filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
-  registry.put({api: self._components.filePanel, name: 'filepanel'})
-
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
-  // ---------------- Tabs -------------------------------
-  let compileTab = new CompileTab(self._components.registry)
-  let tabs = {
-    compile: compileTab,
-    run: new RunTab(self._components.registry),
-    settings: new SettingsTab(self._components.registry),
-    analysis: new AnalysisTab(self._components.registry),
-    debug: new DebuggerTab(self._components.registry),
-    support: new SupportTab(self._components.registry),
-    test: new TestTab(self._components.registry, compileTab)
-  }
-
-  // ---------------- Righthand-panel --------------------
-  self._components.righthandpanel = new RighthandPanel({ tabs, pluginManager })
-  self._view.rightpanel.appendChild(self._components.righthandpanel.render())
-  self._components.righthandpanel.init()
-  self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
-
-  var txLogger = new TxLogger() // eslint-disable-line
+  var txLogger = new TxLogger() // eslint-disable-line  
 
   var queryParams = new QueryParams()
 
