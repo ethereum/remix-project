@@ -8,19 +8,15 @@ const styles = styleguide.chooser()
 const EventManager = remixLib.EventManager
 
 class PluginManagerApi {
-  constructor (swapPanelComponent) {
+  constructor (swapPanelComponent, pluginManagerComponent, appManager) {
     this.component = swapPanelComponent
-  }
-
-  /*
-    viewTitle: string
-    content: DOM element
-  */
-  addView(viewTitle, content) {
-    // add the DOM to the swappanel
-    this.component.addView(viewTitle, contents)
+    this.appManager = appManager
+    appManager.event.register('pluginLoaded', (item) => {
+      pluginManagerComponent.addItem(item)
+    })
+    pluginManagerComponent.event.on('activation', (item) => this.event.emit('activation', item))
+    pluginManagerComponent.event.on('deactivation', (item) => this.event.emit('deactivation', item))
   }
 }
-
 
 module.exports = SwapPanelApi
