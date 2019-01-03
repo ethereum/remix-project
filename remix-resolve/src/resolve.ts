@@ -1,4 +1,22 @@
 import axios from 'axios'
+
+import { Api, PluginProfile } from 'remix-plugin'
+
+export interface RemixResolve extends Api {
+  type: 'remix-resolve'
+  events: {}
+  resolve: any
+}
+
+export const RemixResolveProfile: PluginProfile<RemixResolve> = {
+  type: 'remix-resolve',
+  methods: ['resolve'],
+  events: [],
+  notifications: [],
+  url: ''
+}
+
+
 export interface Imported {
   content: string;
   cleanURL: string;
