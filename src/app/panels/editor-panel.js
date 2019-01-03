@@ -244,12 +244,10 @@ class EditorPanel {
     function toggleLHP (event) {
       this.children[0].classList.toggle('fa-angle-double-right')
       this.children[0].classList.toggle('fa-angle-double-left')
-      self.event.trigger('resize', ['left'])
     }
     function toggleRHP (event) {
       this.children[0].classList.toggle('fa-angle-double-right')
       this.children[0].classList.toggle('fa-angle-double-left')
-      self.event.trigger('resize', ['right'])
     }
     function increase () { self._components.editor.editorFontSize(1) }
     function decrease () { self._components.editor.editorFontSize(-1) }

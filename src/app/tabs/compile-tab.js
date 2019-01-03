@@ -1,4 +1,5 @@
 /* global Worker */
+const EventEmitter = require('events')
 const async = require('async')
 const $ = require('jquery')
 const yo = require('yo-yo')
@@ -25,6 +26,7 @@ const styles = styleGuide.chooser()
 module.exports = class CompileTab {
   constructor (localRegistry) {
     const self = this
+    self.event = new EventEmitter()
     self._view = {
       el: null,
       autoCompile: null,
@@ -115,9 +117,11 @@ module.exports = class CompileTab {
       self._view.compileIcon.setAttribute('title', '')
     })
     self._components.compiler.event.register('compilationFinished', function finish (success, data, source) {
+      if (success) {
+        // forwarding the event to the appManager infra
+        self.event.emit('compilationFinished', null, source, 'Solidity', data)
+      }
       if (self._view.compileIcon) {
-        const compileTab = document.querySelector('.compileView')
-        compileTab.style.color = styles.colors.black
         self._view.compileIcon.style.color = styles.colors.black
         self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
         self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
@@ -129,7 +133,6 @@ module.exports = class CompileTab {
       self._view.contractNames.innerHTML = ''
       if (success) {
         // TODO consider using compile tab as a proper module instead of just forwarding event
-        self._deps.pluginManager.receivedDataFrom('sendCompilationResult', 'solidity-compiler', [data.target, source, self.data.selectedVersion, data])
         self._view.contractNames.removeAttribute('disabled')
         self._components.compiler.visitContracts(contract => {
           self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._components.compiler.getSource(contract.file))
@@ -139,22 +142,16 @@ module.exports = class CompileTab {
       } else {
         self._view.contractNames.setAttribute('disabled', true)
       }
-      // hightlight the tab if error
-      if (success) document.querySelector('.compileView').style.color = '' // @TODO: compileView tab
-      else document.querySelector('.compileView').style.color = styles.colors.red // @TODO: compileView tab
-      // display warning error if any
       var error = false
       if (data['error']) {
         error = true
         self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
-          /*
           return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
                                             The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
                                             The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
                                             It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br>
                                             Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.</div>`)
-          */
         }
       }
       if (data.errors && data.errors.length) {
@@ -184,6 +181,13 @@ module.exports = class CompileTab {
         self.runCompiler()
       }
     })
+  }
+  profile () {
+    return {
+      type: 'solidityCompile',
+      methods: {},
+      events: ['compilationFinished']
+    }
   }
   addWarning (msg, settings) {
     const self = this

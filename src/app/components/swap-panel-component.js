@@ -5,39 +5,40 @@ const remixLib = require('remix-lib')
 const styleguide = require('../ui/styles-guide/theme-chooser')
 const styles = styleguide.chooser()
 
-const EventManager = remixLib.EventManager
-
 class SwapPanelComponent {
   constructor () {
+    // list of contents
+    this.contents = {}
+    // name of the current displayed content
+    this.currentNode
   }
 
   showContent (moduleName) {
     // hiding the current view and display the `moduleName`
+    if (this.contents[moduleName]) {
+      this.contents[moduleName].style.display = 'block'
+      if (this.currentNode) {
+        this.contents[this.currentNode].style.display = 'none'
+      }
+      this.currentNode = moduleName
+      return
+    }
+    console.log(`${moduleName} not found`)
   }
 
-  addView (title, content) {
-    // add the DOM to the swappanel
-  }
+  
+  add (moduleName, content) {
+    this.contents[moduleName] = yo`<div class=${css.plugItIn} >${content}</div>`
+    this.view.appendChild(this.contents[moduleName])
+    this.showContent(moduleName)
+  }  
 
   render () {
-    var self = this
-
-    var view = yo`
+    this.view =  yo`
       <div id='plugins' class=${css.plugins} >
-        <div class=${css.plugItIn} >
-            <h1> Plugin 1 </h1>
-            <ul> <li> Some Text </li> </ul>
-        </div>
-        <div class=${css.plugItIn} >
-            <h1> Plugin 2 </h1>
-            <ul> <li> Some Text </li> </ul>
-        </div>
-        <div class=${css.plugItIn} >
-            <h1> Plugin 3 </h1>
-            <ul> <li> Some Text </li> </ul>
-        </div>
       </div>
     `
+    return this.view
   }
 }
 
@@ -45,7 +46,6 @@ module.exports = SwapPanelComponent
 
 const css = csjs`
   .plugins        {
-    width          : 300px;
   }
   .plugItIn       {
     display        : none;
