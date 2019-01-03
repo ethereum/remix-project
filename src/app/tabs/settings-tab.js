@@ -205,7 +205,6 @@ module.exports = class SettingsTab {
 const css = csjs`
   .settingsTabView {
     padding: 2%;
-    display: flex;
   }
   .info {
     ${styles.rightPanel.settingsTab.box_SolidityVersionInfo};

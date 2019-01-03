@@ -132,7 +132,6 @@ module.exports = class LeftIconPanel {
       document.removeEventListener('mousemove', moveGhostbar)
       document.removeEventListener('mouseup', removeGhostbar)
       document.removeEventListener('keydown', cancelGhostbar)
-      self.event.trigger('resize', [document.body.offsetWidth - getPosition(event)])
     }
   }
 }
