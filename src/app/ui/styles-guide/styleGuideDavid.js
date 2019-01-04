@@ -25,6 +25,7 @@ function styleGuideDavid () {
       backgroundBlue: 'hsla(229, 100%, 97%, 1)',
       blueLightTrans: 'hsla(202, 91%, 75%, .4)',
       brightBlue: 'hsla(233, 91%, 58%, 1)',
+      azure: '#dbe9f4',
       // GREY
       grey: 'hsla(0, 0%, 40%, 1)',
       lightGrey: 'hsla(0, 0%, 40%, .5)',
@@ -82,14 +83,14 @@ function styleGuideDavid () {
                           BACKGROUND COLORS
     ------------------------------------------------------ */
     primary_BackgroundColor: cssProperties.colors.white,
-    secondary_BackgroundColor: cssProperties.colors.backgroundBlue,
-    tertiary_BackgroundColor: cssProperties.colors.backgroundBlue,
-    quaternary_BackgroundColor: cssProperties.colors.backgroundBlue,
-    fifth_BackgroundColor: cssProperties.colors.backgroundBlue,
-    seventh_BackgroundColor: cssProperties.colors.veryLightGrey,
+    secondary_BackgroundColor: cssProperties.colors.white,
+    tertiary_BackgroundColor: cssProperties.colors.white,
+    quaternary_BackgroundColor: cssProperties.colors.white,
+    fifth_BackgroundColor: cssProperties.colors.white,
+    seventh_BackgroundColor: cssProperties.colors.white,
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
-    debuggingMode_BackgroundColor: cssProperties.colors.lightViolet,
+    debuggingMode_BackgroundColor: cssProperties.colors.veryLightGrey,
     highlight_BackgroundColor: cssProperties.colors.veryLightGrey,
     /* ------------------------------------------------------
                               RESIZING
@@ -118,7 +119,7 @@ function styleGuideDavid () {
     ******************************************************** */
     icon_Color: cssProperties.colors.black,
     icon_AltColor: cssProperties.colors.white,
-    icon_HoverColor: cssProperties.colors.orange,
+    icon_HoverColor: cssProperties.colors.azure,
     icon_ConstantColor: cssProperties.colors.black,
 
     /* ------------------------------------------------------
@@ -164,7 +165,7 @@ function styleGuideDavid () {
     ******************************************************** */
     solidBorderBox_TextColor: cssProperties.colors.black,
     solidBorderBox_BackgroundColor: cssProperties.colors.white,
-    solidBorderBox_BorderColor: cssProperties.colors.veryLightGrey,
+    solidBorderBox_BorderColor: cssProperties.colors.white,
 
     /* ------------------------------------------------------
                       SOLID BOX
@@ -180,22 +181,22 @@ function styleGuideDavid () {
           PRIMARY
     .................. */
     primaryButton_TextColor: cssProperties.colors.black,
-    primaryButton_BackgroundColor: cssProperties.colors.lightBlue,
-    primaryButton_BorderColor: cssProperties.colors.lightBlue,
+    primaryButton_BackgroundColor: cssProperties.colors.white,
+    primaryButton_BorderColor: cssProperties.colors.black,
 
     /* .................
           SECONDARY
     .................. */
     secondaryButton_TextColor: cssProperties.colors.black,
-    secondaryButton_BackgroundColor: cssProperties.colors.veryLightGrey,
-    secondaryButton_BorderColor: cssProperties.colors.veryLightGrey,
+    secondaryButton_BackgroundColor: cssProperties.colors.white,
+    secondaryButton_BorderColor: cssProperties.colors.black,
 
     /* .................
           Teriary
     .................. */
     teriaryButton_TextColor: cssProperties.colors.black,
-    teriaryButton_BackgroundColor: cssProperties.colors.lightGrey,
-    teriaryButton_BorderColor: cssProperties.colors.veryLightGrey,
+    teriaryButton_BackgroundColor: cssProperties.colors.white,
+    teriaryButton_BorderColor: cssProperties.colors.black,
     /* .................
 
     /* .................
@@ -203,23 +204,23 @@ function styleGuideDavid () {
     .................. */
     quaternaryButton_TextColor: cssProperties.colors.black,
     quaternaryButton_BackgroundColor: cssProperties.colors.white,
-    quaternaryButton_BorderColor: cssProperties.colors.veryLightGrey,
+    quaternaryButton_BorderColor: cssProperties.colors.black,
     /* .................
 
     /* .................
           Fifth
     .................. */
     fifthButton_TextColor: cssProperties.colors.black,
-    fifthButton_BackgroundColor: cssProperties.colors.blueFairyDust,
-    fifthButton_BorderColor: cssProperties.colors.veryLightGrey,
+    fifthButton_BackgroundColor: cssProperties.colors.white,
+    fifthButton_BorderColor: cssProperties.colors.black,
     /* .................
 
     /* .................
           Sixth
     .................. */
     sixthButton_TextColor: cssProperties.colors.black,
-    sixthButton_BackgroundColor: cssProperties.colors.greenZing,
-    sixthButton_BorderColor: cssProperties.colors.veryLightGrey,
+    sixthButton_BackgroundColor: cssProperties.colors.white,
+    sixthButton_BorderColor: cssProperties.colors.black,
     /* .................
 
           SUCCESS
@@ -246,8 +247,8 @@ function styleGuideDavid () {
           INFO
     .................. */
     infoButton_TextColor: cssProperties.colors.black,
-    infoButton_BackgroundColor: cssProperties.colors.lightPink,
-    infoButton_BorderColor: cssProperties.colors.veryLightGrey,
+    infoButton_BackgroundColor: cssProperties.colors.white,
+    infoButton_BorderColor: cssProperties.colors.black,
 
     /* .................
           SOLIDITY
