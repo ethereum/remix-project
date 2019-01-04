@@ -47,7 +47,7 @@ const css = csjs`
 `
 
 class RighthandPanel {
-  constructor (localRegistry) {
+  constructor ({pluginManager, tabs}, localRegistry) {
     const self = this
     self._components = {}
     self._components.registry = localRegistry || globalRegistry

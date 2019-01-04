@@ -313,7 +313,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
   // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp(registry.get('config').api)
+  var udapp = new UniversalDApp(registry)
   // TODO: to remove when possible
   registry.put({api: udapp, name: 'udapp'})
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {

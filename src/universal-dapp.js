@@ -8,12 +8,11 @@ var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
 
-function UniversalDApp (config) {
+function UniversalDApp (registry) {
   this.event = new EventManager()
   var self = this
   self._deps = {
-    config: globalRegistry.get('config').api,
-    compiler: globalRegistry.get('compiler').api
+    config: registry.get('config').api
   }
   self._txRunnerAPI = {
     config: self._deps.config,
