@@ -26,7 +26,7 @@ module.exports = class SettingsTab {
       el: null,
       optionVM: null, personal: null, warnPersonalMode: null, generateContractMetadata: null,
       pluginInput: null, versionSelector: null, version: null,
-      theme: { dark: null, light: null },
+      theme: { dark: null, light: null, david: null },
       plugins: {},
       config: {
         general: null, themes: null,
@@ -66,6 +66,7 @@ module.exports = class SettingsTab {
 
     self._view.theme.light = yo`<input onchange=${onswitch2lightTheme} class="${css.col1}" name="theme" id="themeLight" type="radio">`
     self._view.theme.dark = yo`<input onchange=${onswitch2darkTheme} class="${css.col1}" name="theme" id="themeDark" type="radio">`
+    self._view.theme.david = yo`<input onchange=${onswitch2davidTheme} class="${css.col1}" name="theme" id="themeDavid" type="radio">`
     self._view.theme[self.data.currentTheme].setAttribute('checked', 'checked')
 
     self._view.config.general = yo`
@@ -111,6 +112,10 @@ module.exports = class SettingsTab {
         <div class="${css.crow}">
           ${self._view.theme.dark}
           <label for="themeDark">Dark Theme</label>
+        </div>
+        <div class="${css.crow}">
+          ${self._view.theme.david}
+          <label for="themeDavid">David Theme</label>
         </div>
       </div>`
     self._view.config.plugins = yo`<div></div>`
@@ -193,6 +198,10 @@ module.exports = class SettingsTab {
     }
     function onswitch2lightTheme (event) {
       styleGuide.switchTheme('light')
+      window.location.reload()
+    }
+    function onswitch2davidTheme (event) {
+      styleGuide.switchTheme('david')
       window.location.reload()
     }
     function onchangePersonal (event) {
