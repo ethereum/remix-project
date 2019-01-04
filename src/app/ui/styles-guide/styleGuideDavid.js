@@ -60,7 +60,6 @@ function styleGuideDavid () {
                                   BORDERS
     ------------------------------------------------------ */
     borders: {
-      primary_borderRadius: '3px',
       secondary_borderRadius: '5px'
     }
   }
@@ -283,7 +282,6 @@ function styleGuideDavid () {
         background-color      : ${opts.BackgroundColor};
         border                : 1px solid ${opts.BorderColor};
         color                 : ${opts.Color};
-        border-radius         : ${cssProperties.borders.primary_borderRadius};
         font-size             : 12px;
         padding               : 10px 15px;
         line-height           : 20px;
@@ -345,22 +343,20 @@ function styleGuideDavid () {
       `,
 
       button: (opts = {}) => `
-      margin                  : 1px;
-      background-color        : ${opts.BackgroundColor};
-      border                  : .3px solid ${opts.BorderColor};
-      color                   : ${opts.Color};
-      display                 : flex;
-      align-items             : center;
-      justify-content         : center;
-      border-radius           : 3px;
-      cursor                  : pointer;
-      min-height              : 25px;
-      max-height              : 25px;
-      width                   : 70px;
-      min-width               : 70px;
-      font-size               : 12px;
-      overflow                : hidden;
-      word-break              : normal;
+        margin                  : 1px;
+        background-color        : ${opts.BackgroundColor};
+        color                   : ${opts.Color};
+        display                 : flex;
+        align-items             : center;
+        justify-content         : center;
+        cursor                  : pointer;
+        min-height              : 25px;
+        max-height              : 25px;
+        width                   : 70px;
+        min-width               : 70px;
+        font-size               : 12px;
+        overflow                : hidden;
+        word-break              : normal;
       `
     }
   }
