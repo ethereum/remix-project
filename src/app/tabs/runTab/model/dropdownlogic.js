@@ -30,18 +30,10 @@ class DropdownLogic {
   listenToCompilationEvents () {
     this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
-      let compiler = new CompilerAbstract(languageVersion, data)
+      let compiler = new CompilerAbstract(languageVersion, data, source)
       this.compilersArtefacts[languageVersion] = compiler
       this.compilersArtefacts['__last'] = compiler
       this.event.trigger('newlyCompiled', [true, data, source, compiler, languageVersion])
-    })
-
-    this.compiler.event.register('compilationFinished', (success, data, source) => {
-      var name = 'solidity'
-      let compiler = new CompilerAbstract(name, data)
-      this.compilersArtefacts[name] = compiler
-      this.compilersArtefacts['__last'] = compiler
-      this.event.trigger('newlyCompiled', [success, data, source, this.compiler, name])
     })
   }
 
@@ -278,7 +270,7 @@ class DropdownLogic {
     this.filePanel.compilerMetadata().deployMetadataOf(selectedContract.name, (error, contractMetadata) => {
       if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
       if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-        return txFormat.buildData(selectedContract.name, selectedContract.object, selectedContract.compiler.getContracts(), true, constructor, args, (error, data) => {
+        return txFormat.buildData(selectedContract.name, selectedContract.object, this.compilersArtefacts['__last'].getData().contracts, true, constructor, args, (error, data) => {
           if (error) return statusCb(`creation of ${selectedContract.name} errored: ` + error)
 
           statusCb(`creation of ${selectedContract.name} pending...`)

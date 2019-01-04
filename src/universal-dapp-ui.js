@@ -26,9 +26,9 @@ function UniversalDAppUI (udapp, registry) {
   this.registry = registry
 
   this.compilerData = {contractsDetails: {}}
-  registry.get('compiler').api.event.register('compilationFinished', (success, data, source) => {
-    this.compilerData.contractsDetails = success && data ? data.contracts : {}
-  })
+  this._deps = {
+    compilersartefacts: registry.get('compilersartefacts').api
+  }
 }
 
 function decodeResponseToTreeView (response, fnabi) {
@@ -220,7 +220,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     }
 
     // contractsDetails is used to resolve libraries
-    txFormat.buildData(args.contractName, args.contractAbi, self.compilerData.contractsDetails, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
+    txFormat.buildData(args.contractName, args.contractAbi, self._deps.compilersartefacts['__last'].getData().contracts, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
         if (!args.funABI.constant) {
           self.registry.get('logCallback').api(`${logMsg} pending ... `)

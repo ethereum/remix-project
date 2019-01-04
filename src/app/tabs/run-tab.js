@@ -9,7 +9,7 @@ var css = require('./styles/run-tab-styles')
 var Settings = require('./runTab/model/settings.js')
 var SettingsUI = require('./runTab/settings.js')
 
-var DropdownLogic = require('./runTab/model/dropdownLogic.js')
+var DropdownLogic = require('./runTab/model/dropdownlogic.js')
 var ContractDropdownUI = require('./runTab/contractDropdown.js')
 
 var Recorder = require('./runTab/model/recorder.js')
