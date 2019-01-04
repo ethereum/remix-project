@@ -52,8 +52,7 @@ describe('testRunner', () => {
               handle: (match: Array<string>) => { return handleLocal(match[2], match[3]) }
             }
           ]
-          //app.calls[api.type].resolve(fileName, localFSHandler)
-          api.resolve(fileName, localFSHandler)
+          app['modules'][api.type].api.resolve(fileName, localFSHandler)
             .then(sources => {
               results = sources
               done()
@@ -71,6 +70,47 @@ describe('testRunner', () => {
             content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
             cleanURL: '../remix-resolve/tests/example_1/greeter.sol',
             type: 'local'
+          }
+          assert.deepEqual(results, expt)
+        })
+      })
+
+      // test IPFShandle
+      describe('test getting IPFS files', function() {
+        let app: AppManager<IAppManager>
+        let api: RemixResolveApi
+
+        const fileName: string = 'ipfs://QmeKtwMBqz5Ac7oL8SyTD96mccEzw9X9d39jLb2kgnBYbn'
+        let results: object
+
+        before((done) => {
+          try {
+            api = new RemixResolveApi()
+            app = new AppManager({
+              modules: [{ json: RemixResolveProfile, api }]
+            })
+
+            app['modules'][api.type].api.resolve(fileName)
+            .then((sources: object) => {
+              results = sources
+              done()
+            })
+            .catch((e: Error) => {
+              throw e
+            })
+          } catch(e) {
+            throw e
+          }
+        })
+
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
+        it('should returns contract content of given local path', () => {
+          const expt = {
+            content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
+            cleanURL: 'ipfs://QmeKtwMBqz5Ac7oL8SyTD96mccEzw9X9d39jLb2kgnBYbn',
+            type: 'ipfs'
           }
           assert.deepEqual(results, expt)
         })
