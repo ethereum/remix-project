@@ -23,7 +23,6 @@ function styleGuideDavid () {
       blue: 'hsla(229, 75%, 87%, 1)',
       lightBlue: 'hsla(229, 75%, 87%, .5)',
       backgroundBlue: 'hsla(229, 100%, 97%, 1)',
-      blueLightTrans: 'hsla(202, 91%, 75%, .4)',
       brightBlue: 'hsla(233, 91%, 58%, 1)',
       azure: '#dbe9f4',
       // GREY
@@ -94,7 +93,7 @@ function styleGuideDavid () {
     /* ------------------------------------------------------
                               RESIZING
     ******************************************************** */
-    ghostBar: cssProperties.colors.blueLightTrans,
+    ghostBar: cssProperties.colors.veryLightGrey,
     draggingBar: cssProperties.colors.blueGreyEve,
 
     /* ------------------------------------------------------
