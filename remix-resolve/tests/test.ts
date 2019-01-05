@@ -179,32 +179,10 @@ describe('testRunner', () => {
         it('should have 3 items', () => {
           assert.equal(Object.keys(results).length, 3)
         })
-        it('should return contract content of given local path', () => {
+        it('should return contract content of given github path', () => {
           const expt = {
             cleanURL: 'https://github.com/ethereum/populus/docs/assets/Greeter.sol',
-            content: {
-              name: 'Greeter.sol',
-              path: 'docs/assets/Greeter.sol',
-              sha: '21f9aae3fb766dc5dc8aeb5a5518c7a69aca74e8',
-              size: 378,
-              url:
-              'https://api.github.com/repos/ethereum/populus/contents/docs/assets/Greeter.sol?ref=master',
-              html_url:
-              'https://github.com/ethereum/populus/blob/master/docs/assets/Greeter.sol',
-              git_url:
-              'https://api.github.com/repos/ethereum/populus/git/blobs/21f9aae3fb766dc5dc8aeb5a5518c7a69aca74e8',
-              download_url:
-              'https://raw.githubusercontent.com/ethereum/populus/master/docs/assets/Greeter.sol',
-              type: 'file',
-              content:
-              'cHJhZ21hIHNvbGlkaXR5IF4wLjQuMDsKCmNvbnRyYWN0IEdyZWV0ZXIgewog\nICAgc3RyaW5nIHB1YmxpYyBncmVldGluZzsKCiAgICAvLyBUT0RPOiBQb3B1\nbHVzIHNlZW1zIHRvIGdldCBubyBieXRlY29kZSBpZiBgaW50ZXJuYWxgCiAg\nICBmdW5jdGlvbiBHcmVldGVyKCkgcHVibGljIHsKICAgICAgICBncmVldGlu\nZyA9ICdIZWxsbyc7CiAgICB9CgogICAgZnVuY3Rpb24gc2V0R3JlZXRpbmco\nc3RyaW5nIF9ncmVldGluZykgcHVibGljIHsKICAgICAgICBncmVldGluZyA9\nIF9ncmVldGluZzsKICAgIH0KCiAgICBmdW5jdGlvbiBncmVldCgpIHB1Ymxp\nYyBjb25zdGFudCByZXR1cm5zIChzdHJpbmcpIHsKICAgICAgICByZXR1cm4g\nZ3JlZXRpbmc7CiAgICB9Cn0K\n',
-              encoding: 'base64',
-              _links: {
-                self: 'https://api.github.com/repos/ethereum/populus/contents/docs/assets/Greeter.sol?ref=master',
-                git: 'https://api.github.com/repos/ethereum/populus/git/blobs/21f9aae3fb766dc5dc8aeb5a5518c7a69aca74e8',
-                html: 'https://github.com/ethereum/populus/blob/master/docs/assets/Greeter.sol'
-              }
-            },
+            content: 'pragma solidity ^0.4.0;\n\ncontract Greeter {\n    string public greeting;\n\n    // TODO: Populus seems to get no bytecode if `internal`\n    function Greeter() public {\n        greeting = \'Hello\';\n    }\n\n    function setGreeting(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    function greet() public constant returns (string) {\n        return greeting;\n    }\n}\n',
             type: 'github'
           }
           assert.deepEqual(results, expt)
