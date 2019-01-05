@@ -46,7 +46,7 @@ export class RemixResolveApi implements API<RemixResolve> {
     try {
       let req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
       const response = await axios.get(req)
-      return response.data
+      return Buffer.from(response.data.content, 'base64').toString()
     } catch(e) {
       throw e
     }
