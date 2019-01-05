@@ -42,8 +42,14 @@ export class RemixResolveApi implements API<RemixResolve> {
   * @params root The root of the github import statement
   * @params filePath path of the file in github
   */
-  handleGithubCall(root: string, filePath: string) {
-    return
+  async handleGithubCall(root: string, filePath: string) {
+    try {
+      let req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
+      const response = await axios.get(req)
+      return response.data
+    } catch(e) {
+      throw e
+    }
   }
   /**
   * Handle an import statement based on http
