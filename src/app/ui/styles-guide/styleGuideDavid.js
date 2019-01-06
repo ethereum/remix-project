@@ -94,7 +94,7 @@ function styleGuideDavid () {
                               RESIZING
     ******************************************************** */
     ghostBar: cssProperties.colors.veryLightGrey,
-    draggingBar: cssProperties.colors.blueGreyEve,
+    draggingBar: cssProperties.colors.veryLightGrey,
 
     /* ------------------------------------------------------
                             TEXT COLORS
@@ -398,6 +398,8 @@ function styleGuideDavid () {
                     LEFT PANEL (FILE PANEL)
     /* ------------------------------------------------------ */
     leftPanel: {
+      customDragbarBorderRight: true,
+      dragbarBorderRight: '2px solid ' + cssProperties.colors.veryLightGrey,
       backgroundColor_Panel: appProperties.primary_BackgroundColor,
       backgroundColor_FileExplorer: appProperties.tertiary_BackgroundColor,
 
@@ -441,6 +443,8 @@ function styleGuideDavid () {
                           TERMINAL
     /* ------------------------------------------------------ */
     terminal: {
+      customBlockBorderTop: true,
+      blockBorderTop: '2px solid ' + cssProperties.colors.veryLightGrey,
       backgroundColor_Menu: appProperties.secondary_BackgroundColor,
       backgroundColor_Terminal: appProperties.seventh_BackgroundColor,
       backgroundColor_TerminalCLI: appProperties.seventh_BackgroundColor,
@@ -499,6 +503,10 @@ function styleGuideDavid () {
                               RIGHT PANEL
     /* ------------------------------------------------------ */
     rightPanel: {
+      customDragbarWidth: true,
+      customDragbarBackgroundColor: true,
+      dragbarWidth: '2px',
+      dragbarBackgroundColor: cssProperties.colors.veryLightGrey,
       backgroundColor_Panel: appProperties.fifth_BackgroundColor,
       backgroundColor_Tab: appProperties.fifth_BackgroundColor,
       BackgroundColor_Pre: appProperties.primary_BackgroundColor,
