@@ -61,7 +61,7 @@ describe('testRunner', () => {
               throw e
             })
         })
-        
+
         it('Plugin should be added to app', () => {
           assert.equal(typeof(app.calls[api.type].resolve), 'function')
         })
@@ -217,6 +217,36 @@ describe('testRunner', () => {
             content: 'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
             cleanURL: 'https://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol',
             type: 'https'
+          }
+          assert.deepEqual(results, expt)
+        })
+      })
+
+      // Test http imports
+      describe('test getting http imports', () => {
+        const remixResolve = new RemixResolveApi()
+        const fileName: string = 'http://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
+        let results: object = {}
+
+        before(done => {
+          remixResolve.resolve(fileName)
+            .then((sources: object) => {
+              results = sources
+              done()
+            })
+            .catch((e: Error) => {
+              throw e
+            })
+        })
+
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
+        it('should return contract content from raw github url', () => {
+          const expt: object = {
+            content: 'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
+            cleanURL: 'http://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol',
+            type: 'http'
           }
           assert.deepEqual(results, expt)
         })
