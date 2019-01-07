@@ -6,6 +6,7 @@ var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
 var EventManager = require('./lib/events')
+var EventEmitter = require('events')
 
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
@@ -203,6 +204,13 @@ class App {
     var self = this
     run.apply(self)
   }
+
+  profile () {
+    return {
+      type: 'app',
+      methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
+    }
+  }
   
   render () {
     var self = this
@@ -283,6 +291,34 @@ class App {
       if (callback) callback(error)
     })
   }
+
+  getExecutionContextProvider (cb) {
+    cb(null, executionContext.getProvider())
+  }
+
+  getProviderEndpoint (cb) {
+    if (executionContext.getProvider() === 'web3') {
+      cb(null, executionContext.web3().currentProvider.host)
+    } else {
+      cb('no endpoint: current provider is either injected or vm')
+    }
+  }
+
+  detectNetWork (cb) {
+    executionContext.detectNetwork((error, network) => {
+      cb(error, network)
+    })
+  }
+
+   addProvider (name, url, cb) {
+    executionContext.addProvider({ name, url })
+    cb()
+  }
+
+   removeProvider (name, cb) {
+    executionContext.removeProvider(name)
+    cb()
+  }
 }
 
 module.exports = App
@@ -359,33 +395,60 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
   registry.put({api: eventsDecoder, name: 'eventsdecoder'})
 
+  /*
+    that proxy is used by appManager to broadcast new transaction event
+  */
+  const txListenerModuleProxy = {
+    event: new EventEmitter(),
+    profile() {
+      return {
+        type: 'txListener',
+        events: ['newTransaction']
+      }
+    }
+  }
+  txlistener.event.register('newTransaction', (tx) => {
+    txListenerModule.event.emit('newTransaction', tx)
+  })
+
   txlistener.startListening()
 
   // TODO: There are still a lot of dep between editorpanel and filemanager
-
-  // ----------------- editor panel ----------------------
-  self._components.editorpanel = new EditorPanel()
-  registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
+  // ----------------- editor panel ----------------------
+  self._components.editorpanel = new EditorPanel()
+  registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
+
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
   
   // ----------------- app manager ----------------------------
-  const PluginManagerProfile = {
-    type: 'pluginManager',
-    methods: []
-  }
+
+  /*
+    TODOs:
+      - for each activated plugin,
+        an internal module (associated only with the plugin) should be created for accessing specific part of the UI. detail to be discussed
+      - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense. 
+  */
 
   const appManager = new AppManager({modules: [],plugins : []})
 
   const swapPanelComponent = new SwapPanelComponent()
-  const pluginManagerComponent = new PluginManagerComponent()
+  const pluginManagerComponent = new PluginManagerComponent(
+    { 
+      app: this,
+      udapp: udapp,
+      fileManager: fileManager,
+      sourceHighlighters: registry.get('editor').api.sourceHighlighters,
+      config: self._components.filesProviders['config'],
+      txListener: txListenerModuleProxy
+    })
   registry.put({api: pluginManagerComponent.proxy(), name: 'pluginmanager'})
 
   self._components.editorpanel.init()
