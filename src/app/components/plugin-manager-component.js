@@ -21,11 +21,20 @@ const EventEmitter = require ('events')
 
 class PluginManagerComponent {
 
-  constructor () {
+  constructor ({ app, udapp, fileManager, sourceHighlighters, config, txListener }) {
     this.event = new EventEmitter()
     this.modulesDefinition = {
-      'FilePanel': { name: 'FilePanel', Type: FilePanel, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwb2x5bGluZSBmaWxsPSJub25lIiBwb2ludHM9IjQ0LDIxIDQ0LDQ5IDYsNDkgICA2LDIxICIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHBvaW50cz0iMTksNDkgMTksMjggMzEsMjggICAzMSw0OSAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjxwb2x5Z29uIHBvaW50cz0iMzUsNSAzNSw4LjAxNiAzNywxMC4wOTQgMzcsNyAzOSw3IDM5LDEyLjIwMyA0MSwxNC4yNjYgNDEsNSAiLz48cG9seWxpbmUgZmlsbD0ibm9uZSIgcG9pbnRzPSIgIDEuMTEsMjUuOTQyIDI1LDEuMDUzIDQ4Ljg5LDI1Ljk0MyAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==' },
+      // service module. They can be seen as daemon
+      // they usually don't have UI and only represent the minimal API a plugins can access.
+      'App': { name: 'App', target: app },
+      'Udapp': { name: 'Udapp', target: udapp },
+      'FileManager': { name: 'FileManager', target: fileManager },
+      'SourceHighlighters': { name: 'SourceHighlighters', target: sourceHighlighters },
+      'Config': { name: 'Config', target: config },
+      'TxListener': { name: 'TxListener', target: txListener },
+      // internal components. They are mostly views, they don't provide external API for plugins
       'Solidity Compile': { name: 'Solidity Compile', class: 'evm-compiler', Type: CompileTab, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik00NiwxNXYtNCAgYzAtMS4xMDQtMC44OTYtMi0yLTJjMCwwLTI0LjY0OCwwLTI2LDBjLTEuNDY5LDAtMi40ODQtNC00LTRIM0MxLjg5Niw1LDEsNS44OTYsMSw3djR2Mjl2NGMwLDEuMTA0LDAuODk2LDIsMiwyaDM5ICBjMS4xMDQsMCwyLTAuODk2LDItMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTEsNDRsNS0yNyAgYzAtMS4xMDQsMC44OTYtMiwyLTJoMzljMS4xMDQsMCwyLDAuODk2LDIsMmwtNSwyNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+' },
+      'FilePanel': { name: 'FilePanel', Type: FilePanel, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwb2x5bGluZSBmaWxsPSJub25lIiBwb2ludHM9IjQ0LDIxIDQ0LDQ5IDYsNDkgICA2LDIxICIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHBvaW50cz0iMTksNDkgMTksMjggMzEsMjggICAzMSw0OSAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjxwb2x5Z29uIHBvaW50cz0iMzUsNSAzNSw4LjAxNiAzNywxMC4wOTQgMzcsNyAzOSw3IDM5LDEyLjIwMyA0MSwxNC4yNjYgNDEsNSAiLz48cG9seWxpbmUgZmlsbD0ibm9uZSIgcG9pbnRzPSIgIDEuMTEsMjUuOTQyIDI1LDEuMDUzIDQ4Ljg5LDI1Ljk0MyAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==' },
       'Test': { name: 'Test', dep: 'Solidity Compile', Type: TestTab, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik00OSw0djI1YzAsMC01LjI3MywzLTEyLDMgIGMtMTEuOTI5LDAtMTUuODY5LTQtMjQtNFMxLDMwLDEsMzBWM2MwLDAsMi4wODUtMiwxMi0yczE0LjA0Nyw2LDI0LDZDNDMuMjgxLDcsNDguMTMsNC40NzEsNDksNHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIgeDE9IjEiIHgyPSIxIiB5MT0iMyIgeTI9IjQ5Ii8+PC9zdmc+' },
       'Run': { name: 'Run', Type: RunTab, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik00My43MzQsMjFjLTMuNjMxLDAtMTUuMDkyLDAtMTUuMDkyLDAgIFMxNi4yNSw1LjE4OCwxNi4wNDcsNC45MzhzLTAuNDIyLTAuNTk0LTEuMTI1LTAuNjcyYy0wLjg1OS0wLjA5NS0xLjk2OS0wLjIwMy0yLjMyOC0wLjIzNGMtMC40MDYtMC4wMzUtMC43MTksMC4xNDEtMC40OTYsMC43MzQgIEMxMi4zODgsNS41MzksMTguNzQ4LDIxLDE4Ljc0OCwyMUg2LjAzNGMwLDAtMi40NTgtNC43MjItMi44NzgtNS41MzFDMi45NjUsMTUuMTAxLDIuNTU3LDE1LjAxNCwyLDE1SDEuMjk3ICBjLTAuMTI1LDAtMC4zMTIsMC0wLjI4MSwwLjM0NEMxLjA1OCwxNS44MTEsMywyNSwzLDI1cy0xLjg4OCw5LjE5Ny0xLjk4NCw5LjY1NkMwLjk1MywzNC45NTMsMS4xNzIsMzUsMS4yOTcsMzVIMiAgYzAuOTY2LTAuMDA5LDAuOTU0LTAuMDc5LDEuMTU2LTAuNDY5QzMuNTc2LDMzLjcyMiw2LjAzNCwyOSw2LjAzNCwyOWgxMi43MTRjMCwwLTYuMzYsMTUuNDYxLTYuNjUsMTYuMjM0ICBjLTAuMjIzLDAuNTk0LDAuMDksMC43NywwLjQ5NiwwLjczNGMwLjM1OS0wLjAzMSwxLjQ2OS0wLjEzOSwyLjMyOC0wLjIzNGMwLjcwMy0wLjA3OCwwLjkyMi0wLjQyMiwxLjEyNS0wLjY3MlMyOC42NDMsMjksMjguNjQzLDI5ICBzMTEuNDYxLDAsMTUuMDkyLDBjMy43NjYsMCw1LjI2NC0zLjAzMSw1LjI2NC00UzQ3LjQ4NCwyMSw0My43MzQsMjF6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+' },
       'Solidity Static Analysis': { name: 'Solidity Static Analysis', Type: AnalysisTab, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxjaXJjbGUgY3g9IjIiIGN5PSIyNSIgcj0iMiIvPjxjaXJjbGUgY3g9IjE1IiBjeT0iMTkiIHI9IjIiLz48Y2lyY2xlIGN4PSIyNSIgY3k9IjExIiByPSIyIi8+PGNpcmNsZSBjeD0iMzUiIGN5PSIxNyIgcj0iMiIvPjxjaXJjbGUgY3g9IjQ4IiBjeT0iNSIgcj0iMiIvPjxjaXJjbGUgY3g9IjIiIGN5PSIzOSIgcj0iMiIvPjxjaXJjbGUgY3g9IjE1IiBjeT0iNDEiIHI9IjIiLz48Y2lyY2xlIGN4PSIyNSIgY3k9IjMzIiByPSIyIi8+PGNpcmNsZSBjeD0iMzUiIGN5PSI0MyIgcj0iMiIvPjxjaXJjbGUgY3g9IjQ4IiBjeT0iMzEiIHI9IjIiLz48cG9seWxpbmUgZmlsbD0ibm9uZSIgcG9pbnRzPSIyLDI1IDE1LDE5IDI1LDExICAgMzUsMTcgNDgsNSAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjxwb2x5bGluZSBmaWxsPSJub25lIiBwb2ludHM9IjIsMzkgMTUsNDEgMjUsMzMgICAzNSw0MyA0OCwzMSAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==' },
@@ -45,6 +54,13 @@ class PluginManagerComponent {
   }
 
   initDefault () {
+    this.activateInternal('App')
+    this.activateInternal('Udapp')
+    this.activateInternal('FileManager')
+    this.activateInternal('SourceHighlighters')
+    this.activateInternal('Config')
+    this.activateInternal('TxListener')
+
     this.activateInternal('FilePanel')
     this.activateInternal('Solidity Compile')
     this.activateInternal('Run')
@@ -63,13 +79,12 @@ class PluginManagerComponent {
     `
   }
 
-  activatePlugin (name, api) {
-    let profile = { json: Plugin1Profile, api: pluginManagerApi }
+  activatePlugin (jsonProfile, api) {
+    let profile = { json: jsonProfile, api }
     let plugin = new Plugin(profile, api)
     this.appManager.addPlugin(plugin)
-    // Plugin1Profile.location 
-    // mainpanel or swappanel or bottom-bar
-    // plugin.render() // plugin.create()
+    this.event.emit('displayableModuleActivated', jsonProfile, plugin.render())
+    this.activated[jsonProfile.name] = plugin
   }
 
   activateInternal (name) {
@@ -78,12 +93,14 @@ class PluginManagerComponent {
     if (mod.dep) dep = this.activateInternal(mod.dep)
     let instance = mod.target
     if (!instance && mod.Type) instance = new mod.Type(registry, dep)
-    if (!instance) return console.log('PluginManagerComponent: no Type or instance to add')
+    if (!instance) return console.log(`PluginManagerComponent: no Type or instance to add: ${JSON.stringify(mod)}`)
     registry.put({api: instance, name: mod.name.toLocaleLowerCase()})
     if (instance.profile && typeof instance.profile === 'function') {
       this.event.emit('requestActivation', instance.profile(), instance)
     }
-    this.event.emit('internalActivated', mod, instance.render())
+    if (mod.icon && instance.render && typeof instance.render === 'function') {
+      this.event.emit('requestContainer', mod, instance.render())
+    }
     // if of type evm-compiler, we forward to the internal components
     if (mod.class === 'evm-compiler') {
       this.data.proxy.register(mod, instance)

@@ -182,10 +182,13 @@ module.exports = class CompileTab {
       }
     })
   }
+  getCompilationResult (cb) {
+    cb(null, self._components.compiler.lastCompilationResult)
+  }
   profile () {
     return {
       type: 'solidityCompile',
-      methods: {},
+      methods: ['getCompilationResult'],
       events: ['compilationFinished']
     }
   }

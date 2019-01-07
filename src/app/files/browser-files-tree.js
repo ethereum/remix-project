@@ -130,6 +130,13 @@ function FilesTree (name, storage) {
     if (path[0] === '/') return path.substring(1)
     return path
   }
+
+  this.profile = function () {
+    return {
+      type: this.type,
+      methods: ['get', 'set', 'remove']
+    }
+  }
 }
 
 module.exports = FilesTree
