@@ -29,8 +29,8 @@ function compileAndDeploy (filename, callback) {
   ], function (_err, contracts) {
     callback(null, compilationData, contracts, accounts)
   })
-}  
-  
+}
+
 
 describe('testRunner', function () {
   describe('#runTest', function() {
@@ -47,7 +47,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, compilationData['simple_storage_test.sol']['MyTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -61,7 +61,7 @@ describe('testRunner', function () {
 
       it('should returns 5 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract',    value: 'MyTest', filename: 'simple_storage_test.sol' },
+          { type: 'contract',    value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
           { type: 'testFailure', value: 'Should trigger one fail', time: 1, context: 'MyTest', errMsg: 'the test 1 fails' },
           { type: 'testPass',    value: 'Should trigger one pass', time: 1, context: 'MyTest'},
           { type: 'testPass',    value: 'Initial value should be100', time: 1, context: 'MyTest' },
@@ -83,7 +83,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('MyTest', contracts.MyTest, compilationData['simple_storage_test.sol']['MyTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -97,7 +97,7 @@ describe('testRunner', function () {
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract', value: 'MyTest', filename: 'simple_storage_test.sol' },
+          { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
           { type: 'testPass', value: 'Initial value should be100', time: 1, context: 'MyTest' },
           { type: 'testPass', value: 'Initial value should be200', time: 1, context: 'MyTest' }
         ])
@@ -118,8 +118,8 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('StringTest', contracts.StringTest, compilationData['simple_string_test.sol']['StringTest'], { accounts }, testCallback, resultsCallback)
-          TestRunner.runTest('StringTest2', contracts.StringTest2, compilationData['simple_string_test.sol']['StringTest2'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('StringTest2', contracts.StringTest2, compilationData[filename]['StringTest2'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -133,9 +133,9 @@ describe('testRunner', function () {
 
       it('should returns 3 messages', function () {
         assert.deepEqual(tests, [
-          { type: 'contract', value: 'StringTest', filename: 'simple_string_test.sol' },
+          { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
           { type: 'testFailure', value: 'Value should be hello world', time: 1, context: 'StringTest', "errMsg": "initial value is not correct" },
-          { type: 'testPass', value: 'Value should not be hello world', time: 1, context: 'StringTest' },
+          { type: 'testPass', value: 'Value should not be hello wordl', time: 1, context: 'StringTest' },
           { type: 'testPass', value: 'Initial value should be hello', time: 1, context: 'StringTest' },
         ])
       })
@@ -155,7 +155,7 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          TestRunner.runTest('IntegerTest', contracts.IntegerTest, compilationData['number_test.sol']['IntegerTest'], { accounts }, testCallback, resultsCallback)
+          TestRunner.runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], { accounts }, testCallback, resultsCallback)
         })
       })
 
@@ -181,9 +181,9 @@ describe('testRunner', function () {
             results = _results
             done()
           }
-          
-          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData['sender_test.sol']['SenderTest'], { accounts }, testCallback, resultsCallback)
-          
+
+          TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback)
+
         })
       })
 
