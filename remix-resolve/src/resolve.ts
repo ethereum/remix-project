@@ -64,8 +64,13 @@ export class RemixResolveApi implements API<RemixResolve> {
   * @params url The url of the import statement
   * @params cleanURL
   */
-  handleHttps(url: string, cleanURL: string) {
-    return
+  async handleHttps(url: string, cleanURL: string) {
+    try {
+      const response = await axios.get(url)
+      return response.data
+    } catch(e) {
+      throw e
+    }
   }
   handleSwarm(url: string, cleanURL: string) {
     return
