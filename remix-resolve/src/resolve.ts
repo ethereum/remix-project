@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 import { Api, ModuleProfile, API } from 'remix-plugin'
 
@@ -45,7 +45,7 @@ export class RemixResolveApi implements API<RemixResolve> {
   async handleGithubCall(root: string, filePath: string) {
     try {
       let req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
-      const response = await axios.get(req)
+      const response: AxiosResponse = await axios.get(req)
       return Buffer.from(response.data.content, 'base64').toString()
     } catch(e) {
       throw e
@@ -56,17 +56,22 @@ export class RemixResolveApi implements API<RemixResolve> {
   * @params url The url of the import statement
   * @params cleanURL
   */
-  handleHttp(url: string, cleanURL: string) {
-    return
+  async handleHttp(url: string, _: string) {
+    try {
+      const response: AxiosResponse = await axios.get(url)
+      return response.data
+    } catch(e) {
+      throw e
+    }
   }
   /**
   * Handle an import statement based on https
   * @params url The url of the import statement
   * @params cleanURL
   */
-  async handleHttps(url: string, cleanURL: string) {
+  async handleHttps(url: string, _: string) {
     try {
-      const response = await axios.get(url)
+      const response: AxiosResponse = await axios.get(url)
       return response.data
     } catch(e) {
       throw e
@@ -86,14 +91,11 @@ export class RemixResolveApi implements API<RemixResolve> {
       const req = 'https://gateway.ipfs.io/' + url
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
-      const response = await axios.get(req)
+      const response: AxiosResponse = await axios.get(req)
       return response.data
     } catch (e) {
       throw e
     }
-  }
-  handleLocal(root: string, filePath: string) {
-    return
   }
   getHandlers(): Handler[] {
     return [
