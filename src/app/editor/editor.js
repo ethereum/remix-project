@@ -7,6 +7,7 @@ var ace = require('brace')
 require('brace/theme/tomorrow_night_blue')
 
 var globalRegistry = require('../../global/registry')
+const SourceHighlighters = require('./SourceHighlighters')
 
 var Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
@@ -317,6 +318,8 @@ function Editor (opts = {}, localRegistry) {
   editor.commands.bindKeys({ 'ctrl-t': null })
   editor.setShowPrintMargin(false)
   editor.resize(true)
+
+  this.sourceHighlighters = new SourceHighlighters()
 }
 
 function editorOnChange (self) {

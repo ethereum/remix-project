@@ -13,7 +13,7 @@ class SwapPanelApi {
     verticalIconsComponent.event.on('showContent', (moduleName) => {
       this.component.showContent(moduleName)
     })
-    pluginManagerComponent.event.on('internalActivated', (mod, content) => {
+    pluginManagerComponent.event.on('requestContainer', (mod, content) => {
       this.add(mod.name, content)
     })
   }
