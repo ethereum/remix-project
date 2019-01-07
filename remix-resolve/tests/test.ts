@@ -61,10 +61,10 @@ describe('testRunner', () => {
               throw e
             })
         })
+        
         it('Plugin should be added to app', () => {
           assert.equal(typeof(app.calls[api.type].resolve), 'function')
         })
-
         it('should return contract content of given local path', () => {
           const expt = {
             content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
@@ -151,6 +151,9 @@ describe('testRunner', () => {
             })
         })
 
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
         it('should return contract content of given local path', () => {
           const expt = {
             content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
@@ -163,7 +166,7 @@ describe('testRunner', () => {
       // Test github import
       describe('test getting github imports', () => {
         const remixResolve = new RemixResolveApi()
-        const fileName: string = 'https://github.com/ethereum/populus/docs/assets/Greeter.sol'
+        const fileName: string = 'github.com/ethereum/populus/docs/assets/Greeter.sol'
         let results: object = {}
 
         before(done => {
@@ -176,14 +179,44 @@ describe('testRunner', () => {
               throw e
             })
         })
+
         it('should have 3 items', () => {
           assert.equal(Object.keys(results).length, 3)
         })
         it('should return contract content of given github path', () => {
-          const expt = {
-            cleanURL: 'https://github.com/ethereum/populus/docs/assets/Greeter.sol',
+          const expt: object = {
+            cleanURL: 'github.com/ethereum/populus/docs/assets/Greeter.sol',
             content: 'pragma solidity ^0.4.0;\n\ncontract Greeter {\n    string public greeting;\n\n    // TODO: Populus seems to get no bytecode if `internal`\n    function Greeter() public {\n        greeting = \'Hello\';\n    }\n\n    function setGreeting(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    function greet() public constant returns (string) {\n        return greeting;\n    }\n}\n',
             type: 'github'
+          }
+          assert.deepEqual(results, expt)
+        })
+      })
+      // Test https imports
+      describe('test getting https imports', () => {
+        const remixResolve = new RemixResolveApi()
+        const fileName: string = 'https://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
+        let results: object = {}
+
+        before(done => {
+          remixResolve.resolve(fileName)
+            .then((sources: object) => {
+              results = sources
+              done()
+            })
+            .catch((e: Error) => {
+              throw e
+            })
+        })
+
+        it('should have 3 items', () => {
+          assert.equal(Object.keys(results).length, 3)
+        })
+        it('should return contract content from raw github url', () => {
+          const expt: object = {
+            content: 'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
+            cleanURL: 'https://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol',
+            type: 'https'
           }
           assert.deepEqual(results, expt)
         })
