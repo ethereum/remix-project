@@ -2,6 +2,7 @@
 
 var $ = require('jquery')
 var yo = require('yo-yo')
+var EventEmitter = require ('events')
 var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
@@ -15,6 +16,7 @@ class FileManager {
   constructor (localRegistry) {
     this.tabbedFiles = {}
     this.event = new EventManager()
+    this.nodeEvent = new EventEmitter()
     this._components = {}
     this._components.compilerImport = new CompilerImport()
     this._components.registry = localRegistry || globalRegistry
@@ -42,6 +44,18 @@ class FileManager {
     self._deps.gistExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     self._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
     self._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
+
+    self.event.register('currentFileChanged', (file, provider) => {
+      this.nodeEvent.emit('currentFileChanged', file)
+    })
+  }
+
+  profile () {
+    return {
+      type: 'fileManager',
+      methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
+      events: ['currentFileChanged']
+    }
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {
@@ -92,6 +106,41 @@ class FileManager {
     var reg = /(.*)(\/).*/
     var path = reg.exec(currentFile)
     return path ? path[1] : null
+  }
+
+  getCurrentFile (cb) {
+    var path = this.currentFile()
+    if (!path) {
+      cb('no file selected')
+    } else {
+      cb(null, path)
+    }
+  }
+  
+  getFile (path, cb) {
+    var provider = this.fileProviderOf(path)
+    if (provider) {
+      // TODO add approval to user for external plugin to get the content of the given `path`
+      provider.get(path, (error, content) => {
+        cb(error, content)
+      })
+    } else {
+      cb(path + ' not available')
+    }
+  }
+
+  setFile (path, content, cb) {
+    var provider = this.fileProviderOf(path)
+    if (provider) {
+      // TODO add approval to user for external plugin to set the content of the given `path`
+      provider.set(path, content, (error) => {
+        if (error) return cb(error)
+        this.syncEditor(path)
+        cb()
+      })
+    } else {
+      cb(path + ' not available')
+    }
   }
 
   removeTabsOf (provider) {

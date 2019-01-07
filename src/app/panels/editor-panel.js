@@ -15,9 +15,11 @@ var css = styles.css
 class EditorPanel {
   constructor (localRegistry) {
     var self = this
+    self.event = new EventManager()
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
-    self.event = new EventManager()
+    self._components.editor = new Editor({})
+    self._components.registry.put({api: self._components.editor, name: 'editor'})
   }
   init () {
     var self = this
@@ -38,32 +40,26 @@ class EditorPanel {
       }
     }
     self._view = {}
-    var editor = new Editor({})
-    self._components.registry.put({api: editor, name: 'editor'})
+    
+    var contextualListener = new ContextualListener({editor: self._components.editor, pluginManager: self._deps.pluginManager})
+    var contextView = new ContextView({contextualListener, editor: self._components.editor})
 
-    var contextualListener = new ContextualListener({editor, pluginManager: self._deps.pluginManager})
-    var contextView = new ContextView({contextualListener, editor})
-
-    self._components = {
-      editor: editor,
-      contextualListener: contextualListener,
-      contextView: contextView,
-      // TODO list of compilers is always empty; should find a path to add plugin compiler here
-      terminal: new Terminal({
-        udapp: self._deps.udapp,
-        compilers: {}
-      },
-        {
-          getPosition: (event) => {
-            var limitUp = 36
-            var limitDown = 20
-            var height = window.innerHeight
-            var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
-            newpos = (newpos < height - limitDown) ? newpos : height - limitDown
-            return newpos
-          }
-        })
-    }
+    self._components.contextualListener = contextualListener
+    self._components.contextView = contextView
+    self._components.terminal = new Terminal({
+      udapp: self._deps.udapp,
+      compilers: {}
+    },
+      {
+        getPosition: (event) => {
+          var limitUp = 36
+          var limitDown = 20
+          var height = window.innerHeight
+          var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
+          newpos = (newpos < height - limitDown) ? newpos : height - limitDown
+          return newpos
+        }
+      })
 
     self._components.terminal.event.register('filterChanged', (type, value) => {
       this.event.trigger('terminalFilterChanged', [type, value])

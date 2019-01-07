@@ -10,7 +10,7 @@ class VerticalIconsApi {
 
   constructor(verticalIconsComponent, pluginManagerComponent) {
     this.component = verticalIconsComponent
-    pluginManagerComponent.event.on('internalActivated', (mod, content) => verticalIconsComponent.addIcon(mod) )
+    pluginManagerComponent.event.on('requestContainer', (mod, content) => verticalIconsComponent.addIcon(mod) )
   }  
 }
 module.exports = VerticalIconsApi
