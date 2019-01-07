@@ -126,7 +126,7 @@ class App {
     executionContext.init(self._components.config)
     executionContext.listenOnLastBlock()
 
-    self._components.compilerImport = new CompilerImport()
+    self._components.compilerImport = new CompilerImport(() => { return self._components.config.get('settings/gist-access-token') })
     registry.put({api: self._components.compilerImport, name: 'compilerimport'})
     self._components.gistHandler = new GistHandler()
 

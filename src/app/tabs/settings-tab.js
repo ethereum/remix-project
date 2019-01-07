@@ -94,7 +94,7 @@ module.exports = class SettingsTab {
     self._view.gistToken = yo`
       <div class="${css.info}">
         <div class=${css.title}>Gist Access Token</div>
-        <div class="${css.crowNoFlex}">Manage the access token used to publish to Gist.</div>
+        <div class="${css.crowNoFlex}">Manage the access token used to publish to Gist and retrieve Github contents.</div>
         <div class="${css.crowNoFlex}">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</div>
         <div class="${css.crowNoFlex}"><a target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></div>
         <div class="${css.crowNoFlex}">${self._view.gistToken}</div>
