@@ -205,7 +205,7 @@ class DropdownLogic {
     )
   }
 
-  runTransaction (data, promptCb, modalDialog, confirmDialog, finalCb) {
+  runTransaction (data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       if (network.name !== 'Main') {
         return continueTxExecution(null)
@@ -261,7 +261,7 @@ class DropdownLogic {
       )
     }
 
-    this.udapp.runTx(data, confirmationCb, promptCb, finalCb)
+    this.udapp.runTx(data, confirmationCb, continueCb, promptCb, finalCb)
   }
 
   forceSend (selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, cb) {
@@ -277,7 +277,7 @@ class DropdownLogic {
           this.createContract(selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, cb)
         }, statusCb, (data, runTxCallback) => {
           // called for libraries deployment
-          this.runTransaction(data, promptCb, modalDialog, confirmDialog, runTxCallback)
+          this.runTransaction(data, continueCb, promptCb, modalDialog, confirmDialog, runTxCallback)
         })
       }
       if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
