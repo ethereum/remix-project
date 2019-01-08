@@ -1,4 +1,6 @@
 #!/usr/bin/env node
 
-require('../src/server');
+const Server = require('../src/server');
+const server = new Server()
+server.start()
 
