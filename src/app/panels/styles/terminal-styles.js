@@ -78,10 +78,7 @@ var css = csjs`
     line-height       : 2ch;
     padding           : 1ch;
     margin-top        : 2ch;
-    border-top        : ${styles.terminal.customBlockBorderTop
-      ? styles.terminal.blockBorderTop 
-      : '0.07ch solid ' + styles.colors.veryLightGrey
-    };
+    border-top        : ${styles.terminal.blockBorderTop};
     color             : ${styles.appProperties.mainText_Color};
   }
   .cli                {
