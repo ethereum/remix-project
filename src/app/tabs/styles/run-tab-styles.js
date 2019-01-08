@@ -130,15 +130,15 @@ var css = csjs`
     ${styles.rightPanel.runTab.button_transaction}
   }
   .atAddress {
-    ${styles.rightPanel.runTab.button_atAddress}
+    margin: 0;
     min-width: 100px;
     width: 100px;
     font-size: 10px;
-    margin: 0;
     word-break: inherit;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
+    ${styles.rightPanel.runTab.button_atAddress}
   }
   .atAddressSect {
     margin-top: 6px;

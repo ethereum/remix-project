@@ -16,7 +16,7 @@ function styleGuideDavid () {
       // BASIC COLORS (B&W and transparent)
       transparent: 'transparent',
       white: 'hsl(0, 0%, 100%)',
-      black: 'hsl(0, 0%, 0%)',
+      black: 'black',
       opacityBlack: 'hsla(0, 0%, 0%, .4)',
 
       // BLUE
@@ -59,6 +59,7 @@ function styleGuideDavid () {
                                   BORDERS
     ------------------------------------------------------ */
     borders: {
+      primary_borderRadius: '3px',
       secondary_borderRadius: '5px'
     }
   }
@@ -81,10 +82,10 @@ function styleGuideDavid () {
                           BACKGROUND COLORS
     ------------------------------------------------------ */
     primary_BackgroundColor: cssProperties.colors.white,
-    secondary_BackgroundColor: cssProperties.colors.white,
+    secondary_BackgroundColor: cssProperties.colors.veryLightGrey,
     tertiary_BackgroundColor: cssProperties.colors.white,
     quaternary_BackgroundColor: cssProperties.colors.white,
-    fifth_BackgroundColor: cssProperties.colors.white,
+    fifth_BackgroundColor: cssProperties.colors.lightGrey,
     seventh_BackgroundColor: cssProperties.colors.white,
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
@@ -181,6 +182,7 @@ function styleGuideDavid () {
     primaryButton_TextColor: cssProperties.colors.black,
     primaryButton_BackgroundColor: cssProperties.colors.white,
     primaryButton_BorderColor: cssProperties.colors.black,
+    primaryButton_BorderWidth: '2px',
 
     /* .................
           SECONDARY
@@ -281,6 +283,7 @@ function styleGuideDavid () {
         background-color      : ${opts.BackgroundColor};
         border                : 1px solid ${opts.BorderColor};
         color                 : ${opts.Color};
+        border-radius         : ${cssProperties.borders.primary_borderRadius}
         font-size             : 12px;
         padding               : 10px 15px;
         line-height           : 20px;
@@ -356,6 +359,10 @@ function styleGuideDavid () {
         font-size               : 12px;
         overflow                : hidden;
         word-break              : normal;
+        border-radius           : ${opts.BorderRadius};
+        border-width            : ${opts.BorderWidth};
+        border-color            : ${opts.BorderColor};
+        border-style            : ${opts.BorderStyle};
       `
     }
   }
@@ -538,25 +545,37 @@ function styleGuideDavid () {
         button_Compile: appProperties.uiElements.button({
           BackgroundColor: appProperties.primaryButton_BackgroundColor,
           BorderColor: appProperties.primaryButton_BorderColor,
-          Color: appProperties.primaryButton_TextColor
+          Color: appProperties.primaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         button_Details: appProperties.uiElements.button({
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.secondaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         button_Publish: appProperties.uiElements.button({
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.secondaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         dropdown_CompileContract: appProperties.uiElements.dropdown({
           BackgroundColor: appProperties.dropdown_BackgroundColor,
           BorderColor: appProperties.dropdown_BorderColor,
-          Color: appProperties.dropdown_TextColor
+          Color: appProperties.dropdown_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         box_CompileContainer: appProperties.uiElements.solidBorderBox({
@@ -618,33 +637,51 @@ function styleGuideDavid () {
         button_atAddress: appProperties.uiElements.button({
           BackgroundColor: appProperties.primaryButton_BackgroundColor,
           BorderColor: appProperties.primaryButton_BorderColor,
-          Color: appProperties.primaryButton_TextColor
+          Color: appProperties.primaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
         button_Create: appProperties.uiElements.button({
           BackgroundColor: appProperties.transactButton_BackgroundColor,
           BorderColor: appProperties.transactButton_BorderColor,
-          Color: appProperties.transactButton_TextColor
+          Color: appProperties.transactButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
         button_Constant: appProperties.uiElements.button({
           BackgroundColor: appProperties.constantButton_BackgroundColor,
           BorderColor: appProperties.constantButton_BorderColor,
-          Color: appProperties.constantButton_TextColor
+          Color: appProperties.constantButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
         button_Instance_Call: appProperties.uiElements.button({
           BackgroundColor: appProperties.callButton_BackgroundColor,
           BorderColor: appProperties.callButton_BorderColor,
-          Color: appProperties.callButton_TextColor
+          Color: appProperties.callButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
         button_Instance_Transact: appProperties.uiElements.button({
           BackgroundColor: appProperties.transactButton_BackgroundColor,
           BorderColor: appProperties.transactButton_BorderColor,
-          Color: appProperties.transactButton_TextColor
+          Color: appProperties.transactButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         button_Instance_TransactPayable: appProperties.uiElements.button({
           BackgroundColor: appProperties.transactPayableButton_BackgroundColor,
           BorderColor: appProperties.transactPayableButton_BorderColor,
-          Color: appProperties.transactPayableButton_TextColor
+          Color: appProperties.transactPayableButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         icon_Color_Instance_CopyToClipboard: appProperties.icon_Color,
@@ -669,13 +706,19 @@ function styleGuideDavid () {
         button_runTests: appProperties.uiElements.button({
           BackgroundColor: appProperties.primaryButton_BackgroundColor,
           BorderColor: appProperties.primaryButton_BorderColor,
-          Color: appProperties.primaryButton_TextColor
+          Color: appProperties.primaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         button_generateTestFile: appProperties.uiElements.button({
           BackgroundColor: appProperties.primaryButton_BackgroundColor,
           BorderColor: appProperties.primaryButton_BorderColor,
-          Color: appProperties.primaryButton_TextColor
+          Color: appProperties.primaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         color_testPass: appProperties.success_BackgroundColor,
@@ -701,12 +744,18 @@ function styleGuideDavid () {
         button_LoadPlugin: appProperties.uiElements.button({
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.secondaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
         button_initPlugin: appProperties.uiElements.button({
           BackgroundColor: appProperties.transactButton_BackgroundColor,
           BorderColor: appProperties.transactButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.secondaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         })
       },
 
@@ -727,7 +776,10 @@ function styleGuideDavid () {
         button_Debugger: appProperties.uiElements.button({
           BackgroundColor: appProperties.secondaryButton_BackgroundColor,
           BorderColor: appProperties.secondaryButton_BorderColor,
-          Color: appProperties.secondaryButton_TextColor
+          Color: appProperties.secondaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         button_Debugger_icon_Color: appProperties.icon_ConstantColor,
@@ -756,7 +808,10 @@ function styleGuideDavid () {
         button_Run_AnalysisTab: appProperties.uiElements.button({
           BackgroundColor: appProperties.primaryButton_BackgroundColor,
           BorderColor: appProperties.primaryButton_BorderColor,
-          Color: appProperties.primaryButton_TextColor
+          Color: appProperties.primaryButton_TextColor,
+          BorderWidth: appProperties.primaryButton_BorderWidth,
+          BorderRadius: cssProperties.borders.primary_borderRadius,
+          BorderStyle: 'solid'
         }),
 
         box_AnalysisContainer: appProperties.uiElements.solidBorderBox({
