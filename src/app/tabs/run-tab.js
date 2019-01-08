@@ -81,7 +81,7 @@ function runTab (opts, localRegistry) {
 
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
 
-  var recorder = new Recorder(self._deps.udapp, self._deps.fileManager, self._deps.udapp.config)
+  var recorder = new Recorder(self._deps.udapp, self._deps.fileManager, self._deps.config)
   recorder.event.register('newTxRecorded', (count) => {
     this.data.count = count
     this._view.recorderCount.innerText = count
