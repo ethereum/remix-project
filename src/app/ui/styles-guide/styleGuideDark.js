@@ -418,6 +418,7 @@ function styleGuideDark () {
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
+      dragbarBorderRight: '2px solid hsla(215, 81%, 79%, .3)',
 
       icon_Color_Menu: appProperties.icon_Color,
       icon_HoverColor_Menu: appProperties.icon_HoverColor,
@@ -466,6 +467,8 @@ function styleGuideDark () {
       text_Title_TransactionLog: appProperties.infoText_Color,
       text_Regular_TransactionLog: appProperties.supportText_Color,
       text_Button: appProperties.oppositeText_Color,
+
+      blockBorderTop: '0.07ch solid ' + cssProperties.colors.veryLightGrey,
 
       icon_Color_TogglePanel: appProperties.icon_Color,
       icon_HoverColor_TogglePanel: appProperties.icon_HoverColor,
@@ -516,6 +519,8 @@ function styleGuideDark () {
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
+      dragbarWidth: '0.5rem',
+      dragbarBackgroundColor: '',
 
       icon_Color_TogglePanel: appProperties.icon_Color,
       icon_HoverColor_TogglePanel: appProperties.icon_HoverColor,

@@ -398,8 +398,6 @@ function styleGuideDavid () {
                     LEFT PANEL (FILE PANEL)
     /* ------------------------------------------------------ */
     leftPanel: {
-      customDragbarBorderRight: true,
-      dragbarBorderRight: '2px solid ' + cssProperties.colors.veryLightGrey,
       backgroundColor_Panel: appProperties.primary_BackgroundColor,
       backgroundColor_FileExplorer: appProperties.tertiary_BackgroundColor,
 
@@ -409,6 +407,7 @@ function styleGuideDavid () {
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
+      dragbarBorderRight: '2px solid ' + cssProperties.colors.veryLightGrey,
 
       icon_Color_Menu: appProperties.icon_Color,
       icon_HoverColor_Menu: appProperties.icon_HoverColor,
@@ -443,8 +442,6 @@ function styleGuideDavid () {
                           TERMINAL
     /* ------------------------------------------------------ */
     terminal: {
-      customBlockBorderTop: true,
-      blockBorderTop: '2px solid ' + cssProperties.colors.veryLightGrey,
       backgroundColor_Menu: appProperties.secondary_BackgroundColor,
       backgroundColor_Terminal: appProperties.seventh_BackgroundColor,
       backgroundColor_TerminalCLI: appProperties.seventh_BackgroundColor,
@@ -459,6 +456,8 @@ function styleGuideDavid () {
       text_Title_TransactionLog: appProperties.infoText_Color,
       text_Regular_TransactionLog: appProperties.supportText_Color,
       text_Button: appProperties.oppositeText_Color,
+
+      blockBorderTop: '2px solid ' + cssProperties.colors.veryLightGrey,
 
       icon_Color_Log_Succeed: appProperties.success_BorderColor,
       icon_Color_Log_Failed: appProperties.errorText_Color,
@@ -503,10 +502,6 @@ function styleGuideDavid () {
                               RIGHT PANEL
     /* ------------------------------------------------------ */
     rightPanel: {
-      customDragbarWidth: true,
-      customDragbarBackgroundColor: true,
-      dragbarWidth: '2px',
-      dragbarBackgroundColor: cssProperties.colors.veryLightGrey,
       backgroundColor_Panel: appProperties.fifth_BackgroundColor,
       backgroundColor_Tab: appProperties.fifth_BackgroundColor,
       BackgroundColor_Pre: appProperties.primary_BackgroundColor,
@@ -518,6 +513,8 @@ function styleGuideDavid () {
 
       bar_Ghost: appProperties.ghostBar,
       bar_Dragging: appProperties.draggingBar,
+      dragbarWidth: '2px',
+      dragbarBackgroundColor: cssProperties.colors.veryLightGrey,
 
       icon_Color_TogglePanel: appProperties.icon_Color,
       icon_HoverColor_TogglePanel: appProperties.icon_HoverColor,
