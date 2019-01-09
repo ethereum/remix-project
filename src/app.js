@@ -39,12 +39,12 @@ const PluginManagerComponent = require('./app/components/plugin-manager-componen
 const PluginManagerApi = require('./app/components/plugin-manager-api')
 
 const VerticalIconsComponent = require('./app/components/vertical-icons-component')
-// const VerticalIconsApi = require('./app/components/vertical-icons-api')
+const VerticalIconsApi = require('./app/components/vertical-icons-api')
 
 const SwapPanelComponent = require('./app/components/swap-panel-component')
-// const SwapPanelApi = require('./app/components/swap-panel-api')
+const SwapPanelApi = require('./app/components/swap-panel-api')
 
-// const AppManager = require('remix-plugin').AppManager
+const AppManager = require('remix-plugin').AppManager
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -437,7 +437,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense.
   */
 
-  // const appManager = new AppManager({modules: [], plugins: []})
+  const appManager = new AppManager({modules: [], plugins: []})
 
   const swapPanelComponent = new SwapPanelComponent()
   const pluginManagerComponent = new PluginManagerComponent(
@@ -456,8 +456,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const verticalIconComponent = new VerticalIconsComponent()
 
-  // const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, pluginManagerComponent)
-  // const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, pluginManagerComponent)
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, pluginManagerComponent)
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, pluginManagerComponent)
   const pluginManagerAPI = new PluginManagerApi(pluginManagerComponent)
 
   self._view.mainpanel.appendChild(self._components.editorpanel.render())
