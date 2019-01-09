@@ -12,12 +12,12 @@ const RunTab = require('../tabs/run-tab')
 
 var registry = require('../../global/registry')
 
-const styleguide = require('../ui/styles-guide/theme-chooser')
-const styles = styleguide.chooser()
+// const styleguide = require('../ui/styles-guide/theme-chooser')
+// const styles = styleguide.chooser()
 
 const PluginManagerProxy = require('./plugin-manager-proxy')
 
-const EventEmitter = require ('events')
+const EventEmitter = require('events')
 
 class PluginManagerComponent {
 
@@ -44,9 +44,13 @@ class PluginManagerComponent {
       'Settings': { name: 'Settings', Type: SettingsTab, icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik00OSwyNy45NTR2LTZsLTcuMTQxLTEuMTY3ICBjLTAuNDIzLTEuNjkxLTEuMDg3LTMuMjgxLTEuOTYyLTQuNzM3bDQuMTYyLTUuOTMybC00LjI0My00LjI0MWwtNS44NTYsNC4yMWMtMS40Ni0wLjg4NC0zLjA2LTEuNTU4LTQuNzYzLTEuOTgybC0xLjI0NS03LjEwNmgtNiAgbC0xLjE1Niw3LjA4M2MtMS43MDQsMC40MTgtMy4zMTMsMS4wODMtNC43NzcsMS45NjNMMTAuMTgsNS44NzNsLTQuMjQzLDQuMjQxbDQuMTA3LDUuODc0Yy0wLjg4OCwxLjQ3LTEuNTYzLDMuMDc3LTEuOTkyLDQuNzkyICBMMSwyMS45NTR2Nmw3LjA0NCwxLjI0OWMwLjQyNSwxLjcxMSwxLjEwMSwzLjMxOCwxLjk5Miw0Ljc5bC00LjE2Myw1LjgyM2w0LjI0MSw0LjI0NWw1Ljg4MS00LjExOSAgYzEuNDY4LDAuODgyLDMuMDczLDEuNTUyLDQuNzc3LDEuOTczbDEuMTgsNy4wODdoNmwxLjI2MS03LjEwNWMxLjY5NS0wLjQzLDMuMjk3LTEuMTA1LDQuNzUxLTEuOTlsNS45MjIsNC4xNTVsNC4yNDItNC4yNDUgIGwtNC4yMjctNS44N2MwLjg3NS0xLjQ1NiwxLjUzOS0zLjA0OCwxLjk1OC00LjczOUw0OSwyNy45NTR6IE0yNSwzM2MtNC40MTgsMC04LTMuNTgyLTgtOHMzLjU4Mi04LDgtOHM4LDMuNTgyLDgsOFMyOS40MTgsMzMsMjUsMzMgIHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==' }
     }
     this.activated = {} // list all activated modules
+    // this.activated = [] // list all activated modules
     this.plugins = []
     this.data = {}
     this.data.proxy = new PluginManagerProxy()
+
+    // This load the state from localstorage first then from the second parameter is nothing is found in localstorage
+    // this.store = Store.fromLocal('***', {}) // Or EntityStore.fromLocal('***', {}, 'id')
   }
 
   proxy () {
@@ -70,21 +74,52 @@ class PluginManagerComponent {
   }
 
   render () {
-    var self = this
+    // var self = this
     // loop over all this.modules and this.plugins
-    return yo`
+    let pluginManagerDiv = yo`
       <div id='pluginManager' class=${css.plugins} >
-      list all modules / plugins that can be activated
+      <h2>Plugin Manager</h2>
+      </div>
+    `
+    for (var mod in this.modulesDefinition) {
+      if (this.modulesDefinition[mod].icon) pluginManagerDiv.appendChild(this.renderItem(mod))
+    }
+    console.log(this.activated)
+    return pluginManagerDiv
+  }
+
+  renderItem (item) {
+    let ctrBtns
+    if (this.activated.hasOwnProperty(item)) {
+      ctrBtns = yo`
+        <button onclick=${() => { this.deactivateInternal(this.modulesDefinition[item].name) }} >deactivate</button>
+      `
+    } else {
+      ctrBtns = yo`
+        <button onclick=${() => { this.activateInternal() }} >activate</button>
+      `
+    }
+    this.plugins.push(item)
+    // var self = this
+    return yo`
+      <div id='pluginManager' class=${css.plugin} >
+        ${this.modulesDefinition[item].name}
+        ${ctrBtns}
       </div>
     `
   }
 
   activatePlugin (jsonProfile, api) {
-    let profile = { json: jsonProfile, api }
-    let plugin = new Plugin(profile, api)
-    this.appManager.addPlugin(plugin)
-    this.event.emit('displayableModuleActivated', jsonProfile, plugin.render())
-    this.activated[jsonProfile.name] = plugin
+    // let profile = { json: jsonProfile, api }
+    // let plugin = new Plugin(profile, api)
+    // this.appManager.addPlugin(plugin)
+    // this.event.emit('displayableModuleActivated', jsonProfile, plugin.render())
+    // this.activated[jsonProfile.name] = plugin
+  }
+
+  deactivateInternal (name) {
+    delete this.activated[name]
+    this.event.emit('removingItem', name)
   }
 
   activateInternal (name) {
@@ -116,32 +151,23 @@ class PluginManagerComponent {
   _deactivate (item) {
     this.event.emit('deactivation', item)
   }
-
-  renderItem (item) {
-    this.plugins.push(item)
-    var self = this
-    var view = yo`
-      <div id='pluginManager' class=${css.plugin} >
-        ${item.name}
-        ${item.url}
-        <button onclick=${() => { self._activate(item) }} ></button>
-        <button onclick=${() => { self._deactivate(item) }} ></button>
-      </div>
-    `
-  }
 }
 
 module.exports = PluginManagerComponent
 
 const css = csjs`
-  .plugins        {
+  .plugins {
     width          : 300px;
   }
-  .plugItIn       {
-    display        : none;
+  .plugin {
+    border-bottom: 1px black solid;
+    padding: 10px 20px;
+    margin-bottom: 20px;
   }
-  .plugItIn.active     {
-    display        :block;
+  .plugItIn.active {
+    display: block;
   }
-  .clearFunds { background-color: lightblue; }
+  .plugin button {
+    cursor: pointer;
+  }
 `

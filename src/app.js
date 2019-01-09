@@ -39,12 +39,12 @@ const PluginManagerComponent = require('./app/components/plugin-manager-componen
 const PluginManagerApi = require('./app/components/plugin-manager-api')
 
 const VerticalIconsComponent = require('./app/components/vertical-icons-component')
-const VerticalIconsApi = require('./app/components/vertical-icons-api')
+// const VerticalIconsApi = require('./app/components/vertical-icons-api')
 
 const SwapPanelComponent = require('./app/components/swap-panel-component')
-const SwapPanelApi = require('./app/components/swap-panel-api')
+// const SwapPanelApi = require('./app/components/swap-panel-api')
 
-const AppManager = require('remix-plugin').AppManager
+// const AppManager = require('remix-plugin').AppManager
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -178,7 +178,7 @@ class App {
     }
   }
   _adjustLayout (direction, delta) {
-    /*var self = this
+    /* var self = this
     var layout = self.data._layout[direction]
     if (layout) {
       if (delta === undefined) {
@@ -211,7 +211,7 @@ class App {
       methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
     }
   }
-  
+
   render () {
     var self = this
     if (self._view.el) return self._view.el
@@ -235,7 +235,7 @@ class App {
         ${''}
       </div>
     `
-    
+
     self._view.el = yo`
       <div class=${css.browsersolidity}>
         ${self._view.iconpanel}
@@ -310,12 +310,12 @@ class App {
     })
   }
 
-   addProvider (name, url, cb) {
+  addProvider (name, url, cb) {
     executionContext.addProvider({ name, url })
     cb()
   }
 
-   removeProvider (name, cb) {
+  removeProvider (name, cb) {
     executionContext.removeProvider(name)
     cb()
   }
@@ -403,7 +403,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   */
   const txListenerModuleProxy = {
     event: new EventEmitter(),
-    profile() {
+    profile () {
       return {
         type: 'txListener',
         events: ['newTransaction']
@@ -430,21 +430,21 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
-  
+
   // ----------------- app manager ----------------------------
 
   /*
     TODOs:
       - for each activated plugin,
         an internal module (associated only with the plugin) should be created for accessing specific part of the UI. detail to be discussed
-      - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense. 
+      - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense.
   */
 
-  const appManager = new AppManager({modules: [],plugins : []})
+  // const appManager = new AppManager({modules: [], plugins: []})
 
   const swapPanelComponent = new SwapPanelComponent()
   const pluginManagerComponent = new PluginManagerComponent(
-    { 
+    {
       app: this,
       udapp: udapp,
       fileManager: fileManager,
@@ -455,12 +455,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: pluginManagerComponent.proxy(), name: 'pluginmanager'})
 
   self._components.editorpanel.init()
-  self._components.fileManager.init()  
-  
+  self._components.fileManager.init()
+
   const verticalIconComponent = new VerticalIconsComponent()
 
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, pluginManagerComponent)
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, pluginManagerComponent)
+  // const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, pluginManagerComponent)
+  // const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, pluginManagerComponent)
   const pluginManagerAPI = new PluginManagerApi(pluginManagerComponent)
 
   self._view.mainpanel.appendChild(self._components.editorpanel.render())
