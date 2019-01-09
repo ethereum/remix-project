@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 import { Api, ModuleProfile, API } from 'remix-plugin'
 
@@ -42,24 +42,40 @@ export class RemixResolveApi implements API<RemixResolve> {
   * @params root The root of the github import statement
   * @params filePath path of the file in github
   */
-  handleGithubCall(root: string, filePath: string) {
-    return
+  async handleGithubCall(root: string, filePath: string) {
+    try {
+      let req: string = 'https://api.github.com/repos/' + root + '/contents/' + filePath
+      const response: AxiosResponse = await axios.get(req)
+      return Buffer.from(response.data.content, 'base64').toString()
+    } catch(e) {
+      throw e
+    }
   }
   /**
   * Handle an import statement based on http
   * @params url The url of the import statement
   * @params cleanURL
   */
-  handleHttp(url: string, cleanURL: string) {
-    return
+  async handleHttp(url: string, _: string) {
+    try {
+      const response: AxiosResponse = await axios.get(url)
+      return response.data
+    } catch(e) {
+      throw e
+    }
   }
   /**
   * Handle an import statement based on https
   * @params url The url of the import statement
   * @params cleanURL
   */
-  handleHttps(url: string, cleanURL: string) {
-    return
+  async handleHttps(url: string, _: string) {
+    try {
+      const response: AxiosResponse = await axios.get(url)
+      return response.data
+    } catch(e) {
+      throw e
+    }
   }
   handleSwarm(url: string, cleanURL: string) {
     return
@@ -75,14 +91,11 @@ export class RemixResolveApi implements API<RemixResolve> {
       const req = 'https://gateway.ipfs.io/' + url
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
-      const response = await axios.get(req)
+      const response: AxiosResponse = await axios.get(req)
       return response.data
     } catch (e) {
       throw e
     }
-  }
-  handleLocal(root: string, filePath: string) {
-    return
   }
   getHandlers(): Handler[] {
     return [
