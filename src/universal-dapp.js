@@ -321,7 +321,6 @@ UniversalDApp.prototype.runTestTx = function (tx, cb) {
   })
 }
 
-
 /**
  * This function send a tx without alerting the user (if mainnet or if gas estimation too high).
  * SHOULD BE TAKEN CAREFULLY!

@@ -40,7 +40,7 @@ class EditorPanel {
       }
     }
     self._view = {}
-    
+
     var contextualListener = new ContextualListener({editor: self._components.editor, pluginManager: self._deps.pluginManager})
     var contextView = new ContextView({contextualListener, editor: self._components.editor})
 

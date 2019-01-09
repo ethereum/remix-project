@@ -1,11 +1,4 @@
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-const remixLib = require('remix-lib')
-
-const styleguide = require('../ui/styles-guide/theme-chooser')
-const styles = styleguide.chooser()
-
-const EventEmmitter = require('events')
+// const EventEmmitter = require('events')
 
 class SwapPanelApi {
   constructor (swapPanelComponent, verticalIconsComponent, pluginManagerComponent) {
