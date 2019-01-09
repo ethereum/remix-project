@@ -16,11 +16,12 @@ class VerticalIconComponent {
 
   addIcon (mod) {
     let self = this
-    this.view.appendChild(yo`<div class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>`)
+    this.view.appendChild(yo`<div id="${mod.name}Icon" class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>`)
   }
 
-  removeIcon (item) {
-
+  removeIcon (mod) {
+    var el = this.view.querySelector(`#${mod.name}Icon`)
+    el.parentElement.removeChild(el)
   }
 
   select (name) {

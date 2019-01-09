@@ -9,6 +9,9 @@ class SwapPanelApi {
     pluginManagerComponent.event.on('requestContainer', (mod, content) => {
       this.add(mod.name, content)
     })
+    pluginManagerComponent.event.on('removingItem', (mod) => {
+      this.remove(mod.name)
+    })
   }
 
   /*
@@ -18,6 +21,10 @@ class SwapPanelApi {
   add (moduleName, content) {
     // add the DOM to the swappanel
     return this.component.add(moduleName, content)
+  }
+
+  remove (moduleName) {
+    return this.component.remove(moduleName)
   }
 
   reference (modulename, domElement) {
