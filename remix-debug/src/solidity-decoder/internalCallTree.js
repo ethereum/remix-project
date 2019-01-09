@@ -38,7 +38,6 @@ class InternalCallTree {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
-            console.log('ready')
             createReducedTrace(this, traceManager.trace.length - 1)
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
@@ -230,7 +229,7 @@ function resolveVariableDeclaration (tree, step, sourceLocation) {
     if (ast) {
       tree.variableDeclarationByFile[sourceLocation.file] = extractVariableDeclarations(ast, tree.astWalker)
     } else {
-      console.log('Ast not found for step ' + step + '. file ' + sourceLocation.file)
+      // console.log('Ast not found for step ' + step + '. file ' + sourceLocation.file)
       return null
     }
   }
@@ -243,7 +242,7 @@ function resolveFunctionDefinition (tree, step, sourceLocation) {
     if (ast) {
       tree.functionDefinitionByFile[sourceLocation.file] = extractFunctionDefinitions(ast, tree.astWalker)
     } else {
-      console.log('Ast not found for step ' + step + '. file ' + sourceLocation.file)
+      // console.log('Ast not found for step ' + step + '. file ' + sourceLocation.file)
       return null
     }
   }

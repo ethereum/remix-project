@@ -3,6 +3,7 @@ var Ethdebugger = require('../Ethdebugger')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var traceHelper = remixLib.helpers.trace
+var OffsetToColumnConverter = remixLib.OffsetToColumnConverter
 
 var StepManager = require('./stepManager')
 var VmDebuggerLogic = require('./VmDebugger')
@@ -11,7 +12,7 @@ function Debugger (options) {
   var self = this
   this.event = new EventManager()
 
-  this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
+  this.offsetToLineColumnConverter = options.offsetToLineColumnConverter || (new OffsetToColumnConverter())
   this.compiler = options.compiler
 
   this.debugger = new Ethdebugger({
@@ -111,8 +112,13 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
   })
 
   this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+  this.vmDebuggerLogic.start()
 
   this.step_manager.event.register('stepChanged', this, function (stepIndex) {
+    if (!stepIndex) {
+      return self.event.trigger('endDebug')
+    }
+
     self.debugger.codeManager.resolveStep(stepIndex, tx)
     self.step_manager.event.trigger('indexChanged', [stepIndex])
     self.vmDebuggerLogic.event.trigger('indexChanged', [stepIndex])
