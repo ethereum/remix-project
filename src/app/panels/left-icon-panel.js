@@ -69,7 +69,6 @@ module.exports = class LeftIconPanel {
       {type: 'settings', displayName: 'setting', icon: 'fa fa-cog fa-2x'}
     ]
   }
-  
 
   swapPlugin (name) {
     console.log(name)
