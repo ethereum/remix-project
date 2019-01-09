@@ -1,5 +1,5 @@
 /* eslint no-extend-native: "warn" */
-let fs = require('fs')
+let fs = require('./fs')
 var async = require('async')
 var path = require('path')
 let RemixCompiler = require('remix-solidity').Compiler
@@ -26,52 +26,60 @@ var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electro
 
 // TODO: replace this with remix's own compiler code
 function compileFileOrFiles (filename, isDirectory, opts, cb) {
-  let compiler, filepath
+  let compiler
   let accounts = opts.accounts || []
   const sources = {
     'tests.sol': { content: require('../sol/tests.sol.js') },
     'remix_tests.sol': { content: require('../sol/tests.sol.js') },
     'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
   }
+  const filepath = (isDirectory ? filename : path.dirname(filename))
   // TODO: for now assumes filepath dir contains all tests, later all this
   // should be replaced with remix's & browser solidity compiler code
-  filepath = (isDirectory ? filename : path.dirname(filename))
 
-  fs.readdirSync(filepath).forEach(file => {
-    // only process .sol files
-    if (file.split('.').pop() === 'sol') {
-      let c = fs.readFileSync(path.join(filepath, file)).toString()
-      const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
-      let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
-      if (file.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
-        c = includeTestLibs.concat(c)
+  // This logic is wrong
+  // We should only look into current file if a full file name with path is given
+  // We should only walk through directory if a directory name is passed
+  try {
+    // walkSync only if it is a directory
+    fs.walkSync(filepath, foundpath => {
+      // only process .sol files
+      if (foundpath.split('.').pop() === 'sol') {
+        let c = fs.readFileSync(foundpath).toString()
+        const s = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+        let includeTestLibs = '\nimport \'remix_tests.sol\';\n'
+        if (foundpath.indexOf('_test.sol') > 0 && c.regexIndexOf(s) < 0) {
+          c = includeTestLibs.concat(c)
+        }
+        sources[foundpath] = { content: c }
       }
-      sources[file] = { content: c }
-    }
-  })
-
-  async.waterfall([
-    function loadCompiler (next) {
-      compiler = new RemixCompiler()
-      compiler.onInternalCompilerLoaded()
-      // compiler.event.register('compilerLoaded', this, function (version) {
-      next()
-      // });
-    },
-    function doCompilation (next) {
-      compiler.event.register('compilationFinished', this, function (success, data, source) {
-        next(null, data)
-      })
-      compiler.compile(sources, filepath)
-    }
-  ], function (err, result) {
-    let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
-    if (errors.length > 0) {
-      if (!isBrowser) require('signale').fatal(errors)
-      return cb(new Error('errors compiling'))
-    }
-    cb(err, result.contracts)
-  })
+    })
+  } catch (e) {
+    throw e
+  } finally {
+    async.waterfall([
+      function loadCompiler (next) {
+        compiler = new RemixCompiler()
+        compiler.onInternalCompilerLoaded()
+        // compiler.event.register('compilerLoaded', this, function (version) {
+        next()
+        // });
+      },
+      function doCompilation (next) {
+        compiler.event.register('compilationFinished', this, function (success, data, source) {
+          next(null, data)
+        })
+        compiler.compile(sources, filepath)
+      }
+    ], function (err, result) {
+      let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
+      if (errors.length > 0) {
+        if (!isBrowser) require('signale').fatal(errors)
+        return cb(new Error('errors compiling'))
+      }
+      cb(err, result.contracts)
+    })
+  }
 }
 
 function compileContractSources (sources, importFileCb, opts, cb) {

@@ -1,6 +1,6 @@
 {
   "name": "remix-debug",
-  "version": "0.2.14",
+  "version": "0.3.1",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -10,6 +10,10 @@
     {
       "name": "Liana Husikyan",
       "email": "liana@ethdev.com"
+    },
+    {
+      "name": "Iuri Matias",
+      "email": "iuri.matias@gmail.com"
     }
   ],
   "main": "./index.js",
@@ -17,7 +21,7 @@
     "ethereumjs-util": "^4.5.0",
     "ethereumjs-vm": "2.4.0",
     "fast-async": "^6.1.2",
-    "remix-lib": "0.3.13"
+    "remix-lib": "0.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
