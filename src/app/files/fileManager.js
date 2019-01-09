@@ -2,7 +2,7 @@
 
 var $ = require('jquery')
 var yo = require('yo-yo')
-var EventEmitter = require ('events')
+var EventEmitter = require('events')
 var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
@@ -116,7 +116,7 @@ class FileManager {
       cb(null, path)
     }
   }
-  
+
   getFile (path, cb) {
     var provider = this.fileProviderOf(path)
     if (provider) {
