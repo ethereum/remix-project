@@ -27,8 +27,13 @@ class SwapPanelComponent {
   }
 
   add (moduleName, content) {
-    this.contents[moduleName] = yo`<div class=${css.plugItIn} >${content}</div>`
+    this.contents[moduleName] = yo`<div id='${moduleName}Content' class=${css.plugItIn} >${content}</div>`
     this.view.appendChild(this.contents[moduleName])
+  }
+
+  remove (moduleName) {
+    var el = this.view.querySelector(`div#${moduleName}Content`)
+    el.parentElement.removeChild(el)
   }
 
   render () {
