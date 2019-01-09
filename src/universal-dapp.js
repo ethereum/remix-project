@@ -1,42 +1,19 @@
-/* global */
-'use strict'
-
-var yo = require('yo-yo')
 var async = require('async')
 var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var remixLib = require('remix-lib')
-var EventManager = require('./lib/events')
 var crypto = require('crypto')
 var TxRunner = remixLib.execution.txRunner
-var txExecution = remixLib.execution.txExecution
-var txFormat = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
-var executionContext = require('./execution-context')
-var modalCustom = require('./app/ui/modal-dialog-custom')
-var uiUtil = require('./app/ui/util')
-var globalRegistry = require('./global/registry')
+var EventManager = remixLib.EventManager
+var executionContext = remixLib.execution.executionContext
 
-var modalDialog = require('./app/ui/modaldialog')
-var typeConversion = remixLib.execution.typeConversion
-var confirmDialog = require('./app/execution/confirmDialog')
-
-function UniversalDApp (opts, localRegistry) {
+function UniversalDApp (registry) {
   this.event = new EventManager()
   var self = this
-  self.data = {}
-  self._components = {}
-  self._components.registry = localRegistry || globalRegistry
-  self.removable = opts.removable
-  self.removable_instances = opts.removable_instances
   self._deps = {
-    config: self._components.registry.get('config').api,
-    compilersartefacts: self._components.registry.get('compilersartefacts').api,
-    logCallback: self._components.registry.get('logCallback').api
+    config: registry.get('config').api
   }
-  executionContext.event.register('contextChanged', this, function (context) {
-    self.resetEnvironment()
-  })
   self._txRunnerAPI = {
     config: self._deps.config,
     detectNetwork: (cb) => {
@@ -49,6 +26,7 @@ function UniversalDApp (opts, localRegistry) {
   self.txRunner = new TxRunner({}, self._txRunnerAPI)
   self.accounts = {}
   self.resetEnvironment()
+  executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 }
 
 UniversalDApp.prototype.resetEnvironment = function () {
@@ -61,13 +39,22 @@ UniversalDApp.prototype.resetEnvironment = function () {
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
     executionContext.vm().stateManager.cache.flush(function () {})
   }
-  this.txRunner = new TxRunner(this.accounts, this._txRunnerAPI)
+  // TODO: most params here can be refactored away in txRunner
+  this.txRunner = new TxRunner(this.accounts, {
+    // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
+    config: this.config,
+    // TODO: to refactor, TxRunner already has access to executionContext
+    detectNetwork: (cb) => {
+      executionContext.detectNetwork(cb)
+    },
+    personalMode: () => {
+      return this.config.get('settings/personal-mode')
+    }
+  })
   this.txRunner.event.register('transactionBroadcasted', (txhash) => {
     executionContext.detectNetwork((error, network) => {
-      if (!error && network) {
-        var txLink = executionContext.txDetailsLink(network.name, txhash)
-        if (txLink) this._deps.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
-      }
+      if (error || !network) return
+      this.event.trigger('transactionBroadcasted', [txhash, network.name])
     })
   })
 }
@@ -83,18 +70,14 @@ UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
   cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
 }
 
-UniversalDApp.prototype.newAccount = function (password, cb) {
+UniversalDApp.prototype.newAccount = function (password, passwordPromptCb, cb) {
   if (!executionContext.isVM()) {
-    if (!this._deps.config.get('settings/personal-mode')) {
+    if (!this.config.get('settings/personal-mode')) {
       return cb('Not running in personal mode')
     }
-    modalCustom.promptPassphraseCreation((error, passphrase) => {
-      if (error) {
-        modalCustom.alert(error)
-      } else {
-        executionContext.web3().personal.newAccount(passphrase, cb)
-      }
-    }, () => {})
+    passwordPromptCb((passphrase) => {
+      executionContext.web3().personal.newAccount(passphrase, cb)
+    })
   } else {
     var privateKey
     do {
@@ -130,7 +113,7 @@ UniversalDApp.prototype.getAccounts = function (cb) {
     // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
     // See: https://github.com/ethereum/web3.js/issues/442
     if (this._deps.config.get('settings/personal-mode')) {
-      executionContext.web3().personal.getListAccounts(cb)
+      return executionContext.web3().personal.getListAccounts(cb)
     } else {
       executionContext.web3().eth.getAccounts(cb)
     }
@@ -182,61 +165,8 @@ UniversalDApp.prototype.getBalanceInEther = function (address, callback) {
   })
 }
 
-UniversalDApp.prototype.pendingTransactions = function () {
-  return this.txRunner.pendingTxs
-}
-
 UniversalDApp.prototype.pendingTransactionsCount = function () {
   return Object.keys(this.txRunner.pendingTxs).length
-}
-
-UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, outputCb) {
-  const self = this
-  var logMsg
-  if (isUserAction) {
-    if (!args.funABI.constant) {
-      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-    } else {
-      logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
-    }
-  }
-  txFormat.buildData(args.contractName, args.contractAbi, self._deps.compilersartefacts['__last'].getData().contracts, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
-    if (!error) {
-      if (isUserAction) {
-        if (!args.funABI.constant) {
-          self._deps.logCallback(`${logMsg} pending ... `)
-        } else {
-          self._deps.logCallback(`${logMsg}`)
-        }
-      }
-      if (args.funABI.type === 'fallback') data.dataHex = value
-      self.callFunction(args.address, data, args.funABI, (error, txResult) => {
-        if (!error) {
-          var isVM = executionContext.isVM()
-          if (isVM) {
-            var vmError = txExecution.checkVMError(txResult)
-            if (vmError.error) {
-              self._deps.logCallback(`${logMsg} errored: ${vmError.message} `)
-              return
-            }
-          }
-          if (lookupOnly) {
-            var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
-            outputCb(decoded)
-          }
-        } else {
-          self._deps.logCallback(`${logMsg} errored: ${error} `)
-        }
-      })
-    } else {
-      self._deps.logCallback(`${logMsg} errored: ${error} `)
-    }
-  }, (msg) => {
-    self._deps.logCallback(msg)
-  }, (data, runTxCallback) => {
-    // called for libraries deployment
-    self.runTx(data, runTxCallback)
-  })
 }
 
 /**
@@ -245,8 +175,8 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
   * @param {String} data    - data to send with the transaction ( return of txFormat.buildData(...) ).
   * @param {Function} callback    - callback.
   */
-UniversalDApp.prototype.createContract = function (data, callback) {
-  this.runTx({data: data, useCall: false}, (error, txResult) => {
+UniversalDApp.prototype.createContract = function (data, confirmationCb, continueCb, promptCb, callback) {
+  this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -260,8 +190,8 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   * @param {Object} funAbi    - abi definition of the function to call.
   * @param {Function} callback    - callback.
   */
-UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
-  this.runTx({to: to, data: data, useCall: funAbi.constant}, (error, txResult) => {
+UniversalDApp.prototype.callFunction = function (to, data, funAbi, confirmationCb, continueCb, promptCb, callback) {
+  this.runTx({to: to, data: data, useCall: funAbi.constant}, confirmationCb, continueCb, promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -303,7 +233,7 @@ UniversalDApp.prototype.silentRunTx = function (tx, cb) {
   cb)
 }
 
-UniversalDApp.prototype.runTx = function (args, cb) {
+UniversalDApp.prototype.runTx = function (args, confirmationCb, continueCb, promptCb, cb) {
   const self = this
   async.waterfall([
     function getGasLimit (next) {
@@ -349,85 +279,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       var timestamp = Date.now()
 
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
-      self.txRunner.rawRun(tx,
-
-        (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-          if (network.name !== 'Main') {
-            return continueTxExecution(null)
-          }
-          var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
-          var content = confirmDialog(tx, amount, gasEstimation, self,
-            (gasPrice, cb) => {
-              let txFeeText, priceStatus
-              // TODO: this try catch feels like an anti pattern, can/should be
-              // removed, but for now keeping the original logic
-              try {
-                var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
-                txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
-                priceStatus = true
-              } catch (e) {
-                txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
-                priceStatus = false
-              }
-              cb(txFeeText, priceStatus)
-            },
-            (cb) => {
-              executionContext.web3().eth.getGasPrice((error, gasPrice) => {
-                var warnMessage = ' Please fix this issue before sending any transaction. '
-                if (error) {
-                  return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
-                }
-                try {
-                  var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
-                  cb(null, gasPriceValue)
-                } catch (e) {
-                  cb(warnMessage + e.message, null, false)
-                }
-              })
-            }
-          )
-          modalDialog('Confirm transaction', content,
-            { label: 'Confirm',
-              fn: () => {
-                self._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
-                // TODO: check if this is check is still valid given the refactor
-                if (!content.gasPriceStatus) {
-                  cancelCb('Given gas price is not correct')
-                } else {
-                  var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
-                  continueTxExecution(gasPrice)
-                }
-              }}, {
-                label: 'Cancel',
-                fn: () => {
-                  return cancelCb('Transaction canceled by user.')
-                }
-              })
-        },
-        (error, continueTxExecution, cancelCb) => {
-          if (error) {
-            var msg = typeof error !== 'string' ? error.message : error
-            modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
-            The transaction execution will likely fail. Do you want to force sending? <br>
-            ${msg}
-            </div>`,
-              {
-                label: 'Send Transaction',
-                fn: () => {
-                  continueTxExecution()
-                }}, {
-                  label: 'Cancel Transaction',
-                  fn: () => {
-                    cancelCb()
-                  }
-                })
-          } else {
-            continueTxExecution()
-          }
-        },
-        function (okCb, cancelCb) {
-          modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account ' + tx.from, '', okCb, cancelCb)
-        },
+      self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
         function (error, result) {
           let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
           self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])

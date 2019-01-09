@@ -313,13 +313,16 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
   // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp({
-    removable: false,
-    removable_instances: true
-  })
+  var udapp = new UniversalDApp(registry)
+  // TODO: to remove when possible
   registry.put({api: udapp, name: 'udapp'})
+  udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
+    var txLink = executionContext.txDetailsLink(networkName, txhash)
+    if (txLink) registry.get('logCallback').api.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
+  })
 
-  var udappUI = new UniversalDAppUI(udapp)
+  var udappUI = new UniversalDAppUI(udapp, registry)
+  // TODO: to remove when possible
   registry.put({api: udappUI, name: 'udappUI'})
 
   // ----------------- Tx listener -----------------
@@ -434,7 +437,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.righthandpanel.init()
   self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
 
-  var txLogger = new TxLogger() // eslint-disable-line  
+  var txLogger = new TxLogger() // eslint-disable-line
 
   var queryParams = new QueryParams()
 

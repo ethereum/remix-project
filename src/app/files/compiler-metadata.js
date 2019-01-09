@@ -74,6 +74,7 @@ class CompilerMetadata {
     return metadata
   }
 
+  // TODO: is only called by dropdownLogic and can be moved there
   deployMetadataOf (contractName, callback) {
     var self = this
     var provider = self._opts.fileManager.currentFileProvider()

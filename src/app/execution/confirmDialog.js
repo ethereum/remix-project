@@ -16,6 +16,7 @@ var css = csjs`
   }
 `
 
+// TODO: self is not actually used and can be removed
 function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialParamsCb) {
   var onGasPriceChange = function () {
     var gasPrice = el.querySelector('#gasprice').value
