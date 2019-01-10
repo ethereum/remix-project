@@ -1,8 +1,8 @@
 // var csjs = require('csjs-inject')
 
-module.exports = styleGuideDavid
+module.exports = styleGuideClean
 
-function styleGuideDavid () {
+function styleGuideClean () {
   /* --------------------------------------------------------------------------
 
                               CSS PROPERTIES
