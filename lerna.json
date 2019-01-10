@@ -7,7 +7,7 @@
     "remix-analyzer",
     "remix-tests",
     "remix-simulator",
-    "remix-resolve"
+    "remix-url-resolver"
   ],
   "command": {
     "init": {
