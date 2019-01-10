@@ -54,7 +54,7 @@ jobs:
       - run: npm install && npm run bootstrap
       - run: cd remix-simulator && npm test
 
-  remix-resolve:
+  remix-url-resolver:
     docker:
       - image: circleci/node:10
     environment:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - checkout
       - run: npm install && npm run bootstrap
-      - run: cd remix-resolve && npm run build && npm test
+      - run: cd remix-url-resolver && npm run build && npm test
 
 
 workflows:
@@ -74,4 +74,4 @@ workflows:
       - remix-analyzer
       - remix-tests
       - remix-simulator
-      - remix-resolve
+      - remix-url-resolver
