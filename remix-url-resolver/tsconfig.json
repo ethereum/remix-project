@@ -15,7 +15,7 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["dom", "es2018"],
     "paths": {
-        "remix-resolve": ["./"]
+        "remix-url-resolver": ["./"]
     }
   }
 }

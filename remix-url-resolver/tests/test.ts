@@ -1,4 +1,4 @@
-import { RemixResolve } from '../src'
+import { RemixURLResolver } from '../src'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as assert from 'assert'
@@ -7,8 +7,8 @@ describe('testRunner', () => {
   describe('# RemixResolve.resolve()', () => {
     describe('* test without AppManager', () => {
       describe('test example_1 [local imports]', () => {
-        const remixResolve = new RemixResolve()
-        const fileName: string = '../remix-resolve/tests/example_1/greeter.sol'
+        const remixURLResolve = new RemixURLResolver()
+        const fileName: string = '../remix-url-resolver/tests/example_1/greeter.sol'
         let results: object = {}
 
         before(done => {
@@ -31,7 +31,7 @@ describe('testRunner', () => {
               handle: (match: Array<string>) => { return handleLocal(match[2], match[3]) }
             }
           ]
-          remixResolve.resolve(fileName, localFSHandler)
+          remixURLResolve.resolve(fileName, localFSHandler)
             .then((sources: object) => {
               results = sources
               done()
@@ -47,7 +47,7 @@ describe('testRunner', () => {
         it('should return contract content of given local path', () => {
           const expt = {
             content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
-            cleanURL: '../remix-resolve/tests/example_1/greeter.sol',
+            cleanURL: '../remix-url-resolver/tests/example_1/greeter.sol',
             type: 'local'
           }
           assert.deepEqual(results, expt)
@@ -55,12 +55,12 @@ describe('testRunner', () => {
       })
       // Test github import
       describe('test getting github imports', () => {
-        const remixResolve = new RemixResolve()
+        const remixURLResolve = new RemixURLResolver()
         const fileName: string = 'github.com/ethereum/populus/docs/assets/Greeter.sol'
         let results: object = {}
 
         before(done => {
-          remixResolve.resolve(fileName)
+          remixURLResolve.resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -84,12 +84,12 @@ describe('testRunner', () => {
       })
       // Test https imports
       describe('test getting https imports', () => {
-        const remixResolve = new RemixResolve()
+        const remixURLResolve = new RemixURLResolver()
         const fileName: string = 'https://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
         let results: object = {}
 
         before(done => {
-          remixResolve.resolve(fileName)
+          remixURLResolve.resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -114,12 +114,12 @@ describe('testRunner', () => {
 
       // Test http imports
       describe('test getting http imports', () => {
-        const remixResolve = new RemixResolve()
+        const remixURLResolve = new RemixURLResolver()
         const fileName: string = 'http://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
         let results: object = {}
 
         before(done => {
-          remixResolve.resolve(fileName)
+          remixURLResolve.resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
