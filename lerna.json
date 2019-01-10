@@ -6,7 +6,8 @@
     "remix-solidity",
     "remix-analyzer",
     "remix-tests",
-    "remix-simulator"
+    "remix-simulator",
+    "remix-url-resolver"
   ],
   "command": {
     "init": {

@@ -23,7 +23,7 @@ jobs:
       - checkout
       - run: npm install && npm run bootstrap
       - run: cd remix-debug && npm test
- 
+
   remix-analyzer:
     docker:
         - image: circleci/node:10
@@ -33,7 +33,7 @@ jobs:
       - checkout
       - run: npm install && npm run bootstrap
       - run: cd remix-analyzer && npm test
-   
+
   remix-tests:
     docker:
         - image: circleci/node:10
@@ -43,7 +43,7 @@ jobs:
       - checkout
       - run: npm install && npm run bootstrap
       - run: cd remix-tests && npm test
-  
+
   remix-simulator:
     docker:
         - image: circleci/node:10
@@ -53,7 +53,17 @@ jobs:
       - checkout
       - run: npm install && npm run bootstrap
       - run: cd remix-simulator && npm test
-   
+
+  remix-url-resolver:
+    docker:
+      - image: circleci/node:10
+    environment:
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: npm install && npm run bootstrap
+      - run: cd remix-url-resolver && npm run build && npm test
+
 
 workflows:
   version: 2
@@ -64,3 +74,4 @@ workflows:
       - remix-analyzer
       - remix-tests
       - remix-simulator
+      - remix-url-resolver
