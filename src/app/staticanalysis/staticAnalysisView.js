@@ -136,8 +136,8 @@ staticAnalysisView.prototype.run = function () {
 }
 
 staticAnalysisView.prototype.checkModule = function (event) {
-  let selected = document.querySelectorAll('[name="staticanalysismodule"]:checked')
-  let checkAll = document.querySelector('[id="checkAllEntries"]')
+  let selected = this.view.querySelectorAll('[name="staticanalysismodule"]:checked')
+  let checkAll = this.view.querySelector('[id="checkAllEntries"]')
   if (event.target.checked) {
     checkAll.checked = true
   } else if (!selected.length) {

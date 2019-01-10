@@ -100,7 +100,7 @@ module.exports = class TestTab {
     }
 
     self._deps.filePanel.event.register('newTestFileCreated', file => {
-      var testList = document.querySelector("[class^='testList']")
+      var testList = self.view.querySelector("[class^='testList']")
       var test = yo`<label class="singleTestLabel"><input class="singleTest" onchange=${(e) => toggleCheckbox(e.target.checked, file)} type="checkbox" checked="true">${file}</label>`
       testList.appendChild(test)
       self.data.allTests.push(file)
@@ -138,12 +138,12 @@ module.exports = class TestTab {
 
     function toggleCheckbox (eChecked, test) {
       if (!self.data.selectedTests) {
-        self.data.selectedTests = document.querySelectorAll('.singleTest:checked')
+        self.data.selectedTests = self._view.el.querySelectorAll('.singleTest:checked')
       }
       let selectedTests = self.data.selectedTests
       selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
       self.data.selectedTests = selectedTests
-      let checkAll = document.querySelector('[id="checkAllTests"]')
+      let checkAll = self._view.el.querySelector('[id="checkAllTests"]')
       if (eChecked) {
         checkAll.checked = true
       } else if (!selectedTests.length) {
@@ -152,8 +152,8 @@ module.exports = class TestTab {
     }
 
     function checkAll (event) {
-      let checkBoxes = document.querySelectorAll('.singleTest')
-      const checkboxesLabels = document.querySelectorAll('.singleTestLabel')
+      let checkBoxes = self._view.el.querySelectorAll('.singleTest')
+      const checkboxesLabels = self._view.el.querySelectorAll('.singleTestLabel')
       // checks/unchecks all
       for (let i = 0; i < checkBoxes.length; i++) {
         checkBoxes[i].checked = event.target.checked
