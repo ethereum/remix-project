@@ -1,36 +1,32 @@
-## Remix resolve engine
+## Remix URL resolver engine
 
-**Input**
-```json
-[ 'greeter.sol': { content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n' } ]
-```
-
-**Output**
-```json
-{
-	'mortal.sol': { content: 'pragma solidity ^0.5.0;\n\ncontract Mortal {\n    /* Define variable owner of the type address */\n    address payable owner;\n\n    /* This function is executed at initialization and sets the owner of the contract */\n    function mortal() public { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() public { if (msg.sender == owner) selfdestruct(owner); }\n}\n' },
-	'greeter.sol': { content: 'pragma solidity ^0.5.0;\nimport \'mortal.sol\';\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n' }
-}
-```
-#### API
-
-`combineSource(sources)`
+`resolve(url, urlHandler)`
 
 Returns `json` object with exact same path as `import` statement.
 
 **Output**
 ```json
 {
-	'./mortal.sol': { content: '...' },
-	'greeter.sol': { content: '...' }
+	content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
+    cleanURL: '../greeter.sol',
+    type: 'local'
 }
 ```
 
-`resolve(path, combinedSources)` function should be called from within `handleImportCb` function of `solc.compile(input, handleImportCb)`.
+#### Usage
 
-```javascript
-const rr = require('remix-resolve')
-function handleImportCb(path) {
-	return rr.resolve(path, combinedSources)
-}
+`resolve(url, urlHandler)` function should be called from within `handleImportCb` function of `solc.compile(input, handleImportCb)`.
+
+```ts
+import { RemixResolve } from 'remix-url-resolver'
+
+const remixResolve = new RemixResolve()
+const fileName: string = '../greeter.sol'
+remixResolve.resolve(fileName, urlHandler)
+	.then((sources: object) => {
+		console.log(sources)
+	})
+	.catch((e: Error) => {
+		throw e
+	})
 ```
