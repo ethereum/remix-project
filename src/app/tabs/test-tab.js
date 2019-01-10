@@ -23,6 +23,14 @@ module.exports = class TestTab {
     self.data = {}
     self.testList = yo`<div class=${css.testList}></div>`
   }
+  profile () {
+    return {
+      name: 'Run',
+      methods: [],
+      events: [],
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik00OSw0djI1YzAsMC01LjI3MywzLTEyLDMgIGMtMTEuOTI5LDAtMTUuODY5LTQtMjQtNFMxLDMwLDEsMzBWM2MwLDAsMi4wODUtMiwxMi0yczE0LjA0Nyw2LDI0LDZDNDMuMjgxLDcsNDguMTMsNC40NzEsNDksNHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIgeDE9IjEiIHgyPSIxIiB5MT0iMyIgeTI9IjQ5Ii8+PC9zdmc+'
+    }
+  } 
   render () {
     const self = this
     var testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
