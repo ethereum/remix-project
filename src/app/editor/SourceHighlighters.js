@@ -9,7 +9,7 @@ module.exports = class SourceHighlighters {
 
   profile () {
     return {
-      type: 'sourcehighlighter',
+      name: 'SourceHighlighters',
       methods: ['highlight', 'discardHighlight']
     }
   }

@@ -36,7 +36,6 @@ var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
-const PluginManagerApi = require('./app/components/plugin-manager-api')
 
 const VerticalIconsComponent = require('./app/components/vertical-icons-component')
 const VerticalIconsApi = require('./app/components/vertical-icons-api')
@@ -44,7 +43,17 @@ const VerticalIconsApi = require('./app/components/vertical-icons-api')
 const SwapPanelComponent = require('./app/components/swap-panel-component')
 const SwapPanelApi = require('./app/components/swap-panel-api')
 
-const AppManager = require('remix-plugin').AppManager
+const CompileTab = require('./app/tabs/compile-tab')
+const SettingsTab = require('./app/tabs/settings-tab')
+const AnalysisTab = require('./app/tabs/analysis-tab')
+const DebuggerTab = require('./app/tabs/debugger-tab')
+const SupportTab = require('./app/tabs/support-tab')
+const TestTab = require('./app/tabs/test-tab')
+const RunTab = require('./app/tabs/run-tab')
+const FilePanel = require('./app/panels/file-panel')
+
+import { EntityStore } from './lib/store'
+import { RemixAppManager } from './remixAppManager'
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -208,7 +217,7 @@ class App {
 
   profile () {
     return {
-      type: 'app',
+      name: 'App',
       description: 'the app',
       methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
     }
@@ -407,7 +416,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     event: new EventEmitter(),
     profile () {
       return {
-        type: 'txListener',
+        name: 'TxListener',
         events: ['newTransaction']
       }
     }
@@ -442,41 +451,74 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense.
   */
 
-  const appManager = new AppManager({modules: [], plugins: []})
+  // TODOs those are instanciated before hand. should be instanciated on demand
+
+  const pluginManagerComponent = new PluginManagerComponent()
+  registry.put({api: pluginManagerComponent.proxy(), name: 'pluginmanager'})
+
+  let filePanel = new FilePanel()
+  registry.put({api: filePanel, name: 'filepanel'})
+
+  let compileTab = new CompileTab(self._components.registry)
+  let run = new RunTab(self._components.registry)
+  let settings = new SettingsTab(self._components.registry)
+  let analysis = new AnalysisTab(self._components.registry)
+  let debug = new DebuggerTab(self._components.registry)
+  let support = new SupportTab(self._components.registry)
+  let test = new TestTab(self._components.registry, compileTab)
+
+  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} }, 'name')
+
+  const appManager = new RemixAppManager(appStore)
+
+  pluginManagerComponent.setApp(appManager)
+  pluginManagerComponent.setStore(appStore)
+
+  let sourceHighlighters = registry.get('editor').api.sourceHighlighters
+  let configProvider = self._components.filesProviders['config']
+  appManager.init([
+    { profile: this.profile(), api: this },
+    { profile: udapp.profile(), api: udapp },
+    { profile: fileManager.profile(), api: fileManager },
+    { profile: sourceHighlighters.profile(), api: sourceHighlighters },
+    { profile: configProvider.profile(), api: configProvider },
+    { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
+    { profile: compileTab.profile(), api: compileTab },
+    { profile: filePanel.profile(), api: filePanel },
+    { profile: test.profile(), api: test },
+    { profile: support.profile(), api: support },
+    { profile: debug.profile(), api: debug },
+    { profile: analysis.profile(), api: analysis },
+    { profile: settings.profile(), api: settings },
+    { profile: run.profile(), api: run },
+    { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
   const swapPanelComponent = new SwapPanelComponent()
-  const pluginManagerComponent = new PluginManagerComponent(
-    {
-      app: this,
-      udapp: udapp,
-      fileManager: fileManager,
-      sourceHighlighters: registry.get('editor').api.sourceHighlighters,
-      config: self._components.filesProviders['config'],
-      txListener: txListenerModuleProxy
-    })
-  registry.put({api: pluginManagerComponent.proxy(), name: 'pluginmanager'})
+  const verticalIconComponent = new VerticalIconsComponent()
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager)
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager)
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
-
-  const verticalIconComponent = new VerticalIconsComponent()
-
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, pluginManagerComponent)
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, pluginManagerComponent)
-  const pluginManagerAPI = new PluginManagerApi(pluginManagerComponent)
-
+  
   self._view.mainpanel.appendChild(self._components.editorpanel.render())
   self._view.iconpanel.appendChild(verticalIconComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
 
-  pluginManagerComponent.initDefault()
-  verticalIconComponent.select('FilePanel')
-  // appManager.init(pluginManagerAPI)
+  appManager.doActivate('App')
+  appManager.doActivate('Udapp')
+  appManager.doActivate('FileManager')
+  appManager.doActivate('SourceHighlighters')
+  appManager.doActivate('config')
+  appManager.doActivate('TxListener')
+  appManager.doActivate('FilePanel')
+  appManager.doActivate('SolidityCompile')
+  appManager.doActivate('Run')
+  appManager.doActivate('PluginManager')
+  appManager.doActivate('Settings')
+  appManager.doActivate('Support')
 
-  pluginManagerAPI.init({
-    modules: [],
-    plugins: []
-  })
+  verticalIconComponent.select('FilePanel')
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.

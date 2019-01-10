@@ -42,7 +42,7 @@
     "remix-analyzer": "0.3.1",
     "remix-debug": "0.3.1",
     "remix-lib": "0.4.1",
-    "remix-plugin": "0.0.1-alpha.2",
+    "remix-plugin": "0.0.1-alpha.4",
     "remix-solidity": "0.3.1",
     "remix-tests": "0.1.1",
     "remixd": "0.1.8-alpha.6",
