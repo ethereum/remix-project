@@ -59,7 +59,6 @@ function styleGuideDavid () {
                                   BORDERS
     ------------------------------------------------------ */
     borders: {
-      primary_borderRadius: '3px',
       secondary_borderRadius: '5px'
     }
   }
@@ -82,10 +81,10 @@ function styleGuideDavid () {
                           BACKGROUND COLORS
     ------------------------------------------------------ */
     primary_BackgroundColor: cssProperties.colors.white,
-    secondary_BackgroundColor: cssProperties.colors.veryLightGrey,
+    secondary_BackgroundColor: cssProperties.colors.white,
     tertiary_BackgroundColor: cssProperties.colors.white,
     quaternary_BackgroundColor: cssProperties.colors.white,
-    fifth_BackgroundColor: cssProperties.colors.lightGrey,
+    fifth_BackgroundColor: cssProperties.colors.white,
     seventh_BackgroundColor: cssProperties.colors.white,
     dark_BackgroundColor: cssProperties.colors.black,
     light_BackgroundColor: cssProperties.colors.white,
@@ -118,7 +117,7 @@ function styleGuideDavid () {
     ******************************************************** */
     icon_Color: cssProperties.colors.black,
     icon_AltColor: cssProperties.colors.white,
-    icon_HoverColor: cssProperties.colors.azure,
+    icon_HoverColor: cssProperties.colors.grey,
     icon_ConstantColor: cssProperties.colors.black,
 
     /* ------------------------------------------------------
@@ -182,7 +181,7 @@ function styleGuideDavid () {
     primaryButton_TextColor: cssProperties.colors.black,
     primaryButton_BackgroundColor: cssProperties.colors.white,
     primaryButton_BorderColor: cssProperties.colors.black,
-    primaryButton_BorderWidth: '2px',
+    primaryButton_BorderWidth: '1px',
 
     /* .................
           SECONDARY
@@ -348,6 +347,7 @@ function styleGuideDavid () {
         margin                  : 1px;
         background-color        : ${opts.BackgroundColor};
         color                   : ${opts.Color};
+        border                  : 1px solid;
         display                 : flex;
         align-items             : center;
         justify-content         : center;
