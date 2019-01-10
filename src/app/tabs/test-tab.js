@@ -157,7 +157,7 @@ module.exports = class TestTab {
       // checks/unchecks all
       for (let i = 0; i < checkBoxes.length; i++) {
         checkBoxes[i].checked = event.target.checked
-        toggleCheckbox(event.target.checkedt, checkboxesLabels[i].innerText)
+        toggleCheckbox(event.target.checked, checkboxesLabels[i].innerText)
       }
     }
 
