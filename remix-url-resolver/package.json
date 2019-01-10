@@ -1,10 +1,10 @@
 {
-  "name": "remix-resolve",
+  "name": "remix-url-resolver",
   "version": "0.0.1",
-  "description": "Solidity import resolver engine",
+  "description": "Solidity import url resolver engine",
   "main": "./src/index.js",
   "bin": {
-    "remix-resolve": "./bin/remix-resolve"
+    "remix-url-resolver": "./bin/remix-url-resolver"
   },
   "scripts": {
     "build": "tsc",

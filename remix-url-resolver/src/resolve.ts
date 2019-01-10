@@ -16,7 +16,7 @@ interface Handler {
   handle(match: any): any;
 }
 
-export class RemixResolve {
+export class RemixURLResolver {
   private previouslyHandled: PreviouslyHandledImports
   constructor() {
     this.previouslyHandled = {}
