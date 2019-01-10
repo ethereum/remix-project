@@ -3,13 +3,48 @@
 
 var $ = require('jquery')
 var yo = require('yo-yo')
+var ethJSUtil = require('ethereumjs-util')
+var BN = ethJSUtil.BN
 var helper = require('./lib/helper')
 var copyToClipboard = require('./app/ui/copy-to-clipboard')
 var css = require('./universal-dapp-styles')
 var MultiParamManager = require('./multiParamManager')
+var remixLib = require('remix-lib')
+var typeConversion = remixLib.execution.typeConversion
+var txExecution = remixLib.execution.txExecution
+var txFormat = remixLib.execution.txFormat
 
-function UniversalDAppUI (udapp, opts = {}) {
+var executionContext = require('./execution-context')
+
+var confirmDialog = require('./app/execution/confirmDialog')
+var modalCustom = require('./app/ui/modal-dialog-custom')
+var modalDialog = require('./app/ui/modaldialog')
+var TreeView = require('./app/ui/TreeView')
+
+function UniversalDAppUI (udapp, registry) {
   this.udapp = udapp
+  this.registry = registry
+
+  this.compilerData = {contractsDetails: {}}
+  this._deps = {
+    compilersartefacts: registry.get('compilersartefacts').api
+  }
+}
+
+function decodeResponseToTreeView (response, fnabi) {
+  var treeView = new TreeView({
+    extractData: (item, parent, key) => {
+      var ret = {}
+      if (BN.isBN(item)) {
+        ret.self = item.toString(10)
+        ret.children = []
+      } else {
+        ret = treeView.extractDataDefault(item, parent, key)
+      }
+      return ret
+    }
+  })
+  return treeView.render(txFormat.decodeResponse(response, fnabi))
 }
 
 UniversalDAppUI.prototype.renderInstance = function (contract, address, contractName) {
@@ -38,10 +73,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
     ${copyToClipboard(() => address)}
   </div>`
 
-  if (self.udapp.removable_instances) {
-    var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-    title.appendChild(close)
-  }
+  var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
+  title.appendChild(close)
 
   function remove () {
     instance.remove()
@@ -92,9 +125,135 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
   function clickButton (valArr, inputsValues) {
-    self.udapp.call(true, args, inputsValues, lookupOnly, (decoded) => {
+    var logMsg
+    if (!args.funABI.constant) {
+      logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    } else {
+      logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
+    }
+
+    var value = inputsValues
+
+    var confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+      if (network.name !== 'Main') {
+        return continueTxExecution(null)
+      }
+      var amount = executionContext.web3().fromWei(typeConversion.toInt(tx.value), 'ether')
+      var content = confirmDialog(tx, amount, gasEstimation, self.udapp,
+        (gasPrice, cb) => {
+          let txFeeText, priceStatus
+          // TODO: this try catch feels like an anti pattern, can/should be
+          // removed, but for now keeping the original logic
+          try {
+            var fee = executionContext.web3().toBigNumber(tx.gas).mul(executionContext.web3().toBigNumber(executionContext.web3().toWei(gasPrice.toString(10), 'gwei')))
+            txFeeText = ' ' + executionContext.web3().fromWei(fee.toString(10), 'ether') + ' Ether'
+            priceStatus = true
+          } catch (e) {
+            txFeeText = ' Please fix this issue before sending any transaction. ' + e.message
+            priceStatus = false
+          }
+          cb(txFeeText, priceStatus)
+        },
+        (cb) => {
+          executionContext.web3().eth.getGasPrice((error, gasPrice) => {
+            var warnMessage = ' Please fix this issue before sending any transaction. '
+            if (error) {
+              return cb('Unable to retrieve the current network gas price.' + warnMessage + error)
+            }
+            try {
+              var gasPriceValue = executionContext.web3().fromWei(gasPrice.toString(10), 'gwei')
+              cb(null, gasPriceValue)
+            } catch (e) {
+              cb(warnMessage + e.message, null, false)
+            }
+          })
+        }
+      )
+      modalDialog('Confirm transaction', content,
+        { label: 'Confirm',
+          fn: () => {
+            self.udapp._deps.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', content.querySelector('input#confirmsetting').checked)
+            // TODO: check if this is check is still valid given the refactor
+            if (!content.gasPriceStatus) {
+              cancelCb('Given gas price is not correct')
+            } else {
+              var gasPrice = executionContext.web3().toWei(content.querySelector('#gasprice').value, 'gwei')
+              continueTxExecution(gasPrice)
+            }
+          }}, {
+            label: 'Cancel',
+            fn: () => {
+              return cancelCb('Transaction canceled by user.')
+            }
+          })
+    }
+
+    var continueCb = (error, continueTxExecution, cancelCb) => {
+      if (error) {
+        var msg = typeof error !== 'string' ? error.message : error
+        modalDialog('Gas estimation failed', yo`<div>Gas estimation errored with the following message (see below).
+        The transaction execution will likely fail. Do you want to force sending? <br>
+        ${msg}
+        </div>`,
+          {
+            label: 'Send Transaction',
+            fn: () => {
+              continueTxExecution()
+            }}, {
+              label: 'Cancel Transaction',
+              fn: () => {
+                cancelCb()
+              }
+            })
+      } else {
+        continueTxExecution()
+      }
+    }
+
+    var outputCb = (decoded) => {
       outputOverride.innerHTML = ''
       outputOverride.appendChild(decoded)
+    }
+
+    var promptCb = (okCb, cancelCb) => {
+      modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+    }
+
+    // contractsDetails is used to resolve libraries
+    txFormat.buildData(args.contractName, args.contractAbi, self._deps.compilersartefacts['__last'].getData().contracts, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
+      if (!error) {
+        if (!args.funABI.constant) {
+          self.registry.get('logCallback').api(`${logMsg} pending ... `)
+        } else {
+          self.registry.get('logCallback').api(`${logMsg}`)
+        }
+        if (args.funABI.type === 'fallback') data.dataHex = value
+        self.udapp.callFunction(args.address, data, args.funABI, confirmationCb, continueCb, promptCb, (error, txResult) => {
+          if (!error) {
+            var isVM = executionContext.isVM()
+            if (isVM) {
+              var vmError = txExecution.checkVMError(txResult)
+              if (vmError.error) {
+                self.registry.get('logCallback').api(`${logMsg} errored: ${vmError.message} `)
+                return
+              }
+            }
+            if (lookupOnly) {
+              var decoded = decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+              outputCb(decoded)
+            }
+          } else {
+            self.registry.get('logCallback').api(`${logMsg} errored: ${error} `)
+          }
+        })
+      } else {
+        self.registry.get('logCallback').api(`${logMsg} errored: ${error} `)
+      }
+    }, (msg) => {
+      self.registry.get('logCallback').api(msg)
+    }, (data, runTxCallback) => {
+      // called for libraries deployment
+      self.udapp.runTx(data, confirmationCb, runTxCallback)
     })
   }
 
