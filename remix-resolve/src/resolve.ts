@@ -1,19 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
 
-import { Api, ModuleProfile, API } from 'remix-plugin'
-
-export interface RemixResolve extends Api {
-  type: 'remix-resolve'
-  events: {}
-  resolve: Function
-}
-
-export const RemixResolveProfile: ModuleProfile<RemixResolve> = {
-  type: 'remix-resolve',
-  methods: ['resolve']
-}
-
-
 export interface Imported {
   content: string;
   cleanURL: string;
@@ -30,9 +16,7 @@ interface Handler {
   handle(match: any): any;
 }
 
-export class RemixResolveApi implements API<RemixResolve> {
-  public readonly type = 'remix-resolve'
-
+export class RemixResolve {
   private previouslyHandled: PreviouslyHandledImports
   constructor() {
     this.previouslyHandled = {}
