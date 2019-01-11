@@ -100,6 +100,7 @@ var css = csjs`
     bottom             : 0;
     overflow           : hidden;
     width              : 400px;
+    height             : 100%;
   }
   .highlightcode {
     position:absolute;
@@ -208,6 +209,7 @@ class App {
   profile () {
     return {
       type: 'app',
+      description: 'the app',
       methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
     }
   }
