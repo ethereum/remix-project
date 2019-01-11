@@ -118,7 +118,7 @@ module.exports = class CompileTab {
     self._components.compiler.event.register('compilationFinished', function finish (success, data, source) {
       if (success) {
         // forwarding the event to the appManager infra
-        self.event.emit('compilationFinished', null, source, 'Solidity', data)
+        self.event.emit('compilationFinished', source.target, source, self.data.selectedVersion, data)
       }
       if (self._view.compileIcon) {
         self._view.compileIcon.style.color = styles.colors.black

@@ -10,11 +10,19 @@ class PluginManagerProxy {
     this.event = new EventManager()
   }
 
-  register (mod, instance) {
-    instance.event.on('compilationFinished', (file, source, languageVersion, data) => {
+  register (instance) {
+    var event = this.event
+    this._listener = (file, source, languageVersion, data) => {
       registry.get('compilersartefacts').api['__last'] = new CompilerAbstract(languageVersion, data, source)
-      this.event.trigger('sendCompilationResult', [file, source, languageVersion, data])
-    })
+      event.trigger('sendCompilationResult', [file, source, languageVersion, data])
+    }
+    instance.event.on('compilationFinished', this._listener)
+  }
+
+  unregister (instance) {
+    if (!this._listener) {
+      instance.event.on('compilationFinished', this._listener)
+    }
   }
 
 }
