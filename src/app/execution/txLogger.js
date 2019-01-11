@@ -142,8 +142,7 @@ class TxLogger {
       editorPanel: this._components.registry.get('editorpanel').api,
       txListener: this._components.registry.get('txlistener').api,
       eventsDecoder: this._components.registry.get('eventsdecoder').api,
-      compilersArtefacts: this._components.registry.get('compilersartefacts').api,
-      app: this._components.registry.get('app').api
+      compilersArtefacts: this._components.registry.get('compilersartefacts').api
     }
 
     this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
@@ -208,7 +207,7 @@ function debug (e, data, self) {
   if (data.tx.isCall && data.tx.envMode !== 'vm') {
     modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
   } else {
-    self._deps.app.startdebugging(data.tx.hash)
+    self.event.trigger('debuggingRequested', [data.tx.hash])
   }
 }
 
