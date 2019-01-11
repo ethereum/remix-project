@@ -17,18 +17,14 @@ var RecorderUI = require('./runTab/recorder.js')
 
 class RunTab {
 
-  constructor () {
+  constructor (udapp, udappUI, config, fileManager, editor, logCallback, filePanel, pluginManager, compilersArtefacts) {
     var self = this
-    self.event = new EventManager()
-    self._view = {}
-    self.data = {
-      count: 0,
-      text: `All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
-      another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.`
-    }
-    self._components = {}
-    self._components.registry = globalRegistry
-    self._components.transactionContextAPI = {
+    this.event = new EventManager()
+
+    this._view = {}
+    this.registry = globalRegistry
+
+    this.transactionContextAPI = {
       getAddress: (cb) => {
         cb(null, $('#txorigin').val())
       },
@@ -51,19 +47,7 @@ class RunTab {
         cb(null, $('#gasLimit').val())
       }
     }
-    // dependencies
-    self._deps = {
-      udapp: self._components.registry.get('udapp').api,
-      udappUI: self._components.registry.get('udappUI').api,
-      config: self._components.registry.get('config').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      editor: self._components.registry.get('editor').api,
-      logCallback: self._components.registry.get('logCallback').api,
-      filePanel: self._components.registry.get('filepanel').api,
-      pluginManager: self._components.registry.get('pluginmanager').api,
-      compilersArtefacts: self._components.registry.get('compilersartefacts').api
-    }
-    self._deps.udapp.resetAPI(self._components.transactionContextAPI)
+    udapp.resetAPI(this.transactionContextAPI)
     self._view.recorderCount = yo`<span>0</span>`
     self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
     self._view.clearInstanceElement = yo`
@@ -83,24 +67,22 @@ class RunTab {
 
     var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
 
-    var recorder = new Recorder(self._deps.udapp, self._deps.fileManager, self._deps.config)
+    var recorder = new Recorder(udapp, fileManager, config)
     recorder.event.register('newTxRecorded', (count) => {
-      this.data.count = count
       this._view.recorderCount.innerText = count
     })
     recorder.event.register('cleared', () => {
-      this.data.count = 0
       this._view.recorderCount.innerText = 0
     })
     executionContext.event.register('contextChanged', recorder.clearAll.bind(recorder))
     self.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-    var recorderInterface = new RecorderUI(recorder, self._deps.logCallback)
+    var recorderInterface = new RecorderUI(recorder, logCallback)
 
     recorderInterface.event.register('newScenario', (abi, address, contractName) => {
       var noInstancesText = this._view.noInstancesText
       if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-      this._view.instanceContainer.appendChild(this._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
+      this._view.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, contractName))
     })
 
     recorderInterface.render()
@@ -113,7 +95,8 @@ class RunTab {
     self._view.expandedView = yo`
       <div class=${css.recorderExpandedView}>
         <div class=${css.recorderDescription}>
-          ${self.data.text}
+          All transactions (deployed contracts and function executions) in this environment can be saved and replayed in
+          another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.
         </div>
         <div class="${css.transactionActions}">
           ${recorderInterface.recordButton}
@@ -139,7 +122,7 @@ class RunTab {
       }
     })
 
-    var settings = new Settings(self._deps.udapp)
+    var settings = new Settings(udapp)
     var settingsUI = new SettingsUI(settings)
 
     self.event.register('clearInstance', () => {
@@ -151,27 +134,18 @@ class RunTab {
       this.event.trigger('clearInstance', [])
     })
 
-    var dropdownLogic = new DropdownLogic(
-      this._deps.fileManager,
-      this._deps.pluginManager,
-      this._deps.compilersArtefacts,
-      this._deps.compiler,
-      this._deps.config,
-      this._deps.editor,
-      this._deps.udapp,
-      this._deps.filePanel
-    )
-    var contractDropdownUI = new ContractDropdownUI(dropdownLogic, this._deps.logCallback)
+    var dropdownLogic = new DropdownLogic(fileManager, pluginManager, compilersArtefacts, null, config, editor, udapp, filePanel)
+    var contractDropdownUI = new ContractDropdownUI(dropdownLogic, logCallback)
 
     contractDropdownUI.event.register('clearInstance', () => {
       var noInstancesText = this._view.noInstancesText
       if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     })
     contractDropdownUI.event.register('newContractABIAdded', (abi, address) => {
-      this._view.instanceContainer.appendChild(this._deps.udappUI.renderInstanceFromABI(abi, address, address))
+      this._view.instanceContainer.appendChild(udappUI.renderInstanceFromABI(abi, address, address))
     })
     contractDropdownUI.event.register('newContractInstanceAdded', (contractObject, address, value) => {
-      this._view.instanceContainer.appendChild(this._deps.udappUI.renderInstance(contractObject, address, value))
+      this._view.instanceContainer.appendChild(udappUI.renderInstance(contractObject, address, value))
     })
 
     this._view.instanceContainer.appendChild(this._view.instanceContainerTitle)

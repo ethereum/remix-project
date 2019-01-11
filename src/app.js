@@ -423,7 +423,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let compileTab = new CompileTab(self._components.registry)
   let tabs = {
     compile: compileTab,
-    run: new RunTab(self._components.registry),
+    run: new RunTab(
+      registry.get('udapp').api,
+      registry.get('udappUI').api,
+      registry.get('config').api,
+      registry.get('filemanager').api,
+      registry.get('editor').api,
+      registry.get('logCallback').api,
+      registry.get('filepanel').api,
+      registry.get('pluginmanager').api,
+      registry.get('compilersartefacts').api
+    ),
     settings: new SettingsTab(self._components.registry),
     analysis: new AnalysisTab(self._components.registry),
     debug: new DebuggerTab(self._components.registry),
