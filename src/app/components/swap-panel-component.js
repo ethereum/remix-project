@@ -49,12 +49,15 @@ module.exports = SwapPanelComponent
 
 const css = csjs`
   .plugins        {
+    height:        : 100%;
+    overflow-y: auto;
+    margin-right: 10px;
   }
   .plugItIn       {
     display        : none;
+    height         : 100%;
   }
   .plugItIn.active     {
     display        :block;
   }
-  .clearFunds { background-color: lightblue; }
 `
