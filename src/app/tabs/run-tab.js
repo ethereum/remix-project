@@ -17,7 +17,7 @@ var RecorderUI = require('./runTab/recorder.js')
 
 class RunTab {
 
-  constructor (opts, localRegistry) {
+  constructor () {
     var self = this
     self.event = new EventManager()
     self._view = {}
@@ -27,7 +27,7 @@ class RunTab {
       another environment. e.g Transactions created in Javascript VM can be replayed in the Injected Web3.`
     }
     self._components = {}
-    self._components.registry = localRegistry || globalRegistry
+    self._components.registry = globalRegistry
     self._components.transactionContextAPI = {
       getAddress: (cb) => {
         cb(null, $('#txorigin').val())
