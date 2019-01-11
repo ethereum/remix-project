@@ -17,9 +17,6 @@ module.exports = class TabbedMenu {
       app: self._components.registry.get('app').api
     }
     self._view = { el: null, viewport: null, tabs: {}, contents: {} }
-    self._deps.app.event.register('debuggingRequested', () => {
-      self.selectTabByTitle('Debugger')
-    })
   }
   render () {
     const self = this
