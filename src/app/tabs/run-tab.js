@@ -1,4 +1,3 @@
-var $ = require('jquery')
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
@@ -24,30 +23,6 @@ class RunTab {
     this._view = {}
     this.registry = globalRegistry
 
-    this.transactionContextAPI = {
-      getAddress: (cb) => {
-        cb(null, $('#txorigin').val())
-      },
-      getValue: (cb) => {
-        try {
-          var number = document.querySelector('#value').value
-          var select = document.getElementById('unit')
-          var index = select.selectedIndex
-          var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-          var unit = 'ether' // default
-          if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
-            unit = selectedUnit
-          }
-          cb(null, executionContext.web3().toWei(number, unit))
-        } catch (e) {
-          cb(e)
-        }
-      },
-      getGasLimit: (cb) => {
-        cb(null, $('#gasLimit').val())
-      }
-    }
-    udapp.resetAPI(this.transactionContextAPI)
     self._view.recorderCount = yo`<span>0</span>`
     self._view.instanceContainer = yo`<div class="${css.instanceContainer}"></div>`
     self._view.clearInstanceElement = yo`
