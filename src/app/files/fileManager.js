@@ -52,7 +52,7 @@ class FileManager {
 
   profile () {
     return {
-      type: 'fileManager',
+      name: 'FileManager',
       methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
       events: ['currentFileChanged']
     }

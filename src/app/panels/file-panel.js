@@ -196,6 +196,15 @@ function filepanel (localRegistry) {
 
   self.render = function render () { return element }
 
+  self.profile = function () {
+    return {
+      name: 'FilePanel',
+      methods: [],
+      events: [],
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwb2x5bGluZSBmaWxsPSJub25lIiBwb2ludHM9IjQ0LDIxIDQ0LDQ5IDYsNDkgICA2LDIxICIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHBvaW50cz0iMTksNDkgMTksMjggMzEsMjggICAzMSw0OSAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjxwb2x5Z29uIHBvaW50cz0iMzUsNSAzNSw4LjAxNiAzNywxMC4wOTQgMzcsNyAzOSw3IDM5LDEyLjIwMyA0MSwxNC4yNjYgNDEsNSAiLz48cG9seWxpbmUgZmlsbD0ibm9uZSIgcG9pbnRzPSIgIDEuMTEsMjUuOTQyIDI1LDEuMDUzIDQ4Ljg5LDI1Ljk0MyAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=='
+    }
+  }
+
   function uploadFile (event) {
     // TODO The file explorer is merely a view on the current state of
     // the files module. Please ask the user here if they want to overwrite

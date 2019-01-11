@@ -16,6 +16,7 @@ class EditorPanel {
   constructor (localRegistry) {
     var self = this
     self.event = new EventManager()
+    self._view = {}
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.editor = new Editor({})
@@ -39,7 +40,6 @@ class EditorPanel {
         }
       }
     }
-    self._view = {}
 
     var contextualListener = new ContextualListener({editor: self._components.editor, pluginManager: self._deps.pluginManager})
     var contextView = new ContextView({contextualListener, editor: self._components.editor})
