@@ -1,5 +1,6 @@
 'use strict'
 
+var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var async = require('async')
@@ -501,6 +502,31 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   var txLogger = new TxLogger() // eslint-disable-line  
   txLogger.event.register('debuggingRequested', (hash) => { debug.debugger().debug(hash) })
+
+  let transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var number = document.querySelector('#value').value
+        var select = document.getElementById('unit')
+        var index = select.selectedIndex
+        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        var unit = 'ether' // default
+        if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+          unit = selectedUnit
+        }
+        cb(null, executionContext.web3().toWei(number, unit))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
+  udapp.resetAPI(transactionContextAPI)
 
   var queryParams = new QueryParams()
 

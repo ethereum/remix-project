@@ -27,6 +27,7 @@ class DropdownLogic {
     })
   }
 
+  // TODO: can be moved up; the event in contractDropdown will have to refactored a method instead
   listenToCompilationEvents () {
     this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
       // TODO check whether the tab is configured
