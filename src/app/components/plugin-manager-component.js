@@ -57,37 +57,38 @@ class PluginManagerComponent {
   }
 
   render () {
-    let pluginManagerDiv = yo`
+    this.views.root = yo`
       <div id='pluginManager' class=${css.plugins} >
       <h2>Plugin Manager</h2>
       </div>
     `
     var modules = this.store.getAll()
     modules.forEach((mod) => {
-      pluginManagerDiv.appendChild(this.renderItem(mod.profile.name))
+      this.views.root.appendChild(this.renderItem(mod.profile.name))
     })
-    return pluginManagerDiv
+    return this.views.root
   }
 
   renderItem (item) {
     let ctrBtns
 
+    const mod = this.store.getOne(item)
+    if (!mod) return
     let action = () => { this.store.isActive(item) ? this.appManager.doDeactivate(item) : this.appManager.doActivate(item) }
 
     ctrBtns = yo`<div id='${item}Activation'>
         <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
         </div>`
 
-    this.views.items[item] = ctrBtns
-    
-    this.views.root = yo`
+    this.views.items[item] = yo`
       <div id='pluginManager' class=${css.plugin} >
-        <h3>${this.modulesDefinition[item].name}</h3>
-        ${this.modulesDefinition[item].description}
+        <h3>${mod.profile.name}</h3>
+        ${mod.profile.description}
         ${ctrBtns}
       </div>
     `
-    return this.views.root
+    
+    return this.views.items[item]
   }
 }
 
