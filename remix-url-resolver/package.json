@@ -2,7 +2,7 @@
   "name": "remix-url-resolver",
   "version": "0.0.1",
   "description": "Solidity import url resolver engine",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "bin": {
     "remix-url-resolver": "./bin/remix-url-resolver"
   },
