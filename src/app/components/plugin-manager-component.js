@@ -1,32 +1,15 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
-const FilePanel = require('../panels/file-panel')
-const CompileTab = require('../tabs/compile-tab')
-const SettingsTab = require('../tabs/settings-tab')
-const AnalysisTab = require('../tabs/analysis-tab')
-const DebuggerTab = require('../tabs/debugger-tab')
-const SupportTab = require('../tabs/support-tab')
-const TestTab = require('../tabs/test-tab')
-const RunTab = require('../tabs/run-tab')
-
-var registry = require('../../global/registry')
-
 const styleguide = require('../ui/styles-guide/theme-chooser')
 const styles = styleguide.chooser()
-import { EntityStore } from '../../lib/store.js'
-
-const PluginManagerProxy = require('./plugin-manager-proxy')
 
 const EventEmitter = require('events')
 
 class PluginManagerComponent {
 
   constructor () {
-    this.event = new EventEmitter()
-    this.data = {
-      proxy: new PluginManagerProxy()
-    }
+    this.event = new EventEmitter()    
     this.views = {
       root: null,
       items: {}
@@ -50,10 +33,6 @@ class PluginManagerComponent {
     this.store = store
     this.store.event.on('activate', (name) => { this.views.items[name] ? this.views.items[name].querySelector('button').innerHTML = 'deactivate' : null })
     this.store.event.on('deactivate', (name) => { this.views.items[name] ? this.views.items[name].querySelector('button').innerHTML = 'activate' : null })
-  }
-
-  proxy () {
-    return this.data.proxy
   }
 
   render () {

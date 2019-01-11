@@ -1,5 +1,6 @@
 import { AppManagerApi } from 'remix-plugin'
 import { EventEmitter } from 'events'
+import PluginManagerProxy from './app/components/plugin-manager-proxy'
 
 export class RemixAppManager extends AppManagerApi {
 
@@ -7,6 +8,14 @@ export class RemixAppManager extends AppManagerApi {
     super(null)
     this.store = store
     this.event = new EventEmitter()
+    this.data = {
+      proxy: new PluginManagerProxy()
+    }
+  }
+
+  proxy () {
+    // that's temporary. should be removed when we can have proper notification registration
+    return this.data.proxy
   }
 
   doActivate (name) {
@@ -18,6 +27,9 @@ export class RemixAppManager extends AppManagerApi {
     if (entity.profile.icon && entity.api.render && typeof entity.api.render === 'function') {
       this.event.emit('requestContainer', entity.profile, entity.api.render()) 
     }
+    if (name === 'SolidityCompile') {
+      this.data.proxy.register(entity.api)
+    }
   }
 
   doDeactivate (name) {
@@ -28,6 +40,9 @@ export class RemixAppManager extends AppManagerApi {
     const entity = this.getEntity(name)
     if (entity.profile.icon && entity.api.render && typeof entity.api.render === 'function') {
       this.event.emit('removingItem', entity.profile)
+    }
+    if (name === 'SolidityCompile') {
+      this.data.proxy.unregister(entity.api)
     }
   }
 
