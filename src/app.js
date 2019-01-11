@@ -417,7 +417,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   }
   txlistener.event.register('newTransaction', (tx) => {
-    txListenerModule.event.emit('newTransaction', tx)
+    txListenerModuleProxy.event.emit('newTransaction', tx)
   })
 
   txlistener.startListening()
@@ -449,7 +449,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
-  registry.put({api: pluginManagerComponent.proxy(), name: 'pluginmanager'})
+  
+  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} }, 'name')
+
+  const appManager = new RemixAppManager(appStore)
+  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
@@ -461,10 +465,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let debug = new DebuggerTab(self._components.registry)
   let support = new SupportTab(self._components.registry)
   let test = new TestTab(self._components.registry, compileTab)
-
-  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} }, 'name')
-
-  const appManager = new RemixAppManager(appStore)
 
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
