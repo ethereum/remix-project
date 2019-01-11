@@ -36,13 +36,6 @@ UniversalDApp.prototype.profile = function () {
   }
 }
 
-UniversalDApp.prototype.profile = function () {
-  return {
-    type: 'udapp',
-    methods: ['runTestTx', 'getAccounts', 'createVMAccount']
-  }
-}
-
 UniversalDApp.prototype.resetEnvironment = function () {
   this.accounts = {}
   if (executionContext.isVM()) {
