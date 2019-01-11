@@ -133,7 +133,7 @@ function FilesTree (name, storage) {
 
   this.profile = function () {
     return {
-      type: this.type,
+      name: this.type,
       methods: ['get', 'set', 'remove']
     }
   }
