@@ -93,7 +93,14 @@ function runTab (opts, localRegistry) {
   executionContext.event.register('contextChanged', recorder.clearAll.bind(recorder))
   self.event.register('clearInstance', recorder.clearAll.bind(recorder))
 
-  var recorderInterface = new RecorderUI(recorder, self)
+  var recorderInterface = new RecorderUI(recorder, self._deps.logCallback)
+
+  recorderInterface.event.register('newScenario', (abi, address, contractName) => {
+    var noInstancesText = this._view.noInstancesText
+    if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
+    this._view.instanceContainer.appendChild(this._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
+  })
+
   recorderInterface.render()
 
   self._view.collapsedView = yo`
