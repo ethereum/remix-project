@@ -7,7 +7,6 @@ var request = require('request')
 var remixLib = require('remix-lib')
 var EventManager = require('./lib/events')
 var EventEmitter = require('events')
-
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -432,7 +431,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
   let compileTab = new CompileTab(self._components.registry)
-  let run = new RunTab(self._components.registry)
+  let run = new RunTab(
+    registry.get('udapp').api,
+    registry.get('udappUI').api,
+    registry.get('config').api,
+    registry.get('filemanager').api,
+    registry.get('editor').api,
+    registry.get('logCallback').api,
+    registry.get('filepanel').api,
+    registry.get('pluginmanager').api,
+    registry.get('compilersartefacts').api
+  )
   let settings = new SettingsTab(self._components.registry)
   let analysis = new AnalysisTab(self._components.registry)
   let debug = new DebuggerTab(self._components.registry)
