@@ -75,6 +75,13 @@ class Recorder {
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
     })
+    executionContext.event.register('contextChanged', this.clearAll.bind(this))
+    this.event.register('newTxRecorded', (count) => {
+      this.event.trigger('recorderCountChange', [count])
+    })
+    this.event.register('cleared', () => {
+      this.event.trigger('recorderCountChange', [0])
+    })
   }
 
   /**
