@@ -1,8 +1,7 @@
 var yo = require('yo-yo')
-var csjs = require('csjs-inject')
 var StaticAnalysis = require('../staticanalysis/staticAnalysisView')
-
 var EventManager = require('../../lib/events')
+var css = require('./styles/analysis-tab-styles')
 
 class AnalysisTab {
 
@@ -29,13 +28,5 @@ class AnalysisTab {
     return this.el
   }
 }
-const css = csjs`
-  .analysisTabView {
-    padding: 2%;
-    padding-bottom: 3em;
-    display: flex;
-    flex-direction: column;
-  }
-`
 
 module.exports = AnalysisTab
