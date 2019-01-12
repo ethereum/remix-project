@@ -436,7 +436,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       registry.get('compilersartefacts').api
     ),
     settings: new SettingsTab(self._components.registry),
-    analysis: new AnalysisTab(self._components.registry),
+    analysis: new AnalysisTab(registry),
     debug: new DebuggerTab(self._components.registry),
     support: new SupportTab(self._components.registry),
     test: new TestTab(self._components.registry, compileTab)
