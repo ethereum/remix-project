@@ -9,10 +9,9 @@ var CompilerAbstract = require('../../../compiler/compiler-abstract')
 var EventManager = remixLib.EventManager
 
 class DropdownLogic {
-  constructor (fileManager, pluginManager, compilersArtefacts, compiler, config, editor, udapp, filePanel) {
+  constructor (fileManager, pluginManager, compilersArtefacts, config, editor, udapp, filePanel) {
     this.pluginManager = pluginManager
     this.compilersArtefacts = compilersArtefacts
-    this.compiler = compiler
     this.config = config
     this.editor = editor
     this.udapp = udapp
