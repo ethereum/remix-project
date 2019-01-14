@@ -18,35 +18,16 @@ export class RemixAppManager extends AppManagerApi {
     return this.data.proxy
   }
 
-  doActivate (name) {
-    this.activateOne(name)
-    // temp
-    this.store.activate(name)
-    // promise ?
-    const entity = this.getEntity(name)
-    if (entity.profile.icon && entity.api.render && typeof entity.api.render === 'function') {
-      this.event.emit('requestContainer', entity.profile, entity.api.render()) 
-    }
-    if (name === 'SolidityCompile') {
-      this.data.proxy.register(entity.api)
-    }
-  }
-
-  doDeactivate (name) {
-    this.deactivateOne(name)
-    // temp
-    this.store.deactivate(name)
-    // promise ?
-    const entity = this.getEntity(name)
-    if (entity.profile.icon && entity.api.render && typeof entity.api.render === 'function') {
-      this.event.emit('removingItem', entity.profile)
-    }
-    if (name === 'SolidityCompile') {
-      this.data.proxy.unregister(entity.api)
-    }
-  }
-
   setActive (name, isActive) {
+    const entity = this.getEntity(name)
+    if (entity && entity.profile.icon && entity.api.render && typeof entity.api.render === 'function') {
+      isActive ? this.event.emit('requestContainer', entity.profile, entity.api.render())  
+        : this.event.emit('removingItem', entity.profile)
+    }
+    // temp
+    if (entity && name === 'SolidityCompiler') {
+      isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
+    }
     isActive ? this.store.activate(name) : this.store.deactivate(name)
   }
 
