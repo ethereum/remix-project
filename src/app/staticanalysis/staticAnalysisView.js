@@ -122,12 +122,6 @@ staticAnalysisView.prototype.run = function () {
           self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning', useSpan: true})
         })
       })
-      if (warningContainer.html() === '') {
-        $('#righthand-panel #menu .staticanalysisView').css('color', '')
-        warningContainer.html('No warning to report')
-      } else {
-        $('#righthand-panel #menu .staticanalysisView').css('color', styles.colors.red)
-      }
       self.event.trigger('staticAnaysisWarning', [warningCount])
     })
   } else {

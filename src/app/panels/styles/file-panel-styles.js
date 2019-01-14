@@ -73,27 +73,7 @@ var css = csjs`
   }
   .treeviews {
     overflow-y        : auto;
-  }
-  .dragbar            {
-    position          : absolute;
-    top               : 29px;
-    width             : 0.5em;
-    right             : 0;
-    bottom            : 0;
-    cursor            : col-resize;
-    z-index           : 999;
-    border-right      : 2px solid hsla(215, 81%, 79%, .3);
-  }
-  .ghostbar           {
-    width             : 3px;
-    background-color  : ${styles.colors.lightBlue};
-    opacity           : 0.5;
-    position          : absolute;
-    cursor            : col-resize;
-    z-index           : 9999;
-    top               : 0;
-    bottom            : 0;
-  }
+  }  
   .dialog {
     display: flex;
     flex-direction: column;
