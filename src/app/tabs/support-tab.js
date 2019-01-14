@@ -1,34 +1,22 @@
 const yo = require('yo-yo')
 var css = require('./styles/support-tab-styles')
 
-var globalRegistry = require('../../global/registry')
-
-var EventManager = require('../../lib/events')
-
 class SupportTab {
 
   constructor (localRegistry) {
-    this.event = new EventManager()
-
     this.el = null
     this.gitterIframe = ''
+    this.gitterIsLoaded = false
+  }
 
-    this.data = { gitterIsLoaded: false }
-    this._components = {}
-    this._components.registry = localRegistry || globalRegistry
+  loadTab () {
+    if (this.gitterIsLoaded) return
 
-    this._deps = {
-      app: this._components.registry.get('app').api
-    }
-
-    this._deps.app.event.register('tabChanged', (tabName) => {
-      if (tabName !== 'Support' || this.data.gitterIsLoaded) return
-      const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
-      this.gitterIframe.parentNode.replaceChild(iframe, this.gitterIframe)
-      this.gitterIframe = iframe
-      this.el.style.display = 'block'
-      this.data.gitterIsLoaded = true
-    })
+    const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
+    this.gitterIframe.parentNode.replaceChild(iframe, this.gitterIframe)
+    this.gitterIframe = iframe
+    this.el.style.display = 'block'
+    this.gitterIsLoaded = true
   }
 
   render () {
