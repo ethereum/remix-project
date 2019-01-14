@@ -449,15 +449,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
-  
-  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} }, 'name')
-
+  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
+  pluginManagerComponent.setApp(appManager)
+  pluginManagerComponent.setStore(appStore)
+
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
-
   let compileTab = new CompileTab(self._components.registry)
   let run = new RunTab(self._components.registry)
   let settings = new SettingsTab(self._components.registry)
@@ -465,28 +465,25 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let debug = new DebuggerTab(self._components.registry)
   let support = new SupportTab(self._components.registry)
   let test = new TestTab(self._components.registry, compileTab)
-
-  pluginManagerComponent.setApp(appManager)
-  pluginManagerComponent.setStore(appStore)
-
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
-  appManager.init([
-    { profile: this.profile(), api: this },
-    { profile: udapp.profile(), api: udapp },
-    { profile: fileManager.profile(), api: fileManager },
-    { profile: sourceHighlighters.profile(), api: sourceHighlighters },
-    { profile: configProvider.profile(), api: configProvider },
-    { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
-    { profile: compileTab.profile(), api: compileTab },
-    { profile: filePanel.profile(), api: filePanel },
-    { profile: test.profile(), api: test },
-    { profile: support.profile(), api: support },
-    { profile: debug.profile(), api: debug },
-    { profile: analysis.profile(), api: analysis },
-    { profile: settings.profile(), api: settings },
-    { profile: run.profile(), api: run },
-    { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
+  
+  appStore.addEntities([
+  { profile: this.profile(), api: this },
+  { profile: udapp.profile(), api: udapp },
+  { profile: fileManager.profile(), api: fileManager },
+  { profile: sourceHighlighters.profile(), api: sourceHighlighters },
+  { profile: configProvider.profile(), api: configProvider },
+  { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
+  { profile: compileTab.profile(), api: compileTab },
+  { profile: filePanel.profile(), api: filePanel },
+  { profile: test.profile(), api: test },
+  { profile: support.profile(), api: support },
+  { profile: debug.profile(), api: debug },
+  { profile: analysis.profile(), api: analysis },
+  { profile: settings.profile(), api: settings },
+  { profile: run.profile(), api: run },
+  { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
   const swapPanelComponent = new SwapPanelComponent()
   const verticalIconComponent = new VerticalIconsComponent()
@@ -500,18 +497,18 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.iconpanel.appendChild(verticalIconComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
 
-  appManager.doActivate('App')
-  appManager.doActivate('Udapp')
-  appManager.doActivate('FileManager')
-  appManager.doActivate('SourceHighlighters')
-  appManager.doActivate('config')
-  appManager.doActivate('TxListener')
-  appManager.doActivate('FilePanel')
-  appManager.doActivate('SolidityCompile')
-  appManager.doActivate('Run')
-  appManager.doActivate('PluginManager')
-  appManager.doActivate('Settings')
-  appManager.doActivate('Support')
+  appManager.activateOne('App')
+  appManager.activateOne('Udapp')
+  appManager.activateOne('FileManager')
+  appManager.activateOne('SourceHighlighters')
+  appManager.activateOne('config')
+  appManager.activateOne('TxListener')
+  appManager.activateOne('FilePanel')
+  appManager.activateOne('SolidityCompile')
+  appManager.activateOne('Run')
+  appManager.activateOne('PluginManager')
+  appManager.activateOne('Settings')
+  appManager.activateOne('Support')
 
   verticalIconComponent.select('FilePanel')
 

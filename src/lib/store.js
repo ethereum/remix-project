@@ -136,6 +136,14 @@ export class EntityStore extends Store {
   }
 
   /**
+   * Add entities to the state
+   * @param {Array} entities
+   */
+  addEntities(entities) {
+    entities.forEach((entity) => { this.add(entity.profile.name, entity) })
+  }
+
+  /**
    * Remove an entity from the state
    * @param {(string|number)} id The id of the entity to remove
    */
