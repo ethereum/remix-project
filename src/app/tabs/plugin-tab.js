@@ -1,36 +1,30 @@
 var yo = require('yo-yo')
-var csjs = require('csjs-inject')
+var css = require('./styles/plugin-tab-styles')
 
 var globalRegistry = require('../../global/registry')
 var EventManager = require('../../lib/events')
 
-module.exports = class plugintab {
+class PluginTab {
+
   constructor (json, localRegistry) {
-    const self = this
-    self.event = new EventManager()
-    self._view = { el: null }
-    self.data = { json }
-    self._components = {}
-    self._components.registry = localRegistry || globalRegistry
+    this.event = new EventManager()
+    this._view = { el: null }
+    this.data = { json }
+    this._components = {}
+    this._components.registry = localRegistry || globalRegistry
   }
+
   render () {
-    const self = this
-    if (self._view.el) return self._view.el
-    self._view.el = yo`
+    if (this._view.el) return this._view.el
+
+    this._view.el = yo`
       <div class="${css.pluginTabView}" id="pluginView">
-        <iframe class="${css.iframe}" src="${self.data.json.url}/index.html"></iframe>
+        <iframe class="${css.iframe}" src="${this.data.json.url}/index.html"></iframe>
       </div>`
-    return self._view.el
+
+    return this._view.el
   }
+
 }
-const css = csjs`
-  .pluginTabView {
-    height: 100%;
-    width: 100%;
-  }
-  .iframe {
-    height: 100%;
-    width: 100%;
-    border: 0;
-  }
-`
+
+module.exports = PluginTab
