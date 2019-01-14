@@ -44,9 +44,8 @@ module.exports = class CompileTab {
     self._components = {}
     self._components.registry = localRegistry || globalRegistry
     self._components.queryParams = new QueryParams()
-    self._components.compilerImport = new CompilerImport()
+    self._components.compilerImport = new CompilerImport(() => { return self._deps.config.get('settings/gist-access-token') })
     self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
-
     // dependencies
     self._deps = {
       editor: self._components.registry.get('editor').api,
@@ -504,8 +503,8 @@ module.exports = class CompileTab {
       },
       (error, content, cleanUrl, type, url) => {
         if (!error) {
-          if (self._deps.filesProviders[type]) {
-            self._deps.filesProviders[type].addReadOnly(cleanUrl, content, url)
+          if (self._deps.fileProviders[type]) {
+            self._deps.fileProviders[type].addReadOnly(cleanUrl, content, url)
           }
           cb(null, content)
         } else {
