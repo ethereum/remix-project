@@ -53,7 +53,7 @@ class PluginManagerComponent {
 
     const mod = this.store.getOne(item)
     if (!mod) return
-    let action = () => { this.store.isActive(item) ? this.appManager.doDeactivate(item) : this.appManager.doActivate(item) }
+    let action = () => { this.store.isActive(item) ? this.appManager.deactivateOne(item) : this.appManager.activateOne(item) }
 
     ctrBtns = yo`<div id='${item}Activation'>
         <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
