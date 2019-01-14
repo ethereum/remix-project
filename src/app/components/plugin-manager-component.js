@@ -21,7 +21,7 @@ class PluginManagerComponent {
       name: 'PluginManager',
       methods: [],
       events: [],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9IiAgTTMyLDM1YzAsMCw4LjMxMiwwLDkuMDk4LDBDNDUuNDYzLDM1LDQ5LDMxLjQ2Myw0OSwyNy4wOTlzLTMuNTM3LTcuOTAyLTcuOTAyLTcuOTAyYy0wLjAyLDAtMC4wMzgsMC4wMDMtMC4wNTgsMC4wMDMgIGMwLjA2MS0wLjQ5NCwwLjEwMy0wLjk5NCwwLjEwMy0xLjUwNGMwLTYuNzEtNS40MzktMTIuMTUtMTIuMTUtMTIuMTVjLTUuMjI5LDAtOS42NzIsMy4zMDktMTEuMzg2LDcuOTQxICBjLTEuMDg3LTEuMDg5LTIuNTkxLTEuNzY0LTQuMjUxLTEuNzY0Yy0zLjMxOSwwLTYuMDA5LDIuNjktNi4wMDksNi4wMDhjMCwwLjA4NSwwLjAxLDAuMTY3LDAuMDEzLDAuMjUxICBDMy42OTUsMTguOTk1LDEsMjIuMzQ0LDEsMjYuMzMxQzEsMzEuMTE5LDQuODgxLDM1LDkuNjcsMzVjMC44MjcsMCw4LjMzLDAsOC4zMywwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2Utd2lkdGg9IjIiLz48cG9seWxpbmUgZmlsbD0ibm9uZSIgcG9pbnRzPSIzMCw0MSAyNSw0NiAyMCw0MSAgICIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PGxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIiB4MT0iMjUiIHgyPSIyNSIgeTE9IjI2IiB5Mj0iNDUuNjY4Ii8+PC9zdmc+'
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNzU1IDQ1M3EzNyAzOCAzNyA5MC41dC0zNyA5MC41bC00MDEgNDAwIDE1MCAxNTAtMTYwIDE2MHEtMTYzIDE2My0zODkuNSAxODYuNXQtNDExLjUtMTAwLjVsLTM2MiAzNjJoLTE4MXYtMTgxbDM2Mi0zNjJxLTEyNC0xODUtMTAwLjUtNDExLjV0MTg2LjUtMzg5LjVsMTYwLTE2MCAxNTAgMTUwIDQwMC00MDFxMzgtMzcgOTEtMzd0OTAgMzcgMzcgOTAuNS0zNyA5MC41bC00MDAgNDAxIDIzNCAyMzQgNDAxLTQwMHEzOC0zNyA5MS0zN3Q5MCAzN3oiLz48L3N2Zz4='
     }
   }
 
@@ -37,7 +37,7 @@ class PluginManagerComponent {
 
   render () {
     this.views.root = yo`
-      <div id='pluginManager' class=${css.plugins} >
+      <div id='pluginManager' class=${css.plugins_settings} >
       <h2>Plugin Manager</h2>
       </div>
     `
@@ -60,7 +60,7 @@ class PluginManagerComponent {
         </div>`
 
     this.views.items[item] = yo`
-      <div id='pluginManager' class=${css.plugin} >
+      <div class=${css.plugin} >
         <h3>${mod.profile.name}</h3>
         ${mod.profile.description}
         ${ctrBtns}
@@ -74,9 +74,7 @@ class PluginManagerComponent {
 module.exports = PluginManagerComponent
 
 const css = csjs`
-  .plugins {
-  }
-  .plugins h2 {
+  .plugins_settings h2 {
     font-size: 1em;
     border-bottom: 1px ${styles.appProperties.solidBorderBox_BorderColor} solid;
     padding: 10px 20px;
