@@ -82,7 +82,7 @@ var css = csjs`
     bottom            : 0;
     cursor            : col-resize;
     z-index           : 999;
-    border-right      : 2px solid hsla(215, 81%, 79%, .3);
+    border-right      : ${styles.leftPanel.dragbarBorderRight};
   }
   .ghostbar           {
     width             : 3px;
