@@ -172,18 +172,12 @@ class EditorPanel {
     self._view.tabsbar = yo`
       <div class=${css.tabsbar}>
         <div class=${css.buttons}>
-          <span class=${css.toggleLHP} onclick=${toggleLHP} title="Toggle left hand panel">
-            <i class="fa fa-angle-double-left"></i>
-          </span>
           <span class=${css.changeeditorfontsize} >
             <i class="increditorsize fa fa-plus" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
             <i class="decreditorsize fa fa-minus" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
           </span>
         </div>
         ${self._view.tabs}
-        <span class="${css.toggleRHP}" onclick=${toggleRHP} title="Toggle right hand panel">
-          <i class="fa fa-angle-double-right"></i>
-        </span>
       </div>
     `
 
@@ -236,14 +230,6 @@ class EditorPanel {
         rightArrow.classList.remove(css.show)
         rightArrow.classList.add(css.hide)
       }
-    }
-    function toggleLHP (event) {
-      this.children[0].classList.toggle('fa-angle-double-right')
-      this.children[0].classList.toggle('fa-angle-double-left')
-    }
-    function toggleRHP (event) {
-      this.children[0].classList.toggle('fa-angle-double-right')
-      this.children[0].classList.toggle('fa-angle-double-left')
     }
     function increase () { self._components.editor.editorFontSize(1) }
     function decrease () { self._components.editor.editorFontSize(-1) }
