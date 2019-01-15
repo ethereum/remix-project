@@ -36,16 +36,39 @@ class PluginManagerComponent {
   }
 
   render () {
+    this.views.activeMods = yo`
+    <div class=${css.activeModules}>
+      <h3>Active Modules</h3>
+    </div>
+    `
+    this.views.inactiveMods = yo`
+    <div class=${css.inactiveModules}>
+      <h3>Inactive Modules</h3>
+    </div>
+    `
     this.views.root = yo`
       <div id='pluginManager' class=${css.plugins_settings} >
-      <h2>Plugin Manager</h2>
+        <h2>Plugin Manager</h2>
+        ${this.views.activeMods}
+        ${this.views.inactiveMods}
       </div>
     `
-
+// loop through actives - to put them through in 1 chunk
     var modulesActive = this.store.getActives()
     modulesActive.forEach((mod) => {
-      this.views.root.appendChild(this.renderItem(mod.profile.name))
+      this.views.activeMods.appendChild(this.renderItem(mod.profile.name))
     })
+
+    // loop through all - if 1 is an active forget it
+    // or update the store.js
+    // actives get put into store where
+    var modulesAll = this.store.getAll()
+    modulesAll.forEach((mod) => {
+      if ( !(modulesActive.includes(mod)) ) {
+        this.views.inactiveMods.appendChild(this.renderItem(mod.profile.name))
+      }
+    })
+
     return this.views.root
   }
 
