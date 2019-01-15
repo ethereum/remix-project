@@ -185,13 +185,13 @@ class App {
       }
     }
   }
-  
+
   init () {
     var self = this
     self._view.swappanel.style.left = self._view.iconpanel.clientWidth + 'px'
     self._view.mainpanel.style.left = (self._view.iconpanel.clientWidth + self._view.swappanel.clientWidth) + 'px'
 
-    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300 })
+    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300 }) // eslint-disable-line
     run.apply(self)
   }
 
@@ -233,7 +233,7 @@ class App {
         ${self._view.swappanel}
         ${self._view.mainpanel}
       </div>
-    `    
+    `
     // INIT
     // self._adjustLayout('left', self.data._layout.left.offset)
     // self._adjustLayout('right', self.data._layout.right.offset)
@@ -447,7 +447,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let test = new TestTab(self._components.registry, compileTab)
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
-  
+
   appStore.addEntities([
   { profile: this.profile(), api: this },
   { profile: udapp.profile(), api: udapp },
@@ -467,12 +467,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const swapPanelComponent = new SwapPanelComponent()
   const verticalIconComponent = new VerticalIconsComponent()
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager)
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager)
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager) // eslint-disable-line
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager) // eslint-disable-line
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
-    
+
   self._view.mainpanel.appendChild(self._components.editorpanel.render())
   self._view.iconpanel.appendChild(verticalIconComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
