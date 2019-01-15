@@ -151,10 +151,11 @@ const css = csjs`
   }
   .dragbar             {
     position           : absolute;
-    width              : 0.5em;
+    width              : ${styles.rightPanel.dragbarWidth};
     top                : 3em;
     bottom             : 0;
     cursor             : col-resize;
+    background-color   : ${styles.rightPanel.dragbarBackgroundColor};
     z-index            : 999;
     border-left        : 2px solid ${styles.rightPanel.bar_Dragging};
   }

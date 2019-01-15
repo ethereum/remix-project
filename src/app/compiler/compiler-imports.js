@@ -4,14 +4,16 @@ var swarmgw = require('swarmgw')()
 var request = require('request')
 
 module.exports = class CompilerImports {
-  constructor () {
+  constructor (githubAccessToken) {
+    this.githubAccessToken = githubAccessToken || (() => {})
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 
   handleGithubCall (root, path, cb) {
+    var accessToken = this.githubAccessToken() ? '?access_token=' + this.githubAccessToken() : ''
     return request.get(
       {
-        url: 'https://api.github.com/repos/' + root + '/contents/' + path,
+        url: 'https://api.github.com/repos/' + root + '/contents/' + path + accessToken,
         json: true
       },
       (err, r, data) => {
