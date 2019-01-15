@@ -32,7 +32,7 @@ export default class PanelsResize {
     var panel2 = document.querySelector(idpanel2)
 
     var ghostbar = yo`<div class=${css.ghostbar}></div>`
-   
+
     let mousedown = (event) => {
       event.preventDefault()
       if (event.which === 1) {
