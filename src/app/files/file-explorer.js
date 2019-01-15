@@ -132,7 +132,7 @@ function fileExplorer (localRegistry, files) {
   })
 
   self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
-    if (key == self.files.type) return
+    if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
@@ -148,7 +148,7 @@ function fileExplorer (localRegistry, files) {
   })
 
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
-    if (key == self.files.type) return
+    if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
