@@ -37,12 +37,12 @@ class PluginManagerComponent {
 
   render () {
     this.views.activeMods = yo`
-    <div class=${css.activeModules}>
+    <div id='activePlugs class=${css.activePlugins}>
       <h3>Active Modules</h3>
     </div>
     `
     this.views.inactiveMods = yo`
-    <div class=${css.inactiveModules}>
+    <div class=${css.inactivePlugins}>
       <h3>Inactive Modules</h3>
     </div>
     `
@@ -53,16 +53,20 @@ class PluginManagerComponent {
         ${this.views.inactiveMods}
       </div>
     `
-// loop through actives - to put them through in 1 chunk
+
     var modulesActive = this.store.getActives()
+    modulesActive.sort(function(a, b) {
+      var textA = a.profile.name.toUpperCase();
+      var textB = b.profile.name.toUpperCase();
+      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    })
+
     modulesActive.forEach((mod) => {
       this.views.activeMods.appendChild(this.renderItem(mod.profile.name))
     })
 
-    // loop through all - if 1 is an active forget it
-    // or update the store.js
-    // actives get put into store where
     var modulesAll = this.store.getAll()
+    modulesAll.sort()
     modulesAll.forEach((mod) => {
       if ( !(modulesActive.includes(mod)) ) {
         this.views.inactiveMods.appendChild(this.renderItem(mod.profile.name))
@@ -77,14 +81,22 @@ class PluginManagerComponent {
 
     const mod = this.store.getOne(item)
     if (!mod) return
-    let action = () => { this.store.isActive(item) ? this.appManager.deactivateOne(item) : this.appManager.activateOne(item) }
+    let action = async() => { 
+      if (this.store.isActive(item)) {
+        await this.appManager.deactivateOne(item)
+        this.reRender()
+      } else {
+        await this.appManager.activateOne(item)
+        this.reRender()
+      }
+    }
 
     ctrBtns = yo`<div id='${item}Activation'>
         <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
         </div>`
 
     this.views.items[item] = yo`
-      <div class=${css.plugin} >
+      <div id=${item} class=${css.plugin} >
         <h3>${mod.profile.name}</h3>
         ${mod.profile.description}
         ${ctrBtns}
@@ -92,6 +104,12 @@ class PluginManagerComponent {
     `
     
     return this.views.items[item]
+  }
+
+  reRender (item) {
+    document.getElementById('pluginManager').innerHTML = ''
+    let piMan = this.render()
+    document.getElementById('pluginManager').appendChild(piMan)
   }
 }
 
@@ -129,5 +147,10 @@ const css = csjs`
     ${styles.rightPanel.settingsTab.button_LoadPlugin};
     cursor: pointer;
     font-size: 10px;
+  }
+  .activePlugins {
+  }
+
+  .inactivePlugins {
   }
 `
