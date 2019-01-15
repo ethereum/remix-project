@@ -41,8 +41,9 @@ class PluginManagerComponent {
       <h2>Plugin Manager</h2>
       </div>
     `
-    var modules = this.store.getAll()
-    modules.forEach((mod) => {
+
+    var modulesActive = this.store.getActives()
+    modulesActive.forEach((mod) => {
       this.views.root.appendChild(this.renderItem(mod.profile.name))
     })
     return this.views.root
