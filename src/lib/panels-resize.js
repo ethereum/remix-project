@@ -54,8 +54,8 @@ export default class PanelsResize {
     }
 
     let moveGhostbar = (event) => { // @NOTE VERTICAL ghostbar
-      let p = processWidth(event)
-      if (p.panel1Width < opt.minWidth || p.panel2Width < opt.minWidth) return
+      let p = processPositiions(event)
+      if (p.panel1Width <= opt.minWidth || p.panel2Width <= opt.minWidth) return
       ghostbar.style.left = event.x + 'px'
     }
 
@@ -64,17 +64,18 @@ export default class PanelsResize {
       document.removeEventListener('mousemove', moveGhostbar)
       document.removeEventListener('mouseup', removeGhostbar)
       document.removeEventListener('keydown', cancelGhostbar)
-      let p = processWidth(event)
-      if (p.panel1Width < opt.minWidth || p.panel2Width < opt.minWidth) return
+      let p = processPositiions(event)
       panel1.style.width = p.panel1Width + 'px'
       panel2.style.left = p.panel2left + 'px'
       panel2.style.width = p.panel2Width + 'px'
     }
 
-    let processWidth = (event) => {
+    let processPositiions = (event) => {
       let panel1Width = event.x - panel1.offsetLeft
+      panel1Width = panel1Width < opt.minWidth ? opt.minWidth : panel1Width
       let panel2left = panel1.offsetLeft + panel1Width
       let panel2Width = panel2.parentElement.clientWidth - panel1.offsetLeft - panel1Width
+      panel2Width = panel2Width < opt.minWidth ? opt.minWidth : panel2Width
       return { panel1Width, panel2left, panel2Width }
     }
 

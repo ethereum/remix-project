@@ -191,7 +191,7 @@ class App {
     self._view.swappanel.style.left = self._view.iconpanel.clientWidth + 'px'
     self._view.mainpanel.style.left = (self._view.iconpanel.clientWidth + self._view.swappanel.clientWidth) + 'px'
 
-    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': '300' })
+    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300 })
     run.apply(self)
   }
 
@@ -412,7 +412,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- editor panel ----------------------
   self._components.editorpanel = new EditorPanel()
   registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
-  
+
   // ----------------- Renderer -----------------
   var renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
@@ -429,7 +429,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
-  
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
@@ -467,21 +466,16 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
   const swapPanelComponent = new SwapPanelComponent()
-  
   const verticalIconComponent = new VerticalIconsComponent()
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager)
   const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager)
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
-  
-  let mainEl = self._components.editorpanel.render()
-  self._view.mainpanel.appendChild(mainEl)
-
+    
+  self._view.mainpanel.appendChild(self._components.editorpanel.render())
   self._view.iconpanel.appendChild(verticalIconComponent.render())
-
-  let swapEl = swapPanelComponent.render()
-  self._view.swappanel.appendChild(swapEl)
+  self._view.swappanel.appendChild(swapPanelComponent.render())
 
   appManager.activateOne('App')
   appManager.activateOne('Udapp')
