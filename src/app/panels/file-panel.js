@@ -20,9 +20,7 @@ var styles = styleGuide.chooser()
 
 var css = require('./styles/file-panel-styles')
 
-var limit = 60
 var canUpload = window.File || window.FileReader || window.FileList || window.Blob
-var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
 /*
   Overview of APIs:
@@ -71,8 +69,7 @@ function filepanel (localRegistry) {
   self._compilerMetadata.syncContractMetadata()
 
   self.compilerMetadata = () => { return self._compilerMetadata }
-  var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
-
+  
   function remixdDialog () {
     return yo`
       <div class=${css.dialog}>
@@ -128,7 +125,6 @@ function filepanel (localRegistry) {
             <div class="httpsexplorer ${css.treeview}">${httpsExplorer.init()}</div>
           </div>
         </div>
-        ${dragbar}
       </div>
     `
   }
@@ -237,41 +233,6 @@ function filepanel (localRegistry) {
         }
       })
     })
-  }
-
-  // ----------------- resizeable ui ---------------
-  function mousedown (event) {
-    event.preventDefault()
-    if (event.which === 1) {
-      moveGhostbar(event)
-      document.body.appendChild(ghostbar)
-      document.addEventListener('mousemove', moveGhostbar)
-      document.addEventListener('mouseup', removeGhostbar)
-      document.addEventListener('keydown', cancelGhostbar)
-    }
-  }
-  function cancelGhostbar (event) {
-    if (event.keyCode === 27) {
-      document.body.removeChild(ghostbar)
-      document.removeEventListener('mousemove', moveGhostbar)
-      document.removeEventListener('mouseup', removeGhostbar)
-      document.removeEventListener('keydown', cancelGhostbar)
-    }
-  }
-  function getPosition (event) {
-    var rhp = document.body.offsetWidth - window['righthand-panel'].offsetWidth
-    var newpos = (event.pageX < limit) ? limit : event.pageX
-    newpos = (newpos < (rhp - limit)) ? newpos : (rhp - limit)
-    return newpos
-  }
-  function moveGhostbar (event) { // @NOTE VERTICAL ghostbar
-    ghostbar.style.left = getPosition(event) + 'px'
-  }
-  function removeGhostbar (event) {
-    document.body.removeChild(ghostbar)
-    document.removeEventListener('mousemove', moveGhostbar)
-    document.removeEventListener('mouseup', removeGhostbar)
-    document.removeEventListener('keydown', cancelGhostbar)
   }
 
   function createNewFile () {
