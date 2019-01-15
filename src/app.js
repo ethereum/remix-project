@@ -52,6 +52,7 @@ const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
 const FilePanel = require('./app/panels/file-panel')
 
+import PanelsResize from './lib/panels-resize'
 import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
 
@@ -85,9 +86,8 @@ var css = csjs`
     position           : absolute;
     top                : 0;
     bottom             : 0;
-    left               : 450px;
     overflow           : hidden;
-    width              : 800px;
+    width              : 82%;
   }
   .iconpanel           {
     background-color  : ${styles.leftPanel.backgroundColor_Panel};
@@ -98,18 +98,16 @@ var css = csjs`
     bottom             : 0;
     left               : 0;
     overflow           : hidden;
-    width              : 50px;
+    width              : 2%;
   }
   .swappanel          {
     display            : flex;
     flex-direction     : column;
     position           : absolute;
     top                : 0;
-    left               : 50px;
     bottom             : 0;
     overflow           : hidden;
-    width              : 400px;
-    height             : 100%;
+    width              : 16%;
   }
   .highlightcode {
     position:absolute;
@@ -187,31 +185,13 @@ class App {
       }
     }
   }
-  _adjustLayout (direction, delta) {
-    /* var self = this
-    var layout = self.data._layout[direction]
-    if (layout) {
-      if (delta === undefined) {
-        layout.show = !layout.show
-        if (layout.show) delta = layout.offset
-        else delta = 0
-      } else {
-        self._components.config.set(`${direction}-offset`, delta)
-        layout.offset = delta
-      }
-    }
-    if (direction === 'left') {
-      self._view.swappanel.style.width = delta + 'px'
-      self._view.mainpanel.style.left = delta + 'px'
-    }
-     if (direction === 'right') {
-       self._view.mainpanel.style.width = delta + 'px'
-       self._view.swappanel.style.right = delta + 'px'
-    }
-    */
-  }
+
   init () {
     var self = this
+    self._view.swappanel.style.left = self._view.iconpanel.clientWidth + 'px'
+    self._view.mainpanel.style.left = (self._view.iconpanel.clientWidth + self._view.swappanel.clientWidth) + 'px'
+
+    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300 }) // eslint-disable-line
     run.apply(self)
   }
 
@@ -467,7 +447,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let test = new TestTab(self._components.registry, compileTab)
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
-  
+
   appStore.addEntities([
   { profile: this.profile(), api: this },
   { profile: udapp.profile(), api: udapp },
@@ -487,12 +467,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const swapPanelComponent = new SwapPanelComponent()
   const verticalIconComponent = new VerticalIconsComponent()
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager)
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager)
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager) // eslint-disable-line
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager) // eslint-disable-line
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
-  
+
   self._view.mainpanel.appendChild(self._components.editorpanel.render())
   self._view.iconpanel.appendChild(verticalIconComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
