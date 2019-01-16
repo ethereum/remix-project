@@ -98,7 +98,7 @@ var css = csjs`
     bottom             : 0;
     left               : 0;
     overflow           : hidden;
-    width              : 2%;
+    width              : 50px;
   }
   .swappanel          {
     display            : flex;
