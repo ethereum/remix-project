@@ -25,7 +25,7 @@ export class RemixAppManager extends AppManagerApi {
         : this.event.emit('removingItem', entity.profile)
     }
     // temp
-    if (entity && name === 'SolidityCompiler') {
+    if (entity && name === 'SolidityCompile') {
       isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
     }
     isActive ? this.store.activate(name) : this.store.deactivate(name)
