@@ -413,13 +413,20 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const verticalIconComponent = new VerticalIconsComponent()
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line  
-
+  
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore, swapPanelApi, verticalIconsApi)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
+
+  self._components.editorpanel.init()
+  self._components.fileManager.init()
+
+  self._view.mainpanel.appendChild(self._components.editorpanel.render())
+  self._view.iconpanel.appendChild(verticalIconComponent.render())
+  self._view.swappanel.appendChild(swapPanelComponent.render())
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
@@ -433,49 +440,34 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
 
-  appStore.addEntities([
-  { profile: this.profile(), api: this },
-  { profile: udapp.profile(), api: udapp },
-  { profile: fileManager.profile(), api: fileManager },
-  { profile: sourceHighlighters.profile(), api: sourceHighlighters },
-  { profile: configProvider.profile(), api: configProvider },
-  { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
-  { profile: compileTab.profile(), api: compileTab },
-  { profile: filePanel.profile(), api: filePanel },
-  { profile: test.profile(), api: test },
-  { profile: support.profile(), api: support },
-  { profile: debug.profile(), api: debug },
-  { profile: analysis.profile(), api: analysis },
-  { profile: settings.profile(), api: settings },
-  { profile: run.profile(), api: run },
-  { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
+  appManager.init([
+    { profile: this.profile(), api: this },
+    { profile: udapp.profile(), api: udapp },
+    { profile: fileManager.profile(), api: fileManager },
+    { profile: sourceHighlighters.profile(), api: sourceHighlighters },
+    { profile: configProvider.profile(), api: configProvider },
+    { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
+    { profile: compileTab.profile(), api: compileTab },
+    { profile: filePanel.profile(), api: filePanel },
+    { profile: support.profile(), api: support },
+    { profile: settings.profile(), api: settings },
+    { profile: run.profile(), api: run },
+    { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
-  appStore.addEntities(appManager.plugins())
+  appManager.registerMany([
+    { profile: debug.profile(), api: debug }, 
+    { profile: analysis.profile(), api: analysis },
+    { profile: test.profile(), api: test }
+  ])
+  appManager.registerMany(appManager.plugins())
 
   swapPanelApi.event.on('toggle', () => {
     this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise() 
   })
   swapPanelApi.event.on('showing', () => { this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : '' })
 
-  self._components.editorpanel.init()
-  self._components.fileManager.init()
 
-  self._view.mainpanel.appendChild(self._components.editorpanel.render())
-  self._view.iconpanel.appendChild(verticalIconComponent.render())
-  self._view.swappanel.appendChild(swapPanelComponent.render())
 
-  appManager.activateOne('App')
-  appManager.activateOne('Udapp')
-  appManager.activateOne('FileManager')
-  appManager.activateOne('SourceHighlighters')
-  appManager.activateOne('config')
-  appManager.activateOne('TxListener')
-  appManager.activateOne('FilePanel')
-  appManager.activateOne('SolidityCompile')
-  appManager.activateOne('Run')
-  appManager.activateOne('PluginManager')
-  appManager.activateOne('Settings')
-  appManager.activateOne('Support')
 
   verticalIconComponent.select('FilePanel')
 

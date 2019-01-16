@@ -133,6 +133,7 @@ export class EntityStore extends Store {
   add(id, entity) {
     this.state.entities[id] = entity
     this.state.ids.push(id)
+    this.event.emit('add', id, entity)
   }
 
   /**
