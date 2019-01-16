@@ -453,7 +453,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   swapPanelApi.event.on('toggle', () => {
     this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise() 
   })
-  swapPanelApi.event.on('showing', () => { this._components.resizeFeature.maximise() })
+  swapPanelApi.event.on('showing', () => { this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : '' })
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
