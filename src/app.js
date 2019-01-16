@@ -169,19 +169,6 @@ class App {
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
     self._view = {}
-
-    self.data = {
-      _layout: {
-        right: {
-          offset: 400,
-          show: true
-        }, // @TODO: adapt sizes proportionally to browser window size
-        left: {
-          offset: 200,
-          show: true
-        }
-      }
-    }
   }
 
   init () {
@@ -232,9 +219,6 @@ class App {
         ${self._view.mainpanel}
       </div>
     `
-    // INIT
-    // self._adjustLayout('left', self.data._layout.left.offset)
-    // self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
   }
   loadFromGist (params) {
