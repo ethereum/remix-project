@@ -1,10 +1,18 @@
-// const EventEmmitter = require('events')
+import EventEmmitter from 'events'
 
 class SwapPanelApi {
   constructor (swapPanelComponent, verticalIconsComponent, appManager) {
+    this.event = new EventEmmitter()
     this.component = swapPanelComponent
+    this.currentContent
     verticalIconsComponent.event.on('showContent', (moduleName) => {
+      if (this.currentContent === moduleName) {
+        this.event.emit('toggle')
+        return
+      }
+      this.event.emit('showing', moduleName)
       this.component.showContent(moduleName)
+      this.currentContent = moduleName
     })
     appManager.event.on('requestContainer', (mod, content) => {
       this.add(mod.name, content)
