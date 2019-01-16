@@ -409,8 +409,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
+  const swapPanelComponent = new SwapPanelComponent()
+  const verticalIconComponent = new VerticalIconsComponent()
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent) // eslint-disable-line
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line  
+
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
-  const appManager = new RemixAppManager(appStore)
+  const appManager = new RemixAppManager(appStore, swapPanelApi, verticalIconsApi)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
   pluginManagerComponent.setApp(appManager)
@@ -445,10 +450,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   { profile: run.profile(), api: run },
   { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
-  const swapPanelComponent = new SwapPanelComponent()
-  const verticalIconComponent = new VerticalIconsComponent()
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager) // eslint-disable-line
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager) // eslint-disable-line  
+  appStore.addEntities(appManager.plugins())
 
   swapPanelApi.event.on('toggle', () => {
     this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise() 
