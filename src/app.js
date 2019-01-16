@@ -180,8 +180,8 @@ class App {
 
   profile () {
     return {
-      name: 'App',
-      description: 'the app',
+      name: 'app',
+      description: 'provides information about current context (network).',
       methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
     }
   }
@@ -462,12 +462,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   appManager.registerMany(appManager.plugins())
 
   swapPanelApi.event.on('toggle', () => {
-    this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise() 
+    this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise()
   })
   swapPanelApi.event.on('showing', () => { this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : '' })
-
-
-
 
   verticalIconComponent.select('FilePanel')
 
