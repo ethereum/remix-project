@@ -87,7 +87,6 @@ var css = csjs`
     top                : 0;
     bottom             : 0;
     overflow           : hidden;
-    width              : 82%;
   }
   .iconpanel           {
     background-color  : ${styles.leftPanel.backgroundColor_Panel};
@@ -106,8 +105,7 @@ var css = csjs`
     position           : absolute;
     top                : 0;
     bottom             : 0;
-    overflow           : hidden;
-    width              : 16%;
+    overflow           : hidden
   }
   .highlightcode {
     position:absolute;
@@ -191,7 +189,7 @@ class App {
     self._view.swappanel.style.left = self._view.iconpanel.clientWidth + 'px'
     self._view.mainpanel.style.left = (self._view.iconpanel.clientWidth + self._view.swappanel.clientWidth) + 'px'
 
-    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300 }) // eslint-disable-line
+    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 400, x: 450 }) // eslint-disable-line
     run.apply(self)
   }
 
