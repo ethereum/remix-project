@@ -26,6 +26,13 @@ const css = csjs`
   }
 `
 
+/*
+* opt: 
+*   minWidth  : minimn width for panels
+*   x         : position of gutter at load
+*
+*
+*/
 export default class PanelsResize {
   constructor (idpanel1, idpanel2, opt) {
     var panel1 = document.querySelector(idpanel1)
@@ -59,15 +66,19 @@ export default class PanelsResize {
       ghostbar.style.left = event.x + 'px'
     }
 
+    let setPosition = (event) => {
+      let p = processPositiions(event)
+      panel1.style.width = p.panel1Width + 'px'
+      panel2.style.left = p.panel2left + 'px'
+      panel2.style.width = p.panel2Width + 'px'
+    }
+
     let removeGhostbar = (event) => {
       document.body.removeChild(ghostbar)
       document.removeEventListener('mousemove', moveGhostbar)
       document.removeEventListener('mouseup', removeGhostbar)
       document.removeEventListener('keydown', cancelGhostbar)
-      let p = processPositiions(event)
-      panel1.style.width = p.panel1Width + 'px'
-      panel2.style.left = p.panel2left + 'px'
-      panel2.style.width = p.panel2Width + 'px'
+      setPosition(event)
     }
 
     let processPositiions = (event) => {
@@ -79,7 +90,13 @@ export default class PanelsResize {
       return { panel1Width, panel2left, panel2Width }
     }
 
+    window.addEventListener('resize', function (event){
+      setPosition({ x: panel1.offsetLeft + panel1.clientWidth })
+    })
+  
     var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
     panel1.appendChild(dragbar)
+
+    setPosition(opt)
   }
 }

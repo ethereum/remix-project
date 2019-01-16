@@ -50,14 +50,13 @@ module.exports = SwapPanelComponent
 const css = csjs`
   .plugins        {
     height:        : 100%;
-    overflow-y: auto;
-    margin-right: 10px;
+    overflow-y     : auto;
   }
   .plugItIn       {
     display        : none;
     height         : 100%;
   }
   .plugItIn.active     {
-    display        :block;
+    display        : block;
   }
 `
