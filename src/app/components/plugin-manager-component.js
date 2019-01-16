@@ -49,6 +49,7 @@ class PluginManagerComponent {
     this.views.root = yo`
       <div id='pluginManager' class=${css.plugins_settings} >
         <h2>Plugin Manager</h2>
+        <input placeholder="Search loaded plugins">
         ${this.views.activeMods}
         ${this.views.inactiveMods}
       </div>
@@ -140,9 +141,6 @@ const css = csjs`
     margin-top: 9px;
   }
 
-  .plugItIn.active {
-    display: block;
-  }
   .plugin button {
     ${styles.rightPanel.settingsTab.button_LoadPlugin};
     cursor: pointer;
@@ -152,5 +150,8 @@ const css = csjs`
   }
 
   .inactivePlugins {
+  }
+  .plugins_settings input {
+    margin: 10px;
   }
 `
