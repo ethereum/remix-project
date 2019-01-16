@@ -3,128 +3,75 @@ const EventEmitter = require('events')
 const async = require('async')
 const $ = require('jquery')
 const yo = require('yo-yo')
-const csjs = require('csjs-inject')
 const copy = require('clipboard-copy')
-var minixhr = require('minixhr')
-var remixTests = require('remix-tests')
-var Compiler = require('remix-solidity').Compiler
-var CompilerImport = require('../compiler/compiler-imports')
 var QueryParams = require('../../lib/query-params')
-var globalRegistry = require('../../global/registry')
 const TreeView = require('../ui/TreeView')
 const modalDialog = require('../ui/modaldialog')
 const copyToClipboard = require('../ui/copy-to-clipboard')
 const modalDialogCustom = require('../ui/modal-dialog-custom')
-const styleGuide = require('../ui/styles-guide/theme-chooser')
 const parseContracts = require('../contract/contractParser')
 const publishOnSwarm = require('../contract/publishOnSwarm')
 const addTooltip = require('../ui/tooltip')
-var helper = require('../../lib/helper')
 
+const styleGuide = require('../ui/styles-guide/theme-chooser')
 const styles = styleGuide.chooser()
+var css = require('./styles/compile-tab-styles')
 
-module.exports = class CompileTab {
-  constructor (localRegistry) {
+const CompileTabLogic = require('./compileTab/compileTab.js')
+const CompilerContainer = require('./compileTab/compilerContainer.js')
+
+class CompileTab {
+
+  constructor (registry) {
     const self = this
     self.event = new EventEmitter()
     self._view = {
       el: null,
-      autoCompile: null,
-      compileButton: null,
       warnCompilationSlow: null,
-      compileIcon: null,
-      compileContainer: null,
       errorContainer: null,
       errorContainerHead: null,
       contractNames: null,
-      contractEl: null,
-      config: {
-        solidity: null
-      },
-      optimize: null
+      contractEl: null
     }
-    self._components = {}
-    self._components.registry = localRegistry || globalRegistry
-    self._components.queryParams = new QueryParams()
-    self._components.compilerImport = new CompilerImport(() => { return self._deps.config.get('settings/gist-access-token') })
-    self._components.compiler = new Compiler((url, cb) => self.importFileCb(url, cb))
+    self.queryParams = new QueryParams()
+
     // dependencies
     self._deps = {
-      editor: self._components.registry.get('editor').api,
-      config: self._components.registry.get('config').api,
-      renderer: self._components.registry.get('renderer').api,
-      swarmfileProvider: self._components.registry.get('fileproviders/swarm').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      fileProviders: self._components.registry.get('fileproviders').api
+      editor: registry.get('editor').api,
+      config: registry.get('config').api,
+      renderer: registry.get('renderer').api,
+      swarmfileProvider: registry.get('fileproviders/swarm').api,
+      fileManager: registry.get('filemanager').api,
+      fileProviders: registry.get('fileproviders').api,
+      pluginManager: registry.get('pluginmanager').api
     }
     self.data = {
-      hideWarnings: self._deps.config.get('hideWarnings') || false,
-      autoCompile: self._deps.config.get('autoCompile'),
-      compileTimeout: null,
-      contractsDetails: {},
-      maxTime: 1000,
-      timeout: 300,
-      allversions: null,
-      selectedVersion: null,
-      defaultVersion: 'soljson-v0.5.1+commit.c8a2cb62.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
-      baseurl: 'https://solc-bin.ethereum.org/bin'
+      contractsDetails: {}
     }
-    self.data.optimize = self._components.queryParams.get().optimize
-    self.data.optimize = self.data.optimize === 'true'
-    self._components.queryParams.update({ optimize: self.data.optimize })
-    self._components.compiler.setOptimize(self.data.optimize)
 
-    self._deps.editor.event.register('contentChanged', scheduleCompilation)
-    self._deps.editor.event.register('sessionSwitched', scheduleCompilation)
-    function scheduleCompilation () {
-      if (!self._deps.config.get('autoCompile')) return
-      if (self.data.compileTimeout) window.clearTimeout(self.data.compileTimeout)
-      self.data.compileTimeout = window.setTimeout(() => self.runCompiler(), self.data.timeout)
-    }
-    self._components.compiler.event.register('compilationDuration', function tabHighlighting (speed) {
-      if (!self._view.warnCompilationSlow) return
-      if (speed > self.data.maxTime) {
-        const msg = `Last compilation took ${speed}ms. We suggest to turn off autocompilation.`
-        self._view.warnCompilationSlow.setAttribute('title', msg)
-        self._view.warnCompilationSlow.style.visibility = 'visible'
-      } else {
-        self._view.warnCompilationSlow.style.visibility = 'hidden'
-      }
-    })
-    self._deps.editor.event.register('contentChanged', function changedFile () {
-      if (!self._view.compileIcon) return
-      self._view.compileIcon.classList.add(`${css.bouncingIcon}`) // @TODO: compileView tab
-    })
-    self._components.compiler.event.register('loadingCompiler', function start () {
-      if (!self._view.compileIcon) return
-      self._view.compileIcon.classList.add(`${css.spinningIcon}`)
-      self._view.warnCompilationSlow.style.visibility = 'hidden'
-      self._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
-    })
-    self._components.compiler.event.register('compilationStarted', function start () {
-      if (!self._view.compileIcon) return
+    this.compileTabLogic = new CompileTabLogic(self.queryParams, self._deps.fileManager, self._deps.editor, self._deps.config, self._deps.fileProviders)
+    this.compiler = this.compileTabLogic.compiler
+    this.compileTabLogic.init()
+
+    this.compilerContainer = new CompilerContainer(self.compileTabLogic, self._deps.editor, self._deps.config, self.queryParams)
+
+    this.listenToEvents()
+  }
+
+  listenToEvents () {
+    const self = this
+
+    self.compiler.event.register('compilationStarted', () => {
       self._view.errorContainer.innerHTML = ''
       self._view.errorContainerHead.innerHTML = ''
-      self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-      self._view.compileIcon.classList.add(`${css.spinningIcon}`)
-      self._view.compileIcon.setAttribute('title', 'compiling...')
     })
-    self._components.compiler.event.register('compilerLoaded', function loaded () {
-      if (!self._view.compileIcon) return
-      self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
-      self._view.compileIcon.setAttribute('title', '')
-    })
-    self._components.compiler.event.register('compilationFinished', function finish (success, data, source) {
+    self.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra
         self.event.emit('compilationFinished', source.target, source, self.data.selectedVersion, data)
       }
-      if (self._view.compileIcon) {
-        self._view.compileIcon.style.color = styles.colors.black
-        self._view.compileIcon.classList.remove(`${css.spinningIcon}`)
-        self._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-        self._view.compileIcon.setAttribute('title', 'idle')
-      }
+      const compileTab = document.querySelector('.compileView')
+      compileTab.style.color = styles.colors.black
       // reset the contractMetadata list (used by the publish action)
       self.data.contractsDetails = {}
       // refill the dropdown list
@@ -132,8 +79,8 @@ module.exports = class CompileTab {
       if (success) {
         // TODO consider using compile tab as a proper module instead of just forwarding event
         self._view.contractNames.removeAttribute('disabled')
-        self._components.compiler.visitContracts(contract => {
-          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self._components.compiler.getSource(contract.file))
+        self.compiler.visitContracts(contract => {
+          self.data.contractsDetails[contract.name] = parseContracts(contract.name, contract.object, self.compiler.getSource(contract.file))
           var contractName = yo`<option>${contract.name}</option>`
           self._view.contractNames.appendChild(contractName)
         })
@@ -154,7 +101,7 @@ module.exports = class CompileTab {
       }
       if (data.errors && data.errors.length) {
         error = true
-        data.errors.forEach(function (err) {
+        data.errors.forEach((err) => {
           if (self._deps.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
               self._deps.renderer.error(err.formattedMessage, self._view.errorContainer, {type: err.severity})
@@ -165,102 +112,26 @@ module.exports = class CompileTab {
         })
       }
       if (!error && data.contracts) {
-        self._components.compiler.visitContracts((contract) => {
+        self.compiler.visitContracts((contract) => {
           self._deps.renderer.error(contract.name, self._view.errorContainer, {type: 'success'})
         })
       }
     })
 
     // Run the compiler instead of trying to save the website
-    $(window).keydown(function (e) {
+    $(window).keydown((e) => {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
         e.preventDefault()
-        self.runCompiler()
+        self.compileTabLogic.runCompiler()
       }
     })
   }
-  getCompilationResult (cb) {
-    cb(null, this._components.compiler.lastCompilationResult)
-  }
-  profile () {
-    return {
-      name: 'solidity',
-      methods: ['getCompilationResult'],
-      events: ['compilationFinished'],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNDcyIDBxMjYgMCA0NSAxOXQxOSA0NXYxNjY0cTAgMjYtMTkgNDV0LTQ1IDE5aC0xMjgwcS0yNiAwLTQ1LTE5dC0xOS00NXYtMTY2NHEwLTI2IDE5LTQ1dDQ1LTE5aDEyODB6bS04MzIgMjg4djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bTAgMjU2djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bTAgMjU2djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bTAgMjU2djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bS0xMjggMzIwdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTUxMiAxMjgwdi0xOTJxMC0xNC05LTIzdC0yMy05aC0zMjBxLTE0IDAtMjMgOXQtOSAyM3YxOTJxMCAxNCA5IDIzdDIzIDloMzIwcTE0IDAgMjMtOXQ5LTIzem0wLTUxMnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0yNTYgMTAyNHYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzeiIvPjwvc3ZnPg==',
-      description: 'compile solidity contracts'
-    }
-  }
-  addWarning (msg, settings) {
-    const self = this
-    self._deps.renderer.error(msg, self._view.errorContainerHead, settings)
-  }
+
   render () {
     const self = this
     if (self._view.el) return self._view.el
 
-    function onchangeLoadVersion (event) {
-      self.data.selectedVersion = self._view.versionSelector.value
-      self._updateVersionSelector()
-    }
-
-    function onchangeOptimize (event) {
-      self.data.optimize = !!self._view.optimize.checked
-      self._components.queryParams.update({ optimize: self.data.optimize })
-      self._components.compiler.setOptimize(self.data.optimize)
-      self.runCompiler()
-    }
-
-    self._components.compiler.event.register('compilerLoaded', (version) => self.setVersionText(version))
-    self.fetchAllVersion((allversions, selectedVersion) => {
-      self.data.allversions = allversions
-      self.data.selectedVersion = selectedVersion
-      if (self._view.versionSelector) self._updateVersionSelector()
-    })
-
-    self._view.optimize = yo`<input onchange=${onchangeOptimize} id="optimize" type="checkbox">`
-    if (self.data.optimize) self._view.optimize.setAttribute('checked', '')
-
-    self._view.versionSelector = yo`
-      <select onchange=${onchangeLoadVersion} class="${css.select}" id="versionSelector" disabled>
-        <option disabled selected>Select new compiler version</option>
-      </select>`
-    self._view.version = yo`<span id="version"></span>`
-
-    self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
-    self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile (Ctrl-S)</div>`
-    self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
-    self._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
-    if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
-    if (self.data.hideWarnings) self._view.hideWarningsBox.setAttribute('checked', '')
-    self._view.compileContainer = yo`
-      <div class="${css.compileContainer}">
-        <div class="${css.info}">
-          <span>Current version:</span> ${self._view.version}
-          <div class="${css.crow}">
-            ${self._view.versionSelector}
-          </div>
-          <div class="${css.compileButtons}">
-            <div class=${css.checkboxes}>
-              <div class="${css.autocompileContainer}">
-                ${self._view.autoCompile}
-                <label for="autoCompile" class="${css.autocompileText}">Auto compile</label>
-              </div>
-              <div class="${css.optimizeContainer}">
-                <div>${self._view.optimize}</div>
-                <label for="optimize" class="${css.checkboxText}">Enable Optimization</label>
-              </div>
-              <div class=${css.hideWarningsContainer}>
-                ${self._view.hideWarningsBox}
-                <label for="hideWarningsBox" class="${css.autocompileText}">Hide warnings</label>
-              </div>
-            </div>
-            ${self._view.compileButton}
-          </div>
-        </div>
-      </div>`
     self._view.errorContainer = yo`<div class='error'></div>`
     self._view.errorContainerHead = yo`<div class='error'></div>`
     self._view.contractNames = yo`<select class="${css.contractNames}" disabled></select>`
@@ -284,7 +155,7 @@ module.exports = class CompileTab {
       </div>`
     self._view.el = yo`
       <div class="${css.compileTabView}" id="compileTabView">
-        ${self._view.compileContainer}
+        ${this.compilerContainer.render()}
         ${self._view.contractEl}
         ${self._view.errorContainerHead}
         ${self._view.errorContainer}
@@ -302,12 +173,6 @@ module.exports = class CompileTab {
       'name': 'Name of the compiled contract',
       'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
       'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
-    }
-    function updateAutoCompile (event) { self._deps.config.set('autoCompile', self._view.autoCompile.checked) }
-    function compile (event) { self.runCompiler() }
-    function hideWarnings (event) {
-      self._deps.config.set('hideWarnings', self._view.hideWarningsBox.checked)
-      compile()
     }
     function getContractProperty (property) {
       const select = self._view.contractNames
@@ -419,345 +284,7 @@ module.exports = class CompileTab {
     }
     return self._view.el
   }
-  setVersionText (text) {
-    const self = this
-    self.data.version = text
-    if (self._view.version) self._view.version.innerText = text
-  }
-  _updateVersionSelector () {
-    const self = this
-    self._view.versionSelector.innerHTML = ''
-    self._view.versionSelector.appendChild(yo`<option disabled selected>Select new compiler version</option>`)
-    self.data.allversions.forEach(build => self._view.versionSelector.appendChild(yo`<option value=${build.path}>${build.longVersion}</option>`))
-    self._view.versionSelector.removeAttribute('disabled')
-    self._components.queryParams.update({ version: self.data.selectedVersion })
-    var url
-    if (self.data.selectedVersion === 'builtin') {
-      var location = window.document.location
-      location = location.protocol + '//' + location.host + '/' + location.pathname
-      if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
-      if (!location.endsWith('/')) location += '/'
-      url = location + 'soljson.js'
-    } else {
-      if (self.data.selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(self.data.selectedVersion)) {
-        return console.log('loading ' + self.data.selectedVersion + ' not allowed')
-      }
-      url = `${self.data.baseurl}/${self.data.selectedVersion}`
-    }
-    var isFirefox = typeof InstallTrigger !== 'undefined'
-    if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
-      // Workers cannot load js on "file:"-URLs and we get a
-      // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
-      // resort to non-worker version in that case.
-      self._components.compiler.loadVersion(true, url)
-      self.setVersionText('(loading using worker)')
-    } else {
-      self._components.compiler.loadVersion(false, url)
-      self.setVersionText('(loading)')
-    }
-  }
-  fetchAllVersion (callback) {
-    var self = this
-    minixhr(`${self.data.baseurl}/list.json`, function (json, event) {
-      // @TODO: optimise and cache results to improve app loading times
-      var allversions, selectedVersion
-      if (event.type !== 'error') {
-        try {
-          const data = JSON.parse(json)
-          allversions = data.builds.slice().reverse()
-          selectedVersion = self.data.defaultVersion
-          if (self._components.queryParams.get().version) selectedVersion = self._components.queryParams.get().version
-        } catch (e) {
-          addTooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
-        }
-      } else {
-        allversions = [{ path: 'builtin', longVersion: 'latest local version' }]
-        selectedVersion = 'builtin'
-      }
-      callback(allversions, selectedVersion)
-    })
-  }
-  runCompiler () {
-    const self = this
-    self._deps.fileManager.saveCurrentFile()
-    self._deps.editor.clearAnnotations()
-    var currentFile = self._deps.config.get('currentFile')
-    if (currentFile) {
-      if (/.(.sol)$/.exec(currentFile)) {
-        // only compile *.sol file.
-        var target = currentFile
-        var sources = {}
-        var provider = self._deps.fileManager.fileProviderOf(currentFile)
-        if (provider) {
-          provider.get(target, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              sources[target] = { content }
-              self._components.compiler.compile(sources, target)
-            }
-          })
-        } else {
-          console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
-        }
-      }
-    }
-  }
-  importExternal (url, cb) {
-    const self = this
-    self._components.compilerImport.import(url,
-      (loadingMsg) => {
-        addTooltip(loadingMsg)
-      },
-      (error, content, cleanUrl, type, url) => {
-        if (!error) {
-          if (self._deps.fileProviders[type]) {
-            self._deps.fileProviders[type].addReadOnly(cleanUrl, content, url)
-          }
-          cb(null, content)
-        } else {
-          cb(error)
-        }
-      })
-  }
-  importFileCb (url, filecb) {
-    const self = this
-    if (url.indexOf('/remix_tests.sol') !== -1) {
-      return filecb(null, remixTests.assertLibCode)
-    }
-    var provider = self._deps.fileManager.fileProviderOf(url)
-    if (provider) {
-      if (provider.type === 'localhost' && !provider.isConnected()) {
-        return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)
-      }
-      provider.exists(url, (error, exist) => {
-        if (error) return filecb(error)
-        if (exist) {
-          return provider.get(url, filecb)
-        } else {
-          self.importExternal(url, filecb)
-        }
-      })
-    } else if (self._components.compilerImport.isRelativeImport(url)) {
-      // try to resolve localhost modules (aka truffle imports)
-      var splitted = /([^/]+)\/(.*)$/g.exec(url)
-      async.tryEach([
-        (cb) => { self.importFileCb('localhost/installed_contracts/' + url, cb) },
-        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/installed_contracts/' + splitted[1] + '/contracts/' + splitted[2], cb) } },
-        (cb) => { self.importFileCb('localhost/node_modules/' + url, cb) },
-        (cb) => { if (!splitted) { cb('URL not parseable: ' + url) } else { self.importFileCb('localhost/node_modules/' + splitted[1] + '/contracts/' + splitted[2], cb) } }],
-        (error, result) => { filecb(error, result) }
-      )
-    } else {
-      self.importExternal(url, filecb)
-    }
-  }
+
 }
 
-const css = csjs`
-  .title {
-    font-size: 1.1em;
-    font-weight: bold;
-    margin-bottom: 1em;
-  }
-  .panicError {
-    color: red;
-    font-size: 20px;
-  }
-  .crow {
-    display: flex;
-    overflow: auto;
-    clear: both;
-    padding: .2em;
-  }
-  .checkboxText {
-    font-weight: normal;
-  }
-  .crow label {
-    cursor:pointer;
-  }
-  .crowNoFlex {
-    overflow: auto;
-    clear: both;
-  }
-  .select {
-    font-weight: bold;
-    margin: 10px 0px;
-    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler};
-  }
-  .info {
-    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
-    margin-bottom: 1em;
-    word-break: break-word;
-  }
-  .compileTabView {
-    padding: 2%;
-  }
-  .contract {
-    display: block;
-    margin: 3% 0;
-  }
-  .compileContainer  {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
-    margin-bottom: 2%;
-  }
-  .autocompileContainer {
-    display: flex;
-    align-items: center;
-  }
-  .hideWarningsContainer {
-    display: flex;
-    align-items: center;
-  }
-  .autocompile {}
-  .autocompileTitle {
-    font-weight: bold;
-    margin: 1% 0;
-  }
-  .autocompileText {
-    margin: 1% 0;
-    font-size: 12px;
-    overflow: hidden;
-    word-break: normal;
-    line-height: initial;
-  }
-  .warnCompilationSlow {
-    color: ${styles.rightPanel.compileTab.icon_WarnCompilation_Color};
-    margin-left: 1%;
-  }
-  .compileButtons {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .name {
-    display: flex;
-  }
-  .size {
-    display: flex;
-  }
-  .checkboxes {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-  .compileButton {
-    ${styles.rightPanel.compileTab.button_Compile};
-    width: 100%;
-    margin: 15px 0 10px 0;
-    font-size: 12px;
-  }
-  .container {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
-    margin: 0;
-    margin-bottom: 2%;
-  }
-  .contractContainer {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2%;
-  }
-  .optimizeContainer {
-    display: flex;
-  }
-  .contractNames {
-    ${styles.rightPanel.compileTab.dropdown_CompileContract};
-    width:78%;
-  }
-  .contractHelperButtons {
-    display: flex;
-    cursor: pointer;
-    text-align: center;
-    justify-content: flex-end;
-    margin: 15px 15px 10px 0;
-  }
-  .copyButton {
-    ${styles.rightPanel.compileTab.button_Publish};
-    padding: 0 7px;
-    min-width: 50px;
-    width: auto;
-    margin-left: 5px;
-    background-color: inherit;
-    border: inherit;
-  }
-  .bytecodeButton {
-    min-width: 80px;
-  }
-  .copyIcon {
-    margin-right: 5px;
-  }
-  .details {
-    ${styles.rightPanel.compileTab.button_Details};
-    min-width: 70px;
-    width: 80px;
-  }
-  .publish {
-    display: flex;
-    align-items: center;
-    margin-left: 10px;
-    cursor: pointer;
-  }
-  .log {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 5%;
-    overflow: visible;
-  }
-  .key {
-    margin-right: 5px;
-    color: ${styles.rightPanel.text_Primary};
-    text-transform: uppercase;
-    width: 100%;
-  }
-  .value {
-    display: flex;
-    width: 100%;
-    margin-top: 1.5%;
-  }
-  .questionMark {
-    margin-left: 2%;
-    cursor: pointer;
-    color: ${styles.rightPanel.icon_Color_TogglePanel};
-  }
-  .questionMark:hover {
-    color: ${styles.rightPanel.icon_HoverColor_TogglePanel};
-  }
-  .detailsJSON {
-    padding: 8px 0;
-    background-color: ${styles.rightPanel.modalDialog_BackgroundColor_Primary};
-    border: none;
-    color: ${styles.rightPanel.modalDialog_text_Secondary};
-  }
-  .icon {
-    margin-right: 0.3em;
-  }
-  .spinningIcon {
-    margin-right: .3em;
-    animation: spin 2s linear infinite;
-  }
-  .bouncingIcon {
-    margin-right: .3em;
-    animation: bounce 2s infinite;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  @-webkit-keyframes bounce {
-    0% {
-      margin-bottom: 0;
-      color: ${styles.colors.transparent};
-    }
-    70% {
-      margin-bottom: 0;
-      color: ${styles.rightPanel.text_Secondary};
-    }
-    100% {
-      margin-bottom: 0;
-      color: ${styles.colors.transparent};
-    }
-  }
-`
+module.exports = CompileTab
