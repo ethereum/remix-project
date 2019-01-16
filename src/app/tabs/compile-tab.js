@@ -181,7 +181,7 @@ module.exports = class CompileTab {
     })
   }
   getCompilationResult (cb) {
-    cb(null, self._components.compiler.lastCompilationResult)
+    cb(null, this._components.compiler.lastCompilationResult)
   }
   profile () {
     return {
