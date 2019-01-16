@@ -104,8 +104,9 @@ var css = csjs`
     flex-direction     : column;
     position           : absolute;
     top                : 0;
+    left               : 50px;
     bottom             : 0;
-    overflow           : hidden
+    overflow           : hidden;
   }
   .highlightcode {
     position:absolute;
@@ -173,10 +174,7 @@ class App {
 
   init () {
     var self = this
-    self._view.swappanel.style.left = self._view.iconpanel.clientWidth + 'px'
-    self._view.mainpanel.style.left = (self._view.iconpanel.clientWidth + self._view.swappanel.clientWidth) + 'px'
-
-    let resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 400, x: 450 }) // eslint-disable-line
+    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 400, x: 450 })
     run.apply(self)
   }
 
@@ -450,7 +448,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const swapPanelComponent = new SwapPanelComponent()
   const verticalIconComponent = new VerticalIconsComponent()
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent, appManager) // eslint-disable-line
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager) // eslint-disable-line
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent, appManager) // eslint-disable-line  
+
+  swapPanelApi.event.on('toggle', () => {
+    this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise() 
+  })
+  swapPanelApi.event.on('showing', () => { this._components.resizeFeature.maximise() })
 
   self._components.editorpanel.init()
   self._components.fileManager.init()

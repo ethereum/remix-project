@@ -37,6 +37,9 @@ export default class PanelsResize {
   constructor (idpanel1, idpanel2, opt) {
     var panel1 = document.querySelector(idpanel1)
     var panel2 = document.querySelector(idpanel2)
+    this.panel1 = panel1
+    this.panel2 = panel2
+    this.opt = opt
 
     var ghostbar = yo`<div class=${css.ghostbar}></div>`
 
@@ -61,13 +64,13 @@ export default class PanelsResize {
     }
 
     let moveGhostbar = (event) => { // @NOTE VERTICAL ghostbar
-      let p = processPositiions(event)
+      let p = processPositions(event)
       if (p.panel1Width <= opt.minWidth || p.panel2Width <= opt.minWidth) return
       ghostbar.style.left = event.x + 'px'
     }
 
     let setPosition = (event) => {
-      let p = processPositiions(event)
+      let p = processPositions(event)
       panel1.style.width = p.panel1Width + 'px'
       panel2.style.left = p.panel2left + 'px'
       panel2.style.width = p.panel2Width + 'px'
@@ -81,7 +84,7 @@ export default class PanelsResize {
       setPosition(event)
     }
 
-    let processPositiions = (event) => {
+    let processPositions = (event) => {
       let panel1Width = event.x - panel1.offsetLeft
       panel1Width = panel1Width < opt.minWidth ? opt.minWidth : panel1Width
       let panel2left = panel1.offsetLeft + panel1Width
@@ -98,5 +101,23 @@ export default class PanelsResize {
     panel1.appendChild(dragbar)
 
     setPosition(opt)
+  }  
+
+  minimize () {
+    let panel1Width = 0
+    let panel2left = this.panel1.offsetLeft + panel1Width
+    let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
+    this.panel1.style.width = panel1Width + 'px'
+    this.panel2.style.left = panel2left + 'px'
+    this.panel2.style.width = panel2Width + 'px'
+  }
+
+  maximise () {
+    let panel1Width = this.opt.minWidth
+    let panel2left = this.panel1.offsetLeft + panel1Width
+    let panel2Width = this.panel2.parentElement.clientWidth - this.panel1.offsetLeft - panel1Width
+    this.panel1.style.width = panel1Width + 'px'
+    this.panel2.style.left = panel2left + 'px'
+    this.panel2.style.width = panel2Width + 'px'
   }
 }
