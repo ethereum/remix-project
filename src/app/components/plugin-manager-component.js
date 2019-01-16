@@ -31,8 +31,8 @@ class PluginManagerComponent {
 
   setStore (store) {
     this.store = store
-    this.store.event.on('activate', (name) => { this.views.items[name] ? this.views.items[name].querySelector('button').innerHTML = 'deactivate' : null })
-    this.store.event.on('deactivate', (name) => { this.views.items[name] ? this.views.items[name].querySelector('button').innerHTML = 'activate' : null })
+    this.store.event.on('activate', (name) => { this.reRender() })
+    this.store.event.on('deactivate', (name) => { this.reRender() })
   }
 
   render () {
@@ -46,7 +46,7 @@ class PluginManagerComponent {
       <h3>Inactive Modules</h3>
     </div>
     `
-    this.views.root = yo`
+    var rootView = yo`
       <div id='pluginManager' class=${css.plugins_settings} >
         <h2>Plugin Manager</h2>
         <input placeholder="Search loaded plugins">
@@ -69,12 +69,14 @@ class PluginManagerComponent {
     var modulesAll = this.store.getAll()
     modulesAll.sort()
     modulesAll.forEach((mod) => {
-      if ( !(modulesActive.includes(mod)) ) {
+      if (!modulesActive.includes(mod)) {
         this.views.inactiveMods.appendChild(this.renderItem(mod.profile.name))
       }
     })
-
-    return this.views.root
+    if (!this.views.root) {
+      this.views.root = rootView
+    }
+    return rootView
   }
 
   renderItem (item) {
@@ -82,13 +84,11 @@ class PluginManagerComponent {
 
     const mod = this.store.getOne(item)
     if (!mod) return
-    let action = async() => { 
+    let action = () => { 
       if (this.store.isActive(item)) {
-        await this.appManager.deactivateOne(item)
-        this.reRender()
+        this.appManager.deactivateOne(item)
       } else {
-        await this.appManager.activateOne(item)
-        this.reRender()
+        this.appManager.activateOne(item)
       }
     }
 
@@ -103,14 +103,13 @@ class PluginManagerComponent {
         ${ctrBtns}
       </div>
     `
-    
     return this.views.items[item]
   }
 
-  reRender (item) {
-    document.getElementById('pluginManager').innerHTML = ''
-    let piMan = this.render()
-    document.getElementById('pluginManager').appendChild(piMan)
+  reRender () {
+    if (this.views.root) {
+      yo.update(this.views.root, this.render())
+    }
   }
 }
 
