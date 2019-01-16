@@ -52,9 +52,10 @@ class FileManager {
 
   profile () {
     return {
-      name: 'FileManager',
+      name: 'file manager',
       methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
-      events: ['currentFileChanged']
+      events: ['currentFileChanged'],
+      description: 'allow accessing / updating any files. Plugins need permissions to access this entire API or part of this API'
     }
   }
 

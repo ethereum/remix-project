@@ -134,7 +134,8 @@ function FilesTree (name, storage) {
   this.profile = function () {
     return {
       name: this.type,
-      methods: ['get', 'set', 'remove']
+      methods: ['get', 'set', 'remove'],
+      description: 'allows using the config explorer without need of additionnal permission.'
     }
   }
 }

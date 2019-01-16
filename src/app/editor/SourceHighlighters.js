@@ -9,8 +9,9 @@ module.exports = class SourceHighlighters {
 
   profile () {
     return {
-      name: 'SourceHighlighters',
-      methods: ['highlight', 'discardHighlight']
+      name: 'source highlighters',
+      methods: ['highlight', 'discardHighlight'],
+      description: 'allows plugins to use highlight feature of the code editor'
     }
   }
 
