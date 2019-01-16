@@ -1,10 +1,16 @@
 // API
 class VerticalIconsApi {
 
-  constructor (verticalIconsComponent, appManager) {
+  constructor (verticalIconsComponent) {
     this.component = verticalIconsComponent
-    appManager.event.on('requestContainer', (mod, content) => verticalIconsComponent.addIcon(mod))
-    appManager.event.on('removingItem', (mod) => verticalIconsComponent.removeIcon(mod))
+  }
+
+  addIcon (mod) {
+    this.component.addIcon(mod)
+  }
+
+  removeIcon (mod) {
+    this.component.removeIcon(mod)
   }
 }
 module.exports = VerticalIconsApi
