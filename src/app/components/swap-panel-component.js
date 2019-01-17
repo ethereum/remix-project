@@ -49,7 +49,7 @@ module.exports = SwapPanelComponent
 
 const css = csjs`
   .plugins        {
-    height:        : 100%;
+    height         : 100%;
     overflow-y     : auto;
   }
   .plugItIn       {
