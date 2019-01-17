@@ -18,6 +18,7 @@
   ],
   "main": "./index.js",
   "dependencies": {
+    "commander": "^2.19.0",
     "ethereumjs-util": "^4.5.0",
     "ethereumjs-vm": "2.4.0",
     "fast-async": "^6.1.2",

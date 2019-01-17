@@ -1,5 +1,31 @@
-var CmdLine = require('./src/cmdline/index.js')
-// var compilation = require('./compilation.json')
+#!/usr/bin/env node
+
+const program = require('commander')
+const version = require('../package.json').version
+
+program
+  .command('version')
+  .description("outputs version number")
+  .action(() => {
+    console.log(version)
+    process.exit(0)
+  })
+
+program
+  .command('help')
+  .description("outputs usage information")
+  .action(() => {
+    program.help()
+    process.exit(0)
+  })
+
+program
+  .option('-f, --file [filename]', 'solidity filename to debug')
+  .option('--tx [txHash]', 'transaction hash to debug')
+  .option('--node [url]', 'node to connect to')
+  .parse(process.argv)
+
+var CmdLine = require('../src/cmdline/index.js')
 
 var solc = require('solc')
 var fs = require('fs')
@@ -27,47 +53,25 @@ var inputJson = {
 
 inputJson.sources[shortFilename] = {content: fs.readFileSync(filename).toString()}
 
-console.dir(inputJson)
-
 console.log('compiling...')
 
 let compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
-console.dir(Object.keys(compilationData))
 var compilation = {}
 compilation.data = compilationData
 compilation.source = { sources: inputJson.sources }
-console.dir(compilation)
-console.dir(compilation.data.errors)
 
 var cmdLine = new CmdLine()
 cmdLine.connect('http', 'http://localhost:8545')
 cmdLine.loadCompilationResult(compilation)
 cmdLine.initDebugger()
 
-// var deployContract = function (cb) {
-//   let _web3 = cmdLine.debugger.debugger.web3
-//
-//   let blockNumber = null
-//   let txNumber = null
-//   let tx = null
-//
-//   let code = compilation.data.contracts[shortFilename].SimpleStorage.evm.bytecode.object
-//   console.dir('deploying...')
-//   console.dir(code)
-//   _web3.eth.sendTransaction({data: '0x' + code, from: _web3.eth.accounts[0], gas: 800000}, cb)
-// }
-
-// let _web3 = cmdLine.debugger.debugger.web3
 var tx = '0xf510c4f0b1d9ee262d7b9e9e87b4262f275fe029c2c733feef7dfa1e2b1e32aa'
 
-//  deployContract((err, tx) => {
 cmdLine.startDebug(tx, shortFilename)
 
 cmdLine.events.on('source', () => {
   cmdLine.getSource().forEach(console.dir)
 })
- // })
-// })
 
 const repl = require('repl')
 
