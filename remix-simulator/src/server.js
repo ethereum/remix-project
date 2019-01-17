@@ -6,12 +6,11 @@ const Provider = require('./provider')
 const log = require('./utils/logs.js')
 
 class Server {
-
-  constructor() {
+  constructor () {
     this.provider = new Provider()
   }
 
-  start(port) {
+  start (port) {
     expressWs(app)
 
     app.use(bodyParser.urlencoded({extended: true}))
@@ -22,7 +21,7 @@ class Server {
     })
 
     app.use((req, res) => {
-      provider.sendAsync(req.body, (err, jsonResponse) => {
+      this.provider.sendAsync(req.body, (err, jsonResponse) => {
         if (err) {
           return res.send(JSON.stringify({error: err}))
         }
@@ -32,7 +31,7 @@ class Server {
 
     app.ws('/', (ws, req) => {
       ws.on('message', function (msg) {
-        provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
+        this.provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
           if (err) {
             return ws.send(JSON.stringify({error: err}))
           }
@@ -43,7 +42,6 @@ class Server {
 
     app.listen(port, () => log('Remix Simulator listening on port ' + port))
   }
-
 }
 
 module.exports = Server
