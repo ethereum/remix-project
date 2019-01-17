@@ -467,7 +467,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
   swapPanelApi.event.on('showing', () => { this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : '' })
 
-  verticalIconComponent.select('FilePanel')
+  verticalIconComponent.select('file explorers')
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
