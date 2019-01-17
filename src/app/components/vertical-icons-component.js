@@ -17,7 +17,7 @@ class VerticalIconComponent {
 
   addIcon (mod) {
     let self = this
-    this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>` 
+    this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>`
     this.view.appendChild(this.icons[mod.name])
   }
 

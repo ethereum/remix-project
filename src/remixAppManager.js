@@ -31,7 +31,7 @@ export class RemixAppManager extends AppManagerApi {
     }
     // at this point, if it's an iframe plugin, it should have already been rendered (to the DOM)
     // either using `location` in json profile or using the optionnal api in the `Plugin` class
-    
+
     // temp
     if (entity && name === 'SolidityCompile') {
       isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
@@ -45,7 +45,7 @@ export class RemixAppManager extends AppManagerApi {
 
   addEntity (entity) {
     this.store.add(entity.profile.name, entity)
-  }  
+  }
 
   resolveLocation (profile, domEl) {
     // if there's an icon, we add to the swap panel
@@ -53,7 +53,7 @@ export class RemixAppManager extends AppManagerApi {
     if (profile.icon) {
       this.swapPanelApi.add(profile, domEl)
       this.verticalIconsApi.addIcon(profile)
-      return 
+      return
     }
     this.hiddenNodes[profile.name] = domEl
     document.body.appendChild(domEl)

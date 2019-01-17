@@ -414,7 +414,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const verticalIconComponent = new VerticalIconsComponent()
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line  
-  
+
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore, swapPanelApi, verticalIconsApi)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
@@ -456,7 +456,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
   appManager.registerMany([
-    { profile: debug.profile(), api: debug }, 
+    { profile: debug.profile(), api: debug },
     { profile: analysis.profile(), api: analysis },
     { profile: test.profile(), api: test }
   ])
