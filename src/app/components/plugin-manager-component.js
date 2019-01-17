@@ -9,7 +9,7 @@ const EventEmitter = require('events')
 class PluginManagerComponent {
 
   constructor () {
-    this.event = new EventEmitter()    
+    this.event = new EventEmitter()
     this.views = {
       root: null,
       items: {}
@@ -60,9 +60,9 @@ class PluginManagerComponent {
 
     var modulesActive = this.store.getActives()
     modulesActive.sort(function (a, b) {
-      var textA = a.profile.name.toUpperCase();
-      var textB = b.profile.name.toUpperCase();
-      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      var textA = a.profile.name.toUpperCase()
+      var textB = b.profile.name.toUpperCase()
+      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
     })
 
     modulesActive.forEach((mod) => {
