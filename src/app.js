@@ -1,5 +1,6 @@
 'use strict'
 
+var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
 var async = require('async')
@@ -423,13 +424,52 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let compileTab = new CompileTab(self._components.registry)
   let tabs = {
     compile: compileTab,
-    run: new RunTab(self._components.registry),
+    run: new RunTab(
+      registry.get('udapp').api,
+      registry.get('udappUI').api,
+      registry.get('config').api,
+      registry.get('filemanager').api,
+      registry.get('editor').api,
+      registry.get('logCallback').api,
+      registry.get('filepanel').api,
+      registry.get('pluginmanager').api,
+      registry.get('compilersartefacts').api
+    ),
     settings: new SettingsTab(self._components.registry),
-    analysis: new AnalysisTab(self._components.registry),
-    debug: new DebuggerTab(self._components.registry),
-    support: new SupportTab(self._components.registry),
+    analysis: new AnalysisTab(registry),
+    debug: new DebuggerTab(),
+    support: new SupportTab(),
     test: new TestTab(self._components.registry, compileTab)
   }
+
+  registry.get('app').api.event.register('tabChanged', (tabName) => {
+    if (tabName === 'Support') tabs.support.loadTab()
+  })
+
+  let transactionContextAPI = {
+    getAddress: (cb) => {
+      cb(null, $('#txorigin').val())
+    },
+    getValue: (cb) => {
+      try {
+        var number = document.querySelector('#value').value
+        var select = document.getElementById('unit')
+        var index = select.selectedIndex
+        var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
+        var unit = 'ether' // default
+        if (['ether', 'finney', 'gwei', 'wei'].indexOf(selectedUnit) >= 0) {
+          unit = selectedUnit
+        }
+        cb(null, executionContext.web3().toWei(number, unit))
+      } catch (e) {
+        cb(e)
+      }
+    },
+    getGasLimit: (cb) => {
+      cb(null, $('#gasLimit').val())
+    }
+  }
+  udapp.resetAPI(transactionContextAPI)
 
   // ---------------- Righthand-panel --------------------
   self._components.righthandpanel = new RighthandPanel({ tabs, pluginManager })
