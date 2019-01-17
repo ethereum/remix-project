@@ -71,13 +71,14 @@ export class RemixAppManager extends AppManagerApi {
 
   plugins () {
     let ethDoc = {
-      name: 'ethdoc',
+      name: 'eth doc',
       events: ['newDoc'],
       methods: ['getdoc'],
       notifications: {
         'solCompiler': ['getCompilationFinished']
       },
-      url: 'https://ipfs.io/ipfs/Qmdu56TjQLMQmwitM6GRZXwvTWh8LBoNCWmoZbSzykPycJ/'
+      url: 'https://ipfs.io/ipfs/Qmdu56TjQLMQmwitM6GRZXwvTWh8LBoNCWmoZbSzykPycJ/',
+      description: 'generate solidity documentation'
     }
     return [{ profile: ethDoc, api: new Plugin(ethDoc, { resolveLocaton: (iframe) => { return this.resolveLocation(ethDoc, iframe) } }) }]
   }
