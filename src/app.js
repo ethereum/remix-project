@@ -448,14 +448,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     { profile: sourceHighlighters.profile(), api: sourceHighlighters },
     { profile: configProvider.profile(), api: configProvider },
     { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
-    { profile: compileTab.profile(), api: compileTab },
     { profile: filePanel.profile(), api: filePanel },
     { profile: support.profile(), api: support },
     { profile: settings.profile(), api: settings },
-    { profile: run.profile(), api: run },
     { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
 
   appManager.registerMany([
+    { profile: compileTab.profile(), api: compileTab },
+    { profile: run.profile(), api: run },
     { profile: debug.profile(), api: debug },
     { profile: analysis.profile(), api: analysis },
     { profile: test.profile(), api: test }
