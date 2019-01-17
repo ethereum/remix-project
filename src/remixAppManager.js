@@ -33,7 +33,7 @@ export class RemixAppManager extends AppManagerApi {
     // either using `location` in json profile or using the optionnal api in the `Plugin` class
 
     // temp
-    if (entity && name === 'SolidityCompile') {
+    if (entity && name === 'solidity') {
       isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
     }
     isActive ? this.store.activate(name) : this.store.deactivate(name)
