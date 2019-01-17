@@ -9,7 +9,6 @@ class AnalysisTab {
     this.event = new EventManager()
     this.registry = registry
   }
-<<<<<<< HEAD
   profile () {
     return {
       name: 'solidity static analysis',
@@ -19,9 +18,6 @@ class AnalysisTab {
       description: ' - '
     }
   }
-=======
-
->>>>>>> 2b6206e1... refactor analysis tab
   render () {
     var staticanalysis = new StaticAnalysis()
 
