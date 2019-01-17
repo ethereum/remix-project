@@ -72,6 +72,7 @@ class ContractDropdownUI {
   }
 
   changeCurrentFile (currentFile) {
+    if (!document.querySelector(`.${css.contractNames}`)) return
     document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     contractNames.innerHTML = ''
