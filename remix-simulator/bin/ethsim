@@ -1,4 +1,29 @@
 #!/usr/bin/env node
 
-require('../src/server');
+const program = require('commander')
+const version = require('../package.json').version
+
+program
+  .command('version')
+  .description("outputs version number")
+  .action(() => {
+    console.log(version)
+    process.exit(0)
+  })
+
+program
+  .command('help')
+  .description("outputs usage information")
+  .action(() => {
+    program.help()
+    process.exit(0)
+  })
+
+program
+  .option('-p, --port [port]', 'specify port')
+  .parse(process.argv)
+
+const Server = require('../src/server')
+const server = new Server()
+server.start(program.port || 8545)
 
