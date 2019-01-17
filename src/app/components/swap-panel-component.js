@@ -23,7 +23,6 @@ class SwapPanelComponent {
       this.currentNode = moduleName
       return
     }
-    console.log(`${moduleName} not found`)
   }
 
   add (moduleName, content) {

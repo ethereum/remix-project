@@ -6,6 +6,7 @@ class SwapPanelApi {
     this.component = swapPanelComponent
     this.currentContent
     verticalIconsComponent.event.on('showContent', (moduleName) => {
+      if (!swapPanelComponent.contents[moduleName]) return
       if (this.currentContent === moduleName) {
         this.event.emit('toggle')
         return
