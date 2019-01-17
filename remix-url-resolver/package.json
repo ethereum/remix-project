@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "Solidity import url resolver engine",
   "main": "./dist/index.js",
-  "bin": {
-    "remix-url-resolver": "./bin/remix-url-resolver"
-  },
   "scripts": {
     "build": "tsc",
     "lint": "standard",
