@@ -475,7 +475,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   swapPanelApi.event.on('toggle', () => {
     this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise()
   })
-  swapPanelApi.event.on('showing', () => { this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : '' })
+  swapPanelApi.event.on('showing', (moduleName) => {
+    this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : ''
+    var current = appStore.getOne(moduleName)
+    // warn the content that it is being displayed. TODO should probably be done in each view
+    if (current && current.api.__showing) current.api.__showing()
+  })
 
   verticalIconComponent.select('file explorers')
 

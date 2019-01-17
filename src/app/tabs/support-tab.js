@@ -9,7 +9,7 @@ class SupportTab {
     this.gitterIsLoaded = false
   }
 
-  loadContent () {
+  __showing () {
     if (this.gitterIsLoaded) return
 
     const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
