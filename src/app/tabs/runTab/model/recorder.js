@@ -54,6 +54,11 @@ class Recorder {
         record.name = payLoad.funAbi.name
         record.inputs = txHelper.serializeInputs(payLoad.funAbi)
         record.type = payLoad.funAbi.type
+        for (var p in record.parameters) {
+          var thisarg = record.parameters[p]
+          var thistimestamp = this.data._createdContracts[thisarg]
+          if (thistimestamp) record.parameters[p] = `created{${thistimestamp}}`
+        }
 
         this.udapp.getAccounts((error, accounts) => {
           if (error) return console.log(error)
