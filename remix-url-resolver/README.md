@@ -18,11 +18,11 @@ Returns `json` object with exact same path as `import` statement.
 `resolve(url, urlHandler)` function should be called from within `handleImportCb` function of `solc.compile(input, handleImportCb)`.
 
 ```ts
-import { RemixResolve } from 'remix-url-resolver'
+import { RemixURLResolver } from 'remix-url-resolver'
 
-const remixResolve = new RemixResolve()
+const urlResolver = new RemixURLResolver()
 const fileName: string = '../greeter.sol'
-remixResolve.resolve(fileName, urlHandler)
+urlResolver.resolve(fileName, urlHandler)
 	.then((sources: object) => {
 		console.log(sources)
 	})

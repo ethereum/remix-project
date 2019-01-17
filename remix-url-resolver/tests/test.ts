@@ -7,7 +7,7 @@ describe('testRunner', () => {
   describe('# RemixResolve.resolve()', () => {
     describe('* test without AppManager', () => {
       describe('test example_1 [local imports]', () => {
-        const remixURLResolve = new RemixURLResolver()
+        const urlResolver = new RemixURLResolver()
         const fileName: string = '../remix-url-resolver/tests/example_1/greeter.sol'
         let results: object = {}
 
@@ -31,7 +31,7 @@ describe('testRunner', () => {
               handle: (match: Array<string>) => { return handleLocal(match[2], match[3]) }
             }
           ]
-          remixURLResolve.resolve(fileName, localFSHandler)
+          urlResolver.resolve(fileName, localFSHandler)
             .then((sources: object) => {
               results = sources
               done()
@@ -55,12 +55,12 @@ describe('testRunner', () => {
       })
       // Test github import
       describe('test getting github imports', () => {
-        const remixURLResolve = new RemixURLResolver()
+        const urlResolver = new RemixURLResolver()
         const fileName: string = 'github.com/ethereum/populus/docs/assets/Greeter.sol'
         let results: object = {}
 
         before(done => {
-          remixURLResolve.resolve(fileName)
+          urlResolver.resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -84,12 +84,12 @@ describe('testRunner', () => {
       })
       // Test https imports
       describe('test getting https imports', () => {
-        const remixURLResolve = new RemixURLResolver()
+        const urlResolver = new RemixURLResolver()
         const fileName: string = 'https://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
         let results: object = {}
 
         before(done => {
-          remixURLResolve.resolve(fileName)
+          urlResolver.resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -114,12 +114,12 @@ describe('testRunner', () => {
 
       // Test http imports
       describe('test getting http imports', () => {
-        const remixURLResolve = new RemixURLResolver()
+        const urlResolver = new RemixURLResolver()
         const fileName: string = 'http://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
         let results: object = {}
 
         before(done => {
-          remixURLResolve.resolve(fileName)
+          urlResolver.resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
