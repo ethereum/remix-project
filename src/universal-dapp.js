@@ -238,7 +238,7 @@ UniversalDApp.prototype.runTestTx = function (tx, cb) {
     if (network.name === 'Main' && network.id === '1') {
       return cb('It is not allowed to make this action against mainnet')
     }
-    udapp.silentRunTx(tx, (error, result) => {
+    this.silentRunTx(tx, (error, result) => {
       if (error) return cb(error)
       cb(null, {
         transactionHash: result.transactionHash,
