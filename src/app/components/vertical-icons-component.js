@@ -12,16 +12,18 @@ class VerticalIconComponent {
 
   constructor () {
     this.event = new EventEmmitter()
+    this.icons = {}
   }
 
   addIcon (mod) {
     let self = this
-    this.view.appendChild(yo`<div id="${mod.name}Icon" class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>`)
+    this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name}><img src="${mod.icon}" alt="${mod.name}" /></div>` 
+    this.view.appendChild(this.icons[mod.name])
   }
 
   removeIcon (mod) {
-    var el = this.view.querySelector(`#${mod.name}Icon`)
-    el.parentElement.removeChild(el)
+    let el = this.icons[mod.name]
+    if (el) el.parentElement.removeChild(el)
   }
 
   select (name) {
