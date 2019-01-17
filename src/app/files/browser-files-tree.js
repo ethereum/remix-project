@@ -135,7 +135,7 @@ function FilesTree (name, storage) {
     return {
       name: this.type,
       methods: ['get', 'set', 'remove'],
-      description: 'allows using the config explorer without need of additionnal permission.'
+      description: 'service - read/write file to the `config` explorer without need of additionnal permission.'
     }
   }
 }

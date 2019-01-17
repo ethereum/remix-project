@@ -181,7 +181,7 @@ class App {
   profile () {
     return {
       name: 'app',
-      description: 'provides information about current context (network).',
+      description: 'service - provides information about current context (network).',
       methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
     }
   }
@@ -371,8 +371,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     event: new EventEmitter(),
     profile () {
       return {
-        name: 'TxListener',
-        events: ['newTransaction']
+        name: 'transaction listener',
+        events: ['newTransaction'],
+        description: 'service - notify new transactions'
       }
     }
   }

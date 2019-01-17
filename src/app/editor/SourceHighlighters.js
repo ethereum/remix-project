@@ -11,7 +11,7 @@ module.exports = class SourceHighlighters {
     return {
       name: 'source highlighters',
       methods: ['highlight', 'discardHighlight'],
-      description: 'allows plugins to use highlight feature of the code editor'
+      description: 'service - highlight source code'
     }
   }
 

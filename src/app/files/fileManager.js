@@ -55,7 +55,7 @@ class FileManager {
       name: 'file manager',
       methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
       events: ['currentFileChanged'],
-      description: 'allow accessing / updating any files. Plugins need permissions to access this entire API or part of this API'
+      description: 'service - read/write to any files or folders, require giving permissions'
     }
   }
 
