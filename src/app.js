@@ -411,12 +411,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const pluginManagerComponent = new PluginManagerComponent()
   const swapPanelComponent = new SwapPanelComponent()
+  const mainPanelComponent = new SwapPanelComponent()
   const verticalIconComponent = new VerticalIconsComponent()
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent) // eslint-disable-line
+  const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line
 
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
-  const appManager = new RemixAppManager(appStore, swapPanelApi, verticalIconsApi)
+  const appManager = new RemixAppManager(appStore, swapPanelApi, mainPanelApi, verticalIconsApi)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
   pluginManagerComponent.setApp(appManager)
@@ -425,7 +427,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.editorpanel.init()
   self._components.fileManager.init()
 
-  self._view.mainpanel.appendChild(self._components.editorpanel.render())
+  self._view.mainpanel.appendChild(mainPanelComponent.render())
   self._view.iconpanel.appendChild(verticalIconComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
 
@@ -462,6 +464,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     { profile: sourceHighlighters.profile(), api: sourceHighlighters },
     { profile: configProvider.profile(), api: configProvider },
     { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
+    { profile: self._components.editorpanel.profile(), api: self._components.editorpanel },
     { profile: filePanel.profile(), api: filePanel },
     { profile: support.profile(), api: support },
     { profile: settings.profile(), api: settings },
@@ -485,9 +488,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     // warn the content that it is being displayed. TODO should probably be done in each view
     if (current && current.api.__showing) current.api.__showing()
   })
+  mainPanelApi.event.on('showing', (moduleName) => {
+    if (moduleName === 'code editor') {
+      verticalIconComponent.select('file explorers')
+      this._components.resizeFeature.maximise()
+      return
+    }
+    this._components.resizeFeature.minimize()
+  })
 
   verticalIconComponent.select('file explorers')
-
+  verticalIconComponent.select('code editor')
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   var filesToLoad = null
