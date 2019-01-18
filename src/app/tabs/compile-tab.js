@@ -1,6 +1,5 @@
-/* global Worker */
+/* global */
 const EventEmitter = require('events')
-const async = require('async')
 const $ = require('jquery')
 const yo = require('yo-yo')
 const copy = require('clipboard-copy')
@@ -13,8 +12,6 @@ const parseContracts = require('../contract/contractParser')
 const publishOnSwarm = require('../contract/publishOnSwarm')
 const addTooltip = require('../ui/tooltip')
 
-const styleGuide = require('../ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
 var css = require('./styles/compile-tab-styles')
 
 const CompileTabLogic = require('./compileTab/compileTab.js')
@@ -70,8 +67,6 @@ class CompileTab {
         // forwarding the event to the appManager infra
         self.event.emit('compilationFinished', source.target, source, self.data.selectedVersion, data)
       }
-      const compileTab = document.querySelector('.compileView')
-      compileTab.style.color = styles.colors.black
       // reset the contractMetadata list (used by the publish action)
       self.data.contractsDetails = {}
       // refill the dropdown list
@@ -126,6 +121,16 @@ class CompileTab {
         self.compileTabLogic.runCompiler()
       }
     })
+  }
+
+  profile () {
+    return {
+      name: 'solidity',
+      methods: ['getCompilationResult'],
+      events: ['compilationFinished'],
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNDcyIDBxMjYgMCA0NSAxOXQxOSA0NXYxNjY0cTAgMjYtMTkgNDV0LTQ1IDE5aC0xMjgwcS0yNiAwLTQ1LTE5dC0xOS00NXYtMTY2NHEwLTI2IDE5LTQ1dDQ1LTE5aDEyODB6bS04MzIgMjg4djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bTAgMjU2djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bTAgMjU2djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bTAgMjU2djY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN6bS0xMjggMzIwdi02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTAtMjU2di02NHEwLTE0LTktMjN0LTIzLTloLTY0cS0xNCAwLTIzIDl0LTkgMjN2NjRxMCAxNCA5IDIzdDIzIDloNjRxMTQgMCAyMy05dDktMjN6bTUxMiAxMjgwdi0xOTJxMC0xNC05LTIzdC0yMy05aC0zMjBxLTE0IDAtMjMgOXQtOSAyM3YxOTJxMCAxNCA5IDIzdDIzIDloMzIwcTE0IDAgMjMtOXQ5LTIzem0wLTUxMnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0yNTYgMTAyNHYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzem0wLTI1NnYtNjRxMC0xNC05LTIzdC0yMy05aC02NHEtMTQgMC0yMyA5dC05IDIzdjY0cTAgMTQgOSAyM3QyMyA5aDY0cTE0IDAgMjMtOXQ5LTIzeiIvPjwvc3ZnPg==',
+      description: 'compile solidity contracts'
+    }
   }
 
   render () {
