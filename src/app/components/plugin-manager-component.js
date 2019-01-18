@@ -40,7 +40,7 @@ class PluginManagerComponent {
 
   render () {
     this.views.activeMods = yo`
-    <div id='activePlugs class=${css.activePlugins}>
+    <div id='activePlugs' class=${css.activePlugins}>
       <h3>Active Modules</h3>
     </div>
     `
@@ -49,14 +49,19 @@ class PluginManagerComponent {
       <h3>Inactive Modules</h3>
     </div>
     `
+    this.views.searchbox = yo`
+    <input id='filter_plugins' placeholder='Search loaded plugins'>
+    `
     var rootView = yo`
       <div id='pluginManager' class=${css.plugins_settings} >
         <h2>Plugin Manager</h2>
-        <input placeholder="Search loaded plugins">
+        ${this.views.searchbox}
         ${this.views.activeMods}
         ${this.views.inactiveMods}
       </div>
     `
+    
+    this.views.searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event) })
 
     var modulesActive = this.store.getActives()
     modulesActive.sort(function (a, b) {
@@ -114,6 +119,66 @@ class PluginManagerComponent {
       yo.update(this.views.root, this.render())
     }
   }
+
+  filterPlugins (event) {
+    let filterOn = event.target.value.toUpperCase()
+    for (var i in this.views.items) {
+      let item = this.views.items[i]
+      
+      let profileName = item.querySelector('h3');
+      let txtValue = profileName.textContent || profileName.innerText;
+      // console.log('val: ' + txtValue)
+      // console.log('filter: ' + filterOn)
+      // if (txtValue.toUpperCase().indexOf(filterOn) > -1) {
+      //   item.querySelector('div').style.display = ""
+      // } else {
+      //   item.querySelector('div').style.display = "none"
+      // }
+      item.style.display = 'none'
+      // console.log(`display ${item.querySelector('div').style.display}`)
+    }
+    // get the array of contained divs for active
+    // for (i = 0; i < li.length; i++) {
+    //   a = li[i].getElementsByTagName("a")[0];
+    //   txtValue = a.textContent || a.innerText;
+    //   if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    //       li[i].style.display = "";
+    //   } else {
+    //       li[i].style.display = "none";
+    //   }
+    // }
+  }
+  
+    // now to the filter
+    // make an array of the profile.name
+    // check each element of the array to see if it contains the substring
+
+    // if it does push it into a new array
+
+    // assemble the object based on this array.
+
+  // filterPlugins () {
+  //   var value = this.views.searchbox.value
+  //   console.log ('msg ' + value)
+  // }
+  
+    // if (e.keyCode === 27) {
+    //   cancelListener()
+    // } else if (e.keyCode === 13) {
+    //   e.preventDefault()
+    //   okListener()
+    // }
+  // }
+
+  // document.getElementById('modal-background').addEventListener('click', cancelListener)
+  // .on("keyup", function() {
+  //   var value = $(this).val().toLowerCase();
+  //   $("#myTable tr").filter(function() {
+  //     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  //   });
+  // });
+
+  
 }
 
 module.exports = PluginManagerComponent
