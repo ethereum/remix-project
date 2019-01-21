@@ -17,6 +17,10 @@ class SwapPanelApi {
     })
   }
 
+  showContent (moduleName) {
+    this.component.showContent(moduleName)
+  }
+
   /*
     content: DOM element
     by appManager
