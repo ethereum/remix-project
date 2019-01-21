@@ -453,10 +453,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
 
-  registry.get('app').api.event.register('tabChanged', (tabName) => {
-    if (tabName === 'Support') support.loadTab()
-  })
-
   appManager.init([
     { profile: this.profile(), api: this },
     { profile: udapp.profile(), api: udapp },
