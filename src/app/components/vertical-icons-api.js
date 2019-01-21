@@ -12,5 +12,9 @@ class VerticalIconsApi {
   removeIcon (mod) {
     this.component.removeIcon(mod)
   }
+
+  select (moduleName) {
+    this.component.select(moduleName)
+  }
 }
 module.exports = VerticalIconsApi
