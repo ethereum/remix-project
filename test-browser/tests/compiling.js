@@ -24,9 +24,10 @@ function runTests (browser) {
   browser.setEditorValue = contractHelper.setEditorValue
   browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.getEditorValue = contractHelper.getEditorValue
+  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   browser
-    .waitForElementVisible('.newFile', 10000)
-    .click('.compileView')
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('solidity')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.
       async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues, testRecorder.test], function () {
@@ -37,7 +38,7 @@ function runTests (browser) {
 
 function testSimpleContract (browser, callback) {
   contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'], function () {
-    browser.click('.runView')
+    browser.clickLaunchIcon('run transactions')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2)')
@@ -68,7 +69,7 @@ function testSimpleContract (browser, callback) {
 
 function testReturnValues (browser, callback) {
   contractHelper.testContracts(browser, 'returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'], function () {
-    browser.click('.runView')
+    browser.clickLaunchIcon('run transactions')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2)')
@@ -106,7 +107,7 @@ function testReturnValues (browser, callback) {
 
 function testInputValues (browser, callback) {
   contractHelper.testContracts(browser, 'inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'], function () {
-    browser.click('.runView')
+    browser.clickLaunchIcon('run transactions')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2)')
