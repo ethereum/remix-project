@@ -2,7 +2,6 @@ var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
 
-const defaultPlugins = require('../plugin/plugins')
 var globalRegistry = require('../../global/registry')
 var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
@@ -127,73 +126,12 @@ module.exports = class SettingsTab {
           <label for="themeClean">Clean Theme</label>
         </div>
       </div>`
-    self._view.config.plugins = yo`<div></div>`
-    self._view.config.plugin = yo`
-      <div class="${css.info}">
-        <div class=${css.title}>Plugin <i title="This section is still under heavy development, please use it carefully" class="${css.icon} fa fa-exclamation-triangle" aria-hidden="true"></i> </div>
-        <div class="${css.crowNoFlex}">
-          <div>Load plugin from JSON description: </div>
-          ${self._view.pluginInput}
-          <input onclick=${onloadPluginJson} type="button" value="Load" class="${css.initPlugin}">
-          ${self._view.config.plugins}
-        </div>
-      </div>`
     self._view.el = yo`
       <div class="${css.settingsTabView}" id="settingsView">
         ${self._view.config.general}
-        ${self._view.config.plugin}
         ${self._view.gistToken}
         ${self._view.config.themes}
       </div>`
-
-    function loadPlugins (plugins, opt) {
-      for (var k in plugins) {
-        (function (plugin) {
-          if (!self._view.plugins[plugin.title]) self._view.plugins[plugin.title] = {}
-          self._view.plugins[plugin.title].json = plugin
-          self._view.plugins[plugin.title].el = yo`<div title=${plugin.title} class="${css.pluginLoad}">
-          <div class="${css.aPlugin}" onclick=${() => { onLoadPlugin(plugin.title) }}>${plugin.title}</div>
-          ${opt.removable ? yo`<span class="${css.removePlugin}" onclick=${() => { onRemovePlugin(plugin.title) }}><i class="fa fa-close"></i></span>` : yo`<span></span>`}
-          </div>`
-          self._view.config.plugins.appendChild(self._view.plugins[plugin.title].el)
-        })(plugins[k])
-      }
-    }
-
-    function getSavedPlugin () {
-      var savedPlugin = self._deps.config.get('settings/plugins-list')
-      return savedPlugin ? JSON.parse(savedPlugin) : {}
-    }
-    function setSavedPlugin (savedPlugins) {
-      self._deps.config.set('settings/plugins-list', JSON.stringify(savedPlugins))
-    }
-    loadPlugins(defaultPlugins, {removable: false})
-    loadPlugins(getSavedPlugin(), {removable: true})
-
-    function onLoadPlugin (name) {
-      self.event.trigger('plugin-loadRequest', [self._view.plugins[name].json])
-    }
-    function onRemovePlugin (name) {
-      var savedPlugin = getSavedPlugin()
-      delete savedPlugin[name]
-      setSavedPlugin(savedPlugin)
-      if (self._view.plugins[name]) {
-        self._view.plugins[name].el.parentNode.removeChild(self._view.plugins[name].el)
-        delete self._view.plugins[name]
-      }
-    }
-    function onloadPluginJson (event) {
-      try {
-        var json = JSON.parse(self._view.pluginInput.value)
-      } catch (e) {
-        return tooltip('cannot parse the plugin definition to JSON')
-      }
-      var savedPlugin = getSavedPlugin()
-      if (self._view.plugins[json.title]) return tooltip('Plugin already loaded')
-      savedPlugin[json.title] = json
-      setSavedPlugin(savedPlugin)
-      loadPlugins([json], {removable: true})
-    }
 
     function onchangeGenerateContractMetadata (event) {
       self._deps.config.set('settings/generate-contract-metadata', !self._deps.config.get('settings/generate-contract-metadata'))
