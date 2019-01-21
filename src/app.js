@@ -55,6 +55,8 @@ const FilePanel = require('./app/panels/file-panel')
 import PanelsResize from './lib/panels-resize'
 import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
+import { generateHomePage, homepageProfile } from './app/ui/landing-page/generate'
+import framingService from './framingService'
 
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
@@ -412,10 +414,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const pluginManagerComponent = new PluginManagerComponent()
   const swapPanelComponent = new SwapPanelComponent()
   const mainPanelComponent = new SwapPanelComponent()
-  const verticalIconComponent = new VerticalIconsComponent()
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent) // eslint-disable-line
-  const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconComponent) // eslint-disable-line
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line
+  const verticalIconsComponent = new VerticalIconsComponent()
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
+  const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
+  const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
 
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore, swapPanelApi, mainPanelApi, verticalIconsApi)
@@ -428,7 +430,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.fileManager.init()
 
   self._view.mainpanel.appendChild(mainPanelComponent.render())
-  self._view.iconpanel.appendChild(verticalIconComponent.render())
+  self._view.iconpanel.appendChild(verticalIconsComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
 
   let filePanel = new FilePanel()
@@ -454,6 +456,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let configProvider = self._components.filesProviders['config']
 
   appManager.init([
+    { profile: homepageProfile(), api: generateHomePage() },
     { profile: this.profile(), api: this },
     { profile: udapp.profile(), api: udapp },
     { profile: fileManager.profile(), api: fileManager },
@@ -475,26 +478,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   ])
   appManager.registerMany(appManager.plugins())
 
-  swapPanelApi.event.on('toggle', () => {
-    this._components.resizeFeature.panel1.clientWidth !== 0 ? this._components.resizeFeature.minimize() : this._components.resizeFeature.maximise()
-  })
-  swapPanelApi.event.on('showing', (moduleName) => {
-    this._components.resizeFeature.panel1.clientWidth === 0 ? this._components.resizeFeature.maximise() : ''
-    var current = appStore.getOne(moduleName)
-    // warn the content that it is being displayed. TODO should probably be done in each view
-    if (current && current.api.__showing) current.api.__showing()
-  })
-  mainPanelApi.event.on('showing', (moduleName) => {
-    if (moduleName === 'code editor') {
-      verticalIconComponent.select('file explorers')
-      this._components.resizeFeature.maximise()
-      return
-    }
-    this._components.resizeFeature.minimize()
-  })
+  framingService.start(appStore, swapPanelApi, verticalIconsApi, mainPanelApi, this._components.resizeFeature)
 
-  verticalIconComponent.select('file explorers')
-  verticalIconComponent.select('code editor')
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   var filesToLoad = null
