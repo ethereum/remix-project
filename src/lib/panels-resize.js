@@ -27,7 +27,7 @@ const css = csjs`
 `
 
 /*
-* opt: 
+* opt:
 *   minWidth  : minimn width for panels
 *   x         : position of gutter at load
 *
@@ -93,15 +93,15 @@ export default class PanelsResize {
       return { panel1Width, panel2left, panel2Width }
     }
 
-    window.addEventListener('resize', function (event){
+    window.addEventListener('resize', function (event) {
       setPosition({ x: panel1.offsetLeft + panel1.clientWidth })
     })
-  
+
     var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
     panel1.appendChild(dragbar)
 
     setPosition(opt)
-  }  
+  }
 
   minimize () {
     let panel1Width = 0

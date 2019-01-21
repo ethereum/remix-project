@@ -415,7 +415,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const verticalIconComponent = new VerticalIconsComponent()
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconComponent) // eslint-disable-line
-  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line  
+  const verticalIconsApi = new VerticalIconsApi(verticalIconComponent) // eslint-disable-line
 
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore, swapPanelApi, mainPanelApi, verticalIconsApi)
@@ -433,7 +433,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
-  let compileTab = new CompileTab(self._components.registry)
+  let compileTab = new CompileTab(registry)
   let run = new RunTab(
     registry.get('udapp').api,
     registry.get('udappUI').api,
@@ -446,9 +446,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('compilersartefacts').api
   )
   let settings = new SettingsTab(self._components.registry)
-  let analysis = new AnalysisTab(self._components.registry)
-  let debug = new DebuggerTab(self._components.registry)
-  let support = new SupportTab(self._components.registry)
+  let analysis = new AnalysisTab(registry)
+  let debug = new DebuggerTab()
+  let support = new SupportTab()
   let test = new TestTab(self._components.registry, compileTab)
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
@@ -516,7 +516,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  var txLogger = new TxLogger() // eslint-disable-line  
+  var txLogger = new TxLogger() // eslint-disable-line
   txLogger.event.register('debuggingRequested', (hash) => { debug.debugger().debug(hash) })
 
   let transactionContextAPI = {
