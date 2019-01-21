@@ -39,29 +39,29 @@ class PluginManagerComponent {
   }
 
   render () {
-    this.views.activeMods = yo`
+    let activeMods = yo`
     <div id='activePlugs' class=${css.activePlugins}>
       <h3>Active Modules</h3>
     </div>
     `
-    this.views.inactiveMods = yo`
+    let inactiveMods = yo`
     <div class=${css.inactivePlugins}>
       <h3>Inactive Modules</h3>
     </div>
     `
-    this.views.searchbox = yo`
-    <input id='filter_plugins' placeholder='Search loaded plugins'>
+    let searchbox = yo`
+    <input id='filter_plugins' placeholder='Search'>
     `
     var rootView = yo`
       <div id='pluginManager' class=${css.plugins_settings} >
         <h2>Plugin Manager</h2>
-        ${this.views.searchbox}
-        ${this.views.activeMods}
-        ${this.views.inactiveMods}
+        ${searchbox}
+        ${activeMods}
+        ${inactiveMods}
       </div>
     `
-    
-    this.views.searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event) })
+
+    searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event) })
 
     var modulesActive = this.store.getActives()
     modulesActive.sort(function (a, b) {
@@ -71,14 +71,14 @@ class PluginManagerComponent {
     })
 
     modulesActive.forEach((mod) => {
-      this.views.activeMods.appendChild(this.renderItem(mod.profile.name))
+      activeMods.appendChild(this.renderItem(mod.profile.name))
     })
 
     var modulesAll = this.store.getAll()
     modulesAll.sort()
     modulesAll.forEach((mod) => {
       if (!modulesActive.includes(mod)) {
-        this.views.inactiveMods.appendChild(this.renderItem(mod.profile.name))
+        inactiveMods.appendChild(this.renderItem(mod.profile.name))
       }
     })
     if (!this.views.root) {
@@ -104,14 +104,13 @@ class PluginManagerComponent {
         <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
         </div>`
 
-    this.views.items[item] = yo`
-      <div id=${item} class=${css.plugin} >
-        <h3>${mod.profile.name}</h3>
-        ${mod.profile.description}
-        ${ctrBtns}
-      </div>
-    `
-    return this.views.items[item]
+    return yo`
+    <div id=${item} class=${css.plugin} >
+      <h3>${mod.profile.name}</h3>
+      ${mod.profile.description}
+      ${ctrBtns}
+    </div>
+  `
   }
 
   reRender () {
@@ -122,63 +121,17 @@ class PluginManagerComponent {
 
   filterPlugins (event) {
     let filterOn = event.target.value.toUpperCase()
-    for (var i in this.views.items) {
-      let item = this.views.items[i]
-      
-      let profileName = item.querySelector('h3');
-      let txtValue = profileName.textContent || profileName.innerText;
-      // console.log('val: ' + txtValue)
-      // console.log('filter: ' + filterOn)
-      // if (txtValue.toUpperCase().indexOf(filterOn) > -1) {
-      //   item.querySelector('div').style.display = ""
-      // } else {
-      //   item.querySelector('div').style.display = "none"
-      // }
-      item.style.display = 'none'
-      // console.log(`display ${item.querySelector('div').style.display}`)
-    }
-    // get the array of contained divs for active
-    // for (i = 0; i < li.length; i++) {
-    //   a = li[i].getElementsByTagName("a")[0];
-    //   txtValue = a.textContent || a.innerText;
-    //   if (txtValue.toUpperCase().indexOf(filter) > -1) {
-    //       li[i].style.display = "";
-    //   } else {
-    //       li[i].style.display = "none";
-    //   }
-    // }
+    var nodes = this.views.root.querySelectorAll(`.${css.plugin}`)
+    nodes.forEach((node) => {
+      let h = node.querySelector('h3')
+      let txtValue = h.textContent || h.innerText
+      if (txtValue.toLowerCase().indexOf(filterOn.toLowerCase()) !== -1) {
+        node.style.display = 'block'
+      } else {
+        node.style.display = 'none'
+      }
+    })
   }
-  
-    // now to the filter
-    // make an array of the profile.name
-    // check each element of the array to see if it contains the substring
-
-    // if it does push it into a new array
-
-    // assemble the object based on this array.
-
-  // filterPlugins () {
-  //   var value = this.views.searchbox.value
-  //   console.log ('msg ' + value)
-  // }
-  
-    // if (e.keyCode === 27) {
-    //   cancelListener()
-    // } else if (e.keyCode === 13) {
-    //   e.preventDefault()
-    //   okListener()
-    // }
-  // }
-
-  // document.getElementById('modal-background').addEventListener('click', cancelListener)
-  // .on("keyup", function() {
-  //   var value = $(this).val().toLowerCase();
-  //   $("#myTable tr").filter(function() {
-  //     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-  //   });
-  // });
-
-  
 }
 
 module.exports = PluginManagerComponent
