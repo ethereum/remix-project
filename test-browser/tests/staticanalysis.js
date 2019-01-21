@@ -34,12 +34,13 @@ module.exports = {
 
 function runTests (browser) {
   browser.setEditorValue = contractHelper.setEditorValue
+  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   browser
-    .waitForElementVisible('.newFile', 10000)
-    .click('.compileView')
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('solidity')
   contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'], function () {
     browser
-      .click('.staticanalysisView')
+      .clickLaunchIcon('solidity static analysis')
       .click('#staticanalysisView button')
       .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
         dom.listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',

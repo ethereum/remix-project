@@ -105,12 +105,12 @@ class PluginManagerComponent {
         </div>`
 
     return yo`
-    <div id=${item} class=${css.plugin} >
+    <div id=${item} title="${item}" class=${css.plugin} >
       <h3>${mod.profile.name}</h3>
       ${mod.profile.description}
       ${ctrBtns}
     </div>
-  `
+    `
   }
 
   reRender () {
