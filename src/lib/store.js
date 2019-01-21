@@ -1,3 +1,4 @@
+/* global localStorage */
 import { EventEmitter } from 'events'
 
 export class Store {
@@ -8,7 +9,7 @@ export class Store {
    * @param {string} name The name of the store
    * @param {T} initialState The initial state used if state is not available in `localStorage`
    */
-  static fromLocal(name, initialState) {
+  static fromLocal (name, initialState) {
     const fromLocal = localStorage.getItem(name)
     const intial = fromLocal ? JSON.parse(fromLocal) : initialState
     return new Store(name, intial)
@@ -20,20 +21,20 @@ export class Store {
    * @param {string} name The name of the store
    * @param {T} initialState The initial state of the store
    */
-  constructor(name, initialState) {
+  constructor (name, initialState) {
     this.event = new EventEmitter()
     this.name = name
     this.state = initialState
   }
 
   /** Listen on event from the store */
-  get on() {
-    return this.event.on;
+  get on () {
+    return this.event.on
   }
 
   /** Liste once on event from the store */
-  get once() {
-    return this.event.once;
+  get once () {
+    return this.event.once
   }
 
   /**
@@ -51,17 +52,17 @@ export class Store {
    * @template Key key of `this.state`
    * @param {Key} key A key of the state
    */
-  get(key) {
+  get (key) {
     return this.state.entities[key]
   }
 
   /** Reset the state its initial value */
-  reset() {
+  reset () {
     this.state = this.initialState
   }
 
   /** Dispatch an event with the new state */
-  dispatch() {
+  dispatch () {
     this.event.emit('newState', this.state)
   }
 }
@@ -74,8 +75,6 @@ export class Store {
  * @property {Object} entities A map of ids and entities
  */
 
-
-
 export class EntityStore extends Store {
 
   /**
@@ -83,7 +82,7 @@ export class EntityStore extends Store {
    * @param {string} name The name of the store
    * @param {EntityState} initialState The initial state used if state is not available in `localStorage`
    */
-  static fromLocal(name, initialState) {
+  static fromLocal (name, initialState) {
     const fromLocal = localStorage.getItem(name)
     const intial = fromLocal ? JSON.parse(fromLocal) : initialState
     return new EntityStore(name, intial)
@@ -94,43 +93,37 @@ export class EntityStore extends Store {
    * @param {string} name The name of the store
    * @param {EntityState} initialState The initial state used if state is not available in `localStorage`
    */
-  constructor(name, initialState) {
+  /*
+  constructor (name, initialState) {
     super(name, initialState)
   }
-
-  ////////////
-  // GETTER //
-  ////////////
+  */
 
   /** Tne entities as a Map */
-  get entities() {
+  get entities () {
     return this.state.entities
   }
 
   /** List of all the ids */
-  get ids() {
+  get ids () {
     return this.state.ids
   }
 
   /** List of all active ID */
-  get actives() {
+  get actives () {
     return this.state.actives
   }
 
   /** Return the length of the entity collection */
-  get length() {
+  get length () {
     return this.state.ids.length
   }
-
-  /////////////
-  // SETTERS //
-  /////////////
 
   /**
    * Add a new entity to the state
    * @param {Object} entity
    */
-  add(id, entity) {
+  add (id, entity) {
     this.state.entities[id] = entity
     this.state.ids.push(id)
     this.event.emit('add', id, entity)
@@ -140,7 +133,7 @@ export class EntityStore extends Store {
    * Add entities to the state
    * @param {Array} entities
    */
-  addEntities(entities) {
+  addEntities (entities) {
     entities.forEach((entity) => { this.add(entity.profile.name, entity) })
   }
 
@@ -148,7 +141,7 @@ export class EntityStore extends Store {
    * Remove an entity from the state
    * @param {(string|number)} id The id of the entity to remove
    */
-  remove(id) {
+  remove (id) {
     delete this.state.entities[id]
     this.state.ids.splice(this.state.ids.indexOf(id), 1)
     this.state.actives.splice(this.state.ids.indexOf(id), 1)
@@ -172,7 +165,7 @@ export class EntityStore extends Store {
    * Activate one or several entity from the state
    * @param {((string|number))} ids An id or a list of id to activate
    */
-  activate(id) {
+  activate (id) {
     this.state.actives.push(id)
     this.event.emit('activate', id)
   }
@@ -181,20 +174,20 @@ export class EntityStore extends Store {
    * Deactivate one or several entity from the state
    * @param {(string|number))} ids An id or a list of id to deactivate
    */
-  deactivate(id) {
+  deactivate (id) {
     this.state.actives.splice(this.state.actives.indexOf(id), 1)
     this.event.emit('deactivate', id)
   }
 
-  ///////////
+  // /////////
   // QUERY //
-  ///////////
+  // /////////
 
   /**
    * Get one entity
    * @param {(string|number)} id The id of the entity to get
    */
-  getOne(id) {
+  getOne (id) {
     return this.state.entities[id]
   }
 
@@ -202,29 +195,25 @@ export class EntityStore extends Store {
    * Get many entities as an array
    * @param {(string|number)[]} ids An array of id of entity to get
    */
-  getMany(ids) {
+  getMany (ids) {
     return ids.map(id => this.state.entities[id])
   }
 
   /** Get all the entities as an array */
-  getAll() {
+  getAll () {
     return this.state.ids.map(id => this.state.entities[id])
   }
 
   /** Get all active entities */
-  getActives() {
+  getActives () {
     return this.state.actives.map(id => this.state.entities[id])
   }
 
-  ////////////////
-  // CONDITIONS //
-  ////////////////
-  
   /**
    * Is the entity active
    * @param {(string|number)} id The id of the entity to check
    */
-  isActive(id) {
+  isActive (id) {
     return this.state.actives.includes(id)
   }
 
@@ -232,7 +221,7 @@ export class EntityStore extends Store {
    * Is this id inside the store
    * @param {(string|number)} id The id of the entity to check
    */
-  hasEntity(id) {
+  hasEntity (id) {
     return this.state.ids.includes(id)
   }
 
@@ -240,7 +229,7 @@ export class EntityStore extends Store {
    * Is the state empty
    * @param {(string|number)} id The id of the entity to check
    */
-  isEmpty() {
+  isEmpty () {
     return this.state.ids.length === 0
   }
 }
@@ -249,7 +238,8 @@ export class EntityStore extends Store {
  * Store the state of the stores into LocalStorage
  * @param {Store[]} stores The list of stores to store into `localStorage`
  */
-function localState(stores) {
+/*
+function localState (stores) {
   stores.forEach(store => {
     const name = store.name
     store.on('newState', (state) => {
@@ -257,3 +247,4 @@ function localState(stores) {
     })
   })
 }
+*/

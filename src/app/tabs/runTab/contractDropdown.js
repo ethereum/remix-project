@@ -18,6 +18,7 @@ class ContractDropdownUI {
 
   listenToEvents () {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName) => {
+      if (!document.querySelector(`.${css.contractNames.classNames[0]}`)) return
       var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       contractNames.innerHTML = ''
       if (success) {
