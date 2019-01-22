@@ -7,9 +7,10 @@ module.exports = {
     return sources
   },
   test: function (browser, callback) {
+    browser.clickLaunchIcon = contractHelper.clickLaunchIcon
     contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
       browser
-        .click('.runView')
+        .clickLaunchIcon('run transactions')
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
         .waitForElementPresent('.instance:nth-of-type(2)')
