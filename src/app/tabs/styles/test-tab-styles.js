@@ -45,6 +45,8 @@ var css = csjs`
   .buttons {
     ${styles.rightPanel.testTab.box_listTests};
     margin: 2%;
+    display: flex;
+    align-items: center;
   }
   .runButton {
     ${styles.rightPanel.testTab.button_runTests};
@@ -58,6 +60,9 @@ var css = csjs`
     font-weight: bold;
     margin-bottom: 1em;
   }
+  .label {
+    display: flex;
+    align-items: center;
+  }
 `
-
 module.exports = css
