@@ -8,17 +8,17 @@ class SwapPanelApi {
     verticalIconsComponent.event.on('showContent', (moduleName) => {
       if (!swapPanelComponent.contents[moduleName]) return
       if (this.currentContent === moduleName) {
-        this.event.emit('toggle')
+        this.event.emit('toggle', moduleName)
         return
       }
+      this.showContent(moduleName)
       this.event.emit('showing', moduleName)
-      this.component.showContent(moduleName)
-      this.currentContent = moduleName
     })
   }
 
   showContent (moduleName) {
     this.component.showContent(moduleName)
+    this.currentContent = moduleName
   }
 
   /*
