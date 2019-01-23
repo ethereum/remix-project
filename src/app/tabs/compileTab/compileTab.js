@@ -56,8 +56,8 @@ class CompileTab {
       (error, content, cleanUrl, type, url) => {
         if (error) return cb(error)
 
-        if (this._deps.fileProviders[type]) {
-          this._deps.fileProviders[type].addReadOnly(cleanUrl, content, url)
+        if (this.fileProviders[type]) {
+          this.fileProviders[type].addReadOnly(cleanUrl, content, url)
         }
         cb(null, content)
       })
@@ -66,7 +66,7 @@ class CompileTab {
   importFileCb (url, filecb) {
     if (url.indexOf('/remix_tests.sol') !== -1) return filecb(null, remixTests.assertLibCode)
 
-    var provider = this._deps.fileManager.fileProviderOf(url)
+    var provider = this.fileManager.fileProviderOf(url)
     if (provider) {
       if (provider.type === 'localhost' && !provider.isConnected()) {
         return filecb(`file provider ${provider.type} not available while trying to resolve ${url}`)

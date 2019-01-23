@@ -26,14 +26,15 @@ function runTests (browser, testData) {
   browser.clickFunction = contractHelper.clickFunction
   browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.setEditorValue = contractHelper.setEditorValue
+  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   browser
-    .waitForElementVisible('.newFile', 10000)
-    .click('.compileView')
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('solidity')
   .perform((client, done) => {
     contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'], function () {
       done()
     })
-  }).click('.runView')
+  }).clickLaunchIcon('run transactions')
       .setValue('input[placeholder="uint8 _numProposals"]', '1')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
@@ -44,6 +45,7 @@ function runTests (browser, testData) {
       .pause(500)
       .click('span#tx0x0571a2439ea58bd349dd130afb8aff62a33af14c06de0dbc3928519bdf13ce2e div[class^="debug"]')
       .pause(2000)
+      .clickLaunchIcon('debugger')
       .click('#jumppreviousbreakpoint')
       .pause(2000)
       .perform(function (client, done) {
@@ -63,7 +65,7 @@ function runTests (browser, testData) {
           done()
         })
       })
-      .click('.runView')
+      .clickLaunchIcon('run transactions')
       .click('div[class^="udappClose"]')
       .perform((client, done) => {
         console.log('ballot.abi')
@@ -77,6 +79,7 @@ function runTests (browser, testData) {
           done()
         })
       })
+      .clickLaunchIcon('file explorers')
       .perform((client, done) => {
         console.log('addInstance 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A')
         contractHelper.addInstance(browser, '0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true, () => {
