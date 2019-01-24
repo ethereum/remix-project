@@ -57,6 +57,13 @@ Available special functions:
 | `Assert.greaterThan()` | `uint`, `int` |
 | `Assert.lesserThan()` | `uint`, `int` |
 
+#### Use a different sender `msg.sender`
+
+It is quite common that a contract need to be tested in different situation.
+Especially being able to set before hand the sender account (`msg.sender`) used for a specific tests suite enable quite a lot a new test use cases.
+please checkout https://github.com/ethereum/remix/blob/master/remix-tests/tests/various_sender/sender_test.sol for an example.
+note that `TestsAccounts` is filled with all the accounts available in `web3.eth.accounts()`.
+
 ### Command Line
 
 Remix-Tests will assume the tests will files whose name end with `"_test.sol"`. e.g `simple_storage_test.sol`
