@@ -13,7 +13,9 @@ function getFunctionFullName (signature, methodIdentifiers) {
 
 function getOverridedSender (userdoc, signature, methodIdentifiers) {
   let fullName = getFunctionFullName(signature, methodIdentifiers)
-  return fullName && userdoc.methods[fullName] ? userdoc.methods[fullName].notice : null
+  let match = /sender: account-+(\d)/g
+  let accountIndex = userdoc.methods[fullName] ? match.exec(userdoc.methods[fullName].notice) : null
+  return fullName && accountIndex ? accountIndex[1] : null
 }
 
 function getAvailableFunctions (jsonInterface) {
