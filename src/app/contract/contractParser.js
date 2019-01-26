@@ -1,5 +1,6 @@
 'use strict'
 
+var solcTranslate = require('solc/translate')
 var remixLib = require('remix-lib')
 var txHelper = remixLib.execution.txHelper
 
@@ -42,7 +43,7 @@ var getDetails = function (contractName, contract, source) {
   }
 
   if (source && contract.assembly !== null) {
-    detail['Assembly'] = formatAssemblyText(contract.evm.legacyAssembly, '', source.content)
+    detail['Assembly'] = solcTranslate.prettyPrintLegacyAssemblyJSON(contract.evm.legacyAssembly, source.content)
   }
 
   return detail
@@ -56,36 +57,6 @@ var retrieveMetadataHash = function (bytecode) {
   if (match) {
     return match[1]
   }
-}
-
-var formatAssemblyText = function (asm, prefix, source) {
-  if (typeof asm === typeof '' || asm === null || asm === undefined) {
-    return prefix + asm + '\n'
-  }
-  var text = prefix + '.code\n'
-  asm['.code'].forEach(function (item, _i) {
-    var v = item.value === undefined ? '' : item.value
-    var src = ''
-    if (item.begin !== undefined && item.end !== undefined) {
-      src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g')
-    }
-    if (src.length > 30) {
-      src = src.slice(0, 30) + '...'
-    }
-    if (item.name !== 'tag') {
-      text += '  '
-    }
-    text += prefix + item.name + ' ' + v + '\t\t\t' + src + '\n'
-  })
-  text += prefix + '.data\n'
-  let asmData = (asm['.data'] || [])
-  for (let i in asmData) {
-    let item = asmData[i]
-
-    text += '  ' + prefix + '' + i + ':\n'
-    text += formatAssemblyText(item, prefix + '    ', source)
-  }
-  return text
 }
 
 var gethDeploy = function (contractName, jsonInterface, bytecode) {

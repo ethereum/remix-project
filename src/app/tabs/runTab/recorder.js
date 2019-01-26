@@ -1,4 +1,6 @@
 var yo = require('yo-yo')
+var remixLib = require('remix-lib')
+var EventManager = remixLib.EventManager
 var csjs = require('csjs-inject')
 var css = require('../styles/run-tab-styles')
 
@@ -8,10 +10,10 @@ var confirmDialog = require('../../execution/confirmDialog')
 
 class RecorderUI {
 
-  constructor (recorder, parentSelf) {
+  constructor (recorder, logCallBack) {
     this.recorder = recorder
-    this.parentSelf = parentSelf
-    this.logCallBack = this.parentSelf._deps.logCallback
+    this.logCallBack = logCallBack
+    this.event = new EventManager()
   }
 
   render () {
@@ -67,10 +69,7 @@ class RecorderUI {
         return modalDialogCustom.alert(error)
       }
 
-      var noInstancesText = this.parentSelf._view.noInstancesText
-      if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-
-      this.parentSelf._view.instanceContainer.appendChild(this.parentSelf._deps.udappUI.renderInstanceFromABI(abi, address, contractName))
+      this.event.trigger('newScenario', [abi, address, contractName])
     })
   }
 
