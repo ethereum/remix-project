@@ -8,8 +8,8 @@ Returns `json` object with exact same path as `import` statement.
 ```json
 {
 	content: 'pragma solidity ^0.5.0;\nimport "./mortal.sol";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
-    cleanURL: '../greeter.sol',
-    type: 'local'
+	cleanURL: '../greeter.sol',
+	type: 'local'
 }
 ```
 
@@ -30,3 +30,8 @@ urlResolver.resolve(fileName, urlHandler)
 		throw e
 	})
 ```
+
+#### References
+
+* [TypeScript Publishing](http://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html)
+* [DefinitelyTyped 'Create a new package' guide](https://github.com/DefinitelyTyped/DefinitelyTyped#create-a-new-package)

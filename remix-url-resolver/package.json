@@ -2,7 +2,8 @@
   "name": "remix-url-resolver",
   "version": "0.0.2",
   "description": "Solidity import url resolver engine",
-  "main": "./dist/index.js",
+  "main": "dist",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "lint": "standard",
