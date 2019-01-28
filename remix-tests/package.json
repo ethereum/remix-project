@@ -2,7 +2,8 @@
   "name": "remix-tests",
   "version": "0.1.1",
   "description": "Tests for the Ethereum tool suite Remix",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "contributors": [
     {
       "name": "Iuri Matias",
@@ -17,8 +18,9 @@
     "remix-tests": "./bin/remix-tests"
   },
   "scripts": {
+    "build": "tsc",
     "lint": "standard",
-    "test": "standard && mocha tests/ -t 300000"
+    "test": "standard && mocha --require ts-node/register tests/*.ts -t 300000"
   },
   "repository": {
     "type": "git",
