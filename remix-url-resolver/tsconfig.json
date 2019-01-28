@@ -5,7 +5,7 @@
     "baseUrl": "./src",
     "outDir": "./dist",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "module": "commonjs",
     "strict": true,
     "noImplicitAny": false,

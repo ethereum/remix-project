@@ -3,9 +3,9 @@
   "version": "0.0.2",
   "description": "Solidity import url resolver engine",
   "main": "dist",
-  "types": "dist/main.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc --declaration",
+    "build": "tsc",
     "lint": "standard",
     "test": "standard && mocha --require ts-node/register tests/*.ts -t 300000"
   },
