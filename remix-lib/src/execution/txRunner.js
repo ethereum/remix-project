@@ -22,7 +22,11 @@ class TxRunner {
   }
 
   rawRun (args, confirmationCb, gasEstimationForceSend, promptCb, cb) {
-    run(this, args, Date.now(), confirmationCb, gasEstimationForceSend, promptCb, cb)
+    var timestamp = Date.now()
+    if (args.timestamp) {
+       timestamp = args.timestamp
+    }
+    run(this, args, timestamp, confirmationCb, gasEstimationForceSend, promptCb, cb)
   }
 
   _executeTx (tx, gasPrice, api, promptCb, callback) {
@@ -81,20 +85,21 @@ class TxRunner {
       self.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, confirmationCb, gasEstimationForceSend, promptCb, callback)
     } else {
       try {
-        self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
+        self.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, callback)
       } catch (e) {
         callback(e, null)
       }
     }
   }
 
-  runInVm (from, to, data, value, gasLimit, useCall, callback) {
+  runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
     const self = this
     var account = self.vmaccounts[from]
     if (!account) {
       return callback('Invalid account selected')
     }
     var tx = new EthJSTX({
+      timestamp: timestamp,
       nonce: new BN(account.nonce++),
       gasPrice: new BN(1),
       gasLimit: new BN(gasLimit, 10),
@@ -108,7 +113,7 @@ class TxRunner {
     const difficulties = [ new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10) ]
     var block = new EthJSBlock({
       header: {
-        timestamp: new Date().getTime() / 1000 | 0,
+        timestamp: timestamp || (new Date().getTime() / 1000 | 0),
         number: self.blockNumber,
         coinbase: coinbases[self.blockNumber % coinbases.length],
         difficulty: difficulties[self.blockNumber % difficulties.length],
