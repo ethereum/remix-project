@@ -11,9 +11,5 @@
     "publish": "lerna publish",
     "release": "lerna bootstrap; lerna publish;",
     "tag": "gulp; gulp publishTag;"
-  },
-  "dependencies": {
-    "remix-ide": "^0.7.5-local",
-    "remixd": "^0.1.8-alpha.6"
   }
 }
