@@ -1,24 +1,24 @@
 'use strict'
-var EventManager = require('../../lib/events')
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-var ace = require('brace')
+const EventManager = require('../../lib/events')
+const yo = require('yo-yo')
+const csjs = require('csjs-inject')
+const ace = require('brace')
 
 require('brace/theme/tomorrow_night_blue')
 
-var globalRegistry = require('../../global/registry')
+const globalRegistry = require('../../global/registry')
 const SourceHighlighters = require('./SourceHighlighters')
 
-var Range = ace.acequire('ace/range').Range
+const Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
-var langTools = ace.acequire('ace/ext/language_tools')
+const langTools = ace.acequire('ace/ext/language_tools')
 require('ace-mode-solidity/build/remix-ide/mode-solidity')
 require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+const styleGuide = require('../ui/styles-guide/theme-chooser')
+const styles = styleGuide.chooser()
 
 function setTheme(cb) {
   if (styles.appProperties.aceTheme) {
@@ -30,7 +30,7 @@ setTheme((path, theme) => {
   require('brace/theme/tomorrow_night_blue')
 })
 
-var css = csjs`
+const css = csjs`
   .ace-editor {
     background-color  : ${styles.editor.backgroundColor_Editor};
     width     : 100%;
@@ -76,11 +76,11 @@ document.head.appendChild(yo`
 
 class Editor {
   /*
-  // Private
+  // Private attributs
   _components
   _deps
 
-  // Public
+  // Public attributs
   editor
   event
   sessions
@@ -140,13 +140,13 @@ class Editor {
 
     /** Listen on Gutter Mouse Down */
     this.editor.on('guttermousedown', e => {
-      var target = e.domEvent.target
+      const target = e.domEvent.target
       if (target.className.indexOf('ace_gutter-cell') === -1) {
         return
       }
-      var row = e.getDocumentPosition().row
-      var breakpoints = e.editor.session.getBreakpoints()
-      for (var k in breakpoints) {
+      const row = e.getDocumentPosition().row
+      const breakpoints = e.editor.session.getBreakpoints()
+      for (const k in breakpoints) {
         if (k === row.toString()) {
           this.event.trigger('breakpointCleared', [this.currentSession, row])
           e.editor.session.clearBreakpoint(row)
@@ -181,11 +181,11 @@ class Editor {
   }
 
   _onChange() {
-    var currentFile = this._deps.config.get('currentFile')
+    const currentFile = this._deps.config.get('currentFile')
     if (!currentFile) {
       return
     }
-    var input = this.get(currentFile)
+    const input = this.get(currentFile)
     if (!input) {
       return
     }
@@ -213,13 +213,13 @@ class Editor {
   }
 
   _getMode(path) {
-    var ext = path.indexOf('.') !== -1 ? /[^.]+$/.exec(path) : null
+    let ext = path.indexOf('.') !== -1 ? /[^.]+$/.exec(path) : null
     if (ext) ext = ext[0]
     return ext && this.modes[ext] ? this.modes[ext] : this.modes['txt']
   }
 
   _createSession(content, mode) {
-    var s = new ace.EditSession(content)
+    const s = new ace.EditSession(content)
     s.setMode(mode || 'ace/mode/text')
     s.setUndoManager(new ace.UndoManager())
     s.setTabSize(4)
@@ -253,7 +253,7 @@ class Editor {
 
   open(path, content) {
     if (!this.sessions[path]) {
-      var session = this._createSession(content, this._getMode(path))
+      const session = this._createSession(content, this._getMode(path))
       this.sessions[path] = session
       this.readOnlySessions[path] = false
     } else if (this.sessions[path].getValue() !== content) {
@@ -264,7 +264,7 @@ class Editor {
 
   openReadOnly(path, content) {
     if (!this.sessions[path]) {
-      var session = this._createSession(content, this._getMode(path))
+      const session = this._createSession(content, this._getMode(path))
       this.sessions[path] = session
       this.readOnlySessions[path] = true
     }
@@ -328,11 +328,11 @@ class Editor {
 
   resize(useWrapMode) {
     this.editor.resize()
-    var session = this.editor.getSession()
+    const session = this.editor.getSession()
     session.setUseWrapMode(useWrapMode)
     if (session.getUseWrapMode()) {
-      var characterWidth = this.editor.renderer.characterWidth
-      var contentWidth = this.editor.container.ownerDocument.getElementsByClassName(
+      const characterWidth = this.editor.renderer.characterWidth
+      const contentWidth = this.editor.container.ownerDocument.getElementsByClassName(
         'ace_scroller'
       )[0].clientWidth
 
@@ -343,7 +343,7 @@ class Editor {
   }
 
   addMarker(lineColumnPos, source, cssClass) {
-    var currentRange = new Range(
+    const currentRange = new Range(
       lineColumnPos.start.line,
       lineColumnPos.start.column,
       lineColumnPos.end.line,
