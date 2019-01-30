@@ -76,10 +76,12 @@ document.head.appendChild(yo`
 
 class Editor {
   /*
-  // Private attributs
+  //Private attributs
   _components
   _deps
+  */
 
+  /*
   // Public attributs
   editor
   event
