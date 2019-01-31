@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
-    "remixd": "0.1.8-alpha.6",
+    "remixd": "0.1.8-alpha.6"
   },
   "repository": {
     "type": "git",
