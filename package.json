@@ -60,9 +60,8 @@
     "yo-yoify": "^3.7.3"
   },
   "dependencies": {
-    "http-server": "^0.11.1",
+    "http-server": "0.9.0",
     "remixd": "0.1.8-alpha.6",
-    "scrypt": "^6.0.3"
   },
   "repository": {
     "type": "git",
