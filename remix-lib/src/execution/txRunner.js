@@ -24,7 +24,7 @@ class TxRunner {
   rawRun (args, confirmationCb, gasEstimationForceSend, promptCb, cb) {
     var timestamp = Date.now()
     if (args.timestamp) {
-       timestamp = args.timestamp
+      timestamp = args.timestamp
     }
     run(this, args, timestamp, confirmationCb, gasEstimationForceSend, promptCb, cb)
   }
