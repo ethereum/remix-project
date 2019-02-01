@@ -1,25 +1,24 @@
 'use strict'
-var remixLib = require('remix-lib')
-var SourceMappingDecoder = remixLib.SourceMappingDecoder
-var AstWalker = remixLib.AstWalker
-var EventManager = require('../../lib/events')
-var globalRegistry = require('../../global/registry')
+const remixLib = require('remix-lib')
+const SourceMappingDecoder = remixLib.SourceMappingDecoder
+const AstWalker = remixLib.AstWalker
+const EventManager = require('../../lib/events')
+const globalRegistry = require('../../global/registry')
 
 /*
   trigger contextChanged(nodes)
 */
 class ContextualListener {
   constructor (opts, localRegistry) {
-    var self = this
     this.event = new EventManager()
-    self._components = {}
-    self._components.registry = localRegistry || globalRegistry
-    self.editor = opts.editor
-    self.pluginManager = opts.pluginManager
-    self._deps = {
-      compilersArtefacts: self._components.registry.get('compilersartefacts').api,
-      config: self._components.registry.get('config').api,
-      offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
+    this._components = {}
+    this._components.registry = localRegistry || globalRegistry
+    this.editor = opts.editor
+    this.pluginManager = opts.pluginManager
+    this._deps = {
+      compilersArtefacts: this._components.registry.get('compilersartefacts').api,
+      config: this._components.registry.get('config').api,
+      offsetToLineColumnConverter: this._components.registry.get('offsettolinecolumnconverter').api
     }
     this._index = {
       Declarations: {},
@@ -27,7 +26,7 @@ class ContextualListener {
     }
     this._activeHighlights = []
 
-    self.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+    this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
       this._stopHighlighting()
       this._index = {
         Declarations: {},
@@ -36,13 +35,13 @@ class ContextualListener {
       this._buildIndex(data, source)
     })
 
-    self.editor.event.register('contentChanged', () => { this._stopHighlighting() })
+    this.editor.event.register('contentChanged', () => { this._stopHighlighting() })
 
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      if (self._deps.compilersArtefacts['__last']) {
-        this._highlightItems(self.editor.getCursorPosition(), self._deps.compilersArtefacts['__last'], self._deps.config.get('currentFile'))
+      if (this._deps.compilersArtefacts['__last']) {
+        this._highlightItems(this.editor.getCursorPosition(), this._deps.compilersArtefacts['__last'], this._deps.config.get('currentFile'))
       }
     }, 1000)
   }
@@ -73,7 +72,7 @@ class ContextualListener {
     this.currentPosition = cursorPosition
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
-      var nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
+      const nodes = this.sourceMappingDecoder.nodesAtPosition(null, cursorPosition, compilationResult.data.sources[file])
       this.nodes = nodes
       if (nodes && nodes.length && nodes[nodes.length - 1]) {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
@@ -84,19 +83,18 @@ class ContextualListener {
 
   _buildIndex (compilationResult, source) {
     if (compilationResult && compilationResult.sources) {
-      var self = this
-      var callback = {}
-      callback['*'] = function (node) {
+      const callback = {}
+      callback['*'] = (node) => {
         if (node && node.attributes && node.attributes.referencedDeclaration) {
-          if (!self._index['Declarations'][node.attributes.referencedDeclaration]) {
-            self._index['Declarations'][node.attributes.referencedDeclaration] = []
+          if (!this._index['Declarations'][node.attributes.referencedDeclaration]) {
+            this._index['Declarations'][node.attributes.referencedDeclaration] = []
           }
-          self._index['Declarations'][node.attributes.referencedDeclaration].push(node)
+          this._index['Declarations'][node.attributes.referencedDeclaration].push(node)
         }
-        self._index['FlatReferences'][node.id] = node
+        this._index['FlatReferences'][node.id] = node
         return true
       }
-      for (var s in compilationResult.sources) {
+      for (const s in compilationResult.sources) {
         this.astWalker.walk(compilationResult.sources[s].legacyAST, callback)
       }
     }
@@ -104,21 +102,19 @@ class ContextualListener {
 
   _highlight (node, compilationResult) {
     if (!node) return
-    var self = this
-    var position = this.sourceMappingDecoder.decode(node.src)
-    var eventId = this._highlightInternal(position, node)
-    let lastCompilationResult = self._deps.compilersArtefacts['__last']
+    const position = this.sourceMappingDecoder.decode(node.src)
+    const eventId = this._highlightInternal(position, node)
+    let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (eventId && lastCompilationResult) {
       this._activeHighlights.push({ eventId, position, fileTarget: lastCompilationResult.getSourceName(position.file), nodeId: node.id })
     }
   }
 
   _highlightInternal (position, node) {
-    var self = this
-    let lastCompilationResult = self._deps.compilersArtefacts['__last']
+    let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult) {
-      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
-      var css = 'highlightreference'
+      let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
+      let css = 'highlightreference'
       if (node.children && node.children.length) {
         // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
         css = 'highlightreference'
@@ -133,28 +129,27 @@ class ContextualListener {
           }
         }
       }
-      var fileName = lastCompilationResult.getSourceName(position.file)
+      const fileName = lastCompilationResult.getSourceName(position.file)
       if (fileName) {
-        return self.editor.addMarker(lineColumn, fileName, css)
+        return this.editor.addMarker(lineColumn, fileName, css)
       }
     }
     return null
   }
 
   _highlightExpressions (node, compilationResult) {
-    var self = this
-    function highlights (id) {
-      if (self._index['Declarations'] && self._index['Declarations'][id]) {
-        var refs = self._index['Declarations'][id]
-        for (var ref in refs) {
-          var node = refs[ref]
-          self._highlight(node, compilationResult)
+    const highlights = (id) => {
+      if (this._index['Declarations'] && this._index['Declarations'][id]) {
+        const refs = this._index['Declarations'][id]
+        for (const ref in refs) {
+          const node = refs[ref]
+          this._highlight(node, compilationResult)
         }
       }
     }
     if (node.attributes && node.attributes.referencedDeclaration) {
       highlights(node.attributes.referencedDeclaration)
-      var current = this._index['FlatReferences'][node.attributes.referencedDeclaration]
+      const current = this._index['FlatReferences'][node.attributes.referencedDeclaration]
       this._highlight(current, compilationResult)
     } else {
       highlights(node.id)
@@ -164,23 +159,21 @@ class ContextualListener {
   }
 
   _stopHighlighting () {
-    var self = this
-    for (var eventKey in this._activeHighlights) {
-      var event = this._activeHighlights[eventKey]
-      self.editor.removeMarker(event.eventId, event.fileTarget)
+    for (const eventKey in this._activeHighlights) {
+      const event = this._activeHighlights[eventKey]
+      this.editor.removeMarker(event.eventId, event.fileTarget)
     }
     this._activeHighlights = []
   }
 
   gasEstimation (node) {
     this._loadContractInfos(node)
-    var executionCost
-    var codeDepositCost
+    let executionCost, codeDepositCost
     if (node.name === 'FunctionDefinition') {
-      var visibility = node.attributes.visibility
+      const visibility = node.attributes.visibility
       if (!node.attributes.isConstructor) {
-        var fnName = node.attributes.name
-        var fn = fnName + this._getInputParams(node)
+        const fnName = node.attributes.name
+        const fn = fnName + this._getInputParams(node)
         if (visibility === 'public' || visibility === 'external') {
           executionCost = this.estimationObj.external[fn]
         } else if (visibility === 'private' || visibility === 'internal') {
@@ -197,9 +190,9 @@ class ContextualListener {
   }
 
   _loadContractInfos (node) {
-    for (var i in this.nodes) {
+    for (const i in this.nodes) {
       if (this.nodes[i].id === node.attributes.scope) {
-        var contract = this.nodes[i]
+        const contract = this.nodes[i]
         this.contract = this.results.data.contracts[this.results.source.target][contract.attributes.name]
         this.estimationObj = this.contract.evm.gasEstimates
         this.creationCost = this.estimationObj.creation.totalCost
@@ -209,16 +202,17 @@ class ContextualListener {
   }
 
   _getInputParams (node) {
-    var params = []
-    for (var i in node.children) {
+    const params = []
+    let target
+    for (const i in node.children) {
       if (node.children[i].name === 'ParameterList') {
-        var target = node.children[i]
+        target = node.children[i]
         break
       }
     }
     if (target) {
-      var children = target.children
-      for (var j in children) {
+      const children = target.children
+      for (const j in children) {
         if (children[j].name === 'VariableDeclaration') {
           params.push(children[j].attributes.type)
         }
