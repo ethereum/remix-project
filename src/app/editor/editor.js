@@ -20,7 +20,7 @@ require('brace/mode/json')
 const styleGuide = require('../ui/styles-guide/theme-chooser')
 const styles = styleGuide.chooser()
 
-function setTheme(cb) {
+function setTheme (cb) {
   if (styles.appProperties.aceTheme) {
     cb('brace/theme/', styles.appProperties.aceTheme)
   }
@@ -96,7 +96,7 @@ class Editor {
   emptySession
   */
 
-  constructor(opts = {}, localRegistry) {
+  constructor (opts = {}, localRegistry) {
     // Dependancies
     this._components = {}
     this._components.registry = localRegistry || globalRegistry
@@ -190,7 +190,7 @@ class Editor {
     })
   }
 
-  _onChange() {
+  _onChange () {
     const currentFile = this._deps.config.get('currentFile')
     if (!currentFile) {
       return
@@ -215,7 +215,7 @@ class Editor {
     }, 5000)
   }
 
-  _switchSession(path) {
+  _switchSession (path) {
     this.currentSession = path
     this.editor.setSession(this.sessions[this.currentSession])
     this.editor.setReadOnly(this.readOnlySessions[this.currentSession])
@@ -226,7 +226,7 @@ class Editor {
    * Get Ace mode base of the extension of the session file
    * @param {string} path Path of the file
    */
-  _getMode(path) {
+  _getMode (path) {
     let ext = path.indexOf('.') !== -1 ? /[^.]+$/.exec(path) : null
     if (ext) ext = ext[0]
     return ext && this.modes[ext] ? this.modes[ext] : this.modes['txt']
@@ -237,7 +237,7 @@ class Editor {
    * @param {string} content Content of the file to open
    * @param {string} mode Ace Mode for this file [Default is `text`]
    */
-  _createSession(content, mode) {
+  _createSession (content, mode) {
     const s = new ace.EditSession(content)
     s.setMode(mode || 'ace/mode/text')
     s.setUndoManager(new ace.UndoManager())
@@ -250,14 +250,14 @@ class Editor {
    * Attempts to find the string in the current document
    * @param {string} string
    */
-  find(string) {
+  find (string) {
     return this.editor.find(string)
   }
 
   /**
    * Display an Empty read-only session
    */
-  displayEmptyReadOnlySession() {
+  displayEmptyReadOnlySession () {
     this.currentSession = null
     this.editor.setSession(this.emptySession)
     this.editor.setReadOnly(true)
@@ -268,7 +268,7 @@ class Editor {
    * @param {number} row Line index of the breakpoint
    * @param {string} className Class of the breakpoint
    */
-  setBreakpoint(row, className) {
+  setBreakpoint (row, className) {
     this.editor.session.setBreakpoint(row, className)
   }
 
@@ -276,7 +276,7 @@ class Editor {
    * Increment the font size (in pixels) for the editor text.
    * @param {number} incr The amount of pixels to add to the font.
    */
-  editorFontSize(incr) {
+  editorFontSize (incr) {
     this.editor.setFontSize(this.editor.getFontSize() + incr)
   }
 
@@ -284,7 +284,7 @@ class Editor {
    * Set the text in the current session, if any.
    * @param {string} text New text to be place.
    */
-  setText(text) {
+  setText (text) {
     if (this.currentSession && this.sessions[this.currentSession]) {
       this.sessions[this.currentSession].setValue(text)
     }
@@ -295,7 +295,7 @@ class Editor {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  open(path, content) {
+  open (path, content) {
     if (!this.sessions[path]) {
       const session = this._createSession(content, this._getMode(path))
       this.sessions[path] = session
@@ -311,7 +311,7 @@ class Editor {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  openReadOnly(path, content) {
+  openReadOnly (path, content) {
     if (!this.sessions[path]) {
       const session = this._createSession(content, this._getMode(path))
       this.sessions[path] = session
@@ -324,7 +324,7 @@ class Editor {
    * Content of the current session
    * @return {String} content of the file referenced by @arg path
    */
-  currentContent() {
+  currentContent () {
     return this.get(this.current())
   }
 
@@ -334,7 +334,7 @@ class Editor {
    * @param {string} path Path of the session to get.
    * @return {String} content of the file referenced by @arg path
    */
-  get(path) {
+  get (path) {
     if (!path || this.currentSession === path) {
       return this.editor.getValue()
     } else if (this.sessions[path]) {
@@ -347,7 +347,7 @@ class Editor {
    * returns `undefined` if no session is being editer
    * @return {String} path of the current session
    */
-  current() {
+  current () {
     if (this.editor.getSession() === this.emptySession) {
       return
     }
@@ -357,7 +357,7 @@ class Editor {
   /**
    * The position of the cursor
    */
-  getCursorPosition() {
+  getCursorPosition () {
     return this.editor.session.doc.positionToIndex(
       this.editor.getCursorPosition(),
       0
@@ -367,7 +367,7 @@ class Editor {
   /**
    * Remove the current session from the list of sessions.
    */
-  discardCurrentSession() {
+  discardCurrentSession () {
     if (this.sessions[this.currentSession]) {
       delete this.sessions[this.currentSession]
       this.currentSession = null
@@ -378,7 +378,7 @@ class Editor {
    * Remove a session based on its path.
    * @param {string} path
    */
-  discard(path) {
+  discard (path) {
     if (this.sessions[path]) delete this.sessions[path]
     if (this.currentSession === path) this.currentSession = null
   }
@@ -387,7 +387,7 @@ class Editor {
    * Resize the editor, and sets whether or not line wrapping is enabled.
    * @param {boolean} useWrapMode Enable (or disable) wrap mode
    */
-  resize(useWrapMode) {
+  resize (useWrapMode) {
     this.editor.resize()
     const session = this.editor.getSession()
     session.setUseWrapMode(useWrapMode)
@@ -409,7 +409,7 @@ class Editor {
    * @param {string} source Path of the session to add the mark on.
    * @param {string} cssClass css to apply to the mark.
    */
-  addMarker(lineColumnPos, source, cssClass) {
+  addMarker (lineColumnPos, source, cssClass) {
     const currentRange = new Range(
       lineColumnPos.start.line,
       lineColumnPos.start.column,
@@ -429,7 +429,7 @@ class Editor {
    * @param {boolean} animate If true animates scrolling
    * @param {Function} callback Function to be called when the animation has finished
    */
-  scrollToLine(line, center, animate, callback) {
+  scrollToLine (line, center, animate, callback) {
     this.editor.scrollToLine(line, center, animate, callback)
   }
 
@@ -438,7 +438,7 @@ class Editor {
    * @param {string} markerId Id of the marker
    * @param {string} source Path of the session
    */
-  removeMarker(markerId, source) {
+  removeMarker (markerId, source) {
     if (this.sessions[source]) {
       this.sessions[source].removeMarker(markerId)
     }
@@ -447,7 +447,7 @@ class Editor {
   /**
    * Clears all the annotations for the current session.
    */
-  clearAnnotations() {
+  clearAnnotations () {
     this.sourceAnnotations = []
     this.editor.getSession().clearAnnotations()
   }
@@ -456,7 +456,7 @@ class Editor {
    * Add an annotation to the current session.
    * @param {Object} annotation
    */
-  addAnnotation(annotation) {
+  addAnnotation (annotation) {
     this.sourceAnnotations[this.sourceAnnotations.length] = annotation
     this.setAnnotations(this.sourceAnnotations)
   }
@@ -465,7 +465,7 @@ class Editor {
    * Set a list of annotations to the current session.
    * @param {Array<Object>} annotation
    */
-  setAnnotations(sourceAnnotations) {
+  setAnnotations (sourceAnnotations) {
     this.editor.getSession().setAnnotations(sourceAnnotations)
   }
 
@@ -474,7 +474,7 @@ class Editor {
    * @param {number} line
    * @param {number} col
    */
-  gotoLine(line, col) {
+  gotoLine (line, col) {
     this.editor.focus()
     this.editor.gotoLine(line + 1, col - 1, true)
   }
