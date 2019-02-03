@@ -15,7 +15,7 @@
     "baseUrl": "./src",                       /* Base directory to resolve non-absolute module names. */
     "paths": { "remix-tests": ["./"] },       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     "typeRoots": ["node_modules/@types"],                       /* List of folders to include type definitions from. */
-    "esModuleInterop": true                   /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "esModuleInterop": true,                   /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
 
     /* Experimental Options */
     "experimentalDecorators": true,           /* Enables experimental support for ES7 decorators. */
