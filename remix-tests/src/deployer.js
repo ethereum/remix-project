@@ -69,7 +69,7 @@ function deployAll (compileResult, web3, callback) {
 
             callback(null, { result: { createdAddress: receipt.contractAddress } }) // TODO this will only work with JavaScriptV VM
           }).on('error', function (err) {
-            console.dir(err)
+            console.error(err)
             callback(err)
           })
         })
@@ -79,9 +79,13 @@ function deployAll (compileResult, web3, callback) {
         let contract = compiledObject[contractName]
         let encodeDataFinalCallback = (error, contractDeployData) => {
           if (error) return nextEach(error)
-          let contractObject = new web3.eth.Contract(contract.abi)
-          let deployObject = contractObject.deploy({arguments: [], data: '0x' + contractDeployData.dataHex})
-          deployRunner(deployObject, contractObject, contractName, contract.filename, (error) => { nextEach(error) })
+          try {
+            let contractObject = new web3.eth.Contract(contract.abi)
+            let deployObject = contractObject.deploy({arguments: [], data: '0x' + contractDeployData.dataHex})
+            deployRunner(deployObject, contractObject, contractName, contract.filename, (error) => { nextEach(error) })
+          } catch (e) {
+            throw e
+          }
         }
 
         let encodeDataStepCallback = (msg) => { console.dir(msg) }
