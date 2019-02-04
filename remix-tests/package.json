@@ -19,8 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "standard",
-    "test": "standard && mocha --require ts-node/register tests/*.ts -t 300000"
+    "test": "mocha --require ts-node/register tests/*.ts -t 300000"
   },
   "repository": {
     "type": "git",
@@ -53,8 +52,10 @@
     "yo-yoify": "latest"
   },
   "devDependencies": {
-    "mocha": "^5.1.0",
     "babel-preset-es2017": "^6.24.1",
-    "standard": "^10.0.3"
+    "mocha": "^5.1.0",
+    "standard": "^10.0.3",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.1"
   }
 }
