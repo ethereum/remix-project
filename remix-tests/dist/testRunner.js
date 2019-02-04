@@ -1,5 +1,4 @@
 "use strict";
-exports.__esModule = true;
 var async = require("async");
 var changeCase = require("change-case");
 var Web3 = require("web3");
@@ -132,4 +131,5 @@ function runTest(testName, testObject, contractDetails, opts, testCallback, resu
         });
     });
 }
-exports.runTest = runTest;
+module.exports = runTest;
+//# sourceMappingURL=testRunner.js.map
