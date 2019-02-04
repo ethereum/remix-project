@@ -1,6 +1,6 @@
-import async = require('async');
-import changeCase = require('change-case');
-import Web3 = require('web3');
+import async from 'async'
+import * as changeCase from 'change-case'
+import Web3 from 'web3'
 
 function getFunctionFullName (signature, methodIdentifiers) {
     for (var method in methodIdentifiers) {
