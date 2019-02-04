@@ -52,6 +52,8 @@
     "yo-yoify": "latest"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.21",
     "babel-preset-es2017": "^6.24.1",
     "mocha": "^5.1.0",
     "standard": "^10.0.3",
