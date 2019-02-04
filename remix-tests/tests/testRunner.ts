@@ -1,48 +1,53 @@
-import async = require('async')
-import Web3 = require('web3')
-import assert = require('assert')
+import async from 'async'
+import Web3 from 'web3'
+import * as assert from 'assert'
+import { Provider } from 'remix-simulator'
 
 let Compiler = require('../src/compiler.js')
 let Deployer = require('../src/deployer.js')
 let TestRunner = require('../src/testRunner.ts')
-const Provider = require('remix-simulator').Provider
 
 interface Results {
     passingNum: number,
     failureNum: number,
 }
 
-function compileAndDeploy (filename, callback) {
+function compileAndDeploy (filename: string, callback: Function) {
     let web3 = new Web3()
     web3.setProvider(new Provider())
-    let compilationData
-    let accounts
+    let compilationData: Object
+    let accounts: Object
     async.waterfall([
-      function getAccountList (next) {
-        web3.eth.getAccounts((_err, _accounts) => {
+      function getAccountList (next: Function) {
+        web3.eth.getAccounts((_err: Error, _accounts: Object) => {
           accounts = _accounts
           next(_err)
         })
       },
-      function compile (next) {
+      function compile (next: Function) {
         Compiler.compileFileOrFiles(filename, false, {accounts}, next)
       },
       function deployAllContracts (compilationResult, next) {
-        compilationData = compilationResult
-        Deployer.deployAll(compilationResult, web3, next)
+        try {
+          compilationData = compilationResult
+          Deployer.deployAll(compilationResult, web3, next)
+          next()
+        } catch(e) {
+          throw e
+        }
       }
     ], function (_err, contracts) {
       callback(null, compilationData, contracts, accounts)
     })
   }
-  
-  
+
+
   describe('testRunner', function () {
     describe('#runTest', function() {
       describe('test with beforeAll', function () {
         let filename = 'tests/examples_1/simple_storage_test.sol'
         let tests:any[] = [], results:Results;
-  
+
         before(function (done) {
           compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
             var testCallback = function (test) {
@@ -55,15 +60,15 @@ function compileAndDeploy (filename, callback) {
             TestRunner.runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
           })
         })
-  
+
         it('should 1 passing test', function () {
           assert.equal(results.passingNum, 2)
         })
-  
+
         it('should 1 failing test', function () {
           assert.equal(results.failureNum, 2)
         })
-  
+
         it('should returns 5 messages', function () {
           assert.deepEqual(tests, [
             { type: 'contract',    value: 'MyTest', filename: 'tests/examples_1/simple_storage_test.sol' },
@@ -74,11 +79,11 @@ function compileAndDeploy (filename, callback) {
           ])
         })
       })
-  
+
       describe('test with beforeEach', function () {
         let filename = 'tests/examples_2/simple_storage_test.sol'
         let tests:any[] = [], results:Results;
-  
+
         before(function (done) {
           compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
             var testCallback = function (test) {
@@ -91,15 +96,15 @@ function compileAndDeploy (filename, callback) {
             TestRunner.runTest('MyTest', contracts.MyTest, compilationData[filename]['MyTest'], { accounts }, testCallback, resultsCallback)
           })
         })
-  
+
         it('should 2 passing tests', function () {
           assert.equal(results.passingNum, 2)
         })
-  
+
         it('should 0 failing tests', function () {
           assert.equal(results.failureNum, 0)
         })
-  
+
         it('should returns 3 messages', function () {
           assert.deepEqual(tests, [
             { type: 'contract', value: 'MyTest', filename: 'tests/examples_2/simple_storage_test.sol' },
@@ -108,7 +113,7 @@ function compileAndDeploy (filename, callback) {
           ])
         })
       })
-  
+
       // Test string equality
       describe('test string equality', function () {
         let filename = 'tests/examples_3/simple_string_test.sol'
@@ -127,15 +132,15 @@ function compileAndDeploy (filename, callback) {
             TestRunner.runTest('StringTest2', contracts.StringTest2, compilationData[filename]['StringTest2'], { accounts }, testCallback, resultsCallback)
           })
         })
-  
+
         it('should 2 passing tests', function () {
           assert.equal(results.passingNum, 2)
         })
-  
+
         it('should 1 failing tests', function () {
           assert.equal(results.failureNum, 1)
         })
-  
+
         it('should returns 3 messages', function () {
           assert.deepEqual(tests, [
             { type: 'contract', value: 'StringTest', filename: 'tests/examples_3/simple_string_test.sol' },
@@ -145,12 +150,12 @@ function compileAndDeploy (filename, callback) {
           ])
         })
       })
-  
+
       // Test signed/unsigned integer weight
       describe('test number weight', function () {
         let filename = 'tests/number/number_test.sol'
         let tests:any[] = [], results:Results;
-  
+
         before(function (done) {
           compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
             var testCallback = function (test) {
@@ -163,7 +168,7 @@ function compileAndDeploy (filename, callback) {
             TestRunner.runTest('IntegerTest', contracts.IntegerTest, compilationData[filename]['IntegerTest'], { accounts }, testCallback, resultsCallback)
           })
         })
-  
+
         it('should have 6 passing tests', function () {
           assert.equal(results.passingNum, 6)
         })
@@ -171,12 +176,12 @@ function compileAndDeploy (filename, callback) {
           assert.equal(results.failureNum, 2)
         })
       })
-  
+
       // Test Transaction with different sender
       describe('various sender', function () {
         let filename = 'tests/various_sender/sender_test.sol'
         let tests:any[] = [], results:Results;
-  
+
         before(function (done) {
           compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
             var testCallback = function (test) {
@@ -186,12 +191,12 @@ function compileAndDeploy (filename, callback) {
               results = _results
               done()
             }
-  
+
             TestRunner.runTest('SenderTest', contracts.SenderTest, compilationData[filename]['SenderTest'], { accounts }, testCallback, resultsCallback)
-  
+
           })
         })
-  
+
           it('should have 4 passing tests', function () {
             assert.equal(results.passingNum, 4)
         })
