@@ -1,4 +1,4 @@
-import async = require('async')
+import async from 'async'
 require('colors')
 
 import Compiler = require('./compiler.js')
