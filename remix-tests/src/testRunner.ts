@@ -53,7 +53,7 @@ function createRunList (jsonInterface) {
     return runList
 }
 
-function runTest (testName, testObject, contractDetails, opts, testCallback, resultsCallback) {
+export default function runTest (testName, testObject: any, contractDetails: any, opts: any, testCallback: Function, resultsCallback: Function) {
     let runList = createRunList(testObject._jsonInterface)
 
     let passingNum = 0
@@ -143,5 +143,3 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
         })
     })
 }
-
-export = runTest
