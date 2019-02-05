@@ -1,7 +1,7 @@
 import async = require('async')
 import path = require('path')
 import fs = require('./fs')
-import runTest = require('./testRunner.js')
+import runTest from './testRunner'
 require('colors')
 
 import Compiler = require('./compiler.js')

@@ -2,11 +2,11 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var async = require("async");
+var async_1 = __importDefault(require("async"));
 require('colors');
 var Compiler = require("./compiler.js");
 var Deployer = require("./deployer.js");
-var runTest = require("./testRunner.js");
+var testRunner_1 = __importDefault(require("./testRunner"));
 var Web3 = require("web3");
 var remix_simulator_1 = __importDefault(require("remix-simulator"));
 var createWeb3Provider = function () {
@@ -18,7 +18,7 @@ function runTestSources(contractSources, testCallback, resultCallback, finalCall
     opts = opts || {};
     var web3 = opts.web3 || createWeb3Provider();
     var accounts = opts.accounts || null;
-    async.waterfall([
+    async_1.default.waterfall([
         function getAccountList(next) {
             if (accounts)
                 return next();
@@ -73,8 +73,8 @@ function runTestSources(contractSources, testCallback, resultCallback, finalCall
                 totalTime += result.timePassed;
                 cb();
             };
-            async.eachOfLimit(contractsToTest, 1, function (contractName, index, cb) {
-                runTest(contractName, contracts(contractName), contractsToTestDetails[index], { accounts: accounts }, _testCallback, function (err, result) {
+            async_1.default.eachOfLimit(contractsToTest, 1, function (contractName, index, cb) {
+                testRunner_1.default(contractName, contracts(contractName), contractsToTestDetails[index], { accounts: accounts }, _testCallback, function (err, result) {
                     if (err) {
                         return cb(err);
                     }
