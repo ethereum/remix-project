@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "mocha --require ts-node/register tests/*.ts -t 300000"
+    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000"
   },
   "repository": {
     "type": "git",
