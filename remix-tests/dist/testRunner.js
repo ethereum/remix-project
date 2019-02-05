@@ -1,7 +1,18 @@
 "use strict";
-var async = require("async");
-var changeCase = require("change-case");
-var Web3 = require("web3");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var async_1 = __importDefault(require("async"));
+var changeCase = __importStar(require("change-case"));
+var web3_1 = __importDefault(require("web3"));
 function getFunctionFullName(signature, methodIdentifiers) {
     for (var method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
@@ -50,7 +61,7 @@ function runTest(testName, testObject, contractDetails, opts, testCallback, resu
     var passingNum = 0;
     var failureNum = 0;
     var timePassed = 0;
-    var web3 = new Web3();
+    var web3 = new web3_1.default();
     var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-';
     var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1);
     if (!isBrowser) {
@@ -61,7 +72,7 @@ function runTest(testName, testObject, contractDetails, opts, testCallback, resu
         signale.warn('TestsAccounts.getAccount(' + opts.accounts.length + ')');
     }
     testCallback({ type: 'contract', value: testName, filename: testObject.filename });
-    async.eachOfLimit(runList, 1, function (func, index, next) {
+    async_1.default.eachOfLimit(runList, 1, function (func, index, next) {
         var sender;
         if (func.signature) {
             sender = getOverridedSender(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers);
@@ -93,7 +104,7 @@ function runTest(testName, testObject, contractDetails, opts, testCallback, resu
             method.send(sendParams).on('receipt', function (receipt) {
                 try {
                     var time = Math.ceil((Date.now() - startTime) / 1000.0);
-                    var topic = Web3.utils.sha3('AssertionEvent(bool,string)');
+                    var topic = web3_1.default.utils.sha3('AssertionEvent(bool,string)');
                     var testPassed = false;
                     for (var i in receipt.events) {
                         var event_1 = receipt.events[i];
@@ -131,5 +142,5 @@ function runTest(testName, testObject, contractDetails, opts, testCallback, resu
         });
     });
 }
-module.exports = runTest;
+exports.default = runTest;
 //# sourceMappingURL=testRunner.js.map
