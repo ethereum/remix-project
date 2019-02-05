@@ -3,7 +3,7 @@ require('colors')
 
 import Compiler = require('./compiler.js')
 import Deployer = require('./deployer.js')
-import runTest = require('./testRunner.js')
+import runTest from './testRunner'
 
 import Web3 = require('web3')
 import Provider from 'remix-simulator'

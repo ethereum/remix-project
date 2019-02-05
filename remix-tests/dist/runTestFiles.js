@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var async = require("async");
 var path = require("path");
 var fs = require("./fs");
-var runTest = require("./testRunner.js");
+var testRunner_1 = __importDefault(require("./testRunner"));
 require('colors');
 var Compiler = require("./compiler.js");
 var Deployer = require("./deployer.js");
@@ -97,7 +100,7 @@ function runTestFiles(filepath, isDirectory, web3, opts) {
                 cb();
             };
             async.eachOfLimit(contractsToTest, 1, function (contractName, index, cb) {
-                runTest(contractName, contracts(contractName), contractsToTestDetails[index], { accounts: accounts }, testCallback, function (err, result) {
+                testRunner_1.default(contractName, contracts(contractName), contractsToTestDetails[index], { accounts: accounts }, testCallback, function (err, result) {
                     if (err) {
                         return cb(err);
                     }
