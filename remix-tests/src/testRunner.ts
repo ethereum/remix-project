@@ -73,7 +73,7 @@ function createRunList (jsonInterface) {
     return runList
 }
 
-export default function runTest (testName, testObject: any, contractDetails: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
+export function runTest(testName, testObject: any, contractDetails: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
     let runList = createRunList(testObject._jsonInterface)
 
     let passingNum: number = 0

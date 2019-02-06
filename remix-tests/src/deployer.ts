@@ -1,19 +1,20 @@
 var async = require('async')
 var remixLib = require('remix-lib')
+import Web3 from 'web3'
 
-export function deployAll (compileResult, web3, callback) {
+export function deployAll(compileResult: object, web3: Web3, callback: Function) {
     let compiledObject = {}
     let contracts = {}
-    let accounts = []
+    let accounts: string[] = []
 
     async.waterfall([
-        function getAccountList (next) {
+        function getAccountList(next: Function) {
             web3.eth.getAccounts((_err, _accounts) => {
                 accounts = _accounts
                 next()
             })
         },
-        function getContractData (next) {
+        function getContractData(next: Function) {
             for (let contractFile in compileResult) {
                 for (let contractName in compileResult[contractFile]) {
                     let contract = compileResult[contractFile][contractName]
@@ -38,8 +39,8 @@ export function deployAll (compileResult, web3, callback) {
             }
             next()
         },
-        function determineContractsToDeploy (next) {
-            let contractsToDeploy = ['Assert']
+        function determineContractsToDeploy(next: Function) {
+            let contractsToDeploy: string[] = ['Assert']
             let allContracts = Object.keys(compiledObject)
 
             for (let contractName of allContracts) {
@@ -52,7 +53,7 @@ export function deployAll (compileResult, web3, callback) {
             }
             next(null, contractsToDeploy)
         },
-        function deployContracts (contractsToDeploy, next) {
+        function deployContracts(contractsToDeploy: string[], next: Function) {
             var deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
                 deployObject.estimateGas().then((gasValue) => {
                     deployObject.send({
