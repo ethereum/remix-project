@@ -1,5 +1,5 @@
 /* eslint no-extend-native: "warn" */
-let fs = require('../src/fs')
+let fs = require('./fileSystem')
 var async = require('async')
 var path = require('path')
 let RemixCompiler = require('remix-solidity').Compiler
