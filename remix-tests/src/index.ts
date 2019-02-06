@@ -1,6 +1,6 @@
-import runTestFiles from './runTestFiles'
-import runTestSources from './runTestSources'
-import runTest from './testRunner'
+import { runTestFiles } from './runTestFiles'
+import { runTestSources } from './runTestSources'
+import { runTest } from './testRunner'
 
 module.exports = {
   runTestFiles: runTestFiles,
