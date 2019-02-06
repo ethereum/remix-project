@@ -18,7 +18,8 @@ class PluginManagerComponent {
 
   profile () {
     return {
-      name: 'plugin manager',
+      displayName: 'plugin manager',
+      name: 'pluginManager',
       methods: [],
       events: [],
       icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNzU1IDQ1M3EzNyAzOCAzNyA5MC41dC0zNyA5MC41bC00MDEgNDAwIDE1MCAxNTAtMTYwIDE2MHEtMTYzIDE2My0zODkuNSAxODYuNXQtNDExLjUtMTAwLjVsLTM2MiAzNjJoLTE4MXYtMTgxbDM2Mi0zNjJxLTEyNC0xODUtMTAwLjUtNDExLjV0MTg2LjUtMzg5LjVsMTYwLTE2MCAxNTAgMTUwIDQwMC00MDFxMzgtMzcgOTEtMzd0OTAgMzcgMzcgOTAuNS0zNyA5MC41bC00MDAgNDAxIDIzNCAyMzQgNDAxLTQwMHEzOC0zNyA5MS0zN3Q5MCAzN3oiLz48L3N2Zz4=',
@@ -45,7 +46,7 @@ class PluginManagerComponent {
     </div>
     `
     let inactiveMods = yo`
-    <div class=${css.inactivePlugins}>
+    <div id='inActivePlugs' class=${css.inactivePlugins}>
       <h3>Inactive Modules</h3>
     </div>
     `
@@ -63,21 +64,22 @@ class PluginManagerComponent {
 
     searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event) })
 
-    var modulesActive = this.store.getActives()
-    modulesActive.sort(function (a, b) {
-      var textA = a.profile.name.toUpperCase()
-      var textB = b.profile.name.toUpperCase()
-      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
-    })
+    var modulesActiveNotReq = this.store.getActives().filter(({profile}) => !profile.required)
+    this.sortObject(modulesActiveNotReq)
 
-    modulesActive.forEach((mod) => {
-      activeMods.appendChild(this.renderItem(mod.profile.name))
-    })
+    if (modulesActiveNotReq.length > 0) {
+      modulesActiveNotReq.forEach((mod) => {
+        activeMods.appendChild(this.renderItem(mod.profile.name))
+      })
+      activeMods.style.display = 'block'
+    } else {
+      activeMods.style.display = 'none'
+    }
 
-    var modulesAll = this.store.getAll()
-    modulesAll.sort()
-    modulesAll.forEach((mod) => {
-      if (!modulesActive.includes(mod)) {
+    var modulesAllNotReq = this.store.getAll().filter(({profile}) => !profile.required)
+    this.sortObject(modulesAllNotReq)
+    modulesAllNotReq.forEach((mod) => {
+      if (!modulesActiveNotReq.includes(mod)) {
         inactiveMods.appendChild(this.renderItem(mod.profile.name))
       }
     })
@@ -87,11 +89,20 @@ class PluginManagerComponent {
     return rootView
   }
 
+  sortObject (obj) {
+    obj.sort((a, b) => {
+      var textA = a.profile.name.toUpperCase()
+      var textB = b.profile.name.toUpperCase()
+      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
+    })
+  }
+
   renderItem (item) {
     let ctrBtns
 
     const mod = this.store.getOne(item)
     if (!mod) return
+    let displayName = (mod.profile.displayName) ? mod.profile.displayName : mod.profile.name
     let action = () => {
       if (this.store.isActive(item)) {
         this.appManager.deactivateOne(item)
@@ -100,13 +111,13 @@ class PluginManagerComponent {
       }
     }
 
-    ctrBtns = yo`<div id='${item}Activation'>
+    ctrBtns = yo`<div id='${mod.profile.name}Activation'>
         <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
         </div>`
 
     return yo`
-    <div id=${item} title="${item}" class=${css.plugin} >
-      <h3>${mod.profile.name}</h3>
+    <div id=${mod.profile.name} title="${item}" class=${css.plugin} >
+      <h3>${displayName}</h3>
       ${mod.profile.description}
       ${ctrBtns}
     </div>
@@ -173,5 +184,8 @@ const css = csjs`
   }
   .plugins_settings input {
     margin: 10px;
+  }
+  .hideIt {
+    display: none;
   }
 `
