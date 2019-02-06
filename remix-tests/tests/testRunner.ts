@@ -3,8 +3,8 @@ import Web3 from 'web3'
 import * as assert from 'assert'
 import { Provider } from 'remix-simulator'
 
-let Compiler = require('../src/compiler.js')
-let Deployer = require('../src/deployer.js')
+let Compiler = require('../dist/compiler.js')
+let Deployer = require('../dist/deployer.js')
 import runTest, { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/testRunner.js'
 
 function compileAndDeploy(filename: string, callback: Function) {
