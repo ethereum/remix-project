@@ -4,8 +4,8 @@ import fs = require('./fs')
 import runTest from './testRunner'
 require('colors')
 
-import Compiler = require('./compiler.js')
-import Deployer = require('./deployer.js')
+import Compiler = require('./compiler')
+import Deployer = require('./deployer')
 
 function runTestFiles(filepath, isDirectory, web3, opts) {
     opts = opts || {}
