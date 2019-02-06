@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
-require('../src/run.js');
+require('../dist/run.js');
 

@@ -1,13 +1,13 @@
 import async = require('async')
 import path = require('path')
-import fs = require('./fs')
+import fs from './fileSystem'
 import runTest from './testRunner'
 require('colors')
 
 import Compiler = require('./compiler')
 import Deployer = require('./deployer')
 
-function runTestFiles(filepath, isDirectory, web3, opts) {
+function runTestFiles(filepath, isDirectory, web3, opts = {}) {
     opts = opts || {}
     const { Signale } = require('signale')
     // signale configuration
@@ -31,7 +31,7 @@ function runTestFiles(filepath, isDirectory, web3, opts) {
         }
     }
     const signale = new Signale(options)
-    let accounts = opts.accounts || null
+    let accounts = opts['accounts'] || null
     async.waterfall([
         function getAccountList (next) {
             if (accounts) return next(null)
