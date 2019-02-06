@@ -1,7 +1,9 @@
+#!/usr/bin/env ts-node
+
 const commander = require('commander')
-const Web3 = require('web3')
-import runTestFiles from './runTestFiles'
-import fs = require('./fileSystem')
+import Web3 from 'web3'
+import { runTestFiles } from './runTestFiles'
+import fs from './fileSystem'
 const Provider = require('remix-simulator').Provider
 import Log = require('./logger')
 const logger = new Log()
