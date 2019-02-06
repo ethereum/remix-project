@@ -1,13 +1,13 @@
 import async = require('async')
 import path = require('path')
 import fs from './fileSystem'
-import runTest from './testRunner'
+import { runTest } from './testRunner'
 require('colors')
 
 import Compiler = require('./compiler')
 import Deployer = require('./deployer')
 
-function runTestFiles(filepath, isDirectory, web3, opts = {}) {
+export function runTestFiles(filepath, isDirectory, web3, opts = {}) {
     opts = opts || {}
     const { Signale } = require('signale')
     // signale configuration
@@ -129,5 +129,3 @@ function runTestFiles(filepath, isDirectory, web3, opts = {}) {
     ], function () {
     })
 }
-
-export = runTestFiles;

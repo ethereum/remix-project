@@ -3,9 +3,9 @@ import Web3 from 'web3'
 import * as assert from 'assert'
 import { Provider } from 'remix-simulator'
 
-let Compiler = require('../dist/compiler.js')
-let Deployer = require('../dist/deployer.js')
-import runTest, { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/testRunner.js'
+import { compileFileOrFiles } from '../dist/compiler'
+import { deployAll } from '../dist/deployer'
+import { runTest, ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/testRunner'
 
 function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
@@ -19,13 +19,13 @@ function compileAndDeploy(filename: string, callback: Function) {
         next(_err)
       })
     },
-    function compile(next: Function) {
-      Compiler.compileFileOrFiles(filename, false, { accounts }, next)
+    function compile(next: Function): void {
+      compileFileOrFiles(filename, false, { accounts }, next)
     },
     function deployAllContracts(compilationResult: object, next: Function): void {
       try {
         compilationData = compilationResult
-        Deployer.deployAll(compilationResult, web3, next)
+        deployAll(compilationResult, web3, next)
       } catch (e) {
         throw e
       }
@@ -39,7 +39,7 @@ function compileAndDeploy(filename: string, callback: Function) {
 describe('testRunner', () => {
   describe('#runTest', () => {
     describe('test with beforeAll', () => {
-      let filename = 'tests/examples_1/simple_storage_test.sol'
+      let filename: string = 'tests/examples_1/simple_storage_test.sol'
       let tests: any[] = [], results: ResultsInterface;
 
       before((done) => {
