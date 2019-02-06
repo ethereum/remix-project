@@ -1,9 +1,8 @@
 /* eslint no-extend-native: "warn" */
-let fs = require('./fileSystem')
+import fs from './fileSystem'
 var async = require('async')
 var path = require('path')
 let RemixCompiler = require('remix-solidity').Compiler
-
 
 function regexIndexOf (inputString, regex, startpos = 0) {
     var indexOf = inputString.substring(startpos).search(regex)
@@ -26,8 +25,8 @@ var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? na
 var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
 
 // TODO: replace this with remix's own compiler code
-export function compileFileOrFiles (filename, isDirectory, opts, cb) {
-    let compiler
+export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
+    let compiler: any
     let accounts = opts.accounts || []
     const sources = {
         'tests.sol': { content: require('../sol/tests.sol.js') },
@@ -43,7 +42,7 @@ export function compileFileOrFiles (filename, isDirectory, opts, cb) {
     // We should only walk through directory if a directory name is passed
     try {
         // walkSync only if it is a directory
-        fs.walkSync(filepath, foundpath => {
+        fs.walkSync(filepath, (foundpath: string) => {
             // only process .sol files
             if (foundpath.split('.').pop() === 'sol') {
                 let c = fs.readFileSync(foundpath).toString()
@@ -59,21 +58,21 @@ export function compileFileOrFiles (filename, isDirectory, opts, cb) {
         throw e
     } finally {
         async.waterfall([
-            function loadCompiler (next) {
+            function loadCompiler(next: Function) {
                 compiler = new RemixCompiler()
                 compiler.onInternalCompilerLoaded()
                 // compiler.event.register('compilerLoaded', this, function (version) {
                 next()
                 // });
             },
-            function doCompilation (next) {
+            function doCompilation(next: Function) {
                 // @ts-ignore
                 compiler.event.register('compilationFinished', this, function (success, data, source) {
                     next(null, data)
                 })
                 compiler.compile(sources, filepath)
             }
-        ], function (err, result) {
+        ], function (err: Error | null | undefined, result) {
             let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
             if (errors.length > 0) {
                 if (!isBrowser) require('signale').fatal(errors)
@@ -84,7 +83,7 @@ export function compileFileOrFiles (filename, isDirectory, opts, cb) {
     }
 }
 
-export function compileContractSources (sources, importFileCb, opts, cb) {
+export function compileContractSources(sources, importFileCb, opts, cb) {
     let compiler, filepath
     let accounts = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
@@ -102,21 +101,21 @@ export function compileContractSources (sources, importFileCb, opts, cb) {
     }
 
     async.waterfall([
-        function loadCompiler (next) {
+        function loadCompiler (next: Function) {
             compiler = new RemixCompiler(importFileCb)
             compiler.onInternalCompilerLoaded()
             // compiler.event.register('compilerLoaded', this, function (version) {
             next()
             // });
         },
-        function doCompilation (next) {
+        function doCompilation (next: Function) {
             // @ts-ignore
             compiler.event.register('compilationFinished', this, function (success, data, source) {
                 next(null, data)
             })
             compiler.compile(sources, filepath)
         }
-    ], function (err, result) {
+    ], function (err: Error | null | undefined , result) {
         let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
             if (!isBrowser) require('signale').fatal(errors)

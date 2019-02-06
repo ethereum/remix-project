@@ -1,9 +1,9 @@
 import async from 'async'
 require('colors')
 
-import Compiler = require('./compiler.js')
-import Deployer = require('./deployer.js')
-import runTest from './testRunner'
+import { compileContractSources } from './compiler'
+import { deployAll } from './deployer'
+import { runTest } from './testRunner'
 
 import Web3 = require('web3')
 import Provider from 'remix-simulator'
@@ -21,7 +21,7 @@ var createWeb3Provider = function () {
     return web3
 }
 
-function runTestSources(contractSources, testCallback, resultCallback, finalCallback, importFileCb, opts) {
+export function runTestSources(contractSources, testCallback, resultCallback, finalCallback, importFileCb, opts) {
     opts = opts || {}
     let web3 = opts.web3 || createWeb3Provider()
     let accounts = opts.accounts || null
@@ -34,10 +34,10 @@ function runTestSources(contractSources, testCallback, resultCallback, finalCall
             })
         },
         function compile (next) {
-            Compiler.compileContractSources(contractSources, importFileCb, opts, next)
+            compileContractSources(contractSources, importFileCb, opts, next)
         },
         function deployAllContracts (compilationResult, next) {
-            Deployer.deployAll(compilationResult, web3, function (err, contracts) {
+            deployAll(compilationResult, web3, function (err, contracts) {
                 if (err) {
                     next(err)
                 }
@@ -115,4 +115,3 @@ function runTestSources(contractSources, testCallback, resultCallback, finalCall
         }
     ], finalCallback)
 }
-export = runTestSources;
