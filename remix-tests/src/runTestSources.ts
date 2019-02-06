@@ -34,7 +34,7 @@ function runTestSources(contractSources, testCallback, resultCallback, finalCall
             })
         },
         function compile (next) {
-            Compiler.compileContractSources(contractSources, importFileCb, next)
+            Compiler.compileContractSources(contractSources, importFileCb, opts, next)
         },
         function deployAllContracts (compilationResult, next) {
             Deployer.deployAll(compilationResult, web3, function (err, contracts) {

@@ -3,7 +3,7 @@ const Web3 = require('web3')
 const RemixTests = require('./index.js')
 const fs = require('fs')
 const Provider = require('remix-simulator').Provider
-const { Log } = require('./logger.js')
+const { Log } = require('./logger')
 const logger = new Log()
 const log = logger.logger
 require('colors')
