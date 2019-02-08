@@ -1,17 +1,15 @@
-#!/usr/bin/env ts-node
-
-const commander = require('commander')
+import commander from 'commander'
 import Web3 from 'web3'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
 const Provider = require('remix-simulator').Provider
-import Log = require('./logger')
+import Log from './logger'
 const logger = new Log()
 const log = logger.logger
-require('colors')
+import colors from 'colors'
 
 // parse verbosity
-function mapVerbosity (v) {
+function mapVerbosity (v: number) {
     const levels = {
         0: 'error',
         1: 'warn',
@@ -39,7 +37,7 @@ commander
     .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
     .action(function (filename) {
         // Console message
-        console.log(('\n\t👁 :: Running remix-tests - Unit testing for solidity :: 👁\t\n'),'color: white')
+        console.log(colors.white('\n\t👁\t:: Running remix-tests - Unit testing for solidity ::\t👁\n'))
         // set logger verbosity
         if (commander.verbose) {
             logger.setVerbosity(commander.verbose)
