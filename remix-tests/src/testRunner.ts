@@ -2,7 +2,7 @@ import async from 'async'
 import * as changeCase from 'change-case'
 import Web3 from 'web3'
 
-interface CbReturnInterface {
+export interface TestResultInterface {
   type: string,
   value: any,
   time?: number,
@@ -10,13 +10,19 @@ interface CbReturnInterface {
   errMsg?: string
   filename?: string
 }
+interface RunListInterface {
+  name: string,
+  type: string,
+  constant: boolean,
+  signature?: any
+}
 export interface ResultsInterface {
     passingNum: number,
     failureNum: number,
     timePassed: number
 }
 export interface TestCbInterface {
-  (error: Error | null | undefined, result?: CbReturnInterface) : void;
+  (error: Error | null | undefined, result: TestResultInterface) : void;
 }
 export interface ResultCbInterface {
   (error: Error | null | undefined, result: ResultsInterface) : void;
@@ -47,27 +53,27 @@ function getTestFunctions (jsonInterface) {
     return jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
 }
 
-function createRunList (jsonInterface) {
+function createRunList(jsonInterface): RunListInterface[] {
     let availableFunctions = getAvailableFunctions(jsonInterface)
     let testFunctions = getTestFunctions(jsonInterface)
-    let runList: any[] = []
+    let runList: RunListInterface[] = []
 
     if (availableFunctions.indexOf('beforeAll') >= 0) {
-        runList.push({name: 'beforeAll', type: 'internal', constant: false})
+        runList.push({ name: 'beforeAll', type: 'internal', constant: false })
     }
 
     for (let func of testFunctions) {
         if (availableFunctions.indexOf('beforeEach') >= 0) {
-            runList.push({name: 'beforeEach', type: 'internal', constant: false})
+            runList.push({ name: 'beforeEach', type: 'internal', constant: false })
         }
-        runList.push({name: func.name, signature: func.signature, type: 'test', constant: func.constant})
+        runList.push({ name: func.name, signature: func.signature, type: 'test', constant: func.constant })
         if (availableFunctions.indexOf('afterEach') >= 0) {
-            runList.push({name: 'afterEach', type: 'internal', constant: false})
+            runList.push({ name: 'afterEach', type: 'internal', constant: false })
         }
     }
 
     if (availableFunctions.indexOf('afterAll') >= 0) {
-        runList.push({name: 'afterAll', type: 'internal', constant: false})
+        runList.push({ name: 'afterAll', type: 'internal', constant: false })
     }
 
     return runList
@@ -90,7 +96,7 @@ export function runTest(testName, testObject: any, contractDetails: any, opts: a
         signale.warn('e.g: the following code won\'t work in the current context:')
         signale.warn('TestsAccounts.getAccount(' + opts.accounts.length + ')')
     }
-    const resp: CbReturnInterface = {
+    const resp: TestResultInterface = {
       type: 'contract',
       value: testName,
       filename: testObject.filename
@@ -113,7 +119,7 @@ export function runTest(testName, testObject: any, contractDetails: any, opts: a
             method.call(sendParams).then((result) => {
                 let time = Math.ceil((Date.now() - startTime) / 1000.0)
                 if (result) {
-                    const resp: CbReturnInterface = {
+                    const resp: TestResultInterface = {
                       type: 'testPass',
                       value: changeCase.sentenceCase(func.name),
                       time: time,
@@ -123,7 +129,7 @@ export function runTest(testName, testObject: any, contractDetails: any, opts: a
                     passingNum += 1
                     timePassed += time
                 } else {
-                    const resp: CbReturnInterface = {
+                    const resp: TestResultInterface = {
                       type: 'testFailure',
                       value: changeCase.sentenceCase(func.name),
                       time: time,
@@ -147,7 +153,7 @@ export function runTest(testName, testObject: any, contractDetails: any, opts: a
                         if (event.raw.topics.indexOf(topic) >= 0) {
                             var testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
                             if (!testEvent[0]) {
-                                const resp: CbReturnInterface = {
+                                const resp: TestResultInterface = {
                                   type: 'testFailure',
                                   value: changeCase.sentenceCase(func.name),
                                   time: time,
@@ -163,7 +169,7 @@ export function runTest(testName, testObject: any, contractDetails: any, opts: a
                     }
 
                     if (testPassed) {
-                        const resp: CbReturnInterface = {
+                        const resp: TestResultInterface = {
                           type: 'testPass',
                           value: changeCase.sentenceCase(func.name),
                           time: time,
@@ -175,8 +181,7 @@ export function runTest(testName, testObject: any, contractDetails: any, opts: a
 
                     return next()
                 } catch (err) {
-                    console.log('error!')
-                    console.dir(err)
+                    console.error(err)
                     return next(err)
                 }
             }).on('error', function (err: Error | null | undefined) {
