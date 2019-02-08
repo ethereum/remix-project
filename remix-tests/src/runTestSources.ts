@@ -37,7 +37,7 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
             compileContractSources(contractSources, importFileCb, opts, next)
         },
         function deployAllContracts (compilationResult, next) {
-            deployAll(compilationResult, web3, function (err, contracts) {
+            deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
                     next(err)
                 }
@@ -58,10 +58,9 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
                     contractsToTest.push(contractName)
                 })
             }
-
             next(null, contractsToTest, contractsToTestDetails, contracts)
         },
-        function runTests (contractsToTest, contractsToTestDetails, contracts, next) {
+        function runTests(contractsToTest, contractsToTestDetails, contracts, next) {
             let totalPassing = 0
             let totalFailing = 0
             let totalTime = 0
