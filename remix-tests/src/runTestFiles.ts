@@ -1,13 +1,13 @@
-import async = require('async')
-import path = require('path')
+import async from 'async'
 import fs from './fileSystem'
-import { runTest } from './testRunner'
-require('colors')
+import { runTest, TestResultInterface, ResultsInterface } from './testRunner'
+import colors from 'colors'
+import Web3 from 'web3'
 
-import Compiler = require('./compiler')
-import Deployer = require('./deployer')
+import { compileFileOrFiles } from './compiler'
+import { deployAll } from './deployer'
 
-export function runTestFiles(filepath, isDirectory, web3, opts = {}) {
+export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3, opts?: object) {
     opts = opts || {}
     const { Signale } = require('signale')
     // signale configuration
@@ -33,38 +33,42 @@ export function runTestFiles(filepath, isDirectory, web3, opts = {}) {
     const signale = new Signale(options)
     let accounts = opts['accounts'] || null
     async.waterfall([
-        function getAccountList (next) {
+        function getAccountList (next: Function) {
             if (accounts) return next(null)
-            web3.eth.getAccounts((_err, _accounts) => {
+            web3.eth.getAccounts((_err: Error | null | undefined, _accounts) => {
                 accounts = _accounts
                 next(null)
             })
         },
-        function compile (next) {
-            Compiler.compileFileOrFiles(filepath, isDirectory, { accounts }, next)
+        function compile(next: Function) {
+            compileFileOrFiles(filepath, isDirectory, { accounts }, next)
         },
-        function deployAllContracts (compilationResult, next) {
-            Deployer.deployAll(compilationResult, web3, function (err, contracts) {
+        function deployAllContracts (compilationResult, next: Function) {
+            deployAll(compilationResult, web3, (err, contracts) => {
                 if (err) {
                     next(err)
                 }
                 next(null, compilationResult, contracts)
             })
         },
-        function determineTestContractsToRun (compilationResult, contracts, next) {
+        function determineTestContractsToRun (compilationResult, contracts, next: Function) {
             let contractsToTest: any[] = []
             let contractsToTestDetails: any[] = []
-            const gatherContractsFrom = (filename) => {
+            const gatherContractsFrom = function(filename: string) {
                 if (filename.indexOf('_test.sol') < 0) {
                     return
                 }
-                Object.keys(compilationResult[path.basename(filename)]).forEach(contractName => {
-                    contractsToTest.push(contractName)
-                    contractsToTestDetails.push(compilationResult[path.basename(filename)][contractName])
-                })
+                try {
+                  Object.keys(compilationResult[filename]).forEach(contractName => {
+                      contractsToTest.push(contractName)
+                      contractsToTestDetails.push(compilationResult[filename][contractName])
+                  })
+                } catch (e) {
+                  console.error(e)
+                }
             }
             if (isDirectory) {
-                fs.walkSync(filepath, foundpath => {
+                fs.walkSync(filepath, (foundpath: string) => {
                     gatherContractsFrom(foundpath)
                 })
             } else {
@@ -72,13 +76,14 @@ export function runTestFiles(filepath, isDirectory, web3, opts = {}) {
             }
             next(null, contractsToTest, contractsToTestDetails, contracts)
         },
-        function runTests (contractsToTest, contractsToTestDetails, contracts, next) {
-            let totalPassing = 0
-            let totalFailing = 0
-            let totalTime = 0
+        function runTests(contractsToTest, contractsToTestDetails, contracts, next: Function) {
+            let totalPassing: number = 0
+            let totalFailing: number = 0
+            let totalTime: number = 0
             let errors: any[] = []
 
-            var testCallback = function (result) {
+            var _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
+                if(err) throw err;
                 if (result.type === 'contract') {
                     signale.name(result.value.white)
                 } else if (result.type === 'testPass') {
@@ -88,20 +93,25 @@ export function runTestFiles(filepath, isDirectory, web3, opts = {}) {
                     errors.push(result)
                 }
             }
-            var resultsCallback = function (_err, result, cb) {
+            var _resultsCallback = (_err: Error | null | undefined, result: ResultsInterface, cb) => {
                 totalPassing += result.passingNum
                 totalFailing += result.failureNum
                 totalTime += result.timePassed
                 cb()
             }
 
-            async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-                runTest(contractName, contracts(contractName), contractsToTestDetails[index], { accounts }, testCallback, (err, result) => {
+            async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
+              try {
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
                     if (err) {
+                      console.log(err)
                         return cb(err)
                     }
-                    resultsCallback(null, result, cb)
+                    _resultsCallback(null, result, cb)
                 })
+              } catch(e) {
+                console.error(e)
+              }
             }, function (err) {
                 if (err) {
                     return next(err)
@@ -109,23 +119,23 @@ export function runTestFiles(filepath, isDirectory, web3, opts = {}) {
 
                 console.log('\n')
                 if (totalPassing > 0) {
-                    console.log(('%c  ' + totalPassing + ' passing ') + ('%c(' + totalTime + 's)'),'color: green','color: grey')
+                    console.log(colors.green(totalPassing + ' passing ') + colors.grey('(' + totalTime + 's)'))
                 }
                 if (totalFailing > 0) {
-                    console.log(('%c  ' + totalFailing + ' failing'),'color: red')
+                    console.log(colors.red(totalFailing + ' failing'))
                 }
                 console.log('')
 
                 errors.forEach((error, index) => {
                     console.log('  ' + (index + 1) + ') ' + error.context + ' ' + error.value)
                     console.log('')
-                    console.log(('%c\t error: ' + error.errMsg),'color: red')
+                    console.log(colors.red('\t error: ' + error.errMsg))
                 })
                 console.log('')
 
                 next()
             })
         }
-    ], function () {
+    ], () => {
     })
 }
