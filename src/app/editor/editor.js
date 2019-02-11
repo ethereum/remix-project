@@ -75,26 +75,6 @@ document.head.appendChild(yo`
 `)
 
 class Editor {
-  /*
-  //Private attributs
-  _components
-  _deps
-  */
-
-  /*
-  // Public attributs
-  editor
-  event
-  sessions
-  modes
-  sourceAnnotations
-  readOnlySessions
-  previousInput
-  saveTimeout
-  sourceHighlighters
-  currentSession
-  emptySession
-  */
 
   constructor (opts = {}, localRegistry) {
     // Dependancies
