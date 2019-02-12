@@ -1,7 +1,5 @@
 'use strict'
 
-var $ = require('jquery')
-var yo = require('yo-yo')
 var EventEmitter = require('events')
 var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
@@ -14,7 +12,7 @@ var CompilerImport = require('../compiler/compiler-imports')
 
 class FileManager {
   constructor (localRegistry) {
-    this.tabbedFiles = {}
+    this.openedFiles = {} // list all opened files
     this.event = new EventManager()
     this.nodeEvent = new EventEmitter()
     this._components = {}
@@ -64,18 +62,18 @@ class FileManager {
     if (!isFolder) {
       self._deps.config.set('currentFile', '')
       self._deps.editor.discard(oldName)
-      if (this.tabbedFiles[oldName]) {
-        delete this.tabbedFiles[oldName]
-        this.tabbedFiles[newName] = newName
+      if (this.openedFiles[oldName]) {
+        delete this.openedFiles[oldName]
+        this.openedFiles[newName] = newName
       }
       this.switchFile(newName)
     } else {
       var newFocus
-      for (var k in this.tabbedFiles) {
+      for (var k in this.openedFiles) {
         if (k.indexOf(oldName + '/') === 0) {
           var newAbsolutePath = k.replace(oldName, newName)
-          this.tabbedFiles[newAbsolutePath] = newAbsolutePath
-          delete this.tabbedFiles[k]
+          this.openedFiles[newAbsolutePath] = newAbsolutePath
+          delete this.openedFiles[k]
           if (self._deps.config.get('currentFile') === k) {
             newFocus = newAbsolutePath
           }
@@ -85,7 +83,7 @@ class FileManager {
         this.switchFile(newFocus)
       }
     }
-    this.refreshTabs()
+    this.event.trigger('fileRenamed', [oldName, newName])
   }
 
   currentFileProvider () {
@@ -99,6 +97,18 @@ class FileManager {
   currentFile () {
     var self = this
     return self._deps.config.get('currentFile')
+  }
+
+  closeFile (name) {
+    var self = this
+    delete self.openedFiles[name]
+    if (Object.keys(self.openedFiles).length) {
+      self.switchFile(Object.keys(self.openedFiles)[0])
+    } else {
+      self._deps.editor.displayEmptyReadOnlySession()
+      self._deps.config.set('currentFile', '')
+    }
+    this.event.trigger('fileClosed', [name])
   }
 
   currentPath () {
@@ -145,7 +155,7 @@ class FileManager {
   }
 
   removeTabsOf (provider) {
-    for (var tab in this.tabbedFiles) {
+    for (var tab in this.openedFiles) {
       if (this.fileProviderOf(tab).type === provider.type) {
         this.fileRemovedEvent(tab)
       }
@@ -154,34 +164,14 @@ class FileManager {
 
   fileRemovedEvent (path) {
     var self = this
-    if (!this.tabbedFiles[path]) return
+    if (!this.openedFiles[path]) return
     if (path === self._deps.config.get('currentFile')) {
       self._deps.config.set('currentFile', '')
     }
     self._deps.editor.discard(path)
-    delete this.tabbedFiles[path]
-    this.refreshTabs()
+    delete this.openedFiles[path]
+    this.event.trigger('fileRemoved', [path])
     this.switchFile()
-  }
-
-  // Display files that have already been selected
-  refreshTabs (newfile) {
-    if (newfile) {
-      this.tabbedFiles[newfile] = newfile
-    }
-
-    var $filesEl = $('#files')
-    $filesEl.find('.file').remove()
-
-    for (var file in this.tabbedFiles) {
-      $filesEl.append(yo`<li class="file"><span class="name">${file}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
-    }
-
-    var active = $('#files .file').filter(function () {
-      return $(this).find('.name').text() === newfile
-    })
-    if (active.length) active.addClass('active')
-    $('#output').toggle(active)
   }
 
   switchFile (file) {
@@ -203,7 +193,7 @@ class FileManager {
     function _switchFile (file) {
       self.saveCurrentFile()
       self._deps.config.set('currentFile', file)
-      self.refreshTabs(file)
+      self.openedFiles[file] = file
       self.fileProviderOf(file).get(file, (error, content) => {
         if (error) {
           console.log(error)
