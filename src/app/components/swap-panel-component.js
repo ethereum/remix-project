@@ -22,10 +22,10 @@ class SwapPanelComponent {
     })
 
     this.store.event.on('activate', (name) => {
-      let item = this.store.get(name)
-      if (((item.profile.prefferedLocation === this.name) || (!item.profile.prefferedLocation && opt.default)) &&
-        item.profile.icon && item.api.render && typeof item.api.render === 'function') {
-        this.add(name, item.api.render())
+      const { profile, api } = this.store.get(name)
+      if (((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) &&
+        profile.icon && api.render && typeof api.render === 'function') {
+        this.add(name, api.render())
       }
     })
 
