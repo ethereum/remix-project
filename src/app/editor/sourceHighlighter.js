@@ -1,20 +1,19 @@
 'use strict'
-var csjs = require('csjs-inject')
-var globlalRegistry = require('../../global/registry')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+const csjs = require('csjs-inject')
+const globlalRegistry = require('../../global/registry')
+const styleGuide = require('../ui/styles-guide/theme-chooser')
+const styles = styleGuide.chooser()
 
 class SourceHighlighter {
   constructor (localRegistry) {
-    const self = this
-    self._components = {}
-    self._components.registry = localRegistry || globlalRegistry
+    this._components = {}
+    this._components.registry = localRegistry || globlalRegistry
     // dependencies
-    self._deps = {
-      editor: self._components.registry.get('editor').api,
-      config: self._components.registry.get('config').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      compilerArtefacts: self._components.registry.get('compilersartefacts').api
+    this._deps = {
+      editor: this._components.registry.get('editor').api,
+      config: this._components.registry.get('config').api,
+      fileManager: this._components.registry.get('filemanager').api,
+      compilerArtefacts: this._components.registry.get('compilersartefacts').api
     }
     this.statementMarker = null
     this.fullLineMarker = null
@@ -26,7 +25,7 @@ class SourceHighlighter {
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
     let lastCompilationResult = this._deps.compilerArtefacts['__last']
     if (location && location.file !== undefined && lastCompilationResult) {
-      var path = lastCompilationResult.getSourceName(location.file)
+      const path = lastCompilationResult.getSourceName(location.file)
       if (path) {
         this.currentSourceLocationFromfileName(lineColumnPos, path)
       }
@@ -45,7 +44,7 @@ class SourceHighlighter {
         this._deps.fileManager.switchFile(this.source)
       }
 
-      var css = csjs`
+      const css = csjs`
         .highlightcode {
           position:absolute;
           z-index:20;

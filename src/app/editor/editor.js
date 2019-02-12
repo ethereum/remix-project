@@ -1,24 +1,24 @@
 'use strict'
-var EventManager = require('../../lib/events')
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-var ace = require('brace')
+const EventManager = require('../../lib/events')
+const yo = require('yo-yo')
+const csjs = require('csjs-inject')
+const ace = require('brace')
 
 require('brace/theme/tomorrow_night_blue')
 
-var globalRegistry = require('../../global/registry')
+const globalRegistry = require('../../global/registry')
 const SourceHighlighters = require('./SourceHighlighters')
 
-var Range = ace.acequire('ace/range').Range
+const Range = ace.acequire('ace/range').Range
 require('brace/ext/language_tools')
 require('brace/ext/searchbox')
-var langTools = ace.acequire('ace/ext/language_tools')
+const langTools = ace.acequire('ace/ext/language_tools')
 require('ace-mode-solidity/build/remix-ide/mode-solidity')
 require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+const styleGuide = require('../ui/styles-guide/theme-chooser')
+const styles = styleGuide.chooser()
 
 function setTheme (cb) {
   if (styles.appProperties.aceTheme) {
@@ -30,7 +30,7 @@ setTheme((path, theme) => {
   require('brace/theme/tomorrow_night_blue')
 })
 
-var css = csjs`
+const css = csjs`
   .ace-editor {
     background-color  : ${styles.editor.backgroundColor_Editor};
     width     : 100%;
@@ -49,113 +49,176 @@ document.head.appendChild(yo`
     .highlightreference {
       position:absolute;
       z-index:20;
-      background-color: ${styles.editor.backgroundColor_Editor_Context_Highlights};
+      background-color: ${
+        styles.editor.backgroundColor_Editor_Context_Highlights
+      };
       opacity: 0.7
     }
 
     .highlightreferenceline {
       position:absolute;
       z-index:20;
-      background-color: ${styles.editor.backgroundColor_Editor_Context_Highlights};
+      background-color: ${
+        styles.editor.backgroundColor_Editor_Context_Highlights
+      };
       opacity: 0.7
     }
 
     .highlightcode {
       position:absolute;
       z-index:20;
-      background-color: ${styles.editor.backgroundColor_Editor_Context_Error_Highlights};
+      background-color: ${
+        styles.editor.backgroundColor_Editor_Context_Error_Highlights
+      };
      }
   </style>
 `)
 
-function Editor (opts = {}, localRegistry) {
-  var self = this
-  var el = yo`<div id="input"></div>`
-  var editor = ace.edit(el)
-  if (styles.appProperties.aceTheme) {
-    editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
-  }
-  self._components = {}
-  self._components.registry = localRegistry || globalRegistry
-  self._deps = {
-    fileManager: self._components.registry.get('filemanager').api,
-    config: self._components.registry.get('config').api
-  }
+class Editor {
 
-  ace.acequire('ace/ext/language_tools')
-  editor.setOptions({
-    enableBasicAutocompletion: true,
-    enableLiveAutocompletion: true
-  })
-  var flowCompleter = {
-    getCompletions: function (editor, session, pos, prefix, callback) {
-      // @TODO add here other propositions
+  constructor (opts = {}, localRegistry) {
+    // Dependancies
+    this._components = {}
+    this._components.registry = localRegistry || globalRegistry
+    this._deps = {
+      fileManager: this._components.registry.get('filemanager').api,
+      config: this._components.registry.get('config').api
     }
-  }
-  langTools.addCompleter(flowCompleter)
-  el.className += ' ' + css['ace-editor']
-  el.editor = editor // required to access the editor during tests
-  self.render = function () { return el }
-  var event = new EventManager()
-  self.event = event
-  var sessions = {}
-  var sourceAnnotations = []
-  var readOnlySessions = {}
-  var currentSession
 
-  var emptySession = createSession('')
-  var modes = {
-    'sol': 'ace/mode/solidity',
-    'js': 'ace/mode/javascript',
-    'py': 'ace/mode/python',
-    'vy': 'ace/mode/python',
-    'txt': 'ace/mode/text',
-    'json': 'ace/mode/json',
-    'abi': 'ace/mode/json'
-  }
-
-  editor.on('guttermousedown', function (e) {
-    var target = e.domEvent.target
-    if (target.className.indexOf('ace_gutter-cell') === -1) {
-      return
+    // Init
+    this.event = new EventManager()
+    this.sessions = {}
+    this.sourceAnnotations = []
+    this.readOnlySessions = {}
+    this.previousInput = ''
+    this.saveTimeout = null
+    this.sourceHighlighters = new SourceHighlighters()
+    this.emptySession = this._createSession('')
+    this.modes = {
+      sol: 'ace/mode/solidity',
+      js: 'ace/mode/javascript',
+      py: 'ace/mode/python',
+      vy: 'ace/mode/python',
+      txt: 'ace/mode/text',
+      json: 'ace/mode/json',
+      abi: 'ace/mode/json'
     }
-    var row = e.getDocumentPosition().row
-    var breakpoints = e.editor.session.getBreakpoints()
-    for (var k in breakpoints) {
-      if (k === row.toString()) {
-        event.trigger('breakpointCleared', [currentSession, row])
-        e.editor.session.clearBreakpoint(row)
-        e.stop()
-        return
+
+    // Editor Setup
+    const el = yo`<div id="input"></div>`
+    this.editor = ace.edit(el)
+    ace.acequire('ace/ext/language_tools')
+
+    // Unmap ctrl-t & ctrl-f
+    this.editor.commands.bindKeys({ 'ctrl-t': null })
+    this.editor.setShowPrintMargin(false)
+    this.editor.resize(true)
+
+    if (styles.appProperties.aceTheme) {
+      this.editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
+    }
+
+    this.editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true
+    })
+
+    el.className += ' ' + css['ace-editor']
+    el.editor = this.editor // required to access the editor during tests
+    this.render = () => el
+
+    // Completer for editor
+    const flowCompleter = {
+      getCompletions: (editor, session, pos, prefix, callback) => {
+        // @TODO add here other propositions
       }
     }
-    self.setBreakpoint(row)
-    event.trigger('breakpointAdded', [currentSession, row])
-    e.stop()
-  })
+    langTools.addCompleter(flowCompleter)
 
-  this.displayEmptyReadOnlySession = function () {
-    currentSession = null
-    editor.setSession(emptySession)
-    editor.setReadOnly(true)
+    // EVENTS LISTENERS
+
+    // Gutter Mouse down
+    this.editor.on('guttermousedown', e => {
+      const target = e.domEvent.target
+      if (target.className.indexOf('ace_gutter-cell') === -1) {
+        return
+      }
+      const row = e.getDocumentPosition().row
+      const breakpoints = e.editor.session.getBreakpoints()
+      for (const k in breakpoints) {
+        if (k === row.toString()) {
+          this.event.trigger('breakpointCleared', [this.currentSession, row])
+          e.editor.session.clearBreakpoint(row)
+          e.stop()
+          return
+        }
+      }
+      this.setBreakpoint(row)
+      this.event.trigger('breakpointAdded', [this.currentSession, row])
+      e.stop()
+    })
+
+    // Do setup on initialisation here
+    this.editor.on('changeSession', () => {
+      this._onChange()
+      this.event.trigger('sessionSwitched', [])
+
+      this.editor.getSession().on('change', () => {
+        this._onChange()
+        this.event.trigger('contentChanged', [])
+      })
+    })
   }
 
-  this.setBreakpoint = function (row, css) {
-    editor.session.setBreakpoint(row, css)
-  }
-
-  this.editorFontSize = function (incr) {
-    editor.setFontSize(editor.getFontSize() + incr)
-  }
-
-  this.setText = function (text) {
-    if (currentSession && sessions[currentSession]) {
-      sessions[currentSession].setValue(text)
+  _onChange () {
+    const currentFile = this._deps.config.get('currentFile')
+    if (!currentFile) {
+      return
     }
+    const input = this.get(currentFile)
+    if (!input) {
+      return
+    }
+    // if there's no change, don't do anything
+    if (input === this.previousInput) {
+      return
+    }
+    this.previousInput = input
+
+    // fire storage update
+    // NOTE: save at most once per 5 seconds
+    if (this.saveTimeout) {
+      window.clearTimeout(this.saveTimeout)
+    }
+    this.saveTimeout = window.setTimeout(() => {
+      this._deps.fileManager.saveCurrentFile()
+    }, 5000)
   }
 
-  function createSession (content, mode) {
-    var s = new ace.EditSession(content)
+  _switchSession (path) {
+    this.currentSession = path
+    this.editor.setSession(this.sessions[this.currentSession])
+    this.editor.setReadOnly(this.readOnlySessions[this.currentSession])
+    this.editor.focus()
+  }
+
+  /**
+   * Get Ace mode base of the extension of the session file
+   * @param {string} path Path of the file
+   */
+  _getMode (path) {
+    let ext = path.indexOf('.') !== -1 ? /[^.]+$/.exec(path) : null
+    if (ext) ext = ext[0]
+    return ext && this.modes[ext] ? this.modes[ext] : this.modes['txt']
+  }
+
+  /**
+   * Create an Ace session
+   * @param {string} content Content of the file to open
+   * @param {string} mode Ace Mode for this file [Default is `text`]
+   */
+  _createSession (content, mode) {
+    const s = new ace.EditSession(content)
     s.setMode(mode || 'ace/mode/text')
     s.setUndoManager(new ace.UndoManager())
     s.setTabSize(4)
@@ -163,98 +226,156 @@ function Editor (opts = {}, localRegistry) {
     return s
   }
 
-  function switchSession (path) {
-    currentSession = path
-    editor.setSession(sessions[currentSession])
-    editor.setReadOnly(readOnlySessions[currentSession])
-    editor.focus()
-  }
-
-  function getMode (path) {
-    var ext = path.indexOf('.') !== -1 ? /[^.]+$/.exec(path) : null
-    if (ext) ext = ext[0]
-    return ext && modes[ext] ? modes[ext] : modes['txt']
-  }
-
-  this.open = function (path, content) {
-    if (!sessions[path]) {
-      var session = createSession(content, getMode(path))
-      sessions[path] = session
-      readOnlySessions[path] = false
-    } else if (sessions[path].getValue() !== content) {
-      sessions[path].setValue(content)
-    }
-    switchSession(path)
-  }
-
-  this.openReadOnly = function (path, content) {
-    if (!sessions[path]) {
-      var session = createSession(content, getMode(path))
-      sessions[path] = session
-      readOnlySessions[path] = true
-    }
-    switchSession(path)
+  /**
+   * Attempts to find the string in the current document
+   * @param {string} string
+   */
+  find (string) {
+    return this.editor.find(string)
   }
 
   /**
-    * returns the content of the current session
-    *
-    * @return {String} content of the file referenced by @arg path
-    */
-  this.currentContent = function () {
+   * Display an Empty read-only session
+   */
+  displayEmptyReadOnlySession () {
+    this.currentSession = null
+    this.editor.setSession(this.emptySession)
+    this.editor.setReadOnly(true)
+  }
+
+  /**
+   * Sets a breakpoint on the row number
+   * @param {number} row Line index of the breakpoint
+   * @param {string} className Class of the breakpoint
+   */
+  setBreakpoint (row, className) {
+    this.editor.session.setBreakpoint(row, className)
+  }
+
+  /**
+   * Increment the font size (in pixels) for the editor text.
+   * @param {number} incr The amount of pixels to add to the font.
+   */
+  editorFontSize (incr) {
+    this.editor.setFontSize(this.editor.getFontSize() + incr)
+  }
+
+  /**
+   * Set the text in the current session, if any.
+   * @param {string} text New text to be place.
+   */
+  setText (text) {
+    if (this.currentSession && this.sessions[this.currentSession]) {
+      this.sessions[this.currentSession].setValue(text)
+    }
+  }
+
+  /**
+   * Upsert and open a session.
+   * @param {string} path Path of the session to open.
+   * @param {string} content Content of the document or update.
+   */
+  open (path, content) {
+    if (!this.sessions[path]) {
+      const session = this._createSession(content, this._getMode(path))
+      this.sessions[path] = session
+      this.readOnlySessions[path] = false
+    } else if (this.sessions[path].getValue() !== content) {
+      this.sessions[path].setValue(content)
+    }
+    this._switchSession(path)
+  }
+
+  /**
+   * Upsert and Open a session and set it as Read-only.
+   * @param {string} path Path of the session to open.
+   * @param {string} content Content of the document or update.
+   */
+  openReadOnly (path, content) {
+    if (!this.sessions[path]) {
+      const session = this._createSession(content, this._getMode(path))
+      this.sessions[path] = session
+      this.readOnlySessions[path] = true
+    }
+    this._switchSession(path)
+  }
+
+  /**
+   * Content of the current session
+   * @return {String} content of the file referenced by @arg path
+   */
+  currentContent () {
     return this.get(this.current())
   }
 
   /**
-    * returns the content of the session targeted by @arg path
-    * if @arg path is null, the content of the current session is returned
-    *
-    * @return {String} content of the file referenced by @arg path
-    */
-  this.get = function (path) {
-    if (!path || currentSession === path) {
-      return editor.getValue()
-    } else if (sessions[path]) {
-      return sessions[path].getValue()
+   * Content of the session targeted by @arg path
+   * if @arg path is null, the content of the current session is returned
+   * @param {string} path Path of the session to get.
+   * @return {String} content of the file referenced by @arg path
+   */
+  get (path) {
+    if (!path || this.currentSession === path) {
+      return this.editor.getValue()
+    } else if (this.sessions[path]) {
+      return this.sessions[path].getValue()
     }
   }
 
   /**
-    * returns the path of the currently editing file
-    * returns `undefined` if no session is being editer
-    *
-    * @return {String} path of the current session
-    */
-  this.current = function () {
-    if (editor.getSession() === emptySession) {
+   * Path of the currently editing file
+   * returns `undefined` if no session is being editer
+   * @return {String} path of the current session
+   */
+  current () {
+    if (this.editor.getSession() === this.emptySession) {
       return
     }
-    return currentSession
+    return this.currentSession
   }
 
-  this.getCursorPosition = function () {
-    return editor.session.doc.positionToIndex(editor.getCursorPosition(), 0)
+  /**
+   * The position of the cursor
+   */
+  getCursorPosition () {
+    return this.editor.session.doc.positionToIndex(
+      this.editor.getCursorPosition(),
+      0
+    )
   }
 
-  this.discardCurrentSession = function () {
-    if (sessions[currentSession]) {
-      delete sessions[currentSession]
-      currentSession = null
+  /**
+   * Remove the current session from the list of sessions.
+   */
+  discardCurrentSession () {
+    if (this.sessions[this.currentSession]) {
+      delete this.sessions[this.currentSession]
+      this.currentSession = null
     }
   }
 
-  this.discard = function (path) {
-    if (sessions[path]) delete sessions[path]
-    if (currentSession === path) currentSession = null
+  /**
+   * Remove a session based on its path.
+   * @param {string} path
+   */
+  discard (path) {
+    if (this.sessions[path]) delete this.sessions[path]
+    if (this.currentSession === path) this.currentSession = null
   }
 
-  this.resize = function (useWrapMode) {
-    editor.resize()
-    var session = editor.getSession()
+  /**
+   * Resize the editor, and sets whether or not line wrapping is enabled.
+   * @param {boolean} useWrapMode Enable (or disable) wrap mode
+   */
+  resize (useWrapMode) {
+    this.editor.resize()
+    const session = this.editor.getSession()
     session.setUseWrapMode(useWrapMode)
     if (session.getUseWrapMode()) {
-      var characterWidth = editor.renderer.characterWidth
-      var contentWidth = editor.container.ownerDocument.getElementsByClassName('ace_scroller')[0].clientWidth
+      const characterWidth = this.editor.renderer.characterWidth
+      const contentWidth = this.editor.container.ownerDocument.getElementsByClassName(
+        'ace_scroller'
+      )[0].clientWidth
 
       if (contentWidth > 0) {
         session.setWrapLimit(parseInt(contentWidth / characterWidth, 10))
@@ -262,89 +383,81 @@ function Editor (opts = {}, localRegistry) {
     }
   }
 
-  this.addMarker = function (lineColumnPos, source, cssClass) {
-    var currentRange = new Range(lineColumnPos.start.line, lineColumnPos.start.column, lineColumnPos.end.line, lineColumnPos.end.column)
-    if (sessions[source]) {
-      return sessions[source].addMarker(currentRange, cssClass)
+  /**
+   * Adds a new marker to the given `Range`.
+   * @param {*} lineColumnPos
+   * @param {string} source Path of the session to add the mark on.
+   * @param {string} cssClass css to apply to the mark.
+   */
+  addMarker (lineColumnPos, source, cssClass) {
+    const currentRange = new Range(
+      lineColumnPos.start.line,
+      lineColumnPos.start.column,
+      lineColumnPos.end.line,
+      lineColumnPos.end.column
+    )
+    if (this.sessions[source]) {
+      return this.sessions[source].addMarker(currentRange, cssClass)
     }
     return null
   }
 
-  this.scrollToLine = function (line, center, animate, callback) {
-    editor.scrollToLine(line, center, animate, callback)
+  /**
+   * Scrolls to a line. If center is true, it puts the line in middle of screen (or attempts to).
+   * @param {number} line The line to scroll to
+   * @param {boolean} center If true
+   * @param {boolean} animate If true animates scrolling
+   * @param {Function} callback Function to be called when the animation has finished
+   */
+  scrollToLine (line, center, animate, callback) {
+    this.editor.scrollToLine(line, center, animate, callback)
   }
 
-  this.removeMarker = function (markerId, source) {
-    if (sessions[source]) {
-      sessions[source].removeMarker(markerId)
+  /**
+   * Remove a marker from the session
+   * @param {string} markerId Id of the marker
+   * @param {string} source Path of the session
+   */
+  removeMarker (markerId, source) {
+    if (this.sessions[source]) {
+      this.sessions[source].removeMarker(markerId)
     }
   }
 
-  this.clearAnnotations = function () {
-    sourceAnnotations = []
-    editor.getSession().clearAnnotations()
+  /**
+   * Clears all the annotations for the current session.
+   */
+  clearAnnotations () {
+    this.sourceAnnotations = []
+    this.editor.getSession().clearAnnotations()
   }
 
-  this.addAnnotation = function (annotation) {
-    sourceAnnotations[sourceAnnotations.length] = annotation
-    this.setAnnotations(sourceAnnotations)
+  /**
+   * Add an annotation to the current session.
+   * @param {Object} annotation
+   */
+  addAnnotation (annotation) {
+    this.sourceAnnotations[this.sourceAnnotations.length] = annotation
+    this.setAnnotations(this.sourceAnnotations)
   }
 
-  this.setAnnotations = function (sourceAnnotations) {
-    editor.getSession().setAnnotations(sourceAnnotations)
+  /**
+   * Set a list of annotations to the current session.
+   * @param {Array<Object>} annotation
+   */
+  setAnnotations (sourceAnnotations) {
+    this.editor.getSession().setAnnotations(sourceAnnotations)
   }
 
-  this.gotoLine = function (line, col) {
-    editor.focus()
-    editor.gotoLine(line + 1, col - 1, true)
+  /**
+   * Moves the cursor and focus to the specified line and column number
+   * @param {number} line
+   * @param {number} col
+   */
+  gotoLine (line, col) {
+    this.editor.focus()
+    this.editor.gotoLine(line + 1, col - 1, true)
   }
-
-  this.find = (string) => editor.find(string)
-
-  this.previousInput = ''
-  this.saveTimeout = null
-  // Do setup on initialisation here
-  editor.on('changeSession', function () {
-    editorOnChange(self)
-    event.trigger('sessionSwitched', [])
-
-    editor.getSession().on('change', function () {
-      editorOnChange(self)
-      event.trigger('contentChanged', [])
-    })
-  })
-
-  // Unmap ctrl-t & ctrl-f
-  editor.commands.bindKeys({ 'ctrl-t': null })
-  editor.setShowPrintMargin(false)
-  editor.resize(true)
-
-  this.sourceHighlighters = new SourceHighlighters()
-}
-
-function editorOnChange (self) {
-  var currentFile = self._deps.config.get('currentFile')
-  if (!currentFile) {
-    return
-  }
-  var input = self.get(currentFile)
-  if (!input) {
-    return
-  }
-  // if there's no change, don't do anything
-  if (input === self.previousInput) {
-    return
-  }
-  self.previousInput = input
-
-  // fire storage update
-  // NOTE: save at most once per 5 seconds
-  if (self.saveTimeout) {
-    window.clearTimeout(self.saveTimeout)
-  }
-  self.saveTimeout = window.setTimeout(() => {
-    self._deps.fileManager.saveCurrentFile()
-  }, 5000)
 }
 
 module.exports = Editor
