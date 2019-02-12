@@ -4,17 +4,10 @@ import PluginManagerProxy from './app/components/plugin-manager-proxy'
 
 export class RemixAppManager extends AppManagerApi {
 
-  constructor (store, swapPanelApi, mainPanelApi, verticalIconsApi) {
+  constructor (store) {
     super(null)
-    this.location = {
-      'default': swapPanelApi,
-      'swapPanel': swapPanelApi,
-      'mainPanel': mainPanelApi
-    }
     this.store = store
-    this.verticalIconsApi = verticalIconsApi
-    this.swapPanelApi = swapPanelApi
-    this.hiddenNodes = {}
+    this.hiddenServices = {}
     this.event = new EventEmitter()
     this.data = {
       proxy: new PluginManagerProxy()
@@ -28,20 +21,14 @@ export class RemixAppManager extends AppManagerApi {
 
   setActive (name, isActive) {
     const entity = this.getEntity(name)
-    if (entity && entity.profile.icon && entity.api.render && typeof entity.api.render === 'function') {
-      // here we have an internal module (it does not need to be rendered necessarily - "rendered" means pushed to the DOM)
-      // if it contains `render` function, we push the view to `resolveLocation`
-      isActive ? this.resolveLocation(entity.profile, entity.api.render())
-        : this.removeComponent(entity.profile)
-    }
-    // at this point, if it's an iframe plugin, it should have already been rendered (to the DOM)
-    // either using `location` in json profile or using the optionnal api in the `Plugin` class
-
     // temp
     if (entity && name === 'solidity') {
       isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
     }
     isActive ? this.store.activate(name) : this.store.deactivate(name)
+    if (!isActive) {
+      this.removeHiddenServices(entity)
+    }
   }
 
   getEntity (entityName) {
@@ -52,24 +39,19 @@ export class RemixAppManager extends AppManagerApi {
     this.store.add(entity.profile.name, entity)
   }
 
+  // this function is only used for iframe plugins
   resolveLocation (profile, domEl) {
-    // if there's an icon, we add to the swap panel
-    // if not we suppose it just need to be put to DOM (that would be)
     if (profile.icon) {
-      var panel = this.location[profile.prefferedLocation] ? this.location[profile.prefferedLocation] : this.location['default']
-      domEl.style.height = '100%'
-      domEl.style.width = '100%'
-      domEl.style.border = '0'
-      panel.add(profile, domEl)
-      return
+      this.event.emit('pluginNeedsLocation', profile, domEl)
+    } else {
+      this.hiddenServices[profile.name] = domEl
+      document.body.appendChild(domEl)
     }
-    this.hiddenNodes[profile.name] = domEl
-    document.body.appendChild(domEl)
   }
 
-  removeComponent (profile) {
-    let hiddenNode = this.hiddenNodes[profile.name]
-    if (hiddenNode) document.body.removeChild(hiddenNode)
+  removeHiddenServices (profile) {
+    let hiddenServices = this.hiddenServices[profile.name]
+    if (hiddenServices) document.body.removeChild(hiddenServices)
   }
 
   plugins () {
