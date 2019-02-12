@@ -1,7 +1,7 @@
 'use strict'
-var SourceHighlighter = require('./sourceHighlighter')
+const SourceHighlighter = require('./sourceHighlighter')
 
-module.exports = class SourceHighlighters {
+class SourceHighlighters {
 
   constructor () {
     this.highlighters = {}
@@ -17,7 +17,7 @@ module.exports = class SourceHighlighters {
 
     // TODO what to do with mod?
   highlight (mod, lineColumnPos, filePath, hexColor, cb) {
-    var position
+    let position
     try {
       position = JSON.parse(lineColumnPos)
     } catch (e) {
@@ -34,3 +34,5 @@ module.exports = class SourceHighlighters {
     cb()
   }
 }
+
+module.exports = SourceHighlighters

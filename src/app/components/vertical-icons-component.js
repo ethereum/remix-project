@@ -10,10 +10,22 @@ const EventEmmitter = require('events')
 // Component
 class VerticalIconComponent {
 
-  constructor () {
+  constructor (appStore) {
+    this.store = appStore
     this.event = new EventEmmitter()
     this.icons = {}
     this.iconKind = {}
+
+    this.store.event.on('activate', (name) => {
+      const item = this.store.get(name)
+      if (item && item.profile.icon && name !== 'code editor') this.addIcon(item.profile)
+    })
+    this.store.event.on('deactivate', (name) => {
+      const item = this.store.get(name)
+      if (item && this.icons[name]) this.removeIcon(item.profile)
+    })
+    this.store.event.on('add', (name) => { })
+    this.store.event.on('remove', (name) => { })
   }
 
   addIcon (mod) {
@@ -24,7 +36,7 @@ class VerticalIconComponent {
 
   removeIcon (mod) {
     let kind = mod.kind || 'other'
-    let el = this.icons[kind]
+    let el = this.iconKind[kind]
     if (el) el.parentElement.removeChild(el)
   }
 
@@ -53,7 +65,7 @@ class VerticalIconComponent {
     <div id='fileExplorerIcons'>
     </div>
     `
-    
+
     this.iconKind['compile'] = yo`
     <div id='compileIcons'>
     </div>
@@ -78,7 +90,7 @@ class VerticalIconComponent {
     <div id='debuggingIcons'>
     </div>
     `
-    
+
     this.iconKind['other'] = yo`
     <div id='otherIcons'>
     </div>
@@ -130,4 +142,8 @@ const css = csjs`
     padding-top: 1px;
     padding-left: 1px;
 }
+  .icon[title='settings'] {
+    position: absolute;
+    bottom: 0;
+  }
 `
