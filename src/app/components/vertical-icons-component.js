@@ -10,9 +10,21 @@ const EventEmmitter = require('events')
 // Component
 class VerticalIconComponent {
 
-  constructor () {
+  constructor (appStore) {
+    this.store = appStore
     this.event = new EventEmmitter()
     this.icons = {}
+
+    this.store.event.on('activate', (name) => {
+      let item = this.store.get(name)
+      if (item && item.profile.icon && name !== 'code editor') this.addIcon(item.profile)
+    })
+    this.store.event.on('deactivate', (name) => {
+      let item = this.store.get(name)
+      if (item && this.icons[name]) this.removeIcon(item.profile)
+    })
+    this.store.event.on('add', (name) => { })
+    this.store.event.on('remove', (name) => { })
   }
 
   addIcon (mod) {

@@ -411,15 +411,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // TODOs those are instanciated before hand. should be instanciated on demand
 
+  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const pluginManagerComponent = new PluginManagerComponent()
-  const swapPanelComponent = new SwapPanelComponent()
-  const mainPanelComponent = new SwapPanelComponent()
-  const verticalIconsComponent = new VerticalIconsComponent()
+  const swapPanelComponent = new SwapPanelComponent(appStore)
+  const mainPanelComponent = new SwapPanelComponent(appStore)
+  const verticalIconsComponent = new VerticalIconsComponent(appStore)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
 
-  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore, swapPanelApi, mainPanelApi, verticalIconsApi)
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
