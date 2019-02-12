@@ -16,11 +16,11 @@ class VerticalIconComponent {
     this.icons = {}
 
     this.store.event.on('activate', (name) => {
-      let item = this.store.get(name)
+      const item = this.store.get(name)
       if (item && item.profile.icon && name !== 'code editor') this.addIcon(item.profile)
     })
     this.store.event.on('deactivate', (name) => {
-      let item = this.store.get(name)
+      const item = this.store.get(name)
       if (item && this.icons[name]) this.removeIcon(item.profile)
     })
     this.store.event.on('add', (name) => { })
