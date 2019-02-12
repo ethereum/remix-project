@@ -274,9 +274,12 @@ UniversalDApp.prototype.runTx = function (args, confirmationCb, continueCb, prom
       })
     },
     function runTransaction (fromAddress, value, gasLimit, next) {
-      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit }
+      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
       var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
       var timestamp = Date.now()
+      if (tx.timestamp) {
+        timestamp = tx.timestamp
+      }
 
       self.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
       self.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,

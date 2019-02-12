@@ -251,7 +251,7 @@ class Recorder {
       } else {
         logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
         logCallBack(`(${index}) data: ${data.data}`)
-        record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName }
+        record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
       }
       self.udapp.runTx(record, confirmationCb, continueCb, promptCb,
         function (err, txResult) {
