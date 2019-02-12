@@ -6,14 +6,29 @@ var csjs = require('csjs-inject')
 // const styles = styleguide.chooser()
 
 class SwapPanelComponent {
-  constructor (appStore) {
+  constructor (name, appStore, appManager, opt) {
+    this.name = name
+    this.opt = opt
     this.store = appStore
     // list of contents
     this.contents = {}
     // name of the current displayed content
     this.currentNode
 
-    this.store.event.on('activate', (name) => { })
+    appManager.event.on('pluginNeedsLocation', (profile, domEl) => {
+      if ((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) {
+        this.add(profile.name, domEl)
+      }
+    })
+
+    this.store.event.on('activate', (name) => {
+      const { profile, api } = this.store.get(name)
+      if (((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) &&
+        profile.icon && api.render && typeof api.render === 'function') {
+        this.add(name, api.render())
+      }
+    })
+
     this.store.event.on('deactivate', (name) => {
       if (this.contents[name]) this.remove(name)
     })
@@ -35,6 +50,9 @@ class SwapPanelComponent {
   }
 
   add (moduleName, content) {
+    content.style.height = '100%'
+    content.style.width = '100%'
+    content.style.border = '0'
     this.contents[moduleName] = yo`<div class=${css.plugItIn} >${content}</div>`
     this.view.appendChild(this.contents[moduleName])
   }
