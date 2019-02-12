@@ -1,10 +1,10 @@
 'use strict'
-var yo = require('yo-yo')
-var remixLib = require('remix-lib')
-var SourceMappingDecoder = remixLib.SourceMappingDecoder
-var globalRegistry = require('../../global/registry')
+const yo = require('yo-yo')
+const remixLib = require('remix-lib')
+const SourceMappingDecoder = remixLib.SourceMappingDecoder
+const globalRegistry = require('../../global/registry')
 
-var css = require('./styles/contextView-styles')
+const css = require('./styles/contextView-styles')
 
 /*
   Display information about the current focused code:
@@ -15,30 +15,29 @@ var css = require('./styles/contextView-styles')
 */
 class ContextView {
   constructor (opts, localRegistry) {
-    const self = this
-    self._components = {}
-    self._components.registry = localRegistry || globalRegistry
-    self.contextualListener = opts.contextualListener
-    self.editor = opts.editor
-    self._deps = {
-      compilersArtefacts: self._components.registry.get('compilersartefacts').api,
-      offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api,
-      config: self._components.registry.get('config').api,
-      fileManager: self._components.registry.get('filemanager').api
+    this._components = {}
+    this._components.registry = localRegistry || globalRegistry
+    this.contextualListener = opts.contextualListener
+    this.editor = opts.editor
+    this._deps = {
+      compilersArtefacts: this._components.registry.get('compilersartefacts').api,
+      offsetToLineColumnConverter: this._components.registry.get('offsettolinecolumnconverter').api,
+      config: this._components.registry.get('config').api,
+      fileManager: this._components.registry.get('filemanager').api
     }
     this._view
     this._nodes
     this._current
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.previousElement = null
-    self.contextualListener.event.register('contextChanged', nodes => {
+    this.contextualListener.event.register('contextChanged', nodes => {
       this._nodes = nodes
       this.update()
     })
   }
 
   render () {
-    var view = yo`<div class=${css.contextview}>
+    const view = yo`<div class=${css.contextview}>
       <div class=${css.container}>
         ${this._renderTarget()}
       </div>
@@ -70,13 +69,14 @@ class ContextView {
   }
 
   _renderTarget () {
-    var previous = this._current
+    let last
+    const previous = this._current
     if (this._nodes && this._nodes.length) {
-      var last = this._nodes[this._nodes.length - 1]
+      last = this._nodes[this._nodes.length - 1]
       if (isDefinition(last)) {
         this._current = last
       } else {
-        var target = this.contextualListener.declarationOf(last)
+        const target = this.contextualListener.declarationOf(last)
         if (target) {
           this._current = target
         } else {
@@ -91,27 +91,26 @@ class ContextView {
   }
 
   _jumpToInternal (position) {
-    var self = this
-    function jumpToLine (lineColumn) {
+    const jumpToLine = (lineColumn) => {
       if (lineColumn.start && lineColumn.start.line && lineColumn.start.column) {
-        self.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
+        this.editor.gotoLine(lineColumn.start.line, lineColumn.end.column + 1)
       }
     }
-    let lastCompilationResult = self._deps.compilersArtefacts['__last']
+    let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.data) {
-      var lineColumn = self._deps.offsetToLineColumnConverter.offsetToLineColumn(
+      const lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(
         position,
         position.file,
         lastCompilationResult.getSourceCode().sources,
         lastCompilationResult.getAsts())
-      var filename = lastCompilationResult.getSourceName(position.file)
+      const filename = lastCompilationResult.getSourceName(position.file)
       // TODO: refactor with rendererAPI.errorClick
-      if (filename !== self._deps.config.get('currentFile')) {
-        var provider = self._deps.fileManager.fileProviderOf(filename)
+      if (filename !== this._deps.config.get('currentFile')) {
+        const provider = this._deps.fileManager.fileProviderOf(filename)
         if (provider) {
           provider.exists(filename, (error, exist) => {
             if (error) return console.log(error)
-            self._deps.fileManager.switchFile(filename)
+            this._deps.fileManager.switchFile(filename)
             jumpToLine(lineColumn)
           })
         }
@@ -123,14 +122,13 @@ class ContextView {
 
   _render (node, nodeAtCursorPosition) {
     if (!node) return yo`<div></div>`
-    var self = this
-    var references = self.contextualListener.referencesOf(node)
-    var type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
+    let references = this.contextualListener.referencesOf(node)
+    const type = (node.attributes && node.attributes.type) ? node.attributes.type : node.name
     references = `${references ? references.length : '0'} reference(s)`
 
-    var ref = 0
-    var nodes = self.contextualListener.getActiveHighlights()
-    for (var k in nodes) {
+    let ref = 0
+    const nodes = this.contextualListener.getActiveHighlights()
+    for (const k in nodes) {
       if (nodeAtCursorPosition.id === nodes[k].nodeId) {
         ref = k
         break
@@ -138,19 +136,32 @@ class ContextView {
     }
 
     // JUMP BETWEEN REFERENCES
-    function jump (e) {
+    const jump = (e) => {
       e.target.dataset.action === 'next' ? ref++ : ref--
       if (ref < 0) ref = nodes.length - 1
       if (ref >= nodes.length) ref = 0
-      self._jumpToInternal(nodes[ref].position)
+      this._jumpToInternal(nodes[ref].position)
     }
 
-    function jumpTo () {
+    const jumpTo = () => {
       if (node && node.src) {
-        var position = self.sourceMappingDecoder.decode(node.src)
+        const position = this.sourceMappingDecoder.decode(node.src)
         if (position) {
-          self._jumpToInternal(position)
+          this._jumpToInternal(position)
         }
+      }
+    }
+
+    const showGasEstimation = () => {
+      if (node.name === 'FunctionDefinition') {
+        const result = this.contextualListener.gasEstimation(node)
+        const executionCost = 'Execution cost: ' + result.executionCost + ' gas'
+        const codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
+        const estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
+        return yo`<div class=${css.gasEstimation}>
+        <img class=${css.gasStationIcon} title='Gas estimation' src='assets/img/gasStation_50.png'>
+        ${estimatedGas}
+        </div>`
       }
     }
 
@@ -163,19 +174,6 @@ class ContextView {
       <i data-action='next' class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${jump}></i>
         ${showGasEstimation()}
     </div>`
-
-    function showGasEstimation () {
-      if (node.name === 'FunctionDefinition') {
-        var result = self.contextualListener.gasEstimation(node)
-        var executionCost = 'Execution cost: ' + result.executionCost + ' gas'
-        var codeDepositCost = 'Code deposit cost: ' + result.codeDepositCost + ' gas'
-        var estimatedGas = result.codeDepositCost ? `${codeDepositCost}, ${executionCost}` : `${executionCost}`
-        return yo`<div class=${css.gasEstimation}>
-        <img class=${css.gasStationIcon} title='Gas estimation' src='assets/img/gasStation_50.png'>
-        ${estimatedGas}
-        </div>`
-      }
-    }
   }
 }
 
