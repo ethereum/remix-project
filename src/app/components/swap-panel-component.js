@@ -6,11 +6,19 @@ var csjs = require('csjs-inject')
 // const styles = styleguide.chooser()
 
 class SwapPanelComponent {
-  constructor () {
+  constructor (appStore) {
+    this.store = appStore
     // list of contents
     this.contents = {}
     // name of the current displayed content
     this.currentNode
+
+    this.store.event.on('activate', (name) => { })
+    this.store.event.on('deactivate', (name) => {
+      if (this.contents[name]) this.remove(name)
+    })
+    this.store.event.on('add', (name) => { })
+    this.store.event.on('remove', (name) => { })
   }
 
   showContent (moduleName) {
