@@ -61,10 +61,6 @@ export class RemixAppManager extends AppManagerApi {
       domEl.style.width = '100%'
       domEl.style.border = '0'
       panel.add(profile, domEl)
-      // TODO perhaps should not be here
-      if (profile.name !== 'code editor') {
-        this.verticalIconsApi.addIcon(profile)
-      }
       return
     }
     this.hiddenNodes[profile.name] = domEl
@@ -72,11 +68,6 @@ export class RemixAppManager extends AppManagerApi {
   }
 
   removeComponent (profile) {
-    if (profile.icon) {
-      this.swapPanelApi.remove(profile)
-      this.verticalIconsApi.removeIcon(profile)
-      return
-    }
     let hiddenNode = this.hiddenNodes[profile.name]
     if (hiddenNode) document.body.removeChild(hiddenNode)
   }
