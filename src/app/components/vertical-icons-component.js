@@ -13,18 +13,18 @@ class VerticalIconComponent {
   constructor () {
     this.event = new EventEmmitter()
     this.icons = {}
+    this.iconKind = {}
   }
 
   addIcon (mod) {
-    let self = this
-    // let idName = mod.displayName ? mod.displayName : mod.name
-    // let idName = slugify(mod.name)
-    this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { self._iconClick(mod.name) }} title=${mod.name} ><img src="${mod.icon}" alt="${mod.name}" /></div>`
-    this.view.appendChild(this.icons[mod.name])
+    let kind = mod.kind || 'other'
+    this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { this._iconClick(mod.name) }} title=${mod.name} ><img src="${mod.icon}" alt="${mod.name}" /></div>`
+    this.iconKind[kind].appendChild(this.icons[mod.name])
   }
 
   removeIcon (mod) {
-    let el = this.icons[mod.name]
+    let kind = mod.kind || 'other'
+    let el = this.icons[kind]
     if (el) el.parentElement.removeChild(el)
   }
 
@@ -49,8 +49,56 @@ class VerticalIconComponent {
   }
 
   render () {
+    this.iconKind['fileexplorer'] = yo`
+    <div id='fileExplorerIcons'>
+    </div>
+    `
+    
+    this.iconKind['compile'] = yo`
+    <div id='compileIcons'>
+    </div>
+    `
+
+    this.iconKind['run'] = yo`
+    <div id='runIcons'>
+    </div>
+    `
+
+    this.iconKind['testing'] = yo`
+    <div id='testingIcons'>
+    </div>
+    `
+
+    this.iconKind['analysis'] = yo`
+    <div id='analysisIcons'>
+    </div>
+    `
+
+    this.iconKind['debugging'] = yo`
+    <div id='debuggingIcons'>
+    </div>
+    `
+    
+    this.iconKind['other'] = yo`
+    <div id='otherIcons'>
+    </div>
+    `
+
+    this.iconKind['settings'] = yo`
+    <div id='settingsIcons'>
+    </div>
+    `
+
     this.view = yo`
       <div class=${css.icons}>
+      ${this.iconKind['fileexplorer']}
+      ${this.iconKind['compile']}
+      ${this.iconKind['run']}
+      ${this.iconKind['testing']}
+      ${this.iconKind['analysis']}
+      ${this.iconKind['debugging']}
+      ${this.iconKind['other']}
+      ${this.iconKind['settings']}
       </div>
     `
     return this.view
