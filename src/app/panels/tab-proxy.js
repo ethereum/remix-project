@@ -65,15 +65,14 @@ export class TabProxy {
   }
 
   renderTabsbar () {
-    var self = this
-    self._view.filetabs = yo`<ul id="files" class="${css.files} nav nav-tabs"></ul>`
+    this._view.filetabs = yo`<ul id="files" class="${css.files} nav nav-tabs"></ul>`
 
-    self._view.tabs = yo`
+    this._view.tabs = yo`
       <div class=${css.tabs} onmouseenter=${toggleScrollers} onmouseleave=${toggleScrollers}>
         <div onclick=${scrollLeft} class="${css.scroller} ${css.hide} ${css.scrollerleft}">
           <i class="fa fa-chevron-left "></i>
         </div>
-        ${self._view.filetabs}
+        ${this._view.filetabs}
         <div onclick=${scrollRight} class="${css.scroller} ${css.hide} ${css.scrollerright}">
            <i class="fa fa-chevron-right "></i>
         </div>
@@ -87,14 +86,15 @@ export class TabProxy {
             <i class="decreditorsize fa fa-minus" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
           </span>
         </div>
-        ${self._view.tabs}
+        ${this._view.tabs}
       </div>
     `
 
     // tabs
-    var $filesEl = $(self._view.filetabs)
+    var $filesEl = $(this._view.filetabs)
 
     // Switch tab
+    var self = this
     $filesEl.on('click', '.file:not(.active)', function (ev) {
       ev.preventDefault()
       self.fileManager.switchFile($(this).find('.name').text())
@@ -108,8 +108,6 @@ export class TabProxy {
       self.fileManager.closeFile(name)
       return false
     })
-
-    return tabsbar
 
     function toggleScrollers (event = {}) {
       if (event.type) self.data._focus = event.type
@@ -172,5 +170,7 @@ export class TabProxy {
         }
       }
     }
+
+    return tabsbar
   }
 }
