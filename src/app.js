@@ -388,13 +388,18 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // TODO: There are still a lot of dep between editorpanel and filemanager
 
+  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
+  const appManager = new RemixAppManager(appStore)
+
+  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false })
+
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
   // ----------------- editor panel ----------------------
-  self._components.editorpanel = new EditorPanel()
+  self._components.editorpanel = new EditorPanel(appStore, appManager, mainPanelComponent)
   registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
 
   // ----------------- Renderer -----------------
@@ -412,12 +417,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // TODOs those are instanciated before hand. should be instanciated on demand
 
-  let appStore = new EntityStore('module')
   const pluginManagerComponent = new PluginManagerComponent()
-  const appManager = new RemixAppManager(appStore)
   const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true })
-  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false })
-  const verticalIconsComponent = new VerticalIconsComponent(appStore)
+  const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
@@ -430,7 +432,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.editorpanel.init()
   self._components.fileManager.init()
 
-  self._view.mainpanel.appendChild(mainPanelComponent.render())
+  self._view.mainpanel.appendChild(self._components.editorpanel.render())
   self._view.iconpanel.appendChild(verticalIconsComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
 
@@ -464,7 +466,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     { profile: sourceHighlighters.profile(), api: sourceHighlighters },
     { profile: configProvider.profile(), api: configProvider },
     { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
-    { profile: self._components.editorpanel.profile(), api: self._components.editorpanel },
     { profile: filePanel.profile(), api: filePanel },
     // { profile: support.profile(), api: support },
     { profile: settings.profile(), api: settings },

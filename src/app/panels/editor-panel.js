@@ -13,24 +13,17 @@ var cssTabs = styles.cssTabs
 var css = styles.css
 
 class EditorPanel {
-  constructor (localRegistry) {
+  constructor (appStore, appManager, mainPanelComponent) {
     var self = this
     self.event = new EventManager()
     self._view = {}
     self._components = {}
-    self._components.registry = localRegistry || globalRegistry
+    self._components.registry = globalRegistry
     self._components.editor = new Editor({})
     self._components.registry.put({api: self._components.editor, name: 'editor'})
-  }
-  profile () {
-    return {
-      name: 'code editor',
-      methods: [],
-      events: [],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
-      description: ' - ',
-      prefferedLocation: 'mainPanel'
-    }
+    self.appStore = appStore
+    self.appManager = appManager
+    self.mainPanelComponent = mainPanelComponent
   }
   init () {
     var self = this
@@ -41,7 +34,29 @@ class EditorPanel {
       udapp: self._components.registry.get('udapp').api,
       pluginManager: self._components.registry.get('pluginmanager').api
     }
-    self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor)
+    self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor, self.appStore, self.appManager)
+    /*
+      We listen here on event from the tab component to display / hide the editor and mainpanel
+      depending on the content that should be displayed
+    */
+    self.tabProxy.event.on('switchFile', (file) => {
+      self._view.editor.style.display = 'block'
+      self._components.contextView.show()
+      self._view.mainPanel.style.display = 'none'
+    })
+    self.tabProxy.event.on('closeFile', (file) => {
+    })
+    self.tabProxy.event.on('switchApp', (name) => {
+      self.mainPanelComponent.showContent(name)
+      self._view.editor.style.display = 'none'
+      self._components.contextView.hide()
+      self._view.mainPanel.style.display = 'block'
+    })
+    self.tabProxy.event.on('closeApp', (name) => {
+      self._view.editor.style.display = 'block'
+      self._components.contextView.hide()
+      self._view.mainPanel.style.display = 'none'
+    })
     self.data = {
       _FILE_SCROLL_DELTA: 200,
       _layout: {
@@ -108,6 +123,7 @@ class EditorPanel {
       var height = containerHeight - delta
       height = height < 0 ? 0 : height
       self._view.editor.style.height = `${delta}px`
+      self._view.mainPanel.style.height = `${delta}px`
       self._view.terminal.style.height = `${height}px` // - menu bar height
       self._components.editor.resize((document.querySelector('#editorWrap') || {}).checked)
       self._components.terminal.scroll2bottom()
@@ -138,6 +154,8 @@ class EditorPanel {
     var self = this
     if (self._view.el) return self._view.el
     self._view.editor = self._components.editor.render()
+    self._view.mainPanel = self.mainPanelComponent.render()
+    self._view.mainPanel.style.display = 'none'
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
@@ -146,6 +164,7 @@ class EditorPanel {
           ${self._components.contextView.render()}
         </div>
         ${self._view.editor}
+        ${self._view.mainPanel}
         ${self._view.terminal}
       </div>
     `
