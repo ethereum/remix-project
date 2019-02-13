@@ -167,9 +167,12 @@ var css = csjs`
     width             : 100%;
   }
   .contextviewcontainer{
-    width             : 100%;
-    height            : 20px;
+    position          : absolute;
+    top               : 29px;
+    z-index           : 50;
     background-color  : ${styles.editor.backgroundColor_Tabs_Highlights};
+    left              : 350px;
+    border-radius     : 1px;
   }
 `
 
