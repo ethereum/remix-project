@@ -6,17 +6,14 @@ var CompilerMetadata = require('../files/compiler-metadata')
 var EventManager = require('../../lib/events')
 var Gists = require('gists')
 var FileExplorer = require('../files/file-explorer')
-var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 var tooltip = require('../ui/tooltip')
 var QueryParams = require('../../lib/query-params')
 var queryParams = new QueryParams()
 var helper = require('../../lib/helper')
+var { RemixdHandle } = require('../files/remixd-handle.js')
 
 var globalRegistry = require('../../global/registry')
-
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = require('./styles/file-panel-styles')
 
@@ -58,6 +55,8 @@ function filepanel (localRegistry) {
   var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
   var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
 
+  self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'])
+
   // ----------------- editor panel ----------------------
   self._compilerMetadata = new CompilerMetadata(
     {
@@ -69,22 +68,6 @@ function filepanel (localRegistry) {
   self._compilerMetadata.syncContractMetadata()
 
   self.compilerMetadata = () => { return self._compilerMetadata }
-
-  function remixdDialog () {
-    return yo`
-      <div class=${css.dialog}>
-        <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
-          Before you get started, check out <a target="_blank" href="https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">Tutorial_remixd_filesystem</a>
-          to find out how to run Remixd.
-        </div>
-        <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
-          so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
-          <i class="fa fa-link"></i> will show you current connection status.
-        </div>
-        <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
-      </div>
-    `
-  }
 
   function template () {
     return yo`
@@ -110,9 +93,6 @@ function filepanel (localRegistry) {
             <span class="${css.copyFiles}" title="Copy all files to another instance of Remix IDE" onclick=${copyFiles}>
               <i class="fa fa-files-o" aria-hidden="true"></i>
             </span>
-            <span onclick=${connectToLocalhost} class="${css.connectToLocalhost}">
-              <i class="websocketconn fa fa-link" title="Connect to Localhost"></i>
-            </span>
           </div>
           <div class=${css.treeviews}>
             <div class=${css.treeview}>${fileExplorer.init()}</div>
@@ -134,27 +114,22 @@ function filepanel (localRegistry) {
   var element = template()
   fileExplorer.ensureRoot()
   configExplorer.ensureRoot()
-  var websocketconn = element.querySelector('.websocketconn')
   self._deps.fileProviders['localhost'].event.register('connecting', (event) => {
-    websocketconn.style.color = styles.colors.yellow
-    websocketconn.setAttribute('title', 'Connecting to localhost. ' + JSON.stringify(event))
+    tooltip('Connecting to localhost. ' + JSON.stringify(event))
   })
 
   self._deps.fileProviders['localhost'].event.register('connected', (event) => {
-    websocketconn.style.color = styles.colors.green
-    websocketconn.setAttribute('title', 'Connected to localhost. ' + JSON.stringify(event))
+    tooltip('Connected to localhost. ' + JSON.stringify(event))
     fileSystemExplorer.show()
   })
 
   self._deps.fileProviders['localhost'].event.register('errored', (event) => {
-    websocketconn.style.color = styles.colors.red
-    websocketconn.setAttribute('title', 'localhost connection errored. ' + JSON.stringify(event))
+    tooltip('localhost connection errored. ' + JSON.stringify(event))
     fileSystemExplorer.hide()
   })
 
   self._deps.fileProviders['localhost'].event.register('closed', (event) => {
-    websocketconn.style.color = styles.colors.black
-    websocketconn.setAttribute('title', 'localhost connection closed. ' + JSON.stringify(event))
+    tooltip('localhost connection closed. ' + JSON.stringify(event))
     fileSystemExplorer.hide()
   })
 
@@ -252,32 +227,6 @@ function filepanel (localRegistry) {
         }
       })
     }, null, true)
-  }
-
-  /**
-    * connect to localhost if no connection and render the explorer
-    * disconnect from localhost if connected and remove the explorer
-    *
-    * @param {String} txHash    - hash of the transaction
-    */
-  function connectToLocalhost () {
-    if (self._deps.fileProviders['localhost'].isConnected()) {
-      self._deps.fileProviders['localhost'].close((error) => {
-        if (error) console.log(error)
-      })
-    } else {
-      modalDialog('Connect to localhost', remixdDialog(),
-        { label: 'Connect',
-          fn: () => {
-            self._deps.fileProviders['localhost'].init((error) => {
-              if (error) {
-                console.log(error)
-              } else {
-                fileSystemExplorer.ensureRoot()
-              }
-            })
-          }})
-    }
   }
 
   // ------------------ gist publish --------------
