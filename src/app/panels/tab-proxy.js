@@ -1,38 +1,41 @@
 var yo = require('yo-yo')
 var $ = require('jquery')
+const EventEmitter = require('events')
 
 var styles = require('./styles/editor-panel-styles')
 var css = styles.css
 
 export class TabProxy {
-  constructor (fileManager, editor) {
+  constructor (fileManager, editor, appStore, appManager) {
+    this.event = new EventEmitter()
     this.fileManager = fileManager
+    this.appManager = appManager
     this.editor = editor
     this.activeEntity
     this.entities = {}
     this.data = {}
     this._view = {}
+    this._handlers = {}
 
     fileManager.event.register('fileRemoved', (name) => {
-      const filesEl = document.querySelector('#files')
-      var file = filesEl.querySelector(`li[path="${name}"]`)
-      if (file) {
-        filesEl.removeChild(file)
-      }
+      this.removeTab(name)
     })
 
     fileManager.event.register('fileClosed', (name) => {
-      const filesEl = document.querySelector('#files')
-      var file = filesEl.querySelector(`li[path="${name}"]`)
-      if (file) {
-        filesEl.removeChild(file)
-      }
+      this.removeTab(name)
     })
 
     fileManager.event.register('currentFileChanged', (file) => {
       const filesEl = document.querySelector('#files')
       if (!filesEl.querySelector(`li[path="${file}"]`)) {
-        filesEl.appendChild(yo`<li class="file" path="${file}" ><span class="name">${file}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
+        this.addTab(file, () => {
+          this.fileManager.switchFile(file)
+          this.event.emit('switchFile', file)
+        },
+        () => {
+          this.fileManager.closeFile(file)
+          this.event.emit('closeFile', file)
+        })
       }
       this.active(file)
     })
@@ -45,6 +48,37 @@ export class TabProxy {
         file.querySelector(`.name`).innerHTML = newName
       }
     })
+
+    appStore.event.on('activate', (name) => {
+      const { profile } = appStore.get(name)
+      if (profile.prefferedLocation === 'mainPanel') {
+        this.addTab(name, () => {
+          this.event.emit('switchApp', name)
+        }, () => {
+          this.event.emit('closeApp', name)
+          this.appManager.deactivateOne(name)
+        })
+      }
+    })
+
+    appStore.event.on('deactivate', (name) => {
+      this.removeTab(name)
+    })
+  }
+
+  addTab (name, switchTo, close, kind) {
+    const filesEl = document.querySelector('#files')
+    filesEl.appendChild(yo`<li class="file" path="${name}" ><span class="name">${name}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
+    this._handlers[name] = { switchTo, close }
+  }
+
+  removeTab (name) {
+    const filesEl = document.querySelector('#files')
+    var file = filesEl.querySelector(`li[path="${name}"]`)
+    if (file) {
+      filesEl.removeChild(file)
+      delete this._handlers[name]
+    }
   }
 
   active (name) {
@@ -97,7 +131,9 @@ export class TabProxy {
     var self = this
     $filesEl.on('click', '.file:not(.active)', function (ev) {
       ev.preventDefault()
-      self.fileManager.switchFile($(this).find('.name').text())
+      var name = $(this).find('.name').text()
+      self._handlers[name].switchTo()
+      self.active(name)
       return false
     })
 
@@ -105,7 +141,7 @@ export class TabProxy {
     $filesEl.on('click', '.file .remove', function (ev) {
       ev.preventDefault()
       var name = $(this).parent().find('.name').text()
-      self.fileManager.closeFile(name)
+      self._handlers[name].close()
       return false
     })
 
