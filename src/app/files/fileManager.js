@@ -100,13 +100,12 @@ class FileManager {
   }
 
   closeFile (name) {
-    var self = this
-    delete self.openedFiles[name]
-    if (Object.keys(self.openedFiles).length) {
-      self.switchFile(Object.keys(self.openedFiles)[0])
+    delete this.openedFiles[name]
+    if (Object.keys(this.openedFiles).length) {
+      this.switchFile(Object.keys(this.openedFiles)[0])
     } else {
-      self._deps.editor.displayEmptyReadOnlySession()
-      self._deps.config.set('currentFile', '')
+      this._deps.editor.displayEmptyReadOnlySession()
+      this._deps.config.set('currentFile', '')
     }
     this.event.trigger('fileClosed', [name])
   }
