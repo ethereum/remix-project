@@ -14,7 +14,7 @@ export class TabProxy {
     this._view = {}
 
     fileManager.event.register('fileRemoved', (name) => {
-      var filesEl = document.querySelector('#files')
+      const filesEl = document.querySelector('#files')
       var file = filesEl.querySelector(`li[path="${name}"]`)
       if (file) {
         filesEl.removeChild(file)
@@ -22,7 +22,7 @@ export class TabProxy {
     })
 
     fileManager.event.register('fileClosed', (name) => {
-      var filesEl = document.querySelector('#files')
+      const filesEl = document.querySelector('#files')
       var file = filesEl.querySelector(`li[path="${name}"]`)
       if (file) {
         filesEl.removeChild(file)
@@ -30,7 +30,7 @@ export class TabProxy {
     })
 
     fileManager.event.register('currentFileChanged', (file) => {
-      var filesEl = document.querySelector('#files')
+      const filesEl = document.querySelector('#files')
       if (!filesEl.querySelector(`li[path="${file}"]`)) {
         filesEl.appendChild(yo`<li class="file" path="${file}" ><span class="name">${file}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
       }
@@ -38,7 +38,7 @@ export class TabProxy {
     })
 
     fileManager.event.register('fileRenamed', (oldName, newName) => {
-      var filesEl = document.querySelector('#files')
+      const filesEl = document.querySelector('#files')
       var file = filesEl.querySelector(`li[path="${oldName}"]`)
       if (file) {
         filesEl.setAttribute('path', file)
