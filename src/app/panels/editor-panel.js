@@ -1,10 +1,10 @@
 var yo = require('yo-yo')
 var EventManager = require('../../lib/events')
-var $ = require('jquery')
 
 var Terminal = require('./terminal')
 var Editor = require('../editor/editor')
 var globalRegistry = require('../../global/registry')
+var { TabProxy } = require('./tab-proxy.js')
 
 var ContextualListener = require('../editor/contextualListener')
 var ContextView = require('../editor/contextView')
@@ -41,6 +41,7 @@ class EditorPanel {
       udapp: self._components.registry.get('udapp').api,
       pluginManager: self._components.registry.get('pluginmanager').api
     }
+    self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor)
     self.data = {
       _FILE_SCROLL_DELTA: 200,
       _layout: {
@@ -140,7 +141,7 @@ class EditorPanel {
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
-        ${self._renderTabsbar()}
+        ${self.tabProxy.renderTabsbar()}
         <div class=${css.contextviewcontainer}>
           ${self._components.contextView.render()}
         </div>
@@ -163,121 +164,6 @@ class EditorPanel {
   }
   updateTerminalFilter (filter) {
     this._components.terminal.updateJournal(filter)
-  }
-  _renderTabsbar () {
-    var self = this
-    if (self._view.tabsbar) return self._view.tabsbar
-    self._view.filetabs = yo`<ul id="files" class="${css.files} nav nav-tabs"></ul>`
-    self._view.tabs = yo`
-      <div class=${css.tabs} onmouseenter=${toggleScrollers} onmouseleave=${toggleScrollers}>
-        <div onclick=${scrollLeft} class="${css.scroller} ${css.hide} ${css.scrollerleft}">
-          <i class="fa fa-chevron-left "></i>
-        </div>
-        ${self._view.filetabs}
-        <div onclick=${scrollRight} class="${css.scroller} ${css.hide} ${css.scrollerright}">
-           <i class="fa fa-chevron-right "></i>
-        </div>
-      </div>
-    `
-    self._view.tabsbar = yo`
-      <div class=${css.tabsbar}>
-        <div class=${css.buttons}>
-          <span class=${css.changeeditorfontsize} >
-            <i class="increditorsize fa fa-plus" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
-            <i class="decreditorsize fa fa-minus" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
-          </span>
-        </div>
-        ${self._view.tabs}
-      </div>
-    `
-
-    // tabs
-    var $filesEl = $(self._view.filetabs)
-
-    // Switch tab
-    $filesEl.on('click', '.file:not(.active)', function (ev) {
-      ev.preventDefault()
-      self._deps.fileManager.switchFile($(this).find('.name').text())
-      return false
-    })
-
-    // Remove current tab
-    $filesEl.on('click', '.file .remove', function (ev) {
-      ev.preventDefault()
-      var name = $(this).parent().find('.name').text()
-      delete self._deps.fileManager.tabbedFiles[name]
-      self._deps.fileManager.refreshTabs()
-      if (Object.keys(self._deps.fileManager.tabbedFiles).length) {
-        self._deps.fileManager.switchFile(Object.keys(self._deps.fileManager.tabbedFiles)[0])
-      } else {
-        self._components.editor.displayEmptyReadOnlySession()
-        self._deps.config.set('currentFile', '')
-      }
-      return false
-    })
-
-    return self._view.tabsbar
-    function toggleScrollers (event = {}) {
-      if (event.type) self.data._focus = event.type
-      var isMouseEnter = self.data._focus === 'mouseenter'
-      var leftArrow = this.children[0]
-      var rightArrow = this.children[2]
-      if (isMouseEnter && this.children[1].offsetWidth > this.offsetWidth) {
-        var hiddenLength = self._view.filetabs.offsetWidth - self._view.tabs.offsetWidth
-        var currentLeft = self._view.filetabs.offsetLeft || 0
-        var hiddenRight = hiddenLength + currentLeft
-        if (currentLeft < 0) {
-          leftArrow.classList.add(css.show)
-          leftArrow.classList.remove(css.hide)
-        }
-        if (hiddenRight > 0) {
-          rightArrow.classList.add(css.show)
-          rightArrow.classList.remove(css.hide)
-        }
-      } else {
-        leftArrow.classList.remove(css.show)
-        leftArrow.classList.add(css.hide)
-        rightArrow.classList.remove(css.show)
-        rightArrow.classList.add(css.hide)
-      }
-    }
-    function increase () { self._components.editor.editorFontSize(1) }
-    function decrease () { self._components.editor.editorFontSize(-1) }
-    function scrollLeft (event) {
-      var leftArrow = this
-      var rightArrow = this.nextElementSibling.nextElementSibling
-      var currentLeft = self._view.filetabs.offsetLeft || 0
-      if (currentLeft < 0) {
-        rightArrow.classList.add(css.show)
-        rightArrow.classList.remove(css.hide)
-        if (currentLeft < -self.data._FILE_SCROLL_DELTA) {
-          self._view.filetabs.style.left = `${currentLeft + self.data._FILE_SCROLL_DELTA}px`
-        } else {
-          self._view.filetabs.style.left = `${currentLeft - currentLeft}px`
-          leftArrow.classList.remove(css.show)
-          leftArrow.classList.add(css.hide)
-        }
-      }
-    }
-
-    function scrollRight (event) {
-      var rightArrow = this
-      var leftArrow = this.previousElementSibling.previousElementSibling
-      var hiddenLength = self._view.filetabs.offsetWidth - self._view.tabs.offsetWidth
-      var currentLeft = self._view.filetabs.offsetLeft || 0
-      var hiddenRight = hiddenLength + currentLeft
-      if (hiddenRight > 0) {
-        leftArrow.classList.add(css.show)
-        leftArrow.classList.remove(css.hide)
-        if (hiddenRight > self.data._FILE_SCROLL_DELTA) {
-          self._view.filetabs.style.left = `${currentLeft - self.data._FILE_SCROLL_DELTA}px`
-        } else {
-          self._view.filetabs.style.left = `${currentLeft - hiddenRight}px`
-          rightArrow.classList.remove(css.show)
-          rightArrow.classList.add(css.hide)
-        }
-      }
-    }
   }
 }
 
