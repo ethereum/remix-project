@@ -63,7 +63,7 @@ class PluginManagerComponent {
       </div>
     `
 
-    searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event) })
+    searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event.target) })
 
     var modulesActiveNotReq = this.store.getActives().filter(({profile}) => !profile.required)
     this.sortObject(modulesActiveNotReq)
@@ -88,6 +88,13 @@ class PluginManagerComponent {
       this.views.root = rootView
     }
     return rootView
+  }
+
+  searchBox () {
+    if (this.views.root) {
+      return this.views.root.querySelector('#filter_plugins')
+    }
+    return null
   }
 
   sortObject (obj) {
@@ -128,11 +135,13 @@ class PluginManagerComponent {
   reRender () {
     if (this.views.root) {
       yo.update(this.views.root, this.render())
+      this.filterPlugins(this.searchBox())
     }
   }
 
-  filterPlugins (event) {
-    let filterOn = event.target.value.toUpperCase()
+  filterPlugins (target) {
+    if (!target) return
+    let filterOn = target.value.toUpperCase()
     var nodes = this.views.root.querySelectorAll(`.${css.plugin}`)
     nodes.forEach((node) => {
       let h = node.querySelector('h3')
