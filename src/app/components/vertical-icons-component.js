@@ -27,6 +27,7 @@ class VerticalIconComponent {
   addIcon (mod) {
     let kind = mod.kind || 'other'
     this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { this._iconClick(mod.name) }} title=${mod.name} ><img src="${mod.icon}" alt="${mod.name}" /></div>`
+
     this.iconKind[kind].appendChild(this.icons[mod.name])
   }
 
@@ -128,6 +129,11 @@ const css = csjs`
     padding: 3px;
   }
   .icon img {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+  .icon svg {
     width: 28px;
     height: 28px;
     padding: 4px;
