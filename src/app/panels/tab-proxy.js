@@ -2,6 +2,8 @@ var yo = require('yo-yo')
 var $ = require('jquery')
 const EventEmitter = require('events')
 
+require('remix-tabs')
+
 var styles = require('./styles/editor-panel-styles')
 var css = styles.css
 
@@ -11,7 +13,6 @@ export class TabProxy {
     this.fileManager = fileManager
     this.appManager = appManager
     this.editor = editor
-    this.activeEntity
     this.entities = {}
     this.data = {}
     this._view = {}
@@ -26,27 +27,26 @@ export class TabProxy {
     })
 
     fileManager.event.register('currentFileChanged', (file) => {
-      const filesEl = document.querySelector('#files')
-      if (!filesEl.querySelector(`li[path="${file}"]`)) {
-        this.addTab(file, () => {
-          this.fileManager.switchFile(file)
-          this.event.emit('switchFile', file)
-        },
-        () => {
-          this.fileManager.closeFile(file)
-          this.event.emit('closeFile', file)
-        })
-      }
-      this.active(file) // this put the css class "active"
+      this.addTab(file, () => {
+        this.fileManager.switchFile(file)
+        this.event.emit('switchFile', file)
+      },
+      () => {
+        this.fileManager.closeFile(file)
+        this.event.emit('closeFile', file)
+      })
     })
 
     fileManager.event.register('fileRenamed', (oldName, newName) => {
-      const filesEl = document.querySelector('#files')
-      var file = filesEl.querySelector(`li[path="${oldName}"]`)
-      if (file) {
-        filesEl.setAttribute('path', file)
-        file.querySelector(`.name`).innerHTML = newName
-      }
+      this.removeTab(oldName)
+      this.addTab(newName, () => {
+        this.fileManager.switchFile(newName)
+        this.event.emit('switchFile', newName)
+      },
+      () => {
+        this.fileManager.closeFile(newName)
+        this.event.emit('closeFile', newName)
+      })
     })
 
     appStore.event.on('activate', (name) => {
@@ -67,31 +67,20 @@ export class TabProxy {
   }
 
   addTab (name, switchTo, close, kind) {
-    const filesEl = document.querySelector('#files')
-    filesEl.appendChild(yo`<li class="file" path="${name}" ><span class="name">${name}</span><span class="remove"><i class="fa fa-close"></i></span></li>`)
+    var slash = name.split('/')
+    let title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
+    this._view.filetabs.addTab({
+      id: name,
+      title,
+      icon: '',
+      tooltip: name
+    })
     this._handlers[name] = { switchTo, close }
   }
 
   removeTab (name) {
-    const filesEl = document.querySelector('#files')
-    var file = filesEl.querySelector(`li[path="${name}"]`)
-    if (file) {
-      filesEl.removeChild(file)
-      delete this._handlers[name]
-    }
-  }
-
-  active (name) {
-    var filesEl = document.querySelector('#files')
-    let file = filesEl.querySelector(`li[path="${this.activeEntity}"]`)
-    if (file) $(file).removeClass('active')
-    if (name) {
-      let active = filesEl.querySelector(`li[path="${name}"]`)
-      if (active) {
-        $(active).addClass('active')
-        this.activeEntity = name
-      }
-    }
+    this._view.filetabs.closeTab(name)
+    delete this._handlers[name]
   }
 
   addHandler (type, fn) {
@@ -99,7 +88,15 @@ export class TabProxy {
   }
 
   renderTabsbar () {
-    this._view.filetabs = yo`<ul id="files" class="${css.files} nav nav-tabs"></ul>`
+    this._view.filetabs = yo`<remix-tabs></remix-tabs>`
+    this._view.filetabs.addEventListener('tabClosed', (id) => {
+      if (this._handlers[id]) this._handlers[id].close()
+    })
+    this._view.filetabs.addEventListener('tabActivated', (id) => {
+      if (this._handlers[id]) this._handlers[id].switchTo()
+    })
+
+    this._view.filetabs.canAdd = false
 
     this._view.tabs = yo`
       <div class=${css.tabs} onmouseenter=${toggleScrollers} onmouseleave=${toggleScrollers}>
@@ -133,7 +130,6 @@ export class TabProxy {
       ev.preventDefault()
       var name = $(this).find('.name').text()
       self._handlers[name].switchTo()
-      self.active(name)
       return false
     })
 

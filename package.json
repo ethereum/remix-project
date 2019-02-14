@@ -45,6 +45,7 @@
     "remix-lib": "0.4.1",
     "remix-plugin": "latest",
     "remix-solidity": "0.3.1",
+    "remix-tabs": "^1.0.0",
     "remix-tests": "0.1.1",
     "remixd": "0.1.8-alpha.6",
     "request": "^2.83.0",
