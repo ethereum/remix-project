@@ -37,7 +37,7 @@ export class TabProxy {
           this.event.emit('closeFile', file)
         })
       }
-      this.active(file)
+      this.active(file) // this put the css class "active"
     })
 
     fileManager.event.register('fileRenamed', (oldName, newName) => {
