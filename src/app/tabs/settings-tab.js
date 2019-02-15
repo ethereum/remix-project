@@ -25,6 +25,10 @@ module.exports = class SettingsTab extends ApiFactory {
       }
     } /* eslint-enable */
     this.event = new EventManager()
+    this.initTheme()
+  }
+
+  initTheme () {
     const themeStorage = new Storage('style:')
     this.currentTheme = themeStorage.get('theme') || 'light'
   }
@@ -48,34 +52,34 @@ module.exports = class SettingsTab extends ApiFactory {
 
     // Gist settings
     var gistAccessToken = yo`<input id="gistaccesstoken" type="password" class="form-control mb-2 ${css.inline}" placeholder="Token">`
-    var token = self.config.get('settings/gist-access-token')
+    var token = this.config.get('settings/gist-access-token')
     if (token) gistAccessToken.value = token
-    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" onclick=${() => { self.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
-    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; self.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
-    self._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => self.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
+    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
+    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
+    this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => this.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
     //
-    self._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
-    if (self.config.get('settings/always-use-vm')) self._view.optionVM.setAttribute('checked', '')
-    self._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
-    if (self.config.get('settings/personal-mode')) self._view.personal.setAttribute('checked', '')
+    this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
+    if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
+    this._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
+    if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
     var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
     This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
     Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...).
     It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM.
     Remix never persist any passphrase.`.split('\n').map(s => s.trim()).join(' ')
-    self._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
-    self._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox" class="form-check-input">`
+    this._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
+    this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox" class="form-check-input">`
 
-    if (self.config.get('settings/generate-contract-metadata')) self._view.generateContractMetadata.setAttribute('checked', '')
+    if (this.config.get('settings/generate-contract-metadata')) this._view.generateContractMetadata.setAttribute('checked', '')
 
-    self._view.pluginInput = yo`<textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>`
+    this._view.pluginInput = yo`<textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>`
 
-    self._view.theme.light = yo`<input onchange=${onswitch2lightTheme} class="align-middle form-check-input" name="theme" id="themeLight" type="radio">`
-    self._view.theme.dark = yo`<input onchange=${onswitch2darkTheme} class="align-middle form-check-input" name="theme" id="themeDark" type="radio">`
-    self._view.theme.clean = yo`<input onchange=${onswitch2cleanTheme} class="align-middle form-check-input" name="theme" id="themeClean" type="radio">`
-    self._view.theme[self.data.currentTheme].setAttribute('checked', 'checked')
+    this._view.theme.light = yo`<input onchange=${onswitch2lightTheme} class="align-middle form-check-input" name="theme" id="themeLight" type="radio">`
+    this._view.theme.dark = yo`<input onchange=${onswitch2darkTheme} class="align-middle form-check-input" name="theme" id="themeDark" type="radio">`
+    this._view.theme.clean = yo`<input onchange=${onswitch2cleanTheme} class="align-middle form-check-input" name="theme" id="themeClean" type="radio">`
+    this._view.theme[this.data.currentTheme].setAttribute('checked', 'checked')
 
-    self._view.config.homePage = yo`
+    this._view.config.homePage = yo`
     <div class="${css.info} card">
       <div class="card-body">
       <h6 class="${css.title} card-title">Home</h6>
@@ -85,72 +89,72 @@ module.exports = class SettingsTab extends ApiFactory {
       </div>
       </div>
     </div>`
-    self._view.config.general = yo`
+    this._view.config.general = yo`
       <div class="${css.info} card">
         <div class="card-body">
           <h6 class="${css.title} card-title">General settings</h6>
           <div class="form-check ${css.frow}">
-            <div>${self._view.generateContractMetadata}</div>
+            <div>${this._view.generateContractMetadata}</div>
             <label class="form-check-label align-middle" for="generatecontractmetadata">Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.</label>
           </div>
           <div class="form-check ${css.frow}">
-            <div>${self._view.optionVM}</div>
+            <div>${this._view.optionVM}</div>
             <label class="form-check-label align-middle" for="alwaysUseVM">Always use Ethereum VM at Load</label>
           </div>
           <div class="form-check ${css.frow}">
-            <div><input id="editorWrap" class="form-check-input align-middle" type="checkbox" onchange=${function () { self.editor.resize(this.checked) }}></div>
+            <div><input id="editorWrap" class="form-check-input align-middle" type="checkbox" onchange=${function () { this.editor.resize(this.checked) }}></div>
             <label class="form-check-label align-middle" for="editorWrap">Text Wrap</label>
           </div>
           <div class="form-check ${css.frow}">
-            <div>${self._view.personal}></div>
-            <label class="form-check-label align-middle" for="personal">Enable Personal Mode ${self._view.warnPersonalMode}></label>
+            <div>${this._view.personal}></div>
+            <label class="form-check-label align-middle" for="personal">Enable Personal Mode ${this._view.warnPersonalMode}></label>
           </div>
         </div>
       </div>
       `
-    self._view.gistToken = yo`
+    this._view.gistToken = yo`
       <div class="${css.info} card">
         <div class="card-body">
           <h6 class="${css.title} card-title">Gist Access Token</h6>
           <p class="">Manage the access token used to publish to Gist and retrieve Github contents.</p>
           <p class="">Go to github token page (link below) to create a new token and save it in Remix. Make sure this token has only 'create gist' permission.</p>
           <p class="${css.crowNoFlex}"><a target="_blank" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
-          <div class="${css.crowNoFlex}">${self._view.gistToken}</div>
+          <div class="${css.crowNoFlex}">${this._view.gistToken}</div>
         </div>
       </div>`
-    self._view.config.themes = yo`
+    this._view.config.themes = yo`
       <div class="${css.info} card">
         <div class="card-body">
           <h6 class="${css.title} card-title">Themes</h6>
           <div class="card-text">
             <div class="${css.frow} form-check ${css.crow}">
-              ${self._view.theme.light}
+              ${this._view.theme.light}
               <label class="form-check-label" for="themeLight">Light Theme</label>
             </div>
             <div class="${css.frow} form-check ${css.crow}">
-              ${self._view.theme.dark}
+              ${this._view.theme.dark}
               <label class="form-check-label" for="themeDark">Dark Theme</label>
             </div>
             <div class="${css.frow} form-check ${css.crow}">
-              ${self._view.theme.clean}
+              ${this._view.theme.clean}
               <label class="form-check-label" for="themeClean">Clean Theme</label>
             </div>
           </div>
         </div>
       </div>`
-    self._view.el = yo`
+    this._view.el = yo`
       <div class="${css.settingsTabView}" id="settingsView">
-        ${self._view.config.homePage}
-        ${self._view.config.general}
-        ${self._view.gistToken}
-        ${self._view.config.themes}
+        ${this._view.config.homePage}
+        ${this._view.config.general}
+        ${this._view.gistToken}
+        ${this._view.config.themes}
       </div>`
 
     function onchangeGenerateContractMetadata (event) {
-      self.config.set('settings/generate-contract-metadata', !self.config.get('settings/generate-contract-metadata'))
+      this.config.set('settings/generate-contract-metadata', !this.config.get('settings/generate-contract-metadata'))
     }
     function onchangeOption (event) {
-      self.config.set('settings/always-use-vm', !self.config.get('settings/always-use-vm'))
+      this.config.set('settings/always-use-vm', !this.config.get('settings/always-use-vm'))
     }
     function onswitch2darkTheme (event) {
       styleGuide.switchTheme('dark')
@@ -162,9 +166,9 @@ module.exports = class SettingsTab extends ApiFactory {
       styleGuide.switchTheme('clean')
     }
     function onchangePersonal (event) {
-      self.config.set('settings/personal-mode', !self.config.get('settings/personal-mode'))
+      this.config.set('settings/personal-mode', !this.config.get('settings/personal-mode'))
     }
     styleGuide.switchTheme()
-    return self._view.el
+    return this._view.el
   }
 }
