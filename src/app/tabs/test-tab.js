@@ -33,69 +33,62 @@ module.exports = class TestTab extends ApiFactory {
   }
 
   listenToEvents () {
-    const self = this
-
-    self.filePanel.event.register('newTestFileCreated', file => {
-      var testList = self.view.querySelector("[class^='testList']")
+    this.filePanel.event.register('newTestFileCreated', file => {
+      var testList = this.view.querySelector("[class^='testList']")
       var test = yo`<label class="singleTestLabel"><input class="singleTest" onchange=${(e) => this.toggleCheckbox(e.target.checked, file)} type="checkbox" checked="true">${file}</label>`
       testList.appendChild(test)
-      self.data.allTests.push(file)
-      self.data.selectedTests.push(file)
+      this.data.allTests.push(file)
+      this.data.selectedTests.push(file)
     })
 
-    self.fileManager.event.register('currentFileChanged', (file, provider) => {
-      self.getTests(self, (error, tests) => {
+    this.fileManager.event.register('currentFileChanged', (file, provider) => {
+      this.getTests((error, tests) => {
         if (error) return tooltip(error)
-        self.data.allTests = tests
-        self.data.selectedTests = [...self.data.allTests]
+        this.data.allTests = tests
+        this.data.selectedTests = [...this.data.allTests]
         if (!tests.length) {
-          yo.update(self.testList, yo`<div class=${css.testList}>No test file available</div>`)
+          yo.update(this.testList, yo`<div class=${css.testList}>No test file available</div>`)
         } else {
-          yo.update(self.testList, yo`<div class=${css.testList}>${self.listTests()}</div>`)
+          yo.update(this.testList, yo`<div class=${css.testList}>${this.listTests()}</div>`)
         }
 
-        if (!self.testsOutput || !self.testsSummary) return
+        if (!this.testsOutput || !this.testsSummary) return
 
-        self.testsOutput.hidden = true
-        self.testsSummary.hidden = true
-        self.testsOutput.innerHTML = ''
-        self.testsSummary.innerHTML = ''
+        this.testsOutput.hidden = true
+        this.testsSummary.hidden = true
+        this.testsOutput.innerHTML = ''
+        this.testsSummary.innerHTML = ''
       })
     })
   }
 
-  getTests (self, cb) {
-    var path = self.fileManager.currentPath()
+  getTests (cb) {
+    var path = this.fileManager.currentPath()
     if (!path) return cb(null, [])
-    var provider = self.fileManager.fileProviderOf(path)
+    var provider = this.fileManager.fileProviderOf(path)
     if (!provider) return cb(null, [])
     var tests = []
-    self.fileManager.filesFromPath(path, (error, files) => {
+    this.fileManager.filesFromPath(path, (error, files) => {
       if (error) return cb(error)
-      if (!error) {
-        for (var file in files) {
-          if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
-        }
-        cb(null, tests)
+      for (var file in files) {
+        if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
       }
+      cb(null, tests)
     })
   }
 
   listTests () {
-    const self = this
-    var tests = self.data.allTests
-    return tests.map(test => yo`<label class="singleTestLabel"><input class="singleTest" onchange =${(e) => self.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">${test} </label>`)
+    return this.data.allTests.map(test => yo`<label class="singleTestLabel"><input class="singleTest" onchange =${(e) => this.toggleCheckbox(e.target.checked, test)} type="checkbox" checked="true">${test} </label>`)
   }
 
   toggleCheckbox (eChecked, test) {
-    const self = this
-    if (!self.data.selectedTests) {
-      self.data.selectedTests = self._view.el.querySelectorAll('.singleTest:checked')
+    if (!this.data.selectedTests) {
+      this.data.selectedTests = this._view.el.querySelectorAll('.singleTest:checked')
     }
-    let selectedTests = self.data.selectedTests
+    let selectedTests = this.data.selectedTests
     selectedTests = eChecked ? [...selectedTests, test] : selectedTests.filter(el => el !== test)
-    self.data.selectedTests = selectedTests
-    let checkAll = self._view.el.querySelector('[id="checkAllTests"]')
+    this.data.selectedTests = selectedTests
+    let checkAll = this._view.el.querySelector('[id="checkAllTests"]')
     if (eChecked) {
       checkAll.checked = true
     } else if (!selectedTests.length) {
@@ -104,25 +97,23 @@ module.exports = class TestTab extends ApiFactory {
   }
 
   checkAll (event) {
-    const self = this
-    let checkBoxes = self._view.el.querySelectorAll('.singleTest')
-    const checkboxesLabels = self._view.el.querySelectorAll('.singleTestLabel')
+    let checkBoxes = this._view.el.querySelectorAll('.singleTest')
+    const checkboxesLabels = this._view.el.querySelectorAll('.singleTestLabel')
     // checks/unchecks all
     for (let i = 0; i < checkBoxes.length; i++) {
       checkBoxes[i].checked = event.target.checked
-      self.toggleCheckbox(event.target.checked, checkboxesLabels[i].innerText)
+      this.toggleCheckbox(event.target.checked, checkboxesLabels[i].innerText)
     }
   }
 
   testCallback (result) {
-    const self = this
-    self.testsOutput.hidden = false
+    this.testsOutput.hidden = false
     if (result.type === 'contract') {
-      self.testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
     } else if (result.type === 'testPass') {
-      self.testsOutput.appendChild(yo`<div class='${css.testPass} ${css.testLog}'>✓ (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class='${css.testPass} ${css.testLog}'>✓ (${result.value})</div>`)
     } else if (result.type === 'testFailure') {
-      self.testsOutput.appendChild(yo`<div class='${css.testFailure} ${css.testLog}'>✘ (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class='${css.testFailure} ${css.testLog}'>✘ (${result.value})</div>`)
     }
   }
 
@@ -135,71 +126,63 @@ module.exports = class TestTab extends ApiFactory {
   }
 
   updateFinalResult (_err, result, filename) {
-    const self = this
-    self.testsSummary.hidden = false
+    this.testsSummary.hidden = false
     if (_err) {
-      self.testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${_err.message}</div>`)
+      this.testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${_err.message}</div>`)
       return
     }
-    self.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
+    this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
     if (result.totalPassing > 0) {
-      self.testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
-      self.testsSummary.appendChild(yo`<br>`)
+      this.testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
+      this.testsSummary.appendChild(yo`<br>`)
     }
     if (result.totalFailing > 0) {
-      self.testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
-      self.testsSummary.appendChild(yo`<br>`)
+      this.testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
+      this.testsSummary.appendChild(yo`<br>`)
     }
     result.errors.forEach((error, index) => {
-      self.testsSummary.appendChild(yo`<div>${error.context} - ${error.value} </div>`)
-      self.testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${error.message}</div>`)
-      self.testsSummary.appendChild(yo`<br>`)
+      this.testsSummary.appendChild(yo`<div>${error.context} - ${error.value} </div>`)
+      this.testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${error.message}</div>`)
+      this.testsSummary.appendChild(yo`<br>`)
     })
   }
 
   runTest (testFilePath, callback) {
-    const self = this
-    self.fileManager.fileProviderOf(testFilePath).get(testFilePath, (error, content) => {
-      if (!error) {
-        var runningTest = {}
-        runningTest[testFilePath] = { content }
-        remixTests.runTestSources(runningTest, self.testCallback, self.resultsCallback, (error, result) => {
-          self.updateFinalResult(error, result, testFilePath)
-          callback(error)
-        }, (url, cb) => {
-          return self.compileTab.compileTabLogic.importFileCb(url, cb)
-        })
-      }
+    this.fileManager.fileProviderOf(testFilePath).get(testFilePath, (error, content) => {
+      if (error) return
+      var runningTest = {}
+      runningTest[testFilePath] = { content }
+      remixTests.runTestSources(runningTest, this.testCallback, this.resultsCallback, (error, result) => {
+        this.updateFinalResult(error, result, testFilePath)
+        callback(error)
+      }, (url, cb) => {
+        return this.compileTab.compileTabLogic.importFileCb(url, cb)
+      })
     })
   }
 
   runTests () {
-    const self = this
-    self.testsOutput.innerHTML = ''
-    self.testsSummary.innerHTML = ''
-    var tests = self.data.selectedTests
-    async.eachOfSeries(tests, (value, key, callback) => { self.runTest(value, callback) })
+    this.testsOutput.innerHTML = ''
+    this.testsSummary.innerHTML = ''
+    var tests = this.data.selectedTests
+    async.eachOfSeries(tests, (value, key, callback) => { this.runTest(value, callback) })
   }
 
   generateTestFile () {
-    const self = this
-    var fileManager = self.fileManager
+    var fileManager = this.fileManager
     var path = fileManager.currentPath()
     var fileProvider = fileManager.fileProviderOf(path)
-    if (fileProvider) {
-      helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
-        if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-        if (!fileProvider.set(newFile, testContractSample)) {
-          modalDialogCustom.alert('Failed to create test file ' + newFile)
-        } else {
-          fileManager.switchFile(newFile)
-        }
-      })
-    }
+    if (!fileProvider) return
+    helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
+      if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
+      if (!fileProvider.set(newFile, testContractSample)) {
+        return modalDialogCustom.alert('Failed to create test file ' + newFile)
+      }
+      fileManager.switchFile(newFile)
+    })
   }
 
   render () {
-    const self = this
     this.testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
     this.testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
 
@@ -214,12 +197,12 @@ module.exports = class TestTab extends ApiFactory {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class="${css.generateTestFile}" onclick="${self.generateTestFile(self)}">Generate test file</div>
+          <div class="${css.generateTestFile}" onclick="${this.generateTestFile(this)}">Generate test file</div>
         </div>
         <div class="${css.tests}">
-          ${self.testList}
+          ${this.testList}
           <div class="${css.buttons}">
-            <div class="${css.runButton}"  onclick="${self.runTests.bind(self)}">Run Tests</div>
+            <div class="${css.runButton}"  onclick="${this.runTests.bind(this)}">Run Tests</div>
             <label class="${css.label}" for="checkAllTests">
               <input id="checkAllTests"
                 type="checkbox"
@@ -229,12 +212,12 @@ module.exports = class TestTab extends ApiFactory {
               Check/Uncheck all
             </label>
           </div>
-          ${self.testsOutput}
-          ${self.testsSummary}
+          ${this.testsOutput}
+          ${this.testsSummary}
         </div>
       </div>
     `
-    if (!self._view.el) self._view.el = el
+    if (!this._view.el) this._view.el = el
     return el
   }
 
