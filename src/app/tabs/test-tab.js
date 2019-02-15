@@ -13,7 +13,6 @@ module.exports = class TestTab extends ApiFactory {
     super()
     this.compileTab = compileTab
     this._view = { el: null }
-    this._components = {}
     this.fileManager = fileManager
     this.filePanel = filePanel
     this.data = {}
@@ -46,11 +45,9 @@ module.exports = class TestTab extends ApiFactory {
         if (error) return tooltip(error)
         this.data.allTests = tests
         this.data.selectedTests = [...this.data.allTests]
-        if (!tests.length) {
-          yo.update(this.testList, yo`<div class=${css.testList}>No test file available</div>`)
-        } else {
-          yo.update(this.testList, yo`<div class=${css.testList}>${this.listTests()}</div>`)
-        }
+
+        const testsMessage = (tests.length ? this.listTests() : 'No test file available')
+        yo.update(this.testList, yo`<div class=${css.testList}>${testsMessage}</div>`)
 
         if (!this.testsOutput || !this.testsSummary) return
 
@@ -169,16 +166,13 @@ module.exports = class TestTab extends ApiFactory {
   }
 
   generateTestFile () {
-    var fileManager = this.fileManager
-    var path = fileManager.currentPath()
-    var fileProvider = fileManager.fileProviderOf(path)
+    var path = this.fileManager.currentPath()
+    var fileProvider = this.fileManager.fileProviderOf(path)
     if (!fileProvider) return
     helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
       if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-      if (!fileProvider.set(newFile, testContractSample)) {
-        return modalDialogCustom.alert('Failed to create test file ' + newFile)
-      }
-      fileManager.switchFile(newFile)
+      if (!fileProvider.set(newFile, testContractSample)) return modalDialogCustom.alert('Failed to create test file ' + newFile)
+      this.fileManager.switchFile(newFile)
     })
   }
 
