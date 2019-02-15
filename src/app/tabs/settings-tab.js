@@ -1,7 +1,6 @@
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 
-var globalRegistry = require('../../global/registry')
 var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
@@ -11,34 +10,25 @@ var css = require('./styles/settings-tab-styles')
 import { ApiFactory } from 'remix-plugin'
 
 module.exports = class SettingsTab extends ApiFactory {
-  constructor (localRegistry) {
+  constructor (config, editor, appManager) {
     super()
-    const self = this
-    self._components = {}
-    self._components.registry = localRegistry || globalRegistry
-    // dependencies
-    self._deps = {
-      config: self._components.registry.get('config').api,
-      editorPanel: self._components.registry.get('editorpanel').api,
-      editor: self._components.registry.get('editor').api,
-      appManager: self._components.registry.get('appmanager').api
-    }
-    self._view = { /* eslint-disable */
+    this.config = config
+    this.editor = editor
+    this.appManager = appManager
+    this._components = {}
+    this._view = { /* eslint-disable */
       el: null,
       optionVM: null, personal: null, warnPersonalMode: null, generateContractMetadata: null,
-      pluginInput: null, versionSelector: null, version: null,
       theme: { dark: null, light: null, clean: null },
-      plugins: {},
       config: {
-        general: null, themes: null,
-        plugin: null
+        general: null, themes: null
       }
     } /* eslint-enable */
-    self.data = {}
-    self.event = new EventManager()
-    self._components.themeStorage = new Storage('style:')
-    self.data.currentTheme = self._components.themeStorage.get('theme') || 'light'
+    this.event = new EventManager()
+    const themeStorage = new Storage('style:')
+    this.currentTheme = themeStorage.get('theme') || 'light'
   }
+
   get profile () {
     return {
       displayName: 'settings',
@@ -58,16 +48,16 @@ module.exports = class SettingsTab extends ApiFactory {
 
     // Gist settings
     var gistAccessToken = yo`<input id="gistaccesstoken" type="password" class="form-control mb-2 ${css.inline}" placeholder="Token">`
-    var token = self._deps.config.get('settings/gist-access-token')
+    var token = self.config.get('settings/gist-access-token')
     if (token) gistAccessToken.value = token
-    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" onclick=${() => { self._deps.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
-    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; self._deps.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
-    self._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => self._deps.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
+    var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" onclick=${() => { self.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
+    var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; self.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
+    self._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => self.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
     //
     self._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
-    if (self._deps.config.get('settings/always-use-vm')) self._view.optionVM.setAttribute('checked', '')
+    if (self.config.get('settings/always-use-vm')) self._view.optionVM.setAttribute('checked', '')
     self._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
-    if (self._deps.config.get('settings/personal-mode')) self._view.personal.setAttribute('checked', '')
+    if (self.config.get('settings/personal-mode')) self._view.personal.setAttribute('checked', '')
     var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
     This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
     Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...).
@@ -76,7 +66,7 @@ module.exports = class SettingsTab extends ApiFactory {
     self._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
     self._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox" class="form-check-input">`
 
-    if (self._deps.config.get('settings/generate-contract-metadata')) self._view.generateContractMetadata.setAttribute('checked', '')
+    if (self.config.get('settings/generate-contract-metadata')) self._view.generateContractMetadata.setAttribute('checked', '')
 
     self._view.pluginInput = yo`<textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>`
 
@@ -90,7 +80,7 @@ module.exports = class SettingsTab extends ApiFactory {
       <div class="card-body">
       <h6 class="${css.title} card-title">Home</h6>
       <div class="btn-group">
-        <button class="btn btn-primary sm-1" onclick="${() => { this._deps.appManager.ensureActivated('home') }}" >Home</button>
+        <button class="btn btn-primary sm-1" onclick="${() => { this.appManager.ensureActivated('home') }}" >Home</button>
         <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
       </div>
       </div>
@@ -108,7 +98,7 @@ module.exports = class SettingsTab extends ApiFactory {
             <label class="form-check-label align-middle" for="alwaysUseVM">Always use Ethereum VM at Load</label>
           </div>
           <div class="form-check ${css.frow}">
-            <div><input id="editorWrap" class="form-check-input align-middle" type="checkbox" onchange=${function () { self._deps.editor.resize(this.checked) }}></div>
+            <div><input id="editorWrap" class="form-check-input align-middle" type="checkbox" onchange=${function () { self.editor.resize(this.checked) }}></div>
             <label class="form-check-label align-middle" for="editorWrap">Text Wrap</label>
           </div>
           <div class="form-check ${css.frow}">
@@ -157,10 +147,10 @@ module.exports = class SettingsTab extends ApiFactory {
       </div>`
 
     function onchangeGenerateContractMetadata (event) {
-      self._deps.config.set('settings/generate-contract-metadata', !self._deps.config.get('settings/generate-contract-metadata'))
+      self.config.set('settings/generate-contract-metadata', !self.config.get('settings/generate-contract-metadata'))
     }
     function onchangeOption (event) {
-      self._deps.config.set('settings/always-use-vm', !self._deps.config.get('settings/always-use-vm'))
+      self.config.set('settings/always-use-vm', !self.config.get('settings/always-use-vm'))
     }
     function onswitch2darkTheme (event) {
       styleGuide.switchTheme('dark')
@@ -172,7 +162,7 @@ module.exports = class SettingsTab extends ApiFactory {
       styleGuide.switchTheme('clean')
     }
     function onchangePersonal (event) {
-      self._deps.config.set('settings/personal-mode', !self._deps.config.get('settings/personal-mode'))
+      self.config.set('settings/personal-mode', !self.config.get('settings/personal-mode'))
     }
     styleGuide.switchTheme()
     return self._view.el
