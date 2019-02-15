@@ -1,75 +1,11 @@
 var yo = require('yo-yo')
 var async = require('async')
-var helper = require('../../lib/helper.js')
 var tooltip = require('../ui/tooltip')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
-
 import { ApiFactory } from 'remix-plugin'
 
-class TestTabLogic {
-
-  constructor (fileManager) {
-    this.fileManager = fileManager
-  }
-
-  generateTestFile () {
-    var path = this.fileManager.currentPath()
-    var fileProvider = this.fileManager.fileProviderOf(path)
-    if (!fileProvider) return
-    helper.createNonClashingNameWithPrefix(path + '/test.sol', fileProvider, '_test', (error, newFile) => {
-      if (error) return modalDialogCustom.alert('Failed to create file. ' + newFile + ' ' + error)
-      if (!fileProvider.set(newFile, this.generateTestContractSample())) return modalDialogCustom.alert('Failed to create test file ' + newFile)
-      this.fileManager.switchFile(newFile)
-    })
-  }
-
-  generateTestContractSample () {
-    return `pragma solidity >=0.4.0 <0.6.0;
-      import "remix_tests.sol"; // this import is automatically injected by Remix.
-
-      // file name has to end with '_test.sol'
-      contract test_1 {
-
-        function beforeAll() public {
-          // here should instantiate tested contract
-          Assert.equal(uint(4), uint(3), "error in before all function");
-        }
-
-        function check1() public {
-          // use 'Assert' to test the contract
-          Assert.equal(uint(2), uint(1), "error message");
-          Assert.equal(uint(2), uint(2), "error message");
-        }
-
-        function check2() public view returns (bool) {
-          // use the return value (true or false) to test the contract
-          return true;
-        }
-      }
-
-    contract test_2 {
-
-      function beforeAll() public {
-        // here should instantiate tested contract
-        Assert.equal(uint(4), uint(3), "error in before all function");
-      }
-
-      function check1() public {
-        // use 'Assert' to test the contract
-        Assert.equal(uint(2), uint(1), "error message");
-        Assert.equal(uint(2), uint(2), "error message");
-      }
-
-      function check2() public view returns (bool) {
-        // use the return value (true or false) to test the contract
-        return true;
-      }
-    }`
-  }
-
-}
+const TestTabLogic = require('./testTab/testTab')
 
 module.exports = class TestTab extends ApiFactory {
   constructor (fileManager, filePanel, compileTab) {
