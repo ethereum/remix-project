@@ -33,8 +33,7 @@ class VerticalIconComponent {
 
   removeIcon (mod) {
     let kind = mod.kind || 'other'
-    let el = this.iconKind[kind]
-    if (el) el.parentElement.removeChild(el)
+    if (this.icons[mod.name]) this.iconKind[kind].removeChild(this.icons[mod.name])
   }
 
   select (name) {
