@@ -32,8 +32,8 @@ class SwapPanelComponent {
     this.store.event.on('deactivate', (name) => {
       if (this.contents[name]) this.remove(name)
     })
-    this.store.event.on('add', (name) => { })
-    this.store.event.on('remove', (name) => { })
+    this.store.event.on('add', (entity) => { })
+    this.store.event.on('remove', (entity) => { })
   }
 
   showContent (moduleName) {

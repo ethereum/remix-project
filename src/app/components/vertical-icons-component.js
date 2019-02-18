@@ -20,8 +20,8 @@ class VerticalIconComponent {
       const item = this.store.get(name)
       if (item && this.icons[name]) this.removeIcon(item.profile)
     })
-    this.store.event.on('add', (name) => { })
-    this.store.event.on('remove', (name) => { })
+    this.store.event.on('add', (entity) => { })
+    this.store.event.on('remove', (entity) => { })
   }
 
   addIcon (mod) {
