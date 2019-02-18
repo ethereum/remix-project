@@ -32,7 +32,7 @@ export class RemixAppManager extends AppManagerApi {
   }
 
   getEntity (entityName) {
-    return this.store.get(entityName)
+    return this.store.getOne(entityName)
   }
 
   addEntity (entity) {
