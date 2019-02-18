@@ -1,8 +1,8 @@
-var async = require('async')
+import async from 'async'
 var remixLib = require('remix-lib')
 import Web3 from 'web3'
 
-export function deployAll(compileResult: object, web3: Web3, callback: Function) {
+export function deployAll(compileResult: object, web3: Web3, callback) {
     let compiledObject = {}
     let contracts = {}
     let accounts: string[] = []

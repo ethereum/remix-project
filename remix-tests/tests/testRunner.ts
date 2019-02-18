@@ -5,16 +5,17 @@ import { Provider } from 'remix-simulator'
 
 import { compileFileOrFiles } from '../dist/compiler'
 import { deployAll } from '../dist/deployer'
-import { runTest, ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/testRunner'
+import { runTest } from '../dist/testRunner'
+import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/types'
 
 function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
   web3.setProvider(new Provider())
   let compilationData: object
-  let accounts: object
+  let accounts: string[]
   async.waterfall([
     function getAccountList(next: Function): void {
-      web3.eth.getAccounts((_err: Error | null | undefined, _accounts: object) => {
+      web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
         accounts = _accounts
         next(_err)
       })

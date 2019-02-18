@@ -1,32 +1,7 @@
 import async from 'async'
 import * as changeCase from 'change-case'
 import Web3 from 'web3'
-
-export interface TestResultInterface {
-  type: string,
-  value: any,
-  time?: number,
-  context?: string,
-  errMsg?: string
-  filename?: string
-}
-interface RunListInterface {
-  name: string,
-  type: string,
-  constant: boolean,
-  signature?: any
-}
-export interface ResultsInterface {
-    passingNum: number,
-    failureNum: number,
-    timePassed: number
-}
-export interface TestCbInterface {
-  (error: Error | null | undefined, result: TestResultInterface) : void;
-}
-export interface ResultCbInterface {
-  (error: Error | null | undefined, result: ResultsInterface) : void;
-}
+import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface } from './types'
 
 function getFunctionFullName (signature, methodIdentifiers) {
     for (var method in methodIdentifiers) {
