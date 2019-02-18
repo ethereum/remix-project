@@ -1,8 +1,8 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
-const styleguide = require('../ui/styles-guide/theme-chooser')
-const styles = styleguide.chooser()
+// const styleguide = require('../ui/styles-guide/theme-chooser')
+// const styles = styleguide.chooser()
 
 const EventEmitter = require('events')
 
@@ -120,11 +120,16 @@ class PluginManagerComponent {
     }
 
     ctrBtns = yo`<div id='${mod.profile.name}Activation'>
-        <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
+        <button class='btn btn-sm btn-primary' onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
         </div>`
 
+        // <div id='${mod.profile.name}Activation' class="custom-control custom-switch">
+        //   <input type="checkbox" class="custom-control-input" id="customSwitch1">
+        //   <label class="custom-control-label" for="customSwitch1">Toggle this switch element</label>
+        // </div>
+
     return yo`
-    <div id=${mod.profile.name} title="${item}" class=${css.plugin} >
+    <div id=${mod.profile.name} title="${item}" class="card ${css.plugin}" >
       <h3>${displayName}</h3>
       ${mod.profile.description}
       ${ctrBtns}
@@ -160,7 +165,7 @@ module.exports = PluginManagerComponent
 const css = csjs`
   .plugins_settings h2 {
     font-size: 1em;
-    border-bottom: 1px ${styles.appProperties.solidBorderBox_BorderColor} solid;
+    border-bottom: 1px red solid;
     padding: 10px 20px;
     font-size: 10px;
     padding: 10px 20px;
@@ -170,10 +175,8 @@ const css = csjs`
     margin-bottom: 0;
   }
   .plugin {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
     margin: 0;
     margin-bottom: 2%;
-    border-bottom: 1px ${styles.appProperties.solidBorderBox_BorderColor} solid;
     padding: 0px 20px 10px;
   }
   .plugin h3 {
@@ -183,8 +186,6 @@ const css = csjs`
   }
 
   .plugin button {
-    ${styles.rightPanel.settingsTab.button_LoadPlugin};
-    cursor: pointer;
     font-size: 10px;
   }
   .activePlugins {
