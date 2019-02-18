@@ -25,7 +25,12 @@ dummyProvider.prototype.traceTransaction = function (txHash, options, cb) {
   return {}
 }
 
-dummyProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) { cb(null, {}) }
+dummyProvider.prototype.storageRangeAt = function (blockNumber, txIndex, address, start, end, maxLength, cb) {
+  if (cb) {
+    cb(null, {})
+  }
+  return {}
+}
 
 dummyProvider.prototype.getBlockNumber = function (cb) { cb(null, '') }
 
