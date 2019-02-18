@@ -20,7 +20,7 @@ export class RemixAppManager extends AppManagerApi {
   }
 
   setActive (name, isActive) {
-    const entity = this.getEntity(name)
+    const entity = this.getOne(name)
     // temp
     if (entity && name === 'solidity') {
       isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
@@ -32,7 +32,7 @@ export class RemixAppManager extends AppManagerApi {
   }
 
   getEntity (entityName) {
-    return this.store.getEntity(entityName)
+    return this.store.getOne(entityName)
   }
 
   addEntity (entity) {

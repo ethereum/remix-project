@@ -22,7 +22,7 @@ class SwapPanelComponent {
     })
 
     this.store.event.on('activate', (name) => {
-      const { profile, api } = this.store.getEntity(name)
+      const { profile, api } = this.store.getOne(name)
       if (((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) &&
         profile.icon && api.render && typeof api.render === 'function') {
         this.add(name, api.render())
