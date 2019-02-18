@@ -1,10 +1,5 @@
-import { runTestFiles } from './runTestFiles'
-import { runTestSources } from './runTestSources'
-import { runTest } from './testRunner'
-
-module.exports = {
-  runTestFiles: runTestFiles,
-  runTestSources: runTestSources,
-  runTest: runTest,
-  assertLibCode: require('../sol/tests.sol.js')
-}
+export { runTestFiles } from './runTestFiles'
+export { runTestSources } from './runTestSources'
+export { runTest } from './testRunner'
+export * from './types'
+export { assertLibCode } from '../sol/tests.sol.js'
