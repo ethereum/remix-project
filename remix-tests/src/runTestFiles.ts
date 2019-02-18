@@ -1,6 +1,7 @@
 import async from 'async'
 import fs from './fileSystem'
-import { runTest, TestResultInterface, ResultsInterface } from './testRunner'
+import { runTest } from './testRunner'
+import { TestResultInterface, ResultsInterface } from './types'
 import colors from 'colors'
 import Web3 from 'web3'
 

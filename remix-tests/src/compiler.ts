@@ -1,15 +1,15 @@
-/* eslint no-extend-native: "warn" */
 import fs from './fileSystem'
-var async = require('async')
+import async from 'async'
 var path = require('path')
 let RemixCompiler = require('remix-solidity').Compiler
+import { SrcIfc } from './types'
 
-function regexIndexOf (inputString, regex, startpos = 0) {
+function regexIndexOf (inputString: string, regex: RegExp, startpos: number = 0) {
     var indexOf = inputString.substring(startpos).search(regex)
     return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
 }
 
-function writeTestAccountsContract (accounts) {
+function writeTestAccountsContract (accounts: string[]) {
     var testAccountContract = require('../sol/tests_accounts.sol.js')
     var body = 'address[' + accounts.length + '] memory accounts;'
     if (!accounts.length) body += ';'
@@ -72,7 +72,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
                 })
                 compiler.compile(sources, filepath)
             }
-        ], function (err: Error | null | undefined, result) {
+        ], function (err: Error | null | undefined, result: any) {
             let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
             if (errors.length > 0) {
                 if (!isBrowser) require('signale').fatal(errors)
@@ -83,7 +83,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     }
 }
 
-export function compileContractSources(sources, importFileCb, opts, cb) {
+export function compileContractSources(sources: SrcIfc, importFileCb, opts, cb) {
     let compiler, filepath
     let accounts = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
@@ -115,7 +115,7 @@ export function compileContractSources(sources, importFileCb, opts, cb) {
             })
             compiler.compile(sources, filepath)
         }
-    ], function (err: Error | null | undefined , result) {
+    ], function (err: Error | null | undefined , result: any) {
         let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
         if (errors.length > 0) {
             if (!isBrowser) require('signale').fatal(errors)
