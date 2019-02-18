@@ -23,7 +23,7 @@ module.exports = {
     for (var k = 0; k < memorySlot.length; k += 2) {
       var raw = memorySlot.substr(k, 2)
       var ascii = String.fromCharCode(parseInt(raw, 16))
-      ascii = ascii.replace(/\W/g, '?')
+      ascii = ascii.replace(/[^\w\s]/, '?')
       if (ascii === '') {
         ascii = '?'
       }
