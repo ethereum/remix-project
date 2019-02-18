@@ -43,7 +43,7 @@ export class RemixdHandle {
     this.connectToLocalhost()
   }
 
-   /**
+  /**
     * connect to localhost if no connection and render the explorer
     * disconnect from localhost if connected and remove the explorer
     *
@@ -65,7 +65,8 @@ export class RemixdHandle {
                 this.fileSystemExplorer.ensureRoot()
               }
             })
-          }})
+          }}
+      )
     }
   }
 }
