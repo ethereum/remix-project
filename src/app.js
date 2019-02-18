@@ -411,7 +411,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // TODOs those are instanciated before hand. should be instanciated on demand
 
-  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
+  let appStore = new EntityStore('module')
   const pluginManagerComponent = new PluginManagerComponent()
   const appManager = new RemixAppManager(appStore)
   const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true })
