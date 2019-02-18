@@ -3,7 +3,7 @@ import * as changeCase from 'change-case'
 import Web3 from 'web3'
 import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface } from './types'
 
-function getFunctionFullName (signature, methodIdentifiers) {
+function getFunctionFullName (signature: string, methodIdentifiers) {
     for (var method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
             return method
@@ -12,7 +12,7 @@ function getFunctionFullName (signature, methodIdentifiers) {
     return null
 }
 
-function getOverridedSender (userdoc, signature, methodIdentifiers) {
+function getOverridedSender (userdoc, signature: string, methodIdentifiers) {
     let fullName: any = getFunctionFullName(signature, methodIdentifiers)
     let match = /sender: account-+(\d)/g
     let accountIndex = userdoc.methods[fullName] ? match.exec(userdoc.methods[fullName].notice) : null
@@ -28,7 +28,7 @@ function getTestFunctions (jsonInterface) {
     return jsonInterface.filter((x) => specialFunctions.indexOf(x.name) < 0 && x.type === 'function')
 }
 
-function createRunList(jsonInterface): RunListInterface[] {
+function createRunList (jsonInterface): RunListInterface[] {
     let availableFunctions = getAvailableFunctions(jsonInterface)
     let testFunctions = getTestFunctions(jsonInterface)
     let runList: RunListInterface[] = []
@@ -54,7 +54,7 @@ function createRunList(jsonInterface): RunListInterface[] {
     return runList
 }
 
-export function runTest(testName, testObject: any, contractDetails: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
+export function runTest (testName, testObject: any, contractDetails: any, opts: any, testCallback: TestCbInterface, resultsCallback: ResultCbInterface) {
     let runList = createRunList(testObject._jsonInterface)
 
     let passingNum: number = 0

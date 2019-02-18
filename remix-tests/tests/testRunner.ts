@@ -5,8 +5,8 @@ import { Provider } from 'remix-simulator'
 
 import { compileFileOrFiles } from '../dist/compiler'
 import { deployAll } from '../dist/deployer'
-import { runTest } from '../dist/testRunner'
-import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/types'
+import { runTest } from '../dist/index'
+import { ResultsInterface, TestCbInterface, ResultCbInterface } from '../dist/index'
 
 function compileAndDeploy(filename: string, callback: Function) {
   let web3: Web3 = new Web3()
@@ -119,7 +119,7 @@ describe('testRunner', () => {
       let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
+        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
           var testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
@@ -158,7 +158,7 @@ describe('testRunner', () => {
       let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
+        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
           var testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
@@ -186,7 +186,7 @@ describe('testRunner', () => {
       let tests: any[] = [], results: ResultsInterface;
 
       before(function (done) {
-        compileAndDeploy(filename, function (_err, compilationData, contracts, accounts) {
+        compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
           var testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
