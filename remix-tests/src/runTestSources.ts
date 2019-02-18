@@ -7,13 +7,7 @@ import { runTest } from './testRunner'
 
 import Web3 = require('web3')
 import Provider from 'remix-simulator'
-
-interface FinalResult {
-    totalPassing: number,
-    totalFailing: number,
-    totalTime: number,
-    errors: any[],
-}
+import { FinalResult } from './types'
 
 var createWeb3Provider = function () {
     let web3 = new Web3()
