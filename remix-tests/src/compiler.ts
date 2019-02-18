@@ -67,7 +67,7 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
             },
             function doCompilation(next: Function) {
                 // @ts-ignore
-                compiler.event.register('compilationFinished', this, function (success, data, source) {
+                compiler.event.register('compilationFinished', this, (success, data, source) => {
                     next(null, data)
                 })
                 compiler.compile(sources, filepath)
@@ -83,8 +83,8 @@ export function compileFileOrFiles(filename: string, isDirectory: boolean, opts:
     }
 }
 
-export function compileContractSources(sources: SrcIfc, importFileCb, opts, cb) {
-    let compiler, filepath
+export function compileContractSources(sources: SrcIfc, importFileCb: any, opts: any, cb: Function) {
+    let compiler, filepath: string
     let accounts = opts.accounts || []
     // Iterate over sources keys. Inject test libraries. Inject test library import statements.
     if (!('remix_tests.sol' in sources) && !('tests.sol' in sources)) {
@@ -110,7 +110,7 @@ export function compileContractSources(sources: SrcIfc, importFileCb, opts, cb) 
         },
         function doCompilation (next: Function) {
             // @ts-ignore
-            compiler.event.register('compilationFinished', this, function (success, data, source) {
+            compiler.event.register('compilationFinished', this, (success, data, source) => {
                 next(null, data)
             })
             compiler.compile(sources, filepath)
