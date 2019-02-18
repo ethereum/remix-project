@@ -85,7 +85,7 @@ export class EntityStore extends Store {
   static fromLocal (name, keyId, initialState = {}) {
     const fromLocal = localStorage.getItem(name)
     const intial = fromLocal ? JSON.parse(fromLocal) : initialState
-    return new EntityStore(name, keyId, intial || { ids: [], actives: [] })
+    return new EntityStore(name, keyId, intial)
   }
 
   /**
@@ -94,7 +94,7 @@ export class EntityStore extends Store {
    * @param {(string|number)} keyId The name of the key used as a unique ID for the entity
    * @param {EntityState} initialState The initial state used if state is not available in `localStorage`
    */
-  constructor (name, keyId, initialState) {
+  constructor (name, keyId, initialState = { ids: [], actives: [], entities: {} }) {
     super(name, initialState)
     this.keyId = keyId || 'id'
   }
