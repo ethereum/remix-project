@@ -36,8 +36,8 @@ class PluginManagerComponent {
     this.store = store
     this.store.event.on('activate', (name) => { this.reRender() })
     this.store.event.on('deactivate', (name) => { this.reRender() })
-    this.store.event.on('add', (name) => { this.reRender() })
-    this.store.event.on('remove', (name) => { this.reRender() })
+    this.store.event.on('add', (entity) => { this.reRender() })
+    this.store.event.on('remove', (entity) => { this.reRender() })
   }
 
   render () {

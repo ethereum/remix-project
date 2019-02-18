@@ -22,7 +22,7 @@ class SwapPanelComponent {
     })
 
     this.store.event.on('activate', (name) => {
-      const { profile, api } = this.store.get(name)
+      const { profile, api } = this.store.getOne(name)
       if (((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) &&
         profile.icon && api.render && typeof api.render === 'function') {
         this.add(name, api.render())
@@ -32,8 +32,8 @@ class SwapPanelComponent {
     this.store.event.on('deactivate', (name) => {
       if (this.contents[name]) this.remove(name)
     })
-    this.store.event.on('add', (name) => { })
-    this.store.event.on('remove', (name) => { })
+    this.store.event.on('add', (entity) => { })
+    this.store.event.on('remove', (entity) => { })
   }
 
   showContent (moduleName) {
