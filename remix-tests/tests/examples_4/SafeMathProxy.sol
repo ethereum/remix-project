@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity >=0.4.22 <0.6.0;
 import "./SafeMath.sol";
 
 /*
@@ -9,23 +9,23 @@ https://truffleframework.com/tutorials/testing-for-throws-in-solidity-tests
 contract SafeMathProxy {
     using SafeMath for uint;
 
-    function divProxy(uint256 a, uint256 b) returns (uint256) {
+    function divProxy(uint256 a, uint256 b) public pure returns (uint256) {
         return a.div(b);
     }
 
-    function mulProxy(uint256 a, uint256 b) returns (uint256) {
+    function mulProxy(uint256 a, uint256 b) public pure returns (uint256) {
         return a.mul(b);
     }
 
-    function subProxy(uint256 a, uint256 b) returns (uint256) {
+    function subProxy(uint256 a, uint256 b) public pure returns (uint256) {
         return a.sub(b);
     }
 
-    function addProxy(uint256 a, uint256 b) returns (uint256) {
+    function addProxy(uint256 a, uint256 b) public pure returns (uint256) {
         return a.add(b);
     }
 
-    function modProxy(uint256 a, uint256 b) returns (uint256) {
+    function modProxy(uint256 a, uint256 b) public pure returns (uint256) {
         return a.mod(b);
     }
 }
