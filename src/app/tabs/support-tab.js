@@ -37,6 +37,7 @@ class SupportTab extends ApiFactory {
 
     this.gitterIframe = yo`<div></div>`
 
+  generateRemixdUI () {
     const remixd = yo`
       <div class="${css.info}">
         <div class=${css.title}>Accessing local files</div>
@@ -49,7 +50,10 @@ class SupportTab extends ApiFactory {
         <div class="${css.crow}"><a target="_blank" href="https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem">http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html</a></div>
         <div class="${css.crow}">Installation: <pre class=${css.remixdinstallation}>npm install remixd -g</pre></div>
       </div>`
+    return remixd
+  }
 
+  generateLocalRemixdUI () {
     const localremixd = yo`
       <div class="${css.info}">
         <div class=${css.title}>Running Remix locally</div>
@@ -63,6 +67,13 @@ class SupportTab extends ApiFactory {
         </div>
         <a target="_blank" href="https://github.com/horizon-games/remix-app">https://github.com/horizon-games/remix-app</a>
       </div>`
+    return localremixd
+  }
+
+  render () {
+    if (this.el) return this.el
+
+    this.gitterIframe = yo`<div></div>`
 
     this.el = yo`
       <div class="${css.supportTabView}" id="supportView">
@@ -78,8 +89,8 @@ class SupportTab extends ApiFactory {
           </div>
           ${this.gitterIframe}
         </div>
-        ${remixd}
-        ${localremixd}
+        ${this.generateRemixdUI()}
+        ${this.generateLocalRemixdUI()}
       </div>`
 
     return this.el
