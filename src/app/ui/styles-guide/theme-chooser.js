@@ -19,7 +19,7 @@ const themeVariable = {
 module.exports = {
 
   chooser: function () {
-    var themeStorage = new Storage('style:')
+    const themeStorage = new Storage('style:')
     if (themeStorage.exists('theme')) {
       if (themeStorage.get('theme') === 'dark') {
         document.getElementById('theme-link').setAttribute('href', themes['dark'])
