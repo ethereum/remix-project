@@ -181,7 +181,7 @@
     "serve_debugger": "execr --silent http-server src/app/debugger/remix-debugger",
     "sourcemap": "exorcist --root ../ build/app.js.map > build/app.js",
     "start": "npm-run-all -lpr serve watch onchange remixd",
-    "test": "npm run csslint; standard && node test/index.js",
+    "test": "csslint && standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc"
   }
