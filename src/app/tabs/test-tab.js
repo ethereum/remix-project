@@ -41,7 +41,7 @@ module.exports = class TestTab extends ApiFactory {
     })
 
     this.fileManager.event.register('currentFileChanged', (file, provider) => {
-      this.getTests((error, tests) => {
+      this.testTabLogic.getTests((error, tests) => {
         if (error) return tooltip(error)
         this.data.allTests = tests
         this.data.selectedTests = [...this.data.allTests]
@@ -56,21 +56,6 @@ module.exports = class TestTab extends ApiFactory {
         this.testsOutput.innerHTML = ''
         this.testsSummary.innerHTML = ''
       })
-    })
-  }
-
-  getTests (cb) {
-    var path = this.fileManager.currentPath()
-    if (!path) return cb(null, [])
-    var provider = this.fileManager.fileProviderOf(path)
-    if (!provider) return cb(null, [])
-    var tests = []
-    this.fileManager.filesFromPath(path, (error, files) => {
-      if (error) return cb(error)
-      for (var file in files) {
-        if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
-      }
-      cb(null, tests)
     })
   }
 
