@@ -4,8 +4,21 @@ const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 
 const css = csjs`
-  .pluginManager {
+  .pluginSearch {
     padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .displayName {
+    text-transform: capitalize;
+  }
+  .description {
+    text-transform: capitalize;
+  }
+  .row {
+    display: flex;
+    flex-direction: row;
   }
 `
 
@@ -44,23 +57,29 @@ class PluginManagerComponent {
     this.store.event.on('remove', (entity) => { this.reRender() })
   }
 
-  renderItem (item) {
-    const mod = this.store.getOne(item)
+  renderItem (name) {
+    const mod = this.store.getOne(name)
     if (!mod) return
-    const isActive = this.store.actives.includes(mod.profile.name)
-    const displayName = (mod.profile.displayName) ? mod.profile.displayName : mod.profile.name
+    const isActive = this.store.actives.includes(name)
+    const displayName = (mod.profile.displayName) ? mod.profile.displayName : name
 
-    const input = isActive
-      ? yo`<input onchange="${_ => this.appManager.deactivateOne(item)}" checked type="checkbox" class="form-check-input">`
-      : yo`<input onchange="${_ => this.appManager.activateOne(item)}" type="checkbox" class="form-check-input">`
+    const activationButton = isActive
+      ? yo`
+      <button onclick="${_ => this.appManager.deactivateOne(name)}" class="btn btn-secondary btn-sm">
+        Deactivate
+      </button>`
+      : yo`
+      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-primary btn-sm">
+        Activate
+      </button>`
 
     return yo`
-      <article class="plugin" id="${mod.profile.name}" title="${item}" >
-        <div id="${mod.profile.name}Activation" class="form-check row align-items-center">
-          ${input}
-          <h6 class="form-check-label">${displayName}</h6>
+      <article class="list-group-item" title="${name}" >
+        <div class="${css.row} justify-content-between align-items-center">
+          <h6 class="${css.displayName}">${displayName}</h6>
+          ${activationButton}
         </div>
-        <p>${mod.profile.description}</p>
+        <p class="${css.description}">${mod.profile.description}</p>
       </article>
     `
   }
@@ -87,24 +106,39 @@ class PluginManagerComponent {
       }, { actives: [], inactives: [] })
 
     const activeTile = actives.length !== 0
-      ? yo`<h3>Active Modules</h3>`
+      ? yo`
+      <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
+        <span class="navbar-brand">Active Modules</span>
+        <span class="badge badge-pill badge-primary">${actives.length}</span>
+      </nav>`
       : ''
     const inactiveTile = inactives.length !== 0
-      ? yo`<h3>Inactive Modules</h3>`
+      ? yo`
+      <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
+        <span class="navbar-brand">Inactive Modules</span>
+        <span class="badge badge-pill badge-primary">${inactives.length}</span>
+      </nav>`
       : ''
 
     const rootView = yo`
-      <section id="${css.pluginManager}">
-        <h2>Plugin Manager</h2>
-        <hr/>
-        <div class="form-group">
+      <div>
+        <header class="navbar navbar-dark bg-dark">
+          <h2 class="navbar-brand">Plugin Manager</h2>
+        </header>
+        <div class="form-group ${css.pluginSearch}">
           <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder='Search'>
         </div>
-        ${activeTile}
-        ${actives.map(name => this.renderItem(name))}
-        ${inactiveTile}
-        ${inactives.map(name => this.renderItem(name))}
-      </section>
+        <section>
+          ${activeTile}
+          <div class="list-group list-group-flush">
+            ${actives.map(name => this.renderItem(name))}
+          </div>
+          ${inactiveTile}
+          <div class="list-group list-group-flush">
+            ${inactives.map(name => this.renderItem(name))}
+          </div>
+        </section>
+      </div>
     `
     if (!this.views.root) this.views.root = rootView
     return rootView
