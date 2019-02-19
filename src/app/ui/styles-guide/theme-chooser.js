@@ -36,7 +36,7 @@ module.exports = {
     themeStorage.set('theme', theme)
     if (themes[theme]) {
       document.getElementById('theme-link').setAttribute('href', themes[theme])
-    } 
+    }
     // if (theme === 'dark') {
     //   return styleGuideDark()
     // } else if (theme === 'light') {
