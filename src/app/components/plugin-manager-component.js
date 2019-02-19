@@ -20,6 +20,10 @@ const css = csjs`
     display: flex;
     flex-direction: row;
   }
+  .isStuck {
+    background-color: var(--primary);
+    color: 
+  }
 `
 
 class PluginManagerComponent {
@@ -69,7 +73,7 @@ class PluginManagerComponent {
         Deactivate
       </button>`
       : yo`
-      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-primary btn-sm">
+      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-success btn-sm">
         Activate
       </button>`
 
