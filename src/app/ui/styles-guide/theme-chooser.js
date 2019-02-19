@@ -33,8 +33,10 @@ module.exports = {
 
   switchTheme: function (theme) {
     var themeStorage = new Storage('style:')
-    console.log(document)
     themeStorage.set('theme', theme)
+    if (themes[theme]) {
+      document.getElementById('theme-link').setAttribute('href', themes[theme])
+    } 
     // if (theme === 'dark') {
     //   return styleGuideDark()
     // } else if (theme === 'light') {
@@ -43,20 +45,6 @@ module.exports = {
     //   return styleGuideClean()
     // } else {
     //   return styleGuideLight()
-    // }
-    // // Boostrap themes
-    // // TODO : Put it somewhere else
-    // const themes = {
-    //   dark: 'https://bootstrap.themes.guide/darkster/theme.min.css',
-    //   light: 'https://bootstrap.themes.guide/herbie/theme.min.css',
-    //   clean: 'https://bootstrap.themes.guide/signal/theme.min.css'
-    // }
-
-    // if (themes[theme]) {
-    //   document.getElementById('theme-link').setAttribute('href', themes[theme])
-    // } 
-    // else {
-    //   document.getElementById('theme-link').setProperty('href', themes['light'])
     // }
   }
 }
