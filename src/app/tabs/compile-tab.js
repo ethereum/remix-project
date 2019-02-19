@@ -21,7 +21,7 @@ import { ApiFactory } from 'remix-plugin'
 
 class CompileTab extends ApiFactory {
 
-  constructor (registry) {
+  constructor (editor, config, renderer, swarmfileProvider, fileManager, fileProviders, pluginManager) {
     super()
     this.events = new EventEmitter()
     this._view = {
@@ -34,27 +34,26 @@ class CompileTab extends ApiFactory {
     this.queryParams = new QueryParams()
 
     // dependencies
-    this._deps = {
-      editor: registry.get('editor').api,
-      config: registry.get('config').api,
-      renderer: registry.get('renderer').api,
-      swarmfileProvider: registry.get('fileproviders/swarm').api,
-      fileManager: registry.get('filemanager').api,
-      fileProviders: registry.get('fileproviders').api,
-      pluginManager: registry.get('pluginmanager').api
-    }
+    this.editor = editor
+    this.config = config
+    this.renderer = renderer
+    this.swarmfileProvider = swarmfileProvider
+    this.fileManager = fileManager
+    this.fileProviders = fileProviders
+    this.pluginManager = pluginManager
+
     this.data = {
       contractsDetails: {}
     }
 
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this._deps.fileManager, this._deps.editor, this._deps.config, this._deps.fileProviders)
+    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProviders)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 
     this.compilerContainer = new CompilerContainer(
       this.compileTabLogic,
-      this._deps.editor,
-      this._deps.config,
+      this.editor,
+      this.config,
       this.queryParams
     )
   }
@@ -82,7 +81,7 @@ class CompileTab extends ApiFactory {
       }
     })
 
-    this._deps.fileManager.events.on('currentFileChanged', (name) => {
+    this.fileManager.events.on('currentFileChanged', (name) => {
       this.compilerContainer.currentFile = name
     })
     this.compiler.event.register('compilationFinished', (success, data, source) => {
@@ -106,7 +105,7 @@ class CompileTab extends ApiFactory {
       yo.update(this._view.contractSelection, contractSelection)
 
       if (data['error']) {
-        this._deps.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
+        this.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
           return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
                                             The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
@@ -117,12 +116,12 @@ class CompileTab extends ApiFactory {
       }
       if (data.errors && data.errors.length) {
         data.errors.forEach((err) => {
-          if (this._deps.config.get('hideWarnings')) {
+          if (this.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
-              this._deps.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
+              this.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
             }
           } else {
-            this._deps.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
+            this.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
           }
         })
       }
@@ -215,7 +214,7 @@ class CompileTab extends ApiFactory {
       if (contract.metadata === undefined || contract.metadata.length === 0) {
         modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
       } else {
-        publishOnSwarm(contract, this._deps.fileManager, function (err, uploaded) {
+        publishOnSwarm(contract, this.fileManager, function (err, uploaded) {
           if (err) {
             try {
               err = JSON.stringify(err)
@@ -229,7 +228,7 @@ class CompileTab extends ApiFactory {
             modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
           }
         }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-          this._deps.swarmfileProvider.addReadOnly(item.hash, item.content)
+          this.swarmfileProvider.addReadOnly(item.hash, item.content)
         })
       }
     }
@@ -339,7 +338,7 @@ class CompileTab extends ApiFactory {
     this._view.errorContainer = yo`<div></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-    const currentFile = this._deps.fileManager.currentFile()
+    const currentFile = this.fileManager.currentFile()
     if (currentFile) this.compilerContainer.currentFile = currentFile
 
     this._view.el = yo`

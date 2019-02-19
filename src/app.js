@@ -432,7 +432,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
-  let compileTab = new CompileTab(registry)
+  let compileTab = new CompileTab(
+    registry.get('editor').api,
+    registry.get('config').api,
+    registry.get('renderer').api,
+    registry.get('fileproviders/swarm').api,
+    registry.get('filemanager').api,
+    registry.get('fileproviders').api,
+    registry.get('pluginmanager').api
+  )
   let run = new RunTab(
     registry.get('udapp').api,
     registry.get('udappUI').api,
