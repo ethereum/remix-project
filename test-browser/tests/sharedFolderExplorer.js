@@ -63,6 +63,11 @@ function runTests (browser, testData) {
     browser.end()
     return
   }
+  if (browserName === 'firefox') {
+    console.log('do not run remixd test for ' + browserName + ': TODO to reenable later')
+    browser.end()
+    return
+  }
   browser
     .waitForElementVisible('.newFile', 10000)
     .click('.websocketconn')
