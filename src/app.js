@@ -474,7 +474,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     { profile: run.profile(), api: run },
     { profile: debug.profile(), api: debug },
     { profile: analysis.profile(), api: analysis },
-    { profile: test.profile(), api: test }
+    { profile: test.profile(), api: test },
+    { profile: filePanel.remixdHandle.profile(), api: filePanel.remixdHandle }
   ])
   appManager.registerMany(appManager.plugins())
 
