@@ -125,7 +125,7 @@ class PluginManagerComponent {
       : ''
 
     const rootView = yo`
-      <div>
+      <div id='pluginManager'>
         <header class="navbar navbar-dark bg-dark">
           <h2 class="navbar-brand">Plugin Manager</h2>
         </header>
