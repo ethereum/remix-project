@@ -8,7 +8,7 @@ var Storage = require('remix-lib').Storage
 const themes = {
   dark: 'https://bootstrap.themes.guide/darkster/theme.min.css',
   light: 'https://bootstrap.themes.guide/herbie/theme.min.css',
-  clean: 'https://bootstrap.themes.guide/signal/theme.min.css'
+  clean: 'https://bootstrap.themes.guide/fresca/theme.min.css'
 }
 // Used for the scroll color
 const themeVariable = {
