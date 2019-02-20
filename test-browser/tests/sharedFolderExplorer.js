@@ -63,7 +63,7 @@ function runTests (browser, testData) {
     browser.end()
     return
   }
-   if (browserName === 'firefox') {
+  if (browserName === 'firefox') {
     console.log('do not run remixd test for ' + browserName + ': TODO to reenable later')
     browser.end()
     return
