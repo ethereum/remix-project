@@ -16,8 +16,6 @@ var DropdownPanel = require('./vmDebugger/DropdownPanel')
 
 var css = csjs`
   .asmCode {
-    float: left;
-    width: 50%;
   }
   .stepDetail {
   }
@@ -123,10 +121,10 @@ function VmDebugger (vmDebuggerLogic) {
 }
 
 VmDebugger.prototype.renderHead = function () {
-  var headView = yo`<div id='vmheadView' class=${css.vmheadView}>
-        <div>
-          <div class=${css.asmCode}>${this.asmCode.render()}</div>
-          <div class=${css.stepDetail}>${this.stepDetail.render()}</div>
+  var headView = yo`<div id='vmheadView' class="${css.vmheadView} container">
+        <div class="row" >
+          <div class="${css.asmCode} column">${this.asmCode.render()}</div>
+          <div class="${css.stepDetail} column">${this.stepDetail.render()}</div>
         </div>
       </div>`
   if (!this.headView) {
