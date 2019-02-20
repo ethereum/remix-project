@@ -1,8 +1,6 @@
 var EventManager = require('../../../lib/events')
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .container {
@@ -19,7 +17,6 @@ var css = csjs`
     justify-content: center;
   }
   .txinput {
-    ${styles.rightPanel.debuggerTab.input_Debugger}
     margin: 3px;
     width: inherit;
   }
@@ -29,14 +26,11 @@ var css = csjs`
     justify-content: center;
   }
   .txbutton {
-    ${styles.rightPanel.debuggerTab.button_Debugger}
     width: inherit;
   }
   .txbuttonstart {
-    ${styles.rightPanel.debuggerTab.button_Debugger}
   }
   .txbutton:hover {
-    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
   .vmargin {
     margin-top: 10px;
@@ -99,13 +93,13 @@ TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div class="${css.container}">
         <div class="${css.txContainer}">
-          <div class="${css.txinputs}">
-            <input class="${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
-            <input class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
+          <div class="${css.txinputs} p-1 input-group">
+            <input class="form-control" class="${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
+            <input class="form-control" class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
           </div>
-          <div class="${css.txbuttons}">
-            <button id='load' class='${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}>Start debugging</button>
-            <button id='unload' class='${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}>Stop</button>
+          <div class="${css.txbuttons} btn-group p-1">
+            <button class='btn btn-primary btn-sm' id='load' class='${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}>Start debugging</button>
+            <button class='btn btn-primary btn-sm' id='unload' class='${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}>Stop</button>
           </div>
         </div>
         <span id='error'></span>

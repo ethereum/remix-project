@@ -5,13 +5,9 @@ var EventManager = require('../../../../lib/events')
 var TreeView = require('../../../ui/TreeView') // TODO setup a direct reference to the UI components
 
 var csjs = require('csjs-inject')
-var styleGuide = require('../../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .title {
-    margin-top: 10px;
-    ${styles.rightPanel.debuggerTab.dropdown_Debugger};
     display: flex;
     align-items: center;
   }
@@ -23,17 +19,14 @@ var css = csjs`
     margin-left: 3px;
   }
   .icon {
-    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_Color};
     margin-right: 5%;
   }
   .eyeButton {
     margin: 3px;
   }
   .eyeButton:hover {
-    color: ${styles.rightPanel.debuggerTab.button_Debugger_icon_HoverColor};
   }
   .dropdownpanel {
-    ${styles.rightPanel.debuggerTab.dropdown_Debugger};
     width: 100%;
   }
   .dropdownrawcontent {
@@ -85,14 +78,12 @@ DropdownPanel.prototype.setLoading = function () {
 
 DropdownPanel.prototype.setUpdating = function () {
   if (!this.view) return
-  this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.greyedText_color
 }
 
 DropdownPanel.prototype.update = function (_data, _header) {
   if (!this.view) return
   this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
   this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
-  this.view.querySelector('.dropdownpanel .dropdowncontent').style.color = styles.appProperties.mainText_Color
   this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
   if (!this.displayContentOnly) {
     this.view.querySelector('.title div.btn').style.display = 'block'
@@ -130,7 +121,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
       <div class='message' style='display:none'></div>
     </div>`
   var view = yo`
-    <div>
+    <div class="border border-primary rounded p-1 m-1 bg-light">
     <style>
       @-moz-keyframes spin {
         to { -moz-transform: rotate(359deg); }
