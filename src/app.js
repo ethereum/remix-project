@@ -373,7 +373,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     event: new EventEmitter(),
     profile () {
       return {
-        name: 'transaction listener',
+        name: 'txListener',
+        displayName: 'transaction listener',
         events: ['newTransaction'],
         description: 'service - notify new transactions'
       }
