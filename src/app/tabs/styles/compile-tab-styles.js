@@ -1,6 +1,6 @@
 const csjs = require('csjs-inject')
-const styleGuide = require('../../ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
+// const styleGuide = require('../../ui/styles-guide/theme-chooser')
+// const styles = styleGuide.chooser()
 
 const css = csjs`
   .title {
@@ -31,11 +31,9 @@ const css = csjs`
   .select {
     font-weight: bold;
     margin: 10px 0px;
-    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler};
   }
   .info {
-    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
-    margin-bottom: 1em;
+
     word-break: break-word;
   }
   .compileTabView {
@@ -46,7 +44,6 @@ const css = csjs`
     margin: 3% 0;
   }
   .compileContainer  {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
     margin-bottom: 2%;
   }
   .autocompileContainer {
@@ -70,7 +67,6 @@ const css = csjs`
     line-height: initial;
   }
   .warnCompilationSlow {
-    color: ${styles.rightPanel.compileTab.icon_WarnCompilation_Color};
     margin-left: 1%;
   }
   .compileButtons {
@@ -92,13 +88,11 @@ const css = csjs`
     flex-wrap: wrap;
   }
   .compileButton {
-    ${styles.rightPanel.compileTab.button_Compile};
     width: 100%;
     margin: 15px 0 10px 0;
     font-size: 12px;
   }
   .container {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
     margin: 0;
     margin-bottom: 2%;
   }
@@ -111,7 +105,6 @@ const css = csjs`
     display: flex;
   }
   .contractNames {
-    ${styles.rightPanel.compileTab.dropdown_CompileContract};
     width:78%;
   }
   .contractHelperButtons {
@@ -122,7 +115,6 @@ const css = csjs`
     margin: 15px 15px 10px 0;
   }
   .copyButton {
-    ${styles.rightPanel.compileTab.button_Publish};
     padding: 0 7px;
     min-width: 50px;
     width: auto;
@@ -137,7 +129,6 @@ const css = csjs`
     margin-right: 5px;
   }
   .details {
-    ${styles.rightPanel.compileTab.button_Details};
     min-width: 70px;
     width: 80px;
   }
@@ -148,7 +139,6 @@ const css = csjs`
     cursor: pointer;
   }
   .log {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
     display: flex;
     flex-direction: column;
     margin-bottom: 5%;
@@ -156,7 +146,6 @@ const css = csjs`
   }
   .key {
     margin-right: 5px;
-    color: ${styles.rightPanel.text_Primary};
     text-transform: uppercase;
     width: 100%;
   }
@@ -168,16 +157,12 @@ const css = csjs`
   .questionMark {
     margin-left: 2%;
     cursor: pointer;
-    color: ${styles.rightPanel.icon_Color_TogglePanel};
   }
   .questionMark:hover {
-    color: ${styles.rightPanel.icon_HoverColor_TogglePanel};
   }
   .detailsJSON {
     padding: 8px 0;
-    background-color: ${styles.rightPanel.modalDialog_BackgroundColor_Primary};
     border: none;
-    color: ${styles.rightPanel.modalDialog_text_Secondary};
   }
   .icon {
     margin-right: 0.3em;
@@ -197,15 +182,12 @@ const css = csjs`
   @-webkit-keyframes bounce {
     0% {
       margin-bottom: 0;
-      color: ${styles.colors.transparent};
     }
     70% {
       margin-bottom: 0;
-      color: ${styles.rightPanel.text_Secondary};
     }
     100% {
       margin-bottom: 0;
-      color: ${styles.colors.transparent};
     }
   }
 `
