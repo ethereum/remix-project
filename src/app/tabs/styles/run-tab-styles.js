@@ -1,6 +1,5 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+const styles = require('../../ui/styles-guide/theme-chooser').chooser()
 
 var css = csjs`
   .runTabView {
@@ -16,12 +15,10 @@ var css = csjs`
     justify-content: space-between;
   }
   .settings {
-    ${styles.rightPanel.runTab.box_RunTab}
     margin-bottom: 2%;
     padding: 10px 15px 15px 15px;
   }
   .recorderCount {
-    border: 1px solid ${styles.rightPanel.runTab.icon_HoverColor};
     border-radius: 50%;
     margin-right: 30px;
     min-width: 13px;
@@ -61,26 +58,21 @@ var css = csjs`
     width: 266px;
   }
   .col2 {
-    ${styles.rightPanel.runTab.input_RunTab}
     border-radius: 3px;
   }
   .col2_1 {
-    ${styles.rightPanel.runTab.input_RunTab}
     width: 164px;
     min-width: 164px;
   }
   .col2_2 {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
     width: 82px;
     min-width: 82px;
   }
   .select {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
     font-weight: normal;
     width: 250px;
   }
   .instanceContainer {
-    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
     margin-bottom: 2%;
@@ -89,7 +81,6 @@ var css = csjs`
     padding: 10px 0px 15px 15px;
   }
   .pendingTxsContainer  {
-    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
     margin-top: 2%;
@@ -97,7 +88,6 @@ var css = csjs`
     text-align: center;
   }
   .container {
-    ${styles.rightPanel.runTab.box_RunTab}
     margin-bottom: 2%;
   }
   .recorderCollapsedView,
@@ -109,12 +99,10 @@ var css = csjs`
     margin: 0 15px 15px 0;
    }
   .contractNames {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
     width: 100%;
     border: 1px solid
   }
   .contractNamesError {
-    border: 1px solid ${styles.appProperties.errorText_Color}
   }
   .subcontainer {
     display: flex;
@@ -127,7 +115,6 @@ var css = csjs`
     margin-top: 13px;
   }
   .transaction {
-    ${styles.rightPanel.runTab.button_transaction}
   }
   .atAddress {
     margin: 0;
@@ -138,7 +125,6 @@ var css = csjs`
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
-    ${styles.rightPanel.runTab.button_atAddress}
   }
   .atAddressSect {
     margin-top: 6px;
@@ -148,19 +134,15 @@ var css = csjs`
     border-bottom-left-radius: 0;
   }
   .create {
-    ${styles.rightPanel.runTab.button_Create}
   }
   .input {
-    ${styles.rightPanel.runTab.input_RunTab};
     font-size: 10px;
   }
   .noInstancesText {
-    ${styles.rightPanel.runTab.box_Instance}
     font-style: italic;
     text-align: left;
   }
   .pendingTxsText {
-    ${styles.rightPanel.runTab.borderBox_Instance}
     font-style: italic;
     display: flex;
     justify-content: space-evenly;
@@ -199,7 +181,6 @@ var css = csjs`
     cursor: pointer;
     font-size: 12px;
     cursor: pointer;
-    color: ${styles.rightPanel.runTab.icon_Color};
     margin-left: 5px;
   }
   .icon:hover {
@@ -244,6 +225,7 @@ var css = csjs`
   .infoDeployAction {
     margin-left: 5px;
     font-size: 13px;
+    color: var(--danger);
   }
 `
 
