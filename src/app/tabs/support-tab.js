@@ -22,7 +22,9 @@ module.exports = class SupportTab {
 
     self._deps.app.event.register('tabChanged', (tabName) => {
       if (tabName !== 'Support' || self.data.gitterIsLoaded) return
-      const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
+      const iframe = yo`
+        <iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>
+        </iframe>`
       self._view.gitterIframe.parentNode.replaceChild(iframe, self._view.gitterIframe)
       self._view.gitterIframe = iframe
       self._view.el.style.display = 'block'
