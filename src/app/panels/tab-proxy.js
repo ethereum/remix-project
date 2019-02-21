@@ -27,6 +27,10 @@ export class TabProxy {
     })
 
     fileManager.event.register('currentFileChanged', (file) => {
+      if (this._handlers[file]) {
+        this._view.filetabs.activateTab(file)
+        return
+      }
       this.addTab(file, () => {
         this.fileManager.switchFile(file)
         this.event.emit('switchFile', file)
@@ -89,11 +93,11 @@ export class TabProxy {
 
   renderTabsbar () {
     this._view.filetabs = yo`<remix-tabs></remix-tabs>`
-    this._view.filetabs.addEventListener('tabClosed', (id) => {
-      if (this._handlers[id]) this._handlers[id].close()
+    this._view.filetabs.addEventListener('tabClosed', (event) => {
+      if (this._handlers[event.detail]) this._handlers[event.detail].close()
     })
-    this._view.filetabs.addEventListener('tabActivated', (id) => {
-      if (this._handlers[id]) this._handlers[id].switchTo()
+    this._view.filetabs.addEventListener('tabActivated', (event) => {
+      if (this._handlers[event.detail]) this._handlers[event.detail].switchTo()
     })
 
     this._view.filetabs.canAdd = false
