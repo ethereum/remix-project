@@ -9,7 +9,8 @@ class SourceHighlighters {
 
   profile () {
     return {
-      name: 'source highlighters',
+      displayName: 'source highlighters',
+      name: 'sourceHighlighters',
       methods: ['highlight', 'discardHighlight'],
       description: 'service - highlight source code'
     }
