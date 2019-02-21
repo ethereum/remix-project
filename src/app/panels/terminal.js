@@ -16,8 +16,6 @@ var AutoCompletePopup = require('../ui/auto-complete-popup')
 var Commands = require('../constants/commands')
 
 var csjs = require('csjs-inject')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = require('./styles/terminal-styles')
 
@@ -25,7 +23,7 @@ var KONSOLES = []
 
 function register (api) { KONSOLES.push(api) }
 
-var ghostbar = yo`<div class=${css.ghostbar}></div>`
+var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
 class Terminal {
   constructor (opts, api) {
@@ -121,7 +119,7 @@ class Terminal {
     `
     self._view.input.innerText = '\n'
     self._view.cli = yo`
-      <div class=${css.cli}>
+      <div class="${css.cli} bg-light">
         <span class=${css.prompt}>${'>'}</span>
         ${self._view.input}
       </div>
@@ -134,7 +132,7 @@ class Terminal {
     self._view.dropdown = self._components.dropdown.render()
     self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
     self._view.bar = yo`
-      <div class=${css.bar}>
+      <div class="${css.bar} bg-light">
         ${self._view.dragbar}
         <div class=${css.menu}>
           ${self._view.icon}
@@ -145,19 +143,20 @@ class Terminal {
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
           <div class=${css.listen}>
-            <input onchange=${listenOnNetwork} type="checkbox"
+            <input id="listenNetworkCheck" onchange=${listenOnNetwork} type="checkbox" class="form-check-input"
             title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you">
+            <label class="${css.listenLabel} form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon}" aria-hidden="true"></i>
+            <i class="fa fa-search ${css.searchIcon} bg-light btn" aria-hidden="true"></i>
             <input type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
       </div>
     `
     self._view.term = yo`
-      <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+      <div class="${css.terminal_container} bg-light" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         <div class=${css.terminal}>
             ${self._view.journal}
             ${self._view.cli}
@@ -166,7 +165,7 @@ class Terminal {
     `
     self._view.autoCompletePopup = self._components.autoCompletePopup.render()
     self._view.el = yo`
-      <div class=${css.panel}>
+      <div class="${css.panel} bg-light">
         ${self._view.bar}
         ${self._view.term}
       </div>
@@ -587,7 +586,12 @@ class Terminal {
         if (args.length) append(args[0])
       }
     }
-    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, warn: styles.terminal.text_WarnLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
+    mode = {
+      log: 'text-info',
+      info: 'text-info',
+      warn: 'text-warning',
+      error: 'text-danger' }[mode] // defaults
+
     if (mode) {
       return function logger (args, scopedCommands, append) {
         var types = args.map(type)
@@ -596,7 +600,7 @@ class Terminal {
           if (types[idx] === 'element') val = jsbeautify.html(val)
           return val
         })
-        append(yo`<span style="color: ${mode};">${values}</span>`)
+        append(yo`<span class="${mode}" >${values}</span>`)
       }
     } else {
       throw new Error('mode is not supported')
