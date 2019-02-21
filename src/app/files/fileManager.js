@@ -50,7 +50,8 @@ class FileManager {
 
   profile () {
     return {
-      name: 'file manager',
+      displayName: 'file manager',
+      name: 'fileManager',
       methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
       events: ['currentFileChanged'],
       description: 'service - read/write to any files or folders, require giving permissions'
