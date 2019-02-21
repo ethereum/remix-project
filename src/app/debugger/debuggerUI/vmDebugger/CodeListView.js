@@ -40,6 +40,7 @@ CodeListView.prototype.indexChanged = function (index) {
     }
   }
   this.itemSelected = this.codeView.children[index]
+  this.itemSelected.style.setProperty('background-color', 'var(--danger)')
   this.itemSelected.setAttribute('selected', 'selected')
   if (this.itemSelected.firstChild) {
     this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
