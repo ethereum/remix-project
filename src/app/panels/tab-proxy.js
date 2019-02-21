@@ -4,9 +4,6 @@ const EventEmitter = require('events')
 
 require('remix-tabs')
 
-var styles = require('./styles/editor-panel-styles')
-var css = styles.css
-
 export class TabProxy {
   constructor (fileManager, editor, appStore, appManager) {
     this.event = new EventEmitter()
@@ -103,22 +100,16 @@ export class TabProxy {
     this._view.filetabs.canAdd = false
 
     this._view.tabs = yo`
-      <div class=${css.tabs} onmouseenter=${toggleScrollers} onmouseleave=${toggleScrollers}>
-        <div onclick=${scrollLeft} class="${css.scroller} ${css.hide} ${css.scrollerleft}">
-          <i class="fa fa-chevron-left "></i>
-        </div>
+      <div>
         ${this._view.filetabs}
-        <div onclick=${scrollRight} class="${css.scroller} ${css.hide} ${css.scrollerright}">
-           <i class="fa fa-chevron-right "></i>
-        </div>
       </div>
     `
     let tabsbar = yo`
-      <div class=${css.tabsbar}>
-        <div class=${css.buttons}>
-          <span class=${css.changeeditorfontsize} >
-            <i class="increditorsize fa fa-plus" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
-            <i class="decreditorsize fa fa-minus" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
+      <div class="d-flex">
+        <div class="m-1">
+          <span class="p-1">
+            <i class="m-1 fa fa-plus" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
+            <i class="m-1 fa fa-minus" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
           </span>
         </div>
         ${this._view.tabs}
@@ -145,68 +136,8 @@ export class TabProxy {
       return false
     })
 
-    function toggleScrollers (event = {}) {
-      if (event.type) self.data._focus = event.type
-      var isMouseEnter = self.data._focus === 'mouseenter'
-      var leftArrow = this.children[0]
-      var rightArrow = this.children[2]
-      if (isMouseEnter && this.children[1].offsetWidth > this.offsetWidth) {
-        var hiddenLength = self._view.filetabs.offsetWidth - self._view.tabs.offsetWidth
-        var currentLeft = self._view.filetabs.offsetLeft || 0
-        var hiddenRight = hiddenLength + currentLeft
-        if (currentLeft < 0) {
-          leftArrow.classList.add(css.show)
-          leftArrow.classList.remove(css.hide)
-        }
-        if (hiddenRight > 0) {
-          rightArrow.classList.add(css.show)
-          rightArrow.classList.remove(css.hide)
-        }
-      } else {
-        leftArrow.classList.remove(css.show)
-        leftArrow.classList.add(css.hide)
-        rightArrow.classList.remove(css.show)
-        rightArrow.classList.add(css.hide)
-      }
-    }
     function increase () { self.editor.editorFontSize(1) }
     function decrease () { self.editor.editorFontSize(-1) }
-    function scrollLeft (event) {
-      var leftArrow = this
-      var rightArrow = this.nextElementSibling.nextElementSibling
-      var currentLeft = self._view.filetabs.offsetLeft || 0
-      if (currentLeft < 0) {
-        rightArrow.classList.add(css.show)
-        rightArrow.classList.remove(css.hide)
-        if (currentLeft < -self.data._FILE_SCROLL_DELTA) {
-          self._view.filetabs.style.left = `${currentLeft + self.data._FILE_SCROLL_DELTA}px`
-        } else {
-          self._view.filetabs.style.left = `${currentLeft - currentLeft}px`
-          leftArrow.classList.remove(css.show)
-          leftArrow.classList.add(css.hide)
-        }
-      }
-    }
-
-    function scrollRight (event) {
-      var rightArrow = this
-      var leftArrow = this.previousElementSibling.previousElementSibling
-      var hiddenLength = self._view.filetabs.offsetWidth - self._view.tabs.offsetWidth
-      var currentLeft = self._view.filetabs.offsetLeft || 0
-      var hiddenRight = hiddenLength + currentLeft
-      if (hiddenRight > 0) {
-        leftArrow.classList.add(css.show)
-        leftArrow.classList.remove(css.hide)
-        if (hiddenRight > self.data._FILE_SCROLL_DELTA) {
-          self._view.filetabs.style.left = `${currentLeft - self.data._FILE_SCROLL_DELTA}px`
-        } else {
-          self._view.filetabs.style.left = `${currentLeft - hiddenRight}px`
-          rightArrow.classList.remove(css.show)
-          rightArrow.classList.add(css.hide)
-        }
-      }
-    }
-
     return tabsbar
   }
 }

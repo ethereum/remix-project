@@ -8,9 +8,28 @@ var { TabProxy } = require('./tab-proxy.js')
 
 var ContextualListener = require('../editor/contextualListener')
 var ContextView = require('../editor/contextView')
-var styles = require('./styles/editor-panel-styles')
-var cssTabs = styles.cssTabs
-var css = styles.css
+
+var csjs = require('csjs-inject')
+
+var css = csjs`
+  .editorpanel         {
+    display            : flex;
+    flex-direction     : column;
+    height             : 100%;
+  }
+  .content            {
+    position          : relative;
+    display           : flex;
+    flex-direction    : column;
+    height            : 100%;
+    width             : 100%;
+  }
+  .contextviewcontainer{
+    width             : 100%;
+    height            : 20px;
+    background-color  : var(--main-bg-color);
+  }
+`
 
 class EditorPanel {
   constructor (appStore, appManager, mainPanelComponent) {
@@ -101,9 +120,6 @@ class EditorPanel {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
         self._deps.txListener.setListenOnNetwork(listenOnNetWork)
       })
-    }
-    if (document && document.head) {
-      document.head.appendChild(cssTabs)
     }
   }
   _adjustLayout (direction, delta) {
