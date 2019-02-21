@@ -50,7 +50,7 @@ export class TabProxy {
     })
 
     appStore.event.on('activate', (name) => {
-      const { profile } = appStore.get(name)
+      const { profile } = appStore.getOne(name)
       if (profile.prefferedLocation === 'mainPanel') {
         this.addTab(name, () => {
           this.event.emit('switchApp', name)
