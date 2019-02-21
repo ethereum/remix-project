@@ -12,7 +12,7 @@ class SupportTab {
   __showing () {
     if (this.gitterIsLoaded) return
 
-    const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'>`
+    const iframe = yo`<iframe class="${css.chatIframe}" src='https://gitter.im/ethereum/remix/~embed'></iframe>`
     this.gitterIframe.parentNode.replaceChild(iframe, this.gitterIframe)
     this.gitterIframe = iframe
     this.el.style.display = 'block'
