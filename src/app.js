@@ -501,7 +501,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   var txLogger = new TxLogger() // eslint-disable-line
-  txLogger.event.register('debuggingRequested', (hash) => { debug.debugger().debug(hash) })
+  txLogger.event.register('debuggingRequested', (hash) => {
+    if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
+    appStore.getOne('debugger').api.debugger().debug(hash)
+    verticalIconsApi.select('debugger')
+  })
 
   let transactionContextAPI = {
     getAddress: (cb) => {
