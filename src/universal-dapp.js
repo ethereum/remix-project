@@ -31,8 +31,9 @@ function UniversalDApp (registry) {
 
 UniversalDApp.prototype.profile = function () {
   return {
-    name: 'universal dapp',
-    methods: ['runTestTx', 'getAccounts', 'createVMAccount'],
+    name: 'udapp',
+    displayName: 'universal dapp',
+    methods: ['runTx', 'getAccounts', 'createVMAccount'],
     description: 'service - run transaction and access account'
   }
 }
