@@ -59,8 +59,10 @@ class CompileTab {
     const self = this
 
     self.compiler.event.register('compilationStarted', () => {
-      self._view.errorContainer.innerHTML = ''
-      self._view.errorContainerHead.innerHTML = ''
+      if (self._view.errorContainer) {
+        self._view.errorContainer.innerHTML = ''
+        self._view.errorContainerHead.innerHTML = ''
+      }
     })
     self.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
