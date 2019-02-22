@@ -43,7 +43,7 @@ module.exports = class Card {
 
     // HTML
     self._view.el = yo`
-      <div class="list-group-item ${css.cardContainer}">
+      <div class="${css.cardContainer} list-group-item">
         ${self._view.cardHeader}
         ${self._view.cardBody}
       </div>`
