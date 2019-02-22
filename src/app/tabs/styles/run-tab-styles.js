@@ -226,6 +226,11 @@ var css = csjs`
     font-size: 13px;
     color: var(--danger);
   }
+  .gasNval {
+    transform: scale(0.7);
+    transform-origin: left;
+    margin-right: 10px;
+  }
 `
 
 module.exports = css
