@@ -58,9 +58,6 @@ import { RemixAppManager } from './remixAppManager'
 import { generateHomePage, homepageProfile } from './app/ui/landing-page/generate'
 import framingService from './framingService'
 
-var styleGuide = require('./app/ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
-
 var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
