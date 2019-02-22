@@ -6,7 +6,6 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    color             : var(--primary);
     height            : 100%;
     min-height        : 1.7em;
     overflow          : hidden;
@@ -18,7 +17,6 @@ var css = csjs`
     z-index           : 3;
   }
   .menu               {
-    color             : var(--primary);
     position          : relative;
     display           : flex;
     align-items       : center;
@@ -28,7 +26,6 @@ var css = csjs`
     margin-right      : 20px;
     width             : 10px;
     cursor            : pointer;
-    color             : var(--primary);
     display           : flex;
   }
   .clear:hover              {
@@ -40,7 +37,6 @@ var css = csjs`
     font-size         : 14px;
     font-weight       : bold;
     cursor            : pointer;
-    color             : var(--primary);
   }
   .toggleTerminal:hover              {
     color             : var(--secondary);
@@ -73,7 +69,6 @@ var css = csjs`
     line-height       : 2ch;
     padding           : 1ch;
     margin-top        : 2ch;
-    color             : var(--primary)
   }
   .cli                {
     line-height       : 1.7em;
@@ -87,7 +82,6 @@ var css = csjs`
     font-family       : monospace;
     font-weight       : bold;
     font-size         : 14px;
-    color             : var(--secondary);
   }
   .input              {
     word-break        : break-all;
@@ -107,7 +101,6 @@ var css = csjs`
     border-bottom-left-radius   : 0px;
   }
   .searchIcon {
-    color                       : var(--primary)
     height                      : 25px;
     width                       : 25px;
     border-top-left-radius      : 3px;
