@@ -79,8 +79,8 @@ function fileExplorer (localRegistry, files) {
           self.focusElement = self.treeView.labelAt(self.focusPath)
           // TODO: here we update the selected file (it applicable)
           // cause we are refreshing the interface of the whole directory when there's a new file.
-          if (self.focusElement && !self.focusElement.classList.contains(css.hasFocus)) {
-            self.focusElement.classList.add(css.hasFocus)
+          if (self.focusElement && !self.focusElement.classList.contains('bg-primary')) {
+            self.focusElement.classList.add('bg-primary')
           }
         })
       }
@@ -122,7 +122,8 @@ function fileExplorer (localRegistry, files) {
     },
     formatSelf: function formatSelf (key, data, li) {
       var isRoot = data.path === self.files.type
-      return yo`<label class="${data.children ? css.folder : css.file}"
+      return yo`<label
+        class=${css.label}
         data-path="${data.path}"
         style="${isRoot ? 'font-weight:bold;' : ''}"
         onkeydown=${editModeOff}
@@ -165,13 +166,13 @@ function fileExplorer (localRegistry, files) {
 
   self.treeView.event.register('leafClick', function (key, data, label) {
     if (self.focusElement) {
-      self.focusElement.classList.remove(css.hasFocus)
+      self.focusElement.classList.remove('bg-secondary')
       self.focusElement = null
       self.focusPath = null
     }
     self.focusElement = self.treeView.labelAt(key)
     if (self.focusElement) {
-      self.focusElement.classList.add(css.hasFocus)
+      self.focusElement.classList.add('bg-secondary')
       self.focusPath = key
       self.events.trigger('focus', [key])
     }
@@ -201,7 +202,7 @@ function fileExplorer (localRegistry, files) {
   // register to main app, trigger when the current file in the editor changed
   self._deps.fileManager.event.register('currentFileChanged', (newFile, explorer) => {
     if (self.focusElement && (!explorer || explorer.type !== files.type) && self.focusPath !== newFile) {
-      self.focusElement.classList.remove(css.hasFocus)
+      self.focusElement.classList.remove('bg-primary')
       self.focusElement = null
       self.focusPath = null
     }
@@ -220,7 +221,7 @@ function fileExplorer (localRegistry, files) {
   function editModeOn (label) {
     textUnderEdit = label.innerText
     label.setAttribute('contenteditable', true)
-    label.classList.add(css.rename)
+    label.classList.add('bg-light')
     label.focus()
     selectElementContents(label)
   }
@@ -259,7 +260,7 @@ function fileExplorer (localRegistry, files) {
         modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { label.innerText = textUnderEdit })
       }
       label.removeAttribute('contenteditable')
-      label.classList.remove(css.rename)
+      label.classList.remove('bg-light')
     }
   }
 }
@@ -285,7 +286,7 @@ fileExplorer.prototype.ensureRoot = function (cb) {
   self.files.resolveDirectory('/', (error, files) => {
     if (error) console.error(error)
     var element = self.treeView.render(files, false)
-    element.className = css.fileexplorer
+    element.classList.add(css.fileexplorer)
     element.events = self.events
     element.api = self.api
     self.container.appendChild(element)
