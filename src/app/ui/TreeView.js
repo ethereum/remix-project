@@ -24,7 +24,6 @@ var css = csjs`
     flex-shrink: 0;
   }
   .label_tv {
-    display: flex;
     align-items: center;
   }
 `

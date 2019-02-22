@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .container {
@@ -30,7 +28,7 @@ var css = csjs`
     cursor            : pointer;
   }
   .newFile i:hover    {
-    color             : ${styles.colors.orange};
+    color             : var(--secondary)
   }
   .gist            {
     padding           : 10px;
@@ -57,19 +55,16 @@ var css = csjs`
     cursor            : pointer;
   }
   .connectToLocalhost i:hover   {
-    color             : ${styles.colors.orange};
+    color             : var(--secondary)
   }
   .uploadFile         {
     padding           : 10px;
   }
   .uploadFile label:hover   {
-    color             : ${styles.colors.orange};
+    color             : var(--secondary)
   }
   .uploadFile label   {
     cursor            : pointer;
-  }
-  .treeview {
-    background-color  : ${styles.colors.general_BackgroundColor};
   }
   .treeviews {
     overflow-y        : auto;
@@ -79,7 +74,6 @@ var css = csjs`
     flex-direction: column;
   }
   .dialogParagraph {
-    ${styles.infoTextBox}
     margin-bottom: 2em;
     word-break: break-word;
   }
