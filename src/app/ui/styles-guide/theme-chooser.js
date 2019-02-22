@@ -2,6 +2,7 @@ var styleGuideLight = require('./style-guide')
 var styleGuideDark = require('./styleGuideDark')
 var styleGuideClean = require('./styleGuideClean')
 var Storage = require('remix-lib').Storage
+var EventEmitter = require('events')
 
 // Boostrap themes
 // TODO : Put it somewhere else
@@ -17,7 +18,7 @@ const themeVariable = {
   clean: 'light'
 }
 module.exports = {
-
+  event: new EventEmitter(),
   chooser: function () {
     const themeStorage = new Storage('style:')
     if (themeStorage.exists('theme')) {
@@ -43,10 +44,14 @@ module.exports = {
 
   switchTheme: function (theme) {
     var themeStorage = new Storage('style:')
-    themeStorage.set('theme', theme)
+    if (theme) themeStorage.set('theme', theme)
+    else {
+      theme = themeStorage.get('theme')
+    }
     if (themes[theme]) {
       document.getElementById('theme-link').setAttribute('href', themes[theme])
       document.documentElement.style.setProperty('--theme', themeVariable[theme])
+      this.event.emit('switchTheme', themeVariable[theme])
     }
     // if (theme === 'dark') {
     //   return styleGuideDark()

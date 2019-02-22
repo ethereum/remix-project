@@ -148,19 +148,17 @@ module.exports = class SettingsTab {
     }
     function onswitch2darkTheme (event) {
       styleGuide.switchTheme('dark')
-      // window.location.reload()
     }
     function onswitch2lightTheme (event) {
       styleGuide.switchTheme('light')
-      // window.location.reload()
     }
     function onswitch2cleanTheme (event) {
       styleGuide.switchTheme('clean')
-      // window.location.reload()
     }
     function onchangePersonal (event) {
       self._deps.config.set('settings/personal-mode', !self._deps.config.get('settings/personal-mode'))
     }
+    styleGuide.switchTheme()
     return self._view.el
   }
 }
