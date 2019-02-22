@@ -16,7 +16,7 @@ require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
 const themeChooser = require('../ui/styles-guide/theme-chooser')
-require('brace/theme/tomorrow_night_blue')
+require('brace/theme/solarized_dark')
 require('brace/theme/solarized_light')
 
 const css = csjs`
@@ -69,7 +69,7 @@ class Editor {
 
     this._themes = {
       'light': 'solarized_light',
-      'dark': 'tomorrow_night_blue'
+      'dark': 'solarized_dark'
     }
     themeChooser.event.on('switchTheme', (type) => {
       this.setTheme(type)
