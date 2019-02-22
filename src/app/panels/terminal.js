@@ -119,7 +119,7 @@ class Terminal {
     `
     self._view.input.innerText = '\n'
     self._view.cli = yo`
-      <div class="${css.cli} bg-light">
+      <div class="${css.cli}">
         <span class=${css.prompt}>${'>'}</span>
         ${self._view.input}
       </div>
@@ -132,7 +132,7 @@ class Terminal {
     self._view.dropdown = self._components.dropdown.render()
     self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
     self._view.bar = yo`
-      <div class="${css.bar} bg-light">
+      <div class="${css.bar}">
         ${self._view.dragbar}
         <div class=${css.menu}>
           ${self._view.icon}
@@ -156,7 +156,7 @@ class Terminal {
       </div>
     `
     self._view.term = yo`
-      <div class="${css.terminal_container} bg-light" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+      <div class="${css.terminal_container}" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
         <div class=${css.terminal}>
             ${self._view.journal}
             ${self._view.cli}
@@ -165,7 +165,7 @@ class Terminal {
     `
     self._view.autoCompletePopup = self._components.autoCompletePopup.render()
     self._view.el = yo`
-      <div class="${css.panel} bg-light">
+      <div class="${css.panel}">
         ${self._view.bar}
         ${self._view.term}
       </div>
