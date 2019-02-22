@@ -49,7 +49,7 @@ class SettingsUI {
         </div>
         <div class=${css.environment}>
           ${this.netUI}
-          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="${css.select}">
+          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm" checked name="executionContext"> JavaScript VM
@@ -76,7 +76,7 @@ class SettingsUI {
           <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="${css.select}" id="txorigin"></select>
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i class="fa fa-pencil-square-o ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>

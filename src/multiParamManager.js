@@ -142,9 +142,9 @@ class MultiParamManager {
     var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
-      <div class="${css.contractActionsContainerMultiInner}" >
+      <div class="card ${css.contractActionsContainerMultiInner}" >
         <div onclick=${() => { this.switchMethodViewOff() }} class="${css.multiHeader}">
-          <div class="${css.multiTitle}">${title}</div>
+          <div class="card-title ${css.multiTitle}">${title}</div>
           <i class='fa fa-angle-up ${css.methCaret}'></i>
         </div>
         ${this.multiFields}
