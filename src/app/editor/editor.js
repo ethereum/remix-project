@@ -4,8 +4,6 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const ace = require('brace')
 
-require('brace/theme/tomorrow_night_blue')
-
 const globalRegistry = require('../../global/registry')
 const SourceHighlighters = require('./SourceHighlighters')
 
@@ -17,22 +15,12 @@ require('ace-mode-solidity/build/remix-ide/mode-solidity')
 require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
-const styleGuide = require('../ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
-
-function setTheme (cb) {
-  if (styles.appProperties.aceTheme) {
-    cb('brace/theme/', styles.appProperties.aceTheme)
-  }
-}
-
-setTheme((path, theme) => {
-  require('brace/theme/tomorrow_night_blue')
-})
+const themeChooser = require('../ui/styles-guide/theme-chooser')
+require('brace/theme/tomorrow_night_blue')
+require('brace/theme/solarized_light')
 
 const css = csjs`
   .ace-editor {
-    background-color  : ${styles.editor.backgroundColor_Editor};
     width     : 100%;
   }
 `
@@ -41,35 +29,29 @@ document.head.appendChild(yo`
     .ace-tm .ace_gutter,
     .ace-tm .ace_gutter-active-line,
     .ace-tm .ace_marker-layer .ace_active-line {
-        background-color: ${styles.editor.backgroundColor_Tabs_Highlights};
+        background-color: var(--secondary);
     }
     .ace_gutter-cell.ace_breakpoint{
-      background-color: ${styles.editor.backgroundColor_DebuggerMode};
+      background-color: var(--secondary);
     }
     .highlightreference {
       position:absolute;
       z-index:20;
-      background-color: ${
-        styles.editor.backgroundColor_Editor_Context_Highlights
-      };
+      background-color: var(--secondary);
       opacity: 0.7
     }
 
     .highlightreferenceline {
       position:absolute;
       z-index:20;
-      background-color: ${
-        styles.editor.backgroundColor_Editor_Context_Highlights
-      };
+      background-color: var(--secondary);
       opacity: 0.7
     }
 
     .highlightcode {
       position:absolute;
       z-index:20;
-      background-color: ${
-        styles.editor.backgroundColor_Editor_Context_Error_Highlights
-      };
+      background-color: var(--danger);
      }
   </style>
 `)
@@ -84,6 +66,14 @@ class Editor {
       fileManager: this._components.registry.get('filemanager').api,
       config: this._components.registry.get('config').api
     }
+
+    this._themes = {
+      'light': 'solarized_light',
+      'dark': 'tomorrow_night_blue'
+    }
+    themeChooser.event.on('switchTheme', (type) => {
+      this.setTheme(type)
+    })
 
     // Init
     this.event = new EventManager()
@@ -114,9 +104,7 @@ class Editor {
     this.editor.setShowPrintMargin(false)
     this.editor.resize(true)
 
-    if (styles.appProperties.aceTheme) {
-      this.editor.setTheme('ace/theme/' + styles.appProperties.aceTheme)
-    }
+    this.setTheme()
 
     this.editor.setOptions({
       enableBasicAutocompletion: true,
@@ -168,6 +156,10 @@ class Editor {
         this.event.trigger('contentChanged', [])
       })
     })
+  }
+
+  setTheme (type) {
+    this.editor.setTheme('ace/theme/' + this._themes[type])
   }
 
   _onChange () {
