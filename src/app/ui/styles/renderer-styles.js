@@ -1,8 +1,5 @@
 var yo = require('yo-yo')
 
-var styleGuide = require('../styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
-
 var css = yo`<style>
 .sol.success,
 .sol.error,
@@ -43,25 +40,20 @@ var css = yo`<style>
 }
 
 .sol.error {
-    background-color: ${styles.rightPanel.message_Error_BackgroundColor};
-    border: .2em dotted ${styles.rightPanel.message_Error_BorderColor};
-    color: ${styles.rightPanel.message_Error_Color};
+    background-color: var(--danger);
+    color: var(--white);
 }
 
 .sol.warning {
-  background-color: ${styles.rightPanel.message_Warning_BackgroundColor};
-  color: ${styles.rightPanel.message_Warning_Color};
+  background-color: var(--warning);
 }
 
 .sol.staticAnalysisWarning {
-  background-color: ${styles.colors.lightViolet};
-  color: ${styles.colors.black};  
+  background-color: var(--info);
 }
 
 .sol.success {
-  background-color: ${styles.rightPanel.message_Success_BackgroundColor};
-  border: .2em dotted ${styles.rightPanel.message_Success_BorderColor};
-  color: ${styles.rightPanel.message_Success_Color};
+  /* background-color:  // styles.rightPanel.message_Success_BackgroundColor; */
 }</style>`
 
 module.exports = css

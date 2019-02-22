@@ -29,7 +29,7 @@ class RunTab {
     this.container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
 
     var el = yo`
-    <div>
+    <div class="list-group list-group-flush">
       ${this.settingsUI.render()}
       ${this.contractDropdownUI.render()}
       ${this.recorderCard.render()}

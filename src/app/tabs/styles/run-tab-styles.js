@@ -1,5 +1,4 @@
 var csjs = require('csjs-inject')
-const styles = require('../../ui/styles-guide/theme-chooser').chooser()
 
 var css = csjs`
   .runTabView {
@@ -19,20 +18,18 @@ var css = csjs`
     padding: 10px 15px 15px 15px;
   }
   .recorderCount {
-    border-radius: 50%;
-    margin-right: 30px;
-    min-width: 13px;
-    height: 13px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 10px;
+    /* margin-right: 30px; */
+    /* min-width: 13px; */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* font-size: 10px; */
   }
   .crow {
     margin-top: .5em;
     display: flex;
     align-items: center;
-    width: 500px;
+    /*width: 500px;*/
   }
   .col1 {
     width: 30%;
@@ -78,7 +75,7 @@ var css = csjs`
     margin-bottom: 2%;
     border: none;
     text-align: center;
-    padding: 10px 0px 15px 15px;
+    padding: 10px 0px 15px 0px;
   }
   .pendingTxsContainer  {
     display: flex;
@@ -133,6 +130,9 @@ var css = csjs`
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
+  .ataddressinput {
+    padding: .25rem;
+  }
   .create {
   }
   .input {
@@ -155,15 +155,15 @@ var css = csjs`
     align-items: center;
   }
   .transact {
-    color: ${styles.colors.lightRed};
+    color: var(--warning);
     margin-right: .3em;
   }
   .payable {
-    color: ${styles.colors.red};
+    color: var(--warning);
     margin-right: .3em;
   }
   .call {
-    color: ${styles.colors.lightBlue};
+    color: var(--info);
     margin-right: .3em;
   }
   .pendingContainer {
@@ -185,14 +185,14 @@ var css = csjs`
   }
   .icon:hover {
     font-size: 12px;
-    color: ${styles.rightPanel.runTab.icon_HoverColor};
+    color: var(--warning);
   }
   .errorIcon {
-    color: ${styles.appProperties.errorText_Color};
+    color: var(--danger);
     margin-left: 15px;
   }
   .failDesc {
-    color: ${styles.appProperties.errorText_Color};
+    color: var(--warning);
     padding-left: 10px;
     display: inline;
   }
@@ -216,7 +216,6 @@ var css = csjs`
   .transactionActions {
     display: flex;
     justify-content: space-evenly;
-    ${styles.rightPanel.runTab.box_Info_RunTab};
     width: 145px;
   }
   .orLabel {
