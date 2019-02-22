@@ -114,7 +114,7 @@ class RunTab {
   renderRecorderCard () {
     const collapsedView = yo`
       <div class=${css.recorderCollapsedView}>
-        <div class=${css.recorderCount}>${this.recorderCount}</div>
+        <div class="${css.recorderCount} badge badge-pill badge-primary">${this.recorderCount}</div>
       </div>`
 
     const expandedView = yo`

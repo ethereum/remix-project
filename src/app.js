@@ -78,7 +78,6 @@ var css = csjs`
     overflow           : hidden;
   }
   .mainpanel         {
-    background-color  : ${styles.colors.transparent};
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -87,7 +86,7 @@ var css = csjs`
     overflow           : hidden;
   }
   .iconpanel           {
-    background-color  : ${styles.leftPanel.backgroundColor_Panel};
+    background-color   : #fafafa;
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -109,12 +108,12 @@ var css = csjs`
   .highlightcode {
     position:absolute;
     z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    background-color: var(--info);
   }
   .highlightcode_fullLine {
     position:absolute;
     z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    background-color: var(--info);
     opacity: 0.5;
   }
 `

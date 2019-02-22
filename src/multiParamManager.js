@@ -125,7 +125,7 @@ class MultiParamManager {
     }
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
-      <button onclick=${() => { onClick() }} class="${css.instanceButton}">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
+      <button onclick=${() => { onClick() }} class="btn btn-sm ${css.instanceButton}">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
       </div>`
 
     this.multiFields = this.createMultiFields()
@@ -142,9 +142,9 @@ class MultiParamManager {
     var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
-      <div class="card ${css.contractActionsContainerMultiInner}" >
+      <div class="${css.contractActionsContainerMultiInner}" >
         <div onclick=${() => { this.switchMethodViewOff() }} class="${css.multiHeader}">
-          <div class="card-title ${css.multiTitle}">${title}</div>
+          <div class="${css.multiTitle}">${title}</div>
           <i class='fa fa-angle-up ${css.methCaret}'></i>
         </div>
         ${this.multiFields}

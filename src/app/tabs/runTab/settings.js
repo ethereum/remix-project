@@ -86,15 +86,15 @@ class SettingsUI {
     var gasPriceEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>
-        <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
+        <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
       </div>
     `
 
     var valueEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
-        <select name="unit" class="${css.col2_2}" id="unit">
+        <input type="text" class="form-control ${css.gasNval} ${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
+        <select name="unit" class="form-control ${css.gasNval} ${css.col2_2}" id="unit">
           <option data-unit="wei">wei</option>
           <option data-unit="gwei">gwei</option>
           <option data-unit="finney">finney</option>

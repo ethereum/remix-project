@@ -36,7 +36,8 @@ var css = csjs`
   }
   .instance {
     min-width: 310px;
-    display: flex;
+    display: block;
+    /* display: flex; */
     flex-direction: column;
     padding: 5px 0 0 10px;
     margin-bottom: 10px;
@@ -44,12 +45,12 @@ var css = csjs`
   .instance .title:before {
     content: "\\25BE";
     margin-right: 5%;
-    font-size: 2rem
+    font-size: 1.2rem
   }
   .instance.hidesub .title:before {
     content: "\\25B8";
     margin-right: 5%;
-    font-size: 2rem;
+    font-size: 1.2rem;
   }
   .instance.hidesub > * {
       display: none;
@@ -156,7 +157,6 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner {
     margin-bottom: 10px;
-    border: 1px solid var(--info);
     padding: 0px 5px 5px 0px;
     background-color: var(--light);
     width: 99%;
