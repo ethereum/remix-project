@@ -54,7 +54,7 @@ export function deployAll(compileResult: object, web3: Web3, callback) {
             next(null, contractsToDeploy)
         },
         function deployContracts(contractsToDeploy: string[], next: Function) {
-            var deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
+            const deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
                 deployObject.estimateGas().then((gasValue) => {
                     deployObject.send({
                         from: accounts[0],
