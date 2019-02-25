@@ -45,11 +45,11 @@ describe('testRunner', () => {
 
       before((done) => {
         compileAndDeploy(filename, (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: object) => {
-          var testCallback: TestCbInterface = (err, test) => {
+          const testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
           }
-          var resultsCallback: ResultCbInterface = (err, _results) => {
+          const resultsCallback: ResultCbInterface = (err, _results) => {
             if (err) { throw err }
             results = _results
             done()
@@ -83,11 +83,11 @@ describe('testRunner', () => {
 
       before(function (done) {
         compileAndDeploy(filename, function (_err: Error | null | undefined, compilationData: object, contracts: any, accounts: object) {
-          var testCallback: TestCbInterface = (err, test) => {
+          const testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
           }
-          var resultsCallback: ResultCbInterface = (err, _results) => {
+          const resultsCallback: ResultCbInterface = (err, _results) => {
             if (err) { throw err }
             results = _results
             done()
@@ -120,11 +120,11 @@ describe('testRunner', () => {
 
       before(function (done) {
         compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          var testCallback: TestCbInterface = (err, test) => {
+          const testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
           }
-          var resultsCallback: ResultCbInterface = (err, _results) => {
+          const resultsCallback: ResultCbInterface = (err, _results) => {
             if (err) { throw err }
             results = _results
             done()
@@ -159,11 +159,11 @@ describe('testRunner', () => {
 
       before(function (done) {
         compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          var testCallback: TestCbInterface = (err, test) => {
+          const testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
           }
-          var resultsCallback: ResultCbInterface = (err, _results) => {
+          const resultsCallback: ResultCbInterface = (err, _results) => {
             if (err) { throw err }
             results = _results
             done()
@@ -187,11 +187,11 @@ describe('testRunner', () => {
 
       before(function (done) {
         compileAndDeploy(filename, (_err, compilationData, contracts, accounts) => {
-          var testCallback: TestCbInterface = (err, test) => {
+          const testCallback: TestCbInterface = (err, test) => {
             if (err) { throw err }
             tests.push(test)
           }
-          var resultsCallback: ResultCbInterface = (err, _results) => {
+          const resultsCallback: ResultCbInterface = (err, _results) => {
             if (err) { throw err }
             results = _results
             done()
