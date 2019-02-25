@@ -9,7 +9,7 @@ import Web3 = require('web3')
 import Provider from 'remix-simulator'
 import { FinalResult } from './types'
 
-var createWeb3Provider = function () {
+const createWeb3Provider = function () {
     let web3 = new Web3()
     web3.setProvider(new Provider())
     return web3
@@ -60,14 +60,14 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
             let totalTime = 0
             let errors: any[] = []
 
-            var _testCallback = function (result) {
+            const _testCallback = function (result) {
                 if (result.type === 'testFailure') {
                     errors.push(result)
                 }
                 testCallback(result)
             }
 
-            var _resultsCallback = function (_err, result, cb) {
+            const _resultsCallback = function (_err, result, cb) {
                 resultCallback(_err, result, () => {})
                 totalPassing += result.passingNum
                 totalFailing += result.failureNum
