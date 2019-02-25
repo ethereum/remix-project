@@ -213,7 +213,7 @@ class FileManager {
     // TODO : Change provider with promise
     return new Promise((resolve, reject) => {
       provider.resolveDirectory(path, (error, filesTree) => {
-        if(error) reject(error)
+        if (error) reject(error)
         resolve(filesTree)
       })
     })
