@@ -17,22 +17,20 @@ class SourceHighlighters {
   }
 
     // TODO what to do with mod?
-  highlight (mod, lineColumnPos, filePath, hexColor, cb) {
+  async highlight (mod, lineColumnPos, filePath, hexColor) {
     let position
     try {
       position = JSON.parse(lineColumnPos)
     } catch (e) {
-      return cb(e.message)
+      throw e
     }
     if (!this.highlighters[mod]) this.highlighters[mod] = new SourceHighlighter()
     this.highlighters[mod].currentSourceLocation(null)
     this.highlighters[mod].currentSourceLocationFromfileName(position, filePath, hexColor)
-    cb()
   }
 
-  discardHighlight (mod, cb) {
+  async discardHighlight (mod) {
     if (this.highlighters[mod]) this.highlighters[mod].currentSourceLocation(null)
-    cb()
   }
 }
 

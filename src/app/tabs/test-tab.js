@@ -98,15 +98,14 @@ module.exports = class TestTab {
       var provider = self._deps.fileManager.fileProviderOf(path)
       if (!provider) return cb(null, [])
       var tests = []
-      self._deps.fileManager.filesFromPath(path, (error, files) => {
-        if (error) return cb(error)
-        if (!error) {
+      self._deps.fileManager.getFilesFromPath(path)
+        .then((files) => {
           for (var file in files) {
             if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
           }
           cb(null, tests)
-        }
-      })
+        })
+        .catch(err => cb(error))
     }
 
     self._deps.filePanel.event.register('newTestFileCreated', file => {
