@@ -6,7 +6,6 @@ var globalRegistry = require('../../global/registry')
 var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
 var styleGuide = require('../ui/styles-guide/theme-chooser')
-// var styles = styleGuide.chooser()
 var Storage = remixLib.Storage
 var EventManager = require('../../lib/events')
 

@@ -1,17 +1,14 @@
 var yo = require('yo-yo')
 // -------------- copyToClipboard ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
     .container
     {
         display: none;
         position: fixed;
-        border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+        border: 1px solid var(--primary);
         width:150px; 
-        background: ${styles.appProperties.solidBorderBox_BackgroundColor};
         border-radius: 2px;
         z-index: 1000;
     }
@@ -31,12 +28,12 @@ var css = csjs`
         padding-left: 5px;
         padding-right: 5px;
         padding-bottom: 3px;
-        color: ${styles.appProperties.solidBorderBox_TextColor};
+        color: var(--primary);
     }
 
     #menuitems :hover
     {
-        background: ${styles.appProperties.highlight_BackgroundColor};
+        background: $var(--seconday);
         border-radius: 2px;
     }
 `

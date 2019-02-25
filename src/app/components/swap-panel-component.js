@@ -1,9 +1,5 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-// const remixLib = require('remix-lib')
-
-// const styleguide = require('../ui/styles-guide/theme-chooser')
-// const styles = styleguide.chooser()
 
 class SwapPanelComponent {
   constructor (name, appStore, appManager, opt) {
