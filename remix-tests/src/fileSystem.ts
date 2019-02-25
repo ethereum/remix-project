@@ -1,14 +1,14 @@
 // Extend fs
 let fs: any = require('fs')
-const path = require('path')
+import path from 'path'
 
 // https://github.com/mikeal/node-utils/blob/master/file/lib/main.js
-fs.walkSync = function (start, callback) {
-    fs.readdirSync(start).forEach(name => {
+fs.walkSync = function (start: string, callback: Function) {
+    fs.readdirSync(start).forEach((name: string) => {
         if (name === 'node_modules') {
             return // hack
         }
-        var abspath = path.join(start, name)
+        const abspath = path.join(start, name)
         if (fs.statSync(abspath).isDirectory()) {
             fs.walkSync(abspath, callback)
         } else {

@@ -37,9 +37,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-tests#readme",
   "dependencies": {
-    "@types/async": "^2.4.0",
-    "@types/colors": "^1.2.1",
-    "@types/web3": "^1.0.18",
     "async": "^2.6.0",
     "change-case": "^3.0.1",
     "colors": "^1.1.2",
@@ -55,6 +52,10 @@
     "yo-yoify": "latest"
   },
   "devDependencies": {
+    "@types/async": "^2.4.0",
+    "@types/colors": "^1.2.1",
+    "@types/web3": "^1.0.18",
+    "@types/color-support": "^1.1.0",
     "@types/commander": "^2.12.2",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.21",

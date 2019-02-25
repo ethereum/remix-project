@@ -1,23 +1,23 @@
-var gray = require('ansi-gray')
-const winston = require('winston')
-var timestamp = require('time-stamp')
-var supportsColor = require('color-support')
+import colors from 'colors'
+import winston, { Logger, LoggerOptions } from 'winston'
+import timestamp from 'time-stamp';
+import supportsColor from 'color-support'
 
-function hasFlag (flag) {
+function hasFlag (flag: string) {
     return ((typeof (process) !== 'undefined') && (process.argv.indexOf('--' + flag) !== -1))
 }
 
-function addColor (str) {
+function addColor (str: string) {
     if (hasFlag('no-color')) {
         return str
     }
 
     if (hasFlag('color')) {
-        return gray(str)
+        return colors.gray(str)
     }
 
     if (supportsColor()) {
-        return gray(str)
+        return colors.gray(str)
     }
 
     return str
@@ -31,7 +31,7 @@ const logFmt = winston.format.printf((info) => {
 })
 
 class Log {
-    logger: any;
+    logger: Logger;
     constructor () {
         this.logger = winston.createLogger({
             level: 'error',
@@ -42,7 +42,7 @@ class Log {
             )
         })
     }
-    setVerbosity (v) {
+    setVerbosity (v: LoggerOptions["level"]) {
         this.logger.configure({
             level: v,
             transports: [new winston.transports.Console()],
