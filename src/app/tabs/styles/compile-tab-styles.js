@@ -1,6 +1,4 @@
 const csjs = require('csjs-inject')
-// const styleGuide = require('../../ui/styles-guide/theme-chooser')
-// const styles = styleGuide.chooser()
 
 const css = csjs`
   .compilerArticle {

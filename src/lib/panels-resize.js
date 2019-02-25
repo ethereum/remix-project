@@ -1,7 +1,5 @@
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
-const styleGuide = require('../app/ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
 
 const css = csjs`
   .dragbar            {
@@ -12,11 +10,11 @@ const css = csjs`
     bottom            : 0;
     cursor            : col-resize;
     z-index           : 999;
-    border-right      : ${styles.leftPanel.dragbarBorderRight};
+    border-right      : var(--primary);
   }
   .ghostbar           {
     width             : 3px;
-    background-color  : ${styles.colors.lightBlue};
+    background-color  : var(--primary);
     opacity           : 0.5;
     position          : absolute;
     cursor            : col-resize;

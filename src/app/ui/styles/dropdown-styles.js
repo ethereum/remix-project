@@ -1,10 +1,7 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .dropdown           {
-    ${styles.terminal.dropdown_Filter_MenuBar}
     overflow          : visible;
     position          : relative;
     display           : flex;
@@ -38,8 +35,7 @@ var css = csjs`
     top               : 24px;
     left              : 0;
     width             : 250px;
-    background-color  : ${styles.appProperties.dropdown_BackgroundColor};
-    border            : 1px solid ${styles.appProperties.dropdown_BorderColor};
+    border            : 1px solid var(--primary);
     border-radius     : 3px;
     border-top        : 0;
   }

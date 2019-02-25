@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .contextview            {
@@ -16,7 +14,6 @@ var css = csjs`
     text-overflow       : ellipsis;
     overflow            : hidden;
     white-space         : nowrap;
-    color               : ${styles.editor.text_Primary};
     font-size           : 11px;
   }
   .type                   {
@@ -29,10 +26,9 @@ var css = csjs`
   .jump                   {
     cursor            : pointer;
     margin            : 0 5px;
-    color             : ${styles.editor.icon_Color_Editor};
   }
   .jump:hover              {
-    color             : ${styles.editor.icon_HoverColor_Editor};
+    color             : var(--secondary);
   }
   .referencesnb           {
     float             : right;

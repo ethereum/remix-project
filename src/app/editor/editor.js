@@ -38,14 +38,14 @@ document.head.appendChild(yo`
       position:absolute;
       z-index:20;
       background-color: var(--secondary);
-      opacity: 0.7
+      opacity: 0.6
     }
 
     .highlightreferenceline {
       position:absolute;
       z-index:20;
       background-color: var(--secondary);
-      opacity: 0.7
+      opacity: 0.6
     }
 
     .highlightcode {

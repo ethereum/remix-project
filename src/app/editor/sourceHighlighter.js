@@ -1,8 +1,6 @@
 'use strict'
 const csjs = require('csjs-inject')
 const globlalRegistry = require('../../global/registry')
-const styleGuide = require('../ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
 
 class SourceHighlighter {
   constructor (localRegistry) {
@@ -48,12 +46,12 @@ class SourceHighlighter {
         .highlightcode {
           position:absolute;
           z-index:20;
-          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
+          background-color: ${style || 'var(--text-info)'};
         }
         .highlightcode_fullLine {
           position:absolute;
           z-index:20;
-          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
+          background-color: ${style || 'var(--text-info)'};
           opacity: 0.5;
         }
         `
