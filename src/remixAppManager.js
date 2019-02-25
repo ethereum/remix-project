@@ -61,7 +61,7 @@ export class RemixAppManager extends AppManagerApi {
   plugins () {
     let vyper = {
       name: 'vyper',
-      events: [],
+      events: ['compilationFinished'],
       methods: [],
       notifications: {},
       url: 'https://remix-vyper.surge.sh/',
@@ -88,8 +88,10 @@ export class RemixAppManager extends AppManagerApi {
       icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnIGNsYXNzPSJsYXllciI+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18yMyIgcj0iMjU2IiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1kYXNoYXJyYXk9Im51bGwiIHN0cm9rZS1saW5lY2FwPSJudWxsIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjAiLz4KICA8bGluZSBmaWxsPSJub25lIiBmaWxsLW9wYWNpdHk9IjAiIGlkPSJzdmdfMTUiIG1hcmtlci1lbmQ9InVybCgjc2VfbWFya2VyX2VuZF9zdmdfMTUpIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1kYXNoYXJyYXk9Im51bGwiIHN0cm9rZS1saW5lY2FwPSJudWxsIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjEyIiB4MT0iMjU2IiB4Mj0iMjU2IiB5MT0iMTg1LjAzODUyIiB5Mj0iMjg0LjAwMTEiLz4KICA8ZyBpZD0ic3ZnXzIwIj4KICAgPHJlY3QgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwIiBoZWlnaHQ9Ijk2LjY1NDA4IiBpZD0ic3ZnXzEiIHJ4PSIyMCIgcnk9IjIwIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMjMiIHdpZHRoPSIyODkuOTYyMjMiIHg9IjExMS4wMTg4OSIgeT0iNzAuOTA3NDQiLz4KICAgPHJlY3QgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwIiBoZWlnaHQ9Ijk2LjY1NDA4IiBpZD0ic3ZnXzQiIHJ4PSIyMCIgcnk9IjIwIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMjMiIHdpZHRoPSIyODkuOTYyMjMiIHg9IjExMS4wMTg4OSIgeT0iMzQ0LjQzODQ3Ii8+CiAgIDxlbGxpcHNlIGN4PSIyNTYuMDAwMDEiIGN5PSIxNjUuNzcxNjMiIGZpbGw9IiNmZmZmZmYiIGlkPSJzdmdfMTEiIHJ4PSIyMS42ODMyNCIgcnk9IjIxLjY4MzI0IiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1kYXNoYXJyYXk9Im51bGwiIHN0cm9rZS1saW5lY2FwPSJudWxsIiBzdHJva2UtbGluZWpvaW49Im51bGwiIHN0cm9rZS13aWR0aD0iMjMiLz4KICAgPGVsbGlwc2UgY3g9IjI1Ni4wMDAwMSIgY3k9IjM0My4zMDMxNyIgZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z18xMiIgcng9IjIxLjY4MzI0IiByeT0iMjEuNjgzMjQiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLWRhc2hhcnJheT0ibnVsbCIgc3Ryb2tlLWxpbmVjYXA9Im51bGwiIHN0cm9rZS1saW5lam9pbj0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIyMyIvPgogIDwvZz4KIDwvZz4KIDxkZWZzPgogIDxtYXJrZXIgaWQ9InNlX21hcmtlcl9lbmRfc3ZnXzE1IiBtYXJrZXJIZWlnaHQ9IjUiIG1hcmtlclVuaXRzPSJzdHJva2VXaWR0aCIgbWFya2VyV2lkdGg9IjUiIG9yaWVudD0iYXV0byIgcmVmWD0iNTAiIHJlZlk9IjUwIiBzZV90eXBlPSJyaWdodGFycm93IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+CiAgIDxwYXRoIGQ9Im0xMDAsNTBsLTEwMCw0MGwzMCwtNDBsLTMwLC00MHoiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIxMCIvPgogIDwvbWFya2VyPgogPC9kZWZzPgo8L3N2Zz4=',
       prefferedLocation: 'mainPanel'
     }
-    return [{ profile: ethDoc, api: new Plugin(ethDoc, { resolveLocaton: (iframe) => { return this.resolveLocation(ethDoc, iframe) } }) },
+    const plugins = [{ profile: ethDoc, api: new Plugin(ethDoc, { resolveLocaton: (iframe) => { return this.resolveLocation(ethDoc, iframe) } }) },
             { profile: pipeline, api: new Plugin(pipeline, { resolveLocaton: (iframe) => { return this.resolveLocation(pipeline, iframe) } }) },
             { profile: vyper, api: new Plugin(vyper, { resolveLocaton: (iframe) => { return this.resolveLocation(vyper, iframe) } }) }]
+    plugins[2].api.events.on('compilationFinished', (result) => console.log('GOT EVENT', result))
+    return plugins
   }
 }
