@@ -35,17 +35,17 @@ module.exports = class TestTab {
   }
   render () {
     const self = this
-    var testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
-    var testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
+    var testsOutput = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
+    var testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
 
     var testCallback = function (result) {
       testsOutput.hidden = false
       if (result.type === 'contract') {
-        testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
+        testsOutput.appendChild(yo`<div class="${css.outputTitle}">${result.filename} (${result.value})</div>`)
       } else if (result.type === 'testPass') {
-        testsOutput.appendChild(yo`<div class='${css.testPass} ${css.testLog}'>✓ (${result.value})</div>`)
+        testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} bg-success">✓ (${result.value})</div>`)
       } else if (result.type === 'testFailure') {
-        testsOutput.appendChild(yo`<div class='${css.testFailure} ${css.testLog}'>✘ (${result.value})</div>`)
+        testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} bg-danger">✘ (${result.value})</div>`)
       }
     }
 
@@ -60,21 +60,21 @@ module.exports = class TestTab {
     var updateFinalResult = function (_err, result, filename) {
       testsSummary.hidden = false
       if (_err) {
-        testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${_err.message}</div>`)
+        testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${_err.message}</div>`)
         return
       }
       testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
       if (result.totalPassing > 0) {
-        testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
+        testsSummary.appendChild(yo`<div class="text-success">${result.totalPassing} passing (${result.totalTime}s)</div>`)
         testsSummary.appendChild(yo`<br>`)
       }
       if (result.totalFailing > 0) {
-        testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
+        testsSummary.appendChild(yo`<div class="text-danger" >${result.totalFailing} failing</div>`)
         testsSummary.appendChild(yo`<br>`)
       }
       result.errors.forEach((error, index) => {
-        testsSummary.appendChild(yo`<div>${error.context} - ${error.value} </div>`)
-        testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${error.message}</div>`)
+        testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
+        testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
         testsSummary.appendChild(yo`<br>`)
       })
     }
@@ -87,7 +87,7 @@ module.exports = class TestTab {
           remixTests.runTestSources(runningTest, testCallback, resultsCallback, (error, result) => {
             updateFinalResult(error, result, testFilePath)
             callback(error)
-          }, (url, cb) => { self.compileTab.importFileCb(url, cb) })
+          }, (url, cb) => { self.compileTab.compileTabLogic.importFileCb(url, cb) })
         }
       })
     }
@@ -171,8 +171,7 @@ module.exports = class TestTab {
     }
 
     var runTests = function () {
-      testsOutput.innerHTML = ''
-      testsSummary.innerHTML = ''
+      testsOutput.innerHTML = 'Running tests ...'
       var tests = self.data.selectedTests
       async.eachOfSeries(tests, (value, key, callback) => { runTest(value, callback) })
     }
@@ -194,9 +193,9 @@ module.exports = class TestTab {
     }
 
     var el = yo`
-      <div class="${css.testTabView}" id="testView">
+      <div class="${css.testTabView} card" id="testView">
         <div class="${css.infoBox}">
-        <div class="${css.title}">Unit Testing</div>
+        <h2 class="${css.title}">Unit Testing</h2>
           Test your smart contract by creating a foo_test.sol file (open ballot_test.sol to see the example).
           <br/>
           You will find more informations in the <a href="https://remix.readthedocs.io/en/latest/unittesting_tab.html">documentation</a>
@@ -205,12 +204,13 @@ module.exports = class TestTab {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class="${css.generateTestFile}" onclick="${generateTestFile}">Generate test file</div>
+          <br/>
+          <button class="${css.generateTestFile} btn btn-primary m-1" onclick="${generateTestFile}">Generate test file</button>
         </div>
         <div class="${css.tests}">
           ${self.testList}
-          <div class="${css.buttons}">
-            <div class="${css.runButton}"  onclick="${runTests}">Run Tests</div>
+          <div class="${css.buttons} btn-group">
+            <button class="${css.runButton} btn btn-primary m-1"  onclick="${runTests}">Run Tests</button>
             <label class="${css.label}" for="checkAllTests">
               <input id="checkAllTests"
                 type="checkbox"
