@@ -2,7 +2,7 @@ import commander from 'commander'
 import Web3 from 'web3'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
-const Provider = require('remix-simulator').Provider
+import { Provider } from 'remix-simulator'
 import Log from './logger'
 const logger = new Log()
 const log = logger.logger
@@ -35,7 +35,7 @@ commander.command('help').description('output usage information').action(functio
 // get current version
 commander
     .option('-v, --verbose <level>', 'run with verbosity', mapVerbosity)
-    .action(function (filename) {
+    .action((filename) => {
         // Console message
         console.log(colors.white('\n\t👁\t:: Running remix-tests - Unit testing for solidity ::\t👁\n'))
         // set logger verbosity

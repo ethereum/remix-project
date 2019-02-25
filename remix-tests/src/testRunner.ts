@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import { RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface } from './types'
 
 function getFunctionFullName (signature: string, methodIdentifiers) {
-    for (var method in methodIdentifiers) {
+    for (const method in methodIdentifiers) {
         if (signature.replace('0x', '') === methodIdentifiers[method].replace('0x', '')) {
             return method
         }
@@ -62,8 +62,8 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
     let timePassed: number = 0
     let web3 = new Web3()
 
-    var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
-    var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
+    const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
+    const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
     if (!isBrowser) {
         let signale = require('signale')
         signale.warn('DO NOT TRY TO ACCESS (IN YOUR SOLIDITY TEST) AN ACCOUNT GREATER THAN THE LENGTH OF THE FOLLOWING ARRAY (' + opts.accounts.length + ') :')
@@ -126,7 +126,7 @@ export function runTest (testName, testObject: any, contractDetails: any, opts: 
                     for (let i in receipt.events) {
                         let event = receipt.events[i]
                         if (event.raw.topics.indexOf(topic) >= 0) {
-                            var testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
+                            const testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
                             if (!testEvent[0]) {
                                 const resp: TestResultInterface = {
                                   type: 'testFailure',

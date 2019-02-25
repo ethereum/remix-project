@@ -83,7 +83,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
             let totalTime: number = 0
             let errors: any[] = []
 
-            var _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
+            const _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
                 if(err) throw err;
                 if (result.type === 'contract') {
                     signale.name(result.value.white)
@@ -94,7 +94,7 @@ export function runTestFiles(filepath: string, isDirectory: boolean, web3: Web3,
                     errors.push(result)
                 }
             }
-            var _resultsCallback = (_err: Error | null | undefined, result: ResultsInterface, cb) => {
+            const _resultsCallback = (_err: Error | null | undefined, result: ResultsInterface, cb) => {
                 totalPassing += result.passingNum
                 totalFailing += result.failureNum
                 totalTime += result.timePassed
