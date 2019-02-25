@@ -1,17 +1,17 @@
 import fs from './fileSystem'
 import async from 'async'
-var path = require('path')
+import path from 'path'
 let RemixCompiler = require('remix-solidity').Compiler
 import { SrcIfc } from './types'
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos: number = 0) {
-    var indexOf = inputString.substring(startpos).search(regex)
+    const indexOf = inputString.substring(startpos).search(regex)
     return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
 }
 
 function writeTestAccountsContract (accounts: string[]) {
-    var testAccountContract = require('../sol/tests_accounts.sol.js')
-    var body = 'address[' + accounts.length + '] memory accounts;'
+    const testAccountContract = require('../sol/tests_accounts.sol.js')
+    let body = `address[${accounts.length}] memory accounts;`
     if (!accounts.length) body += ';'
     else {
         accounts.map((address, index) => {
@@ -21,8 +21,8 @@ function writeTestAccountsContract (accounts: string[]) {
     return testAccountContract.replace('>accounts<', body)
 }
 
-var userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
-var isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
+const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
+const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' electron/') > -1)
 
 // TODO: replace this with remix's own compiler code
 export function compileFileOrFiles(filename: string, isDirectory: boolean, opts: any, cb: Function) {
