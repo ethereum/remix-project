@@ -56,7 +56,7 @@ describe('testRunner', () => {
       // Test github import
       describe('test getting github imports', () => {
         const urlResolver = new RemixURLResolver()
-        const fileName: string = 'github.com/ethereum/populus/docs/assets/Greeter.sol'
+        const fileName: string = 'github.com/MathCody/solidity-examples/greeter/greeter.sol'
         let results: object = {}
 
         before(done => {
@@ -75,8 +75,8 @@ describe('testRunner', () => {
         })
         it('should return contract content of given github path', () => {
           const expt: object = {
-            cleanURL: 'github.com/ethereum/populus/docs/assets/Greeter.sol',
-            content: 'pragma solidity ^0.4.0;\n\ncontract Greeter {\n    string public greeting;\n\n    // TODO: Populus seems to get no bytecode if `internal`\n    function Greeter() public {\n        greeting = \'Hello\';\n    }\n\n    function setGreeting(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    function greet() public constant returns (string) {\n        return greeting;\n    }\n}\n',
+            cleanURL: 'github.com/MathCody/solidity-examples/greeter/greeter.sol',
+            content: 'pragma solidity >=0.5.0 <0.6.0;\nimport \"../mortal/mortal.sol\";\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n',
             type: 'github'
           }
           assert.deepEqual(results, expt)
