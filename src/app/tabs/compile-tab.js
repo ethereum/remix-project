@@ -113,7 +113,7 @@ class CompileTab {
           }
         })
       }
-        })
+    })
 
     // Run the compiler instead of trying to save the website
     $(window).keydown((e) => {
