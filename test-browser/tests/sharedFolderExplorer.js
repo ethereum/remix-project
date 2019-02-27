@@ -71,7 +71,7 @@ function runTests (browser, testData) {
   }
   browser
     .waitForElementVisible('#icon-panel', 10000)
-    .clickLaunchIcon('file explorers')
+    .clickLaunchIcon('fileExplorers')
     .click('.websocketconn')
     .waitForElementVisible('#modal-footer-ok', 10000)
     .click('#modal-footer-ok')
@@ -132,7 +132,7 @@ function runTests (browser, testData) {
       testImportFromRemixd(browser, () => { done() })
     })
     .perform(function () {
-      browser.clickLaunchIcon('file explorers').click('[data-path="localhost"]') // collapse and expand
+      browser.clickLaunchIcon('fileExplorers').click('[data-path="localhost"]') // collapse and expand
         .waitForElementNotVisible('[data-path="localhost/folder1"]')
         .click('[data-path="localhost"]')
         .waitForElementVisible('[data-path="localhost/folder1"]')
