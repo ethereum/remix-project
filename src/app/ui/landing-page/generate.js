@@ -5,6 +5,7 @@ import { defaultWorkspaces } from './workspace'
 
 export function homepageProfile () {
   return {
+    displayName: 'home page',
     name: 'homepage',
     methods: [],
     events: [],
@@ -14,7 +15,7 @@ export function homepageProfile () {
   }
 }
 
-export function generateHomePage (appManager) {
+export function generateHomePage (appManager, appStore) {
   /*
   var actions1 = [
     {label: 'new file', type: `callback`, payload: () => { alert(`-new file created-`) }},
@@ -56,6 +57,14 @@ export function generateHomePage (appManager) {
   */
 
   var sectionsWorkspaces = []
+  sectionsWorkspaces.push({
+    label: 'Close All Modules',
+    type: 'callback',
+    payload: () => {
+      appStore.getActives()
+      .filter(({profile}) => !profile.required)
+      .forEach((profile) => { appManager.deactivateOne(profile.name) })
+    }})
   defaultWorkspaces(appManager).forEach((workspace) => {
     sectionsWorkspaces.push({label: workspace.title, type: 'callback', payload: () => { workspace.activate() }})
   })
