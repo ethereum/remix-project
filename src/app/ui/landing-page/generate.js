@@ -1,6 +1,7 @@
-/* global alert */
+/* global */
 import LandingPage from './landing-page'
 import Section from './section'
+import { defaultWorkspaces } from './workspace'
 
 export function homepageProfile () {
   return {
@@ -13,7 +14,8 @@ export function homepageProfile () {
   }
 }
 
-export function generateHomePage () {
+export function generateHomePage (appManager) {
+  /*
   var actions1 = [
     {label: 'new file', type: `callback`, payload: () => { alert(`-new file created-`) }},
     {label: 'import from GitHub', type: `callback`, payload: () => { alert(`-imported from GitHub-`) }},
@@ -51,6 +53,12 @@ export function generateHomePage () {
   var section3 = new Section('Learn', actions3)
   var section4 = new Section('Plugins', actions4)
   var section5 = new Section('Help', actions5)
+  */
 
-  return new LandingPage([section1, section2, section3, section4, section5])
+  var sectionsWorkspaces = []
+  defaultWorkspaces(appManager).forEach((workspace) => {
+    sectionsWorkspaces.push({label: workspace.title, type: 'callback', payload: () => { workspace.activate() }})
+  })
+  var sectionWorkspace = new Section('Workspaces', sectionsWorkspaces)
+  return new LandingPage([sectionWorkspace])
 }

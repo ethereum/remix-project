@@ -34,7 +34,7 @@ function runTests (browser, testData) {
     contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['Ballot'], function () {
       done()
     })
-  }).clickLaunchIcon('run transactions')
+  }).clickLaunchIcon('run')
       .setValue('input[placeholder="uint8 _numProposals"]', '1')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
@@ -65,7 +65,7 @@ function runTests (browser, testData) {
           done()
         })
       })
-      .clickLaunchIcon('run transactions')
+      .clickLaunchIcon('run')
       .click('div[class^="udappClose"]')
       .perform((client, done) => {
         console.log('ballot.abi')
@@ -79,7 +79,7 @@ function runTests (browser, testData) {
           done()
         })
       })
-      .clickLaunchIcon('file explorers')
+      .clickLaunchIcon('fileExplorers')
       .perform((client, done) => {
         console.log('addInstance 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A')
         contractHelper.addInstance(browser, '0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true, () => {

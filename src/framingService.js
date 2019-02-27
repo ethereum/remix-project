@@ -2,12 +2,12 @@ export default {
   start: (appStore, swapPanelApi, verticalIconApi, mainPanelApi, resizeFeature) => {
     swapPanelApi.event.on('toggle', (moduleName) => {
       resizeFeature.panel1.clientWidth !== 0 ? resizeFeature.minimize() : resizeFeature.maximise()
-      if (moduleName === 'file explorers') {
+      if (moduleName === 'fileExplorers') {
         mainPanelApi.showContent('code editor')
       }
     })
     swapPanelApi.event.on('showing', (moduleName) => {
-      if (moduleName === 'file explorers') {
+      if (moduleName === 'fileExplorers') {
         mainPanelApi.showContent('code editor')
       }
       resizeFeature.panel1.clientWidth === 0 ? resizeFeature.maximise() : ''
@@ -21,7 +21,7 @@ export default {
     })
     // mainPanelApi.event.on('showing', (moduleName) => {})
 
-    verticalIconApi.select('file explorers')
+    verticalIconApi.select('fileExplorers')
     verticalIconApi.select('homepage')
     resizeFeature.minimize()
   }
