@@ -25,8 +25,6 @@ class CompilerContainer {
       defaultVersion: 'soljson-v0.5.1+commit.c8a2cb62.js', // this default version is defined: in makeMockCompiler (for browser test) and in package.json (downloadsolc_root) for the builtin compiler
       baseurl: 'https://solc-bin.ethereum.org/bin'
     }
-
-    this.listenToEvents()
   }
 
   /**
@@ -36,6 +34,13 @@ class CompilerContainer {
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
     yo.update(this._view.compilationButton, button)
+  }
+
+  deactivate () {
+  }
+
+  activate () {
+    this.listenToEvents()
   }
 
   listenToEvents () {
