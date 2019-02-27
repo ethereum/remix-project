@@ -4,8 +4,6 @@ var minixhr = require('minixhr')
 var helper = require('../../../lib/helper')
 const addTooltip = require('../../ui/tooltip')
 
-const styleGuide = require('../../ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
 var css = require('../styles/compile-tab-styles')
 
 class CompilerContainer {
@@ -82,7 +80,6 @@ class CompilerContainer {
 
     this.compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
       if (!this._view.compileIcon) return
-      this._view.compileIcon.style.color = styles.colors.black
       this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
       this._view.compileIcon.setAttribute('title', 'idle')
