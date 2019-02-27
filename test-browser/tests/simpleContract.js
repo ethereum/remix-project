@@ -24,7 +24,7 @@ function runTests (browser) {
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
-    .clickLaunchIcon('file explorers')
+    .clickLaunchIcon('fileExplorers')
     .click('#swap-panel label[data-path="browser"]')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.

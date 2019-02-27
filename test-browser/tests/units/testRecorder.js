@@ -10,7 +10,7 @@ module.exports = {
     browser.clickLaunchIcon = contractHelper.clickLaunchIcon
     contractHelper.addFile(browser, 'scenario.json', {content: records}, () => {
       browser
-        .clickLaunchIcon('run transactions')
+        .clickLaunchIcon('run')
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
         .waitForElementPresent('.instance:nth-of-type(2)')

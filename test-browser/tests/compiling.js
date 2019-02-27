@@ -38,7 +38,7 @@ function runTests (browser) {
 
 function testSimpleContract (browser, callback) {
   contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'], function () {
-    browser.clickLaunchIcon('run transactions')
+    browser.clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2)')
@@ -69,7 +69,7 @@ function testSimpleContract (browser, callback) {
 
 function testReturnValues (browser, callback) {
   contractHelper.testContracts(browser, 'returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'], function () {
-    browser.clickLaunchIcon('run transactions')
+    browser.clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
       .click('.instance:nth-of-type(2)')
@@ -107,7 +107,7 @@ function testReturnValues (browser, callback) {
 
 function testInputValues (browser, callback) {
   contractHelper.testContracts(browser, 'inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'], function () {
-    browser.clickLaunchIcon('run transactions')
+    browser.clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
         .click('.instance:nth-of-type(2)')
