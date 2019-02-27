@@ -199,7 +199,7 @@ class CompileTab {
    */
 
   selectContract (contractName) {
-    this.selectContract = contractName
+    this.selectedContract = contractName
   }
 
   publish () {
