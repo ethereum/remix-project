@@ -382,8 +382,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore)
+  registry.put({api: appManager, name: 'appmanager'})
 
-  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false })
+  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false, displayHeader: false })
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
@@ -410,7 +411,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
-  const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true })
+  const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true, displayHeader: true })
   const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
