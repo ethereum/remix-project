@@ -3,6 +3,9 @@ const csjs = require('csjs-inject')
 // const styles = styleGuide.chooser()
 
 const css = csjs`
+  .compilerArticle {
+    padding: 10px;
+  }
   .title {
     font-size: 1.1em;
     font-weight: bold;
@@ -28,23 +31,13 @@ const css = csjs`
     overflow: auto;
     clear: both;
   }
-  .select {
-    font-weight: bold;
-    margin: 10px 0px;
-  }
   .info {
-
+    padding: 10px;
     word-break: break-word;
-  }
-  .compileTabView {
-    padding: 2%;
   }
   .contract {
     display: block;
     margin: 3% 0;
-  }
-  .compileContainer  {
-    margin-bottom: 2%;
   }
   .autocompileContainer {
     display: flex;
@@ -69,11 +62,12 @@ const css = csjs`
   .warnCompilationSlow {
     margin-left: 1%;
   }
-  .compileButtons {
+  .compilerConfig {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+  }
+  .compilerConfig label {
+    margin: 0;
   }
   .name {
     display: flex;
@@ -96,47 +90,26 @@ const css = csjs`
     margin: 0;
     margin-bottom: 2%;
   }
-  .contractContainer {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2%;
-  }
   .optimizeContainer {
     display: flex;
   }
-  .contractNames {
-    width:78%;
+  .noContractAlert {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .contractHelperButtons {
+    margin-top: 10px;
     display: flex;
     cursor: pointer;
-    text-align: center;
-    justify-content: flex-end;
-    margin: 15px 15px 10px 0;
+    align-items: center;
+    justify-content: space-between;
   }
-  .copyButton {
-    padding: 0 7px;
-    min-width: 50px;
-    width: auto;
-    margin-left: 5px;
-    background-color: inherit;
-    border: inherit;
-  }
-  .bytecodeButton {
-    min-width: 80px;
+  .copyToClipboard {
+    font-size: 1rem;
   }
   .copyIcon {
     margin-right: 5px;
-  }
-  .details {
-    min-width: 70px;
-    width: 80px;
-  }
-  .publish {
-    display: flex;
-    align-items: center;
-    margin-left: 10px;
-    cursor: pointer;
   }
   .log {
     display: flex;
