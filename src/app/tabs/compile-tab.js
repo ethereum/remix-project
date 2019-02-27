@@ -152,7 +152,7 @@ class CompileTab {
         <div class="input-group-prepend">
           <label class="input-group-text" for="compiledContracts">Contract</label>
         </div>
-        <select onchange="${e => this.selectContract(e.value)}" id="compiledContracts" class="custom-select">
+        <select onchange="${e => this.selectContract(e.target.value)}" onload="${e => { this.selectedContract = e.value }}" id="compiledContracts" class="custom-select">
           ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
         </select>
       </header>
