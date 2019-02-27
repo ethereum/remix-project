@@ -157,22 +157,22 @@ class CompileTab {
         </select>
       </header>
       <article class="${css.compilerArticle}">
-        <button class="btn btn-primary btn-block" title="Publish on Swarm" onclick="${this.publish}">
+        <button class="btn btn-primary btn-block" title="Publish on Swarm" onclick="${() => { this.publish() }}">
           <i class="${css.copyIcon} fa fa-upload" aria-hidden="true"></i>
           <span>Publish on Swarm</span>
         </button>
-        <button class="btn btn-secondary btn-block" title="Display Contract Details" onclick="${this.details}">
+        <button class="btn btn-secondary btn-block" title="Display Contract Details" onclick="${() => { this.details() }}">
           Compilation Details
         </button>
         <!-- Copy to Clipboard -->
         <div class="${css.contractHelperButtons}">
           <span class="${css.copyToClipboard}">Copy to Clipboard : </span>
           <div class="btn-group" role="group" aria-label="Copy to clipboard">
-            <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${this.copyABI}">
+            <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
               <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
               <span>ABI</span>
             </button>
-            <button class="btn btn-secondary" title="Copy Bytecode to clipboard" onclick="${this.copyBytecode}">
+            <button class="btn btn-secondary" title="Copy Bytecode to clipboard" onclick="${() => { this.copyBytecode() }}">
               <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
               <span>Bytecode</span>
             </button>
