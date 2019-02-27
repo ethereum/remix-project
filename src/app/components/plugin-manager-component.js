@@ -152,7 +152,6 @@ class PluginManagerComponent {
   reRender () {
     if (this.views.root) {
       yo.update(this.views.root, this.render())
-      this.filterPlugins(this.searchBox())
     }
   }
 

@@ -2,8 +2,6 @@ var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 
 var csjs = require('csjs-inject')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .dialog {
@@ -11,7 +9,6 @@ var css = csjs`
     flex-direction: column;
   }
   .dialogParagraph {
-    ${styles.infoTextBox}
     margin-bottom: 2em;
     word-break: break-word;
   }
