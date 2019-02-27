@@ -22,10 +22,10 @@ var css = csjs`
     line-height: 1.5em;
   }
   .modalBody em {
-    color: var(--text-info)
+    color: var(--text-secondary);
   }
   .modalBody a {
-    color: color: var(--text-info)
+    color: var(--text-secondary);
   }
   .modalFooter {
     display: flex;

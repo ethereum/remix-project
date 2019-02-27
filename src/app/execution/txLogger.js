@@ -81,7 +81,7 @@ var css = csjs`
     border-collapse: collapse;
     font-size: 10px;
     color: var(--primary);
-    border: 1px solid var(--secondary);
+    border: 1px solid var(--primary);
   }
   #txTable {
     margin-top: 1%;
@@ -107,11 +107,6 @@ var css = csjs`
     margin-left: auto;
   }
   .debug {
-    width: 55px;
-    min-width: 55px;
-    min-height: 20px;
-    max-height: 20px;
-    font-size: 11px;
   }
   .debug:hover {
     opacity: 0.8;
@@ -236,7 +231,7 @@ function renderKnownTransaction (self, data) {
         ${checkTxStatus(data.receipt, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <button class="${css.debug} btn" onclick=${(e) => debug(e, data, self)}>Debug</div>
+          <button class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
         <i class="${css.arrow} fa fa-angle-down"></i>
       </div>
