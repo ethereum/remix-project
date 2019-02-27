@@ -16,10 +16,12 @@ var css = csjs`
     padding: 2px 16px;
     display: flex;
     justify-content: space-between;
+    background: var(--info);
   }
   .modalBody {
     padding: 1.5em;
     line-height: 1.5em;
+    color: var(--success);
   }
   .modalBody em {
     color: var(--text-secondary);
@@ -34,6 +36,7 @@ var css = csjs`
     text-align: right;
     font-weight: 700;
     cursor: pointer;
+    background-color: var(--info);
   }
   .modalContent {
     position: relative;

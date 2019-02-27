@@ -84,13 +84,13 @@ function html () {
   <div id="modal-background" class="${css['modalBackground']}"> </div>
   <div class="${css['modalContent']} bg-light text-secondary">
     <div class="${css['modalHeader']}">
-    <h2></h2>
+    <h3></h3>
     <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
   </div>
   <div class="${css['modalBody']}"> -
   </div>
   <div class="${css['modalFooter']}">
-    <span id="modal-footer-ok" class=${css['modalFooterOk']}>OK</span><span id="modal-footer-cancel"  class=${css['modalFooterCancel']}>Cancel</span>
+    <span id="modal-footer-ok" class="${css['modalFooterOk']} btn btn-sm btn-primary">OK</span><span id="modal-footer-cancel"  class="${css['modalFooterCancel']} btn btn-sm btn-primary">Cancel</span>
         </div>
   </div>
   </div>`
