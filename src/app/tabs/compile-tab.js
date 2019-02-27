@@ -180,9 +180,9 @@ class CompileTab {
         </div>
       </article>
     </section>`
-    : yo`<article class="${css.compilerArticle}">
+    : yo`<section class="${css.container}"><article class="${css.compilerArticle}">
       <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
-    </article>`
+    </article></section>`
   }
 
   // TODO : Add success alert when compilation succeed
