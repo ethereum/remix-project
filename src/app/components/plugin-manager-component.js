@@ -5,6 +5,7 @@ const EventEmitter = require('events')
 
 const css = csjs`
   .pluginSearch {
+    background-color: var(--light);
     padding: 10px;
     position: sticky;
     top: 0;
