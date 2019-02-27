@@ -179,8 +179,8 @@ class EditorPanel {
     var self = this
     if (self._view.el) return self._view.el
     self._view.editor = self._components.editor.render()
+    self._view.editor.style.display = 'none'
     self._view.mainPanel = self.mainPanelComponent.render()
-    self._view.mainPanel.style.display = 'none'
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
