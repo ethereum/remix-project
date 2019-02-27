@@ -54,8 +54,14 @@ class CompileTab {
       this._deps.config,
       this.queryParams
     )
+  }
 
+  activate () {
     this.listenToEvents()
+    this.compilerContainer.activate()
+  }
+
+  deactivate () {
   }
 
   /************
