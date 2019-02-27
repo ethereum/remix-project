@@ -131,9 +131,6 @@ class CompilerContainer {
 
     this._view.compileContainer = yo`
       <section>
-        <header class="navbar navbar-dark bg-dark">
-          <h2 class="navbar-brand">Solidity Compiler</h2>
-        </header>
         <!-- Select Compiler Version -->
         <article>
           <header class="navbar navbar-light bg-light input-group mb-3">

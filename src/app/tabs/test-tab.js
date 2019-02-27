@@ -195,7 +195,6 @@ module.exports = class TestTab {
     var el = yo`
       <div class="${css.testTabView} card" id="testView">
         <div class="${css.infoBox}">
-        <h2 class="${css.title}">Unit Testing</h2>
           Test your smart contract by creating a foo_test.sol file (open ballot_test.sol to see the example).
           <br/>
           You will find more informations in the <a href="https://remix.readthedocs.io/en/latest/unittesting_tab.html">documentation</a>
