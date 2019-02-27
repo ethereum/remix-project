@@ -21,10 +21,10 @@ function initModules (browser, callback) {
   .execute(function () {
     document.querySelector('div[title="pluginManager"]').scrollTop = document.querySelector('div[title="pluginManager"]').scrollHeight
   }, [], function () {
-    browser.click('#pluginManager div[title="solidity"] button')
-    .click('#pluginManager div[title="run"] button')
-    .click('#pluginManager div[title="solidityStaticAnalysis"] button')
-    .click('#pluginManager div[title="debugger"] button')
+    browser.click('#pluginManager article[title="solidity"] button')
+    .click('#pluginManager article[title="run"] button')
+    .click('#pluginManager article[title="solidityStaticAnalysis"] button')
+    .click('#pluginManager article[title="debugger"] button')
     .click('#icon-panel div[title="fileExplorers"]')
     .perform(() => { callback() })
   })
