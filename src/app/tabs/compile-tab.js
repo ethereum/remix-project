@@ -153,7 +153,7 @@ class CompileTab {
    * Section to select the compiled contract
    * @param {string[]} contractList Names of the compiled contracts
    */
-  contractSelection(contractList = []) {
+  contractSelection (contractList = []) {
     return contractList.length !== 0
     ? yo`<section class="${css.container}">
       <!-- Select Compiler Version -->
@@ -161,7 +161,7 @@ class CompileTab {
         <div class="input-group-prepend">
           <label class="input-group-text" for="compiledContracts">Contract</label>
         </div>
-        <select onchange="${e => this.selectedContract = e.value}" id="compiledContracts" class="custom-select">
+        <select onchange="${e => this.selectContract(e.value)}" id="compiledContracts" class="custom-select">
           ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
         </select>
       </header>
@@ -195,11 +195,11 @@ class CompileTab {
   }
 
   // TODO : Add success alert when compilation succeed
-  contractCompiledSuccess() {
+  contractCompiledSuccess () {
     return yo``
   }
   // TODO : Add error alert when compilation failed
-  contractCompiledError() {
+  contractCompiledError () {
     return yo``
   }
 
@@ -207,7 +207,11 @@ class CompileTab {
    * METHODS
    */
 
-  publish() {
+  selectContract (contractName) {
+    this.selectContract = contractName
+  }
+
+  publish () {
     const selectContractNames = this._view.contractNames
     if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
       var contract = this.data.contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
@@ -234,7 +238,7 @@ class CompileTab {
     }
   }
 
-  details() {
+  details () {
     const help = {
       'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
       'Opcodes': 'Assembly opcodes describing the contract',
@@ -306,7 +310,7 @@ class CompileTab {
   }
 
   copyContractProperty (property) {
-    let content = getContractProperty(property)
+    let content = this.getContractProperty(property)
     if (!content) {
       addTooltip('No content available for ' + property)
       return
@@ -325,7 +329,7 @@ class CompileTab {
   copyABI () {
     this.copyContractProperty('abi')
   }
-  
+
   copyBytecode () {
     this.copyContractProperty('bytecode')
   }
