@@ -26,7 +26,7 @@ class LandingPage {
 
   render () {
     var totalLook = yo`
-      <div class="${css.container} bg-secondary">
+      <div class="${css.container}">
         <h1> Remix </h1>
       </div>
     `
