@@ -37,14 +37,14 @@ document.head.appendChild(yo`
     .highlightreference {
       position:absolute;
       z-index:20;
-      background-color: var(--secondary);
+      background-color: var(--primary);
       opacity: 0.6
     }
 
     .highlightreferenceline {
       position:absolute;
       z-index:20;
-      background-color: var(--secondary);
+      background-color: var(--primary);
       opacity: 0.6
     }
 
