@@ -1,6 +1,3 @@
-var styleGuideLight = require('./style-guide')
-var styleGuideDark = require('./styleGuideDark')
-var styleGuideClean = require('./styleGuideClean')
 var Storage = require('remix-lib').Storage
 var EventEmitter = require('events')
 
@@ -25,20 +22,16 @@ module.exports = {
       if (themeStorage.get('theme') === 'dark') {
         document.getElementById('theme-link').setAttribute('href', themes['dark'])
         document.documentElement.style.setProperty('--theme', 'dark')
-        return styleGuideDark()
       } else if (themeStorage.get('theme') === 'clean') {
         document.getElementById('theme-link').setAttribute('href', themes['clean'])
         document.documentElement.style.setProperty('--theme', 'light')
-        return styleGuideClean()
       } else {
         document.getElementById('theme-link').setAttribute('href', themes['light'])
         document.documentElement.style.setProperty('--theme', 'light')
-        return styleGuideLight()
       }
     } else {
       document.getElementById('theme-link').setAttribute('href', themes['light'])
       document.documentElement.style.setProperty('--theme', 'light')
-      return styleGuideLight()
     }
   },
 
@@ -53,14 +46,5 @@ module.exports = {
       document.documentElement.style.setProperty('--theme', themeVariable[theme])
       this.event.emit('switchTheme', themeVariable[theme])
     }
-    // if (theme === 'dark') {
-    //   return styleGuideDark()
-    // } else if (theme === 'light') {
-    //   return styleGuideLight()
-    // } else if (theme === 'clean') {
-    //   return styleGuideClean()
-    // } else {
-    //   return styleGuideLight()
-    // }
   }
 }

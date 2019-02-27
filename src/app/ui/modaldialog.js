@@ -82,7 +82,7 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
 function html () {
   return yo`<div id="modal-dialog" class="${css.modal}">
   <div id="modal-background" class="${css['modalBackground']}"> </div>
-  <div class="${css['modalContent']} bg-warning text-info">
+  <div class="${css['modalContent']} bg-light text-secondary">
     <div class="${css['modalHeader']}">
     <h2></h2>
     <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
