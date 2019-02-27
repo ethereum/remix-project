@@ -34,7 +34,7 @@ class CompilerContainer {
   /**
    * Update the compilation button with the name of the current file
    */
-  set currentFile(name) {
+  set currentFile (name) {
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
     yo.update(this._view.compilationButton, button)
@@ -92,8 +92,7 @@ class CompilerContainer {
   /**************
    * SUBCOMPONENT
    */
-  compilationButton(name) {
-    console.log({name})
+  compilationButton (name) {
     return yo`
     <div class="${css.compilerArticle}">
       <button class="btn btn-primary btn-block" title="Compile" onclick="${this.compile.bind(this)}">
@@ -101,7 +100,6 @@ class CompilerContainer {
       </button>
     </div>`
   }
-
 
   render () {
     this.compileTabLogic.compiler.event.register('compilerLoaded', (version) => this.setVersionText(version))
@@ -193,7 +191,7 @@ class CompilerContainer {
   _updateVersionSelector () {
     this._view.versionSelector.innerHTML = ''
     this.data.allversions.forEach(build => {
-      const option = build.path === this.data.selectedVersion 
+      const option = build.path === this.data.selectedVersion
         ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
         : yo`<option value="${build.path}">${build.longVersion}</option>`
       this._view.versionSelector.appendChild(option)
