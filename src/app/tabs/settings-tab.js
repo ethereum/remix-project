@@ -18,7 +18,8 @@ module.exports = class SettingsTab {
     self._deps = {
       config: self._components.registry.get('config').api,
       editorPanel: self._components.registry.get('editorpanel').api,
-      editor: self._components.registry.get('editor').api
+      editor: self._components.registry.get('editor').api,
+      appManager: self._components.registry.get('appmanager').api
     }
     self._view = { /* eslint-disable */
       el: null,
@@ -79,6 +80,14 @@ module.exports = class SettingsTab {
     self._view.theme.clean = yo`<input onchange=${onswitch2cleanTheme} class="align-middle form-check-input" name="theme" id="themeClean" type="radio">`
     self._view.theme[self.data.currentTheme].setAttribute('checked', 'checked')
 
+    self._view.config.homePage = yo`
+    <div class="${css.info} card">
+      <div class="card-body">
+      <h6 class="${css.title} card-title">Home Page</h6>
+        <button class="btn btn-primary sm-1" onclick="${() => { this._deps.appManager.ensureActivated('homepage') }}" > Load Home Page </button>
+        <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}"> Load Gitter Chat </button>
+      </div>
+    </div>`
     self._view.config.general = yo`
       <div class="${css.info} card">
         <div class="card-body">
@@ -134,6 +143,7 @@ module.exports = class SettingsTab {
       </div>`
     self._view.el = yo`
       <div class="${css.settingsTabView}" id="settingsView">
+        ${self._view.config.homePage}
         ${self._view.config.general}
         ${self._view.gistToken}
         ${self._view.config.themes}
