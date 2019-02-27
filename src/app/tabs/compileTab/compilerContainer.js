@@ -31,6 +31,15 @@ class CompilerContainer {
     this.listenToEvents()
   }
 
+  /**
+   * Update the compilation button with the name of the current file
+   */
+  set currentFile(name) {
+    if (!this._view.compilationButton) return
+    const button = this.compilationButton(name.split('/').pop())
+    yo.update(this._view.compilationButton, button)
+  }
+
   listenToEvents () {
     this.editor.event.register('contentChanged', this.scheduleCompilation.bind(this))
     this.editor.event.register('sessionSwitched', this.scheduleCompilation.bind(this))
@@ -80,6 +89,20 @@ class CompilerContainer {
     })
   }
 
+  /**************
+   * SUBCOMPONENT
+   */
+  compilationButton(name) {
+    console.log({name})
+    return yo`
+    <div class="${css.compilerArticle}">
+      <button class="btn btn-primary btn-block" title="Compile" onclick="${this.compile.bind(this)}">
+        <span>${this._view.compileIcon} Compile ${name}</span>
+      </button>
+    </div>`
+  }
+
+
   render () {
     this.compileTabLogic.compiler.event.register('compilerLoaded', (version) => this.setVersionText(version))
     this.fetchAllVersion((allversions, selectedVersion) => {
@@ -90,7 +113,6 @@ class CompilerContainer {
 
     this._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     this._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    this._view.compileButton = yo`<div class="${css.compileButton}" onclick=${this.compile.bind(this)} id="compile" title="Compile source code">${this._view.compileIcon} Start to compile (Ctrl-S)</div>`
     this._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${this.updateAutoCompile.bind(this)} id="autoCompile" type="checkbox" title="Auto compile">`
     this._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${this.hideWarnings.bind(this)} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (this.data.autoCompile) this._view.autoCompile.setAttribute('checked', '')
@@ -100,37 +122,47 @@ class CompilerContainer {
     if (this.compileTabLogic.optimize) this._view.optimize.setAttribute('checked', '')
 
     this._view.versionSelector = yo`
-      <select onchange=${this.onchangeLoadVersion.bind(this)} class="${css.select}" id="versionSelector" disabled>
+      <select onchange="${this.onchangeLoadVersion.bind(this)}" class="custom-select" id="versionSelector" disabled>
         <option disabled selected>Select new compiler version</option>
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
+    this._view.compilationButton = this.compilationButton()
+
     this._view.compileContainer = yo`
-      <div class="${css.compileContainer}">
-        <div class="${css.info}">
-          <span>Current version:</span> ${this._view.version}
-          <div class="${css.crow}">
-            ${this._view.versionSelector}
-          </div>
-          <div class="${css.compileButtons}">
-            <div class=${css.checkboxes}>
-              <div class="${css.autocompileContainer}">
-                ${this._view.autoCompile}
-                <label for="autoCompile" class="${css.autocompileText}">Auto compile</label>
-              </div>
-              <div class="${css.optimizeContainer}">
-                <div>${this._view.optimize}</div>
-                <label for="optimize" class="${css.checkboxText}">Enable Optimization</label>
-              </div>
-              <div class=${css.hideWarningsContainer}>
-                ${this._view.hideWarningsBox}
-                <label for="hideWarningsBox" class="${css.autocompileText}">Hide warnings</label>
-              </div>
+      <section>
+        <header class="navbar navbar-dark bg-dark">
+          <h2 class="navbar-brand">Solidity Compiler</h2>
+        </header>
+        <!-- Select Compiler Version -->
+        <article>
+          <header class="navbar navbar-light bg-light input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="versionSelector">Compiler</label>
             </div>
-            ${this._view.compileButton}
-          </div>
-        </div>
-      </div>`
+            ${this._view.versionSelector}
+          </header>
+          ${this._view.compilationButton}
+        </article>
+        <!-- Config -->
+        <article>
+          <small>Compiler Configuration</small>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item form-group ${css.compilerConfig}">
+              ${this._view.autoCompile}
+              <label for="autoCompile">Auto compile</label>
+            </li>
+            <li class="list-group-item form-group ${css.compilerConfig}">
+              ${this._view.optimize}
+              <label for="optimize">Enable Optimization</label>
+            </li>
+            <li class="list-group-item form-group ${css.compilerConfig}">
+              ${this._view.hideWarningsBox}
+              <label for="hideWarningsBox">Hide warnings</label>
+            </li>
+          </ul>
+        </article>
+      </section>`
 
     return this._view.compileContainer
   }
@@ -160,14 +192,18 @@ class CompilerContainer {
 
   _updateVersionSelector () {
     this._view.versionSelector.innerHTML = ''
-    this._view.versionSelector.appendChild(yo`<option disabled selected>Select new compiler version</option>`)
-    this.data.allversions.forEach(build => this._view.versionSelector.appendChild(yo`<option value=${build.path}>${build.longVersion}</option>`))
+    this.data.allversions.forEach(build => {
+      const option = build.path === this.data.selectedVersion 
+        ? yo`<option value="${build.path}" selected>${build.longVersion}</option>`
+        : yo`<option value="${build.path}">${build.longVersion}</option>`
+      this._view.versionSelector.appendChild(option)
+    })
     this._view.versionSelector.removeAttribute('disabled')
     this.queryParams.update({ version: this.data.selectedVersion })
-    var url
+    let url
     if (this.data.selectedVersion === 'builtin') {
-      var location = window.document.location
-      location = location.protocol + '//' + location.host + '/' + location.pathname
+      let location = window.document.location
+      location = `${location.protocol}//${location.host}/${location.pathname}`
       if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
       if (!location.endsWith('/')) location += '/'
       url = location + 'soljson.js'
@@ -177,7 +213,7 @@ class CompilerContainer {
       }
       url = `${this.data.baseurl}/${this.data.selectedVersion}`
     }
-    var isFirefox = typeof InstallTrigger !== 'undefined'
+    const isFirefox = typeof InstallTrigger !== 'undefined'
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
       // Workers cannot load js on "file:"-URLs and we get a
       // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
