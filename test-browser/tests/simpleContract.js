@@ -97,7 +97,7 @@ function testAutoDeployLib (browser, callback) {
 function testManualDeployLib (browser, callback) {
   console.log('testManualDeployLib')
   browser.click('i[class^="clearinstance"]').pause(5000).clickLaunchIcon('settings').click('#generatecontractmetadata').perform(() => {
-    browser.clickLaunchIcon('solidity').click('#compile').perform(() => { // that should generate the JSON artefact
+    browser.clickLaunchIcon('solidity').click('#compileTabView button[title="Compile"]').perform(() => { // that should generate the JSON artefact
       contractHelper.verifyContract(browser, ['test'], () => {
         contractHelper.selectContract(browser, 'lib', () => { // deploy lib
           contractHelper.createContract(browser, '', () => {
