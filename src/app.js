@@ -544,18 +544,4 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       }
     })
   }
-
-  // Open last opened file
-  var previouslyOpenedFile = self._components.config.get('currentFile')
-  if (previouslyOpenedFile) {
-    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) {
-        fileManager.switchFile(previouslyOpenedFile)
-      } else {
-        fileManager.switchFile()
-      }
-    })
-  } else {
-    fileManager.switchFile()
-  }
 }
