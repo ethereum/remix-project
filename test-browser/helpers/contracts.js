@@ -50,14 +50,14 @@ function getCompiledContracts (browser, compiled, callback) {
 }
 
 function selectContract (browser, contractName, callback) {
-  browser.clickLaunchIcon('settings').clickLaunchIcon('run transactions')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('run')
   .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
     callback()
   })
 }
 
 function createContract (browser, inputParams, callback) {
-  browser.clickLaunchIcon('settings').clickLaunchIcon('run transactions')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('run')
   .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
     browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function () { callback() })
   })
@@ -217,7 +217,7 @@ function setEditorValue (value, callback) {
 }
 
 function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
-  browser.clickLaunchIcon('run transactions').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
+  browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
       .execute(function () {
         var ret = document.querySelector('div[class^="modalBody"] div').innerHTML
@@ -265,7 +265,7 @@ function modalFooterOKClick () {
 }
 
 function addFile (browser, name, content, done) {
-  browser.clickLaunchIcon('run transactions').clickLaunchIcon('file explorers').click('.newFile')
+  browser.clickLaunchIcon('run').clickLaunchIcon('fileExplorers').click('.newFile')
     .perform((client, done) => {
       browser.execute(function (fileName) {
         if (fileName !== 'Untitled.sol') {
@@ -372,7 +372,7 @@ function useFilter (browser, filter, test, done) {
 }
 
 function switchFile (browser, name, done) {
-  browser.clickLaunchIcon('settings').clickLaunchIcon('file explorers')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('fileExplorers')
     .click('li[key="' + name + '"]')
     .pause(2000)
     .perform(() => {

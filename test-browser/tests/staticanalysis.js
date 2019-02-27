@@ -40,7 +40,7 @@ function runTests (browser) {
     .clickLaunchIcon('solidity')
   contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TooMuchGas', 'test1', 'test2'], function () {
     browser
-      .clickLaunchIcon('solidity static analysis')
+      .clickLaunchIcon('solidityStaticAnalysis')
       .click('#staticanalysisView button')
       .waitForElementPresent('#staticanalysisresult .staticAnalysisWarning', 2000, true, function () {
         dom.listSelectorContains(['browser/Untitled.sol:2:33:Use of tx.origin',

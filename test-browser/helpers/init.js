@@ -22,10 +22,10 @@ function initModules (browser, callback) {
     document.querySelector('div[title="pluginManager"]').scrollTop = document.querySelector('div[title="pluginManager"]').scrollHeight
   }, [], function () {
     browser.click('#pluginManager div[title="solidity"] button')
-    .click('#pluginManager div[title="run transactions"] button')
-    .click('#pluginManager div[title="solidity static analysis"] button')
+    .click('#pluginManager div[title="run"] button')
+    .click('#pluginManager div[title="solidityStaticAnalysis"] button')
     .click('#pluginManager div[title="debugger"] button')
-    .click('#icon-panel div[title="file explorers"]')
+    .click('#icon-panel div[title="fileExplorers"]')
     .perform(() => { callback() })
   })
 }

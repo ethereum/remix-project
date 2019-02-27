@@ -459,7 +459,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let configProvider = self._components.filesProviders['config']
 
   appManager.init([
-    { profile: homepageProfile(), api: generateHomePage() },
+    { profile: homepageProfile(), api: generateHomePage(appManager, appStore) },
     { profile: this.profile(), api: this },
     { profile: udapp.profile(), api: udapp },
     { profile: fileManager.profile(), api: fileManager },

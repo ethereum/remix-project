@@ -14,6 +14,10 @@ export class RemixAppManager extends AppManagerApi {
     }
   }
 
+  ensureActivated (module) {
+    if (!this.store.isActive(module)) this.activateOne(module)
+  }
+
   proxy () {
     // that's temporary. should be removed when we can have proper notification registration
     return this.data.proxy
