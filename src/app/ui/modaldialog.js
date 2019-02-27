@@ -17,7 +17,7 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
   cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
 
   var modal = document.querySelector(`.${css.modalBody}`)
-  var modalTitle = document.querySelector(`.${css.modalHeader} h2`)
+  var modalTitle = document.querySelector(`.${css.modalHeader} h3`)
 
   modalTitle.innerHTML = ''
   if (title) modalTitle.innerHTML = title
