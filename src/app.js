@@ -83,7 +83,6 @@ var css = csjs`
     overflow           : hidden;
   }
   .iconpanel           {
-    background-color   : #fafafa;
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -92,6 +91,7 @@ var css = csjs`
     left               : 0;
     overflow           : hidden;
     width              : 50px;
+    border-right       : 1px solid var(--primary);
   }
   .swappanel          {
     display            : flex;
@@ -185,7 +185,7 @@ class App {
     if (self._view.el) return self._view.el
     // not resizable
     self._view.iconpanel = yo`
-      <div id="icon-panel" class=${css.iconpanel}>
+      <div id="icon-panel" class="${css.iconpanel} bg-primary">
       ${''}
       </div>
     `

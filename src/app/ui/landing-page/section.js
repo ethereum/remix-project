@@ -8,7 +8,6 @@ var css = csjs`
     align-items     : center;
     width           : 400px;
     padding         : 50px;
-    background-color: #bfbfbf;
     font-family     : "Lucida Console", Monaco, monospace
     }
   a:link              {
@@ -26,24 +25,21 @@ class Section {
 
   render () {
     var sectionLook = yo`
-      <div class=${css.item}>
+      <div class="${css.item}">
         <h2> ${this.title} </h2>
-        <br>
-        <br>
-        <br>
       </div>
     `
     for (var i = 0; i < this.actions.length; i++) {
       if (this.actions[i].type === `callback`) {
         sectionLook.appendChild(yo`
                 <div>
-                  <span onclick= ${this.actions[i].payload} > ${this.actions[i].label} </span>
+                  <span class='text-warning h6' style="cursor:pointer;" onclick= ${this.actions[i].payload} > ${this.actions[i].label} </span>
                 </div>
               `)
       } else if (this.actions[i].type === `link`) {
         sectionLook.appendChild(yo`
             <div>
-                <a href= ${this.actions[i].payload} target="_blank" > ${this.actions[i].label} </a> 
+                <a class='text-warning h6' href= ${this.actions[i].payload} target="_blank" > ${this.actions[i].label} </a> 
             </div>
           `)
       }

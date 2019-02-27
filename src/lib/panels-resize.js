@@ -10,7 +10,7 @@ const css = csjs`
     bottom            : 0;
     cursor            : col-resize;
     z-index           : 999;
-    border-right      : var(--primary);
+    border-right      : 2px solid var(--primary);
   }
   .ghostbar           {
     width             : 3px;

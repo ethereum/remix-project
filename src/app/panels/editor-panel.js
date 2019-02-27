@@ -25,9 +25,12 @@ var css = csjs`
     width             : 100%;
   }
   .contextviewcontainer{
-    width             : 100%;
-    height            : 20px;
-    background-color  : var(--main-bg-color);
+    position          : absolute;
+    top               : 39px;
+    z-index           : 50;
+    left              : 350px;
+    border-radius     : 1px;
+    border            : 2px solid var(--secondary);
   }
 `
 
@@ -182,7 +185,7 @@ class EditorPanel {
     self._view.content = yo`
       <div class=${css.content}>
         ${self.tabProxy.renderTabsbar()}
-        <div class=${css.contextviewcontainer}>
+        <div class="${css.contextviewcontainer} bg-secondary border-top-0">
           ${self._components.contextView.render()}
         </div>
         ${self._view.editor}
