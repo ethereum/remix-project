@@ -87,11 +87,11 @@ class CompileTab {
         })
       }
       // Update contract Selection
-      const contractMap = this.compiler.getContracts()
-      const contractSelection = this.contractSelection(Object.keys(contractMap) || [])
+      let contractMap = {}
+      if (success) this.compiler.visitContracts((contract) => { contractMap[contract.name] = contract })
+      let contractSelection = this.contractSelection(Object.keys(contractMap) || [])
       yo.update(this._view.contractSelection, contractSelection)
 
-      let error = false
       if (data['error']) {
         error = true
         this._deps.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
