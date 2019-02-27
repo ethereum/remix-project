@@ -25,7 +25,6 @@ class CompileTab {
       el: null,
       warnCompilationSlow: null,
       errorContainer: null,
-      errorContainerHead: null,
       contractNames: null,
       contractEl: null
     }
@@ -67,7 +66,6 @@ class CompileTab {
     this.compiler.event.register('compilationStarted', () => {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
-        this._view.errorContainerHead.innerHTML = ''
       }
     })
 
@@ -337,8 +335,7 @@ class CompileTab {
   render () {
     if (this._view.el) return this._view.el
 
-    this._view.errorContainer = yo`<div class="alert alert-danger"></div>`
-    this._view.errorContainerHead = yo`<div class="alert alert-danger"></div>`
+    this._view.errorContainer = yo`<div></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
     this.compilerContainer.currentFile = this._deps.fileManager.currentFile()
@@ -347,7 +344,6 @@ class CompileTab {
       <div id="compileTabView">
         ${this._view.compilerContainer}
         ${this._view.contractSelection}
-        ${this._view.errorContainerHead}
         ${this._view.errorContainer}
       </div>`
     return this._view.el
