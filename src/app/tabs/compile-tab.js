@@ -187,11 +187,11 @@ class CompileTab {
 
   // TODO : Add success alert when compilation succeed
   contractCompiledSuccess () {
-    return yo``
+    return yo`<div></div>`
   }
   // TODO : Add error alert when compilation failed
   contractCompiledError () {
-    return yo``
+    return yo`<div></div>`
   }
 
   /************
