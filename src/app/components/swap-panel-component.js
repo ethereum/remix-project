@@ -41,6 +41,8 @@ class SwapPanelComponent {
         this.contents[this.currentNode].style.display = 'none'
       }
       this.currentNode = moduleName
+      var item = this.store.getOne(moduleName)
+      this.header.innerHTML = item.profile ? item.profile.displayName : ' - '
       return
     }
   }
@@ -63,7 +65,13 @@ class SwapPanelComponent {
       <div id='plugins' class=${css.plugins} >
       </div>
     `
-    return this.view
+    this.header = yo`<header class="navbar navbar-dark bg-dark"><h2 class="navbar-brand"></h2> </header>`
+    if (!this.opt.displayHeader) this.header.style.display = 'none'
+
+    return yo`<div>
+        ${this.header}
+        ${this.view}
+        </div>`
   }
 }
 

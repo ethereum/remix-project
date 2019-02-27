@@ -127,9 +127,6 @@ class PluginManagerComponent {
 
     const rootView = yo`
       <div id='pluginManager'>
-        <header class="navbar navbar-dark bg-dark">
-          <h2 class="navbar-brand">Plugin Manager</h2>
-        </header>
         <div class="form-group ${css.pluginSearch}">
           <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder='Search'>
         </div>
