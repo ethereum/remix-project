@@ -93,7 +93,6 @@ class CompileTab {
       yo.update(this._view.contractSelection, contractSelection)
 
       if (data['error']) {
-        error = true
         this._deps.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
           return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
@@ -104,7 +103,6 @@ class CompileTab {
         }
       }
       if (data.errors && data.errors.length) {
-        error = true
         data.errors.forEach((err) => {
           if (this._deps.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
@@ -115,12 +113,7 @@ class CompileTab {
           }
         })
       }
-      if (!error && data.contracts) {
-        this.compiler.visitContracts((contract) => {
-          this._deps.renderer.error(contract.name, this._view.errorContainer, {type: 'success'})
         })
-      }
-    })
 
     // Run the compiler instead of trying to save the website
     $(window).keydown((e) => {
