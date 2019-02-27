@@ -133,6 +133,7 @@ class CompileTab {
 
   profile () {
     return {
+      displayName: 'solidity compiler',
       name: 'solidity',
       methods: ['getCompilationResult'],
       events: ['compilationFinished'],
