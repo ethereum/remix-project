@@ -3,17 +3,17 @@ node_js:
   - "9"
 branches:
   only:
-  - master
+  - remix_alpha
   - remix_live
 script:
   - npm run lint && npm run test && npm run make-mock-compiler && npm run build
   - ./ci/browser_tests.sh
 deploy:
   - provider: script
-    script: ci/deploy_from_travis_master.sh
+    script: ci/deploy_from_travis_remix-alpha.sh
     skip_cleanup: true
     on:
-      branch: master
+      branch: remix_alpha
   - provider: script
     script: ci/deploy_from_travis_remix-live.sh
     skip_cleanup: true
