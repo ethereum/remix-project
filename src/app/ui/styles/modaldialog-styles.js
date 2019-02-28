@@ -17,17 +17,21 @@ var css = csjs`
     display: flex;
     justify-content: space-between;
     background: var(--info);
+    color: var(--primary);
   }
   .modalBody {
     padding: 1.5em;
     line-height: 1.5em;
-    color: var(--success);
+    color: var(--primary);
   }
   .modalBody em {
-    color: var(--text-secondary);
+    color: var(--success);
   }
   .modalBody a {
-    color: var(--text-secondary);
+    color: var(--secondary);
+  }
+  .modalBody a:hover {
+    color: var(--success);
   }
   .modalFooter {
     display: flex;
