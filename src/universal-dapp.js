@@ -62,7 +62,7 @@ UniversalDApp.prototype.resetEnvironment = function () {
     this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea', '0x56BC75E2D63100000')
-    this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')    
+    this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
   }
   this.txRunner = new TxRunner(this.accounts, this._txRunnerAPI)
   this.txRunner.event.register('transactionBroadcasted', (txhash) => {
@@ -123,11 +123,11 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
     stateManager.getAccount(address, (error, account) => {
       if (error) return console.log(error)
       account.balance = balance || '0xf00000000000000001'
-      stateManager.putAccount(address, account, function cb (error) { 
-        if (error) console.log(error) 
+      stateManager.putAccount(address, account, function cb (error) {
+        if (error) console.log(error)
       })
     })
-    
+
     self.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 }
   }
 }
