@@ -95,20 +95,16 @@ Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
     return self.debugTx(tx, loadingCb)
   }
 
-  try {
-    if (txNumber.indexOf('0x') !== -1) {
-      return web3.eth.getTransaction(txNumber, function (_error, result) {
-        let tx = result
-        self.debugTx(tx, loadingCb)
-      })
-    }
-    web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
+  if (txNumber.indexOf('0x') !== -1) {
+    return web3.eth.getTransaction(txNumber, function (_error, result) {
       let tx = result
       self.debugTx(tx, loadingCb)
     })
-  } catch (e) {
-    console.error(e.message)
   }
+  web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
+    let tx = result
+    self.debugTx(tx, loadingCb)
+  })
 }
 
 Debugger.prototype.debugTx = function (tx, loadingCb) {
