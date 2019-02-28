@@ -65,7 +65,7 @@ class SwapPanelComponent {
       <div id='plugins' class=${css.plugins} >
       </div>
     `
-    this.header = yo`<header class="navbar navbar-dark bg-dark"><h2 class="navbar-brand"></h2> </header>`
+    this.header = yo`<header class="navbar navbar-dark bg-dark text-warning"><h2 class="navbar-brand"></h2> </header>`
     if (!this.opt.displayHeader) this.header.style.display = 'none'
 
     return yo`<div>
