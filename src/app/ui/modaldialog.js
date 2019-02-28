@@ -15,6 +15,7 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
 
   var cancelDiv = document.getElementById('modal-footer-cancel')
   cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
+  cancelDiv.style.display = cancelDiv.innerHTML === '' ? 'none' : 'inline-block'
 
   var modal = document.querySelector(`.${css.modalBody}`)
   var modalTitle = document.querySelector(`.${css.modalHeader} h3`)
