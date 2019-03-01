@@ -200,7 +200,8 @@ function fileExplorer (localRegistry, files) {
   }
 
   // register to main app, trigger when the current file in the editor changed
-  self._deps.fileManager.event.register('currentFileChanged', (newFile, explorer) => {
+  self._deps.fileManager.events.on('currentFileChanged', (newFile) => {
+    const explorer = self._deps.fileManager.fileProviderOf(newFile)
     if (self.focusElement && (!explorer || explorer.type !== files.type) && self.focusPath !== newFile) {
       self.focusElement.classList.remove('bg-primary')
       self.focusElement = null
