@@ -103,8 +103,9 @@ class PluginManagerComponent {
   /**
    * Add a local plugin to the list of plugins
    */
-  async openLocalPlugin() {
+  async openLocalPlugin () {
     const profile = await this.localPlugin.open(this.store.getAll())
+    if (!profile) return
     const resolveLocaton = (iframe) => this.appManager.resolveLocation(profile, iframe)
     const api = new Plugin(profile, { resolveLocaton })
     this.appManager.init([{profile, api}])
