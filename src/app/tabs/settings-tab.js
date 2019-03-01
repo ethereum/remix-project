@@ -84,9 +84,11 @@ module.exports = class SettingsTab {
     self._view.config.homePage = yo`
     <div class="${css.info} card">
       <div class="card-body">
-      <h6 class="${css.title} card-title">Home Page</h6>
-        <button class="btn btn-primary sm-1" onclick="${() => { this._deps.appManager.ensureActivated('home') }}" > Load Home Page </button>
-        <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}"> Load Gitter Chat </button>
+      <h6 class="${css.title} card-title">Home</h6>
+      <div class="btn-group">
+        <button class="btn btn-primary sm-1" onclick="${() => { this._deps.appManager.ensureActivated('home') }}" >Home</button>
+        <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
+      </div>
       </div>
     </div>`
     self._view.config.general = yo`
