@@ -61,7 +61,7 @@ class EditorPanel {
       We listen here on event from the tab component to display / hide the editor and mainpanel
       depending on the content that should be displayed
     */
-    self._deps.fileManager.event.register('currentFileChanged', (file) => {
+    self._deps.fileManager.events.on('currentFileChanged', (file) => {
       // we check upstream for "fileChanged"
       self._view.editor.style.display = 'block'
       self._components.contextView.show()

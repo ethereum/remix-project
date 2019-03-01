@@ -75,12 +75,13 @@ class CompileTab {
       }
     })
 
-    this._deps.fileManager.event.register('currentFileChanged', (name) => {
+    this._deps.fileManager.events.on('currentFileChanged', (name) => {
       this.compilerContainer.currentFile = name
     })
     this.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra
+        console.log(source.target, source, this.data.selectedVersion, data)
         this.events.emit('compilationFinished', source.target, source, this.data.selectedVersion, data)
         // Store the contracts
         this.data.contractsDetails = {}
