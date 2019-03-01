@@ -75,7 +75,7 @@ export class RemixAppManager extends AppManagerApi {
       events: ['newDoc'],
       methods: ['getdoc'],
       notifications: {
-        'solCompiler': ['getCompilationFinished']
+        'solidity': ['getCompilationFinished']
       },
       url: 'https://ipfs.io/ipfs/QmbxaFhAzSYbQ4TNQhCQqBgW3dFMt7Zj1D2achHHYvJhkz/',
       description: 'generate solidity documentation'
@@ -94,7 +94,6 @@ export class RemixAppManager extends AppManagerApi {
     const plugins = [{ profile: ethDoc, api: new Plugin(ethDoc, { resolveLocaton: (iframe) => { return this.resolveLocation(ethDoc, iframe) } }) },
             { profile: pipeline, api: new Plugin(pipeline, { resolveLocaton: (iframe) => { return this.resolveLocation(pipeline, iframe) } }) },
             { profile: vyper, api: new Plugin(vyper, { resolveLocaton: (iframe) => { return this.resolveLocation(vyper, iframe) } }) }]
-    plugins[2].api.events.on('compilationFinished', (result) => console.log('GOT EVENT', result))
     return plugins
   }
 }
