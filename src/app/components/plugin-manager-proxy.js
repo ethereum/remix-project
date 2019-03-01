@@ -16,12 +16,12 @@ class PluginManagerProxy {
       registry.get('compilersartefacts').api['__last'] = new CompilerAbstract(languageVersion, data, source)
       event.trigger('sendCompilationResult', [file, source, languageVersion, data])
     }
-    instance.event.on('compilationFinished', this._listener)
+    instance.events.on('compilationFinished', this._listener)
   }
 
   unregister (instance) {
     if (!this._listener) {
-      instance.event.on('compilationFinished', this._listener)
+      instance.events.on('compilationFinished', this._listener)
     }
   }
 

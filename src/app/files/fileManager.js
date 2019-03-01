@@ -1,6 +1,6 @@
 'use strict'
 
-var EventEmitter = require('events')
+const EventEmitter = require('events')
 var EventManager = require('../../lib/events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
@@ -14,7 +14,7 @@ class FileManager {
   constructor (localRegistry) {
     this.openedFiles = {} // list all opened files
     this.event = new EventManager()
-    this.nodeEvent = new EventEmitter()
+    this.events = new EventEmitter()
     this._components = {}
     this._components.compilerImport = new CompilerImport()
     this._components.registry = localRegistry || globalRegistry
@@ -44,7 +44,7 @@ class FileManager {
     self._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
 
     self.event.register('currentFileChanged', (file, provider) => {
-      this.nodeEvent.emit('currentFileChanged', file)
+      this.events.emit('currentFileChanged', file)
     })
   }
 
