@@ -1,15 +1,22 @@
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
-
 const EventEmitter = require('events')
+const LocalPlugin = require('./local-plugin')
+import { Plugin } from 'remix-plugin'
 
 const css = csjs`
   .pluginSearch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: var(--light);
     padding: 10px;
     position: sticky;
     top: 0;
     z-index: 2;
+  }
+  .localPluginBtn {
+    margin-top: 10px;
   }
   .displayName {
     text-transform: capitalize;
@@ -35,6 +42,7 @@ class PluginManagerComponent {
       root: null,
       items: {}
     }
+    this.localPlugin = new LocalPlugin()
     this.filter = ''
   }
 
@@ -89,6 +97,20 @@ class PluginManagerComponent {
     `
   }
 
+  /***************
+   * SUB-COMPONENT
+   */
+  /**
+   * Add a local plugin to the list of plugins
+   */
+  async openLocalPlugin() {
+    const profile = await this.localPlugin.open(this.store.getAll())
+    const resolveLocaton = (iframe) => this.appManager.resolveLocation(profile, iframe)
+    const api = new Plugin(profile, { resolveLocaton })
+    this.appManager.init([{profile, api}])
+    console.log(this.store)
+  }
+
   render () {
     // Filtering helpers
     const isFiltered = ({profile}) => profile.name.toLowerCase().includes(this.filter)
@@ -128,7 +150,10 @@ class PluginManagerComponent {
     const rootView = yo`
       <div id='pluginManager'>
         <div class="form-group ${css.pluginSearch}">
-          <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder='Search'>
+          <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
+          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm ${css.localPluginBtn}">
+            Connect to a Local Plugin
+          </button>
         </div>
         <section>
           ${activeTile}
