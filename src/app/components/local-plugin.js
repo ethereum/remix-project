@@ -1,4 +1,4 @@
-/* globlal localStorage */
+/* global localStorage */
 const yo = require('yo-yo')
 const modalDialog = require('../ui/modaldialog')
 
