@@ -48,7 +48,7 @@ class ContractDropdownUI {
     var info = yo`<i class="fa fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
 
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="atAddress" />`
-    this.selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
+    this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
     this.createPanel = yo`<div class="${css.button}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
