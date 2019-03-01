@@ -15,7 +15,7 @@ export default {
     // mainPanelApi.event.on('showing', (moduleName) => {})
 
     verticalIconApi.select('fileExplorers')
-    mainPanelApi.showContent('homepage')
+    mainPanelApi.showContent('home')
     resizeFeature.minimize()
   }
 }

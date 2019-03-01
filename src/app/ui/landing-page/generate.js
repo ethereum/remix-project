@@ -5,8 +5,8 @@ import { defaultWorkspaces } from './workspace'
 
 export function homepageProfile () {
   return {
-    displayName: 'home page',
-    name: 'homepage',
+    displayName: 'home',
+    name: 'home',
     methods: [],
     events: [],
     description: ' - ',
