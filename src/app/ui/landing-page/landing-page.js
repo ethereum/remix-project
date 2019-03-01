@@ -37,15 +37,7 @@ class LandingPage {
                 </div>
               `)
     }
-
-    if (!this._view) {
-      this._view = totalLook
-    }
-    return this._view
-  }
-
-  update () {
-    yo.update(this._view, this.render())
+    return totalLook
   }
 }
 
