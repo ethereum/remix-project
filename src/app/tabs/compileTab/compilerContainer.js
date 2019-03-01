@@ -30,7 +30,7 @@ class CompilerContainer {
   /**
    * Update the compilation button with the name of the current file
    */
-  set currentFile (name) {
+  set currentFile (name = '') {
     if (!this._view.compilationButton) return
     const button = this.compilationButton(name.split('/').pop())
     yo.update(this._view.compilationButton, button)

@@ -338,7 +338,8 @@ class CompileTab {
     this._view.errorContainer = yo`<div></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-    this.compilerContainer.currentFile = this._deps.fileManager.currentFile()
+    const currentFile = this._deps.fileManager.currentFile()
+    if (currentFile) this.compilerContainer.currentFile = currentFile
 
     this._view.el = yo`
       <div id="compileTabView">
