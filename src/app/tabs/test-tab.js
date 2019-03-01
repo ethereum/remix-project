@@ -116,7 +116,7 @@ module.exports = class TestTab {
       self.data.selectedTests.push(file)
     })
 
-    self._deps.fileManager.event.register('currentFileChanged', (file, provider) => {
+    self._deps.fileManager.events.on('currentFileChanged', (file) => {
       getTests(self, (error, tests) => {
         if (error) return tooltip(error)
         self.data.allTests = tests

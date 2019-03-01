@@ -93,7 +93,7 @@ module.exports = class PluginManager {
     self.plugins = {}
     self.origins = {}
     self.inFocus
-    fileManager.event.register('currentFileChanged', (file, provider) => {
+    fileManager.events.on('currentFileChanged', (file) => {
       self.broadcast(JSON.stringify({
         action: 'notification',
         key: 'editor',

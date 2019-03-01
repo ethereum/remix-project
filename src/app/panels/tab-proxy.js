@@ -15,15 +15,15 @@ export class TabProxy {
     this._view = {}
     this._handlers = {}
 
-    fileManager.event.register('fileRemoved', (name) => {
+    fileManager.events.on('fileRemoved', (name) => {
       this.removeTab(name)
     })
 
-    fileManager.event.register('fileClosed', (name) => {
+    fileManager.events.on('fileClosed', (name) => {
       this.removeTab(name)
     })
 
-    fileManager.event.register('currentFileChanged', (file) => {
+    fileManager.events.on('currentFileChanged', (file) => {
       if (this._handlers[file]) {
         this._view.filetabs.activateTab(file)
         return
@@ -38,7 +38,7 @@ export class TabProxy {
       })
     })
 
-    fileManager.event.register('fileRenamed', (oldName, newName) => {
+    fileManager.events.on('fileRenamed', (oldName, newName) => {
       this.removeTab(oldName)
       this.addTab(newName, () => {
         this.fileManager.switchFile(newName)
