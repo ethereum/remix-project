@@ -20,7 +20,7 @@ const CompilerContainer = require('./compileTab/compilerContainer.js')
 class CompileTab {
 
   constructor (registry) {
-    this.event = new EventEmitter()
+    this.events = new EventEmitter()
     this._view = {
       el: null,
       warnCompilationSlow: null,
@@ -81,7 +81,7 @@ class CompileTab {
     this.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra
-        this.event.emit('compilationFinished', source.target, source, this.data.selectedVersion, data)
+        this.events.emit('compilationFinished', source.target, source, this.data.selectedVersion, data)
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
