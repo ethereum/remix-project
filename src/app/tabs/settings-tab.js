@@ -39,6 +39,7 @@ module.exports = class SettingsTab {
   }
   profile () {
     return {
+      displayName: 'settings',
       name: 'settings',
       methods: [],
       events: [],
@@ -84,7 +85,7 @@ module.exports = class SettingsTab {
     <div class="${css.info} card">
       <div class="card-body">
       <h6 class="${css.title} card-title">Home Page</h6>
-        <button class="btn btn-primary sm-1" onclick="${() => { this._deps.appManager.ensureActivated('homepage') }}" > Load Home Page </button>
+        <button class="btn btn-primary sm-1" onclick="${() => { this._deps.appManager.ensureActivated('home') }}" > Load Home Page </button>
         <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}"> Load Gitter Chat </button>
       </div>
     </div>`
