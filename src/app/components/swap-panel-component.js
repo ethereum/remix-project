@@ -34,12 +34,11 @@ class SwapPanelComponent {
 
   showContent (moduleName) {
     // hiding the current view and display the `moduleName`
-    if (moduleName === this.currentNode) return
     if (this.contents[moduleName]) {
-      this.contents[moduleName].style.display = 'block'
       if (this.currentNode) {
         this.contents[this.currentNode].style.display = 'none'
       }
+      this.contents[moduleName].style.display = 'block'
       this.currentNode = moduleName
       var item = this.store.getOne(moduleName)
       this.header.innerHTML = item.profile ? item.profile.displayName : ' - '
