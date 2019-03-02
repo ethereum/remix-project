@@ -12,8 +12,16 @@ module.exports = class LocalPlugin {
   open (plugins) {
     this.profile = JSON.parse(localStorage.getItem('plugins/local')) || { notifications: {} }
     return new Promise((resolve, reject) => {
+      const onValidation = () => {
+        try {
+          const profile = this.create()
+          resolve(profile)
+        } catch (err) {
+          reject(err)
+        }
+      }
       modalDialog('Local Plugin', this.form(plugins),
-        { fn: () => resolve(this.create()) },
+        { fn: () => onValidation() },
         { fn: () => resolve() }
       )
     })
@@ -94,7 +102,7 @@ module.exports = class LocalPlugin {
     return yo`
     <form id="local-plugin-form" onsubmit="${e => this.validate(e)}">
       <div class="form-group">
-        <label for="plugin-name">Plugin Name</label>
+        <label for="plugin-name">Plugin Name <small>(required)</small></label>
         <input class="form-control" onchange="${e => this.updateName(e)}" value="${name}" id="plugin-name" placeholder="Should be camelCase">
       </div>
       <div class="form-group">
@@ -102,7 +110,7 @@ module.exports = class LocalPlugin {
         <input class="form-control" onchange="${e => this.updateDisplayName(e)}" value="${displayName}" id="plugin-displayname" placeholder="Name in the header">
       </div>
       <div class="form-group">
-        <label for="plugin-url">Url</label>
+        <label for="plugin-url">Url <small>(required)</small></label>
         <input class="form-control" onchange="${e => this.updateUrl(e)}" value="${url}" id="plugin-url" placeholder="ex: https://localhost:8000">
       </div>
       <div class="form-group">
