@@ -111,6 +111,7 @@ class PluginManagerComponent {
       const api = new Plugin(profile, { resolveLocaton })
       this.appManager.init([{profile, api}])
     } catch (err) {
+      // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
     }
   }
