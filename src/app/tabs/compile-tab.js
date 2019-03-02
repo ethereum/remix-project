@@ -338,14 +338,9 @@ class CompileTab {
 
     this._view.errorContainer = yo`<div></div>`
     this._view.contractSelection = this.contractSelection()
-<<<<<<< HEAD
     this._view.compilerContainer = this.compilerContainer.render()
     const currentFile = this._deps.fileManager.currentFile()
     if (currentFile) this.compilerContainer.currentFile = currentFile
-=======
-    this.compilerContainer.currentFile = this._deps.fileManager.currentFile()
-    this._view.compilerContainer = this.compilerContainer.render()
->>>>>>> User `events` and `EventEmitter` instead of `event` and `EventManager`
 
     this._view.el = yo`
       <div id="compileTabView">
