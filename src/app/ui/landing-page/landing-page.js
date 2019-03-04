@@ -15,8 +15,12 @@ var css = csjs`
     border          : 2px solid black;
     width           : 400px;
     padding         : 50px;
-    font-family     : "Lucida Console", Monaco, monospace
-}
+    font-family     : "Lucida Console", Monaco, monospace;
+  }
+  .logo             {
+    position: absolute;
+    opacity: 0.3;
+  }
 `
 
 class LandingPage {
@@ -27,7 +31,7 @@ class LandingPage {
   render () {
     var totalLook = yo`
       <div class="${css.container}">
-        <h1> Remix </h1>
+        <img src="icon.png" class="${css.logo}" />
       </div>
     `
     for (var i = 0; i < this.sections.length; i++) {
