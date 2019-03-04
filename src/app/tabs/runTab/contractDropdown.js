@@ -47,8 +47,8 @@ class ContractDropdownUI {
     this.compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
     var info = yo`<i class="fa fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
 
-    this.atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
-    this.selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
+    this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="atAddress" />`
+    this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
     this.createPanel = yo`<div class="${css.button}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
@@ -61,7 +61,7 @@ class ContractDropdownUI {
           ${this.createPanel}
           ${this.orLabel}
           <div class="${css.button} ${css.atAddressSect}">
-            <div class="${css.atAddress}" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
+            <div class="${css.atAddress} btn btn-sm btn-info" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
             ${this.atAddressButtonInput}
           </div>
         </div>

@@ -1,41 +1,32 @@
 'use strict'
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var styleGuide = require('./styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .containerDraggableModal {
     position: absolute;
     z-index: 1000;
-    background-color: ${styles.appProperties.light_BackgroundColor};
     text-align: center;
     width: 500px;
     height: 500px;
-    border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
     overflow-y: hidden;
   }
 
   .headerDraggableModal {
     cursor: move;
     z-index: 10;
-    color: ${styles.appProperties.mainText_Color};
-    background-color: ${styles.appProperties.primary_BackgroundColor};
-    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
     text-overflow: ellipsis;
     overflow-x: hidden;
   }
   
   .modalActions {
     float: right;
-    color: ${styles.appProperties.solidBorderBox_BorderColor};
   }
 
   .modalAction {
     padding-right: 1px;
     padding-left: 1px;
     cursor: pointer;
-    color: ${styles.appProperties.solidBorderBox_BorderColor};
   }
 `
 

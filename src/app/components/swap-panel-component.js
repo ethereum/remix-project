@@ -1,9 +1,5 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-// const remixLib = require('remix-lib')
-
-// const styleguide = require('../ui/styles-guide/theme-chooser')
-// const styles = styleguide.chooser()
 
 class SwapPanelComponent {
   constructor (name, appStore, appManager, opt) {
@@ -38,13 +34,14 @@ class SwapPanelComponent {
 
   showContent (moduleName) {
     // hiding the current view and display the `moduleName`
-    if (moduleName === this.currentNode) return
     if (this.contents[moduleName]) {
-      this.contents[moduleName].style.display = 'block'
       if (this.currentNode) {
         this.contents[this.currentNode].style.display = 'none'
       }
+      this.contents[moduleName].style.display = 'block'
       this.currentNode = moduleName
+      var item = this.store.getOne(moduleName)
+      this.header.innerHTML = item.profile ? item.profile.displayName : ' - '
       return
     }
   }
@@ -67,7 +64,13 @@ class SwapPanelComponent {
       <div id='plugins' class=${css.plugins} >
       </div>
     `
-    return this.view
+    this.header = yo`<header class="navbar navbar-dark bg-dark text-warning"><h2 class="navbar-brand"></h2> </header>`
+    if (!this.opt.displayHeader) this.header.style.display = 'none'
+
+    return yo`<div class=${css.pluginsContainer}>
+        ${this.header}
+        ${this.view}
+        </div>`
   }
 }
 
@@ -76,13 +79,21 @@ module.exports = SwapPanelComponent
 const css = csjs`
   .plugins        {
     height         : 100%;
-    overflow-y     : auto;
   }
   .plugItIn       {
     display        : none;
     height         : 100%;
   }
+  .plugItIn > div {
+    overflow-y     : auto;
+    height         : 100%;
+    width          : 100%;
+  }
   .plugItIn.active     {
     display        : block;
+  }
+  .pluginsContainer {
+    height: 100%;
+    overflow-y: hidden;
   }
 `

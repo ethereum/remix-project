@@ -4,8 +4,6 @@ const copy = require('clipboard-copy')
 var addTooltip = require('./tooltip')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
-var styleGuide = require('./styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .copyIcon {
@@ -16,9 +14,6 @@ var css = csjs`
 
 module.exports = function copyToClipboard (getContent, tip = 'Copy value to clipboard', icon = 'fa-clipboard') {
   var copyIcon = yo`<i title="${tip}" class="${css.copyIcon} fa ${icon}" aria-hidden="true"></i>`
-  copyIcon.style.color = styles.remix.icon_Color_CopyToClipboard
-  copyIcon.onmouseenter = function (event) { copyIcon.style.color = styles.remix.icon_HoverColor_CopyToClipboard }
-  copyIcon.onmouseleave = function (event) { copyIcon.style.color = styles.remix.icon_Color_CopyToClipboard }
   copyIcon.onclick = (event) => {
     event.stopPropagation()
     var copiableContent

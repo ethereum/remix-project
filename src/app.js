@@ -58,19 +58,12 @@ import { RemixAppManager } from './remixAppManager'
 import { generateHomePage, homepageProfile } from './app/ui/landing-page/generate'
 import framingService from './framingService'
 
-var styleGuide = require('./app/ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
-
 var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
   body                 {
-    font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin             : 0;
-    padding            : 0;
-    font-size          : 12px;
-    color              : ${styles.leftPanel.text_Primary};
-    font-weight        : normal;
+    /* font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif; */
+    font-size          : .8rem;
   }
   pre {
     overflow-x: auto;
@@ -82,7 +75,6 @@ var css = csjs`
     overflow           : hidden;
   }
   .mainpanel         {
-    background-color  : ${styles.colors.transparent};
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -91,7 +83,6 @@ var css = csjs`
     overflow           : hidden;
   }
   .iconpanel           {
-    background-color  : ${styles.leftPanel.backgroundColor_Panel};
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -100,6 +91,7 @@ var css = csjs`
     left               : 0;
     overflow           : hidden;
     width              : 50px;
+    border-right       : 1px solid var(--primary);
   }
   .swappanel          {
     display            : flex;
@@ -109,16 +101,17 @@ var css = csjs`
     left               : 50px;
     bottom             : 0;
     overflow           : hidden;
+    overflow-y         : auto;
   }
   .highlightcode {
     position:absolute;
     z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    background-color: var(--info);
   }
   .highlightcode_fullLine {
     position:absolute;
     z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    background-color: var(--info);
     opacity: 0.5;
   }
 `
@@ -193,7 +186,7 @@ class App {
     if (self._view.el) return self._view.el
     // not resizable
     self._view.iconpanel = yo`
-      <div id="icon-panel" class=${css.iconpanel}>
+      <div id="icon-panel" class="${css.iconpanel} bg-primary">
       ${''}
       </div>
     `
@@ -390,8 +383,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
   const appManager = new RemixAppManager(appStore)
+  registry.put({api: appManager, name: 'appmanager'})
 
-  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false })
+  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false, displayHeader: false })
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
@@ -418,7 +412,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
-  const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true })
+  const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true, displayHeader: true })
   const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
@@ -505,7 +499,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
 
   var txLogger = new TxLogger() // eslint-disable-line
-  txLogger.event.register('debuggingRequested', (hash) => { debug.debugger().debug(hash) })
+  txLogger.event.register('debuggingRequested', (hash) => {
+    if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
+    appStore.getOne('debugger').api.debugger().debug(hash)
+    verticalIconsApi.select('debugger')
+  })
 
   let transactionContextAPI = {
     getAddress: (cb) => {
@@ -547,19 +545,5 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         }
       }
     })
-  }
-
-  // Open last opened file
-  var previouslyOpenedFile = self._components.config.get('currentFile')
-  if (previouslyOpenedFile) {
-    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) {
-        fileManager.switchFile(previouslyOpenedFile)
-      } else {
-        fileManager.switchFile()
-      }
-    })
-  } else {
-    fileManager.switchFile()
   }
 }

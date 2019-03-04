@@ -1,17 +1,13 @@
 const csjs = require('csjs-inject')
-const styles = require('../../ui/styles-guide/theme-chooser').chooser()
 
 const css = csjs`
   .menu {
     display: flex;
-    background-color: ${styles.rightPanel.BackgroundColor_Pre};
     list-style: none;
     margin: 0;
     padding: 0;
   }
   .active {
-    background-color: ${styles.rightPanel.backgroundColor_Tab};
-    color: ${styles.appProperties.mainText_Color}
   }
   .options {
     float: left;
@@ -23,7 +19,6 @@ const css = csjs`
     text-align: center;
   }
   .optionViews {
-    background-color: ${styles.rightPanel.backgroundColor_Tab};
     overflow: scroll;
     height: 100%;
   }
@@ -32,7 +27,6 @@ const css = csjs`
   }
   .optionViews .pre {
     word-wrap: break-word;
-    background-color: ${styles.rightPanel.BackgroundColor_Pre};
     border-radius: 3px;
     display: inline-block;
     padding: 0 0.6em;

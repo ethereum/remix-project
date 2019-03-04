@@ -125,7 +125,7 @@ class MultiParamManager {
     }
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
-      <button onclick=${() => { onClick() }} class="${css.instanceButton}">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
+      <button onclick=${() => { onClick() }} class="${css.instanceButton} btn btn-sm">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
       </div>`
 
     this.multiFields = this.createMultiFields()

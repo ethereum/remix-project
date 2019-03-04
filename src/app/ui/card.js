@@ -1,7 +1,5 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var styleGuide = require('./styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 var EventManager = require('../../lib/events')
 
 module.exports = class Card {
@@ -45,7 +43,7 @@ module.exports = class Card {
 
     // HTML
     self._view.el = yo`
-      <div class=${css.cardContainer}>
+      <div class="${css.cardContainer} list-group-item">
         ${self._view.cardHeader}
         ${self._view.cardBody}
       </div>`
@@ -57,7 +55,7 @@ module.exports = class Card {
 
 const css = csjs`
   .cardContainer {
-    ${styles.remix.solidBox};
+    padding: 10px 15px 15px 0;
     margin-bottom       : 2%;
   }
   .cardHeader {
@@ -74,18 +72,15 @@ const css = csjs`
   .cardTitle {
     font-size           : 13px;
     font-weight         : bold;
-    color               : ${styles.appProperties.mainText_Color};
     margin-right        : 5px;
   }
   .expandCollapseButton {}
   .arrow {
-    color               : ${styles.appProperties.icon_Color};
     font-weight         : bold;
     cursor              : pointer;
     font-size           : 14px;
   }
   .arrow:hover {
-    color               : ${styles.appProperties.icon_HoverColor};
   }
 
 `

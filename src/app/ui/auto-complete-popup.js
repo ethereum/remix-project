@@ -6,7 +6,7 @@ var modal = require('./modaldialog.js')
 
 // -------------- styling ----------------------
 var css = require('./styles/auto-complete-popup-styles')
-var cssModal = require('./styles/modaldialog-styles')
+// var cssModal = require('./styles/modaldialog-styles')
 
 /* USAGE:
 
@@ -32,11 +32,13 @@ class AutoCompletePopup {
   }
 
   resetCSSValuesModalContainer () {
+    /*
     var modalContainer = document.querySelector(`.${cssModal.modal}`)
     modalContainer.style.display = 'none'
     var modalContent = document.querySelector(`.${css.modalContent}`)
     let newModalContent = modalContent ? document.querySelector(`.${css.modalContent}`) : document.querySelector(`.${cssModal.modalContent}`)
     newModalContent.className = cssModal.modalContent
+    */
   }
 
   render () {
@@ -121,9 +123,11 @@ class AutoCompletePopup {
     }
 
     function editCSSValuesModalContainer () {
+      /*
       var modalContent = document.querySelector(`.${cssModal.modalContent}`)
       let newModalContent = modalContent ? document.querySelector(`.${cssModal.modalContent}`) : document.querySelector(`.${css.modalContent}`)
       newModalContent.className = css.modalContent
+      */
     }
 
     setUpPopUp()
