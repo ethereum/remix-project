@@ -86,6 +86,8 @@ const css = csjs`
   }
   .plugItIn > div {
     overflow-y     : auto;
+    height         : 100%;
+    width          : 100%;
   }
   .plugItIn.active     {
     display        : block;
