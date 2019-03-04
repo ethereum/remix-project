@@ -21,7 +21,7 @@ class DropdownLogic {
 
     this.listenToCompilationEvents()
 
-    fileManager.event.register('currentFileChanged', (currentFile) => {
+    fileManager.events.on('currentFileChanged', (currentFile) => {
       this.event.trigger('currentFileChanged', [currentFile])
     })
   }

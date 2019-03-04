@@ -10,6 +10,7 @@ class DebuggerTab {
 
   profile () {
     return {
+      displayName: 'debugger',
       name: 'debugger',
       methods: [],
       events: [],

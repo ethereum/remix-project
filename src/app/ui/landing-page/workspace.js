@@ -7,13 +7,8 @@ export class Workspace {
   }
 }
 
-export const defaultWorkspaces = (appManager, appStore) => {
+export const defaultWorkspaces = (appManager) => {
   return [
-    new Workspace('Close All Modules', '', () => {
-      appStore.getActives()
-      .filter(({profile}) => !profile.required)
-      .forEach((profile) => { appManager.deactivateOne(profile.name) })
-    }, () => {}),
     new Workspace('Solidity Basic', '', () => {
       appManager.ensureActivated('solidity')
     }, () => {}),

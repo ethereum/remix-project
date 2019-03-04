@@ -49,7 +49,7 @@ class SettingsUI {
         </div>
         <div class=${css.environment}>
           ${this.netUI}
-          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="${css.select}">
+          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm" checked name="executionContext"> JavaScript VM
@@ -76,7 +76,7 @@ class SettingsUI {
           <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="${css.select}" id="txorigin"></select>
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
           <i class="fa fa-pencil-square-o ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
@@ -86,15 +86,15 @@ class SettingsUI {
     var gasPriceEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>
-        <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
+        <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
       </div>
     `
 
     var valueEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
-        <select name="unit" class="${css.col2_2}" id="unit">
+        <input type="text" class="form-control ${css.gasNval} ${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
+        <select name="unit" class="form-control ${css.gasNval} ${css.col2_2}" id="unit">
           <option data-unit="wei">wei</option>
           <option data-unit="gwei">gwei</option>
           <option data-unit="finney">finney</option>

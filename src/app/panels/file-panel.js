@@ -72,7 +72,7 @@ function filepanel (localRegistry) {
   function template () {
     return yo`
       <div class=${css.container}>
-        <div class=${css.fileexplorer}>
+        <div class="${css.fileexplorer}">
           <div class=${css.menu}>
             <span onclick=${createNewFile} class="newFile ${css.newFile}" title="Create New File in the Browser Storage Explorer">
               <i class="fa fa-plus-circle"></i>
@@ -94,7 +94,7 @@ function filepanel (localRegistry) {
               <i class="fa fa-files-o" aria-hidden="true"></i>
             </span>
           </div>
-          <div class=${css.treeviews}>
+          <div>
             <div class=${css.treeview}>${fileExplorer.init()}</div>
             <div class="configexplorer ${css.treeview}">${configExplorer.init()}</div>
             <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
@@ -115,21 +115,17 @@ function filepanel (localRegistry) {
   fileExplorer.ensureRoot()
   configExplorer.ensureRoot()
   self._deps.fileProviders['localhost'].event.register('connecting', (event) => {
-    tooltip('Connecting to localhost. ' + JSON.stringify(event))
   })
 
   self._deps.fileProviders['localhost'].event.register('connected', (event) => {
-    tooltip('Connected to localhost. ' + JSON.stringify(event))
     fileSystemExplorer.show()
   })
 
   self._deps.fileProviders['localhost'].event.register('errored', (event) => {
-    tooltip('localhost connection errored. ' + JSON.stringify(event))
     fileSystemExplorer.hide()
   })
 
   self._deps.fileProviders['localhost'].event.register('closed', (event) => {
-    tooltip('localhost connection closed. ' + JSON.stringify(event))
     fileSystemExplorer.hide()
   })
 

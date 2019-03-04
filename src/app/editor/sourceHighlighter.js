@@ -1,8 +1,6 @@
 'use strict'
 const csjs = require('csjs-inject')
 const globlalRegistry = require('../../global/registry')
-const styleGuide = require('../ui/styles-guide/theme-chooser')
-const styles = styleGuide.chooser()
 
 class SourceHighlighter {
   constructor (localRegistry) {
@@ -44,21 +42,20 @@ class SourceHighlighter {
         this._deps.fileManager.switchFile(this.source)
       }
 
+      const backgoundClass = style || 'bg-info'
       const css = csjs`
         .highlightcode {
           position:absolute;
           z-index:20;
-          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
         }
         .highlightcode_fullLine {
           position:absolute;
           z-index:20;
-          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
           opacity: 0.5;
         }
         `
 
-      this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode)
+      this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode + ' ' + backgoundClass)
       this._deps.editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
 
       if (lineColumnPos.start.line === lineColumnPos.end.line) {

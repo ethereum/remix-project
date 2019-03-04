@@ -9,14 +9,12 @@ var css = csjs`
     display         : flex;
     flex-direction  : column;
     flex-wrap       : wrap;
-    justify-content : space-between;
     align-items     : center;
     align-content   : space-around;
     
     border          : 2px solid black;
     width           : 400px;
     padding         : 50px;
-    background-color: #bfbfbf;
     font-family     : "Lucida Console", Monaco, monospace
 }
 `
@@ -28,11 +26,8 @@ class LandingPage {
 
   render () {
     var totalLook = yo`
-      <div class=${css.container}>
+      <div class="${css.container}">
         <h1> Remix </h1>
-        <br>
-        <br>
-        <br>
       </div>
     `
     for (var i = 0; i < this.sections.length; i++) {
@@ -42,15 +37,7 @@ class LandingPage {
                 </div>
               `)
     }
-
-    if (!this._view) {
-      this._view = totalLook
-    }
-    return this._view
-  }
-
-  update () {
-    yo.update(this._view, this.render())
+    return totalLook
   }
 }
 

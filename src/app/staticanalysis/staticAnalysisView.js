@@ -42,28 +42,30 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`
     <div class="${css.analysis}">
-      <div id="staticanalysismodules">
+      <div id="staticanalysismodules" class="list-group list-group-flush">
         ${this.modulesView}
       </div>
       <div class="${css.buttons}">
-        <button class="${css.buttonRun}" onclick="${function () { self.run() }}" >Run</button>
-        <label class="${css.label}" for="autorunstaticanalysis">
-          <input id="autorunstaticanalysis"
-            type="checkbox"
-            style="vertical-align:bottom"
-            checked="true"
-          >
-          Auto run
-        </label>
-        <label class="${css.label}" for="checkAllEntries">
-          <input id="checkAllEntries"
-            type="checkbox"
-            onclick="${function (event) { self.checkAll(event) }}"
-            style="vertical-align:bottom"
-            checked="true"
-          >
-          Check/Uncheck all
-        </label>
+        <div class="${css.buttonsInner}">
+          <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
+          <label class="${css.label}" for="autorunstaticanalysis">
+            <input id="autorunstaticanalysis"
+              type="checkbox"
+              style="vertical-align:bottom"
+              checked="true"
+            >
+            Auto run
+          </label>
+          <label class="${css.label}" for="checkAllEntries">
+            <input id="checkAllEntries"
+              type="checkbox"
+              onclick="${function (event) { self.checkAll(event) }}"
+              style="vertical-align:bottom"
+              checked="true"
+            >
+            Check/Uncheck all
+          </label>
+        </div>
       </div>
       <div class="${css.result}" "id='staticanalysisresult'></div>
     </div>
@@ -166,7 +168,7 @@ staticAnalysisView.prototype.renderModules = function () {
         </label>
             `
     })
-    return yo`<div class="${css.analysisModulesContainer}">
+    return yo`<div class="${css.analysisModulesContainer} list-group-item">
                 <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
                 ${entriesDom}
               </div>`

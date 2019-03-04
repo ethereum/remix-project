@@ -29,7 +29,7 @@ class RunTab {
     this.container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
 
     var el = yo`
-    <div>
+    <div class="list-group list-group-flush">
       ${this.settingsUI.render()}
       ${this.contractDropdownUI.render()}
       ${this.recorderCard.render()}
@@ -114,7 +114,7 @@ class RunTab {
   renderRecorderCard () {
     const collapsedView = yo`
       <div class=${css.recorderCollapsedView}>
-        <div class=${css.recorderCount}>${this.recorderCount}</div>
+        <div class="${css.recorderCount} badge badge-pill badge-primary">${this.recorderCount}</div>
       </div>`
 
     const expandedView = yo`

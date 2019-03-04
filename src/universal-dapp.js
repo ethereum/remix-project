@@ -231,23 +231,24 @@ UniversalDApp.prototype.getInputs = function (funABI) {
  * SHOULD BE TAKEN CAREFULLY!
  *
  * @param {Object} tx    - transaction.
- * @param {Function} callback    - callback.
  */
-UniversalDApp.prototype.runTestTx = function (tx, cb) {
-  executionContext.detectNetwork((error, network) => {
-    if (error) return cb(error)
-    if (network.name === 'Main' && network.id === '1') {
-      return cb('It is not allowed to make this action against mainnet')
-    }
-    this.silentRunTx(tx, (error, result) => {
-      if (error) return cb(error)
-      cb(null, {
-        transactionHash: result.transactionHash,
-        status: result.result.status,
-        gasUsed: '0x' + result.result.gasUsed.toString('hex'),
-        error: result.result.vm.exceptionError,
-        return: result.result.vm.return ? '0x' + result.result.vm.return.toString('hex') : '0x',
-        createdAddress: result.result.createdAddress ? '0x' + result.result.createdAddress.toString('hex') : undefined
+UniversalDApp.prototype.runTestTx = function (tx) {
+  return new Promise((resolve, reject) => {
+    executionContext.detectNetwork((error, network) => {
+      if (error) reject(error)
+      if (network.name === 'Main' && network.id === '1') {
+        reject(new Error('It is not allowed to make this action against mainnet'))
+      }
+      this.silentRunTx(tx, (error, result) => {
+        if (error) reject(error)
+        resolve({
+          transactionHash: result.transactionHash,
+          status: result.result.status,
+          gasUsed: '0x' + result.result.gasUsed.toString('hex'),
+          error: result.result.vm.exceptionError,
+          return: result.result.vm.return ? '0x' + result.result.vm.return.toString('hex') : '0x',
+          createdAddress: result.result.createdAddress ? '0x' + result.result.createdAddress.toString('hex') : undefined
+        })
       })
     })
   })

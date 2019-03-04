@@ -1,11 +1,8 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .txInfoBox {
-    ${styles.rightPanel.compileTab.box_CompileContainer};  // add askToConfirmTXContainer to Remix and then replace this styling
   }
   .wrapword {
     white-space: pre-wrap;       /* Since CSS 2.1 */

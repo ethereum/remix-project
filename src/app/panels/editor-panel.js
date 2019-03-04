@@ -8,9 +8,31 @@ var { TabProxy } = require('./tab-proxy.js')
 
 var ContextualListener = require('../editor/contextualListener')
 var ContextView = require('../editor/contextView')
-var styles = require('./styles/editor-panel-styles')
-var cssTabs = styles.cssTabs
-var css = styles.css
+
+var csjs = require('csjs-inject')
+
+var css = csjs`
+  .editorpanel         {
+    display            : flex;
+    flex-direction     : column;
+    height             : 100%;
+  }
+  .content            {
+    position          : relative;
+    display           : flex;
+    flex-direction    : column;
+    height            : 100%;
+    width             : 100%;
+  }
+  .contextviewcontainer{
+    position          : absolute;
+    top               : 39px;
+    z-index           : 50;
+    left              : 350px;
+    border-radius     : 1px;
+    border            : 2px solid var(--secondary);
+  }
+`
 
 class EditorPanel {
   constructor (appStore, appManager, mainPanelComponent) {
@@ -39,7 +61,7 @@ class EditorPanel {
       We listen here on event from the tab component to display / hide the editor and mainpanel
       depending on the content that should be displayed
     */
-    self._deps.fileManager.event.register('currentFileChanged', (file) => {
+    self._deps.fileManager.events.on('currentFileChanged', (file) => {
       // we check upstream for "fileChanged"
       self._view.editor.style.display = 'block'
       self._components.contextView.show()
@@ -102,9 +124,6 @@ class EditorPanel {
         self._deps.txListener.setListenOnNetwork(listenOnNetWork)
       })
     }
-    if (document && document.head) {
-      document.head.appendChild(cssTabs)
-    }
   }
   _adjustLayout (direction, delta) {
     var limitUp = 0
@@ -160,13 +179,13 @@ class EditorPanel {
     var self = this
     if (self._view.el) return self._view.el
     self._view.editor = self._components.editor.render()
+    self._view.editor.style.display = 'none'
     self._view.mainPanel = self.mainPanelComponent.render()
-    self._view.mainPanel.style.display = 'none'
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
         ${self.tabProxy.renderTabsbar()}
-        <div class=${css.contextviewcontainer}>
+        <div class="${css.contextviewcontainer} bg-secondary border-top-0">
           ${self._components.contextView.render()}
         </div>
         ${self._view.editor}

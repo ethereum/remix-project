@@ -1,10 +1,38 @@
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-
-const styleguide = require('../ui/styles-guide/theme-chooser')
-const styles = styleguide.chooser()
-
+const yo = require('yo-yo')
+const csjs = require('csjs-inject')
 const EventEmitter = require('events')
+const LocalPlugin = require('./local-plugin')
+import { Plugin } from 'remix-plugin'
+
+const css = csjs`
+  .pluginSearch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--light);
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .localPluginBtn {
+    margin-top: 10px;
+  }
+  .displayName {
+    text-transform: capitalize;
+  }
+  .description {
+    text-transform: capitalize;
+  }
+  .row {
+    display: flex;
+    flex-direction: row;
+  }
+  .isStuck {
+    background-color: var(--primary);
+    color: 
+  }
+`
 
 class PluginManagerComponent {
 
@@ -14,6 +42,8 @@ class PluginManagerComponent {
       root: null,
       items: {}
     }
+    this.localPlugin = new LocalPlugin()
+    this.filter = ''
   }
 
   profile () {
@@ -40,162 +70,122 @@ class PluginManagerComponent {
     this.store.event.on('remove', (entity) => { this.reRender() })
   }
 
-  render () {
-    let activeMods = yo`
-    <div id='activePlugs' class=${css.activePlugins}>
-      <h3>Active Modules</h3>
-    </div>
-    `
-    let inactiveMods = yo`
-    <div id='inActivePlugs' class=${css.inactivePlugins}>
-      <h3>Inactive Modules</h3>
-    </div>
-    `
-    let searchbox = yo`
-    <input id='filter_plugins' placeholder='Search'>
-    `
-    var rootView = yo`
-      <div id='pluginManager' class=${css.plugins_settings} >
-        <h2>Plugin Manager</h2>
-        ${searchbox}
-        ${activeMods}
-        ${inactiveMods}
-      </div>
-    `
-
-    searchbox.addEventListener('keyup', (event) => { this.filterPlugins(event.target) })
-
-    var modulesActiveNotReq = this.store.getActives().filter(({profile}) => !profile.required)
-    this.sortObject(modulesActiveNotReq)
-
-    if (modulesActiveNotReq.length > 0) {
-      modulesActiveNotReq.forEach((mod) => {
-        activeMods.appendChild(this.renderItem(mod.profile.name))
-      })
-      activeMods.style.display = 'block'
-    } else {
-      activeMods.style.display = 'none'
-    }
-
-    var modulesAllNotReq = this.store.getAll().filter(({profile}) => !profile.required)
-    this.sortObject(modulesAllNotReq)
-    modulesAllNotReq.forEach((mod) => {
-      if (!modulesActiveNotReq.includes(mod)) {
-        inactiveMods.appendChild(this.renderItem(mod.profile.name))
-      }
-    })
-    if (!this.views.root) {
-      this.views.root = rootView
-    }
-    return rootView
-  }
-
-  searchBox () {
-    if (this.views.root) {
-      return this.views.root.querySelector('#filter_plugins')
-    }
-    return null
-  }
-
-  sortObject (obj) {
-    obj.sort((a, b) => {
-      var textA = a.profile.name.toUpperCase()
-      var textB = b.profile.name.toUpperCase()
-      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
-    })
-  }
-
-  renderItem (item) {
-    let ctrBtns
-
-    const mod = this.store.getOne(item)
+  renderItem (name) {
+    const mod = this.store.getOne(name)
     if (!mod) return
-    let displayName = (mod.profile.displayName) ? mod.profile.displayName : mod.profile.name
-    let action = () => {
-      if (this.store.isActive(item)) {
-        this.appManager.deactivateOne(item)
-      } else {
-        this.appManager.activateOne(item)
-      }
-    }
+    const isActive = this.store.actives.includes(name)
+    const displayName = (mod.profile.displayName) ? mod.profile.displayName : name
 
-    ctrBtns = yo`<div id='${mod.profile.name}Activation'>
-        <button onclick=${(event) => { action(event) }} >${this.store.isActive(item) ? 'deactivate' : 'activate'}</button>
-        </div>`
+    const activationButton = isActive
+      ? yo`
+      <button onclick="${_ => this.appManager.deactivateOne(name)}" class="btn btn-secondary btn-sm">
+        Deactivate
+      </button>`
+      : yo`
+      <button onclick="${_ => this.appManager.activateOne(name)}" class="btn btn-success btn-sm">
+        Activate
+      </button>`
 
     return yo`
-    <div id=${mod.profile.name} title="${item}" class=${css.plugin} >
-      <h3>${displayName}</h3>
-      ${mod.profile.description}
-      ${ctrBtns}
-    </div>
+      <article class="list-group-item" title="${name}" >
+        <div class="${css.row} justify-content-between align-items-center">
+          <h6 class="${css.displayName}">${displayName}</h6>
+          ${activationButton}
+        </div>
+        <p class="${css.description}">${mod.profile.description}</p>
+      </article>
     `
+  }
+
+  /***************
+   * SUB-COMPONENT
+   */
+  /**
+   * Add a local plugin to the list of plugins
+   */
+  async openLocalPlugin () {
+    try {
+      const profile = await this.localPlugin.open(this.store.getAll())
+      if (!profile) return
+      const resolveLocaton = (iframe) => this.appManager.resolveLocation(profile, iframe)
+      const api = new Plugin(profile, { resolveLocaton })
+      this.appManager.init([{profile, api}])
+    } catch (err) {
+      // TODO : Use an alert to handle this error instead of a console.log
+      console.log(`Cannot create Plugin : ${err.message}`)
+    }
+  }
+
+  render () {
+    // Filtering helpers
+    const isFiltered = ({profile}) => profile.name.toLowerCase().includes(this.filter)
+    const isNotRequired = ({profile}) => !profile.required
+    const sortByName = (a, b) => {
+      const nameA = a.profile.name.toUpperCase()
+      const nameB = b.profile.name.toUpperCase()
+      return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
+    }
+
+    // Filter all active and inactive modules that are not required
+    const { actives, inactives } = this.store.getAll()
+      .filter(isFiltered)
+      .filter(isNotRequired)
+      .sort(sortByName)
+      .reduce(({actives, inactives}, {profile}) => {
+        return this.store.actives.includes(profile.name)
+          ? { actives: [...actives, profile.name], inactives }
+          : { inactives: [...inactives, profile.name], actives }
+      }, { actives: [], inactives: [] })
+
+    const activeTile = actives.length !== 0
+      ? yo`
+      <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
+        <span class="navbar-brand">Active Modules</span>
+        <span class="badge badge-pill badge-primary">${actives.length}</span>
+      </nav>`
+      : ''
+    const inactiveTile = inactives.length !== 0
+      ? yo`
+      <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
+        <span class="navbar-brand">Inactive Modules</span>
+        <span class="badge badge-pill badge-primary">${inactives.length}</span>
+      </nav>`
+      : ''
+
+    const rootView = yo`
+      <div id='pluginManager'>
+        <div class="form-group ${css.pluginSearch}">
+          <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
+          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm ${css.localPluginBtn}">
+            Connect to a Local Plugin
+          </button>
+        </div>
+        <section>
+          ${activeTile}
+          <div class="list-group list-group-flush">
+            ${actives.map(name => this.renderItem(name))}
+          </div>
+          ${inactiveTile}
+          <div class="list-group list-group-flush">
+            ${inactives.map(name => this.renderItem(name))}
+          </div>
+        </section>
+      </div>
+    `
+    if (!this.views.root) this.views.root = rootView
+    return rootView
   }
 
   reRender () {
     if (this.views.root) {
       yo.update(this.views.root, this.render())
-      this.filterPlugins(this.searchBox())
     }
   }
 
-  filterPlugins (target) {
-    if (!target) return
-    let filterOn = target.value.toUpperCase()
-    var nodes = this.views.root.querySelectorAll(`.${css.plugin}`)
-    nodes.forEach((node) => {
-      let h = node.querySelector('h3')
-      let txtValue = h.textContent || h.innerText
-      if (txtValue.toLowerCase().indexOf(filterOn.toLowerCase()) !== -1) {
-        node.style.display = 'block'
-      } else {
-        node.style.display = 'none'
-      }
-    })
+  filterPlugins ({ target }) {
+    this.filter = target.value.toLowerCase()
+    this.reRender()
   }
 }
 
 module.exports = PluginManagerComponent
-
-const css = csjs`
-  .plugins_settings h2 {
-    font-size: 1em;
-    border-bottom: 1px ${styles.appProperties.solidBorderBox_BorderColor} solid;
-    padding: 10px 20px;
-    font-size: 10px;
-    padding: 10px 20px;
-    text-transform: uppercase;
-    font-weight: normal;
-    background-color: white;
-    margin-bottom: 0;
-  }
-  .plugin {
-    ${styles.rightPanel.compileTab.box_CompileContainer};
-    margin: 0;
-    margin-bottom: 2%;
-    border-bottom: 1px ${styles.appProperties.solidBorderBox_BorderColor} solid;
-    padding: 0px 20px 10px;
-  }
-  .plugin h3 {
-    margin-bottom: 5px;
-    font-size: 12px;
-    margin-top: 9px;
-  }
-
-  .plugin button {
-    ${styles.rightPanel.settingsTab.button_LoadPlugin};
-    cursor: pointer;
-    font-size: 10px;
-  }
-  .activePlugins {
-  }
-
-  .inactivePlugins {
-  }
-  .plugins_settings input {
-    margin: 10px;
-  }
-  .hideIt {
-    display: none;
-  }
-`

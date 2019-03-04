@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('./app/ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .instanceTitleContainer {
@@ -8,7 +6,6 @@ var css = csjs`
     align-items: center;
   }
   .title {
-    ${styles.rightPanel.runTab.titlebox_RunTab}
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -35,20 +32,25 @@ var css = csjs`
   }
 
   .title .copy {
-    color: ${styles.rightPanel.runTab.icon_AltColor_Instance_CopyToClipboard};
+    color: var(--primary);
   }
   .instance {
     min-width: 310px;
-    display: flex;
+    display: block;
+    /* display: flex; */
     flex-direction: column;
+    padding: 5px 0 0 10px;
+    margin-bottom: 10px;
   }
   .instance .title:before {
     content: "\\25BE";
     margin-right: 5%;
+    font-size: 1.2rem
   }
   .instance.hidesub .title:before {
     content: "\\25B8";
     margin-right: 5%;
+    font-size: 1.2rem;
   }
   .instance.hidesub > * {
       display: none;
@@ -80,7 +82,6 @@ var css = csjs`
   }
   .instanceButton {
     border-radius: 3px;
-    border: .3px solid hsla(0, 82%, 82%, .5);
   }
   .closeIcon {
     font-size: 12px;
@@ -108,7 +109,7 @@ var css = csjs`
     border-bottom-left-radius: 0;
   }
   .contractProperty button {
-    ${styles.rightPanel.runTab.button_Create}
+    background-color: var(--warning);
     min-width: 100px;
     width: 100px;
     font-size: 10px;
@@ -121,7 +122,7 @@ var css = csjs`
     border-color: lightgray;
   }
   .contractProperty.constant button {
-    ${styles.rightPanel.runTab.button_Constant}
+    background-color:var(--info);
     min-width: 100px;
     width: 100px;
     font-size: 10px;
@@ -136,13 +137,12 @@ var css = csjs`
     box-sizing: border-box;
     float: left;
     align-self: center;
-    color: ${styles.appProperties.mainText_Color};
     margin-left: 4px;
   }
   .value ul {
     margin-bottom: 10px;
     padding-bottom: 5px;
-    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    border-bottom: 1px solid var(--info);
   }
   .contractActionsContainer {
     width: 98%;
@@ -157,9 +157,8 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner {
     margin-bottom: 10px;
-    border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
     padding: 0px 5px 5px 0px;
-    background-color: ${styles.appProperties.primary_BackgroundColor};
+    background-color: var(--light);
     width: 99%;
     border-radius: 3px;
   }
@@ -240,6 +239,10 @@ var css = csjs`
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
+    height: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .hasArgs .contractActionsContainerMulti button {
     border-radius: 3px;

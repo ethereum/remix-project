@@ -1,7 +1,6 @@
 'use strict'
 
-var EventEmitter = require('events')
-var EventManager = require('../../lib/events')
+const EventEmitter = require('events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
 
@@ -13,8 +12,7 @@ var CompilerImport = require('../compiler/compiler-imports')
 class FileManager {
   constructor (localRegistry) {
     this.openedFiles = {} // list all opened files
-    this.event = new EventManager()
-    this.nodeEvent = new EventEmitter()
+    this.events = new EventEmitter()
     this._components = {}
     this._components.compilerImport = new CompilerImport()
     this._components.registry = localRegistry || globalRegistry
@@ -42,10 +40,6 @@ class FileManager {
     self._deps.gistExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     self._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
     self._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(self._deps.localhostExplorer) })
-
-    self.event.register('currentFileChanged', (file, provider) => {
-      this.nodeEvent.emit('currentFileChanged', file)
-    })
   }
 
   profile () {
@@ -84,7 +78,7 @@ class FileManager {
         this.switchFile(newFocus)
       }
     }
-    this.event.trigger('fileRenamed', [oldName, newName])
+    this.events.emit('fileRenamed', oldName, newName)
   }
 
   currentFileProvider () {
@@ -96,8 +90,7 @@ class FileManager {
   }
 
   currentFile () {
-    var self = this
-    return self._deps.config.get('currentFile')
+    return this._deps.config.get('currentFile')
   }
 
   closeFile (name) {
@@ -108,7 +101,7 @@ class FileManager {
       this._deps.editor.displayEmptyReadOnlySession()
       this._deps.config.set('currentFile', '')
     }
-    this.event.trigger('fileClosed', [name])
+    this.events.emit('fileClosed', name)
   }
 
   currentPath () {
@@ -119,39 +112,37 @@ class FileManager {
     return path ? path[1] : null
   }
 
-  getCurrentFile (cb) {
-    var path = this.currentFile()
-    if (!path) {
-      cb('no file selected')
-    } else {
-      cb(null, path)
-    }
+  async getCurrentFile () {
+    const path = this.currentFile()
+    if (!path) throw new Error('no file selected')
+    console.log('Get current File', path)
+    return path
   }
 
-  getFile (path, cb) {
-    var provider = this.fileProviderOf(path)
-    if (provider) {
-      // TODO add approval to user for external plugin to get the content of the given `path`
-      provider.get(path, (error, content) => {
-        cb(error, content)
+  getFile (path) {
+    const provider = this.fileProviderOf(path)
+    if (!provider) throw new Error(`${path} not available`)
+    // TODO: change provider to Promise
+    return new Promise((resolve, reject) => {
+      provider.get(path, (err, content) => {
+        if (err) reject(err)
+        resolve(content)
       })
-    } else {
-      cb(path + ' not available')
-    }
+    })
   }
 
-  setFile (path, content, cb) {
-    var provider = this.fileProviderOf(path)
-    if (provider) {
-      // TODO add approval to user for external plugin to set the content of the given `path`
+  setFile (path, content) {
+    const provider = this.fileProviderOf(path)
+    if (!provider) throw new Error(`${path} not availble`)
+    // TODO : Add permission
+    // TODO : Change Provider to Promise
+    return new Promise((resolve, reject) => {
       provider.set(path, content, (error) => {
-        if (error) return cb(error)
+        if (error) reject(error)
         this.syncEditor(path)
-        cb()
+        resolve(true)
       })
-    } else {
-      cb(path + ' not available')
-    }
+    })
   }
 
   removeTabsOf (provider) {
@@ -170,7 +161,7 @@ class FileManager {
     }
     self._deps.editor.discard(path)
     delete this.openedFiles[path]
-    this.event.trigger('fileRemoved', [path])
+    this.events.emit('fileRemoved', path)
     this.switchFile()
   }
 
@@ -185,7 +176,7 @@ class FileManager {
         if (fileList.length) {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
-          self.event.trigger('currentFileChanged', [])
+          self.events.emit('currentFileChanged')
           self._deps.editor.displayEmptyReadOnlySession()
         }
       })
@@ -203,18 +194,22 @@ class FileManager {
           } else {
             self._deps.editor.open(file, content)
           }
-          self.event.trigger('currentFileChanged', [file, self.fileProviderOf(file)])
+          self.events.emit('currentFileChanged', file)
         }
       })
     }
   }
 
-  filesFromPath (path, cb) {
-    var provider = this.fileProviderOf(path)
-    if (provider) {
-      return provider.resolveDirectory(path, (error, filesTree) => { cb(error, filesTree) })
-    }
-    cb(`provider for path ${path} not found`)
+  getFilesFromPath (path) {
+    const provider = this.fileProviderOf(path)
+    if (!provider) throw new Error(`provider for path ${path} not found`)
+    // TODO : Change provider with promise
+    return new Promise((resolve, reject) => {
+      provider.resolveDirectory(path, (error, filesTree) => {
+        if (error) reject(error)
+        resolve(filesTree)
+      })
+    })
   }
 
   fileProviderOf (file) {

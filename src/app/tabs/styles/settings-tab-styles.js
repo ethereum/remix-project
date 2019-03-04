@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .settingsTabView {
@@ -8,7 +6,6 @@ var css = csjs`
     display: flex;
   }
   .info {
-    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
     margin-bottom: 1em;
     word-break: break-word;
   }
@@ -41,7 +38,6 @@ var css = csjs`
   .select {
     font-weight: bold;
     margin-top: 1em;
-    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
   }
   .heading {
     margin-bottom: 0;
@@ -64,7 +60,7 @@ var css = csjs`
     vertical-align: top;
   }
   i.warnIt {
-    color: ${styles.appProperties.warningText_Color};
+    color: var(--warning);
   }
   .icon {
     margin-right: .5em;

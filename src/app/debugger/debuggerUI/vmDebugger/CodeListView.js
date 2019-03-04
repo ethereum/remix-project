@@ -4,12 +4,9 @@ var yo = require('yo-yo')
 var DropdownPanel = require('./DropdownPanel')
 var EventManager = require('../../../../lib/events')
 var csjs = require('csjs-inject')
-var styleGuide = require('../../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .instructions {
-    ${styles.rightPanel.debuggerTab.box_Debugger}
     overflow-y: scroll;
     max-height: 150px;
   }
@@ -43,7 +40,7 @@ CodeListView.prototype.indexChanged = function (index) {
     }
   }
   this.itemSelected = this.codeView.children[index]
-  this.itemSelected.setAttribute('style', 'background-color: ' + styles.rightPanel.debuggerTab.text_BgHighlight)
+  this.itemSelected.style.setProperty('background-color', 'var(--danger)')
   this.itemSelected.setAttribute('selected', 'selected')
   if (this.itemSelected.firstChild) {
     this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')

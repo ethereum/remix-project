@@ -43,7 +43,6 @@
     "remix-analyzer": "0.3.1",
     "remix-debug": "0.3.1",
     "remix-lib": "0.4.1",
-    "remix-plugin": "latest",
     "remix-solidity": "0.3.1",
     "remix-tabs": "^1.0.0",
     "remix-tests": "0.1.1",
@@ -65,6 +64,7 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
+    "remix-plugin": "0.0.1-alpha.33",
     "remixd": "0.1.8-alpha.6"
   },
   "repository": {
@@ -174,14 +174,14 @@
     "nightwatch_remote_debugger_parallel": "nightwatch --config nightwatch_debugger.js --env safari,chrome,default",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
-    "remixd": "./node_modules/remixd/bin/remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
+    "remixd": "remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "serve": "execr --silent http-server .",
     "serve_debugger": "execr --silent http-server src/app/debugger/remix-debugger",
     "sourcemap": "exorcist --root ../ build/app.js.map > build/app.js",
     "start": "npm-run-all -lpr serve watch onchange remixd",
-    "test": "npm run csslint; standard && node test/index.js",
+    "test": "csslint && standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
     "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc"
   }

@@ -1,8 +1,5 @@
 var csjs = require('csjs-inject')
 
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
-
 var css = csjs`
   .analysis {
     display: flex;
@@ -12,20 +9,17 @@ var css = csjs`
     margin-top: 1%;
   }
   .buttons  {
-    ${styles.rightPanel.analysisTab.box_AnalysisContainer}
+    margin: 1rem 0;
+  }
+  .buttonsInner {
     display: flex;
     align-items: center;
+    justify-content: space-around;
   }
   .buttonRun  {
-    ${styles.rightPanel.analysisTab.button_Run_AnalysisTab}
     margin-right: 1%;
   }
   .analysisModulesContainer {
-    ${styles.rightPanel.analysisTab.box_AnalysisContainer}
-    margin-bottom: 1%;
-    line-height: 2em;
-    display: flex;
-    flex-direction: column;
   }
   .label {
     display: flex;

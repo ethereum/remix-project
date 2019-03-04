@@ -1,14 +1,11 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .tooltip {
     z-index: 1001;
     display: inline-block;
     position: fixed;
-    background-color: ${styles.remix.tooltip_CopyToClipboard_BackgroundColor};
-    color: ${styles.remix.tooltip_CopyToClipboard_Color};
+    color: var(--primary)
     min-height: 50px;
     min-width: 290px;
     padding: 16px 24px 12px;

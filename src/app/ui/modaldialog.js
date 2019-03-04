@@ -15,9 +15,10 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
 
   var cancelDiv = document.getElementById('modal-footer-cancel')
   cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
+  cancelDiv.style.display = cancelDiv.innerHTML === '' ? 'none' : 'inline-block'
 
   var modal = document.querySelector(`.${css.modalBody}`)
-  var modalTitle = document.querySelector(`.${css.modalHeader} h2`)
+  var modalTitle = document.querySelector(`.${css.modalHeader} h3`)
 
   modalTitle.innerHTML = ''
   if (title) modalTitle.innerHTML = title
@@ -82,15 +83,15 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
 function html () {
   return yo`<div id="modal-dialog" class="${css.modal}">
   <div id="modal-background" class="${css['modalBackground']}"> </div>
-  <div class="${css['modalContent']}">
+  <div class="${css['modalContent']} bg-light text-secondary">
     <div class="${css['modalHeader']}">
-    <h2></h2>
+    <h3></h3>
     <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
   </div>
   <div class="${css['modalBody']}"> -
   </div>
   <div class="${css['modalFooter']}">
-    <span id="modal-footer-ok" class=${css['modalFooterOk']}>OK</span><span id="modal-footer-cancel"  class=${css['modalFooterCancel']}>Cancel</span>
+    <span id="modal-footer-ok" class="${css['modalFooterOk']} btn btn-sm btn-primary">OK</span><span id="modal-footer-cancel"  class="${css['modalFooterCancel']} btn btn-sm btn-primary">Cancel</span>
         </div>
   </div>
   </div>`
