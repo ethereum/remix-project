@@ -41,6 +41,7 @@ module.exports = {
     else {
       theme = themeStorage.get('theme')
     }
+    if (!theme) theme = 'light'
     if (themes[theme]) {
       document.getElementById('theme-link').setAttribute('href', themes[theme])
       document.documentElement.style.setProperty('--theme', themeVariable[theme])
