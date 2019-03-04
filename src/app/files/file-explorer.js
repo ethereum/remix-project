@@ -79,8 +79,8 @@ function fileExplorer (localRegistry, files) {
           self.focusElement = self.treeView.labelAt(self.focusPath)
           // TODO: here we update the selected file (it applicable)
           // cause we are refreshing the interface of the whole directory when there's a new file.
-          if (self.focusElement && !self.focusElement.classList.contains('bg-primary')) {
-            self.focusElement.classList.add('bg-primary')
+          if (self.focusElement && !self.focusElement.classList.contains('bg-secondary')) {
+            self.focusElement.classList.add('bg-secondary')
           }
         })
       }
@@ -165,17 +165,7 @@ function fileExplorer (localRegistry, files) {
   })
 
   self.treeView.event.register('leafClick', function (key, data, label) {
-    if (self.focusElement) {
-      self.focusElement.classList.remove('bg-secondary')
-      self.focusElement = null
-      self.focusPath = null
-    }
-    self.focusElement = self.treeView.labelAt(key)
-    if (self.focusElement) {
-      self.focusElement.classList.add('bg-secondary')
-      self.focusPath = key
-      self.events.trigger('focus', [key])
-    }
+    self.events.trigger('focus', [key])
   })
 
   self.treeView.event.register('nodeClick', function (path, childrenContainer) {
@@ -202,10 +192,17 @@ function fileExplorer (localRegistry, files) {
   // register to main app, trigger when the current file in the editor changed
   self._deps.fileManager.events.on('currentFileChanged', (newFile) => {
     const explorer = self._deps.fileManager.fileProviderOf(newFile)
-    if (self.focusElement && (!explorer || explorer.type !== files.type) && self.focusPath !== newFile) {
-      self.focusElement.classList.remove('bg-primary')
+    if (self.focusElement && self.focusPath !== newFile) {
+      self.focusElement.classList.remove('bg-secondary')
       self.focusElement = null
       self.focusPath = null
+    }
+    if (explorer && (explorer.type === files.type)) {
+      self.focusElement = self.treeView.labelAt(newFile)
+      if (self.focusElement) {
+        self.focusElement.classList.add('bg-secondary')
+        self.focusPath = newFile
+      }
     }
   })
 
