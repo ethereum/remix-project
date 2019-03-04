@@ -67,7 +67,7 @@ class SwapPanelComponent {
     this.header = yo`<header class="navbar navbar-dark bg-dark text-warning"><h2 class="navbar-brand"></h2> </header>`
     if (!this.opt.displayHeader) this.header.style.display = 'none'
 
-    return yo`<div>
+    return yo`<div class=${css.pluginsContainer}>
         ${this.header}
         ${this.view}
         </div>`
@@ -79,7 +79,6 @@ module.exports = SwapPanelComponent
 const css = csjs`
   .plugins        {
     height         : 100%;
-    overflow-y     : auto;
   }
   .plugItIn       {
     display        : none;
@@ -87,5 +86,9 @@ const css = csjs`
   }
   .plugItIn.active     {
     display        : block;
+  }
+  .pluginsContainer {
+    height: 100%;
+    overflow-y: hidden;
   }
 `
