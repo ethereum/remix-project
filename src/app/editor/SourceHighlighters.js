@@ -18,19 +18,25 @@ class SourceHighlighters {
 
     // TODO what to do with mod?
   async highlight (mod, lineColumnPos, filePath, hexColor) {
-    let position
-    try {
-      position = JSON.parse(lineColumnPos)
-    } catch (e) {
-      throw e
-    }
-    if (!this.highlighters[mod]) this.highlighters[mod] = new SourceHighlighter()
-    this.highlighters[mod].currentSourceLocation(null)
-    this.highlighters[mod].currentSourceLocationFromfileName(position, filePath, hexColor)
+    return new Promise((resolve, reject) => {
+      let position
+      try {
+        position = JSON.parse(lineColumnPos)
+      } catch (e) {
+        throw e
+      }
+      if (!this.highlighters[mod]) this.highlighters[mod] = new SourceHighlighter()
+      this.highlighters[mod].currentSourceLocation(null)
+      this.highlighters[mod].currentSourceLocationFromfileName(position, filePath, hexColor)
+      resolve()
+    })
   }
 
   async discardHighlight (mod) {
-    if (this.highlighters[mod]) this.highlighters[mod].currentSourceLocation(null)
+    return new Promise((resolve, reject) => {
+      if (this.highlighters[mod]) this.highlighters[mod].currentSourceLocation(null)
+      resolve()
+    })
   }
 }
 
