@@ -253,32 +253,43 @@ class App {
     })
   }
 
-  getExecutionContextProvider (cb) {
-    cb(null, executionContext.getProvider())
-  }
-
-  getProviderEndpoint (cb) {
-    if (executionContext.getProvider() === 'web3') {
-      cb(null, executionContext.web3().currentProvider.host)
-    } else {
-      cb('no endpoint: current provider is either injected or vm')
-    }
-  }
-
-  detectNetWork (cb) {
-    executionContext.detectNetwork((error, network) => {
-      cb(error, network)
+  getExecutionContextProvider () {
+    return new Promise((resolve, reject) => {
+      resolve(executionContext.getProvider())
     })
   }
 
-  addProvider (name, url, cb) {
-    executionContext.addProvider({ name, url })
-    cb()
+  getProviderEndpoint () {
+    return new Promise((resolve, reject) => {
+      if (executionContext.getProvider() === 'web3') {
+        resolve(executionContext.web3().currentProvider.host)
+      } else {
+        reject('no endpoint: current provider is either injected or vm')
+      }
+    })
   }
 
-  removeProvider (name, cb) {
-    executionContext.removeProvider(name)
-    cb()
+  detectNetWork () {
+    return new Promise((resolve, reject) => {
+      executionContext.detectNetwork((error, network) => {
+        if (error) return reject(error)
+        resolve(network)
+      })
+    })
+  }
+
+  addProvider (name, url) {
+    return new Promise((resolve, reject) => {
+      executionContext.addProvider({ name, url })
+      resolve()
+    })
+  }
+
+  removeProvider (name) {
+    return new Promise((resolve, reject) => {
+      executionContext.removeProvider(name)
+      resolve()
+    })
   }
 }
 

@@ -132,6 +132,7 @@ function FilesTree (name, storage) {
   }
 
   this.profile = function () {
+    // TODO should make them promisable
     return {
       name: this.type,
       methods: ['get', 'set', 'remove'],
