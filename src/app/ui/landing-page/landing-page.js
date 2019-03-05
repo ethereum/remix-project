@@ -18,8 +18,12 @@ var css = csjs`
     font-family     : "Lucida Console", Monaco, monospace;
   }
   .logo             {
-    position: absolute;
-    opacity: 0.3;
+    position        : absolute;
+    opacity         : 0.3;
+    z-index         : 0;
+  }
+  .section          {
+    z-index         : 10;
   }
 `
 
@@ -36,7 +40,7 @@ class LandingPage {
     `
     for (var i = 0; i < this.sections.length; i++) {
       totalLook.appendChild(yo`
-                <div> 
+                <div class="${css.section}" > 
                     ${this.sections[i].render()}
                 </div>
               `)

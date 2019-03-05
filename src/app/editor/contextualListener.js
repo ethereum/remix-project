@@ -27,6 +27,7 @@ class ContextualListener {
     this._activeHighlights = []
 
     this.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
+      if (languageVersion.indexOf('soljson') !== 0) return
       this._stopHighlighting()
       this._index = {
         Declarations: {},
@@ -40,7 +41,7 @@ class ContextualListener {
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.astWalker = new AstWalker()
     setInterval(() => {
-      if (this._deps.compilersArtefacts['__last']) {
+      if (this._deps.compilersArtefacts['__last'] && this._deps.compilersArtefacts['__last'].languageversion.indexOf('soljson') === 0) {
         this._highlightItems(this.editor.getCursorPosition(), this._deps.compilersArtefacts['__last'], this._deps.config.get('currentFile'))
       }
     }, 1000)
@@ -105,14 +106,14 @@ class ContextualListener {
     const position = this.sourceMappingDecoder.decode(node.src)
     const eventId = this._highlightInternal(position, node)
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
-    if (eventId && lastCompilationResult) {
+    if (eventId && lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       this._activeHighlights.push({ eventId, position, fileTarget: lastCompilationResult.getSourceName(position.file), nodeId: node.id })
     }
   }
 
   _highlightInternal (position, node) {
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
-    if (lastCompilationResult) {
+    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
       let css = 'highlightreference'
       if (node.children && node.children.length) {

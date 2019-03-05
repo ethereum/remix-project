@@ -97,7 +97,7 @@ class ContextView {
       }
     }
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
-    if (lastCompilationResult && lastCompilationResult.data) {
+    if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
       const lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(
         position,
         position.file,
