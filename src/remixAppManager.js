@@ -26,8 +26,8 @@ export class RemixAppManager extends AppManagerApi {
   setActive (name, isActive) {
     const entity = this.getEntity(name)
     // temp
-    if (entity && name === 'solidity') {
-      isActive ? this.data.proxy.register(entity.api) : this.data.proxy.unregister(entity.api)
+    if (entity && (name === 'solidity' || name === 'vyper')) {
+      isActive ? this.data.proxy.register(name, entity.api) : this.data.proxy.unregister(name, entity.api)
     }
     isActive ? this.store.activate(name) : this.store.deactivate(name)
     if (!isActive) {
