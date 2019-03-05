@@ -10,7 +10,7 @@ class PluginManagerProxy {
     this.event = new EventManager()
     this._listeners = {}
     this._listeners['vyper'] = (data) => {
-      registry.get('compilersartefacts').api['__last'] = new CompilerAbstract(data.language, data, data.content)
+      registry.get('compilersartefacts').api['__last'] = new CompilerAbstract(data.language, data.result, data.content)
       this.event.trigger('sendCompilationResult', [data.title, data.content, data.language, data.result])
     }
     this._listeners['solidity'] = (file, source, languageVersion, data) => {
