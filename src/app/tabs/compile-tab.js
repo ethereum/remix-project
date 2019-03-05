@@ -143,6 +143,12 @@ class CompileTab {
     }
   }
 
+  getCompilationResult () {
+    return new Promise((resolve, reject) => {
+      resolve(this.compileTabLogic.compiler.lastCompilationResult)
+    })
+  }
+
   /*********
    * SUB-COMPONENTS
    */

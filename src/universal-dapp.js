@@ -33,7 +33,7 @@ UniversalDApp.prototype.profile = function () {
   return {
     name: 'udapp',
     displayName: 'universal dapp',
-    methods: ['runTx', 'getAccounts', 'createVMAccount'],
+    methods: ['runTestTx', 'getAccounts', 'createVMAccount'],
     description: 'service - run transaction and access account'
   }
 }
@@ -73,11 +73,13 @@ UniversalDApp.prototype.resetAPI = function (transactionContextAPI) {
 }
 
 UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
-  if (executionContext.getProvider() !== 'vm') return cb('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
-  this._addAccount(privateKey, balance)
-  executionContext.vm().stateManager.cache.flush(function () {})
-  privateKey = Buffer.from(privateKey, 'hex')
-  cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
+  return new Promise((resolve, reject) => {
+    if (executionContext.getProvider() !== 'vm') return reject('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
+    this._addAccount(privateKey, balance)
+    executionContext.vm().stateManager.cache.flush(function () {})
+    privateKey = Buffer.from(privateKey, 'hex')
+    resolve('0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
+  })
 }
 
 UniversalDApp.prototype.newAccount = function (password, passwordPromptCb, cb) {
@@ -116,24 +118,36 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
   }
 }
 
+// TODO should remove this cb
 UniversalDApp.prototype.getAccounts = function (cb) {
   var self = this
-
-  if (!executionContext.isVM()) {
-    // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
-    // See: https://github.com/ethereum/web3.js/issues/442
-    if (this._deps.config.get('settings/personal-mode')) {
-      return executionContext.web3().personal.getListAccounts(cb)
+  return new Promise((resolve, reject) => {
+    if (!executionContext.isVM()) {
+      // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
+      // See: https://github.com/ethereum/web3.js/issues/442
+      if (this._deps.config.get('settings/personal-mode')) {
+        return executionContext.web3().personal.getListAccounts((error, accounts) => {
+          if (cb) cb(error, accounts)
+          if (error) return reject(error)
+          resolve(accounts)
+        })
+      } else {
+        executionContext.web3().eth.getAccounts((error, accounts) => {
+          if (cb) cb(error, accounts)
+          if (error) return reject(error)
+          resolve(accounts)
+        })
+      }
     } else {
-      executionContext.web3().eth.getAccounts(cb)
+      if (!self.accounts) {
+        if (cb) cb('No accounts?')
+        reject('No accounts?')
+        return
+      }
+      if (cb) cb(null, Object.keys(self.accounts))
+      resolve(Object.keys(self.accounts))
     }
-  } else {
-    if (!self.accounts) {
-      return cb('No accounts?')
-    }
-
-    cb(null, Object.keys(self.accounts))
-  }
+  })
 }
 
 UniversalDApp.prototype.getBalance = function (address, cb) {
@@ -235,12 +249,12 @@ UniversalDApp.prototype.getInputs = function (funABI) {
 UniversalDApp.prototype.runTestTx = function (tx) {
   return new Promise((resolve, reject) => {
     executionContext.detectNetwork((error, network) => {
-      if (error) reject(error)
+      if (error) return reject(error)
       if (network.name === 'Main' && network.id === '1') {
-        reject(new Error('It is not allowed to make this action against mainnet'))
+        return reject(new Error('It is not allowed to make this action against mainnet'))
       }
       this.silentRunTx(tx, (error, result) => {
-        if (error) reject(error)
+        if (error) return reject(error)
         resolve({
           transactionHash: result.transactionHash,
           status: result.result.status,
