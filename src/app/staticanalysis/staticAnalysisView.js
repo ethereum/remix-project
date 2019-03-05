@@ -27,10 +27,10 @@ function staticAnalysisView (localRegistry) {
   }
 
   self._deps.pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
-    if (languageVersion.indexOf('soljson') !== 0) return
     self.lastCompilationResult = null
     self.lastCompilationSource = null
     $('#staticanalysisresult').empty()
+    if (languageVersion.indexOf('soljson') !== 0) return
     self.lastCompilationResult = data
     self.lastCompilationSource = source
     if (self.view.querySelector('#autorunstaticanalysis').checked) {
