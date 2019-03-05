@@ -81,7 +81,7 @@ class CompileTab {
     this.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra
-        this.events.emit('compilationFinished', source.target, source, this.compilerContainer.data.selectedVersion, data)
+        this.events.emit('compilationFinished', source.target, source, 'soljson', data)
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
