@@ -16,7 +16,6 @@ export function homepageProfile () {
   }
 }
 
-export function generateHomePage (appManager, appStore) {
  /* var actions1 = [
     { label: 'New file',
       type: 'callback',
@@ -76,3 +75,4 @@ export function generateHomePage (appManager, appStore) {
 
   return new LandingPage([sectionWorkspace, /* sectionStart, */sectionLearn, sectionPlugins, sectionHelp])
 }
+
