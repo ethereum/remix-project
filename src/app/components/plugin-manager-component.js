@@ -109,7 +109,8 @@ class PluginManagerComponent {
       if (!profile) return
       const resolveLocaton = (iframe) => this.appManager.resolveLocation(profile, iframe)
       const api = new Plugin(profile, { resolveLocaton })
-      this.appManager.init([{profile, api}])
+      this.appManager.registerOne({profile, api})
+      this.appManager.activateOne(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
