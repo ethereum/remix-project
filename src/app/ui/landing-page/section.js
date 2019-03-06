@@ -12,6 +12,7 @@ var css = csjs`
     background-color: var(--primary);
     font-family     : "Lucida Console", Monaco, monospace;
     font-size       : 12px;
+    cursor          : default;
   }
   span {
     cursor: pointer;
@@ -27,7 +28,6 @@ var css = csjs`
   a:hover {
     font-size: 14px;
   }
-
 `
 
 class Section {

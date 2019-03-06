@@ -16,7 +16,8 @@ export function homepageProfile () {
   }
 }
 
- /* var actions1 = [
+export function generateHomePage (appManager, appStore) {
+  /* var actions1 = [
     { label: 'New file',
       type: 'callback',
       payload: () => {
@@ -27,6 +28,7 @@ export function homepageProfile () {
     {label: 'Import from GitHub', type: `callback`, payload: () => { this.alert(`-imported from GitHub-`) }},
     {label: 'Import from gist', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }}
   ] */
+ 
 
   var actions3 = [
     {label: 'Remix documentation', type: `link`, payload: `https://remix.readthedocs.io/en/latest/#`},
