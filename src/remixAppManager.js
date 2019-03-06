@@ -76,7 +76,7 @@ export class RemixAppManager extends AppManagerApi {
       events: [],
       methods: [],
       notifications: {
-        'solidity': 'compilationFinished'
+        'solidity': ['compilationFinished']
       },
       url: 'https://remix-pipeline.surge.sh',
       description: ' - ',
