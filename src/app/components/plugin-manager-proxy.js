@@ -27,7 +27,7 @@ class PluginManagerProxy {
 
   unregister (name, instance) {
     if (this._listeners[name]) {
-      instance.events.off('compilationFinished', this._listeners[name])
+      instance.events.removeListener('compilationFinished', this._listeners[name])
     }
   }
 
