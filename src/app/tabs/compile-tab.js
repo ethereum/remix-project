@@ -25,7 +25,6 @@ class CompileTab {
       el: null,
       warnCompilationSlow: null,
       errorContainer: null,
-      contractNames: null,
       contractEl: null
     }
     this.queryParams = new QueryParams()
@@ -216,9 +215,8 @@ class CompileTab {
   }
 
   publish () {
-    const selectContractNames = this._view.contractNames
-    if (selectContractNames.children.length > 0 && selectContractNames.selectedIndex >= 0) {
-      var contract = this.data.contractsDetails[selectContractNames.children[selectContractNames.selectedIndex].innerHTML]
+    let contract = this.data.contractsDetails[this.selectedContract]
+    if (contract) {
       if (contract.metadata === undefined || contract.metadata.length === 0) {
         modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
       } else {
