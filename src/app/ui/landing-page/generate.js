@@ -63,7 +63,7 @@ export function generateHomePage (appManager, appStore) {
     payload: () => {
       appStore.getActives()
       .filter(({profile}) => !profile.required)
-      .forEach((profile) => { appManager.deactivateOne(profile.name) })
+      .forEach(({profile}) => { appManager.deactivateOne(profile.name) })
     }})
   defaultWorkspaces(appManager).forEach((workspace) => {
     sectionsWorkspaces.push({label: workspace.title, type: 'callback', payload: () => { workspace.activate() }})
