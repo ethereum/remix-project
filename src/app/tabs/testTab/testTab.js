@@ -18,19 +18,22 @@ class TestTabLogic {
     })
   }
 
-  getTests (cb) {
+  async getTests (cb) {
     var path = this.fileManager.currentPath()
     if (!path) return cb(null, [])
     var provider = this.fileManager.fileProviderOf(path)
     if (!provider) return cb(null, [])
     var tests = []
-    this.fileManager.filesFromPath(path, (error, files) => {
-      if (error) return cb(error)
-      for (var file in files) {
-        if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
-      }
-      cb(null, tests)
-    })
+    let files
+    try {
+      files = await this.fileManager.getFilesFromPath(path)
+    } catch (e) {
+      cb(e.message)
+    }
+    for (var file in files) {
+      if (/.(_test.sol)$/.exec(file)) tests.push(provider.type + '/' + file)
+    }
+    cb(null, tests)
   }
 
   generateTestContractSample () {
