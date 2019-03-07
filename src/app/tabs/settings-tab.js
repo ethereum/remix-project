@@ -150,11 +150,12 @@ module.exports = class SettingsTab extends ApiFactory {
         ${this._view.config.themes}
       </div>`
 
+    var self = this
     function onchangeGenerateContractMetadata (event) {
-      this.config.set('settings/generate-contract-metadata', !this.config.get('settings/generate-contract-metadata'))
+      self.config.set('settings/generate-contract-metadata', !self.config.get('settings/generate-contract-metadata'))
     }
     function onchangeOption (event) {
-      this.config.set('settings/always-use-vm', !this.config.get('settings/always-use-vm'))
+      self.config.set('settings/always-use-vm', !self.config.get('settings/always-use-vm'))
     }
     function onswitch2darkTheme (event) {
       styleGuide.switchTheme('dark')
@@ -166,7 +167,7 @@ module.exports = class SettingsTab extends ApiFactory {
       styleGuide.switchTheme('clean')
     }
     function onchangePersonal (event) {
-      this.config.set('settings/personal-mode', !this.config.get('settings/personal-mode'))
+      self.config.set('settings/personal-mode', !self.config.get('settings/personal-mode'))
     }
     styleGuide.switchTheme()
     return this._view.el
