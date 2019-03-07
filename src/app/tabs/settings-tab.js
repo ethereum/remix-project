@@ -77,7 +77,7 @@ module.exports = class SettingsTab extends ApiFactory {
     this._view.theme.light = yo`<input onchange=${onswitch2lightTheme} class="align-middle form-check-input" name="theme" id="themeLight" type="radio">`
     this._view.theme.dark = yo`<input onchange=${onswitch2darkTheme} class="align-middle form-check-input" name="theme" id="themeDark" type="radio">`
     this._view.theme.clean = yo`<input onchange=${onswitch2cleanTheme} class="align-middle form-check-input" name="theme" id="themeClean" type="radio">`
-    this._view.theme[this.data.currentTheme].setAttribute('checked', 'checked')
+    this._view.theme[this.currentTheme].setAttribute('checked', 'checked')
 
     this._view.config.homePage = yo`
     <div class="${css.info} card">
