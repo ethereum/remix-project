@@ -12,12 +12,12 @@ module.exports = class TestTab extends ApiFactory {
     super()
     this.compileTab = compileTab
     this._view = { el: null }
+    this.compileTab = compileTab
     this.fileManager = fileManager
     this.filePanel = filePanel
     this.testTabLogic = new TestTabLogic(fileManager)
     this.data = {}
     this.testList = yo`<div class=${css.testList}></div>`
-    this.listenToEvents()
   }
 
   get profile () {
@@ -31,6 +31,13 @@ module.exports = class TestTab extends ApiFactory {
     }
   }
 
+  activate () {
+    this.listenToEvents()
+  }
+
+  deactivate () {
+  }
+
   listenToEvents () {
     this.filePanel.event.register('newTestFileCreated', file => {
       var testList = this.view.querySelector("[class^='testList']")
@@ -40,7 +47,7 @@ module.exports = class TestTab extends ApiFactory {
       this.data.selectedTests.push(file)
     })
 
-    this.fileManager.event.register('currentFileChanged', (file, provider) => {
+    this.fileManager.events.on('currentFileChanged', (file, provider) => {
       this.testTabLogic.getTests((error, tests) => {
         if (error) return tooltip(error)
         this.data.allTests = tests
@@ -93,9 +100,9 @@ module.exports = class TestTab extends ApiFactory {
     if (result.type === 'contract') {
       this.testsOutput.appendChild(yo`<div class=${css.outputTitle}>${result.filename} (${result.value})</div>`)
     } else if (result.type === 'testPass') {
-      this.testsOutput.appendChild(yo`<div class='${css.testPass} ${css.testLog}'>✓ (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class="${css.testPass} ${css.testLog} bg-success">✓ (${result.value})</div>`)
     } else if (result.type === 'testFailure') {
-      this.testsOutput.appendChild(yo`<div class='${css.testFailure} ${css.testLog}'>✘ (${result.value})</div>`)
+      this.testsOutput.appendChild(yo`<div class="${css.testFailure} ${css.testLog} bg-danger">✘ (${result.value})</div>`)
     }
   }
 
@@ -110,21 +117,21 @@ module.exports = class TestTab extends ApiFactory {
   updateFinalResult (_err, result, filename) {
     this.testsSummary.hidden = false
     if (_err) {
-      this.testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${_err.message}</div>`)
+      this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${_err.message}</div>`)
       return
     }
     this.testsSummary.appendChild(yo`<div class=${css.summaryTitle}> ${filename} </div>`)
     if (result.totalPassing > 0) {
-      this.testsSummary.appendChild(yo`<div>${result.totalPassing} passing (${result.totalTime}s)</div>`)
+      this.testsSummary.appendChild(yo`<div class="text-success" >${result.totalPassing} passing (${result.totalTime}s)</div>`)
       this.testsSummary.appendChild(yo`<br>`)
     }
     if (result.totalFailing > 0) {
-      this.testsSummary.appendChild(yo`<div>${result.totalFailing} failing</div>`)
+      this.testsSummary.appendChild(yo`<div class="text-danger" >${result.totalFailing} failing</div>`)
       this.testsSummary.appendChild(yo`<br>`)
     }
     result.errors.forEach((error, index) => {
-      this.testsSummary.appendChild(yo`<div>${error.context} - ${error.value} </div>`)
-      this.testsSummary.appendChild(yo`<div class=${css.testFailureSummary} >${error.message}</div>`)
+      this.testsSummary.appendChild(yo`<div class="text-danger" >${error.context} - ${error.value} </div>`)
+      this.testsSummary.appendChild(yo`<div class="${css.testFailureSummary} text-danger" >${error.message}</div>`)
       this.testsSummary.appendChild(yo`<br>`)
     })
   }
@@ -134,7 +141,7 @@ module.exports = class TestTab extends ApiFactory {
       if (error) return
       var runningTest = {}
       runningTest[testFilePath] = { content }
-      remixTests.runTestSources(runningTest, this.testCallback, this.resultsCallback, (error, result) => {
+      remixTests.runTestSources(runningTest, (result) => { this.testCallback(result) }, (_err, result, cb) => { this.resultsCallback(_err, result, cb) }, (error, result) => {
         this.updateFinalResult(error, result, testFilePath)
         callback(error)
       }, (url, cb) => {
@@ -151,8 +158,8 @@ module.exports = class TestTab extends ApiFactory {
   }
 
   render () {
-    this.testsOutput = yo`<div class=${css.container} hidden='true' id="tests"></div>`
-    this.testsSummary = yo`<div class=${css.container} hidden='true' id="tests"></div>`
+    this.testsOutput = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
+    this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
 
     var el = yo`
       <div class="${css.testTabView} card" id="testView">
@@ -165,12 +172,12 @@ module.exports = class TestTab extends ApiFactory {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class="${css.generateTestFile}" onclick="${this.testTabLogic.generateTestFile(this)}">Generate test file</div>
+          <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile(this)}">Generate test file</div>
         </div>
         <div class="${css.tests}">
           ${this.testList}
-          <div class="${css.buttons}">
-            <div class="${css.runButton}"  onclick="${this.runTests.bind(this)}">Run Tests</div>
+          <div class="${css.buttons} btn-group">
+            <div class="${css.runButton} btn btn-primary m-1"  onclick="${this.runTests.bind(this)}">Run Tests</div>
             <label class="${css.label}" for="checkAllTests">
               <input id="checkAllTests"
                 type="checkbox"
