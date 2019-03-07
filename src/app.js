@@ -46,7 +46,6 @@ const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
 const DebuggerTab = require('./app/tabs/debugger-tab')
-// const SupportTab = require('./app/tabs/support-tab')
 const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
 const FilePanel = require('./app/panels/file-panel')
@@ -460,7 +459,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let analysis = new AnalysisTab(registry)
   let debug = new DebuggerTab()
   const landingPage = new LandingPage(appManager, appStore)
-  // let support = new SupportTab()
   let test = new TestTab(
     registry.get('filemanager').api,
     registry.get('filepanel').api,

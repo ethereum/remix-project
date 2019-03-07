@@ -150,7 +150,6 @@ module.exports = class SettingsTab extends ApiFactory {
         ${this._view.config.themes}
       </div>`
 
-    var self = this
     function onchangeGenerateContractMetadata (event) {
       self.config.set('settings/generate-contract-metadata', !self.config.get('settings/generate-contract-metadata'))
     }
