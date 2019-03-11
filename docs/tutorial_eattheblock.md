@@ -1,7 +1,7 @@
 Eat the Block tutorials
 =======================
 
-This section list Remix related tuturials:
+This section list Remix related tutorials:
 
 [Youtube channel](https://www.youtube.com/playlist?list=PLbbtODcOYIoH7597VZ4sTXRKJkuhMAqYy)
 
