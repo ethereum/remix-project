@@ -11,6 +11,11 @@ var css = csjs`
     padding-bottom   : 13px;
   }
 
+  .autoCompleteItem {
+    padding          : 4px;
+    border-radius    : 2px;
+  }
+
   .popup a {
     cursor           : pointer;
   }

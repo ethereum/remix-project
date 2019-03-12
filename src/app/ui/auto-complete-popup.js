@@ -1,12 +1,12 @@
 var yo = require('yo-yo')
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
+var Commands = require('../constants/commands')
 
 var modal = require('./modaldialog.js')
 
 // -------------- styling ----------------------
 var css = require('./styles/auto-complete-popup-styles')
-// var cssModal = require('./styles/modaldialog-styles')
 
 /* USAGE:
 
@@ -22,118 +22,180 @@ class AutoCompletePopup {
   constructor (opts = {}) {
     var self = this
     self.event = new EventManager()
+    self.isOpen = false
     self.data = {
       _options: opts.options || []
     }
+    self._components = {
+      modal: null
+    }
     self._view = {}
     self._startingElement = 0
-    self._elementsToShow = 3
-    self._removePopUp = this.resetCSSValuesModalContainer
-  }
-
-  resetCSSValuesModalContainer () {
-    /*
-    var modalContainer = document.querySelector(`.${cssModal.modal}`)
-    modalContainer.style.display = 'none'
-    var modalContent = document.querySelector(`.${css.modalContent}`)
-    let newModalContent = modalContent ? document.querySelector(`.${css.modalContent}`) : document.querySelector(`.${cssModal.modalContent}`)
-    newModalContent.className = cssModal.modalContent
-    */
+    self._elementsToShow = 4
+    self._selectedElement = 0
+    this.render()
   }
 
   render () {
     var self = this
-    var header = yo`<div class="${css.text}">Remix Commands</div>`
     self._view.autoComplete = yo`
       <div class="${css.popup}">
         <div>
           ${self.data._options.map((item, index) => {
             return yo`
-              <div class="${css.listHandlerHide}">
-                  <a value=${index}>
-                    <div onclick=${handleSelect}>
-                      ${Object.keys(item)[0]} 
-                    </div>
-                  </a>
-                  <div>
-                    ${Object.values(item)[0]}
+              <div class="${css.autoCompleteItem} ${css.listHandlerHide} item ${self._selectedElement === index ? 'bg-secondary' : ''}">
+                  <div value=${index} onclick=${(event) => { self.handleSelect(event.srcElement.innerText) }}>
+                    ${getKeyOf(item)} 
                   </div>
-                <hr/>
+                  <div>
+                    ${getValueOf(item)}
+                  </div>
               </div>
             `
           })}
         </div>
         <div class="${css.listHandlerHide}">
-          <button value=false onclick=${handleListIteration}>▲</button>
-          <button value=true onclick=${handleListIteration}>▼</button>
           <div class="${css.pageNumberAlignment}">Page ${(self._startingElement / self._elementsToShow) + 1} of ${Math.ceil(self.data._options.length / self._elementsToShow)}</div>
         </div>
       </div>
     `
     function setUpPopUp () {
       handleOpenPopup()
-      handleNagivationButtons()
       handleListSize()
     }
 
     function handleOpenPopup () {
-      if (self.data._options.length > 1) {
+      if (self.data._options.length > 0) {
         self._view.autoComplete.style.display = 'block'
-        modal(header.innerText, self._view.autoComplete, {label: null},
-          {
-            fn: () => { self._removePopUp() }
-          })
-        editCSSValuesModalContainer()
-      }
-    }
-
-    function handleSelect (event) {
-      self._removePopUp()
-      self._view.autoComplete.style.display = 'none'
-      self.event.trigger('handleSelect', [event.srcElement.innerText])
-    }
-
-    function handleNagivationButtons () {
-      if (self.data._options.length > self._elementsToShow) {
-        self._view.autoComplete.children[1].className = css.listHandlerButtonShow
+        self._components.modal = modal('', self._view.autoComplete, {label: null}, {label: null}, null, { class: css.modalContent, hideClose: true })
       }
     }
 
     function handleListSize () {
       if (self.data._options.length >= self._startingElement) {
         for (let i = self._startingElement; i < (self._elementsToShow + self._startingElement); i++) {
-          if (self._view.autoComplete.children[0].children[i]) {
-            self._view.autoComplete.children[0].children[i].className = css.listHandlerShow
+          let el = self._view.autoComplete.querySelectorAll('.item')[i]
+          if (el) {
+            el.classList.remove(css.listHandlerHide)
+            el.classList.add(css.listHandlerShow)
           }
         }
       }
     }
 
-    function handleListIteration (event) {
-      if (event.srcElement.value === 'true' || event.which === 40) {
-        if ((self._startingElement + self._elementsToShow) < self.data._options.length) {
-          self._startingElement += self._elementsToShow
-        }
-      } else {
-        if (self._startingElement > 0) {
-          self._startingElement -= self._elementsToShow
-        }
-      }
-      self.event.trigger('updateList')
-    }
-
-    function editCSSValuesModalContainer () {
-      /*
-      var modalContent = document.querySelector(`.${cssModal.modalContent}`)
-      let newModalContent = modalContent ? document.querySelector(`.${cssModal.modalContent}`) : document.querySelector(`.${css.modalContent}`)
-      newModalContent.className = css.modalContent
-      */
-    }
-
     setUpPopUp()
+
     return self._view
   }
 
+  handleSelect (text) {
+    this.removeAutoComplete()
+    this.event.trigger('handleSelect', [text])
+  }
+
+  moveUp () {
+    if (this._selectedElement === 0) return
+    this._selectedElement--
+    this._startingElement = this._selectedElement > 0 ? this._selectedElement - 1 : 0
+    this.event.trigger('updateList')
+    yo.update(this._view, this.render())
+  }
+
+  moveDown () {
+    if (this.data._options.length <= this._selectedElement + 1) return
+    this._selectedElement++
+    this._startingElement = this._selectedElement - 1
+    this.event.trigger('updateList')
+    yo.update(this._view, this.render())
+  }
+
+  handleAutoComplete (event, inputString) {
+    if (this.isOpen && (event.which === 27 || event.which === 8 || event.which === 46)) {
+      // backspace or any key that should remove the autocompletion
+      this.removeAutoComplete()
+      return true
+    }
+    if (this.isOpen && (event.which === 13 || event.which === 9)) {
+      // enter and tab (validate completion)
+      event.preventDefault()
+      if (this.data._options[this._selectedElement]) {
+        this.handleSelect(getKeyOf(this.data._options[this._selectedElement]))
+      }
+      this.removeAutoComplete()
+      return true
+    }
+    if (this.isOpen && event.which === 38) {
+      // move up
+      event.preventDefault()
+      this.isOpen = true
+      this.moveUp()
+      return true
+    }
+    if (this.isOpen && event.which === 40) {
+      // move down
+      event.preventDefault()
+      this.isOpen = true
+      this.moveDown()
+      return true
+    }
+    if (event.which === 13 || event.which === 9) {
+      // enter || tab and autocompletion is off, just returning false
+      return false
+    }
+    let textList = inputString.split(' ')
+    let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
+    if (inputString.length >= 2) {
+      // more than 2 letters, start completion
+      this.isOpen = true
+      this.data._options = []
+      Commands.allPrograms.forEach(item => {
+        let program = getKeyOf(item)
+        if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
+          this.data._options.push(item)
+        } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
+          Commands.allCommands.forEach(item => {
+            let command = getKeyOf(item)
+            if (command.includes(autoCompleteInput.trim())) {
+              this.data._options.push(item)
+            }
+          })
+        }
+      })
+
+      if (this.data._options.length === 1 && event.which === 9) {
+        // if only one option and tab is pressed, we resolve it
+        event.preventDefault()
+        textList.pop()
+        textList.push(getKeyOf(this.data._options[0]))
+        this.handleSelect(`${textList}`.replace(/,/g, ' '))
+        this.removeAutoComplete()
+        return
+      }
+
+      yo.update(this._view, this.render())
+      return true
+    }
+    return false
+  }
+
+  removeAutoComplete () {
+    if (!this.isOpen) return
+    this._view.autoComplete.style.display = 'none'
+    if (this._components.modal) this._components.modal.cancelListener()
+    this.isOpen = false
+    this.data._options = []
+    this._startingElement = 0
+    this._selectedElement = 0
+    yo.update(this._view, this.render())
+  }
+}
+
+function getKeyOf (item) {
+  return Object.keys(item)[0]
+}
+
+function getValueOf (item) {
+  return Object.values(item)[0]
 }
 
 module.exports = AutoCompletePopup
