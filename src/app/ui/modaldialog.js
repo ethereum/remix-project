@@ -1,17 +1,20 @@
 var yo = require('yo-yo')
 var css = require('./styles/modaldialog-styles')
 
-module.exports = (title, content, ok, cancel, focusSelector) => {
+module.exports = (title, content, ok, cancel, focusSelector, opts) => {
+  opts = opts || {}
   var container = document.querySelector(`.${css.modal}`)
   if (!container) {
-    document.querySelector('body').appendChild(html())
+    document.querySelector('body').appendChild(html(opts))
     container = document.querySelector(`.${css.modal}`)
   }
 
   var closeDiv = document.getElementById('modal-close')
+  if (opts.hideClose) closeDiv.style.display = 'none'
 
   var okDiv = document.getElementById('modal-footer-ok')
   okDiv.innerHTML = (ok && ok.label !== undefined) ? ok.label : 'OK'
+  okDiv.style.display = okDiv.innerHTML === '' ? 'none' : 'inline-block'
 
   var cancelDiv = document.getElementById('modal-footer-cancel')
   cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
@@ -38,6 +41,10 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
     removeEventListener()
     hide()
     if (cancel && cancel.fn) cancel.fn()
+    if (container) {
+      container.class = css.modal
+      container = null
+    }
   }
 
   function modalKeyEvent (e) {
@@ -50,10 +57,11 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
   }
 
   function hide () {
-    container.style.display = 'none'
+    if (container) container.style.display = 'none'
   }
 
   function show () {
+    if (!container) return
     container.style.display = 'block'
     if (focusSelector) {
       const focusTarget = document.querySelector(`.${css.modal} ${focusSelector}`)
@@ -71,19 +79,24 @@ module.exports = (title, content, ok, cancel, focusSelector) => {
     cancelDiv.removeEventListener('click', cancelListener)
     closeDiv.removeEventListener('click', cancelListener)
     document.removeEventListener('keydown', modalKeyEvent)
-    document.getElementById('modal-background').removeEventListener('click', cancelListener)
+    if (document.getElementById('modal-background')) {
+      document.getElementById('modal-background').removeEventListener('click', cancelListener)
+    }
   }
   okDiv.addEventListener('click', okListener)
   cancelDiv.addEventListener('click', cancelListener)
   closeDiv.addEventListener('click', cancelListener)
   document.addEventListener('keydown', modalKeyEvent)
-  document.getElementById('modal-background').addEventListener('click', cancelListener)
+  if (document.getElementById('modal-background')) {
+    document.getElementById('modal-background').addEventListener('click', cancelListener)
+  }
+  return { container, okListener, cancelListener }
 }
 
-function html () {
+function html (opts) {
   return yo`<div id="modal-dialog" class="${css.modal}">
   <div id="modal-background" class="${css['modalBackground']}"> </div>
-  <div class="${css['modalContent']} bg-light text-secondary">
+  <div class="${css['modalContent']} bg-light text-secondary ${opts.class}">
     <div class="${css['modalHeader']}">
     <h3></h3>
     <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
