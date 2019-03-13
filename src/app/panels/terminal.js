@@ -13,7 +13,6 @@ var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
 var Dropdown = require('../ui/dropdown')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
-var Commands = require('../constants/commands')
 
 var csjs = require('csjs-inject')
 
@@ -63,17 +62,12 @@ class Terminal {
     })
     self._components.autoCompletePopup = new AutoCompletePopup()
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
-      self._components.autoCompletePopup.data._options = []
-      self._components.autoCompletePopup._startingElement = 0
       let textList = self._view.input.innerText.split(' ')
       textList.pop()
       textList.push(input)
       self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
       self._view.input.focus()
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
-    })
-    self._components.autoCompletePopup.event.register('updateList', function () {
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
+      self.putCursor2End(self._view.input)
     })
     self._commands = {}
     self.commands = {}
@@ -115,7 +109,7 @@ class Terminal {
     if (self._view.el) return self._view.el
     self._view.journal = yo`<div class=${css.journal}></div>`
     self._view.input = yo`
-      <span class=${css.input} contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
+      <span class=${css.input} spellcheck="false" contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
     `
     self._view.input.innerText = '\n'
     self._view.cli = yo`
@@ -150,7 +144,7 @@ class Terminal {
           ${self._view.dropdown}
           <div class=${css.search}>
             <i class="fa fa-search ${css.searchIcon} bg-light btn" aria-hidden="true"></i>
-            <input type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
+            <input spellcheck="false" type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
       </div>
@@ -163,7 +157,6 @@ class Terminal {
         </div>
       </div>
     `
-    self._view.autoCompletePopup = self._components.autoCompletePopup.render()
     self._view.el = yo`
       <div class="${css.panel}">
         ${self._view.bar}
@@ -406,14 +399,16 @@ class Terminal {
     return self._view.el
 
     function change (event) {
-      handleAutoComplete(event)
+      if (self._components.autoCompletePopup.handleAutoComplete(
+        event,
+        self._view.input.innerText)) return
       if (self._view.input.innerText.length === 0) self._view.input.innerText += '\n'
       if (event.which === 13) {
         if (event.ctrlKey) { // <ctrl+enter>
           self._view.input.innerText += '\n'
-          putCursor2End(self._view.input)
+          self.putCursor2End(self._view.input)
           self.scroll2bottom()
-          removeAutoComplete()
+          self._components.autoCompletePopup.removeAutoComplete()
         } else { // <enter>
           self._cmdIndex = -1
           self._cmdTemp = ''
@@ -424,102 +419,55 @@ class Terminal {
             self._cmdHistory.unshift(script)
             self.commands.script(script)
           }
-          removeAutoComplete()
+          self._components.autoCompletePopup.removeAutoComplete()
         }
       } else if (event.which === 38) { // <arrowUp>
-        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
-          self._components.autoCompletePopup._view.autoComplete.children[1].children[0].onclick(event)
-        } else {
-          var len = self._cmdHistory.length
-          if (len === 0) return event.preventDefault()
-          if (self._cmdHistory.length - 1 > self._cmdIndex) {
-            self._cmdIndex++
-          }
-          self._view.input.innerText = self._cmdHistory[self._cmdIndex]
-          putCursor2End(self._view.input)
-          self.scroll2bottom()
+        var len = self._cmdHistory.length
+        if (len === 0) return event.preventDefault()
+        if (self._cmdHistory.length - 1 > self._cmdIndex) {
+          self._cmdIndex++
         }
+        self._view.input.innerText = self._cmdHistory[self._cmdIndex]
+        self.putCursor2End(self._view.input)
+        self.scroll2bottom()
       } else if (event.which === 40) { // <arrowDown>
-        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
-          self._components.autoCompletePopup._view.autoComplete.children[1].children[1].onclick(event)
-        } else {
-          if (self._cmdIndex > -1) {
-            self._cmdIndex--
-          }
-          self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
-          putCursor2End(self._view.input)
-          self.scroll2bottom()
+        if (self._cmdIndex > -1) {
+          self._cmdIndex--
         }
+        self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+        self.putCursor2End(self._view.input)
+        self.scroll2bottom()
       } else {
         self._cmdTemp = self._view.input.innerText
       }
     }
-    function putCursor2End (editable) {
-      var range = document.createRange()
-      range.selectNode(editable)
-      var child = editable
-      var chars
+  }
+  putCursor2End (editable) {
+    var range = document.createRange()
+    range.selectNode(editable)
+    var child = editable
+    var chars
 
-      while (child) {
-        if (child.lastChild) child = child.lastChild
-        else break
-        if (child.nodeType === Node.TEXT_NODE) {
-          chars = child.textContent.length
-        } else {
-          chars = child.innerHTML.length
-        }
+    while (child) {
+      if (child.lastChild) child = child.lastChild
+      else break
+      if (child.nodeType === Node.TEXT_NODE) {
+        chars = child.textContent.length
+      } else {
+        chars = child.innerHTML.length
       }
-
-      range.setEnd(child, chars)
-      var toStart = true
-      var toEnd = !toStart
-      range.collapse(toEnd)
-
-      var sel = window.getSelection()
-      sel.removeAllRanges()
-      sel.addRange(range)
-
-      editable.focus()
     }
-    function handleAutoComplete (event) {
-      if (event.which === 9) {
-        event.preventDefault()
-        let textList = self._view.input.innerText.split(' ')
-        let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
-        if (self._view.input.innerText.length >= 2) {
-          self._components.autoCompletePopup.data._options = []
-          Commands.allPrograms.forEach(item => {
-            if (Object.keys(item)[0].substring(0, Object.keys(item)[0].length - 1).includes(autoCompleteInput.trim())) {
-              self._components.autoCompletePopup.data._options.push(item)
-            } else if (autoCompleteInput.trim().includes(Object.keys(item)[0]) || (Object.keys(item)[0] === autoCompleteInput.trim())) {
-              Commands.allCommands.forEach(item => {
-                if (Object.keys(item)[0].includes(autoCompleteInput.trim())) {
-                  self._components.autoCompletePopup.data._options.push(item)
-                }
-              })
-            }
-          })
-        }
-        if (self._components.autoCompletePopup.data._options.length === 1) {
-          textList.pop()
-          textList.push(Object.keys(self._components.autoCompletePopup.data._options[0])[0])
-          self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
-          self._components.autoCompletePopup.data._options = []
-          putCursor2End(self._view.input)
-        }
-      }
-      if (event.which === 27 || event.which === 8 || event.which === 46) {
-        self._components.autoCompletePopup.data._options = []
-        self._components.autoCompletePopup._startingElement = 0
-      }
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
-    }
-    function removeAutoComplete () {
-      self._components.autoCompletePopup.data._options = []
-      self._components.autoCompletePopup._startingElement = 0
-      self._components.autoCompletePopup._removePopUp()
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
-    }
+
+    range.setEnd(child, chars)
+    var toStart = true
+    var toEnd = !toStart
+    range.collapse(toEnd)
+
+    var sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+
+    editable.focus()
   }
   updateJournal (filterEvent) {
     var self = this
