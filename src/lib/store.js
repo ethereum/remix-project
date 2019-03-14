@@ -135,7 +135,8 @@ export class EntityStore extends Store {
    * Add a new entity to the state
    * @param {Object} entity
    */
-  add (id, entity) {
+  add (entity) {
+    const id = entity[this.keyId]
     this.state.entities[id] = entity
     this.state.ids.push(id)
     this.event.emit('add', entity)
