@@ -24,14 +24,14 @@ export class RemixAppManager extends AppManagerApi {
   }
 
   setActive (name, isActive) {
-    const entity = this.getEntity(name)
+    const api = this.getEntity(name)
     // temp
-    if (entity && (name === 'solidity' || name === 'vyper')) {
-      isActive ? this.data.proxy.register(name, entity.api) : this.data.proxy.unregister(name, entity.api)
+    if (api && (name === 'solidity' || name === 'vyper')) {
+      isActive ? this.data.proxy.register(name, api) : this.data.proxy.unregister(name, api)
     }
     isActive ? this.store.activate(name) : this.store.deactivate(name)
     if (!isActive) {
-      this.removeHiddenServices(entity)
+      this.removeHiddenServices(api)
     }
   }
 
@@ -41,16 +41,6 @@ export class RemixAppManager extends AppManagerApi {
 
   addEntity (api) {
     this.store.add(api)
-  }
-
-  // this function is only used for iframe plugins
-  resolveLocation (profile, domEl) {
-    if (profile.icon) {
-      this.event.emit('pluginNeedsLocation', profile, domEl)
-    } else {
-      this.hiddenServices[profile.name] = domEl
-      document.body.appendChild(domEl)
-    }
   }
 
   removeHiddenServices (profile) {
@@ -84,8 +74,8 @@ export class RemixAppManager extends AppManagerApi {
       location: 'mainPanel'
     }
     return [
-      new Plugin(pipeline, { resolveLocaton: (iframe) => this.resolveLocation(pipeline, iframe) }),
-      new Plugin(vyper, { resolveLocaton: (iframe) => this.resolveLocation(vyper, iframe) })
+      new Plugin(pipeline),
+      new Plugin(vyper)
     ]
   }
 }
