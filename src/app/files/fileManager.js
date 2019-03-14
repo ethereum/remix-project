@@ -164,20 +164,6 @@ class FileManager extends ApiFactory {
   }
 
   switchFile (file) {
-    if (file) return _switchFile(file)
-    else {
-      var browserProvider = this._deps.filesProviders['browser']
-      browserProvider.resolveDirectory('browser', (error, filesTree) => {
-        if (error) console.error(error)
-        var fileList = Object.keys(filesTree)
-        if (fileList.length) {
-          _switchFile(browserProvider.type + '/' + fileList[0])
-        } else {
-          this.events.emit('currentFileChanged')
-          this._deps.editor.displayEmptyReadOnlySession()
-        }
-      })
-    }
     const _switchFile = (file) => {
       this.saveCurrentFile()
       this._deps.config.set('currentFile', file)
@@ -192,6 +178,20 @@ class FileManager extends ApiFactory {
             this._deps.editor.open(file, content)
           }
           this.events.emit('currentFileChanged', file)
+        }
+      })
+    }
+    if (file) return _switchFile(file)
+    else {
+      var browserProvider = this._deps.filesProviders['browser']
+      browserProvider.resolveDirectory('browser', (error, filesTree) => {
+        if (error) console.error(error)
+        var fileList = Object.keys(filesTree)
+        if (fileList.length) {
+          _switchFile(browserProvider.type + '/' + fileList[0])
+        } else {
+          this.events.emit('currentFileChanged')
+          this._deps.editor.displayEmptyReadOnlySession()
         }
       })
     }
