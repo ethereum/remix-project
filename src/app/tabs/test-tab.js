@@ -7,8 +7,11 @@ var globalRegistry = require('../../global/registry')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
 
-module.exports = class TestTab {
+import { ApiFactory } from 'remix-plugin'
+
+module.exports = class TestTab extends ApiFactory {
   constructor (localRegistry, compileTab) {
+    super()
     // TODO here is a direct reference to compile tab, should be removed
     const self = this
     self.compileTab = compileTab
@@ -23,7 +26,8 @@ module.exports = class TestTab {
     self.data = {}
     self.testList = yo`<div class=${css.testList}></div>`
   }
-  profile () {
+
+  get profile () {
     return {
       name: 'solidityUnitTesting',
       displayName: 'solidity unit testing',
@@ -33,6 +37,7 @@ module.exports = class TestTab {
       description: ' - '
     }
   }
+
   render () {
     const self = this
     var testsOutput = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
