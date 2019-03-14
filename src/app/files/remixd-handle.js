@@ -1,3 +1,5 @@
+import { ApiFactory } from 'remix-plugin'
+
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 
@@ -14,13 +16,14 @@ var css = csjs`
   }
 `
 
-export class RemixdHandle {
+export class RemixdHandle extends ApiFactory {
   constructor (fileSystemExplorer, locahostProvider) {
+    super()
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
   }
 
-  profile () {
+  get profile () {
     return {
       name: 'remixd',
       methods: [],

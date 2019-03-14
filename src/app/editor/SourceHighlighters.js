@@ -1,13 +1,16 @@
 'use strict'
 const SourceHighlighter = require('./sourceHighlighter')
 
-class SourceHighlighters {
+import { ApiFactory } from 'remix-plugin'
+
+class SourceHighlighters extends ApiFactory {
 
   constructor () {
+    super()
     this.highlighters = {}
   }
 
-  profile () {
+  get profile () {
     return {
       displayName: 'source highlighters',
       name: 'sourceHighlighters',

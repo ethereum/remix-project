@@ -2,7 +2,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
-import { Plugin } from 'remix-plugin'
+import { Plugin, ApiFactory } from 'remix-plugin'
 
 const css = csjs`
   .pluginSearch {
@@ -34,9 +34,10 @@ const css = csjs`
   }
 `
 
-class PluginManagerComponent {
+class PluginManagerComponent extends ApiFactory {
 
   constructor () {
+    super()
     this.event = new EventEmitter()
     this.views = {
       root: null,
@@ -46,7 +47,7 @@ class PluginManagerComponent {
     this.filter = ''
   }
 
-  profile () {
+  get profile () {
     return {
       displayName: 'plugin manager',
       name: 'pluginManager',
@@ -71,10 +72,10 @@ class PluginManagerComponent {
   }
 
   renderItem (name) {
-    const mod = this.store.getOne(name)
-    if (!mod) return
+    const api = this.store.getOne(name)
+    if (!api) return
     const isActive = this.store.actives.includes(name)
-    const displayName = (mod.profile.displayName) ? mod.profile.displayName : name
+    const displayName = (api.profile.displayName) ? api.profile.displayName : name
 
     const activationButton = isActive
       ? yo`
@@ -92,7 +93,7 @@ class PluginManagerComponent {
           <h6 class="${css.displayName}">${displayName}</h6>
           ${activationButton}
         </div>
-        <p class="${css.description}">${mod.profile.description}</p>
+        <p class="${css.description}">${api.profile.description}</p>
       </article>
     `
   }
@@ -109,8 +110,8 @@ class PluginManagerComponent {
       if (!profile) return
       const resolveLocaton = (iframe) => this.appManager.resolveLocation(profile, iframe)
       const api = new Plugin(profile, { resolveLocaton })
-      this.appManager.registerOne({profile, api})
-      this.appManager.activateOne(profile.name)
+      this.appManager.registerOne(api)
+      this.appManager.activateOne(api.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
@@ -119,11 +120,11 @@ class PluginManagerComponent {
 
   render () {
     // Filtering helpers
-    const isFiltered = ({profile}) => profile.name.toLowerCase().includes(this.filter)
+    const isFiltered = (api) => api.name.toLowerCase().includes(this.filter)
     const isNotRequired = ({profile}) => !profile.required
     const sortByName = (a, b) => {
-      const nameA = a.profile.name.toUpperCase()
-      const nameB = b.profile.name.toUpperCase()
+      const nameA = a.name.toUpperCase()
+      const nameB = b.name.toUpperCase()
       return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0
     }
 
@@ -132,10 +133,10 @@ class PluginManagerComponent {
       .filter(isFiltered)
       .filter(isNotRequired)
       .sort(sortByName)
-      .reduce(({actives, inactives}, {profile}) => {
-        return this.store.actives.includes(profile.name)
-          ? { actives: [...actives, profile.name], inactives }
-          : { inactives: [...inactives, profile.name], actives }
+      .reduce(({actives, inactives}, api) => {
+        return this.store.actives.includes(api.name)
+          ? { actives: [...actives, api.name], inactives }
+          : { inactives: [...inactives, api.name], actives }
       }, { actives: [], inactives: [] })
 
     const activeTile = actives.length !== 0
