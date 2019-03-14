@@ -1,19 +1,22 @@
+/* global FileReader */
+var async = require('async')
+var Gists = require('gists')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
+var tooltip = require('../ui/tooltip')
+var QueryParams = require('../../lib/query-params')
+var helper = require('../../lib/helper')
 var yo = require('yo-yo')
 var Treeview = require('../ui/TreeView')
 var modalDialog = require('../ui/modaldialog')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
 var EventManager = require('../../lib/events')
 var contextMenu = require('../ui/contextMenu')
 var addTooltip = require('../ui/tooltip')
-var helper = require('../../lib/helper')
-
 var css = require('./styles/file-explorer-styles')
-
 var globalRegistry = require('../../global/registry')
-
+var queryParams = new QueryParams()
 let MENU_HANDLE
 
-function fileExplorer (localRegistry, files) {
+function fileExplorer (localRegistry, files, menuItems) {
   var self = this
   this.events = new EventManager()
   // file provider backend
@@ -22,6 +25,35 @@ function fileExplorer (localRegistry, files) {
   this.focusElement = null
   // path currently focused on
   this.focusPath = null
+  let allItems =
+    [
+      { action: 'createNewFile',
+        title: 'Create New File in the Browser Storage Explorer',
+        icon: 'fa fa-plus-circle'
+      },
+      { action: 'publishToGist',
+        title: 'Publish all [browser] explorer files to a github gist',
+        icon: 'fa fa-github'
+      },
+      { action: 'copyFiles',
+        title: 'Copy all files to another instance of Remix IDE',
+        icon: 'fa fa-files-o'
+      },
+      { action: 'uploadFile',
+        title: 'Add Local file to the Browser Storage Explorer',
+        icon: 'fa fa-folder-open'
+      },
+      { action: 'updateGist',
+        title: 'Update the current [gist] explorer',
+        icon: 'fa fa-github'
+      }
+    ]
+  // menu items
+  this.menuItems = allItems.filter(
+    (item) => {
+      if (menuItems) return menuItems.find((name) => { return name === item.action })
+    }
+  )
 
   self._components = {}
   self._components.registry = localRegistry || globalRegistry
@@ -30,6 +62,8 @@ function fileExplorer (localRegistry, files) {
     editor: self._components.registry.get('editor').api,
     fileManager: self._components.registry.get('filemanager').api
   }
+
+  self._components.registry.put(`fileexplorer${files.type}`, this)
 
   // warn if file changed outside of Remix
   function remixdDialog () {
@@ -122,13 +156,19 @@ function fileExplorer (localRegistry, files) {
     },
     formatSelf: function formatSelf (key, data, li) {
       var isRoot = data.path === self.files.type
-      return yo`<label
-        class=${css.label}
-        data-path="${data.path}"
-        style="${isRoot ? 'font-weight:bold;' : ''}"
-        onkeydown=${editModeOff}
-        onblur=${editModeOff}
-      >${key.split('/').pop()}</label>`
+      return yo`
+        <div class="${css.items}">
+          <label
+            class=${css.label}
+            data-path="${data.path}"
+            style="${isRoot ? 'font-weight:bold;' : ''}"
+            onkeydown=${editModeOff}
+            onblur=${editModeOff}
+          >${key.split('/').pop()}
+          </label>
+          ${isRoot ? self.renderMenuItems() : ''}
+        </div>
+      `
     }
   })
 
@@ -274,6 +314,217 @@ fileExplorer.prototype.show = function () {
 fileExplorer.prototype.init = function () {
   this.container = yo`<div></div>`
   return this.container
+}
+
+fileExplorer.prototype.publishToGist = function (fileProviderName) {
+  modalDialogCustom.confirm(
+    null,
+    'Are you sure you want to publish all your files anonymously as a public gist on github.com?',
+    () => { this.toGist(fileProviderName) }
+  )
+}
+
+fileExplorer.prototype.uploadFile = function (event) {
+  // TODO The file explorer is merely a view on the current state of
+  // the files module. Please ask the user here if they want to overwrite
+  // a file and then just use `files.add`. The file explorer will
+  // pick that up via the 'fileAdded' event from the files module.
+
+  let self = this
+
+  ;[...event.target.files].forEach((file) => {
+    let files = this.files
+    function loadFile () {
+      var fileReader = new FileReader()
+      fileReader.onload = function (event) {
+        if (helper.checkSpecialChars(file.name)) {
+          modalDialogCustom.alert('Special characters are not allowed')
+          return
+        }
+        var success = files.set(name, event.target.result)
+        if (!success) {
+          modalDialogCustom.alert('Failed to create file ' + name)
+        } else {
+          self.events.trigger('focus', [name])
+        }
+      }
+      fileReader.readAsText(file)
+    }
+    var name = files.type + '/' + file.name
+    files.exists(name, (error, exist) => {
+      if (error) console.log(error)
+      if (!exist) {
+        loadFile()
+      } else {
+        modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
+      }
+    })
+  })
+}
+
+fileExplorer.prototype.toGist = function (id) {
+  let proccedResult = function (error, data) {
+    if (error) {
+      modalDialogCustom.alert('Failed to manage gist: ' + error)
+    } else {
+      if (data.html_url) {
+        modalDialogCustom.confirm(null, `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
+          window.open(data.html_url, '_blank')
+        })
+      } else {
+        modalDialogCustom.alert(data.message + ' ' + data.documentation_url + ' ' + JSON.stringify(data.errors, null, '\t'))
+      }
+    }
+  }
+
+  this.packageFiles(this.files, (error, packaged) => {
+    if (error) {
+      console.log(error)
+      modalDialogCustom.alert('Failed to create gist: ' + error)
+    } else {
+      var tokenAccess = this._deps.config.get('settings/gist-access-token')
+      if (!tokenAccess) {
+        modalDialogCustom.alert(
+          'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.'
+        )
+      } else {
+        var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
+          queryParams.get().version +
+          '&optimize=' +
+          queryParams.get().optimize +
+          '&gist='
+        var gists = new Gists({
+          token: tokenAccess
+        })
+        if (id) {
+          tooltip('Saving gist (' + id + ') ...')
+          gists.edit({
+            description: description,
+            public: true,
+            files: packaged,
+            id: id
+          }, (error, result) => {
+            proccedResult(error, result)
+          })
+        } else {
+          tooltip('Creating a new gist ...')
+          gists.create({
+            description: description,
+            public: true,
+            files: packaged
+          }, (error, result) => {
+            proccedResult(error, result)
+          })
+        }
+      }
+    }
+  })
+}
+
+// return all the files, except the temporary/readonly ones..
+fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
+  var ret = {}
+  filesProvider.resolveDirectory(filesProvider.type, (error, files) => {
+    if (error) callback(error)
+    else {
+      async.eachSeries(Object.keys(files), (path, cb) => {
+        filesProvider.get(path, (error, content) => {
+          if (/^\s+$/.test(content)) {
+            content = '// this line is added to create a gist. Empty file is not allowed.'
+          }
+          if (error) cb(error)
+          else {
+            ret[path] = { content }
+            cb()
+          }
+        })
+      }, (error) => {
+        callback(error, ret)
+      })
+    }
+  })
+}
+
+// ------------------ copy files --------------
+fileExplorer.prototype.copyFiles = function () {
+  let self = this
+  modalDialogCustom.prompt(
+    null,
+    'To which other remix-ide instance do you want to copy over all files?',
+    'https://remix.ethereum.org',
+    (target) => {
+      doCopy(target)
+    }
+  )
+  function doCopy (target) {
+    // package only files from the browser storage.
+    self.packageFiles(self.files, (error, packaged) => {
+      if (error) {
+        console.log(error)
+      } else {
+        let iframe = yo`
+          <iframe src=${target} style='display:none;'></iframe>
+        `
+        iframe.onload = function () {
+          iframe.contentWindow.postMessage(['loadFiles', packaged], '*')
+          tooltip('Files copied successfully.')
+        }
+        document.querySelector('body').appendChild(iframe)
+      }
+    })
+  }
+}
+
+// ------------------ gist publish --------------
+fileExplorer.prototype.updateGist = function () {
+  var gistId = this.files.id
+  if (!gistId) {
+    tooltip('no gist content is currently loaded.')
+  } else {
+    this.toGist(gistId)
+  }
+}
+
+fileExplorer.prototype.createNewFile = function () {
+  let self = this
+  modalDialogCustom.prompt(null, 'File Name', 'Untitled.sol', (input) => {
+    helper.createNonClashingName(input, self.files, (error, newName) => {
+      if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
+      if (!self.files.set(newName, '')) {
+        modalDialogCustom.alert('Failed to create file ' + newName)
+      } else {
+        var file = self.files.type + '/' + newName
+        self._deps.fileManager.switchFile(file)
+        if (file.includes('_test.sol')) {
+          self.event.trigger('newTestFileCreated', [file])
+        }
+      }
+    })
+  }, null, true)
+}
+
+fileExplorer.prototype.renderMenuItems = function () {
+  let items = ''
+  if (this.menuItems) {
+    items = this.menuItems.map(({action, title, icon}) => {
+      if (action === 'uploadFile') {
+        return yo`
+          <label class="${icon}">
+            <input type="file" onchange=${(event) => {
+              this.uploadFile(event)
+            }} multiple />
+          </label>
+        `
+      } else {
+        return yo`
+        <span onclick=${() => { this[ action ]() }} class="newFile ${css.newFile}" title=${title}>
+          <i class=${icon}></i>
+        </span>
+        `
+      }
+    })
+  }
+  return yo`<span class=${css.menu}>${items}</span>`
 }
 
 fileExplorer.prototype.ensureRoot = function (cb) {

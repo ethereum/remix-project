@@ -14,22 +14,6 @@ var css = csjs`
     position          : relative;
     width             : 100%;
   }
-  .menu               {
-    margin-top        : -0.2em;
-    flex-shrink       : 0;
-    display           : flex;
-    flex-direction    : row;
-    min-width         : 160px;
-  }
-  .newFile            {
-    padding           : 10px;
-  }
-  .newFile i          {
-    cursor            : pointer;
-  }
-  .newFile i:hover    {
-    color             : var(--secondary)
-  }
   .gist            {
     padding           : 10px;
   }

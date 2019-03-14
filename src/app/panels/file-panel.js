@@ -1,20 +1,9 @@
-/* global FileReader */
-var async = require('async')
-var $ = require('jquery')
 var yo = require('yo-yo')
 var CompilerMetadata = require('../files/compiler-metadata')
 var EventManager = require('../../lib/events')
-var Gists = require('gists')
 var FileExplorer = require('../files/file-explorer')
-var modalDialogCustom = require('../ui/modal-dialog-custom')
-var tooltip = require('../ui/tooltip')
-var QueryParams = require('../../lib/query-params')
-var queryParams = new QueryParams()
-var helper = require('../../lib/helper')
 var { RemixdHandle } = require('../files/remixd-handle.js')
-
 var globalRegistry = require('../../global/registry')
-
 var css = require('./styles/file-panel-styles')
 
 import { ApiFactory } from 'remix-plugin'
