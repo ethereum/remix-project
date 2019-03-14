@@ -16,6 +16,22 @@ var css = csjs`
     cursor            : pointer;
   }
   .file               {
+    padding           : 4px;
+  }
+  .newFile            {
+    padding           : 4px;
+  }
+  .newFile i          {
+    cursor            : pointer;
+  }
+  .newFile i:hover    {
+    color             : var(--secondary)
+  }
+  .menu               {
+    margin-left       : 20px;
+  }
+  .items              {
+    display           : inline
   }
   .hasFocus           {
   }
