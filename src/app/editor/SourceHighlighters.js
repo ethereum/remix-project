@@ -19,27 +19,21 @@ class SourceHighlighters extends ApiFactory {
     }
   }
 
-    // TODO what to do with mod?
-  async highlight (mod, lineColumnPos, filePath, hexColor) {
-    return new Promise((resolve, reject) => {
-      let position
-      try {
-        position = JSON.parse(lineColumnPos)
-      } catch (e) {
-        throw e
-      }
-      if (!this.highlighters[mod]) this.highlighters[mod] = new SourceHighlighter()
-      this.highlighters[mod].currentSourceLocation(null)
-      this.highlighters[mod].currentSourceLocationFromfileName(position, filePath, hexColor)
-      resolve()
-    })
+  highlight (lineColumnPos, filePath, hexColor) {
+    const { from } = this.currentRequest
+    try {
+      const position = JSON.parse(lineColumnPos)
+      if (!this.highlighters[from]) this.highlighters[from] = new SourceHighlighter()
+      this.highlighters[from].currentSourceLocation(null)
+      this.highlighters[from].currentSourceLocationFromfileName(position, filePath, hexColor)
+    } catch (e) {
+      throw e
+    }
   }
 
-  async discardHighlight (mod) {
-    return new Promise((resolve, reject) => {
-      if (this.highlighters[mod]) this.highlighters[mod].currentSourceLocation(null)
-      resolve()
-    })
+  discardHighlight () {
+    const { from } = this.currentRequest
+    if (this.highlighters[from]) this.highlighters[from].currentSourceLocation(null)
   }
 }
 
