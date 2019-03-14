@@ -67,8 +67,8 @@ class PluginManagerComponent extends ApiFactory {
     this.store = store
     this.store.event.on('activate', (name) => { this.reRender() })
     this.store.event.on('deactivate', (name) => { this.reRender() })
-    this.store.event.on('add', (entity) => { this.reRender() })
-    this.store.event.on('remove', (entity) => { this.reRender() })
+    this.store.event.on('add', (api) => { this.reRender() })
+    this.store.event.on('remove', (api) => { this.reRender() })
   }
 
   renderItem (name) {
@@ -108,10 +108,8 @@ class PluginManagerComponent extends ApiFactory {
     try {
       const profile = await this.localPlugin.open(this.store.getAll())
       if (!profile) return
-      const resolveLocaton = (iframe) => this.appManager.resolveLocation(profile, iframe)
-      const api = new Plugin(profile, { resolveLocaton })
-      this.appManager.registerOne(api)
-      this.appManager.activateOne(api.name)
+      this.appManager.registerOne(new Plugin(profile))
+      this.appManager.activateOne(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)

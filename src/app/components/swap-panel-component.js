@@ -11,18 +11,11 @@ class SwapPanelComponent {
     // name of the current displayed content
     this.currentNode
 
-    appManager.event.on('pluginNeedsLocation', (profile, domEl) => {
-      if ((profile.location === this.name) || (!profile.location && opt.default)) {
-        this.add(profile.name, domEl)
-      }
-    })
-
     this.store.event.on('activate', (name) => {
       const api = this.store.getOne(name)
       const profile = api.profile
       if (((profile.location === this.name) || (!profile.location && opt.default)) &&
         profile.icon && api.render && typeof api.render === 'function') {
-        // PROBLEM: THE API DOESN'T HAVE RENDER !!!!!!
         this.add(name, api.render())
       }
     })
