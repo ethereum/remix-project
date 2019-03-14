@@ -71,14 +71,6 @@ class CompileTab extends ApiFactory {
     }
   }
 
-  activate () {
-    this.listenToEvents()
-    this.compilerContainer.activate()
-  }
-
-  deactivate () {
-  }
-
   /************
    * EVENTS
    */
@@ -147,9 +139,7 @@ class CompileTab extends ApiFactory {
   }
 
   getCompilationResult () {
-    return new Promise((resolve, reject) => {
-      resolve(this.compileTabLogic.compiler.lastCompilationResult)
-    })
+    return this.compileTabLogic.compiler.lastCompilationResult
   }
 
   /*********
@@ -343,6 +333,8 @@ class CompileTab extends ApiFactory {
 
   render () {
     if (this._view.el) return this._view.el
+    this.listenToEvents()
+    this.compilerContainer.activate()
 
     this._view.errorContainer = yo`<div></div>`
     this._view.contractSelection = this.contractSelection()
