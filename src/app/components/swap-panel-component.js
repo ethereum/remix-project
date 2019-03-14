@@ -12,15 +12,17 @@ class SwapPanelComponent {
     this.currentNode
 
     appManager.event.on('pluginNeedsLocation', (profile, domEl) => {
-      if ((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) {
+      if ((profile.location === this.name) || (!profile.location && opt.default)) {
         this.add(profile.name, domEl)
       }
     })
 
     this.store.event.on('activate', (name) => {
-      const { profile, api } = this.store.getOne(name)
-      if (((profile.prefferedLocation === this.name) || (!profile.prefferedLocation && opt.default)) &&
+      const api = this.store.getOne(name)
+      const profile = api.profile
+      if (((profile.location === this.name) || (!profile.location && opt.default)) &&
         profile.icon && api.render && typeof api.render === 'function') {
+        // PROBLEM: THE API DOESN'T HAVE RENDER !!!!!!
         this.add(name, api.render())
       }
     })
@@ -28,8 +30,8 @@ class SwapPanelComponent {
     this.store.event.on('deactivate', (name) => {
       if (this.contents[name]) this.remove(name)
     })
-    this.store.event.on('add', (entity) => { })
-    this.store.event.on('remove', (entity) => { })
+    this.store.event.on('add', (api) => { })
+    this.store.event.on('remove', (api) => { })
   }
 
   showContent (moduleName) {
@@ -40,8 +42,8 @@ class SwapPanelComponent {
       }
       this.contents[moduleName].style.display = 'block'
       this.currentNode = moduleName
-      var item = this.store.getOne(moduleName)
-      this.header.innerHTML = item.profile ? item.profile.displayName : ' - '
+      var api = this.store.getOne(moduleName)
+      this.header.innerHTML = api.profile ? api.profile.displayName : ' - '
       return
     }
   }
