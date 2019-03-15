@@ -1,9 +1,12 @@
 const yo = require('yo-yo')
 var css = require('./styles/support-tab-styles')
 
-class SupportTab {
+import { ApiFactory } from 'remix-plugin'
+
+class SupportTab extends ApiFactory {
 
   constructor (localRegistry) {
+    super()
     this.el = null
     this.gitterIframe = ''
     this.gitterIsLoaded = false
@@ -18,7 +21,8 @@ class SupportTab {
     this.el.style.display = 'block'
     this.gitterIsLoaded = true
   }
-  profile () {
+
+  get profile () {
     return {
       name: 'support',
       methods: [],
@@ -27,6 +31,7 @@ class SupportTab {
       description: 'help center'
     }
   }
+
   render () {
     if (this.el) return this.el
 

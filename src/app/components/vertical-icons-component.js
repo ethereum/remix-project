@@ -1,14 +1,14 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
-const EventEmmitter = require('events')
+const EventEmitter = require('events')
 
 // Component
 class VerticalIconComponent {
 
   constructor (name, appStore) {
     this.store = appStore
-    this.event = new EventEmmitter()
+    this.events = new EventEmitter()
     this.icons = {}
     this.iconKind = {}
     this.name = name
@@ -16,28 +16,34 @@ class VerticalIconComponent {
     this.store.event.on('activate', (name) => {
       const { profile } = this.store.getOne(name)
       if (!profile.icon) return
-      if (profile.prefferedLocation === this.name || !profile.prefferedLocation) {
+      if (profile.location === this.name || !profile.location) {
         this.addIcon(profile)
       }
     })
     this.store.event.on('deactivate', (name) => {
-      const item = this.store.getOne(name)
-      if (item && this.icons[name]) this.removeIcon(item.profile)
+      const api = this.store.getOne(name)
+      if (api && this.icons[name]) this.removeIcon(api.profile)
     })
-    this.store.event.on('add', (entity) => { })
-    this.store.event.on('remove', (entity) => { })
+    this.store.event.on('add', (api) => { })
+    this.store.event.on('remove', (api) => { })
   }
 
-  addIcon (mod) {
-    let kind = mod.kind || 'other'
-    this.icons[mod.name] = yo`<div class="${css.icon}" onclick=${(e) => { this._iconClick(mod.name) }} title=${mod.name} ><img src="${mod.icon}" alt="${mod.name}" /></div>`
+  /**
+   * Add an icon to the map
+   * @param {ModuleProfile} profile The profile of the module
+   */
+  addIcon ({kind, name, icon}) {
+    this.icons[name] = yo`<div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" title="${name}" ><img src="${icon}" alt="${name}" /></div>`
 
-    this.iconKind[kind].appendChild(this.icons[mod.name])
+    this.iconKind[kind || 'other'].appendChild(this.icons[name])
   }
 
-  removeIcon (mod) {
-    let kind = mod.kind || 'other'
-    if (this.icons[mod.name]) this.iconKind[kind].removeChild(this.icons[mod.name])
+  /**
+   * Remove an icon from the map
+   * @param {ModuleProfile} profile The profile of the module
+   */
+  removeIcon ({kind, name}) {
+    if (this.icons[name]) this.iconKind[kind || 'other'].removeChild(this.icons[name])
   }
 
   select (name) {
@@ -53,7 +59,7 @@ class VerticalIconComponent {
       let activate = this.view.querySelector(`[title="${name}"]`)
       if (activate) activate.classList.toggle(`${css.active}`)
     }
-    this.event.emit('showContent', name)
+    this.events.emit('showContent', name)
   }
 
   _iconClick (name) {

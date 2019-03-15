@@ -3,13 +3,16 @@ var StaticAnalysis = require('../staticanalysis/staticAnalysisView')
 var EventManager = require('../../lib/events')
 var css = require('./styles/analysis-tab-styles')
 
-class AnalysisTab {
+import { ApiFactory } from 'remix-plugin'
+
+class AnalysisTab extends ApiFactory {
 
   constructor (registry) {
+    super()
     this.event = new EventManager()
     this.registry = registry
   }
-  profile () {
+  get profile () {
     return {
       name: 'solidityStaticAnalysis',
       displayName: 'solidity static analysis',

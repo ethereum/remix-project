@@ -2,21 +2,35 @@
 
 var EventManager = require('../../lib/events')
 
-function FilesTree (name, storage) {
-  var self = this
-  var event = new EventManager()
-  this.event = event
-  this.type = name
-  this.structFile = '.' + name + '.tree'
-  this.tree = {}
+import { ApiFactory } from 'remix-plugin'
 
-  this.exists = function (path, cb) {
+class FilesTree extends ApiFactory {
+
+  constructor (name, storage) {
+    super()
+    this.event = new EventManager()
+    this.storage = storage
+    this.type = name
+    this.structFile = '.' + name + '.tree'
+    this.tree = {}
+  }
+
+  get profile () {
+    // TODO should make them promisable
+    return {
+      name: this.type,
+      methods: ['get', 'set', 'remove'],
+      description: 'service - read/write file to the `config` explorer without need of additionnal permission.'
+    }
+  }
+
+  exists (path, cb) {
     cb(null, this._exists(path))
   }
 
-  function updateRefs (path, type) {
+  updateRefs (path, type) {
     var split = path.split('/') // this should be unprefixed path
-    var crawlpath = self.tree
+    var crawlpath = this.tree
     var intermediatePath = ''
     split.forEach((pathPart, index) => {
       intermediatePath += pathPart
@@ -30,91 +44,90 @@ function FilesTree (name, storage) {
         delete crawlpath[intermediatePath]
       }
     })
-    storage.set(self.structFile, JSON.stringify(self.tree))
+    this.storage.set(this.structFile, JSON.stringify(this.tree))
   }
 
-  this._exists = function (path) {
+  _exists (path) {
     var unprefixedpath = this.removePrefix(path)
-    return storage.exists(unprefixedpath)
+    return this.storage.exists(unprefixedpath)
   }
 
-  this.init = function (cb) {
-    var tree = storage.get(this.structFile)
+  init (cb) {
+    var tree = this.storage.get(this.structFile)
     this.tree = tree ? JSON.parse(tree) : {}
     if (cb) cb()
   }
 
-  this.get = function (path, cb) {
+  get (path, cb) {
     var unprefixedpath = this.removePrefix(path)
-    var content = storage.get(unprefixedpath)
+    var content = this.storage.get(unprefixedpath)
     if (cb) {
       cb(null, content)
     }
     return content
   }
 
-  this.set = function (path, content, cb) {
+  set (path, content, cb) {
     var unprefixedpath = this.removePrefix(path)
-    updateRefs(unprefixedpath, 'add')
-    var exists = storage.exists(unprefixedpath)
-    if (!storage.set(unprefixedpath, content)) {
+    this.updateRefs(unprefixedpath, 'add')
+    var exists = this.storage.exists(unprefixedpath)
+    if (!this.storage.set(unprefixedpath, content)) {
       if (cb) cb('error updating ' + path)
       return false
     }
     if (!exists) {
-      event.trigger('fileAdded', [this.type + '/' + unprefixedpath, false])
+      this.event.trigger('fileAdded', [this.type + '/' + unprefixedpath, false])
     } else {
-      event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
+      this.event.trigger('fileChanged', [this.type + '/' + unprefixedpath])
     }
     if (cb) cb()
     return true
   }
 
-  this.addReadOnly = function (path, content) {
+  addReadOnly (path, content) {
     return this.set(path, content)
   }
 
-  this.isReadOnly = function (path) {
+  isReadOnly (path) {
     return false
   }
 
-  this.remove = function (path) {
+  remove (path) {
     var unprefixedpath = this.removePrefix(path)
-    updateRefs(unprefixedpath, 'remove')
+    this.updateRefs(unprefixedpath, 'remove')
     if (!this._exists(unprefixedpath)) {
       return false
     }
-    if (!storage.remove(unprefixedpath)) {
+    if (!this.storage.remove(unprefixedpath)) {
       return false
     }
-    event.trigger('fileRemoved', [this.type + '/' + unprefixedpath])
+    this.event.trigger('fileRemoved', [this.type + '/' + unprefixedpath])
     return true
   }
 
-  this.rename = function (oldPath, newPath, isFolder) {
+  rename (oldPath, newPath, isFolder) {
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
-    updateRefs(unprefixedoldPath, 'remove')
-    updateRefs(unprefixednewPath, 'add')
-    if (storage.exists(unprefixedoldPath)) {
-      if (!storage.rename(unprefixedoldPath, unprefixednewPath)) {
+    this.updateRefs(unprefixedoldPath, 'remove')
+    this.updateRefs(unprefixednewPath, 'add')
+    if (this.storage.exists(unprefixedoldPath)) {
+      if (!this.storage.rename(unprefixedoldPath, unprefixednewPath)) {
         return false
       }
-      event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
+      this.event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
       return true
     }
     return false
   }
 
-  this.resolveDirectory = function (path, callback) {
-    var self = this
+  resolveDirectory (path, callback) {
     if (path[0] === '/') path = path.substring(1)
-    if (!path) return callback(null, { [self.type]: { } })
+    if (!path) return callback(null, { [this.type]: { } })
     var tree = {}
-    path = self.removePrefix(path)
+    path = this.removePrefix(path)
 
     var split = path.split('/') // this should be unprefixed path
-    var crawlpath = self.tree
+    var crawlpath = this.tree
     split.forEach((pathPart, index) => {
       if (crawlpath[pathPart]) crawlpath = crawlpath[pathPart]
     })
@@ -125,20 +138,12 @@ function FilesTree (name, storage) {
     callback(null, tree)
   }
 
-  this.removePrefix = function (path) {
+  removePrefix (path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
     if (path[0] === '/') return path.substring(1)
     return path
   }
 
-  this.profile = function () {
-    // TODO should make them promisable
-    return {
-      name: this.type,
-      methods: ['get', 'set', 'remove'],
-      description: 'service - read/write file to the `config` explorer without need of additionnal permission.'
-    }
-  }
 }
 
 module.exports = FilesTree
