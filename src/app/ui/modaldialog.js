@@ -30,6 +30,8 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   modal.innerHTML = ''
   if (content) modal.appendChild(content)
 
+  setFocusOn('ok')
+
   show()
 
   function setFocusOn (btn) {
