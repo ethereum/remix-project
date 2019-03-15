@@ -8,6 +8,8 @@ var css = require('./styles/file-panel-styles')
 
 import { ApiFactory } from 'remix-plugin'
 
+var canUpload = window.File || window.FileReader || window.FileList || window.Blob
+
 /*
   Overview of APIs:
    * fileManager: @args fileProviders (browser, shared-folder, swarm, github, etc ...) & config & editor
@@ -38,16 +40,19 @@ module.exports = class Filepanel extends ApiFactory {
       config: self._components.registry.get('config').api,
       pluginManager: self._components.registry.get('pluginmanager').api
     }
-    var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'])
+    var fileExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['browser'],
+      ['createNewFile', 'publishToGist', 'copyFiles', canUpload ? 'uploadFile' : '']
+    )
     var fileSystemExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['localhost'])
     var swarmExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['swarm'])
     var githubExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['github'])
-    var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'])
+    var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'], ['updateGist'])
     var configExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['config'])
     var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
     var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
 
-    self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'])
+    self.remixdHandle = new RemixdHandle(fileSystemExplorer, self._deps.fileProviders['localhost'],
+      self._deps.fileProviders['localhost'].isReadOnly ? ['createNewFile'] : [])
 
     // ----------------- editor panel ----------------------
     self._compilerMetadata = new CompilerMetadata(
@@ -133,6 +138,18 @@ module.exports = class Filepanel extends ApiFactory {
     })
 
     self.render = function render () { return element }
+  }
+
+  get profile () {
+    return {
+      name: 'fileExplorers',
+      displayName: 'file explorers',
+      methods: [],
+      events: [],
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4=',
+      description: ' - ',
+      kind: 'fileexplorer'
+    }
   }
 }
 
