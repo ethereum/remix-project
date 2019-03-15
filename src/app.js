@@ -7,7 +7,6 @@ var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
 var EventManager = require('./lib/events')
-var EventEmitter = require('events')
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -55,8 +54,10 @@ const FilePanel = require('./app/panels/file-panel')
 import PanelsResize from './lib/panels-resize'
 import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
-import { generateHomePage, homepageProfile } from './app/ui/landing-page/generate'
+import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
+import { ApiFactory } from 'remix-plugin'
+import { TxListenerModule } from './app/tabs/txlistener-module'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -116,8 +117,9 @@ var css = csjs`
   }
 `
 
-class App {
+class App extends ApiFactory {
   constructor (api = {}, events = {}, opts = {}) {
+    super()
     var self = this
     this.event = new EventManager()
     self._components = {}
@@ -173,7 +175,7 @@ class App {
     run.apply(self)
   }
 
-  profile () {
+  get profile () {
     return {
       name: 'app',
       description: 'service - provides information about current context (network).',
@@ -373,26 +375,13 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   /*
     that proxy is used by appManager to broadcast new transaction event
   */
-  const txListenerModuleProxy = {
-    event: new EventEmitter(),
-    profile () {
-      return {
-        name: 'txListener',
-        displayName: 'transaction listener',
-        events: ['newTransaction'],
-        description: 'service - notify new transactions'
-      }
-    }
-  }
-  txlistener.event.register('newTransaction', (tx) => {
-    txListenerModuleProxy.event.emit('newTransaction', tx)
-  })
+  const txListenerModule = new TxListenerModule(txlistener)
 
   txlistener.startListening()
 
   // TODO: There are still a lot of dep between editorpanel and filemanager
 
-  let appStore = new EntityStore('module', { actives: [], ids: [], entities: {} })
+  let appStore = new EntityStore('module', 'name')
   const appManager = new RemixAppManager(appStore)
   registry.put({api: appManager, name: 'appmanager'})
 
@@ -458,33 +447,35 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let settings = new SettingsTab(self._components.registry)
   let analysis = new AnalysisTab(registry)
   let debug = new DebuggerTab()
+  const landingPage = new LandingPage(appManager, appStore)
   // let support = new SupportTab()
   let test = new TestTab(self._components.registry, compileTab)
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
 
   appManager.init([
-    { profile: homepageProfile(), api: generateHomePage(appManager, appStore) },
-    { profile: this.profile(), api: this },
-    { profile: udapp.profile(), api: udapp },
-    { profile: fileManager.profile(), api: fileManager },
-    { profile: sourceHighlighters.profile(), api: sourceHighlighters },
-    { profile: configProvider.profile(), api: configProvider },
-    { profile: txListenerModuleProxy.profile(), api: txListenerModuleProxy },
-    { profile: filePanel.profile(), api: filePanel },
+    this.api(),
+    landingPage.api(),
+    udapp.api(),
+    fileManager.api(),
+    sourceHighlighters.api(),
+    configProvider.api(),
+    txListenerModule.api(),
+    filePanel.api(),
     // { profile: support.profile(), api: support },
-    { profile: settings.profile(), api: settings },
-    { profile: pluginManagerComponent.profile(), api: pluginManagerComponent }])
+    settings.api(),
+    pluginManagerComponent.api()
+  ])
 
   appManager.registerMany([
-    { profile: compileTab.profile(), api: compileTab },
-    { profile: run.profile(), api: run },
-    { profile: debug.profile(), api: debug },
-    { profile: analysis.profile(), api: analysis },
-    { profile: test.profile(), api: test },
-    { profile: filePanel.remixdHandle.profile(), api: filePanel.remixdHandle }
+    compileTab.api(),
+    run.api(),
+    debug.api(),
+    analysis.api(),
+    test.api(),
+    filePanel.remixdHandle.api(),
+    ...appManager.plugins()
   ])
-  appManager.registerMany(appManager.plugins())
 
   framingService.start(appStore, swapPanelApi, verticalIconsApi, mainPanelApi, this._components.resizeFeature)
 
@@ -512,7 +503,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var txLogger = new TxLogger() // eslint-disable-line
   txLogger.event.register('debuggingRequested', (hash) => {
     if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
-    appStore.getOne('debugger').api.debugger().debug(hash)
+    debug.debugger().debug(hash)
     verticalIconsApi.select('debugger')
   })
 
