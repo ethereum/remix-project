@@ -48,31 +48,33 @@ export class LandingPage extends ApiFactory {
 
   constructor (appManager, appStore) {
     super()
-    /*
-    var actions1 = [
-      {label: 'new file', type: `callback`, payload: () => { alert(`-new file created-`) }},
-      {label: 'import from GitHub', type: `callback`, payload: () => { alert(`-imported from GitHub-`) }},
-      {label: 'import from gist', type: `callback`, payload: () => { alert(`-imported from gist-`) }}
-    ]
-
-    var actions2 = [
-      {label: '...', type: `callback`, payload: () => { alert(`-...-`) }}
-    ]
+    this.sections = []
+    /* var actions1 = [
+    { label: 'New file',
+      type: 'callback',
+      payload: () => {
+        let fileManager = globalRegistry.get('fileexplorerbrowser').api
+        fileManager.creatNewFile()
+      }
+    },
+    {label: 'Import from GitHub', type: `callback`, payload: () => { this.alert(`-imported from GitHub-`) }},
+    {label: 'Import from gist', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }}
+  ] */
 
     var actions3 = [
       {label: 'Remix documentation', type: `link`, payload: `https://remix.readthedocs.io/en/latest/#`},
       {label: 'GitHub repository', type: `link`, payload: `https://github.com/ethereum/remix-ide`},
-      {label: 'acces local file system (remixd)', type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html`},
+      {label: 'Access local file system with remixd', type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html`},
       {label: 'npm module for remixd', type: `link`, payload: `https://www.npmjs.com/package/remixd`},
-      {label: 'medium posts', type: `link`, payload: `https://medium.com/remix-ide`},
-      {label: 'tutorials', type: `link`, payload: `https://github.com/ethereum/remix-workshops`}
+      {label: 'Medium posts', type: `link`, payload: `https://medium.com/remix-ide`},
+      {label: 'Tutorials', type: `link`, payload: `https://github.com/ethereum/remix-workshops`}
     ]
 
     var actions4 = [
       {label: 'Remix plugins & modules', type: `link`, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md`},
-      {label: 'repository on GitHub', type: `link`, payload: `https://github.com/ethereum/remix-plugin`},
-      {label: 'examples', type: `link`, payload: `https://github.com/ethereum/remix-plugin/tree/master/examples`},
-      {label: 'build plugin for Remix', type: `link`, payload: `https://medium.com/remix-ide/build-a-plugin-for-remix-90d43b209c5a`}
+      {label: 'Repository on GitHub', type: `link`, payload: `https://github.com/ethereum/remix-plugin`},
+      {label: 'Examples', type: `link`, payload: `https://github.com/ethereum/remix-plugin/tree/master/examples`},
+      {label: 'Build a plugin for Remix', type: `link`, payload: `https://medium.com/remix-ide/build-a-plugin-for-remix-90d43b209c5a`}
     ]
 
     var actions5 = [
@@ -81,13 +83,12 @@ export class LandingPage extends ApiFactory {
       {label: 'Reddit', type: `link`, payload: `https://www.reddit.com/r/ethdev/search?q=remix&restrict_sr=1`}
     ]
 
-    var section1 = new Section('Start', actions1)
-    var section2 = new Section('Recent', actions2)
-    var section3 = new Section('Learn', actions3)
-    var section4 = new Section('Plugins', actions4)
-    var section5 = new Section('Help', actions5)
-    */
-    const sectionsWorkspaces = []
+    // var sectionStart = new Section('Start', actions1)
+    var sectionLearn = new Section('Learn', actions3)
+    var sectionPlugins = new Section('Plugins', actions4)
+    var sectionHelp = new Section('Help', actions5)
+
+    var sectionsWorkspaces = []
     sectionsWorkspaces.push({
       label: 'Close All Modules',
       type: 'callback',
@@ -97,10 +98,18 @@ export class LandingPage extends ApiFactory {
         .forEach((profile) => { appManager.deactivateOne(profile.name) })
       }})
     defaultWorkspaces(appManager).forEach((workspace) => {
-      sectionsWorkspaces.push({label: workspace.title, type: 'callback', payload: () => { workspace.activate() }})
+      sectionsWorkspaces.push({
+        label: workspace.title,
+        type: 'callback',
+        payload: () => { workspace.activate() }
+      })
     })
-    const sectionWorkspace = new Section('Workspaces', sectionsWorkspaces)
-    this.sections = sectionWorkspace
+    var sectionWorkspace = new Section('Workspaces', sectionsWorkspaces)
+
+    this.sections.push(sectionWorkspace)
+    this.sections.push(sectionLearn)
+    this.sections.push(sectionPlugins)
+    this.sections.push(sectionHelp)
   }
 
   get profile () {
