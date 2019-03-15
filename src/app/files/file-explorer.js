@@ -63,8 +63,6 @@ function fileExplorer (localRegistry, files, menuItems) {
     fileManager: self._components.registry.get('filemanager').api
   }
 
-  self._components.registry.put(`fileexplorer${files.type}`, this)
-
   // warn if file changed outside of Remix
   function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
@@ -316,11 +314,11 @@ fileExplorer.prototype.init = function () {
   return this.container
 }
 
-fileExplorer.prototype.publishToGist = function (fileProviderName) {
+fileExplorer.prototype.publishToGist = function () {
   modalDialogCustom.confirm(
     null,
     'Are you sure you want to publish all your files anonymously as a public gist on github.com?',
-    () => { this.toGist(fileProviderName) }
+    () => { this.toGist() }
   )
 }
 
