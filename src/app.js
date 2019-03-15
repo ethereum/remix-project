@@ -46,7 +46,6 @@ const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
 const DebuggerTab = require('./app/tabs/debugger-tab')
-// const SupportTab = require('./app/tabs/support-tab')
 const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
 const FilePanel = require('./app/panels/file-panel')
@@ -432,7 +431,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
-  let compileTab = new CompileTab(registry)
+  let compileTab = new CompileTab(
+    registry.get('editor').api,
+    registry.get('config').api,
+    registry.get('renderer').api,
+    registry.get('fileproviders/swarm').api,
+    registry.get('filemanager').api,
+    registry.get('fileproviders').api,
+    registry.get('pluginmanager').api
+  )
   let run = new RunTab(
     registry.get('udapp').api,
     registry.get('udappUI').api,
@@ -444,12 +451,19 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     registry.get('pluginmanager').api,
     registry.get('compilersartefacts').api
   )
-  let settings = new SettingsTab(self._components.registry)
+  let settings = new SettingsTab(
+      registry.get('config').api,
+      registry.get('editor').api,
+      appManager
+  )
   let analysis = new AnalysisTab(registry)
   let debug = new DebuggerTab()
   const landingPage = new LandingPage(appManager, appStore)
-  // let support = new SupportTab()
-  let test = new TestTab(self._components.registry, compileTab)
+  let test = new TestTab(
+    registry.get('filemanager').api,
+    registry.get('filepanel').api,
+    compileTab
+  )
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
   let configProvider = self._components.filesProviders['config']
 

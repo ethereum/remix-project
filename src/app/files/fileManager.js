@@ -198,10 +198,10 @@ class FileManager extends ApiFactory {
   }
 
   getFilesFromPath (path) {
-    const provider = this.fileProviderOf(path)
-    if (!provider) throw new Error(`provider for path ${path} not found`)
     // TODO : Change provider with promise
     return new Promise((resolve, reject) => {
+      const provider = this.fileProviderOf(path)
+      if (!provider) return reject(`provider for path ${path} not found`)
       provider.resolveDirectory(path, (error, filesTree) => {
         if (error) reject(error)
         resolve(filesTree)
