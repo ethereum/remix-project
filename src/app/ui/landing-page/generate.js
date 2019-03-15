@@ -2,7 +2,7 @@
 import LandingPage from './landing-page'
 import Section from './section'
 import { defaultWorkspaces } from './workspace'
-var globalRegistry = require('../../../global/registry')
+// var globalRegistry = require('../../../global/registry')
 
 export function homepageProfile () {
   return {
@@ -17,7 +17,7 @@ export function homepageProfile () {
 }
 
 export function generateHomePage (appManager, appStore) {
-  var actions1 = [
+ /* var actions1 = [
     { label: 'New file',
       type: 'callback',
       payload: () => {
@@ -27,7 +27,7 @@ export function generateHomePage (appManager, appStore) {
     },
     {label: 'Import from GitHub', type: `callback`, payload: () => { this.alert(`-imported from GitHub-`) }},
     {label: 'Import from gist', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }}
-  ]
+  ] */
 
   var actions3 = [
     {label: 'Remix documentation', type: `link`, payload: `https://remix.readthedocs.io/en/latest/#`},
@@ -51,7 +51,7 @@ export function generateHomePage (appManager, appStore) {
     {label: 'Reddit', type: `link`, payload: `https://www.reddit.com/r/ethdev/search?q=remix&restrict_sr=1`}
   ]
 
-  var sectionStart = new Section('Start', actions1)
+  // var sectionStart = new Section('Start', actions1)
   var sectionLearn = new Section('Learn', actions3)
   var sectionPlugins = new Section('Plugins', actions4)
   var sectionHelp = new Section('Help', actions5)
@@ -74,5 +74,5 @@ export function generateHomePage (appManager, appStore) {
   })
   var sectionWorkspace = new Section('Workspaces', sectionsWorkspaces)
 
-  return new LandingPage([sectionWorkspace, sectionStart, sectionLearn, sectionPlugins, sectionHelp])
+  return new LandingPage([sectionWorkspace, /* sectionStart, */sectionLearn, sectionPlugins, sectionHelp])
 }
