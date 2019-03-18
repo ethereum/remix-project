@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
-    "remix-plugin": "0.0.1-alpha.33",
+    "remix-plugin": "0.0.1-alpha.39",
     "remixd": "0.1.8-alpha.6"
   },
   "repository": {
@@ -178,7 +178,7 @@
     "remixd": "remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
-    "serve": "execr --silent http-server .",
+    "serve": "http-server .",
     "serve_debugger": "execr --silent http-server src/app/debugger/remix-debugger",
     "sourcemap": "exorcist --root ../ build/app.js.map > build/app.js",
     "start": "npm-run-all -lpr serve watch onchange remixd",

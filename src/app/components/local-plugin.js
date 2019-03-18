@@ -6,7 +6,7 @@ module.exports = class LocalPlugin {
 
   /**
    * Open a modal to create a local plugin
-   * @param {{profile: any, api: any}[]} plugins The list of the plugins in the store
+   * @param {PluginApi[]} plugins The list of the plugins in the store
    * @returns {Promise<{api: any, profile: any}>} A promise with the new plugin profile
    */
   open (plugins) {
@@ -90,7 +90,7 @@ module.exports = class LocalPlugin {
 
   /**
    * The form to create a local plugin
-   * @param {Profile[]} plugins Liste of profile of the plugins
+   * @param {ProfileApi[]} plugins Liste of profile of the plugins
    */
   form (plugins = []) {
     const name = this.profile.name || ''

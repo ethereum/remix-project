@@ -3,13 +3,17 @@ var StaticAnalysis = require('../staticanalysis/staticAnalysisView')
 var EventManager = require('../../lib/events')
 var css = require('./styles/analysis-tab-styles')
 
-class AnalysisTab {
+import { ApiFactory } from 'remix-plugin'
+
+class AnalysisTab extends ApiFactory {
 
   constructor (registry) {
+    super()
     this.event = new EventManager()
     this.registry = registry
   }
-  profile () {
+
+  get profile () {
     return {
       name: 'solidityStaticAnalysis',
       displayName: 'solidity static analysis',
@@ -20,6 +24,7 @@ class AnalysisTab {
       kind: 'analysis'
     }
   }
+
   render () {
     var staticanalysis = new StaticAnalysis()
     this.registry.put({api: staticanalysis, name: 'staticanalysis'})
@@ -28,6 +33,7 @@ class AnalysisTab {
     this.el = yo`<div class="${css.analysisTabView}" id="staticanalysisView">${staticanalysis.render()}</div>`
     return this.el
   }
+
 }
 
 module.exports = AnalysisTab

@@ -52,13 +52,15 @@ export class TabProxy {
 
     appStore.event.on('activate', (name) => {
       const { profile } = appStore.getOne(name)
-      if (profile.prefferedLocation === 'mainPanel') {
-        this.addTab(name, () => {
-          this.event.emit('switchApp', name)
-        }, () => {
-          this.event.emit('closeApp', name)
-          this.appManager.deactivateOne(name)
-        })
+      if (profile.location === 'mainPanel') {
+        this.addTab(
+          name,
+          () => this.event.emit('switchApp', name),
+          () => {
+            this.event.emit('closeApp', name)
+            this.appManager.deactivateOne(name)
+          }
+        )
       }
     })
 
