@@ -17,9 +17,12 @@ var css = require('./styles/compile-tab-styles')
 const CompileTabLogic = require('./compileTab/compileTab.js')
 const CompilerContainer = require('./compileTab/compilerContainer.js')
 
-class CompileTab {
+import { ApiFactory } from 'remix-plugin'
 
-  constructor (registry) {
+class CompileTab extends ApiFactory {
+
+  constructor (editor, config, renderer, swarmfileProvider, fileManager, fileProviders, pluginManager) {
+    super()
     this.events = new EventEmitter()
     this._view = {
       el: null,
@@ -30,37 +33,40 @@ class CompileTab {
     this.queryParams = new QueryParams()
 
     // dependencies
-    this._deps = {
-      editor: registry.get('editor').api,
-      config: registry.get('config').api,
-      renderer: registry.get('renderer').api,
-      swarmfileProvider: registry.get('fileproviders/swarm').api,
-      fileManager: registry.get('filemanager').api,
-      fileProviders: registry.get('fileproviders').api,
-      pluginManager: registry.get('pluginmanager').api
-    }
+    this.editor = editor
+    this.config = config
+    this.renderer = renderer
+    this.swarmfileProvider = swarmfileProvider
+    this.fileManager = fileManager
+    this.fileProviders = fileProviders
+    this.pluginManager = pluginManager
+
     this.data = {
       contractsDetails: {}
     }
 
-    this.compileTabLogic = new CompileTabLogic(this.queryParams, this._deps.fileManager, this._deps.editor, this._deps.config, this._deps.fileProviders)
+    this.compileTabLogic = new CompileTabLogic(this.queryParams, this.fileManager, this.editor, this.config, this.fileProviders)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
 
     this.compilerContainer = new CompilerContainer(
       this.compileTabLogic,
-      this._deps.editor,
-      this._deps.config,
+      this.editor,
+      this.config,
       this.queryParams
     )
   }
 
-  activate () {
-    this.listenToEvents()
-    this.compilerContainer.activate()
-  }
-
-  deactivate () {
+  get profile () {
+    return {
+      displayName: 'solidity compiler',
+      name: 'solidity',
+      methods: ['getCompilationResult'],
+      events: ['compilationFinished'],
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE2LjAuMywgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIgoJIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTMwMHB4IiBoZWlnaHQ9IjEzMDBweCIKCSB2aWV3Qm94PSIwIDAgMTMwMCAxMzAwIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMzAwIDEzMDAiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8dGl0bGU+VmVjdG9yIDE8L3RpdGxlPgo8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KPGcgaWQ9IlBhZ2UtMSIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+Cgk8ZyBpZD0ic29saWRpdHkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQwMi4wMDAwMDAsIDExOC4wMDAwMDApIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIj4KCQk8ZyBpZD0iR3JvdXAiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPgoJCQk8cGF0aCBpZD0iU2hhcGUiIG9wYWNpdHk9IjAuNDUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgICAgIiBkPSJNMzcxLjc3MiwxMzUuMzA4TDI0MS4wNjgsMzY3LjYxSC0yMC4xNThsMTMwLjYxNC0yMzIuMzAyCgkJCQlIMzcxLjc3MiIvPgoJCQk8cGF0aCBpZD0iU2hhcGVfMV8iIG9wYWNpdHk9IjAuNiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAgICAiIGQ9Ik0yNDEuMDY4LDM2Ny42MWgyNjEuMzE4TDM3MS43NzIsMTM1LjMwOEgxMTAuNDU2CgkJCQlMMjQxLjA2OCwzNjcuNjF6Ii8+CgkJCTxwYXRoIGlkPSJTaGFwZV8yXyIgb3BhY2l0eT0iMC44IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3ICAgICIgZD0iTTExMC40NTYsNTk5LjgyMkwyNDEuMDY4LDM2Ny42MUwxMTAuNDU2LDEzNS4zMDgKCQkJCUwtMjAuMTU4LDM2Ny42MUwxMTAuNDU2LDU5OS44MjJ6Ii8+CgkJCTxwYXRoIGlkPSJTaGFwZV8zXyIgb3BhY2l0eT0iMC40NSIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAgICAiIGQ9Ik0xMTEuNzIxLDk0OC4yNzVsMTMwLjcwNC0yMzIuMzAzaDI2MS4zMThMMzczLjAzOCw5NDguMjc1CgkJCQlIMTExLjcyMSIvPgoJCQk8cGF0aCBpZD0iU2hhcGVfNF8iIG9wYWNpdHk9IjAuNiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAgICAiIGQ9Ik0yNDIuNDI0LDcxNS45NzNILTE4Ljg5M2wxMzAuNjEzLDIzMi4zMDNoMjYxLjMxNwoJCQkJTDI0Mi40MjQsNzE1Ljk3M3oiLz4KCQkJPHBhdGggaWQ9IlNoYXBlXzVfIiBvcGFjaXR5PSIwLjgiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgICAgIiBkPSJNMzczLjAzOCw0ODMuNzYxTDI0Mi40MjQsNzE1Ljk3M2wxMzAuNjE0LDIzMi4zMDMKCQkJCWwxMzAuNzA0LTIzMi4zMDNMMzczLjAzOCw0ODMuNzYxeiIvPgoJCTwvZz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
+      description: 'compile solidity contracts',
+      kind: 'compile'
+    }
   }
 
   /************
@@ -74,7 +80,7 @@ class CompileTab {
       }
     })
 
-    this._deps.fileManager.events.on('currentFileChanged', (name) => {
+    this.fileManager.events.on('currentFileChanged', (name) => {
       this.compilerContainer.currentFile = name
     })
     this.compiler.event.register('compilationFinished', (success, data, source) => {
@@ -98,7 +104,7 @@ class CompileTab {
       yo.update(this._view.contractSelection, contractSelection)
 
       if (data['error']) {
-        this._deps.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
+        this.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
           return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
                                             The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
@@ -109,12 +115,12 @@ class CompileTab {
       }
       if (data.errors && data.errors.length) {
         data.errors.forEach((err) => {
-          if (this._deps.config.get('hideWarnings')) {
+          if (this.config.get('hideWarnings')) {
             if (err.severity !== 'warning') {
-              this._deps.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
+              this.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
             }
           } else {
-            this._deps.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
+            this.renderer.error(err.formattedMessage, this._view.errorContainer, {type: err.severity})
           }
         })
       }
@@ -130,22 +136,8 @@ class CompileTab {
     })
   }
 
-  profile () {
-    return {
-      displayName: 'solidity compiler',
-      name: 'solidity',
-      methods: ['getCompilationResult'],
-      events: ['compilationFinished'],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE2LjAuMywgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIgoJIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTMwMHB4IiBoZWlnaHQ9IjEzMDBweCIKCSB2aWV3Qm94PSIwIDAgMTMwMCAxMzAwIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMzAwIDEzMDAiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8dGl0bGU+VmVjdG9yIDE8L3RpdGxlPgo8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KPGcgaWQ9IlBhZ2UtMSIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+Cgk8ZyBpZD0ic29saWRpdHkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQwMi4wMDAwMDAsIDExOC4wMDAwMDApIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIj4KCQk8ZyBpZD0iR3JvdXAiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPgoJCQk8cGF0aCBpZD0iU2hhcGUiIG9wYWNpdHk9IjAuNDUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgICAgIiBkPSJNMzcxLjc3MiwxMzUuMzA4TDI0MS4wNjgsMzY3LjYxSC0yMC4xNThsMTMwLjYxNC0yMzIuMzAyCgkJCQlIMzcxLjc3MiIvPgoJCQk8cGF0aCBpZD0iU2hhcGVfMV8iIG9wYWNpdHk9IjAuNiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAgICAiIGQ9Ik0yNDEuMDY4LDM2Ny42MWgyNjEuMzE4TDM3MS43NzIsMTM1LjMwOEgxMTAuNDU2CgkJCQlMMjQxLjA2OCwzNjcuNjF6Ii8+CgkJCTxwYXRoIGlkPSJTaGFwZV8yXyIgb3BhY2l0eT0iMC44IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3ICAgICIgZD0iTTExMC40NTYsNTk5LjgyMkwyNDEuMDY4LDM2Ny42MUwxMTAuNDU2LDEzNS4zMDgKCQkJCUwtMjAuMTU4LDM2Ny42MUwxMTAuNDU2LDU5OS44MjJ6Ii8+CgkJCTxwYXRoIGlkPSJTaGFwZV8zXyIgb3BhY2l0eT0iMC40NSIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAgICAiIGQ9Ik0xMTEuNzIxLDk0OC4yNzVsMTMwLjcwNC0yMzIuMzAzaDI2MS4zMThMMzczLjAzOCw5NDguMjc1CgkJCQlIMTExLjcyMSIvPgoJCQk8cGF0aCBpZD0iU2hhcGVfNF8iIG9wYWNpdHk9IjAuNiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAgICAiIGQ9Ik0yNDIuNDI0LDcxNS45NzNILTE4Ljg5M2wxMzAuNjEzLDIzMi4zMDNoMjYxLjMxNwoJCQkJTDI0Mi40MjQsNzE1Ljk3M3oiLz4KCQkJPHBhdGggaWQ9IlNoYXBlXzVfIiBvcGFjaXR5PSIwLjgiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgICAgIiBkPSJNMzczLjAzOCw0ODMuNzYxTDI0Mi40MjQsNzE1Ljk3M2wxMzAuNjE0LDIzMi4zMDMKCQkJCWwxMzAuNzA0LTIzMi4zMDNMMzczLjAzOCw0ODMuNzYxeiIvPgoJCTwvZz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
-      description: 'compile solidity contracts',
-      kind: 'compile'
-    }
-  }
-
   getCompilationResult () {
-    return new Promise((resolve, reject) => {
-      resolve(this.compileTabLogic.compiler.lastCompilationResult)
-    })
+    return this.compileTabLogic.compiler.lastCompilationResult
   }
 
   /*********
@@ -215,12 +207,12 @@ class CompileTab {
   }
 
   publish () {
-    let contract = this.data.contractsDetails[this.selectedContract]
-    if (contract) {
+    if (this.selectedContract) {
+      var contract = this.data.contractsDetails[this.selectedContract]
       if (contract.metadata === undefined || contract.metadata.length === 0) {
         modalDialogCustom.alert('This contract may be abstract, may not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.')
       } else {
-        publishOnSwarm(contract, this._deps.fileManager, function (err, uploaded) {
+        publishOnSwarm(contract, this.fileManager, function (err, uploaded) {
           if (err) {
             try {
               err = JSON.stringify(err)
@@ -234,7 +226,7 @@ class CompileTab {
             modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
           }
         }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-          this._deps.swarmfileProvider.addReadOnly(item.hash, item.content)
+          this.swarmfileProvider.addReadOnly(item.hash, item.content)
         })
       }
     }
@@ -338,11 +330,13 @@ class CompileTab {
 
   render () {
     if (this._view.el) return this._view.el
+    this.listenToEvents()
+    this.compilerContainer.activate()
 
     this._view.errorContainer = yo`<div></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-    const currentFile = this._deps.fileManager.currentFile()
+    const currentFile = this.fileManager.currentFile()
     if (currentFile) this.compilerContainer.currentFile = currentFile
 
     this._view.el = yo`

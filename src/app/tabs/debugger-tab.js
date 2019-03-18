@@ -3,12 +3,16 @@ var css = require('./styles/debugger-tab-styles')
 
 var DebuggerUI = require('../debugger/debuggerUI')
 
-class DebuggerTab {
+import { ApiFactory } from 'remix-plugin'
+
+class DebuggerTab extends ApiFactory {
+
   constructor () {
+    super()
     this.el = null
   }
 
-  profile () {
+  get profile () {
     return {
       displayName: 'debugger',
       name: 'debugger',
