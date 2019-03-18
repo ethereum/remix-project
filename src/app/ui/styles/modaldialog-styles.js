@@ -61,8 +61,6 @@ var css = csjs`
     cursor: pointer;
   }
   .modalFooterOk:hover {
-    background-color: var(--dark);
-    color: var(--light);
     cursor: pointer;
   }
   .modalFooterCancel {
@@ -72,8 +70,6 @@ var css = csjs`
     cursor: pointer;
   }
   .modalFooterCancel:hover {
-    background-color: var(--dark);
-    color: var(--light);
     margin-left: 1em;
     cursor: pointer;
   }
