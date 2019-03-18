@@ -28,7 +28,6 @@ class CompileTab extends ApiFactory {
       el: null,
       warnCompilationSlow: null,
       errorContainer: null,
-      contractNames: null,
       contractEl: null
     }
     this.queryParams = new QueryParams()
