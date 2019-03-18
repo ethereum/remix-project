@@ -509,13 +509,14 @@ fileExplorer.prototype.renderMenuItems = function () {
         return yo`
           <label class="${icon} ${css.newFile}">
             <input type="file" onchange=${(event) => {
+              event.stopPropagation();
               this.uploadFile(event)
             }} multiple />
           </label>
         `
       } else {
         return yo`
-        <span onclick=${() => { this[ action ]() }} class="newFile ${css.newFile}" title=${title}>
+        <span onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="newFile ${css.newFile}" title=${title}>
           <i class=${icon}></i>
         </span>
         `
