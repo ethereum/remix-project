@@ -11,7 +11,6 @@ var css = csjs`
         width:150px; 
         border-radius: 2px;
         z-index: 1000;
-        background-color: var(--light)
     }
     
     .liitem
