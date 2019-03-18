@@ -509,7 +509,7 @@ fileExplorer.prototype.renderMenuItems = function () {
         return yo`
           <label class="${icon} ${css.newFile}">
             <input type="file" onchange=${(event) => {
-              event.stopPropagation();
+              event.stopPropagation()
               this.uploadFile(event)
             }} multiple />
           </label>
