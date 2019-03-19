@@ -29,8 +29,11 @@ The available options for this plugin are below. Default options are shown below
 ```
 
 
-`readOnly` does not let Remix update the contents on the local filesystem. Default: `false`.
-`remixIde` specifies the URL that the Remix IDE will be served from. If this is a `localhost` URL, the plugin creates a server that is responsible for listening on this URL. Default: `(see above)`.
+`readOnly` does not let Remix update the contents on the local filesystem. 
+ - Default: `false`
+
+`remixIde` specifies the URL that the Remix IDE will be served from. If this is a `localhost` URL, the plugin creates a server that is responsible for listening on this URL. 
+ - Default: `(see above)`
 
 If it is preferred to connect to the public Remix IDE at https://remix.ethereum.org, set the `remixIde` config to:
 ```
