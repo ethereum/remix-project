@@ -48,7 +48,7 @@ export class LandingPage extends ApiFactory {
   constructor (appManager, appStore) {
     super()
     this.sections = []
-    /* var actions1 = [
+    /* var actionsStart = [
     { label: 'New file',
       type: 'callback',
       payload: () => {
@@ -60,7 +60,7 @@ export class LandingPage extends ApiFactory {
     {label: 'Import from gist', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }}
   ] */
 
-    var actions3 = [
+    var actionsLearn = [
       {label: 'Remix documentation', type: `link`, payload: `https://remix.readthedocs.io/en/latest/#`},
       {label: 'GitHub repository', type: `link`, payload: `https://github.com/ethereum/remix-ide`},
       {label: 'Access local file system with remixd', type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html`},
@@ -69,23 +69,23 @@ export class LandingPage extends ApiFactory {
       {label: 'Tutorials', type: `link`, payload: `https://github.com/ethereum/remix-workshops`}
     ]
 
-    var actions4 = [
+    var actionsPlugins = [
       {label: 'Remix plugins & modules', type: `link`, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md`},
       {label: 'Repository on GitHub', type: `link`, payload: `https://github.com/ethereum/remix-plugin`},
       {label: 'Examples', type: `link`, payload: `https://github.com/ethereum/remix-plugin/tree/master/examples`},
       {label: 'Build a plugin for Remix', type: `link`, payload: `https://medium.com/remix-ide/build-a-plugin-for-remix-90d43b209c5a`}
     ]
 
-    var actions5 = [
+    var actionsHelp = [
       {label: 'Gitter channel', type: `link`, payload: `https://gitter.im/ethereum/remix`},
       {label: 'Stack Overflow', type: `link`, payload: `https://stackoverflow.com/questions/tagged/remix`},
       {label: 'Reddit', type: `link`, payload: `https://www.reddit.com/r/ethdev/search?q=remix&restrict_sr=1`}
     ]
 
     // var sectionStart = new Section('Start', actions1)
-    var sectionLearn = new Section('Learn', actions3)
-    var sectionPlugins = new Section('Plugins', actions4)
-    var sectionHelp = new Section('Help', actions5)
+    var sectionLearn = new Section('Learn', actionsLearn)
+    var sectionPlugins = new Section('Plugins', actionsPlugins)
+    var sectionHelp = new Section('Help', actionsHelp)
 
     var sectionsWorkspaces = []
     sectionsWorkspaces.push({
@@ -113,7 +113,7 @@ export class LandingPage extends ApiFactory {
 
   get profile () {
     return {
-      displayName: 'home',
+      displayName: 'Home',
       name: 'home',
       methods: [],
       events: [],
@@ -132,8 +132,8 @@ export class LandingPage extends ApiFactory {
     `
     for (let i = 0; i < this.sections.length; i++) {
       totalLook.appendChild(yo`
-        <div class="${css.section}" >
-            ${this.sections[i].render()}
+        <div>
+          ${this.sections[i].render()}
         </div>
       `)
     }

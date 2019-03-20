@@ -16,17 +16,19 @@ var css = csjs`
   }
   span {
     cursor: pointer;
-    font-size: 12px;
+    font-size: 100%;
   }
   span:hover {
-    font-size: 14px;
+    font-size: 120%;
   }
   a:link {
     text-decoration : none;
-    font-size: 12px;
+    color: white
+    font-size: 100%;
   }
   a:hover {
-    font-size: 14px;
+    color: var(--bg-warning);
+    font-size: 120%;
   }
 `
 
@@ -34,19 +36,22 @@ class Section {
   constructor (title, actions) {
     this.title = title
     this.actions = actions
+    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success' : 'border-success'
   }
 
   render () {
     let sectionLook = yo`
-      <div class="${css.item}">
-        <h2> ${this.title} </h2>
+      <div class="card ${this.cardStyle} bg-primary mb-3">
+        <div class="card-header">${this.title}</div>
+        <div class="card-body" style="min-width: 350px;">
+        </div>
       </div>
     `
     for (var i = 0; i < this.actions.length; i++) {
       if (this.actions[i].type === `callback`) {
         sectionLook.appendChild(yo`
           <div>
-            <span class='text-warning h7 span' " onclick= ${this.actions[i].payload} >
+            <span class="card-text" onclick=${this.actions[i].payload} >
               ${this.actions[i].label}
             </span>
           </div>
@@ -54,7 +59,7 @@ class Section {
       } else if (this.actions[i].type === `link`) {
         sectionLook.appendChild(yo`
           <div>
-            <a class='text-warning h7' href= ${this.actions[i].payload} target="_blank" >
+            <a  href=${this.actions[i].payload} target="_blank" >
               ${this.actions[i].label}
             </a>
           </div>
