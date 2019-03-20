@@ -1,3 +1,4 @@
+/* global ethereum */
 'use strict'
 var Web3 = require('web3')
 var EventManager = require('../eventManager')
@@ -96,7 +97,13 @@ function ExecutionContext () {
       executionContext = 'vm'
     } else {
       executionContext = injectedProvider ? 'injected' : 'vm'
+      if (executionContext === 'injected') this.askPermission()
     }
+  }
+
+  this.askPermission = function () {
+    // metamask
+    if (ethereum && typeof ethereum.enable === 'function') ethereum.enable()
   }
 
   this.getProvider = function () {
@@ -190,6 +197,7 @@ function ExecutionContext () {
         infoCb(alertMsg)
         return cb()
       } else {
+        self.askPermission()
         executionContext = context
         web3.setProvider(injectedProvider)
         self._updateBlockGasLimit()
