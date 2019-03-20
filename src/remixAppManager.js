@@ -1,11 +1,13 @@
 import { AppManagerApi, Plugin } from 'remix-plugin'
 import { EventEmitter } from 'events'
 import PluginManagerProxy from './app/components/plugin-manager-proxy'
+import { PermissionHandler } from './persmission-handler'
 
 export class RemixAppManager extends AppManagerApi {
 
   constructor (store) {
     super(null)
+    this.permissionHandler = new PermissionHandler()
     this.store = store
     this.hiddenServices = {}
     this.event = new EventEmitter()
