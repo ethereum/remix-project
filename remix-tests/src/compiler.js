@@ -4,7 +4,7 @@ var async = require('async')
 var path = require('path')
 let RemixCompiler = require('remix-solidity').Compiler
 
-String.prototype.regexIndexOf = function (regex, startpos) {
+String.prototype.regexIndexOf = function (regex, startpos) { // eslint-disable-line
   var indexOf = this.substring(startpos || 0).search(regex)
   return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf
 }

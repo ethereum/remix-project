@@ -6,8 +6,17 @@ var util = require('../src/util')
 var compiler = require('solc')
 var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 var executionContext = require('../src/execution/execution-context')
+var solidityVersion = 'v0.5.4+commit.9549d8ff'
 
 /* tape *********************************************************** */
+tape('load compiler ' + solidityVersion, function (t) {
+  compiler.loadRemoteVersion(solidityVersion, (error, solcSnapshot) => {
+    if (error) console.log(error)
+    console.warn('testing *txFormat* against', solidityVersion)
+    compiler = solcSnapshot
+    t.end()
+  })
+})
 
 var context
 tape('ContractParameters - (TxFormat.buildData) - format input parameters', function (t) {
