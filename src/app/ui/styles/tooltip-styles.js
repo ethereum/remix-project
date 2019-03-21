@@ -3,7 +3,9 @@ var csjs = require('csjs-inject')
 var css = csjs`
   .tooltip {
     z-index: 1001;
-    display: inline-block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: fixed;
     color: var(--primary)
     min-height: 50px;

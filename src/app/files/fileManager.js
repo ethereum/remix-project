@@ -49,7 +49,8 @@ class FileManager extends ApiFactory {
       name: 'fileManager',
       methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
       events: ['currentFileChanged'],
-      description: 'service - read/write to any files or folders, require giving permissions'
+      description: 'service - read/write to any files or folders, require giving permissions',
+      permission: true
     }
   }
 
