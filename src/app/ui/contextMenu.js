@@ -11,6 +11,7 @@ var css = csjs`
         width:150px; 
         border-radius: 2px;
         z-index: 1000;
+        background-color: var(--light)
     }
     
     .liitem
@@ -28,7 +29,7 @@ var css = csjs`
         padding-left: 5px;
         padding-right: 5px;
         padding-bottom: 3px;
-        color: var(--primary);
+        color: var(--dark);
     }
 
     #menuitems :hover
