@@ -58,7 +58,6 @@ class Section {
         `)
       }
     }
-    sectionLook.appendChild(yo`<p></p>`)
 
     if (!this._view) {
       this._view = sectionLook
