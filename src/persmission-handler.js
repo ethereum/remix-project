@@ -23,7 +23,7 @@ const css = csjs`
 }
 `
 
-function notAllowWarning(from, to) {
+function notAllowWarning (from, to) {
   return `${from.displayName || from.name} is not allowed to call ${to.displayName || to.name}.`
 }
 
