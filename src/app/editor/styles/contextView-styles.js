@@ -43,6 +43,14 @@ var css = csjs`
     height: 13px;
     margin-right: 5px;
   }
+  .contextviewcontainer{
+    position          : absolute;
+    top               : 39px;
+    z-index           : 50;
+    left              : 350px;
+    border-radius     : 1px;
+    border            : 2px solid var(--secondary);
+  }
 `
 
 module.exports = css

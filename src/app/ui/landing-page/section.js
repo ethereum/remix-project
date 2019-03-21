@@ -1,47 +1,61 @@
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
+let yo = require('yo-yo')
+let csjs = require('csjs-inject')
 
 var css = csjs`
-  .item      {
-    display         : flex;
-    flex-direction  : column;
-    align-items     : center;
-    width           : 400px;
-    padding         : 50px;
-    font-family     : "Lucida Console", Monaco, monospace
-    }
-  a:link              {
-    color           : black;
+  .text {
+    background-color : var(--success);
+    cursor: pointer;
+    color: var(--primary);
+    font-weight: normal;
+  }
+  .text:hover {
+    font-weight: bold;
+  }
+  .link {
+    cursor: pointer;
+    background-color : var(--primary);
+    color: var(--success);
+    font-weight: normal;
     text-decoration : none;
   }
-
+  .link:hover {
+    color: var(--success);
+    font-weight: bold;
+    text-decoration : none;
+  }
 `
 
 class Section {
   constructor (title, actions) {
     this.title = title
     this.actions = actions
+    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success text-primary' : 'bg-primary text-success border-success'
   }
 
   render () {
-    var sectionLook = yo`
-      <div class="${css.item}">
-        <h2> ${this.title} </h2>
+    let sectionLook = yo`
+      <div class="card ${this.cardStyle} p-3" style="min-width: 300px;">
+        <div class="card-header font-weight-bold">${this.title}</div>
+        <p></p>
       </div>
     `
     for (var i = 0; i < this.actions.length; i++) {
       if (this.actions[i].type === `callback`) {
         sectionLook.appendChild(yo`
-                <div>
-                  <span class='text-warning h6' style="cursor:pointer;" onclick= ${this.actions[i].payload} > ${this.actions[i].label} </span>
-                </div>
-              `)
+          <div>
+            <span class ="${css.text}" onclick=${this.actions[i].payload} >
+              ${this.actions[i].label}
+            </span>
+          </div>
+        `)
       } else if (this.actions[i].type === `link`) {
         sectionLook.appendChild(yo`
-            <div>
-                <a class='text-warning h6' href= ${this.actions[i].payload} target="_blank" > ${this.actions[i].label} </a> 
-            </div>
-          `)
+          <div >
+            <a class="${css.link} text-decoration-none" href=${this.actions[i].payload} target="_blank" >
+              ${this.actions[i].label}
+            </a>
+          </div>
+        `)
       }
     }
 
