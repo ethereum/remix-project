@@ -16,7 +16,8 @@ export class TxListenerModule extends ApiFactory {
       name: 'txListener',
       displayName: 'transaction listener',
       events: ['newTransaction'],
-      description: 'service - notify new transactions'
+      description: 'service - notify new transactions',
+      permission: true
     }
   }
 }
