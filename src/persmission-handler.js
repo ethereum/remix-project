@@ -6,7 +6,16 @@ const modalDialog = require('./app/ui/modaldialog')
 
 const css = csjs`
 .permission h4 {
+  text-transform: uppercase;
   text-align: center;
+}
+.permission h6 {
+  text-transform: uppercase;
+}
+.remember {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .images {
   display: flex;
@@ -18,8 +27,8 @@ const css = csjs`
   width: 40px;
   height: 40px;
 }
-.images span {
-  marign: 0 20px;
+.images i {
+  margin: 0 20px;
 }
 `
 
@@ -41,6 +50,7 @@ export class PermissionHandler {
 
   clear () {
     localStorage.removeItem('plugins/permissions')
+    addTooltip('All Permissions have been reset')
   }
 
   /**
@@ -125,14 +135,26 @@ export class PermissionHandler {
     <section class="${css.permission}">
       <article class="${css.images}">
         <img src="${from.icon}" />
-        <span>  --->  </span>
+        <i class="fa fa-arrow-right"></i>
         <img src="${to.icon}" />
       </article>
-      <h4>${message}</h4>
-      <div class="custom-control custom-checkbox">
-        ${rememberSwitch}
-        <label class="custom-control-label" for="remember">Remember this choice</label>
-      </div>
+      
+      <article>
+        <h4>${message} :</h4>
+        <h6>${fromName}</h6>
+        <p>${from.description || yo`<i>No description Provided</i>`}</p>
+        <h6>${toName} :</p>
+        <p>${to.description || yo`<i>No description Provided</i>`}</p>
+      </article>
+
+      <article class="${css.remember}">
+        <div class="custom-control custom-checkbox">
+          ${rememberSwitch}
+          <label class="custom-control-label" for="remember">Remember this choice</label>
+        </div>
+        <button class="btn btn-sm" onclick="${_ => this.clear()}">Reset all Permissions</button>
+      </article>
+
     </section>
     `
   }
