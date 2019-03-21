@@ -24,14 +24,7 @@ var css = csjs`
     height            : 100%;
     width             : 100%;
   }
-  .contextviewcontainer{
-    position          : absolute;
-    top               : 39px;
-    z-index           : 50;
-    left              : 350px;
-    border-radius     : 1px;
-    border            : 2px solid var(--secondary);
-  }
+  
 `
 
 class EditorPanel {
@@ -64,12 +57,10 @@ class EditorPanel {
     self._deps.fileManager.events.on('currentFileChanged', (file) => {
       // we check upstream for "fileChanged"
       self._view.editor.style.display = 'block'
-      self._components.contextView.show()
       self._view.mainPanel.style.display = 'none'
     })
     self.tabProxy.event.on('switchFile', (file) => {
       self._view.editor.style.display = 'block'
-      self._components.contextView.show()
       self._view.mainPanel.style.display = 'none'
     })
     self.tabProxy.event.on('closeFile', (file) => {
@@ -185,9 +176,7 @@ class EditorPanel {
     self._view.content = yo`
       <div class=${css.content}>
         ${self.tabProxy.renderTabsbar()}
-        <div class="${css.contextviewcontainer} bg-secondary border-top-0">
-          ${self._components.contextView.render()}
-        </div>
+        ${self._components.contextView.render()}
         ${self._view.editor}
         ${self._view.mainPanel}
         ${self._view.terminal}

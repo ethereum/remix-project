@@ -34,8 +34,8 @@ class Section {
 
   render () {
     let sectionLook = yo`
-      <div class="card ${this.cardStyle} p-2" style="min-width: 300px;">
-        <div class="card-header">${this.title}</div>
+      <div class="card ${this.cardStyle} p-3" style="min-width: 300px;">
+        <div class="card-header font-weight-bold">${this.title}</div>
         <p></p>
       </div>
     `

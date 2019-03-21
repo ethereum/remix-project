@@ -31,13 +31,17 @@ class ContextView {
     this.sourceMappingDecoder = new SourceMappingDecoder()
     this.previousElement = null
     this.contextualListener.event.register('contextChanged', nodes => {
+      this.show()
       this._nodes = nodes
       this.update()
+    })
+    this.contextualListener.event.register('stopHighlighting', () => {
+      this.hide()
     })
   }
 
   render () {
-    const view = yo`<div class=${css.contextview}>
+    const view = yo`<div class="${css.contextview} ${css.contextviewcontainer} bg-secondary border-top-0">
       <div class=${css.container}>
         ${this._renderTarget()}
       </div>
