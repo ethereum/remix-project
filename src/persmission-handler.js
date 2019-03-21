@@ -1,37 +1,46 @@
 /* global localStorage */
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
+const addTooltip = require('./app/ui/tooltip')
 const modalDialog = require('./app/ui/modaldialog')
 
 const css = csjs`
-.permission p {
+.permission h4 {
   text-align: center;
 }
 .images {
   display: flex;
   justify-content: center;
-  align-item: center;  
+  align-items: center;
+  padding: 10px;
 }
 .images img {
   width: 40px;
   height: 40px;
 }
+.images span {
+  marign: 0 20px;
+}
 `
+
+function notAllowWarning(from, to) {
+  return `${from.displayName || from.name} is not allowed to call ${to.displayName || to.name}.`
+}
 
 export class PermissionHandler {
 
   constructor () {
-    const permission = localStorage.getItem('plugin-permissions')
+    const permission = localStorage.getItem('plugins/permissions')
     this.permissions = permission ? JSON.parse(permission) : {}
   }
 
   persistPermissions () {
     const permissions = JSON.stringify(this.permissions)
-    localStorage.setItem('plugin-permissions', permissions)
+    localStorage.setItem('plugins/permissions', permissions)
   }
 
   clear () {
-    localStorage.removeItem('plugin-permissions')
+    localStorage.removeItem('plugins/permissions')
   }
 
   /**
@@ -52,7 +61,7 @@ export class PermissionHandler {
               this.permissions[to.name][from.name].allow = true
               this.persistPermissions()
             }
-            resolve(true)
+            resolve()
           }
         },
         {
@@ -62,7 +71,7 @@ export class PermissionHandler {
               this.permissions[to.name][from.name].allow = false
               this.persistPermissions()
             }
-            resolve(false)
+            reject(notAllowWarning(from, to))
           }
         }
       )
@@ -80,7 +89,11 @@ export class PermissionHandler {
     if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
 
     const { allow, hash } = this.permissions[to.name][from.name]
-    if (!allow) return false
+    if (!allow) {
+      const warning = notAllowWarning(from, to)
+      addTooltip(warning)
+      throw new Error(warning)
+    }
     return hash === from.hash
       ? true  // Allow
       : this.openPermission(from, to)  // New version of a plugin
@@ -93,7 +106,7 @@ export class PermissionHandler {
    */
   form (from, to) {
     const fromName = from.displayName || from.name
-    const toName = from.displayName || from.name
+    const toName = to.displayName || to.name
     const remember = this.permissions[to.name][from.name]
 
     const switchMode = (e) => {
@@ -103,7 +116,7 @@ export class PermissionHandler {
     }
     const rememberSwitch = remember
       ? yo`<input type="checkbox" onchange="${switchMode}" checkbox class="custom-control-input" id="remember">`
-      : yo`<input type="checkbox" class="custom-control-input" id="remember">`
+      : yo`<input type="checkbox" onchange="${switchMode}" class="custom-control-input" id="remember">`
     const message = remember
       ? `${fromName} has changed and would like to access the plugin ${toName}.`
       : `${fromName} would like to access plugin ${toName}.`
@@ -112,10 +125,10 @@ export class PermissionHandler {
     <section class="${css.permission}">
       <article class="${css.images}">
         <img src="${from.icon}" />
-        <span>  ->  </span>
+        <span>  --->  </span>
         <img src="${to.icon}" />
       </article>
-      <p>${message}</p>
+      <h4>${message}</h4>
       <div class="custom-control custom-checkbox">
         ${rememberSwitch}
         <label class="custom-control-label" for="remember">Remember this choice</label>
