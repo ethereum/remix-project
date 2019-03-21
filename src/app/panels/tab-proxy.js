@@ -110,8 +110,8 @@ export class TabProxy {
       <div class="d-flex">
         <div class="m-1">
           <span class="p-1">
-            <i class="m-1 fa fa-plus" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
-            <i class="m-1 fa fa-minus" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
+            <i class="m-1 fa fa-plus" style="color: var(--dark)" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
+            <i class="m-1 fa fa-minus" style="color: var(--dark)" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
           </span>
         </div>
         ${this._view.tabs}
