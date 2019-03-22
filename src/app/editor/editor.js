@@ -104,8 +104,6 @@ class Editor {
     this.editor.setShowPrintMargin(false)
     this.editor.resize(true)
 
-    this.setTheme()
-
     this.editor.setOptions({
       enableBasicAutocompletion: true,
       enableLiveAutocompletion: true
