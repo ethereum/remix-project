@@ -36,7 +36,7 @@ class SwapPanelComponent {
       this.contents[moduleName].style.display = 'block'
       this.currentNode = moduleName
       var api = this.store.getOne(moduleName)
-      this.header.innerHTML = api.profile ? api.profile.displayName : ' - '
+      this.header.querySelector('h6').innerHTML = api.profile ? api.profile.displayName : ' - '
       return
     }
   }
@@ -59,7 +59,7 @@ class SwapPanelComponent {
       <div id='plugins' class=${css.plugins} >
       </div>
     `
-    this.header = yo`<header class="navbar navbar-dark bg-dark text-warning"><h2 class="navbar-brand"></h2> </header>`
+    this.header = yo`<header class="${css.swapitHeader} bg-dark"><h6 class="${css.swapitTitle}"></h6></header>`
     if (!this.opt.displayHeader) this.header.style.display = 'none'
 
     return yo`<div class=${css.pluginsContainer}>
@@ -77,7 +77,7 @@ const css = csjs`
   }
   .plugItIn       {
     display        : none;
-    height         : 100%;
+    height: calc(100% - 50px);
   }
   .plugItIn > div {
     overflow-y     : auto;
@@ -90,5 +90,13 @@ const css = csjs`
   .pluginsContainer {
     height: 100%;
     overflow-y: hidden;
+  }
+  .swapitTitle {
+    text-transform: uppercase;
+  }
+  .swapitHeader {
+    height: 50px;
+    padding-top: 16px;
+    padding-left: 27px;
   }
 `
