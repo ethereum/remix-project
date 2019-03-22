@@ -11,7 +11,6 @@ var css = csjs`
         width:150px; 
         border-radius: 2px;
         z-index: 1000;
-        background-color: var(--light)
     }
     
     .liitem
@@ -54,11 +53,11 @@ module.exports = (event, items) => {
     current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
-  var container = yo`<div class=${css.container}><ul id='menuitems'>${menu}</ul></div>`
+  var container = yo`<div class="${css.container} bg-ligh"><ul id='menuitems'>${menu}</ul></div>`
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
-
+  
   document.querySelector('body').appendChild(container)
   setTimeout(() => {
     window.addEventListener('click', hide)
