@@ -26,5 +26,4 @@ contract MyTest {
   function shouldTriggerOnePass() public {
     Assert.equal(uint(1), uint(1), "the test 3 fails");
   }
-
 }
