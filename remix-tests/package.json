@@ -19,8 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "standard",
-    "test": "standard && mocha --require ts-node/register tests/*.ts -t 300000"
+    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000"
   },
   "repository": {
     "type": "git",
@@ -53,8 +52,17 @@
     "yo-yoify": "latest"
   },
   "devDependencies": {
-    "mocha": "^5.1.0",
+    "@types/async": "^2.4.0",
+    "@types/colors": "^1.2.1",
+    "@types/web3": "^1.0.18",
+    "@types/color-support": "^1.1.0",
+    "@types/commander": "^2.12.2",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.21",
     "babel-preset-es2017": "^6.24.1",
-    "standard": "^10.0.3"
+    "mocha": "^5.1.0",
+    "standard": "^10.0.3",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.1"
   }
 }
