@@ -1,3 +1,4 @@
+import 'mocha'
 import * as async from 'async'
 import Web3 from 'web3'
 import * as assert from 'assert'
