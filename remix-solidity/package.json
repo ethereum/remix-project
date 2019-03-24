@@ -15,7 +15,7 @@
   "main": "./index.js",
   "dependencies": {
     "ethereumjs-util": "^4.5.0",
-    "ethereumjs-vm": "2.4.0",
+    "ethereumjs-vm": "github:yann300/ethereumjs-vm#48db4cb8f884234428682803c2ea5301f5141e96",
     "fast-async": "^6.1.2",
     "remix-lib": "0.4.1",
     "solc": "^0.5.0",
