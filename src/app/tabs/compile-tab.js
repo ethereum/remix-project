@@ -79,6 +79,7 @@ class CompileTab extends ApiFactory {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
+      this.events.emit('setStatus', {key: 'spinner', title: 'compiling...', type: 'info'})
     })
 
     this.fileManager.events.on('currentFileChanged', (name) => {
@@ -88,6 +89,7 @@ class CompileTab extends ApiFactory {
       if (success) {
         // forwarding the event to the appManager infra
         this.events.emit('compilationFinished', source.target, source, 'soljson', data)
+        this.events.emit('setStatus', {key: 'check', title: 'compilation successful', type: 'success'})
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
@@ -97,6 +99,8 @@ class CompileTab extends ApiFactory {
             this.compiler.getSource(contract.file)
           )
         })
+      } else {
+        this.events.emit('setStatus', {key: 'exclamation', title: 'compilation failed', type: 'danger'})
       }
       // Update contract Selection
       let contractMap = {}
