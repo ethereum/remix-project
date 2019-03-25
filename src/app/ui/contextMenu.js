@@ -5,36 +5,29 @@ var csjs = require('csjs-inject')
 var css = csjs`
     .container
     {
-        display: none;
-        position: fixed;
-        border: 1px solid var(--primary);
-        width:150px; 
-        border-radius: 2px;
-        z-index: 1000;
+      display: none;
+      position: fixed;
+      width:100px;
+      border-radius: 2px;
+      z-index: 1000;
+      box-shadow: 0 0 4px var(--dark);
     }
-    
     .liitem
     {
-        padding: 3px;
-        padding-left: 10px;
-        cursor: pointer;
+      padding: 2px;
+      padding-left: 6px;
+      cursor: pointer;
+      color: var(--text-dark);
+      background-color: var(--light)
     }
-    
+    .liitem:hover
+    {
+      background-color:  var(--secondary);
+    }
     #menuitems
     {
-        list-style: none;
-        margin: 0px;
-        margin-top: 4px;
-        padding-left: 5px;
-        padding-right: 5px;
-        padding-bottom: 3px;
-        color: var(--dark);
-    }
-
-    #menuitems :hover
-    {
-        background-color: var(--secondary);
-        border-radius: 2px;
+      list-style: none;
+      margin: 0px;
     }
 `
 
@@ -53,7 +46,7 @@ module.exports = (event, items) => {
     current.onclick = () => { hide(null, true); items[item]() }
     return current
   })
-  var container = yo`<div class="${css.container} bg-ligh"><ul id='menuitems'>${menu}</ul></div>`
+  var container = yo`<div class="${css.container} bg-light"><ul id='menuitems'>${menu}</ul></div>`
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
