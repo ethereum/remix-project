@@ -1,16 +1,16 @@
-pragma solidity ^0.4.24;
-import "./remix_tests.sol";
+pragma solidity >=0.4.22 <0.6.0;
+import "remix_tests.sol";
 import "./SafeMath.sol";
 import "./SafeMathProxy.sol";
 
 contract SafeMathTest {
   SafeMathProxy safemathproxy;
 
-  function beforeAll() {
+  function beforeAll() public {
     safemathproxy = new SafeMathProxy();
   }
 
-  function unsafeMultiplicationShouldOverflow() public view returns (bool) {
+  function unsafeMultiplicationShouldOverflow() public returns (bool) {
     uint256 a = 4;
     uint256 b = 2 ** 256 - 1;
     return Assert.equal(
@@ -20,27 +20,29 @@ contract SafeMathTest {
     );
   }
 
-  function safeMultiplicationShouldRevert() public view returns (bool) {
+  function safeMultiplicationShouldRevert() public returns (bool) {
     uint256 a = 4;
     uint256 b = 2 ** 256 - 1;
+    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("mulProxy, [a, b]"));
     return Assert.equal(
-      address(safemathproxy).call.gas(40000).value(0)("mulProxy",[a, b]),
+      success,
       false,
       "safe multiplication did not revert"
     );
   }
 
-  function safeDivisionByZeroShouldRevert() public view returns (bool) {
+  function safeDivisionByZeroShouldRevert() public returns (bool) {
     uint256 a = 4;
     uint256 b = 0;
+    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("divProxy, [a, b]"));
     return Assert.equal(
-      address(safemathproxy).call.gas(40000).value(0)("divProxy", [a, b]),
+      success,
       false,
       "safe division did not revert"
     );
   }
 
-  function unsafeSubtractShouldUnderflow() public view returns (bool) {
+  function unsafeSubtractShouldUnderflow() public returns (bool) {
     uint256 a = 0;
     uint256 b = a - 1;
     return Assert.equal(
@@ -50,35 +52,38 @@ contract SafeMathTest {
     );
   }
 
-  function safeSubtractShouldRevert() public constant returns (bool) {
+  function safeSubtractShouldRevert() public returns (bool) {
+    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("subProxy, [0, 1]"));
     return Assert.equal(
-      address(safemathproxy).call.gas(40000).value(0)("subProxy", [0, 1]),
+      success,
       false,
       "safe subtract should revert"
     );
   }
 
-  function unsafeAdditionShouldOverflow() public constant returns (bool) {
+  function unsafeAdditionShouldOverflow() public returns (bool) {
     uint256 a = 1;
     uint256 b = 2 ** 256 - 1;
     return Assert.equal(a + b, 0, "unsafe addition did not overflow");
   }
 
-  function safeAdditionShouldRevert() public constant returns (bool) {
+  function safeAdditionShouldRevert() public returns (bool) {
     uint256 a = 1;
     uint256 b = 2 ** 256 - 1;
+    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("addProxy, [a, b]"));
     return Assert.equal(
-      address(safemathproxy).call.gas(40000).value(0)("addProxy", [a, b]),
+      success,
       false,
       "safe addition should revert"
     );
   }
 
-  function safeModulusShouldRevert() public constant returns (bool) {
+  function safeModulusShouldRevert() public returns (bool) {
     uint256 a = 1;
     uint256 b = 0;
+    (bool success, bytes memory data) = address(safemathproxy).call.gas(40000).value(0)(abi.encode("modProxy, [a, b]"));
     return Assert.equal(
-      address(safemathproxy).call.gas(40000).value(0)("modProxy", [a, b]),
+      success,
       false,
       "safe modulus did not revert"
     );
