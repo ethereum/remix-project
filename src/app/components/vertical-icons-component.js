@@ -11,21 +11,44 @@ class VerticalIconComponent {
     this.events = new EventEmitter()
     this.icons = {}
     this.iconKind = {}
+    this.iconStatus = {}
     this.name = name
 
     this.store.event.on('activate', (name) => {
-      const { profile } = this.store.getOne(name)
-      if (!profile.icon) return
-      if (profile.location === this.name || !profile.location) {
-        this.addIcon(profile)
+      const api = this.store.getOne(name)
+      if (!api.profile.icon) return
+      if (api.profile.location === this.name || !api.profile.location) {
+        this.addIcon(api.profile)
+        this.listenOnStatus(api)
       }
     })
     this.store.event.on('deactivate', (name) => {
       const api = this.store.getOne(name)
-      if (api && this.icons[name]) this.removeIcon(api.profile)
+      if (api && this.icons[name]) {
+        this.removeIcon(api.profile)
+        this.stopListenOnStatus(api)
+      }
     })
     this.store.event.on('add', (api) => { })
     this.store.event.on('remove', (api) => { })
+  }
+
+  stopListenOnStatus (api) {
+    if (!api.events) return
+    let fn = this.iconStatus[api.profile.name]
+    if (fn) {
+      api.events.unregister('setStatus', fn)
+      delete this.iconStatus[api.profile.name]
+    }
+  }
+
+  listenOnStatus (api) {
+    if (!api.events) return
+    const fn = (status) => {
+      this.setIconStatus(api.profile.name, status)
+    }
+    this.iconStatus[api.profile.name] = fn
+    api.events.on('setStatus', this.iconStatus[api.profile.name])
   }
 
   /**
@@ -34,8 +57,24 @@ class VerticalIconComponent {
    */
   addIcon ({kind, name, icon}) {
     this.icons[name] = yo`<div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" title="${name}" ><img src="${icon}" alt="${name}" /></div>`
-
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
+  }
+
+  /**
+   * Set a new status for the @arg name
+   * @param {name}
+   * @param {status}
+   */
+  setIconStatus (name, status) {
+    const el = this.icons[name]
+    if (!el) return
+    let statusEl = el.querySelector('i')
+    if (statusEl) {
+      el.removeChild(statusEl)
+    }
+    if (status.key) {
+      el.appendChild(yo`<i title="${status.title}" class="fa fa-${status.key} ${css.status} font-weight-bold text-${status.type}" aria-hidden="true"></i>`)
+    }
   }
 
   /**
@@ -136,6 +175,7 @@ const css = csjs`
     width: 36px;
     height: 36px;
     padding: 3px;
+    position: relative;
   }
   .icon img {
     width: 28px;
@@ -152,9 +192,14 @@ const css = csjs`
     border-radius: 8px;
     padding-top: 1px;
     padding-left: 1px;
-}
+  }
   .icon[title='settings'] {
     position: absolute;
     bottom: 0;
+  }
+  .status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
   }
 `
