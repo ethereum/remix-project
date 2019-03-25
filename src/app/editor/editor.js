@@ -16,8 +16,8 @@ require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
 const themeChooser = require('../ui/styles-guide/theme-chooser')
-require('brace/theme/solarized_dark')
-require('brace/theme/solarized_light')
+require('brace/theme/chaos')
+require('brace/theme/chrome')
 
 const css = csjs`
   .ace-editor {
@@ -68,8 +68,8 @@ class Editor {
     }
 
     this._themes = {
-      'light': 'solarized_light',
-      'dark': 'solarized_dark'
+      'light': 'chrome',
+      'dark': 'chaos'
     }
     themeChooser.event.on('switchTheme', (type) => {
       this.setTheme(type)
