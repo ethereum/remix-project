@@ -4,12 +4,14 @@ var EventManager = require('../../lib/events')
 var css = require('./styles/analysis-tab-styles')
 
 import { ApiFactory } from 'remix-plugin'
+import { EventEmitter } from 'events'
 
 class AnalysisTab extends ApiFactory {
 
   constructor (registry) {
     super()
     this.event = new EventManager()
+    this.events = new EventEmitter()
     this.registry = registry
   }
 
@@ -27,6 +29,13 @@ class AnalysisTab extends ApiFactory {
 
   render () {
     var staticanalysis = new StaticAnalysis()
+    staticanalysis.event.register('staticAnaysisWarning', (count) => {
+      if (count) {
+        this.events.emit('statusChanged', {key: 'exclamation-triangle', title: count + ' warnings', type: 'warning'})
+      } else {
+        this.events.emit('statusChanged', {key: 'check', title: 'no warning', type: 'success'})
+      }
+    })
     this.registry.put({api: staticanalysis, name: 'staticanalysis'})
 
     if (this.el) return this.el
