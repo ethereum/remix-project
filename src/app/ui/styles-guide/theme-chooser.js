@@ -17,7 +17,7 @@ const themes = [
   {name: 'Superhero', quality: 'dark', url: 'https://bootswatch.com/4/superhero/bootstrap.min.css'}
 ]
 
-const defaultTheme = 'Flatly'
+const defaultTheme = 'Superhero'
 
 module.exports = {
   event: new EventEmitter(),
