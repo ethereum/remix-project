@@ -28,6 +28,7 @@ var css = csjs`
   }
   .dropdownpanel {
     width: 100%;
+    word-break: break-all;
   }
   .dropdownrawcontent {
     padding: 2px;
@@ -114,7 +115,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
       <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fa fa-clipboard"></div>
     </div>` : yo`<div></div>`
 
-  var contentNode = yo`<div class='dropdownpanel' style='display:none'>
+  var contentNode = yo`<div class='dropdownpanel ${css.dropdownpanel}' style='display:none'>
       <i class="${css.refresh} fa fa-refresh" aria-hidden="true"></i>
       <div class='dropdowncontent'>${content}</div>
       <div class='dropdownrawcontent' style='display:none'></div>
