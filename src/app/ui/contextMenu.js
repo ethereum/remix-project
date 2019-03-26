@@ -18,7 +18,7 @@ var css = csjs`
       padding-left: 6px;
       cursor: pointer;
       color: var(--text-dark);
-      background-color: var(--light)
+      background-color: var(--light);
     }
     .liitem:hover
     {
