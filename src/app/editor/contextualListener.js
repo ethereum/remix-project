@@ -69,6 +69,7 @@ class ContextualListener {
       this.currentPosition = cursorPosition
       return
     }
+    this._stopHighlighting()
     this.currentPosition = cursorPosition
     this.currentFile = file
     if (compilationResult && compilationResult.data && compilationResult.data.sources[file]) {
@@ -78,7 +79,7 @@ class ContextualListener {
         this._highlightExpressions(nodes[nodes.length - 1], compilationResult)
       }
       this.event.trigger('contextChanged', [nodes])
-    } else this._stopHighlighting()
+    }
   }
 
   _buildIndex (compilationResult, source) {

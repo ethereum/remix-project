@@ -125,6 +125,7 @@ staticAnalysisView.prototype.run = function () {
     })
   } else {
     warningContainer.html('No compiled AST available')
+    self.event.trigger('staticAnaysisWarning', [0])
   }
 }
 
