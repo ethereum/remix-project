@@ -3,6 +3,7 @@ var EventEmitter = require('events')
 
 // TODO : Put it somewhere else
 const themes = [
+  {name: 'cerulean', quality: 'light', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cerulean/bootstrap.min.css'},
   {name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css'},
   {name: 'Journal', quality: 'light', url: 'https://bootswatch.com/4/journal/bootstrap.min.css'},
   {name: 'Lumen', quality: 'light', url: 'https://bootswatch.com/4/lumen/bootstrap.min.css'},
