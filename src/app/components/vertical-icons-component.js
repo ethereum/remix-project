@@ -1,5 +1,6 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
+var helper = require('../../lib/helper')
 
 const EventEmitter = require('events')
 
@@ -62,8 +63,8 @@ class VerticalIconComponent {
 
   /**
    * Set a new status for the @arg name
-   * @param {name}
-   * @param {status}
+   * @param {String} name
+   * @param {Object} status
    */
   setIconStatus (name, status) {
     const el = this.icons[name]
@@ -73,7 +74,10 @@ class VerticalIconComponent {
       el.removeChild(statusEl)
     }
     if (status.key) {
-      el.appendChild(yo`<i title="${status.title}" class="fa fa-${status.key} ${css.status} font-weight-bold text-${status.type}" aria-hidden="true"></i>`)
+      let key = helper.checkSpecialChars(status.key) ? '' : status.key
+      let type = helper.checkSpecialChars(status.type) ? '' : status.type
+      let title = helper.checkSpecialChars(status.title) ? '' : status.title
+      el.appendChild(yo`<i title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></i>`)
     }
   }
 
