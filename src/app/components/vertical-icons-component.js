@@ -38,7 +38,7 @@ class VerticalIconComponent {
     if (!api.events) return
     let fn = this.iconStatus[api.profile.name]
     if (fn) {
-      api.events.unregister('setStatus', fn)
+      api.events.remove('statusChanged', fn)
       delete this.iconStatus[api.profile.name]
     }
   }
@@ -49,7 +49,7 @@ class VerticalIconComponent {
       this.setIconStatus(api.profile.name, status)
     }
     this.iconStatus[api.profile.name] = fn
-    api.events.on('setStatus', this.iconStatus[api.profile.name])
+    api.events.on('statusChanged', this.iconStatus[api.profile.name])
   }
 
   /**

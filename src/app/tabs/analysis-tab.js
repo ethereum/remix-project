@@ -31,9 +31,9 @@ class AnalysisTab extends ApiFactory {
     var staticanalysis = new StaticAnalysis()
     staticanalysis.event.register('staticAnaysisWarning', (count) => {
       if (count) {
-        this.events.emit('setStatus', {key: 'exclamation-triangle', title: count + ' warnings', type: 'warning'})
+        this.events.emit('statusChanged', {key: 'exclamation-triangle', title: count + ' warnings', type: 'warning'})
       } else {
-        this.events.emit('setStatus', {key: 'check', title: 'no warning', type: 'success'})
+        this.events.emit('statusChanged', {key: 'check', title: 'no warning', type: 'success'})
       }
     })
     this.registry.put({api: staticanalysis, name: 'staticanalysis'})
