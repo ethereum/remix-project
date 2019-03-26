@@ -9,34 +9,20 @@ export class Workspace {
 
 export const defaultWorkspaces = (appManager) => {
   return [
-    new Workspace('Solidity Basic', '', () => {
-      appManager.ensureActivated('solidity')
-    }, () => {}),
-    new Workspace('Solidity Unit testing', '', () => {
-      appManager.ensureActivated('solidity')
-      appManager.ensureActivated('solidityUnitTesting')
-    }, () => {}),
-    new Workspace('Solidity Full Environement', '', () => {
+    new Workspace('Solidity', '', () => {
       appManager.ensureActivated('solidity')
       appManager.ensureActivated('run')
       appManager.ensureActivated('solidityStaticAnalysis')
       appManager.ensureActivated('solidityUnitTesting')
     }, () => {}),
-    new Workspace('Vyper Basic', '', () => {
+    new Workspace('Vyper', '', () => {
       appManager.ensureActivated('vyper')
+      appManager.ensureActivated('run')
     }, () => {}),
     new Workspace('Pipeline', '', () => {
       appManager.ensureActivated('solidity')
       appManager.ensureActivated('run')
       appManager.ensureActivated('pipeline')
-    }, () => {}),
-    new Workspace('Deploy and Run Solidity', '', () => {
-      appManager.ensureActivated('solidity')
-      appManager.ensureActivated('run')
-    }, () => {}),
-    new Workspace('Deploy and Run Vyper', '', () => {
-      appManager.ensureActivated('vyper')
-      appManager.ensureActivated('run')
     }, () => {}),
     new Workspace('Debugger', '', () => {
       appManager.ensureActivated('debugger')
