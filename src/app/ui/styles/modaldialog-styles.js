@@ -56,16 +56,12 @@ var css = csjs`
     animation-duration: 0.4s
   }
   .modalFooterOk {
-    background-color: var(--light);
-    color: var(--dark);
     cursor: pointer;
   }
   .modalFooterOk:hover {
     cursor: pointer;
   }
   .modalFooterCancel {
-    background-color: var(--light);
-    color: var(--dark);
     margin-left: 1em;
     cursor: pointer;
   }

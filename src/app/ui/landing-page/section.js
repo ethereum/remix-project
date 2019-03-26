@@ -3,23 +3,19 @@ let csjs = require('csjs-inject')
 
 var css = csjs`
   .text {
-    background-color : var(--success);
     cursor: pointer;
-    color: var(--primary);
     font-weight: normal;
+    max-width: 300px;
   }
   .text:hover {
     font-weight: bold;
   }
   .link {
     cursor: pointer;
-    background-color : var(--primary);
-    color: var(--success);
     font-weight: normal;
     text-decoration : none;
   }
   .link:hover {
-    color: var(--success);
     font-weight: bold;
     text-decoration : none;
   }
@@ -29,7 +25,7 @@ class Section {
   constructor (title, actions) {
     this.title = title
     this.actions = actions
-    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success text-primary' : 'bg-primary text-success border-success'
+    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success text-light' : 'bg-light text-dark border-dark'
   }
 
   render () {
