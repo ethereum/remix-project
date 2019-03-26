@@ -133,4 +133,3 @@ function html (opts) {
     </div>
   </div>`
 }
-

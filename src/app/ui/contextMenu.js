@@ -50,7 +50,7 @@ module.exports = (event, items) => {
   container.style.left = event.pageX + 'px'
   container.style.top = event.pageY + 'px'
   container.style.display = 'block'
-  
+
   document.querySelector('body').appendChild(container)
   setTimeout(() => {
     window.addEventListener('click', hide)
