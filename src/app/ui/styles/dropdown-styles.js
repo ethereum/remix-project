@@ -33,7 +33,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     align-items       : end;
-    top               : 30px;
+    top               : 32px;
     right             : 0;
     width             : 230px;
     border            : 1px solid var(--dark);

@@ -25,12 +25,12 @@ class Section {
   constructor (title, actions) {
     this.title = title
     this.actions = actions
-    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success text-light' : 'bg-light text-dark border-dark'
+    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success text-light' : 'bg-light text-dark'
   }
 
   render () {
     let sectionLook = yo`
-      <div class="card ${this.cardStyle} p-3" style="min-width: 300px;">
+      <div class="card ${this.cardStyle} p-3" style="min-width: 300px; min-height: 190px;">
         <div class="card-header font-weight-bold">${this.title}</div>
         <p></p>
       </div>
