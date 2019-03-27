@@ -65,7 +65,7 @@ export class LandingPage extends ApiFactory {
       { label: 'Access local file system. remixd', type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html` },
       { label: 'Medium posts', type: `link`, payload: `https://medium.com/remix-ide` },
       { label: 'Plugins & modules', type: `link`, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md` },
-      { label: 'GitHub repo', type: `link`, payload: `https://github.com/ethereum/remix-ide` },
+      { label: 'GitHub repo', type: `link`, payload: `https://github.com/ethereum/remix-ide` }
     ]
 
     var actionsHelp = [
