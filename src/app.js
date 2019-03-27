@@ -187,7 +187,7 @@ class App extends ApiFactory {
     if (self._view.el) return self._view.el
     // not resizable
     self._view.iconpanel = yo`
-      <div id="icon-panel" class="${css.iconpanel} bg-primary">
+      <div id="icon-panel" class="${css.iconpanel} bg-light">
       ${''}
       </div>
     `
