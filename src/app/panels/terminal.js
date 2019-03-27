@@ -136,10 +136,10 @@ class Terminal {
           </div>
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
-          <div class=${css.listen}>
-            <input id="listenNetworkCheck" onchange=${listenOnNetwork} type="checkbox" class="form-check-input"
+          <div class="form-check">
+            <input id="listenNetworkCheck" onchange=${listenOnNetwork} type="checkbox" class="form-check-input "
             title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you">
-            <label class="${css.listenLabel} form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
+            <label class="form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>

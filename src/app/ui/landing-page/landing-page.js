@@ -9,7 +9,7 @@ var css = csjs`
     flex-wrap       : wrap;
     align-content   : space-around;
     padding         : 20px;
-    max-width       : 300px;
+    max-width       : 340px;
     background-color: var(--light);
     font-family     : "Lucida Console", Monaco, monospace;
   }
