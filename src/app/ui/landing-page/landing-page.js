@@ -28,6 +28,7 @@ var css = csjs`
     height          : 100%;
     padding         : 20px;
     background-color: var(--bg-light);
+    margin-left     : 75px;
   }
   .im:hover {
   }
@@ -61,18 +62,10 @@ export class LandingPage extends ApiFactory {
 
     var actionsLearn = [
       { label: 'Remix documentation', type: `link`, payload: `https://remix.readthedocs.io/en/latest/#` },
-      { label: 'GitHub repository', type: `link`, payload: `https://github.com/ethereum/remix-ide` },
       { label: 'Access local file system. remixd', type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html` },
-      { label: 'npm module for remixd', type: `link`, payload: `https://www.npmjs.com/package/remixd` },
       { label: 'Medium posts', type: `link`, payload: `https://medium.com/remix-ide` },
-      { label: 'Tutorials', type: `link`, payload: `https://github.com/ethereum/remix-workshops` }
-    ]
-
-    var actionsPlugins = [
-      { label: 'Remix plugins & modules', type: `link`, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md` },
-      { label: 'Repository on GitHub', type: `link`, payload: `https://github.com/ethereum/remix-plugin` },
-      { label: 'Examples', type: `link`, payload: `https://github.com/ethereum/remix-plugin/tree/master/examples` },
-      { label: 'Build a plugin for Remix', type: `link`, payload: `https://medium.com/remix-ide/build-a-plugin-for-remix-90d43b209c5a` }
+      { label: 'Plugins & modules', type: `link`, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md` },
+      { label: 'GitHub repo', type: `link`, payload: `https://github.com/ethereum/remix-ide` },
     ]
 
     var actionsHelp = [
@@ -83,7 +76,6 @@ export class LandingPage extends ApiFactory {
 
     // var sectionStart = new Section('Start', actionsStart)
     var sectionLearn = new Section('Learn', actionsLearn)
-    var sectionPlugins = new Section('Plugins', actionsPlugins)
     var sectionHelp = new Section('Help', actionsHelp)
 
     var sectionsWorkspaces = []
@@ -109,7 +101,6 @@ export class LandingPage extends ApiFactory {
     this.sections.push(sectionWorkspace)
     // this.sections.push(sectionStart)
     this.sections.push(sectionLearn)
-    this.sections.push(sectionPlugins)
     this.sections.push(sectionHelp)
   }
 
