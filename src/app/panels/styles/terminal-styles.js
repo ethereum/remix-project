@@ -21,6 +21,7 @@ var css = csjs`
     display           : flex;
     align-items       : center;
     width             : 100%;
+    border-bottom-style : ridge;
   }
   .clear           {
     margin-right      : 20px;

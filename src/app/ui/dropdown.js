@@ -45,9 +45,9 @@ class Dropdown {
       </div>
     `
     self._view.el = yo`
-      <div class=${css.dropdown} onclick=${show}>
+      <div class="${css.dropdown}" onclick=${show}>
         ${self._view.selected}
-        <div class=${css.options} style="display: none;">
+        <div class="${css.options} bg-light" style="display: none;">
           ${self.data._options.map(label => {
             var input = yo`<input data-idx=${self.data._elements.length} onchange=${emit} type="checkbox" />`
             if (self.data.selected.indexOf(label) !== -1) {

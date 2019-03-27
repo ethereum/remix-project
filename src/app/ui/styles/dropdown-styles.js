@@ -7,6 +7,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     margin-right      : 10px;
+    margin-left       : 10px;
     width             : auto;
   }
   .selectbox          {
@@ -32,15 +33,16 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     align-items       : end;
-    top               : 24px;
-    left              : 0;
-    width             : 250px;
-    border            : 1px solid var(--primary);
+    top               : 30px;
+    right             : 0;
+    width             : 230px;
+    border            : 1px solid var(--dark);
     border-radius     : 3px;
     border-top        : 0;
   }
   .option {
-    margin: 0;
+    margin-left       : 5px;
+    margin-top        : 5px;
   }
 `
 
