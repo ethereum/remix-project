@@ -1,6 +1,6 @@
 {
   "name": "remix-solidity",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Ethereum IDE and tools for the web",
   "contributors": [
     {
@@ -17,7 +17,7 @@
     "ethereumjs-util": "^4.5.0",
     "ethereumjs-vm": "github:yann300/ethereumjs-vm#48db4cb8f884234428682803c2ea5301f5141e96",
     "fast-async": "^6.1.2",
-    "remix-lib": "0.4.1",
+    "remix-lib": "0.4.2",
     "solc": "^0.5.0",
     "webworkify": "^1.2.1"
   },
