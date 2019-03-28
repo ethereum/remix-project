@@ -6,6 +6,7 @@ var css = csjs`
     cursor: pointer;
     font-weight: normal;
     max-width: 300px;
+    user-select: none;
   }
   .text:hover {
     font-weight: bold;
@@ -14,6 +15,7 @@ var css = csjs`
     cursor: pointer;
     font-weight: normal;
     text-decoration : none;
+    user-select: none;
   }
   .link:hover {
     font-weight: bold;
@@ -31,7 +33,7 @@ class Section {
   render () {
     let sectionLook = yo`
       <div class="card ${this.cardStyle} p-3" style="min-width: 300px; min-height: 190px;">
-        <div class="card-header font-weight-bold">${this.title}</div>
+        <div class="card-header font-weight-bold" style="user-select: none;">${this.title}</div>
         <p></p>
       </div>
     `

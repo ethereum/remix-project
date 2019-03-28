@@ -22,6 +22,7 @@ var css = csjs`
     align-items       : center;
     width             : 100%;
     border-bottom-style : ridge;
+    max-height        : 35px;
   }
   .clear           {
     margin-right      : 20px;
@@ -92,7 +93,8 @@ var css = csjs`
   .search {
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    width: 200px;
+    padding-left: 20px;
   }
   .filter             {
     width                       : 200px;
@@ -102,13 +104,14 @@ var css = csjs`
     border-bottom-left-radius   : 0px;
   }
   .searchIcon {
-    height                      : 25px;
+    height                      : 100%;
     width                       : 25px;
     border-top-left-radius      : 3px;
     border-bottom-left-radius   : 3px;
     display                     : flex;
     align-items                 : center;
     justify-content             : center;
+    margin-right                : 5px;
   }
   .listen {
     margin-right: 30px;
@@ -123,7 +126,6 @@ var css = csjs`
   .verticalLine {
     border-left       : 1px solid var(--secondary)
     height            : 65%;
-    margin-right      : 30px;   
   }
   .pendingTx {
     border            : 1px solid var(--secondary);

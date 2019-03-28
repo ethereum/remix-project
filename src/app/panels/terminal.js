@@ -128,7 +128,7 @@ class Terminal {
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class=${css.menu}>
+        <div class="${css.menu} bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" title="Clear console"
@@ -143,7 +143,7 @@ class Terminal {
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon} bg-light btn" aria-hidden="true"></i>
+            <i class="fa fa-search ${css.searchIcon} bg-light btn-light" aria-hidden="true"></i>
             <input spellcheck="false" type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
