@@ -29,6 +29,7 @@ var css = csjs`
     padding         : 20px;
     background-color: var(--bg-light);
     margin-left     : 75px;
+    user-select     : none;
   }
   .im:hover {
   }
