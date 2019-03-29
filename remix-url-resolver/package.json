@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "lint": "standard",
-    "test": "standard && mocha --require ts-node/register tests/*.ts -t 300000"
+    "test": "standard && mocha --require ts-node/register tests/*.ts -t 300000",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
