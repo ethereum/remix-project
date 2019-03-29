@@ -19,7 +19,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000"
+    "test": "tsc && mocha --require ts-node/register tests/*.ts -t 300000",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
