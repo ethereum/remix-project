@@ -48,8 +48,8 @@ Remix is built out of several different modules:
 + [`remix-analyzer`](remix-analyzer/README.md)
 + [`remix-solidity`](remix-solidity/README.md) provides Solidity analysis and decoding functions.
 + [`remix-lib`](remix-lib/README.md)
-+ [`remix-debug`](remix-debugger/README.md) is now *deprecated*. It contains the debugger.
-+ [`remix-tests`](remix-tests/README.md) contains our tests.
++ [`remix-debug`](remix-debug/README.md) allo debuggin transaction.
++ [`remix-tests`](remix-tests/README.md) provides unit testing for solidity.
 + [`remixd`](https://github.com/ethereum/remixd/tree/master) CLI which allow accessing local element from Remix IDE (see https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html)
 
 Each generally has their own npm package and test suite, as well as basic documentation.
