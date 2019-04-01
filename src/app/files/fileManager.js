@@ -136,8 +136,9 @@ class FileManager extends ApiFactory {
     if (this.currentRequest) {
       let reject = false
       let savedAsAnotherFile = false
+      let warnToaster
       const actions = yo`<div class="container ml-1">
-        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => { reject = true; e.target.innerHTML = 'Canceled' }}>Cancel</button>
+        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => { reject = true; e.target.innerHTML = 'Canceled'; warnToaster.hide() }}>Cancel</button>
         <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
           if (savedAsAnotherFile) return
           savedAsAnotherFile = true
@@ -145,9 +146,10 @@ class FileManager extends ApiFactory {
           this._setFileInternal(newPath, content)
           this.switchFile(newPath)
           e.target.innerHTML = 'Saved'
+          warnToaster.hide()
         }}>Save As Another</button>
         </div>`
-      await toaster(yo`<div><span class="text-primary">${this.currentRequest.from}</span> is modyfing to <span class="text-primary">${path}</span></div>`, actions, { time: 4000 })
+      warnToaster = await toaster(yo`<div><span class="text-primary">${this.currentRequest.from}</span> is modyfing to <span class="text-primary">${path}</span></div>`, actions, { time: 4000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
       if (savedAsAnotherFile) return
     }
