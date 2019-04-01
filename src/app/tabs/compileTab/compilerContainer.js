@@ -143,7 +143,7 @@ class CompilerContainer {
         </article>
         <!-- Config -->
         <article>
-          <small>Compiler Configuration</small>
+          <small class="${css.compilerSm}">Compiler Configuration</small>
           <ul class="list-group list-group-flush">
             <li class="list-group-item form-group ${css.compilerConfig}">
               ${this._view.autoCompile}
