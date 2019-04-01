@@ -1,9 +1,11 @@
 'use strict'
 
+import { ApiFactory } from 'remix-plugin'
+import yo from 'yo-yo'
 const EventEmitter = require('events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
-import { ApiFactory } from 'remix-plugin'
+var toaster = require('../ui/tooltip')
 
 /*
   attach to files event (removed renamed)
@@ -129,7 +131,21 @@ class FileManager extends ApiFactory {
     })
   }
 
-  setFile (path, content) {
+  async setFile (path, content) {
+    if (this.currentRequest) {
+      let reject = false
+      const actions = yo`<div class="btn-group">
+        <button class="btn btn-secondary btn-sm" onclick=${(e) => { reject = true; e.target.innerHTML = 'Aborted' }}>Abort</button>
+        </div>`
+      await toaster(`${this.currentRequest.from} is modyfing to ${path}`, actions, { time: 140000 })
+      if (reject) {
+        throw new Error(`set file operation on ${path} aborted by user.`)
+      }
+    }
+    this._setFileInternal(path, content)
+  }
+
+  _setFileInternal (path, content) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw new Error(`${path} not availble`)
     // TODO : Add permission

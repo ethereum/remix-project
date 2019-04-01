@@ -6,14 +6,25 @@ var css = require('./styles/tooltip-styles')
  * @param {string} tooltipText The text shown by the tooltip
  * @param {HTMLElement} [action] An HTMLElement to display for action
  */
-module.exports = function addTooltip (tooltipText, action) {
+module.exports = function addTooltip (tooltipText, action, opts) {
+  opts = defaultOptions(opts)
   var tooltip = yo`
   <div class="${css.tooltip} bg-secondary">
     <span>${tooltipText}</span>
     ${action}
   </div>`
-  document.body.appendChild(tooltip)
-  setTimeout(function () {
-    document.body.removeChild(tooltip)
-  }, 7000)
+  return new Promise((resolve, reject) => {
+    document.body.appendChild(tooltip)
+    setTimeout(function () {
+      document.body.removeChild(tooltip)
+      resolve()
+    }, opts.time)
+  })
+}
+
+let defaultOptions = (opts) => {
+  opts = opts || {}
+  return {
+    time: opts.time || 70000
+  }
 }
