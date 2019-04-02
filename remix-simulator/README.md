@@ -14,7 +14,7 @@ Implemented:
 * [X] eth_hashrate
 * [~] eth_gasPrice
 * [~] eth_accounts
-* [_] eth_blockNumber
+* [X] eth_blockNumber
 * [_] eth_getBalance
 * [_] eth_getStorageAt
 * [_] eth_getTransactionCount
