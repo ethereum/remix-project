@@ -27,6 +27,8 @@ var CodeManager = require('./src/code/codeManager')
 var BreakpointManager = require('./src/code/breakpointManager')
 var TraceManager = require('./src/trace/traceManager')
 
+var UniversalDApp = require('./src/universalDapp')
+
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
   module.exports = modules()
 }
@@ -71,6 +73,7 @@ function modules () {
       txListener: txListener,
       txRunner: txRunner,
       typeConversion: typeConversion
-    }
+    },
+    UniversalDApp: UniversalDApp
   }
 }
