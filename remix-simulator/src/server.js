@@ -10,7 +10,7 @@ class Server {
     this.provider = new Provider()
   }
 
-  start (port) {
+  start (host, port) {
     expressWs(app)
 
     app.use(bodyParser.urlencoded({extended: true}))
@@ -40,7 +40,7 @@ class Server {
       })
     })
 
-    app.listen(port, () => log('Remix Simulator listening on port ' + port))
+    app.listen(port, host, () => log('Remix Simulator listening on port ' + host + ':' + port))
   }
 }
 
