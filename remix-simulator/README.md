@@ -9,7 +9,7 @@ Implemented:
 * [X] net_peerCount
 * [X] eth_protocolVersion
 * [X] eth_syncing
-* [_] eth_coinbase
+* [X] eth_coinbase
 * [X] eth_mining
 * [X] eth_hashrate
 * [~] eth_gasPrice
