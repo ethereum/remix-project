@@ -8,7 +8,7 @@ const Net = require('./methods/net.js')
 const Transactions = require('./methods/transactions.js')
 const Whisper = require('./methods/whisper.js')
 
-var Provider = function () {
+var Provider = function (options) {
   this.Accounts = new Accounts()
 
   this.methods = {}
