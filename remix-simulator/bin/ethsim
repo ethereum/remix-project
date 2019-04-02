@@ -21,9 +21,10 @@ program
 
 program
   .option('-p, --port [port]', 'specify port')
+  .option('-b, --ip [host]', 'specify host')
   .parse(process.argv)
 
 const Server = require('../src/server')
 const server = new Server()
-server.start(program.port || 8545)
+server.start(program.host || '127.0.0.1', program.port || 8545)
 
