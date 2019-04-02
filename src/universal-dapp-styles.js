@@ -109,10 +109,10 @@ var css = csjs`
     border-bottom-left-radius: 0;
   }
   .contractProperty button {
-    background-color: var(--warning);
+    /* background-color: var(--warning); */
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
+    /* font-size: 10px; */
     margin:0;
     word-break: inherit;
   }
@@ -233,7 +233,7 @@ var css = csjs`
     border-left: none;
     padding: 8px 8px 8px 10px;
     font-size: 10px;
-    height: 25px;
+    /* height: 25px; */
   }
   .hasArgs button {
     border-top-right-radius: 0;

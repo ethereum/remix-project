@@ -123,7 +123,7 @@ class MultiParamManager {
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
-
+// TODO: if this is a lookup only make this button btn-info
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
       <button onclick=${() => { onClick() }} class="${css.instanceButton} btn btn-sm">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
       </div>`
@@ -171,7 +171,7 @@ class MultiParamManager {
     </div>`
 
     var contractProperty = yo`<div class="${css.contractProperty}">${this.contractActionsContainerSingle} ${this.contractActionsContainerMulti}</div>`
-
+// TODO: add class for btn-info to the button and remove stuff from the class
     if (this.lookupOnly) {
       contractProperty.classList.add(css.constant)
       button.setAttribute('title', (title + ' - call'))
