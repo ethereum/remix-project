@@ -6,7 +6,9 @@ var assert = require('assert')
 
 describe('blocks', function () {
   before(function () {
-    let provider = new RemixSim.Provider()
+    let provider = new RemixSim.Provider({
+      coinbase: "0x0000000000000000000000000000000000000001"
+    })
     web3.setProvider(provider)
   })
 
@@ -43,4 +45,10 @@ describe('blocks', function () {
     let gasPrice = await web3.eth.getGasPrice()
     assert.equal(gasPrice, 1)
   })
+
+  it('should get coinbase', async function () {
+    let coinbase = await web3.eth.getCoinbase()
+    assert.equal(coinbase, "0x0000000000000000000000000000000000000001")
+  })
+
 })
