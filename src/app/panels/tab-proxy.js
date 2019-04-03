@@ -107,8 +107,8 @@ export class TabProxy {
       </div>
     `
     let tabsbar = yo`
-      <div class="d-flex border-bottom">
-        <div class="m-1">
+      <div class="d-flex align-items-center" style="max-height: 35px; height: 100%">
+        <div class="m-1 botder-bottom">
           <span class="p-1">
             <i class="m-1 fa fa-plus" style="color: var(--text-dark)" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
             <i class="m-1 fa fa-minus" style="color: var(--text-dark)" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>

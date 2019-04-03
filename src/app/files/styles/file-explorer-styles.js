@@ -19,7 +19,7 @@ var css = csjs`
     padding           : 4px;
   }
   .newFile            {
-    padding-right     : 5px;
+    padding-right     : 10px;
   }
   .newFile i          {
     cursor            : pointer;

@@ -143,7 +143,7 @@ class Terminal {
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon} bg-light btn-light" aria-hidden="true"></i>
+            <i class="fa fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
             <input spellcheck="false" type="text" class="${css.filter} form-control" onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
