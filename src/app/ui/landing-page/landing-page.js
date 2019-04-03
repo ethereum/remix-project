@@ -82,7 +82,7 @@ export class LandingPage extends ApiFactory {
         description: ``,
         payload: () => { this.alert(`-imported from gist-`) }
       },
-      { label: 'Import from gist',
+      { label: 'Import from Gist',
         type: `callback`,
         description: ``,
         payload: () => {
