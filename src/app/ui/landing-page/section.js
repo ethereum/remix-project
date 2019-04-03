@@ -27,12 +27,11 @@ class Section {
   constructor (title, actions) {
     this.title = title
     this.actions = actions
-    this.cardStyle = (this.title === 'Workspaces') ? 'bg-success text-light' : 'bg-light text-dark'
   }
 
   render () {
     let sectionLook = yo`
-      <div class="card ${this.cardStyle} p-3" style="min-width: 300px; min-height: 190px;">
+      <div class="card border-0 bg-light bd-light text-dark p-1" style="min-width: 300px; min-height: 210px;">
         <div class="card-header font-weight-bold" style="user-select: none;">${this.title}</div>
         <p></p>
       </div>
@@ -41,7 +40,7 @@ class Section {
       if (this.actions[i].type === `callback`) {
         sectionLook.appendChild(yo`
           <div>
-            <span class ="${css.text}" onclick=${this.actions[i].payload} >
+            <span class="${css.text} text-dark" onclick=${this.actions[i].payload} >
               ${this.actions[i].label}
             </span>
           </div>
@@ -49,7 +48,7 @@ class Section {
       } else if (this.actions[i].type === `link`) {
         sectionLook.appendChild(yo`
           <div >
-            <a class="${css.link} text-decoration-none" href=${this.actions[i].payload} target="_blank" >
+            <a class="${css.link} text-dark text-decoration-none" href=${this.actions[i].payload} target="_blank" >
               ${this.actions[i].label}
             </a>
           </div>
