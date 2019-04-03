@@ -1,35 +1,39 @@
-var yo = require('yo-yo')
-var csjs = require('csjs-inject')
-// var globalRegistry = require('../../../global/registry')
+let yo = require('yo-yo')
+let csjs = require('csjs-inject')
+let globalRegistry = require('../../../global/registry')
+let CompilerImport = require('../../compiler/compiler-imports')
+var modalDialogCustom = require('../modal-dialog-custom')
+var tooltip = require('../tooltip')
 
-var css = csjs`
+
+let css = csjs`
   .sectionContainer {
-    display         : table-cell;
+    display         : flex;
     flex-direction  : column;
     flex-wrap       : wrap;
     align-content   : space-around;
     padding         : 20px;
     max-width       : 340px;
+    min-height      : 300px;
     background-color: var(--light);
     font-family     : "Lucida Console", Monaco, monospace;
   }
   .landingPage {
     height          : 100%;
     width           : 100%;
-    background-color: var(--light);
     flex-wrap       : wrap;
     justify-content : space-evenly;
+    user-select     : none;
   }
   .im {
     display         : grid;
-    max-width       : 150px;
-    max-height      : 160px;
+    max-width       : 200px;
+    max-height      : 200px;
     width           : 100%;
     height          : 100%;
     padding         : 20px;
     background-color: var(--bg-light);
-    margin-left     : 75px;
-    user-select     : none;
+    align-self      : center;
   }
   .im:hover {
   }
@@ -39,69 +43,119 @@ var css = csjs`
 import { defaultWorkspaces } from './workspace'
 import { ApiFactory } from 'remix-plugin'
 import Section from './section'
+import { ENGINE_METHOD_ALL } from 'constants';
 
 export class LandingPage extends ApiFactory {
 
   constructor (appManager, appStore) {
     super()
     this.sections = []
-    /* var actionsStart = [
+    let load = function(item) {
+      let compilerImport = new CompilerImport()
+      let fileProviders = globalRegistry.get('fileproviders').api
+      modalDialogCustom.prompt(null, 'Enter the ' + item + ' you would like to load.', null, (target) => {
+        if (target !== '') {
+          compilerImport.import(
+            target,
+            (loadingMsg) => { tooltip(loadingMsg) },
+            (error, content, cleanUrl, type, url) => {
+              if (error) { modalDialogCustom.alert(error) }
+              else {
+                if (fileProviders[type]) {
+                  fileProviders[type].addReadOnly(cleanUrl, content, url)
+                }
+              }
+            }
+          )
+        }
+      })
+    }
+    var actionsStart = [
       { label: 'New file',
         type: 'callback',
         payload: () => {
-          let fileExplorer = globalRegistry.get('fileexplorer').api
-          fileExplorer.creatNewFile()
+          let fileExplorer = globalRegistry.get('fileexplorer/browser').api
+          fileExplorer.createNewFile()
         }
       },
-      {label: 'Import from GitHub', type: `callback`, payload: () => { this.alert(`-imported from GitHub-`) }},
-      {label: 'Import from gist', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }},
-      {label: 'Import from swarm', type: `callback`, payload: () => { this.alert(`-imported from swarm-`) }},
-      {label: 'Import from ipfs', type: `callback`, payload: () => { this.alert(`-imported from ipfs-`) }},
-      {label: 'Import from gist', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }},
-      {label: 'Open file', type: `callback`, payload: () => { this.alert(`-imported from gist-`) }}
-    ] */
+      { label: 'Open file',
+        type: `callback`,
+        description: ``,
+        payload: () => { this.alert(`-imported from gist-`) }
+      },
+      { label: 'Import from gist',
+        type: `callback`,
+        description: ``,
+        payload: () => {
+          let app = globalRegistry.get('app').api
+          app.loadFromGist({gist: ''})
+        }
+      },
+      { label: 'Import from GitHub',
+        type: `callback`,
+        description: ``,
+        payload: () => {
+          load('URL')
+        }
+      },
+      { label: 'Import from Swarm',
+        type: `callback`,
+        description: ``,
+        payload: () => { load('bzz-raw URL') }
+      },
+      { label: 'Import from IPFS',
+        type: `callback`,
+        description: ``,
+        payload: () => {  load('IPFS URL') }
+      },      
+      { label: 'Connect to localhost',
+        type: `callback`,
+        description: ``,
+        payload: () => {
+          appManager.ensureActivated('remixd')
+        }
+      }
 
-    var actionsLearn = [
-      { label: 'Remix documentation', type: `link`, payload: `https://remix.readthedocs.io/en/latest/#` },
-      { label: 'Access local file system. remixd', type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html` },
-      { label: 'Medium posts', type: `link`, payload: `https://medium.com/remix-ide` },
-      { label: 'Plugins & modules', type: `link`, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md` },
-      { label: 'GitHub repo', type: `link`, payload: `https://github.com/ethereum/remix-ide` }
     ]
 
     var actionsHelp = [
-      { label: 'Gitter channel', type: `link`, payload: `https://gitter.im/ethereum/remix` },
-      { label: 'Stack Overflow', type: `link`, payload: `https://stackoverflow.com/questions/tagged/remix` },
-      { label: 'Reddit', type: `link`, payload: `https://www.reddit.com/r/ethdev/search?q=remix&restrict_sr=1` }
+      { label: 'Remix documentation', type: `link`, description: ``, payload: `https://remix.readthedocs.io/en/latest/#` },
+      { label: 'Access local file system. remixd', description: ``, type: `link`, payload: `https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html` },
+      { label: 'Medium posts', type: `link`, description: ``, payload: `https://medium.com/remix-ide` },
+      { label: 'Plugins & modules', type: `link`, description: ``, payload: `https://github.com/ethereum/remix-plugin/blob/master/readme.md` },
+      { label: 'GitHub repo', type: `link`, description: ``, payload: `https://github.com/ethereum/remix-ide` },
+      { label: 'Gitter channel', type: `link`, description: ``, payload: `https://gitter.im/ethereum/remix` },
+      { label: 'Stack Overflow', type: `link`, description: ``, payload: `https://stackoverflow.com/questions/tagged/remix` },
+      { label: 'Reddit', type: `link`, description: ``, payload: `https://www.reddit.com/r/ethdev/search?q=remix&restrict_sr=1` }
     ]
 
-    // var sectionStart = new Section('Start', actionsStart)
-    var sectionLearn = new Section('Learn', actionsLearn)
-    var sectionHelp = new Section('Help', actionsHelp)
+    var sectionStart = new Section('Start', actionsStart)
+    let sectionHelp = new Section('Help', actionsHelp)
 
-    var sectionsWorkspaces = []
+    this.sectionWorkspaceMain = []
+    this.sectionWorkspaceOthers = []
     defaultWorkspaces(appManager).forEach((workspace) => {
-      sectionsWorkspaces.push({
-        label: workspace.title,
-        type: 'callback',
-        payload: () => { workspace.activate() }
-      })
-    })
-    sectionsWorkspaces.push({
-      label: 'Close All Modules',
-      type: 'callback',
-      payload: () => {
-        appStore.getActives()
-          .filter(({ profile }) => !profile.required)
-          .forEach((profile) => { appManager.deactivateOne(profile.name) })
+      if (workspace.isMain) {
+        this.sectionWorkspaceMain.push({
+          label: workspace.title,
+          type: 'callback',
+          description: workspace.description,
+          payload: () => { workspace.activate() }
+        })
+      } else {
+        this.sectionWorkspaceOthers.push({
+          label: workspace.title,
+          type: 'callback',
+          description: workspace.description,
+          payload: () => { workspace.activate() }
+        })
       }
     })
 
-    var sectionWorkspace = new Section('Workspaces', sectionsWorkspaces)
+    // var sectionWorkspaceMain = new Section('Workspaces', sectionsWorkspacesMain)
 
-    this.sections.push(sectionWorkspace)
-    // this.sections.push(sectionStart)
-    this.sections.push(sectionLearn)
+    // this.sections.push(sectionWorkspaceMain)
+    this.sections.push(sectionStart)
     this.sections.push(sectionHelp)
   }
 
@@ -123,20 +177,54 @@ export class LandingPage extends ApiFactory {
       <div class="${css.landingPage}">
       </div>
     `
-    totalLook.appendChild(yo`
-      <div class="${css.sectionContainer} p-2">
-         <img class="${css.im}" src="${logo}" />
-        ${this.sections[0].render()}
-      </div>
-    `)
 
-    for (let i = 1; i < this.sections.length; i++) {
-      totalLook.appendChild(yo`
+    let main = yo`<div class="container m-4"></div>`
+    for (let i = 0; i < this.sectionWorkspaceMain.length; i++) {
+      main.appendChild(yo`
+        <span class="btn btn-secondary btn-lg m-2" onclick="${this.sectionWorkspaceMain[i].payload}">
+          ${this.sectionWorkspaceMain[i].label}
+        </span>
+      `)
+    }
+
+    let others = yo`<div class="container m-4"></div>`
+    for (let i = 0; i < this.sectionWorkspaceOthers.length; i++) {
+      others.appendChild(yo`
+        <span class="btn btn-secondary btn-sm m-2" onclick="${this.sectionWorkspaceOthers[i].payload}">
+          ${this.sectionWorkspaceOthers[i].label}
+        </span>
+      `)
+    }
+
+    let docs = yo`<div class="container m-4"></div>`
+    for (let i = 0; i < this.sections.length; i++) {
+      docs.appendChild(yo`
         <div class="${css.sectionContainer} p-2">
           ${this.sections[i].render()}
         </div>
       `)
     }
+
+    totalLook.appendChild(yo`
+      <div class="container-fluid">
+        <div class="row">
+          <div class="card m-4 p-4" style="min-width: 50%;">
+            <img class="card-img-top ${css.im}" src="${logo}" />
+            <div class="card-body-fluid m-4">
+              <h5 class="card-header m-4">Workspaces</h5>
+              <h6>Create, compile and execute smart contracts</h6>
+              <p>${main}</p>
+              <h6> Most used plugins</h6>
+              <p>${others}</p>
+            </div>
+          </div>
+          <div>
+            ${docs}
+          </div>
+        </div>
+      </div>
+    `)
+
     return totalLook
   }
 }
