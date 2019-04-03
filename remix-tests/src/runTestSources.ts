@@ -1,12 +1,13 @@
-import async from 'async'
+import async, { ErrorCallback } from 'async'
 require('colors')
 
 import { compileContractSources } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
+import { TestResultInterface, ResultsInterface } from './types'
 
 import Web3 = require('web3')
-import Provider from 'remix-simulator'
+import { Provider } from 'remix-simulator'
 import { FinalResult } from './types'
 
 const createWeb3Provider = function () {
@@ -28,7 +29,7 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
             })
         },
         function compile (next) {
-            compileContractSources(contractSources, importFileCb, opts, next)
+            compileContractSources(contractSources, importFileCb, { accounts }, next)
         },
         function deployAllContracts (compilationResult, next) {
             deployAll(compilationResult, web3, (err, contracts) => {
@@ -60,7 +61,7 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
             let totalTime = 0
             let errors: any[] = []
 
-            const _testCallback = function (result) {
+            const _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
                 if (result.type === 'testFailure') {
                     errors.push(result)
                 }
@@ -75,8 +76,8 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
                 cb()
             }
 
-            async.eachOfLimit(contractsToTest, 1, (contractName, index, cb) => {
-                runTest(contractName, contracts(contractName), contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
+            async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
+                runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
                     if (err) {
                         return cb(err)
                     }
