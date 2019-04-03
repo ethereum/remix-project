@@ -144,7 +144,7 @@ class Terminal {
           ${self._view.dropdown}
           <div class=${css.search}>
             <i class="fa fa-search ${css.searchIcon} bg-light btn-light" aria-hidden="true"></i>
-            <input spellcheck="false" type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
+            <input spellcheck="false" type="text" class="${css.filter} form-control" onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@ class Terminal {
       </div>
     `
     self._view.el = yo`
-      <div class="${css.panel}">
+      <div class="${css.panel}" style="height: 180px;">
         ${self._view.bar}
         ${self._view.term}
       </div>
