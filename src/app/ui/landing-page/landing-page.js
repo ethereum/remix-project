@@ -5,7 +5,6 @@ let CompilerImport = require('../../compiler/compiler-imports')
 var modalDialogCustom = require('../modal-dialog-custom')
 var tooltip = require('../tooltip')
 
-
 let css = csjs`
   .sectionContainer {
     display         : flex;
@@ -43,14 +42,13 @@ let css = csjs`
 import { defaultWorkspaces } from './workspace'
 import { ApiFactory } from 'remix-plugin'
 import Section from './section'
-import { ENGINE_METHOD_ALL } from 'constants';
 
 export class LandingPage extends ApiFactory {
 
   constructor (appManager, appStore) {
     super()
     this.sections = []
-    let load = function(item) {
+    let load = function (item) {
       let compilerImport = new CompilerImport()
       let fileProviders = globalRegistry.get('fileproviders').api
       modalDialogCustom.prompt(null, 'Enter the ' + item + ' you would like to load.', null, (target) => {
@@ -59,8 +57,9 @@ export class LandingPage extends ApiFactory {
             target,
             (loadingMsg) => { tooltip(loadingMsg) },
             (error, content, cleanUrl, type, url) => {
-              if (error) { modalDialogCustom.alert(error) }
-              else {
+              if (error) {
+                modalDialogCustom.alert(error)
+              } else {
                 if (fileProviders[type]) {
                   fileProviders[type].addReadOnly(cleanUrl, content, url)
                 }
@@ -106,8 +105,8 @@ export class LandingPage extends ApiFactory {
       { label: 'Import from IPFS',
         type: `callback`,
         description: ``,
-        payload: () => {  load('IPFS URL') }
-      },      
+        payload: () => { load('IPFS URL') }
+      },
       { label: 'Connect to localhost',
         type: `callback`,
         description: ``,
@@ -115,7 +114,6 @@ export class LandingPage extends ApiFactory {
           appManager.ensureActivated('remixd')
         }
       }
-
     ]
 
     var actionsHelp = [
@@ -152,9 +150,6 @@ export class LandingPage extends ApiFactory {
       }
     })
 
-    // var sectionWorkspaceMain = new Section('Workspaces', sectionsWorkspacesMain)
-
-    // this.sections.push(sectionWorkspaceMain)
     this.sections.push(sectionStart)
     this.sections.push(sectionHelp)
   }
