@@ -95,11 +95,11 @@ class VerticalIconComponent {
       let currentTitle = currentActive.getAttribute('title')
       currentActive.classList.toggle(`${css.active}`)
       if (currentTitle !== name) {
-        let activate = this.view.querySelector(`[title="${name}"]`)
+        let activate = this.view.querySelector(`[plugin="${name}"]`)
         if (activate) activate.classList.toggle(`${css.active}`)
       }
     } else {
-      let activate = this.view.querySelector(`[title="${name}"]`)
+      let activate = this.view.querySelector(`[plugin="${name}"]`)
       if (activate) activate.classList.toggle(`${css.active}`)
     }
     this.events.emit('showContent', name)
