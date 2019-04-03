@@ -124,11 +124,11 @@ module.exports = class UniversalDApp extends UdappApi {
       stateManager.getAccount(address, (error, account) => {
         if (error) return console.log(error)
         account.balance = balance || '0xf00000000000000001'
-        stateManager.putAccount(address, account, function cb (error) { 
-          if (error) console.log(error) 
+        stateManager.putAccount(address, account, function cb (error) {
+          if (error) console.log(error)
         })
       })
-      
+
       this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
     }
   }
