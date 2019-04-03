@@ -1,4 +1,4 @@
-import async from 'async'
+import async, { ErrorCallback } from 'async'
 require('colors')
 
 import { compileContractSources } from './compiler'
@@ -76,7 +76,7 @@ export function runTestSources(contractSources, testCallback, resultCallback, fi
                 cb()
             }
 
-            async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
+            async.eachOfLimit(contractsToTest, 1, (contractName: string, index: string | number, cb: ErrorCallback) => {
                 runTest(contractName, contracts[contractName], contractsToTestDetails[index], { accounts }, _testCallback, (err, result) => {
                     if (err) {
                         return cb(err)
