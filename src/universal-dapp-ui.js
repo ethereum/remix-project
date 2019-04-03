@@ -68,8 +68,9 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title}" onclick=${toggleClass}>
-    <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
+    <div class="${css.title}">
+      <button onclick=${toggleClass}"><i class="fa fa-caret-square-o-right" aria-hidden="true"></i></button>
+      <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
     ${copyToClipboard(() => address)}
   </div>`
 
@@ -82,6 +83,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   }
 
   function toggleClass () {
+    console.log('hit')
     $(instance).toggleClass(`${css.hidesub}`)
   }
 
