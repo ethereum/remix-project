@@ -66,7 +66,7 @@ class Dropdown {
             return yo`
               <div class=${css.option}>
                 ${input}
-                <label for="${label}">${label}</label>
+                <label class="text-dark" for="${label}">${label}</label>
               </div>
             `
           })}
