@@ -3,21 +3,21 @@ var EventEmitter = require('events')
 
 // TODO : Put it somewhere else
 const themes = [
+  {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
   {name: 'Flatly', quality: 'light', url: 'https://bootswatch.com/4/flatly/bootstrap.min.css'},
-  {name: 'Journal', quality: 'light', url: 'https://bootswatch.com/4/journal/bootstrap.min.css'},
   {name: 'Lumen', quality: 'light', url: 'https://bootswatch.com/4/lumen/bootstrap.min.css'},
   {name: 'Minty', quality: 'light', url: 'https://bootswatch.com/4/minty/bootstrap.min.css'},
+  {name: 'Pulse', quality: 'light', url: 'https://bootswatch.com/4/pulse/bootstrap.min.css'},
   {name: 'Sandstone', quality: 'light', url: 'https://bootswatch.com/4/sandstone/bootstrap.min.css'},
   {name: 'Spacelab', quality: 'light', url: 'https://bootswatch.com/4/spacelab/bootstrap.min.css'},
-  {name: 'United', quality: 'light', url: 'https://bootswatch.com/4/united/bootstrap.min.css'},
   {name: 'Yeti', quality: 'light', url: 'https://bootswatch.com/4/yeti/bootstrap.min.css'},
   {name: 'Cyborg', quality: 'dark', url: 'https://bootswatch.com/4/cyborg/bootstrap.min.css'},
   {name: 'Darkly', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css'},
   {name: 'Slate', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/slate/bootstrap.min.css'},
-  {name: 'Superhero', quality: 'dark', url: 'https://bootswatch.com/4/superhero/bootstrap.min.css'}
+  {name: 'Superhero', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/superhero/bootstrap.min.css'}
 ]
 
-const defaultTheme = 'Superhero'
+const defaultTheme = 'Cerulean'
 
 module.exports = {
   event: new EventEmitter(),
