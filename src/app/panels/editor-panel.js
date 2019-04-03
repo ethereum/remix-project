@@ -50,6 +50,13 @@ class EditorPanel {
       pluginManager: self._components.registry.get('pluginmanager').api
     }
     self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor, self.appStore, self.appManager)
+    let showApp = function(name){
+      self.mainPanelComponent.showContent(name)
+      self._view.editor.style.display = 'none'
+      self._components.contextView.hide()
+      self._view.mainPanel.style.display = 'block'
+    }
+    self.appManager.event.on('ensureActivated', (name) => { if(name === 'home') showApp(name)})
     /*
       We listen here on event from the tab component to display / hide the editor and mainpanel
       depending on the content that should be displayed
@@ -65,12 +72,7 @@ class EditorPanel {
     })
     self.tabProxy.event.on('closeFile', (file) => {
     })
-    self.tabProxy.event.on('switchApp', (name) => {
-      self.mainPanelComponent.showContent(name)
-      self._view.editor.style.display = 'none'
-      self._components.contextView.hide()
-      self._view.mainPanel.style.display = 'block'
-    })
+    self.tabProxy.event.on('switchApp', showApp)
     self.tabProxy.event.on('closeApp', (name) => {
       self._view.editor.style.display = 'block'
       self._components.contextView.hide()
