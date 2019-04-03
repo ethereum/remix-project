@@ -56,7 +56,7 @@ class EditorPanel {
       self._components.contextView.hide()
       self._view.mainPanel.style.display = 'block'
     }
-    self.appManager.event.on('ensureActivated', (name) => { if (name === 'home') { showApp(name) }})
+    self.appManager.event.on('ensureActivated', (name) => { if (name === 'home') { showApp(name) } })
     /*
       We listen here on event from the tab component to display / hide the editor and mainpanel
       depending on the content that should be displayed
