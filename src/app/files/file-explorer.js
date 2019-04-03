@@ -432,7 +432,7 @@ fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
           if (error) cb(error)
-          else {
+          else {gi
             ret[path] = { content }
             cb()
           }
