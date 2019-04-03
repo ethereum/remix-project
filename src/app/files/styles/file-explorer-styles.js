@@ -2,7 +2,6 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .label {
-    margin-bottom     : 0px;
     margin-top        : 4px
   }
   .fileexplorer       {
@@ -20,7 +19,7 @@ var css = csjs`
     padding           : 4px;
   }
   .newFile            {
-    padding           : 5px;
+    padding-right     : 5px;
   }
   .newFile i          {
     cursor            : pointer;
