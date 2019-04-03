@@ -56,8 +56,8 @@ class VerticalIconComponent {
    * Add an icon to the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  addIcon ({kind, name, icon}) {
-    this.icons[name] = yo`<div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" title="${name}" ><img src="${icon}" alt="${name}" /></div>`
+  addIcon ({kind, name, icon, displayName}) {
+    this.icons[name] = yo`<div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName || name}" ><img src="${icon}" alt="${name}" /></div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
   }
 

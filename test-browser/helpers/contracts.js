@@ -28,7 +28,7 @@ module.exports = {
 }
 
 function clickLaunchIcon (icon) {
-  this.click('#icon-panel div[title="' + icon + '"]')
+  this.click('#icon-panel div[plugin="' + icon + '"]')
   return this
 }
 
