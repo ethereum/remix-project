@@ -63,6 +63,8 @@ function fileExplorer (localRegistry, files, menuItems) {
     fileManager: self._components.registry.get('filemanager').api
   }
 
+  self._components.registry.put({ api: self, name: `fileexplorer/${self.files.type}` })
+
   // warn if file changed outside of Remix
   function remixdDialog () {
     return yo`<div>This file has been changed outside of Remix IDE.</div>`
@@ -507,7 +509,7 @@ fileExplorer.prototype.renderMenuItems = function () {
     items = this.menuItems.map(({action, title, icon}) => {
       if (action === 'uploadFile') {
         return yo`
-          <label class="${icon} ${css.newFile}">
+          <label class="${icon} ${css.newFile}"  title="${title}">
             <input type="file" onchange=${(event) => {
               event.stopPropagation()
               this.uploadFile(event)
@@ -516,14 +518,12 @@ fileExplorer.prototype.renderMenuItems = function () {
         `
       } else {
         return yo`
-        <span onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="newFile ${css.newFile}" title=${title}>
-          <i class=${icon}></i>
-        </span>
+        <span onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="${icon} ${css.newFile}" title=${title}></span>
         `
       }
     })
   }
-  return yo`<span class=${css.menu}>${items}</span>`
+  return yo`<span class=" ${css.menu}">${items}</span>`
 }
 
 fileExplorer.prototype.ensureRoot = function (cb) {

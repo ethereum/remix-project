@@ -3,6 +3,7 @@ var csjs = require('csjs-inject')
 var css = csjs`
   .label {
     margin-bottom     : 0px;
+    margin-top        : 4px
   }
   .fileexplorer       {
     box-sizing        : border-box;
@@ -19,13 +20,13 @@ var css = csjs`
     padding           : 4px;
   }
   .newFile            {
-    padding           : 4px;
+    padding           : 5px;
   }
   .newFile i          {
     cursor            : pointer;
   }
-  .newFile i:hover    {
-    color             : var(--secondary)
+  .newFile:hover    {
+    transform         : scale(1.3);
   }
   .menu               {
     margin-left       : 20px;
