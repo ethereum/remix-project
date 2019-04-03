@@ -10,7 +10,6 @@ var Treeview = require('../ui/TreeView')
 var modalDialog = require('../ui/modaldialog')
 var EventManager = require('../../lib/events')
 var contextMenu = require('../ui/contextMenu')
-var addTooltip = require('../ui/tooltip')
 var css = require('./styles/file-explorer-styles')
 var globalRegistry = require('../../global/registry')
 var queryParams = new QueryParams()
@@ -177,12 +176,12 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
-        if (self.files.readonly) { return addTooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.readonly) { return tooltip('cannot rename folder. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
         if (name) editModeOn(name)
       },
       'Delete': () => {
-        if (self.files.readonly) { return addTooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.readonly) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(null, 'Do you want to delete this folder?', () => { files.remove(key) }, () => {})
       }
     })
@@ -193,12 +192,12 @@ function fileExplorer (localRegistry, files, menuItems) {
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     MENU_HANDLE = contextMenu(event, {
       'Rename': () => {
-        if (self.files.readonly) { return addTooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
         if (name) editModeOn(name)
       },
       'Delete': () => {
-        if (self.files.readonly) { return addTooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
+        if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm(null, 'Do you want to delete this file?', () => { files.remove(key) }, () => {})
       }
     })
