@@ -429,7 +429,7 @@ fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
     else {
       async.eachSeries(Object.keys(files), (path, cb) => {
         filesProvider.get(path, (error, content) => {
-          if (/^\s+$/.test(content)) {
+          if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
           if (error) cb(error)
