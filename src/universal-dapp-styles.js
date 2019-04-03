@@ -42,24 +42,14 @@ var css = csjs`
     padding: 5px 0 0 10px;
     margin-bottom: 10px;
   }
-  .instance .title:before {
-    content: "\\25BE";
-    margin-right: 5%;
-    font-size: 1.2rem
-  }
-  .instance.hidesub .title:before {
-    content: "\\25B8";
-    margin-right: 5%;
-    font-size: 1.2rem;
-  }
-  .instance.hidesub > * {
-      display: none;
-  }
   .instance.hidesub .title {
       display: flex;
   }
   .instance.hidesub .udappClose {
       display: flex;
+  }
+  .instance.hidesub > * {
+    display: none;
   }
   .methCaret {
     margin-right: 5px;
@@ -122,7 +112,7 @@ var css = csjs`
     border-color: lightgray;
   }
   .contractProperty.constant button {
-    background-color:var(--info);
+    /* background-color:var(--info); */
     min-width: 100px;
     width: 100px;
     font-size: 10px;
