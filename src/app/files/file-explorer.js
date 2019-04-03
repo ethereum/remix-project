@@ -517,7 +517,7 @@ fileExplorer.prototype.renderMenuItems = function () {
         `
       } else {
         return yo`
-        <span onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="${icon} newFile ${css.newFile}" title=${title}></span>
+        <span onclick=${(event) => { event.stopPropagation(); this[ action ]() }} class="newFile ${icon} ${css.newFile}" title=${title}></span>
         `
       }
     })
