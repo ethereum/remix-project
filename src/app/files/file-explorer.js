@@ -245,6 +245,14 @@ function fileExplorer (localRegistry, files, menuItems) {
     }
   })
 
+  self._deps.fileManager.events.on('noFileSelected', () => {
+    if (self.focusElement) {
+      self.focusElement.classList.remove('bg-secondary')
+      self.focusElement = null
+      self.focusPath = null
+    }
+  })
+
   var textUnderEdit = null
 
   function selectElementContents (el) {
