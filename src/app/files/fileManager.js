@@ -192,8 +192,8 @@ class FileManager extends ApiFactory {
         if (fileList.length) {
           _switchFile(browserProvider.type + '/' + fileList[0])
         } else {
-          this.events.emit('currentFileChanged')
           this._deps.editor.displayEmptyReadOnlySession()
+          this.events.emit('noFileSelected')
         }
       })
     }
