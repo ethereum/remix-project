@@ -7,6 +7,8 @@ var css = csjs`
   }
   .result {
     margin-top: 1%;
+    max-height: 300px;
+    overflow-y: auto;
   }
   .buttons  {
     margin: 1rem 0;
@@ -24,6 +26,10 @@ var css = csjs`
   .label {
     display: flex;
     align-items: center;
+  }
+  .container {
+    max-height: 300px;
+    overflow-y: auto;
   }
 `
 

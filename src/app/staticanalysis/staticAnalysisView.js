@@ -43,32 +43,34 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`
     <div class="${css.analysis}">
-      <div id="staticanalysismodules" class="list-group list-group-flush">
-        ${this.modulesView}
-      </div>
       <div class="${css.buttons}">
-        <div class="${css.buttonsInner}">
-          <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
-          <label class="${css.label}" for="autorunstaticanalysis">
-            <input id="autorunstaticanalysis"
-              type="checkbox"
-              style="vertical-align:bottom"
-              checked="true"
-            >
-            Auto run
-          </label>
-          <label class="${css.label}" for="checkAllEntries">
-            <input id="checkAllEntries"
-              type="checkbox"
-              onclick="${function (event) { self.checkAll(event) }}"
-              style="vertical-align:bottom"
-              checked="true"
-            >
-            Check/Uncheck all
-          </label>
+          <div class="${css.buttonsInner}">
+            <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
+            <label class="${css.label}" for="autorunstaticanalysis">
+              <input id="autorunstaticanalysis"
+                type="checkbox"
+                style="vertical-align:bottom"
+                checked="true"
+              >
+              Auto run
+            </label>
+            <label class="${css.label}" for="checkAllEntries">
+              <input id="checkAllEntries"
+                type="checkbox"
+                onclick="${function (event) { self.checkAll(event) }}"
+                style="vertical-align:bottom"
+                checked="true"
+              >
+              Check/Uncheck all
+            </label>
+          </div>
         </div>
-      </div>
-      <div class="${css.result}" "id='staticanalysisresult'></div>
+        <div id="staticanalysismodules" class="list-group list-group-flush ${css.container}">
+          ${this.modulesView}
+        </div>
+        <hr>
+        <div><h6>Results:</h6></div>
+        <div class="${css.result}" id='staticanalysisresult'></div>
     </div>
   `
   if (!this.view) {
@@ -96,8 +98,8 @@ staticAnalysisView.prototype.run = function () {
   var selected = this.selectedModules()
   var warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
+  var self = this
   if (this.lastCompilationResult) {
-    var self = this
     var warningCount = 0
     this.runner.run(this.lastCompilationResult, selected, function (results) {
       results.map(function (result, i) {
