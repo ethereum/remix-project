@@ -161,7 +161,7 @@ class CompileTab extends ApiFactory {
    */
   contractSelection (contractList = []) {
     return contractList.length !== 0
-    ? yo`<section class="${css.container}">
+    ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
       <header class="navbar navbar-light bg-light input-group mb-3 ${css.compilerArticle}">
         <div class="input-group-prepend">
@@ -181,21 +181,25 @@ class CompileTab extends ApiFactory {
         </button>
         <!-- Copy to Clipboard -->
         <div class="${css.contractHelperButtons}">
-          <span class="${css.copyToClipboard}">Copy to Clipboard : </span>
-          <div class="btn-group" role="group" aria-label="Copy to clipboard">
-            <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
-              <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
-              <span>ABI</span>
-            </button>
-            <button class="btn btn-secondary" title="Copy Bytecode to clipboard" onclick="${() => { this.copyBytecode() }}">
-              <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
-              <span>Bytecode</span>
-            </button>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Copy to clipboard</span>
+            </div>
+            <div class="btn-group" role="group" aria-label="Copy to Clipboard">
+              <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
+                <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
+                <span>ABI</span>
+              </button>
+              <button class="btn btn-secondary" title="Copy Bytecode to clipboard" onclick="${() => { this.copyBytecode() }}">
+                <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
+                <span>Bytecode</span>
+              </button>
+            </div>
           </div>
         </div>
       </article>
     </section>`
-    : yo`<section class="${css.container}"><article class="${css.compilerArticle}">
+    : yo`<section class="${css.container} clearfix"><article class="${css.compilerArticle}">
       <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
   }
@@ -347,7 +351,7 @@ class CompileTab extends ApiFactory {
     this.listenToEvents()
     this.compilerContainer.activate()
 
-    this._view.errorContainer = yo`<div></div>`
+    this._view.errorContainer = yo`<div class="${css.errorBlobs}"></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
     const currentFile = this.fileManager.currentFile()
