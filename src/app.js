@@ -170,7 +170,7 @@ class App extends ApiFactory {
 
   init () {
     var self = this
-    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 400, x: 450 })
+    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300, x: 300 })
     run.apply(self)
   }
 
