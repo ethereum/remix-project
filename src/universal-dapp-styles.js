@@ -58,6 +58,9 @@ var css = csjs`
     padding-top: 5px;
     vertical-align: top;
   }
+  .cActionsWrapper {
+    
+  }
   .group:after {
     content: "";
     display: table;
