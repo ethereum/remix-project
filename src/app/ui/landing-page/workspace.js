@@ -8,7 +8,7 @@ export class Workspace {
   }
 }
 
-export const defaultWorkspaces = (appManager) => {
+export const defaultWorkspaces = (appManager, registry) => {
   return [
     new Workspace(
       'Solidity',
@@ -19,6 +19,8 @@ export const defaultWorkspaces = (appManager) => {
         appManager.ensureActivated('run')
         appManager.ensureActivated('solidityStaticAnalysis')
         appManager.ensureActivated('solidityUnitTesting')
+        registry.get('filemanager').api.switchFile()
+        registry.get('verticalicon').api.select('solidity')
       }, () => {}),
     new Workspace(
       'Vyper',
@@ -27,6 +29,8 @@ export const defaultWorkspaces = (appManager) => {
       () => {
         appManager.ensureActivated('vyper')
         appManager.ensureActivated('run')
+        registry.get('filemanager').api.switchFile()
+        registry.get('verticalicon').api.select('solidity')
       }, () => {}),
     new Workspace('Debugger', 'Debug transactions with remix', false, () => {
       appManager.ensureActivated('debugger')

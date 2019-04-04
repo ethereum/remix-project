@@ -45,7 +45,7 @@ import Section from './section'
 
 export class LandingPage extends ApiFactory {
 
-  constructor (appManager, appStore) {
+  constructor (appManager, appStore, registry) {
     super()
     this.sections = []
     let load = function (item) {
@@ -132,7 +132,7 @@ export class LandingPage extends ApiFactory {
 
     this.sectionWorkspaceMain = []
     this.sectionWorkspaceOthers = []
-    defaultWorkspaces(appManager).forEach((workspace) => {
+    defaultWorkspaces(appManager, registry).forEach((workspace) => {
       if (workspace.isMain) {
         this.sectionWorkspaceMain.push({
           label: workspace.title,
