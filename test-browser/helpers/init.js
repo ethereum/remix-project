@@ -17,7 +17,7 @@ module.exports = function (browser, callback) {
 }
 
 function initModules (browser, callback) {
-  browser.click('#icon-panel div[title="pluginManager"]')
+  browser.click('#icon-panel div[plugin="pluginManager"]')
   .execute(function () {
     document.querySelector('div[title="pluginManager"]').scrollTop = document.querySelector('div[title="pluginManager"]').scrollHeight
   }, [], function () {
@@ -25,7 +25,7 @@ function initModules (browser, callback) {
     .click('#pluginManager article[title="run"] button')
     .click('#pluginManager article[title="solidityStaticAnalysis"] button')
     .click('#pluginManager article[title="debugger"] button')
-    .click('#icon-panel div[title="fileExplorers"]')
+    .click('#icon-panel div[plugin="fileExplorers"]')
     .perform(() => { callback() })
   })
 }

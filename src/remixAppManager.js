@@ -18,6 +18,7 @@ export class RemixAppManager extends AppManagerApi {
 
   ensureActivated (apiName) {
     if (!this.store.isActive(apiName)) this.activateOne(apiName)
+    this.event.emit('ensureActivated', apiName)
   }
 
   proxy () {

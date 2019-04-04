@@ -6,23 +6,22 @@ var css = csjs`
     position          : relative;
     display           : flex;
     flex-direction    : column;
-    margin-right      : 10px;
+    margin-left       : 10px;
     width             : auto;
   }
   .selectbox          {
     display           : flex;
     align-items       : center;
-    margin            : 3px;
     cursor            : pointer;
   }
   .selected           {
     display           : inline-block;
-    min-width         : 30ch;
     max-width         : 30ch;
     white-space       : nowrap;
     text-overflow     : ellipsis;
     overflow          : hidden;
-    padding           : 3px;
+    margin-right      : 10px;
+    min-width         : 200px;
   }
   .icon               {
     padding           : 0px 5px;
@@ -32,15 +31,18 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     align-items       : end;
-    top               : 24px;
+    top               : 32px;
     left              : 0;
-    width             : 250px;
-    border            : 1px solid var(--primary);
+    width             : 245px;
+    border            : 1px solid var(--dark);
     border-radius     : 3px;
     border-top        : 0;
+    padding-left      : 5px;
   }
   .option {
-    margin: 0;
+    margin-left       : 5px;
+    margin-top        : 5px;
+    width             : -webkit-fill-available;
   }
 `
 

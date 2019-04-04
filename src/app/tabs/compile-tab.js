@@ -111,11 +111,12 @@ class CompileTab extends ApiFactory {
       if (data['error']) {
         this.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
-          return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
-                                            The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
-                                            The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
-                                            It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br>
-                                            Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.</div>`)
+          return modalDialogCustom.alert(yo`
+            <div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
+            The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
+            The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
+            It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br>
+            Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.</div>`)
         }
       }
       if (data.errors && data.errors.length) {
@@ -155,7 +156,7 @@ class CompileTab extends ApiFactory {
    */
   contractSelection (contractList = []) {
     return contractList.length !== 0
-    ? yo`<section class="${css.container}">
+    ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
       <header class="navbar navbar-light bg-light input-group mb-3 ${css.compilerArticle}">
         <div class="input-group-prepend">
@@ -193,7 +194,7 @@ class CompileTab extends ApiFactory {
         </div>
       </article>
     </section>`
-    : yo`<section class="${css.container}"><article class="${css.compilerArticle}">
+    : yo`<section class="${css.container} clearfix"><article class="${css.compilerArticle}">
       <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
   }
@@ -293,7 +294,10 @@ class CompileTab extends ApiFactory {
       })
       if (details[propertyName] !== '') {
         try {
-          node = yo`<div>${treeView.render(typeof details[propertyName] === 'object' ? details[propertyName] : JSON.parse(details[propertyName]))}</div>` // catch in case the parsing fails.
+          node = yo`
+          <div>
+            ${treeView.render(typeof details[propertyName] === 'object' ? details[propertyName] : JSON.parse(details[propertyName]))}
+          </div>` // catch in case the parsing fails.
         } catch (e) {
           node = yo`<div>Unable to display "${propertyName}": ${e.message}</div>`
         }
