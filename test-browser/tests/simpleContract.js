@@ -85,7 +85,7 @@ function testAutoDeployLib (browser, callback) {
       contractHelper.createContract(browser, '', () => {
         contractHelper.getAddressAtPosition(browser, 0, (address) => {
           console.log(address)
-          browser.waitForElementPresent('.instance:nth-of-type(2)').click('.instance:nth-of-type(2)').perform(() => {
+          browser.waitForElementPresent('.instance:nth-of-type(2)').click('.instance:nth-of-type(2) > div > button').perform(() => {
             contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
           })
         })
@@ -146,7 +146,7 @@ function checkDeployShouldSucceed (browser, address, callback) {
             contractHelper.createContract(browser, '', () => {
               contractHelper.getAddressAtPosition(browser, 1, (address) => {
                 browser.waitForElementPresent('.instance:nth-of-type(3)')
-                .click('.instance:nth-of-type(3)').perform(() => {
+                .click('.instance:nth-of-type(3) > div > button').perform(() => {
                   contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
                 })
               })

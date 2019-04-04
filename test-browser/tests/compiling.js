@@ -41,7 +41,7 @@ function testSimpleContract (browser, callback) {
     browser.clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
       .click('#runTabView .instance div[class^="title"]')
       .click('#runTabView .instance div[class^="title"]')
       .testFunction('f - transact (not payable)',
@@ -72,7 +72,7 @@ function testReturnValues (browser, callback) {
     browser.clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
       .testFunction('retunValues1 - transact (not payable)',
         '0xc3660c7ab6899f196e77d3ab3749169e22c00ae7f1b8fe3af0ce54df49504019',
         `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0xc36...04019`,
@@ -110,7 +110,7 @@ function testInputValues (browser, callback) {
     browser.clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2) > div > button')
      .testFunction('inputValue1 - transact (not payable)',
         '0xf3265e3d9cd9299958bf81bed3cdfdd537942f85b9e0b95c5468c691d9396505',
         `[vm]\nfrom:0xca3...a733c\nto:test.inputValue1(uint256,int256,string) 0x8c1...401f5\nvalue:0 wei\ndata:0xd69...00000\nlogs:0\nhash:0xf32...96505`,
