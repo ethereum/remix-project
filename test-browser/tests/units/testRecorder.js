@@ -14,9 +14,9 @@ module.exports = {
         .click('div[class^="cardContainer"] i[class^="arrow"]')
         .click('#runTabView .runtransaction')
         .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2) > div > button')
         .waitForElementPresent('.instance:nth-of-type(3)')
-        .click('.instance:nth-of-type(3)')
+        .click('.instance:nth-of-type(3) > div > button')
         .clickFunction('getInt - call')
         .clickFunction('getAddress - call')
         .clickFunction('getFromLib - call')
@@ -38,7 +38,7 @@ module.exports = {
           })
         })
         .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2) > div > button')
         .perform((client, done) => {
           browser.clickFunction('set - transact (not payable)', {types: 'uint256 _p', values: '34'})
               .click('i.savetransaction').modalFooterOKClick().getEditorValue(function (result) {
