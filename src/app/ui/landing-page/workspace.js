@@ -30,7 +30,7 @@ export const defaultWorkspaces = (appManager, registry) => {
         appManager.ensureActivated('vyper')
         appManager.ensureActivated('run')
         registry.get('filemanager').api.switchFile()
-        registry.get('verticalicon').api.select('solidity')
+        registry.get('verticalicon').api.select('vyper')
       }, () => {}),
     new Workspace('Debugger', 'Debug transactions with remix', false, () => {
       appManager.ensureActivated('debugger')
