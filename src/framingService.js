@@ -13,6 +13,5 @@ export default {
 
     verticalIconApi.select('fileExplorers')
     mainPanelApi.showContent('home')
-    resizeFeature.minimize()
   }
 }
