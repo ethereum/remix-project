@@ -17,7 +17,6 @@ var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
-var BrowserfilesTree = require('./app/files/browser-files-tree')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
@@ -140,10 +139,7 @@ class App extends ApiFactory {
 
     self._components.filesProviders = {}
     self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
-    self._components.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
-    self._components.filesProviders['config'].init()
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
-    registry.put({api: self._components.filesProviders['config'], name: 'fileproviders/config'})
 
     var remixd = new Remixd(65520)
     registry.put({api: remixd, name: 'remixd'})
@@ -465,7 +461,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     compileTab
   )
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
-  let configProvider = self._components.filesProviders['config']
 
   appManager.init([
     this.api(),
@@ -473,7 +468,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     udapp.api(),
     fileManager.api(),
     sourceHighlighters.api(),
-    configProvider.api(),
     txListenerModule.api(),
     filePanel.api(),
     // { profile: support.profile(), api: support },
