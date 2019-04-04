@@ -68,8 +68,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title}">
-      <button onclick=${toggleClass}"><i class="fa fa-caret-square-o-right" aria-hidden="true"></i></button>
+    <div class="${css.title} alert alert-dark">
+      <button onclick="${(e) => { toggleClass(e) }}"><i class="fa fa-caret-right" aria-hidden="true"></i></button>
       <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
     ${copyToClipboard(() => address)}
   </div>`
@@ -77,14 +77,20 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
   title.appendChild(close)
 
+  var contractActionsWrapper = yo`
+  <div class="${css.cActionsWrapper}">
+  </div>`
+
   function remove () {
     instance.remove()
     // @TODO perhaps add a callack here to warn the caller that the instance has been removed
   }
 
-  function toggleClass () {
-    console.log('hit')
+  function toggleClass (e) {
     $(instance).toggleClass(`${css.hidesub}`)
+    // e.currentTarget.querySelector('i')
+    e.currentTarget.querySelector('i').classList.toggle(`fa-caret-right`)
+    e.currentTarget.querySelector('i').classList.toggle(`fa-caret-down`)
   }
 
   instance.appendChild(title)
