@@ -127,7 +127,7 @@ class EditorPanel {
       if (delta === undefined) {
         layout.show = !layout.show
         if (layout.show) delta = layout.offset
-        else delta = containerHeight
+        else delta = 0
       } else {
         layout.show = true
         self._deps.config.set(`terminal-${direction}-offset`, delta)
