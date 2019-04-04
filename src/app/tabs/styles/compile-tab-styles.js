@@ -67,6 +67,9 @@ const css = csjs`
   .compilerConfig label {
     margin: 0;
   }
+  .compilerSm {
+    padding-left: 1.25rem;
+  }
   .name {
     display: flex;
   }
@@ -99,9 +102,9 @@ const css = csjs`
   .contractHelperButtons {
     margin-top: 10px;
     display: flex;
-    cursor: pointer;
     align-items: center;
     justify-content: space-between;
+    float: right;
   }
   .copyToClipboard {
     font-size: 1rem;
@@ -145,6 +148,10 @@ const css = csjs`
   .bouncingIcon {
     margin-right: .3em;
     animation: bounce 2s infinite;
+  }
+  .errorBlobs {
+    padding-left: 5px;
+    padding-right: 5px;
   }
   @keyframes spin {
     0% { transform: rotate(0deg); }
