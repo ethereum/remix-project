@@ -7,7 +7,7 @@ var css = csjs`
   }
   .result {
     margin-top: 1%;
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
   }
   .buttons  {
@@ -28,7 +28,7 @@ var css = csjs`
     align-items: center;
   }
   .container {
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
   }
 `
