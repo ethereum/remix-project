@@ -79,10 +79,9 @@ class EditorPanel {
       self._view.mainPanel.style.display = 'none'
     })
     self.data = {
-      _FILE_SCROLL_DELTA: 200,
       _layout: {
         top: {
-          offset: self._deps.config.get('terminal-top-offset') || 500,
+          offset: self._deps.config.get('terminal-top-offset') || 150,
           show: true
         }
       }
@@ -104,7 +103,7 @@ class EditorPanel {
           var height = window.innerHeight
           var newpos = (event.pageY < limitUp) ? limitUp : event.pageY
           newpos = (newpos < height - limitDown) ? newpos : height - limitDown
-          return newpos
+          return height - newpos
         }
       })
 
@@ -138,11 +137,11 @@ class EditorPanel {
     var tmp = delta - limitDown
     delta = tmp > 0 ? tmp : 0
     if (direction === 'top') {
-      var height = containerHeight - delta
-      height = height < 0 ? 0 : height
-      self._view.editor.style.height = `${delta}px`
-      self._view.mainPanel.style.height = `${delta}px`
-      self._view.terminal.style.height = `${height}px` // - menu bar height
+      var mainPanelHeight = containerHeight - delta
+      mainPanelHeight = mainPanelHeight < 0 ? 0 : mainPanelHeight
+      self._view.editor.style.height = `${mainPanelHeight}px`
+      self._view.mainPanel.style.height = `${mainPanelHeight}px`
+      self._view.terminal.style.height = `${delta}px` // - menu bar height
       self._components.editor.resize((document.querySelector('#editorWrap') || {}).checked)
       self._components.terminal.scroll2bottom()
     }

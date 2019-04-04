@@ -174,9 +174,8 @@ module.exports = class TestTab extends ApiFactory {
           How to test smart contracts guide in our documentation.
           <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile(this)}">Generate test file</div>
         </div>
-        <div class="${css.tests}">
-          ${this.testList}
-          <div class="${css.buttons} btn-group">
+        <div class="${css.tests}">          
+          <div class="${css.buttons}">
             <div class="${css.runButton} btn btn-primary m-1"  onclick="${this.runTests.bind(this)}">Run Tests</div>
             <label class="${css.label}" for="checkAllTests">
               <input id="checkAllTests"
@@ -187,6 +186,9 @@ module.exports = class TestTab extends ApiFactory {
               Check/Uncheck all
             </label>
           </div>
+          ${this.testList}
+          <hr>
+          <div class="${css.buttons}" ><h6>Results:</h6></div>
           ${this.testsOutput}
           ${this.testsSummary}
         </div>
