@@ -120,7 +120,7 @@ class Terminal {
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="${css.toggleTerminal} fa fa-angle-double-down"></i>`
+      class="btn btn-secondary align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()

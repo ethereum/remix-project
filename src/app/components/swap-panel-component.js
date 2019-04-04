@@ -77,7 +77,7 @@ const css = csjs`
   }
   .plugItIn       {
     display        : none;
-    height: calc(100% - 50px);
+    height         : 100%;
   }
   .plugItIn > div {
     overflow-y     : auto;
@@ -95,8 +95,8 @@ const css = csjs`
     text-transform: uppercase;
   }
   .swapitHeader {
-    height: 50px;
-    padding-top: 16px;
+    height: 35px;
+    padding-top: 10px;
     padding-left: 27px;
   }
 `

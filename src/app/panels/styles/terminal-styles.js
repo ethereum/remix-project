@@ -34,7 +34,8 @@ var css = csjs`
   }
   .toggleTerminal              {
     margin-right      : 20px;
-    margin-left       : 4px;
+    margin-left       : 2px;
+    margin-top        : 2px;
     font-size         : 14px;
     font-weight       : bold;
     cursor            : pointer;

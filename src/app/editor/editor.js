@@ -276,7 +276,10 @@ class Editor {
    * @param {number} incr The amount of pixels to add to the font.
    */
   editorFontSize (incr) {
-    this.editor.setFontSize(this.editor.getFontSize() + incr)
+    let newSize = this.editor.getFontSize() + incr
+    if (newSize >= 6) {
+      this.editor.setFontSize(newSize)
+    }
   }
 
   /**
