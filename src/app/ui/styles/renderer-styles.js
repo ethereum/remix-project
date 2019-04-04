@@ -49,7 +49,7 @@ var css = yo`<style>
 }
 
 .sol.staticAnalysisWarning {
-  background-color: var(--info);
+  background-color: var(--warning);
 }
 
 .sol.success {

@@ -25,6 +25,10 @@ var css = csjs`
     display: flex;
     align-items: center;
   }
+  .container {
+    max-height: 500px;
+    overflow-y: auto;
+  }
 `
 
 module.exports = css
