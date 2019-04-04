@@ -104,12 +104,17 @@ class Terminal {
     if (opts.shell) self._shell = opts.shell
     register(self)
   }
+
+  focus () {
+    if (this._view.input) this._view.input.focus()
+  }
+
   render () {
     var self = this
     if (self._view.el) return self._view.el
     self._view.journal = yo`<div class=${css.journal}></div>`
     self._view.input = yo`
-      <span class=${css.input} spellcheck="false" contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
+      <span class=${css.input} spellcheck="false" onload=${() => { this.focus() }} contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
     `
     self._view.input.innerText = '\n'
     self._view.cli = yo`
