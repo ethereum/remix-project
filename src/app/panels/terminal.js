@@ -158,7 +158,7 @@ class Terminal {
       </div>
     `
     self._view.el = yo`
-      <div class="${css.panel}" style="height: 180px;">
+      <div class="border ${css.panel}" style="height: 180px;">
         ${self._view.bar}
         ${self._view.term}
       </div>
