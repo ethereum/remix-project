@@ -101,6 +101,35 @@ class Editor {
 
     // Unmap ctrl-t & ctrl-f
     this.editor.commands.bindKeys({ 'ctrl-t': null })
+
+    // shortcuts for "Ctrl-"" and "Ctrl+"" to increase/decrease font size of the editor
+    this.editor.commands.addCommand({
+      name: 'increasefontsizeEqual',
+      bindKey: {win: 'Ctrl-=', mac: 'Command-='},
+      exec: (editor) => {
+        this.editorFontSize(1)
+      },
+      readOnly: true
+    })
+
+    this.editor.commands.addCommand({
+      name: 'increasefontsizePlus',
+      bindKey: {win: 'Ctrl-+', mac: 'Command-+'},
+      exec: (editor) => {
+        this.editorFontSize(1)
+      },
+      readOnly: true
+    })
+
+    this.editor.commands.addCommand({
+      name: 'decreasefontsize',
+      bindKey: {win: 'Ctrl--', mac: 'Command--'},
+      exec: (editor) => {
+        this.editorFontSize(-1)
+      },
+      readOnly: true
+    })
+
     this.editor.setShowPrintMargin(false)
     this.editor.resize(true)
 
