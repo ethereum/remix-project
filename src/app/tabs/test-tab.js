@@ -187,6 +187,8 @@ module.exports = class TestTab extends ApiFactory {
             </label>
           </div>
           ${this.testList}
+          <hr>
+          <div class="${css.buttons}" ><h6>Results:</h6></div>
           ${this.testsOutput}
           ${this.testsSummary}
         </div>

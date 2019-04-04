@@ -11,13 +11,15 @@ var css = csjs`
     display: flex;
     flex-direction: column;
     margin: 2%;
-    max-height: 500px;
+    max-height: 300px;
     overflow-y: auto;
 
   }
   .container {
     margin: 2%;
     padding-bottom: 5%;
+    max-height: 300px;
+    overflow-y: auto;
   }
   .outputTitle {
     font-weight: bold;
