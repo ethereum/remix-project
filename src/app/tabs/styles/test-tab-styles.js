@@ -11,6 +11,9 @@ var css = csjs`
     display: flex;
     flex-direction: column;
     margin: 2%;
+    max-height: 500px;
+    overflow-y: auto;
+
   }
   .container {
     margin: 2%;
