@@ -128,7 +128,7 @@ class Terminal {
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class=${css.menu}>
+        <div class="${css.menu} bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" title="Clear console"
@@ -136,15 +136,15 @@ class Terminal {
           </div>
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
-          <div class=${css.listen}>
-            <input id="listenNetworkCheck" onchange=${listenOnNetwork} type="checkbox" class="form-check-input"
+          <div class="form-check">
+            <input id="listenNetworkCheck" onchange=${listenOnNetwork} type="checkbox" class="form-check-input "
             title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you">
-            <label class="${css.listenLabel} form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
+            <label class="form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon} bg-light btn" aria-hidden="true"></i>
-            <input spellcheck="false" type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
+            <i class="fa fa-search ${css.searchIcon} bg-light btn-light" aria-hidden="true"></i>
+            <input spellcheck="false" type="text" class="${css.filter} form-control" onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@ class Terminal {
       </div>
     `
     self._view.el = yo`
-      <div class="${css.panel}">
+      <div class="${css.panel}" style="height: 180px;">
         ${self._view.bar}
         ${self._view.term}
       </div>
