@@ -95,12 +95,18 @@ class CompilerContainer {
    * SUBCOMPONENT
    */
   compilationButton (name) {
-    return yo`
+    if (!name) name = ''
+    var displayed = name === '' ? '<no file selected>' : name
+    var el = yo`
     <div class="${css.compilerArticle}">
       <button class="btn btn-primary btn-block" title="Compile" onclick="${this.compile.bind(this)}">
-        <span>${this._view.compileIcon} Compile ${name}</span>
+        <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
     </div>`
+    if (name === '') {
+      el.setAttribute('disabled', 'true')
+    }
+    return el
   }
 
   render () {

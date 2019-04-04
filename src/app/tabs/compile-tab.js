@@ -85,6 +85,11 @@ class CompileTab extends ApiFactory {
     this.fileManager.events.on('currentFileChanged', (name) => {
       this.compilerContainer.currentFile = name
     })
+
+    this.fileManager.events.on('noFileSelected', () => {
+      this.compilerContainer.currentFile = ''
+    })
+
     this.compiler.event.register('compilationFinished', (success, data, source) => {
       if (success) {
         // forwarding the event to the appManager infra

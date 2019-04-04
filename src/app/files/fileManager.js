@@ -101,6 +101,7 @@ class FileManager extends ApiFactory {
     } else {
       this._deps.editor.displayEmptyReadOnlySession()
       this._deps.config.set('currentFile', '')
+      this.events.emit('noFileSelected')
     }
     this.events.emit('fileClosed', name)
   }
