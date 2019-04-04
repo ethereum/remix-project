@@ -102,18 +102,12 @@ export class TabProxy {
     this._view.filetabs.canAdd = false
 
     this._view.tabs = yo`
-      <div>
+      <div style="width: 100%; height: 100%;">
         ${this._view.filetabs}
       </div>
     `
     let tabsbar = yo`
-      <div class="d-flex border-bottom">
-        <div class="m-1">
-          <span class="p-1">
-            <i class="m-1 fa fa-plus" style="color: var(--text-dark)" onclick=${increase} aria-hidden="true" title="increase editor font size"></i>
-            <i class="m-1 fa fa-minus" style="color: var(--text-dark)" onclick=${decrease} aria-hidden="true" title="decrease editor font size"></i>
-          </span>
-        </div>
+      <div class="d-flex align-items-center" style="max-height: 35px; height: 100%">
         ${this._view.tabs}
       </div>
     `
@@ -138,8 +132,6 @@ export class TabProxy {
       return false
     })
 
-    function increase () { self.editor.editorFontSize(1) }
-    function decrease () { self.editor.editorFontSize(-1) }
     return tabsbar
   }
 }

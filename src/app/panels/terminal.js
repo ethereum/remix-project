@@ -120,7 +120,7 @@ class Terminal {
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="${css.toggleTerminal} fa fa-angle-double-down"></i>`
+      class="btn btn-secondary align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
@@ -143,7 +143,7 @@ class Terminal {
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon} bg-light btn-light" aria-hidden="true"></i>
+            <i class="fa fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
             <input spellcheck="false" type="text" class="${css.filter} form-control" onkeydown=${filter}  placeholder="Search transactions">
           </div>
         </div>
@@ -158,7 +158,7 @@ class Terminal {
       </div>
     `
     self._view.el = yo`
-      <div class="${css.panel}" style="height: 180px;">
+      <div class="border ${css.panel}" style="height: 180px;">
         ${self._view.bar}
         ${self._view.term}
       </div>
