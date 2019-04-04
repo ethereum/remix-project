@@ -20,7 +20,6 @@ var css = csjs`
     display              : flex;
     align-items          : center;
     width                : 100%;
-    border-bottom-style  : ridge;
     max-height           : 35px;
   }
   .clear           {
@@ -148,7 +147,6 @@ var css = csjs`
     left              : 0;
     cursor            : ns-resize;
     z-index           : 999;
-    border-top        : 2px solid var(--primary);
   }
   .ghostbar           {
     position          : absolute;
