@@ -1,7 +1,7 @@
 var yo = require('yo-yo')
+const globalRegistry = require('../../global/registry')
 var tooltip = require('../ui/tooltip')
 var copyToClipboard = require('../ui/copy-to-clipboard')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
 var EventManager = require('../../lib/events')
 var css = require('./styles/settings-tab-styles')
 import { ApiFactory } from 'remix-plugin'
@@ -13,6 +13,9 @@ module.exports = class SettingsTab extends ApiFactory {
     this.editor = editor
     this.appManager = appManager
     this._components = {}
+    this._deps = {
+      themeModule: globalRegistry.get('themeModule').api
+    }
     this._view = { /* eslint-disable */
       el: null,
       optionVM: null, personal: null, warnPersonalMode: null, generateContractMetadata: null,
@@ -25,7 +28,7 @@ module.exports = class SettingsTab extends ApiFactory {
   }
 
   initTheme () {
-    this.currentTheme = styleGuide.currentTheme()
+    this.currentTheme = this._deps.themeModule.currentTheme()
   }
   get profile () {
     return {
@@ -40,9 +43,9 @@ module.exports = class SettingsTab extends ApiFactory {
     }
   }
   createThemeCheckies () {
-    let themes = styleGuide.getThemes()
+    let themes = this._deps.themeModule.getThemes()
     function onswitchTheme (event, name) {
-      styleGuide.switchTheme(name)
+      this._deps.themeModule.switchTheme(name)
     }
     if (themes) {
       return yo`<div class="card-text themes-container">
@@ -85,7 +88,7 @@ module.exports = class SettingsTab extends ApiFactory {
 
     this._view.pluginInput = yo`<textarea rows="4" cols="70" id="plugininput" type="text" class="${css.pluginTextArea}" ></textarea>`
 
-    this._view.themes = styleGuide.getThemes()
+    this._view.themes = this._deps.themeModule.getThemes()
     this._view.themesCheckBoxes = this.createThemeCheckies()
     this._view.config.homePage = yo`
 
@@ -156,7 +159,7 @@ module.exports = class SettingsTab extends ApiFactory {
       self.config.set('settings/personal-mode', !self.config.get('settings/personal-mode'))
     }
 
-    styleGuide.switchTheme()
+    this._deps.themeModule.switchTheme()
     return this._view.el
   }
 }
