@@ -130,6 +130,24 @@ class Editor {
       readOnly: true
     })
 
+    this.editor.commands.addCommand({
+      name: 'movenexttab',
+      bindKey: {win: 'Ctrl-Right', mac: 'Command-Right'},
+      exec: (editor) => {
+        this.event.trigger('switchNextTab', [])
+      },
+      readOnly: true
+    })
+
+    this.editor.commands.addCommand({
+      name: 'moveprevioustab',
+      bindKey: {win: 'Ctrl-Left', mac: 'Command-Left'},
+      exec: (editor) => {
+        this.event.trigger('switchPreviousTab', [])
+      },
+      readOnly: true
+    })
+
     this.editor.setShowPrintMargin(false)
     this.editor.resize(true)
 
