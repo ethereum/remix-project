@@ -210,23 +210,8 @@ function fileExplorer (localRegistry, files, menuItems) {
   self.treeView.event.register('nodeClick', function (path, childrenContainer) {
     if (!childrenContainer) return
     if (childrenContainer.style.display === 'none') return
-
-    files.resolveDirectory(path, (error, fileTree) => {
-      if (error) console.error(error)
-      if (!fileTree) return
-      var newTree = normalize(path, fileTree)
-      self.treeView.updateNodeFromJSON(path, newTree, true)
-    })
+    self.updatePath(path)
   })
-
-  function normalize (path, filesList) {
-    var prefix = path.split('/')[0]
-    var newList = {}
-    Object.keys(filesList).forEach(key => {
-      newList[prefix + '/' + key] = filesList[key].isDirectory ? {} : { '/content': true }
-    })
-    return newList
-  }
 
   // register to main app, trigger when the current file in the editor changed
   self._deps.fileManager.events.on('currentFileChanged', (newFile) => {
@@ -308,6 +293,15 @@ function fileExplorer (localRegistry, files, menuItems) {
       label.classList.remove('bg-light')
     }
   }
+}
+
+fileExplorer.prototype.updatePath = function (path) {
+  this.files.resolveDirectory(path, (error, fileTree) => {
+    if (error) console.error(error)
+    if (!fileTree) return
+    var newTree = normalize(path, fileTree)
+    this.treeView.updateNodeFromJSON(path, newTree, true)
+  })
 }
 
 fileExplorer.prototype.hide = function () {
@@ -547,7 +541,17 @@ fileExplorer.prototype.ensureRoot = function (cb) {
     self.container.appendChild(element)
     self.element = element
     if (cb) cb()
+    self.treeView.expand(self.files.type)
   })
+}
+
+function normalize (path, filesList) {
+  var prefix = path.split('/')[0]
+  var newList = {}
+  Object.keys(filesList).forEach(key => {
+    newList[prefix + '/' + key] = filesList[key].isDirectory ? {} : { '/content': true }
+  })
+  return newList
 }
 
 module.exports = fileExplorer

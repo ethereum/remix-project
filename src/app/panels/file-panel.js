@@ -47,7 +47,6 @@ module.exports = class Filepanel extends ApiFactory {
     var swarmExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['swarm'])
     var githubExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['github'])
     var gistExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['gist'], ['updateGist'])
-    var configExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['config'])
     var httpExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['http'])
     var httpsExplorer = new FileExplorer(self._components.registry, self._deps.fileProviders['https'])
 
@@ -72,7 +71,6 @@ module.exports = class Filepanel extends ApiFactory {
           <div class="${css.fileexplorer}">           
             <div>
               <div class=${css.treeview}>${fileExplorer.init()}</div>
-              <div class="configexplorer ${css.treeview}">${configExplorer.init()}</div>
               <div class="filesystemexplorer ${css.treeview}">${fileSystemExplorer.init()}</div>
               <div class="swarmexplorer ${css.treeview}">${swarmExplorer.init()}</div>
               <div class="githubexplorer ${css.treeview}">${githubExplorer.init()}</div>
@@ -89,7 +87,6 @@ module.exports = class Filepanel extends ApiFactory {
     self.event = event
     var element = template()
     fileExplorer.ensureRoot()
-    configExplorer.ensureRoot()
     self._deps.fileProviders['localhost'].event.register('connecting', (event) => {
     })
 
@@ -106,10 +103,6 @@ module.exports = class Filepanel extends ApiFactory {
     })
 
     fileExplorer.events.register('focus', function (path) {
-      self._deps.fileManager.switchFile(path)
-    })
-
-    configExplorer.events.register('focus', function (path) {
       self._deps.fileManager.switchFile(path)
     })
 

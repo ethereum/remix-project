@@ -25,7 +25,6 @@ function runTests (browser) {
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
     .clickLaunchIcon('fileExplorers')
-    .click('#swap-panel label[data-path="browser"]')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.
       async.waterfall([function (callback) { callback(null, browser) },
