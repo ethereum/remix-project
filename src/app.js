@@ -454,7 +454,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   let analysis = new AnalysisTab(registry)
   let debug = new DebuggerTab()
-  const landingPage = new LandingPage(appManager, appStore, registry)
+  const landingPage = new LandingPage(appManager, appStore)
   let test = new TestTab(
     registry.get('filemanager').api,
     registry.get('filepanel').api,

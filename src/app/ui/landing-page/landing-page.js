@@ -45,7 +45,7 @@ import Section from './section'
 
 export class LandingPage extends ApiFactory {
 
-  constructor (appManager, appStore, registry) {
+  constructor (appManager, appStore) {
     super()
     this.sections = []
     let load = function (item) {

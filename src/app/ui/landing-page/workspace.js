@@ -1,3 +1,5 @@
+let globalRegistry = require('../../../global/registry')
+
 export class Workspace {
   constructor (title, description, isMain, activate, deactivate) {
     this.title = title
@@ -8,7 +10,7 @@ export class Workspace {
   }
 }
 
-export const defaultWorkspaces = (appManager, registry) => {
+export const defaultWorkspaces = (appManager) => {
   return [
     new Workspace(
       'Solidity',
@@ -19,8 +21,8 @@ export const defaultWorkspaces = (appManager, registry) => {
         appManager.ensureActivated('run')
         appManager.ensureActivated('solidityStaticAnalysis')
         appManager.ensureActivated('solidityUnitTesting')
-        registry.get('filemanager').api.switchFile()
-        registry.get('verticalicon').api.select('solidity')
+        globalRegistry.get('filemanager').api.switchFile()
+        globalRegistry.get('verticalicon').api.select('solidity')
       }, () => {}),
     new Workspace(
       'Vyper',
@@ -29,8 +31,8 @@ export const defaultWorkspaces = (appManager, registry) => {
       () => {
         appManager.ensureActivated('vyper')
         appManager.ensureActivated('run')
-        registry.get('filemanager').api.switchFile()
-        registry.get('verticalicon').api.select('vyper')
+        globalRegistry.get('filemanager').api.switchFile()
+        globalRegistry.get('verticalicon').api.select('vyper')
       }, () => {}),
     new Workspace('Debugger', 'Debug transactions with remix', false, () => {
       appManager.ensureActivated('debugger')
