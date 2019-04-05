@@ -10,13 +10,14 @@ var css = csjs`
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    height: 30px;
-    width: 97%;
+    /* height: 30px; */
+    /* width: 97%; */
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
     overflow: visible;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
+    padding-left: 10px;
   }
   .noInstancesText {
 
@@ -26,7 +27,7 @@ var css = csjs`
     align-items: baseline;
   }
   .titleText {
-    margin-right: 1em;
+    /* margin-right: 1em; */
     word-break: break-word;
     min-width: 230px;
   }
@@ -34,26 +35,19 @@ var css = csjs`
   .title .copy {
     color: var(--primary);
   }
+  .titleExpander {
+    margin-right: 10px;
+  }
+  .nameNbuts {
+    flex-wrap: nowrap;
+  }
   .instance {
     min-width: 310px;
     display: block;
     /* display: flex; */
     flex-direction: column;
-    padding: 5px 0 0 10px;
+    /* padding: 5px 0 0 10px; */
     margin-bottom: 10px;
-  }
-  .instance .title:before {
-    content: "\\25BE";
-    margin-right: 5%;
-    font-size: 1.2rem
-  }
-  .instance.hidesub .title:before {
-    content: "\\25B8";
-    margin-right: 5%;
-    font-size: 1.2rem;
-  }
-  .instance.hidesub > * {
-      display: none;
   }
   .instance.hidesub .title {
       display: flex;
@@ -61,12 +55,23 @@ var css = csjs`
   .instance.hidesub .udappClose {
       display: flex;
   }
+  .instance.hidesub > * {
+    display: none;
+  }
   .methCaret {
     margin-right: 5px;
     cursor: pointer;
     font-size: 16px;
     padding-top: 5px;
     vertical-align: top;
+  }
+  .cActionsWrapper {
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0.25rem;
+    border-top-rightt-radius: 0;
+    border-bottom-right-radius: 0.25rem;
   }
   .group:after {
     content: "";
@@ -109,10 +114,10 @@ var css = csjs`
     border-bottom-left-radius: 0;
   }
   .contractProperty button {
-    background-color: var(--warning);
+    /* background-color: var(--warning); */
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
+    /* font-size: 10px; */
     margin:0;
     word-break: inherit;
   }
@@ -122,7 +127,7 @@ var css = csjs`
     border-color: lightgray;
   }
   .contractProperty.constant button {
-    background-color:var(--info);
+    /* background-color:var(--info); */
     min-width: 100px;
     width: 100px;
     font-size: 10px;
@@ -191,7 +196,7 @@ var css = csjs`
   .contractProperty.constant .multiTitle {
     display: inline-block;
     width: 90%;
-    font-size: 10px;
+    /* font-size: 10px; */
     height: 25px;
     padding-left: 20px;
     font-weight: bold;
@@ -233,13 +238,13 @@ var css = csjs`
     border-left: none;
     padding: 8px 8px 8px 10px;
     font-size: 10px;
-    height: 25px;
+    /* height: 25px; */
   }
   .hasArgs button {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
-    height: 25px;
+    /* height: 25px; */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

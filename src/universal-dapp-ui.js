@@ -63,34 +63,47 @@ UniversalDAppUI.prototype.renderInstance = function (contract, address, contract
 UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address, contractName) {
   var self = this
   address = (address.slice(0, 2) === '0x' ? '' : '0x') + address.toString('hex')
-  var instance = yo`<div class="instance card ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
+  var instance = yo`<div class="instance ${css.instance} ${css.hidesub}" id="instance${address}"></div>`
   var context = self.udapp.context()
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title}" onclick=${toggleClass}>
-    <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
-    ${copyToClipboard(() => address)}
+    <div class="${css.title} alert alert-dark">
+      <button class="btn btn-light ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+      <div class="input-group ${css.nameNbuts}">
+        <div class="${css.titleText} input-group-prepend"><span class="input-group-text"> ${contractName} at ${shortAddress} (${context})</span></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary">${copyToClipboard(() => address)}</button>
+        </div>
+      </div>
   </div>`
 
-  var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-  title.appendChild(close)
+  var close = yo`<button class="${css.udappClose} btn btn-secondary" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></button>`
+  title.querySelector('.btn-group').appendChild(close)
+
+  var contractActionsWrapper = yo`
+  <div class="${css.cActionsWrapper}">
+  </div>`
 
   function remove () {
     instance.remove()
     // @TODO perhaps add a callack here to warn the caller that the instance has been removed
   }
 
-  function toggleClass () {
+  function toggleClass (e) {
     $(instance).toggleClass(`${css.hidesub}`)
+    // e.currentTarget.querySelector('i')
+    e.currentTarget.querySelector('i').classList.toggle(`fa-caret-right`)
+    e.currentTarget.querySelector('i').classList.toggle(`fa-caret-down`)
   }
 
   instance.appendChild(title)
+  instance.appendChild(contractActionsWrapper)
 
   // Add the fallback function
   var fallback = self.udapp.getFallbackInterface(contractABI)
   if (fallback) {
-    instance.appendChild(this.getCallButton({
+    contractActionsWrapper.appendChild(this.getCallButton({
       funABI: fallback,
       address: address,
       contractAbi: contractABI,
@@ -103,7 +116,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       return
     }
     // @todo getData cannot be used with overloaded functions
-    instance.appendChild(this.getCallButton({
+    contractActionsWrapper.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
       contractAbi: contractABI,
