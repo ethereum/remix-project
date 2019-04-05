@@ -172,7 +172,7 @@ staticAnalysisView.prototype.renderModules = function () {
         </label>
             `
     })
-    return yo`<div class="${css.analysisModulesContainer} list-group-item">
+    return yo`<div class="${css.analysisModulesContainer} list-group-item py-1">
                 <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
                 ${entriesDom}
               </div>`

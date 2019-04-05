@@ -88,7 +88,7 @@ class PluginManagerComponent extends ApiFactory {
       </button>`
 
     return yo`
-      <article class="list-group-item" title="${name}" >
+      <article class="list-group-item py-1" title="${name}" >
         <div class="${css.row} justify-content-between align-items-center">
           <h6 class="${css.displayName}">${displayName}</h6>
           ${activationButton}
