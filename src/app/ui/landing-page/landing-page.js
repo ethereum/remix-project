@@ -132,7 +132,7 @@ export class LandingPage extends ApiFactory {
 
     this.sectionWorkspaceMain = []
     this.sectionWorkspaceOthers = []
-    defaultWorkspaces(appManager, registry).forEach((workspace) => {
+    defaultWorkspaces(appManager).forEach((workspace) => {
       if (workspace.isMain) {
         this.sectionWorkspaceMain.push({
           label: workspace.title,
