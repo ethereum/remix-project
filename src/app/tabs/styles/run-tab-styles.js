@@ -117,7 +117,7 @@ var css = csjs`
     margin: 0;
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
+    /* font-size: 10px; */
     word-break: inherit;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
