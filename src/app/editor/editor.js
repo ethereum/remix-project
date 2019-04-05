@@ -15,7 +15,6 @@ require('ace-mode-solidity/build/remix-ide/mode-solidity')
 require('brace/mode/javascript')
 require('brace/mode/python')
 require('brace/mode/json')
-const themeChooser = require('../ui/styles-guide/theme-chooser')
 require('brace/theme/chaos')
 require('brace/theme/chrome')
 
@@ -63,6 +62,7 @@ class Editor {
     this._components = {}
     this._components.registry = localRegistry || globalRegistry
     this._deps = {
+      themeModule: this._components.registry.get('themeModule').api,
       fileManager: this._components.registry.get('filemanager').api,
       config: this._components.registry.get('config').api
     }
@@ -71,7 +71,7 @@ class Editor {
       'light': 'chrome',
       'dark': 'chaos'
     }
-    themeChooser.event.on('switchTheme', (type) => {
+    this._deps.themeModule.events.on('switchTheme', (type) => {
       this.setTheme(type)
     })
 
