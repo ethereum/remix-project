@@ -71,7 +71,7 @@ class Editor {
       'light': 'chrome',
       'dark': 'chaos'
     }
-    this._deps.themeModule.events.on('switchTheme', (type) => {
+    this._deps.themeModule.events.on('themeChanged', (type) => {
       this.setTheme(type)
     })
 

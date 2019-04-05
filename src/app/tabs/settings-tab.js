@@ -44,7 +44,7 @@ module.exports = class SettingsTab extends ApiFactory {
   }
   createThemeCheckies () {
     let themes = this._deps.themeModule.getThemes()
-    function onswitchTheme (event, name) {
+    const onswitchTheme = (event, name) => {
       this._deps.themeModule.switchTheme(name)
     }
     if (themes) {
