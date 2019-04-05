@@ -156,6 +156,14 @@ class Terminal {
     `
     self._view.term = yo`
       <div class="${css.terminal_container}" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+        <div style="
+          background-color: grey;
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          opacity: 0.1;
+          z-index: -1;
+        "></div>
         <div class=${css.terminal}>
             ${self._view.journal}
             ${self._view.cli}
@@ -163,7 +171,7 @@ class Terminal {
       </div>
     `
     self._view.el = yo`
-      <div class="border ${css.panel}" style="height: 180px;">
+      <div class="${css.panel}" style="height: 180px;">
         ${self._view.bar}
         ${self._view.term}
       </div>
