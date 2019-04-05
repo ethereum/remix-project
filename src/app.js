@@ -388,6 +388,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
+  // ----------------- theme module ----------------------------
+  const themeModule = new ThemeModule()
+  registry.put({api: themeModule, name: 'themeModule'})
+
   // ----------------- editor panel ----------------------
   self._components.editorpanel = new EditorPanel(appStore, appManager, mainPanelComponent)
   registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
@@ -413,11 +417,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
-  const themeModule = new ThemeModule()
 
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
   registry.put({api: verticalIconsApi, name: 'verticalicon'})
-  registry.put({api: themeModule, name: 'themeModule'})
 
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)

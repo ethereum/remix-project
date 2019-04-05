@@ -23,7 +23,7 @@ export class ThemeModule extends ApiFactory {
     super()
     this.events = new EventEmitter()
     this.storage = new Storage('style:')
-    this.themes = themes.reduce(theme => ({ [theme.name]: theme }), {})
+    this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
     this.active = this.storage.exists('theme') ? this.storage.get('theme') : 'Cerulean'
   }
 
@@ -37,17 +37,17 @@ export class ThemeModule extends ApiFactory {
 
   /** Return the active theme */
   currentTheme () {
-    return this.theme[this.active]
+    return this.themes[this.active]
   }
 
   /** Returns all themes as an array */
   getThemes () {
-    return Object.keys(this.themes).map(key => this.themes(key))
+    return Object.keys(this.themes).map(key => this.themes[key])
   }
 
   /**
    * Change the current theme
-   * @param {string} [themeName] - The name of the theme 
+   * @param {string} [themeName] - The name of the theme
    */
   switchTheme (themeName) {
     if (themeName && !Object.keys(this.themes).includes(themeName)) {
@@ -58,6 +58,6 @@ export class ThemeModule extends ApiFactory {
     this.storage.set('theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
-    this.event.emit('switchTheme', nextTheme.quality)
+    this.events.emit('themeChanged', nextTheme.quality)
   }
 }
