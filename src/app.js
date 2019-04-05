@@ -413,10 +413,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
-  registry.put({api: verticalIconsApi, name: 'verticalicon'})
   const themeModule = new ThemeModule()
 
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
+  registry.put({api: verticalIconsApi, name: 'verticalicon'})
   registry.put({api: themeModule, name: 'themeModule'})
 
   pluginManagerComponent.setApp(appManager)
