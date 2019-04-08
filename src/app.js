@@ -56,6 +56,7 @@ import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
 import { ApiFactory } from 'remix-plugin'
 import { TxListenerModule } from './app/tabs/txlistener-module'
+import { ThemeModule } from './app/tabs/theme-module'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -387,6 +388,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
+  // ----------------- theme module ----------------------------
+  const themeModule = new ThemeModule()
+  registry.put({api: themeModule, name: 'themeModule'})
+
   // ----------------- editor panel ----------------------
   self._components.editorpanel = new EditorPanel(appStore, appManager, mainPanelComponent)
   registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
@@ -412,8 +417,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
-  registry.put({api: verticalIconsApi, name: 'verticalicon'})
+
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
+  registry.put({api: verticalIconsApi, name: 'verticalicon'})
 
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
@@ -472,7 +478,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel.api(),
     // { profile: support.profile(), api: support },
     settings.api(),
-    pluginManagerComponent.api()
+    pluginManagerComponent.api(),
+    themeModule.api()
   ])
 
   appManager.registerMany([
