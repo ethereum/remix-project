@@ -25,7 +25,7 @@ module.exports = {
   removeFile,
   getAddressAtPosition,
   clickLaunchIcon,
-  scrollDown
+  scrollInto
 }
 
 function clickLaunchIcon (icon) {
@@ -154,25 +154,24 @@ function testConstantFunction (browser, address, fnFullName, expectedInput, expe
   .click('.instance button[title="' + fnFullName + '"]')
   .pause(1000)
   .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
-  .scrollDown('#runTabView')
+  .scrollInto('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
   .assert.containsText('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]', expectedOutput).perform(() => {
     cb()
   })
 }
 
-function scrollDown (target) {
+function scrollInto (target) {
   return this.perform((client, done) => {
-    _scrollDown(this, target, () => {
+    _scrollInto(this, target, () => {
       done()
     })
   })
 }
 
-function _scrollDown (browser, target, cb) {
-  browser.execute(function () {
-    document.querySelector(target).scrollTop = 0
-    document.querySelector(target).scrollTop = document.querySelector(target).scrollHeight
-  }, [], function () {
+function _scrollInto (browser, target, cb) {
+  browser.execute(function (target) {
+    document.querySelector(target).scrollIntoView()
+  }, [target], function () {
     cb()
   })
 }
