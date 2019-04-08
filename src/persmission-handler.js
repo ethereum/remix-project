@@ -68,7 +68,10 @@ export class PermissionHandler {
           label: 'Accept',
           fn: () => {
             if (this.permissions[to.name][from.name]) {
-              this.permissions[to.name][from.name].allow = true
+              this.permissions[to.name][from.name] = {
+                allow: true,
+                hash: from.hash
+              }
               this.persistPermissions()
             }
             resolve()
@@ -78,7 +81,10 @@ export class PermissionHandler {
           label: 'Decline',
           fn: () => {
             if (this.permissions[to.name][from.name]) {
-              this.permissions[to.name][from.name].allow = false
+              this.permissions[to.name][from.name] = {
+                allow: false,
+                hash: from.hash
+              }
               this.persistPermissions()
             }
             reject(notAllowWarning(from, to))

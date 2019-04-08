@@ -18,7 +18,7 @@ class VerticalIconComponent {
     this.store.event.on('activate', (name) => {
       const api = this.store.getOne(name)
       if (!api.profile.icon) return
-      if (api.profile.location === this.name || !api.profile.location) {
+      if (api.profile.location === this.name) {
         this.addIcon(api.profile)
         this.listenOnStatus(api)
       }
