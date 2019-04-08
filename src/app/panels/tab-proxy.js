@@ -10,7 +10,6 @@ export class TabProxy {
     this.fileManager = fileManager
     this.appManager = appManager
     this.editor = editor
-    this.entities = {}
     this.data = {}
     this._view = {}
     this._handlers = {}
@@ -61,12 +60,44 @@ export class TabProxy {
             this.appManager.deactivateOne(name)
           }
         )
+        this.switchTab(name)
       }
     })
 
     appStore.event.on('deactivate', (name) => {
       this.removeTab(name)
     })
+  }
+
+  switchTab (tabName) {
+    if (this._handlers[tabName]) {
+      this._handlers[tabName].switchTo()
+      this._view.filetabs.activateTab(tabName)
+    }
+  }
+
+  switchNextTab () {
+    const active = this._view.filetabs.active
+    if (active && this._handlers[active]) {
+      const handlers = Object.keys(this._handlers)
+      let i = handlers.indexOf(active)
+      if (i >= 0) {
+        i = handlers[i + 1] ? i + 1 : 0
+        this.switchTab(handlers[i])
+      }
+    }
+  }
+
+  switchPreviousTab () {
+    const active = this._view.filetabs.active
+    if (active && this._handlers[active]) {
+      const handlers = Object.keys(this._handlers)
+      let i = handlers.indexOf(active)
+      if (i >= 0) {
+        i = handlers[i - 1] ? i - 1 : handlers.length - 1
+        this.switchTab(handlers[i])
+      }
+    }
   }
 
   addTab (name, switchTo, close, kind) {
