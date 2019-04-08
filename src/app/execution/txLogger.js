@@ -24,7 +24,7 @@ var css = csjs`
     opacity: 0.8;
   }
   .arrow {
-    color: var(--primary);
+    color: var(--text-info);
     font-size: 20px;
     cursor: pointer;
     display: flex;
@@ -57,12 +57,12 @@ var css = csjs`
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--primary);
+    color: var(--text-info);
     text-transform: uppercase;
     font-weight: bold;
   }
   .txItem {
-    color: var(--primary);
+    color: var(--text-info);
     margin-right: 5px;
     float: left;
   }
@@ -70,7 +70,7 @@ var css = csjs`
     font-weight: bold;
   }
   .tx {
-    color: var(--primary);
+    color: var(--text-info);
     font-weight: bold;
     float: left;
     margin-right: 10px;
@@ -80,8 +80,8 @@ var css = csjs`
   .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: var(--primary);
-    border: 1px solid var(--primary);
+    color: var(--text-info);
+    border: 1px solid var(--text-info);
   }
   #txTable {
     margin-top: 1%;

@@ -100,6 +100,10 @@ export class TabProxy {
     }
   }
 
+  showTab (name) {
+    this._view.filetabs.activateTab(name)
+  }
+
   addTab (name, switchTo, close, kind) {
     var slash = name.split('/')
     let title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
