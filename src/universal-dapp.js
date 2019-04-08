@@ -54,7 +54,7 @@ module.exports = class UniversalDApp extends ApiFactory {
     // TODO: most params here can be refactored away in txRunner
     this.txRunner = new TxRunner(this.accounts, {
       // TODO: only used to check value of doNotShowTransactionConfirmationAgain property
-      config: this.config,
+      config: this._deps.config,
       // TODO: to refactor, TxRunner already has access to executionContext
       detectNetwork: (cb) => {
         executionContext.detectNetwork(cb)
