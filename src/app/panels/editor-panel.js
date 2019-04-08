@@ -190,6 +190,11 @@ class EditorPanel {
     `
     // INIT
     self._adjustLayout('top', self.data._layout.top.offset)
+
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab()
+    })
+
     return self._view.el
   }
   registerCommand (name, command, opts) {
