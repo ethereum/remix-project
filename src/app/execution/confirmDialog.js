@@ -1,5 +1,6 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
+const copyToClipboard = require('../ui/copy-to-clipboard')
 
 var css = csjs`
   .txInfoBox {
@@ -35,7 +36,7 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
       <div>Gas price: <input id='gasprice' oninput=${onGasPriceChange} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
       <div>Max transaction fee:<span id='txfee'></span></div>
       <div>Data:</div>
-      <pre class=${css.wrapword}>${tx.data}</pre>
+      <pre class=${css.wrapword}>${tx.data && tx.data.length > 50 ? tx.data.substring(0, 49) + '...' : tx.data} ${copyToClipboard(() => { return tx.data })}</pre>
     </div>
     <div class=${css.checkbox}>
       <input id='confirmsetting' type="checkbox">
