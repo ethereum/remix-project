@@ -147,9 +147,9 @@ class FileManager extends ApiFactory {
           this.switchFile(newPath)
           e.target.innerHTML = 'Saved'
           warnToaster.hide()
-        }}>Save As Another</button>
+        }}>Save As Copy</button>
         </div>`
-      warnToaster = await toaster(yo`<div><span class="text-primary">${this.currentRequest.from}</span> is modyfing to <span class="text-primary">${path}</span></div>`, actions, { time: 4000 })
+      warnToaster = await toaster(yo`<div><span class="text-primary">${this.currentRequest.from}</span> is modyfing <span class="text-primary">${path}</span></div>`, actions, { time: 6000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
       if (savedAsAnotherFile) return
     }
