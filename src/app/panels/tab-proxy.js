@@ -99,8 +99,8 @@ export class TabProxy {
       }
     }
   }
-  
-  showTab(name) {
+
+  showTab (name) {
     this._view.filetabs.activateTab(name)
   }
 
