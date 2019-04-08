@@ -1,9 +1,11 @@
 'use strict'
 
+import { ApiFactory } from 'remix-plugin'
+import yo from 'yo-yo'
 const EventEmitter = require('events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
-import { ApiFactory } from 'remix-plugin'
+var toaster = require('../ui/tooltip')
 
 /*
   attach to files event (removed renamed)
@@ -47,7 +49,8 @@ class FileManager extends ApiFactory {
       methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
       events: ['currentFileChanged'],
       description: 'service - read/write to any files or folders, require giving permissions',
-      permission: true
+      permission: true,
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4='
     }
   }
 
@@ -129,7 +132,31 @@ class FileManager extends ApiFactory {
     })
   }
 
-  setFile (path, content) {
+  async setFile (path, content) {
+    if (this.currentRequest) {
+      let reject = false
+      let savedAsAnotherFile = false
+      let warnToaster
+      const actions = yo`<div class="container ml-1">
+        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => { reject = true; e.target.innerHTML = 'Canceled'; warnToaster.hide() }}>Cancel</button>
+        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
+          if (savedAsAnotherFile) return
+          savedAsAnotherFile = true
+          const newPath = path + '.' + this.currentRequest.from
+          this._setFileInternal(newPath, content)
+          this.switchFile(newPath)
+          e.target.innerHTML = 'Saved'
+          warnToaster.hide()
+        }}>Save As Copy</button>
+        </div>`
+      warnToaster = await toaster(yo`<div><span class="text-primary">${this.currentRequest.from}</span> is modyfing <span class="text-primary">${path}</span></div>`, actions, { time: 6000 })
+      if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
+      if (savedAsAnotherFile) return
+    }
+    this._setFileInternal(path, content)
+  }
+
+  _setFileInternal (path, content) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw new Error(`${path} not availble`)
     // TODO : Add permission
