@@ -99,6 +99,10 @@ export class TabProxy {
       }
     }
   }
+  
+  showTab(name) {
+    this._view.filetabs.activateTab(name)
+  }
 
   addTab (name, switchTo, close, kind) {
     var slash = name.split('/')
