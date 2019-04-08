@@ -56,8 +56,6 @@ class EditorPanel {
       self._components.contextView.hide()
       self._view.mainPanel.style.display = 'block'
     }
-    self._components.editor.event.register('switchNextTab', () => { self.tabProxy.switchNextTab() })
-    self._components.editor.event.register('switchPreviousTab', () => { self.tabProxy.switchPreviousTab() })
     self.appManager.event.on('ensureActivated', (name) => { if (name === 'home') { showApp(name) } })
     /*
       We listen here on event from the tab component to display / hide the editor and mainpanel
@@ -192,6 +190,11 @@ class EditorPanel {
     `
     // INIT
     self._adjustLayout('top', self.data._layout.top.offset)
+
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab()
+    })
+
     return self._view.el
   }
   registerCommand (name, command, opts) {
