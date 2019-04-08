@@ -165,7 +165,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, statusCb, finalCb)
+            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -173,7 +173,7 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, statusCb, finalCb)
+    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
   }
 
   loadFromAddress () {

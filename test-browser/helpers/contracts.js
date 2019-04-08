@@ -24,7 +24,8 @@ module.exports = {
   renameFile,
   removeFile,
   getAddressAtPosition,
-  clickLaunchIcon
+  clickLaunchIcon,
+  scrollInto
 }
 
 function clickLaunchIcon (icon) {
@@ -153,7 +154,24 @@ function testConstantFunction (browser, address, fnFullName, expectedInput, expe
   .click('.instance button[title="' + fnFullName + '"]')
   .pause(1000)
   .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
+  .scrollInto('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
   .assert.containsText('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]', expectedOutput).perform(() => {
+    cb()
+  })
+}
+
+function scrollInto (target) {
+  return this.perform((client, done) => {
+    _scrollInto(this, target, () => {
+      done()
+    })
+  })
+}
+
+function _scrollInto (browser, target, cb) {
+  browser.execute(function (target) {
+    document.querySelector(target).scrollIntoView()
+  }, [target], function () {
     cb()
   })
 }

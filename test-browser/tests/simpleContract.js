@@ -21,6 +21,7 @@ function runTests (browser) {
   browser.setEditorValue = contractHelper.setEditorValue
   browser.getEditorValue = contractHelper.getEditorValue
   browser.clickLaunchIcon = contractHelper.clickLaunchIcon
+  browser.scrollInto = contractHelper.scrollInto
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
