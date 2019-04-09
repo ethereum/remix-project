@@ -184,6 +184,7 @@
     "start": "npm-run-all -lpr serve watch onchange remixd",
     "test": "csslint && standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
-    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc"
+    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc",
+    "reinstall": "rm ./node-modules/ -rf; rm package-lock.json; rm ./build/ -rf; npm install; npm run build"
   }
 }
