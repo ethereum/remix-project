@@ -3,16 +3,25 @@
 const EventEmitter = require('events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
-import { ApiFactory } from 'remix-plugin'
+import { FileSystemApi } from 'remix-plugin'
 
 /*
   attach to files event (removed renamed)
   trigger: currentFileChanged
 */
 
-class FileManager extends ApiFactory {
+const profile = {
+  displayName: 'file manager',
+  name: 'fileManager',
+  methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
+  events: ['currentFileChanged'],
+  description: 'service - read/write to any files or folders, require giving permissions',
+  permission: true
+}
+
+class FileManager extends FileSystemApi {
   constructor (localRegistry) {
-    super()
+    super(profile)
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
     this._components = {}
@@ -41,14 +50,7 @@ class FileManager extends ApiFactory {
   }
 
   get profile () {
-    return {
-      displayName: 'file manager',
-      name: 'fileManager',
-      methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
-      events: ['currentFileChanged'],
-      description: 'service - read/write to any files or folders, require giving permissions',
-      permission: true
-    }
+    return 
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {

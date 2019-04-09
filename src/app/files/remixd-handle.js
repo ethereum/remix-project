@@ -1,4 +1,4 @@
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
@@ -16,21 +16,19 @@ var css = csjs`
   }
 `
 
-export class RemixdHandle extends ApiFactory {
+const profile = {
+  name: 'remixd',
+  methods: [],
+  events: [],
+  description: 'using Remixd daemon, allow to access file system',
+  kind: 'other'
+}
+
+export class RemixdHandle extends BaseApi {
   constructor (fileSystemExplorer, locahostProvider) {
-    super()
+    super(profile)
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
-  }
-
-  get profile () {
-    return {
-      name: 'remixd',
-      methods: [],
-      events: [],
-      description: 'using Remixd daemon, allow to access file system',
-      kind: 'other'
-    }
   }
 
   deactivate () {
