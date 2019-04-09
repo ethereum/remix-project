@@ -1,6 +1,7 @@
 var Web3 = require("web3")
 
-var Blocks = function (options) {
+var Blocks = function (_options) {
+  const options = _options || {}
   this.coinbase = options.coinbase || "0x0000000000000000000000000000000000000000"
   this.blockNumber = 0
 }
@@ -9,8 +10,8 @@ Blocks.prototype.methods = function () {
   return {
     eth_getBlockByNumber: this.eth_getBlockByNumber.bind(this),
     eth_gasPrice: this.eth_gasPrice.bind(this),
-    eth_coinbase: this.coinbase.bind(this),
-    eth_blockNumber: this.blockNumber.bind(this)
+    eth_coinbase: this.eth_coinbase.bind(this),
+    eth_blockNumber: this.eth_blockNumber.bind(this)
   }
 }
 
