@@ -132,6 +132,7 @@ class Terminal {
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
     self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
+    self._view.inputSearch = yo`<input spellcheck="false" type="text" class="${css.filter} form-control" id="input" onkeydown=${filter}  placeholder="Search transactions"></input>`
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
@@ -151,7 +152,7 @@ class Terminal {
           ${self._view.dropdown}
           <div class=${css.search}>
             <i class="fa fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
-            <input spellcheck="false" type="text" class="${css.filter} form-control" onkeydown=${filter}  placeholder="Search transactions">
+            ${self._view.inputSearch}
           </div>
         </div>
       </div>
@@ -280,7 +281,7 @@ class Terminal {
         if (inserted) {
           text.innerText = ''
           background.onclick = undefined
-          self._view.journal.removeChild(placeholder)
+          if (placeholder.parentElement) self._view.journal.removeChild(placeholder)
         }
         inserted = false
         delete self.scroll2bottom
@@ -347,7 +348,7 @@ class Terminal {
         clearTimeout(filtertimeout)
       }
       filtertimeout = setTimeout(() => {
-        self.updateJournal({ type: 'search', value: document.querySelector('.' + event.target.className).value })
+        self.updateJournal({ type: 'search', value: self._view.inputSearch.value })
       }, 500)
     }
     function clear (event) {
@@ -499,8 +500,8 @@ class Terminal {
       commands[value] = false
       if (!self._INDEX.commandsMain[value]) return
       self._INDEX.commandsMain[value].forEach(item => {
-        item.root.steps.forEach(item => { self._JOURNAL[item.gidx] = undefined })
-        self._JOURNAL[item.gidx] = undefined
+        item.root.steps.forEach(item => { self._JOURNAL[item.gidx].hide = true })
+        self._JOURNAL[item.gidx].hide = true
       })
     } else if (filterEvent.type === 'search') {
       if (value !== self.data.activeFilters.input) {
@@ -535,7 +536,7 @@ class Terminal {
         self._jobs = []
       })
     }
-    self._jobs.push(el)
+    if (self.data.activeFilters.commands[item.cmd]) self._jobs.push(el)
   }
   scroll2bottom () {
     var self = this
