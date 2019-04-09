@@ -1,7 +1,10 @@
 import { ApiFactory } from 'remix-plugin'
+let globalRegistry = require('../../global/registry')
 
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
+
 
 var csjs = require('csjs-inject')
 
@@ -43,6 +46,11 @@ export class RemixdHandle extends ApiFactory {
     this.connectToLocalhost()
   }
 
+  canceled () {
+    let appManager = globalRegistry.get('appmanager').api
+    appManager.ensureDeactivated('remixd')
+  }
+
   /**
     * connect to localhost if no connection and render the explorer
     * disconnect from localhost if connected and remove the explorer
@@ -55,17 +63,30 @@ export class RemixdHandle extends ApiFactory {
         if (error) console.log(error)
       })
     } else {
-      modalDialog('Connect to localhost', remixdDialog(),
+      modalDialog(
+        'Connect to localhost',
+        remixdDialog(),
         { label: 'Connect',
           fn: () => {
             this.locahostProvider.init((error) => {
               if (error) {
                 console.log(error)
+                modalDialogCustom.alert(
+                  'Cannot connect to the remixd daemon.' +
+                  'Please make sure you have the remixd running in the background.'
+                )
+                this.canceled()
               } else {
                 this.fileSystemExplorer.ensureRoot()
               }
             })
-          }}
+          }
+        },
+        { label: 'Cancel',
+          fn: () => {
+            this.canceled()
+          }
+        }
       )
     }
   }
