@@ -355,6 +355,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       udapp: udapp.event
     }})
   registry.put({api: txlistener, name: 'txlistener'})
+  udapp.startListening(txlistener)
 
   const eventsDecoder = new EventsDecoder({
     api: {
