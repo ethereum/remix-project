@@ -54,7 +54,7 @@ import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 import { TxListenerModule } from './app/tabs/txlistener-module'
 import { ThemeModule } from './app/tabs/theme-module'
 
@@ -116,9 +116,15 @@ var css = csjs`
   }
 `
 
-class App extends ApiFactory {
+const profile = {
+  name: 'app',
+  description: 'service - provides information about current context (network).',
+  methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
+}
+
+class App extends BaseApi {
   constructor (api = {}, events = {}, opts = {}) {
-    super()
+    super(profile)
     var self = this
     this.event = new EventManager()
     self._components = {}
@@ -169,14 +175,6 @@ class App extends ApiFactory {
     var self = this
     self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300, x: 300 })
     run.apply(self)
-  }
-
-  get profile () {
-    return {
-      name: 'app',
-      description: 'service - provides information about current context (network).',
-      methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
-    }
   }
 
   render () {

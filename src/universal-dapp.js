@@ -7,12 +7,19 @@ var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
-import { ApiFactory } from 'remix-plugin'
+import { UdappApi } from 'remix-plugin'
 
-module.exports = class UniversalDApp extends ApiFactory {
+const profile = {
+  name: 'udapp',
+  displayName: 'universal dapp',
+  methods: ['runTestTx', 'getAccounts', 'createVMAccount'],
+  description: 'service - run transaction and access account'
+}
+
+module.exports = class UniversalDApp extends UdappApi {
 
   constructor (registry) {
-    super()
+    super(profile)
     this.event = new EventManager()
     this._deps = {
       config: registry.get('config').api
@@ -30,15 +37,6 @@ module.exports = class UniversalDApp extends ApiFactory {
     this.accounts = {}
     this.resetEnvironment()
     executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
-  }
-
-  get profile () {
-    return {
-      name: 'udapp',
-      displayName: 'universal dapp',
-      methods: ['runTestTx', 'getAccounts', 'createVMAccount'],
-      description: 'service - run transaction and access account'
-    }
   }
 
   resetEnvironment () {

@@ -1,4 +1,4 @@
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 import { EventEmitter } from 'events'
 const Storage = require('remix-lib').Storage
 
@@ -17,22 +17,20 @@ const themes = [
   {name: 'Superhero', quality: 'dark', url: 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/superhero/bootstrap.min.css'}
 ]
 
-export class ThemeModule extends ApiFactory {
+const profile = {
+  name: 'theme',
+  events: ['themeChanged'],
+  methods: ['switchTheme', 'getThemes', 'currentTheme']
+}
+
+export class ThemeModule extends BaseApi {
 
   constructor () {
-    super()
+    super(profile)
     this.events = new EventEmitter()
     this.storage = new Storage('style:')
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
     this.active = this.storage.exists('theme') ? this.storage.get('theme') : 'Cerulean'
-  }
-
-  get profile () {
-    return {
-      name: 'theme',
-      events: ['themeChanged'],
-      methods: ['switchTheme', 'getThemes', 'currentTheme']
-    }
   }
 
   /** Return the active theme */
