@@ -17,6 +17,7 @@ var css = csjs`
     font-weight: normal;
     text-decoration : none;
     user-select: none;
+    padding-left: 14px;
   }
   .link:hover {
     font-weight: bold;
