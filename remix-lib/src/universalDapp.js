@@ -3,7 +3,7 @@ var ethJSUtil = require('ethereumjs-util')
 var BN = ethJSUtil.BN
 var crypto = require('crypto')
 
-var txRunner = require('./execution/txRunner')
+var TxRunner = require('./execution/txRunner')
 var txHelper = require('./execution/txHelper')
 var EventManager = require('./eventManager')
 var executionContext = require('./execution/execution-context')
