@@ -4,13 +4,13 @@ var EventManager = require('../../lib/events')
 
 import { BaseApi } from 'remix-plugin'
 
- class FilesTree extends BaseApi {
-
+class FilesTree extends BaseApi {
   constructor (name, storage) {
     super({
       name: name,
       methods: ['get', 'set', 'remove'],
-      description: 'service - read/write file to the `config` explorer without need of additionnal permission.'
+      description:
+        'service - read/write file to the `config` explorer without need of additionnal permission.'
     })
     this.event = new EventManager()
     this.storage = storage
@@ -109,7 +109,11 @@ import { BaseApi } from 'remix-plugin'
       if (!this.storage.rename(unprefixedoldPath, unprefixednewPath)) {
         return false
       }
-      this.event.trigger('fileRenamed', [this.type + '/' + unprefixedoldPath, this.type + '/' + unprefixednewPath, isFolder])
+      this.event.trigger('fileRenamed', [
+        this.type + '/' + unprefixedoldPath,
+        this.type + '/' + unprefixednewPath,
+        isFolder
+      ])
       return true
     }
     return false
@@ -117,7 +121,7 @@ import { BaseApi } from 'remix-plugin'
 
   resolveDirectory (path, callback) {
     if (path[0] === '/') path = path.substring(1)
-    if (!path) return callback(null, { [this.type]: { } })
+    if (!path) return callback(null, { [this.type]: {} })
     var tree = {}
     path = this.removePrefix(path)
 
@@ -138,7 +142,6 @@ import { BaseApi } from 'remix-plugin'
     if (path[0] === '/') return path.substring(1)
     return path
   }
-
 }
 
 module.exports = FilesTree
