@@ -55,7 +55,6 @@ import { RemixAppManager } from './remixAppManager'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
 import { BaseApi } from 'remix-plugin'
-import { TxListenerModule } from './app/tabs/txlistener-module'
 import { ThemeModule } from './app/tabs/theme-module'
 
 var css = csjs`
@@ -327,7 +326,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
   // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp(registry)
+  const udapp = new UniversalDApp(registry)
   // TODO: to remove when possible
   registry.put({api: udapp, name: 'udapp'})
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
@@ -335,14 +334,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     if (txLink) registry.get('logCallback').api.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
   })
 
-  var udappUI = new UniversalDAppUI(udapp, registry)
+  const udappUI = new UniversalDAppUI(udapp, registry)
   // TODO: to remove when possible
   registry.put({api: udappUI, name: 'udappUI'})
 
   // ----------------- Tx listener -----------------
-  var transactionReceiptResolver = new TransactionReceiptResolver()
+  const transactionReceiptResolver = new TransactionReceiptResolver()
 
-  var txlistener = new Txlistener({
+  const txlistener = new Txlistener({
     api: {
       contracts: function () {
         if (self._components.compilersArtefacts['__last']) return self._components.compilersArtefacts['__last'].getContracts()
@@ -357,7 +356,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }})
   registry.put({api: txlistener, name: 'txlistener'})
 
-  var eventsDecoder = new EventsDecoder({
+  const eventsDecoder = new EventsDecoder({
     api: {
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
@@ -365,11 +364,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   })
   registry.put({api: eventsDecoder, name: 'eventsdecoder'})
-
-  /*
-    that proxy is used by appManager to broadcast new transaction event
-  */
-  const txListenerModule = new TxListenerModule(txlistener)
 
   txlistener.startListening()
 
@@ -383,7 +377,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
-  var fileManager = self._components.fileManager
+  const fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
   // ----------------- theme module ----------------------------
@@ -395,7 +389,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
 
   // ----------------- Renderer -----------------
-  var renderer = new Renderer()
+  const renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
   // ----------------- app manager ----------------------------
@@ -472,7 +466,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     udapp.api(),
     fileManager.api(),
     sourceHighlighters.api(),
-    txListenerModule.api(),
     filePanel.api(),
     // { profile: support.profile(), api: support },
     settings.api(),
@@ -494,8 +487,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
-  var filesToLoad = null
-  var loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
+  let filesToLoad = null
+  const loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
 
   window.addEventListener('message', function (ev) {
     if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
@@ -513,7 +506,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  var txLogger = new TxLogger() // eslint-disable-line
+  const txLogger = new TxLogger() // eslint-disable-line
   txLogger.event.register('debuggingRequested', (hash) => {
     if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
     debug.debugger().debug(hash)
@@ -545,9 +538,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
   udapp.resetAPI(transactionContextAPI)
 
-  var queryParams = new QueryParams()
+  const queryParams = new QueryParams()
 
-  var loadingFromGist = self.loadFromGist(queryParams.get())
+  const loadingFromGist = self.loadFromGist(queryParams.get())
   if (!loadingFromGist) {
     // insert ballot contract if there are no files to show
     self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
