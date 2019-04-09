@@ -18,6 +18,8 @@ var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
 
+var packageV = require('../../../package.json')
+
 var KONSOLES = []
 
 function register (api) { KONSOLES.push(api) }
@@ -390,7 +392,7 @@ class Terminal {
     self._cmdIndex = -1
     self._cmdTemp = ''
 
-    var intro = yo`<div><div> - Welcome to Remix v0.8.0-alpha+001 - </div><br>
+    var intro = yo`<div><div> - Welcome to Remix ${packageV.version} - </div><br>
                   <div>You can use this terminal for: </div>
                   <ul class=${css2.ul}>
                     <li>Checking transactions details and start debugging.</li>
