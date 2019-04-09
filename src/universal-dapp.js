@@ -8,22 +8,32 @@ var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
 import { UdappApi } from 'remix-plugin'
+import { EventEmitter } from 'events';
 
 const profile = {
   name: 'udapp',
   displayName: 'universal dapp',
-  methods: ['runTestTx', 'getAccounts', 'createVMAccount'],
-  description: 'service - run transaction and access account'
+  events: ['newTransaction'],
+  methods: ['sendTransaction', 'getAccounts', 'createVMAccount'],
+  description: 'service - run transaction and access account',
+  permission: true
 }
+
 
 module.exports = class UniversalDApp extends UdappApi {
 
   constructor (registry) {
     super(profile)
+    this.events = new EventEmitter()
     this.event = new EventManager()
     this._deps = {
-      config: registry.get('config').api
+      config: registry.get('config').api,
+      txlistener: registry.get('txlistener').api
     }
+    this._deps.txlistener.event.register('newTransaction', (tx) => {
+      this.events.emit('newTransaction', tx)
+    })
+
     this._txRunnerAPI = {
       config: this._deps.config,
       detectNetwork: (cb) => {
@@ -240,7 +250,7 @@ module.exports = class UniversalDApp extends UdappApi {
    *
    * @param {Object} tx    - transaction.
    */
-  runTestTx (tx) {
+  sendTransaction (tx) {
     return new Promise((resolve, reject) => {
       executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
