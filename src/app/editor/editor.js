@@ -99,9 +99,8 @@ class Editor {
     this.editor = ace.edit(el)
     ace.acequire('ace/ext/language_tools')
 
-    // Unmap ctrl-t & ctrl-f & ctrl-l & cmd-l
+    // Unmap ctrl-l & cmd-l
     this.editor.commands.bindKeys({
-      'ctrl-t': null,
       'ctrl-L': null,
       'Command-L': null
     })
