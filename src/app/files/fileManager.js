@@ -6,15 +6,25 @@ const EventEmitter = require('events')
 var globalRegistry = require('../../global/registry')
 var CompilerImport = require('../compiler/compiler-imports')
 var toaster = require('../ui/tooltip')
+import { FileSystemApi } from 'remix-plugin'
 
 /*
   attach to files event (removed renamed)
   trigger: currentFileChanged
 */
 
-class FileManager extends ApiFactory {
+const profile = {
+  displayName: 'file manager',
+  name: 'fileManager',
+  methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
+  events: ['currentFileChanged'],
+  description: 'service - read/write to any files or folders, require giving permissions',
+  permission: true
+}
+
+class FileManager extends FileSystemApi {
   constructor (localRegistry) {
-    super()
+    super(profile)
     this.openedFiles = {} // list all opened files
     this.events = new EventEmitter()
     this._components = {}
@@ -40,18 +50,6 @@ class FileManager extends ApiFactory {
     this._deps.gistExplorer.event.register('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.localhostExplorer.event.register('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-  }
-
-  get profile () {
-    return {
-      displayName: 'file manager',
-      name: 'fileManager',
-      methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
-      events: ['currentFileChanged'],
-      description: 'service - read/write to any files or folders, require giving permissions',
-      permission: true,
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNjk2IDM4NHE0MCAwIDY4IDI4dDI4IDY4djEyMTZxMCA0MC0yOCA2OHQtNjggMjhoLTk2MHEtNDAgMC02OC0yOHQtMjgtNjh2LTI4OGgtNTQ0cS00MCAwLTY4LTI4dC0yOC02OHYtNjcycTAtNDAgMjAtODh0NDgtNzZsNDA4LTQwOHEyOC0yOCA3Ni00OHQ4OC0yMGg0MTZxNDAgMCA2OCAyOHQyOCA2OHYzMjhxNjgtNDAgMTI4LTQwaDQxNnptLTU0NCAyMTNsLTI5OSAyOTloMjk5di0yOTl6bS02NDAtMzg0bC0yOTkgMjk5aDI5OXYtMjk5em0xOTYgNjQ3bDMxNi0zMTZ2LTQxNmgtMzg0djQxNnEwIDQwLTI4IDY4dC02OCAyOGgtNDE2djY0MGg1MTJ2LTI1NnEwLTQwIDIwLTg4dDQ4LTc2em05NTYgODA0di0xMTUyaC0zODR2NDE2cTAgNDAtMjggNjh0LTY4IDI4aC00MTZ2NjQwaDg5NnoiLz48L3N2Zz4='
-    }
   }
 
   fileRenamedEvent (oldName, newName, isFolder) {

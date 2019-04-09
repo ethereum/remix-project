@@ -2,26 +2,21 @@
 
 var EventManager = require('../../lib/events')
 
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 
-class FilesTree extends ApiFactory {
+ class FilesTree extends BaseApi {
 
   constructor (name, storage) {
-    super()
+    super({
+      name: name,
+      methods: ['get', 'set', 'remove'],
+      description: 'service - read/write file to the `config` explorer without need of additionnal permission.'
+    })
     this.event = new EventManager()
     this.storage = storage
     this.type = name
     this.structFile = '.' + name + '.tree'
     this.tree = {}
-  }
-
-  get profile () {
-    // TODO should make them promisable
-    return {
-      name: this.type,
-      methods: ['get', 'set', 'remove'],
-      description: 'service - read/write file to the `config` explorer without need of additionnal permission.'
-    }
   }
 
   exists (path, cb) {
