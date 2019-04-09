@@ -488,7 +488,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
   let filesToLoad = null
-  const loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
+  let loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
 
   window.addEventListener('message', function (ev) {
     if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
