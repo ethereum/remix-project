@@ -24,12 +24,8 @@ module.exports = class UniversalDApp extends UdappApi {
     this.events = new EventEmitter()
     this.event = new EventManager()
     this._deps = {
-      config: registry.get('config').api,
-      txlistener: registry.get('txlistener').api
+      config: registry.get('config').api
     }
-    this._deps.txlistener.event.register('newTransaction', (tx) => {
-      this.events.emit('newTransaction', tx)
-    })
 
     this._txRunnerAPI = {
       config: this._deps.config,
@@ -44,6 +40,14 @@ module.exports = class UniversalDApp extends UdappApi {
     this.accounts = {}
     this.resetEnvironment()
     executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
+  }
+
+  // TODO : event should be triggered by Udapp instead of TxListener
+  /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
+  startListening (txlistener) {
+    txlistener.event.register('newTransaction', (tx) => {
+      this.events.emit('newTransaction', tx)
+    })
   }
 
   resetEnvironment () {
