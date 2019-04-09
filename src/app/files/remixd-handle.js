@@ -5,7 +5,6 @@ var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
 var modalDialogCustom = require('../ui/modal-dialog-custom')
 
-
 var csjs = require('csjs-inject')
 
 var css = csjs`
