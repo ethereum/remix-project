@@ -49,10 +49,6 @@ class FileManager extends FileSystemApi {
     this._deps.localhostExplorer.event.register('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
   }
 
-  get profile () {
-    return 
-  }
-
   fileRenamedEvent (oldName, newName, isFolder) {
     if (!isFolder) {
       this._deps.config.set('currentFile', '')

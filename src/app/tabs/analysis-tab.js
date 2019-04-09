@@ -25,10 +25,6 @@ class AnalysisTab extends BaseApi {
     this.registry = registry
   }
 
-  get profile () {
-    return 
-  }
-
   render () {
     var staticanalysis = new StaticAnalysis()
     staticanalysis.event.register('staticAnaysisWarning', (count) => {
