@@ -7,6 +7,7 @@ var css = csjs`
     font-weight: normal;
     max-width: 300px;
     user-select: none;
+    padding-left: 14px;
   }
   .text:hover {
     font-weight: bold;
@@ -40,7 +41,7 @@ class Section {
       if (this.actions[i].type === `callback`) {
         sectionLook.appendChild(yo`
           <div>
-            <span class="${css.text} p-3 h6 text-dark" onclick=${this.actions[i].payload} >
+            <span class="${css.text} h6 text-dark" onclick=${this.actions[i].payload} >
               ${this.actions[i].label}
             </span>
           </div>
@@ -48,7 +49,7 @@ class Section {
       } else if (this.actions[i].type === `link`) {
         sectionLook.appendChild(yo`
           <div >
-            <a class="${css.link} text-dark p-3 h6 text-decoration-none" href=${this.actions[i].payload} target="_blank" >
+            <a class="${css.link} text-dark h6 text-decoration-none" href=${this.actions[i].payload} target="_blank" >
               ${this.actions[i].label}
             </a>
           </div>
