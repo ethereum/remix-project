@@ -44,6 +44,16 @@ jobs:
       - run: npm install && npm run bootstrap
       - run: cd remix-tests && npm test
 
+  remix-astwalker:
+    docker:
+        - image: circleci/node:10
+    environment:
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: npm install && npm run bootstrap
+      - run: cd remix-astwalker && npm test
+
   remix-simulator:
     docker:
         - image: circleci/node:10
@@ -73,5 +83,6 @@ workflows:
       - remix-debug
       - remix-analyzer
       - remix-tests
+      - remix-astwalker
       - remix-simulator
       - remix-url-resolver
