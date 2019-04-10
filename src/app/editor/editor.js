@@ -33,25 +33,6 @@ document.head.appendChild(yo`
     .ace_gutter-cell.ace_breakpoint{
       background-color: var(--secondary);
     }
-    .highlightreference {
-      position:absolute;
-      z-index:20;
-      background-color: var(--primary);
-      opacity: 0.6
-    }
-
-    .highlightreferenceline {
-      position:absolute;
-      z-index:20;
-      background-color: var(--primary);
-      opacity: 0.6
-    }
-
-    .highlightcode {
-      position:absolute;
-      z-index:20;
-      background-color: var(--danger);
-     }
   </style>
 `)
 
