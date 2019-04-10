@@ -17,12 +17,12 @@ Implemented:
 * [X] eth_blockNumber
 * [X] eth_getBalance
 * [_] eth_getStorageAt
-* [X] eth_getTransactionCount
+* [~] eth_getTransactionCount
 * [_] eth_getBlockTransactionCountByHash
 * [_] eth_getBlockTransactionCountByNumber
 * [_] eth_getUncleCountByBlockHash
 * [_] eth_getUncleCountByBlockNumber
-* [~] eth_getCode
+* [X] eth_getCode
 * [~] eth_sign
 * [X] eth_sendTransaction
 * [_] eth_sendRawTransaction
