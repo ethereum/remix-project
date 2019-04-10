@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
+let globalRegistry = require('../../global/registry')
 
 const EventEmitter = require('events')
 
@@ -32,6 +33,11 @@ class VerticalIconComponent {
     })
     this.store.event.on('add', (api) => { })
     this.store.event.on('remove', (api) => { })
+
+    let themeModule = globalRegistry.get('themeModule').api
+    themeModule.events.on('themeChanged', (type) => {
+      this.updateIcons(type)
+    })
   }
 
   stopListenOnStatus (api) {
@@ -61,6 +67,23 @@ class VerticalIconComponent {
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
   }
 
+  updateIcons(type)
+  {
+    if (!type) {
+      type = globalRegistry.get("themeModule").api.currentTheme().quality === 'dark'
+    }
+
+    let icon
+    for (icon in this.icons) {
+      if (type === 'dark') {
+        this.icons[icon].classList.remove(`${css.light}`)
+        this.icons[icon].classList.add(`${css.dark}`)
+      } else {
+        this.icons[icon].classList.remove(`${css.dark}`)
+        this.icons[icon].classList.add(`${css.light}`)
+      }
+    }
+  }
   /**
    * Set a new status for the @arg name
    * @param {String} name
@@ -78,6 +101,17 @@ class VerticalIconComponent {
       let type = helper.checkSpecialChars(status.type) ? '' : status.type
       let title = helper.checkSpecialChars(status.title) ? '' : status.title
       el.appendChild(yo`<i title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></i>`)
+
+      // el.classList = "" doesn't work on all browser use instead
+      var classList = el.classList;
+      while (classList.length > 0) {
+        classList.remove(classList.item(0));
+      }
+
+      el.classList.add(`${css.icon}`)
+      el.classList.add('border')
+      el.classList.add(`border-${type}`)
+
     }
   }
 
@@ -90,6 +124,7 @@ class VerticalIconComponent {
   }
 
   select (name) {
+    this.updateIcons()
     let currentActive = this.view.querySelector(`.${css.active}`)
     if (currentActive) {
       let currentTitle = currentActive.getAttribute('title')
@@ -173,13 +208,21 @@ const css = csjs`
     margin-left: 10px;
     margin-top: 15px;
   }
-  .icon      {
+  .icon {
     cursor: pointer;
     margin-bottom: 12px;
     width: 36px;
     height: 36px;
     padding: 3px;
     position: relative;
+    border-radius: 8px;
+    filter: invert(0.5);
+  }
+  .dark{
+    filter: invert(0.5);
+  }
+  .light{
+    filter: invert(0.5);
   }
   .icon img {
     width: 28px;
@@ -191,11 +234,17 @@ const css = csjs`
     height: 28px;
     padding: 4px;
   }
-  .icon.active {
-    border: solid 3px hsla(229, 75%, 87%, 1);
+  .light.active {
     border-radius: 8px;
     padding-top: 1px;
     padding-left: 1px;
+    filter: invert(0);
+  }
+  .dark.active {
+    border-radius: 8px;
+    padding-top: 1px;
+    padding-left: 1px;
+    filter: invert(1);
   }
   .icon[title='settings'] {
     position: absolute;
