@@ -11,7 +11,8 @@ Misc.prototype.methods = function () {
     eth_syncing: this.eth_syncing.bind(this),
     eth_mining: this.eth_mining.bind(this),
     eth_hashrate: this.eth_hashrate.bind(this),
-    web3_sha3: this.web3_sha3.bind(this)
+    web3_sha3: this.web3_sha3.bind(this),
+    eth_getCompilers: this.eth_getCompilers.bind(this)
   }
 }
 
@@ -39,6 +40,10 @@ Misc.prototype.eth_hashrate = function (payload, cb) {
 Misc.prototype.web3_sha3 = function (payload, cb) {
   let str = payload.params[0]
   cb(null, web3.utils.sha3(str))
+}
+
+Misc.prototype.eth_getCompilers = function (payload, cb) {
+  cb(null, [])
 }
 
 module.exports = Misc
