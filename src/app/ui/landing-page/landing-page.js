@@ -40,17 +40,50 @@ let css = csjs`
     width           : 100%;
     font-size       : xx-large;
     align-self      : center;
-
   }
   .text {
     cursor: pointer;
     font-weight: normal;
     max-width: 300px;
     user-select: none;
+    color: var(--primary);
   }
   .text:hover {
-    font-weight: bold;
+    text-decoration: underline;
   }
+  .jumbotronContainer {
+    margin: 0 60px;
+    width: 80%;
+  }
+  .thisJumboton {
+    padding: 2.5rem 5rem;
+  }
+  .hpLogoContainer {
+    margin:30px;
+    padding-right: 90px;
+  }
+  .jumboBtnContainer {
+    float: left;
+    vertical-align: bottom;
+    padding-top: 0px;
+  }
+  .headlineContainer {
+    float: left;
+    padding-right: 90px;
+  }
+  .hpSections {
+    margin: 0 60px;
+  }
+  .solidityBtn {
+    margin-right: 40px;
+  }
+  .labelIt {
+    margin-bottom: 0;
+  }
+  .seeAll {
+    margin-top: 7px;
+  }
+
 }
 `
 
@@ -158,56 +191,62 @@ export class LandingPage extends BaseApi {
     let importFromExternal = () => { load('URL') }
 
     let container = yo`<div>
-      <div><img src="${logo}" style="height:45px;" alt="Remix logo" /></div>
-      <div>
-          <div class="jumbotron">
-            <h1 class="display-4">The New Layout has arrived</h1>
-            <button class="btn btn-primary btn-lg" href="#" onclick=${() => { learnMore() }} role="button">Learn more</button>
+      <div class="${css.hpLogoContainer}"><img src="${logo}" style="height:45px;" alt="Remix logo" /></div>
+      <div class="${css.jumbotronContainer}">
+        <div class="jumbotron clearfix ${css.thisJumboton}">
+          <div class="${css.headlineContainer}">
+            <h3 class="">The new layout has arrived</h3>
           </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="environment">
-            <h3>Environments</h3>
+          <div class="${css.jumboBtnContainer}">
+            <button class="btn btn-info btn-lg" href="#" onclick=${() => { learnMore() }} role="button">Learn more</button>
+          </div>
+        </div><!-- end of jumbotron -->
+      </div><!-- end of jumbotron container -->
+      <div class="row ${css.hpSections}">
+        <div id="col1" class="col-sm-6">
+          <div class="environment mb-5">
+            <h4>Environments</h4>
             <div>
-              <button class="btn btn-lg btn-primary" onclick=${() => { startSolidity() }}>Solidity</button>
-              <button class="btn btn-lg btn-primary" onclick=${() => { startVyper() }}>Vyper</button>
+              <button class="btn btn-lg btn-secondary ${css.solidityBtn}" onclick=${() => { startSolidity() }}>Solidity</button>
+              <button class="btn btn-lg btn-secondary" onclick=${() => { startVyper() }}>Vyper</button>
             </div>
           </div>
           <div class="file">
-            <h3>File</h3>
-            <p onclick=${() => { createNewFile() }}><a>New File</a></p>
-            <label class="${css.text} m-0 h6 text-dark">
-            Open files
-            <input title="open file" type="file" onchange="${
-              (event) => {
-                event.stopPropagation()
-                let fileExplorer = globalRegistry.get('fileexplorer/browser').api
-                fileExplorer.uploadFile(event)
-              }
-            }" multiple />
-          </label>
-            <p onclick=${() => { connectToLocalhost() }}><a>Connect to Localhost</a></p>
-            <p onclick=${() => { importFromExternal() }}><a>Import From external source</a></p>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="plugins">
-            <h3>Featured Plugins</h3>
-            <p onclick=${() => { startPipeline() }}>Pipeline</p>
-            <p onclick=${() => { startDebugger() }}>Debugger</p>
-            <button onclick=${() => { startPluginManager() }} class="btn btn-lg btn-primary">see all<i class="fa fa-plug" ></i></button>
+            <h4>File</h4>
+            <p class="mb-1 ${css.text}" onclick=${() => { createNewFile() }}>New File</p>
+            <p class="mb-1">
+              <label class="${css.labelIt} ${css.text}">
+                Open Files
+                <input title="open file" type="file" onchange="${
+                  (event) => {
+                    event.stopPropagation()
+                    let fileExplorer = globalRegistry.get('fileexplorer/browser').api
+                    fileExplorer.uploadFile(event)
+                  }
+                }" multiple />
+              </label>
+            </p>
+            <p class="mb-1 ${css.text}" onclick=${() => { connectToLocalhost() }}>Connect to Localhost</p>
+            <p class="mb-1 ${css.text} onclick=${() => { importFromExternal() }}">Import From external source</p>
+          </div><!-- end of div.file -->
+        </div><!-- end of #col1 -->
+        <div id="col2" class="col-sm-6">
+          <div class="plugins mb-5">
+            <h4>Featured Plugins</h4>
+            <p class="mb-1 ${css.text}" onclick=${() => { startPipeline() }}>Pipeline</p>
+            <p class="mb-1 ${css.text}" onclick=${() => { startDebugger() }}>Debugger</p>
+            <p class="mb-1"><button onclick=${() => { startPluginManager() }} class="btn btn-sm btn-info ${css.seeAll}">See all Plugins <i class="fa fa-plug" ></i></button></p>
           </div>
           <div class="resources">
-            <h3>Resources</h3>
-            <p><a target="__blank" href="https://remix.readthedocs.io/en/latest/#">Documentation</a></p>
-            <p><a target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a></p>
-            <p><a target="__blank" href="https://medium.com/remix-ide">Medium Posts</a></p>
-            <p><a target="__blank" href="">Tutorials</a></p>
-            <p><a target="__blank" href="">Workshops Slides</a></p>
+            <h4>Resources</h4>
+            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://remix.readthedocs.io/en/latest/#">Documentation</a></p>
+            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a></p>
+            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a></p>
+            <p class="mb-1"><a class="${css.text}" target="__blank" href="">Tutorials</a></p>
+            <p class="mb-1"><a class="${css.text}" target="__blank" href="">Workshops Slides</a></p>
           </div>
-        </div>
-      </div>
+        </div><!-- end of #col2 -->
+      </div><!-- end of hpSections -->
       </div>`
 
     return container
