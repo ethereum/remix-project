@@ -2,10 +2,23 @@ var RemixLib = require('remix-lib')
 var executionContext = RemixLib.execution.executionContext
 var processTx = require('./txProcess.js')
 
+function hexConvert(ints) {
+  var ret = '0x'
+  for (var i = 0; i < ints.length; i++) {
+    var h = ints[i]
+    if (h) {
+      ret += (h <= 0xf ? '0' : '') + h.toString(16)
+    } else {
+      ret += '00'
+    }
+  }
+  return ret
+}
+
 var Transactions = function (accounts) {
   this.accounts = accounts
   // TODO: fix me; this is a temporary and very hackish thing just to get the getCode working for now
-  this.deployedContracts = {}
+  //this.deployedContracts = {}
 }
 
 Transactions.prototype.methods = function () {
@@ -29,7 +42,7 @@ Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
     if (error) {
       return cb(error)
     }
-    self.deployedContracts[receipt.contractAddress] = receipt.data
+    //self.deployedContracts[receipt.contractAddress] = receipt.data
 
     var r = {
       'transactionHash': receipt.hash,
@@ -54,7 +67,11 @@ Transactions.prototype.eth_estimateGas = function (payload, cb) {
 Transactions.prototype.eth_getCode = function (payload, cb) {
   let address = payload.params[0]
 
-  cb(null, this.deployedContracts[address] || '0x')
+  const account = ethJSUtil.toBuffer(address)
+  executionContext.vm().stateManager.getContractCode(account, (error, result) => {
+    cb(error, hexConvert(result))
+  })
+  //cb(null, this.deployedContracts[address] || '0x')
 }
 
 Transactions.prototype.eth_call = function (payload, cb) {
