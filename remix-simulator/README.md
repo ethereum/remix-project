@@ -17,7 +17,7 @@ Implemented:
 * [X] eth_blockNumber
 * [X] eth_getBalance
 * [_] eth_getStorageAt
-* [_] eth_getTransactionCount
+* [X] eth_getTransactionCount
 * [_] eth_getBlockTransactionCountByHash
 * [_] eth_getBlockTransactionCountByNumber
 * [_] eth_getUncleCountByBlockHash
