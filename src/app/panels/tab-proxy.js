@@ -105,6 +105,8 @@ export class TabProxy {
   }
 
   addTab (name, switchTo, close, kind) {
+    if (this._handlers[name]) return
+
     var slash = name.split('/')
     let title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
     this._view.filetabs.addTab({
@@ -117,7 +119,7 @@ export class TabProxy {
   }
 
   removeTab (name) {
-    this._view.filetabs.closeTab(name)
+    this._view.filetabs.removeTab(name)
     delete this._handlers[name]
   }
 
