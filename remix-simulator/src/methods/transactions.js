@@ -14,7 +14,8 @@ Transactions.prototype.methods = function () {
     eth_getTransactionReceipt: this.eth_getTransactionReceipt.bind(this),
     eth_getCode: this.eth_getCode.bind(this),
     eth_call: this.eth_call.bind(this),
-    eth_estimateGas: this.eth_estimateGas.bind(this)
+    eth_estimateGas: this.eth_estimateGas.bind(this),
+    eth_getTransactionCount: this.eth_getTransactionCount.bind(this)
   }
 }
 
@@ -58,6 +59,15 @@ Transactions.prototype.eth_getCode = function (payload, cb) {
 
 Transactions.prototype.eth_call = function (payload, cb) {
   processTx(this.accounts, payload, true, cb)
+}
+
+Transactions.prototype.eth_getTransactionCount = function (payload, cb) {
+  let address = payload.params[0]
+
+  executionContext.vm().stateManager.getAccount(address, (err, account) => {
+    let nonce = new BN(account.nonce).toString(10)
+    cb(null, nonce)
+  })
 }
 
 module.exports = Transactions
