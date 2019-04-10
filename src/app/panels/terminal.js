@@ -136,7 +136,7 @@ class Terminal {
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class="${css.menu} bg-light">
+        <div class="${css.menu} border-top bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" title="Clear console"
