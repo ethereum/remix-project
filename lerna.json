@@ -8,6 +8,7 @@
     "remix-tests",
     "remix-simulator",
     "remix-url-resolver"
+    "remix-astwalker"
   ],
   "command": {
     "init": {
