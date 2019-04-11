@@ -64,7 +64,7 @@ class SettingsUI {
               value="web3" name="executionContext"> Web3 Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
+          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fa fa-info"></i></a>
         </div>
       </div>
     `
