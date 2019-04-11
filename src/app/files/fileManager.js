@@ -15,11 +15,13 @@ import { FileSystemApi } from 'remix-plugin'
 const profile = {
   displayName: 'file manager',
   name: 'fileManager',
-  methods: ['getFilesFromPath', 'getCurrentFile', 'getFile', 'setFile'],
-  events: ['currentFileChanged'],
   description: 'service - read/write to any files or folders, require giving permissions',
   permission: true
 }
+
+// File System profile
+// - events: ['currentFileChanged']
+// - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile']
 
 class FileManager extends FileSystemApi {
   constructor (localRegistry) {
@@ -220,7 +222,7 @@ class FileManager extends FileSystemApi {
     }
   }
 
-  getFilesFromPath (path) {
+  getFolder (path) {
     // TODO : Change provider with promise
     return new Promise((resolve, reject) => {
       const provider = this.fileProviderOf(path)
