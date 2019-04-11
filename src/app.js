@@ -6,7 +6,6 @@ var yo = require('yo-yo')
 var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
-var EventManager = require('./lib/events')
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -54,8 +53,8 @@ import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
-import { BaseApi } from 'remix-plugin'
 import { ThemeModule } from './app/tabs/theme-module'
+import { NetworkModule } from './app/tabs/network-module'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -115,17 +114,9 @@ var css = csjs`
   }
 `
 
-const profile = {
-  name: 'app',
-  description: 'service - provides information about current context (network).',
-  methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
-}
-
-class App extends BaseApi {
+class App {
   constructor (api = {}, events = {}, opts = {}) {
-    super(profile)
     var self = this
-    this.event = new EventManager()
     self._components = {}
     registry.put({api: self, name: 'app'})
 
@@ -247,45 +238,6 @@ class App extends BaseApi {
       if (callback) callback(error)
     })
   }
-
-  getExecutionContextProvider () {
-    return new Promise((resolve, reject) => {
-      resolve(executionContext.getProvider())
-    })
-  }
-
-  getProviderEndpoint () {
-    return new Promise((resolve, reject) => {
-      if (executionContext.getProvider() === 'web3') {
-        resolve(executionContext.web3().currentProvider.host)
-      } else {
-        reject('no endpoint: current provider is either injected or vm')
-      }
-    })
-  }
-
-  detectNetWork () {
-    return new Promise((resolve, reject) => {
-      executionContext.detectNetwork((error, network) => {
-        if (error) return reject(error)
-        resolve(network)
-      })
-    })
-  }
-
-  addProvider (name, url) {
-    return new Promise((resolve, reject) => {
-      executionContext.addProvider({ name, url })
-      resolve()
-    })
-  }
-
-  removeProvider (name) {
-    return new Promise((resolve, reject) => {
-      executionContext.removeProvider(name)
-      resolve()
-    })
-  }
 }
 
 module.exports = App
@@ -381,6 +333,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
+  // ----------------- Network ----------------------------
+  const networkModule = new NetworkModule()
+  registry.put({api: networkModule, name: 'network'})
+
   // ----------------- theme module ----------------------------
   const themeModule = new ThemeModule()
   registry.put({api: themeModule, name: 'themeModule'})
@@ -406,16 +362,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const pluginManagerComponent = new PluginManagerComponent()
   const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true, displayHeader: true })
+  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
+
+  pluginManagerComponent.setApp(appManager)
+  pluginManagerComponent.setStore(appStore)
+
+  // ----------------- Vertical Icon ----------------------------
   const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
-
-  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
   registry.put({api: verticalIconsApi, name: 'verticalicon'})
-
-  pluginManagerComponent.setApp(appManager)
-  pluginManagerComponent.setStore(appStore)
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
@@ -471,6 +428,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     // { profile: support.profile(), api: support },
     settings.api(),
     pluginManagerComponent.api(),
+    networkModule.api(),
     themeModule.api()
   ])
 

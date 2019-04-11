@@ -40,7 +40,7 @@ function load () {
     }
   })
   setInterval(function () {
-    remix.call('app', 'detectNetWork', [], function (error, result) {
+    remix.call('network', 'detectNetWork', [], function (error, result) {
       if (error) console.log(error)
       if (network.innerHTML !== result[0].name + ' - ' + result[0].id) {
         currentNetWork = result[0].name
