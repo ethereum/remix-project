@@ -224,7 +224,7 @@ var css = csjs`
   .infoDeployAction {
     margin-left: 5px;
     font-size: 13px;
-    color: var(--danger);
+    color: var(--info);
   }
   .gasNval {
     transform: scale(0.7);
