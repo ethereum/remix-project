@@ -1,6 +1,5 @@
 'use strict'
 
-import { ApiFactory } from 'remix-plugin'
 import yo from 'yo-yo'
 const EventEmitter = require('events')
 var globalRegistry = require('../../global/registry')
