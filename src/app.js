@@ -419,7 +419,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
 
   appManager.init([
-    this.api(),
     landingPage.api(),
     udapp.api(),
     fileManager.api(),
