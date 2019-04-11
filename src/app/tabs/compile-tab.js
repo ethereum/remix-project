@@ -28,6 +28,10 @@ const profile = {
   permission: true
 }
 
+// EditorApi: 
+// - events: ['compilationFinished'],
+// - methods: ['getCompilationResult']
+
 class CompileTab extends CompilerApi {
 
   constructor (editor, config, renderer, swarmfileProvider, fileManager, fileProviders, pluginManager) {
