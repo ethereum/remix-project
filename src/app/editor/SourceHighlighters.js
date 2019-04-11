@@ -5,11 +5,11 @@ import { EditorApi } from 'remix-plugin'
 
 const profile = {
   displayName: 'source highlighters',
-  name: 'sourceHighlighters',
+  name: 'editor',
   description: 'service - highlight source code'
 }
 
-// EditorApi: 
+// EditorApi:
 // - methods: ['highlight', 'discardHighlight'],
 
 class SourceHighlighters extends EditorApi {
