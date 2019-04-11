@@ -28,7 +28,7 @@ const profile = {
   permission: true
 }
 
-// EditorApi: 
+// EditorApi:
 // - events: ['compilationFinished'],
 // - methods: ['getCompilationResult']
 
