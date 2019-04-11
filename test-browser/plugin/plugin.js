@@ -74,8 +74,8 @@ window.onload = function () {
     function (error, result) { console.log(error, result) })
   })
 
-  document.querySelector('input#getfilesfrompath').addEventListener('click', function () {
-    extension.call('editor', 'getFilesFromPath', [document.getElementById('filename').value],
+  document.querySelector('input#getFolder').addEventListener('click', function () {
+    extension.call('fileManager', 'getFolder', [document.getElementById('filename').value],
     function (error, result) { console.log(error, result) })
   })
 
