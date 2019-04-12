@@ -128,7 +128,6 @@ var css = csjs`
     height            : 65%;
   }
   .pendingTx {
-    border            : 1px solid var(--secondary);
     border-radius     : 50%;
     margin-right      : 30px;
     min-width         : 13px;
@@ -137,6 +136,7 @@ var css = csjs`
     justify-content   : center;
     align-items       : center;
     font-size         : 14px;
+    user-select       : none;
   }
   .dragbarHorizontal  {
     position          : absolute;

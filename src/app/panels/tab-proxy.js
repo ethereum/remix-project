@@ -27,7 +27,7 @@ export class TabProxy {
         this._view.filetabs.activateTab(file)
         return
       }
-      this.addTab(file, "", () => {
+      this.addTab(file, '', () => {
         this.fileManager.switchFile(file)
         this.event.emit('switchFile', file)
       },
@@ -39,7 +39,7 @@ export class TabProxy {
 
     fileManager.events.on('fileRenamed', (oldName, newName) => {
       this.removeTab(oldName)
-      this.addTab(newName, "", () => {
+      this.addTab(newName, '', () => {
         this.fileManager.switchFile(newName)
         this.event.emit('switchFile', newName)
       },

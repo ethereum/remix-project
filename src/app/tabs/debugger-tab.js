@@ -5,7 +5,7 @@ var DebuggerUI = require('../debugger/debuggerUI')
 
 import { BaseApi } from 'remix-plugin'
 
-const profile = {  displayName: 'Debugger',
+const profile = {
   name: 'debugger',
   displayName: 'Debuggerr',
   methods: [],
