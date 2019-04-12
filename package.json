@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
-    "remix-plugin": "0.0.1-alpha.43",
+    "remix-plugin": "0.0.2-alpha.3",
     "remixd": "0.1.8-alpha.6"
   },
   "repository": {
