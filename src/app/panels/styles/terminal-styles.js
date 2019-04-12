@@ -12,7 +12,6 @@ var css = csjs`
   }
   .bar                {
     display           : flex;
-    min-height        : 3em;
     z-index           : 3;
   }
   .menu               {

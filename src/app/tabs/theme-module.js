@@ -56,6 +56,7 @@ export class ThemeModule extends BaseApi {
     this.storage.set('theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
+    this.active = themeName ? themeName : this.active
     this.events.emit('themeChanged', nextTheme.quality)
   }
 }
