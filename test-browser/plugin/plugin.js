@@ -18,7 +18,7 @@ window.onload = function () {
   })
 
   setInterval(function () {
-    extension.call('app', 'detectNetWork', [], function (error, result) {
+    extension.call('network', 'detectNetWork', [], function (error, result) {
       console.log(error, result)
     })
   }, 5000)
@@ -74,18 +74,18 @@ window.onload = function () {
     function (error, result) { console.log(error, result) })
   })
 
-  document.querySelector('input#getfilesfrompath').addEventListener('click', function () {
-    extension.call('editor', 'getFilesFromPath', [document.getElementById('filename').value],
+  document.querySelector('input#getFolder').addEventListener('click', function () {
+    extension.call('fileManager', 'getFolder', [document.getElementById('filename').value],
     function (error, result) { console.log(error, result) })
   })
 
   document.querySelector('input#addnetwork').addEventListener('click', function () {
-    extension.call('app', 'addProvider', [document.getElementById('filename').value, document.getElementById('valuetosend').value],
+    extension.call('network', 'addProvider', [document.getElementById('filename').value, document.getElementById('valuetosend').value],
     function (error, result) { console.log(error, result) })
   })
 
   document.querySelector('input#removenetwork').addEventListener('click', function () {
-    extension.call('app', 'removeProvider', [document.getElementById('filename').value],
+    extension.call('network', 'removeProvider', [document.getElementById('filename').value],
     function (error, result) { console.log(error, result) })
   })
 }
