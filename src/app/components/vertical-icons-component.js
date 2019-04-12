@@ -89,6 +89,14 @@ class VerticalIconComponent {
     if (this.icons[name]) this.iconKind[kind || 'other'].removeChild(this.icons[name])
   }
 
+  selected () {
+    let currentActive = this.view.querySelector(`.${css.active}`)
+    if (currentActive) {
+      return currentActive.getAttribute('title')
+    }
+    return null
+  }
+
   select (name) {
     let currentActive = this.view.querySelector(`.${css.active}`)
     if (currentActive) {
