@@ -58,7 +58,7 @@ export class RemixAppManager extends AppManagerApi {
 
   plugins () {
     let vyper = {
-      displayName: 'vyper',
+      displayName: 'Vyper',
       name: 'vyper',
       events: ['compilationFinished'],
       methods: [],

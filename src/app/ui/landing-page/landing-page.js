@@ -60,8 +60,8 @@ import { BaseApi } from 'remix-plugin'
 import Section from './section'
 
 const profile = {
-  displayName: 'Home',
   name: 'home',
+  displayName: 'Home',
   methods: [],
   events: [],
   description: ' - ',

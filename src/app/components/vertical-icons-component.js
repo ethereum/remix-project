@@ -33,11 +33,6 @@ class VerticalIconComponent {
     })
     this.store.event.on('add', (api) => { })
     this.store.event.on('remove', (api) => { })
-
-    let themeModule = globalRegistry.get('themeModule').api
-    themeModule.events.on('themeChanged', (type) => {
-      this.updateIcons(type)
-    })
   }
 
   stopListenOnStatus (api) {
@@ -63,27 +58,13 @@ class VerticalIconComponent {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({kind, name, icon, displayName}) {
-    this.icons[name] = yo`<div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName || name}" ><img src="${icon}" alt="${name}" /></div>`
+    this.icons[name] = yo`
+      <div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName || name}" >
+        <img class="image" src="${icon}" alt="${name}" />
+      </div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
   }
 
-  updateIcons(type)
-  {
-    if (!type) {
-      type = globalRegistry.get("themeModule").api.currentTheme().quality === 'dark'
-    }
-
-    let icon
-    for (icon in this.icons) {
-      if (type === 'dark') {
-        this.icons[icon].classList.remove(`${css.light}`)
-        this.icons[icon].classList.add(`${css.dark}`)
-      } else {
-        this.icons[icon].classList.remove(`${css.dark}`)
-        this.icons[icon].classList.add(`${css.light}`)
-      }
-    }
-  }
   /**
    * Set a new status for the @arg name
    * @param {String} name
@@ -92,7 +73,7 @@ class VerticalIconComponent {
   setIconStatus (name, status) {
     const el = this.icons[name]
     if (!el) return
-    let statusEl = el.querySelector('i')
+    let statusEl = el.querySelector('span')
     if (statusEl) {
       el.removeChild(statusEl)
     }
@@ -100,7 +81,7 @@ class VerticalIconComponent {
       let key = helper.checkSpecialChars(status.key) ? '' : status.key
       let type = helper.checkSpecialChars(status.type) ? '' : status.type
       let title = helper.checkSpecialChars(status.title) ? '' : status.title
-      el.appendChild(yo`<i title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></i>`)
+      el.appendChild(yo`<span title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></span>`)
 
       // el.classList = "" doesn't work on all browser use instead
       var classList = el.classList;
@@ -123,20 +104,28 @@ class VerticalIconComponent {
     if (this.icons[name]) this.iconKind[kind || 'other'].removeChild(this.icons[name])
   }
 
+  /**
+   * Set an icon as active
+   * @param {string} name Name of profile of the module to activate
+   */
   select (name) {
-    this.updateIcons()
-    let currentActive = this.view.querySelector(`.${css.active}`)
+    const themeType = globalRegistry.get("themeModule").api.currentTheme().quality
+    const invert = themeType === 'dark' ? 1 : 0
+    // Remove active for the current activated icons
+    const currentActive = this.view.querySelector(`.${css.active}`)
     if (currentActive) {
-      let currentTitle = currentActive.getAttribute('title')
-      currentActive.classList.toggle(`${css.active}`)
-      if (currentTitle !== name) {
-        let activate = this.view.querySelector(`[plugin="${name}"]`)
-        if (activate) activate.classList.toggle(`${css.active}`)
-      }
-    } else {
-      let activate = this.view.querySelector(`[plugin="${name}"]`)
-      if (activate) activate.classList.toggle(`${css.active}`)
+      currentActive.classList.remove(css.active)
+      let image = currentActive.querySelector('.image')
+      image.style.setProperty('filter', 'invert(0.5)')
     }
+    // Add active for the new activated icon
+    const nextActive = this.view.querySelector(`[plugin="${name}"]`)
+    if (nextActive) {
+      let image = nextActive.querySelector('.image')
+      nextActive.classList.add(css.active)
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
+
     this.events.emit('showContent', name)
   }
 
@@ -216,35 +205,20 @@ const css = csjs`
     padding: 3px;
     position: relative;
     border-radius: 8px;
-    filter: invert(0.5);
-  }
-  .dark{
-    filter: invert(0.5);
-  }
-  .light{
-    filter: invert(0.5);
   }
   .icon img {
     width: 28px;
     height: 28px;
     padding: 4px;
+    filter: invert(0.5);
+  }
+  .image {
+    filter: invert(0.5);
   }
   .icon svg {
     width: 28px;
     height: 28px;
     padding: 4px;
-  }
-  .light.active {
-    border-radius: 8px;
-    padding-top: 1px;
-    padding-left: 1px;
-    filter: invert(0);
-  }
-  .dark.active {
-    border-radius: 8px;
-    padding-top: 1px;
-    padding-left: 1px;
-    filter: invert(1);
   }
   .icon[title='settings'] {
     position: absolute;
@@ -254,5 +228,16 @@ const css = csjs`
     position: absolute;
     bottom: 0;
     right: 0;
+  }
+  .statusWithBG
+    border-radius: 8px;
+    background-color: var(--danger);
+    color: var(--light);
+    font-size: 12px;
+    height: 15px;
+    text-align: center;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 `
