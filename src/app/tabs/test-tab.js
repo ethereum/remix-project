@@ -171,7 +171,7 @@ module.exports = class TestTab extends BaseApi {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile(this)}">Generate test file</div>
+          <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</div>
         </div>
         <div class="${css.tests}">          
           <div class="${css.buttons}">
