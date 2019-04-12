@@ -179,6 +179,10 @@ export class LandingPage extends ApiFactory {
       this.appManager.ensureActivated('remixd')
     }
     let importFromExternal = () => { load('URL') }
+    let importFromGist = () => {
+      let app = globalRegistry.get('app').api
+      app.loadFromGist({gist: ''})
+    }
 
     let container = yo`<div>
       <div class="${css.hpLogoContainer}"><img src="${logo}" style="height:45px;" alt="Remix logo" /></div>
@@ -217,8 +221,12 @@ export class LandingPage extends ApiFactory {
               </label>
             </p>
             <p class="mb-1 ${css.text}" onclick=${() => { connectToLocalhost() }}>Connect to Localhost</p>
-            <p class="mb-1 ${css.text} onclick=${() => { importFromExternal() }}">Import From external source</p>
-          </div><!-- end of div.file -->
+            <p class="mb-1 ${css.text} onclick=${() => { importFromExternal() }}">Import From:</p>
+              <button class="btn btn-lg btn-secondary" onclick=${() => { importFromGist() }}>Gist</button>
+              <button class="btn btn-lg btn-secondary" onclick=${() => { load('Github URL') }}>Github</button>
+              <button class="btn btn-lg btn-secondary" onclick=${() => { load('bzz-raw URL') }}>Swarm</button>
+              <button class="btn btn-lg btn-secondary" onclick=${() => { load('ipfs URL') }}>Ipfs</button>
+            </div><!-- end of div.file -->
         </div><!-- end of #col1 -->
         <div id="col2" class="col-sm-6">
           <div class="plugins mb-5">
