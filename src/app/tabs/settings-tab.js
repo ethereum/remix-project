@@ -41,7 +41,7 @@ module.exports = class SettingsTab extends BaseApi {
   initTheme () {
     this.currentTheme = this._deps.themeModule.currentTheme()
   }
-
+  
   createThemeCheckies () {
     let themes = this._deps.themeModule.getThemes()
     const onswitchTheme = (event, name) => {

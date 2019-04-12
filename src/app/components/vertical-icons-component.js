@@ -59,7 +59,7 @@ class VerticalIconComponent {
    */
   addIcon ({kind, name, icon, displayName}) {
     this.icons[name] = yo`
-      <div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName || name}" >
+      <div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName}" >
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
@@ -84,15 +84,14 @@ class VerticalIconComponent {
       el.appendChild(yo`<span title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></span>`)
 
       // el.classList = "" doesn't work on all browser use instead
-      var classList = el.classList;
+      var classList = el.classList
       while (classList.length > 0) {
-        classList.remove(classList.item(0));
+        classList.remove(classList.item(0))
       }
 
       el.classList.add(`${css.icon}`)
       el.classList.add('border')
       el.classList.add(`border-${type}`)
-
     }
   }
 
@@ -109,7 +108,7 @@ class VerticalIconComponent {
    * @param {string} name Name of profile of the module to activate
    */
   select (name) {
-    const themeType = globalRegistry.get("themeModule").api.currentTheme().quality
+    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
     const invert = themeType === 'dark' ? 1 : 0
     // Remove active for the current activated icons
     const currentActive = this.view.querySelector(`.${css.active}`)
@@ -220,7 +219,7 @@ const css = csjs`
     height: 28px;
     padding: 4px;
   }
-  .icon[title='settings'] {
+  .icon[title='Settings'] {
     position: absolute;
     bottom: 0;
   }
