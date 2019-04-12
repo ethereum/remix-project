@@ -454,19 +454,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   }, false)
 
-  window.addEventListener('keypress', (e) => {
-    if (e.shiftKey && e.ctrlKey) {
-      if (e.code === 'KeyF') { // Ctrl+Shift+F
-        verticalIconsApi.select('fileExplorers')
-      } else if (e.code === 'KeyA') { // Ctrl+Shift+A
-        verticalIconsApi.select('pluginManager')
-      } else if (e.code === 'KeyS') { //  Ctrl+Shift+S
-        verticalIconsApi.select('settings')
-      }
-      e.preventDefault()
-    }
-  })
-
   // Replace early callback with instant response
   loadFilesCallback = function (files) {
     self.loadFiles(files)

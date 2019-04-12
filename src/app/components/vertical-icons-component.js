@@ -57,9 +57,13 @@ class VerticalIconComponent {
    * Add an icon to the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  addIcon ({kind, name, icon, displayName}) {
+  addIcon ({kind, name, icon, displayName, tooltip}) {
+    let title = (displayName || name) + " " + tooltip
     this.icons[name] = yo`
-      <div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName}" >
+      <div
+        class="${css.icon}"
+        onclick="${(e) => { this._iconClick(name) }}"
+        plugin="${name}" title="${title}" >
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
@@ -219,7 +223,7 @@ const css = csjs`
     height: 28px;
     padding: 4px;
   }
-  .icon[title='Settings'] {
+  .icon[title='Settings (Ctrl+Shift+S)'] {
     position: absolute;
     bottom: 0;
   }

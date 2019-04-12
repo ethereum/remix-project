@@ -13,5 +13,19 @@ export default {
 
     verticalIconApi.select('fileExplorers')
     mainPanelApi.showContent('home')
+
+
+    document.addEventListener('keypress', (e) => {
+      if (e.shiftKey && e.ctrlKey) {
+        if (e.code === 'KeyF') { // Ctrl+Shift+F
+          verticalIconApi.select('fileExplorers')
+        } else if (e.code === 'KeyA') { // Ctrl+Shift+A
+          verticalIconApi.select('pluginManager')
+        } else if (e.code === 'KeyS') { //  Ctrl+Shift+S
+          verticalIconApi.select('settings')
+        }
+        e.preventDefault()
+      }
+    })
   }
 }
