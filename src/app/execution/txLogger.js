@@ -178,7 +178,7 @@ class TxLogger {
     })
 
     this._deps.txListener.event.register('newBlock', (block) => {
-      if (!block.transactions.length) {
+      if (!block.transactions || block.transactions && !block.transactions.length) {
         this.logEmptyBlock({ block: block })
       }
     })
