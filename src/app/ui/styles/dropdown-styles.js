@@ -8,6 +8,8 @@ var css = csjs`
     flex-direction    : column;
     margin-left       : 10px;
     width             : auto;
+    margin-top        : 2px;
+    max-height        : 24px;
   }
   .selectbox          {
     display           : flex;
@@ -31,7 +33,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     align-items       : end;
-    top               : 32px;
+    top               : 23px;
     left              : 0;
     width             : 245px;
     border            : 1px solid var(--dark);
