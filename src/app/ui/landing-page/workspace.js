@@ -21,7 +21,6 @@ export const defaultWorkspaces = (appManager) => {
         appManager.ensureActivated('run')
         appManager.ensureActivated('solidityStaticAnalysis')
         appManager.ensureActivated('solidityUnitTesting')
-        globalRegistry.get('filemanager').api.switchFile()
         globalRegistry.get('verticalicon').api.select('solidity')
       }, () => {}),
     new Workspace(
@@ -31,7 +30,6 @@ export const defaultWorkspaces = (appManager) => {
       () => {
         appManager.ensureActivated('vyper')
         appManager.ensureActivated('run')
-        globalRegistry.get('filemanager').api.switchFile()
         globalRegistry.get('verticalicon').api.select('vyper')
       }, () => {}),
     new Workspace('Debugger', 'Debug transactions with remix', false, () => {
