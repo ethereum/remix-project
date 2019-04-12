@@ -33,6 +33,11 @@ class VerticalIconComponent {
     })
     this.store.event.on('add', (api) => { })
     this.store.event.on('remove', (api) => { })
+
+    let themeModule = globalRegistry.get('themeModule').api
+    themeModule.events.on('themeChanged', (type) => {
+      this.onThemeChanged(type)
+    })
   }
 
   stopListenOnStatus (api) {
@@ -58,7 +63,7 @@ class VerticalIconComponent {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({kind, name, icon, displayName, tooltip}) {
-    let title = (displayName || name) + " " + tooltip
+    let title = (displayName || name)// + (tooltip ? tooltip : "")
     this.icons[name] = yo`
       <div
         class="${css.icon}"
@@ -108,28 +113,49 @@ class VerticalIconComponent {
   }
 
   /**
-   * Set an icon as active
-   * @param {string} name Name of profile of the module to activate
+   *  Remove active for the current activated icons
    */
-  select (name) {
-    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
-    const invert = themeType === 'dark' ? 1 : 0
-    // Remove active for the current activated icons
+  removeActive () {
     const currentActive = this.view.querySelector(`.${css.active}`)
     if (currentActive) {
       currentActive.classList.remove(css.active)
       let image = currentActive.querySelector('.image')
       image.style.setProperty('filter', 'invert(0.5)')
     }
-    // Add active for the new activated icon
+  }
+
+  /**
+   *  Add active for the new activated icon
+   * @param {string} name Name of profile of the module to activate
+   */
+  addActive (name) {
+    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
+    const invert = themeType === 'dark' ? 1 : 0
     const nextActive = this.view.querySelector(`[plugin="${name}"]`)
     if (nextActive) {
       let image = nextActive.querySelector('.image')
       nextActive.classList.add(css.active)
       image.style.setProperty('filter', `invert(${invert})`)
     }
+  }
 
+  /**
+   * Set an icon as active
+   * @param {string} name Name of profile of the module to activate
+   */
+  select (name) {
+    this.removeActive()
+    this.addActive(name)
     this.events.emit('showContent', name)
+  }
+
+  onThemeChanged (themeType) {
+    const invert = themeType === 'dark' ? 1 : 0
+    const active = this.view.querySelector(`.${css.active}`)
+    if (active) {
+      let image = active.querySelector('.image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
   }
 
   _iconClick (name) {
@@ -223,7 +249,7 @@ const css = csjs`
     height: 28px;
     padding: 4px;
   }
-  .icon[title='Settings (Ctrl+Shift+S)'] {
+  .icon[title='Settings'] {
     position: absolute;
     bottom: 0;
   }

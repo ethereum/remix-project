@@ -12,6 +12,7 @@ var css = csjs`
     font-size: 12px;
     display: flex;
     justify-content: space-between;
+    padding-left: 15px;
   }
   .settings {
     margin-bottom: 2%;
@@ -141,6 +142,7 @@ var css = csjs`
   .noInstancesText {
     font-style: italic;
     text-align: left;
+    padding-left: 15px;
   }
   .pendingTxsText {
     font-style: italic;

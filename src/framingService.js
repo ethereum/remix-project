@@ -14,7 +14,6 @@ export default {
     verticalIconApi.select('fileExplorers')
     mainPanelApi.showContent('home')
 
-
     document.addEventListener('keypress', (e) => {
       if (e.shiftKey && e.ctrlKey) {
         if (e.code === 'KeyF') { // Ctrl+Shift+F
