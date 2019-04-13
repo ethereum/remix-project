@@ -136,9 +136,10 @@ class Editor {
     langTools.addCompleter(flowCompleter)
 
     // zoom with Ctrl+wheel
-    window.addEventListener("wheel", (e) => {
-      if (e.ctrlKey && Math.abs(e.wheelY) > 5)
+    window.addEventListener('wheel', (e) => {
+      if (e.ctrlKey && Math.abs(e.wheelY) > 5) {
         this.editorFontSize(e.wheelY > 0 ? 1 : -1)
+      }
     })
 
     // EVENTS LISTENERS
