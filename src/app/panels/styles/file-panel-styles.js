@@ -13,6 +13,8 @@ var css = csjs`
     flex-direction    : column;
     position          : relative;
     width             : 100%;
+    padding-left      : 6px;
+    padding-top       : 6px;
   }
   .gist            {
     padding           : 10px;
@@ -50,7 +52,7 @@ var css = csjs`
   .uploadFile label   {
     cursor            : pointer;
   }
-  .treeviews {
+  .treeview {
     overflow-y        : auto;
   }  
   .dialog {
