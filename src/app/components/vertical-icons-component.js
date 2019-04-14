@@ -116,11 +116,16 @@ class VerticalIconComponent {
    *  Remove active for the current activated icons
    */
   removeActive () {
+    // reset filters
+    const images = this.view.querySelectorAll(`.image`)
+    images.forEach(function (im) {
+      im.style.setProperty('filter', 'invert(0.5)')
+    })
+
+    // remove active
     const currentActive = this.view.querySelector(`.${css.active}`)
     if (currentActive) {
       currentActive.classList.remove(css.active)
-      let image = currentActive.querySelector('.image')
-      image.style.setProperty('filter', 'invert(0.5)')
     }
   }
 
@@ -242,7 +247,6 @@ const css = csjs`
     filter: invert(0.5);
   }
   .image {
-    filter: invert(0.5);
   }
   .icon svg {
     width: 28px;
