@@ -68,7 +68,6 @@ class ContractDropdownUI {
       </div>
     `
     this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
-    
     this.setInputParamsPlaceHolder()
     return el
   }
@@ -89,7 +88,7 @@ class ContractDropdownUI {
       this.orLabel.style.display = 'block'
     }
   }
-  
+
   setInputParamsPlaceHolder () {
     this.createPanel.innerHTML = ''
     if (this.selectContractNames.selectedIndex < 0 || this.selectContractNames.children.length <= 0) {
