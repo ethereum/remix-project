@@ -1,22 +1,22 @@
 'use strict'
 const SourceHighlighter = require('./sourceHighlighter')
 
-import { ApiFactory } from 'remix-plugin'
+import { EditorApi } from 'remix-plugin'
 
-class SourceHighlighters extends ApiFactory {
+const profile = {
+  displayName: 'source highlighters',
+  name: 'editor',
+  description: 'service - highlight source code'
+}
+
+// EditorApi:
+// - methods: ['highlight', 'discardHighlight'],
+
+class SourceHighlighters extends EditorApi {
 
   constructor () {
-    super()
+    super(profile)
     this.highlighters = {}
-  }
-
-  get profile () {
-    return {
-      displayName: 'source highlighters',
-      name: 'sourceHighlighters',
-      methods: ['highlight', 'discardHighlight'],
-      description: 'service - highlight source code'
-    }
   }
 
   highlight (lineColumnPos, filePath, hexColor) {

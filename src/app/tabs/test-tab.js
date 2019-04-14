@@ -3,13 +3,23 @@ var async = require('async')
 var tooltip = require('../ui/tooltip')
 var css = require('./styles/test-tab-styles')
 var remixTests = require('remix-tests')
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 
 const TestTabLogic = require('./testTab/testTab')
 
-module.exports = class TestTab extends ApiFactory {
+const profile = {
+  name: 'solidityUnitTesting',
+  displayName: 'solidity unit testing',
+  methods: [],
+  events: [],
+  icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMjMwNCIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMjMwNCAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNzI4IDQ0OGwtMzg0IDcwNGg3Njh6bS0xMjgwIDBsLTM4NCA3MDRoNzY4em04MjEtMTkycS0xNCA0MC00NS41IDcxLjV0LTcxLjUgNDUuNXYxMjkxaDYwOHExNCAwIDIzIDl0OSAyM3Y2NHEwIDE0LTkgMjN0LTIzIDloLTEzNDRxLTE0IDAtMjMtOXQtOS0yM3YtNjRxMC0xNCA5LTIzdDIzLTloNjA4di0xMjkxcS00MC0xNC03MS41LTQ1LjV0LTQ1LjUtNzEuNWgtNDkxcS0xNCAwLTIzLTl0LTktMjN2LTY0cTAtMTQgOS0yM3QyMy05aDQ5MXEyMS01NyA3MC05Mi41dDExMS0zNS41IDExMSAzNS41IDcwIDkyLjVoNDkxcTE0IDAgMjMgOXQ5IDIzdjY0cTAgMTQtOSAyM3QtMjMgOWgtNDkxem0tMTgxIDE2cTMzIDAgNTYuNS0yMy41dDIzLjUtNTYuNS0yMy41LTU2LjUtNTYuNS0yMy41LTU2LjUgMjMuNS0yMy41IDU2LjUgMjMuNSA1Ni41IDU2LjUgMjMuNXptMTA4OCA4ODBxMCA3My00Ni41IDEzMXQtMTE3LjUgOTEtMTQ0LjUgNDkuNS0xMzkuNSAxNi41LTEzOS41LTE2LjUtMTQ0LjUtNDkuNS0xMTcuNS05MS00Ni41LTEzMXEwLTExIDM1LTgxdDkyLTE3NC41IDEwNy0xOTUuNSAxMDItMTg0IDU2LTEwMHExOC0zMyA1Ni0zM3Q1NiAzM3E0IDcgNTYgMTAwdDEwMiAxODQgMTA3IDE5NS41IDkyIDE3NC41IDM1IDgxem0tMTI4MCAwcTAgNzMtNDYuNSAxMzF0LTExNy41IDkxLTE0NC41IDQ5LjUtMTM5LjUgMTYuNS0xMzkuNS0xNi41LTE0NC41LTQ5LjUtMTE3LjUtOTEtNDYuNS0xMzFxMC0xMSAzNS04MXQ5Mi0xNzQuNSAxMDctMTk1LjUgMTAyLTE4NCA1Ni0xMDBxMTgtMzMgNTYtMzN0NTYgMzNxNCA3IDU2IDEwMHQxMDIgMTg0IDEwNyAxOTUuNSA5MiAxNzQuNSAzNSA4MXoiLz48L3N2Zz4=',
+  description: ' - ',
+  location: 'swapPanel'
+}
+
+module.exports = class TestTab extends BaseApi {
   constructor (fileManager, filePanel, compileTab) {
-    super()
+    super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
     this.compileTab = compileTab
@@ -18,18 +28,6 @@ module.exports = class TestTab extends ApiFactory {
     this.testTabLogic = new TestTabLogic(fileManager)
     this.data = {}
     this.testList = yo`<div class=${css.testList}></div>`
-  }
-
-  get profile () {
-    return {
-      name: 'solidityUnitTesting',
-      displayName: 'solidity unit testing',
-      methods: [],
-      events: [],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMjMwNCIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMjMwNCAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNzI4IDQ0OGwtMzg0IDcwNGg3Njh6bS0xMjgwIDBsLTM4NCA3MDRoNzY4em04MjEtMTkycS0xNCA0MC00NS41IDcxLjV0LTcxLjUgNDUuNXYxMjkxaDYwOHExNCAwIDIzIDl0OSAyM3Y2NHEwIDE0LTkgMjN0LTIzIDloLTEzNDRxLTE0IDAtMjMtOXQtOS0yM3YtNjRxMC0xNCA5LTIzdDIzLTloNjA4di0xMjkxcS00MC0xNC03MS41LTQ1LjV0LTQ1LjUtNzEuNWgtNDkxcS0xNCAwLTIzLTl0LTktMjN2LTY0cTAtMTQgOS0yM3QyMy05aDQ5MXEyMS01NyA3MC05Mi41dDExMS0zNS41IDExMSAzNS41IDcwIDkyLjVoNDkxcTE0IDAgMjMgOXQ5IDIzdjY0cTAgMTQtOSAyM3QtMjMgOWgtNDkxem0tMTgxIDE2cTMzIDAgNTYuNS0yMy41dDIzLjUtNTYuNS0yMy41LTU2LjUtNTYuNS0yMy41LTU2LjUgMjMuNS0yMy41IDU2LjUgMjMuNSA1Ni41IDU2LjUgMjMuNXptMTA4OCA4ODBxMCA3My00Ni41IDEzMXQtMTE3LjUgOTEtMTQ0LjUgNDkuNS0xMzkuNSAxNi41LTEzOS41LTE2LjUtMTQ0LjUtNDkuNS0xMTcuNS05MS00Ni41LTEzMXEwLTExIDM1LTgxdDkyLTE3NC41IDEwNy0xOTUuNSAxMDItMTg0IDU2LTEwMHExOC0zMyA1Ni0zM3Q1NiAzM3E0IDcgNTYgMTAwdDEwMiAxODQgMTA3IDE5NS41IDkyIDE3NC41IDM1IDgxem0tMTI4MCAwcTAgNzMtNDYuNSAxMzF0LTExNy41IDkxLTE0NC41IDQ5LjUtMTM5LjUgMTYuNS0xMzkuNS0xNi41LTE0NC41LTQ5LjUtMTE3LjUtOTEtNDYuNS0xMzFxMC0xMSAzNS04MXQ5Mi0xNzQuNSAxMDctMTk1LjUgMTAyLTE4NCA1Ni0xMDBxMTgtMzMgNTYtMzN0NTYgMzNxNCA3IDU2IDEwMHQxMDIgMTg0IDEwNyAxOTUuNSA5MiAxNzQuNSAzNSA4MXoiLz48L3N2Zz4=',
-      description: ' - ',
-      location: 'swapPanel'
-    }
   }
 
   activate () {
@@ -173,7 +171,7 @@ module.exports = class TestTab extends ApiFactory {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile(this)}">Generate test file</div>
+          <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</div>
         </div>
         <div class="${css.tests}">          
           <div class="${css.buttons}">
