@@ -16,7 +16,7 @@ var css = csjs`
   }
   .settings {
     margin-bottom: 2%;
-    padding: 10px 15px 15px 15px;
+    padding: 10px 0px 15px 15px;
   }
   .recorderCount {
     /* margin-right: 30px; */
@@ -39,7 +39,6 @@ var css = csjs`
   }
   .col1_1 {
     font-size: 12px;
-    width: 15%;
     min-width: 75px;
     float: left;
     align-self: center;
@@ -48,12 +47,13 @@ var css = csjs`
     display: flex;
     align-items: center;
     position: relative;
-    width: 259px;
+    width: 100%;
+    padding-right: 25px;
   }
   .account {
     display: flex;
     align-items: center;
-    width: 266px;
+    width: 90%;
   }
   .col2 {
     border-radius: 3px;
@@ -63,12 +63,14 @@ var css = csjs`
     min-width: 164px;
   }
   .col2_2 {
-    width: 82px;
+    width: 100px;
     min-width: 82px;
+    position: absolute;
+    margin-left: 100px;
   }
   .select {
     font-weight: normal;
-    width: 250px;
+    width: 100%;
   }
   .instanceContainer {
     display: flex;
@@ -86,7 +88,8 @@ var css = csjs`
     text-align: center;
   }
   .container {
-    margin-bottom: 2%;
+    margin-bottom: 4%;
+    padding-left: 15px;
   }
   .recorderCollapsedView,
   .recorderExpandedView {
@@ -190,7 +193,7 @@ var css = csjs`
     color: var(--warning);
   }
   .errorIcon {
-    color: var(--danger);
+    color: var(--warning);
     margin-left: 15px;
   }
   .failDesc {
@@ -206,7 +209,7 @@ var css = csjs`
     color: grey;
     width: 100%;
     height: 100%;
-    padding-right: 28px;
+    padding-right: 53px;
     pointer-events: none;
   }
   .networkItem {
@@ -228,7 +231,17 @@ var css = csjs`
     font-size: 13px;
     color: var(--info);
   }
+  .gasValueContainer {
+    flex-direction: row;
+    display: flex;
+  }
   .gasNval {
+    transform: scale(0.7);
+    transform-origin: left;
+    margin-right: 10px;
+    width: 120px;
+  }
+  .gasNvalUnit {
     transform: scale(0.7);
     transform-origin: left;
     margin-right: 10px;

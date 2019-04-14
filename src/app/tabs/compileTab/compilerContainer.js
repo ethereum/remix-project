@@ -141,7 +141,7 @@ class CompilerContainer {
         <article>
           <header class="navbar navbar-light bg-light input-group mb-3">
             <div class="input-group-prepend">
-              <label class="input-group-text" for="versionSelector">Compiler</label>
+              <label class="input-group-text border-0" for="versionSelector">Compiler</label>
             </div>
             ${this._view.versionSelector}
           </header>

@@ -181,7 +181,7 @@ class CompileTab extends CompilerApi {
           Compilation Details
         </button>
         <!-- Copy to Clipboard -->
-        <div class="${css.contractHelperButtons}">
+        <div class="${css.contractHelperButtons} btn-secondary">
           <div class="input-group">
             <div class="input-group-prepend">
               <span class="input-group-text">Copy to clipboard</span>
