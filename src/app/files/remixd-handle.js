@@ -1,7 +1,9 @@
-import { ApiFactory } from 'remix-plugin'
+let globalRegistry = require('../../global/registry')
+import { BaseApi } from 'remix-plugin'
 
 var yo = require('yo-yo')
 var modalDialog = require('../ui/modaldialog')
+var modalDialogCustom = require('../ui/modal-dialog-custom')
 
 var csjs = require('csjs-inject')
 
@@ -16,21 +18,19 @@ var css = csjs`
   }
 `
 
-export class RemixdHandle extends ApiFactory {
+const profile = {
+  name: 'remixd',
+  methods: [],
+  events: [],
+  description: 'using Remixd daemon, allow to access file system',
+  kind: 'other'
+}
+
+export class RemixdHandle extends BaseApi {
   constructor (fileSystemExplorer, locahostProvider) {
-    super()
+    super(profile)
     this.fileSystemExplorer = fileSystemExplorer
     this.locahostProvider = locahostProvider
-  }
-
-  get profile () {
-    return {
-      name: 'remixd',
-      methods: [],
-      events: [],
-      description: 'using Remixd daemon, allow to access file system',
-      kind: 'other'
-    }
   }
 
   deactivate () {
@@ -41,6 +41,11 @@ export class RemixdHandle extends ApiFactory {
 
   activate () {
     this.connectToLocalhost()
+  }
+
+  canceled () {
+    let appManager = globalRegistry.get('appmanager').api
+    appManager.ensureDeactivated('remixd')
   }
 
   /**
@@ -55,17 +60,30 @@ export class RemixdHandle extends ApiFactory {
         if (error) console.log(error)
       })
     } else {
-      modalDialog('Connect to localhost', remixdDialog(),
+      modalDialog(
+        'Connect to localhost',
+        remixdDialog(),
         { label: 'Connect',
           fn: () => {
             this.locahostProvider.init((error) => {
               if (error) {
                 console.log(error)
+                modalDialogCustom.alert(
+                  'Cannot connect to the remixd daemon.' +
+                  'Please make sure you have the remixd running in the background.'
+                )
+                this.canceled()
               } else {
                 this.fileSystemExplorer.ensureRoot()
               }
             })
-          }}
+          }
+        },
+        { label: 'Cancel',
+          fn: () => {
+            this.canceled()
+          }
+        }
       )
     }
   }

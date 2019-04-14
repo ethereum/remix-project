@@ -2,7 +2,7 @@ const yo = require('yo-yo')
 const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
-import { Plugin, ApiFactory } from 'remix-plugin'
+import { Plugin, BaseApi } from 'remix-plugin'
 
 const css = csjs`
   .pluginSearch {
@@ -34,10 +34,21 @@ const css = csjs`
   }
 `
 
-class PluginManagerComponent extends ApiFactory {
+const profile = {
+  displayName: 'plugin manager',
+  name: 'pluginManager',
+  methods: [],
+  events: [],
+  icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNzU1IDQ1M3EzNyAzOCAzNyA5MC41dC0zNyA5MC41bC00MDEgNDAwIDE1MCAxNTAtMTYwIDE2MHEtMTYzIDE2My0zODkuNSAxODYuNXQtNDExLjUtMTAwLjVsLTM2MiAzNjJoLTE4MXYtMTgxbDM2Mi0zNjJxLTEyNC0xODUtMTAwLjUtNDExLjV0MTg2LjUtMzg5LjVsMTYwLTE2MCAxNTAgMTUwIDQwMC00MDFxMzgtMzcgOTEtMzd0OTAgMzcgMzcgOTAuNS0zNyA5MC41bC00MDAgNDAxIDIzNCAyMzQgNDAxLTQwMHEzOC0zNyA5MS0zN3Q5MCAzN3oiLz48L3N2Zz4=',
+  description: 'start/stop services, modules and plugins',
+  kind: 'settings',
+  location: 'swapPanel'
+}
+
+class PluginManagerComponent extends BaseApi {
 
   constructor () {
-    super()
+    super(profile)
     this.event = new EventEmitter()
     this.views = {
       root: null,
@@ -45,19 +56,6 @@ class PluginManagerComponent extends ApiFactory {
     }
     this.localPlugin = new LocalPlugin()
     this.filter = ''
-  }
-
-  get profile () {
-    return {
-      displayName: 'plugin manager',
-      name: 'pluginManager',
-      methods: [],
-      events: [],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNzU1IDQ1M3EzNyAzOCAzNyA5MC41dC0zNyA5MC41bC00MDEgNDAwIDE1MCAxNTAtMTYwIDE2MHEtMTYzIDE2My0zODkuNSAxODYuNXQtNDExLjUtMTAwLjVsLTM2MiAzNjJoLTE4MXYtMTgxbDM2Mi0zNjJxLTEyNC0xODUtMTAwLjUtNDExLjV0MTg2LjUtMzg5LjVsMTYwLTE2MCAxNTAgMTUwIDQwMC00MDFxMzgtMzcgOTEtMzd0OTAgMzcgMzcgOTAuNS0zNyA5MC41bC00MDAgNDAxIDIzNCAyMzQgNDAxLTQwMHEzOC0zNyA5MS0zN3Q5MCAzN3oiLz48L3N2Zz4=',
-      description: 'start/stop services, modules and plugins',
-      kind: 'settings',
-      location: 'swapPanel'
-    }
   }
 
   setApp (appManager) {
