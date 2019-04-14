@@ -136,12 +136,14 @@ module.exports = class TestTab extends BaseApi {
   }
 
   runTest (testFilePath, callback) {
+    this.loading.hidden = false
     this.fileManager.fileProviderOf(testFilePath).get(testFilePath, (error, content) => {
       if (error) return
       var runningTest = {}
       runningTest[testFilePath] = { content }
       remixTests.runTestSources(runningTest, (result) => { this.testCallback(result) }, (_err, result, cb) => { this.resultsCallback(_err, result, cb) }, (error, result) => {
         this.updateFinalResult(error, result, testFilePath)
+        this.loading.hidden = true
         callback(error)
       }, (url, cb) => {
         return this.compileTab.compileTabLogic.importFileCb(url, cb)
@@ -150,6 +152,7 @@ module.exports = class TestTab extends BaseApi {
   }
 
   runTests () {
+    this.loading.hidden = false
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
     var tests = this.data.selectedTests
@@ -159,7 +162,8 @@ module.exports = class TestTab extends BaseApi {
   render () {
     this.testsOutput = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
     this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
-
+    this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
+    this.loading.hidden = true
     var el = yo`
       <div class="${css.testTabView} card" id="testView">
         <div class="${css.infoBox}">
@@ -187,7 +191,7 @@ module.exports = class TestTab extends BaseApi {
           </div>
           ${this.testList}
           <hr>
-          <div class="${css.buttons}" ><h6>Results:</h6></div>
+          <div class="${css.buttons}" ><h6>Results:${this.loading}</h6></div>
           ${this.testsOutput}
           ${this.testsSummary}
         </div>
