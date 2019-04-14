@@ -145,7 +145,7 @@ class MultiParamManager {
     var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
-      <div class="${css.contractActionsContainerMultiInner}" >
+      <div class="${css.contractActionsContainerMultiInner} text-dark" >
         <div onclick=${() => { this.switchMethodViewOff() }} class="${css.multiHeader}">
           <div class="${css.multiTitle}">${title}</div>
           <i class='fa fa-angle-up ${css.methCaret}'></i>
@@ -183,9 +183,9 @@ class MultiParamManager {
       this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-info')
       button.classList.add('btn-info')
     } else {
-      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-warning')
+      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-primary')
       button.innerHTML = 'transact'
-      button.classList.add('btn-warning')
+      button.classList.add('btn-primary')
     }
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {

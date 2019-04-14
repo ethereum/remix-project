@@ -61,14 +61,15 @@ class ContractDropdownUI {
           ${this.createPanel}
           ${this.orLabel}
           <div class="${css.button} ${css.atAddressSect}">
-            <div class="${css.atAddress} btn btn-sm btn-info" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
+            <div class="${css.atAddress} btn btn-sm btn-primary" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
             ${this.atAddressButtonInput}
           </div>
         </div>
       </div>
     `
     this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
-
+    
+    this.setInputParamsPlaceHolder()
     return el
   }
 
@@ -88,7 +89,7 @@ class ContractDropdownUI {
       this.orLabel.style.display = 'block'
     }
   }
-
+  
   setInputParamsPlaceHolder () {
     this.createPanel.innerHTML = ''
     if (this.selectContractNames.selectedIndex < 0 || this.selectContractNames.children.length <= 0) {
