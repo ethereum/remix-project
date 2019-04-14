@@ -220,7 +220,6 @@ var css = csjs`
     border-radius: 3px;
     float: right;
     margin-right: 2%;
-    font-size: 10px;
     border-width: 1px;
     width: inherit;
   }
@@ -245,7 +244,6 @@ var css = csjs`
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
-    height: 25px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

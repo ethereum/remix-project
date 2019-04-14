@@ -166,7 +166,7 @@ class CompileTab extends CompilerApi {
       <!-- Select Compiler Version -->
       <header class="navbar navbar-light bg-light input-group mb-3 ${css.compilerArticle}">
         <div class="input-group-prepend">
-          <label class="input-group-text" for="compiledContracts">Contract</label>
+          <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
         </div>
         <select onchange="${e => this.selectContract(e.target.value)}" onload="${e => { this.selectedContract = e.value }}" id="compiledContracts" class="custom-select">
           ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
