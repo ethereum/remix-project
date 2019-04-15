@@ -31,7 +31,9 @@ var css = csjs`
     word-break: break-word;
     min-width: 230px;
   }
-
+  .inputGroupText {
+    width: 100%;
+  }
   .title .copy {
     color: var(--primary);
   }
@@ -42,7 +44,6 @@ var css = csjs`
     flex-wrap: nowrap;
   }
   .instance {
-    min-width: 310px;
     display: block;
     /* display: flex; */
     flex-direction: column;
@@ -129,10 +130,12 @@ var css = csjs`
     /* background-color:var(--info); */
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
     margin:0;
     word-break: inherit;
     outline: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .contractProperty input {
     /* width: 75% */

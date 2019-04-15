@@ -183,9 +183,9 @@ class MultiParamManager {
       this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-info')
       button.classList.add('btn-info')
     } else {
-      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-primary')
+      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-warning')
       button.innerHTML = 'transact'
-      button.classList.add('btn-primary')
+      button.classList.add('btn-warning')
     }
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {
