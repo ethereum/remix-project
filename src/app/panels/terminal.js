@@ -17,7 +17,7 @@ var AutoCompletePopup = require('../ui/auto-complete-popup')
 var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 
 var packageV = require('../../../package.json')
 
@@ -27,9 +27,18 @@ function register (api) { KONSOLES.push(api) }
 
 var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
-class Terminal extends ApiFactory {
+const profile = {
+  displayName: 'Terminal',
+  name: 'terminal',
+  methods: [],
+  events: [],
+  description: ' - ',
+  required: false
+}
+
+class Terminal extends BaseApi {
   constructor (opts, api) {
-    super()
+    super(profile)
     var self = this
     self.event = new EventManager()
     self._api = api
@@ -115,16 +124,6 @@ class Terminal extends ApiFactory {
   }
   focus () {
     if (this._view.input) this._view.input.focus()
-  }
-  get profile () {
-    return {
-      displayName: 'terminal',
-      name: 'terminal',
-      methods: [],
-      events: [],
-      description: ' - ',
-      required: false
-    }
   }
   render () {
     var self = this
