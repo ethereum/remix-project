@@ -17,6 +17,7 @@ var AutoCompletePopup = require('../ui/auto-complete-popup')
 var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
+import { BaseApi } from 'remix-plugin'
 
 var packageV = require('../../../package.json')
 
@@ -26,8 +27,18 @@ function register (api) { KONSOLES.push(api) }
 
 var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
-class Terminal {
+const profile = {
+  displayName: 'Terminal',
+  name: 'terminal',
+  methods: [],
+  events: [],
+  description: ' - ',
+  required: false
+}
+
+class Terminal extends BaseApi {
   constructor (opts, api) {
+    super(profile)
     var self = this
     self.event = new EventManager()
     self._api = api
@@ -62,12 +73,12 @@ class Terminal {
         self.updateJournal({ type: 'select', value: label })
       }
     })
-    self._components.autoCompletePopup = new AutoCompletePopup()
+    self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
       let textList = self._view.input.innerText.split(' ')
       textList.pop()
       textList.push(input)
-      self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
+      self._view.input.innerText = textList
       self._view.input.focus()
       self.putCursor2End(self._view.input)
     })
@@ -103,14 +114,18 @@ class Terminal {
 
     self._jsSandboxContext = {}
     self._jsSandboxRegistered = {}
+
+    self.externalApi = this.api()
+    self.externalApi.notifs = {'theme': ['switchTheme']}
+    opts.appManager.init([self.externalApi])
+    opts.appManager.activateRequestAndNotification(self.externalApi)
+
     if (opts.shell) self._shell = opts.shell
     register(self)
   }
-
   focus () {
     if (this._view.input) this._view.input.focus()
   }
-
   render () {
     var self = this
     if (self._view.el) return self._view.el
@@ -649,7 +664,6 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
-    compilers: self._opts.compilers,
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,
