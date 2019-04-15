@@ -51,6 +51,9 @@ let css = csjs`
   .text:hover {
     text-decoration: underline;
   }
+  .homeContainer {
+    user-select:none;
+  }
   .jumbotronContainer {
     /* margin: 50px 60px 0; */
     /* width: 80%; */
@@ -194,7 +197,7 @@ export class LandingPage extends BaseApi {
       app.loadFromGist({gist: ''})
     }
 
-    let container = yo`<div class="bg-light">
+    let container = yo`<div class="${css.homeContainer} bg-light">
       <div class="${css.jumbotronContainer}">
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.logoContainer}">
@@ -254,8 +257,7 @@ export class LandingPage extends BaseApi {
             <p class="mb-1"><a class="${css.text}" target="__blank" href="https://remix.readthedocs.io/en/latest/#">Documentation</a></p>
             <p class="mb-1"><a class="${css.text}" target="__blank" href="https://gitter.im/ethereum/remix">Gitter channel</a></p>
             <p class="mb-1"><a class="${css.text}" target="__blank" href="https://medium.com/remix-ide">Medium Posts</a></p>
-            <p class="mb-1"><a class="${css.text}" target="__blank" href="">Tutorials</a></p>
-            <p class="mb-1"><a class="${css.text}" target="__blank" href="">Workshops Slides</a></p>
+            <p class="mb-1"><a class="${css.text}" target="__blank" href="https://remix.readthedocs.io/en/latest/">Tutorials</a></p>
           </div>
         </div><!-- end of #col2 -->
       </div><!-- end of hpSections -->
