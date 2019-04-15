@@ -42,7 +42,7 @@ class SourceHighlighter {
         this._deps.fileManager.switchFile(this.source)
       }
 
-      const backgoundClass = style || 'bg-info'
+      const backgoundClass = style || 'alert-info'
       const css = csjs`
         .highlightcode {
           position:absolute;

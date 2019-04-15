@@ -12,7 +12,6 @@ var css = csjs`
   }
   .bar                {
     display           : flex;
-    min-height        : 3em;
     z-index           : 3;
   }
   .menu               {
@@ -34,7 +33,6 @@ var css = csjs`
   .toggleTerminal              {
     margin-right      : 20px;
     margin-left       : 2px;
-    margin-top        : 2px;
     font-size         : 14px;
     font-weight       : bold;
     cursor            : pointer;
@@ -129,7 +127,6 @@ var css = csjs`
     height            : 65%;
   }
   .pendingTx {
-    border            : 1px solid var(--secondary);
     border-radius     : 50%;
     margin-right      : 30px;
     min-width         : 13px;
@@ -138,6 +135,7 @@ var css = csjs`
     justify-content   : center;
     align-items       : center;
     font-size         : 14px;
+    user-select       : none;
   }
   .dragbarHorizontal  {
     position          : absolute;

@@ -1,6 +1,7 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 var helper = require('../../lib/helper')
+let globalRegistry = require('../../global/registry')
 
 const EventEmitter = require('events')
 
@@ -32,6 +33,11 @@ class VerticalIconComponent {
     })
     this.store.event.on('add', (api) => { })
     this.store.event.on('remove', (api) => { })
+
+    let themeModule = globalRegistry.get('themeModule').api
+    themeModule.events.on('themeChanged', (type) => {
+      this.onThemeChanged(type)
+    })
   }
 
   stopListenOnStatus (api) {
@@ -56,8 +62,15 @@ class VerticalIconComponent {
    * Add an icon to the map
    * @param {ModuleProfile} profile The profile of the module
    */
-  addIcon ({kind, name, icon, displayName}) {
-    this.icons[name] = yo`<div class="${css.icon}" onclick="${(e) => { this._iconClick(name) }}" plugin="${name}" title="${displayName || name}" ><img src="${icon}" alt="${name}" /></div>`
+  addIcon ({kind, name, icon, displayName, tooltip}) {
+    let title = (displayName || name)// + (tooltip ? tooltip : "")
+    this.icons[name] = yo`
+      <div
+        class="${css.icon}"
+        onclick="${(e) => { this._iconClick(name) }}"
+        plugin="${name}" title="${title}" >
+        <img class="image" src="${icon}" alt="${name}" />
+      </div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
   }
 
@@ -69,7 +82,7 @@ class VerticalIconComponent {
   setIconStatus (name, status) {
     const el = this.icons[name]
     if (!el) return
-    let statusEl = el.querySelector('i')
+    let statusEl = el.querySelector('span')
     if (statusEl) {
       el.removeChild(statusEl)
     }
@@ -77,7 +90,17 @@ class VerticalIconComponent {
       let key = helper.checkSpecialChars(status.key) ? '' : status.key
       let type = helper.checkSpecialChars(status.type) ? '' : status.type
       let title = helper.checkSpecialChars(status.title) ? '' : status.title
-      el.appendChild(yo`<i title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></i>`)
+      el.appendChild(yo`<span title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></span>`)
+
+      // el.classList = "" doesn't work on all browser use instead
+      var classList = el.classList
+      while (classList.length > 0) {
+        classList.remove(classList.item(0))
+      }
+
+      el.classList.add(`${css.icon}`)
+      el.classList.add('border')
+      el.classList.add(`border-${type}`)
     }
   }
 
@@ -89,20 +112,55 @@ class VerticalIconComponent {
     if (this.icons[name]) this.iconKind[kind || 'other'].removeChild(this.icons[name])
   }
 
-  select (name) {
-    let currentActive = this.view.querySelector(`.${css.active}`)
+  /**
+   *  Remove active for the current activated icons
+   */
+  removeActive () {
+    // reset filters
+    const images = this.view.querySelectorAll(`.image`)
+    images.forEach(function (im) {
+      im.style.setProperty('filter', 'invert(0.5)')
+    })
+
+    // remove active
+    const currentActive = this.view.querySelector(`.${css.active}`)
     if (currentActive) {
-      let currentTitle = currentActive.getAttribute('title')
-      currentActive.classList.toggle(`${css.active}`)
-      if (currentTitle !== name) {
-        let activate = this.view.querySelector(`[plugin="${name}"]`)
-        if (activate) activate.classList.toggle(`${css.active}`)
-      }
-    } else {
-      let activate = this.view.querySelector(`[plugin="${name}"]`)
-      if (activate) activate.classList.toggle(`${css.active}`)
+      currentActive.classList.remove(css.active)
     }
+  }
+
+  /**
+   *  Add active for the new activated icon
+   * @param {string} name Name of profile of the module to activate
+   */
+  addActive (name) {
+    const themeType = globalRegistry.get('themeModule').api.currentTheme().quality
+    const invert = themeType === 'dark' ? 1 : 0
+    const nextActive = this.view.querySelector(`[plugin="${name}"]`)
+    if (nextActive) {
+      let image = nextActive.querySelector('.image')
+      nextActive.classList.add(css.active)
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
+  }
+
+  /**
+   * Set an icon as active
+   * @param {string} name Name of profile of the module to activate
+   */
+  select (name) {
+    this.removeActive()
+    this.addActive(name)
     this.events.emit('showContent', name)
+  }
+
+  onThemeChanged (themeType) {
+    const invert = themeType === 'dark' ? 1 : 0
+    const active = this.view.querySelector(`.${css.active}`)
+    if (active) {
+      let image = active.querySelector('.image')
+      image.style.setProperty('filter', `invert(${invert})`)
+    }
   }
 
   _iconClick (name) {
@@ -173,31 +231,29 @@ const css = csjs`
     margin-left: 10px;
     margin-top: 15px;
   }
-  .icon      {
+  .icon {
     cursor: pointer;
     margin-bottom: 12px;
     width: 36px;
     height: 36px;
     padding: 3px;
     position: relative;
+    border-radius: 8px;
   }
   .icon img {
     width: 28px;
     height: 28px;
     padding: 4px;
+    filter: invert(0.5);
+  }
+  .image {
   }
   .icon svg {
     width: 28px;
     height: 28px;
     padding: 4px;
   }
-  .icon.active {
-    border: solid 3px hsla(229, 75%, 87%, 1);
-    border-radius: 8px;
-    padding-top: 1px;
-    padding-left: 1px;
-  }
-  .icon[title='settings'] {
+  .icon[title='Settings'] {
     position: absolute;
     bottom: 0;
   }
@@ -205,5 +261,16 @@ const css = csjs`
     position: absolute;
     bottom: 0;
     right: 0;
+  }
+  .statusWithBG
+    border-radius: 8px;
+    background-color: var(--danger);
+    color: var(--light);
+    font-size: 12px;
+    height: 15px;
+    text-align: center;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 `

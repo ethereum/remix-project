@@ -199,7 +199,7 @@ class EditorPanel {
     self._adjustLayout('top', self.data._layout.top.offset)
 
     document.addEventListener('keydown', (e) => {
-      if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab()
+      if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab() // alt + t
     })
 
     return self._view.el

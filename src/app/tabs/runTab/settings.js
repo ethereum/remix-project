@@ -64,7 +64,7 @@ class SettingsUI {
               value="web3" name="executionContext"> Web3 Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
+          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fa fa-info"></i></a>
         </div>
       </div>
     `
@@ -93,13 +93,15 @@ class SettingsUI {
     var valueEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Value</div>
-        <input type="text" class="form-control ${css.gasNval} ${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
-        <select name="unit" class="form-control ${css.gasNval} ${css.col2_2}" id="unit">
-          <option data-unit="wei">wei</option>
-          <option data-unit="gwei">gwei</option>
-          <option data-unit="finney">finney</option>
-          <option data-unit="ether">ether</option>
-        </select>
+        <div class="${css.gasValueContainer}">
+          <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
+          <select name="unit" class="form-control ${css.gasNvalUnit} ${css.col2_2}" id="unit">
+            <option data-unit="wei">wei</option>
+            <option data-unit="gwei">gwei</option>
+            <option data-unit="finney">finney</option>
+            <option data-unit="ether">ether</option>
+          </select>
+        </div>
       </div>
     `
 

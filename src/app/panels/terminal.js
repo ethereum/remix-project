@@ -142,7 +142,7 @@ class Terminal extends BaseApi {
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="btn btn-secondary align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
+      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
@@ -151,7 +151,7 @@ class Terminal extends BaseApi {
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class="${css.menu} bg-light">
+        <div class="${css.menu} border-top bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" title="Clear console"
