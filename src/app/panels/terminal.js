@@ -116,6 +116,7 @@ class Terminal extends BaseApi {
     self._jsSandboxRegistered = {}
 
     self.externalApi = this.api()
+    self.externalApi.notifs = {'theme': ['switchTheme']}
     opts.appManager.init([self.externalApi])
     opts.appManager.activateRequestAndNotification(self.externalApi)
 
