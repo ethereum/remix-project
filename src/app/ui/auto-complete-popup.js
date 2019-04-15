@@ -201,11 +201,11 @@ class AutoCompletePopup {
   extendAutocompletion () {
     // TODO: this is not using the appManager interface. Terminal should be put as module
     this.opts.appStore.event.on('activate', (id) => {
-      const keyValue = {}
       const profile = this.opts.appStore.getOne(id).profile
       if (!profile.methods) return
       profile.methods.forEach((method) => {
         const key = `remix.call({name: '${id}', key:'${method}', payload: []}).then((result) => { console.log(result) }).catch((error) => { console.log(error) })`
+        const keyValue = {}
         keyValue[key] = `call ${id} - ${method}`
         if (this.extraCommands.includes(keyValue)) return
         this.extraCommands.push(keyValue)
