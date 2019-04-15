@@ -101,13 +101,12 @@ var css = csjs`
   .contractProperty {
     overflow: auto;
     margin-bottom: 0.4em;
+    margin-top: 1em;
     width:100%;
   }
   .contractProperty.hasArgs input {
-    min-width: 200px;
     padding: .36em;
     border-radius: 5px;
-    width: 70%;
   }
   .contractProperty .contractActionsContainerSingle input{
     border-top-left-radius: 0;
@@ -136,7 +135,7 @@ var css = csjs`
     outline: none;
   }
   .contractProperty input {
-    width: 75%
+    /* width: 75% */
   }
   .contractProperty > .value {
     box-sizing: border-box;
@@ -187,7 +186,7 @@ var css = csjs`
     cursor: default;
   }
   .contractProperty .contractActionsContainerMultiInner .multiArg label{
-    text-align: center;
+    text-align: right;
   }
   .multiHeader .methCaret {
     float: right;
@@ -205,6 +204,7 @@ var css = csjs`
   }
   .multiArg {
     margin-bottom: 8px;
+    display: flex;
   }
   .multiArg input{
     padding: 5px;
@@ -214,13 +214,12 @@ var css = csjs`
       float: left;
       margin-right: 6px;
       font-size: 10px;
-      width: 20%;
+      min-width: 30%;
   }
   .multiArg button {
     border-radius: 3px;
     float: right;
-    margin-right: 5%;
-    font-size: 10px;
+    margin-right: 2%;
     border-width: 1px;
     width: inherit;
   }
@@ -230,6 +229,7 @@ var css = csjs`
   }
   .hasArgs .multiArg input {
     border-left: 1px solid #dddddd;
+    width: 100%;
   }
   .hasArgs input {
     display: block;
@@ -244,7 +244,6 @@ var css = csjs`
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
-    /* height: 25px; */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -253,7 +252,7 @@ var css = csjs`
     border-radius: 3px;
   }
   .contractActionsContainerMultiInner .multiArg i {
-    padding-right: 26px;
+    padding-right: 15px;
     padding-top: 5px;
     float: right;
   },

@@ -106,8 +106,8 @@ let css = csjs`
 import { BaseApi } from 'remix-plugin'
 
 const profile = {
-  displayName: 'Home',
   name: 'home',
+  displayName: 'Home',
   methods: [],
   events: [],
   description: ' - ',

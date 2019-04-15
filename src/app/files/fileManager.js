@@ -13,9 +13,9 @@ import { FileSystemApi } from 'remix-plugin'
 */
 
 const profile = {
-  displayName: 'file manager',
   name: 'fileManager',
-  description: 'service - read/write to any files or folders, require giving permissions',
+  displayName: 'File manager',
+  description: 'Service - read/write to any files or folders, require giving permissions',
   permission: true
 }
 
