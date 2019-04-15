@@ -28,6 +28,7 @@ class CmdInterpreterAPI {
       offsetToLineColumnConverter: self._components.registry.get('offsettolinecolumnconverter').api
     }
     self.commandHelp = {
+      'remix.call(message: {name, key, payload})': 'Call a registered plugins',
       'remix.getFile(path)': 'Returns the content of the file located at the given path',
       'remix.setFile(path, content)': 'set the content of the file located at the given path',
       'remix.debug(hash)': 'Start debugging a transaction.',
@@ -39,6 +40,9 @@ class CmdInterpreterAPI {
       'remix.help()': 'Display this help message',
       'remix.debugHelp()': 'Display help message for debugging'
     }
+  }
+  call (message) {
+    return this._components.terminal.externalApi.request(message)
   }
   log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
   highlight (rawLocation) {

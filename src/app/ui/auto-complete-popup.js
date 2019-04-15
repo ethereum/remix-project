@@ -23,8 +23,9 @@ class AutoCompletePopup {
     var self = this
     self.event = new EventManager()
     self.isOpen = false
+    self.opts = opts
     self.data = {
-      _options: opts.options || []
+      _options: []
     }
     self._components = {
       modal: null
@@ -33,7 +34,9 @@ class AutoCompletePopup {
     self._startingElement = 0
     self._elementsToShow = 4
     self._selectedElement = 0
+    this.extraCommands = []
     this.render()
+    this.extendAutocompletion()
   }
 
   render () {
@@ -149,16 +152,22 @@ class AutoCompletePopup {
       this.isOpen = true
       this.data._options = []
       Commands.allPrograms.forEach(item => {
-        let program = getKeyOf(item)
+        const program = getKeyOf(item)
         if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
           this.data._options.push(item)
         } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
           Commands.allCommands.forEach(item => {
-            let command = getKeyOf(item)
+            const command = getKeyOf(item)
             if (command.includes(autoCompleteInput.trim())) {
               this.data._options.push(item)
             }
           })
+        }
+      })
+      this.extraCommands.forEach(item => {
+        const command = getKeyOf(item)
+        if (command.includes(autoCompleteInput.trim())) {
+          this.data._options.push(item)
         }
       })
 
@@ -187,6 +196,21 @@ class AutoCompletePopup {
     this._startingElement = 0
     this._selectedElement = 0
     yo.update(this._view, this.render())
+  }
+
+  extendAutocompletion () {
+    // TODO: this is not using the appManager interface. Terminal should be put as module
+    this.opts.appStore.event.on('activate', (id) => {
+      const profile = this.opts.appStore.getOne(id).profile
+      if (!profile.methods) return
+      profile.methods.forEach((method) => {
+        const key = `remix.call({name: '${id}', key:'${method}', payload: []}).then((result) => { console.log(result) }).catch((error) => { console.log(error) })`
+        const keyValue = {}
+        keyValue[key] = `call ${id} - ${method}`
+        if (this.extraCommands.includes(keyValue)) return
+        this.extraCommands.push(keyValue)
+      })
+    })
   }
 }
 

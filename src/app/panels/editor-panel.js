@@ -100,7 +100,8 @@ class EditorPanel {
     self._components.contextView = contextView
     self._components.terminal = new Terminal({
       udapp: self._deps.udapp,
-      compilers: {}
+      appStore: self.appStore,
+      appManager: self.appManager
     },
       {
         getPosition: (event) => {
