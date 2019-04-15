@@ -41,8 +41,8 @@ class CmdInterpreterAPI {
       'remix.debugHelp()': 'Display help message for debugging'
     }
   }
-  async call (message) {
-    return await this._components.terminal.externalApi.request(message)
+  call (message) {
+    return this._components.terminal.externalApi.request(message)
   }
   log () { arguments[0] != null ? this._components.terminal.commands.html(arguments[0]) : this._components.terminal.commands.html(arguments[1]) }
   highlight (rawLocation) {
