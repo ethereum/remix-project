@@ -152,12 +152,12 @@ class AutoCompletePopup {
       this.isOpen = true
       this.data._options = []
       Commands.allPrograms.forEach(item => {
-        let program = getKeyOf(item)
+        const program = getKeyOf(item)
         if (program.substring(0, program.length - 1).includes(autoCompleteInput.trim())) {
           this.data._options.push(item)
         } else if (autoCompleteInput.trim().includes(program) || (program === autoCompleteInput.trim())) {
           Commands.allCommands.forEach(item => {
-            let command = getKeyOf(item)
+            const command = getKeyOf(item)
             if (command.includes(autoCompleteInput.trim())) {
               this.data._options.push(item)
             }
@@ -165,7 +165,7 @@ class AutoCompletePopup {
         }
       })
       this.extraCommands.forEach(item => {
-        let command = getKeyOf(item)
+        const command = getKeyOf(item)
         if (command.includes(autoCompleteInput.trim())) {
           this.data._options.push(item)
         }
@@ -201,7 +201,7 @@ class AutoCompletePopup {
   extendAutocompletion () {
     // TODO: this is not using the appManager interface. Terminal should be put as module
     this.opts.appStore.event.on('activate', (id) => {
-      let keyValue = {}
+      const keyValue = {}
       const profile = this.opts.appStore.getOne(id).profile
       if (!profile.methods) return
       profile.methods.forEach((method) => {
