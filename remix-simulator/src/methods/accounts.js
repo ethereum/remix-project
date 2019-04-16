@@ -7,13 +7,15 @@ var Web3 = require('web3')
 var Accounts = function () {
   this.web3 = new Web3()
   // TODO: make it random and/or use remix-libs
-  this.accounts = [this.web3.eth.accounts.create(['abcd']), this.web3.eth.accounts.create(['ef12']), this.web3.eth.accounts.create(['ef34'])]
+  this.accountsList = [this.web3.eth.accounts.create(['abcd']), this.web3.eth.accounts.create(['ef12']), this.web3.eth.accounts.create(['ef34'])]
+  this.accounts = {}
   this.accountsKeys = {}
 
   executionContext.init({get: () => { return true }})
 
-  for (let _account of this.accounts) {
+  for (let _account of this.accountsList) {
     this.accountsKeys[_account.address.toLowerCase()] = _account.privateKey
+    this.accounts[_account.address.toLowerCase()] = { privateKey: Buffer.from(_account.privateKey.replace("0x", ""), 'hex'), nonce: 0 }
 
     executionContext.vm().stateManager.getAccount(Buffer.from(_account.address.toLowerCase().replace("0x", ""), 'hex'), (err, account) => {
       var balance = '0x56BC75E2D63100000'
@@ -31,7 +33,7 @@ Accounts.prototype.methods = function () {
 }
 
 Accounts.prototype.eth_accounts = function (payload, cb) {
-  return cb(null, this.accounts.map((x) => x.address))
+  return cb(null, this.accountsList.map((x) => x.address))
 }
 
 Accounts.prototype.eth_getBalance = function (payload, cb) {
