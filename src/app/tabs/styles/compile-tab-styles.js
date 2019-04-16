@@ -141,33 +141,83 @@ const css = csjs`
   .icon {
     margin-right: 0.3em;
   }
-  .spinningIcon {
-    margin-right: .3em;
-    animation: spin 2s linear infinite;
-  }
-  .bouncingIcon {
-    margin-right: .3em;
-    animation: bounce 2s infinite;
-  }
   .errorBlobs {
     padding-left: 5px;
     padding-right: 5px;
+  }
+
+  .spinningIcon {
+    display: inline-block;
+    position: relative;
+    animation: spin 2s infinite linear;
+    -moz-animation: spin 2s infinite linear;
+    -o-animation: spin 2s infinite linear;
+    -webkit-animation: spin 2s infinite linear;
   }
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  @-webkit-keyframes bounce {
-    0% {
-      margin-bottom: 0;
-    }
-    70% {
-      margin-bottom: 0;
-    }
-    100% {
-      margin-bottom: 0;
-    }
+  @-webkit-keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
+  @-moz-keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @-o-keyframes spin {
+     0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @-ms-keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+
+  .bouncingIcon {
+    display: inline-block;
+    position: relative;
+    -moz-animation: bounce 2s infinite linear;
+    -o-animation: bounce 2s infinite linear;
+    -webkit-animation: bounce 2s infinite linear;
+    animation: bounce 2s infinite linear;
+  } 
+
+  @-webkit-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @-moz-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @-o-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @-ms-keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+  @keyframes bounce {
+      0% { top: 0; }
+      50% { top: -0.2em; }
+      70% { top: -0.3em; }
+      100% { top: 0; }
+  }
+
+
+
 `
 
 module.exports = css
