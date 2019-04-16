@@ -28,9 +28,9 @@ Implemented:
 * [_] eth_sendRawTransaction
 * [X] eth_call
 * [~] eth_estimateGas
-* [_] eth_getBlockByHash
+* [~] eth_getBlockByHash
 * [~] eth_getBlockByNumber
-* [_] eth_getTransactionByHash
+* [~] eth_getTransactionByHash
 * [_] eth_getTransactionByBlockHashAndIndex
 * [_] eth_getTransactionByBlockNumberAndIndex
 * [~] eth_getTransactionReceipt
