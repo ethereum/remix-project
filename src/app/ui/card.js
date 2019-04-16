@@ -16,7 +16,7 @@ module.exports = class Card {
     if (self._view.el) return self._view.el
 
     self._view.cardBody = yo`<div class=${css.cardBody}></div>`
-    self._view.arrow = yo`<i class="${css.arrow} fa fa-angle-down" onclick="${() => trigger(this)}"></i>`
+    self._view.arrow = yo`<i class="${css.arrow} fas fa-angle-down" onclick="${() => trigger(this)}"></i>`
 
     self._view.expandCollapseButton = yo`
     <div class=${css.expandCollapseButton}>${self._view.arrow}</div>`

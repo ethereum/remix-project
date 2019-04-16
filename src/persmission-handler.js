@@ -141,7 +141,7 @@ export class PermissionHandler {
     <section class="${css.permission}">
       <article class="${css.images}">
         <img src="${from.icon}" />
-        <i class="fa fa-arrow-right"></i>
+        <i class="fas fa-arrow-right"></i>
         <img src="${to.icon}" />
       </article>
       

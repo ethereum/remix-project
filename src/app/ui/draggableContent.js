@@ -44,9 +44,9 @@ module.exports =
       <div>
           <div class="${css.headerDraggableModal} title" title=${title}><span title="${title}" >${title}</span><span title="${url}" > - ${url}</span>
             <div class=${css.modalActions}>
-              <i onclick=${() => { this.minimize() }} class="fa fa-window-minimize ${css.modalAction}"></i>
-              <i onclick=${() => { this.maximise() }} class="fa fa-window-maximize ${css.modalAction}"></i>
-              <i onclick=${() => { this.close() }} class="fa fa-window-close-o ${css.modalAction}"></i>
+              <i onclick=${() => { this.minimize() }} class="fas fa-window-minimize ${css.modalAction}"></i>
+              <i onclick=${() => { this.maximise() }} class="fas fa-window-maximize ${css.modalAction}"></i>
+              <i onclick=${() => { this.close() }} class="fas fa-window-close-o ${css.modalAction}"></i>
             </div>
           </div>
         </div>

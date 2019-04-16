@@ -41,7 +41,7 @@ class Dropdown {
     self._view.selected = yo`
       <div class=${css.selectbox}>
         <span class=${css.selected}> [${self.data.selected.length}] ${self.data.selected.join(', ')}</span>
-        <i class="${css.icon} fa fa-caret-down"></i>
+        <i class="${css.icon} fas fa-caret-down"></i>
       </div>
     `
     self._view.el = yo`
