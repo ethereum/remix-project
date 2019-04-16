@@ -160,14 +160,12 @@ export class LandingPage extends BaseApi {
       this.appManager.ensureActivated('run')
       this.appManager.ensureActivated('solidityStaticAnalysis')
       this.appManager.ensureActivated('solidityUnitTesting')
-      globalRegistry.get('filemanager').api.switchFile()
       globalRegistry.get('verticalicon').api.select('solidity')
     }
     let startVyper = () => {
       closeAll()
       this.appManager.ensureActivated('vyper')
       this.appManager.ensureActivated('run')
-      globalRegistry.get('filemanager').api.switchFile()
       globalRegistry.get('verticalicon').api.select('vyper')
     }
 
