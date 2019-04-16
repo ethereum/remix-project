@@ -44,7 +44,7 @@ TraceManager.prototype.resolveTrace = function (tx, callback) {
           }
         })
       } else {
-        var mes = tx.hash + ' is not a contract invokation or contract creation.'
+        var mes = tx.hash + ' is not a contract invocation or contract creation.'
         console.log(mes)
         self.isLoading = false
         callback(mes, false)
