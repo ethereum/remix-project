@@ -2,8 +2,9 @@ var RemixLib = require('remix-lib')
 var executionContext = RemixLib.execution.executionContext
 var ethJSUtil = require('ethereumjs-util')
 var processTx = require('./txProcess.js')
+var BN = ethJSUtil.BN
 
-function hexConvert(ints) {
+function hexConvert (ints) {
   var ret = '0x'
   for (var i = 0; i < ints.length; i++) {
     var h = ints[i]
@@ -37,12 +38,10 @@ Transactions.prototype.eth_sendTransaction = function (payload, cb) {
 }
 
 Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
-  const self = this
   executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
     if (error) {
       return cb(error)
     }
-    //self.deployedContracts[receipt.contractAddress] = receipt.data
 
     var r = {
       'transactionHash': receipt.hash,
@@ -82,6 +81,9 @@ Transactions.prototype.eth_getTransactionCount = function (payload, cb) {
   let address = payload.params[0]
 
   executionContext.vm().stateManager.getAccount(address, (err, account) => {
+    if (err) {
+      return cb(err)
+    }
     let nonce = new BN(account.nonce).toString(10)
     cb(null, nonce)
   })
@@ -95,23 +97,23 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
       return cb(error)
     }
 
-    web3.eth.getBlock(receipt.hash).then((block) => {
+    //executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
       const r = {
-        "hash": receipt.transactionHash,
-        //"nonce": 2,
-        "blockHash": receipt.hash,
-        "blockNumber": block.number,
-        //"transactionIndex": 0,
-        "from": receipt.from,
-        "to": receipt.to,
-        "value": receipt.value,
-        "gas": receipt.gas,
-        "gasPrice": '2000000000000',
-        "input": receipt.input
+        'hash': receipt.transactionHash,
+        // "nonce": 2,
+        'blockHash': receipt.hash,
+        //'blockNumber': block.number,
+        // "transactionIndex": 0,
+        'from': receipt.from,
+        'to': receipt.to,
+        'value': receipt.value,
+        'gas': receipt.gas,
+        'gasPrice': '2000000000000',
+        'input': receipt.input
       }
 
       cb(null, r)
-    })
+    //})
   })
 }
 
