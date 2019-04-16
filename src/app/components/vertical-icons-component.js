@@ -90,7 +90,7 @@ class VerticalIconComponent {
       let key = helper.checkSpecialChars(status.key) ? '' : status.key
       let type = helper.checkSpecialChars(status.type) ? '' : status.type
       let title = helper.checkSpecialChars(status.title) ? '' : status.title
-      el.appendChild(yo`<span title="${title}" class="fa fa-${key} ${css.status} text-${type}" aria-hidden="true"></span>`)
+      el.appendChild(yo`<span title="${title}" class="fas fa-${key} ${css.status} text-${type}" aria-hidden="true"></span>`)
 
       // el.classList = "" doesn't work on all browser use instead
       var classList = el.classList

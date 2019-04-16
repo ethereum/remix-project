@@ -142,7 +142,7 @@ class Terminal extends BaseApi {
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
+      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fas fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
@@ -154,7 +154,7 @@ class Terminal extends BaseApi {
         <div class="${css.menu} border-top bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
-            <i class="fa fa-ban" aria-hidden="true" title="Clear console"
+            <i class="fas fa-ban" aria-hidden="true" title="Clear console"
             onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
           ${self._view.pendingTxCount}
@@ -166,7 +166,7 @@ class Terminal extends BaseApi {
           </div>
           ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
+            <i class="fas fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
             ${self._view.inputSearch}
           </div>
         </div>

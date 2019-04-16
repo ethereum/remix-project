@@ -44,8 +44,8 @@ class ContractDropdownUI {
   }
 
   render () {
-    this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
-    var info = yo`<i class="fa fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
+    this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="fas fa-times-circle ${css.errorIcon}" ></i>`
+    var info = yo`<i class="fas fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
 
     this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="atAddress" />`
     this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`

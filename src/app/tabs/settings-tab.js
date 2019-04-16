@@ -81,7 +81,7 @@ module.exports = class SettingsTab extends BaseApi {
     Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...).
     It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM.
     Remix never persist any passphrase.`.split('\n').map(s => s.trim()).join(' ')
-    this._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
+    this._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
     this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox" class="form-check-input">`
 
     if (this.config.get('settings/generate-contract-metadata')) this._view.generateContractMetadata.setAttribute('checked', '')
