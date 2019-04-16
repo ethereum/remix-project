@@ -76,6 +76,14 @@ class CompileTab extends CompilerApi {
    */
 
   listenToEvents () {
+    this.compiler.event.register('loadingCompiler', () => {
+      this.events.emit('statusChanged', {key: 'spinner', title: 'loading compiler...', type: 'info'})
+    })
+
+    this.compiler.event.register('compilerLoaded', () => {
+      this.events.emit('statusChanged', {key: '', title: '', type: ''})
+    })
+
     this.compiler.event.register('compilationStarted', () => {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
@@ -355,8 +363,6 @@ class CompileTab extends CompilerApi {
     this._view.errorContainer = yo`<div class="${css.errorBlobs}"></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-    const currentFile = this.fileManager.currentFile()
-    if (currentFile) this.compilerContainer.currentFile = currentFile
 
     this._view.el = yo`
       <div id="compileTabView">
