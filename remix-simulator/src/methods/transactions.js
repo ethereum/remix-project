@@ -1,5 +1,6 @@
 var RemixLib = require('remix-lib')
 var executionContext = RemixLib.execution.executionContext
+var ethJSUtil = require('ethereumjs-util')
 var processTx = require('./txProcess.js')
 
 function hexConvert(ints) {
@@ -17,8 +18,6 @@ function hexConvert(ints) {
 
 var Transactions = function (accounts) {
   this.accounts = accounts
-  // TODO: fix me; this is a temporary and very hackish thing just to get the getCode working for now
-  //this.deployedContracts = {}
 }
 
 Transactions.prototype.methods = function () {
@@ -28,7 +27,8 @@ Transactions.prototype.methods = function () {
     eth_getCode: this.eth_getCode.bind(this),
     eth_call: this.eth_call.bind(this),
     eth_estimateGas: this.eth_estimateGas.bind(this),
-    eth_getTransactionCount: this.eth_getTransactionCount.bind(this)
+    eth_getTransactionCount: this.eth_getTransactionCount.bind(this),
+    eth_getTransactionByHash: this.eth_getTransactionByHash.bind(this)
   }
 }
 
@@ -68,10 +68,10 @@ Transactions.prototype.eth_getCode = function (payload, cb) {
   let address = payload.params[0]
 
   const account = ethJSUtil.toBuffer(address)
+
   executionContext.vm().stateManager.getContractCode(account, (error, result) => {
     cb(error, hexConvert(result))
   })
-  //cb(null, this.deployedContracts[address] || '0x')
 }
 
 Transactions.prototype.eth_call = function (payload, cb) {
@@ -84,6 +84,34 @@ Transactions.prototype.eth_getTransactionCount = function (payload, cb) {
   executionContext.vm().stateManager.getAccount(address, (err, account) => {
     let nonce = new BN(account.nonce).toString(10)
     cb(null, nonce)
+  })
+}
+
+Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
+  const address = payload.params[0]
+
+  executionContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
+    if (error) {
+      return cb(error)
+    }
+
+    web3.eth.getBlock(receipt.hash).then((block) => {
+      const r = {
+        "hash": receipt.transactionHash,
+        //"nonce": 2,
+        "blockHash": receipt.hash,
+        "blockNumber": block.number,
+        //"transactionIndex": 0,
+        "from": receipt.from,
+        "to": receipt.to,
+        "value": receipt.value,
+        "gas": receipt.gas,
+        "gasPrice": '2000000000000',
+        "input": receipt.input
+      }
+
+      cb(null, r)
+    })
   })
 }
 
