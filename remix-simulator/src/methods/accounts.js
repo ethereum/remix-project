@@ -15,9 +15,12 @@ var Accounts = function () {
 
   for (let _account of this.accountsList) {
     this.accountsKeys[_account.address.toLowerCase()] = _account.privateKey
-    this.accounts[_account.address.toLowerCase()] = { privateKey: Buffer.from(_account.privateKey.replace("0x", ""), 'hex'), nonce: 0 }
+    this.accounts[_account.address.toLowerCase()] = { privateKey: Buffer.from(_account.privateKey.replace('0x', ''), 'hex'), nonce: 0 }
 
-    executionContext.vm().stateManager.getAccount(Buffer.from(_account.address.toLowerCase().replace("0x", ""), 'hex'), (err, account) => {
+    executionContext.vm().stateManager.getAccount(Buffer.from(_account.address.toLowerCase().replace('0x', ''), 'hex'), (err, account) => {
+      if (err) {
+        throw new Error(err)
+      }
       var balance = '0x56BC75E2D63100000'
       account.balance = balance || '0xf00000000000000001'
     })
@@ -42,7 +45,7 @@ Accounts.prototype.eth_getBalance = function (payload, cb) {
 
   executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, account) => {
     if (err) {
-      return cb('Account not found')
+      return cb(err)
     }
     cb(null, new BN(account.balance).toString(10))
   })
@@ -53,7 +56,7 @@ Accounts.prototype.eth_sign = function (payload, cb) {
   let message = payload.params[1]
 
   let privateKey = this.accountsKeys[address]
-  let account = web3.eth.accounts.privateKeyToAccount(privateKey)
+  let account = Web3.eth.accounts.privateKeyToAccount(privateKey)
 
   let data = account.sign(message)
 

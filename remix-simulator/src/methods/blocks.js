@@ -1,8 +1,8 @@
-var Web3 = require("web3")
+var Web3 = require('web3')
 
 var Blocks = function (_options) {
   const options = _options || {}
-  this.coinbase = options.coinbase || "0x0000000000000000000000000000000000000000"
+  this.coinbase = options.coinbase || '0x0000000000000000000000000000000000000000'
   this.blockNumber = 0
 }
 
