@@ -61,7 +61,7 @@ class ContractDropdownUI {
           ${this.createPanel}
           ${this.orLabel}
           <div class="${css.button} ${css.atAddressSect}">
-            <div class="${css.atAddress} btn btn-sm btn-primary" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
+            <div class="${css.atAddress} btn btn-sm btn-info" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
             ${this.atAddressButtonInput}
           </div>
         </div>
