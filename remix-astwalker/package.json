@@ -1,6 +1,6 @@
 {
   "name": "remix-astwalker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Remix sub-module for walking through AST",
   "main": "dist/index.js",
   "scripts": {
