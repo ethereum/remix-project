@@ -37,7 +37,6 @@ UniversalDApp.prototype.resetEnvironment = function () {
     this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
     this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea', '0x56BC75E2D63100000')
     this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
-    executionContext.vm().stateManager.cache.flush(function () {})
   }
   // TODO: most params here can be refactored away in txRunner
   this.txRunner = new TxRunner(this.accounts, {
@@ -65,7 +64,6 @@ UniversalDApp.prototype.resetAPI = function (transactionContextAPI) {
 
 UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
   this._addAccount(privateKey, balance)
-  executionContext.vm().stateManager.cache.flush(function () {})
   privateKey = Buffer.from(privateKey, 'hex')
   cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
 }
@@ -84,7 +82,6 @@ UniversalDApp.prototype.newAccount = function (password, passwordPromptCb, cb) {
       privateKey = crypto.randomBytes(32)
     } while (!ethJSUtil.isValidPrivate(privateKey))
     this._addAccount(privateKey, '0x56BC75E2D63100000')
-    executionContext.vm().stateManager.cache.flush(function () {})
     cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
   }
 }
@@ -101,7 +98,14 @@ UniversalDApp.prototype._addAccount = function (privateKey, balance) {
     var address = ethJSUtil.privateToAddress(privateKey)
 
     // FIXME: we don't care about the callback, but we should still make this proper
-    executionContext.vm().stateManager.putAccountBalance(address, balance || '0xf00000000000000001', function cb () {})
+    let stateManager = executionContext.vm().stateManager
+    stateManager.getAccount(address, (error, account) => {
+      if (error) return console.log(error)
+      account.balance = balance || '0xf00000000000000001'
+      stateManager.putAccount(address, account, function cb (error) {
+        if (error) console.log(error)
+      })
+    })
     self.accounts['0x' + address.toString('hex')] = { privateKey: privateKey, nonce: 0 }
   }
 }
@@ -144,11 +148,11 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       return cb('No accounts?')
     }
 
-    executionContext.vm().stateManager.getAccountBalance(Buffer.from(address, 'hex'), function (err, res) {
+    executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), function (err, res) {
       if (err) {
         cb('Account not found')
       } else {
-        cb(null, new BN(res).toString(10))
+        cb(null, new BN(res.balance).toString(10))
       }
     })
   }
