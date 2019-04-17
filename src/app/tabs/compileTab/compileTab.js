@@ -1,4 +1,5 @@
 const async = require('async')
+const EventEmitter = require('events')
 var remixTests = require('remix-tests')
 var Compiler = require('remix-solidity').Compiler
 var CompilerImport = require('../../compiler/compiler-imports')
@@ -9,6 +10,7 @@ const addTooltip = require('../../ui/tooltip')
 class CompileTab {
 
   constructor (queryParams, fileManager, editor, config, fileProviders) {
+    this.event = new EventEmitter()
     this.queryParams = queryParams
     this.compilerImport = new CompilerImport()
     this.compiler = new Compiler((url, cb) => this.importFileCb(url, cb))
@@ -45,7 +47,11 @@ class CompileTab {
     provider.get(target, (error, content) => {
       if (error) return console.log(error)
       sources[target] = { content }
-      this.compiler.compile(sources, target)
+      this.event.emit('startingCompilation')
+      setTimeout(() => {
+        // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
+        this.compiler.compile(sources, target)
+      }, 100)
     })
   }
 

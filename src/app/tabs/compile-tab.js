@@ -76,6 +76,12 @@ class CompileTab extends CompilerApi {
    */
 
   listenToEvents () {
+    let onContentChanged = () => {
+      this.events.emit('statusChanged', {key: 'code', title: 'content changed, needs recompilation', type: 'info'})
+    }
+    this.editor.event.register('contentChanged', onContentChanged)
+    this.editor.event.register('sessionSwitched', onContentChanged)
+
     this.compiler.event.register('loadingCompiler', () => {
       this.events.emit('statusChanged', {key: 'spinner', title: 'loading compiler...', type: 'info'})
     })
@@ -84,7 +90,7 @@ class CompileTab extends CompilerApi {
       this.events.emit('statusChanged', {key: '', title: '', type: ''})
     })
 
-    this.compiler.event.register('compilationStarted', () => {
+    this.compileTabLogic.event.on('startingCompilation', () => {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
@@ -93,10 +99,12 @@ class CompileTab extends CompilerApi {
 
     this.fileManager.events.on('currentFileChanged', (name) => {
       this.compilerContainer.currentFile = name
+      onContentChanged()
     })
 
     this.fileManager.events.on('noFileSelected', () => {
       this.compilerContainer.currentFile = ''
+      onContentChanged()
     })
 
     this.compiler.event.register('compilationFinished', (success, data, source) => {
