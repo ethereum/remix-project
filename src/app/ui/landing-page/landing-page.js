@@ -250,7 +250,7 @@ export class LandingPage extends BaseApi {
             <h4>Featured Plugins</h4>
             <p class="mb-1 ${css.text}" onclick=${() => { startPipeline() }}>Pipeline</p>
             <p class="mb-1 ${css.text}" onclick=${() => { startDebugger() }}>Debugger</p>
-            <p class="mb-1"><button onclick=${() => { startPluginManager() }} class="btn btn-sm btn-secondary ${css.seeAll}">See all Plugins <i class="fa fa-plug" ></i></button></p>
+            <p class="mb-1"><button onclick=${() => { startPluginManager() }} class="btn btn-sm btn-secondary ${css.seeAll}">See all Plugins <i class="fas fa-plug" ></i></button></p>
           </div>
           <div class="resources">
             <h4>Resources</h4>

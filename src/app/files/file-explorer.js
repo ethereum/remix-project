@@ -32,19 +32,19 @@ function fileExplorer (localRegistry, files, menuItems) {
       },
       { action: 'publishToGist',
         title: 'Publish all [browser] explorer files to a github gist',
-        icon: 'fas fa-github'
+        icon: 'fab fa-github'
       },
       { action: 'copyFiles',
         title: 'Copy all files to another instance of Remix IDE',
-        icon: 'fas fa-files-o'
+        icon: 'fas fa-copy'
       },
       { action: 'uploadFile',
         title: 'Add Local file to the Browser Storage Explorer',
-        icon: 'fas fa-folder-open'
+        icon: 'far fa-folder-open'
       },
       { action: 'updateGist',
         title: 'Update the current [gist] explorer',
-        icon: 'fas fa-github'
+        icon: 'fab fa-github'
       }
     ]
   // menu items
