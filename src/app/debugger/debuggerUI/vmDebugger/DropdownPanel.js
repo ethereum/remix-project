@@ -65,7 +65,7 @@ DropdownPanel.prototype.setMessage = function (message) {
   if (!this.view) return
   this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
   this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
-  this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
+  this.view.querySelector('.dropdownpanel > i').style.display = 'none'
   this.message(message)
 }
 
@@ -73,7 +73,7 @@ DropdownPanel.prototype.setLoading = function () {
   if (!this.view) return
   this.view.querySelector('.dropdownpanel .dropdownrawcontent').style.display = 'none'
   this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'none'
-  this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'inline-block'
+  this.view.querySelector('.dropdownpanel > i').style.display = 'inline-block'
   this.message('')
 }
 
@@ -83,7 +83,7 @@ DropdownPanel.prototype.setUpdating = function () {
 
 DropdownPanel.prototype.update = function (_data, _header) {
   if (!this.view) return
-  this.view.querySelector('.dropdownpanel .fa-refresh').style.display = 'none'
+  this.view.querySelector('.dropdownpanel > i').style.display = 'none'
   this.view.querySelector('.dropdownpanel .dropdowncontent').style.display = 'block'
   this.view.querySelector('.dropdownpanel .dropdownrawcontent').innerText = JSON.stringify(_data, null, '\t')
   if (!this.displayContentOnly) {
