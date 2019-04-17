@@ -25,7 +25,7 @@ class RecorderUI {
 
     this.runButton = yo`<i class="fas fa-play runtransaction ${css2.runTxs} ${css.icon}"  title="Run Transactions" aria-hidden="true"></i>`
     this.recordButton = yo`
-      <i class="fas fa-floppy-o savetransaction ${css2.recorder} ${css.icon}"
+      <i class="fas fa-save savetransaction ${css2.recorder} ${css.icon}"
         onclick=${this.triggerRecordButton.bind(this)} title="Save Transactions" aria-hidden="true">
       </i>`
 
