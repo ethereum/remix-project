@@ -97,23 +97,23 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
       return cb(error)
     }
 
-    //executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
-      const r = {
-        'hash': receipt.transactionHash,
-        // "nonce": 2,
-        'blockHash': receipt.hash,
-        //'blockNumber': block.number,
-        // "transactionIndex": 0,
-        'from': receipt.from,
-        'to': receipt.to,
-        'value': receipt.value,
-        'gas': receipt.gas,
-        'gasPrice': '2000000000000',
-        'input': receipt.input
-      }
+    // executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
+    const r = {
+      'hash': receipt.transactionHash,
+      // "nonce": 2,
+      'blockHash': receipt.hash,
+      // 'blockNumber': block.number,
+      // "transactionIndex": 0,
+      'from': receipt.from,
+      'to': receipt.to,
+      'value': receipt.value,
+      'gas': receipt.gas,
+      'gasPrice': '2000000000000',
+      'input': receipt.input
+    }
 
-      cb(null, r)
-    //})
+    cb(null, r)
+    // })
   })
 }
 

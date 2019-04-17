@@ -7,7 +7,7 @@ var assert = require('assert')
 describe('blocks', function () {
   before(function () {
     let provider = new RemixSim.Provider({
-      coinbase: "0x0000000000000000000000000000000000000001"
+      coinbase: '0x0000000000000000000000000000000000000001'
     })
     web3.setProvider(provider)
   })
@@ -48,7 +48,6 @@ describe('blocks', function () {
 
   it('should get coinbase', async function () {
     let coinbase = await web3.eth.getCoinbase()
-    assert.equal(coinbase, "0x0000000000000000000000000000000000000001")
+    assert.equal(coinbase, '0x0000000000000000000000000000000000000001')
   })
-
 })
