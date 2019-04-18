@@ -200,7 +200,7 @@ export class LandingPage extends BaseApi {
     globalRegistry.get('themeModule').api.events.on('themeChanged', (type) => {
       const invert = type === 'dark' ? 1 : 0
       const img = document.getElementById('remixLogo')
-      if (img)  {
+      if (img) {
         img.style.filter = `invert(${invert})`
       }
     })
