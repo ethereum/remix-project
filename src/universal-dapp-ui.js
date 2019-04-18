@@ -68,10 +68,10 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title} alert alert-dark">
-      <button class="btn btn-light ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+    <div class="${css.title} alert alert-info">
+      <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fa fa-caret-right" aria-hidden="true"></i></button>
       <div class="input-group ${css.nameNbuts}">
-        <div class="${css.titleText} input-group-prepend"><span class="input-group-text"> ${contractName} at ${shortAddress} (${context})</span></div>
+        <div class="${css.titleText} input-group-prepend"><span class="input-group-text ${css.spanTitleText}"> ${contractName} at ${shortAddress} (${context})</span></div>
         <div class="btn-group">
           <button class="btn btn-secondary">${copyToClipboard(() => address)}</button>
         </div>

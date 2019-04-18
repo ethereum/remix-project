@@ -17,7 +17,8 @@ var css = csjs`
     line-height: initial;
     overflow: visible;
     margin-bottom: 0px;
-    padding-left: 10px;
+    padding-left: 0px;
+    padding-right: 10px;
   }
   .noInstancesText {
 
@@ -29,7 +30,13 @@ var css = csjs`
   .titleText {
     /* margin-right: 1em; */
     word-break: break-word;
-    min-width: 230px;
+    min-width: 170px;
+    width: 100%;
+  }
+  .spanTitleText {
+    /* font-size: .8rem; */
+    font-size: 11px;
+    width:100%;
   }
   .inputGroupText {
     width: 100%;
@@ -38,10 +45,12 @@ var css = csjs`
     color: var(--primary);
   }
   .titleExpander {
-    margin-right: 10px;
+    /* margin-right: 10px; */
+    padding: 5px 7px;
   }
   .nameNbuts {
     flex-wrap: nowrap;
+    width: 100%;
   }
   .instance {
     display: block;
