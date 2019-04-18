@@ -160,6 +160,7 @@ export class LandingPage extends BaseApi {
     let importFromGist = () => {
       let app = globalRegistry.get('app').api
       app.loadFromGist({gist: ''})
+      globalRegistry.get('verticalicon').api.select('fileExplorers')
     }
 
     let container = yo`<div class="${css.homeContainer} bg-light">
