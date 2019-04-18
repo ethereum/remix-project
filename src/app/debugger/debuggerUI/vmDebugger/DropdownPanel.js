@@ -99,7 +99,7 @@ DropdownPanel.prototype.update = function (_data, _header) {
 DropdownPanel.prototype.setContent = function (node) {
   if (!this.view) return
   var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
-  parent.replaceChild(node, parent.firstElementChild)
+  if (parent) parent.replaceChild(node, parent.firstElementChild)
 }
 
 DropdownPanel.prototype.render = function (overridestyle) {
