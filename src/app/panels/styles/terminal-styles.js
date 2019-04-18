@@ -90,17 +90,17 @@ var css = csjs`
   .search {
     display           : flex;
     align-items       : center;
-    width             : 200px;
+    width             : 330px;
     padding-left      : 20px;
     height            : 100%;
   }
   .filter                       {
-    width                       : 200px;
     padding-right               : 0px;
     margin-right                : 0px;
-    border-top-left-radius      : 0px;
-    border-bottom-left-radius   : 0px;
     height                      : 100%;
+    white-space                 : nowrap;
+    overflow                    : hidden;
+    text-overflow               : ellipsis;
   }
   .searchIcon                   {
     height                      : 100%;

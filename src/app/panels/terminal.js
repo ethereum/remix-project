@@ -125,7 +125,14 @@ class Terminal extends BaseApi {
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
 
     self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
-    self._view.inputSearch = yo`<input spellcheck="false" type="text" class="${css.filter} form-control" id="input" onkeydown=${filter}  placeholder="Search transactions"></input>`
+    self._view.inputSearch = yo`<input
+      spellcheck="false"
+      type="text"
+      class="${css.filter} form-control"
+      id="input"
+      onkeydown=${filter}
+      placeholder="Search with transaction hash or address">
+    </input>`
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
@@ -138,9 +145,19 @@ class Terminal extends BaseApi {
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
           <div class="form-check">
-            <input id="listenNetworkCheck" onchange=${listenOnNetwork} type="checkbox" class="form-check-input "
-            title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you">
-            <label class="form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
+            <input
+              id="listenNetworkCheck"
+              onchange=${listenOnNetwork}
+              type="checkbox" class="form-check-input "
+              title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+            >
+            <label
+              class="form-check-label"
+              title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+              for="listenNetworkCheck"
+            >
+              listen on network
+            </label>
           </div>
           <div class=${css.search}>
             <i class="fa fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
