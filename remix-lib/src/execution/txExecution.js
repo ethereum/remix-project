@@ -90,7 +90,7 @@ module.exports = {
         var reason = abiCoder.decode(['string'], returnData.slice(4))[0]
         msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
       } else {
-        msg = `\tThe transaction has been reverted to the initial state.\nNote: The constructor should be payable if you send value.`
+        msg = `\tThe transaction has been reverted to the initial state.\nNote: The called function should be payable if you send value and the value you send should be less than your current balance.`
       }
       ret.error = true
     } else if (exceptionError === errorCode.STATIC_STATE_CHANGE) {
