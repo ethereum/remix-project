@@ -6,41 +6,6 @@ var modalDialogCustom = require('../modal-dialog-custom')
 var tooltip = require('../tooltip')
 
 let css = csjs`
-  .sectionContainer {
-    display         : flex;
-    flex-direction  : column;
-    flex-wrap       : wrap;
-    align-content   : space-around;
-    padding         : 20px;
-    max-width       : 300px;
-    min-height      : 200px;
-    background-color: var(--light);
-  }
-  .landingPage {
-    height          : 100%;
-    width           : 100%;
-    flex-wrap       : wrap;
-    justify-content : space-evenly;
-    user-select     : none;
-  }
-  .im {
-    display         : grid;
-    max-width       : 200px;
-    max-height      : 200px;
-    width           : 100%;
-    height          : 100%;
-    padding         : 20px;
-    background-color: var(--bg-light);
-    align-self      : center;
-  }
-  .im:hover {
-  }
-  .getStarted {
-    margin-top      : 50px;
-    width           : 100%;
-    font-size       : xx-large;
-    align-self      : center;
-  }
   .text {
     cursor: pointer;
     font-weight: normal;
