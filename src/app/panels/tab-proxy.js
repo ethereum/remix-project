@@ -27,7 +27,7 @@ export class TabProxy {
         this._view.filetabs.activateTab(file)
         return
       }
-      this.addTab(file, () => {
+      this.addTab(file, '', () => {
         this.fileManager.switchFile(file)
         this.event.emit('switchFile', file)
       },
@@ -39,7 +39,7 @@ export class TabProxy {
 
     fileManager.events.on('fileRenamed', (oldName, newName) => {
       this.removeTab(oldName)
-      this.addTab(newName, () => {
+      this.addTab(newName, '', () => {
         this.fileManager.switchFile(newName)
         this.event.emit('switchFile', newName)
       },
@@ -54,6 +54,7 @@ export class TabProxy {
       if (profile.location === 'mainPanel') {
         this.addTab(
           name,
+          profile.displayName,
           () => this.event.emit('switchApp', name),
           () => {
             this.event.emit('closeApp', name)
@@ -104,9 +105,13 @@ export class TabProxy {
     this._view.filetabs.activateTab(name)
   }
 
-  addTab (name, switchTo, close, kind) {
+  addTab (name, title, switchTo, close, kind) {
+    if (this._handlers[name]) return
+
     var slash = name.split('/')
-    let title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
+    if (!title) {
+      title = name.indexOf('/') !== -1 ? slash[slash.length - 1] : name
+    }
     this._view.filetabs.addTab({
       id: name,
       title,
@@ -117,7 +122,7 @@ export class TabProxy {
   }
 
   removeTab (name) {
-    this._view.filetabs.closeTab(name)
+    this._view.filetabs.removeTab(name)
     delete this._handlers[name]
   }
 

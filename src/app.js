@@ -6,7 +6,6 @@ var yo = require('yo-yo')
 var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
-var EventManager = require('./lib/events')
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -54,9 +53,8 @@ import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
-import { ApiFactory } from 'remix-plugin'
-import { TxListenerModule } from './app/tabs/txlistener-module'
 import { ThemeModule } from './app/tabs/theme-module'
+import { NetworkModule } from './app/tabs/network-module'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -116,11 +114,9 @@ var css = csjs`
   }
 `
 
-class App extends ApiFactory {
+class App {
   constructor (api = {}, events = {}, opts = {}) {
-    super()
     var self = this
-    this.event = new EventManager()
     self._components = {}
     registry.put({api: self, name: 'app'})
 
@@ -167,16 +163,8 @@ class App extends ApiFactory {
 
   init () {
     var self = this
-    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300, x: 300 })
+    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300, x: 450 })
     run.apply(self)
-  }
-
-  get profile () {
-    return {
-      name: 'app',
-      description: 'service - provides information about current context (network).',
-      methods: ['getExecutionContextProvider', 'getProviderEndpoint', 'detectNetWork', 'addProvider', 'removeProvider']
-    }
   }
 
   render () {
@@ -250,45 +238,6 @@ class App extends ApiFactory {
       if (callback) callback(error)
     })
   }
-
-  getExecutionContextProvider () {
-    return new Promise((resolve, reject) => {
-      resolve(executionContext.getProvider())
-    })
-  }
-
-  getProviderEndpoint () {
-    return new Promise((resolve, reject) => {
-      if (executionContext.getProvider() === 'web3') {
-        resolve(executionContext.web3().currentProvider.host)
-      } else {
-        reject('no endpoint: current provider is either injected or vm')
-      }
-    })
-  }
-
-  detectNetWork () {
-    return new Promise((resolve, reject) => {
-      executionContext.detectNetwork((error, network) => {
-        if (error) return reject(error)
-        resolve(network)
-      })
-    })
-  }
-
-  addProvider (name, url) {
-    return new Promise((resolve, reject) => {
-      executionContext.addProvider({ name, url })
-      resolve()
-    })
-  }
-
-  removeProvider (name) {
-    return new Promise((resolve, reject) => {
-      executionContext.removeProvider(name)
-      resolve()
-    })
-  }
 }
 
 module.exports = App
@@ -329,7 +278,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
   // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp(registry)
+  const udapp = new UniversalDApp(registry)
   // TODO: to remove when possible
   registry.put({api: udapp, name: 'udapp'})
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
@@ -337,14 +286,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     if (txLink) registry.get('logCallback').api.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
   })
 
-  var udappUI = new UniversalDAppUI(udapp, registry)
+  const udappUI = new UniversalDAppUI(udapp, registry)
   // TODO: to remove when possible
   registry.put({api: udappUI, name: 'udappUI'})
 
   // ----------------- Tx listener -----------------
-  var transactionReceiptResolver = new TransactionReceiptResolver()
+  const transactionReceiptResolver = new TransactionReceiptResolver()
 
-  var txlistener = new Txlistener({
+  const txlistener = new Txlistener({
     api: {
       contracts: function () {
         if (self._components.compilersArtefacts['__last']) return self._components.compilersArtefacts['__last'].getContracts()
@@ -358,8 +307,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       udapp: udapp.event
     }})
   registry.put({api: txlistener, name: 'txlistener'})
+  udapp.startListening(txlistener)
 
-  var eventsDecoder = new EventsDecoder({
+  const eventsDecoder = new EventsDecoder({
     api: {
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
@@ -367,11 +317,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     }
   })
   registry.put({api: eventsDecoder, name: 'eventsdecoder'})
-
-  /*
-    that proxy is used by appManager to broadcast new transaction event
-  */
-  const txListenerModule = new TxListenerModule(txlistener)
 
   txlistener.startListening()
 
@@ -385,8 +330,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
-  var fileManager = self._components.fileManager
+  const fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
+
+  // ----------------- Network ----------------------------
+  const networkModule = new NetworkModule()
+  registry.put({api: networkModule, name: 'network'})
 
   // ----------------- theme module ----------------------------
   const themeModule = new ThemeModule()
@@ -397,7 +346,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
 
   // ----------------- Renderer -----------------
-  var renderer = new Renderer()
+  const renderer = new Renderer()
   registry.put({api: renderer, name: 'renderer'})
 
   // ----------------- app manager ----------------------------
@@ -413,16 +362,17 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const pluginManagerComponent = new PluginManagerComponent()
   const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true, displayHeader: true })
+  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
+
+  pluginManagerComponent.setApp(appManager)
+  pluginManagerComponent.setStore(appStore)
+
+  // ----------------- Vertical Icon ----------------------------
   const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
-
-  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
   registry.put({api: verticalIconsApi, name: 'verticalicon'})
-
-  pluginManagerComponent.setApp(appManager)
-  pluginManagerComponent.setStore(appStore)
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
@@ -469,16 +419,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
 
   appManager.init([
-    this.api(),
     landingPage.api(),
     udapp.api(),
     fileManager.api(),
     sourceHighlighters.api(),
-    txListenerModule.api(),
     filePanel.api(),
     // { profile: support.profile(), api: support },
     settings.api(),
     pluginManagerComponent.api(),
+    networkModule.api(),
     themeModule.api()
   ])
 
@@ -496,8 +445,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
-  var filesToLoad = null
-  var loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
+  let filesToLoad = null
+  let loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
 
   window.addEventListener('message', function (ev) {
     if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
@@ -515,7 +464,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  var txLogger = new TxLogger() // eslint-disable-line
+  const txLogger = new TxLogger() // eslint-disable-line
   txLogger.event.register('debuggingRequested', (hash) => {
     if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
     debug.debugger().debug(hash)
@@ -547,9 +496,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
   udapp.resetAPI(transactionContextAPI)
 
-  var queryParams = new QueryParams()
+  const queryParams = new QueryParams()
 
-  var loadingFromGist = self.loadFromGist(queryParams.get())
+  const loadingFromGist = self.loadFromGist(queryParams.get())
   if (!loadingFromGist) {
     // insert ballot contract if there are no files to show
     self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {

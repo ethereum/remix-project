@@ -33,25 +33,6 @@ document.head.appendChild(yo`
     .ace_gutter-cell.ace_breakpoint{
       background-color: var(--secondary);
     }
-    .highlightreference {
-      position:absolute;
-      z-index:20;
-      background-color: var(--primary);
-      opacity: 0.6
-    }
-
-    .highlightreferenceline {
-      position:absolute;
-      z-index:20;
-      background-color: var(--primary);
-      opacity: 0.6
-    }
-
-    .highlightcode {
-      position:absolute;
-      z-index:20;
-      background-color: var(--danger);
-     }
   </style>
 `)
 
@@ -97,10 +78,14 @@ class Editor {
     // Editor Setup
     const el = yo`<div id="input"></div>`
     this.editor = ace.edit(el)
+
     ace.acequire('ace/ext/language_tools')
 
-    // Unmap ctrl-t & ctrl-f
-    this.editor.commands.bindKeys({ 'ctrl-t': null })
+    // Unmap ctrl-l & cmd-l
+    this.editor.commands.bindKeys({
+      'ctrl-L': null,
+      'Command-L': null
+    })
 
     // shortcuts for "Ctrl-"" and "Ctrl+"" to increase/decrease font size of the editor
     this.editor.commands.addCommand({
@@ -149,6 +134,13 @@ class Editor {
       }
     }
     langTools.addCompleter(flowCompleter)
+
+    // zoom with Ctrl+wheel
+    window.addEventListener('wheel', (e) => {
+      if (e.ctrlKey && Math.abs(e.wheelY) > 5) {
+        this.editorFontSize(e.wheelY > 0 ? 1 : -1)
+      }
+    })
 
     // EVENTS LISTENERS
 

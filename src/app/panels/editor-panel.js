@@ -100,7 +100,8 @@ class EditorPanel {
     self._components.contextView = contextView
     self._components.terminal = new Terminal({
       udapp: self._deps.udapp,
-      compilers: {}
+      appStore: self.appStore,
+      appManager: self.appManager
     },
       {
         getPosition: (event) => {
@@ -198,7 +199,7 @@ class EditorPanel {
     self._adjustLayout('top', self.data._layout.top.offset)
 
     document.addEventListener('keydown', (e) => {
-      if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab()
+      if (e.altKey && e.keyCode === 84) self.tabProxy.switchNextTab() // alt + t
     })
 
     return self._view.el

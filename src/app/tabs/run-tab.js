@@ -12,12 +12,23 @@ var ContractDropdownUI = require('./runTab/contractDropdown.js')
 var Recorder = require('./runTab/model/recorder.js')
 var RecorderUI = require('./runTab/recorder.js')
 
-import { ApiFactory } from 'remix-plugin'
+import { BaseApi } from 'remix-plugin'
 
-class RunTab extends ApiFactory {
+const profile = {
+  name: 'run',
+  displayName: 'Deploy and run transactions',
+  methods: [],
+  events: [],
+  icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNTc2IDkyN2wtMTMyOCA3MzhxLTIzIDEzLTM5LjUgM3QtMTYuNS0zNnYtMTQ3MnEwLTI2IDE2LjUtMzZ0MzkuNSAzbDEzMjggNzM4cTIzIDEzIDIzIDMxdC0yMyAzMXoiLz48L3N2Zz4=',
+  description: 'execute and save transactions',
+  kind: 'run',
+  location: 'swapPanel'
+}
+
+class RunTab extends BaseApi {
 
   constructor (udapp, udappUI, config, fileManager, editor, logCallback, filePanel, pluginManager, compilersArtefacts) {
-    super()
+    super(profile)
     this.event = new EventManager()
 
     this.renderInstanceContainer()
@@ -26,19 +37,6 @@ class RunTab extends ApiFactory {
     this.renderRecorder(udapp, udappUI, fileManager, config, logCallback)
     this.renderRecorderCard()
     this.renderContainer()
-  }
-
-  get profile () {
-    return {
-      name: 'run',
-      displayName: 'run transactions',
-      methods: [],
-      events: [],
-      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNTc2IDkyN2wtMTMyOCA3MzhxLTIzIDEzLTM5LjUgM3QtMTYuNS0zNnYtMTQ3MnEwLTI2IDE2LjUtMzZ0MzkuNSAzbDEzMjggNzM4cTIzIDEzIDIzIDMxdC0yMyAzMXoiLz48L3N2Zz4=',
-      description: 'execute and save transactions',
-      kind: 'run',
-      location: 'swapPanel'
-    }
   }
 
   renderContainer () {

@@ -58,8 +58,8 @@ export class RemixAppManager extends AppManagerApi {
 
   plugins () {
     let vyper = {
-      displayName: 'vyper',
       name: 'vyper',
+      displayName: 'Vyper',
       events: ['compilationFinished'],
       methods: [],
       notifications: {},
@@ -70,8 +70,8 @@ export class RemixAppManager extends AppManagerApi {
       location: 'swapPanel'
     }
     var pipeline = {
-      displayName: 'pipeline',
       name: 'pipeline',
+      displayName: 'Pipeline',
       events: [],
       methods: [],
       notifications: {

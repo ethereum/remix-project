@@ -17,6 +17,7 @@ var AutoCompletePopup = require('../ui/auto-complete-popup')
 var csjs = require('csjs-inject')
 
 var css = require('./styles/terminal-styles')
+import { BaseApi } from 'remix-plugin'
 
 var packageV = require('../../../package.json')
 
@@ -26,8 +27,18 @@ function register (api) { KONSOLES.push(api) }
 
 var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
-class Terminal {
+const profile = {
+  displayName: 'Terminal',
+  name: 'terminal',
+  methods: [],
+  events: [],
+  description: ' - ',
+  required: false
+}
+
+class Terminal extends BaseApi {
   constructor (opts, api) {
+    super(profile)
     var self = this
     self.event = new EventManager()
     self._api = api
@@ -62,12 +73,12 @@ class Terminal {
         self.updateJournal({ type: 'select', value: label })
       }
     })
-    self._components.autoCompletePopup = new AutoCompletePopup()
+    self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
       let textList = self._view.input.innerText.split(' ')
       textList.pop()
       textList.push(input)
-      self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
+      self._view.input.innerText = textList
       self._view.input.focus()
       self.putCursor2End(self._view.input)
     })
@@ -103,14 +114,18 @@ class Terminal {
 
     self._jsSandboxContext = {}
     self._jsSandboxRegistered = {}
+
+    self.externalApi = this.api()
+    self.externalApi.notifs = {'theme': ['switchTheme']}
+    opts.appManager.init([self.externalApi])
+    opts.appManager.activateRequestAndNotification(self.externalApi)
+
     if (opts.shell) self._shell = opts.shell
     register(self)
   }
-
   focus () {
     if (this._view.input) this._view.input.focus()
   }
-
   render () {
     var self = this
     if (self._view.el) return self._view.el
@@ -127,7 +142,7 @@ class Terminal {
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="btn btn-secondary align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
+      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fa fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
     self._view.dropdown = self._components.dropdown.render()
@@ -136,7 +151,7 @@ class Terminal {
     self._view.bar = yo`
       <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class="${css.menu} bg-light">
+        <div class="${css.menu} border-top bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
             <i class="fa fa-ban" aria-hidden="true" title="Clear console"
@@ -649,7 +664,6 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
-    compilers: self._opts.compilers,
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,

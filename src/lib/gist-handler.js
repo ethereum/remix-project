@@ -12,7 +12,7 @@ function GistHandler (_window) {
     var gistId
     if (params['gist'] === '') {
       loadingFromGist = true
-      modalDialogCustom.prompt(null, 'Enter the URL or ID of the Gist you would like to load.', null, (target) => {
+      modalDialogCustom.prompt(null, 'Enter the ID of the Gist you would like to load.', null, (target) => {
         if (target !== '') {
           gistId = getGistId(target)
           if (gistId) {

@@ -7,16 +7,26 @@ var TxRunner = remixLib.execution.txRunner
 var txHelper = remixLib.execution.txHelper
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
-import { ApiFactory } from 'remix-plugin'
+import { UdappApi } from 'remix-plugin'
+import { EventEmitter } from 'events'
 
-module.exports = class UniversalDApp extends ApiFactory {
+const profile = {
+  name: 'udapp',
+  displayName: 'universal dapp',
+  description: 'service - run transaction and access account',
+  permission: true
+}
+
+module.exports = class UniversalDApp extends UdappApi {
 
   constructor (registry) {
-    super()
+    super(profile)
+    this.events = new EventEmitter()
     this.event = new EventManager()
     this._deps = {
       config: registry.get('config').api
     }
+
     this._txRunnerAPI = {
       config: this._deps.config,
       detectNetwork: (cb) => {
@@ -32,13 +42,12 @@ module.exports = class UniversalDApp extends ApiFactory {
     executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
   }
 
-  get profile () {
-    return {
-      name: 'udapp',
-      displayName: 'universal dapp',
-      methods: ['runTestTx', 'getAccounts', 'createVMAccount'],
-      description: 'service - run transaction and access account'
-    }
+  // TODO : event should be triggered by Udapp instead of TxListener
+  /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
+  startListening (txlistener) {
+    txlistener.event.register('newTransaction', (tx) => {
+      this.events.emit('newTransaction', tx)
+    })
   }
 
   resetEnvironment () {
@@ -242,7 +251,7 @@ module.exports = class UniversalDApp extends ApiFactory {
    *
    * @param {Object} tx    - transaction.
    */
-  runTestTx (tx) {
+  sendTransaction (tx) {
     return new Promise((resolve, reject) => {
       executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
