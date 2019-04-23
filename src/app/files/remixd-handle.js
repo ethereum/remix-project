@@ -98,7 +98,7 @@ function remixdDialog () {
       </div>
       <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
         so please make sure your system is secured enough (port 65520 neither opened nor forwarded).
-        <i class="fa fa-link"></i> will show you current connection status.
+        <i class="fas fa-link"></i> will show you current connection status.
       </div>
       <div class=${css.dialogParagraph}>This feature is still in Alpha, so we recommend you to keep a copy of the shared folder.</div>
     </div>
