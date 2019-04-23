@@ -173,7 +173,7 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner {
     margin-bottom: 10px;
-    padding: 0px 5px 5px 0px;
+    padding: 0px 5px 5px 5px;
     background-color: var(--light);
     width: 99%;
     border-radius: 3px;
@@ -218,6 +218,7 @@ var css = csjs`
   .multiArg {
     margin-bottom: 8px;
     /* display: flex; */
+    clear:both;
   }
   .multiArg input{
     padding: 5px;
@@ -227,8 +228,9 @@ var css = csjs`
       float: left;
       margin-right: 6px;
       font-size: 10px;
-      min-width: 30%;
+      width: 30%;
       padding-top: 5px;
+      word-break: break-all;
   }
   .multiArg button {
     border-radius: 3px;
@@ -243,7 +245,7 @@ var css = csjs`
   }
   .hasArgs .multiArg input {
     border-left: 1px solid #dddddd;
-    width: 60%;
+    width: 67%;
   }
   .hasArgs input {
     display: block;
