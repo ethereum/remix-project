@@ -129,7 +129,7 @@ class Terminal extends BaseApi {
       spellcheck="false"
       type="text"
       class="${css.filter} form-control"
-      id="input"
+      id="searchInput"
       onkeydown=${filter}
       placeholder="Search with transaction hash or address">
     </input>`
