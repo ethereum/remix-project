@@ -163,11 +163,19 @@ export class LandingPage extends BaseApi {
       globalRegistry.get('verticalicon').api.select('fileExplorers')
     }
 
+    globalRegistry.get('themeModule').api.events.on('themeChanged', (type) => {
+      const invert = type === 'dark' ? 1 : 0
+      const img = document.getElementById('remixLogo')
+      if (img) {
+        img.style.filter = `invert(${invert})`
+      }
+    })
+
     let container = yo`<div class="${css.homeContainer} bg-light">
       <div class="${css.jumbotronContainer}">
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.logoContainer}">
-            <img src="${logo}" alt="remix logo">
+            <img id="remixLogo" src="${logo}" alt="remix logo">
           </div>
           <div class="${css.headlineContainer}">
             <h2 class="">The new layout has arrived</h2>

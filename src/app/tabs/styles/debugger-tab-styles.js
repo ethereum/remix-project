@@ -6,6 +6,7 @@ const css = csjs`
   }
   .debugger {
     margin-bottom: 1%;
+    width: max-content;
   }
 `
 
