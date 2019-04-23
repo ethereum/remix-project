@@ -172,10 +172,10 @@ class ContextView {
     return yo`<div class=${css.line}>
       <div title=${type} class=${css.type}>${type}</div>
       <div title=${node.attributes.name} class=${css.name}>${node.attributes.name}</div>
-      <i class="fa fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
+      <i class="fas fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
       <span class=${css.referencesnb}>${references}</span>
-      <i data-action='previous' class="fa fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${jump}></i>
-      <i data-action='next' class="fa fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${jump}></i>
+      <i data-action='previous' class="fas fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${jump}></i>
+      <i data-action='next' class="fas fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${jump}></i>
         ${showGasEstimation()}
     </div>`
   }

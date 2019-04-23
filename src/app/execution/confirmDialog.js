@@ -40,7 +40,7 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
     </div>
     <div class=${css.checkbox}>
       <input id='confirmsetting' type="checkbox">
-      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
+      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
     </div>
   </div>
   `

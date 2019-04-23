@@ -69,7 +69,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
     <div class="${css.title} alert alert-dark">
-      <button class="btn btn-light ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+      <button class="btn btn-light ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fas fa-caret-right" aria-hidden="true"></i></button>
       <div class="input-group ${css.nameNbuts}">
         <div class="${css.titleText} input-group-prepend"><span class="input-group-text"> ${contractName} at ${shortAddress} (${context})</span></div>
         <div class="btn-group">
@@ -78,7 +78,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       </div>
   </div>`
 
-  var close = yo`<button class="${css.udappClose} btn btn-secondary" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></button>`
+  var close = yo`<button class="${css.udappClose} btn btn-secondary" onclick=${remove}><i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i></button>`
   title.querySelector('.btn-group').appendChild(close)
 
   var contractActionsWrapper = yo`
