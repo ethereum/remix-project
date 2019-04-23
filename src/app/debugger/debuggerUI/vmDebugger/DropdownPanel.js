@@ -98,11 +98,10 @@ DropdownPanel.prototype.update = function (_data, _header) {
 
 DropdownPanel.prototype.setContent = function (node) {
   if (!this.view) return
-  var parent = this.view.querySelector('.dropdownpanel div.dropdowncontent')
-  parent.replaceChild(node, parent.firstElementChild)
+  yo.update(this.view, this.render(null, node))
 }
 
-DropdownPanel.prototype.render = function (overridestyle) {
+DropdownPanel.prototype.render = function (overridestyle, node) {
   var content = yo`<div>Empty</div>`
   if (this.json) {
     content = this.treeView.render({})
@@ -117,7 +116,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
 
   var contentNode = yo`<div class='dropdownpanel ${css.dropdownpanel}' style='display:none'>
       <i class="${css.refresh} fas fa-sync" aria-hidden="true"></i>
-      <div class='dropdowncontent'>${content}</div>
+      <div class='dropdowncontent'>${node || content}</div>
       <div class='dropdownrawcontent' style='display:none'></div>
       <div class='message' style='display:none'></div>
     </div>`

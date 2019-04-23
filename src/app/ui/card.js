@@ -34,9 +34,11 @@ module.exports = class Card {
     function trigger (el) {
       var body = self._view.cardBody
       var status = self._view.statusBar
-      el.classList.toggle('fa-angle-up')
-      var arrow = el.classList.toggle('fa-angle-down') ? 'up' : 'down'
-      self.event.trigger('expandCollapseCard', [arrow, body, status])
+      if (el.classList) {
+        el.classList.toggle('fa-angle-up')
+        var arrow = el.classList.toggle('fa-angle-down') ? 'up' : 'down'
+        self.event.trigger('expandCollapseCard', [arrow, body, status])
+      }
     }
 
     // HTML

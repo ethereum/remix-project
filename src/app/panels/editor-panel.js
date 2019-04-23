@@ -114,9 +114,6 @@ class EditorPanel {
         }
       })
 
-    self._components.terminal.event.register('filterChanged', (type, value) => {
-      this.event.trigger('terminalFilterChanged', [type, value])
-    })
     self._components.terminal.event.register('resize', delta => self._adjustLayout('top', delta))
     if (self._deps.txListener) {
       self._components.terminal.event.register('listenOnNetWork', (listenOnNetWork) => {
