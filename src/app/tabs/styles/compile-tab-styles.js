@@ -174,7 +174,6 @@ const css = csjs`
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  
 
   .bouncingIcon {
     display: inline-block;
@@ -215,9 +214,6 @@ const css = csjs`
       70% { top: -0.3em; }
       100% { top: 0; }
   }
-
-
-
 `
 
 module.exports = css
