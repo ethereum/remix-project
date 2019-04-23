@@ -77,7 +77,7 @@ class CompileTab extends CompilerApi {
 
   listenToEvents () {
     let onContentChanged = () => {
-      this.events.emit('statusChanged', {key: 'code', title: 'content changed, needs recompilation', type: 'info'})
+      this.events.emit('statusChanged', {key: 'code', title: 'the content has changed, needs recompilation', type: 'info'})
     }
     this.editor.event.register('contentChanged', onContentChanged)
     this.editor.event.register('sessionSwitched', onContentChanged)
