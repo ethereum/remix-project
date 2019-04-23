@@ -36,7 +36,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       },
       { action: 'copyFiles',
         title: 'Copy all files to another instance of Remix IDE',
-        icon: 'fas fa-copy'
+        icon: 'far fa-copy'
       },
       { action: 'uploadFile',
         title: 'Add Local file to the Browser Storage Explorer',
