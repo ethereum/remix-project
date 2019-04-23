@@ -77,7 +77,7 @@ class TreeView {
   formatData (key, data, children, expand, keyPath) {
     var self = this
     var li = yo`<li key=${keyPath} class=${css.li_tv}></li>`
-    var caret = yo`<div class="fa fa-caret-right caret ${css.caret_tv}"></div>`
+    var caret = yo`<div class="fas fa-caret-right caret ${css.caret_tv}"></div>`
     var label = yo`
       <div key=${keyPath} class=${css.label_tv}>
         ${caret}
@@ -87,7 +87,7 @@ class TreeView {
     if (data.children) {
       var list = yo`<ul key=${keyPath} class=${css.ul_tv}>${children}</ul>`
       list.style.display = 'none'
-      caret.className = list.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
+      caret.className = list.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
       label.onclick = function () {
         self.expand(keyPath)
       }
@@ -120,7 +120,7 @@ class TreeView {
     var node = this.nodeAt(path)
     if (node) {
       node.style.display = node.style.display === 'none' ? 'block' : 'none'
-      caret.className = node.style.display === 'none' ? `fa fa-caret-right caret ${css.caret_tv}` : `fa fa-caret-down caret ${css.caret_tv}`
+      caret.className = node.style.display === 'none' ? `fas fa-caret-right caret ${css.caret_tv}` : `fas fa-caret-down caret ${css.caret_tv}`
       this.event.trigger('nodeClick', [path, node])
     }
   }

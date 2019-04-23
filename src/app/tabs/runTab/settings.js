@@ -64,7 +64,7 @@ class SettingsUI {
               value="web3" name="executionContext"> Web3 Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fa fa-info"></i></a>
+          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
         </div>
       </div>
     `
@@ -73,12 +73,12 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
+          <i class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
         </div>
         <div class=${css.account}>
           <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
-          <i class="fa fa-pencil-square-o ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          <i class="fas fa-edit ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
     `
@@ -231,7 +231,7 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      this.netUI.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+      this.netUI.innerHTML = `<i class="${css.networkItem} fas fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
     })
   }
 

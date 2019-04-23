@@ -28,23 +28,23 @@ function fileExplorer (localRegistry, files, menuItems) {
     [
       { action: 'createNewFile',
         title: 'Create New File in the Browser Storage Explorer',
-        icon: 'fa fa-plus-circle'
+        icon: 'fas fa-plus-circle'
       },
       { action: 'publishToGist',
         title: 'Publish all [browser] explorer files to a github gist',
-        icon: 'fa fa-github'
+        icon: 'fab fa-github'
       },
       { action: 'copyFiles',
         title: 'Copy all files to another instance of Remix IDE',
-        icon: 'fa fa-files-o'
+        icon: 'far fa-copy'
       },
       { action: 'uploadFile',
         title: 'Add Local file to the Browser Storage Explorer',
-        icon: 'fa fa-folder-open'
+        icon: 'far fa-folder-open'
       },
       { action: 'updateGist',
         title: 'Update the current [gist] explorer',
-        icon: 'fa fa-github'
+        icon: 'fab fa-github'
       }
     ]
   // menu items

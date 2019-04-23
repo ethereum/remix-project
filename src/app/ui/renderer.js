@@ -89,7 +89,7 @@ Renderer.prototype.error = function (message, container, opt) {
 
   var $pre = $(opt.useSpan ? yo`<span></span>` : yo`<pre></pre>`).html(message)
 
-  var $error = $(yo`<div class="sol ${opt.type}"><div class="close"><i class="fa fa-close"></i></div></div>`).prepend($pre)
+  var $error = $(yo`<div class="sol ${opt.type}"><div class="close"><i class="fas fa-times"></i></div></div>`).prepend($pre)
   $(container).append($error)
 
   $error.click((ev) => {

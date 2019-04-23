@@ -122,7 +122,7 @@ function html (opts) {
     <div class="${css['modalContent']} bg-light text-secondary ${opts.class}">
       <div class="${css['modalHeader']}">
         <h3></h3>
-        <i id="modal-close" title="Close" class="fa fa-times ${css['modalClose']}" aria-hidden="true"></i>
+        <i id="modal-close" title="Close" class="fas fa-times ${css['modalClose']}" aria-hidden="true"></i>
       </div>
       <div class="${css['modalBody']}"> -
       </div>
