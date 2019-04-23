@@ -161,22 +161,6 @@ class TxLogger {
       append(el)
     }, { activate: true })
 
-    this._deps.editorPanel.event.register('terminalFilterChanged', (type, label) => {
-      if (type === 'deselect') {
-        if (label === 'only remix transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
-        } else if (label === 'all transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
-        }
-      } else if (type === 'select') {
-        if (label === 'only remix transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
-        } else if (label === 'all transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
-        }
-      }
-    })
-
     this._deps.txListener.event.register('newBlock', (block) => {
       if (!block.transactions || block.transactions && !block.transactions.length) {
         this.logEmptyBlock({ block: block })
@@ -190,6 +174,9 @@ class TxLogger {
     this._deps.txListener.event.register('newCall', (tx) => {
       log(this, tx, null)
     })
+
+    this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+    this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'knownTransaction' })
   }
 }
 

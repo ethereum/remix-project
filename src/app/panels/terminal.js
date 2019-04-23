@@ -11,7 +11,6 @@ var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
-var Dropdown = require('../ui/dropdown')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
 
 var csjs = require('csjs-inject')
@@ -52,27 +51,6 @@ class Terminal extends BaseApi {
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
     self._components.cmdInterpreter = new CommandInterpreterAPI(this)
-    self._components.dropdown = new Dropdown({
-      options: [
-        'only remix transactions',
-        'all transactions',
-        'script'
-      ],
-      defaults: ['only remix transactions', 'script'],
-      dependencies: {'all transactions': ['only remix transactions'], 'only remix transactions': ['all transactions']}
-    })
-    self._components.dropdown.event.register('deselect', function (label) {
-      self.event.trigger('filterChanged', ['deselect', label])
-      if (label === 'script') {
-        self.updateJournal({ type: 'deselect', value: label })
-      }
-    })
-    self._components.dropdown.event.register('select', function (label) {
-      self.event.trigger('filterChanged', ['select', label])
-      if (label === 'script') {
-        self.updateJournal({ type: 'select', value: label })
-      }
-    })
     self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
       let textList = self._view.input.innerText.split(' ')
@@ -145,7 +123,7 @@ class Terminal extends BaseApi {
       class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fas fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
-    self._view.dropdown = self._components.dropdown.render()
+
     self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
     self._view.inputSearch = yo`<input spellcheck="false" type="text" class="${css.filter} form-control" id="input" onkeydown=${filter}  placeholder="Search transactions"></input>`
     self._view.bar = yo`
@@ -164,7 +142,6 @@ class Terminal extends BaseApi {
             title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you">
             <label class="form-check-label" title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you" for="listenNetworkCheck">listen on network</label>
           </div>
-          ${self._view.dropdown}
           <div class=${css.search}>
             <i class="fas fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
             ${self._view.inputSearch}
@@ -364,6 +341,7 @@ class Terminal extends BaseApi {
       }
       filtertimeout = setTimeout(() => {
         self.updateJournal({ type: 'search', value: self._view.inputSearch.value })
+        self.scroll2bottom()
       }, 500)
     }
     function clear (event) {
@@ -535,8 +513,8 @@ class Terminal extends BaseApi {
     self._JOURNAL.forEach(item => {
       if (item && item.el && !item.hide) df.appendChild(item.el)
     })
+    self._view.journal.innerHTML = ''
     requestAnimationFrame(function updateDOM () {
-      self._view.journal.innerHTML = ''
       self._view.journal.appendChild(df)
     })
   }

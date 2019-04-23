@@ -183,9 +183,6 @@ class CompileTab extends CompilerApi {
         <!-- Copy to Clipboard -->
         <div class="${css.contractHelperButtons} btn-secondary">
           <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Copy to clipboard</span>
-            </div>
             <div class="btn-group" role="group" aria-label="Copy to Clipboard">
               <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
                 <i class="${css.copyIcon} far fa-clipboard" aria-hidden="true"></i>
