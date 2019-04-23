@@ -76,7 +76,7 @@ var css = csjs`
     vertical-align: top;
   }
   .cActionsWrapper {
-    padding: 10px;
+    padding: 0px 0 10px 10px;
     border: 1px solid rgba(0,0,0,0.125);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0.25rem;
@@ -196,6 +196,7 @@ var css = csjs`
     font-weight: bold;
     line-height: 25px;
     cursor: default;
+    padding-top: 5px;
   }
   .contractProperty .contractActionsContainerMultiInner .multiArg label{
     text-align: right;
@@ -216,7 +217,7 @@ var css = csjs`
   }
   .multiArg {
     margin-bottom: 8px;
-    display: flex;
+    /* display: flex; */
   }
   .multiArg input{
     padding: 5px;
@@ -227,6 +228,7 @@ var css = csjs`
       margin-right: 6px;
       font-size: 10px;
       min-width: 30%;
+      padding-top: 5px;
   }
   .multiArg button {
     border-radius: 3px;
@@ -241,7 +243,7 @@ var css = csjs`
   }
   .hasArgs .multiArg input {
     border-left: 1px solid #dddddd;
-    width: 100%;
+    width: 60%;
   }
   .hasArgs input {
     display: block;
