@@ -118,7 +118,7 @@ class CompileTab extends CompilerApi {
         this.renderer.error(data['error'].formattedMessage, this._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
           return modalDialogCustom.alert(yo`
-            <div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
+            <div><i class="fas fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
             The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
             The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
             It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br>
@@ -174,7 +174,7 @@ class CompileTab extends CompilerApi {
       </header>
       <article class="${css.compilerArticle}">
         <button class="btn btn-primary btn-block" title="Publish on Swarm" onclick="${() => { this.publish() }}">
-          <i class="${css.copyIcon} fa fa-upload" aria-hidden="true"></i>
+          <i class="${css.copyIcon} fas fa-upload" aria-hidden="true"></i>
           <span>Publish on Swarm</span>
         </button>
         <button class="btn btn-secondary btn-block" title="Display Contract Details" onclick="${() => { this.details() }}">
@@ -185,11 +185,11 @@ class CompileTab extends CompilerApi {
           <div class="input-group">
             <div class="btn-group" role="group" aria-label="Copy to Clipboard">
               <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
-                <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
+                <i class="${css.copyIcon} far fa-clipboard" aria-hidden="true"></i>
                 <span>ABI</span>
               </button>
               <button class="btn btn-secondary" title="Copy Bytecode to clipboard" onclick="${() => { this.copyBytecode() }}">
-                <i class="${css.copyIcon} fa fa-clipboard" aria-hidden="true"></i>
+                <i class="${css.copyIcon} far fa-clipboard" aria-hidden="true"></i>
                 <span>Bytecode</span>
               </button>
             </div>
@@ -265,7 +265,7 @@ class CompileTab extends CompilerApi {
     const log = yo`<div class="${css.detailsJSON}"></div>`
     Object.keys(contractProperties).map(propertyName => {
       const copyDetails = yo`<span class="${css.copyDetails}">${copyToClipboard(() => contractProperties[propertyName])}</span>`
-      const questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fa fa-question-circle" aria-hidden="true"></i></span>`
+      const questionMark = yo`<span class="${css.questionMark}"><i title="${help[propertyName]}" class="fas fa-question-circle" aria-hidden="true"></i></span>`
       log.appendChild(yo`<div class=${css.log}>
         <div class="${css.key}">${propertyName} ${copyDetails} ${questionMark}</div>
         ${this.insertValue(contractProperties, propertyName)}
