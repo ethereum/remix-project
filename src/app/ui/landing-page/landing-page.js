@@ -209,7 +209,7 @@ export class LandingPage extends BaseApi {
       <div class="${css.jumbotronContainer}">
         <div class="alert alert-info clearfix ${css.thisJumboton}">
           <div class="${css.logoContainer}">
-            <img id='remixLogo' src="${logo}" alt="remix logo">
+            <img id="remixLogo" src="${logo}" alt="remix logo">
           </div>
           <div class="${css.headlineContainer}">
             <h2 class="">The new layout has arrived</h2>
