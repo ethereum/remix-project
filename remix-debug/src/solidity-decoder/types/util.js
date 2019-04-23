@@ -75,7 +75,7 @@ async function extractHexValue (location, storageResolver, byteLength) {
 function toBN (value) {
   if (value instanceof BN) {
     return value
-  } else if (value.match && value.match(/^(?:0x)?(?<hash>[a-f0-9])*$/)) {
+  } else if (value.match && value.match(/^(0x)?([a-f0-9]*)$/)) {
     value = ethutil.unpad(value.replace(/^(0x)/, ''))
     value = new BN(value === '' ? '0' : value, 16)
   } else if (!isNaN(value)) {
