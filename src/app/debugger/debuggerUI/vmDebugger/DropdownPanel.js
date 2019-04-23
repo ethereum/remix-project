@@ -112,7 +112,7 @@ DropdownPanel.prototype.render = function (overridestyle) {
   var title = !self.displayContentOnly ? yo`<div class="${css.title} title">
       <div class="${css.icon} fas fa-caret-right" onclick=${function () { self.toggle() }} ></div>
       <div class="${css.name}" onclick=${function () { self.toggle() }} >${this.name}</div><span class="${css.nameDetail}" onclick=${function () { self.toggle() }} ></span>
-      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn fas fa-clipboard"></div>
+      <div onclick=${function () { self.copyClipboard() }} title='raw' class="${css.eyeButton} btn far fa-clipboard"></div>
     </div>` : yo`<div></div>`
 
   var contentNode = yo`<div class='dropdownpanel ${css.dropdownpanel}' style='display:none'>
