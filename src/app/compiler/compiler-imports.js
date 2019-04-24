@@ -11,10 +11,20 @@ module.exports = class CompilerImports {
   }
 
   handleGithubCall (root, path, cb) {
-    var accessToken = this.githubAccessToken() ? '?access_token=' + this.githubAccessToken() : ''
+    let param = '?'
+
+    param += this.githubAccessToken() ? 'access_token=' + this.githubAccessToken() : ''
+    const regex = path.match(/blob\/([^/]+)\/(.*)/)
+    if (regex) {
+      // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
+      // the ref can be branch name, tag, commit id
+      const reference = regex[1]
+      param += 'ref=' + reference
+      path = path.replace(`blob/${reference}/`, '')
+    }
     return request.get(
       {
-        url: 'https://api.github.com/repos/' + root + '/contents/' + path + accessToken,
+        url: 'https://api.github.com/repos/' + root + '/contents/' + path + param,
         json: true
       },
       (err, r, data) => {
