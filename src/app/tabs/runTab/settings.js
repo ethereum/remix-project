@@ -1,12 +1,12 @@
-var $ = require('jquery')
-var yo = require('yo-yo')
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var css = require('../styles/run-tab-styles')
-var copyToClipboard = require('../../ui/copy-to-clipboard')
-var modalDialogCustom = require('../../ui/modal-dialog-custom')
-var addTooltip = require('../../ui/tooltip')
-var helper = require('../../../lib/helper.js')
+const $ = require('jquery')
+const yo = require('yo-yo')
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
+const css = require('../styles/run-tab-styles')
+const copyToClipboard = require('../../ui/copy-to-clipboard')
+const modalDialogCustom = require('../../ui/modal-dialog-custom')
+const addTooltip = require('../../ui/tooltip')
+const helper = require('../../../lib/helper.js')
 
 class SettingsUI {
 
@@ -40,7 +40,7 @@ class SettingsUI {
   }
 
   render () {
-    this.netUI = yo`<span class=${css.network}></span>`
+    this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
     var environmentEl = yo`
       <div class="${css.crow}">
@@ -48,7 +48,6 @@ class SettingsUI {
           Environment
         </div>
         <div class=${css.environment}>
-          ${this.netUI}
           <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
@@ -68,8 +67,16 @@ class SettingsUI {
         </div>
       </div>
     `
-
-    var accountEl = yo`
+    const networkEl = yo`
+    <div class="${css.crow}">
+        <div class="${css.col1_1}">
+        </div>
+        <div class="${css.environment}">
+          ${this.netUI}
+        </div>
+      </div>
+    `
+    const accountEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
@@ -83,14 +90,14 @@ class SettingsUI {
       </div>
     `
 
-    var gasPriceEl = yo`
+    const gasPriceEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>
         <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
       </div>
     `
 
-    var valueEl = yo`
+    const valueEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Value</div>
         <div class="${css.gasValueContainer}">
@@ -105,9 +112,10 @@ class SettingsUI {
       </div>
     `
 
-    var el = yo`
+    const el = yo`
       <div class="${css.settings}">
         ${environmentEl}
+        ${networkEl}
         ${accountEl}
         ${gasPriceEl}
         ${valueEl}
@@ -231,7 +239,7 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      this.netUI.innerHTML = `<i class="${css.networkItem} fas fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+      this.netUI.innerHTML = `${name} (${id || '-'}) network`
     })
   }
 
