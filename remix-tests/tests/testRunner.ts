@@ -131,7 +131,6 @@ describe('testRunner', () => {
             done()
           }
           runTest('StringTest', contracts.StringTest, compilationData[filename]['StringTest'], { accounts }, testCallback, resultsCallback)
-          runTest('StringTest2', contracts.StringTest2, compilationData[filename]['StringTest2'], { accounts }, testCallback, resultsCallback)
         })
       })
 
