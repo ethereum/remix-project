@@ -202,14 +202,7 @@ var css = csjs`
     display: inline;
   }
   .network {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: absolute;
-    color: grey;
-    width: 100%;
-    height: 100%;
-    padding-right: 53px;
+    margin-left: 8px;
     pointer-events: none;
   }
   .networkItem {
