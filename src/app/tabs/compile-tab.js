@@ -76,7 +76,21 @@ class CompileTab extends CompilerApi {
    */
 
   listenToEvents () {
-    this.compiler.event.register('compilationStarted', () => {
+    let onContentChanged = () => {
+      this.events.emit('statusChanged', {key: 'code', title: 'the content has changed, needs recompilation', type: 'info'})
+    }
+    this.editor.event.register('contentChanged', onContentChanged)
+    this.editor.event.register('sessionSwitched', onContentChanged)
+
+    this.compiler.event.register('loadingCompiler', () => {
+      this.events.emit('statusChanged', {key: 'spinner', title: 'loading compiler...', type: 'info'})
+    })
+
+    this.compiler.event.register('compilerLoaded', () => {
+      this.events.emit('statusChanged', {key: '', title: '', type: ''})
+    })
+
+    this.compileTabLogic.event.on('startingCompilation', () => {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
@@ -85,10 +99,12 @@ class CompileTab extends CompilerApi {
 
     this.fileManager.events.on('currentFileChanged', (name) => {
       this.compilerContainer.currentFile = name
+      onContentChanged()
     })
 
     this.fileManager.events.on('noFileSelected', () => {
       this.compilerContainer.currentFile = ''
+      onContentChanged()
     })
 
     this.compiler.event.register('compilationFinished', (success, data, source) => {
@@ -352,8 +368,6 @@ class CompileTab extends CompilerApi {
     this._view.errorContainer = yo`<div class="${css.errorBlobs}"></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-    const currentFile = this.fileManager.currentFile()
-    if (currentFile) this.compilerContainer.currentFile = currentFile
 
     this._view.el = yo`
       <div id="compileTabView">

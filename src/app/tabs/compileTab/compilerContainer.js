@@ -47,6 +47,13 @@ class CompilerContainer {
     this.editor.event.register('contentChanged', this.scheduleCompilation.bind(this))
     this.editor.event.register('sessionSwitched', this.scheduleCompilation.bind(this))
 
+    this.compileTabLogic.event.on('startingCompilation', () => {
+      if (!this._view.compileIcon) return
+      this._view.compileIcon.setAttribute('title', 'compiling...')
+      this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
+      this._view.compileIcon.classList.add(`${css.spinningIcon}`)
+    })
+
     this.compileTabLogic.compiler.event.register('compilationDuration', (speed) => {
       if (!this._view.warnCompilationSlow) return
       if (speed > 1000) {
@@ -65,29 +72,22 @@ class CompilerContainer {
 
     this.compileTabLogic.compiler.event.register('loadingCompiler', () => {
       if (!this._view.compileIcon) return
+      this._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
       this._view.compileIcon.classList.add(`${css.spinningIcon}`)
       this._view.warnCompilationSlow.style.visibility = 'hidden'
-      this._view.compileIcon.setAttribute('title', 'compiler is loading, please wait a few moments.')
-    })
-
-    this.compileTabLogic.compiler.event.register('compilationStarted', () => {
-      if (!this._view.compileIcon) return
-      this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-      this._view.compileIcon.classList.add(`${css.spinningIcon}`)
-      this._view.compileIcon.setAttribute('title', 'compiling...')
     })
 
     this.compileTabLogic.compiler.event.register('compilerLoaded', () => {
       if (!this._view.compileIcon) return
-      this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       this._view.compileIcon.setAttribute('title', '')
+      this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
     })
 
     this.compileTabLogic.compiler.event.register('compilationFinished', (success, data, source) => {
       if (!this._view.compileIcon) return
+      this._view.compileIcon.setAttribute('title', 'idle')
       this._view.compileIcon.classList.remove(`${css.spinningIcon}`)
       this._view.compileIcon.classList.remove(`${css.bouncingIcon}`)
-      this._view.compileIcon.setAttribute('title', 'idle')
     })
   }
 
