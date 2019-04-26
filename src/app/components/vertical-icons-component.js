@@ -101,7 +101,7 @@ class VerticalIconComponent {
       let classes = css.status
       switch (key) {
         case 'check':
-          classes += ' badge badge-pill badge-' + type + ' text-' + type
+          classes += ' fas fa-check-circle text-' + type + ' ' + css.statusCheck
           break
         case 'code':
           classes += ' fas fa-sync text-' + type
@@ -115,7 +115,7 @@ class VerticalIconComponent {
         class="${classes}"
         aria-hidden="true"
       >
-      ${key === 'code' ? '' : key === 'check' ? 'o' : key}
+      ${key === 'code' || key === 'check' ? '' : key}
       </span>`)
 
       // el.classList = "" doesn't work on all browser use instead
@@ -284,6 +284,9 @@ const css = csjs`
     position: absolute;
     bottom: 0;
     right: 0;
+  }
+  .statusCheck {
+    font-size: 1.2em;
   }
   .statusWithBG
     border-radius: 8px;
