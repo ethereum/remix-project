@@ -99,7 +99,7 @@ staticAnalysisView.prototype.run = function () {
   var warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
   var self = this
-  if (this.lastCompilationResult) {
+  if (this.lastCompilationResult && selected.length) {
     var warningCount = 0
     this.runner.run(this.lastCompilationResult, selected, function (results) {
       results.map(function (result, i) {
@@ -126,8 +126,10 @@ staticAnalysisView.prototype.run = function () {
       self.event.trigger('staticAnaysisWarning', [warningCount])
     })
   } else {
-    warningContainer.html('No compiled AST available')
-    self.event.trigger('staticAnaysisWarning', [0])
+    if (selected.length) {
+      warningContainer.html('No compiled AST available')
+    }
+    self.event.trigger('staticAnaysisWarning', [-1])
   }
 }
 

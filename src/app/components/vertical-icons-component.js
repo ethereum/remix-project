@@ -52,7 +52,14 @@ class VerticalIconComponent {
   listenOnStatus (api) {
     if (!api.events) return
     const fn = (status) => {
-      this.setIconStatus(api.profile.name, status)
+      if (
+        status.type === 'warning' ||
+        status.type === 'danger' ||
+        status.key === 'code' ||
+        status.key === 'check' ||
+        (status.key === '' && status.type === '' && status.title === '')) {
+        this.setIconStatus(api.profile.name, status)
+      }
     }
     this.iconStatus[api.profile.name] = fn
     api.events.on('statusChanged', this.iconStatus[api.profile.name])
@@ -90,17 +97,33 @@ class VerticalIconComponent {
       let key = helper.checkSpecialChars(status.key) ? '' : status.key
       let type = helper.checkSpecialChars(status.type) ? '' : status.type
       let title = helper.checkSpecialChars(status.title) ? '' : status.title
-      el.appendChild(yo`<span title="${title}" class="badge badge-pill badge-${type} ${css.status}" aria-hidden="true">3</span>`)
+
+      let classes = css.status
+      switch (key) {
+        case 'check':
+          classes += ' badge badge-pill badge-' + type + ' text-' + type
+          break
+        case 'code':
+          classes += ' fas fa-sync text-' + type
+          break
+        default:
+          classes += ' badge badge-pill badge-' + type
+      }
+
+      el.appendChild(yo`<span
+        title="${title}"
+        class="${classes}"
+        aria-hidden="true"
+      >
+      ${key === 'code' ? '' : key === 'check' ? 'o' : key}
+      </span>`)
 
       // el.classList = "" doesn't work on all browser use instead
       var classList = el.classList
       while (classList.length > 0) {
         classList.remove(classList.item(0))
       }
-
       el.classList.add(`${css.icon}`)
-      //el.classList.add('border')
-      //el.classList.add(`border-${type}`)
     }
   }
 

@@ -122,7 +122,7 @@ class CompileTab extends CompilerApi {
           )
         })
       } else {
-        this.events.emit('statusChanged', {key: 'exclamation', title: 'compilation failed', type: 'danger'})
+        this.events.emit('statusChanged', {key: data.errors.length.toString(), title: 'compilation failed', type: 'danger'})
       }
       // Update contract Selection
       let contractMap = {}
