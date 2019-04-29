@@ -128,7 +128,7 @@ class CompileTab extends CompilerApi {
           )
         })
       } else {
-        const count =  errorList.filter(error => error.severity === 'error').length.toString()
+        const count = data.errors.filter(error => error.severity === 'error').length.toString()
         this.events.emit('statusChanged', {key: count, title: 'compilation failed', type: 'danger'})
       }
       // Update contract Selection
