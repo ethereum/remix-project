@@ -2,6 +2,8 @@
 const yo = require('yo-yo')
 const modalDialog = require('../ui/modaldialog')
 
+const unexposedEvents = ['statusChanged']
+
 module.exports = class LocalPlugin {
 
   /**
@@ -39,10 +41,10 @@ module.exports = class LocalPlugin {
       hash: `local-${this.profile.name}`,
       location: 'swapPanel'
     }
-    if (!this.profile.name) throw new Error('Plugin should have a name')
-    if (!this.profile.url) throw new Error('Plugin should have an URL')
+    if (!profile.name) throw new Error('Plugin should have a name')
+    if (!profile.url) throw new Error('Plugin should have an URL')
     localStorage.setItem('plugins/local', JSON.stringify(profile))
-    return this.profile
+    return profile
   }
 
   /**
@@ -118,9 +120,12 @@ module.exports = class LocalPlugin {
       <div class="form-group">
         <label>Notifications</label>
         ${profiles.map(({name, events}) => {
-          return events.map(event => this.notificationCheckbox(name, event))
+          return events
+            .filter(event => !unexposedEvents.includes(event))
+            .map(event => this.notificationCheckbox(name, event))
         })}
       </div>
     </form>`
   }
 }
+
