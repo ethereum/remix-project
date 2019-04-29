@@ -111,7 +111,13 @@ class CompileTab extends CompilerApi {
       if (success) {
         // forwarding the event to the appManager infra
         this.events.emit('compilationFinished', source.target, source, 'soljson', data)
-        this.events.emit('statusChanged', {key: 'check', title: 'compilation successful', type: 'success'})
+        if (data.errors) {
+          this.events.emit('statusChanged', {
+            key: data.errors.length.toString(),
+            title: 'compilation finished successful with warning' + data.errors.length > 1 ? 's' : '',
+            type: 'warning'
+          })
+        } else this.events.emit('statusChanged', {key: 'check', title: 'compilation successful', type: 'success'})
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
@@ -122,7 +128,8 @@ class CompileTab extends CompilerApi {
           )
         })
       } else {
-        this.events.emit('statusChanged', {key: data.errors.length.toString(), title: 'compilation failed', type: 'danger'})
+        const count =  errorList.filter(error => error.severity === 'error').length.toString()
+        this.events.emit('statusChanged', {key: count, title: 'compilation failed', type: 'danger'})
       }
       // Update contract Selection
       let contractMap = {}
