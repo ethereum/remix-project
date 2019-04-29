@@ -6,8 +6,7 @@ var css = csjs`
     display           : flex;
     flex-direction    : column;
     font-size         : 12px;
-    height            : 100%;
-    min-height        : 1.7em;
+    min-height        : 3em;
     overflow          : hidden;
   }
   .bar                {
@@ -20,6 +19,7 @@ var css = csjs`
     align-items          : center;
     width                : 100%;
     max-height           : 35px;
+    min-height           : 35px;
   }
   .clear           {
     margin-right      : 20px;
