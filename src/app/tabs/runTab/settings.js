@@ -7,18 +7,25 @@ const copyToClipboard = require('../../ui/copy-to-clipboard')
 const modalDialogCustom = require('../../ui/modal-dialog-custom')
 const addTooltip = require('../../ui/tooltip')
 const helper = require('../../../lib/helper.js')
+const globalRegistry = require('../../../global/registry')
 
 class SettingsUI {
 
   constructor (settings) {
     this.settings = settings
     this.event = new EventManager()
+    this._components = {}
 
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
       this.updateAccountBalances()
     })
+
+    this._components.registry = globalRegistry
+    this._deps = {
+      networkModule: this._components.registry.get('network').api
+    }
 
     setInterval(() => {
       this.updateAccountBalances()
@@ -239,7 +246,8 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      this.netUI.innerHTML = `${name} (${id || '-'}) network`
+      let network = this._deps.networkModule.getNetworkProvider
+      this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
     })
   }
 
