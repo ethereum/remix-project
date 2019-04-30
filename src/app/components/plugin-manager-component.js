@@ -155,7 +155,7 @@ class PluginManagerComponent extends BaseApi {
       <div id='pluginManager'>
         <div class="form-group ${css.pluginSearch}">
           <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
-          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm ${css.localPluginBtn}">
+          <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm text-dark ${css.localPluginBtn}">
             Connect to a Local Plugin
           </button>
         </div>

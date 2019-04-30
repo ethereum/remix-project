@@ -266,7 +266,7 @@ class CompileTab extends CompilerApi {
             var result = yo`<div>${uploaded.map((value) => {
               return yo`<div><b>${value.filename}</b> : <pre>${value.output.url}</pre></div>`
             })}</div>`
-            modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <span>${result}</span> </span>`)
+            modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
           }
         }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
           this.swarmfileProvider.addReadOnly(item.hash, item.content)
