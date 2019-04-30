@@ -40,16 +40,12 @@ var css = yo`<style>
 }
 
 .sol.error {
-    background-color: var(--danger);
-    color: var(--white);
 }
 
 .sol.warning {
-  background-color: var(--warning);
 }
 
 .sol.staticAnalysisWarning {
-  background-color: var(--warning);
 }
 
 .sol.success {

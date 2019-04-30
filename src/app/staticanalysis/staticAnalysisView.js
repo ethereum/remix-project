@@ -120,7 +120,7 @@ staticAnalysisView.prototype.run = function () {
           }
           warningCount++
           var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
-          self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning', useSpan: true})
+          self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
         })
       })
       self.event.trigger('staticAnaysisWarning', [warningCount])
