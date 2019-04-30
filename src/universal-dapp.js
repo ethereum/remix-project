@@ -58,7 +58,6 @@ module.exports = class UniversalDApp extends UdappApi {
       this._addAccount('dae9801649ba2d95a21e688b56f77905e5667c44ce868ec83f82e838712a2c7a', '0x56BC75E2D63100000')
       this._addAccount('d74aa6d18aa79a05f3473dd030a97d3305737cbc8337d940344345c1f6b72eea', '0x56BC75E2D63100000')
       this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
-      executionContext.vm().stateManager.cache.flush(function () {})
     }
     // TODO: most params here can be refactored away in txRunner
     this.txRunner = new TxRunner(this.accounts, {
@@ -88,7 +87,6 @@ module.exports = class UniversalDApp extends UdappApi {
     return new Promise((resolve, reject) => {
       if (executionContext.getProvider() !== 'vm') return reject('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
       this._addAccount(privateKey, balance)
-      executionContext.vm().stateManager.cache.flush(function () {})
       privateKey = Buffer.from(privateKey, 'hex')
       resolve('0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
     })
@@ -108,7 +106,6 @@ module.exports = class UniversalDApp extends UdappApi {
         privateKey = crypto.randomBytes(32)
       } while (!ethJSUtil.isValidPrivate(privateKey))
       this._addAccount(privateKey, '0x56BC75E2D63100000')
-      executionContext.vm().stateManager.cache.flush(function () {})
       cb(null, '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
     }
   }
@@ -123,7 +120,15 @@ module.exports = class UniversalDApp extends UdappApi {
       const address = ethJSUtil.privateToAddress(privateKey)
 
       // FIXME: we don't care about the callback, but we should still make this proper
-      executionContext.vm().stateManager.putAccountBalance(address, balance || '0xf00000000000000001', function cb () {})
+      let stateManager = executionContext.vm().stateManager
+      stateManager.getAccount(address, (error, account) => {
+        if (error) return console.log(error)
+        account.balance = balance || '0xf00000000000000001'
+        stateManager.putAccount(address, account, function cb (error) {
+          if (error) console.log(error)
+        })
+      })
+
       this.accounts['0x' + address.toString('hex')] = { privateKey, nonce: 0 }
     }
   }
@@ -174,11 +179,11 @@ module.exports = class UniversalDApp extends UdappApi {
         return cb('No accounts?')
       }
 
-      executionContext.vm().stateManager.getAccountBalance(Buffer.from(address, 'hex'), (err, res) => {
+      executionContext.vm().stateManager.getAccount(Buffer.from(address, 'hex'), (err, res) => {
         if (err) {
           cb('Account not found')
         } else {
-          cb(null, new BN(res).toString(10))
+          cb(null, new BN(res.balance).toString(10))
         }
       })
     }
