@@ -27,19 +27,17 @@ class AnalysisTab extends BaseApi {
   }
 
   render () {
-    var staticanalysis = new StaticAnalysis()
-    staticanalysis.event.register('staticAnaysisWarning', (count) => {
+    if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis()
+    this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
       if (count) {
         this.events.emit('statusChanged', {key: 'exclamation-triangle', title: count + ' warnings', type: 'warning'})
       } else {
         this.events.emit('statusChanged', {key: 'check', title: 'no warning', type: 'success'})
       }
     })
-    this.registry.put({api: staticanalysis, name: 'staticanalysis'})
+    this.registry.put({api: this.staticanalysis, name: 'staticanalysis'})
 
-    if (this.el) return this.el
-    this.el = yo`<div class="${css.analysisTabView}" id="staticanalysisView">${staticanalysis.render()}</div>`
-    return this.el
+    return yo`<div class="${css.analysisTabView}" id="staticanalysisView">${this.staticanalysis.render()}</div>`
   }
 
 }
