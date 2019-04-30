@@ -12,7 +12,10 @@ Misc.prototype.methods = function () {
     eth_mining: this.eth_mining.bind(this),
     eth_hashrate: this.eth_hashrate.bind(this),
     web3_sha3: this.web3_sha3.bind(this),
-    eth_getCompilers: this.eth_getCompilers.bind(this)
+    eth_getCompilers: this.eth_getCompilers.bind(this),
+    eth_compileSolidity: this.eth_compileSolidity.bind(this),
+    eth_compileLLL: this.eth_compileLLL.bind(this),
+    eth_compileSerpent: this.eth_compileSerpent.bind(this)
   }
 }
 
@@ -44,6 +47,18 @@ Misc.prototype.web3_sha3 = function (payload, cb) {
 
 Misc.prototype.eth_getCompilers = function (payload, cb) {
   cb(null, [])
+}
+
+Misc.prototype.eth_compileSolidity = function (payload, cb) {
+  cb(null, "unsupported")
+}
+
+Misc.prototype.eth_compileLLL = function (payload, cb) {
+  cb(null, "unsupported")
+}
+
+Misc.prototype.eth_compileSerpent = function (payload, cb) {
+  cb(null, "unsupported")
 }
 
 module.exports = Misc
