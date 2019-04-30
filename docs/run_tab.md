@@ -1,5 +1,5 @@
-Running transactions
-====================
+Running & Depolying transactions
+================================
 
 The Run tab is an important section of Remix. It allows you to send
 transactions to the current environment.

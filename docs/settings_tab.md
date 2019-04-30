@@ -1,9 +1,11 @@
 Settings
 ========
 
-This section displays the current compiler version and allows one to change to another version.
+To get to **Settings** click the gear a the very bottom of the icon panel. 
 
-![image](images/remix_settingstab.png)
+You can find a link to the homepage (if you closed it) as well as a link to our Gitter Channel and for you aesthetes out there, we now have a rather large list of themes.  
+
+![](images/a-settings.png)
 
 Another important settings:
 
