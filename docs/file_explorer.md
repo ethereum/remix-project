@@ -1,18 +1,20 @@
 File Explorer
 =============
 
+To get to the file explorers - click the file explorers icon.
+
+![](images/a-file-explorer1.png)
+
 The file explorer lists by default all the files stored in your browser.
 You can see them in the browser folder. You can always rename, remove or
 add new files to the file explorer.
-
-![image](images/remix_file_explorer_browser.png)
 
 Note that clearing the browser storage will permanently delete all the
 solidity files you wrote. To avoid this, you can use Remixd, which
 enables you to store and sync files in the browser with your local
 computer (for more information see ../tutorial\_remixd\_filesystem)
 
-![image](images/remix_file_explorer_menu.png)
+![](images/a-file-explorer-buttons.png)
 
 We will start by reviewing at the icons at the top left - from left to
 the right:
