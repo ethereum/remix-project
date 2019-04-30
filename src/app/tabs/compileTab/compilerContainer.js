@@ -40,6 +40,7 @@ class CompilerContainer {
   }
 
   activate () {
+    this.currentFile = this.config.get('currentFile')
     this.listenToEvents()
   }
 
