@@ -35,8 +35,8 @@ class VerticalIconComponent {
     this.store.event.on('remove', (api) => { })
 
     let themeModule = globalRegistry.get('themeModule').api
-    themeModule.events.on('themeChanged', (type) => {
-      this.onThemeChanged(type)
+    themeModule.events.on('themeChanged', (theme) => {
+      this.onThemeChanged(theme.quality)
     })
   }
 
