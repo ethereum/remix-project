@@ -161,8 +161,8 @@ export class LandingPage extends BaseApi {
       globalRegistry.get('verticalicon').api.select('fileExplorers')
     }
 
-    globalRegistry.get('themeModule').api.events.on('themeChanged', (type) => {
-      const invert = type === 'dark' ? 1 : 0
+    globalRegistry.get('themeModule').api.events.on('themeChanged', (theme) => {
+      const invert = theme.quality === 'dark' ? 1 : 0
       const img = document.getElementById('remixLogo')
       if (img) {
         img.style.filter = `invert(${invert})`
