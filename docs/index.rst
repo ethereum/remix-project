@@ -30,30 +30,43 @@ Useful links:
    :maxdepth: 2
    :caption: Quick start
 
-   packages
-   solidity_editor
-   compile_tab
-   quickstart_javascript_vm
+   layout
+   file_explorer
+   plugin_manager
    settings_tab
-
+   terminal
+   run_tab
+   javascript_vm
+   udapp
 
 .. toctree::
    :maxdepth: 2
-   :caption: Deploy and test
+   :caption: Running remix locally
 
-   run_tab
-   udapp
+   packages
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tour of typical modules
+
+   solidity_editor
+   compile_tab
    contract_metadata
+   debugger_tab
+   analysis_tab
+   
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Testing
+
    unittesting_tab
 
 .. toctree::
    :maxdepth: 2
    :caption: Other Remix features
 
-   file_explorer
-   debugger_tab
-   analysis_tab
-   terminal
+   tutorial_remixd_filesystem
 
 .. toctree::
    :maxdepth: 2
@@ -61,7 +74,6 @@ Useful links:
 
    workshop_Building_smart_contracts_with_Remix
    tutorial_eattheblock
-   tutorial_remixd_filesystem
    tutorial_debug
    tutorial_import
    tutorial_mist
