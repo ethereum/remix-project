@@ -37,9 +37,9 @@ Implemented:
 * [_] eth_getUncleByBlockHashAndIndex
 * [_] eth_getUncleByBlockNumberAndIndex
 * [X] eth_getCompilers (DEPRECATED)
-* [_] eth_compileSolidity (DEPRECATED)
-* [_] eth_compileLLL (DEPRECATED)
-* [_] eth_compileSerpent (DEPRECATED)
+* [X] eth_compileSolidity (DEPRECATED)
+* [X] eth_compileLLL (DEPRECATED)
+* [X] eth_compileSerpent (DEPRECATED)
 * [_] eth_newFilter
 * [_] eth_newBlockFilter
 * [_] eth_newPendingTransactionFilter
