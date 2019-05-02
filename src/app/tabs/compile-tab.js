@@ -77,7 +77,7 @@ class CompileTab extends CompilerApi {
 
   listenToEvents () {
     let onContentChanged = () => {
-      this.events.emit('statusChanged', {key: 'code', title: 'the content has changed, needs recompilation', type: 'info'})
+      this.events.emit('statusChanged', {key: 'edited', title: 'the content has changed, needs recompilation', type: 'info'})
     }
     this.editor.event.register('contentChanged', onContentChanged)
     this.editor.event.register('sessionSwitched', onContentChanged)
@@ -87,7 +87,7 @@ class CompileTab extends CompilerApi {
     })
 
     this.compiler.event.register('compilerLoaded', () => {
-      this.events.emit('statusChanged', {key: '', title: '', type: ''})
+      this.events.emit('statusChanged', {key: 'none'})
     })
 
     this.compileTabLogic.event.on('startingCompilation', () => {
@@ -111,7 +111,7 @@ class CompileTab extends CompilerApi {
 
     const cleanupErrors = () => {
       this._view.errorContainer.innerHTML = ''
-      this.events.emit('statusChanged', {key: '', title: '', type: ''})
+      this.events.emit('statusChanged', {key: 'none'})
     }
 
     this.compiler.event.register('compilationFinished', (success, data, source) => {
@@ -120,11 +120,11 @@ class CompileTab extends CompilerApi {
         this.events.emit('compilationFinished', source.target, source, 'soljson', data)
         if (data.errors) {
           this.events.emit('statusChanged', {
-            key: data.errors.length.toString(),
-            title: 'compilation finished successful with warning' + data.errors.length > 1 ? 's' : '',
+            key: data.errors.length,
+            title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.events.emit('statusChanged', {key: 'check', title: 'compilation successful', type: 'success'})
+        } else this.events.emit('statusChanged', {key: 'success', title: 'compilation successful', type: 'success'})
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
@@ -135,8 +135,8 @@ class CompileTab extends CompilerApi {
           )
         })
       } else {
-        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0).toString()
-        this.events.emit('statusChanged', {key: count, title: 'compilation failed', type: 'danger'})
+        const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + data.error ? 1 : 0)
+        this.events.emit('statusChanged', {key: count, title: 'compilation failed', type: 'error'})
       }
       // Update contract Selection
       let contractMap = {}
