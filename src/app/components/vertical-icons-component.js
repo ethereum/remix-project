@@ -51,15 +51,18 @@ class VerticalIconComponent {
 
   listenOnStatus (api) {
     if (!api.events) return
+
+    // the list of supported keys. 'none' will remove the status
+    const keys = ['edited', 'success', 'none', 'spinner', 'fail']
+    const types = ['error', 'warning', 'success', 'info', '']
     const fn = (status) => {
-      if (
-        status.type === 'warning' ||
-        status.type === 'danger' ||
-        status.key === 'code' ||
-        status.key === 'check' ||
-        (status.key === '' && status.type === '' && status.title === '')) {
-        this.setIconStatus(api.profile.name, status)
+      if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
+      if (!status.key) throw new Error(`status key should be defined`)
+
+      if (typeof status.key === 'string' && (!keys.includes(status.key))) {
+        throw new Error('key should contain either number or ' + keys.join())
       }
+      this.setIconStatus(api.profile.name, status)
     }
     this.iconStatus[api.profile.name] = fn
     api.events.on('statusChanged', this.iconStatus[api.profile.name])
@@ -82,6 +85,33 @@ class VerticalIconComponent {
   }
 
   /**
+   * resolve a classes list for @arg key
+   * @param {Object} key
+   * @param {Object} type
+   */
+  resolveClasses (key, type) {
+    let classes = css.status
+    switch (key) {
+      case 'success':
+        classes += ' fas fa-check-circle text-' + type + ' ' + css.statusCheck
+        break
+      case 'edited':
+        classes += ' fas fa-sync text-' + type + ' ' + css.statusCheck
+        break
+      case 'spinner':
+        classes += ' fas fa-spinner text-' + type + ' ' + css.statusCheck
+        break
+      case 'fail':
+        classes += ' fas fa-exclamation-triangle text-' + type + ' ' + css.statusCheck
+        break
+      default: {
+        classes += ' badge badge-pill badge-' + type
+      }
+    }
+    return classes
+  }
+
+  /**
    * Set a new status for the @arg name
    * @param {String} name
    * @param {Object} status
@@ -93,38 +123,30 @@ class VerticalIconComponent {
     if (statusEl) {
       el.removeChild(statusEl)
     }
-    if (status.key) {
-      let key = helper.checkSpecialChars(status.key) ? '' : status.key
-      let type = helper.checkSpecialChars(status.type) ? '' : status.type
-      let title = helper.checkSpecialChars(status.title) ? '' : status.title
+    if (status.key === 'none') return // remove status
 
-      let classes = css.status
-      switch (key) {
-        case 'check':
-          classes += ' fas fa-check-circle text-' + type + ' ' + css.statusCheck
-          break
-        case 'code':
-          classes += ' fas fa-sync text-' + type
-          break
-        default:
-          classes += ' badge badge-pill badge-' + type
-      }
+    let text = ''
+    let key = ''
+    if (typeof status.key === 'number') {
+      key = status.key.toString()
+      text = key
+    } else key = helper.checkSpecialChars(status.key) ? '' : status.key
 
-      el.appendChild(yo`<span
-        title="${title}"
-        class="${classes}"
-        aria-hidden="true"
-      >
-      ${key === 'code' || key === 'check' ? '' : key}
-      </span>`)
+    let type = ''
+    if (status.type === 'error') {
+      type = 'danger' // to use with bootstrap
+    } else type = helper.checkSpecialChars(status.type) ? '' : status.type
+    let title = helper.checkSpecialChars(status.title) ? '' : status.title
 
-      // el.classList = "" doesn't work on all browser use instead
-      var classList = el.classList
-      while (classList.length > 0) {
-        classList.remove(classList.item(0))
-      }
-      el.classList.add(`${css.icon}`)
-    }
+    el.appendChild(yo`<span
+      title="${title}"
+      class="${this.resolveClasses(key, type)}"
+      aria-hidden="true"
+    >
+    ${text}
+    </span>`)
+
+    el.classList.add(`${css.icon}`)
   }
 
   /**
