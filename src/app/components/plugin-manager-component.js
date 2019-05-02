@@ -14,9 +14,11 @@ const css = csjs`
     position: sticky;
     top: 0;
     z-index: 2;
+    margin-bottom: 0px;
   }
   .localPluginBtn {
-    margin-top: 10px;
+    margin-top: 15px;
+    margin-bottom: -25px;
   }
   .displayName {
     text-transform: capitalize;
