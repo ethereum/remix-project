@@ -2,7 +2,7 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .contextview            {
-      opacity           : 0.6;
+      opacity           : 0.5;
     }
   .container              {
     padding             : 1px 15px;
@@ -47,7 +47,7 @@ var css = csjs`
     position          : absolute;
     top               : 35px;
     z-index           : 50;
-    left              : 350px;
+    left              : 50%;
     border-radius     : 1px;
     border            : 2px solid var(--secondary);
   }

@@ -41,7 +41,7 @@ class ContextView {
   }
 
   render () {
-    const view = yo`<div class="${css.contextview} ${css.contextviewcontainer} bg-secondary border-top-0">
+    const view = yo`<div class="${css.contextview} ${css.contextviewcontainer} badge badge-info font-weight-bold border-top-0">
       <div class=${css.container}>
         ${this._renderTarget()}
       </div>
