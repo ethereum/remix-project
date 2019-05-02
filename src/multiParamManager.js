@@ -168,7 +168,7 @@ class MultiParamManager {
               } else {
                 return encodeObj.data
               }
-            }, 'Encode values of input fields & copy to clipboard', 'fa-briefcase')}
+            }, 'Encode values of input fields & copy to clipboard', 'fa-clipboard')}
         </div>
       </div>
     </div>`

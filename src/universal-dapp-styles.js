@@ -17,7 +17,8 @@ var css = csjs`
     line-height: initial;
     overflow: visible;
     margin-bottom: 0px;
-    padding-left: 10px;
+    padding-left: 0px;
+    padding-right: 10px;
   }
   .noInstancesText {
 
@@ -29,7 +30,13 @@ var css = csjs`
   .titleText {
     /* margin-right: 1em; */
     word-break: break-word;
-    min-width: 230px;
+    min-width: 170px;
+    width: 100%;
+  }
+  .spanTitleText {
+    /* font-size: .8rem; */
+    font-size: 11px;
+    width:100%;
   }
   .inputGroupText {
     width: 100%;
@@ -38,10 +45,12 @@ var css = csjs`
     color: var(--primary);
   }
   .titleExpander {
-    margin-right: 10px;
+    /* margin-right: 10px; */
+    padding: 5px 7px;
   }
   .nameNbuts {
     flex-wrap: nowrap;
+    width: 100%;
   }
   .instance {
     display: block;
@@ -67,7 +76,7 @@ var css = csjs`
     vertical-align: top;
   }
   .cActionsWrapper {
-    padding: 10px;
+    padding: 0px 0 10px 10px;
     border: 1px solid rgba(0,0,0,0.125);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0.25rem;
@@ -164,7 +173,7 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner {
     margin-bottom: 10px;
-    padding: 0px 5px 5px 0px;
+    padding: 0px 5px 5px 5px;
     background-color: var(--light);
     width: 99%;
     border-radius: 3px;
@@ -187,6 +196,7 @@ var css = csjs`
     font-weight: bold;
     line-height: 25px;
     cursor: default;
+    padding-top: 5px;
   }
   .contractProperty .contractActionsContainerMultiInner .multiArg label{
     text-align: right;
@@ -207,7 +217,8 @@ var css = csjs`
   }
   .multiArg {
     margin-bottom: 8px;
-    display: flex;
+    /* display: flex; */
+    clear:both;
   }
   .multiArg input{
     padding: 5px;
@@ -217,7 +228,9 @@ var css = csjs`
       float: left;
       margin-right: 6px;
       font-size: 10px;
-      min-width: 30%;
+      width: 30%;
+      padding-top: 5px;
+      word-break: break-all;
   }
   .multiArg button {
     border-radius: 3px;
@@ -232,7 +245,7 @@ var css = csjs`
   }
   .hasArgs .multiArg input {
     border-left: 1px solid #dddddd;
-    width: 100%;
+    width: 67%;
   }
   .hasArgs input {
     display: block;

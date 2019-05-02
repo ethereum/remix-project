@@ -68,10 +68,10 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title} alert alert-dark">
-      <button class="btn btn-light ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fas fa-caret-right" aria-hidden="true"></i></button>
+    <div class="${css.title} alert alert-secondary">
+      <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fas fa-angle-right" aria-hidden="true"></i></button>
       <div class="input-group ${css.nameNbuts}">
-        <div class="${css.titleText} input-group-prepend"><span class="input-group-text"> ${contractName} at ${shortAddress} (${context})</span></div>
+        <div class="${css.titleText} input-group-prepend"><span class="input-group-text ${css.spanTitleText}"> ${contractName} at ${shortAddress} (${context})</span></div>
         <div class="btn-group">
           <button class="btn btn-secondary">${copyToClipboard(() => address)}</button>
         </div>
@@ -93,8 +93,8 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
   function toggleClass (e) {
     $(instance).toggleClass(`${css.hidesub}`)
     // e.currentTarget.querySelector('i')
-    e.currentTarget.querySelector('i').classList.toggle(`fa-caret-right`)
-    e.currentTarget.querySelector('i').classList.toggle(`fa-caret-down`)
+    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
+    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-down`)
   }
 
   instance.appendChild(title)
