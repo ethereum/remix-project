@@ -283,7 +283,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: udapp, name: 'udapp'})
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
     var txLink = executionContext.txDetailsLink(networkName, txhash)
-    if (txLink) registry.get('logCallback').api.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
+    if (txLink) registry.get('logCallback').api(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
   })
 
   const udappUI = new UniversalDAppUI(udapp, registry)
