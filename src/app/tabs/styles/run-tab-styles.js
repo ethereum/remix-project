@@ -65,8 +65,8 @@ var css = csjs`
   .col2_2 {
     width: 100px;
     min-width: 82px;
-    position: absolute;
-    margin-left: 100px;
+    /* position: absolute; */
+    /* margin-left: 100px; */
   }
   .select {
     font-weight: normal;
@@ -229,14 +229,14 @@ var css = csjs`
     display: flex;
   }
   .gasNval {
-    transform: scale(0.7);
-    transform-origin: left;
+    /* transform: scale(0.7); */
+    /* transform-origin: left; */
     margin-right: 10px;
     width: 120px;
   }
   .gasNvalUnit {
-    transform: scale(0.7);
-    transform-origin: left;
+    /* transform: scale(0.7); */
+    /* transform-origin: left; */
     margin-right: 10px;
   }
 `
