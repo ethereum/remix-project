@@ -34,6 +34,7 @@ class AnalysisTab extends BaseApi {
       } else if (count === 0) {
         this.events.emit('statusChanged', {key: 'success', title: 'no warning', type: 'success'})
       } else {
+        // count ==-1 no compilation result
         this.events.emit('statusChanged', {key: 'none'})
       }
     })

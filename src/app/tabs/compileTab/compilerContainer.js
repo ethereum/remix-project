@@ -100,7 +100,7 @@ class CompilerContainer {
     var displayed = name === '' ? '<no file selected>' : name
     var el = yo`
     <div class="${css.compilerArticle}">
-      <button class="btn btn-primary btn-block" title="Compile" onclick="${this.compile.bind(this)}">
+      <button class="btn btn-primary btn-block ${name === '' ? 'disabled' : ''}" title="Compile" onclick="${this.compile.bind(this)}">
         <span>${this._view.compileIcon} Compile ${displayed}</span>
       </button>
     </div>`

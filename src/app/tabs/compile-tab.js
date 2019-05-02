@@ -106,7 +106,6 @@ class CompileTab extends CompilerApi {
     this.fileManager.events.on('noFileSelected', () => {
       this.compilerContainer.currentFile = ''
       cleanupErrors()
-      onContentChanged()
     })
 
     const cleanupErrors = () => {
