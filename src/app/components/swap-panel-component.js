@@ -73,7 +73,7 @@ module.exports = SwapPanelComponent
 
 const css = csjs`
   .plugins        {
-    height         : 100%;
+    height         : 95%;
   }
   .plugItIn       {
     display        : none;
