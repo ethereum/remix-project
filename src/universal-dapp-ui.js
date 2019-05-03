@@ -73,12 +73,12 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       <div class="input-group ${css.nameNbuts}">
         <div class="${css.titleText} input-group-prepend"><span class="input-group-text ${css.spanTitleText}"> ${contractName} at ${shortAddress} (${context})</span></div>
         <div class="btn-group">
-          <button class="btn btn-secondary">${copyToClipboard(() => address)}</button>
+          <button class="btn p-2 btn-secondary">${copyToClipboard(() => address)}</button>
         </div>
       </div>
   </div>`
 
-  var close = yo`<button class="${css.udappClose} btn btn-secondary" onclick=${remove}><i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i></button>`
+  var close = yo`<button class="${css.udappClose} p-2 btn btn-secondary" onclick=${remove}><i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i></button>`
   title.querySelector('.btn-group').appendChild(close)
 
   var contractActionsWrapper = yo`

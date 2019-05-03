@@ -107,6 +107,7 @@ var css = csjs`
     margin-left: auto;
   }
   .debug {
+    white-space: nowrap;
   }
   .debug:hover {
     opacity: 0.8;
@@ -244,7 +245,7 @@ function renderCall (self, data) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
         </span>
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
         <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
@@ -264,7 +265,7 @@ function renderUnknownTransaction (self, data) {
         ${checkTxStatus(data.receipt || data.tx, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
         <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
