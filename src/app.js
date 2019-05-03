@@ -129,9 +129,6 @@ class App {
     self._components.config = new Config(fileStorage)
     registry.put({api: self._components.config, name: 'config'})
 
-    executionContext.init(self._components.config)
-    executionContext.listenOnLastBlock()
-
     self._components.gistHandler = new GistHandler()
 
     self._components.filesProviders = {}

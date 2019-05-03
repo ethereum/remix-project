@@ -38,7 +38,6 @@ module.exports = class UniversalDApp extends UdappApi {
     }
     this.txRunner = new TxRunner({}, this._txRunnerAPI)
     this.accounts = {}
-    this.resetEnvironment()
     executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
   }
 

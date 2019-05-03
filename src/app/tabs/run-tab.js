@@ -12,6 +12,8 @@ var ContractDropdownUI = require('./runTab/contractDropdown.js')
 var Recorder = require('./runTab/model/recorder.js')
 var RecorderUI = require('./runTab/recorder.js')
 
+const executionContext = require('../../execution-context')
+
 import { BaseApi } from 'remix-plugin'
 
 const profile = {
@@ -30,13 +32,15 @@ class RunTab extends BaseApi {
   constructor (udapp, udappUI, config, fileManager, editor, logCallback, filePanel, pluginManager, compilersArtefacts) {
     super(profile)
     this.event = new EventManager()
-
-    this.renderInstanceContainer()
-    this.renderSettings(udapp)
-    this.renderDropdown(udappUI, fileManager, pluginManager, compilersArtefacts, config, editor, udapp, filePanel, logCallback)
-    this.renderRecorder(udapp, udappUI, fileManager, config, logCallback)
-    this.renderRecorderCard()
-    this.renderContainer()
+    this.config = config
+    this.udapp = udapp
+    this.udappUI = udappUI
+    this.fileManager = fileManager
+    this.editor = editor
+    this.logCallback = logCallback
+    this.filePanel = filePanel
+    this.pluginManager = pluginManager
+    this.compilersArtefacts = compilersArtefacts
   }
 
   renderContainer () {
@@ -51,6 +55,7 @@ class RunTab extends BaseApi {
     </div>
     `
     this.container.appendChild(el)
+    return this.container
   }
 
   renderInstanceContainer () {
@@ -158,7 +163,16 @@ class RunTab extends BaseApi {
   }
 
   render () {
-    return this.container
+    executionContext.init(this.config)
+    executionContext.stopListenOnLastBlock()
+    executionContext.listenOnLastBlock()
+    this.udapp.resetEnvironment()
+    this.renderInstanceContainer()
+    this.renderSettings(this.udapp)
+    this.renderDropdown(this.udappUI, this.fileManager, this.pluginManager, this.compilersArtefacts, this.config, this.editor, this.udapp, this.filePanel, this.logCallback)
+    this.renderRecorder(this.udapp, this.udappUI, this.fileManager, this.config, this.logCallback)
+    this.renderRecorderCard()
+    return this.renderContainer()
   }
 
 }
