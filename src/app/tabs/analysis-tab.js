@@ -29,10 +29,13 @@ class AnalysisTab extends BaseApi {
   render () {
     if (!this.staticanalysis) this.staticanalysis = new StaticAnalysis()
     this.staticanalysis.event.register('staticAnaysisWarning', (count) => {
-      if (count) {
-        this.events.emit('statusChanged', {key: 'exclamation-triangle', title: count + ' warnings', type: 'warning'})
+      if (count > 0) {
+        this.events.emit('statusChanged', {key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning'})
+      } else if (count === 0) {
+        this.events.emit('statusChanged', {key: 'success', title: 'no warning', type: 'success'})
       } else {
-        this.events.emit('statusChanged', {key: 'check', title: 'no warning', type: 'success'})
+        // count ==-1 no compilation result
+        this.events.emit('statusChanged', {key: 'none'})
       }
     })
     this.registry.put({api: this.staticanalysis, name: 'staticanalysis'})
