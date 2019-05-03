@@ -63,10 +63,6 @@ var css = csjs`
     min-width: 164px;
   }
   .col2_2 {
-    width: 100px;
-    min-width: 82px;
-    /* position: absolute; */
-    /* margin-left: 100px; */
   }
   .select {
     font-weight: normal;
@@ -232,12 +228,14 @@ var css = csjs`
     /* transform: scale(0.7); */
     /* transform-origin: left; */
     margin-right: 10px;
-    width: 120px;
+    width: 100px;
+    font-size: 0.8rem;
   }
   .gasNvalUnit {
     /* transform: scale(0.7); */
     /* transform-origin: left; */
     margin-right: 10px;
+    font-size: 0.8rem;
   }
 `
 
