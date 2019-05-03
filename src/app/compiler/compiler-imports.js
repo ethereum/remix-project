@@ -131,6 +131,9 @@ module.exports = class CompilerImports {
       return resolver.require(url)
     })
     .then(result => {
+      if (url.indexOf(result.provider + ':') === 0) {
+        url = url.substring(result.provider.length + 1) // remove the github prefix
+      }
       cb(null, result.source, url, result.provider, result.url)
     })
     .catch(err => {
