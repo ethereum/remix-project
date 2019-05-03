@@ -56,7 +56,7 @@ class SwapPanelComponent {
 
   render () {
     this.view = yo`
-      <div id='plugins' class=${css.plugins} >
+      <div id='plugins' class=${css.plugins}>
       </div>
     `
     this.header = yo`<header class="${css.swapitHeader}"><h6 class="${css.swapitTitle}"></h6></header>`
