@@ -182,7 +182,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       },
       'Delete': () => {
         if (self.files.readonly) { return tooltip('cannot delete folder. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm(null, 'Do you want to delete this folder?', () => { files.remove(key) }, () => {})
+        modalDialogCustom.confirm('Confirm to delete a folder', 'Are you sure you want to delete this folder?', () => { files.remove(key) }, () => {})
       }
     })
   })
@@ -198,7 +198,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       },
       'Delete': () => {
         if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
-        modalDialogCustom.confirm(null, 'Do you want to delete this file?', () => { files.remove(key) }, () => {})
+        modalDialogCustom.confirm('Delete a file', 'Are you sure you want to delete this file?', () => { files.remove(key) }, () => {})
       }
     })
   })
@@ -287,7 +287,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm(null, 'Do you want to rename?', () => { rename() }, () => { label.innerText = textUnderEdit })
+        modalDialogCustom.confirm('Confirm to rename a file', 'Are you sure you want to rename thi file?', () => { rename() }, () => { label.innerText = textUnderEdit })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove('bg-light')
@@ -357,7 +357,7 @@ fileExplorer.prototype.uploadFile = function (event) {
       if (!exist) {
         loadFile()
       } else {
-        modalDialogCustom.confirm(null, `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
+        modalDialogCustom.confirm('Confirm to overrite', `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
       }
     })
   })
@@ -369,7 +369,7 @@ fileExplorer.prototype.toGist = function (id) {
       modalDialogCustom.alert('Failed to manage gist: ' + error)
     } else {
       if (data.html_url) {
-        modalDialogCustom.confirm(null, `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
+        modalDialogCustom.confirm('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, () => {
           window.open(data.html_url, '_blank')
         })
       } else {
@@ -488,7 +488,7 @@ fileExplorer.prototype.updateGist = function () {
 
 fileExplorer.prototype.createNewFile = function () {
   let self = this
-  modalDialogCustom.prompt(null, 'File Name', 'Untitled.sol', (input) => {
+  modalDialogCustom.prompt('Create new file', 'File Name', 'Untitled.sol', (input) => {
     helper.createNonClashingName(input, self.files, (error, newName) => {
       if (error) return modalDialogCustom.alert('Failed to create file ' + newName + ' ' + error)
       if (!self.files.set(newName, '')) {

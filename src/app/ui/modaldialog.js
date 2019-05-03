@@ -3,11 +3,12 @@ var css = require('./styles/modaldialog-styles')
 
 module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   let agreed = true
+  let footerIsActive = true
   opts = opts || {}
-  var container = document.querySelector(`.${css.modal}`)
+  var container = document.querySelector(`.modal`)
   if (!container) {
     document.querySelector('body').appendChild(html(opts))
-    container = document.querySelector(`.${css.modal}`)
+    container = document.querySelector(`.modal`)
   }
 
   var closeDiv = document.getElementById('modal-close')
@@ -21,11 +22,11 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   cancelDiv.innerHTML = (cancel && cancel.label !== undefined) ? cancel.label : 'Cancel'
   cancelDiv.style.display = cancelDiv.innerHTML === '' ? 'none' : 'inline-block'
 
-  var modal = document.querySelector(`.${css.modalBody}`)
-  var modalTitle = document.querySelector(`.${css.modalHeader} h3`)
+  var modal = document.querySelector(`.modal-body`)
+  var modalTitle = document.querySelector(`.modal-header h6`)
 
   modalTitle.innerHTML = ''
-  if (title) modalTitle.innerHTML = title
+  if (title) modalTitle.innerText = title
 
   modal.innerHTML = ''
   if (content) modal.appendChild(content)
@@ -57,22 +58,22 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     hide()
     if (cancel && cancel.fn) cancel.fn()
     if (container) {
-      container.class = css.modal
+      container.class = `modal`
       container = null
     }
   }
 
   function modalKeyEvent (e) {
-    if (e.keyCode === 27) {
+    if (e.keyCode === 27) { // Esc
       cancelListener()
-    } else if (e.keyCode === 13) {
+    } else if (e.keyCode === 13) { // Enter
       e.preventDefault()
       okListener()
-    } else if (e.keyCode === 37) {
+    } else if (e.keyCode === 37 && footerIsActive) { // Arrow Left
       e.preventDefault()
       agreed = true
       setFocusOn('ok')
-    } else if (e.keyCode === 39) {
+    } else if (e.keyCode === 39 && footerIsActive) { // Arrow Right
       e.preventDefault()
       agreed = false
       setFocusOn('cancel')
@@ -87,7 +88,7 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
     if (!container) return
     container.style.display = 'block'
     if (focusSelector) {
-      const focusTarget = document.querySelector(`.${css.modal} ${focusSelector}`)
+      const focusTarget = document.querySelector(`.modal ${focusSelector}`)
       if (focusTarget) {
         focusTarget.focus()
         if (typeof focusTarget.setSelectionRange === 'function') {
@@ -110,25 +111,35 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   cancelDiv.addEventListener('click', cancelListener)
   closeDiv.addEventListener('click', cancelListener)
   document.addEventListener('keydown', modalKeyEvent)
-  if (document.getElementById('modal-background')) {
-    document.getElementById('modal-background').addEventListener('click', cancelListener)
+
+  let modalDialog = document.getElementById('modal-dialog')
+  if (modalDialog) {
+    modalDialog.addEventListener('click', (e)=>{
+      footerIsActive = document.activeElement === modalDialog
+      if (e.toElement == modalDialog) {
+        cancelListener() // click is outside of modal-content
+      }
+    })
   }
   return { container, okListener, cancelListener }
 }
 
 function html (opts) {
-  return yo`<div id="modal-dialog" class="${css.modal}">
-  <div id="modal-background" class="${css['modalBackground']}"> </div>
-    <div class="${css['modalContent']} bg-light text-secondary ${opts.class}">
-      <div class="${css['modalHeader']}">
-        <h3></h3>
-        <i id="modal-close" title="Close" class="fas fa-times ${css['modalClose']}" aria-hidden="true"></i>
-      </div>
-      <div class="${css['modalBody']}"> -
-      </div>
-      <div class="${css['modalFooter']}">
-        <span id="modal-footer-ok" class="${css['modalFooterOk']} btn btn-sm btn-light">OK</span>
-        <span id="modal-footer-cancel" class="${css['modalFooterCancel']} btn btn-sm btn-light">Cancel</span>
+  return yo`
+  <div id="modal-dialog" class="modal" tabindex="-1" role="dialog">
+    <div id="modal-background" class="modal-dialog" role="document">
+      <div class="modal-content ${css.modalContent} ${opts.class}">
+        <div class="modal-header">
+          <h6 class="modal-title"></h6>
+          <span class="modal-close">
+            <i id="modal-close" title="Close" class="fas fa-times" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="modal-body"> - </div>
+        <div class="modal-footer" autofocus>
+          <span id="modal-footer-ok" class="${css['modalFooterOk']} modal-ok btn btn-sm btn-light" tabindex='5'>OK</span>
+          <span id="modal-footer-cancel" class="${css['modalFooterCancel']} modal-cancel btn btn-sm btn-light" tabindex='10' data-dismiss="modal">Cancel</span>
+        </div>
       </div>
     </div>
   </div>`

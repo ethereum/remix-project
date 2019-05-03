@@ -46,7 +46,7 @@ var css = csjs`
     padding          : 0;
     line-height      : 18px;
     font-size        : 12px;
-    width            : 50%;
+    width            : 40%;
     box-shadow       : 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatebottom;
     -webkit-animation-duration: 0.4s;

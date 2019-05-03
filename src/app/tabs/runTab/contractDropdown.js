@@ -182,7 +182,7 @@ class ContractDropdownUI {
     var address = this.atAddressButtonInput.value
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
-        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', cb)
+        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
       },
       (error, loadType, abi) => {
         if (error) {

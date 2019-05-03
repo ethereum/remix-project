@@ -150,9 +150,12 @@ class SettingsUI {
 
     this.settings.event.register('addProvider', (network) => {
       selectExEnv.appendChild(yo`<option
-              title="Manually added environment: ${network.url}"
-              value="${network.name}" name="executionContext"> ${network.name}
-            </option>`)
+        title="Manually added environment: ${network.url}"
+        value="${network.name}"
+        name="executionContext"
+      >
+        ${network.name}
+      </option>`)
       addTooltip(`${network.name} [${network.url}] added`)
     })
 
