@@ -36,19 +36,17 @@ class ContextView {
       this.update()
     })
     this.contextualListener.event.register('stopHighlighting', () => {
-      this.hide()
     })
   }
 
   render () {
-    const view = yo`<div class="${css.contextview} ${css.contextviewcontainer} badge badge-secondary border-top-0">
+    const view = yo`<div class="${css.contextview} ${css.contextviewcontainer} badge bg-light border-0">
       <div class=${css.container}>
         ${this._renderTarget()}
       </div>
     </div>`
     if (!this._view) {
       this._view = view
-      this.hide()
     }
     return view
   }
@@ -68,7 +66,6 @@ class ContextView {
   update () {
     if (this._view) {
       yo.update(this._view, this.render())
-      this._view.style.display = this._current ? 'block' : 'none'
     }
   }
 
@@ -169,14 +166,13 @@ class ContextView {
       }
     }
 
-    return yo`<div class=${css.line}>
+    return yo`<div class=${css.line}>${showGasEstimation()}
       <div title=${type} class=${css.type}>${type}</div>
       <div title=${node.attributes.name} class=${css.name}>${node.attributes.name}</div>
       <i class="fas fa-share ${css.jump}" aria-hidden="true" onclick=${jumpTo}></i>
       <span class=${css.referencesnb}>${references}</span>
       <i data-action='previous' class="fas fa-chevron-up ${css.jump}" aria-hidden="true" onclick=${jump}></i>
       <i data-action='next' class="fas fa-chevron-down ${css.jump}" aria-hidden="true" onclick=${jump}></i>
-        ${showGasEstimation()}
     </div>`
   }
 }
