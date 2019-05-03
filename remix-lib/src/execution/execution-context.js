@@ -130,6 +130,7 @@ function ExecutionContext () {
         else if (id === '2') name = 'Morden (deprecated)'
         else if (id === '3') name = 'Ropsten'
         else if (id === '4') name = 'Rinkeby'
+        else if (id === '5') name = 'Görli'
         else if (id === '42') name = 'Kovan'
         else name = 'Custom'
 
