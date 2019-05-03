@@ -47,7 +47,7 @@ UniversalDApp.prototype.resetEnvironment = function () {
       executionContext.detectNetwork(cb)
     },
     personalMode: () => {
-      return this.config.get('settings/personal-mode')
+      return this._deps.config.get('settings/personal-mode')
     }
   })
   this.txRunner.event.register('transactionBroadcasted', (txhash) => {
@@ -70,7 +70,7 @@ UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
 
 UniversalDApp.prototype.newAccount = function (password, passwordPromptCb, cb) {
   if (!executionContext.isVM()) {
-    if (!this.config.get('settings/personal-mode')) {
+    if (!this._deps.config.get('settings/personal-mode')) {
       return cb('Not running in personal mode')
     }
     passwordPromptCb((passphrase) => {
