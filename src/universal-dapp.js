@@ -68,7 +68,7 @@ module.exports = class UniversalDApp extends UdappApi {
         executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return this.config.get('settings/personal-mode')
+        return this._deps.config.get('settings/personal-mode')
       }
     })
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
@@ -94,7 +94,7 @@ module.exports = class UniversalDApp extends UdappApi {
 
   newAccount (password, passwordPromptCb, cb) {
     if (!executionContext.isVM()) {
-      if (!this.config.get('settings/personal-mode')) {
+      if (!this._deps.config.get('settings/personal-mode')) {
         return cb('Not running in personal mode')
       }
       passwordPromptCb((passphrase) => {
