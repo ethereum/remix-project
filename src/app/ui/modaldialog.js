@@ -114,9 +114,9 @@ module.exports = (title, content, ok, cancel, focusSelector, opts) => {
 
   let modalDialog = document.getElementById('modal-dialog')
   if (modalDialog) {
-    modalDialog.addEventListener('click', (e)=>{
+    modalDialog.addEventListener('click', (e) => {
       footerIsActive = document.activeElement === modalDialog
-      if (e.toElement == modalDialog) {
+      if (e.toElement === modalDialog) {
         cancelListener() // click is outside of modal-content
       }
     })
