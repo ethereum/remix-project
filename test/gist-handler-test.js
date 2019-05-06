@@ -19,7 +19,7 @@ function GistHandler (_window) {
     if (params['gist'] === '') {
       loadingFromGist = true
       modalDialogCustom.prompt(
-        null,
+        'Load a Gist',
         'Enter the URL or ID of the Gist you would like to load.',
         null,
         target => {

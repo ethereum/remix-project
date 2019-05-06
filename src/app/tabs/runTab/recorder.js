@@ -56,7 +56,7 @@ class RecorderUI {
     }
 
     var promptCb = (okCb, cancelCb) => {
-      modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     var alertCb = (msg) => {
@@ -76,7 +76,7 @@ class RecorderUI {
   triggerRecordButton () {
     this.recorder.saveScenario(
       (path, cb) => {
-        modalDialogCustom.prompt(null, 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)
+        modalDialogCustom.prompt('Save transactions as scenario', 'Transactions will be saved in a file under ' + path, 'scenario.json', cb)
       },
       (error) => {
         if (error) return modalDialogCustom.alert(error)
