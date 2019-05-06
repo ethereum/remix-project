@@ -229,7 +229,7 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     }
 
     var promptCb = (okCb, cancelCb) => {
-      modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     // contractsDetails is used to resolve libraries

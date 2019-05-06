@@ -141,7 +141,7 @@ class ContractDropdownUI {
     }
 
     var promptCb = (okCb, cancelCb) => {
-      modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     var statusCb = (msg) => {
@@ -182,7 +182,7 @@ class ContractDropdownUI {
     var address = this.atAddressButtonInput.value
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
-        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', cb)
+        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
       },
       (error, loadType, abi) => {
         if (error) {

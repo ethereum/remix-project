@@ -90,10 +90,10 @@ export class LandingPage extends BaseApi {
   }
 
   render () {
-    let load = function (item) {
+    let load = function (service, item) {
       let compilerImport = new CompilerImport()
       let fileProviders = globalRegistry.get('fileproviders').api
-      modalDialogCustom.prompt(null, 'Enter the ' + item + ' you would like to load.', null, (target) => {
+      modalDialogCustom.prompt(`Import from ${service}`, 'Enter the ' + item + ' you would like to load.', null, (target) => {
         if (target !== '') {
           compilerImport.import(
             target,
@@ -212,9 +212,9 @@ export class LandingPage extends BaseApi {
             <p class="mb-1">Import From:</p>
             <div class="btn-group">
               <button class="btn btn-sm btn-secondary" onclick=${() => { importFromGist() }}>Gist</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Github URL') }}>Github</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('bzz-raw URL') }}>Swarm</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('ipfs URL') }}>Ipfs</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Github', 'Github URL') }}>Github</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Swarm', 'bzz-raw URL') }}>Swarm</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Ipfs', 'ipfs URL') }}>Ipfs</button>
             </div><!-- end of btn-group -->
           </div><!-- end of div.file -->
         </div><!-- end of #col1 -->
