@@ -287,7 +287,7 @@ function fileExplorer (localRegistry, files, menuItems) {
       var isFolder = label.className.indexOf('folder') !== -1
       var save = textUnderEdit !== label.innerText
       if (save) {
-        modalDialogCustom.confirm('Confirm to rename a file', 'Are you sure you want to rename thi file?', () => { rename() }, () => { label.innerText = textUnderEdit })
+        modalDialogCustom.confirm('Confirm to rename a file', 'Are you sure you want to rename this file?', () => { rename() }, () => { label.innerText = textUnderEdit })
       }
       label.removeAttribute('contenteditable')
       label.classList.remove('bg-light')
@@ -357,7 +357,7 @@ fileExplorer.prototype.uploadFile = function (event) {
       if (!exist) {
         loadFile()
       } else {
-        modalDialogCustom.confirm('Confirm to overrite', `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
+        modalDialogCustom.confirm('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, () => { loadFile() })
       }
     })
   })
@@ -450,7 +450,7 @@ fileExplorer.prototype.packageFiles = function (filesProvider, callback) {
 fileExplorer.prototype.copyFiles = function () {
   let self = this
   modalDialogCustom.prompt(
-    null,
+    'Copy files from browser explorer',
     'To which other remix-ide instance do you want to copy over all files?',
     'https://remix.ethereum.org',
     (target) => {
