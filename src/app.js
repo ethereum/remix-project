@@ -338,7 +338,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: networkModule, name: 'network'})
 
   // ----------------- theme module ----------------------------
-  const themeModule = new ThemeModule()
+  const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
 
   // ----------------- editor panel ----------------------
