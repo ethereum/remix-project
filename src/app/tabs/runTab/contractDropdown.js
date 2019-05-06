@@ -141,7 +141,7 @@ class ContractDropdownUI {
     }
 
     var promptCb = (okCb, cancelCb) => {
-      modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     var statusCb = (msg) => {

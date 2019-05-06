@@ -170,8 +170,8 @@ class SettingsUI {
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
-        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+        modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an ethereum node?', () => {
+          modalDialogCustom.prompt('External node request', 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
               if (alertMsg) {
                 modalDialogCustom.alert(alertMsg)
