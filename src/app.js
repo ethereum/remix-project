@@ -123,10 +123,10 @@ class App {
     var fileStorage = new Storage('sol:')
     registry.put({api: fileStorage, name: 'fileStorage'})
 
-    var configStorage = new Storage('config:')
+    var configStorage = new Storage('config-v0.8:')
     registry.put({api: configStorage, name: 'configStorage'})
 
-    self._components.config = new Config(fileStorage)
+    self._components.config = new Config(configStorage)
     registry.put({api: self._components.config, name: 'config'})
 
     self._components.gistHandler = new GistHandler()
@@ -335,7 +335,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: networkModule, name: 'network'})
 
   // ----------------- theme module ----------------------------
-  const themeModule = new ThemeModule()
+  const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
 
   // ----------------- editor panel ----------------------
