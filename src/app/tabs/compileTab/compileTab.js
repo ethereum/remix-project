@@ -38,7 +38,7 @@ class CompileTab {
     this.editor.clearAnnotations()
     var currentFile = this.config.get('currentFile')
     if (!currentFile) return
-    if (!/\.sol$/.exec(currentFile)) return
+    if (!/\.sol/.exec(currentFile)) return
     // only compile *.sol file.
     var target = currentFile
     var sources = {}

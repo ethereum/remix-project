@@ -209,7 +209,9 @@ class VerticalIconComponent {
   }
 
   _iconClick (name) {
-    this.select(name)
+    this.removeActive()
+    this.addActive(name)
+    this.events.emit('toggleContent', name)
   }
 
   render () {

@@ -90,10 +90,14 @@ export class LandingPage extends BaseApi {
   }
 
   render () {
-    let load = function (service, item) {
+    let load = function (service, item, examples, info) {
       let compilerImport = new CompilerImport()
       let fileProviders = globalRegistry.get('fileproviders').api
-      modalDialogCustom.prompt(`Import from ${service}`, 'Enter the ' + item + ' you would like to load.', null, (target) => {
+      const msg = yo`<div class="p-2"><span>Enter the ${item} you would like to load.</span>
+      <div>${info}</div>
+      <div>e.g ${examples.map((url) => { return yo`<div class="p-1"><a>${url}</a></div>` })}</div></div>`
+
+      modalDialogCustom.prompt(`Import from ${service}`, msg, null, (target) => {
         if (target !== '') {
           compilerImport.import(
             target,
@@ -104,6 +108,7 @@ export class LandingPage extends BaseApi {
               } else {
                 if (fileProviders[type]) {
                   fileProviders[type].addReadOnly(cleanUrl, content, url)
+                  globalRegistry.get('verticalicon').api.select('fileExplorers')
                 }
               }
             }
@@ -212,9 +217,11 @@ export class LandingPage extends BaseApi {
             <p class="mb-1">Import From:</p>
             <div class="btn-group">
               <button class="btn btn-sm btn-secondary" onclick=${() => { importFromGist() }}>Gist</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Github', 'Github URL') }}>Github</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Swarm', 'bzz-raw URL') }}>Swarm</button>
-              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Ipfs', 'ipfs URL') }}>Ipfs</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Github', 'github URL', ['https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/crowdsale/Crowdsale.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol', 'github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2']) }}>Github</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Swarm', 'bzz-raw URL', ['bzz-raw://<swarm-hash>']) }}>Swarm</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>']) }}>Ipfs</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-solidity/master/contracts/crowdsale/validation/IndividuallyCappedCrowdsale.sol']) }}>https</button>
+              <button class="btn btn-sm btn-secondary" onclick=${() => { load('@resolver-engine', 'resolver-engine URL', ['github:OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol#v2.1.2'], yo`<span>please checkout <a class='text-primary' href="https://github.com/Crypto-Punkers/resolver-engine" target='_blank'>https://github.com/Crypto-Punkers/resolver-engine</a> for more information</span>`) }}>Resolver-engine</button>
             </div><!-- end of btn-group -->
           </div><!-- end of div.file -->
         </div><!-- end of #col1 -->

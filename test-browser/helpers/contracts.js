@@ -238,7 +238,7 @@ function addInstance (browser, address, isValidFormat, isValidChecksum, callback
   browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
       .execute(function () {
-        var ret = document.querySelector('div[class="modal-body"] div').innerHTML
+        var ret = document.querySelector('div[class^="modal-body"] div').innerHTML
         document.querySelector('#modal-footer-ok').click()
         return ret
       }, [], function (result) {
