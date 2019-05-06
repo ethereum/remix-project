@@ -49,7 +49,7 @@ var css = csjs`
     z-index           : 50;
     border-radius     : 1px;
     border            : 2px solid var(--secondary);
-    transition: all 0.3s cubic-bezier(0.86, 0, 0.07, 1);
+    transition        : all 0.3s cubic-bezier(0.86, 0, 0.07, 1);
   }
 `
 
