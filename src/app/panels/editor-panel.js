@@ -71,17 +71,19 @@ class EditorPanel {
       // we check upstream for "fileChanged"
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
+      self._components.contextView.show()
     })
     self.tabProxy.event.on('switchFile', (file) => {
       self._view.editor.style.display = 'block'
       self._view.mainPanel.style.display = 'none'
+      self._components.contextView.show()
     })
     self.tabProxy.event.on('closeFile', (file) => {
     })
     self.tabProxy.event.on('switchApp', showApp)
     self.tabProxy.event.on('closeApp', (name) => {
       self._view.editor.style.display = 'block'
-      self._components.contextView.hide()
+      self._components.contextView.show()
       self._view.mainPanel.style.display = 'none'
     })
     self.data = {
@@ -181,9 +183,9 @@ class EditorPanel {
     self._view.content = yo`
       <div class=${css.content}>
         ${self.tabProxy.renderTabsbar()}
-        ${self._components.contextView.render()}
         ${self._view.editor}
         ${self._view.mainPanel}
+        ${self._components.contextView.render()}
         ${self._view.terminal}
       </div>
     `
