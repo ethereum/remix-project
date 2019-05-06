@@ -5,6 +5,7 @@ var css = yo`<style>
 .sol.error,
 .sol.staticAnalysisWarning,
 .sol.warning {
+    white-space: pre-line;
     word-wrap: break-word;
     cursor: pointer;
     position: relative;
@@ -18,6 +19,7 @@ var css = yo`<style>
 .sol.error pre,
 .sol.staticAnalysisWarning pre,
 .sol.warning pre {
+    white-space: pre-line;
     overflow-y: hidden;
     background-color: transparent;
     margin: 0;
@@ -31,6 +33,7 @@ var css = yo`<style>
 .sol.staticAnalysisWarning .close,
 .sol.error .close,
 .sol.warning .close {
+    white-space: pre-line;
     font-weight: bold;
     position: absolute;
     color: hsl(0, 0%, 0%); /* black in style-guide.js */
