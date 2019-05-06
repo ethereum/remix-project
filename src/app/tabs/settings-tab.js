@@ -35,11 +35,6 @@ module.exports = class SettingsTab extends BaseApi {
       }
     } /* eslint-enable */
     this.event = new EventManager()
-    this.initTheme()
-  }
-
-  initTheme () {
-    this.currentTheme = this._deps.themeModule.currentTheme()
   }
 
   createThemeCheckies () {
@@ -54,7 +49,7 @@ module.exports = class SettingsTab extends BaseApi {
           <input type="radio" onchange=${event => { onswitchTheme(event, aTheme.name) }} class="align-middle form-check-input" name="theme" id="${aTheme.name}"   >
           <label class="form-check-label" for="${aTheme.name}">${aTheme.name} (${aTheme.quality})</label>
         </div>`
-          if (this.currentTheme === aTheme.name) el.querySelector('input').setAttribute('checked', 'checked')
+          if (this._deps.themeModule.active === aTheme.name) el.querySelector('input').setAttribute('checked', 'checked')
           return el
         })}
       </div>`
