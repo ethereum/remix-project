@@ -2,7 +2,9 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .contextview            {
-      opacity           : 1;
+    opacity             : 1;
+    position            : relative;
+    height              : 20px;
   }
   .container              {
     padding             : 1px 15px;
@@ -14,7 +16,7 @@ var css = csjs`
     text-overflow       : ellipsis;
     overflow            : hidden;
     white-space         : nowrap;
-    font-size           : 18px;
+    font-size           : 13px;
   }
   .type                   {
     font-style        : italic;
@@ -35,7 +37,7 @@ var css = csjs`
     margin-left       : 15px;
   }
   .gasEstimation {
-    margin-left: 15px;
+    margin-right: 15px;
     display: flex;
     align-items: center;
   }
@@ -44,10 +46,7 @@ var css = csjs`
     margin-right: 5px;
   }
   .contextviewcontainer{
-    position          : absolute;
-    top               : 35px;
     z-index           : 50;
-    left              : 40%;
     border-radius     : 1px;
     border            : 2px solid var(--secondary);
   }
