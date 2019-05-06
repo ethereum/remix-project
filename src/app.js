@@ -123,10 +123,10 @@ class App {
     var fileStorage = new Storage('sol:')
     registry.put({api: fileStorage, name: 'fileStorage'})
 
-    var configStorage = new Storage('config:')
+    var configStorage = new Storage('config-v0.8:')
     registry.put({api: configStorage, name: 'configStorage'})
 
-    self._components.config = new Config(fileStorage)
+    self._components.config = new Config(configStorage)
     registry.put({api: self._components.config, name: 'config'})
 
     executionContext.init(self._components.config)
