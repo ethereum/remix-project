@@ -1,6 +1,5 @@
 import { BaseApi } from 'remix-plugin'
 import { EventEmitter } from 'events'
-const Storage = require('remix-lib').Storage
 
 const themes = [
   {name: 'Cerulean', quality: 'light', url: 'https://bootswatch.com/4/cerulean/bootstrap.min.css'},
@@ -25,12 +24,14 @@ const profile = {
 
 export class ThemeModule extends BaseApi {
 
-  constructor () {
+  constructor (registry) {
     super(profile)
     this.events = new EventEmitter()
-    this.storage = new Storage('style:')
+    this._deps = {
+      config: registry.get('config').api
+    }
     this.themes = themes.reduce((acc, theme) => ({ ...acc, [theme.name]: theme }), {})
-    this.active = this.storage.exists('theme') ? this.storage.get('theme') : 'Cerulean'
+    this.active = this._deps.config.get('settings/theme') ? this._deps.config.get('settings/theme') : 'Flatly'
   }
 
   /** Return the active theme */
@@ -53,7 +54,7 @@ export class ThemeModule extends BaseApi {
     }
     const next = themeName || this.active   // Name
     const nextTheme = this.themes[next] // Theme
-    this.storage.set('theme', next)
+    this._deps.config.set('settings/theme', next)
     document.getElementById('theme-link').setAttribute('href', nextTheme.url)
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
