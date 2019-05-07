@@ -19,10 +19,9 @@ class SourceHighlighters extends EditorApi {
     this.highlighters = {}
   }
 
-  highlight (lineColumnPos, filePath, hexColor) {
+  highlight (position, filePath, hexColor) {
     const { from } = this.currentRequest
     try {
-      const position = JSON.parse(lineColumnPos)
       if (!this.highlighters[from]) this.highlighters[from] = new SourceHighlighter()
       this.highlighters[from].currentSourceLocation(null)
       this.highlighters[from].currentSourceLocationFromfileName(position, filePath, hexColor)
