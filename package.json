@@ -67,7 +67,7 @@
   },
   "dependencies": {
     "http-server-legacy": "latest",
-    "remix-plugin": "0.0.2-alpha.5",
+    "remix-plugin": "0.0.2-alpha.6",
     "remixd": "0.1.8-alpha.6"
   },
   "repository": {

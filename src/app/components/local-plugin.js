@@ -37,10 +37,10 @@ module.exports = class LocalPlugin {
       ...this.profile,
       icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMjYyIDEwNzVxLTM3IDEyMS0xMzggMTk1dC0yMjggNzQtMjI4LTc0LTEzOC0xOTVxLTgtMjUgNC00OC41dDM4LTMxLjVxMjUtOCA0OC41IDR0MzEuNSAzOHEyNSA4MCA5Mi41IDEyOS41dDE1MS41IDQ5LjUgMTUxLjUtNDkuNSA5Mi41LTEyOS41cTgtMjYgMzItMzh0NDktNCAzNyAzMS41IDQgNDguNXptLTQ5NC00MzVxMCA1My0zNy41IDkwLjV0LTkwLjUgMzcuNS05MC41LTM3LjUtMzcuNS05MC41IDM3LjUtOTAuNSA5MC41LTM3LjUgOTAuNSAzNy41IDM3LjUgOTAuNXptNTEyIDBxMCA1My0zNy41IDkwLjV0LTkwLjUgMzcuNS05MC41LTM3LjUtMzcuNS05MC41IDM3LjUtOTAuNSA5MC41LTM3LjUgOTAuNSAzNy41IDM3LjUgOTAuNXptMjU2IDI1NnEwLTEzMC01MS0yNDguNXQtMTM2LjUtMjA0LTIwNC0xMzYuNS0yNDguNS01MS0yNDguNSA1MS0yMDQgMTM2LjUtMTM2LjUgMjA0LTUxIDI0OC41IDUxIDI0OC41IDEzNi41IDIwNCAyMDQgMTM2LjUgMjQ4LjUgNTEgMjQ4LjUtNTEgMjA0LTEzNi41IDEzNi41LTIwNCA1MS0yNDguNXptMTI4IDBxMCAyMDktMTAzIDM4NS41dC0yNzkuNSAyNzkuNS0zODUuNSAxMDMtMzg1LjUtMTAzLTI3OS41LTI3OS41LTEwMy0zODUuNSAxMDMtMzg1LjUgMjc5LjUtMjc5LjUgMzg1LjUtMTAzIDM4NS41IDEwMyAyNzkuNSAyNzkuNSAxMDMgMzg1LjV6Ii8+PC9zdmc+',
       methods: [],
-      events: [],
       hash: `local-${this.profile.name}`,
       location: 'swapPanel'
     }
+    profile.events = profile.events.filter((item) => { return item !== '' })
     if (!profile.name) throw new Error('Plugin should have a name')
     if (!profile.url) throw new Error('Plugin should have an URL')
     localStorage.setItem('plugins/local', JSON.stringify(profile))
@@ -76,6 +76,12 @@ module.exports = class LocalPlugin {
     this.profile.displayName = target.value
   }
 
+  updateEvents ({target}, index) {
+    if (this.profile.events[index] !== undefined) {
+      this.profile.events[index] = target.value
+    }
+  }
+
   /**
    * The checkbox for a couple module / event
    * @param {string} plugin The name of the plugin
@@ -103,8 +109,22 @@ module.exports = class LocalPlugin {
     const profiles = plugins
       .filter(({profile}) => profile.events && profile.events.length > 0)
       .map(({profile}) => profile)
+
+    const eventsForm = (events) => {
+      return yo`<div>${events.map((event, i) => {
+        return yo`<input class="form-control" onchange="${e => this.updateEvents(e, i)}" value="${event}" />`
+      })}</div>`
+    }
+    const eventsEl = eventsForm(this.profile.events || [])
+    const pushEvent = () => {
+      if (!this.profile.events) this.profile.events = []
+      this.profile.events.push('')
+      yo.update(eventsEl, eventsForm(this.profile.events))
+    }
+    const addEvent = yo`<button type="button" class="btn btn-sm btn-light" onclick="${() => pushEvent()}">Add an event</button>`
+
     return yo`
-    <form id="local-plugin-form" onsubmit="${e => this.validate(e)}">
+    <form id="local-plugin-form">
       <div class="form-group">
         <label for="plugin-name">Plugin Name <small>(required)</small></label>
         <input class="form-control" onchange="${e => this.updateName(e)}" value="${name}" id="plugin-name" placeholder="Should be camelCase">
@@ -116,6 +136,10 @@ module.exports = class LocalPlugin {
       <div class="form-group">
         <label for="plugin-url">Url <small>(required)</small></label>
         <input class="form-control" onchange="${e => this.updateUrl(e)}" value="${url}" id="plugin-url" placeholder="ex: https://localhost:8000">
+      </div>
+      <div class="form-group">
+        <label>Events</label>
+        ${eventsEl}${addEvent}
       </div>
       <div class="form-group">
         <label>Notifications</label>
