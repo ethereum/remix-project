@@ -18,7 +18,6 @@ const css = csjs`
   }
   .localPluginBtn {
     margin-top: 15px;
-    margin-bottom: -25px;
   }
   .displayName {
     text-transform: capitalize;
