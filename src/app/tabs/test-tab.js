@@ -160,7 +160,7 @@ module.exports = class TestTab extends BaseApi {
   }
 
   render () {
-    this.testsOutput = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
+    this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
     this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
     this.loading = yo`<span class='text-info ml-1'>Running tests...</span>`
     this.loading.hidden = true
@@ -175,12 +175,13 @@ module.exports = class TestTab extends BaseApi {
           <br/>
           For more details, see
           How to test smart contracts guide in our documentation.
-          <div class="${css.generateTestFile} btn btn-primary m-1" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</div>
+          <br/>
+          <div class="${css.generateTestFile} btn btn-secondary" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</div>
         </div>
         <div class="${css.tests}">          
           <div class="${css.buttons}">
-            <div class="${css.runButton} btn btn-primary m-1"  onclick="${this.runTests.bind(this)}">Run Tests</div>
-            <label class="${css.label}" for="checkAllTests">
+            <div class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</div>
+            <label class="${css.label} mx-4 m-2" for="checkAllTests">
               <input id="checkAllTests"
                 type="checkbox"
                 onclick="${(event) => { this.checkAll(event) }}"

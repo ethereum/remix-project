@@ -44,7 +44,7 @@ class RunTab extends BaseApi {
   }
 
   renderContainer () {
-    this.container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
+    this.container = yo`<div class="${css.runTabView} p-3" id="runTabView" ></div>`
 
     var el = yo`
     <div class="list-group list-group-flush">

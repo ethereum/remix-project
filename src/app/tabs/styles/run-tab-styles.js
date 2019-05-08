@@ -236,6 +236,7 @@ var css = csjs`
     /* transform-origin: left; */
     margin-right: 10px;
     font-size: 0.8rem;
+    width: 70px;
   }
 `
 
