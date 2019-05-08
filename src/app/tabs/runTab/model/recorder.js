@@ -31,8 +31,8 @@ class Recorder {
         var record = { value, parameters: payLoad.funArgs }
         if (!to) {
           var abi = payLoad.contractABI
-          var sha3 = ethutil.bufferToHex(ethutil.sha3(abi))
-          record.abi = sha3
+          var keccak = ethutil.bufferToHex(ethutil.keccak(abi))
+          record.abi = keccak
           record.contractName = payLoad.contractName
           record.bytecode = payLoad.contractBytecode
           record.linkReferences = payLoad.linkReferences
@@ -43,9 +43,9 @@ class Recorder {
               }
             }
           }
-          self.data._abis[sha3] = abi
+          self.data._abis[keccak] = abi
 
-          this.data._contractABIReferences[timestamp] = sha3
+          this.data._contractABIReferences[timestamp] = keccak
         } else {
           var creationTimestamp = this.data._createdContracts[to]
           record.to = `created{${creationTimestamp}}`
