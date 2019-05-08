@@ -12,8 +12,6 @@ var executionContext = require('../../execution-context')
 var globalRegistry = require('../../global/registry')
 
 var remixLib = require('remix-lib')
-var Web3Providers = remixLib.vm.Web3Providers
-var DummyProvider = remixLib.vm.DummyProvider
 
 var init = remixLib.init
 
@@ -30,71 +28,11 @@ var css = csjs`
   }
 `
 
-class ContextManager {
-  constructor () {
-    this.executionContext = executionContext
-    this.web3 = this.executionContext.web3()
-    this.event = new EventManager()
-  }
-
-  initProviders () {
-    this.web3Providers = new Web3Providers()
-    this.addProvider('DUMMYWEB3', new DummyProvider())
-    this.switchProvider('DUMMYWEB3')
-
-    this.addProvider('vm', this.executionContext.vm())
-    this.addProvider('injected', this.executionContext.internalWeb3())
-    this.addProvider('web3', this.executionContext.internalWeb3())
-    this.switchProvider(this.executionContext.getProvider())
-  }
-
-  getWeb3 () {
-    return this.web3
-  }
-
-  addProvider (type, obj) {
-    this.web3Providers.addProvider(type, obj)
-    this.event.trigger('providerAdded', [type])
-  }
-
-  switchProvider (type) {
-    var self = this
-    this.web3Providers.get(type, function (error, obj) {
-      if (error) {
-        console.log('provider ' + type + ' not defined')
-      } else {
-        self.web3 = obj
-        self.executionContext.detectNetwork((error, network) => {
-          if (error || !network) {
-            self.web3 = obj
-          } else {
-            var webDebugNode = init.web3DebugNode(network.name)
-            self.web3 = (!webDebugNode ? obj : webDebugNode)
-          }
-          self.event.trigger('providerChanged', [type, self.web3])
-        })
-        self.event.trigger('providerChanged', [type, self.web3])
-      }
-    })
-  }
-
-}
-
 class DebuggerUI {
 
   constructor (container) {
     this.registry = globalRegistry
     this.event = new EventManager()
-
-    this.executionContext = executionContext
-
-    this.contextManager = new ContextManager()
-
-    this.contextManager.initProviders()
-
-    this.contextManager.event.register('providerChanged', () => {
-      if (this.debugger) this.debugger.updateWeb3(this.contextManager.getWeb3())
-    })
 
     this.isActive = false
 
@@ -173,19 +111,29 @@ class DebuggerUI {
     if (compilers['__last']) lastCompilationResult = compilers['__last']
 
     // TODO debugging with source highlight is disabled. see line 98
-    this.debugger = new Debugger({
-      web3: this.contextManager.getWeb3(),
-      offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
-      compiler: { lastCompilationResult }
-    })
 
-    this.listenToEvents()
+    executionContext.detectNetwork((error, network) => {
+      let web3
+      if (error || !network) {
+        web3 = init.web3DebugNode(executionContext.web3())
+      } else {
+        var webDebugNode = init.web3DebugNode(network.name)
+        web3 = (!webDebugNode ? executionContext.web3() : webDebugNode)
+      }
+      init.extendWeb3(web3)
+      this.debugger = new Debugger({
+        web3,
+        offsetToLineColumnConverter: this.registry.get('offsettolinecolumnconverter').api,
+        compiler: { lastCompilationResult }
+      })
 
-    this.debugger.debugger.updateWeb3(this.executionContext.web3())
-    this.debugger.debug(blockNumber, txNumber, tx, () => {
-      self.stepManager = new StepManagerUI(this.debugger.step_manager)
-      self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
-      self.renderDebugger()
+      this.listenToEvents()
+
+      this.debugger.debug(blockNumber, txNumber, tx, () => {
+        self.stepManager = new StepManagerUI(this.debugger.step_manager)
+        self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
+        self.renderDebugger()
+      })
     })
   }
 

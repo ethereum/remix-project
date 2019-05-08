@@ -1,6 +1,7 @@
 'use strict'
 var base64 = require('js-base64').Base64
 var swarmgw = require('swarmgw')()
+var resolver = require('@resolver-engine/imports').ImportsEngine()
 var request = require('request')
 
 module.exports = class CompilerImports {
@@ -10,10 +11,20 @@ module.exports = class CompilerImports {
   }
 
   handleGithubCall (root, path, cb) {
-    var accessToken = this.githubAccessToken() ? '?access_token=' + this.githubAccessToken() : ''
+    let param = '?'
+
+    param += this.githubAccessToken() ? 'access_token=' + this.githubAccessToken() : ''
+    const regex = path.match(/blob\/([^/]+)\/(.*)/)
+    if (regex) {
+      // if we have /blob/master/+path we extract the branch name "master" and add it as a parameter to the github api
+      // the ref can be branch name, tag, commit id
+      const reference = regex[1]
+      param += 'ref=' + reference
+      path = path.replace(`blob/${reference}/`, '')
+    }
     return request.get(
       {
-        url: 'https://api.github.com/repos/' + root + '/contents/' + path + accessToken,
+        url: 'https://api.github.com/repos/' + root + '/contents/' + path + param,
         json: true
       },
       (err, r, data) => {
@@ -112,13 +123,22 @@ module.exports = class CompilerImports {
         })
       }
     })
+    if (found) return
 
-    if (found) {
-      return
-    } else if (/^[^:]*:\/\//.exec(url)) {
-      cb('Unable to import "' + url + '": Unsupported URL schema')
-    } else {
+    resolver
+    .resolve(url)
+    .then(result => {
+      return resolver.require(url)
+    })
+    .then(result => {
+      if (url.indexOf(result.provider + ':') === 0) {
+        url = url.substring(result.provider.length + 1) // remove the github prefix
+      }
+      cb(null, result.source, url, result.provider, result.url)
+    })
+    .catch(err => {
+      err
       cb('Unable to import "' + url + '": File not found')
-    }
+    })
   }
 }

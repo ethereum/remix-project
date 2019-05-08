@@ -20,10 +20,12 @@ module.exports = {
 function runTests (browser) {
   browser.setEditorValue = contractHelper.setEditorValue
   browser.getEditorValue = contractHelper.getEditorValue
+  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
+  browser.scrollInto = contractHelper.scrollInto
   browser
-    .waitForElementVisible('.newFile', 10000)
-    .click('.compileView')
-    .click('#filepanel label[data-path="browser"]')
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('solidity')
+    .clickLaunchIcon('fileExplorers')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.
       async.waterfall([function (callback) { callback(null, browser) },
@@ -63,7 +65,7 @@ function testSuccessImport (browser, callback) {
 function testFailedImport (browser, callback) {
   console.log('testFailedImport')
   contractHelper.addFile(browser, 'Untitled3.sol', sources[2]['browser/Untitled3.sol'], () => {
-    browser.assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
+    browser.clickLaunchIcon('solidity').assert.containsText('#compileTabView .error pre', 'Unable to import "browser/Untitled11.sol": File not found')
     .perform(function () {
       callback(null, browser)
     })
@@ -83,7 +85,7 @@ function testAutoDeployLib (browser, callback) {
       contractHelper.createContract(browser, '', () => {
         contractHelper.getAddressAtPosition(browser, 0, (address) => {
           console.log(address)
-          browser.waitForElementPresent('.instance:nth-of-type(2)').click('.instance:nth-of-type(2)').perform(() => {
+          browser.waitForElementPresent('.instance:nth-of-type(2)').click('.instance:nth-of-type(2) > div > button').perform(() => {
             contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
           })
         })
@@ -94,8 +96,8 @@ function testAutoDeployLib (browser, callback) {
 
 function testManualDeployLib (browser, callback) {
   console.log('testManualDeployLib')
-  browser.click('i[class^="clearinstance"]').pause(5000).click('.settingsView').click('#generatecontractmetadata').perform(() => {
-    browser.click('.compileView').click('#compile').perform(() => { // that should generate the JSON artefact
+  browser.click('i[class^="clearinstance"]').pause(5000).clickLaunchIcon('settings').click('#generatecontractmetadata').perform(() => {
+    browser.clickLaunchIcon('solidity').click('#compileTabView button[title="Compile"]').perform(() => { // that should generate the JSON artefact
       contractHelper.verifyContract(browser, ['test'], () => {
         contractHelper.selectContract(browser, 'lib', () => { // deploy lib
           contractHelper.createContract(browser, '', () => {
@@ -144,7 +146,7 @@ function checkDeployShouldSucceed (browser, address, callback) {
             contractHelper.createContract(browser, '', () => {
               contractHelper.getAddressAtPosition(browser, 1, (address) => {
                 browser.waitForElementPresent('.instance:nth-of-type(3)')
-                .click('.instance:nth-of-type(3)').perform(() => {
+                .click('.instance:nth-of-type(3) > div > button').perform(() => {
                   contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
                 })
               })

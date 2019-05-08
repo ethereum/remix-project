@@ -1,24 +1,31 @@
-var $ = require('jquery')
-var yo = require('yo-yo')
-var remixLib = require('remix-lib')
-var EventManager = remixLib.EventManager
-var css = require('../styles/run-tab-styles')
-var copyToClipboard = require('../../ui/copy-to-clipboard')
-var modalDialogCustom = require('../../ui/modal-dialog-custom')
-var addTooltip = require('../../ui/tooltip')
-var helper = require('../../../lib/helper.js')
+const $ = require('jquery')
+const yo = require('yo-yo')
+const remixLib = require('remix-lib')
+const EventManager = remixLib.EventManager
+const css = require('../styles/run-tab-styles')
+const copyToClipboard = require('../../ui/copy-to-clipboard')
+const modalDialogCustom = require('../../ui/modal-dialog-custom')
+const addTooltip = require('../../ui/tooltip')
+const helper = require('../../../lib/helper.js')
+const globalRegistry = require('../../../global/registry')
 
 class SettingsUI {
 
   constructor (settings) {
     this.settings = settings
     this.event = new EventManager()
+    this._components = {}
 
     this.settings.event.register('transactionExecuted', (error, from, to, data, lookupOnly, txResult) => {
       if (error) return
       if (!lookupOnly) this.el.querySelector('#value').value = '0'
       this.updateAccountBalances()
     })
+
+    this._components.registry = globalRegistry
+    this._deps = {
+      networkModule: this._components.registry.get('network').api
+    }
 
     setInterval(() => {
       this.updateAccountBalances()
@@ -40,7 +47,7 @@ class SettingsUI {
   }
 
   render () {
-    this.netUI = yo`<span class=${css.network}></span>`
+    this.netUI = yo`<span class="${css.network} badge badge-secondary"></span>`
 
     var environmentEl = yo`
       <div class="${css.crow}">
@@ -48,8 +55,7 @@ class SettingsUI {
           Environment
         </div>
         <div class=${css.environment}>
-          ${this.netUI}
-          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="${css.select}">
+          <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
               value="vm" checked name="executionContext"> JavaScript VM
@@ -64,48 +70,59 @@ class SettingsUI {
               value="web3" name="executionContext"> Web3 Provider
             </option>
           </select>
-          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
+          <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.infoDeployAction} fas fa-info"></i></a>
         </div>
       </div>
     `
-
-    var accountEl = yo`
+    const networkEl = yo`
+    <div class="${css.crow}">
+        <div class="${css.col1_1}">
+        </div>
+        <div class="${css.environment}">
+          ${this.netUI}
+        </div>
+      </div>
+    `
+    const accountEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
+          <i class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
         </div>
         <div class=${css.account}>
-          <select name="txorigin" class="${css.select}" id="txorigin"></select>
+          <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
-          <i class="fa fa-pencil-square-o ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          <i class="fas fa-edit ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
     `
 
-    var gasPriceEl = yo`
+    const gasPriceEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>
-        <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
+        <input type="number" class="form-control ${css.gasNval} ${css.col2}" id="gasLimit" value="3000000">
       </div>
     `
 
-    var valueEl = yo`
+    const valueEl = yo`
       <div class="${css.crow}">
         <div class="${css.col1_1}">Value</div>
-        <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
-        <select name="unit" class="${css.col2_2}" id="unit">
-          <option data-unit="wei">wei</option>
-          <option data-unit="gwei">gwei</option>
-          <option data-unit="finney">finney</option>
-          <option data-unit="ether">ether</option>
-        </select>
+        <div class="${css.gasValueContainer}">
+          <input type="text" class="form-control ${css.gasNval} ${css.col2}" id="value" value="0" title="Enter the value and choose the unit">
+          <select name="unit" class="form-control ${css.gasNvalUnit} ${css.col2_2}" id="unit">
+            <option data-unit="wei">wei</option>
+            <option data-unit="gwei">gwei</option>
+            <option data-unit="finney">finney</option>
+            <option data-unit="ether">ether</option>
+          </select>
+        </div>
       </div>
     `
 
-    var el = yo`
+    const el = yo`
       <div class="${css.settings}">
         ${environmentEl}
+        ${networkEl}
         ${accountEl}
         ${gasPriceEl}
         ${valueEl}
@@ -133,9 +150,12 @@ class SettingsUI {
 
     this.settings.event.register('addProvider', (network) => {
       selectExEnv.appendChild(yo`<option
-              title="Manually added environment: ${network.url}"
-              value="${network.name}" name="executionContext"> ${network.name}
-            </option>`)
+        title="Manually added environment: ${network.url}"
+        value="${network.name}"
+        name="executionContext"
+      >
+        ${network.name}
+      </option>`)
       addTooltip(`${network.name} [${network.url}] added`)
     })
 
@@ -150,8 +170,8 @@ class SettingsUI {
     selectExEnv.addEventListener('change', (event) => {
       let context = selectExEnv.options[selectExEnv.selectedIndex].value
       this.settings.changeExecutionContext(context, () => {
-        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+        modalDialogCustom.confirm('External node request', 'Are you sure you want to connect to an ethereum node?', () => {
+          modalDialogCustom.prompt('External node request', 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
             this.settings.setProviderFromEndpoint(target, context, (alertMsg) => {
               if (alertMsg) {
                 modalDialogCustom.alert(alertMsg)
@@ -229,7 +249,8 @@ class SettingsUI {
         this.netUI.innerHTML = 'can\'t detect network '
         return
       }
-      this.netUI.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+      let network = this._deps.networkModule.getNetworkProvider
+      this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
     })
   }
 

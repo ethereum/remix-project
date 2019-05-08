@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .runTabView {
@@ -14,28 +12,25 @@ var css = csjs`
     font-size: 12px;
     display: flex;
     justify-content: space-between;
+    padding-left: 15px;
   }
   .settings {
-    ${styles.rightPanel.runTab.box_RunTab}
     margin-bottom: 2%;
-    padding: 10px 15px 15px 15px;
+    padding: 10px 0px 15px 15px;
   }
   .recorderCount {
-    border: 1px solid ${styles.rightPanel.runTab.icon_HoverColor};
-    border-radius: 50%;
-    margin-right: 30px;
-    min-width: 13px;
-    height: 13px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 10px;
+    /* margin-right: 30px; */
+    /* min-width: 13px; */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* font-size: 10px; */
   }
   .crow {
     margin-top: .5em;
     display: flex;
     align-items: center;
-    width: 500px;
+    /*width: 500px;*/
   }
   .col1 {
     width: 30%;
@@ -44,7 +39,6 @@ var css = csjs`
   }
   .col1_1 {
     font-size: 12px;
-    width: 15%;
     min-width: 75px;
     float: left;
     align-self: center;
@@ -53,43 +47,36 @@ var css = csjs`
     display: flex;
     align-items: center;
     position: relative;
-    width: 259px;
+    width: 100%;
+    padding-right: 25px;
   }
   .account {
     display: flex;
     align-items: center;
-    width: 266px;
+    width: 90%;
   }
   .col2 {
-    ${styles.rightPanel.runTab.input_RunTab}
     border-radius: 3px;
   }
   .col2_1 {
-    ${styles.rightPanel.runTab.input_RunTab}
     width: 164px;
     min-width: 164px;
   }
   .col2_2 {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
-    width: 82px;
-    min-width: 82px;
   }
   .select {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
     font-weight: normal;
-    width: 250px;
+    width: 100%;
   }
   .instanceContainer {
-    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
     margin-bottom: 2%;
     border: none;
     text-align: center;
-    padding: 10px 0px 15px 15px;
+    padding: 10px 0px 15px 0px;
   }
   .pendingTxsContainer  {
-    ${styles.rightPanel.runTab.box_Instance}
     display: flex;
     flex-direction: column;
     margin-top: 2%;
@@ -97,8 +84,8 @@ var css = csjs`
     text-align: center;
   }
   .container {
-    ${styles.rightPanel.runTab.box_RunTab}
-    margin-bottom: 2%;
+    margin-bottom: 4%;
+    padding-left: 15px;
   }
   .recorderCollapsedView,
   .recorderExpandedView {
@@ -109,12 +96,10 @@ var css = csjs`
     margin: 0 15px 15px 0;
    }
   .contractNames {
-    ${styles.rightPanel.runTab.dropdown_RunTab}
     width: 100%;
     border: 1px solid
   }
   .contractNamesError {
-    border: 1px solid ${styles.appProperties.errorText_Color}
   }
   .subcontainer {
     display: flex;
@@ -127,18 +112,16 @@ var css = csjs`
     margin-top: 13px;
   }
   .transaction {
-    ${styles.rightPanel.runTab.button_transaction}
   }
   .atAddress {
     margin: 0;
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
+    /* font-size: 10px; */
     word-break: inherit;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
-    ${styles.rightPanel.runTab.button_atAddress}
   }
   .atAddressSect {
     margin-top: 6px;
@@ -147,20 +130,20 @@ var css = csjs`
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
+  .ataddressinput {
+    padding: .25rem;
+  }
   .create {
-    ${styles.rightPanel.runTab.button_Create}
   }
   .input {
-    ${styles.rightPanel.runTab.input_RunTab};
     font-size: 10px;
   }
   .noInstancesText {
-    ${styles.rightPanel.runTab.box_Instance}
     font-style: italic;
     text-align: left;
+    padding-left: 15px;
   }
   .pendingTxsText {
-    ${styles.rightPanel.runTab.borderBox_Instance}
     font-style: italic;
     display: flex;
     justify-content: space-evenly;
@@ -173,15 +156,15 @@ var css = csjs`
     align-items: center;
   }
   .transact {
-    color: ${styles.colors.lightRed};
+    color: var(--warning);
     margin-right: .3em;
   }
   .payable {
-    color: ${styles.colors.red};
+    color: var(--warning);
     margin-right: .3em;
   }
   .call {
-    color: ${styles.colors.lightBlue};
+    color: var(--info);
     margin-right: .3em;
   }
   .pendingContainer {
@@ -199,31 +182,23 @@ var css = csjs`
     cursor: pointer;
     font-size: 12px;
     cursor: pointer;
-    color: ${styles.rightPanel.runTab.icon_Color};
     margin-left: 5px;
   }
   .icon:hover {
     font-size: 12px;
-    color: ${styles.rightPanel.runTab.icon_HoverColor};
+    color: var(--warning);
   }
   .errorIcon {
-    color: ${styles.appProperties.errorText_Color};
+    color: var(--warning);
     margin-left: 15px;
   }
   .failDesc {
-    color: ${styles.appProperties.errorText_Color};
+    color: var(--warning);
     padding-left: 10px;
     display: inline;
   }
   .network {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: absolute;
-    color: grey;
-    width: 100%;
-    height: 100%;
-    padding-right: 28px;
+    margin-left: 8px;
     pointer-events: none;
   }
   .networkItem {
@@ -235,7 +210,6 @@ var css = csjs`
   .transactionActions {
     display: flex;
     justify-content: space-evenly;
-    ${styles.rightPanel.runTab.box_Info_RunTab};
     width: 145px;
   }
   .orLabel {
@@ -244,6 +218,24 @@ var css = csjs`
   .infoDeployAction {
     margin-left: 5px;
     font-size: 13px;
+    color: var(--info);
+  }
+  .gasValueContainer {
+    flex-direction: row;
+    display: flex;
+  }
+  .gasNval {
+    /* transform: scale(0.7); */
+    /* transform-origin: left; */
+    margin-right: 10px;
+    width: 100px;
+    font-size: 0.8rem;
+  }
+  .gasNvalUnit {
+    /* transform: scale(0.7); */
+    /* transform-origin: left; */
+    margin-right: 10px;
+    font-size: 0.8rem;
   }
 `
 

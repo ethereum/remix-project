@@ -6,8 +6,6 @@ var yo = require('yo-yo')
 var async = require('async')
 var request = require('request')
 var remixLib = require('remix-lib')
-var EventManager = require('./lib/events')
-
 var registry = require('./global/registry')
 var UniversalDApp = require('./universal-dapp.js')
 var UniversalDAppUI = require('./universal-dapp-ui.js')
@@ -18,14 +16,11 @@ var GistHandler = require('./lib/gist-handler')
 var helper = require('./lib/helper')
 var Storage = remixLib.Storage
 var Browserfiles = require('./app/files/browser-files')
-var BrowserfilesTree = require('./app/files/browser-files-tree')
 var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
 var executionContext = require('./execution-context')
-var FilePanel = require('./app/panels/file-panel')
 var EditorPanel = require('./app/panels/editor-panel')
-var RighthandPanel = require('./app/panels/righthand-panel')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var TxLogger = require('./app/execution/txLogger')
@@ -37,29 +32,36 @@ var NotPersistedExplorer = require('./app/files/NotPersistedExplorer')
 var toolTip = require('./app/ui/tooltip')
 var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
-const CompilerAbstract = require('./app/compiler/compiler-abstract')
-const PluginManager = require('./app/plugin/pluginManager')
+const PluginManagerComponent = require('./app/components/plugin-manager-component')
+
+const VerticalIconsComponent = require('./app/components/vertical-icons-component')
+const VerticalIconsApi = require('./app/components/vertical-icons-api')
+
+const SwapPanelComponent = require('./app/components/swap-panel-component')
+const SwapPanelApi = require('./app/components/swap-panel-api')
+
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
 const DebuggerTab = require('./app/tabs/debugger-tab')
-const SupportTab = require('./app/tabs/support-tab')
 const TestTab = require('./app/tabs/test-tab')
 const RunTab = require('./app/tabs/run-tab')
+const FilePanel = require('./app/panels/file-panel')
 
-var styleGuide = require('./app/ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+import PanelsResize from './lib/panels-resize'
+import { EntityStore } from './lib/store'
+import { RemixAppManager } from './remixAppManager'
+import { LandingPage } from './app/ui/landing-page/landing-page'
+import framingService from './framingService'
+import { ThemeModule } from './app/tabs/theme-module'
+import { NetworkModule } from './app/tabs/network-module'
 
 var css = csjs`
   html { box-sizing: border-box; }
   *, *:before, *:after { box-sizing: inherit; }
   body                 {
-    font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin             : 0;
-    padding            : 0;
-    font-size          : 12px;
-    color              : ${styles.leftPanel.text_Primary};
-    font-weight        : normal;
+    /* font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif; */
+    font-size          : .8rem;
   }
   pre {
     overflow-x: auto;
@@ -70,8 +72,7 @@ var css = csjs`
     height             : 100vh;
     overflow           : hidden;
   }
-  .centerpanel         {
-    background-color  : ${styles.colors.transparent};
+  .mainpanel         {
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -79,8 +80,7 @@ var css = csjs`
     bottom             : 0;
     overflow           : hidden;
   }
-  .leftpanel           {
-    background-color  : ${styles.leftPanel.backgroundColor_Panel};
+  .iconpanel           {
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -88,26 +88,29 @@ var css = csjs`
     bottom             : 0;
     left               : 0;
     overflow           : hidden;
+    width              : 50px;
+    user-select        : none;
+    /* border-right       : 1px solid var(--primary); */
   }
-  .rightpanel          {
-    background-color  : ${styles.rightPanel.backgroundColor_Panel};
+  .swappanel          {
     display            : flex;
     flex-direction     : column;
     position           : absolute;
     top                : 0;
-    right              : 0;
+    left               : 50px;
     bottom             : 0;
     overflow           : hidden;
+    overflow-y         : auto;
   }
   .highlightcode {
     position:absolute;
     z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    background-color: var(--info);
   }
   .highlightcode_fullLine {
     position:absolute;
     z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    background-color: var(--info);
     opacity: 0.5;
   }
 `
@@ -115,30 +118,23 @@ var css = csjs`
 class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
-    this.event = new EventManager()
     self._components = {}
     registry.put({api: self, name: 'app'})
 
     var fileStorage = new Storage('sol:')
     registry.put({api: fileStorage, name: 'fileStorage'})
 
-    var configStorage = new Storage('config:')
+    var configStorage = new Storage('config-v0.8:')
     registry.put({api: configStorage, name: 'configStorage'})
 
-    self._components.config = new Config(fileStorage)
+    self._components.config = new Config(configStorage)
     registry.put({api: self._components.config, name: 'config'})
-
-    executionContext.init(self._components.config)
-    executionContext.listenOnLastBlock()
 
     self._components.gistHandler = new GistHandler()
 
     self._components.filesProviders = {}
     self._components.filesProviders['browser'] = new Browserfiles(fileStorage)
-    self._components.filesProviders['config'] = new BrowserfilesTree('config', configStorage)
-    self._components.filesProviders['config'].init()
     registry.put({api: self._components.filesProviders['browser'], name: 'fileproviders/browser'})
-    registry.put({api: self._components.filesProviders['config'], name: 'fileproviders/config'})
 
     var remixd = new Remixd(65520)
     registry.put({api: remixd, name: 'remixd'})
@@ -161,80 +157,46 @@ class App {
     registry.put({api: self._components.filesProviders, name: 'fileproviders'})
 
     self._view = {}
+  }
 
-    self.data = {
-      _layout: {
-        right: {
-          offset: self._components.config.get('right-offset') || 400,
-          show: true
-        }, // @TODO: adapt sizes proportionally to browser window size
-        left: {
-          offset: self._components.config.get('left-offset') || 200,
-          show: true
-        }
-      }
-    }
-  }
-  _adjustLayout (direction, delta) {
-    var self = this
-    var layout = self.data._layout[direction]
-    if (layout) {
-      if (delta === undefined) {
-        layout.show = !layout.show
-        if (layout.show) delta = layout.offset
-        else delta = 0
-      } else {
-        self._components.config.set(`${direction}-offset`, delta)
-        layout.offset = delta
-      }
-    }
-    if (direction === 'left') {
-      self._view.leftpanel.style.width = delta + 'px'
-      self._view.centerpanel.style.left = delta + 'px'
-    }
-    if (direction === 'right') {
-      self._view.rightpanel.style.width = delta + 'px'
-      self._view.centerpanel.style.right = delta + 'px'
-    }
-  }
   init () {
     var self = this
+    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300, x: 450 })
     run.apply(self)
   }
+
   render () {
     var self = this
     if (self._view.el) return self._view.el
-    self._view.leftpanel = yo`
-      <div id="filepanel" class=${css.leftpanel}>
+    // not resizable
+    self._view.iconpanel = yo`
+      <div id="icon-panel" class="${css.iconpanel} bg-light">
+      ${''}
+      </div>
+    `
+
+    // center panel, resizable
+    self._view.swappanel = yo`
+      <div id="swap-panel" class=${css.swappanel}>
         ${''}
       </div>
     `
-    self._view.centerpanel = yo`
-      <div id="editor-container" class=${css.centerpanel}>
+
+    // handle the editor + terminal
+    self._view.mainpanel = yo`
+      <div id="editor-container" class=${css.mainpanel}>
         ${''}
       </div>
     `
-    self._view.rightpanel = yo`
-      <div class=${css.rightpanel}>
-        ${''}
-      </div>
-    `
+
     self._view.el = yo`
       <div class=${css.browsersolidity}>
-        ${self._view.leftpanel}
-        ${self._view.centerpanel}
-        ${self._view.rightpanel}
+        ${self._view.iconpanel}
+        ${self._view.swappanel}
+        ${self._view.mainpanel}
       </div>
     `
-    // INIT
-    self._adjustLayout('left', self.data._layout.left.offset)
-    self._adjustLayout('right', self.data._layout.right.offset)
     return self._view.el
-  }
-  startdebugging (txHash) {
-    const self = this
-    self.event.trigger('debuggingRequested', [])
-    self._components.righthandpanel.debugger().debug(txHash)
   }
   loadFromGist (params) {
     const self = this
@@ -314,22 +276,22 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   registry.put({api: self._components.compilersArtefacts, name: 'compilersartefacts'})
 
   // ----------------- UniversalDApp -----------------
-  var udapp = new UniversalDApp(registry)
+  const udapp = new UniversalDApp(registry)
   // TODO: to remove when possible
   registry.put({api: udapp, name: 'udapp'})
   udapp.event.register('transactionBroadcasted', (txhash, networkName) => {
     var txLink = executionContext.txDetailsLink(networkName, txhash)
-    if (txLink) registry.get('logCallback').api.logCallback(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
+    if (txLink) registry.get('logCallback').api(yo`<a href="${txLink}" target="_blank">${txLink}</a>`)
   })
 
-  var udappUI = new UniversalDAppUI(udapp, registry)
+  const udappUI = new UniversalDAppUI(udapp, registry)
   // TODO: to remove when possible
   registry.put({api: udappUI, name: 'udappUI'})
 
   // ----------------- Tx listener -----------------
-  var transactionReceiptResolver = new TransactionReceiptResolver()
+  const transactionReceiptResolver = new TransactionReceiptResolver()
 
-  var txlistener = new Txlistener({
+  const txlistener = new Txlistener({
     api: {
       contracts: function () {
         if (self._components.compilersArtefacts['__last']) return self._components.compilersArtefacts['__last'].getContracts()
@@ -343,8 +305,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       udapp: udapp.event
     }})
   registry.put({api: txlistener, name: 'txlistener'})
+  udapp.startListening(txlistener)
 
-  var eventsDecoder = new EventsDecoder({
+  const eventsDecoder = new EventsDecoder({
     api: {
       resolveReceipt: function (tx, cb) {
         transactionReceiptResolver.resolve(tx, cb)
@@ -357,42 +320,132 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   // TODO: There are still a lot of dep between editorpanel and filemanager
 
-  // ----------------- editor panel ----------------------
-  self._components.editorpanel = new EditorPanel()
-  registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
+  let appStore = new EntityStore('module', 'name')
+  const appManager = new RemixAppManager(appStore)
+  registry.put({api: appManager, name: 'appmanager'})
+
+  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false, displayHeader: false })
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
-  var fileManager = self._components.fileManager
+  const fileManager = self._components.fileManager
   registry.put({api: fileManager, name: 'filemanager'})
 
-  // ---------------- Plugin Manager -------------------------------
+  // ----------------- Network ----------------------------
+  const networkModule = new NetworkModule()
+  registry.put({api: networkModule, name: 'network'})
 
-  let pluginManager = new PluginManager(
-    self,
-    self._components.compilersArtefacts,
-    txlistener,
-    self._components.fileProviders,
-    self._components.fileManager,
-    udapp)
-  registry.put({api: pluginManager, name: 'pluginmanager'})
+  // ----------------- theme module ----------------------------
+  const themeModule = new ThemeModule(registry)
+  registry.put({api: themeModule, name: 'themeModule'})
 
-  pluginManager.event.register('sendCompilationResult', (file, source, languageVersion, data) => {
-    // TODO check whether the tab is configured
-    let compiler = new CompilerAbstract(languageVersion, data, source)
-    self._components.compilersArtefacts['__last'] = compiler
-  })
+  // ----------------- editor panel ----------------------
+  self._components.editorpanel = new EditorPanel(appStore, appManager, mainPanelComponent)
+  registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
+
+  // ----------------- Renderer -----------------
+  const renderer = new Renderer()
+  registry.put({api: renderer, name: 'renderer'})
+
+  // ----------------- app manager ----------------------------
+
+  /*
+    TODOs:
+      - for each activated plugin,
+        an internal module (associated only with the plugin) should be created for accessing specific part of the UI. detail to be discussed
+      - the current API is not optimal. For instance methods of `app` only refers to `executionContext`, wich does not make really sense.
+  */
+
+  // TODOs those are instanciated before hand. should be instanciated on demand
+
+  const pluginManagerComponent = new PluginManagerComponent()
+  const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true, displayHeader: true })
+  registry.put({api: appManager.proxy(), name: 'pluginmanager'})
+
+  pluginManagerComponent.setApp(appManager)
+  pluginManagerComponent.setStore(appStore)
+
+  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
+  const landingPage = new LandingPage(appManager, appStore)
+
+  // ----------------- Vertical Icon ----------------------------
+  const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore, landingPage.profile)
+  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
+  const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
+  const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
+  registry.put({api: verticalIconsApi, name: 'verticalicon'})
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
+  self._view.mainpanel.appendChild(self._components.editorpanel.render())
+  self._view.iconpanel.appendChild(verticalIconsComponent.render())
+  self._view.swappanel.appendChild(swapPanelComponent.render())
 
-  self._components.editorpanel.event.register('resize', direction => self._adjustLayout(direction))
-  self._view.centerpanel.appendChild(self._components.editorpanel.render())
+  let filePanel = new FilePanel()
+  registry.put({api: filePanel, name: 'filepanel'})
+  let compileTab = new CompileTab(
+    registry.get('editor').api,
+    registry.get('config').api,
+    registry.get('renderer').api,
+    registry.get('fileproviders/swarm').api,
+    registry.get('filemanager').api,
+    registry.get('fileproviders').api,
+    registry.get('pluginmanager').api
+  )
+  let run = new RunTab(
+    registry.get('udapp').api,
+    registry.get('udappUI').api,
+    registry.get('config').api,
+    registry.get('filemanager').api,
+    registry.get('editor').api,
+    registry.get('logCallback').api,
+    registry.get('filepanel').api,
+    registry.get('pluginmanager').api,
+    registry.get('compilersartefacts').api
+  )
+  let settings = new SettingsTab(
+      registry.get('config').api,
+      registry.get('editor').api,
+      appManager
+  )
+  let analysis = new AnalysisTab(registry)
+  let debug = new DebuggerTab()
+  let test = new TestTab(
+    registry.get('filemanager').api,
+    registry.get('filepanel').api,
+    compileTab
+  )
+  let sourceHighlighters = registry.get('editor').api.sourceHighlighters
+
+  appManager.init([
+    landingPage.api(),
+    udapp.api(),
+    fileManager.api(),
+    sourceHighlighters.api(),
+    filePanel.api(),
+    // { profile: support.profile(), api: support },
+    settings.api(),
+    pluginManagerComponent.api(),
+    networkModule.api(),
+    themeModule.api()
+  ])
+
+  appManager.registerMany([
+    compileTab.api(),
+    run.api(),
+    debug.api(),
+    analysis.api(),
+    test.api(),
+    filePanel.remixdHandle.api(),
+    ...appManager.plugins()
+  ])
+
+  framingService.start(appStore, swapPanelApi, verticalIconsApi, mainPanelApi, this._components.resizeFeature)
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
-  var filesToLoad = null
-  var loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
+  let filesToLoad = null
+  let loadFilesCallback = function (files) { filesToLoad = files } // will be replaced later
 
   window.addEventListener('message', function (ev) {
     if (typeof ev.data === typeof [] && ev.data[0] === 'loadFiles') {
@@ -410,40 +463,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     self.loadFiles(filesToLoad)
   }
 
-  // ---------------- FilePanel --------------------
-  self._components.filePanel = new FilePanel()
-  self._view.leftpanel.appendChild(self._components.filePanel.render())
-  self._components.filePanel.event.register('resize', delta => self._adjustLayout('left', delta))
-  registry.put({api: self._components.filePanel, name: 'filepanel'})
-
-  // ----------------- Renderer -----------------
-  var renderer = new Renderer()
-  registry.put({api: renderer, name: 'renderer'})
-
-  // ---------------- Tabs -------------------------------
-  let compileTab = new CompileTab(self._components.registry)
-  let tabs = {
-    compile: compileTab,
-    run: new RunTab(
-      registry.get('udapp').api,
-      registry.get('udappUI').api,
-      registry.get('config').api,
-      registry.get('filemanager').api,
-      registry.get('editor').api,
-      registry.get('logCallback').api,
-      registry.get('filepanel').api,
-      registry.get('pluginmanager').api,
-      registry.get('compilersartefacts').api
-    ),
-    settings: new SettingsTab(self._components.registry),
-    analysis: new AnalysisTab(registry),
-    debug: new DebuggerTab(),
-    support: new SupportTab(),
-    test: new TestTab(self._components.registry, compileTab)
-  }
-
-  registry.get('app').api.event.register('tabChanged', (tabName) => {
-    if (tabName === 'Support') tabs.support.loadTab()
+  const txLogger = new TxLogger() // eslint-disable-line
+  txLogger.event.register('debuggingRequested', (hash) => {
+    if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
+    debug.debugger().debug(hash)
+    verticalIconsApi.select('debugger')
   })
 
   let transactionContextAPI = {
@@ -471,17 +495,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   }
   udapp.resetAPI(transactionContextAPI)
 
-  // ---------------- Righthand-panel --------------------
-  self._components.righthandpanel = new RighthandPanel({ tabs, pluginManager })
-  self._view.rightpanel.appendChild(self._components.righthandpanel.render())
-  self._components.righthandpanel.init()
-  self._components.righthandpanel.event.register('resize', delta => self._adjustLayout('right', delta))
+  const queryParams = new QueryParams()
 
-  var txLogger = new TxLogger() // eslint-disable-line
-
-  var queryParams = new QueryParams()
-
-  var loadingFromGist = self.loadFromGist(queryParams.get())
+  const loadingFromGist = self.loadFromGist(queryParams.get())
   if (!loadingFromGist) {
     // insert ballot contract if there are no files to show
     self._components.filesProviders['browser'].resolveDirectory('browser', (error, filesList) => {
@@ -494,19 +510,5 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
         }
       }
     })
-  }
-
-  // Open last opened file
-  var previouslyOpenedFile = self._components.config.get('currentFile')
-  if (previouslyOpenedFile) {
-    self._components.filesProviders['browser'].get(previouslyOpenedFile, (error, content) => {
-      if (!error && content) {
-        fileManager.switchFile(previouslyOpenedFile)
-      } else {
-        fileManager.switchFile()
-      }
-    })
-  } else {
-    fileManager.switchFile()
   }
 }

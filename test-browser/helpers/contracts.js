@@ -23,11 +23,18 @@ module.exports = {
   testEditorValue,
   renameFile,
   removeFile,
-  getAddressAtPosition
+  getAddressAtPosition,
+  clickLaunchIcon,
+  scrollInto
+}
+
+function clickLaunchIcon (icon) {
+  this.click('#icon-panel div[plugin="' + icon + '"]')
+  return this
 }
 
 function getCompiledContracts (browser, compiled, callback) {
-  browser.execute(function () {
+  browser.clickLaunchIcon('solidity').execute(function () {
     var contracts = document.querySelectorAll('#compileTabView select option')
     if (!contracts) {
       return null
@@ -44,14 +51,14 @@ function getCompiledContracts (browser, compiled, callback) {
 }
 
 function selectContract (browser, contractName, callback) {
-  browser.click('.runView')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('run')
   .setValue('#runTabView select[class^="contractNames"]', contractName).perform(() => {
     callback()
   })
 }
 
 function createContract (browser, inputParams, callback) {
-  browser.click('.runView')
+  browser.clickLaunchIcon('settings').clickLaunchIcon('run')
   .setValue('div[class^="contractActionsContainerSingle"] input', inputParams, function () {
     browser.click('#runTabView button[class^="instanceButton"]').pause(500).perform(function () { callback() })
   })
@@ -79,7 +86,7 @@ function verifyContract (browser, compiledContractNames, callback) {
 
 function testContracts (browser, fileName, contractCode, compiledContractNames, callback) {
   browser
-    .click('.compileView')
+    .clickLaunchIcon('solidity')
     .clearValue('#input textarea')
     .perform((client, done) => {
       addFile(browser, fileName, contractCode, done)
@@ -94,7 +101,7 @@ function clickFunction (fnFullName, expectedInput) {
   this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
     .perform(function (client, done) {
       client.execute(function () {
-        document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+        document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
       }, [], function () {
         if (expectedInput) {
           client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
@@ -136,7 +143,7 @@ function getAddressAtPosition (browser, index, callback) {
 function testConstantFunction (browser, address, fnFullName, expectedInput, expectedOutput, cb) {
   browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]').perform(function (client, done) {
     client.execute(function () {
-      document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+      document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
     }, [], function () {
       if (expectedInput) {
         client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
@@ -147,7 +154,24 @@ function testConstantFunction (browser, address, fnFullName, expectedInput, expe
   .click('.instance button[title="' + fnFullName + '"]')
   .pause(1000)
   .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
+  .scrollInto('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
   .assert.containsText('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]', expectedOutput).perform(() => {
+    cb()
+  })
+}
+
+function scrollInto (target) {
+  return this.perform((client, done) => {
+    _scrollInto(this, target, () => {
+      done()
+    })
+  })
+}
+
+function _scrollInto (browser, target, cb) {
+  browser.execute(function (target) {
+    document.querySelector(target).scrollIntoView()
+  }, [target], function () {
     cb()
   })
 }
@@ -157,7 +181,7 @@ function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, e
   this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
     .perform(function (client, done) {
       client.execute(function () {
-        document.querySelector('#optionViews').scrollTop = document.querySelector('#optionViews').scrollHeight
+        document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
       }, [], function () {
         if (expectedInput) {
           client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
@@ -211,10 +235,10 @@ function setEditorValue (value, callback) {
 }
 
 function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
-  browser.clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
+  browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
       .execute(function () {
-        var ret = document.querySelector('div[class^="modalBody"] div').innerHTML
+        var ret = document.querySelector('div[class^="modal-body"] div').innerHTML
         document.querySelector('#modal-footer-ok').click()
         return ret
       }, [], function (result) {
@@ -259,7 +283,7 @@ function modalFooterOKClick () {
 }
 
 function addFile (browser, name, content, done) {
-  browser.click('.newFile')
+  browser.clickLaunchIcon('run').clickLaunchIcon('fileExplorers').click('.newFile')
     .perform((client, done) => {
       browser.execute(function (fileName) {
         if (fileName !== 'Untitled.sol') {
@@ -366,7 +390,7 @@ function useFilter (browser, filter, test, done) {
 }
 
 function switchFile (browser, name, done) {
-  browser
+  browser.clickLaunchIcon('settings').clickLaunchIcon('fileExplorers')
     .click('li[key="' + name + '"]')
     .pause(2000)
     .perform(() => {

@@ -41,15 +41,23 @@ class Dropdown {
     self._view.selected = yo`
       <div class=${css.selectbox}>
         <span class=${css.selected}> [${self.data.selected.length}] ${self.data.selected.join(', ')}</span>
-        <i class="${css.icon} fa fa-caret-down"></i>
+        <i class="${css.icon} fas fa-caret-down"></i>
       </div>
     `
     self._view.el = yo`
-      <div class=${css.dropdown} onclick=${show}>
+      <div name="dropdown" class="${css.dropdown} form-control form-control-sm" onclick=${show}>
         ${self._view.selected}
-        <div class=${css.options} style="display: none;">
+        <div class="${css.options} bg-light" style="display: none;}">
           ${self.data._options.map(label => {
-            var input = yo`<input data-idx=${self.data._elements.length} onchange=${emit} type="checkbox" />`
+            let index = self.data._elements.length
+            var input = yo`
+              <input
+                data-idx=${index}
+                onchange=${emit}
+                type="${index === 2 ? 'checkbox' : 'radio'}"
+                id="${label}"
+              />
+            `
             if (self.data.selected.indexOf(label) !== -1) {
               input.checked = true
               self.event.trigger('select', [label])
@@ -58,7 +66,7 @@ class Dropdown {
             return yo`
               <div class=${css.option}>
                 ${input}
-                <label>${label}</label>
+                <label class="text-dark" for="${label}">${label}</label>
               </div>
             `
           })}

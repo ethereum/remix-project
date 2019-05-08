@@ -1,20 +1,17 @@
 'use strict'
-var csjs = require('csjs-inject')
-var globlalRegistry = require('../../global/registry')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+const csjs = require('csjs-inject')
+const globlalRegistry = require('../../global/registry')
 
 class SourceHighlighter {
   constructor (localRegistry) {
-    const self = this
-    self._components = {}
-    self._components.registry = localRegistry || globlalRegistry
+    this._components = {}
+    this._components.registry = localRegistry || globlalRegistry
     // dependencies
-    self._deps = {
-      editor: self._components.registry.get('editor').api,
-      config: self._components.registry.get('config').api,
-      fileManager: self._components.registry.get('filemanager').api,
-      compilerArtefacts: self._components.registry.get('compilersartefacts').api
+    this._deps = {
+      editor: this._components.registry.get('editor').api,
+      config: this._components.registry.get('config').api,
+      fileManager: this._components.registry.get('filemanager').api,
+      compilerArtefacts: this._components.registry.get('compilersartefacts').api
     }
     this.statementMarker = null
     this.fullLineMarker = null
@@ -26,7 +23,7 @@ class SourceHighlighter {
     if (this.fullLineMarker) this._deps.editor.removeMarker(this.fullLineMarker, this.source)
     let lastCompilationResult = this._deps.compilerArtefacts['__last']
     if (location && location.file !== undefined && lastCompilationResult) {
-      var path = lastCompilationResult.getSourceName(location.file)
+      const path = lastCompilationResult.getSourceName(location.file)
       if (path) {
         this.currentSourceLocationFromfileName(lineColumnPos, path)
       }
@@ -45,21 +42,24 @@ class SourceHighlighter {
         this._deps.fileManager.switchFile(this.source)
       }
 
-      var css = csjs`
+      const css = csjs`
         .highlightcode {
           position:absolute;
           z-index:20;
-          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
+          background-color: ${style || 'var(--info)'};
         }
         .highlightcode_fullLine {
           position:absolute;
           z-index:20;
-          background-color: ${style || styles.editor.backgroundColor_DebuggerMode};
           opacity: 0.5;
+          background-color: ${style || 'var(--info)'};
+        }
+        .customBackgroundColor {
+          background-color: ${style || 'var(--info)'};
         }
         `
 
-      this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode)
+      this.statementMarker = this._deps.editor.addMarker(lineColumnPos, this.source, css.highlightcode.className + ' ' + css.customBackgroundColor.className)
       this._deps.editor.scrollToLine(lineColumnPos.start.line, true, true, function () {})
 
       if (lineColumnPos.start.line === lineColumnPos.end.line) {
@@ -72,7 +72,7 @@ class SourceHighlighter {
             line: lineColumnPos.start.line + 1,
             column: 0
           }
-        }, this.source, css.highlightcode_fullLine)
+        }, this.source, css.highlightcode_fullLine.className)
       }
     }
   }

@@ -1,13 +1,11 @@
 var yo = require('yo-yo')
 
-var styleGuide = require('../styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
-
 var css = yo`<style>
 .sol.success,
 .sol.error,
 .sol.staticAnalysisWarning,
 .sol.warning {
+    white-space: pre-line;
     word-wrap: break-word;
     cursor: pointer;
     position: relative;
@@ -21,6 +19,7 @@ var css = yo`<style>
 .sol.error pre,
 .sol.staticAnalysisWarning pre,
 .sol.warning pre {
+    white-space: pre-line;
     overflow-y: hidden;
     background-color: transparent;
     margin: 0;
@@ -34,6 +33,7 @@ var css = yo`<style>
 .sol.staticAnalysisWarning .close,
 .sol.error .close,
 .sol.warning .close {
+    white-space: pre-line;
     font-weight: bold;
     position: absolute;
     color: hsl(0, 0%, 0%); /* black in style-guide.js */
@@ -43,25 +43,16 @@ var css = yo`<style>
 }
 
 .sol.error {
-    background-color: ${styles.rightPanel.message_Error_BackgroundColor};
-    border: .2em dotted ${styles.rightPanel.message_Error_BorderColor};
-    color: ${styles.rightPanel.message_Error_Color};
 }
 
 .sol.warning {
-  background-color: ${styles.rightPanel.message_Warning_BackgroundColor};
-  color: ${styles.rightPanel.message_Warning_Color};
 }
 
 .sol.staticAnalysisWarning {
-  background-color: ${styles.colors.lightViolet};
-  color: ${styles.colors.black};  
 }
 
 .sol.success {
-  background-color: ${styles.rightPanel.message_Success_BackgroundColor};
-  border: .2em dotted ${styles.rightPanel.message_Success_BorderColor};
-  color: ${styles.rightPanel.message_Success_Color};
+  /* background-color:  // styles.rightPanel.message_Success_BackgroundColor; */
 }</style>`
 
 module.exports = css

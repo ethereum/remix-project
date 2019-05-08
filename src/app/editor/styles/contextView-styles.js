@@ -1,11 +1,11 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .contextview            {
-      opacity           : 0.8;
-    }
+    opacity             : 1;
+    position            : relative;
+    height              : 20px;
+  }
   .container              {
     padding             : 1px 15px;
   }
@@ -16,8 +16,7 @@ var css = csjs`
     text-overflow       : ellipsis;
     overflow            : hidden;
     white-space         : nowrap;
-    color               : ${styles.editor.text_Primary};
-    font-size           : 11px;
+    font-size           : 13px;
   }
   .type                   {
     font-style        : italic;
@@ -29,23 +28,27 @@ var css = csjs`
   .jump                   {
     cursor            : pointer;
     margin            : 0 5px;
-    color             : ${styles.editor.icon_Color_Editor};
   }
   .jump:hover              {
-    color             : ${styles.editor.icon_HoverColor_Editor};
+    color             : var(--secondary);
   }
   .referencesnb           {
     float             : right;
     margin-left       : 15px;
   }
   .gasEstimation {
-    margin-left: 15px;
+    margin-right: 15px;
     display: flex;
     align-items: center;
   }
   .gasStationIcon {
     height: 13px;
     margin-right: 5px;
+  }
+  .contextviewcontainer{
+    z-index           : 50;
+    border-radius     : 1px;
+    border            : 2px solid var(--secondary);
   }
 `
 

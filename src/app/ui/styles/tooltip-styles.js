@@ -1,38 +1,49 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .tooltip {
     z-index: 1001;
-    display: inline-block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: fixed;
-    background-color: ${styles.remix.tooltip_CopyToClipboard_BackgroundColor};
-    color: ${styles.remix.tooltip_CopyToClipboard_Color};
+    color: var(--primary)
     min-height: 50px;
-    min-width: 290px;
     padding: 16px 24px 12px;
     border-radius: 3px;
     bottom: -300;
     left: 40%;
     font-size: 12px;
     text-align: center;
-    -webkit-animation-name: animatebottom;
-    -webkit-animation-duration: 6s;
-    animation-name: animatebottom;
-    animation-duration: 6s
+    bottom: 0;
   }
   @-webkit-keyframes animatebottom  {
     0% {bottom: -300px}
-    20% {bottom: 0}
-    50% {bottom: 0}
-    100% {bottom: -300px}
+    100% {bottom: 0}
   }
   @keyframes animatebottom  {
     0% {bottom: -300px}
-    20% {bottom: 0}
-    50% {bottom: 0}
+    100% {bottom: 0}
+  }
+  @-webkit-keyframes animatetop  {
+    0% {bottom: 0}
     100% {bottom: -300px}
+  }
+  @keyframes animatetop  {
+    0% {bottom: 0}
+    100% {bottom: -300px}
+  }
+  .animateTop {
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 2s;
+    animation-name: animatetop;
+    animation-duration: 2s;
+  }
+  .animateBottom {
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 2s;
+    animation-name: animatebottom;
+    animation-duration: 2s;    
   }
 `
 

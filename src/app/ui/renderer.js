@@ -16,7 +16,6 @@ function Renderer (localRegistry) {
   self._components.registry = localRegistry || globlalRegistry
   // dependencies
   self._deps = {
-    editor: self._components.registry.get('editor').api,
     fileManager: self._components.registry.get('filemanager').api,
     config: self._components.registry.get('config').api
   }
@@ -27,13 +26,15 @@ function Renderer (localRegistry) {
 
 Renderer.prototype._error = function (file, error) {
   const self = this
+  const editor = self._components.registry.get('editor').api
   if (file === self._deps.config.get('currentFile')) {
-    self._deps.editor.addAnnotation(error)
+    editor.addAnnotation(error)
   }
 }
 
 Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
   const self = this
+  const editor = self._components.registry.get('editor').api
   if (errFile !== self._deps.config.get('currentFile')) {
     // TODO: refactor with this._components.contextView.jumpTo
     var provider = self._deps.fileManager.fileProviderOf(errFile)
@@ -41,11 +42,11 @@ Renderer.prototype._errorClick = function (errFile, errLine, errCol) {
       provider.exists(errFile, (error, exist) => {
         if (error) return console.log(error)
         self._deps.fileManager.switchFile(errFile)
-        self._deps.editor.gotoLine(errLine, errCol)
+        editor.gotoLine(errLine, errCol)
       })
     }
   } else {
-    self._deps.editor.gotoLine(errLine, errCol)
+    editor.gotoLine(errLine, errCol)
   }
 }
 
@@ -88,7 +89,8 @@ Renderer.prototype.error = function (message, container, opt) {
 
   var $pre = $(opt.useSpan ? yo`<span></span>` : yo`<pre></pre>`).html(message)
 
-  var $error = $(yo`<div class="sol ${opt.type}"><div class="close"><i class="fa fa-close"></i></div></div>`).prepend($pre)
+  let classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
+  var $error = $(yo`<div class="sol ${opt.type} ${classList}"><div class="close"><i class="fas fa-times"></i></div></div>`).prepend($pre)
   $(container).append($error)
 
   $error.click((ev) => {

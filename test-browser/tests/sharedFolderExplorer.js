@@ -52,6 +52,7 @@ function runTests (browser, testData) {
   browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.getEditorValue = contractHelper.getEditorValue
   browser.testEditorValue = contractHelper.testEditorValue
+  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   var browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
     console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
@@ -69,7 +70,8 @@ function runTests (browser, testData) {
     return
   }
   browser
-    .waitForElementVisible('.newFile', 10000)
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('fileExplorers')
     .click('.websocketconn')
     .waitForElementVisible('#modal-footer-ok', 10000)
     .click('#modal-footer-ok')
@@ -130,7 +132,7 @@ function runTests (browser, testData) {
       testImportFromRemixd(browser, () => { done() })
     })
     .perform(function () {
-      browser.click('[data-path="localhost"]') // collapse and expand
+      browser.clickLaunchIcon('fileExplorers').click('[data-path="localhost"]') // collapse and expand
         .waitForElementNotVisible('[data-path="localhost/folder1"]')
         .click('[data-path="localhost"]')
         .waitForElementVisible('[data-path="localhost/folder1"]')

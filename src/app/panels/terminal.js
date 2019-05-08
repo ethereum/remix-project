@@ -11,24 +11,33 @@ var swarmgw = require('swarmgw')()
 
 var CommandInterpreterAPI = require('../../lib/cmdInterpreterAPI')
 var executionContext = require('../../execution-context')
-var Dropdown = require('../ui/dropdown')
 var AutoCompletePopup = require('../ui/auto-complete-popup')
-var Commands = require('../constants/commands')
 
 var csjs = require('csjs-inject')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = require('./styles/terminal-styles')
+import { BaseApi } from 'remix-plugin'
+
+var packageV = require('../../../package.json')
 
 var KONSOLES = []
 
 function register (api) { KONSOLES.push(api) }
 
-var ghostbar = yo`<div class=${css.ghostbar}></div>`
+var ghostbar = yo`<div class=${css.ghostbar} bg-secondary></div>`
 
-class Terminal {
+const profile = {
+  displayName: 'Terminal',
+  name: 'terminal',
+  methods: [],
+  events: [],
+  description: ' - ',
+  required: false
+}
+
+class Terminal extends BaseApi {
   constructor (opts, api) {
+    super(profile)
     var self = this
     self.event = new EventManager()
     self._api = api
@@ -42,40 +51,14 @@ class Terminal {
     self._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     self._components = {}
     self._components.cmdInterpreter = new CommandInterpreterAPI(this)
-    self._components.dropdown = new Dropdown({
-      options: [
-        'only remix transactions',
-        'all transactions',
-        'script'
-      ],
-      defaults: ['only remix transactions', 'script'],
-      dependencies: {'all transactions': ['only remix transactions'], 'only remix transactions': ['all transactions']}
-    })
-    self._components.dropdown.event.register('deselect', function (label) {
-      self.event.trigger('filterChanged', ['deselect', label])
-      if (label === 'script') {
-        self.updateJournal({ type: 'deselect', value: label })
-      }
-    })
-    self._components.dropdown.event.register('select', function (label) {
-      self.event.trigger('filterChanged', ['select', label])
-      if (label === 'script') {
-        self.updateJournal({ type: 'select', value: label })
-      }
-    })
-    self._components.autoCompletePopup = new AutoCompletePopup()
+    self._components.autoCompletePopup = new AutoCompletePopup(self._opts)
     self._components.autoCompletePopup.event.register('handleSelect', function (input) {
-      self._components.autoCompletePopup.data._options = []
-      self._components.autoCompletePopup._startingElement = 0
       let textList = self._view.input.innerText.split(' ')
       textList.pop()
       textList.push(input)
-      self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
+      self._view.input.innerText = textList
       self._view.input.focus()
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
-    })
-    self._components.autoCompletePopup.event.register('updateList', function () {
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
+      self.putCursor2End(self._view.input)
     })
     self._commands = {}
     self.commands = {}
@@ -109,64 +92,98 @@ class Terminal {
 
     self._jsSandboxContext = {}
     self._jsSandboxRegistered = {}
+
+    self.externalApi = this.api()
+    self.externalApi.notifs = {'theme': ['switchTheme']}
+    opts.appManager.init([self.externalApi])
+    opts.appManager.activateRequestAndNotification(self.externalApi)
+
     if (opts.shell) self._shell = opts.shell
     register(self)
+  }
+  focus () {
+    if (this._view.input) this._view.input.focus()
   }
   render () {
     var self = this
     if (self._view.el) return self._view.el
     self._view.journal = yo`<div class=${css.journal}></div>`
     self._view.input = yo`
-      <span class=${css.input} contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
+      <span class=${css.input} spellcheck="false" onload=${() => { this.focus() }} contenteditable="true" onpaste=${paste} onkeydown=${change}></span>
     `
     self._view.input.innerText = '\n'
     self._view.cli = yo`
-      <div class=${css.cli}>
+      <div class="${css.cli}">
         <span class=${css.prompt}>${'>'}</span>
         ${self._view.input}
       </div>
     `
     self._view.icon = yo`
       <i onmouseenter=${hover} onmouseleave=${hover} onmousedown=${minimize}
-      class="${css.toggleTerminal} fa fa-angle-double-down"></i>`
+      class="btn btn-secondary btn-sm align-items-center ${css.toggleTerminal} fas fa-angle-double-down"></i>`
     self._view.dragbar = yo`
       <div onmousedown=${mousedown} class=${css.dragbarHorizontal}></div>`
-    self._view.dropdown = self._components.dropdown.render()
+
     self._view.pendingTxCount = yo`<div class=${css.pendingTx} title='Pending Transactions'>0</div>`
+    self._view.inputSearch = yo`<input
+      spellcheck="false"
+      type="text"
+      class="${css.filter} form-control"
+      id="searchInput"
+      onkeydown=${filter}
+      placeholder="Search with transaction hash or address">
+    </input>`
     self._view.bar = yo`
-      <div class=${css.bar}>
+      <div class="${css.bar}">
         ${self._view.dragbar}
-        <div class=${css.menu}>
+        <div class="${css.menu} border-top bg-light">
           ${self._view.icon}
           <div class=${css.clear} onclick=${clear}>
-            <i class="fa fa-ban" aria-hidden="true" title="Clear console"
+            <i class="fas fa-ban" aria-hidden="true" title="Clear console"
             onmouseenter=${hover} onmouseleave=${hover}></i>
           </div>
           ${self._view.pendingTxCount}
           <div class=${css.verticalLine}></div>
-          <div class=${css.listen}>
-            <input onchange=${listenOnNetwork} type="checkbox"
-            title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you">
+          <div class="form-check">
+            <input
+              id="listenNetworkCheck"
+              onchange=${listenOnNetwork}
+              type="checkbox" class="form-check-input "
+              title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+            >
+            <label
+              class="form-check-label"
+              title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+              for="listenNetworkCheck"
+            >
+              listen on network
+            </label>
           </div>
-          ${self._view.dropdown}
           <div class=${css.search}>
-            <i class="fa fa-search ${css.searchIcon}" aria-hidden="true"></i>
-            <input type="text" class=${css.filter} onkeydown=${filter}  placeholder="Search transactions">
+            <i class="fas fa-search ${css.searchIcon} bg-light" aria-hidden="true"></i>
+            ${self._view.inputSearch}
           </div>
         </div>
       </div>
     `
     self._view.term = yo`
-      <div class=${css.terminal_container} onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+      <div class="${css.terminal_container}" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
+        <div style="
+          background-color: grey;
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          opacity: 0.1;
+          z-index: -1;
+        "></div>
         <div class=${css.terminal}>
             ${self._view.journal}
             ${self._view.cli}
         </div>
       </div>
     `
-    self._view.autoCompletePopup = self._components.autoCompletePopup.render()
     self._view.el = yo`
-      <div class=${css.panel}>
+      <div class="${css.panel}" style="height: 180px;">
         ${self._view.bar}
         ${self._view.term}
       </div>
@@ -273,7 +290,7 @@ class Terminal {
         if (inserted) {
           text.innerText = ''
           background.onclick = undefined
-          self._view.journal.removeChild(placeholder)
+          if (placeholder.parentElement) self._view.journal.removeChild(placeholder)
         }
         inserted = false
         delete self.scroll2bottom
@@ -340,7 +357,8 @@ class Terminal {
         clearTimeout(filtertimeout)
       }
       filtertimeout = setTimeout(() => {
-        self.updateJournal({ type: 'search', value: document.querySelector('.' + event.target.className).value })
+        self.updateJournal({ type: 'search', value: self._view.inputSearch.value })
+        self.scroll2bottom()
       }, 500)
     }
     function clear (event) {
@@ -385,7 +403,7 @@ class Terminal {
     self._cmdIndex = -1
     self._cmdTemp = ''
 
-    var intro = yo`<div><div> - Welcome to Remix v0.7.5 - </div><br>
+    var intro = yo`<div><div> - Welcome to Remix ${packageV.version} - </div><br>
                   <div>You can use this terminal for: </div>
                   <ul class=${css2.ul}>
                     <li>Checking transactions details and start debugging.</li>
@@ -394,7 +412,7 @@ class Terminal {
                         <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
                         <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
                         <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>
-                        <li>compilers - contains currently loaded compiler</li>
+                        <li>remix (run remix.help() for more info)</li>
                       </ul>
                     </li>
                     <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
@@ -407,14 +425,16 @@ class Terminal {
     return self._view.el
 
     function change (event) {
-      handleAutoComplete(event)
+      if (self._components.autoCompletePopup.handleAutoComplete(
+        event,
+        self._view.input.innerText)) return
       if (self._view.input.innerText.length === 0) self._view.input.innerText += '\n'
       if (event.which === 13) {
         if (event.ctrlKey) { // <ctrl+enter>
           self._view.input.innerText += '\n'
-          putCursor2End(self._view.input)
+          self.putCursor2End(self._view.input)
           self.scroll2bottom()
-          removeAutoComplete()
+          self._components.autoCompletePopup.removeAutoComplete()
         } else { // <enter>
           self._cmdIndex = -1
           self._cmdTemp = ''
@@ -425,102 +445,55 @@ class Terminal {
             self._cmdHistory.unshift(script)
             self.commands.script(script)
           }
-          removeAutoComplete()
+          self._components.autoCompletePopup.removeAutoComplete()
         }
       } else if (event.which === 38) { // <arrowUp>
-        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
-          self._components.autoCompletePopup._view.autoComplete.children[1].children[0].onclick(event)
-        } else {
-          var len = self._cmdHistory.length
-          if (len === 0) return event.preventDefault()
-          if (self._cmdHistory.length - 1 > self._cmdIndex) {
-            self._cmdIndex++
-          }
-          self._view.input.innerText = self._cmdHistory[self._cmdIndex]
-          putCursor2End(self._view.input)
-          self.scroll2bottom()
+        var len = self._cmdHistory.length
+        if (len === 0) return event.preventDefault()
+        if (self._cmdHistory.length - 1 > self._cmdIndex) {
+          self._cmdIndex++
         }
+        self._view.input.innerText = self._cmdHistory[self._cmdIndex]
+        self.putCursor2End(self._view.input)
+        self.scroll2bottom()
       } else if (event.which === 40) { // <arrowDown>
-        if (self._components.autoCompletePopup.data._options.length > self._components.autoCompletePopup._elementsToShow) {
-          self._components.autoCompletePopup._view.autoComplete.children[1].children[1].onclick(event)
-        } else {
-          if (self._cmdIndex > -1) {
-            self._cmdIndex--
-          }
-          self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
-          putCursor2End(self._view.input)
-          self.scroll2bottom()
+        if (self._cmdIndex > -1) {
+          self._cmdIndex--
         }
+        self._view.input.innerText = self._cmdIndex >= 0 ? self._cmdHistory[self._cmdIndex] : self._cmdTemp
+        self.putCursor2End(self._view.input)
+        self.scroll2bottom()
       } else {
         self._cmdTemp = self._view.input.innerText
       }
     }
-    function putCursor2End (editable) {
-      var range = document.createRange()
-      range.selectNode(editable)
-      var child = editable
-      var chars
+  }
+  putCursor2End (editable) {
+    var range = document.createRange()
+    range.selectNode(editable)
+    var child = editable
+    var chars
 
-      while (child) {
-        if (child.lastChild) child = child.lastChild
-        else break
-        if (child.nodeType === Node.TEXT_NODE) {
-          chars = child.textContent.length
-        } else {
-          chars = child.innerHTML.length
-        }
+    while (child) {
+      if (child.lastChild) child = child.lastChild
+      else break
+      if (child.nodeType === Node.TEXT_NODE) {
+        chars = child.textContent.length
+      } else {
+        chars = child.innerHTML.length
       }
-
-      range.setEnd(child, chars)
-      var toStart = true
-      var toEnd = !toStart
-      range.collapse(toEnd)
-
-      var sel = window.getSelection()
-      sel.removeAllRanges()
-      sel.addRange(range)
-
-      editable.focus()
     }
-    function handleAutoComplete (event) {
-      if (event.which === 9) {
-        event.preventDefault()
-        let textList = self._view.input.innerText.split(' ')
-        let autoCompleteInput = textList.length > 1 ? textList[textList.length - 1] : textList[0]
-        if (self._view.input.innerText.length >= 2) {
-          self._components.autoCompletePopup.data._options = []
-          Commands.allPrograms.forEach(item => {
-            if (Object.keys(item)[0].substring(0, Object.keys(item)[0].length - 1).includes(autoCompleteInput.trim())) {
-              self._components.autoCompletePopup.data._options.push(item)
-            } else if (autoCompleteInput.trim().includes(Object.keys(item)[0]) || (Object.keys(item)[0] === autoCompleteInput.trim())) {
-              Commands.allCommands.forEach(item => {
-                if (Object.keys(item)[0].includes(autoCompleteInput.trim())) {
-                  self._components.autoCompletePopup.data._options.push(item)
-                }
-              })
-            }
-          })
-        }
-        if (self._components.autoCompletePopup.data._options.length === 1) {
-          textList.pop()
-          textList.push(Object.keys(self._components.autoCompletePopup.data._options[0])[0])
-          self._view.input.innerText = `${textList}`.replace(/,/g, ' ')
-          self._components.autoCompletePopup.data._options = []
-          putCursor2End(self._view.input)
-        }
-      }
-      if (event.which === 27 || event.which === 8 || event.which === 46) {
-        self._components.autoCompletePopup.data._options = []
-        self._components.autoCompletePopup._startingElement = 0
-      }
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
-    }
-    function removeAutoComplete () {
-      self._components.autoCompletePopup.data._options = []
-      self._components.autoCompletePopup._startingElement = 0
-      self._components.autoCompletePopup._removePopUp()
-      yo.update(self._view.autoCompletePopup, self._components.autoCompletePopup.render())
-    }
+
+    range.setEnd(child, chars)
+    var toStart = true
+    var toEnd = !toStart
+    range.collapse(toEnd)
+
+    var sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+
+    editable.focus()
   }
   updateJournal (filterEvent) {
     var self = this
@@ -537,8 +510,8 @@ class Terminal {
       commands[value] = false
       if (!self._INDEX.commandsMain[value]) return
       self._INDEX.commandsMain[value].forEach(item => {
-        item.root.steps.forEach(item => { self._JOURNAL[item.gidx] = undefined })
-        self._JOURNAL[item.gidx] = undefined
+        item.root.steps.forEach(item => { self._JOURNAL[item.gidx].hide = true })
+        self._JOURNAL[item.gidx].hide = true
       })
     } else if (filterEvent.type === 'search') {
       if (value !== self.data.activeFilters.input) {
@@ -557,8 +530,8 @@ class Terminal {
     self._JOURNAL.forEach(item => {
       if (item && item.el && !item.hide) df.appendChild(item.el)
     })
+    self._view.journal.innerHTML = ''
     requestAnimationFrame(function updateDOM () {
-      self._view.journal.innerHTML = ''
       self._view.journal.appendChild(df)
     })
   }
@@ -573,7 +546,7 @@ class Terminal {
         self._jobs = []
       })
     }
-    self._jobs.push(el)
+    if (self.data.activeFilters.commands[item.cmd]) self._jobs.push(el)
   }
   scroll2bottom () {
     var self = this
@@ -587,7 +560,12 @@ class Terminal {
         if (args.length) append(args[0])
       }
     }
-    mode = { log: styles.terminal.text_RegularLog, info: styles.terminal.text_InfoLog, warn: styles.terminal.text_WarnLog, error: styles.terminal.text_ErrorLog }[mode] // defaults
+    mode = {
+      log: 'text-info',
+      info: 'text-info',
+      warn: 'text-warning',
+      error: 'text-danger' }[mode] // defaults
+
     if (mode) {
       return function logger (args, scopedCommands, append) {
         var types = args.map(type)
@@ -596,7 +574,7 @@ class Terminal {
           if (types[idx] === 'element') val = jsbeautify.html(val)
           return val
         })
-        append(yo`<span style="color: ${mode};">${values}</span>`)
+        append(yo`<span class="${mode}" >${values}</span>`)
       }
     } else {
       throw new Error('mode is not supported')
@@ -681,7 +659,6 @@ class Terminal {
 
 function domTerminalFeatures (self, scopedCommands) {
   return {
-    compilers: self._opts.compilers,
     swarmgw,
     ethers,
     remix: self._components.cmdInterpreter,

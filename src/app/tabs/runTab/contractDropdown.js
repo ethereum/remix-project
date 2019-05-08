@@ -18,6 +18,7 @@ class ContractDropdownUI {
 
   listenToEvents () {
     this.dropdownLogic.event.register('newlyCompiled', (success, data, source, compiler, compilerFullName) => {
+      if (!document.querySelector(`.${css.contractNames.classNames[0]}`)) return
       var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
       contractNames.innerHTML = ''
       if (success) {
@@ -43,11 +44,11 @@ class ContractDropdownUI {
   }
 
   render () {
-    this.compFails = yo`<i title="Contract compilation failed. Please check the compile tab for more information." class="fa fa-times-circle ${css.errorIcon}" ></i>`
-    var info = yo`<i class="fa fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
+    this.compFails = yo`<i title="No contract compiled yet or compilation failed. Please check the compile tab for more information." class="fas fa-times-circle ${css.errorIcon}" ></i>`
+    var info = yo`<i class="fas fa-info ${css.infoDeployAction}" aria-hidden="true" title="*.sol files allows deploying and accessing contracts. *.abi files only allows accessing contracts."></i>`
 
-    this.atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Load contract from Address" title="atAddress" />`
-    this.selectContractNames = yo`<select class="${css.contractNames}" disabled></select>`
+    this.atAddressButtonInput = yo`<input class="${css.input} ${css.ataddressinput} ataddressinput form-control" placeholder="Load contract from Address" title="atAddress" />`
+    this.selectContractNames = yo`<select class="${css.contractNames} custom-select" disabled></select>`
 
     this.createPanel = yo`<div class="${css.button}"></div>`
     this.orLabel = yo`<div class="${css.orLabel}">or</div>`
@@ -60,18 +61,19 @@ class ContractDropdownUI {
           ${this.createPanel}
           ${this.orLabel}
           <div class="${css.button} ${css.atAddressSect}">
-            <div class="${css.atAddress}" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
+            <div class="${css.atAddress} btn btn-sm btn-info" onclick=${this.loadFromAddress.bind(this)}>At Address</div>
             ${this.atAddressButtonInput}
           </div>
         </div>
       </div>
     `
     this.selectContractNames.addEventListener('change', this.setInputParamsPlaceHolder.bind(this))
-
+    this.setInputParamsPlaceHolder()
     return el
   }
 
   changeCurrentFile (currentFile) {
+    if (!document.querySelector(`.${css.contractNames}`)) return
     document.querySelector(`.${css.contractNames}`).classList.remove(css.contractNamesError)
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     contractNames.innerHTML = ''
@@ -139,7 +141,7 @@ class ContractDropdownUI {
     }
 
     var promptCb = (okCb, cancelCb) => {
-      modalDialogCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      modalDialogCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     var statusCb = (msg) => {
@@ -153,7 +155,7 @@ class ContractDropdownUI {
         return this.logCallback(error)
       }
 
-      this.event.trigger('newContractInstanceAdded', [contractObject, address, this.selectContractNames.value])
+      this.event.trigger('newContractInstanceAdded', [contractObject, address, contractObject.name])
     }
 
     if (selectedContract.isOverSizeLimit()) {
@@ -163,7 +165,7 @@ class ContractDropdownUI {
         {
           label: 'Force Send',
           fn: () => {
-            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, statusCb, finalCb)
+            this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
           }}, {
             label: 'Cancel',
             fn: () => {
@@ -171,7 +173,7 @@ class ContractDropdownUI {
             }
           })
     }
-    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialogCustom, confirmDialog, statusCb, finalCb)
+    this.dropdownLogic.forceSend(selectedContract, args, continueCb, promptCb, modalDialog, confirmDialog, statusCb, finalCb)
   }
 
   loadFromAddress () {
@@ -180,7 +182,7 @@ class ContractDropdownUI {
     var address = this.atAddressButtonInput.value
     this.dropdownLogic.loadContractFromAddress(address,
       (cb) => {
-        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', cb)
+        modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition?', cb)
       },
       (error, loadType, abi) => {
         if (error) {
