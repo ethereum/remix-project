@@ -83,7 +83,7 @@ class CompileTab extends CompilerApi {
     this.editor.event.register('sessionSwitched', onContentChanged)
 
     this.compiler.event.register('loadingCompiler', () => {
-      this.events.emit('statusChanged', {key: 'spinner', title: 'loading compiler...', type: 'info'})
+      this.events.emit('statusChanged', {key: 'loading', title: 'loading compiler...', type: 'info'})
     })
 
     this.compiler.event.register('compilerLoaded', () => {
@@ -94,7 +94,7 @@ class CompileTab extends CompilerApi {
       if (this._view.errorContainer) {
         this._view.errorContainer.innerHTML = ''
       }
-      this.events.emit('statusChanged', {key: 'spinner', title: 'compiling...', type: 'info'})
+      this.events.emit('statusChanged', {key: 'loading', title: 'compiling...', type: 'info'})
     })
 
     this.fileManager.events.on('currentFileChanged', (name) => {
@@ -123,7 +123,7 @@ class CompileTab extends CompilerApi {
             title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.events.emit('statusChanged', {key: 'success', title: 'compilation successful', type: 'success'})
+        } else this.events.emit('statusChanged', {key: 'succeed', title: 'compilation successful', type: 'success'})
         // Store the contracts
         this.data.contractsDetails = {}
         this.compiler.visitContracts((contract) => {
