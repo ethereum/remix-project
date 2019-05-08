@@ -89,6 +89,7 @@ var css = csjs`
     left               : 0;
     overflow           : hidden;
     width              : 50px;
+    user-select        : none;
     /* border-right       : 1px solid var(--primary); */
   }
   .swappanel          {
@@ -364,8 +365,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
 
+  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
+  const landingPage = new LandingPage(appManager, appStore)
+
   // ----------------- Vertical Icon ----------------------------
-  const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore)
+  const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore, landingPage.profile)
   const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
   const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
@@ -373,7 +377,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   self._components.editorpanel.init()
   self._components.fileManager.init()
-
   self._view.mainpanel.appendChild(self._components.editorpanel.render())
   self._view.iconpanel.appendChild(verticalIconsComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
@@ -407,7 +410,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   )
   let analysis = new AnalysisTab(registry)
   let debug = new DebuggerTab()
-  const landingPage = new LandingPage(appManager, appStore)
   let test = new TestTab(
     registry.get('filemanager').api,
     registry.get('filepanel').api,

@@ -89,11 +89,8 @@ module.exports = class SettingsTab extends BaseApi {
 
     <div class="${css.info} card">
       <div class="card-body">
-      <h6 class="${css.title} card-title">Home</h6>
-      <div class="btn-group">
-        <button class="btn btn-primary sm-1" onclick="${() => { this.appManager.ensureActivated('home') }}" >Home</button>
-        <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
-      </div>
+      <h6 class="${css.title} card-title">Have a question?</h6>
+      <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
       </div>
     </div>`
     this._view.config.general = yo`
