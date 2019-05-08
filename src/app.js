@@ -89,6 +89,7 @@ var css = csjs`
     left               : 0;
     overflow           : hidden;
     width              : 50px;
+    user-select        : none;
     /* border-right       : 1px solid var(--primary); */
   }
   .swappanel          {
