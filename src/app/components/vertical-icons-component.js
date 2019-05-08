@@ -226,7 +226,7 @@ class VerticalIconComponent {
       plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
     >
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="512px" height="512px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+    width="42px" height="42px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
       <g>
         <path fill="#414042" d="M70.582,428.904c0.811,0,1.622,0.285,2.437,0.853c0.811,0.571,1.218,1.34,1.218,2.314
           c0,2.277-1.059,3.496-3.168,3.656c-5.038,0.814-9.381,2.356-13.037,4.63c-3.655,2.276-6.663,5.117-9.016,8.528
@@ -365,9 +365,16 @@ module.exports = VerticalIconComponent
 const css = csjs`
   .homeIcon {
       display: block;
-      width: 32px;
-      height: 32px;
-      background-image: url(assets/img/remix_logo_512x512.svg);
+      width: 42px;
+      height: 42px;
+      margin-bottom: 20px;
+      margin-left: -5px;
+  }
+  .homeIcon svg path {
+    fill: var(--primary);
+  }
+  .homeIcon svg polygon {
+    fill: var(--primary);
   }
   .icons {
     margin-left: 10px;
