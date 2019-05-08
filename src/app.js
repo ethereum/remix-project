@@ -364,7 +364,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
 
-  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon 
+  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
   const landingPage = new LandingPage(appManager, appStore)
 
   // ----------------- Vertical Icon ----------------------------
@@ -408,7 +408,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       appManager
   )
   let analysis = new AnalysisTab(registry)
-  let debug = new DebuggerTab() 
+  let debug = new DebuggerTab()
   let test = new TestTab(
     registry.get('filemanager').api,
     registry.get('filepanel').api,
@@ -438,7 +438,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     filePanel.remixdHandle.api(),
     ...appManager.plugins()
   ])
-
 
   framingService.start(appStore, swapPanelApi, verticalIconsApi, mainPanelApi, this._components.resizeFeature)
 

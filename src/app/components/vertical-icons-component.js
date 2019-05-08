@@ -218,9 +218,9 @@ class VerticalIconComponent {
   render () {
     let home = yo`
     <div
-      class="${css.icon}"
+      class="${css.homeIcon}"
       onclick="${(e) => {
-        this._iconClick(name)
+        this._iconClick(this.homeProfile.name)
         globalRegistry.get('appManager').api.ensureActivated('home')
       }}"
       plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
@@ -273,27 +273,27 @@ class VerticalIconComponent {
         <g>
           <g opacity="0.45">
             <g>
-              <polygon fill="#010101" points="150.734,196.212 255.969,344.508 255.969,258.387 				"/>
+              <polygon fill="#010101" points="150.734,196.212 255.969,344.508 255.969,258.387"/>
             </g>
           </g>
           <g opacity="0.8">
             <g>
-              <polygon fill="#010101" points="255.969,258.387 255.969,344.508 361.267,196.212 				"/>
+              <polygon fill="#010101" points="255.969,258.387 255.969,344.508 361.267,196.212"/>
             </g>
           </g>
           <g opacity="0.6">
             <g>
-              <polygon fill="#010101" points="255.969,126.781 150.733,174.611 255.969,236.818 361.204,174.611 				"/>
+              <polygon fill="#010101" points="255.969,126.781 150.733,174.611 255.969,236.818 361.204,174.611"/>
             </g>
           </g>
           <g opacity="0.45">
             <g>
-              <polygon fill="#010101" points="150.734,174.612 255.969,236.818 255.969,126.782 255.969,0.001 				"/>
+              <polygon fill="#010101" points="150.734,174.612 255.969,236.818 255.969,126.782 255.969,0.001"/>
             </g>
           </g>
           <g opacity="0.8">
             <g>
-              <polygon fill="#010101" points="255.969,0 255.969,126.781 255.969,236.818 361.204,174.611 				"/>
+              <polygon fill="#010101" points="255.969,0 255.969,126.781 255.969,236.818 361.204,174.611"/>
             </g>
           </g>
         </g>
