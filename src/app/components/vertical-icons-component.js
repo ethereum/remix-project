@@ -53,7 +53,7 @@ class VerticalIconComponent {
     if (!api.events) return
 
     // the list of supported keys. 'none' will remove the status
-    const keys = ['edited', 'success', 'none', 'spinner', 'fail']
+    const keys = ['edited', 'succeed', 'none', 'loading', 'failed']
     const types = ['error', 'warning', 'success', 'info', '']
     const fn = (status) => {
       if (!types.includes(status.type) && status.type) throw new Error(`type should be ${keys.join()}`)
@@ -92,16 +92,16 @@ class VerticalIconComponent {
   resolveClasses (key, type) {
     let classes = css.status
     switch (key) {
-      case 'success':
+      case 'succeed':
         classes += ' fas fa-check-circle text-' + type + ' ' + css.statusCheck
         break
       case 'edited':
         classes += ' fas fa-sync text-' + type + ' ' + css.statusCheck
         break
-      case 'spinner':
+      case 'loading':
         classes += ' fas fa-spinner text-' + type + ' ' + css.statusCheck
         break
-      case 'fail':
+      case 'failed':
         classes += ' fas fa-exclamation-triangle text-' + type + ' ' + css.statusCheck
         break
       default: {

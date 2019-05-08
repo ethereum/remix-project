@@ -32,7 +32,7 @@ class AnalysisTab extends BaseApi {
       if (count > 0) {
         this.events.emit('statusChanged', {key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning'})
       } else if (count === 0) {
-        this.events.emit('statusChanged', {key: 'success', title: 'no warning', type: 'success'})
+        this.events.emit('statusChanged', {key: 'succeed', title: 'no warning', type: 'success'})
       } else {
         // count ==-1 no compilation result
         this.events.emit('statusChanged', {key: 'none'})
