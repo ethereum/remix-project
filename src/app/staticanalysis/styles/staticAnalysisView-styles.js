@@ -9,6 +9,9 @@ var css = csjs`
     margin-top: 1%;
     max-height: 300px;
   }
+  .resultTitle {
+    padding-top: 20px;
+  }
   .buttons  {
     margin: 1rem 0;
   }

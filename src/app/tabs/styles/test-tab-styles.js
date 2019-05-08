@@ -3,14 +3,14 @@ var csjs = require('csjs-inject')
 var css = csjs`
   .testTabView {}
   .infoBox  {
-    margin: 2%;
+    margin: 5%;
   }
   .tests {}
   .testList {
     line-height: 2em;
     display: flex;
     flex-direction: column;
-    margin: 2%;
+    margin: 5%;
     max-height: 300px;
     overflow-y: auto;
 
@@ -40,13 +40,14 @@ var css = csjs`
   .testFailureSummary {
   }
   .buttons {
-    margin: 2%;
+    margin: 5%;
     display: flex;
     align-items: center;
   }
   .runButton {
   }
   .generateTestFile {
+    margin-top: 20px;
     min-width: 100px
   }
   .title {
