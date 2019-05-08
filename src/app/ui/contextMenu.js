@@ -7,7 +7,6 @@ var css = csjs`
     {
       display: none;
       position: fixed;
-      width:100px;
       border-radius: 2px;
       z-index: 1000;
       box-shadow: 0 0 4px var(--dark);
