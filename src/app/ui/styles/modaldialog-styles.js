@@ -13,6 +13,8 @@ var css = csjs`
   }
   .modalBody {
     word-break: break-word;
+    overflow-y: auto;
+    max-height: 600px;
   }
   .modalFooterOk {
   }

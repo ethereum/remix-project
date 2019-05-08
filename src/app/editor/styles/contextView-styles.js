@@ -1,15 +1,15 @@
 var csjs = require('csjs-inject')
 
 var css = csjs`
-  .contextview            {
+  .contextview {
     opacity             : 1;
     position            : relative;
-    height              : 20px;
+    height              : 25px;
   }
-  .container              {
+  .container {
     padding             : 1px 15px;
   }
-  .line                   {
+  .line {
     display             : flex;
     justify-content     : flex-end;
     align-items         : center;
@@ -18,32 +18,36 @@ var css = csjs`
     white-space         : nowrap;
     font-size           : 13px;
   }
-  .type                   {
+  .type {
     font-style        : italic;
     margin-right      : 5px;
   }
-  .name                   {
+  .name  {
     font-weight       : bold;
   }
-  .jump                   {
+  .jump {
     cursor            : pointer;
     margin            : 0 5px;
   }
   .jump:hover              {
     color             : var(--secondary);
   }
-  .referencesnb           {
+  .referencesnb {
     float             : right;
     margin-left       : 15px;
   }
   .gasEstimation {
-    margin-right: 15px;
-    display: flex;
-    align-items: center;
+    margin-right      : 15px;
+    display           : flex;
+    align-items       : center;
   }
   .gasStationIcon {
-    height: 13px;
-    margin-right: 5px;
+    margin-right      : 5px;
+  }
+  .contextviewcontainer {
+    z-index           : 50;
+    border-radius     : 1px;
+    border            : 2px solid var(--secondary);
   }
   .contextviewcontainer{
     z-index           : 50;
