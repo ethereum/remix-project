@@ -109,7 +109,6 @@ class CompileTab extends CompilerApi {
     })
 
     const cleanupErrors = () => {
-      this._view.errorContainer.innerHTML = ''
       this.events.emit('statusChanged', {key: 'none'})
     }
 
