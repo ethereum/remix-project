@@ -47,8 +47,8 @@ ButtonNavigator.prototype.render = function () {
   var view = yo`<div class="${css.buttons}">
     <div class="${css.stepButtons} btn-group p-1">
       <button id='overback' class='btn btn-primary btn-sm' title='Step over back' class='${css.navigator} ${css.stepButton} fas fa-reply' onclick=${function () { self.event.trigger('stepOverBack') }} disabled=${this.overBackDisabled} ></button>
-      <button id='intoback' class='btn btn-primary btn-sm' title='Step back' class='${css.navigator} ${css.stepButton} fas fa-level-up' onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} ></button>
-      <button id='intoforward' class='btn btn-primary btn-sm' title='Step into'  class='${css.navigator} ${css.stepButton} fas fa-level-down' onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} ></button>
+      <button id='intoback' class='btn btn-primary btn-sm' title='Step back' class='${css.navigator} ${css.stepButton} fas fa-level-up-alt' onclick=${function () { self.event.trigger('stepIntoBack') }} disabled=${this.intoBackDisabled} ></button>
+      <button id='intoforward' class='btn btn-primary btn-sm' title='Step into'  class='${css.navigator} ${css.stepButton} fas fa-level-down-alt' onclick=${function () { self.event.trigger('stepIntoForward') }} disabled=${this.intoForwardDisabled} ></button>
       <button id='overforward' class='btn btn-primary btn-sm' title='Step over forward' class='${css.navigator} ${css.stepButton} fas fa-share' onclick=${function () { self.event.trigger('stepOverForward') }} disabled=${this.overForwardDisabled} ></button>
     </div>
 
