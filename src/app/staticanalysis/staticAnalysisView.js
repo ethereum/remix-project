@@ -4,10 +4,6 @@ var yo = require('yo-yo')
 var $ = require('jquery')
 var remixLib = require('remix-lib')
 var utils = remixLib.util
-
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
-
 var css = require('./styles/staticAnalysisView-styles')
 var globlalRegistry = require('../../global/registry')
 
@@ -34,6 +30,7 @@ function staticAnalysisView (localRegistry) {
     self.lastCompilationResult = null
     self.lastCompilationSource = null
     $('#staticanalysisresult').empty()
+    if (languageVersion.indexOf('soljson') !== 0) return
     self.lastCompilationResult = data
     self.lastCompilationSource = source
     if (self.view.querySelector('#autorunstaticanalysis').checked) {
@@ -46,30 +43,34 @@ staticAnalysisView.prototype.render = function () {
   var self = this
   var view = yo`
     <div class="${css.analysis}">
-      <div id="staticanalysismodules">
-        ${this.modulesView}
-      </div>
       <div class="${css.buttons}">
-        <button class="${css.buttonRun}" onclick="${function () { self.run() }}" >Run</button>
-        <label class="${css.label}" for="autorunstaticanalysis">
-          <input id="autorunstaticanalysis"
-            type="checkbox"
-            style="vertical-align:bottom"
-            checked="true"
-          >
-          Auto run
-        </label>
-        <label class="${css.label}" for="checkAllEntries">
-          <input id="checkAllEntries"
-            type="checkbox"
-            onclick="${function (event) { self.checkAll(event) }}"
-            style="vertical-align:bottom"
-            checked="true"
-          >
-          Check/Uncheck all
-        </label>
-      </div>
-      <div class="${css.result}" "id='staticanalysisresult'></div>
+          <div class="${css.buttonsInner}">
+            <button class="${css.buttonRun} btn btn-sm btn-primary" onclick="${function () { self.run() }}" >Run</button>
+            <label class="${css.label}" for="autorunstaticanalysis">
+              <input id="autorunstaticanalysis"
+                type="checkbox"
+                style="vertical-align:bottom"
+                checked="true"
+              >
+              Auto run
+            </label>
+            <label class="${css.label}" for="checkAllEntries">
+              <input id="checkAllEntries"
+                type="checkbox"
+                onclick="${function (event) { self.checkAll(event) }}"
+                style="vertical-align:bottom"
+                checked="true"
+              >
+              Check/Uncheck all
+            </label>
+          </div>
+        </div>
+        <div id="staticanalysismodules" class="list-group list-group-flush ${css.container}">
+          ${this.modulesView}
+        </div>
+        <hr>
+        <div><h6>Results:</h6></div>
+        <div class="${css.result}" id='staticanalysisresult'></div>
     </div>
   `
   if (!this.view) {
@@ -97,8 +98,8 @@ staticAnalysisView.prototype.run = function () {
   var selected = this.selectedModules()
   var warningContainer = $('#staticanalysisresult')
   warningContainer.empty()
-  if (this.lastCompilationResult) {
-    var self = this
+  var self = this
+  if (this.lastCompilationResult && selected.length) {
     var warningCount = 0
     this.runner.run(this.lastCompilationResult, selected, function (results) {
       results.map(function (result, i) {
@@ -119,19 +120,16 @@ staticAnalysisView.prototype.run = function () {
           }
           warningCount++
           var msg = yo`<span>${location} ${item.warning} ${item.more ? yo`<span><br><a href="${item.more}" target="blank">more</a></span>` : yo`<span></span>`}</span>`
-          self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning', useSpan: true})
+          self._deps.renderer.error(msg, warningContainer, {type: 'staticAnalysisWarning alert alert-warning', useSpan: true})
         })
       })
-      if (warningContainer.html() === '') {
-        $('#righthand-panel #menu .staticanalysisView').css('color', '')
-        warningContainer.html('No warning to report')
-      } else {
-        $('#righthand-panel #menu .staticanalysisView').css('color', styles.colors.red)
-      }
       self.event.trigger('staticAnaysisWarning', [warningCount])
     })
   } else {
-    warningContainer.html('No compiled AST available')
+    if (selected.length) {
+      warningContainer.html('No compiled AST available')
+    }
+    self.event.trigger('staticAnaysisWarning', [-1])
   }
 }
 
@@ -176,7 +174,7 @@ staticAnalysisView.prototype.renderModules = function () {
         </label>
             `
     })
-    return yo`<div class="${css.analysisModulesContainer}">
+    return yo`<div class="${css.analysisModulesContainer} list-group-item py-1">
                 <label class="${css.label}"><b>${category[0].categoryDisplayName}</b></label>
                 ${entriesDom}
               </div>`

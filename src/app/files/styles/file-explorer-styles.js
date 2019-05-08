@@ -1,8 +1,9 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
+  .label {
+    margin-top        : 4px
+  }
   .fileexplorer       {
     box-sizing        : border-box;
   }
@@ -15,13 +16,26 @@ var css = csjs`
     cursor            : pointer;
   }
   .file               {
-    color             : ${styles.leftPanel.text_Teriary};
+    padding           : 4px;
+  }
+  .newFile            {
+    padding-right     : 10px;
+  }
+  .newFile i          {
+    cursor            : pointer;
+  }
+  .newFile:hover    {
+    transform         : scale(1.3);
+  }
+  .menu               {
+    margin-left       : 20px;
+  }
+  .items              {
+    display           : inline
   }
   .hasFocus           {
-    background-color  : ${styles.leftPanel.backgroundColor_FileExplorer};
   }
   .rename             {
-    background-color  : ${styles.leftPanel.backgroundColor_Panel};
   }
   .remove             {
     margin-left       : auto;

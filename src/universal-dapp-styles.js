@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('./app/ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .instanceTitleContainer {
@@ -8,18 +6,19 @@ var css = csjs`
     align-items: center;
   }
   .title {
-    ${styles.rightPanel.runTab.titlebox_RunTab}
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    height: 30px;
-    width: 97%;
+    /* height: 30px; */
+    /* width: 97%; */
     overflow: hidden;
     word-break: break-word;
     line-height: initial;
     overflow: visible;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 10px;
   }
   .noInstancesText {
 
@@ -29,29 +28,36 @@ var css = csjs`
     align-items: baseline;
   }
   .titleText {
-    margin-right: 1em;
+    /* margin-right: 1em; */
     word-break: break-word;
-    min-width: 230px;
+    min-width: 170px;
+    width: 100%;
   }
-
+  .spanTitleText {
+    /* font-size: .8rem; */
+    font-size: 11px;
+    width:100%;
+  }
+  .inputGroupText {
+    width: 100%;
+  }
   .title .copy {
-    color: ${styles.rightPanel.runTab.icon_AltColor_Instance_CopyToClipboard};
+    color: var(--primary);
+  }
+  .titleExpander {
+    /* margin-right: 10px; */
+    padding: 5px 7px;
+  }
+  .nameNbuts {
+    flex-wrap: nowrap;
+    width: 100%;
   }
   .instance {
-    min-width: 310px;
-    display: flex;
+    display: block;
+    /* display: flex; */
     flex-direction: column;
-  }
-  .instance .title:before {
-    content: "\\25BE";
-    margin-right: 5%;
-  }
-  .instance.hidesub .title:before {
-    content: "\\25B8";
-    margin-right: 5%;
-  }
-  .instance.hidesub > * {
-      display: none;
+    /* padding: 5px 0 0 10px; */
+    margin-bottom: 10px;
   }
   .instance.hidesub .title {
       display: flex;
@@ -59,12 +65,23 @@ var css = csjs`
   .instance.hidesub .udappClose {
       display: flex;
   }
+  .instance.hidesub > * {
+    display: none;
+  }
   .methCaret {
     margin-right: 5px;
     cursor: pointer;
     font-size: 16px;
     padding-top: 5px;
     vertical-align: top;
+  }
+  .cActionsWrapper {
+    padding: 0px 0 10px 10px;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0.25rem;
+    border-top-rightt-radius: 0;
+    border-bottom-right-radius: 0.25rem;
   }
   .group:after {
     content: "";
@@ -80,7 +97,6 @@ var css = csjs`
   }
   .instanceButton {
     border-radius: 3px;
-    border: .3px solid hsla(0, 82%, 82%, .5);
   }
   .closeIcon {
     font-size: 12px;
@@ -95,23 +111,22 @@ var css = csjs`
   .contractProperty {
     overflow: auto;
     margin-bottom: 0.4em;
+    margin-top: 1em;
     width:100%;
   }
   .contractProperty.hasArgs input {
-    min-width: 200px;
     padding: .36em;
     border-radius: 5px;
-    width: 70%;
   }
   .contractProperty .contractActionsContainerSingle input{
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
   .contractProperty button {
-    ${styles.rightPanel.runTab.button_Create}
+    /* background-color: var(--warning); */
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
+    /* font-size: 10px; */
     margin:0;
     word-break: inherit;
   }
@@ -121,28 +136,29 @@ var css = csjs`
     border-color: lightgray;
   }
   .contractProperty.constant button {
-    ${styles.rightPanel.runTab.button_Constant}
+    /* background-color:var(--info); */
     min-width: 100px;
     width: 100px;
-    font-size: 10px;
     margin:0;
     word-break: inherit;
     outline: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .contractProperty input {
-    width: 75%
+    /* width: 75% */
   }
   .contractProperty > .value {
     box-sizing: border-box;
     float: left;
     align-self: center;
-    color: ${styles.appProperties.mainText_Color};
     margin-left: 4px;
   }
   .value ul {
     margin-bottom: 10px;
     padding-bottom: 5px;
-    border-bottom: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
+    border-bottom: 1px solid var(--info);
   }
   .contractActionsContainer {
     width: 98%;
@@ -157,9 +173,8 @@ var css = csjs`
   }
   .contractActionsContainerMultiInner {
     margin-bottom: 10px;
-    border: 1px solid ${styles.appProperties.solidBorderBox_BorderColor};
-    padding: 0px 5px 5px 0px;
-    background-color: ${styles.appProperties.primary_BackgroundColor};
+    padding: 0px 5px 5px 5px;
+    background-color: var(--light);
     width: 99%;
     border-radius: 3px;
   }
@@ -181,9 +196,10 @@ var css = csjs`
     font-weight: bold;
     line-height: 25px;
     cursor: default;
+    padding-top: 5px;
   }
   .contractProperty .contractActionsContainerMultiInner .multiArg label{
-    text-align: center;
+    text-align: right;
   }
   .multiHeader .methCaret {
     float: right;
@@ -192,7 +208,7 @@ var css = csjs`
   .contractProperty.constant .multiTitle {
     display: inline-block;
     width: 90%;
-    font-size: 10px;
+    /* font-size: 10px; */
     height: 25px;
     padding-left: 20px;
     font-weight: bold;
@@ -201,6 +217,8 @@ var css = csjs`
   }
   .multiArg {
     margin-bottom: 8px;
+    /* display: flex; */
+    clear:both;
   }
   .multiArg input{
     padding: 5px;
@@ -210,13 +228,14 @@ var css = csjs`
       float: left;
       margin-right: 6px;
       font-size: 10px;
-      width: 20%;
+      width: 30%;
+      padding-top: 5px;
+      word-break: break-all;
   }
   .multiArg button {
     border-radius: 3px;
     float: right;
-    margin-right: 5%;
-    font-size: 10px;
+    margin-right: 2%;
     border-width: 1px;
     width: inherit;
   }
@@ -226,6 +245,7 @@ var css = csjs`
   }
   .hasArgs .multiArg input {
     border-left: 1px solid #dddddd;
+    width: 67%;
   }
   .hasArgs input {
     display: block;
@@ -234,18 +254,21 @@ var css = csjs`
     border-left: none;
     padding: 8px 8px 8px 10px;
     font-size: 10px;
-    height: 25px;
+    /* height: 25px; */
   }
   .hasArgs button {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .hasArgs .contractActionsContainerMulti button {
     border-radius: 3px;
   }
   .contractActionsContainerMultiInner .multiArg i {
-    padding-right: 26px;
+    padding-right: 15px;
     padding-top: 5px;
     float: right;
   },

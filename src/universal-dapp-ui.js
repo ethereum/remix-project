@@ -68,29 +68,42 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title}" onclick=${toggleClass}>
-    <div class="${css.titleText}"> ${contractName} at ${shortAddress} (${context}) </div>
-    ${copyToClipboard(() => address)}
+    <div class="${css.title} alert alert-secondary">
+      <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fas fa-angle-right" aria-hidden="true"></i></button>
+      <div class="input-group ${css.nameNbuts}">
+        <div class="${css.titleText} input-group-prepend"><span class="input-group-text ${css.spanTitleText}"> ${contractName} at ${shortAddress} (${context})</span></div>
+        <div class="btn-group">
+          <button class="btn p-2 btn-secondary">${copyToClipboard(() => address)}</button>
+        </div>
+      </div>
   </div>`
 
-  var close = yo`<div class="${css.udappClose}" onclick=${remove}><i class="${css.closeIcon} fa fa-close" aria-hidden="true"></i></div>`
-  title.appendChild(close)
+  var close = yo`<button class="${css.udappClose} p-2 btn btn-secondary" onclick=${remove}><i class="${css.closeIcon} fas fa-times" aria-hidden="true"></i></button>`
+  title.querySelector('.btn-group').appendChild(close)
+
+  var contractActionsWrapper = yo`
+  <div class="${css.cActionsWrapper}">
+  </div>`
 
   function remove () {
     instance.remove()
     // @TODO perhaps add a callack here to warn the caller that the instance has been removed
   }
 
-  function toggleClass () {
+  function toggleClass (e) {
     $(instance).toggleClass(`${css.hidesub}`)
+    // e.currentTarget.querySelector('i')
+    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-right`)
+    e.currentTarget.querySelector('i').classList.toggle(`fa-angle-down`)
   }
 
   instance.appendChild(title)
+  instance.appendChild(contractActionsWrapper)
 
   // Add the fallback function
   var fallback = self.udapp.getFallbackInterface(contractABI)
   if (fallback) {
-    instance.appendChild(this.getCallButton({
+    contractActionsWrapper.appendChild(this.getCallButton({
       funABI: fallback,
       address: address,
       contractAbi: contractABI,
@@ -103,7 +116,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
       return
     }
     // @todo getData cannot be used with overloaded functions
-    instance.appendChild(this.getCallButton({
+    contractActionsWrapper.appendChild(this.getCallButton({
       funABI: funABI,
       address: address,
       contractAbi: contractABI,
@@ -216,11 +229,11 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
     }
 
     var promptCb = (okCb, cancelCb) => {
-      modalCustom.promptPassphrase(null, 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
+      modalCustom.promptPassphrase('Passphrase requested', 'Personal mode is enabled. Please provide passphrase of account', '', okCb, cancelCb)
     }
 
     // contractsDetails is used to resolve libraries
-    txFormat.buildData(args.contractName, args.contractAbi, self._deps.compilersartefacts['__last'].getData().contracts, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
+    txFormat.buildData(args.contractName, args.contractAbi, {}, false, args.funABI, args.funABI.type !== 'fallback' ? value : '', (error, data) => {
       if (!error) {
         if (!args.funABI.constant) {
           self.registry.get('logCallback').api(`${logMsg} pending ... `)

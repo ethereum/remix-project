@@ -1,11 +1,9 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
+const copyToClipboard = require('../ui/copy-to-clipboard')
 
 var css = csjs`
   .txInfoBox {
-    ${styles.rightPanel.compileTab.box_CompileContainer};  // add askToConfirmTXContainer to Remix and then replace this styling
   }
   .wrapword {
     white-space: pre-wrap;       /* Since CSS 2.1 */
@@ -38,11 +36,11 @@ function confirmDialog (tx, amount, gasEstimation, self, newGasPriceCb, initialP
       <div>Gas price: <input id='gasprice' oninput=${onGasPriceChange} /> Gwei <span> (visit <a target='_blank' href='https://ethgasstation.info'>ethgasstation.info</a> to get more info about gas price)</span></div>
       <div>Max transaction fee:<span id='txfee'></span></div>
       <div>Data:</div>
-      <pre class=${css.wrapword}>${tx.data}</pre>
+      <pre class=${css.wrapword}>${tx.data && tx.data.length > 50 ? tx.data.substring(0, 49) + '...' : tx.data} ${copyToClipboard(() => { return tx.data })}</pre>
     </div>
     <div class=${css.checkbox}>
       <input id='confirmsetting' type="checkbox">
-      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
+      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Do not ask for confirmation again. (the setting will not be persisted for the next page reload)
     </div>
   </div>
   `

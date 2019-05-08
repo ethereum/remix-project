@@ -1,6 +1,4 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var css = csjs`
   .container {
@@ -15,22 +13,8 @@ var css = csjs`
     flex-direction    : column;
     position          : relative;
     width             : 100%;
-  }
-  .menu               {
-    margin-top        : -0.2em;
-    flex-shrink       : 0;
-    display           : flex;
-    flex-direction    : row;
-    min-width         : 160px;
-  }
-  .newFile            {
-    padding           : 10px;
-  }
-  .newFile i          {
-    cursor            : pointer;
-  }
-  .newFile i:hover    {
-    color             : ${styles.colors.orange};
+    padding-left      : 6px;
+    padding-top       : 6px;
   }
   .gist            {
     padding           : 10px;
@@ -57,49 +41,25 @@ var css = csjs`
     cursor            : pointer;
   }
   .connectToLocalhost i:hover   {
-    color             : ${styles.colors.orange};
+    color             : var(--secondary)
   }
   .uploadFile         {
     padding           : 10px;
   }
   .uploadFile label:hover   {
-    color             : ${styles.colors.orange};
+    color             : var(--secondary)
   }
   .uploadFile label   {
     cursor            : pointer;
   }
   .treeview {
-    background-color  : ${styles.colors.general_BackgroundColor};
-  }
-  .treeviews {
     overflow-y        : auto;
-  }
-  .dragbar            {
-    position          : absolute;
-    top               : 29px;
-    width             : 0.5em;
-    right             : 0;
-    bottom            : 0;
-    cursor            : col-resize;
-    z-index           : 999;
-    border-right      : ${styles.leftPanel.dragbarBorderRight};
-  }
-  .ghostbar           {
-    width             : 3px;
-    background-color  : ${styles.colors.lightBlue};
-    opacity           : 0.5;
-    position          : absolute;
-    cursor            : col-resize;
-    z-index           : 9999;
-    top               : 0;
-    bottom            : 0;
-  }
+  }  
   .dialog {
     display: flex;
     flex-direction: column;
   }
   .dialogParagraph {
-    ${styles.infoTextBox}
     margin-bottom: 2em;
     word-break: break-word;
   }

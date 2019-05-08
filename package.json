@@ -1,12 +1,16 @@
 {
   "name": "remix-ide",
-  "version": "v0.7.5",
+  "version": "v0.8.0-alpha+002",
   "description": "Minimalistic browser-based Solidity IDE",
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.8.1",
+    "@resolver-engine/imports": "^0.3.0",
     "ace-mode-solidity": "^0.1.0",
     "async": "^2.1.2",
     "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-modern-regexp": "0.0.6",
     "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-yo-yoify": "^0.3.3",
     "babel-polyfill": "^6.22.0",
     "babel-preset-env": "^1.6.1",
@@ -21,7 +25,8 @@
     "csjs-inject": "^1.0.1",
     "csslint": "^1.0.2",
     "deep-equal": "^1.0.1",
-    "ethereumjs-util": "^6.1.0",
+    "ethereumjs-util": "^5.1.2",
+    "events": "^3.0.0",
     "execr": "^1.0.1",
     "exorcist": "^0.4.0",
     "fast-async": "6.3.1",
@@ -38,11 +43,12 @@
     "npm-link-local": "^1.1.0",
     "npm-run-all": "^4.0.2",
     "onchange": "^3.2.1",
-    "remix-debug": "0.3.1",
-    "remix-analyzer": "0.3.1",
-    "remix-lib": "0.4.1",
-    "remix-solidity": "0.3.1",
-    "remix-tests": "0.1.1",
+    "remix-analyzer": "0.3.5",
+    "remix-debug": "0.3.5",
+    "remix-lib": "0.4.5",
+    "remix-solidity": "0.3.5",
+    "remix-tabs": "^1.0.0",
+    "remix-tests": "0.1.6",
     "remixd": "0.1.8-alpha.6",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
@@ -60,7 +66,8 @@
     "yo-yoify": "^3.7.3"
   },
   "dependencies": {
-    "http-server": "0.9.0",
+    "http-server-legacy": "latest",
+    "remix-plugin": "0.0.2-alpha.6",
     "remixd": "0.1.8-alpha.6"
   },
   "repository": {
@@ -105,7 +112,8 @@
       "transform-es2015-spread",
       "transform-es2015-parameters",
       "transform-es2015-destructuring",
-      "transform-es2015-block-scoping"
+      "transform-es2015-block-scoping",
+      "transform-modern-regexp"
     ]
   },
   "browserify": {
@@ -146,7 +154,7 @@
     "remix-ide": "./bin/remix-ide"
   },
   "scripts": {
-    "setupremix": "npm run linkremixlib && npm run linkremixsolidity && npm run linkremixsimulator && npm run linkremixtests",
+    "setupremix": "npm run linkremixdebug && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixsimulator && npm run linkremixtests",
     "pullremix": "git clone https://github.com/ethereum/remix",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../../remix/remix-lib remix-lib && cd ..",
     "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../../remix/remix-solidity remix-solidity && cd ..",
@@ -171,15 +179,16 @@
     "nightwatch_remote_debugger_parallel": "nightwatch --config nightwatch_debugger.js --env safari,chrome,default",
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
-    "remixd": "./node_modules/remixd/bin/remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
+    "remixd": "remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
     "selenium": "execr --silent selenium-standalone start",
     "selenium-install": "selenium-standalone install",
-    "serve": "execr --silent http-server .",
-    "serve_debugger": "execr --silent http-server src/app/debugger/remix-debugger",
+    "serve": "npx http-server-legacy .",
+    "serve_debugger": "npx http-server-legacy src/app/debugger/remix-debugger",
     "sourcemap": "exorcist --root ../ build/app.js.map > build/app.js",
     "start": "npm-run-all -lpr serve watch onchange remixd",
-    "test": "npm run csslint; standard && node test/index.js",
+    "test": "csslint && standard && node test/index.js",
     "test-browser": "npm-run-all -lpr selenium downloadsolc_root make-mock-compiler serve browsertest",
-    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc"
+    "watch": "watchify src/index.js -dv -p browserify-reload -o build/app.js --exclude solc",
+    "reinstall": "rm ./node-modules/ -rf; rm package-lock.json; rm ./build/ -rf; npm install; npm run build"
   }
 }

@@ -123,9 +123,12 @@ class MultiParamManager {
     var onClick = (domEl) => {
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
+// TODO: if this is a lookup only make this button btn-info
+// otherwise it needs to have btn-warning injected
+// or do we need to only do this in 1 place - I have a feeling that this will happen in multiple places
 
     this.contractActionsContainerSingle = yo`<div class="${css.contractActionsContainerSingle}" >
-      <button onclick=${() => { onClick() }} class="${css.instanceButton}">${title}</button>${this.basicInputField}<i class="fa fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
+      <button onclick=${() => { onClick() }} class="${css.instanceButton} btn btn-sm">${title}</button>${this.basicInputField}<i class="fas fa-angle-down ${css.methCaret}" onclick=${() => { this.switchMethodViewOn() }} title=${title} ></i>
       </div>`
 
     this.multiFields = this.createMultiFields()
@@ -142,10 +145,10 @@ class MultiParamManager {
     var button = yo`<button onclick=${() => { multiOnClick() }} class="${css.instanceButton}"></button>`
 
     this.contractActionsContainerMulti = yo`<div class="${css.contractActionsContainerMulti}" >
-      <div class="${css.contractActionsContainerMultiInner}" >
+      <div class="${css.contractActionsContainerMultiInner} text-dark" >
         <div onclick=${() => { this.switchMethodViewOff() }} class="${css.multiHeader}">
           <div class="${css.multiTitle}">${title}</div>
-          <i class='fa fa-angle-up ${css.methCaret}'></i>
+          <i class='fas fa-angle-up ${css.methCaret}'></i>
         </div>
         ${this.multiFields}
         <div class="${css.group} ${css.multiArg}" >
@@ -165,20 +168,24 @@ class MultiParamManager {
               } else {
                 return encodeObj.data
               }
-            }, 'Encode values of input fields & copy to clipboard', 'fa-briefcase')}
+            }, 'Encode values of input fields & copy to clipboard', 'fa-clipboard')}
         </div>
       </div>
     </div>`
 
     var contractProperty = yo`<div class="${css.contractProperty}">${this.contractActionsContainerSingle} ${this.contractActionsContainerMulti}</div>`
-
+// TODO: add class for btn-info to the button and remove stuff from the class
     if (this.lookupOnly) {
       contractProperty.classList.add(css.constant)
       button.setAttribute('title', (title + ' - call'))
       button.innerHTML = 'call'
       this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).setAttribute('title', (title + ' - call'))
+      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-info')
+      button.classList.add('btn-info')
     } else {
+      this.contractActionsContainerSingle.querySelector(`.${css.instanceButton}`).classList.add('btn-warning')
       button.innerHTML = 'transact'
+      button.classList.add('btn-warning')
     }
 
     if (this.funABI.inputs && this.funABI.inputs.length > 0) {

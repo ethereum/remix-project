@@ -1,27 +1,30 @@
 var csjs = require('csjs-inject')
-var styleGuide = require('../../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
-var css = csjs`
+const css = csjs`
   .settingsTabView {
     padding: 2%;
-    display: flex;
   }
   .info {
-    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo}
-    margin-bottom: 1em;
+    margin-bottom: .6rem;
     word-break: break-word;
+    font-size: .8rem;
+  }
+  .info h7 {
+    margin-bottom: .5rem;
   }
   .title {
-    font-size: 1.1em;
-    font-weight: bold;
-    margin-bottom: 1em;
+    // font-size: 1.1em;
+    // font-weight: bold;
+    // margin-bottom: 1em;
+  }
+  .frow {
+    margin-bottom: .5rem;
   }
   .crow {
-    display: flex;
-    overflow: auto;
-    clear: both;
-    padding: .2em;
+    // display: flex;
+    // overflow: auto;
+    // clear: both;
+    // padding: .2em;
   }
   .checkboxText {
     font-weight: normal;
@@ -38,11 +41,6 @@ var css = csjs`
     padding: .5em;
     font-weight: bold;
   }
-  .select {
-    font-weight: bold;
-    margin-top: 1em;
-    ${styles.rightPanel.settingsTab.dropdown_SelectCompiler}
-  }
   .heading {
     margin-bottom: 0;
   }
@@ -53,6 +51,7 @@ var css = csjs`
   input {
     margin-right: 5px;
     cursor: pointer;
+    width: inherit;
   }
   input[type=radio] {
     margin-top: 2px;
@@ -60,24 +59,36 @@ var css = csjs`
   .pluginTextArea {
     font-family: unset;
   }
-  .pluginLoad {
-    vertical-align: top;
-  }
-  i.warnIt {
-    color: ${styles.appProperties.warningText_Color};
+
+  .removePlugin {
+    cursor: pointer;
   }
   .icon {
     margin-right: .5em;
   }
-  .remixdinstallation {
-    padding: 3px;
-    border-radius: 2px;
-    margin-left: 5px;
-  }
   .savegisttoken {
     margin-left: 5px;
   }
-}
+  .aPlugin {
+    display: inline-block;
+    padding-left: 10px;
+    padding-top: 4px;
+    padding-bottom: 6px;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .removePlugin{
+    padding-left: 7px;
+    padding-right: 7px;
+    margin-left: 10px;
+  }
+  .inline {
+    display: inline;
+    width: 50%;
+  }
 `
 
 module.exports = css

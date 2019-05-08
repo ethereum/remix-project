@@ -5,8 +5,6 @@ var copyToClipboard = require('../ui/copy-to-clipboard')
 // -------------- styling ----------------------
 var csjs = require('csjs-inject')
 var remixLib = require('remix-lib')
-var styleGuide = require('../ui/styles-guide/theme-chooser')
-var styles = styleGuide.chooser()
 
 var EventManager = require('../../lib/events')
 var helper = require('../../lib/helper')
@@ -26,14 +24,14 @@ var css = csjs`
     opacity: 0.8;
   }
   .arrow {
-    color: ${styles.terminal.icon_Color_Menu};
+    color: var(--text-info);
     font-size: 20px;
     cursor: pointer;
     display: flex;
     margin-left: 10px;
   }
   .arrow:hover {
-    color: ${styles.terminal.icon_HoverColor_Menu};
+    color: var(--secondary);
   }
   .txLog {
   }
@@ -44,28 +42,27 @@ var css = csjs`
     float: left;
   }
   .succeeded {
-    color: ${styles.terminal.icon_Color_Log_Succeed};
+    color: var(--success);
   }
   .failed {
-    color: ${styles.terminal.icon_Color_Log_Failed};
+    color: var(--danger);
   }
   .notavailable {
   }
   .call {
     font-size: 7px;
-    background-color: ${styles.terminal.icon_BackgroundColor_Log_Call};
     border-radius: 50%;
     min-width: 20px;
     min-height: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: ${styles.terminal.icon_Color_Log_Call};
+    color: var(--text-info);
     text-transform: uppercase;
     font-weight: bold;
   }
   .txItem {
-    color: ${styles.terminal.text_Primary};
+    color: var(--text-info);
     margin-right: 5px;
     float: left;
   }
@@ -73,7 +70,7 @@ var css = csjs`
     font-weight: bold;
   }
   .tx {
-    color: ${styles.terminal.text_Title_TransactionLog};
+    color: var(--text-info);
     font-weight: bold;
     float: left;
     margin-right: 10px;
@@ -83,8 +80,8 @@ var css = csjs`
   .td {
     border-collapse: collapse;
     font-size: 10px;
-    color: ${styles.terminal.text_Primary};
-    border: 1px solid ${styles.terminal.text_Secondary};
+    color: var(--text-info);
+    border: 1px solid var(--text-info);
   }
   #txTable {
     margin-top: 1%;
@@ -110,12 +107,7 @@ var css = csjs`
     margin-left: auto;
   }
   .debug {
-    ${styles.terminal.button_Log_Debug}
-    width: 55px;
-    min-width: 55px;
-    min-height: 20px;
-    max-height: 20px;
-    font-size: 11px;
+    white-space: nowrap;
   }
   .debug:hover {
     opacity: 0.8;
@@ -142,8 +134,7 @@ class TxLogger {
       editorPanel: this._components.registry.get('editorpanel').api,
       txListener: this._components.registry.get('txlistener').api,
       eventsDecoder: this._components.registry.get('eventsdecoder').api,
-      compilersArtefacts: this._components.registry.get('compilersartefacts').api,
-      app: this._components.registry.get('app').api
+      compilersArtefacts: this._components.registry.get('compilersartefacts').api
     }
 
     this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
@@ -171,24 +162,8 @@ class TxLogger {
       append(el)
     }, { activate: true })
 
-    this._deps.editorPanel.event.register('terminalFilterChanged', (type, label) => {
-      if (type === 'deselect') {
-        if (label === 'only remix transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
-        } else if (label === 'all transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
-        }
-      } else if (type === 'select') {
-        if (label === 'only remix transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'deselect', value: 'unknownTransaction' })
-        } else if (label === 'all transactions') {
-          this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
-        }
-      }
-    })
-
     this._deps.txListener.event.register('newBlock', (block) => {
-      if (!block.transactions.length) {
+      if (!block.transactions || block.transactions && !block.transactions.length) {
         this.logEmptyBlock({ block: block })
       }
     })
@@ -200,6 +175,9 @@ class TxLogger {
     this._deps.txListener.event.register('newCall', (tx) => {
       log(this, tx, null)
     })
+
+    this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+    this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'knownTransaction' })
   }
 }
 
@@ -208,7 +186,7 @@ function debug (e, data, self) {
   if (data.tx.isCall && data.tx.envMode !== 'vm') {
     modalDialog.alert('Cannot debug this call. Debugging calls is only possible in JavaScript VM mode.')
   } else {
-    self._deps.app.startdebugging(data.tx.hash)
+    self.event.trigger('debuggingRequested', [data.tx.hash])
   }
 }
 
@@ -241,9 +219,9 @@ function renderKnownTransaction (self, data) {
         ${checkTxStatus(data.receipt, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
+          <button class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
-        <i class="${css.arrow} fa fa-angle-down"></i>
+        <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
     </span>
   `
@@ -267,9 +245,9 @@ function renderCall (self, data) {
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
         </span>
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
-        <i class="${css.arrow} fa fa-angle-down"></i>
+        <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
     </span>
   `
@@ -287,9 +265,9 @@ function renderUnknownTransaction (self, data) {
         ${checkTxStatus(data.receipt || data.tx, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
-          <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
+          <div class="${css.debug} btn btn-primary btn-sm" onclick=${(e) => debug(e, data, self)}>Debug</div>
         </div>
-        <i class="${css.arrow} fa fa-angle-down"></i>
+        <i class="${css.arrow} fas fa-angle-down"></i>
       </div>
     </span>
   `
@@ -305,14 +283,14 @@ function renderEmptyBlock (self, data) {
 
 function checkTxStatus (tx, type) {
   if (tx.status === '0x1') {
-    return yo`<i class="${css.txStatus} ${css.succeeded} fa fa-check-circle"></i>`
+    return yo`<i class="${css.txStatus} ${css.succeeded} fas fa-check-circle"></i>`
   }
   if (type === 'call' || type === 'unknownCall') {
     return yo`<i class="${css.txStatus} ${css.call}">call</i>`
   } else if (tx.status === '0x0') {
-    return yo`<i class="${css.txStatus} ${css.failed} fa fa-times-circle"></i>`
+    return yo`<i class="${css.txStatus} ${css.failed} fas fa-times-circle"></i>`
   } else {
-    return yo`<i class="${css.txStatus} ${css.notavailable} fa fa-circle-thin" title='Status not available' ></i>`
+    return yo`<i class="${css.txStatus} ${css.notavailable} fas fa-circle-thin" title='Status not available' ></i>`
   }
 }
 
@@ -379,8 +357,8 @@ function txDetails (e, tx, data, obj) {
   var to = obj.to
   var log = document.querySelector(`#${tx.id} [class^='log']`)
   var arrow = document.querySelector(`#${tx.id} [class^='arrow']`)
-  var arrowUp = yo`<i class="${css.arrow} fa fa-angle-up"></i>`
-  var arrowDown = yo`<i class="${css.arrow} fa fa-angle-down"></i>`
+  var arrowUp = yo`<i class="${css.arrow} fas fa-angle-up"></i>`
+  var arrowDown = yo`<i class="${css.arrow} fas fa-angle-down"></i>`
   if (table && table.parentNode) {
     tx.removeChild(table)
     log.removeChild(arrow)

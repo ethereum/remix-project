@@ -1,5 +1,4 @@
 const csjs = require('csjs-inject')
-const styles = require('../../ui/styles-guide/theme-chooser').chooser()
 
 const css = csjs`
   .supportTabView {
@@ -12,7 +11,6 @@ const css = csjs`
     overflow-y: auto;
   }
   .chat {
-    ${styles.rightPanel.supportTab.box_IframeContainer}
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -49,7 +47,6 @@ const css = csjs`
     border: none;
   }
   .infoBox {
-    ${styles.rightPanel.supportTab.box_SupportInfo}
   }
   .remixdinstallation {
     padding: 3px;
@@ -57,7 +54,6 @@ const css = csjs`
     margin-left: 5px;
   }
   .info {
-    ${styles.rightPanel.settingsTab.box_SolidityVersionInfo};
     margin-top: 1em;
     word-break: break-word;
   }

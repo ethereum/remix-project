@@ -21,7 +21,7 @@ class DropdownLogic {
 
     this.listenToCompilationEvents()
 
-    fileManager.event.register('currentFileChanged', (currentFile) => {
+    fileManager.events.on('currentFileChanged', (currentFile) => {
       this.event.trigger('currentFileChanged', [currentFile])
     })
   }
@@ -121,7 +121,7 @@ class DropdownLogic {
   }
 
   // TODO: check if selectedContract and data can be joined
-  createContract (selectedContract, data, continueCb, promptCb, confirmDialog, modalDialog, finalCb) {
+  createContract (selectedContract, data, continueCb, promptCb, modalDialog, confirmDialog, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences

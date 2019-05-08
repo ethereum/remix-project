@@ -24,9 +24,10 @@ function runTests (browser) {
   browser.setEditorValue = contractHelper.setEditorValue
   browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.getEditorValue = contractHelper.getEditorValue
+  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   browser
-    .waitForElementVisible('.newFile', 10000)
-    .click('.compileView')
+    .waitForElementVisible('#icon-panel', 10000)
+    .clickLaunchIcon('solidity')
     .perform(() => {
       // the first fn is used to pass browser to the other ones.
       async.waterfall([function (callback) { callback(null, browser) }, testSimpleContract, testReturnValues, testInputValues, testRecorder.test], function () {
@@ -37,10 +38,10 @@ function runTests (browser) {
 
 function testSimpleContract (browser, callback) {
   contractHelper.testContracts(browser, 'Untitled.sol', sources[0]['browser/Untitled.sol'], ['TestContract'], function () {
-    browser.click('.runView')
+    browser.clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
       .click('#runTabView .instance div[class^="title"]')
       .click('#runTabView .instance div[class^="title"]')
       .testFunction('f - transact (not payable)',
@@ -68,10 +69,10 @@ function testSimpleContract (browser, callback) {
 
 function testReturnValues (browser, callback) {
   contractHelper.testContracts(browser, 'returnValues.sol', sources[1]['browser/returnValues.sol'], ['testReturnValues'], function () {
-    browser.click('.runView')
+    browser.clickLaunchIcon('run')
       .click('#runTabView button[class^="instanceButton"]')
       .waitForElementPresent('.instance:nth-of-type(2)')
-      .click('.instance:nth-of-type(2)')
+      .click('.instance:nth-of-type(2) > div > button')
       .testFunction('retunValues1 - transact (not payable)',
         '0xc3660c7ab6899f196e77d3ab3749169e22c00ae7f1b8fe3af0ce54df49504019',
         `[vm]\nfrom:0xca3...a733c\nto:testReturnValues.retunValues1() 0x5e7...26e9f\nvalue:0 wei\ndata:0x9ed...59eb7\nlogs:0\nhash:0xc36...04019`,
@@ -106,10 +107,10 @@ function testReturnValues (browser, callback) {
 
 function testInputValues (browser, callback) {
   contractHelper.testContracts(browser, 'inputValues.sol', sources[2]['browser/inputValues.sol'], ['test'], function () {
-    browser.click('.runView')
+    browser.clickLaunchIcon('run')
         .click('#runTabView button[class^="instanceButton"]')
         .waitForElementPresent('.instance:nth-of-type(2)')
-        .click('.instance:nth-of-type(2)')
+        .click('.instance:nth-of-type(2) > div > button')
      .testFunction('inputValue1 - transact (not payable)',
         '0xf3265e3d9cd9299958bf81bed3cdfdd537942f85b9e0b95c5468c691d9396505',
         `[vm]\nfrom:0xca3...a733c\nto:test.inputValue1(uint256,int256,string) 0x8c1...401f5\nvalue:0 wei\ndata:0xd69...00000\nlogs:0\nhash:0xf32...96505`,
