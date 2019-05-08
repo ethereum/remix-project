@@ -220,8 +220,7 @@ class VerticalIconComponent {
     <div
       class="${css.homeIcon}"
       onclick="${(e) => {
-        this._iconClick(this.homeProfile.name)
-        globalRegistry.get('appManager').api.ensureActivated('home')
+        globalRegistry.get('appmanager').api.ensureActivated('home')
       }}"
       plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
     >
@@ -369,6 +368,7 @@ const css = csjs`
       height: 42px;
       margin-bottom: 20px;
       margin-left: -5px;
+      cursor: pointer;
   }
   .homeIcon svg path {
     fill: var(--primary);
