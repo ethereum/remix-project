@@ -56,11 +56,6 @@ module.exports = class TestTab extends BaseApi {
         yo.update(this.testList, yo`<div class=${css.testList}>${testsMessage}</div>`)
 
         if (!this.testsOutput || !this.testsSummary) return
-
-        this.testsOutput.hidden = true
-        this.testsSummary.hidden = true
-        this.testsOutput.innerHTML = ''
-        this.testsSummary.innerHTML = ''
       })
     })
   }
