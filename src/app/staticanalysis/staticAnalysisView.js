@@ -68,9 +68,8 @@ staticAnalysisView.prototype.render = function () {
         <div id="staticanalysismodules" class="list-group list-group-flush ${css.container}">
           ${this.modulesView}
         </div>
-        <hr>
-        <div><h6>Results:</h6></div>
-        <div class="${css.result}" id='staticanalysisresult'></div>
+        <div class="${css.resultTitle} mx-2"><h6>Results:</h6></div>
+        <div class="${css.result} m-2" id='staticanalysisresult'></div>
     </div>
   `
   if (!this.view) {
