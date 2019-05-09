@@ -122,36 +122,36 @@ function testInputValues (browser, callback) {
 }`).pause(500).testFunction('inputValue2 - transact (not payable)',
         '0xd9ec6d8aa73d81755447190f52939ee3084e105b988d445a11e7ac718392ff5a',
         `[vm]\nfrom:0xca3...a733c\nto:test.inputValue2(uint256[3],bytes8[4]) 0x8c1...401f5\nvalue:0 wei\ndata:0x1b7...00000\nlogs:1\nhash:0xd9e...2ff5a`,
-        {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234", "0x1234","0x1234","0x1234"]'},
+        {types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234000000000000", "0x1234000000000000","0x1234000000000000","0x1234000000000000"]'},
         `{
  "0": "uint256[3]: _nret 1,2,3",
  "1": "bytes8[4]: _b8ret 0x1234000000000000,0x1234000000000000,0x1234000000000000,0x1234000000000000"
 }`, `[
- {
-  "from": "0x8c1ed7e19abaa9f23c476da86dc1577f1ef401f5", 
-  "topic": "0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
-  "event": "event1",
-  "args": {
-   "0": "-123",
-   "1": "123",
-   "2": {
-    "indexed": true,
-    "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
-   },
-   "3": "0x12340000",
-   "4": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
-   "_i": "-123",
-   "_u": "123",
-   "_str": {
-    "indexed": true,
-    "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"
-   },
-   "_b": "0x12340000",
-   "_notIndexed": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
-   "length": 5
+  {
+   "from": "0x8c1ed7e19abaa9f23c476da86dc1577f1ef401f5",
+   "topic": "0xd30981760edbf605bda8689e945f622877f230c9a77cbfbd448aa4b7d8ac6e7f",
+   "event": "event1",
+   "args": {
+    "0": "-123",
+    "1": "123",
+    "2": {
+     "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658",
+     "type": "Indexed"
+    },
+    "3": "0x12340000",
+    "4": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
+    "_i": "-123",
+    "_u": "123",
+    "_str": {
+     "hash": "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658",
+     "type": "Indexed"
+    },
+    "_b": "0x12340000",
+    "_notIndexed": "test _ test _ test _ test test _ test test _ test test _ test test _ test test _ test test _ test ",
+    "length": 5
+   }
   }
- }
-]`)
+ ]`)
       .click('i[class^="clearinstance"]').perform(() => { callback(null, browser) })
   })
 }
