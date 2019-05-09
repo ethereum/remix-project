@@ -37,10 +37,11 @@ module.exports = class LocalPlugin {
       ...this.profile,
       icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMjYyIDEwNzVxLTM3IDEyMS0xMzggMTk1dC0yMjggNzQtMjI4LTc0LTEzOC0xOTVxLTgtMjUgNC00OC41dDM4LTMxLjVxMjUtOCA0OC41IDR0MzEuNSAzOHEyNSA4MCA5Mi41IDEyOS41dDE1MS41IDQ5LjUgMTUxLjUtNDkuNSA5Mi41LTEyOS41cTgtMjYgMzItMzh0NDktNCAzNyAzMS41IDQgNDguNXptLTQ5NC00MzVxMCA1My0zNy41IDkwLjV0LTkwLjUgMzcuNS05MC41LTM3LjUtMzcuNS05MC41IDM3LjUtOTAuNSA5MC41LTM3LjUgOTAuNSAzNy41IDM3LjUgOTAuNXptNTEyIDBxMCA1My0zNy41IDkwLjV0LTkwLjUgMzcuNS05MC41LTM3LjUtMzcuNS05MC41IDM3LjUtOTAuNSA5MC41LTM3LjUgOTAuNSAzNy41IDM3LjUgOTAuNXptMjU2IDI1NnEwLTEzMC01MS0yNDguNXQtMTM2LjUtMjA0LTIwNC0xMzYuNS0yNDguNS01MS0yNDguNSA1MS0yMDQgMTM2LjUtMTM2LjUgMjA0LTUxIDI0OC41IDUxIDI0OC41IDEzNi41IDIwNCAyMDQgMTM2LjUgMjQ4LjUgNTEgMjQ4LjUtNTEgMjA0LTEzNi41IDEzNi41LTIwNCA1MS0yNDguNXptMTI4IDBxMCAyMDktMTAzIDM4NS41dC0yNzkuNSAyNzkuNS0zODUuNSAxMDMtMzg1LjUtMTAzLTI3OS41LTI3OS41LTEwMy0zODUuNSAxMDMtMzg1LjUgMjc5LjUtMjc5LjUgMzg1LjUtMTAzIDM4NS41IDEwMyAyNzkuNSAyNzkuNSAxMDMgMzg1LjV6Ii8+PC9zdmc+',
       methods: [],
-      hash: `local-${this.profile.name}`,
-      location: 'swapPanel'
+      hash: `local-${this.profile.name}`
     }
     profile.events = profile.events.filter((item) => { return item !== '' })
+
+    if (!profile.location) throw new Error('Plugin should have a location')
     if (!profile.name) throw new Error('Plugin should have a name')
     if (!profile.url) throw new Error('Plugin should have an URL')
     localStorage.setItem('plugins/local', JSON.stringify(profile))
@@ -80,6 +81,10 @@ module.exports = class LocalPlugin {
     if (this.profile.events[index] !== undefined) {
       this.profile.events[index] = target.value
     }
+  }
+
+  updateLoc ({target}) {
+    this.profile.location = target.value
   }
 
   /**
@@ -149,7 +154,18 @@ module.exports = class LocalPlugin {
             .map(event => this.notificationCheckbox(name, event))
         })}
       </div>
+      <div class="form-group">
+      <h6>Location in remix <small>(required)</small></h6>
+
+      <div class="radio">
+        <label for="loc1"><input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="swapPanel" id="loc1" >Swap Panel</label>
+      </div>
+      <div class="radio">
+        <label for="loc2"><input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="mainPanel" id="loc2" >Main Panel</label>
+      </div>
+      <div class="radio">
+        <label for="loc3"><input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="none" id="loc3" >None</label>
+      </div>
     </form>`
   }
 }
-
