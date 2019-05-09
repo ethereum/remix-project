@@ -180,7 +180,7 @@
     "onchange": "onchange build/app.js -- npm-run-all lint",
     "prepublish": "mkdirp build; npm-run-all -ls downloadsolc_root build",
     "remixd": "remixd -s ./contracts --remix-ide http://127.0.0.1:8080",
-    "selenium": "execr --silent selenium-standalone start",
+    "selenium": "selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "serve": "npx http-server-legacy .",
     "serve_debugger": "npx http-server-legacy src/app/debugger/remix-debugger",
