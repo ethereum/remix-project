@@ -366,9 +366,15 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   pluginManagerComponent.setStore(appStore)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   self._components.mainview.init()
 =======
+=======
+  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
+  const landingPage = new LandingPage(appManager, appStore)
+
+>>>>>>> Fix tests
   self._components.editorpanel.init()
 >>>>>>> standard
   self._components.fileManager.init()
