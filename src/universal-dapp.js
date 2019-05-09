@@ -134,30 +134,41 @@ module.exports = class UniversalDApp extends UdappApi {
 
   getAccounts (cb) {
     return new Promise((resolve, reject) => {
-      if (!executionContext.isVM()) {
-        // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
-        // See: https://github.com/ethereum/web3.js/issues/442
-        if (this._deps.config.get('settings/personal-mode')) {
-          return executionContext.web3().personal.getListAccounts((error, accounts) => {
-            if (cb) cb(error, accounts)
-            if (error) return reject(error)
-            resolve(accounts)
-          })
-        } else {
+      const provider = executionContext.getProvider()
+      switch (provider) {
+        case 'vm': {
+          if (!this.accounts) {
+            if (cb) cb('No accounts?')
+            reject('No accounts?')
+            return
+          }
+          if (cb) cb(null, Object.keys(this.accounts))
+          resolve(Object.keys(this.accounts))
+        }
+          break
+        case 'web3': {
+          if (this._deps.config.get('settings/personal-mode')) {
+            return executionContext.web3().personal.getListAccounts((error, accounts) => {
+              if (cb) cb(error, accounts)
+              if (error) return reject(error)
+              resolve(accounts)
+            })
+          } else {
+            executionContext.web3().eth.getAccounts((error, accounts) => {
+              if (cb) cb(error, accounts)
+              if (error) return reject(error)
+              resolve(accounts)
+            })
+          }
+        }
+          break
+        case 'injected': {
           executionContext.web3().eth.getAccounts((error, accounts) => {
             if (cb) cb(error, accounts)
             if (error) return reject(error)
             resolve(accounts)
           })
         }
-      } else {
-        if (!this.accounts) {
-          if (cb) cb('No accounts?')
-          reject('No accounts?')
-          return
-        }
-        if (cb) cb(null, Object.keys(this.accounts))
-        resolve(Object.keys(this.accounts))
       }
     })
   }
