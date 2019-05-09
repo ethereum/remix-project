@@ -93,6 +93,8 @@ var css = csjs`
     width             : 330px;
     padding-left      : 20px;
     height            : 100%;
+    padding-top       : 1px;
+    padding-bottom    : 1px;
   }
   .filter                       {
     padding-right               : 0px;
