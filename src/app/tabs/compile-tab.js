@@ -131,7 +131,7 @@ class CompileTab extends CompilerApi {
       // Update contract Selection
       let contractMap = {}
       if (success) this.compiler.visitContracts((contract) => { contractMap[contract.name] = contract })
-      let contractSelection = this.contractSelection(Object.keys(contractMap) || [])
+      let contractSelection = this.contractSelection(Object.keys(contractMap) || [], source.target)
       yo.update(this._view.contractSelection, contractSelection)
 
       if (data['error']) {
@@ -180,18 +180,20 @@ class CompileTab extends CompilerApi {
    * Section to select the compiled contract
    * @param {string[]} contractList Names of the compiled contracts
    */
-  contractSelection (contractList = []) {
+  contractSelection (contractList = [], sourceFile) {
     return contractList.length !== 0
     ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
-      <header class="navbar navbar-light bg-light input-group mb-3 ${css.compilerArticle}">
-        <div class="input-group-prepend">
+      <h6 class="bg-light input-group mt-3 mb-1 ${css.compilerArticle}">
+        Compilation result for <label class="border-0 px-1 text-dark">${sourceFile}</label>
+      </h6>
+      <div class="input-group-prepend">
           <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
-        </div>
-        <select onchange="${e => this.selectContract(e.target.value)}" onload="${e => { this.selectedContract = e.value }}" id="compiledContracts" class="custom-select">
+          <select onchange="${e => this.selectContract(e.target.value)}" onload="${e => { this.selectedContract = e.value }}" id="compiledContracts" class="custom-select">
           ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
-        </select>
-      </header>
+        </select>  
+      </div>
+        
       <article class="${css.compilerArticle}">
         <button class="btn btn-primary btn-block" title="Publish on Swarm" onclick="${() => { this.publish() }}">
           <i class="${css.copyIcon} fas fa-upload" aria-hidden="true"></i>
