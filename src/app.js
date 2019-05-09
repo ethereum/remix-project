@@ -33,8 +33,6 @@ var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 
-const VerticalIcons = require('./app/components/vertical-icons-component')
-
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
@@ -53,6 +51,7 @@ import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { SwapPanel } from './app/components/swap-panel'
 import { MainPanel } from './app/components/main-panel'
+import { VerticalIcons } from './app/components/vertical-icons'
 
 var css = csjs`
   html { box-sizing: border-box; }
