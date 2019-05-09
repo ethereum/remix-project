@@ -189,6 +189,12 @@ class FileManager extends FileSystemApi {
     this.switchFile()
   }
 
+  unselectCurrentFile () {
+    this.saveCurrentFile()
+    this._deps.config.set('currentFile', '')
+    this.events.emit('noFileSelected')
+  }
+
   switchFile (file) {
     const _switchFile = (file) => {
       this.saveCurrentFile()
