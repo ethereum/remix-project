@@ -172,6 +172,7 @@ function fileExplorer (localRegistry, files, menuItems) {
   })
 
   self.treeView.event.register('nodeRightClick', function (key, data, label, event) {
+    if (self.files.readonly) return
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
     MENU_HANDLE = contextMenu(event, {
@@ -190,17 +191,27 @@ function fileExplorer (localRegistry, files, menuItems) {
   self.treeView.event.register('leafRightClick', function (key, data, label, event) {
     if (key === self.files.type) return
     MENU_HANDLE && MENU_HANDLE.hide(null, true)
-    MENU_HANDLE = contextMenu(event, {
-      'Rename': () => {
+    let actions = {}
+    if (!self.files.readonly) {
+      actions['Rename'] = () => {
         if (self.files.readonly) { return tooltip('cannot rename file. ' + self.files.type + ' is a read only explorer') }
         var name = label.querySelector('label[data-path="' + key + '"]')
         if (name) editModeOn(name)
-      },
-      'Delete': () => {
+      }
+      actions['Delete'] = () => {
         if (self.files.readonly) { return tooltip('cannot delete file. ' + self.files.type + ' is a read only explorer') }
         modalDialogCustom.confirm('Delete a file', 'Are you sure you want to delete this file?', () => { files.remove(key) }, () => {})
       }
-    })
+    }
+    if (self.files.type !== 'browser') {
+      actions['Copy to Browser explorer'] = () => {
+        files.get(key, (error, content) => {
+          if (error) return tooltip(error)
+          self._deps.fileManager.setFile(`browser/${label.innerText}`, content)
+        })
+      }
+    }
+    MENU_HANDLE = contextMenu(event, actions)
   })
 
   self.treeView.event.register('leafClick', function (key, data, label) {

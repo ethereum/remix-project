@@ -51,11 +51,11 @@ class EditorPanel {
     }
     self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor, self.appStore, self.appManager)
     let showApp = function (name) {
+      self._deps.fileManager.unselectCurrentFile()
       self.mainPanelComponent.showContent(name)
       self._view.editor.style.display = 'none'
       self._components.contextView.hide()
       self._view.mainPanel.style.display = 'block'
-      self.tabProxy.sh
     }
     self.appManager.event.on('ensureActivated', (name) => {
       if (name === 'home') {
