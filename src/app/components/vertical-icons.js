@@ -359,7 +359,6 @@ export class VerticalIcons {
   }
 }
 
-
 const css = csjs`
   .homeIcon {
       display: block;

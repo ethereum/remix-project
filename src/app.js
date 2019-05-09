@@ -321,7 +321,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const appManager = new RemixAppManager(appStore)
   registry.put({api: appManager, name: 'appmanager'})
 
-
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
   const fileManager = self._components.fileManager
@@ -366,8 +365,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
 
+<<<<<<< HEAD
 
   self._components.mainview.init()
+=======
+  self._components.editorpanel.init()
+>>>>>>> standard
   self._components.fileManager.init()
   self._view.mainpanel.appendChild(self._components.mainview.render())
   self._view.iconpanel.appendChild(verticalIconsComponent.render())
