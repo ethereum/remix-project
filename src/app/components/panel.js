@@ -34,7 +34,7 @@ export class AbstractPanel {
     this.events = new EventEmitter()
     this.contents = {}
     this.active = undefined
-    
+
     // View where the plugin HTMLElement leaves
     this.view = yo`<div id="plugins" class="${css.plugins}"></div>`
 
@@ -70,14 +70,13 @@ export class AbstractPanel {
     })
   }
 
-
   /**
    * Add the plugin to the panel
    * @param {String} name the name of the plugin
    * @param {HTMLElement} content the HTMLContent of the plugin
    */
   add (name, content) {
-    if (!!this.contents[name]) throw new Error(`Plugin ${name} already rendered`)
+    if (this.contents[name]) throw new Error(`Plugin ${name} already rendered`)
     content.style.height = '100%'
     content.style.width = '100%'
     content.style.border = '0'
