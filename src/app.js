@@ -33,11 +33,7 @@ var TransactionReceiptResolver = require('./transactionReceiptResolver')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
 
-const VerticalIconsComponent = require('./app/components/vertical-icons-component')
-const VerticalIconsApi = require('./app/components/vertical-icons-api')
-
-const SwapPanelComponent = require('./app/components/swap-panel-component')
-const SwapPanelApi = require('./app/components/swap-panel-api')
+const VerticalIcons = require('./app/components/vertical-icons-component')
 
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
@@ -55,6 +51,8 @@ import framingService from './framingService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
+import { SwapPanel } from './app/components/swap-panel'
+import { MainPanel } from './app/components/main-panel'
 
 var css = csjs`
   html { box-sizing: border-box; }
@@ -324,7 +322,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const appManager = new RemixAppManager(appStore)
   registry.put({api: appManager, name: 'appmanager'})
 
-  const mainPanelComponent = new SwapPanelComponent('mainPanel', appStore, appManager, { default: false, displayHeader: false })
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
@@ -342,6 +339,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // ----------------- main view ----------------------
   self._components.mainview = new MainView(appStore, appManager, mainPanelComponent)
   registry.put({ api: self._components.mainview, name: 'mainview' })
+  // ----------------- Vertical Icon ----------------------------
+  const verticalIcons = new VerticalIcons('swapPanel', appStore)
+  registry.put({api: verticalIcons, name: 'verticalicon'})
+
+  const swapPanel = new SwapPanel(appStore)
+  const mainPanel = new MainPanel(appStore)
 
   // ----------------- Renderer -----------------
   const renderer = new Renderer()
@@ -359,21 +362,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   // TODOs those are instanciated before hand. should be instanciated on demand
 
   const pluginManagerComponent = new PluginManagerComponent()
-  const swapPanelComponent = new SwapPanelComponent('swapPanel', appStore, appManager, { default: true, displayHeader: true })
   registry.put({api: appManager.proxy(), name: 'pluginmanager'})
 
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
 
-  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
-  const landingPage = new LandingPage(appManager, appStore)
-
-  // ----------------- Vertical Icon ----------------------------
-  const verticalIconsComponent = new VerticalIconsComponent('swapPanel', appStore, landingPage.profile)
-  const swapPanelApi = new SwapPanelApi(swapPanelComponent, verticalIconsComponent) // eslint-disable-line
-  const mainPanelApi = new SwapPanelApi(mainPanelComponent, verticalIconsComponent) // eslint-disable-line
-  const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
-  registry.put({api: verticalIconsApi, name: 'verticalicon'})
 
   self._components.mainview.init()
   self._components.fileManager.init()
@@ -423,7 +416,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     fileManager.api(),
     sourceHighlighters.api(),
     filePanel.api(),
-    // { profile: support.profile(), api: support },
     settings.api(),
     pluginManagerComponent.api(),
     networkModule.api(),
@@ -440,7 +432,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     ...appManager.plugins()
   ])
 
-  framingService.start(appStore, swapPanelApi, verticalIconsApi, mainPanelApi, this._components.resizeFeature)
+  framingService.start(appStore, swapPanel, verticalIcons, mainPanel, this._components.resizeFeature)
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
@@ -467,7 +459,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   txLogger.event.register('debuggingRequested', (hash) => {
     if (!appStore.isActive('debugger')) appManager.activateOne('debugger')
     debug.debugger().debug(hash)
-    verticalIconsApi.select('debugger')
+    verticalIcons.select('debugger')
   })
 
   let transactionContextAPI = {
