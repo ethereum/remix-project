@@ -131,13 +131,13 @@ class TxLogger {
     this._components.registry = localRegistry || globlalRegistry
     // dependencies
     this._deps = {
-      editorPanel: this._components.registry.get('editorpanel').api,
+      mainView: this._components.registry.get('mainview').api,
       txListener: this._components.registry.get('txlistener').api,
       eventsDecoder: this._components.registry.get('eventsdecoder').api,
       compilersArtefacts: this._components.registry.get('compilersartefacts').api
     }
 
-    this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
+    this.logKnownTX = this._deps.mainView.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
       var el
       if (data.tx.isCall) {
@@ -149,14 +149,14 @@ class TxLogger {
       append(el)
     }, { activate: true, filterFn: filterTx })
 
-    this.logUnknownTX = this._deps.editorPanel.registerCommand('unknownTransaction', (args, cmds, append) => {
+    this.logUnknownTX = this._deps.mainView.registerCommand('unknownTransaction', (args, cmds, append) => {
       // triggered for transaction AND call
       var data = args[0]
       var el = renderUnknownTransaction(this, data)
       append(el)
     }, { activate: false, filterFn: filterTx })
 
-    this.logEmptyBlock = this._deps.editorPanel.registerCommand('emptyBlock', (args, cmds, append) => {
+    this.logEmptyBlock = this._deps.mainView.registerCommand('emptyBlock', (args, cmds, append) => {
       var data = args[0]
       var el = renderEmptyBlock(this, data)
       append(el)
@@ -176,8 +176,8 @@ class TxLogger {
       log(this, tx, null)
     })
 
-    this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
-    this._deps.editorPanel.updateTerminalFilter({ type: 'select', value: 'knownTransaction' })
+    this._deps.mainView.updateTerminalFilter({ type: 'select', value: 'unknownTransaction' })
+    this._deps.mainView.updateTerminalFilter({ type: 'select', value: 'knownTransaction' })
   }
 }
 

@@ -20,7 +20,6 @@ var SharedFolder = require('./app/files/shared-folder')
 var Config = require('./config')
 var Renderer = require('./app/ui/renderer')
 var executionContext = require('./execution-context')
-var EditorPanel = require('./app/panels/editor-panel')
 var examples = require('./app/editor/example-contracts')
 var modalDialogCustom = require('./app/ui/modal-dialog-custom')
 var TxLogger = require('./app/execution/txLogger')
@@ -53,6 +52,7 @@ import { EntityStore } from './lib/store'
 import { RemixAppManager } from './remixAppManager'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import framingService from './framingService'
+import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 
@@ -265,7 +265,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     return 'Are you sure you want to leave?'
   }
 
-  registry.put({api: msg => self._components.editorpanel.logHtmlMessage(msg), name: 'logCallback'})
+  registry.put({api: msg => self._components.mainview.logHtmlMessage(msg), name: 'logCallback'})
 
   // helper for converting offset to line/column
   var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
@@ -318,7 +318,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   txlistener.startListening()
 
-  // TODO: There are still a lot of dep between editorpanel and filemanager
+  // TODO: There are still a lot of dep between mainview and filemanager
 
   let appStore = new EntityStore('module', 'name')
   const appManager = new RemixAppManager(appStore)
@@ -339,9 +339,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
 
-  // ----------------- editor panel ----------------------
-  self._components.editorpanel = new EditorPanel(appStore, appManager, mainPanelComponent)
-  registry.put({ api: self._components.editorpanel, name: 'editorpanel' })
+  // ----------------- main view ----------------------
+  self._components.mainview = new MainView(appStore, appManager, mainPanelComponent)
+  registry.put({ api: self._components.mainview, name: 'mainview' })
 
   // ----------------- Renderer -----------------
   const renderer = new Renderer()
@@ -375,9 +375,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const verticalIconsApi = new VerticalIconsApi(verticalIconsComponent) // eslint-disable-line
   registry.put({api: verticalIconsApi, name: 'verticalicon'})
 
-  self._components.editorpanel.init()
+  self._components.mainview.init()
   self._components.fileManager.init()
-  self._view.mainpanel.appendChild(self._components.editorpanel.render())
+  self._view.mainpanel.appendChild(self._components.mainview.render())
   self._view.iconpanel.appendChild(verticalIconsComponent.render())
   self._view.swappanel.appendChild(swapPanelComponent.render())
 
