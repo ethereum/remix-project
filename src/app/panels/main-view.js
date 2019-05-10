@@ -28,7 +28,7 @@ var css = csjs`
 `
 
 export class MainView {
-  constructor (appStore, appManager, mainPanelComponent) {
+  constructor (appStore, appManager, mainPanel) {
     var self = this
     self.event = new EventManager()
     self._view = {}
@@ -38,7 +38,7 @@ export class MainView {
     self._components.registry.put({api: self._components.editor, name: 'editor'})
     self.appStore = appStore
     self.appManager = appManager
-    self.mainPanelComponent = mainPanelComponent
+    self.mainPanel = mainPanel
   }
   init () {
     var self = this
@@ -52,7 +52,7 @@ export class MainView {
     self.tabProxy = new TabProxy(self._deps.fileManager, self._components.editor, self.appStore, self.appManager)
     let showApp = function (name) {
       self._deps.fileManager.unselectCurrentFile()
-      self.mainPanelComponent.showContent(name)
+      self.mainPanel.showContent(name)
       self._view.editor.style.display = 'none'
       self._components.contextView.hide()
       self._view.mainPanel.style.display = 'block'
@@ -178,7 +178,7 @@ export class MainView {
     if (self._view.el) return self._view.el
     self._view.editor = self._components.editor.render()
     self._view.editor.style.display = 'none'
-    self._view.mainPanel = self.mainPanelComponent.render()
+    self._view.mainPanel = self.mainPanel.render()
     self._view.terminal = self._components.terminal.render()
     self._view.content = yo`
       <div class=${css.content}>
