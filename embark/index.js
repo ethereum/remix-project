@@ -5,9 +5,9 @@ const merge = require('merge')
 const colors = require('colors')
 
 const DEFAULT_OPTIONS = {
-  protocol: "http",
-  host: "localhost",
-  port: "8088"
+  protocol: 'http',
+  host: 'localhost',
+  port: '8088'
 }
 
 module.exports = (embark) => {
@@ -46,7 +46,7 @@ module.exports = (embark) => {
   })
   const killRemixD = sharedFolderRouter.start()
   const kill = () => {
-    if(server) server.close()
+    if (server) server.close()
     embark.logger.info(colors.red('embark-remix stopped'))
     process.exit()
   }
@@ -59,9 +59,8 @@ module.exports = (embark) => {
       process.emit('SIGINT')
     })
   }
-  
+
   process.on('SIGINT', kill) // catch ctrl-c
   process.on('SIGTERM', kill) // catch kill
   process.on('exit', killRemixD)
-
 }
