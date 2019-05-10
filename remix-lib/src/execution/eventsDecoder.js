@@ -63,6 +63,21 @@ class EventsDecoder {
     return null
   }
 
+  _stringifyBigNumber (value) {
+    return value._ethersType === 'BigNumber' ? value.toString() : value
+  }
+
+  _stringifyEvent (value) {
+    if (value === null || value === undefined) return ' - '
+    if (value._ethersType) value.type = value._ethersType
+    if (Array.isArray(value)) {
+      // for struct && array
+      return value.map((item) => { return this._stringifyEvent(item) })
+    } else {
+      return this._stringifyBigNumber(value)
+    }
+  }
+
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventsABI = this._eventsABI(compiledContracts)
     var events = []
@@ -75,10 +90,7 @@ class EventsDecoder {
         var decodedlog = eventAbi.abi.parseLog(log)
         let decoded = {}
         for (const v in decodedlog.values) {
-          const value = decodedlog.values[v]
-          if (value._ethersType) value.type = value._ethersType
-          let decodedValue = value._ethersType === 'BigNumber' ? value.toString() : value
-          decoded[v] = decodedValue
+          decoded[v] = this._stringifyEvent(decodedlog.values[v])
         }
         events.push({ from: log.address, topic: topicId, event: eventAbi.event, args: decoded })
       } else {
