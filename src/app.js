@@ -334,10 +334,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const themeModule = new ThemeModule(registry)
   registry.put({api: themeModule, name: 'themeModule'})
 
-  // ----------------- main view ----------------------
-  self._components.mainview = new MainView(appStore, appManager, mainPanelComponent)
-  registry.put({ api: self._components.mainview, name: 'mainview' })
-
   // ----------------- landing page ----------------------------
   // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
   const landingPage = new LandingPage(appManager, appStore)
@@ -348,6 +344,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const swapPanel = new SwapPanel(appStore)
   const mainPanel = new MainPanel(appStore)
+
+  // ----------------- main view ----------------------
+  self._components.mainview = new MainView(appStore, appManager, mainPanel)
+  registry.put({ api: self._components.mainview, name: 'mainview' })
 
   // ----------------- Renderer -----------------
   const renderer = new Renderer()
@@ -370,16 +370,12 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   pluginManagerComponent.setApp(appManager)
   pluginManagerComponent.setStore(appStore)
 
-
   self._components.mainview.init()
-
-  // Need to have Home initialized before VerticalIconComponent render to access profile of it for icon
-  const landingPage = new LandingPage(appManager, appStore)
 
   self._components.fileManager.init()
   self._view.mainpanel.appendChild(self._components.mainview.render())
-  self._view.iconpanel.appendChild(verticalIconsComponent.render())
-  self._view.swappanel.appendChild(swapPanelComponent.render())
+  self._view.iconpanel.appendChild(verticalIcons.render())
+  self._view.swappanel.appendChild(swapPanel.render())
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
