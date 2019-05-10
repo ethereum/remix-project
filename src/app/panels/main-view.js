@@ -12,7 +12,7 @@ var ContextView = require('../editor/contextView')
 var csjs = require('csjs-inject')
 
 var css = csjs`
-  .editorpanel         {
+  .mainview         {
     display            : flex;
     flex-direction     : column;
     height             : 100%;
@@ -27,7 +27,7 @@ var css = csjs`
   
 `
 
-class EditorPanel {
+export class MainView {
   constructor (appStore, appManager, mainPanelComponent) {
     var self = this
     self.event = new EventManager()
@@ -190,7 +190,7 @@ class EditorPanel {
       </div>
     `
     self._view.el = yo`
-      <div class=${css.editorpanel}>
+      <div class=${css.mainview}>
         ${self._view.content}
       </div>
     `
@@ -212,4 +212,3 @@ class EditorPanel {
   }
 }
 
-module.exports = EditorPanel
