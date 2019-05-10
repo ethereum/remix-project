@@ -1,5 +1,5 @@
 'use strict'
-
+/* global ethereum */
 var $ = require('jquery')
 var csjs = require('csjs-inject')
 var yo = require('yo-yo')
@@ -495,7 +495,16 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   executionContext.event.register('contextChanged', this, function (context) {
     self.runCompiler()
+    askPermissionToInjectedProvider(context)
   })
+
+  let askPermissionToInjectedProvider = (context) => {
+    if (context === 'injected' && ethereum && typeof ethereum.enable === 'function') {
+      ethereum.enable()
+    }
+  }
+
+  askPermissionToInjectedProvider(executionContext.getProvider())
 
   // rerun the compiler when the environement changed
   executionContext.event.register('web3EndpointChanged', this, function (context) {
