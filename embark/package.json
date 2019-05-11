@@ -1,6 +1,6 @@
 {
   "name": "embark-remix",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "load remix IDE from embark environment",
   "main": "index.js",
   "scripts": {
