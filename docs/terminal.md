@@ -1,7 +1,7 @@
 Terminal
 ========
 
-![image](images/remix_terminal.png)
+![](images/a-terminal-and-more.png)
 
 Features, available in the terminal:
 
@@ -17,4 +17,5 @@ Features, available in the terminal:
     the Remix IDE).
 -   It allows searching for the data and clearing the logs from the
     terminal.
+-   You can run scripts by inputting them at the bottom after the `>`.
 

@@ -1,4 +1,4 @@
-Debugging a Dapp using Remix - Mist - Geth
+Debugging a Dapp using Remix & Geth
 ==========================================
 
 The ultimate goal of this tutorial is to debug transactions that have
@@ -12,8 +12,6 @@ We will need four tools for that :
 
 > -   Geth - this is the center piece and provides the blockchain
 >     environment. We will basically run geth in a dev mode.
-> -   Mist - this is the Ethereum dapp browser. We will use it to browse
->     our front end.
 > -   Remix - this is the Ethereum IDE. We will use it to develop our
 >     Solidity contract.
 > -   Any code editor you want - in order to write your front end :)
@@ -21,15 +19,9 @@ We will need four tools for that :
 Install the environment
 -----------------------
 
-### Install Mist
+### Install Metamask
 
-Mist is the Ethereum browser and the entry point of a Dapp.
-
-Please download [the latest
-version](http://github.com/ethereum/mist/releases) (at least 0.8.9).
-
-Basically we will always run our front end in Mist (note that it is also
-possible to use [Metamask](http://metamask.io)).
+Basically we will run our front end in the Metamask Chrome plugin ([Metamask](http://metamask.io)).
 
 ### Install Geth
 
@@ -49,7 +41,7 @@ not be synced to the main or ropsten network.
 `<test-chain-directory>` is the folder where keys and chain data will be
 stored.
 
-`--ipcpath` defines the end point that other apps (like Mist) use to
+`--ipcpath` defines the end point that other apps (like Metamask) use to
 talk to geth.
 
 `--datadir` specifies the data directory.
@@ -67,29 +59,6 @@ Then we need to create accounts and mine a bit to generate some Ether:
 Next time we run Geth, we will only need to mine transactions (no need
 to recreate account).
 
-### Run Mist
-
-If we run Mist without any argument, its internal Geth node will run. As
-we have our own we need to specify the ipc path of the node installed
-above.
-
-    mist --rpc <test-chain-directory>/geth.ipc
-
-(yes the option is --rpc)
-
-Once Mist is started, verify that it is connected to the test node
-(that's very important!!).
-
-On the bottom left, check that the network is `Private-net` and that the
-block number is the same as reported by the test node we are currently
-running. Run the following command in the Geth Console to check:
-web3.eth.blockNumber.
-
-![image](mist1.png)
-
-Clicking on Wallet will allow you to send transactions and check account
-balances (if you are currently mining you should see the balance
-increasing).
 
 ### Starting Remix
 
@@ -119,7 +88,8 @@ Here is a sample solidity contract.
 
 Copy and paste the following inside remix:
 
-``` {.sourceCode .none}
+``` 
+{.sourceCode .none}
 contract Donation {
     address owner;
     event fundMoved(address _to, uint _amount);
@@ -160,18 +130,18 @@ contract Donation {
 
 and here is the front end:
 
-``` {.sourceCode .none}
+```html
 <div>    
     <div>Donation Contract</div>
     <br/>
-    <input id='contractaddress' placeholder='contract address'></intput>
+    <input id='contractaddress' placeholder='contract address' />
     <br/>
     <div>
         <br/>
-        <input id='fromGive' placeholder='from' ></intput><input placeholder='amount' id='valueGive'></intput><button id="fallbackbtn" onclick="donate()">give</button>
+        <input id='fromGive' placeholder='from' /><input placeholder='amount' id='valueGive' /><button id="fallbackbtn" onclick="donate()">give</button>
         <br/>
         <br/>
-        <input id='fromMoveFund' placeholder='from' ></intput><input id='moveFundTo' placeholder='move to' ></intput><input id='amountToMove' placeholder='amount' ></intput><button id="movefundbtn" onclick="movefund()">moveFund</button>
+        <input id='fromMoveFund' placeholder='from' /><input id='moveFundTo' placeholder='move to' /><input id='amountToMove' placeholder='amount' /><button id="movefundbtn" onclick="movefund()">moveFund</button>
         <br/>
         <br/>
         <div id='wait' ></div>

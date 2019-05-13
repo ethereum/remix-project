@@ -1,5 +1,5 @@
-Tutorial on debugging transactions with Remix
-===============================================
+Debugging transactions
+======================
 
 The goal of this tutorial is to explain how to debug transaction using
 Remix.
@@ -15,7 +15,8 @@ a different use case.
 We will not explain in detail here how to write or deploy contract. Let
 us start with a basic contract (replace this one by your's):
 
-``` {.sourceCode .none}
+``` 
+{.sourceCode .none}
 contract Donation {
     address owner;
     event fundMoved(address _to, uint _amount);
@@ -53,9 +54,7 @@ contract Donation {
 ```
 
 For the purpose of this tutorial, we will run the `JavaScript VM`
-(that's the default mode when you don't use Remix with Mist or
-Metamask). This simulates a custom blockchain. You could do the same
-using a proper backend node.
+(that's the default mode when you don't use Remix with Metamask). This simulates a custom blockchain. You could do the same using a proper backend node.
 
 Now, let's deploy the contract:
 
@@ -189,7 +188,8 @@ variable, it might be triggered twice: Once for initializing the
 variable to zero and second time for assigning the actual value. As an
 example, assume you are debugging the following contract:
 
-``` {.sourceCode .none}
+``` 
+{.sourceCode .none}
 contract ctr {
     function hid () {
         uint p = 45;

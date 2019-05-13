@@ -12,7 +12,7 @@ add new files to the file explorer.
 Note that clearing the browser storage will permanently delete all the
 solidity files you wrote. To avoid this, you can use Remixd, which
 enables you to store and sync files in the browser with your local
-computer (for more information see ../tutorial\_remixd\_filesystem)
+computer ( for more information see [remixd](remixd.html) ).
 
 ![](images/a-file-explorer-buttons.png)
 
@@ -51,4 +51,4 @@ Connect your filesystem to Remix
 --------------------
 
 Allows to sync between Remix and your local file system (see
-[more about RemixD](http://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html)).
+[more about RemixD](remixd.html)).
