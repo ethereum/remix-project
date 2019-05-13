@@ -46,13 +46,6 @@ module.exports = {
 }
 
 function runTests (browser, testData) {
-  browser.testFunction = contractHelper.testFunction
-  browser.clickFunction = contractHelper.clickFunction
-  browser.setEditorValue = contractHelper.setEditorValue
-  browser.modalFooterOKClick = contractHelper.modalFooterOKClick
-  browser.getEditorValue = contractHelper.getEditorValue
-  browser.testEditorValue = contractHelper.testEditorValue
-  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   var browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
     console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')

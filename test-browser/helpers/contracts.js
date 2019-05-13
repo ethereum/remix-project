@@ -2,36 +2,23 @@
 var deepequal = require('deep-equal')
 
 module.exports = {
-  getCompiledContracts: getCompiledContracts,
-  testContracts: testContracts,
-  addFile: addFile,
-  switchFile: switchFile,
-  verifyContract: verifyContract,
+  getCompiledContracts,
+  testContracts,
+  addFile,
+  switchFile,
+  verifyContract,
   selectContract,
-  testFunction,
   testConstantFunction,
   checkDebug,
   goToVMtraceStep,
   useFilter,
   addInstance,
-  clickFunction,
   verifyCallReturnValue,
   createContract,
-  modalFooterOKClick,
-  setEditorValue,
-  getEditorValue,
-  testEditorValue,
   renameFile,
   removeFile,
   getAddressAtPosition,
-  clickLaunchIcon,
-  scrollInto,
   signMsg
-}
-
-function clickLaunchIcon (icon) {
-  this.click('#icon-panel div[plugin="' + icon + '"]')
-  return this
 }
 
 function getCompiledContracts (browser, compiled, callback) {
@@ -98,23 +85,6 @@ function testContracts (browser, fileName, contractCode, compiledContractNames, 
     })
 }
 
-function clickFunction (fnFullName, expectedInput) {
-  this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
-    .perform(function (client, done) {
-      client.execute(function () {
-        document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
-      }, [], function () {
-        if (expectedInput) {
-          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
-        }
-        done()
-      })
-    })
-    .click('.instance button[title="' + fnFullName + '"]')
-    .pause(500)
-  return this
-}
-
 function verifyCallReturnValue (browser, address, checks, done) {
   console.log('verifyCallReturnValue address', address)
   browser.execute(function (address) {
@@ -163,14 +133,6 @@ function testConstantFunction (browser, address, fnFullName, expectedInput, expe
   })
 }
 
-function scrollInto (target) {
-  return this.perform((client, done) => {
-    _scrollInto(this, target, () => {
-      done()
-    })
-  })
-}
-
 function signMsg (browser, msg, cb) {
   let hash, signature
   browser
@@ -197,72 +159,6 @@ function signMsg (browser, msg, cb) {
     })
 }
 
-function _scrollInto (browser, target, cb) {
-  browser.execute(function (target) {
-    document.querySelector(target).scrollIntoView()
-  }, [target], function () {
-    cb()
-  })
-}
-
-function testFunction (fnFullName, txHash, log, expectedInput, expectedReturn, expectedEvent, callback) {
-  // this => browser
-  this.waitForElementPresent('.instance button[title="' + fnFullName + '"]')
-    .perform(function (client, done) {
-      client.execute(function () {
-        document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
-      }, [], function () {
-        if (expectedInput) {
-          client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
-        }
-        done()
-      })
-    })
-    .click('.instance button[title="' + fnFullName + '"]')
-    .pause(500)
-    .waitForElementPresent('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"]')
-    .assert.containsText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] span', log)
-    .click('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] div[class^="log"]')
-    .perform(function (client, done) {
-      if (expectedReturn) {
-        client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #decodedoutput', (result) => {
-          console.log(result)
-          var equal = deepequal(JSON.parse(result.value), JSON.parse(expectedReturn))
-          if (!equal) {
-            client.assert.fail('expected ' + expectedReturn + ' got ' + result.value, 'info about error', '')
-          }
-        })
-      }
-      done()
-    })
-    .perform(function (client, done) {
-      if (expectedEvent) {
-        client.getText('#editor-container div[class^="terminal"] span[id="tx' + txHash + '"] table[class^="txTable"] #logs', (result) => {
-          console.log(result)
-          var equal = deepequal(JSON.parse(result.value), JSON.parse(expectedEvent))
-          if (!equal) {
-            client.assert.fail('expected ' + expectedEvent + ' got ' + result.value, 'info about error', '')
-          }
-        })
-      }
-      done()
-      if (callback) callback()
-    })
-  return this
-}
-
-function setEditorValue (value, callback) {
-  this.perform((client, done) => {
-    this.execute(function (value) {
-      document.getElementById('input').editor.session.setValue(value)
-    }, [value], function (result) {
-      done()
-      if (callback) callback()
-    })
-  })
-  return this
-}
-
 function addInstance (browser, address, isValidFormat, isValidChecksum, callback) {
   browser.clickLaunchIcon('run').clearValue('.ataddressinput').setValue('.ataddressinput', address, function () {
     browser.click('div[class^="atAddress"]')
@@ -279,36 +175,6 @@ function addInstance (browser, address, isValidFormat, isValidChecksum, callback
         callback()
       })
   })
-}
-
-function getEditorValue (callback) {
-  this.perform((client, done) => {
-    this.execute(function (value) {
-      return document.getElementById('input').editor.getValue()
-    }, [], function (result) {
-      done(result.value)
-      callback(result.value)
-    })
-  })
-  return this
-}
-
-function testEditorValue (testvalue, callback) {
-  this.getEditorValue((value) => {
-    this.assert.equal(testvalue, value)
-    callback()
-  })
-}
-
-function modalFooterOKClick () {
-  this.perform((client, done) => {
-    this.execute(function () {
-      document.querySelector('#modal-footer-ok').click()
-    }, [], function (result) {
-      done()
-    })
-  })
-  return this
 }
 
 function addFile (browser, name, content, done) {
