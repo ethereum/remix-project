@@ -92,8 +92,8 @@ module.exports = class UniversalDApp extends UdappApi {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     this._addAccount(privateKey, balance)
-    privateKey = Buffer.from(privateKey, 'hex')
-    return '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex')
+    const privKey = Buffer.from(privateKey, 'hex')
+    return '0x' + ethJSUtil.privateToAddress(privKey).toString('hex')
   }
 
   newAccount (password, passwordPromptCb, cb) {
