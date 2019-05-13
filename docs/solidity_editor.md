@@ -5,7 +5,7 @@ The Remix editor recompiles the code each time the current file is
 changed or another file is selected. It also provides syntax
 highlighting mapped to solidity keywords.
 
-![image](images/remix_editor.png)
+![](images/a-sol-editor.png)
 
 Here's the list of some important features:
 

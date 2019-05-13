@@ -5,7 +5,7 @@ To get to **Settings** click the gear a the very bottom of the icon panel.
 
 You can find a link to the homepage (if you closed it) as well as a link to our Gitter Channel and for you aesthetes out there, we now have a rather large list of themes.  
 
-![](images/a-settings.png)
+![](images/a-themes.png)
 
 Another important settings:
 
