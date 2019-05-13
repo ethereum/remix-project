@@ -17,7 +17,6 @@ let css = csjs`
     text-decoration: underline;
   }
   .homeContainer {
-    height: 105%!important; /* @todo should be removed once swap_it and mainview will be separated */
     user-select:none;
   }
   .jumbotronContainer {
