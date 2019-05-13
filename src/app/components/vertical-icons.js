@@ -6,7 +6,7 @@ let globalRegistry = require('../../global/registry')
 const EventEmitter = require('events')
 
 // Component
-class VerticalIconComponent {
+export class VerticalIcons {
 
   constructor (name, appStore, homeProfile) {
     this.store = appStore
@@ -78,7 +78,7 @@ class VerticalIconComponent {
     this.icons[name] = yo`
       <div
         class="${css.icon}"
-        onclick="${(e) => { this._iconClick(name) }}"
+        onclick="${() => { this._iconClick(name) }}"
         plugin="${name}" title="${title}" >
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
@@ -358,8 +358,6 @@ class VerticalIconComponent {
     return this.view
   }
 }
-
-module.exports = VerticalIconComponent
 
 const css = csjs`
   .homeIcon {
