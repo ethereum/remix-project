@@ -31,8 +31,7 @@ const css = csjs`
 `
 
 const options = {
-  default: true,
-  displayHeader: true
+  default: true
 }
 
 export class SwapPanel extends AbstractPanel {

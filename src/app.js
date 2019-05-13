@@ -51,6 +51,7 @@ import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { SwapPanel } from './app/components/swap-panel'
 import { MainPanel } from './app/components/main-panel'
+import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 
 var css = csjs`
@@ -344,6 +345,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
 
   const swapPanel = new SwapPanel(appStore)
   const mainPanel = new MainPanel(appStore)
+  const hiddenPanel = new HiddenPanel(appStore)
 
   // ----------------- main view ----------------------
   self._components.mainview = new MainView(appStore, appManager, mainPanel)
@@ -376,6 +378,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._view.mainpanel.appendChild(self._components.mainview.render())
   self._view.iconpanel.appendChild(verticalIcons.render())
   self._view.swappanel.appendChild(swapPanel.render())
+  document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
 
   let filePanel = new FilePanel()
   registry.put({api: filePanel, name: 'filepanel'})
