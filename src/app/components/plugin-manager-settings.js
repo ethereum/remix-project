@@ -17,6 +17,7 @@ const css = csjs`
 }
 .permissionForm h4 {
   font-size: 1.3rem;
+  text-align: center;
 }
 .permissionForm h6 {
   font-size: 1.1rem;
@@ -36,7 +37,8 @@ const css = csjs`
 export class PluginManagerSettings {
 
   openDialog () {
-    this.permissions = JSON.parse(window.localStorage.getItem('plugins/permissions'))
+    const fromLocal = window.localStorage.getItem('plugins/permissions')
+    this.permissions = JSON.parse(fromLocal || '{}')
     modalDialog('Plugin Manager Settings', this.settings(),
       { fn: () => this.onValidation() },
     )
@@ -64,22 +66,27 @@ export class PluginManagerSettings {
         </div>`
       }
 
-      const byPlugin = Object
+      const byModule = Object
         .keys(permission)
         .map(name => permissionByPlugin(name, permission[name]))
 
       return yo`
       <div>
         <h6>${key} :</h6>
-        ${byPlugin}
+        ${byModule}
       </div>`
     }
 
     const permissions = Object
       .keys(this.permissions)
       .map(key => permissionByModule(key, this.permissions[key]))
+
+    const title = permissions.length === 0
+      ? yo`<h4>No Permission requested yet.</h4>`
+      : yo`<h4>Current Permission settings</h4>`
+
     return yo`<form class="${css.permissionForm}">
-      <h4>Current Permission settings</h4>
+      ${title}
       <hr/>
       ${permissions}
     </form>`
