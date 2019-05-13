@@ -33,8 +33,6 @@ module.exports = {
 }
 
 function runTests (browser) {
-  browser.setEditorValue = contractHelper.setEditorValue
-  browser.clickLaunchIcon = contractHelper.clickLaunchIcon
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
