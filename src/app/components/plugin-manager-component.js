@@ -3,6 +3,7 @@ const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
 import { Plugin, BaseApi } from 'remix-plugin'
+import { PluginManagerSettings } from './plugin-manager-settings'
 
 const css = csjs`
   .pluginSearch {
@@ -152,14 +153,16 @@ class PluginManagerComponent extends BaseApi {
       </nav>`
       : ''
 
+    const settings = new PluginManagerSettings().render()
+
     const rootView = yo`
       <div id='pluginManager'>
-        <div class="form-group ${css.pluginSearch}">
+        <header class="form-group ${css.pluginSearch}">
           <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
           <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm text-info ${css.localPluginBtn}">
             Connect to a Local Plugin
           </button>
-        </div>
+        </header>
         <section>
           ${activeTile}
           <div class="list-group list-group-flush">
@@ -170,6 +173,7 @@ class PluginManagerComponent extends BaseApi {
             ${inactives.map(name => this.renderItem(name))}
           </div>
         </section>
+        ${settings}
       </div>
     `
     if (!this.views.root) this.views.root = rootView
