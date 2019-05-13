@@ -82,13 +82,18 @@ module.exports = class UniversalDApp extends UdappApi {
     this.transactionContextAPI = transactionContextAPI
   }
 
-  createVMAccount (privateKey, balance, cb) {
-    return new Promise((resolve, reject) => {
-      if (executionContext.getProvider() !== 'vm') return reject('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
-      this._addAccount(privateKey, balance)
-      privateKey = Buffer.from(privateKey, 'hex')
-      resolve('0x' + ethJSUtil.privateToAddress(privateKey).toString('hex'))
-    })
+  /**
+   * Create a VM Account
+   * @param {{privateKey: string, balance: string}} newAccount The new account to create
+   */
+  createVMAccount (newAccount) {
+    const { privateKey, balance } = newAccount
+    if (executionContext.getProvider() !== 'vm') {
+      throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
+    }
+    this._addAccount(privateKey, balance)
+    privateKey = Buffer.from(privateKey, 'hex')
+    return '0x' + ethJSUtil.privateToAddress(privateKey).toString('hex')
   }
 
   newAccount (password, passwordPromptCb, cb) {
