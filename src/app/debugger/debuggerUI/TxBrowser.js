@@ -17,7 +17,6 @@ var css = csjs`
     justify-content: center;
   }
   .txinput {
-    margin: 3px;
     width: inherit;
   }
   .txbuttons {
