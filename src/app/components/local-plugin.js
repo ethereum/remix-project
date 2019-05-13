@@ -164,7 +164,7 @@ module.exports = class LocalPlugin {
         <label for="loc2"><input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="mainPanel" id="loc2" >Main Panel</label>
       </div>
       <div class="radio">
-        <label for="loc3"><input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="none" id="loc3" >None</label>
+        <label for="loc3"><input type="radio" name="location" onclick="${e => this.updateLoc(e)}" value="hiddenPanel" id="loc3" >None</label>
       </div>
     </form>`
   }
