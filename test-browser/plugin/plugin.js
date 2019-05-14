@@ -44,7 +44,10 @@ window.onload = function () {
   })
 
   document.querySelector('input#testaccountcreation').addEventListener('click', function () {
-    extension.call('udapp', 'createVMAccount', ['71975fbf7fe448e004ac7ae54cad0a383c3906055a75468714156a07385e96ce', '0x56BC75E2D63100000'],
+    extension.call('udapp', 'createVMAccount', [{
+      privateKey: '71975fbf7fe448e004ac7ae54cad0a383c3906055a75468714156a07385e96ce',
+      balance: '0x56BC75E2D63100000'
+    }],
     function (error, result) { console.log(error, result) })
   })
 
