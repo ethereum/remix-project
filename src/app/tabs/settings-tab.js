@@ -67,7 +67,7 @@ module.exports = class SettingsTab extends BaseApi {
     var gistAddToken = yo`<input class="${css.savegisttoken} btn btn-sm btn-primary" id="savegisttoken" onclick=${() => { this.config.set('settings/gist-access-token', gistAccessToken.value); tooltip('Access token saved') }} value="Save" type="button">`
     var gistRemoveToken = yo`<input class="btn btn-sm btn-primary" id="removegisttoken" onclick=${() => { gistAccessToken.value = ''; this.config.set('settings/gist-access-token', ''); tooltip('Access token removed') }} value="Remove" type="button">`
     this._view.gistToken = yo`<div class="${css.checkboxText}">${gistAccessToken}${copyToClipboard(() => this.config.get('settings/gist-access-token'))}${gistAddToken}${gistRemoveToken}</div>`
-    this._view.optionVM = yo`<input onchange=${onchangeOption} class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
+    this._view.optionVM = yo`<input onchange=${onchangeOption} checked class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
     this._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
     if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
