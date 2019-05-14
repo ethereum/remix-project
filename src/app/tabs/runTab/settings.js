@@ -224,8 +224,9 @@ class SettingsUI {
       var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
       var $txOrigin = this.el.querySelector('#txorigin')
       if (!$txOrigin.selectedOptions[0] && this.settings.isInjectedWeb3()) {
-        return addTooltip(`Account list is empty, please login to your wallet to load it`)
+        return addTooltip(`Account list is empty, please make sure the current provider is properly connected to remix`)
       }
+
       var account = $txOrigin.selectedOptions[0].value
 
       var promptCb = (passphrase) => {
