@@ -173,20 +173,20 @@ function signMsg (browser, msg, cb) {
   let hash, signature
   browser
     .click('i[id="remixRunSignMsg"]')
-    .setValue('textarea[id="prompt_text"]', msg, ()=>{
+    .setValue('textarea[id="prompt_text"]', msg, () => {
       browser.modalFooterOKClick().perform(
-        (client, done)=>{
-          browser.getText('span[id="remixRunSignMsgHash"]', (v)=>{ hash = v; done()})
+        (client, done) => {
+          browser.getText('span[id="remixRunSignMsgHash"]', (v) => { hash = v; done() })
         }
       )
       .perform(
-        (client, done)=>{
-          browser.getText('span[id="remixRunSignMsgSignature"]', (v)=>{ signature = v; done()})
+        (client, done) => {
+          browser.getText('span[id="remixRunSignMsgSignature"]', (v) => { signature = v; done() })
         }
       )
       .modalFooterOKClick()
       .perform(
-        ()=>{
+        () => {
           cb(hash, signature)
         }
       )

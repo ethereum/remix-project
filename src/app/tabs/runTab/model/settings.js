@@ -1,6 +1,7 @@
 var ethJSUtil = require('ethereumjs-util')
 var Personal = require('web3-eth-personal')
 var remixLib = require('remix-lib')
+const addTooltip = require('../../../ui/tooltip')
 var EventManager = remixLib.EventManager
 var executionContext = remixLib.execution.executionContext
 
@@ -97,7 +98,7 @@ class Settings {
       const hashedMsg = executionContext.web3().sha3(message)
       try {
         executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-          if (!error) alert("Please check your provider")
+          if (!error) addTooltip('Please check your provider to approve')
           cb(error, hashedMsg, signedData)
         })
       } catch (e) {

@@ -163,23 +163,23 @@ function checkDeployShouldSucceed (browser, address, callback) {
 
 function testSignature (browser, callback) {
   let hash, signature
-  browser.clickLaunchIcon("run").pause(4000).perform((client, done)=>{
-    contractHelper.signMsg(browser, "test message", (h, s)=>{
+  browser.clickLaunchIcon('run').pause(4000).perform((client, done) => {
+    contractHelper.signMsg(browser, 'test message', (h, s) => {
       hash = h
       signature = s
-      contractHelper.addFile(browser, "signMassage.sol", sources[6]["browser/signMassage.sol"], ()=>{
+      contractHelper.addFile(browser, 'signMassage.sol', sources[6]['browser/signMassage.sol'], () => {
         contractHelper.switchFile(browser, 'browser/signMassage.sol', () => {
           contractHelper.selectContract(browser, 'ECVerify', () => { // deploy lib
             contractHelper.createContract(browser, '', () => {
               browser.waitForElementPresent('.instance:nth-of-type(4)')
               .click('.instance:nth-of-type(4) > div > button')
-              .clickFunction("ecrecovery - call", {types: "bytes32 hash, bytes sig", values: `"${hash.value}","${signature.value}"`}).perform(
-                ()=>{
-                  contractHelper.verifyCallReturnValue(
+              .clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
+                () => {
+                  contractHelper.verifyCallReturnalue(
                     browser,
-                    "0x08970fed061e7747cd9a38d680a601510cb659fb",
+                    '0x08970fed061e7747cd9a38d680a601510cb659fb',
                     ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
-                    ()=>{callback(null, browser)}
+                    () => { callback(null, browser) }
                   )
                 }
               )
