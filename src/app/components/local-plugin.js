@@ -40,8 +40,7 @@ module.exports = class LocalPlugin {
       ...this.profile,
       hash: `local-${this.profile.name}`
     }
-    profile.events = profile.events || []
-    profile.events = profile.events.filter((item) => { return item !== '' })
+    profile.events = (profile.events || []).filter(item => item !== '')
 
     if (!profile.location) throw new Error('Plugin should have a location')
     if (!profile.name) throw new Error('Plugin should have a name')
