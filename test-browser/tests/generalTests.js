@@ -21,6 +21,8 @@ function runTests (browser) {
   browser.setEditorValue = contractHelper.setEditorValue
   browser.getEditorValue = contractHelper.getEditorValue
   browser.clickLaunchIcon = contractHelper.clickLaunchIcon
+  browser.modalFooterOKClick = contractHelper.modalFooterOKClick
+  browser.clickFunction = contractHelper.clickFunction
   browser.scrollInto = contractHelper.scrollInto
   browser
     .waitForElementVisible('#icon-panel', 10000)
@@ -34,7 +36,8 @@ function runTests (browser) {
         testFailedImport, /* testGitHubImport */
         addDeployLibTestFile,
         testAutoDeployLib,
-        testManualDeployLib
+        testManualDeployLib,
+        testSignature
       ],
       function () {
         browser.end()
@@ -150,6 +153,36 @@ function checkDeployShouldSucceed (browser, address, callback) {
                   contractHelper.testConstantFunction(browser, address, 'get - call', '', '0: uint256: 45', () => { callback(null, browser) })
                 })
               })
+            })
+          })
+        })
+      })
+    })
+  })
+}
+
+function testSignature (browser, callback) {
+  let hash, signature
+  browser.clickLaunchIcon("run").pause(4000).perform((client, done)=>{
+    contractHelper.signMsg(browser, "test message", (h, s)=>{
+      hash = h
+      signature = s
+      contractHelper.addFile(browser, "signMassage.sol", sources[6]["browser/signMassage.sol"], ()=>{
+        contractHelper.switchFile(browser, 'browser/signMassage.sol', () => {
+          contractHelper.selectContract(browser, 'ECVerify', () => { // deploy lib
+            contractHelper.createContract(browser, '', () => {
+              browser.waitForElementPresent('.instance:nth-of-type(4)')
+              .click('.instance:nth-of-type(4) > div > button')
+              .clickFunction("ecrecovery - call", {types: "bytes32 hash, bytes sig", values: `"${hash.value}","${signature.value}"`}).perform(
+                ()=>{
+                  contractHelper.verifyCallReturnValue(
+                    browser,
+                    "0x08970fed061e7747cd9a38d680a601510cb659fb",
+                    ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
+                    ()=>{callback(null, browser)}
+                  )
+                }
+              )
             })
           })
         })
@@ -320,6 +353,46 @@ var sources = [
       function get () public view returns (uint) {
           return lib.getInt();
       }    
-}`}
+    }`}
+  },
+  {
+    'browser/signMassage.sol': {content: `
+    contract SignMassageTest {
+      function testRecovery(bytes32 h, uint8 v, bytes32 r, bytes32 s) public pure returns (address) {
+          return ecrecover(h, v, r, s);
+      }
+    }
+
+    library ECVerify {
+      function ecrecovery(bytes32 hash, bytes memory sig) public pure returns (address) {
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+
+        if (sig.length != 65) {
+          return address(0);
+        }
+
+        assembly {
+          r := mload(add(sig, 32))
+          s := mload(add(sig, 64))
+          v := and(mload(add(sig, 65)), 255)
+        }
+
+        if (v < 27) {
+          v += 27;
+        }
+
+        if (v != 27 && v != 28) {
+          return address(0);
+        }
+
+        return ecrecover(hash, v, r, s);
+      }
+
+      function ecverify(bytes32 hash, bytes memory sig, address signer) public pure returns (bool) {
+        return signer == ecrecovery(hash, sig);
+      }
+    }`}
   }
 ]

@@ -73,6 +73,10 @@ class Settings {
     return (!isVM && !isInjected)
   }
 
+  isInjectedWeb3 () {
+    return executionContext.getProvider() === 'injected'
+  }
+
   signMessage (message, account, passphrase, cb) {
     var isVM = executionContext.isVM()
     var isInjected = executionContext.getProvider() === 'injected'
@@ -93,6 +97,7 @@ class Settings {
       const hashedMsg = executionContext.web3().sha3(message)
       try {
         executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
+          if (!error) alert("Please check your provider")
           cb(error, hashedMsg, signedData)
         })
       } catch (e) {
