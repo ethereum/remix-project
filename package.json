@@ -90,7 +90,8 @@
     "ignore": [
       "build/",
       "src/app/editor/mode-solidity.js",
-      "soljson.js"
+      "soljson.js",
+      "assets/js/0.7.7/app.js"
     ],
     "parser": "babel-eslint"
   },
