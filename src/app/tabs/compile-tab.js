@@ -366,12 +366,10 @@ class CompileTab extends CompilerApi {
   render () {
     if (this._view.el) return this._view.el
     this.listenToEvents()
-    this.compilerContainer.activate()
-
     this._view.errorContainer = yo`<div class="${css.errorBlobs}"></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-
+    this.compilerContainer.activate()
     this._view.el = yo`
       <div id="compileTabView">
         ${this._view.compilerContainer}
