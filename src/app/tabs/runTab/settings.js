@@ -58,11 +58,11 @@ class SettingsUI {
           <select id="selectExEnvOptions" onchange=${() => { this.updateNetwork() }} class="form-control ${css.select}">
             <option id="vm-mode"
               title="Execution environment does not connect to any node, everything is local and in memory only."
-              value="vm" checked name="executionContext"> JavaScript VM
+              value="vm" name="executionContext"> JavaScript VM
             </option>
             <option id="injected-mode"
               title="Execution environment has been provided by Metamask or similar provider."
-              value="injected" checked name="executionContext"> Injected Web3
+              value="injected" name="executionContext"> Injected Web3
             </option>
             <option id="web3-mode"
               title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
@@ -92,7 +92,7 @@ class SettingsUI {
         <div class=${css.account}>
           <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
           ${copyToClipboard(() => document.querySelector('#runTabView #txorigin').value)}
-          <i class="fas fa-edit ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
+          <i id="remixRunSignMsg" class="fas fa-edit ${css.icon}" aria-hiden="true" onclick=${this.signMessage.bind(this)} title="Sign a message using this account key"></i>
         </div>
       </div>
     `
@@ -223,6 +223,10 @@ class SettingsUI {
 
       var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
       var $txOrigin = this.el.querySelector('#txorigin')
+      if (!$txOrigin.selectedOptions[0] && (this.settings.isInjectedWeb3() || this.settings.isWeb3Provider())) {
+        return addTooltip(`Account list is empty, please make sure the current provider is properly connected to remix`)
+      }
+
       var account = $txOrigin.selectedOptions[0].value
 
       var promptCb = (passphrase) => {
@@ -231,13 +235,26 @@ class SettingsUI {
             if (err) {
               return addTooltip(err)
             }
-            modalDialogCustom.alert(yo`<div><b>hash:</b>${msgHash}<br><b>signature:</b>${signedData}</div>`)
+            modalDialogCustom.alert(yo`
+              <div>
+                <b>hash:</b><br>
+                <span id="remixRunSignMsgHash">${msgHash}</span>
+                <br><b>signature:</b><br>
+                <span id="remixRunSignMsgSignature">${signedData}</span>
+              </div>
+            `)
           })
         }, false)
       }
 
       if (this.settings.isWeb3Provider()) {
-        return modalDialogCustom.promptPassphrase('Passphrase to sign a message', 'Enter your passphrase for this account to sign the message', '', promptCb, false)
+        return modalDialogCustom.promptPassphrase(
+          'Passphrase to sign a message',
+          'Enter your passphrase for this account to sign the message',
+          '',
+          promptCb,
+          false
+        )
       }
       promptCb()
     })
