@@ -29,7 +29,6 @@
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<title>Remix - Ethereum IDE</title>
 		<link rel="stylesheet" id="theme-link"/>
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 		<link rel="stylesheet" href="assets/css/pygment_trac.css">
 		<link rel="icon" type="x-icon" href="icon.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -56,7 +55,7 @@
 					return params
 				}
         const defaultVersion = window.location.hostname === 'remix.ethereum.org' ? '0.7.7' : '0.8.0'
-        let version = urlParams().appVersion ? urlParams().appVersion : defaultVersion
+        let versionToLoad = urlParams().appVersion ? urlParams().appVersion : defaultVersion
                 
 				let assets = {
 						'0.8.0': ['https://use.fontawesome.com/releases/v5.8.1/css/all.css', 'assets/css/pygment_trac.css'],
@@ -66,11 +65,11 @@
 						'0.7.7': 'assets/js/0.7.7/app.js', // commit 7b5c7ae3de935e0ccc32eadfd83bf7349478491e
 						'0.8.0': 'build/app.js'
 				}
-				for (let k in assets[version]) {
+				for (let k in assets[versionToLoad]) {
           let app = document.createElement('link')
           app.setAttribute('rel', 'stylesheet')
-          app.setAttribute('href', assets[version][k])
-          if (assets[version][k] === 'https://use.fontawesome.com/releases/v5.8.1/css/all.css') {
+          app.setAttribute('href', assets[versionToLoad][k])
+          if (assets[versionToLoad][k] === 'https://use.fontawesome.com/releases/v5.8.1/css/all.css') {
             app.setAttribute('integrity', 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf')
             app.setAttribute('crossorigin', 'anonymous')
           }
@@ -78,7 +77,7 @@
         }
 				window.onload = () => {
 					let app = document.createElement('script')
-					app.setAttribute('src', versions[version])
+					app.setAttribute('src', versions[versionToLoad])
 					document.body.appendChild(app)
 				}				
 		</script>
