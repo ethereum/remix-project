@@ -26,7 +26,7 @@ class Toaster {
 
     return new Promise((resolve, reject) => {
       this.tooltip = yo`
-    <div class="${css.tooltip} bg-secondary" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
+    <div class="${css.tooltip} alert alert-info" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
       <span>${tooltipText}</span>
       ${action}
     </div>`
