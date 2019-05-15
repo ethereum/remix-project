@@ -97,8 +97,8 @@ class Settings {
     if (isInjected) {
       const hashedMsg = executionContext.web3().sha3(message)
       try {
+        addTooltip('Please check your provider to approve')
         executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-          if (!error) addTooltip('Please check your provider to approve')
           cb(error, hashedMsg, signedData)
         })
       } catch (e) {
