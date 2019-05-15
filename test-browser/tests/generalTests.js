@@ -24,6 +24,7 @@ function runTests (browser) {
   browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.clickFunction = contractHelper.clickFunction
   browser.scrollInto = contractHelper.scrollInto
+  browser.verifyCallReturnalue = contractHelper.verifyCallReturnalue
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
