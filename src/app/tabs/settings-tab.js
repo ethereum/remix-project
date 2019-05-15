@@ -70,7 +70,7 @@ module.exports = class SettingsTab extends BaseApi {
     this._view.optionVM = yo`<input onchange=${onchangeOption} checked class="align-middle form-check-input" id="alwaysUseVM" type="checkbox">`
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
     this._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
-    if (this.config.get('settings/always-use-vm') === undefined)  this.config.set('settings/always-use-vm', true)
+    if (this.config.get('settings/always-use-vm') === undefined) this.config.set('settings/always-use-vm', true)
     if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
     var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
     This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
