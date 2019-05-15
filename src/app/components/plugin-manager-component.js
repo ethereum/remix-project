@@ -4,6 +4,7 @@ const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
 import { Plugin, BaseApi } from 'remix-plugin'
 import { PluginManagerSettings } from './plugin-manager-settings'
+const addToolTip = require('../ui/tooltip')
 
 const css = csjs`
   .pluginSearch {
@@ -109,11 +110,15 @@ class PluginManagerComponent extends BaseApi {
     try {
       const profile = await this.localPlugin.open(this.store.getAll())
       if (!profile) return
+      if (this.store.ids.includes(profile.name)) {
+        throw new Error('This name has already been used')
+      }
       this.appManager.registerOne(new Plugin(profile))
       this.appManager.activateOne(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
+      addToolTip(`Cannot create Plugin : ${err.message}`)
     }
   }
 
