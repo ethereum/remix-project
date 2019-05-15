@@ -24,7 +24,7 @@ function runTests (browser) {
   browser.modalFooterOKClick = contractHelper.modalFooterOKClick
   browser.clickFunction = contractHelper.clickFunction
   browser.scrollInto = contractHelper.scrollInto
-  browser.verifyCallReturnalue = contractHelper.verifyCallReturnalue
+  browser.verifyCallReturnValue = contractHelper.verifyCallReturnValue
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
@@ -176,7 +176,7 @@ function testSignature (browser, callback) {
               .click('.instance:nth-of-type(4) > div > button')
               .clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
                 () => {
-                  contractHelper.verifyCallReturnalue(
+                  contractHelper.verifyCallReturnValue(
                     browser,
                     '0x08970fed061e7747cd9a38d680a601510cb659fb',
                     ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
