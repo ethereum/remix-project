@@ -8,12 +8,12 @@ const Net = require('./methods/net.js')
 const Transactions = require('./methods/transactions.js')
 const Whisper = require('./methods/whisper.js')
 
-var Provider = function () {
+var Provider = function (options) {
   this.Accounts = new Accounts()
 
   this.methods = {}
   this.methods = merge(this.methods, this.Accounts.methods())
-  this.methods = merge(this.methods, (new Blocks()).methods())
+  this.methods = merge(this.methods, (new Blocks(options)).methods())
   this.methods = merge(this.methods, (new Misc()).methods())
   this.methods = merge(this.methods, (new Net()).methods())
   this.methods = merge(this.methods, (new Transactions(this.Accounts.accounts)).methods())
