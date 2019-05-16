@@ -73,39 +73,39 @@ Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
   let web3 = this.debugger.web3
 
   return new Promise((resolve, reject) => {
-  if (this.debugger.traceManager.isLoading) {
+    if (this.debugger.traceManager.isLoading) {
       return resolve()
-  }
-
-  if (tx) {
-    if (!tx.to) {
-      tx.to = traceHelper.contractCreationToken('0')
     }
+
+    if (tx) {
+      if (!tx.to) {
+        tx.to = traceHelper.contractCreationToken('0')
+      }
       self.debugTx(tx, loadingCb)
       return resolve()
-  }
+    }
 
-  try {
-    if (txNumber.indexOf('0x') !== -1) {
-      return web3.eth.getTransaction(txNumber, function (_error, result) {
+    try {
+      if (txNumber.indexOf('0x') !== -1) {
+        return web3.eth.getTransaction(txNumber, function (_error, result) {
           if (_error) return reject(_error)
           if (!result) return reject('cannot find transaction ' + txNumber)
-        let tx = result
-        self.debugTx(tx, loadingCb)
+          let tx = result
+          self.debugTx(tx, loadingCb)
           return resolve()
-      })
-    }
-    web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
+        })
+      }
+      web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
         if (_error) return reject(_error)
         if (!result) return reject('cannot find transaction ' + blockNumber + ' ' + txNumber)
-      let tx = result
-      self.debugTx(tx, loadingCb)
+        let tx = result
+        self.debugTx(tx, loadingCb)
         return resolve()
-    })
-  } catch (e) {
-    console.error(e.message)
+      })
+    } catch (e) {
+      console.error(e.message)
       return reject(e.message)
-  }
+    }
   })
 }
 
@@ -125,7 +125,7 @@ Debugger.prototype.debugTx = function (tx, loadingCb) {
   this.vmDebuggerLogic.start()
 
   this.step_manager.event.register('stepChanged', this, function (stepIndex) {
-    if (!stepIndex) {
+    if (typeof stepIndex !== 'number' || stepIndex >= self.step_manager.traceLength) {
       return self.event.trigger('endDebug')
     }
 
