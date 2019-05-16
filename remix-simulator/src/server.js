@@ -6,11 +6,11 @@ const Provider = require('./provider')
 const log = require('./utils/logs.js')
 
 class Server {
-  constructor () {
-    this.provider = new Provider()
+  constructor (options) {
+    this.provider = new Provider(options)
   }
 
-  start (port) {
+  start (host, port) {
     expressWs(app)
 
     app.use(bodyParser.urlencoded({extended: true}))
@@ -40,7 +40,7 @@ class Server {
       })
     })
 
-    app.listen(port, () => log('Remix Simulator listening on port ' + port))
+    app.listen(port, host, () => log('Remix Simulator listening on port ' + host + ':' + port))
   }
 }
 
