@@ -80,21 +80,13 @@ TxBrowser.prototype.setState = function (state) {
   }
 }
 
-TxBrowser.prototype.setTx = function (blockNumber, txNumber) {
-  this.blockNumber = blockNumber
-  this.txNumber = txNumber
-  if (this.view) {
-    yo.update(this.view, this.render())
-  }
-}
-
 TxBrowser.prototype.render = function () {
   var self = this
   var view = yo`<div class="${css.container}">
         <div class="${css.txContainer}">
           <div class="${css.txinputs} p-1 input-group">
-            <input value=${this.blockNumber || ''} class="form-control ${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
-            <input value=${this.txNumber || ''} class="form-control ${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
+            <input value="${this.blockNumber || ''}" class="form-control ${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
+            <input value="${this.txNumber || ''}" class="form-control ${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
           </div>
           <div class="${css.txbuttons} btn-group p-1">
             <button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.debugging ? 'Stop' : 'Start'} debugging</button>
@@ -102,7 +94,9 @@ TxBrowser.prototype.render = function () {
         </div>
         <span id='error'></span>
       </div>`
-
+  if (this.debugging) {
+    view.querySelectorAll('input').forEach(element => { element.setAttribute('disabled', '') })
+  }
   if (!this.view) {
     this.view = view
   }
