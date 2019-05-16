@@ -119,7 +119,7 @@ class ContextualListener {
       const css = csjs`
         .highlightref_fullLine {
           position:absolute;
-          z-index:20;
+          z-index:2;
           opacity: 0.4;
           background-color: var(--info);
         }
@@ -139,7 +139,7 @@ class ContextualListener {
       }
       const fileName = lastCompilationResult.getSourceName(position.file)
       if (fileName) {
-        return this.editor.addMarker(lineColumn, fileName, css.highlightref_fullLine.className)
+        return this.editor.addMarker(lineColumn, fileName, css.highlightref_fullLine)
       }
     }
     return null
