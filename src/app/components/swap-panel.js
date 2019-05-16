@@ -9,6 +9,12 @@ const css = csjs`
   }
   .swapitTitle {
     text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .swapitTitle i{
+    padding-left:4px;
+    font-size:10px;
+    
   }
   .swapitHeader {
     height: 35px;
@@ -60,7 +66,7 @@ export class SwapPanel extends AbstractPanel {
     }
     return yo`
     <header class="${css.swapitHeader}">
-      <h6 class="${css.swapitTitle}">${name}</h6>
+      <h6 class="${css.swapitTitle}">${name} <a href="https://remix.readthedocs.io/en/docsnewlayout/file_explorer.html" title="link to documentation" target="_new"><sup><i aria-hidden="true" class="fas fa-asterisk"></i></sup></h6>
       </div>
     </header>`
   }
