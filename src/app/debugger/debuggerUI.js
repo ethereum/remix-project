@@ -1,6 +1,7 @@
 var TxBrowser = require('./debuggerUI/TxBrowser')
 var StepManagerUI = require('./debuggerUI/StepManager')
 var VmDebugger = require('./debuggerUI/VmDebugger')
+var toaster = require('../ui/tooltip')
 
 var Debugger = require('remix-debug').TransactionDebugger
 
@@ -104,13 +105,11 @@ class DebuggerUI {
 
   startDebugging (blockNumber, txNumber, tx) {
     const self = this
-    if (this.debugger) delete this.debugger
+    if (this.debugger) this.unLoad()
 
     let compilers = this.registry.get('compilersartefacts').api
     let lastCompilationResult
     if (compilers['__last']) lastCompilationResult = compilers['__last']
-
-    // TODO debugging with source highlight is disabled. see line 98
 
     executionContext.detectNetwork((error, network) => {
       let web3
@@ -133,6 +132,9 @@ class DebuggerUI {
         self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
         self.txBrowser.setState({ blockNumber, txNumber, debugging: true })
         self.renderDebugger()
+      }).catch((error) => {
+        toaster(error)
+        this.unLoad()
       })
     })
   }
@@ -170,6 +172,7 @@ class DebuggerUI {
     if (this.txBrowser) this.txBrowser.setState({debugging: false})
     this.vmDebugger = null
     this.stepManager = null
+    if (this.debugger) delete this.debugger
     this.event.trigger('traceUnloaded')
   }
 
