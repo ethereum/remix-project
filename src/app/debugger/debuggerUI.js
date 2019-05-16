@@ -128,10 +128,10 @@ class DebuggerUI {
       })
 
       this.listenToEvents()
-
       this.debugger.debug(blockNumber, txNumber, tx, () => {
         self.stepManager = new StepManagerUI(this.debugger.step_manager)
         self.vmDebugger = new VmDebugger(this.debugger.vmDebuggerLogic)
+        self.txBrowser.setState({ blockNumber, txNumber, debugging: true })
         self.renderDebugger()
       })
     })
@@ -167,6 +167,7 @@ class DebuggerUI {
     yo.update(this.stepManagerView, yo`<div></div>`)
     if (this.vmDebugger) this.vmDebugger.remove()
     if (this.stepManager) this.stepManager.remove()
+    if (this.txBrowser) this.txBrowser.setState({debugging: false})
     this.vmDebugger = null
     this.stepManager = null
     this.event.trigger('traceUnloaded')

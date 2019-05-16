@@ -43,32 +43,16 @@ function TxBrowser () {
   this.blockNumber
   this.txNumber
   this.view
-  this.setDefaultValues()
+  this.debugging = false
 }
 
-TxBrowser.prototype.setDefaultValues = function () {
-  this.connectInfo = ''
-  if (this.view) {
-    yo.update(this.view, this.render())
+TxBrowser.prototype.submit = function () {
+  if (this.debugging) {
+    this.unload()
+  } else {
+    this.event.trigger('requestDebug', [this.blockNumber, this.txNumber])
   }
-}
-
-TxBrowser.prototype.submit = function (tx) {
-  this.event.trigger('requestDebug', [this.blockNumber, this.txNumber, tx])
-}
-
-TxBrowser.prototype.update = function (error, tx) {
-  if (error) {
-    this.view.querySelector('#error').innerHTML = error
-    return
-  }
-
-  if (!tx) {
-    this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
-    return
-  }
-
-  this.view.querySelector('#error').innerHTML = ''
+  yo.update(this.view, this.render())
 }
 
 TxBrowser.prototype.updateBlockN = function (ev) {
@@ -83,9 +67,25 @@ TxBrowser.prototype.load = function (txHash, tx) {
   this.txNumber = txHash
 }
 
-TxBrowser.prototype.unload = function (txHash) {
+TxBrowser.prototype.unload = function () {
   this.event.trigger('unloadRequested')
-  this.setDefaultValues()
+}
+
+TxBrowser.prototype.setState = function (state) {
+  if (state.debugging !== undefined) this.debugging = state.debugging
+  if (state.blockNumber !== undefined) this.blockNumber = state.blockNumber
+  if (state.txNumber !== undefined) this.txNumber = state.txNumber
+  if (this.view) {
+    yo.update(this.view, this.render())
+  }
+}
+
+TxBrowser.prototype.setTx = function (blockNumber, txNumber) {
+  this.blockNumber = blockNumber
+  this.txNumber = txNumber
+  if (this.view) {
+    yo.update(this.view, this.render())
+  }
 }
 
 TxBrowser.prototype.render = function () {
@@ -93,12 +93,11 @@ TxBrowser.prototype.render = function () {
   var view = yo`<div class="${css.container}">
         <div class="${css.txContainer}">
           <div class="${css.txinputs} p-1 input-group">
-            <input class="form-control" class="${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
-            <input class="form-control" class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
+            <input value=${this.blockNumber || ''} class="form-control ${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
+            <input value=${this.txNumber || ''} class="form-control ${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
           </div>
           <div class="${css.txbuttons} btn-group p-1">
-            <button class='btn btn-primary btn-sm' id='load' class='${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}>Start debugging</button>
-            <button class='btn btn-primary btn-sm' id='unload' class='${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}>Stop</button>
+            <button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.debugging ? 'Stop' : 'Start'} debugging</button>
           </div>
         </div>
         <span id='error'></span>
