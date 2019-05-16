@@ -160,15 +160,6 @@ Ethdebugger.prototype.updateWeb3 = function (web3) {
   this.setManagers()
 }
 
-Ethdebugger.prototype.debug = function (tx) {
-  this.setCompilationResult(this.opts.compilationResult())
-  if (tx instanceof Object) {
-    this.txBrowser.load(tx.hash)
-  } else if (tx instanceof String) {
-    this.txBrowser.load(tx)
-  }
-}
-
 Ethdebugger.prototype.unLoad = function () {
   this.traceManager.init()
   this.codeManager.clear()

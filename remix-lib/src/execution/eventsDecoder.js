@@ -1,5 +1,4 @@
 'use strict'
-var ethJSUtil = require('ethereumjs-util')
 var ethers = require('ethers')
 var txHelper = require('./txHelper')
 
@@ -39,10 +38,10 @@ class EventsDecoder {
 
   _eventABI (contract) {
     var eventABI = {}
-    var abi = new ethers.Interface(contract.abi)
+    var abi = new ethers.utils.Interface(contract.abi)
     for (var e in abi.events) {
       var event = abi.events[e]
-      eventABI[ethJSUtil.sha3(Buffer.from(event.signature)).toString('hex')] = { event: event.name, inputs: event.inputs, object: event }
+      eventABI[event.topic.replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
     }
     return eventABI
   }
@@ -64,6 +63,21 @@ class EventsDecoder {
     return null
   }
 
+  _stringifyBigNumber (value) {
+    return value._ethersType === 'BigNumber' ? value.toString() : value
+  }
+
+  _stringifyEvent (value) {
+    if (value === null || value === undefined) return ' - '
+    if (value._ethersType) value.type = value._ethersType
+    if (Array.isArray(value)) {
+      // for struct && array
+      return value.map((item) => { return this._stringifyEvent(item) })
+    } else {
+      return this._stringifyBigNumber(value)
+    }
+  }
+
   _decodeEvents (tx, logs, contractName, compiledContracts, cb) {
     var eventsABI = this._eventsABI(compiledContracts)
     var events = []
@@ -71,9 +85,14 @@ class EventsDecoder {
       // [address, topics, mem]
       var log = logs[i]
       var topicId = log.topics[0]
-      var abi = this._event(topicId.replace('0x', ''), eventsABI)
-      if (abi) {
-        events.push({ from: log.address, topic: topicId, event: abi.event, args: abi.object.parse(log.topics, log.data) })
+      var eventAbi = this._event(topicId.replace('0x', ''), eventsABI)
+      if (eventAbi) {
+        var decodedlog = eventAbi.abi.parseLog(log)
+        let decoded = {}
+        for (const v in decodedlog.values) {
+          decoded[v] = this._stringifyEvent(decodedlog.values[v])
+        }
+        events.push({ from: log.address, topic: topicId, event: eventAbi.event, args: decoded })
       } else {
         events.push({ from: log.address, data: log.data, topics: log.topics })
       }
