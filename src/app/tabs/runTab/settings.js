@@ -199,32 +199,33 @@ class SettingsUI {
     this.updatePlusButton()
   }
 
-  updatePlusButton() {
-      // enable/disable + button
-      let plusBtn = document.getElementById("remixRunPlus")
-      let plusTitle = document.getElementById("remixRunPlusWraper")
-      switch (this.selectExEnv.value) {
-        case "injected": {
-          plusBtn.classList.add(css.disableMouseEvents)
-          plusTitle.title = "Unfortnately it's not possible to create an account for injected web3, please use the Metamask or other providers"
-        }
-        break;
-        case "vm": {
-          plusBtn.classList.remove(css.disableMouseEvents)
-          plusTitle.title = "Create a new account"
-        }
-        break;
-        case "web3": {
-          if (!this._components.registry.get('config').api.get("settings/personal-mode")) {
-            plusBtn.classList.add(css.disableMouseEvents)
-            plusTitle.title = "Creating an account is possible only in Personal mode. Please go to Settings to enable it."
-          } else {
-            plusBtn.classList.remove(css.disableMouseEvents)
-            plusTitle.title = "Create a new account"
-          }
-        }
-        default:
+  updatePlusButton () {
+    // enable/disable + button
+    let plusBtn = document.getElementById('remixRunPlus')
+    let plusTitle = document.getElementById('remixRunPlusWraper')
+    switch (this.selectExEnv.value) {
+      case 'injected': {
+        plusBtn.classList.add(css.disableMouseEvents)
+        plusTitle.title = "Unfortnately it's not possible to create an account for injected web3, please use the Metamask or other providers"
       }
+        break
+      case 'vm': {
+        plusBtn.classList.remove(css.disableMouseEvents)
+        plusTitle.title = 'Create a new account'
+      }
+        break
+      case 'web3': {
+        if (!this._components.registry.get('config').api.get('settings/personal-mode')) {
+          plusBtn.classList.add(css.disableMouseEvents)
+          plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+        } else {
+          plusBtn.classList.remove(css.disableMouseEvents)
+          plusTitle.title = 'Create a new account'
+        }
+      }
+        break
+      default:
+    }
   }
 
   newAccount () {
