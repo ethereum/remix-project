@@ -1,5 +1,6 @@
 'use strict'
 const remixLib = require('remix-lib')
+const csjs = require('csjs-inject')
 const SourceMappingDecoder = remixLib.SourceMappingDecoder
 const AstWalker = remixLib.AstWalker
 const EventManager = require('../../lib/events')
@@ -115,10 +116,16 @@ class ContextualListener {
     let lastCompilationResult = this._deps.compilersArtefacts['__last']
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0) {
       let lineColumn = this._deps.offsetToLineColumnConverter.offsetToLineColumn(position, position.file, lastCompilationResult.getSourceCode().sources, lastCompilationResult.getAsts())
-      let css = 'highlightreference'
+      const css = csjs`
+        .highlightref_fullLine {
+          position:absolute;
+          z-index:20;
+          opacity: 0.4;
+          background-color: var(--info);
+        }
+        `
       if (node.children && node.children.length) {
         // If node has children, highlight the entire line. if not, just highlight the current source position of the node.
-        css = 'highlightreference'
         lineColumn = {
           start: {
             line: lineColumn.start.line,
@@ -132,7 +139,7 @@ class ContextualListener {
       }
       const fileName = lastCompilationResult.getSourceName(position.file)
       if (fileName) {
-        return this.editor.addMarker(lineColumn, fileName, css)
+        return this.editor.addMarker(lineColumn, fileName, css.highlightref_fullLine.className)
       }
     }
     return null
