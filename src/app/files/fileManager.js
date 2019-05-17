@@ -113,8 +113,10 @@ class FileManager extends FileSystemApi {
     return path ? path[1] : null
   }
 
-  async getCurrentFile () {
-    return this.currentFile()
+  getCurrentFile () {
+    const path = this.currentFile()
+    if (!path) throw new Error('No file selected')
+    return path
   }
 
   getFile (path) {
