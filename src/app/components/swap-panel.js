@@ -11,10 +11,12 @@ const css = csjs`
     text-transform: uppercase;
     white-space: nowrap;
   }
+  .swapitTitle a{
+    cursor: help;
+  }
   .swapitTitle i{
     padding-left:4px;
     font-size:10px;
-    
   }
   .swapitHeader {
     height: 35px;
@@ -60,13 +62,17 @@ export class SwapPanel extends AbstractPanel {
   /** The header of the swap panel */
   renderHeader () {
     let name = ' - '
+    let docLink = ''
     if (this.active) {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
+      const docsRoot = 'https://remix.readthedocs.io/en/docsnewlayout/'
+      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><sup><i aria-hidden="true" class="fas fa-asterisk"></i></sup></a>` : ''
     }
+
     return yo`
     <header class="${css.swapitHeader}">
-      <h6 class="${css.swapitTitle}">${name} <a href="https://remix.readthedocs.io/en/docsnewlayout/file_explorer.html" title="link to documentation" target="_new"><sup><i aria-hidden="true" class="fas fa-asterisk"></i></sup></h6>
+  <h6 class="${css.swapitTitle}">${name}${docLink}</h6>
       </div>
     </header>`
   }

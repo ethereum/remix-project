@@ -36,7 +36,7 @@ const profile = {
   description: ' - ',
   kind: 'fileexplorer',
   location: 'swapPanel',
-  documentation: 'https://remix.readthedocs.io/en/file_explorer.html'
+  documentation: 'file_explorer.html'
 }
 
 module.exports = class Filepanel extends BaseApi {
