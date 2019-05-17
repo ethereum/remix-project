@@ -99,7 +99,7 @@ class Settings {
       try {
         addTooltip('Please check your provider to approve')
         executionContext.web3().eth.sign(account, hashedMsg, (error, signedData) => {
-          cb(error, hashedMsg, signedData)
+          cb(error.message, hashedMsg, signedData)
         })
       } catch (e) {
         cb(e.message)
@@ -111,7 +111,7 @@ class Settings {
     try {
       var personal = new Personal(executionContext.web3().currentProvider)
       personal.sign(hashedMsg, account, passphrase, (error, signedData) => {
-        cb(error, hashedMsg, signedData)
+        cb(error.message, hashedMsg, signedData)
       })
     } catch (e) {
       cb(e.message)

@@ -4,7 +4,7 @@ const csjs = require('csjs-inject')
 const css = csjs`
   .dragbar            {
     position          : absolute;
-    top               : 29px;
+    top               : 0px;
     width             : 0.5em;
     right             : 0;
     bottom            : 0;

@@ -184,10 +184,7 @@ class CompileTab extends CompilerApi {
     return contractList.length !== 0
     ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
-      <h6 class="bg-light input-group mt-3 mb-1 ${css.compilerArticle}">
-        Compilation result for <label class="border-0 px-1 text-dark">${sourceFile}</label>
-      </h6>
-      <div class="input-group-prepend">
+      <div class="navbar navbar-light bg-light input-group mb-3">
           <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
           <select onchange="${e => this.selectContract(e.target.value)}" onload="${e => { this.selectedContract = e.value }}" id="compiledContracts" class="custom-select">
           ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
@@ -369,12 +366,10 @@ class CompileTab extends CompilerApi {
   render () {
     if (this._view.el) return this._view.el
     this.listenToEvents()
-    this.compilerContainer.activate()
-
     this._view.errorContainer = yo`<div class="${css.errorBlobs}"></div>`
     this._view.contractSelection = this.contractSelection()
     this._view.compilerContainer = this.compilerContainer.render()
-
+    this.compilerContainer.activate()
     this._view.el = yo`
       <div id="compileTabView">
         ${this._view.compilerContainer}

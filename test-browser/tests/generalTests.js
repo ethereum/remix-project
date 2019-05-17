@@ -164,7 +164,7 @@ function checkDeployShouldSucceed (browser, address, callback) {
 
 function testSignature (browser, callback) {
   let hash, signature
-  browser.clickLaunchIcon('run').pause(4000).perform((client, done) => {
+  browser.perform((client, done) => {
     contractHelper.signMsg(browser, 'test message', (h, s) => {
       hash = h
       signature = s

@@ -54,19 +54,13 @@ export class SwapPanel extends AbstractPanel {
   /** The header of the swap panel */
   renderHeader () {
     let name = ' - '
-    let hasSettings = false
     if (this.active) {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
-      hasSettings = profile.settings || false
     }
     return yo`
     <header class="${css.swapitHeader}">
       <h6 class="${css.swapitTitle}">${name}</h6>
-      <div class="${css.icons}">
-        ${hasSettings
-            ? yo`<i class="fas fa-cog"></i>`
-            : yo`<i></i>`}
       </div>
     </header>`
   }
