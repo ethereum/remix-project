@@ -4,6 +4,7 @@ let globalRegistry = require('../../../global/registry')
 let CompilerImport = require('../../compiler/compiler-imports')
 var modalDialogCustom = require('../modal-dialog-custom')
 var tooltip = require('../tooltip')
+var QueryParams = require('../../../lib/query-params.js')
 
 let css = csjs`
   .text {
@@ -174,6 +175,11 @@ export class LandingPage extends BaseApi {
       }
     })
 
+    let switchToPreviousVersion = () => {
+      const query = new QueryParams()
+      query.update({appVersion: '0.7.7'})
+      document.location.reload()
+    }
     let container = yo`<div class="${css.homeContainer} bg-light">
       <div class="${css.jumbotronContainer}">
         <div class="alert alert-info clearfix ${css.thisJumboton}">
@@ -185,6 +191,7 @@ export class LandingPage extends BaseApi {
           </div>
           <div class="${css.jumboBtnContainer}">
             <button class="btn btn-primary btn-lg" href="#" onclick=${() => { learnMore() }} role="button">Learn more</button>
+            <button class="btn btn-secondary btn-lg" onclick=${() => { switchToPreviousVersion() }}>Switch to the previous version</button>
           </div>
         </div><!-- end of jumbotron -->
       </div><!-- end of jumbotron container -->
