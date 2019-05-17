@@ -223,7 +223,7 @@ class SettingsUI {
 
       var signMessageDialog = { 'title': 'Sign a message', 'text': 'Enter a message to sign', 'inputvalue': 'Message to sign' }
       var $txOrigin = this.el.querySelector('#txorigin')
-      if (!$txOrigin.selectedOptions[0] && this.settings.isInjectedWeb3()) {
+      if (!$txOrigin.selectedOptions[0] && (this.settings.isInjectedWeb3() || this.settings.isWeb3Provider())) {
         return addTooltip(`Account list is empty, please make sure the current provider is properly connected to remix`)
       }
 

@@ -3,6 +3,8 @@ const csjs = require('csjs-inject')
 const EventEmitter = require('events')
 const LocalPlugin = require('./local-plugin')
 import { Plugin, BaseApi } from 'remix-plugin'
+import { PluginManagerSettings } from './plugin-manager-settings'
+const addToolTip = require('../ui/tooltip')
 
 const css = csjs`
   .pluginSearch {
@@ -108,11 +110,15 @@ class PluginManagerComponent extends BaseApi {
     try {
       const profile = await this.localPlugin.open(this.store.getAll())
       if (!profile) return
+      if (this.store.ids.includes(profile.name)) {
+        throw new Error('This name has already been used')
+      }
       this.appManager.registerOne(new Plugin(profile))
       this.appManager.activateOne(profile.name)
     } catch (err) {
       // TODO : Use an alert to handle this error instead of a console.log
       console.log(`Cannot create Plugin : ${err.message}`)
+      addToolTip(`Cannot create Plugin : ${err.message}`)
     }
   }
 
@@ -152,14 +158,16 @@ class PluginManagerComponent extends BaseApi {
       </nav>`
       : ''
 
+    const settings = new PluginManagerSettings().render()
+
     const rootView = yo`
       <div id='pluginManager'>
-        <div class="form-group ${css.pluginSearch}">
+        <header class="form-group ${css.pluginSearch}">
           <input onkeyup="${e => this.filterPlugins(e)}" class="form-control" placeholder="Search">
           <button onclick="${_ => this.openLocalPlugin()}" class="btn btn-sm text-info ${css.localPluginBtn}">
             Connect to a Local Plugin
           </button>
-        </div>
+        </header>
         <section>
           ${activeTile}
           <div class="list-group list-group-flush">
@@ -170,6 +178,7 @@ class PluginManagerComponent extends BaseApi {
             ${inactives.map(name => this.renderItem(name))}
           </div>
         </section>
+        ${settings}
       </div>
     `
     if (!this.views.root) this.views.root = rootView

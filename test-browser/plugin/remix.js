@@ -64,7 +64,10 @@ window.onload = function () {
       action: 'request',
       key: 'udapp',
       type: 'createVMAccount',
-      value: ['71975fbf7fe448e004ac7ae54cad0a383c3906055a75468714156a07385e96ce', '0x56BC75E2D63100000'],
+      value: [{
+        privateKey: '71975fbf7fe448e004ac7ae54cad0a383c3906055a75468714156a07385e96ce',
+        balance: '0x56BC75E2D63100000'
+      }],
       id: 38
     }), '*')
   })
