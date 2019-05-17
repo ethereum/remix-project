@@ -7,13 +7,12 @@ var css = csjs`
     justify-content: space-between;
     align-items: center;
     position: fixed;
-    color: var(--primary)
     min-height: 50px;
     padding: 16px 24px 12px;
     border-radius: 3px;
     bottom: -300;
     left: 40%;
-    font-size: 12px;
+    font-size: 14px;
     text-align: center;
     bottom: 0;
   }
