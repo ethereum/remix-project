@@ -206,7 +206,7 @@ class SettingsUI {
     switch (this.selectExEnv.value) {
       case 'injected': {
         plusBtn.classList.add(css.disableMouseEvents)
-        plusTitle.title = "Unfortnately it's not possible to create an account for injected web3, please use the Metamask or other providers"
+        plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
       }
         break
       case 'vm': {
