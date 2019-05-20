@@ -24,8 +24,11 @@ class SettingsUI {
 
     this._components.registry = globalRegistry
     this._deps = {
-      networkModule: this._components.registry.get('network').api
+      networkModule: this._components.registry.get('network').api,
+      config: this._components.registry.get('config').api
     }
+
+    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
 
     setInterval(() => {
       this.updateAccountBalances()
@@ -87,7 +90,7 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <span id="remixRunPlusWraper" title="Create a new account">
+          <span id="remixRunPlusWraper" title="Create a new account" onload=${this.updatePlusButton.bind(this)}>
             <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
           </span>
         </div>
@@ -215,16 +218,22 @@ class SettingsUI {
       }
         break
       case 'web3': {
-        if (!this._components.registry.get('config').api.get('settings/personal-mode')) {
-          plusBtn.classList.add(css.disableMouseEvents)
-          plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
-        } else {
-          plusBtn.classList.remove(css.disableMouseEvents)
-          plusTitle.title = 'Create a new account'
-        }
+        this.onPersonalChange()
       }
         break
       default:
+    }
+  }
+
+  onPersonalChange () {
+    let plusBtn = document.getElementById('remixRunPlus')
+    let plusTitle = document.getElementById('remixRunPlusWraper')
+    if (!this._deps.config.get('settings/personal-mode')) {
+      plusBtn.classList.add(css.disableMouseEvents)
+      plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+    } else {
+      plusBtn.classList.remove(css.disableMouseEvents)
+      plusTitle.title = 'Create a new account'
     }
   }
 
