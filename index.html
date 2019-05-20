@@ -27,14 +27,59 @@
 		THE SOFTWARE.
 		-->
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
-		<title>Remix - Solidity IDE</title>
+		<title>Remix - Ethereum IDE</title>
 		<link rel="stylesheet" id="theme-link"/>
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 		<link rel="stylesheet" href="assets/css/pygment_trac.css">
 		<link rel="icon" type="x-icon" href="icon.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 	<body>
-		<script src="build/app.js"></script>
+		<script>
+				function  urlParams () {
+					var qs = window.location.hash.substr(1)
+
+					if (window.location.search.length > 0) {
+						// use legacy query params instead of hash
+						window.location.hash = window.location.search.substr(1)
+						window.location.search = ''
+					}
+
+					var params = {}
+					var parts = qs.split('&')
+					for (var x in parts) {
+						var keyValue = parts[x].split('=')
+						if (keyValue[0] !== '') {
+							params[keyValue[0]] = keyValue[1]
+						}
+					}	
+					return params
+				}
+        const defaultVersion = window.location.hostname === 'remix.ethereum.org' ? '0.7.7' : '0.8.0'
+        let versionToLoad = urlParams().appVersion ? urlParams().appVersion : defaultVersion
+                
+				let assets = {
+						'0.8.0': ['https://use.fontawesome.com/releases/v5.8.1/css/all.css', 'assets/css/pygment_trac.css'],
+						'0.7.7': ['assets/css/font-awesome.min.css', 'assets/css/pygment_trac.css']
+				}
+				let versions = {
+						'0.7.7': 'assets/js/0.7.7/app.js', // commit 7b5c7ae3de935e0ccc32eadfd83bf7349478491e
+						'0.8.0': 'build/app.js'
+				}
+				for (let k in assets[versionToLoad]) {
+          let app = document.createElement('link')
+          app.setAttribute('rel', 'stylesheet')
+          app.setAttribute('href', assets[versionToLoad][k])
+          if (assets[versionToLoad][k] === 'https://use.fontawesome.com/releases/v5.8.1/css/all.css') {
+            app.setAttribute('integrity', 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf')
+            app.setAttribute('crossorigin', 'anonymous')
+          }
+          document.head.appendChild(app)
+        }
+				window.onload = () => {
+					let app = document.createElement('script')
+					app.setAttribute('src', versions[versionToLoad])
+					document.body.appendChild(app)
+				}				
+		</script>
 	</body>
 </html>
