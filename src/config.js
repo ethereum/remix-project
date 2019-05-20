@@ -28,6 +28,7 @@ function Config (storage) {
     this.items[key] = content
     try {
       storage.set(CONFIG_FILE, JSON.stringify(this.items))
+      event.emit(key+'_changed', content)
     } catch (exception) {
     }
   }
