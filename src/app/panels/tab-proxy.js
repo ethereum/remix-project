@@ -59,7 +59,8 @@ export class TabProxy {
           () => {
             this.event.emit('closeApp', name)
             this.appManager.deactivateOne(name)
-          }
+          },
+          profile.icon
         )
         this.switchTab(name)
       }
@@ -105,7 +106,7 @@ export class TabProxy {
     this._view.filetabs.activateTab(name)
   }
 
-  addTab (name, title, switchTo, close, kind) {
+  addTab (name, title, switchTo, close, icon) {
     if (this._handlers[name]) return
 
     var slash = name.split('/')
@@ -115,7 +116,7 @@ export class TabProxy {
     this._view.filetabs.addTab({
       id: name,
       title,
-      icon: '',
+      icon,
       tooltip: name
     })
     this._handlers[name] = { switchTo, close }
