@@ -39,8 +39,12 @@ function notAllowWarning (from, to) {
 export class PermissionHandler {
 
   constructor () {
+    this.permissions = this._getFromLocal()
+  }
+
+  _getFromLocal() {
     const permission = localStorage.getItem('plugins/permissions')
-    this.permissions = permission ? JSON.parse(permission) : {}
+    return permission ? JSON.parse(permission) : {}
   }
 
   persistPermissions () {
@@ -101,6 +105,7 @@ export class PermissionHandler {
    * @returns {Promise<boolean>}
    */
   async askPermission (from, to) {
+    this.permissions = this._getFromLocal()
     if (!this.permissions[to.name]) this.permissions[to.name] = {}
     if (!this.permissions[to.name][from.name]) return this.openPermission(from, to)
 
