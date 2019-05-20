@@ -69,7 +69,7 @@ export class SwapPanel extends AbstractPanel {
       const docsRoot = 'https://remix.readthedocs.io/en/latest/'
       docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><sup><i aria-hidden="true" class="fas fa-book"></i></sup></a>` : ''
     }
-    
+
     return yo`
     <header class="${css.swapitHeader}">
   <h6 class="${css.swapitTitle}">${name}${docLink}</h6>
