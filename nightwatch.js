@@ -16,8 +16,8 @@ module.exports = {
       'selenium_host': 'ondemand.saucelabs.com',
       'selenium_port': 80,
       'silent': true,
-      'username': 'chriseth',
-      'access_key': 'b781828a-9e9c-43d8-89d4-2fbb879595ca',
+      'username': 'yanneth',
+      'access_key': '1f5a4560-b02b-41aa-b52b-f033aad30870',
       'use_ssl': false,
       'globals': {
         'waitForConditionTimeout': 10000,
@@ -78,7 +78,7 @@ module.exports = {
       'selenium_port': 4444,
       'selenium_host': 'localhost',
       'desiredCapabilities': {
-        'browserName': 'firefox',
+        'browserName': 'chrome',
         'javascriptEnabled': true,
         'acceptSslCerts': true
       }

@@ -178,6 +178,9 @@ var css = csjs`
     border-radius: 3px;
     margin-left: 5px;
   }
+  .disableMouseEvents {
+    pointer-events: none;
+  }
   .icon {
     cursor: pointer;
     font-size: 12px;

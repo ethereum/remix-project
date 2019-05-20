@@ -66,10 +66,10 @@ export class SwapPanel extends AbstractPanel {
     if (this.active) {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
-      const docsRoot = 'https://remix.readthedocs.io/en/docsnewlayout/'
-      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><sup><i aria-hidden="true" class="fas fa-asterisk"></i></sup></a>` : ''
+      const docsRoot = 'https://remix.readthedocs.io/en/latest/'
+      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><sup><i aria-hidden="true" class="fas fa-book"></i></sup></a>` : ''
     }
-
+    
     return yo`
     <header class="${css.swapitHeader}">
   <h6 class="${css.swapitTitle}">${name}${docLink}</h6>
