@@ -218,14 +218,14 @@ class SettingsUI {
       }
         break
       case 'web3': {
-        onPersonalChange()
+        this.onPersonalChange()
       }
         break
       default:
     }
   }
 
-  onPersonalChange() {
+  onPersonalChange () {
     let plusBtn = document.getElementById('remixRunPlus')
     let plusTitle = document.getElementById('remixRunPlusWraper')
     if (!this._deps.config.get('settings/personal-mode')) {
