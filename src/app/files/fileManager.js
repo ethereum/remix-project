@@ -22,7 +22,7 @@ const profile = {
 
 // File System profile
 // - events: ['currentFileChanged']
-// - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile']
+// - methods: ['getFolder', 'getCurrentFile', 'getFile', 'setFile', 'switchFile']
 
 class FileManager extends FileSystemApi {
   constructor (localRegistry) {
@@ -113,10 +113,9 @@ class FileManager extends FileSystemApi {
     return path ? path[1] : null
   }
 
-  async getCurrentFile () {
+  getCurrentFile () {
     const path = this.currentFile()
-    if (!path) throw new Error('no file selected')
-    console.log('Get current File', path)
+    if (!path) throw new Error('No file selected')
     return path
   }
 
