@@ -120,7 +120,7 @@ export class LandingPage extends BaseApi {
       })
     }
 
-    let learnMore = () => { window.open('https://remix.readthedocs.io/en/docsnewlayout/layout.html', '_blank') }
+    let learnMore = () => { window.open('https://remix.readthedocs.io/en/latest/layout.html', '_blank') }
 
     let closeAll = () => {
       this.appStore.getActives()
