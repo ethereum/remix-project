@@ -69,7 +69,6 @@ Debugger.prototype.updateWeb3 = function (web3) {
 }
 
 Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
-  const self = this
   let web3 = this.debugger.web3
 
   return new Promise((resolve, reject) => {
@@ -81,25 +80,23 @@ Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
       if (!tx.to) {
         tx.to = traceHelper.contractCreationToken('0')
       }
-      self.debugTx(tx, loadingCb)
+      this.debugTx(tx, loadingCb)
       return resolve()
     }
 
     try {
       if (txNumber.indexOf('0x') !== -1) {
-        return web3.eth.getTransaction(txNumber, function (_error, result) {
+        return web3.eth.getTransaction(txNumber, (_error, tx) => {
           if (_error) return reject(_error)
-          if (!result) return reject('cannot find transaction ' + txNumber)
-          let tx = result
-          self.debugTx(tx, loadingCb)
+          if (!tx) return reject('cannot find transaction ' + txNumber)
+          this.debugTx(tx, loadingCb)
           return resolve()
         })
       }
-      web3.eth.getTransactionFromBlock(blockNumber, txNumber, function (_error, result) {
+      web3.eth.getTransactionFromBlock(blockNumber, txNumber, (_error, tx) => {
         if (_error) return reject(_error)
-        if (!result) return reject('cannot find transaction ' + blockNumber + ' ' + txNumber)
-        let tx = result
-        self.debugTx(tx, loadingCb)
+        if (!tx) return reject('cannot find transaction ' + blockNumber + ' ' + txNumber)
+        this.debugTx(tx, loadingCb)
         return resolve()
       })
     } catch (e) {
