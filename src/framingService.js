@@ -1,9 +1,9 @@
 export default {
-  start: (appStore, swapPanel, verticalIcon, mainPanel, resizeFeature) => {
-    swapPanel.events.on('toggle', () => {
+  start: (appStore, sidePanel, verticalIcon, mainPanel, resizeFeature) => {
+    sidePanel.events.on('toggle', () => {
       resizeFeature.panel1.clientWidth !== 0 ? resizeFeature.minimize() : resizeFeature.maximise()
     })
-    swapPanel.events.on('showing', () => {
+    sidePanel.events.on('showing', () => {
       resizeFeature.panel1.clientWidth === 0 ? resizeFeature.maximise() : ''
     })
     mainPanel.events.on('toggle', () => {
