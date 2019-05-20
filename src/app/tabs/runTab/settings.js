@@ -87,7 +87,9 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <i class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)} title="Create a new account"></i>
+          <span id="remixRunPlusWraper" title="Create a new account">
+            <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
+          </span>
         </div>
         <div class=${css.account}>
           <select name="txorigin" class="form-control ${css.select}" id="txorigin"></select>
@@ -194,6 +196,36 @@ class SettingsUI {
     this.event.trigger('clearInstance', [])
     this.updateNetwork()
     this.fillAccountsList()
+    this.updatePlusButton()
+  }
+
+  updatePlusButton () {
+    // enable/disable + button
+    let plusBtn = document.getElementById('remixRunPlus')
+    let plusTitle = document.getElementById('remixRunPlusWraper')
+    switch (this.selectExEnv.value) {
+      case 'injected': {
+        plusBtn.classList.add(css.disableMouseEvents)
+        plusTitle.title = "Unfortunately it's not possible to create an account using injected web3. Please create the account directly from your provider (i.e metamask or other of the same type)."
+      }
+        break
+      case 'vm': {
+        plusBtn.classList.remove(css.disableMouseEvents)
+        plusTitle.title = 'Create a new account'
+      }
+        break
+      case 'web3': {
+        if (!this._components.registry.get('config').api.get('settings/personal-mode')) {
+          plusBtn.classList.add(css.disableMouseEvents)
+          plusTitle.title = 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+        } else {
+          plusBtn.classList.remove(css.disableMouseEvents)
+          plusTitle.title = 'Create a new account'
+        }
+      }
+        break
+      default:
+    }
   }
 
   newAccount () {
