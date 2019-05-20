@@ -17,7 +17,7 @@ module.exports = function (browser, callback) {
 }
 
 function initModules (browser, callback) {
-  browser.click('#icon-panel div[plugin="pluginManager"]')
+  browser.pause(3000).click('#icon-panel div[plugin="pluginManager"]')
   .execute(function () {
     document.querySelector('div[id="pluginManager"]').scrollTop = document.querySelector('div[id="pluginManager"]').scrollHeight
   }, [], function () {

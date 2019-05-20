@@ -30,7 +30,10 @@ module.exports = class SettingsTab extends BaseApi {
     }
     this._view = { /* eslint-disable */
       el: null,
-      optionVM: null, personal: null, warnPersonalMode: null, generateContractMetadata: null,
+      optionVM: null,
+      personal: null,
+      warnPersonalMode: null,
+      generateContractMetadata: null,
       config: {
         general: null, themes: null
       }
@@ -73,12 +76,6 @@ module.exports = class SettingsTab extends BaseApi {
     if (this.config.get('settings/always-use-vm')) this._view.optionVM.setAttribute('checked', '')
     this._view.personal = yo`<input onchange=${onchangePersonal} id="personal" type="checkbox" class="align-middle form-check-input">`
     if (this.config.get('settings/personal-mode')) this._view.personal.setAttribute('checked', '')
-    var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
-    This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
-    Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...).
-    It is not recommended (and also most likely not relevant) to use this mode with an injected provider (Mist, Metamask, ...) or with JavaScript VM.
-    Remix never persist any passphrase.`.split('\n').map(s => s.trim()).join(' ')
-    this._view.warnPersonalMode = yo`<i title=${warnText} class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
     this._view.generateContractMetadata = yo`<input onchange=${onchangeGenerateContractMetadata} id="generatecontractmetadata" type="checkbox" class="form-check-input">`
 
     if (this.config.get('settings/generate-contract-metadata')) this._view.generateContractMetadata.setAttribute('checked', '')
@@ -95,6 +92,13 @@ module.exports = class SettingsTab extends BaseApi {
       <button class="btn btn-primary sm-1" onclick="${() => { window.open('https://gitter.im/ethereum/remix') }}">Gitter Channel</button>
       </div>
     </div>`
+
+    var warnText = `Transaction sent over Web3 will use the web3.personal API - be sure the endpoint is opened before enabling it.
+    This mode allows to provide the passphrase in the Remix interface without having to unlock the account.
+    Although this is very convenient, you should completely trust the backend you are connected to (Geth, Parity, ...).
+    Remix never persist any passphrase.`.split('\n').map(s => s.trim()).join(' ')
+    this._view.warnPersonalMode = yo`<i class="${css.icon} fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>`
+
     this._view.config.general = yo`
       <div class="${css.info} card">
         <div class="card-body">
@@ -113,7 +117,7 @@ module.exports = class SettingsTab extends BaseApi {
           </div>
           <div class="form-check ${css.frow}">
             <div>${this._view.personal}></div>
-            <label class="form-check-label align-middle" for="personal">Enable Personal Mode ${this._view.warnPersonalMode}></label>
+            <label class="form-check-label align-middle" for="personal"> ${this._view.warnPersonalMode} Enable Personal Mode for web3 provider. ${warnText}></label>
           </div>
         </div>
       </div>

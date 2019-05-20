@@ -29,7 +29,7 @@ class Toaster {
       const shortTooltipText = tooltipText.length > 201 ? tooltipText.substring(0, 200) + '...' : tooltipText
 
       this.tooltip = yo`
-    <div class="${css.tooltip} bg-secondary" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
+    <div class="${css.tooltip} alert alert-info" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
       <span>${shortTooltipText}<button class="btn btn-secondary btn-sm" onclick=${() => { modal.alert(tooltipText) }}>show full message</button></span>
       ${action}
     </div>`

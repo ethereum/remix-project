@@ -40,52 +40,39 @@ var css = csjs`
 function TxBrowser () {
   this.event = new EventManager()
 
-  this.blockNumber
-  this.txNumber
+  this.state = {
+    txNumber: undefined,
+    debugging: false
+  }
   this.view
-  this.setDefaultValues()
 }
 
-TxBrowser.prototype.setDefaultValues = function () {
-  this.connectInfo = ''
-  if (this.view) {
-    yo.update(this.view, this.render())
+TxBrowser.prototype.submit = function () {
+  if (this.state.debugging) {
+    this.unload()
+  } else {
+    this.event.trigger('requestDebug', [undefined, this.state.txNumber])
   }
-}
-
-TxBrowser.prototype.submit = function (tx) {
-  this.event.trigger('requestDebug', [this.blockNumber, this.txNumber, tx])
-}
-
-TxBrowser.prototype.update = function (error, tx) {
-  if (error) {
-    this.view.querySelector('#error').innerHTML = error
-    return
-  }
-
-  if (!tx) {
-    this.view.querySelector('#error').innerHTML = 'Cannot find transaction with reference. Block number: ' + this.blockNumber + '. Transaction index/hash: ' + this.txNumber
-    return
-  }
-
-  this.view.querySelector('#error').innerHTML = ''
-}
-
-TxBrowser.prototype.updateBlockN = function (ev) {
-  this.blockNumber = ev.target.value
+  yo.update(this.view, this.render())
 }
 
 TxBrowser.prototype.updateTxN = function (ev) {
-  this.txNumber = ev.target.value
+  this.state.txNumber = ev.target.value
 }
 
 TxBrowser.prototype.load = function (txHash, tx) {
-  this.txNumber = txHash
+  this.state.txNumber = txHash
 }
 
-TxBrowser.prototype.unload = function (txHash) {
+TxBrowser.prototype.unload = function () {
   this.event.trigger('unloadRequested')
-  this.setDefaultValues()
+}
+
+TxBrowser.prototype.setState = function (state) {
+  this.state = {...this.state, ...state}
+  if (this.view) {
+    yo.update(this.view, this.render())
+  }
 }
 
 TxBrowser.prototype.render = function () {
@@ -93,17 +80,17 @@ TxBrowser.prototype.render = function () {
   var view = yo`<div class="${css.container}">
         <div class="${css.txContainer}">
           <div class="${css.txinputs} p-1 input-group">
-            <input class="form-control" class="${css.txinput}" onkeyup=${function () { self.updateBlockN(arguments[0]) }} type='text' placeholder=${'Block number'} />
-            <input class="form-control" class="${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction index or hash'} />
+            <input value="${this.state.txNumber || ''}" class="form-control ${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction hash'} />
           </div>
           <div class="${css.txbuttons} btn-group p-1">
-            <button class='btn btn-primary btn-sm' id='load' class='${css.txbutton}' title='start debugging' onclick=${function () { self.submit() }}>Start debugging</button>
-            <button class='btn btn-primary btn-sm' id='unload' class='${css.txbutton}' title='stop debugging' onclick=${function () { self.unload() }}>Stop</button>
+            <button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>
           </div>
         </div>
         <span id='error'></span>
       </div>`
-
+  if (this.state.debugging) {
+    view.querySelectorAll('input').forEach(element => { element.setAttribute('disabled', '') })
+  }
   if (!this.view) {
     this.view = view
   }
