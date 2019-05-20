@@ -42,7 +42,7 @@ export class PermissionHandler {
     this.permissions = this._getFromLocal()
   }
 
-  _getFromLocal() {
+  _getFromLocal () {
     const permission = localStorage.getItem('plugins/permissions')
     return permission ? JSON.parse(permission) : {}
   }
