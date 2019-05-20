@@ -28,7 +28,7 @@ class SettingsUI {
       config: this._components.registry.get('config').api
     }
 
-    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange)
+    this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
 
     setInterval(() => {
       this.updateAccountBalances()
