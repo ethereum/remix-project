@@ -90,7 +90,7 @@ class SettingsUI {
       <div class="${css.crow}">
         <div class="${css.col1_1}">
           Account
-          <span id="remixRunPlusWraper" title="Create a new account">
+          <span id="remixRunPlusWraper" title="Create a new account" onload=${this.updatePlusButton.bind(this)}>
             <i id="remixRunPlus" class="fas fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${this.newAccount.bind(this)}"></i>
           </span>
         </div>
