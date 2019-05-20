@@ -25,51 +25,64 @@ Useful links:
 
 - `Ðapp Developer resources (Ethereum wiki) <https://github.com/ethereum/wiki/wiki/Dapp-Developer-Resources>`__
 
+.. toctree::
+   :maxdepth: 2
+   :caption: New Layout Intro
+
+   layout
 
 .. toctree::
    :maxdepth: 2
-   :caption: Quick start
-
-   packages
-   solidity_editor
-   compile_tab
-   quickstart_javascript_vm
-   settings_tab
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Deploy and test
-
-   run_tab
-   udapp
-   contract_metadata
-   unittesting_tab
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Other Remix features
+   :caption: Tour of default modules
 
    file_explorer
-   debugger_tab
-   analysis_tab
+   plugin_manager
+   settings
+   solidity_editor
    terminal
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tutorials and workshops
+   :caption: Tour of typical solidity modules
 
-   workshop_Building_smart_contracts_with_Remix
-   tutorial_eattheblock
-   tutorial_remixd_filesystem
-   tutorial_debug
-   tutorial_import
-   tutorial_mist
+   compile
+   run
+   udapp
+   debugger
+   static_analysis
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Using Remix
+   
+   contract_metadata
+   create_deploy
+   import
+   remixd
+   unittesting
+   
+.. toctree::
+   :maxdepth: 2
+   :caption: Building Plugins
+
+   remix_plugin.md
+
+.. toctree::
+   :maxdepth: 2
+   :caption: URLs & Downloads
+
+   locations
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorials and workshops slides
+
+   remix_tutorials_github
 
 .. toctree::
    :maxdepth: 2
    :caption: Code contribution guide
 
    code_contribution_guide
-   Community
-   support_tab
+   community
+   support

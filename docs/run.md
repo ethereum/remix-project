@@ -1,10 +1,13 @@
-Running transactions
-====================
+Run & Deploy
+============
 
-The Run tab is an important section of Remix. It allows you to send
-transactions to the current environment.
+The Run tab allows you to send transactions to the current environment.
 
-![image](images/remix_runtab.png)
+To get to the Run & Deploy module - click the run icon in the icon panel.
+
+In order to use this module you need to have a contract compiled.  So if there is file name in the contract pulldown menu ( in the image below it's the pulldown that says **Ballot**), then you can interact with this contract.  If nothing is there - then you need to select a contract - make it the active contract in the main panel, ( in the image below - on the right side of the page - in the main panel - you see the ballot.sol so it is the active contract) then go to the compiler module and compile it.
+
+![](images/a-runtab1.png)
 
 Run Setup
 ---------
@@ -20,7 +23,7 @@ Environment:
     blockchain from scratch, the old one will not be saved.
 
 -   `Injected Provider`: Remix will connect to an injected
-    web3 provider. `Mist` and `Metamask` are example of
+    web3 provider. `Metamask` is an example of
     providers that inject web3, thus can be used with this
     option.
 
@@ -37,7 +40,7 @@ Environment:
 -   Value: the amount of value for the next created transaction (this
      value is always reset to 0 after each transaction execution).
 
- ![image](images/remix_runtab_example.png)
+ ![](images/a-Runtab-deploy-atAddress.png)
 
 Initiate Instance
 -----------------
@@ -50,7 +53,7 @@ This section contains the list of compiled contracts and 2 actions:
     when using this feature, and be sure you trust the contract at that
     address.
 
--   `Create` send a transaction that deploys the selected contract. When
+-   `Deploy` send a transaction that deploys the selected contract. When
     the transaction is mined, the newly created instance will be added
     (this might take several seconds). Note that if the `constructor`
     has parameters, you need to specify them.
@@ -96,7 +99,7 @@ We can find many use cases for the recorder, for instance:
     -   Working in a dev environment does often require to setup the
         state in a first place.
 
-![image](images/remix_recorder.png)
+![](images/a-runtab-recorder.png)
 
 Saving a record ends up with the creation of this type of content (see
 below):
@@ -120,7 +123,8 @@ Input parameters are `1` and
 all these transactions are created using the value of the accounts
 `account{0}`.
 
-``` {.sourceCode .none}
+``` 
+{.sourceCode .none}
 {
 "accounts": {
     "account{0}": "0xca35b7d915458ef540ade6068dfe2f44e8fa733c"

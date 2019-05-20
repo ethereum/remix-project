@@ -1,9 +1,9 @@
 Unit Testing
 ============
 
-The unit testing tab allows to run unit testing.
+Click the "double check" icon to get to the unit testing plugin.  If you don't see this icon, go to the plugin manager and load up the unit testing plugin.
 
-![image](images/remix_unittest.png)
+![](images/a-unit-testing1.png)
 
 Generate test File
 ------------------
