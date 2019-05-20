@@ -49,7 +49,7 @@ import framingService from './framingService'
 import { MainView } from './app/panels/main-view'
 import { ThemeModule } from './app/tabs/theme-module'
 import { NetworkModule } from './app/tabs/network-module'
-import { SwapPanel } from './app/components/swap-panel'
+import { SidePanel } from './app/components/side-panel'
 import { MainPanel } from './app/components/main-panel'
 import { HiddenPanel } from './app/components/hidden-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
@@ -90,7 +90,7 @@ var css = csjs`
     user-select        : none;
     /* border-right       : 1px solid var(--primary); */
   }
-  .swappanel          {
+  .sidepanel          {
     display            : flex;
     flex-direction     : column;
     position           : absolute;
@@ -159,7 +159,7 @@ class App {
 
   init () {
     var self = this
-    self._components.resizeFeature = new PanelsResize('#swap-panel', '#editor-container', { 'minWidth': 300, x: 450 })
+    self._components.resizeFeature = new PanelsResize('#side-panel', '#editor-container', { 'minWidth': 300, x: 450 })
     run.apply(self)
   }
 
@@ -174,8 +174,8 @@ class App {
     `
 
     // center panel, resizable
-    self._view.swappanel = yo`
-      <div id="swap-panel" class=${css.swappanel}>
+    self._view.sidepanel = yo`
+      <div id="side-panel" class=${css.sidepanel}>
         ${''}
       </div>
     `
@@ -190,7 +190,7 @@ class App {
     self._view.el = yo`
       <div class=${css.browsersolidity}>
         ${self._view.iconpanel}
-        ${self._view.swappanel}
+        ${self._view.sidepanel}
         ${self._view.mainpanel}
       </div>
     `
@@ -340,10 +340,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   const landingPage = new LandingPage(appManager, appStore)
 
   // ----------------- Vertical Icon ----------------------------
-  const verticalIcons = new VerticalIcons('swapPanel', appStore, landingPage)
+  const verticalIcons = new VerticalIcons('sidePanel', appStore, landingPage)
   registry.put({api: verticalIcons, name: 'verticalicon'})
 
-  const swapPanel = new SwapPanel(appStore)
+  const sidePanel = new SidePanel(appStore)
   const mainPanel = new MainPanel(appStore)
   const hiddenPanel = new HiddenPanel(appStore)
 
@@ -377,7 +377,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   self._components.fileManager.init()
   self._view.mainpanel.appendChild(self._components.mainview.render())
   self._view.iconpanel.appendChild(verticalIcons.render())
-  self._view.swappanel.appendChild(swapPanel.render())
+  self._view.sidepanel.appendChild(sidePanel.render())
   document.body.appendChild(hiddenPanel.render()) // Hidden Panel is display none, it can be directly on body
 
   let filePanel = new FilePanel()
@@ -438,7 +438,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     ...appManager.plugins()
   ])
 
-  framingService.start(appStore, swapPanel, verticalIcons, mainPanel, this._components.resizeFeature)
+  framingService.start(appStore, sidePanel, verticalIcons, mainPanel, this._components.resizeFeature)
 
   // The event listener needs to be registered as early as possible, because the
   // parent will send the message upon the "load" event.
