@@ -148,7 +148,7 @@ class FileManager extends FileSystemApi {
           warnToaster.hide()
         }}>Save As Copy</button>
         </div>`
-      warnToaster = await toaster(yo`<div><span class="text-primary">${this.currentRequest.from}</span> is modyfing <span class="text-primary">${path}</span></div>`, actions, { time: 6000 })
+      warnToaster = await toaster(yo`<div><i class="fas fa-exclamation-triangle text-info mr-1"></i><span class="text-primary">${this.currentRequest.from}</span> is modyfing <span class="text-primary">${path}</span></div>`, actions, { time: 4000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
       if (savedAsAnotherFile) return
     }

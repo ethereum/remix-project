@@ -9,8 +9,7 @@ var modal = require('./modal-dialog-custom')
  */
 module.exports = function addTooltip (tooltipText, action, opts) {
   let t = new Toaster()
-  t.render(tooltipText, action, opts)
-  return t
+  return t.render(tooltipText, action, opts)
 }
 
 class Toaster {
