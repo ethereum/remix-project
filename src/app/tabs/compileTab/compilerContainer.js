@@ -134,6 +134,33 @@ class CompilerContainer {
       </select>`
     this._view.version = yo`<span id="version"></span>`
 
+    this._view.evmVersionSelector = yo`
+      <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
+        <option disabled selected>EVM Version: default</option>
+        <option value="default">compiler default</option>
+        <option>petersburg</option>
+        <option>constantinople</option>
+        <option>byzantium</option>
+        <option>spuriousDragon</option>
+        <option>tangerineWhistle</option>
+        <option>homestead</option>
+      </select>`
+    if (this.compileTabLogic.evmVersion) {
+      let s = this._view.evmVersionSelector
+      let i
+      for (i = 0; i < s.options.length; i++) {
+        if (s.options[i].value === this.compileTabLogic.evmVersion) {
+          break
+        }
+      }
+      if (i === s.options.length) { // invalid evmVersion from queryParams
+        s.selectedIndex = 1 // compiler default
+        this.onchangeEvmVersion()
+      } else {
+        s.selectedIndex = i
+      }
+    }
+
     this._view.compilationButton = this.compilationButton()
 
     this._view.compileContainer = yo`
@@ -145,6 +172,9 @@ class CompilerContainer {
               <label class="input-group-text border-0" for="versionSelector">Compiler</label>
             </div>
             ${this._view.versionSelector}
+            <div class="input-group-prepend">
+            </div>
+            ${this._view.evmVersionSelector}
           </header>
           ${this._view.compilationButton}
         </article>
@@ -187,6 +217,22 @@ class CompilerContainer {
   onchangeOptimize () {
     this.compileTabLogic.setOptimize(!!this._view.optimize.checked)
     this.compileTabLogic.runCompiler()
+  }
+
+  onchangeEvmVersion (_) {
+    let s = this._view.evmVersionSelector
+    let v = s.value
+    if (v === 'default') {
+      v = null
+    }
+    this.compileTabLogic.setEvmVersion(v)
+    if (!v) {
+      v = 'default'
+    }
+    const o = yo` <option disabled="disabled" selected="selected">EVM Version: ${v}</option>`
+    s.options[0] = o
+    s.selectedIndex = 0
+    // calling `runCompiler()` here would cause the UI to freeze with the selection drop down menu open
   }
 
   onchangeLoadVersion (event) {
