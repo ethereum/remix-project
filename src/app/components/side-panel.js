@@ -42,10 +42,10 @@ const options = {
   default: true
 }
 
-export class SwapPanel extends AbstractPanel {
+export class SidePanel extends AbstractPanel {
 
   constructor (appStore) {
-    super('swapPanel', appStore, options)
+    super('sidePanel', appStore, options)
     this.header = this.renderHeader()
     this.store = appStore
   }

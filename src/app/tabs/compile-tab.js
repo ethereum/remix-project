@@ -26,7 +26,7 @@ const profile = {
   description: 'Compile solidity contracts',
   kind: 'compile',
   permission: true,
-  location: 'swapPanel',
+  location: 'sidePanel',
   documentation: 'solidity_editor.html'
 }
 
