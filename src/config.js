@@ -1,10 +1,12 @@
 'use strict'
 
 var CONFIG_FILE = '.remix.config'
+const EventEmitter = require('events')
 
 function Config (storage) {
   this.items = {}
   this.unpersistedItems = {}
+  this.events = new EventEmitter()
 
   // load on instantiation
   try {
@@ -28,6 +30,7 @@ function Config (storage) {
     this.items[key] = content
     try {
       storage.set(CONFIG_FILE, JSON.stringify(this.items))
+      this.events.emit(key + '_changed', content)
     } catch (exception) {
     }
   }

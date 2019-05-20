@@ -16,8 +16,10 @@ var DropdownPanel = require('./vmDebugger/DropdownPanel')
 
 var css = csjs`
   .asmCode {
+    width: 100%;
   }
   .stepDetail {
+    width: 100%;
   }
   .vmheadView {
     margin-top:10px;

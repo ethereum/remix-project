@@ -93,6 +93,7 @@ export class AbstractPanel {
     const el = this.contents[name]
     delete this.contents[name]
     if (el) el.parentElement.removeChild(el)
+    if (name === this.active) this.active = undefined
   }
 
   /**
