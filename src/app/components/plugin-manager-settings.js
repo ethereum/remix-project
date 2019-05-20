@@ -47,7 +47,7 @@ export class PluginManagerSettings {
   openDialog () {
     const fromLocal = window.localStorage.getItem('plugins/permissions')
     this.permissions = JSON.parse(fromLocal || '{}')
-    this.currentSetting = this.settings(),
+    this.currentSetting = this.settings()
     modalDialog('Plugin Manager Settings', this.currentSetting,
       { fn: () => this.onValidation() },
     )
