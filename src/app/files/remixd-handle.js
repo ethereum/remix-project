@@ -93,7 +93,7 @@ function remixdDialog () {
   return yo`
     <div class=${css.dialog}>
       <div class=${css.dialogParagraph}>Interact with your file system from Remix. Click connect and find shared folder in the Remix file explorer (under localhost).
-        Before you get started, check out <a target="_blank" href="https://remix.readthedocs.io/en/latest/tutorial_remixd_filesystem.html">Tutorial_remixd_filesystem</a>
+        Before you get started, check out the <a target="_blank" href="https://remix.readthedocs.io/en/latest/remixd.html">Remixd tutorial</a>.
         to find out how to run Remixd.
       </div>
       <div class=${css.dialogParagraph}>Connection will start a session between <em>${window.location.href}</em> and your local file system <i>ws://127.0.0.1:65520</i>
