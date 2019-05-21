@@ -5,11 +5,11 @@ var modal = require('./modal-dialog-custom')
 /**
  * Open a tooltip
  * @param {string} tooltipText The text shown by the tooltip
- * @param {HTMLElement} [action] An HTMLElement to display for action
+ * @param {function} [action] Returns An HTMLElement to display for action
  */
 module.exports = function addTooltip (tooltipText, action, opts) {
   let t = new Toaster()
-  return t.render(tooltipText, action, opts)
+  return t.render(tooltipText, action(t), opts)
 }
 
 class Toaster {
