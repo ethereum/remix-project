@@ -135,9 +135,9 @@ class FileManager extends FileSystemApi {
     if (this.currentRequest) {
       let reject = false
       let savedAsAnotherFile = false
-      let warnToaster
-      const actions = yo`<div class="container ml-1">
-        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => { reject = true; e.target.innerHTML = 'Canceled'; warnToaster.hide() }}>Cancel</button>
+      let actions = (toaster) => {
+        return yo`<div class="container ml-1">
+        <button class="btn btn-primary btn-sm m-1" onclick=${(e) => { reject = true; e.target.innerHTML = 'Canceled'; toaster.hide() }}>Cancel</button>
         <button class="btn btn-primary btn-sm m-1" onclick=${(e) => {
           if (savedAsAnotherFile) return
           savedAsAnotherFile = true
@@ -145,10 +145,11 @@ class FileManager extends FileSystemApi {
           this._setFileInternal(newPath, content)
           this.switchFile(newPath)
           e.target.innerHTML = 'Saved'
-          warnToaster.hide()
+          toaster.hide()
         }}>Save As Copy</button>
         </div>`
-      warnToaster = await toaster(yo`<div><i class="fas fa-exclamation-triangle text-info mr-1"></i><span class="text-primary">${this.currentRequest.from}</span> is modyfing <span class="text-primary">${path}</span></div>`, actions, { time: 4000 })
+      }
+      await toaster(yo`<div><i class="fas fa-exclamation-triangle text-info mr-1"></i><span class="text-primary">${this.currentRequest.from}</span> is modyfing <span class="text-primary">${path}</span></div>`, actions, { time: 4000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
       if (savedAsAnotherFile) return
     }
