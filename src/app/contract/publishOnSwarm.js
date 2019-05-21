@@ -56,6 +56,12 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
         })
       }, () => {
         swarmVerifiedPublish(JSON.stringify(metadata), '', (error, result) => {
+          if (!error && swarmVerifiedPublishCallBack) {
+            swarmVerifiedPublishCallBack({
+              content: contract.metadata,
+              hash: contract.metadataHash
+            })
+          }
           uploaded.push({
             content: contract.metadata,
             hash: contract.metadataHash,
