@@ -47,6 +47,11 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
       var uploaded = []
       async.eachSeries(sources, function (item, cb) {
         swarmVerifiedPublish(item.content, item.hash, (error, result) => {
+          try {
+            item.hash = result.url.match('bzz-raw://(.+)')[1]
+          } catch (e) {
+            item.hash = '<Metadata inconsistency> - ' + item.fileName
+          }
           if (!error && swarmVerifiedPublishCallBack) swarmVerifiedPublishCallBack(item)
           item.output = result
           uploaded.push(item)
@@ -55,10 +60,16 @@ module.exports = (contract, fileManager, cb, swarmVerifiedPublishCallBack) => {
           cb(error)
         })
       }, () => {
-        swarmVerifiedPublish(JSON.stringify(metadata), '', (error, result) => {
+        const metadataContent = JSON.stringify(metadata)
+        swarmVerifiedPublish(metadataContent, '', (error, result) => {
+          try {
+            contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
+          } catch (e) {
+            contract.metadataHash = '<Metadata inconsistency> - metadata.json'
+          }
           if (!error && swarmVerifiedPublishCallBack) {
             swarmVerifiedPublishCallBack({
-              content: contract.metadata,
+              content: metadataContent,
               hash: contract.metadataHash
             })
           }

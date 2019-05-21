@@ -2,7 +2,12 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .label {
-    margin-top        : 4px
+    margin-top        : 4px;
+  }
+  .leaf {
+    overflow          : hidden;
+    text-overflow     : ellipsis;
+    width             : 90%;
   }
   .fileexplorer       {
     box-sizing        : border-box;
