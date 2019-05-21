@@ -4,6 +4,7 @@ var async = require('async')
 var remixLib = require('remix-lib')
 var EventManager = require('../lib/events')
 
+var CompilerImport = require('../app/compiler/compiler-imports')
 var executionContext = require('../execution-context')
 var toolTip = require('../app/ui/tooltip')
 var globalRegistry = require('../global/registry')
@@ -20,6 +21,7 @@ class CmdInterpreterAPI {
     self._components.registry = localRegistry || globalRegistry
     self._components.terminal = terminal
     self._components.sourceHighlighter = new SourceHighlighter()
+    self._components.fileImport = new CompilerImport()
     self._deps = {
       app: self._components.registry.get('app').api,
       fileManager: self._components.registry.get('filemanager').api,
@@ -141,28 +143,40 @@ class CmdInterpreterAPI {
   }
   loadurl (url, cb) {
     const self = this
-    self._deps.app.importExternal(url, (err, content) => {
-      if (err) {
-        toolTip(`Unable to load ${url}: ${err}`)
-        if (cb) cb(err)
-      } else {
-        try {
-          content = JSON.parse(content)
-          async.eachOfSeries(content.sources, (value, file, callbackSource) => {
-            var url = value.urls[0] // @TODO retrieve all other contents ?
-            self._deps.app.importExternal(url, (error, content) => {
-              if (error) {
-                toolTip(`Cannot retrieve the content of ${url}: ${error}`)
-              }
-              callbackSource()
+    self._components.fileImport.import(url,
+      (loadingMsg) => { toolTip(loadingMsg) },
+      (err, content, cleanUrl, type, url) => {
+        if (err) {
+          toolTip(`Unable to load ${url}: ${err}`)
+          if (cb) cb(err)
+        } else {
+          self._deps.fileManager.setFile(type + '/' + cleanUrl, content)
+          try {
+            content = JSON.parse(content)
+            async.eachOfSeries(content.sources, (value, file, callbackSource) => {
+              var url = value.urls[0] // @TODO retrieve all other contents ?
+              self._components.fileImport.import(url,
+                (loadingMsg) => { toolTip(loadingMsg) },
+                async (error, content, cleanUrl, type, url) => {
+                  if (error) {
+                    toolTip(`Cannot retrieve the content of ${url}: ${error}`)
+                    return callbackSource(`Cannot retrieve the content of ${url}: ${error}`)
+                  } else {
+                    try {
+                      await self._deps.fileManager.setFile(type + '/' + cleanUrl, content)
+                      callbackSource()
+                    } catch (e) {
+                      callbackSource(e.message)
+                    }
+                  }
+                })
+            }, (error) => {
+              if (cb) cb(error)
             })
-          }, (error) => {
-            if (cb) cb(error)
-          })
-        } catch (e) {}
-        if (cb) cb()
-      }
-    })
+          } catch (e) {}
+          if (cb) cb()
+        }
+      })
   }
   setproviderurl (url, cb) {
     executionContext.setProviderFromEndpoint(url, 'web3', (error) => {
