@@ -167,14 +167,23 @@ class CompilerContainer {
       <section>
         <!-- Select Compiler Version -->
         <article>
-          <header class="navbar navbar-light bg-light input-group mb-3">
-            <div class="input-group-prepend">
-              <label class="input-group-text border-0" for="versionSelector">Compiler</label>
+          <header class="navbar navbar-light bg-light">
+            <div class="row w-100 no-gutters mb-2">
+              <div class="col-sm-4">
+                <label class="input-group-text border-0" for="versionSelector">Compiler</label>
+              </div>
+              <div class="col-sm-8">
+                ${this._view.versionSelector}
+              </div>
             </div>
-            ${this._view.versionSelector}
-            <div class="input-group-prepend">
+            <div class="row w-100 no-gutters">
+              <div class="col-sm-4">
+                <label class="input-group-text border-0" for="evmVersionSelector">EVM Version</label>
+              </div>
+              <div class="col-sm-8">
+                ${this._view.evmVersionSelector}
+              </div>
             </div>
-            ${this._view.evmVersionSelector}
           </header>
           ${this._view.compilationButton}
         </article>
