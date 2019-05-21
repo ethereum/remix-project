@@ -187,7 +187,7 @@ class CompileTab extends CompilerApi {
         ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
       </select>
     `
-    let result = contractList.length !== 0
+    let result = !contractList.length
     ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
       <div class="navbar navbar-light bg-light input-group mb-3">
@@ -224,9 +224,8 @@ class CompileTab extends CompilerApi {
       <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
 
-    if (0 !== contractList.length)
-      this.selectedContract = selectEl.value
-    return result;
+    if (!contractList.length) this.selectedContract = selectEl.value
+    return result
   }
 
   // TODO : Add success alert when compilation succeed
