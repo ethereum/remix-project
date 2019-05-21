@@ -182,14 +182,17 @@ class CompileTab extends CompilerApi {
    * @param {string[]} contractList Names of the compiled contracts
    */
   contractSelection (contractList = [], sourceFile) {
-    return contractList.length !== 0
+    let selectEl = yo`
+      <select onchange="${e => this.selectContract(e.target.value)}" id="compiledContracts" class="custom-select">
+        ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
+      </select>
+    `
+    let result = contractList.length !== 0
     ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
       <div class="navbar navbar-light bg-light input-group mb-3">
-          <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
-          <select onchange="${e => this.selectContract(e.target.value)}" onload="${e => { this.selectedContract = e.value }}" id="compiledContracts" class="custom-select">
-          ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
-        </select>  
+        <label class="border-0 input-group-text" for="compiledContracts">Contract</label>
+        ${selectEl}
       </div>
         
       <article class="${css.compilerArticle}">
@@ -220,6 +223,10 @@ class CompileTab extends CompilerApi {
     : yo`<section class="${css.container} clearfix"><article class="${css.compilerArticle}">
       <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
+
+    if (0 !== contractList.length)
+      this.selectedContract = selectEl.value
+    return result;
   }
 
   // TODO : Add success alert when compilation succeed
