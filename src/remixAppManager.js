@@ -93,8 +93,8 @@ export class RemixAppManager extends AppManagerApi {
       notifications: {
         'solidity': ['compilationFinished']
       },
-      url: 'http://remythx.xyz',
-      icon: 'http://remythx.xyz/logo.png',
+      url: 'https://remythx.xyz',
+      icon: 'https://remythx.xyz/logo.png',
       location: 'sidePanel'
     }
     return [
