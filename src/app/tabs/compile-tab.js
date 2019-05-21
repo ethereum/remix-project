@@ -183,11 +183,14 @@ class CompileTab extends CompilerApi {
    */
   contractSelection (contractList = [], sourceFile) {
     let selectEl = yo`
-      <select onchange="${e => this.selectContract(e.target.value)}" id="compiledContracts" class="custom-select">
+      <select
+        onchange="${e => this.selectContract(e.target.value)}"
+        id="compiledContracts" class="custom-select"
+      >
         ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
       </select>
     `
-    let result = !contractList.length
+    let result = contractList.length
     ? yo`<section class="${css.container} clearfix">
       <!-- Select Compiler Version -->
       <div class="navbar navbar-light bg-light input-group mb-3">
@@ -224,7 +227,11 @@ class CompileTab extends CompilerApi {
       <span class="alert alert-warning" role="alert">No Contract Compiled Yet</span>
     </article></section>`
 
-    if (!contractList.length) this.selectedContract = selectEl.value
+    if (contractList.length) {
+      this.selectedContract = selectEl.value
+    } else {
+      delete this.selectedContract
+    }
     return result
   }
 

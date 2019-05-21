@@ -18,6 +18,10 @@ var css = csjs`
   }
   .txinput {
     width: inherit;
+    font-size: small;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .txbuttons {
     width: 100%;
@@ -80,7 +84,14 @@ TxBrowser.prototype.render = function () {
   var view = yo`<div class="${css.container}">
         <div class="${css.txContainer}">
           <div class="${css.txinputs} p-1 input-group">
-            <input value="${this.state.txNumber || ''}" class="form-control ${css.txinput}" id='txinput' onkeyup=${function () { self.updateTxN(arguments[0]) }} type='text' placeholder=${'Transaction hash'} />
+            <input
+              value="${this.state.txNumber || ''}"
+              class="form-control m-0 ${css.txinput}"
+              id='txinput'
+              onkeyup=${function () { self.updateTxN(arguments[0]) }}
+              type='text'
+              placeholder=${'Transaction hash'}
+            />
           </div>
           <div class="${css.txbuttons} btn-group p-1">
             <button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>
