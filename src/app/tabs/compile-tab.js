@@ -259,7 +259,7 @@ class CompileTab extends CompilerApi {
             modalDialogCustom.alert(yo`<span>Metadata published successfully.<br> <pre>${result}</pre> </span>`)
           }
         }, (item) => { // triggered each time there's a new verified publish (means hash correspond)
-          this.swarmfileProvider.addReadOnly(item.hash, item.content)
+          this.swarmfileProvider.addReadOnly('swarm/' + item.hash, item.content)
         })
       }
     }
