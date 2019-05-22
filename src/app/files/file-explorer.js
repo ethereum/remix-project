@@ -158,7 +158,8 @@ function fileExplorer (localRegistry, files, menuItems) {
       return yo`
         <div class="${css.items}">
           <label
-            class=${css.label}
+            title="${data.path}"
+            class="${css.label} ${!isRoot ? css.leaf : ''}"
             data-path="${data.path}"
             style="${isRoot ? 'font-weight:bold;' : ''}"
             onkeydown=${editModeOff}
