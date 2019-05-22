@@ -78,7 +78,7 @@ export class VerticalIcons {
     this.icons[name] = yo`
       <div
         class="${css.icon}"
-        onclick="${() => { this._iconClick(name) }}"
+        onclick="${() => { this.toggle(name) }}"
         plugin="${name}"
         title="${title}">
         <img class="image" src="${icon}" alt="${name}" />
@@ -200,6 +200,15 @@ export class VerticalIcons {
     this.events.emit('showContent', name)
   }
 
+  /**
+   * Toggles the plugin/module
+   * @param {string} name Name of profile of the module to activate
+   */
+  toggle (name) {
+    this.updateActivations(name)
+    this.events.emit('toggleContent', name)
+  }
+
   updateActivations (name) {
     if (name === 'home') {
       this.activateHome()
@@ -216,11 +225,6 @@ export class VerticalIcons {
       let image = active.querySelector('.image')
       image.style.setProperty('filter', `invert(${invert})`)
     }
-  }
-
-  _iconClick (name) {
-    this.updateActivations(name)
-    this.events.emit('toggleContent', name)
   }
 
   activateHome () {
