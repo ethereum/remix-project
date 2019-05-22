@@ -56,7 +56,7 @@ export class SidePanel extends AbstractPanel {
     yo.update(this.header, this.renderHeader())
   }
 
-  /** The header of the swap panel */
+  /** The header of the side panel */
   renderHeader () {
     let name = ' - '
     let docLink = ''
@@ -68,10 +68,11 @@ export class SidePanel extends AbstractPanel {
     }
 
     return yo`
-    <header class="${css.swapitHeader}">
-  <h6 class="${css.swapitTitle}">${name}${docLink}</h6>
-      </div>
-    </header>`
+      <header class="${css.swapitHeader}">
+        <h6 class="${css.swapitTitle}">${name}</h6>
+        ${docLink}
+      </header>
+    `
   }
 
   render () {
