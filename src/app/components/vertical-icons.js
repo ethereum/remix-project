@@ -196,9 +196,17 @@ export class VerticalIcons {
    * @param {string} name Name of profile of the module to activate
    */
   select (name) {
-    this.removeActive()
-    this.addActive(name)
+    this.updateActivations(name)
     this.events.emit('showContent', name)
+  }
+
+  updateActivations(name) {
+    if (name === "home") {
+      this.activateHome()
+    } else {
+      this.removeActive()
+      this.addActive(name)
+    }
   }
 
   onThemeChanged (themeType) {
@@ -211,9 +219,12 @@ export class VerticalIcons {
   }
 
   _iconClick (name) {
-    this.removeActive()
-    this.addActive(name)
+    this.updateActivations(name)
     this.events.emit('toggleContent', name)
+  }
+
+  activateHome() {
+    globalRegistry.get('appmanager').api.ensureActivated('home')
   }
 
   render () {
@@ -221,7 +232,7 @@ export class VerticalIcons {
     <div
       class="${css.homeIcon}"
       onclick="${(e) => {
-        globalRegistry.get('appmanager').api.ensureActivated('home')
+        this.activateHome()
       }}"
       plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
     >
@@ -345,15 +356,15 @@ export class VerticalIcons {
 
     this.view = yo`
       <div class=${css.icons}>
-      ${home}
-      ${this.iconKind['fileexplorer']}
-      ${this.iconKind['compile']}
-      ${this.iconKind['run']}
-      ${this.iconKind['testing']}
-      ${this.iconKind['analysis']}
-      ${this.iconKind['debugging']}
-      ${this.iconKind['other']}
-      ${this.iconKind['settings']}
+        ${home}
+        ${this.iconKind['fileexplorer']}
+        ${this.iconKind['compile']}
+        ${this.iconKind['run']}
+        ${this.iconKind['testing']}
+        ${this.iconKind['analysis']}
+        ${this.iconKind['debugging']}
+        ${this.iconKind['other']}
+        ${this.iconKind['settings']}
       </div>
     `
     return this.view
