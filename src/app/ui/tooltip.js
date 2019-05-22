@@ -8,6 +8,7 @@ var modal = require('./modal-dialog-custom')
  * @param {function} [action] Returns An HTMLElement to display for action
  */
 module.exports = function addTooltip (tooltipText, action, opts) {
+  action = action || function () { return yo`<div></div>` }
   let t = new Toaster()
   return t.render(tooltipText, action(t), opts)
 }
@@ -27,9 +28,16 @@ class Toaster {
     return new Promise((resolve, reject) => {
       const shortTooltipText = tooltipText.length > 201 ? tooltipText.substring(0, 200) + '...' : tooltipText
 
+      let button = tooltipText.length > 201 ? yo`
+      <button class="btn btn-secondary btn-sm" onclick=${() => { modal.alert(tooltipText) }}>show full message</button>
+      ` : ``
+
       this.tooltip = yo`
     <div class="${css.tooltip} alert alert-info" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
-      <span>${shortTooltipText}<button class="btn btn-secondary btn-sm" onclick=${() => { modal.alert(tooltipText) }}>show full message</button></span>
+      <span>
+        ${shortTooltipText}
+        ${button}
+      </span>
       ${action}
     </div>`
       let timeOut = () => {
