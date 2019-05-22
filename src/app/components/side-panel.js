@@ -10,6 +10,8 @@ const css = csjs`
   .swapitTitle {
     text-transform: uppercase;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .swapitTitle i{
     padding-left: 6px;
@@ -21,6 +23,7 @@ const css = csjs`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    justify-content: flex-start;
   }
   .swapitHeader h6 {
     margin: 0;
@@ -32,6 +35,9 @@ const css = csjs`
   .pluginsContainer {
     height: calc(100% - 35px);
     overflow: auto;
+  }
+  .titleInfo {
+    padding-left: 10px;
   }
 `
 
@@ -64,7 +70,7 @@ export class SidePanel extends AbstractPanel {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
       const docsRoot = 'https://remix.readthedocs.io/en/latest/'
-      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
+      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" class="${css.titleInfo}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
     }
 
     return yo`
