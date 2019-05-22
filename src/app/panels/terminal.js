@@ -168,8 +168,8 @@ class Terminal extends BaseApi {
     `
     self._view.term = yo`
       <div class="${css.terminal_container}" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
-        <div style="
-          background-color: grey;
+        ${self._components.autoCompletePopup.render()}
+        <div class="bg-secondary" style="
           position: absolute;
           height: 100%;
           width: 100%;
