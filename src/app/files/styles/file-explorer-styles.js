@@ -8,6 +8,7 @@ var css = csjs`
     overflow          : hidden;
     text-overflow     : ellipsis;
     width             : 90%;
+    margin-bottom     : 0px;
   }
   .fileexplorer       {
     box-sizing        : border-box;
