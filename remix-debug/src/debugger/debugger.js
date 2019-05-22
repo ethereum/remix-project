@@ -100,7 +100,6 @@ Debugger.prototype.debug = function (blockNumber, txNumber, tx, loadingCb) {
         return resolve()
       })
     } catch (e) {
-      console.error(e.message)
       return reject(e.message)
     }
   })
