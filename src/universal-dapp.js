@@ -33,7 +33,7 @@ module.exports = class UniversalDApp extends UdappApi {
         executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return this._deps.config.get('settings/personal-mode')
+        return executionContext.getProvider() === 'web3' ? this._deps.config.get('settings/personal-mode') : false
       }
     }
     this.txRunner = new TxRunner({}, this._txRunnerAPI)
@@ -67,7 +67,7 @@ module.exports = class UniversalDApp extends UdappApi {
         executionContext.detectNetwork(cb)
       },
       personalMode: () => {
-        return this._deps.config.get('settings/personal-mode')
+        return executionContext.getProvider() === 'web3' ? this._deps.config.get('settings/personal-mode') : false
       }
     })
     this.txRunner.event.register('transactionBroadcasted', (txhash) => {
