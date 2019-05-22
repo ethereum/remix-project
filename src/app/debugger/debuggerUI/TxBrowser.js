@@ -94,7 +94,7 @@ TxBrowser.prototype.render = function () {
             />
           </div>
           <div class="${css.txbuttons} btn-group p-1">
-            <button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>
+            <button class='btn btn-primary btn-sm ${css.txbutton} disabled='${this.state.txNumber ? 'false' : 'true'}' id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>
           </div>
         </div>
         <span id='error'></span>
