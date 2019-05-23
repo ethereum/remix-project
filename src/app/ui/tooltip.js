@@ -25,6 +25,17 @@ class Toaster {
   render (tooltipText, action, opts) {
     opts = defaultOptions(opts)
 
+    if (typeof tooltipText === 'object') {
+      if (tooltipText.message) {
+        tooltipText = tooltipText.message
+      } else {
+        try {
+          tooltipText = JSON.stringify(tooltipText)
+        } catch (e) {
+        }
+      }
+    }
+
     return new Promise((resolve, reject) => {
       const shortTooltipText = tooltipText.length > 201 ? tooltipText.substring(0, 200) + '...' : tooltipText
 
