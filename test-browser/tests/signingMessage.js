@@ -48,6 +48,7 @@ module.exports = {
 var sources = [
   {
     'browser/signMassage.sol': {content: `
+    pragma solidity >=0.4.22 <0.6.0;
     contract SignMassageTest {
       function testRecovery(bytes32 h, uint8 v, bytes32 r, bytes32 s) public pure returns (address) {
           return ecrecover(h, v, r, s);
