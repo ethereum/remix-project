@@ -136,7 +136,6 @@ class CompilerContainer {
 
     this._view.evmVersionSelector = yo`
       <select onchange="${this.onchangeEvmVersion.bind(this)}" class="custom-select" id="evmVersionSelector">
-        <option disabled selected>EVM Version: default</option>
         <option value="default">compiler default</option>
         <option>petersburg</option>
         <option>constantinople</option>
@@ -154,7 +153,7 @@ class CompilerContainer {
         }
       }
       if (i === s.options.length) { // invalid evmVersion from queryParams
-        s.selectedIndex = 1 // compiler default
+        s.selectedIndex = 0 // compiler default
         this.onchangeEvmVersion()
       } else {
         s.selectedIndex = i
@@ -235,13 +234,7 @@ class CompilerContainer {
       v = null
     }
     this.compileTabLogic.setEvmVersion(v)
-    if (!v) {
-      v = 'default'
-    }
-    const o = yo` <option disabled="disabled" selected="selected">EVM Version: ${v}</option>`
-    s.options[0] = o
-    s.selectedIndex = 0
-    // calling `runCompiler()` here would cause the UI to freeze with the selection drop down menu open
+    this.compile()
   }
 
   onchangeLoadVersion (event) {
