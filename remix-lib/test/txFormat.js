@@ -6,7 +6,7 @@ var util = require('../src/util')
 var compiler = require('solc')
 var compilerInput = require('../src/helpers/compilerHelper').compilerInput
 var executionContext = require('../src/execution/execution-context')
-var solidityVersion = 'v0.5.4+commit.9549d8ff'
+var solidityVersion = 'v0.5.8+commit.23d335f2'
 
 /* tape *********************************************************** */
 tape('load compiler ' + solidityVersion, function (t) {
