@@ -24,33 +24,38 @@ class Toaster {
   }
   render (tooltipText, action, opts) {
     opts = defaultOptions(opts)
-
-    if (typeof tooltipText === 'object') {
-      if (tooltipText.message) {
-        tooltipText = tooltipText.message
-      } else {
-        try {
-          tooltipText = JSON.stringify(tooltipText)
-        } catch (e) {
+    let canShorten = true
+    if (tooltipText instanceof Element)
+    {
+      canShorten = false
+    } else {
+      if (typeof tooltipText === 'object') {
+        if (tooltipText.message) {
+          tooltipText = tooltipText.message
+        } else {
+          try {
+            tooltipText = JSON.stringify(tooltipText)
+          } catch (e) {
+          }
         }
       }
     }
 
     return new Promise((resolve, reject) => {
-      const shortTooltipText = tooltipText.length > 201 ? tooltipText.substring(0, 200) + '...' : tooltipText
+      const shortTooltipText = (canShorten && tooltipText.length > 201) ? tooltipText.substring(0, 200) + '...' : tooltipText
 
       let button = tooltipText.length > 201 ? yo`
       <button class="btn btn-secondary btn-sm" onclick=${() => { modal.alert(tooltipText) }}>show full message</button>
       ` : ``
 
       this.tooltip = yo`
-    <div class="${css.tooltip} alert alert-info" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
-      <span>
-        ${shortTooltipText}
-        ${button}
-      </span>
-      ${action}
-    </div>`
+        <div class="${css.tooltip} alert alert-info" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
+          <span>
+            ${shortTooltipText}
+            ${button}
+          </span>
+          ${action}
+        </div>`
       let timeOut = () => {
         return setTimeout(() => {
           if (this.id) {
