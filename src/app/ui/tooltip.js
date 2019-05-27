@@ -25,8 +25,7 @@ class Toaster {
   render (tooltipText, action, opts) {
     opts = defaultOptions(opts)
     let canShorten = true
-    if (tooltipText instanceof Element)
-    {
+    if (tooltipText instanceof Element) {
       canShorten = false
     } else {
       if (typeof tooltipText === 'object') {
@@ -45,16 +44,22 @@ class Toaster {
       const shortTooltipText = (canShorten && tooltipText.length > 201) ? tooltipText.substring(0, 200) + '...' : tooltipText
 
       let button = tooltipText.length > 201 ? yo`
-      <button class="btn btn-secondary btn-sm" onclick=${() => { modal.alert(tooltipText) }}>show full message</button>
+      <button class="btn btn-secondary btn-sm mx-3" style="white-space: nowrap;" onclick=${() => { modal.alert(tooltipText) }}>See full error</button>
       ` : ``
 
       this.tooltip = yo`
-        <div class="${css.tooltip} alert alert-info" onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
-          <span>
+        <div class="${css.tooltip} alert alert-info p-2"  onmouseenter=${() => { over() }} onmouseleave=${() => { out() }}>
+          <span class="px-2">
             ${shortTooltipText}
             ${button}
+            ${action}
           </span>
-          ${action}
+          <span style="align-self: baseline;">
+            <button class="fas fa-times btn-info mx-1 p-0" onclick=${() => {
+              this.hide()
+              resolve()
+            }}></button>
+          </span>
         </div>`
       let timeOut = () => {
         return setTimeout(() => {

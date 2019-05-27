@@ -15,6 +15,7 @@ var css = csjs`
     font-size: 14px;
     text-align: center;
     bottom: 0;
+    flex-direction: row;
   }
   @-webkit-keyframes animatebottom  {
     0% {bottom: -300px}
