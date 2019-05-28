@@ -201,7 +201,7 @@ export class VerticalIcons {
   }
 
   /**
-   * Toggles the plugin/module
+   * Toggles the side panel for plugin
    * @param {string} name Name of profile of the module to activate
    */
   toggle (name) {
