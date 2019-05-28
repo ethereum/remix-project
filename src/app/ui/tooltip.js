@@ -58,6 +58,7 @@ class Toaster {
           <span style="align-self: baseline;">
             <button class="fas fa-times btn-info mx-1 p-0" onclick=${() => {
               this.hide()
+              over()
               resolve()
             }}></button>
           </span>
