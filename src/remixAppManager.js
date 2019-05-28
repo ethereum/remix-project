@@ -97,10 +97,24 @@ export class RemixAppManager extends AppManagerApi {
       icon: 'data:image/png;base64,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',
       location: 'sidePanel'
     }
+    var ethdoc = {
+      name: 'solidityDocMd',
+      displayName: 'Solidity documentation generator',
+      events: [],
+      methods: [],
+      notifications: {
+        'solidity': ['compilationFinished']
+      },
+      url: 'https://remix-ethdoc-plugin.surge.sh',
+      description: 'Generate Solidity documentation (as md) using Natspec',
+      icon: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxMDI0IiB3aWR0aD0iMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOTUwLjE1NCAxOTJINzMuODQ2QzMzLjEyNyAxOTIgMCAyMjUuMTI2OTk5OTk5OTk5OTUgMCAyNjUuODQ2djQ5Mi4zMDhDMCA3OTguODc1IDMzLjEyNyA4MzIgNzMuODQ2IDgzMmg4NzYuMzA4YzQwLjcyMSAwIDczLjg0Ni0zMy4xMjUgNzMuODQ2LTczLjg0NlYyNjUuODQ2QzEwMjQgMjI1LjEyNjk5OTk5OTk5OTk1IDk5MC44NzUgMTkyIDk1MC4xNTQgMTkyek01NzYgNzAzLjg3NUw0NDggNzA0VjUxMmwtOTYgMTIzLjA3N0wyNTYgNTEydjE5MkgxMjhWMzIwaDEyOGw5NiAxMjggOTYtMTI4IDEyOC0wLjEyNVY3MDMuODc1ek03NjcuMDkxIDczNS44NzVMNjA4IDUxMmg5NlYzMjBoMTI4djE5Mmg5Nkw3NjcuMDkxIDczNS44NzV6Ii8+PC9zdmc+',
+      location: 'sidePanel'
+    }
     return [
       new Plugin(pipeline),
       new Plugin(vyper),
-      new Plugin(etherscan)
+      new Plugin(etherscan),
+      new Plugin(ethdoc)
     ]
   }
 }
