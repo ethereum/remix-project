@@ -11,7 +11,7 @@ export default {
     })
 
     verticalIcon.select('fileExplorers')
-    verticalIcon.select('home')
+    verticalIcon.showHome()
 
     document.addEventListener('keypress', (e) => {
       if (e.shiftKey && e.ctrlKey) {
