@@ -25,7 +25,7 @@ class Toaster {
   render (tooltipText, action, opts) {
     opts = defaultOptions(opts)
     let canShorten = true
-    if (tooltipText instanceof Element) {
+    if (tooltipText['nodeName']) {
       canShorten = false
     } else {
       if (typeof tooltipText === 'object') {

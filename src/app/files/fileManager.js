@@ -153,7 +153,7 @@ class FileManager extends FileSystemApi {
         <div>
           <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
           <span>
-            ${this.currentRequest.from}<span class="text-warning"> is modyfing </span>${path}
+            ${this.currentRequest.from}<span class="text-danger"> is modyfing </span>${path}
           </span>
         </div>`, actions, { time: 4000 })
       if (reject) throw new Error(`set file operation on ${path} aborted by user.`)
