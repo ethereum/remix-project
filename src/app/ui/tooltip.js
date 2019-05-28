@@ -1,3 +1,4 @@
+/* global Element */
 var yo = require('yo-yo')
 var css = require('./styles/tooltip-styles')
 var modal = require('./modal-dialog-custom')
@@ -25,7 +26,7 @@ class Toaster {
   render (tooltipText, action, opts) {
     opts = defaultOptions(opts)
     let canShorten = true
-    if (tooltipText['nodeName']) {
+    if (tooltipText instanceof Element) {
       canShorten = false
     } else {
       if (typeof tooltipText === 'object') {
@@ -44,7 +45,7 @@ class Toaster {
       const shortTooltipText = (canShorten && tooltipText.length > 201) ? tooltipText.substring(0, 200) + '...' : tooltipText
 
       let button = tooltipText.length > 201 ? yo`
-      <button class="btn btn-secondary btn-sm mx-3" style="white-space: nowrap;" onclick=${() => { modal.alert(tooltipText) }}>See full error</button>
+      <button class="btn btn-secondary btn-sm mx-3" style="white-space: nowrap;" onclick=${() => { modal.alert(tooltipText) }}>Show full message</button>
       ` : ``
 
       this.tooltip = yo`
