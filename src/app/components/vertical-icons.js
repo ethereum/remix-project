@@ -79,7 +79,8 @@ export class VerticalIcons {
       <div
         class="${css.icon}"
         onclick="${() => { this._iconClick(name) }}"
-        plugin="${name}" title="${title}" >
+        plugin="${name}"
+        title="${title}">
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])

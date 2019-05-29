@@ -142,17 +142,17 @@ function getAddressAtPosition (browser, index, callback) {
 }
 
 function testConstantFunction (browser, address, fnFullName, expectedInput, expectedOutput, cb) {
-  browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]').perform(function (client, done) {
+  browser.waitForElementPresent('.instance button[plugin="' + fnFullName + '"]').perform(function (client, done) {
     client.execute(function () {
       document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
     }, [], function () {
       if (expectedInput) {
-        client.setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values, function () {})
+        client.setValue('#runTabView input[plugin="' + expectedInput.types + '"]', expectedInput.values, function () {})
       }
       done()
     })
   })
-  .click('.instance button[title="' + fnFullName + '"]')
+  .click('.instance button[plugin="' + fnFullName + '"]')
   .pause(1000)
   .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
   .scrollInto('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')

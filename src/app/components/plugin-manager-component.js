@@ -91,7 +91,7 @@ class PluginManagerComponent extends BaseApi {
       </button>`
 
     return yo`
-      <article class="list-group-item py-1" title="${displayName}" >
+      <article id="remixPluginManagerListItem_${name}" class="list-group-item py-1" title="${displayName}" >
         <div class="${css.row} justify-content-between align-items-center">
           <h6 class="${css.displayName}">${displayName}</h6>
           ${activationButton}
@@ -155,7 +155,7 @@ class PluginManagerComponent extends BaseApi {
       ? yo`
       <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between align-items-center">
         <span class="navbar-brand">Inactive Modules</span>
-        <span class="badge badge-pill badge-primary">${inactives.length}</span>
+        <span class="badge badge-pill badge-primary" style = "cursor: default;">${inactives.length}</span>
       </nav>`
       : ''
 
