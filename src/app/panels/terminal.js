@@ -152,7 +152,7 @@ class Terminal extends BaseApi {
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
             >
             <label
-              class="form-check-label"
+              class="${css.listenOnNetworkLabel} form-check-label"
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
               for="listenNetworkCheck"
             >
