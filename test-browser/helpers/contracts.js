@@ -152,7 +152,7 @@ function testConstantFunction (browser, address, fnFullName, expectedInput, expe
       done()
     })
   })
-  .click('.instance button[plugin="' + fnFullName + '"]')
+  .click('.instance button[title="' + fnFullName + '"]')
   .pause(1000)
   .waitForElementPresent('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
   .scrollInto('#instance' + address + ' div[class^="contractActionsContainer"] div[class^="value"]')
