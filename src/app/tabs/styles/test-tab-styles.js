@@ -45,6 +45,7 @@ var css = csjs`
     align-items: center;
   }
   .runButton {
+    white-space: nowrap;
   }
   .generateTestFile {
     margin-top: 20px;
