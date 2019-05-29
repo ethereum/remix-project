@@ -59,6 +59,7 @@ var css = csjs`
   .label {
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
 `
 module.exports = css
