@@ -143,10 +143,11 @@ class SettingsUI {
 
     setInterval(() => {
       this.updateNetwork()
-      this.fillAccountsList()
     }, 5000)
 
     this.el = el
+
+    this.fillAccountsList()
     return el
   }
 
@@ -198,7 +199,6 @@ class SettingsUI {
     this.selectExEnv.value = this.settings.getProvider()
     this.event.trigger('clearInstance', [])
     this.updateNetwork()
-    this.fillAccountsList()
     this.updatePlusButton()
   }
 
@@ -310,6 +310,7 @@ class SettingsUI {
       let network = this._deps.networkModule.getNetworkProvider
       this.netUI.innerHTML = (network() !== 'vm') ? `${name} (${id || '-'}) network` : ''
     })
+    this.fillAccountsList()
   }
 
   // TODO: unclear what's the goal of accountListCallId, feels like it can be simplified
