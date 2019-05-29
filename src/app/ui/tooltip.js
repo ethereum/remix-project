@@ -25,8 +25,6 @@ class Toaster {
   }
   render (tooltipText, actionElement, opts) {
     opts = defaultOptions(opts)
-<<<<<<< HEAD
-<<<<<<< HEAD
     let canShorten = true
     if (tooltipText instanceof Element) {
       canShorten = false
@@ -39,21 +37,6 @@ class Toaster {
             tooltipText = JSON.stringify(tooltipText)
           } catch (e) {
           }
-=======
-    if (typeof (tooltipText) === 'object' && tooltipText.message !== undefined) {
-      tooltipText = tooltipText.message
-    }
-=======
->>>>>>> 9211c21f... removed double implementation
-
-    if (typeof tooltipText === 'object') {
-      if (tooltipText.message) {
-        tooltipText = tooltipText.message
-      } else {
-        try {
-          tooltipText = JSON.stringify(tooltipText)
-        } catch (e) {
->>>>>>> c2943a2b... tandard
         }
       }
     }
