@@ -15,7 +15,6 @@ function CodeListView () {
   this.event = new EventManager()
   this.code
   this.address
-  this.codeView
   this.itemSelected
   this.basicPanel = new DropdownPanel('Instructions', {json: false, displayContentOnly: true})
   this.basicPanel.event.register('hide', () => {
@@ -27,7 +26,8 @@ function CodeListView () {
 }
 
 CodeListView.prototype.render = function () {
-  return yo`<div id='asmcodes' >${this.basicPanel.render({height: style.instructionsList.height})}</div>`
+  this.view = yo`<div id='asmcodes' >${this.basicPanel.render({height: style.instructionsList.height})}</div>`
+  return this.view
 }
 
 CodeListView.prototype.indexChanged = function (index) {
@@ -39,14 +39,15 @@ CodeListView.prototype.indexChanged = function (index) {
       this.itemSelected.firstChild.removeAttribute('style')
     }
   }
-  this.itemSelected = this.codeView.children[index]
+  let codeView = this.view.querySelector('#asmitems')
+  this.itemSelected = codeView.children[index]
   this.itemSelected.style.setProperty('background-color', 'var(--info)')
   this.itemSelected.style.setProperty('color', 'var(--light)')
   this.itemSelected.setAttribute('selected', 'selected')
   if (this.itemSelected.firstChild) {
     this.itemSelected.firstChild.setAttribute('style', 'margin-left: 2px')
   }
-  this.codeView.scrollTop = this.itemSelected.offsetTop - parseInt(this.codeView.offsetTop)
+  codeView.scrollTop = this.itemSelected.offsetTop - parseInt(codeView.offsetTop)
 }
 
 CodeListView.prototype.reset = function () {
@@ -59,8 +60,7 @@ CodeListView.prototype.changed = function (code, address, index) {
   }
   this.code = code
   this.address = address
-  this.codeView = this.renderAssemblyItems()
-  this.basicPanel.setContent(this.codeView)
+  this.basicPanel.setContent(this.renderAssemblyItems())
   this.indexChanged(index)
 }
 
