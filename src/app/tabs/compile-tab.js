@@ -207,14 +207,14 @@ class CompileTab extends CompilerApi {
           Compilation Details
         </button>
         <!-- Copy to Clipboard -->
-        <div class="${css.contractHelperButtons} btn-secondary">
+        <div class="${css.contractHelperButtons}">
           <div class="input-group">
             <div class="btn-group" role="group" aria-label="Copy to Clipboard">
-              <button class="btn btn-secondary" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
+              <button class="btn" title="Copy ABI to clipboard" onclick="${() => { this.copyABI() }}">
                 <i class="${css.copyIcon} far fa-clipboard" aria-hidden="true"></i>
                 <span>ABI</span>
               </button>
-              <button class="btn btn-secondary" title="Copy Bytecode to clipboard" onclick="${() => { this.copyBytecode() }}">
+              <button class="btn" title="Copy Bytecode to clipboard" onclick="${() => { this.copyBytecode() }}">
                 <i class="${css.copyIcon} far fa-clipboard" aria-hidden="true"></i>
                 <span>Bytecode</span>
               </button>
