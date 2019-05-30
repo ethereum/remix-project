@@ -29,7 +29,9 @@ Transactions.prototype.methods = function () {
     eth_call: this.eth_call.bind(this),
     eth_estimateGas: this.eth_estimateGas.bind(this),
     eth_getTransactionCount: this.eth_getTransactionCount.bind(this),
-    eth_getTransactionByHash: this.eth_getTransactionByHash.bind(this)
+    eth_getTransactionByHash: this.eth_getTransactionByHash.bind(this),
+    eth_getTransactionByBlockHashAndIndex: this.eth_getTransactionByBlockHashAndIndex.bind(this),
+    eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this)
   }
 }
 
@@ -138,6 +140,98 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
 			// "v": "0x25", // 37
 			// "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
 			// "s": "0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c"
+    }
+
+    if (receipt.to) {
+      r.to = receipt.to
+    }
+
+    if (r.value === "0x") {
+      r.value = "0x0"
+    }
+
+    cb(null, r)
+    // })
+  })
+}
+
+Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload, cb) {
+	console.dir("== eth_getTransactionByHash")
+	console.dir(payload.params)
+  // const address = payload.params[0]
+  const txIndex = payload.params[1]
+
+  var txBlock = executionContext.blocks[payload.params[0]]
+  const txHash = "0x" + txBlock.transactions[web3.utils.toDecimal(txIndex)].hash().toString('hex')
+
+  executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
+    if (error) {
+      return cb(error)
+    }
+
+    // executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
+    let r = {
+      'blockHash': "0x" + txBlock.hash().toString('hex'),
+      'blockNumber': "0x" + txBlock.header.number.toString('hex'),
+      'from': receipt.from,
+      'gas': web3.utils.toHex(receipt.gas),
+      // 'gasPrice': '2000000000000', // 0x123
+      "gasPrice": "0x4a817c800", // 20000000000
+      'hash': receipt.transactionHash,
+      'input': receipt.input,
+      // "nonce": 2, // 0x15
+      // "transactionIndex": 0,
+      "value": receipt.value
+      // "value":"0xf3dbb76162000" // 4290000000000000
+      // "v": "0x25", // 37
+      // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
+      // "s": "0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c"
+    }
+
+    if (receipt.to) {
+      r.to = receipt.to
+    }
+
+    if (r.value === "0x") {
+      r.value = "0x0"
+    }
+
+    cb(null, r)
+    // })
+  })
+}
+
+Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (payload, cb) {
+  console.dir("== eth_getTransactionByHash")
+  console.dir(payload.params)
+  // const address = payload.params[0]
+  const txIndex = payload.params[1]
+
+  var txBlock = executionContext.blocks[payload.params[0]]
+  const txHash = "0x" + txBlock.transactions[web3.utils.toDecimal(txIndex)].hash().toString('hex')
+
+  executionContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
+    if (error) {
+      return cb(error)
+    }
+
+    // executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
+    let r = {
+      'blockHash': "0x" + txBlock.hash().toString('hex'),
+      'blockNumber': "0x" + txBlock.header.number.toString('hex'),
+      'from': receipt.from,
+      'gas': web3.utils.toHex(receipt.gas),
+      // 'gasPrice': '2000000000000', // 0x123
+      "gasPrice": "0x4a817c800", // 20000000000
+      'hash': receipt.transactionHash,
+      'input': receipt.input,
+      // "nonce": 2, // 0x15
+      // "transactionIndex": 0,
+      "value": receipt.value
+      // "value":"0xf3dbb76162000" // 4290000000000000
+      // "v": "0x25", // 37
+      // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
+      // "s": "0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c"
     }
 
     if (receipt.to) {
