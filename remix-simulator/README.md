@@ -28,12 +28,12 @@ Implemented:
 * [_] eth_sendRawTransaction
 * [X] eth_call
 * [~] eth_estimateGas
-* [~] eth_getBlockByHash
-* [~] eth_getBlockByNumber
-* [~] eth_getTransactionByHash
-* [_] eth_getTransactionByBlockHashAndIndex
-* [_] eth_getTransactionByBlockNumberAndIndex
-* [~] eth_getTransactionReceipt
+* [V] eth_getBlockByHash
+* [V] eth_getBlockByNumber
+* [V] eth_getTransactionByHash
+* [V] eth_getTransactionByBlockHashAndIndex
+* [V] eth_getTransactionByBlockNumberAndIndex
+* [V] eth_getTransactionReceipt
 * [_] eth_getUncleByBlockHashAndIndex
 * [_] eth_getUncleByBlockNumberAndIndex
 * [X] eth_getCompilers (DEPRECATED)
