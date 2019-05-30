@@ -38,9 +38,7 @@ Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
     'gasLimit': toHex(block.header.gasLimit),
     'gasUsed': toHex(block.header.gasUsed),
     "timestamp": toHex(block.header.timestamp),
-    // TODO: add transactions
-    // block.transactions
-    "transactions": [],
+    "transactions": block.transactions.map((t) => "0x" + t.hash().toString('hex')),
     "uncles": []
   }
 
@@ -79,9 +77,7 @@ Blocks.prototype.eth_getBlockByHash = function (payload, cb) {
     'gasLimit': toHex(block.header.gasLimit),
     'gasUsed': toHex(block.header.gasUsed),
     "timestamp": toHex(block.header.timestamp),
-    // TODO: add transactions
-    // block.transactions
-    "transactions": [],
+    "transactions": block.transactions.map((t) => "0x" + t.hash().toString('hex')),
     "uncles": []
   }
 
