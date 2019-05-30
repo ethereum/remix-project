@@ -17,9 +17,9 @@ Implemented:
 * [X] eth_blockNumber
 * [X] eth_getBalance
 * [_] eth_getStorageAt
-* [~] eth_getTransactionCount
-* [_] eth_getBlockTransactionCountByHash
-* [_] eth_getBlockTransactionCountByNumber
+* [X] eth_getTransactionCount
+* [X] eth_getBlockTransactionCountByHash
+* [X] eth_getBlockTransactionCountByNumber
 * [_] eth_getUncleCountByBlockHash
 * [_] eth_getUncleCountByBlockNumber
 * [X] eth_getCode
@@ -28,12 +28,12 @@ Implemented:
 * [_] eth_sendRawTransaction
 * [X] eth_call
 * [~] eth_estimateGas
-* [V] eth_getBlockByHash
-* [V] eth_getBlockByNumber
-* [V] eth_getTransactionByHash
-* [V] eth_getTransactionByBlockHashAndIndex
-* [V] eth_getTransactionByBlockNumberAndIndex
-* [V] eth_getTransactionReceipt
+* [X] eth_getBlockByHash
+* [X] eth_getBlockByNumber
+* [X] eth_getTransactionByHash
+* [X] eth_getTransactionByBlockHashAndIndex
+* [X] eth_getTransactionByBlockNumberAndIndex
+* [X] eth_getTransactionReceipt
 * [_] eth_getUncleByBlockHashAndIndex
 * [_] eth_getUncleByBlockNumberAndIndex
 * [X] eth_getCompilers (DEPRECATED)
