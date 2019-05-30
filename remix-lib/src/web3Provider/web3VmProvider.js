@@ -40,6 +40,7 @@ function web3VmProvider () {
   this.toWei = function () { return self.web3.toWei.apply(self.web3, arguments) }
   this.toBigNumber = function () { return self.web3.toBigNumber.apply(self.web3, arguments) }
   this.isAddress = function () { return self.web3.isAddress.apply(self.web3, arguments) }
+  this.utils = Web3.utils || []
 }
 
 web3VmProvider.prototype.setVM = function (vm) {
