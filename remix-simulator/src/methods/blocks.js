@@ -16,7 +16,9 @@ Blocks.prototype.methods = function () {
     eth_blockNumber: this.eth_blockNumber.bind(this),
     eth_getBlockByHash: this.eth_getBlockByHash.bind(this),
     eth_getBlockTransactionCountByHash: this.eth_getBlockTransactionCountByHash.bind(this),
-    eth_getBlockTransactionCountByNumber: this.eth_getBlockTransactionCountByNumber.bind(this)
+    eth_getBlockTransactionCountByNumber: this.eth_getBlockTransactionCountByNumber.bind(this),
+    eth_getUncleCountByBlockHash: this.eth_getUncleCountByBlockHash.bind(this),
+    eth_getUncleCountByBlockNumber: this.eth_getUncleCountByBlockNumber.bind(this)
   }
 }
 
@@ -110,5 +112,12 @@ Blocks.prototype.eth_getBlockTransactionCountByNumber = function (payload, cb) {
   cb(null, block.transactions.length)
 }
 
+Blocks.prototype.eth_getUncleCountByBlockHash = function (payload, cb) {
+  cb(null, 0)
+}
+
+Blocks.prototype.eth_getUncleCountByBlockNumber = function (payload, cb) {
+  cb(null, 0)
+}
 
 module.exports = Blocks
