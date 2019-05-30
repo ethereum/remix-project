@@ -67,6 +67,7 @@ function createVm (hardfork) {
     stateManager: stateManager,
     hardfork: hardfork
   })
+  vm.blockchain.validate = false
   var web3vm = new Web3VMProvider()
   web3vm.setVM(vm)
   return { vm, web3vm, stateManager }
@@ -91,6 +92,8 @@ function ExecutionContext () {
   this.blockGasLimitDefault = 4300000
   this.blockGasLimit = this.blockGasLimitDefault
   this.customNetWorks = {}
+  this.blocks = {}
+  this.txs = {}
 
   this.init = function (config) {
     if (config.get('settings/always-use-vm')) {
@@ -115,6 +118,8 @@ function ExecutionContext () {
   }
 
   this.web3 = function () {
+    console.dir("isVM")
+    console.dir(this.isVM())
     return this.isVM() ? vms.constantinople.web3vm : web3
   }
 
@@ -183,9 +188,9 @@ function ExecutionContext () {
 
     if (context === 'vm') {
       executionContext = context
-      vms.constantinople.stateManager.revert(() => {
-        vms.constantinople.stateManager.checkpoint(() => {})
-      })
+      // vms.constantinople.stateManager.revert(() => {
+      //   vms.constantinople.stateManager.checkpoint(() => {})
+      // })
       self.event.trigger('contextChanged', ['vm'])
       return cb()
     }
@@ -273,6 +278,14 @@ function ExecutionContext () {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
+  }
+
+  this.addBlock = function (block) {
+    self.blocks["0x" + block.hash().toString('hex')] = block
+  }
+
+  this.trackTx = function(tx, block) {
+    self.txs[tx] = block
   }
 }
 
