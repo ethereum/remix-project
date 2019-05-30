@@ -14,7 +14,9 @@ Blocks.prototype.methods = function () {
     eth_gasPrice: this.eth_gasPrice.bind(this),
     eth_coinbase: this.eth_coinbase.bind(this),
     eth_blockNumber: this.eth_blockNumber.bind(this),
-    eth_getBlockByHash: this.eth_getBlockByHash.bind(this)
+    eth_getBlockByHash: this.eth_getBlockByHash.bind(this),
+    eth_getBlockTransactionCountByHash: this.eth_getBlockTransactionCountByHash.bind(this),
+    eth_getBlockTransactionCountByNumber: this.eth_getBlockTransactionCountByNumber.bind(this)
   }
 }
 
@@ -95,5 +97,18 @@ Blocks.prototype.eth_coinbase = function (payload, cb) {
 Blocks.prototype.eth_blockNumber = function (payload, cb) {
   cb(null, this.blockNumber)
 }
+
+Blocks.prototype.eth_getBlockTransactionCountByHash = function (payload, cb) {
+  var block = executionContext.blocks[payload.params[0]]
+
+  cb(null, block.transactions.length)
+}
+
+Blocks.prototype.eth_getBlockTransactionCountByNumber = function (payload, cb) {
+  var block = executionContext.blocks[payload.params[0]]
+
+  cb(null, block.transactions.length)
+}
+
 
 module.exports = Blocks
