@@ -173,6 +173,11 @@ class CompileTab extends CompilerApi {
     return this.compileTabLogic.compiler.lastCompilationResult
   }
 
+  // This function is used by remix-plugin
+  compile (fileName) {
+    return this.compileTabLogic.compileFile(fileName)
+  }
+
   /*********
    * SUB-COMPONENTS
    */

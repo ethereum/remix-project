@@ -33,26 +33,36 @@ class CompileTab {
     this.compiler.setOptimize(this.optimize)
   }
 
-  runCompiler () {
-    this.fileManager.saveCurrentFile()
-    this.editor.clearAnnotations()
-    var currentFile = this.config.get('currentFile')
-    if (!currentFile) return
-    if (!/\.sol/.exec(currentFile)) return
+  /**
+   * Compile a specific file of the file manager
+   * @param {string} target the path to the file to compile
+   */
+  compileFile (target) {
+    if (!target) throw new Error('No target provided for compiliation')
+    if (!/\.sol/.exec(target)) throw new Error(`${target} is not a solidity file. It cannot be compiled with solidity compiler`)
     // only compile *.sol file.
-    var target = currentFile
-    var sources = {}
-    var provider = this.fileManager.fileProviderOf(currentFile)
-    if (!provider) return console.log('cannot compile ' + currentFile + '. Does not belong to any explorer')
-    provider.get(target, (error, content) => {
-      if (error) return console.log(error)
-      sources[target] = { content }
-      this.event.emit('startingCompilation')
-      setTimeout(() => {
+    const provider = this.fileManager.fileProviderOf(target)
+    if (!provider) throw new Error(`cannot compile ${target}. Does not belong to any explorer`)
+    return new Promise((resolve, reject) => {
+      provider.get(target, (error, content) => {
+        if (error) return reject(error)
+        const sources = { [target]: { content } }
+        this.event.emit('startingCompilation')
         // setTimeout fix the animation on chrome... (animation triggered by 'staringCompilation')
-        this.compiler.compile(sources, target)
-      }, 100)
+        setTimeout(() => this.compiler.compile(sources, target), 100)
+      })
     })
+  }
+
+  runCompiler () {
+    try {
+      this.fileManager.saveCurrentFile()
+      this.editor.clearAnnotations()
+      var currentFile = this.config.get('currentFile')
+      return this.compileFile(currentFile)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   importExternal (url, cb) {
