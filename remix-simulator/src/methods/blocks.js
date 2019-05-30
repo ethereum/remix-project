@@ -1,4 +1,6 @@
 var Web3 = require('web3')
+var RemixLib = require('remix-lib')
+var executionContext = RemixLib.execution.executionContext
 
 var Blocks = function (_options) {
   const options = _options || {}
@@ -43,6 +45,12 @@ Blocks.prototype.eth_getBlockByNumber = function (payload, cb) {
 }
 
 Blocks.prototype.eth_getBlockByHash = function (payload, cb) {
+  console.dir("eth_getBlockByHash")
+  console.dir(payload)
+  console.dir(Object.keys(executionContext.blocks))
+  console.dir("== toJSON")
+  console.dir(executionContext.blocks[payload.params[0]].toJSON())
+
   let b = {
     'difficulty': '0x0',
     'extraData': '0x',
