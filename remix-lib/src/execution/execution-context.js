@@ -281,7 +281,11 @@ function ExecutionContext () {
   }
 
   this.addBlock = function (block) {
+    let blockNumber = "0x" + block.header.number.toString('hex')
+    blockNumber = web3.toHex(web3.toBigNumber(blockNumber))
+
     self.blocks["0x" + block.hash().toString('hex')] = block
+    self.blocks[blockNumber] = block
   }
 
   this.trackTx = function(tx, block) {
