@@ -171,7 +171,7 @@ module.exports = class LocalPlugin {
       </div>
       <div class="form-group">
       <h6>Location in remix <small>(required)</small></h6>
-      ${radioLocations('sidePanel', 'Swap Panel')}
+      ${radioLocations('sidePanel', 'Side Panel')}
       ${radioLocations('mainPanel', 'Main Panel')}
       ${radioLocations('none', 'None')}
     </form>`

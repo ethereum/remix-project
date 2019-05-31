@@ -11,12 +11,9 @@ const css = csjs`
     text-transform: uppercase;
     white-space: nowrap;
   }
-  .swapitTitle a{
-    cursor: help;
-  }
   .swapitTitle i{
-    padding-left:4px;
-    font-size:10px;
+    padding-left: 6px;
+    font-size: 14px;
   }
   .swapitHeader {
     height: 35px;
@@ -67,7 +64,7 @@ export class SidePanel extends AbstractPanel {
       const { profile } = this.store.getOne(this.active)
       name = profile.displayName ? profile.displayName : profile.name
       const docsRoot = 'https://remix.readthedocs.io/en/latest/'
-      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><sup><i aria-hidden="true" class="fas fa-book"></i></sup></a>` : ''
+      docLink = profile.documentation ? yo`<a href="${docsRoot}${profile.documentation}" title="link to documentation" target="_blank"><i aria-hidden="true" class="fas fa-book"></i></a>` : ''
     }
 
     return yo`

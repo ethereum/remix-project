@@ -30,8 +30,8 @@ class Settings {
     this.networkcallid = 0
   }
 
-  changeExecutionContext (context, cb) {
-    return executionContext.executionContextChange(context, null, cb)
+  changeExecutionContext (context, confirmCb, infoCb, cb) {
+    return executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
   setProviderFromEndpoint (target, context, cb) {

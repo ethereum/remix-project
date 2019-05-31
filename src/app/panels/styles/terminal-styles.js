@@ -128,6 +128,9 @@ var css = csjs`
     border-left       : 1px solid var(--secondary)
     height            : 65%;
   }
+  .listenOnNetworkLabel {
+    white-space       : nowrap;
+  }
   .pendingTx {
     border-radius     : 50%;
     margin-right      : 30px;

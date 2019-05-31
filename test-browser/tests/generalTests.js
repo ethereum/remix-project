@@ -34,7 +34,7 @@ function runTests (browser) {
       async.waterfall([function (callback) { callback(null, browser) },
         testSimpleContract,
         testSuccessImport,
-        testFailedImport, /* testGitHubImport */
+        testFailedImport, /* testGitHubImport, */
         addDeployLibTestFile,
         testAutoDeployLib,
         testManualDeployLib,
@@ -168,22 +168,28 @@ function testSignature (browser, callback) {
     contractHelper.signMsg(browser, 'test message', (h, s) => {
       hash = h
       signature = s
+      browser.assert.ok(typeof hash.value === 'string', 'type of hash.value must be String')
+      browser.assert.ok(typeof signature.value === 'string', 'type of signature.value must be String')
       contractHelper.addFile(browser, 'signMassage.sol', sources[6]['browser/signMassage.sol'], () => {
         contractHelper.switchFile(browser, 'browser/signMassage.sol', () => {
           contractHelper.selectContract(browser, 'ECVerify', () => { // deploy lib
             contractHelper.createContract(browser, '', () => {
-              browser.waitForElementPresent('.instance:nth-of-type(4)')
-              .click('.instance:nth-of-type(4) > div > button')
-              .clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
-                () => {
-                  contractHelper.verifyCallReturnValue(
-                    browser,
-                    '0x08970fed061e7747cd9a38d680a601510cb659fb',
-                    ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
-                    () => { callback(null, browser) }
-                  )
-                }
-              )
+              const instanceSelector = '.instance:nth-of-type(4)'
+              browser.waitForElementPresent(instanceSelector)
+              .click(instanceSelector + ' > div > button')
+              .getAttribute(instanceSelector, 'id', (result) => {
+                // skip 'instance' part of e.g. 'instance0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
+                const address = result.value.slice('instance'.length)
+                browser.clickFunction('ecrecovery - call', {types: 'bytes32 hash, bytes sig', values: `"${hash.value}","${signature.value}"`}).perform(
+                  () => {
+                    contractHelper.verifyCallReturnValue(
+                      browser,
+                      address,
+                      ['0: address: 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'],
+                      () => { callback(null, browser) }
+                    )
+                  })
+              })
             })
           })
         })
@@ -347,13 +353,13 @@ var sources = [
     'browser/Untitled5.sol': {content: `library lib {
       function getInt () public view returns (uint) {
           return 45;
-      }    
+      }
     }
 
     contract test {
       function get () public view returns (uint) {
           return lib.getInt();
-      }    
+      }
     }`}
   },
   {
