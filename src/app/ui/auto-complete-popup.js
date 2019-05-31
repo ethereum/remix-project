@@ -3,8 +3,6 @@ var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
 var Commands = require('../constants/commands')
 
-var modal = require('./modaldialog.js')
-
 // -------------- styling ----------------------
 var css = require('./styles/auto-complete-popup-styles')
 
@@ -27,26 +25,23 @@ class AutoCompletePopup {
     self.data = {
       _options: []
     }
-    self._components = {
-      modal: null
-    }
-    self._view = {}
+    self._components = {}
+    self._view
     self._startingElement = 0
     self._elementsToShow = 4
     self._selectedElement = 0
     this.extraCommands = []
-    this.render()
     this.extendAutocompletion()
   }
 
   render () {
     var self = this
-    self._view.autoComplete = yo`
-      <div class="${css.popup}">
+    let autoComplete = yo`
+      <div class="${css.popup} alert alert-secondary">
         <div>
           ${self.data._options.map((item, index) => {
             return yo`
-              <div class="${css.autoCompleteItem} ${css.listHandlerHide} item ${self._selectedElement === index ? 'bg-secondary' : ''}">
+              <div class="${css.autoCompleteItem} ${css.listHandlerHide} item ${self._selectedElement === index ? 'border border-primary' : ''}">
                   <div value=${index} onclick=${(event) => { self.handleSelect(event.srcElement.innerText) }}>
                     ${getKeyOf(item)} 
                   </div>
@@ -62,22 +57,19 @@ class AutoCompletePopup {
         </div>
       </div>
     `
-    function setUpPopUp () {
-      handleOpenPopup()
-      handleListSize()
+    function setUpPopUp (autoComplete) {
+      handleOpenPopup(autoComplete)
+      handleListSize(autoComplete)
     }
 
-    function handleOpenPopup () {
-      if (self.data._options.length > 0) {
-        self._view.autoComplete.style.display = 'block'
-        self._components.modal = modal('', self._view.autoComplete, {label: null}, {label: null}, null, { class: css.modalContent, hideClose: true })
-      }
+    function handleOpenPopup (autoComplete) {
+      autoComplete.style.display = self.data._options.length > 0 ? 'block' : 'none'
     }
 
-    function handleListSize () {
+    function handleListSize (autoComplete) {
       if (self.data._options.length >= self._startingElement) {
         for (let i = self._startingElement; i < (self._elementsToShow + self._startingElement); i++) {
-          let el = self._view.autoComplete.querySelectorAll('.item')[i]
+          let el = autoComplete.querySelectorAll('.item')[i]
           if (el) {
             el.classList.remove(css.listHandlerHide)
             el.classList.add(css.listHandlerShow)
@@ -85,10 +77,9 @@ class AutoCompletePopup {
         }
       }
     }
-
-    setUpPopUp()
-
-    return self._view
+    setUpPopUp(autoComplete)
+    if (!this._view) this._view = autoComplete
+    return autoComplete
   }
 
   handleSelect (text) {
@@ -189,8 +180,7 @@ class AutoCompletePopup {
 
   removeAutoComplete () {
     if (!this.isOpen) return
-    this._view.autoComplete.style.display = 'none'
-    if (this._components.modal) this._components.modal.cancelListener()
+    this._view.style.display = 'none'
     this.isOpen = false
     this.data._options = []
     this._startingElement = 0

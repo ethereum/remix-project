@@ -2,6 +2,7 @@ var csjs = require('csjs-inject')
 
 var css = csjs`
   .popup             {
+    position         : absolute;
     text-align       : left;
     display          : none;
     width            : 100%;
@@ -9,6 +10,8 @@ var css = csjs`
     font-size        : 10px;
     overflow         : auto;
     padding-bottom   : 13px;
+    z-index          : 2;
+    bottom           : 1.7em;
   }
 
   .autoCompleteItem {

@@ -152,7 +152,7 @@ class Terminal extends BaseApi {
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
             >
             <label
-              class="form-check-label"
+              class="${css.listenOnNetworkLabel} form-check-label"
               title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
               for="listenNetworkCheck"
             >
@@ -168,8 +168,8 @@ class Terminal extends BaseApi {
     `
     self._view.term = yo`
       <div class="${css.terminal_container}" onscroll=${throttle(reattach, 10)} onclick=${focusinput}>
-        <div style="
-          background-color: grey;
+        ${self._components.autoCompletePopup.render()}
+        <div class="bg-secondary" style="
           position: absolute;
           height: 100%;
           width: 100%;

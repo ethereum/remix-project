@@ -219,7 +219,9 @@ class Editor {
    */
   _getMode (path) {
     let ext = path.indexOf('.') !== -1 ? /[^.]+/.exec(path) : null
-    if (ext) ext = path.replace(ext[0] + '.', '') // we get <ext>
+    if (ext) {
+      ext = path.replace(ext[0] + '.', '') // we get <ext>
+    } else ext = 'txt'
     ext = ext.split('#')
     if (!ext.length) return this.modes['txt']
     ext = ext[0]

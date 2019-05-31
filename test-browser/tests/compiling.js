@@ -160,8 +160,8 @@ function testInputValues (browser, callback) {
 
 var sources = [
   {'browser/Untitled.sol': {content: `
-      contract TestContract { function f() public returns (uint) { return 8; } 
-      function g() public returns (uint, string memory, bool, uint) {  
+      contract TestContract { function f() public returns (uint) { return 8; }
+      function g() public returns (uint, string memory, bool, uint) {
         uint payment = 345;
         bool payed = true;
         string memory comment = "comment_comment_";
@@ -176,7 +176,7 @@ var sources = [
         _i = -345;
         _a = msg.sender;
     }
-    
+
     function retunValues2 () public returns (byte _b, bytes2 _b2, bytes3 _b3, bytes memory _blit, bytes5 _b5, bytes6 _b6, string memory _str, bytes7 _b7, bytes22 _b22, bytes32 _b32)  {
         _b = 0x12;
         _b2 = 0x1223;
@@ -188,7 +188,7 @@ var sources = [
         _blit = hex"123498";
         _str = "this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string";
     }
-    
+
     function retunValues3 () public returns (ActionChoices _en, int[5][] memory _a1)  {
        _en = ActionChoices.GoStraight;
        int[5][] memory a = new int[5][](3);
