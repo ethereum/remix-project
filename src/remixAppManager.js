@@ -112,9 +112,14 @@ export class RemixAppManager extends AppManagerApi {
     }
     var mythx = {
       name: 'remythx',
-      displayName: 'MythX',
-      description: 'Security analysis of smart contracts by using MythX',
+      displayName: 'MythX Security Verification (Beta)',
+      events: [],
+      methods: [],
+      notifications: {
+        'solidity': ['compilationFinished']
+      },
       url: 'https://remythx.xyz',
+      description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
       icon: 'https://remythx.xyz/logo.png',
       location: 'sidePanel'
     }
