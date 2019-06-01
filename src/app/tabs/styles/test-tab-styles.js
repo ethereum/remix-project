@@ -45,6 +45,7 @@ var css = csjs`
     align-items: center;
   }
   .runButton {
+    white-space: nowrap;
   }
   .generateTestFile {
     margin-top: 20px;
@@ -58,6 +59,7 @@ var css = csjs`
   .label {
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
 `
 module.exports = css
