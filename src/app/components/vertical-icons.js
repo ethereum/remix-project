@@ -10,7 +10,7 @@ export class VerticalIcons {
 
   constructor (name, appStore, homeProfile) {
     this.store = appStore
-    this.homeProfile = homeProfile
+    this.homeProfile = homeProfile.profile
     this.events = new EventEmitter()
     this.icons = {}
     this.iconKind = {}
@@ -74,12 +74,13 @@ export class VerticalIcons {
    * @param {ModuleProfile} profile The profile of the module
    */
   addIcon ({kind, name, icon, displayName, tooltip}) {
-    let title = (displayName || name)// + (tooltip ? tooltip : "")
+    let title = (tooltip || displayName || name)
     this.icons[name] = yo`
       <div
         class="${css.icon}"
         onclick="${() => { this._iconClick(name) }}"
-        plugin="${name}" title="${title}" >
+        plugin="${name}"
+        title="${title}">
         <img class="image" src="${icon}" alt="${name}" />
       </div>`
     this.iconKind[kind || 'other'].appendChild(this.icons[name])
