@@ -68,7 +68,7 @@ UniversalDAppUI.prototype.renderInstanceFromABI = function (contractABI, address
 
   var shortAddress = helper.shortenAddress(address)
   var title = yo`
-    <div class="${css.title} alert alert-secondary">
+    <div class="${css.title} alert alert-secondary p-2">
       <button class="btn ${css.titleExpander}" onclick="${(e) => { toggleClass(e) }}"><i class="fas fa-angle-right" aria-hidden="true"></i></button>
       <div class="input-group ${css.nameNbuts}">
         <div class="${css.titleText} input-group-prepend"><span class="input-group-text ${css.spanTitleText}"> ${contractName} at ${shortAddress} (${context})</span></div>
