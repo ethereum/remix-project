@@ -263,10 +263,14 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     return 'Are you sure you want to leave?'
   }
 
+  let appStore = new EntityStore('module', 'name')
+  const appManager = new RemixAppManager(appStore)
+  registry.put({api: appManager, name: 'appmanager'})
+
   registry.put({api: msg => self._components.mainview.logHtmlMessage(msg), name: 'logCallback'})
 
   // helper for converting offset to line/column
-  var offsetToLineColumnConverter = new OffsetToLineColumnConverter()
+  var offsetToLineColumnConverter = new OffsetToLineColumnConverter(appManager)
   registry.put({api: offsetToLineColumnConverter, name: 'offsettolinecolumnconverter'})
 
   // json structure for hosting the last compilattion result
@@ -317,10 +321,6 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   txlistener.startListening()
 
   // TODO: There are still a lot of dep between mainview and filemanager
-
-  let appStore = new EntityStore('module', 'name')
-  const appManager = new RemixAppManager(appStore)
-  registry.put({api: appManager, name: 'appmanager'})
 
   // ----------------- file manager ----------------------------
   self._components.fileManager = new FileManager()
