@@ -42,7 +42,7 @@ function getCompiledContracts (browser, compiled, callback) {
     } else {
       var ret = []
       for (var c = 0; c < contracts.length; c++) {
-        ret.push(contracts[c].innerHTML)
+        ret.push(contracts[c].value)
       }
       return ret
     }
