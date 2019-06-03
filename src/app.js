@@ -412,7 +412,8 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   let test = new TestTab(
     registry.get('filemanager').api,
     registry.get('filepanel').api,
-    compileTab
+    compileTab,
+    appStore
   )
   let sourceHighlighters = registry.get('editor').api.sourceHighlighters
 
