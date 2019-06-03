@@ -132,7 +132,7 @@ class CompileTab extends CompilerApi {
       // Update contract Selection
       let contractMap = {}
       if (success) this.compiler.visitContracts((contract) => { contractMap[contract.name] = contract })
-      let contractSelection = this.contractSelection(Object.keys(contractMap) || [], source.target)
+      let contractSelection = this.contractSelection(contractMap)
       yo.update(this._view.contractSelection, contractSelection)
 
       if (data['error']) {
@@ -173,6 +173,11 @@ class CompileTab extends CompilerApi {
     return this.compileTabLogic.compiler.lastCompilationResult
   }
 
+  // This function is used by remix-plugin
+  compile (fileName) {
+    return this.compileTabLogic.compileFile(fileName)
+  }
+
   /*********
    * SUB-COMPONENTS
    */
@@ -181,13 +186,22 @@ class CompileTab extends CompilerApi {
    * Section to select the compiled contract
    * @param {string[]} contractList Names of the compiled contracts
    */
-  contractSelection (contractList = [], sourceFile) {
+  contractSelection (contractMap) {
+    // Return the file name of a path: ex "browser/ballot.sol" -> "ballot.sol"
+    const getFileName = (path) => {
+      const part = path.split('/')
+      return part[part.length - 1]
+    }
+    const contractList = contractMap ? Object.keys(contractMap).map((key) => ({
+      name: key,
+      file: getFileName(contractMap[key].file)
+    })) : []
     let selectEl = yo`
       <select
         onchange="${e => this.selectContract(e.target.value)}"
         id="compiledContracts" class="custom-select"
       >
-        ${contractList.map((name) => yo`<option value="${name}">${name}</option>`)}
+        ${contractList.map(({name, file}) => yo`<option value="${name}">${name} (${file})</option>`)}
       </select>
     `
     let result = contractList.length
