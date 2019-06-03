@@ -19,16 +19,22 @@ const profile = {
 }
 
 module.exports = class TestTab extends BaseApi {
-  constructor (fileManager, filePanel, compileTab) {
+  constructor (fileManager, filePanel, compileTab, appStore) {
     super(profile)
     this.compileTab = compileTab
     this._view = { el: null }
     this.compileTab = compileTab
     this.fileManager = fileManager
     this.filePanel = filePanel
+    this.appStore = appStore
     this.testTabLogic = new TestTabLogic(fileManager)
     this.data = {}
-    this.testList = yo`<div class=${css.testList}></div>`
+    this.appStore.event.on('activate', (name) => {
+      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+    })
+    this.appStore.event.on('deactivate', (name) => {
+      if (name === 'solidity') this.updateRunAction(fileManager.currentFile())
+    })
   }
 
   activate () {
@@ -47,15 +53,20 @@ module.exports = class TestTab extends BaseApi {
       this.data.selectedTests.push(file)
     })
 
+    this.fileManager.events.on('noFileSelected', () => {
+      this.updateGenerateFileAction()
+      this.updateRunAction()
+      this.updateTestFileList()
+    })
+
     this.fileManager.events.on('currentFileChanged', (file, provider) => {
+      this.updateGenerateFileAction(file)
+      this.updateRunAction(file)
       this.testTabLogic.getTests((error, tests) => {
         if (error) return tooltip(error)
         this.data.allTests = tests
         this.data.selectedTests = [...this.data.allTests]
-
-        const testsMessage = (tests.length ? this.listTests() : 'No test file available')
-        yo.update(this.testList, yo`<div class=${css.testList}>${testsMessage}</div>`)
-
+        this.updateTestFileList(tests)
         if (!this.testsOutput || !this.testsSummary) return
       })
     })
@@ -148,13 +159,55 @@ module.exports = class TestTab extends BaseApi {
   }
 
   runTests () {
-    this.loading.hidden = false
     this.testsOutput.innerHTML = ''
     this.testsSummary.innerHTML = ''
     var tests = this.data.selectedTests
+    if (!tests) return
+    this.loading.hidden = tests.length === 0
     async.eachOfSeries(tests, (value, key, callback) => { this.runTest(value, callback) })
   }
 
+  updateGenerateFileAction (currentFile) {
+    let el = yo`<button class="${css.generateTestFile} btn btn-primary" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</button>`
+    if (!currentFile) {
+      el.setAttribute('disabled', 'disabled')
+      el.setAttribute('title', 'No file selected')
+    }
+    if (!this.generateFileActionElement) {
+      this.generateFileActionElement = el
+    } else {
+      yo.update(this.generateFileActionElement, el)
+    }
+    return this.generateFileActionElement
+  }
+
+  updateRunAction (currentFile) {
+    let el = yo`<button class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</button>`
+    const isSolidityActive = this.appStore.isActive('solidity')
+    if (!currentFile || !isSolidityActive) {
+      el.setAttribute('disabled', 'disabled')
+      if (!currentFile) el.setAttribute('title', 'No file selected')
+      if (!isSolidityActive) el.setAttribute('title', 'The solidity module should be activated')
+    }
+
+    if (!this.runActionElement) {
+      this.runActionElement = el
+    } else {
+      yo.update(this.runActionElement, el)
+    }
+    return this.runActionElement
+  }
+
+  updateTestFileList (tests) {
+    const testsMessage = (tests && tests.length ? this.listTests() : 'No test file available')
+    let el = yo`<div class=${css.testList}>${testsMessage}</div>`
+    if (!this.testFilesListElement) {
+      this.testFilesListElement = el
+    } else {
+      yo.update(this.testFilesListElement, el)
+    }
+    return this.testFilesListElement
+  }
   render () {
     this.testsOutput = yo`<div class="${css.container} m-3 border border-primary border-right-0 border-left-0 border-bottom-0"  hidden='true' id="tests"></div>`
     this.testsSummary = yo`<div class="${css.container} border border-primary border-right-0 border-left-0 border-bottom-0" hidden='true' id="tests"></div>`
@@ -172,11 +225,11 @@ module.exports = class TestTab extends BaseApi {
           For more details, see
           How to test smart contracts guide in our documentation.
           <br/>
-          <div class="${css.generateTestFile} btn btn-secondary" onclick="${this.testTabLogic.generateTestFile.bind(this.testTabLogic)}">Generate test file</div>
+          ${this.updateGenerateFileAction()}
         </div>
         <div class="${css.tests}">          
           <div class="${css.buttons}">
-            <div class="${css.runButton} btn btn-primary"  onclick="${this.runTests.bind(this)}">Run Tests</div>
+          ${this.updateRunAction()}
             <label class="${css.label} mx-4 m-2" for="checkAllTests">
               <input id="checkAllTests"
                 type="checkbox"
@@ -186,7 +239,7 @@ module.exports = class TestTab extends BaseApi {
               Check/Uncheck all
             </label>
           </div>
-          ${this.testList}
+          ${this.updateTestFileList()}
           <hr>
           <div class="${css.buttons}" ><h6>Results:${this.loading}</h6></div>
           ${this.testsOutput}
