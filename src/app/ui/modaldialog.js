@@ -3,7 +3,7 @@ var css = require('./styles/modaldialog-styles')
 
 module.exports = (title, content, ok, cancel, focusSelector, opts) => {
   let agreed = true
-  let footerIsActive = true
+  let footerIsActive = false
   opts = opts || {}
   var container = document.querySelector(`.modal`)
   if (!container) {
