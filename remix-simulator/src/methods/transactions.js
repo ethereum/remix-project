@@ -40,8 +40,6 @@ Transactions.prototype.eth_sendTransaction = function (payload, cb) {
 }
 
 Transactions.prototype.eth_getTransactionReceipt = function (payload, cb) {
-	console.dir("== eth_getTransactionReceipt")
-	console.dir(payload.params)
   executionContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
     if (error) {
       return cb(error)
@@ -70,22 +68,13 @@ Transactions.prototype.eth_estimateGas = function (payload, cb) {
 }
 
 Transactions.prototype.eth_getCode = function (payload, cb) {
-	console.dir("== eth_getCode")
-	console.dir(payload.params)
   let address = payload.params[0]
-  console.dir(address);
 
-  // const account = ethJSUtil.toBuffer(address)
-	// console.dir(account)
-
-	//executionContext.vm().stateManager.getContractCode(account, (error, result) => {
-	//executionContext.web3().eth.getContractCode(address, (error, result) => {
 	executionContext.web3().eth.getCode(address, (error, result) => {
 		if (error) {
       console.dir("error getting code");
       console.dir(error);
 		}
-		//cb(error, hexConvert(result))
 		cb(error, result)
 	})
 }
@@ -107,8 +96,6 @@ Transactions.prototype.eth_getTransactionCount = function (payload, cb) {
 }
 
 Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
-	console.dir("== eth_getTransactionByHash")
-	console.dir(payload.params)
   const address = payload.params[0]
 
   executionContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
@@ -116,14 +103,11 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
       return cb(error)
     }
 
-    console.dir("== receipt")
-    console.dir(receipt)
-
     var test = executionContext.web3();
 
     var txBlock = executionContext.txs[receipt.transactionHash];
 
-    // executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
+    // TODO: params to add later
     let r = {
       'blockHash': "0x" + txBlock.hash().toString('hex'),
 		 	'blockNumber': "0x" + txBlock.header.number.toString('hex'),
@@ -151,14 +135,10 @@ Transactions.prototype.eth_getTransactionByHash = function (payload, cb) {
     }
 
     cb(null, r)
-    // })
   })
 }
 
 Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload, cb) {
-	console.dir("== eth_getTransactionByHash")
-	console.dir(payload.params)
-  // const address = payload.params[0]
   const txIndex = payload.params[1]
 
   var txBlock = executionContext.blocks[payload.params[0]]
@@ -169,7 +149,7 @@ Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload
       return cb(error)
     }
 
-    // executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
+    // TODO: params to add later
     let r = {
       'blockHash': "0x" + txBlock.hash().toString('hex'),
       'blockNumber': "0x" + txBlock.header.number.toString('hex'),
@@ -197,14 +177,10 @@ Transactions.prototype.eth_getTransactionByBlockHashAndIndex = function (payload
     }
 
     cb(null, r)
-    // })
   })
 }
 
 Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (payload, cb) {
-  console.dir("== eth_getTransactionByHash")
-  console.dir(payload.params)
-  // const address = payload.params[0]
   const txIndex = payload.params[1]
 
   var txBlock = executionContext.blocks[payload.params[0]]
@@ -215,7 +191,7 @@ Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (paylo
       return cb(error)
     }
 
-    // executionContext.web3().eth.getBlock(receipt.hash).then((block) => {
+    // TODO: params to add later
     let r = {
       'blockHash': "0x" + txBlock.hash().toString('hex'),
       'blockNumber': "0x" + txBlock.header.number.toString('hex'),
@@ -243,7 +219,6 @@ Transactions.prototype.eth_getTransactionByBlockNumberAndIndex = function (paylo
     }
 
     cb(null, r)
-    // })
   })
 }
 

@@ -118,8 +118,6 @@ function ExecutionContext () {
   }
 
   this.web3 = function () {
-    console.dir("isVM")
-    console.dir(this.isVM())
     return this.isVM() ? vms.constantinople.web3vm : web3
   }
 
@@ -188,9 +186,6 @@ function ExecutionContext () {
 
     if (context === 'vm') {
       executionContext = context
-      // vms.constantinople.stateManager.revert(() => {
-      //   vms.constantinople.stateManager.checkpoint(() => {})
-      // })
       self.event.trigger('contextChanged', ['vm'])
       return cb()
     }

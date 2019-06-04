@@ -194,8 +194,6 @@ web3VmProvider.prototype.pushTrace = function (self, data) {
 }
 
 web3VmProvider.prototype.getCode = function (address, cb) {
-  console.dir("===> web3VmProvider: ")
-
   const account = ethutil.toBuffer(address)
   this.vm.stateManager.getContractCode(account, function (error, result) {
     cb(error, util.hexConvert(result))
