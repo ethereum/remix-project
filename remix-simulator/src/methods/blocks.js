@@ -56,12 +56,6 @@ function toHex(value) {
 }
 
 Blocks.prototype.eth_getBlockByHash = function (payload, cb) {
-  console.dir("eth_getBlockByHash")
-  console.dir(payload)
-  console.dir(Object.keys(executionContext.blocks))
-  console.dir("== toJSON")
-  console.dir(executionContext.blocks[payload.params[0]].toJSON())
-
   var block = executionContext.blocks[payload.params[0]]
 
   let b = {
