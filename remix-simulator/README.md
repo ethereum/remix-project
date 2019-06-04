@@ -20,8 +20,8 @@ Implemented:
 * [X] eth_getTransactionCount
 * [X] eth_getBlockTransactionCountByHash
 * [X] eth_getBlockTransactionCountByNumber
-* [_] eth_getUncleCountByBlockHash
-* [_] eth_getUncleCountByBlockNumber
+* [~] eth_getUncleCountByBlockHash
+* [~] eth_getUncleCountByBlockNumber
 * [X] eth_getCode
 * [~] eth_sign
 * [X] eth_sendTransaction
@@ -81,4 +81,3 @@ Implemented:
 * [_] rpc_modules
 * [_] web3_clientVersion
 * [_] web3_sha3
-
