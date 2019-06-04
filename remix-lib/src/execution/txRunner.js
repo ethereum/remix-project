@@ -94,7 +94,7 @@ class TxRunner {
     }
   }
 
-  runInVm (from, to, data, value, gasLimit, useCall, timestamp, callback) {
+  runInVm(from, to, data, value, gasLimit, useCall, timestamp, callback) {
     const self = this
     var account = self.vmaccounts[from]
     if (!account) {
@@ -111,106 +111,50 @@ class TxRunner {
     })
     tx.sign(account.privateKey)
 
-    const coinbases = [ '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e' ]
-    const difficulties = [ new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10) ]
+    const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
+    const difficulties = [new BN('69762765929000', 10), new BN('70762765929000', 10), new BN('71762765929000', 10)]
     var block = new EthJSBlock({
       header: {
         timestamp: timestamp || (new Date().getTime() / 1000 | 0),
         number: self.blockNumber,
-        // coinbase: coinbases[self.blockNumber % coinbases.length],
-        // difficulty: difficulties[self.blockNumber % difficulties.length],
-        // coinbase: coinbases[0],
-        //difficulty: difficulties[0],
+        coinbase: coinbases[self.blockNumber % coinbases.length],
+        difficulty: difficulties[self.blockNumber % difficulties.length],
         coinbase: coinbases[0],
-        // gasLimit: new BN(gasLimit, 10).imuln(200),
         gasLimit: new BN("5000000").imuln(1)
       },
       transactions: [tx],
-      //transactions: [],
       uncleHeaders: []
     })
     if (!useCall) {
       ++self.blockNumber
     } else {
-      executionContext.vm().stateManager.checkpoint(() => {})
+      executionContext.vm().stateManager.checkpoint(() => { })
     }
 
-    //block.transactions.push(tx);
-
     this.checkpointAndCommit(() => {
+      executionContext.vm().runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false }, function (err, results) {
+        let result = results.results[0]
+        console.dir(result)
+        if (useCall) {
+          executionContext.vm().stateManager.revert(function () { })
+        }
+        err = err ? err.message : err
+        if (result) {
+          result.status = '0x' + result.vm.exception.toString(16)
+        }
 
-      //executionContext.vm().blockchain.getLatestBlock((a, b) => {
+        executionContext.addBlock(block)
+        executionContext.trackTx("0x" + tx.hash().toString('hex'), block)
 
-        // console.dir("b.hash()")
-        // console.dir(b.hash())
-        // console.dir(b.hash().length)
-        // console.dir(b.hash().toString('hex'))
-        // console.dir(b.hash().toString('hex').length)
-
-        // block.header.parentHash = b.hash()
-
-        // block.header.parentHash = b.hash().toString('hex')
-
-        //block.header.parentHash = Buffer.from(b.hash(), 'hex')
-        //block.header.parentHash = "4599f6765f1d5a50Bf1E3DBFa14A72dF"
-
-
-        // block.header.parentHash = b.hash()
-        // block.header.difficulty = block.header.canonicalDifficulty(b)
-
-        //executionContext.vm().runTx({block: block, tx: tx, skipBalance: true, skipNonce: true}, function (err, result) {
-        executionContext.vm().runBlock({block: block, generate: true, skipBlockValidation: true, skipBalance: false}, function (err, results) {
-          console.dir("-- runBlock result")
-          console.dir(err)
-          //console.dir(results)
-          let result = results.results[0]
-          console.dir(result)
-          if (useCall) {
-            executionContext.vm().stateManager.revert(function () {})
-          }
-          err = err ? err.message : err
-          if (result) {
-            result.status = '0x' + result.vm.exception.toString(16)
-          }
-
-          //executionContext.vm().blockchain.putBlock(block, (err, savedBlock) => {
-
-            executionContext.addBlock(block)
-            executionContext.trackTx("0x" + tx.hash().toString('hex'), block)
-
-            // result.blockHash = "0x" + block.hash().toString('hex')
-            // result.blockNumber = "0x" + block.header.number.toString('hex')
-
-            callback(err, {
-              result: result,
-              transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
-            })
-          //})
-
+        callback(err, {
+          result: result,
+          transactionHash: ethJSUtil.bufferToHex(Buffer.from(tx.hash()))
         })
-
-
-      //})
-
-
+      })
     })
-    //})
   }
 
   checkpointAndCommit (cb) {
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir(executionContext.vm().stateManager._checkpointCount)
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
-    console.dir("------------------------")
     if (executionContext.vm().stateManager._checkpointCount > 0) {
       return executionContext.vm().stateManager.commit(() => {
         cb()
