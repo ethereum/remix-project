@@ -16,7 +16,7 @@ const profile = {
   description: 'Checks the contract code for security vulnerabilities and bad practices.',
   kind: 'analysis',
   location: 'sidePanel',
-  documentation: 'static_analysis.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/static_analysis.html',
   version: packageJson.version
 }
 

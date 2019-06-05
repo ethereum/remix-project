@@ -15,7 +15,7 @@ const profile = {
   description: 'Debug transactions',
   kind: 'debugging',
   location: 'sidePanel',
-  documentation: 'debugger.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/debugger.html',
   version: packageJson.version
 }
 
