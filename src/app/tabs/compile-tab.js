@@ -28,7 +28,7 @@ const profile = {
   kind: 'compile',
   permission: true,
   location: 'sidePanel',
-  documentation: 'solidity_editor.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: packageJson.version
 }
 
