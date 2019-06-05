@@ -96,9 +96,12 @@ export class LandingPage extends BaseApi {
     let load = function (service, item, examples, info) {
       let compilerImport = new CompilerImport()
       let fileProviders = globalRegistry.get('fileproviders').api
-      const msg = yo`<div class="p-2"><span>Enter the ${item} you would like to load.</span>
-      <div>${info}</div>
-      <div>e.g ${examples.map((url) => { return yo`<div class="p-1"><a>${url}</a></div>` })}</div></div>`
+      const msg = yo`
+        <div class="p-2">
+          <span>Enter the ${item} you would like to load.</span>
+          <div>${info}</div>
+          <div>e.g ${examples.map((url) => { return yo`<div class="p-1"><a>${url}</a></div>` })}</div>
+        </div>`
 
       modalDialogCustom.prompt(`Import from ${service}`, msg, null, (target) => {
         if (target !== '') {

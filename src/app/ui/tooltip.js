@@ -23,7 +23,7 @@ class Toaster {
     }, 2000)
     animation(this.tooltip, css.animateTop.className)
   }
-  render (tooltipText, action, opts) {
+  render (tooltipText, actionElement, opts) {
     opts = defaultOptions(opts)
     let canShorten = true
     if (tooltipText instanceof Element) {
@@ -53,7 +53,7 @@ class Toaster {
           <span class="px-2">
             ${shortTooltipText}
             ${button}
-            ${action}
+            ${actionElement}
           </span>
           <span style="align-self: baseline;">
             <button class="fas fa-times btn-info mx-1 p-0" onclick=${() => {
