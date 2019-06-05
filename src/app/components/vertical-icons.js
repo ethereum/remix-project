@@ -78,7 +78,7 @@ export class VerticalIcons {
     this.icons[name] = yo`
       <div
         class="${css.icon}"
-        onclick="${() => { this._iconClick(name) }}"
+        onclick="${() => { this.toggle(name) }}"
         plugin="${name}"
         title="${title}">
         <img class="image" src="${icon}" alt="${name}" />
@@ -196,9 +196,22 @@ export class VerticalIcons {
    * @param {string} name Name of profile of the module to activate
    */
   select (name) {
+    this.updateActivations(name)
+    this.events.emit('showContent', name)
+  }
+
+  /**
+   * Toggles the side panel for plugin
+   * @param {string} name Name of profile of the module to activate
+   */
+  toggle (name) {
+    this.updateActivations(name)
+    this.events.emit('toggleContent', name)
+  }
+
+  updateActivations (name) {
     this.removeActive()
     this.addActive(name)
-    this.events.emit('showContent', name)
   }
 
   onThemeChanged (themeType) {
@@ -210,10 +223,11 @@ export class VerticalIcons {
     }
   }
 
-  _iconClick (name) {
-    this.removeActive()
-    this.addActive(name)
-    this.events.emit('toggleContent', name)
+  /**
+   * Show the home page
+   */
+  showHome () {
+    globalRegistry.get('appmanager').api.ensureActivated('home')
   }
 
   render () {
@@ -221,7 +235,7 @@ export class VerticalIcons {
     <div
       class="${css.homeIcon}"
       onclick="${(e) => {
-        globalRegistry.get('appmanager').api.ensureActivated('home')
+        this.showHome()
       }}"
       plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
     >
@@ -345,15 +359,15 @@ export class VerticalIcons {
 
     this.view = yo`
       <div class=${css.icons}>
-      ${home}
-      ${this.iconKind['fileexplorer']}
-      ${this.iconKind['compile']}
-      ${this.iconKind['run']}
-      ${this.iconKind['testing']}
-      ${this.iconKind['analysis']}
-      ${this.iconKind['debugging']}
-      ${this.iconKind['other']}
-      ${this.iconKind['settings']}
+        ${home}
+        ${this.iconKind['fileexplorer']}
+        ${this.iconKind['compile']}
+        ${this.iconKind['run']}
+        ${this.iconKind['testing']}
+        ${this.iconKind['analysis']}
+        ${this.iconKind['debugging']}
+        ${this.iconKind['other']}
+        ${this.iconKind['settings']}
       </div>
     `
     return this.view
