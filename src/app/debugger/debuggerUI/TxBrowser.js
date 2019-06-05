@@ -62,6 +62,9 @@ TxBrowser.prototype.submit = function () {
 
 TxBrowser.prototype.updateTxN = function (ev) {
   this.state.txNumber = ev.target.value
+  if (this.view) {
+    yo.update(this.view, this.render())
+  }
 }
 
 TxBrowser.prototype.load = function (txHash, tx) {
@@ -81,6 +84,7 @@ TxBrowser.prototype.setState = function (state) {
 
 TxBrowser.prototype.render = function () {
   var self = this
+  let action = yo`<button class='btn btn-primary btn-sm ${css.txbutton}' id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>`
   var view = yo`<div class="${css.container}">
         <div class="${css.txContainer}">
           <div class="${css.txinputs} p-1 input-group">
@@ -94,13 +98,16 @@ TxBrowser.prototype.render = function () {
             />
           </div>
           <div class="${css.txbuttons} btn-group p-1">
-            <button class='btn btn-primary btn-sm ${css.txbutton}' disabled="${this.state.txNumber ? 'false' : 'true'}" id='load' title='${this.state.debugging ? 'Stop' : 'Start'} debugging' onclick=${function () { self.submit() }}>${this.state.debugging ? 'Stop' : 'Start'} debugging</button>
+           ${action}
           </div>
         </div>
         <span id='error'></span>
       </div>`
   if (this.state.debugging) {
     view.querySelectorAll('input').forEach(element => { element.setAttribute('disabled', '') })
+  }
+  if (!this.state.txNumber) {
+    action.setAttribute('disabled', 'disabled')
   }
   if (!this.view) {
     this.view = view
