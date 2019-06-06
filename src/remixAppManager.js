@@ -121,7 +121,8 @@ export class RemixAppManager extends AppManagerApi {
       url: 'https://remythx.xyz',
       description: 'Perform Static and Dynamic Security Analysis using the MythX Cloud Service',
       icon: 'https://remythx.xyz/logo.png',
-      location: 'sidePanel'
+      location: 'sidePanel',
+      documentation: 'https://github.com/aquiladev/remix-mythx-plugin/blob/master/README.md'
     }
     return [
       new Plugin(pipeline),
